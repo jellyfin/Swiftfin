@@ -76,6 +76,8 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     var userEditAccessTags = makeUserEditAccessTags
     @Route(.modal)
     var userAddAccessTag = makeUserAddAccessTag
+    @Route(.modal)
+    var userPhotoPicker = makeUserPhotoPicker
 
     // MARK: - Route: API Keys
 
@@ -141,6 +143,10 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeUserDetails(user: UserDto) -> some View {
         ServerUserDetailsView(user: user)
+    }
+
+    func makeUserPhotoPicker(viewModel: UserProfileImageViewModel) -> NavigationViewCoordinator<UserProfileImageCoordinator> {
+        NavigationViewCoordinator(UserProfileImageCoordinator(viewModel: viewModel))
     }
 
     func makeAddServerUser() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {

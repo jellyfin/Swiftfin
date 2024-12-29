@@ -7,6 +7,7 @@
 //
 
 import Algorithms
+import CryptoKit
 import Foundation
 import SwiftUI
 
@@ -115,6 +116,23 @@ extension String {
         }
 
         return s
+    }
+
+    var sha1: String? {
+        guard let input = data(using: .utf8) else { return nil }
+        return Insecure.SHA1.hash(data: input)
+            .reduce(into: "") { partialResult, byte in
+                partialResult += String(format: "%02x", byte)
+            }
+    }
+
+    var base64: String? {
+        guard let input = data(using: .utf8) else { return nil }
+        return input.base64EncodedString()
+    }
+
+    var url: URL? {
+        URL(string: self)
     }
 
     // TODO: remove after iOS 15 support removed

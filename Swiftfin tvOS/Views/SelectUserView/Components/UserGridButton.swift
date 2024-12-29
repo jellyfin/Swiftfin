@@ -69,17 +69,13 @@ extension SelectUserView {
                         ZStack {
                             Color.clear
 
-                            ImageView(user.profileImageSource(client: server.client, maxWidth: 120))
-                                .image { image in
-                                    image
-                                        .posterBorder(ratio: 1 / 2, of: \.width)
-                                }
-                                .placeholder { _ in
-                                    personView
-                                }
-                                .failure {
-                                    personView
-                                }
+                            UserProfileImage(
+                                userID: user.id,
+                                source: user.profileImageSource(
+                                    client: server.client,
+                                    maxWidth: 120
+                                )
+                            )
                         }
                         .aspectRatio(1, contentMode: .fill)
                     }

@@ -154,6 +154,6 @@ final class MediaViewModel: ViewModel, Stateful {
         let response = try await userSession.client.send(request)
 
         return (response.value.items ?? [])
-            .map { $0.imageSource(.backdrop, maxWidth: 500) }
+            .map { $0.imageSource(.backdrop, maxWidth: 200) }
     }
 }

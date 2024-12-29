@@ -31,29 +31,17 @@ struct SettingsBarButton: View {
                     ZStack {
                         Color.clear
 
-                        RedrawOnNotificationView(.didChangeUserProfileImage) {
-                            ImageView(user.profileImageSource(
+                        UserProfileImage(
+                            userID: user.id,
+                            source: user.profileImageSource(
                                 client: server.client,
                                 maxWidth: 120
-                            ))
-                            .pipeline(.Swiftfin.branding)
-                            .image { image in
-                                image
-                                    .posterBorder(ratio: 1 / 2, of: \.width)
-                                    .onAppear {
-                                        isUserImage = true
-                                    }
-                            }
-                            .placeholder { _ in
-                                Color.clear
-                            }
-                            .onDisappear {
-                                isUserImage = false
-                            }
+                            ),
+                            pipeline: .Swiftfin.local
+                        ) {
+                            Color.clear
                         }
                     }
-                    .aspectRatio(contentMode: .fill)
-                    .clipShape(.circle)
                 }
         }
         .accessibilityLabel(L10n.settings)
