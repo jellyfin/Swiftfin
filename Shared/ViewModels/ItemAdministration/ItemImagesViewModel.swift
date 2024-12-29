@@ -327,18 +327,30 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         try await refreshItem()
 
         await MainActor.run {
-            self.images = images.filter { $0.key != imageInfo }.sorted(by: { lhs, rhs in
-                guard let lhsType = lhs.key.imageType, let rhsType = rhs.key.imageType else {
-                    return false
+            self.images.removeValue(forKey: imageInfo)
+
+            let updatedImages = self.images
+                .sorted { lhs, rhs in
+                    guard let lhsType = lhs.key.imageType, let rhsType = rhs.key.imageType else {
+                        return false
+                    }
+                    if lhsType != rhsType {
+                        return lhsType.rawValue < rhsType.rawValue
+                    }
+                    return (lhs.key.imageIndex ?? 0) < (rhs.key.imageIndex ?? 0)
                 }
-                if lhsType != rhsType {
-                    return lhsType.rawValue < rhsType.rawValue
+                .reduce(into: [ImageInfo: UIImage]()) { result, pair in
+                    var updatedInfo = pair.key
+                    if updatedInfo.imageType == imageInfo.imageType,
+                       let index = updatedInfo.imageIndex,
+                       index > imageInfo.imageIndex!
+                    {
+                        updatedInfo.imageIndex = index - 1
+                    }
+                    result[updatedInfo] = pair.value
                 }
-                return (lhs.key.imageIndex ?? 0) < (rhs.key.imageIndex ?? 0)
-            })
-            .reduce(into: [ImageInfo: UIImage]()) { result, pair in
-                result[pair.key] = pair.value
-            }
+
+            self.images = updatedImages
         }
     }
 
