@@ -20,7 +20,8 @@ extension AddServerUserAccessTagsView {
         @Binding
         var tag: String
 
-        let itemAlreadyExists: Bool
+        let tagIsDuplicate: Bool
+        let tagAlreadyExists: Bool
 
         // MARK: - Body
 
@@ -64,8 +65,14 @@ extension AddServerUserAccessTagsView {
                         systemImage: "exclamationmark.circle.fill"
                     )
                     .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                } else if tagIsDuplicate {
+                    Label(
+                        L10n.accessTagAlreadyExists,
+                        systemImage: "exclamationmark.circle.fill"
+                    )
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                 } else {
-                    if itemAlreadyExists {
+                    if tagAlreadyExists {
                         Label(
                             L10n.existsOnServer,
                             systemImage: "checkmark.circle.fill"

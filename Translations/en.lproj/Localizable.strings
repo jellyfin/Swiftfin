@@ -28,6 +28,9 @@
 /// User will have access to no media unless it contains at least one allowed tag.
 "accessTagAllowDescription" = "User will have access to no media unless it contains at least one allowed tag.";
 
+/// Access tag already exists
+"accessTagAlreadyExists" = "Access tag already exists";
+
 /// User will have access to all media except when it contains any blocked tag.
 "accessTagBlockDescription" = "User will have access to all media except when it contains any blocked tag.";
 

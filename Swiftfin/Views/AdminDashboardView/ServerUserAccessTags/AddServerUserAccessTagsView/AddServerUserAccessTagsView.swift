@@ -44,12 +44,19 @@ struct AddServerUserAccessTagsView: View {
     // MARK: - Name is Valid
 
     private var isValid: Bool {
-        tempTag.isNotEmpty
+        tempTag.isNotEmpty && !tagIsDuplicate
     }
 
-    // MARK: - Name Already Exists
+    // MARK: - Tag is Already Blocked/Allowed
 
-    private var itemAlreadyExists: Bool {
+    private var tagIsDuplicate: Bool {
+        viewModel.user.policy!.blockedTags!.contains(tempTag) // &&
+        //! viewModel.user.policy!.allowedTags!.contains(tempTag)
+    }
+
+    // MARK: - Tag Already Exists on Jellyfin
+
+    private var tagAlreadyExists: Bool {
         tagViewModel.trie.contains(key: tempTag.localizedLowercase)
     }
 
@@ -136,7 +143,8 @@ struct AddServerUserAccessTagsView: View {
             TagInput(
                 access: $access,
                 tag: $tempTag,
-                itemAlreadyExists: itemAlreadyExists
+                tagIsDuplicate: tagIsDuplicate,
+                tagAlreadyExists: tagAlreadyExists
             )
 
             SearchResultsSection(
