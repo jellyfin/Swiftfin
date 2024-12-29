@@ -45,7 +45,7 @@ struct UserProfileHeroImage: View {
     init(
         user: UserDto,
         source: ImageSource,
-        pipeline: ImagePipeline = .Swiftfin.default,
+        pipeline: ImagePipeline = .Swiftfin.posters,
         onUpdate: @escaping () -> Void,
         onDelete: @escaping () -> Void
     ) {
@@ -65,19 +65,12 @@ struct UserProfileHeroImage: View {
                     isPresentingOptions = true
                 } label: {
                     ZStack(alignment: .bottomTrailing) {
-                        // `.aspectRatio(contentMode: .fill)` on `imageView` alone
-                        // causes a crash on some iOS versions
-                        ZStack {
-                            UserProfileImage(
-                                userId: user.id,
-                                source: source,
-                                pipeline: userSession?.user.id == user.id ? .Swiftfin.branding : .Swiftfin.default
-                            )
-                        }
-                        .aspectRatio(1, contentMode: .fill)
-                        .clipShape(.circle)
+                        UserProfileImage(
+                            userID: user.id,
+                            source: source,
+                            pipeline: userSession?.user.id == user.id ? .Swiftfin.local : .Swiftfin.posters
+                        )
                         .frame(width: 150, height: 150)
-                        .shadow(radius: 5)
 
                         Image(systemName: "pencil.circle.fill")
                             .resizable()

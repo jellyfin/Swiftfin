@@ -152,7 +152,6 @@ extension UserState {
         let scaleWidth = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
 
         let parameters = Paths.GetUserImageParameters(
-            tag: data.primaryImageTag,
             maxWidth: scaleWidth
         )
         let request = Paths.getUserImage(

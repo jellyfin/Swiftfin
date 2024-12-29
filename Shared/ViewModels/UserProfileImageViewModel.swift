@@ -49,8 +49,7 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
 
     // MARK: - Published Values
 
-    @Published
-    var userID: String
+    let user: UserDto
 
     // MARK: - Task Variables
 
@@ -59,8 +58,8 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
 
     // MARK: - Initializer
 
-    init(userID: String) {
-        self.userID = userID
+    init(user: UserDto) {
+        self.user = user
     }
 
     // MARK: - Respond to Action
@@ -128,6 +127,9 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
     // MARK: - Upload Image
 
     private func upload(_ image: UIImage) async throws {
+
+        guard let userID = user.id else { return }
+
         let contentType: String
         let imageData: Data
 
@@ -151,6 +153,8 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
 
         let _ = try await userSession.client.send(request)
 
+        sweepProfileImageCache()
+
         await MainActor.run {
             Notifications[.didChangeUserProfile].post(userID)
         }
@@ -159,14 +163,36 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
     // MARK: - Delete Image
 
     private func delete() async throws {
+
+        guard let userID = user.id else { return }
+
         let request = Paths.deleteUserImage(
             userID: userID,
             imageType: "Primary"
         )
         let _ = try await userSession.client.send(request)
 
+        sweepProfileImageCache()
+
         await MainActor.run {
             Notifications[.didChangeUserProfile].post(userID)
+        }
+    }
+
+    private func sweepProfileImageCache() {
+        if let userImageURL = user.profileImageSource(client: userSession.client, maxWidth: 60).url {
+            ImagePipeline.Swiftfin.local.removeItem(for: userImageURL)
+            ImagePipeline.Swiftfin.posters.removeItem(for: userImageURL)
+        }
+
+        if let userImageURL = user.profileImageSource(client: userSession.client, maxWidth: 120).url {
+            ImagePipeline.Swiftfin.local.removeItem(for: userImageURL)
+            ImagePipeline.Swiftfin.posters.removeItem(for: userImageURL)
+        }
+
+        if let userImageURL = user.profileImageSource(client: userSession.client, maxWidth: 150).url {
+            ImagePipeline.Swiftfin.local.removeItem(for: userImageURL)
+            ImagePipeline.Swiftfin.posters.removeItem(for: userImageURL)
         }
     }
 }

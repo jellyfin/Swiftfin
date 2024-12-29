@@ -75,12 +75,12 @@ extension SelectUserView {
                 Color.clear
 
                 UserProfileImage(
-                    userId: user.id,
+                    userID: user.id,
                     source: user.profileImageSource(
                         client: server.client,
                         maxWidth: 120
                     ),
-                    pipeline: .Swiftfin.branding
+                    pipeline: .Swiftfin.local
                 )
 
                 if isEditing {

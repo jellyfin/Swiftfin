@@ -12,7 +12,7 @@ import JellyfinAPI
 import Nuke
 import SwiftUI
 
-struct UserProfileImage: View {
+struct UserProfileImage<Placeholder: View>: View {
 
     // MARK: - Inject Logger
 
@@ -21,24 +21,10 @@ struct UserProfileImage: View {
 
     // MARK: - User Variables
 
-    private let userId: String?
+    private let userID: String?
     private let source: ImageSource
     private let pipeline: ImagePipeline
-    private let placeholder: any View
-
-    // MARK: - Initializer
-
-    init(
-        userId: String?,
-        source: ImageSource,
-        pipeline: ImagePipeline = .Swiftfin.default,
-        placeholder: any View = SystemImageContentView(systemName: "person.fill", ratio: 0.5)
-    ) {
-        self.userId = userId
-        self.source = source
-        self.pipeline = pipeline
-        self.placeholder = placeholder
-    }
+    private let placeholder: Placeholder
 
     // MARK: - Body
 
@@ -46,7 +32,7 @@ struct UserProfileImage: View {
         RedrawOnNotificationView(
             .didChangeUserProfile,
             filter: {
-                $0 == userId
+                $0 == userID
             }
         ) {
             ImageView(source)
@@ -65,21 +51,36 @@ struct UserProfileImage: View {
                 .clipShape(Circle())
                 .shadow(radius: 5)
         }
-        .onNotification(.didChangeUserProfile) { notificationUser in
-            if notificationUser == userId {
-                let imageURL = source.url
+    }
+}
 
-                guard let imageURL else {
-                    logger.info("No user profile image URL found")
-                    return
-                }
+// MARK: - Initializer
 
-                let request = ImageRequest(url: imageURL)
+extension UserProfileImage {
 
-                pipeline.cache[request] = nil
-                pipeline.configuration.dataCache?.removeData(for: imageURL.absoluteString)
-                logger.info("Image removed from cache: \(imageURL.absoluteString)")
-            }
-        }
+    init(
+        userID: String?,
+        source: ImageSource,
+        pipeline: ImagePipeline = .Swiftfin.posters,
+        @ViewBuilder placeholder: @escaping () -> Placeholder
+    ) {
+        self.userID = userID
+        self.source = source
+        self.pipeline = pipeline
+        self.placeholder = placeholder()
+    }
+}
+
+extension UserProfileImage where Placeholder == SystemImageContentView {
+
+    init(
+        userID: String?,
+        source: ImageSource,
+        pipeline: ImagePipeline = .Swiftfin.posters
+    ) {
+        self.userID = userID
+        self.source = source
+        self.pipeline = pipeline
+        self.placeholder = SystemImageContentView(systemName: "person.fill", ratio: 0.5)
     }
 }

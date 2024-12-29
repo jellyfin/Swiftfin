@@ -31,7 +31,7 @@ extension SettingsView {
                     // causes a crash on some iOS versions
                     ZStack {
                         UserProfileImage(
-                            userId: user.id,
+                            userID: user.id,
                             source: user.profileImageSource(
                                 client: userSession.client,
                                 maxWidth: 120

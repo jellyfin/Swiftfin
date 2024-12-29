@@ -21,26 +21,11 @@ extension DataCache {
 
 extension DataCache.Swiftfin {
 
-    static let `default`: DataCache? = {
+    static let posters: DataCache? = {
 
-        let dataCache = try? DataCache(name: "org.jellyfin.swiftfin/Images") { name in
-
-            guard var components = name.url?.components else { return nil }
-
-            var maxWidthValue: String? = nil
-
-            if let maxWidth = components.queryItems?.first(where: { $0.name == "maxWidth" }) {
-                maxWidthValue = maxWidth.value
-                components.queryItems = components.queryItems?.filter { $0.name != "maxWidth" }
-            }
-
-            guard let newURL = components.url, let urlSHA = newURL.absoluteString.sha1 else { return nil }
-
-            if let maxWidthValue {
-                return urlSHA + "-\(maxWidthValue)"
-            } else {
-                return urlSHA
-            }
+        let dataCache = try? DataCache(name: "org.jellyfin.swiftfin/Posters") { name in
+            guard let url = name.url else { return nil }
+            return ImagePipeline.cacheKey(for: url)
         }
 
         dataCache?.sizeLimit = 1024 * 1024 * 1000 // 500 MB
@@ -49,30 +34,27 @@ extension DataCache.Swiftfin {
     }()
 
     /// The `DataCache` used for server and user images that should be usable
-    /// without a consistent connection.
-    static let branding: DataCache? = {
+    /// without an active connection.
+    static let local: DataCache? = {
         guard let root = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
             return nil
         }
 
-        let path = root.appendingPathComponent("Cache/org.jellyfin.swiftfin.branding", isDirectory: true)
+        let path = root.appendingPathComponent("Caches/org.jellyfin.swiftfin.local", isDirectory: true)
 
         let dataCache = try? DataCache(path: path) { name in
 
-            guard let url = name.url else { return name }
+            guard let url = name.url else { return nil }
 
-            // Since multi-url servers is supported,
-            // key splashscreens with the server ID.
+            // Since multi-url servers are supported, key splashscreens with the server ID.
             //
-            // Additional latency from Core Data round
-            // trip is acceptable.
+            // Additional latency from Core Data fetch is acceptable.
             if url.path.contains("Splashscreen") {
 
                 // Account for hosting at a path
                 guard let prefixURL = url.absoluteString.trimmingSuffix("/Branding/Splashscreen?").url else { return nil }
 
-                // We can assume that the request
-                // is from the current server
+                // We can assume that the request is from the current server
                 let urlFilter: Where<ServerModel> = Where(\.$currentURL == prefixURL)
                 guard let server = try? SwiftfinStore.dataStack.fetchOne(
                     From<ServerModel>()
@@ -81,8 +63,7 @@ extension DataCache.Swiftfin {
 
                 return "\(server.id)-splashscreen".sha1
             } else {
-                // TODO: size differences...
-                return url.pathAndQuery()?.sha1
+                return ImagePipeline.cacheKey(for: url)
             }
         }
 

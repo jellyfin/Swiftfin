@@ -39,12 +39,11 @@ extension UserSignInView {
                         Color.clear
 
                         UserProfileImage(
-                            userId: user.id,
+                            userID: user.id,
                             source: user.profileImageSource(
                                 client: client,
                                 maxWidth: 120
-                            ),
-                            pipeline: .Swiftfin.default
+                            )
                         )
                     }
                     .frame(width: 50, height: 50)

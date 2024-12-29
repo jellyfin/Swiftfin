@@ -32,14 +32,15 @@ struct SettingsBarButton: View {
                         Color.clear
 
                         UserProfileImage(
-                            userId: user.id,
+                            userID: user.id,
                             source: user.profileImageSource(
                                 client: server.client,
                                 maxWidth: 120
                             ),
-                            pipeline: .Swiftfin.branding,
-                            placeholder: Color.clear
-                        )
+                            pipeline: .Swiftfin.local
+                        ) {
+                            Color.clear
+                        }
                     }
                 }
         }

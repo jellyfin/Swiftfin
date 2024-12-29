@@ -25,7 +25,7 @@ struct ServerUserDetailsView: View {
     @StateObject
     private var viewModel: ServerUserAdminViewModel
 
-    @ObservedObject
+    @StateObject
     private var profileViewModel: UserProfileImageViewModel
 
     // MARK: - Dialog State
@@ -44,7 +44,7 @@ struct ServerUserDetailsView: View {
 
     init(user: UserDto) {
         self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
-        self.profileViewModel = .init(userID: user.id!)
+        self._profileViewModel = StateObject(wrappedValue: UserProfileImageViewModel(user: user))
         self.username = user.name ?? ""
     }
 

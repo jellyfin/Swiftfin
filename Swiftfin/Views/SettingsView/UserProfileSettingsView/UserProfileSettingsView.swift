@@ -13,42 +13,34 @@ import SwiftUI
 
 struct UserProfileSettingsView: View {
 
-    @Default(.accentColor)
-    private var accentColor
-
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
     @ObservedObject
-    var viewModel: SettingsViewModel
-    @ObservedObject
-    var profileViewModel: UserProfileImageViewModel
+    private var viewModel: SettingsViewModel
+    @StateObject
+    private var profileImageViewModel: UserProfileImageViewModel
 
     @State
     private var isPresentingConfirmReset: Bool = false
-    @State
-    private var isPresentingProfileImageOptions: Bool = false
 
     init(viewModel: SettingsViewModel) {
         self.viewModel = viewModel
-        self.profileViewModel = .init(userID: viewModel.userSession.user.id)
+        self._profileImageViewModel = StateObject(wrappedValue: UserProfileImageViewModel(user: viewModel.userSession.user.data))
     }
 
     var body: some View {
         List {
             UserProfileHeroImage(
-                user: UserDto(
-                    id: viewModel.userSession.user.id,
-                    name: viewModel.userSession.user.username
-                ),
+                user: profileImageViewModel.user,
                 source: viewModel.userSession.user.profileImageSource(
                     client: viewModel.userSession.client,
                     maxWidth: 150
                 )
             ) {
-                router.route(to: \.photoPicker, profileViewModel)
+                router.route(to: \.photoPicker, profileImageViewModel)
             } onDelete: {
-                profileViewModel.send(.delete)
+                profileImageViewModel.send(.delete)
             }
 
             Section {

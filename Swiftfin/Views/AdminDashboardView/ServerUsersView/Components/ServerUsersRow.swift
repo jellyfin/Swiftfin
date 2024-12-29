@@ -76,7 +76,7 @@ extension ServerUsersView {
         private var userImage: some View {
             ZStack {
                 UserProfileImage(
-                    userId: user.id,
+                    userID: user.id,
                     source: user.profileImageSource(
                         client: userSession!.client,
                         maxWidth: 60
