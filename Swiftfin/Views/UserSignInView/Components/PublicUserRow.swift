@@ -30,25 +30,6 @@ extension UserSignInView {
             self.action = action
         }
 
-        @ViewBuilder
-        private var personView: some View {
-            ZStack {
-                Group {
-                    if colorScheme == .light {
-                        Color.secondarySystemFill
-                    } else {
-                        Color.tertiarySystemBackground
-                    }
-                }
-                .posterShadow()
-
-                RelativeSystemImageView(systemName: "person.fill", ratio: 0.5)
-                    .foregroundStyle(.secondary)
-            }
-            .clipShape(.circle)
-            .aspectRatio(1, contentMode: .fill)
-        }
-
         var body: some View {
             Button {
                 action()
@@ -57,22 +38,14 @@ extension UserSignInView {
                     ZStack {
                         Color.clear
 
-                        ImageView(user.profileImageSource(client: client, maxWidth: 120))
-                            .pipeline(.Swiftfin.branding)
-                            .image { image in
-                                image
-                                    .posterBorder(ratio: 0.5, of: \.width)
-                            }
-                            .placeholder { _ in
-                                personView
-                            }
-                            .failure {
-                                personView
-                            }
+                        UserProfileImage(
+                            userID: user.id,
+                            source: user.profileImageSource(
+                                client: client,
+                                maxWidth: 120
+                            )
+                        )
                     }
-                    .aspectRatio(1, contentMode: .fill)
-                    .posterShadow()
-                    .clipShape(.circle)
                     .frame(width: 50, height: 50)
 
                     Text(user.name ?? .emptyDash)
