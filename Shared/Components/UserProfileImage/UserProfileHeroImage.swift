@@ -89,20 +89,13 @@ struct UserProfileHeroImage: View {
             .listRowBackground(Color.clear)
         }
         .confirmationDialog(
-            """
-            \(L10n.profileImage)
-            \(L10n.viewsMayRequireRestart)
-            """,
+            L10n.profileImage,
             isPresented: $isPresentingOptions,
             titleVisibility: .visible
         ) {
-            Text(L10n.viewsMayRequireRestart)
-            Button(L10n.selectImage) {
-                onUpdate()
-            }
-            Button(L10n.delete, role: .destructive) {
-                onDelete()
-            }
+            Button(L10n.selectImage, action: onUpdate)
+
+            Button(L10n.delete, role: .destructive, action: onDelete)
         }
     }
 }
