@@ -1294,6 +1294,9 @@
 /// Production Locations
 "productionLocations" = "Production Locations";
 
+/// Profile Image
+"profileImage" = "Profile Image";
+
 /// Profiles
 "profiles" = "Profiles";
 
@@ -1426,6 +1429,15 @@
 /// Reset all settings back to defaults.
 "resetAllSettings" = "Reset all settings back to defaults.";
 
+/// Reset Settings
+"resetSettings" = "Reset Settings";
+
+/// Reset Swiftfin user settings
+"resetSettingsDescription" = "Reset Swiftfin user settings";
+
+/// Are you sure you want to reset all user settings?
+"resetSettingsMessage" = "Are you sure you want to reset all user settings?";
+
 /// Reset User Settings
 "resetUserSettings" = "Reset User Settings";
 
@@ -1509,6 +1521,9 @@
 
 /// Select All
 "selectAll" = "Select All";
+
+/// Select Image
+"selectImage" = "Select Image";
 
 /// Series
 "series" = "Series";
@@ -1920,6 +1935,9 @@
 
 /// Video transcoding
 "videoTranscoding" = "Video transcoding";
+
+/// Some views may need an app restart to update.
+"viewsMayRequireRestart" = "Some views may need an app restart to update.";
 
 /// Weekday
 "weekday" = "Weekday";

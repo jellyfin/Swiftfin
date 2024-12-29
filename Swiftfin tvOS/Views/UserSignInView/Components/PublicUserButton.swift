@@ -36,20 +36,6 @@ extension UserSignInView {
             self.action = action
         }
 
-        // MARK: - Fallback Person View
-
-        @ViewBuilder
-        private var fallbackPersonView: some View {
-            ZStack {
-                Color.secondarySystemFill
-
-                RelativeSystemImageView(systemName: "person.fill", ratio: 0.5)
-                    .foregroundStyle(.secondary)
-            }
-            .clipShape(.circle)
-            .aspectRatio(1, contentMode: .fill)
-        }
-
         // MARK: - Person View
 
         @ViewBuilder
@@ -57,17 +43,13 @@ extension UserSignInView {
             ZStack {
                 Color.clear
 
-                ImageView(user.profileImageSource(client: client, maxWidth: 120))
-                    .image { image in
-                        image
-                            .posterBorder(ratio: 0.5, of: \.width)
-                    }
-                    .placeholder { _ in
-                        fallbackPersonView
-                    }
-                    .failure {
-                        fallbackPersonView
-                    }
+                UserProfileImage(
+                    userID: user.id,
+                    source: user.profileImageSource(
+                        client: client,
+                        maxWidth: 120
+                    )
+                )
             }
         }
 

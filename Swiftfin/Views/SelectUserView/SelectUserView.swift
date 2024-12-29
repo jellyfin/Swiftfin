@@ -447,7 +447,7 @@ struct SelectUserView: View {
                     Color.clear
 
                     ImageView(splashScreenImageSources)
-                        .pipeline(.Swiftfin.branding)
+                        .pipeline(.Swiftfin.local)
                         .aspectRatio(contentMode: .fill)
                         .id(splashScreenImageSources)
                         .transition(.opacity)

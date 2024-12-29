@@ -68,7 +68,7 @@ extension URL {
     }
 
     // doesn't have `?` but doesn't matter
-    func pathAndQuery() -> String? {
+    var pathAndQuery: String? {
         path + (query ?? "")
     }
 
@@ -79,5 +79,9 @@ extension URL {
         } catch {
             return -1
         }
+    }
+
+    var components: URLComponents? {
+        URLComponents(url: self, resolvingAgainstBaseURL: false)
     }
 }
