@@ -30,12 +30,20 @@ struct ItemIdentifyView: View {
     @State
     private var error: Error?
 
+    // MARK: - Lookup Truple
+
+    private struct searchComponents: Equatable {
+        var name: String?
+        var originalTitle: String?
+        var year: Int?
+    }
+
     // MARK: - Lookup States
 
     @State
-    var search = ItemIdentifySearch()
+    private var search = searchComponents()
     @State
-    var lastSearch = ItemIdentifySearch()
+    private var lastSearch = searchComponents()
 
     // MARK: - Initializer
 
@@ -87,18 +95,14 @@ struct ItemIdentifyView: View {
         .errorMessage($error)
     }
 
-    // MARK: - UpdatE View
+    // MARK: - Update View
 
     @ViewBuilder
     var updateView: some View {
-        VStack(alignment: .center, spacing: 16) {
-            ProgressView()
-            Button(L10n.cancel, role: .destructive) {
-                viewModel.send(.cancel)
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(.red)
+        CancellableLoadingButton(L10n.applyingMediaInformation) {
+            viewModel.send(.cancel)
         }
+        .foregroundStyle(.primary)
     }
 
     // MARK: - Content View
@@ -111,7 +115,11 @@ struct ItemIdentifyView: View {
         }
         .topBarTrailing {
             Button(L10n.search) {
-                viewModel.send(.search(search))
+                viewModel.send(.search(
+                    name: search.name,
+                    originalTitle: search.originalTitle,
+                    year: search.year
+                ))
                 lastSearch = search
             }
             .buttonStyle(.toolbarPill)

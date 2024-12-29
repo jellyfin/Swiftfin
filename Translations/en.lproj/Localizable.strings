@@ -136,6 +136,9 @@
 /// Application Name
 "applicationName" = "Application Name";
 
+/// Applying media information
+"applyingMediaInformation" = "Applying media information";
+
 /// Arranger
 "arranger" = "Arranger";
 

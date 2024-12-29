@@ -106,6 +106,8 @@ internal enum L10n {
   internal static let appIcon = L10n.tr("Localizable", "appIcon", fallback: "App Icon")
   /// Application Name
   internal static let applicationName = L10n.tr("Localizable", "applicationName", fallback: "Application Name")
+  /// Applying media information
+  internal static let applyingMediaInformation = L10n.tr("Localizable", "applyingMediaInformation", fallback: "Applying media information")
   /// Arranger
   internal static let arranger = L10n.tr("Localizable", "arranger", fallback: "Arranger")
   /// Artist

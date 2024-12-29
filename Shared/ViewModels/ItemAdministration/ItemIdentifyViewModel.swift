@@ -26,7 +26,7 @@ class ItemIdentifyViewModel: ViewModel, Stateful, Eventful {
 
     enum Action: Equatable {
         case cancel
-        case search(ItemIdentifySearch)
+        case search(name: String? = nil, originalTitle: String? = nil, year: Int? = nil)
         case update(RemoteSearchResult)
     }
 
@@ -83,7 +83,7 @@ class ItemIdentifyViewModel: ViewModel, Stateful, Eventful {
 
             return state
 
-        case let .search(itemIdentifySearch):
+        case let .search(name, originalTitle, year):
             searchTask?.cancel()
 
             searchTask = Task { [weak self] in
@@ -94,7 +94,11 @@ class ItemIdentifyViewModel: ViewModel, Stateful, Eventful {
                         _ = self.backgroundStates.append(.searching)
                     }
 
-                    let allElements = try await self.searchItem(itemIdentifySearch)
+                    let allElements = try await self.searchItem(
+                        name: name,
+                        originalTitle: originalTitle,
+                        year: year
+                    )
 
                     await MainActor.run {
                         self.searchResults = allElements
@@ -142,14 +146,15 @@ class ItemIdentifyViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: - Return Matching Elements (To Be Overridden)
 
-    private func searchItem(_ itemIdentifySearch: ItemIdentifySearch) async throws -> [RemoteSearchResult] {
+    private func searchItem(
+        name: String?,
+        originalTitle: String?,
+        year: Int?
+    ) async throws -> [RemoteSearchResult] {
+
         guard let itemId = item.id, let itemType = item.type else {
             return []
         }
-
-        let name = itemIdentifySearch.name
-        let originalTitle = itemIdentifySearch.originalTitle
-        let year = itemIdentifySearch.year
 
         switch itemType {
         case .boxSet:
