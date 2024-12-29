@@ -9,14 +9,13 @@
 import JellyfinAPI
 import SwiftUI
 
-extension ItemIdentifyView {
+extension ItemIdentificationView {
 
     struct ItemInfoConfirmationView: View {
 
         // MARK: - Item Info Variables
 
         let itemInfo: RemoteSearchResult
-        let remoteImage: any View
 
         // MARK: - Item Info Actions
 
@@ -28,9 +27,7 @@ extension ItemIdentifyView {
         var body: some View {
             NavigationView {
                 VStack(alignment: .leading, spacing: 16) {
-                    remoteImage
-                        .eraseToAnyView()
-                        .frame(width: 60, height: 180, alignment: .leading)
+                    ItemIdentificationView.resultImage(itemInfo.imageURL)
 
                     Text(itemInfo.name ?? L10n.unknown)
                         .foregroundStyle(Color.primary)

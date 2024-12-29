@@ -10,39 +10,24 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-extension ItemIdentifyView {
+extension ItemIdentificationView {
 
     struct RemoteSearchResultButton: View {
 
         // MARK: - Remote Search Result Variable
 
         let remoteSearchResult: RemoteSearchResult
-        let remoteImage: any View
 
         // MARK: - Remote Search Result Action
 
         let onSelect: () -> Void
-
-        // MARK: - Result Title
-
-        private var resultTitle: String {
-            let name = remoteSearchResult.name ?? L10n.unknown
-            let year = remoteSearchResult.productionYear?.description ??
-                remoteSearchResult.premiereDate?.formatted(.dateTime.year()).description ??
-                .emptyDash
-
-            return "\(name) (\(year))"
-        }
 
         // MARK: - Body
 
         var body: some View {
             Button(action: onSelect) {
                 HStack {
-                    remoteImage
-                        .eraseToAnyView()
-                        .frame(width: 30, height: 90)
-                        .padding(.horizontal)
+                    ItemIdentificationView.resultImage(remoteSearchResult.imageURL)
 
                     VStack(alignment: .leading) {
                         Text(
@@ -60,6 +45,17 @@ extension ItemIdentifyView {
                     }
                 }
             }
+        }
+
+        // MARK: - Result Title
+
+        private var resultTitle: String {
+            let name = remoteSearchResult.name ?? L10n.unknown
+            let year = remoteSearchResult.productionYear?.description ??
+                remoteSearchResult.premiereDate?.formatted(.dateTime.year()).description ??
+                .emptyDash
+
+            return "\(name) (\(year))"
         }
     }
 }

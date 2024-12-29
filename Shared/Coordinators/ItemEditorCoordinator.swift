@@ -64,7 +64,7 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
 
     @ViewBuilder
     func makeEditIdentity(item: BaseItemDto) -> some View {
-        ItemIdentifyView(item: item)
+        ItemIdentificationView(item: item)
     }
 
     func makeEditMetadata(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {

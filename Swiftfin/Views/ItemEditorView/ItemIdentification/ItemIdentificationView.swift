@@ -10,7 +10,7 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-struct ItemIdentifyView: View {
+struct ItemIdentificationView: View {
 
     // MARK: - Observed & Environment Objects
 
@@ -70,10 +70,7 @@ struct ItemIdentifyView: View {
             set: { if !$0 { selectedMatch = nil } }
         )) {
             if let match = selectedMatch {
-                ItemInfoConfirmationView(
-                    itemInfo: match,
-                    remoteImage: resultImage(match.imageURL)
-                ) {
+                ItemInfoConfirmationView(itemInfo: match) {
                     viewModel.send(.update(match))
                     selectedMatch = nil
                 } onClose: {
@@ -158,8 +155,7 @@ struct ItemIdentifyView: View {
             Section(L10n.items) {
                 ForEach(viewModel.searchResults, id: \.id) { remoteSearchResult in
                     RemoteSearchResultButton(
-                        remoteSearchResult: remoteSearchResult,
-                        remoteImage: resultImage(remoteSearchResult.imageURL)
+                        remoteSearchResult: remoteSearchResult
                     ) {
                         selectedMatch = remoteSearchResult
                     }
@@ -171,16 +167,20 @@ struct ItemIdentifyView: View {
     // MARK: - Result Image
 
     @ViewBuilder
-    public func resultImage(_ url: String? = nil) -> some View {
+    static func resultImage(_ url: String? = nil) -> some View {
         ZStack {
             Color.clear
 
             ImageView(URL(string: url ?? ""))
                 .failure {
-                    SystemImageContentView(systemName: "questionmark")
+                    Image(systemName: "questionmark")
+                        .foregroundStyle(.primary)
                 }
         }
         .posterStyle(.portrait)
+        .scaledToFit()
+        .frame(height: 120, alignment: .leading)
         .posterShadow()
+        .padding(.trailing)
     }
 }
