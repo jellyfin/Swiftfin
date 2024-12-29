@@ -157,7 +157,7 @@ struct EditServerUserAccessTagsView: View {
     private func errorView(with error: some Error) -> some View {
         ErrorView(error: error)
             .onRetry {
-                viewModel.send(.loadDetails)
+                viewModel.send(.refresh)
             }
     }
 
