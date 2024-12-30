@@ -88,6 +88,19 @@ extension SelectUserView {
                 Button {
                     action()
                 } label: {
+                    VStack(alignment: .center) {
+                        ZStack {
+                            Color.clear
+
+                            UserProfileImage(
+                                userID: user.id,
+                                source: user.profileImageSource(
+                                    client: server.client,
+                                    maxWidth: 120
+                                )
+                            )
+                        }
+                        .aspectRatio(1, contentMode: .fill)
                     userImage
                         .hoverEffect(.highlight)
 
