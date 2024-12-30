@@ -62,25 +62,21 @@ extension SelectUserView {
 
         @ViewBuilder
         private var userImage: some View {
-            ImageView(user.profileImageSource(client: server.client, maxWidth: 120))
-                .image { image in
-                    image
-                        .posterBorder(ratio: 1 / 2, of: \.width)
+            UserProfileImage(
+                userID: user.id,
+                source: user.profileImageSource(
+                    client: server.client,
+                    maxWidth: 120
+                )
+            )
+            .aspectRatio(1, contentMode: .fill)
+            .overlay {
+                if isEditing {
+                    Color.black
+                        .opacity(isSelected ? 0 : 0.5)
+                        .clipShape(.circle)
                 }
-                .placeholder { _ in
-                    personView
-                }
-                .failure {
-                    personView
-                }
-                .aspectRatio(1, contentMode: .fill)
-                .overlay {
-                    if isEditing {
-                        Color.black
-                            .opacity(isSelected ? 0 : 0.5)
-                            .clipShape(.circle)
-                    }
-                }
+            }
         }
 
         var body: some View {
@@ -88,19 +84,6 @@ extension SelectUserView {
                 Button {
                     action()
                 } label: {
-                    VStack(alignment: .center) {
-                        ZStack {
-                            Color.clear
-
-                            UserProfileImage(
-                                userID: user.id,
-                                source: user.profileImageSource(
-                                    client: server.client,
-                                    maxWidth: 120
-                                )
-                            )
-                        }
-                        .aspectRatio(1, contentMode: .fill)
                     userImage
                         .hoverEffect(.highlight)
 
