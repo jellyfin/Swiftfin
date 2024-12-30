@@ -234,6 +234,7 @@ struct SelectUserView: View {
                         .frame(height: 100)
 
                     gridContentView
+                        .focusSection()
                 }
                 .scrollIfLargerThanContainer(padding: 100)
                 .scrollViewOffset($scrollViewOffset)
@@ -255,6 +256,7 @@ struct SelectUserView: View {
                     selectedUsers.insert(contentsOf: users)
                 }
             }
+            .focusSection()
         }
         .animation(.linear(duration: 0.1), value: scrollViewOffset)
         .background {
