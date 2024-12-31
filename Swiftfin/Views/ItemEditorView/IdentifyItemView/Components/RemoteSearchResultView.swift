@@ -51,28 +51,28 @@ extension IdentifyItemView {
 
                 if let premiereDate = result.premiereDate {
                     TextPairView(
-                        "Premiere Date",
+                        L10n.premiereDate,
                         value: Text(premiereDate.formatted(.dateTime.year().month().day()))
                     )
                 }
 
                 if let productionYear = result.productionYear {
                     TextPairView(
-                        "Production Year",
+                        L10n.productionYear,
                         value: Text(productionYear, format: .number.grouping(.never))
                     )
                 }
 
                 if let provider = result.searchProviderName {
                     TextPairView(
-                        leading: "Provider",
+                        leading: L10n.provider,
                         trailing: provider
                     )
                 }
 
                 if let providerID = result.providerIDs?.values.first {
                     TextPairView(
-                        leading: "ID",
+                        leading: L10n.id,
                         trailing: providerID
                     )
                 }

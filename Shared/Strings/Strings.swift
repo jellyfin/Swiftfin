@@ -604,6 +604,8 @@ internal enum L10n {
   internal static let home = L10n.tr("Localizable", "home", fallback: "Home")
   /// Hours
   internal static let hours = L10n.tr("Localizable", "hours", fallback: "Hours")
+  /// ID
+  internal static let id = L10n.tr("Localizable", "id", fallback: "ID")
   /// Identify
   internal static let identify = L10n.tr("Localizable", "identify", fallback: "Identify")
   /// Idle
@@ -910,6 +912,8 @@ internal enum L10n {
   internal static let production = L10n.tr("Localizable", "production", fallback: "Production")
   /// Production Locations
   internal static let productionLocations = L10n.tr("Localizable", "productionLocations", fallback: "Production Locations")
+  /// Production Year
+  internal static let productionYear = L10n.tr("Localizable", "productionYear", fallback: "Production Year")
   /// Profile Image
   internal static let profileImage = L10n.tr("Localizable", "profileImage", fallback: "Profile Image")
   /// Profiles
@@ -918,6 +922,8 @@ internal enum L10n {
   internal static let programs = L10n.tr("Localizable", "programs", fallback: "Programs")
   /// Progress
   internal static let progress = L10n.tr("Localizable", "progress", fallback: "Progress")
+  /// Provider
+  internal static let provider = L10n.tr("Localizable", "provider", fallback: "Provider")
   /// Public Users
   internal static let publicUsers = L10n.tr("Localizable", "publicUsers", fallback: "Public Users")
   /// Quick Connect
