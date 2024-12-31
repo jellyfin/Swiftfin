@@ -7,9 +7,6 @@
 /// Accent Color
 "accentColor" = "Accent Color";
 
-/// Some views may need an app restart to update.
-"accentColorDescription" = "Some views may need an app restart to update.";
-
 /// Access
 "access" = "Access";
 
@@ -847,6 +844,12 @@
 /// Hours
 "hours" = "Hours";
 
+/// ID
+"id" = "ID";
+
+/// Identify
+"identify" = "Identify";
+
 /// Idle
 "idle" = "Idle";
 
@@ -1291,6 +1294,9 @@
 /// Production Locations
 "productionLocations" = "Production Locations";
 
+/// Production Year
+"productionYear" = "Production Year";
+
 /// Profile Image
 "profileImage" = "Profile Image";
 
@@ -1302,6 +1308,9 @@
 
 /// Progress
 "progress" = "Progress";
+
+/// Provider
+"provider" = "Provider";
 
 /// Public Users
 "publicUsers" = "Public Users";

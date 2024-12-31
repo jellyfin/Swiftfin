@@ -106,6 +106,8 @@ internal enum L10n {
   internal static let appIcon = L10n.tr("Localizable", "appIcon", fallback: "App Icon")
   /// Application Name
   internal static let applicationName = L10n.tr("Localizable", "applicationName", fallback: "Application Name")
+  /// Applying media information
+  internal static let applyingMediaInformation = L10n.tr("Localizable", "applyingMediaInformation", fallback: "Applying media information")
   /// Arranger
   internal static let arranger = L10n.tr("Localizable", "arranger", fallback: "Arranger")
   /// Artist
@@ -602,6 +604,10 @@ internal enum L10n {
   internal static let home = L10n.tr("Localizable", "home", fallback: "Home")
   /// Hours
   internal static let hours = L10n.tr("Localizable", "hours", fallback: "Hours")
+  /// ID
+  internal static let id = L10n.tr("Localizable", "id", fallback: "ID")
+  /// Identify
+  internal static let identify = L10n.tr("Localizable", "identify", fallback: "Identify")
   /// Idle
   internal static let idle = L10n.tr("Localizable", "idle", fallback: "Idle")
   /// Illustrator
@@ -906,6 +912,8 @@ internal enum L10n {
   internal static let production = L10n.tr("Localizable", "production", fallback: "Production")
   /// Production Locations
   internal static let productionLocations = L10n.tr("Localizable", "productionLocations", fallback: "Production Locations")
+  /// Production Year
+  internal static let productionYear = L10n.tr("Localizable", "productionYear", fallback: "Production Year")
   /// Profile Image
   internal static let profileImage = L10n.tr("Localizable", "profileImage", fallback: "Profile Image")
   /// Profiles
@@ -914,6 +922,8 @@ internal enum L10n {
   internal static let programs = L10n.tr("Localizable", "programs", fallback: "Programs")
   /// Progress
   internal static let progress = L10n.tr("Localizable", "progress", fallback: "Progress")
+  /// Provider
+  internal static let provider = L10n.tr("Localizable", "provider", fallback: "Provider")
   /// Public Users
   internal static let publicUsers = L10n.tr("Localizable", "publicUsers", fallback: "Public Users")
   /// Quick Connect
@@ -1298,6 +1308,8 @@ internal enum L10n {
   internal static let unsavedChangesMessage = L10n.tr("Localizable", "unsavedChangesMessage", fallback: "You have unsaved changes. Are you sure you want to discard them?")
   /// URL
   internal static let url = L10n.tr("Localizable", "url", fallback: "URL")
+  /// Use as item
+  internal static let useAsItem = L10n.tr("Localizable", "useAsItem", fallback: "Use as item")
   /// Use as Transcoding Profile
   internal static let useAsTranscodingProfile = L10n.tr("Localizable", "useAsTranscodingProfile", fallback: "Use as Transcoding Profile")
   /// Use Primary Image
