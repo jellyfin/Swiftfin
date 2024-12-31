@@ -373,6 +373,7 @@
 		BD3957792C113EC40078CEF8 /* SubtitleSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD3957782C113EC40078CEF8 /* SubtitleSection.swift */; };
 		BD39577C2C113FAA0078CEF8 /* TimestampSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD39577B2C113FAA0078CEF8 /* TimestampSection.swift */; };
 		BD39577E2C1140810078CEF8 /* TransitionSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD39577D2C1140810078CEF8 /* TransitionSection.swift */; };
+		BDA623532D0D0854009A157F /* SelectUserBottomBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA623522D0D0854009A157F /* SelectUserBottomBar.swift */; };
 		C40CD926271F8D1E000FB198 /* ItemTypeLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD924271F8D1E000FB198 /* ItemTypeLibraryViewModel.swift */; };
 		C44FA6E02AACD19C00EDEB56 /* LiveSmallPlaybackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44FA6DE2AACD19C00EDEB56 /* LiveSmallPlaybackButton.swift */; };
 		C44FA6E12AACD19C00EDEB56 /* LiveLargePlaybackButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44FA6DF2AACD19C00EDEB56 /* LiveLargePlaybackButtons.swift */; };
@@ -1485,6 +1486,7 @@
 		BD3957782C113EC40078CEF8 /* SubtitleSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleSection.swift; sourceTree = "<group>"; };
 		BD39577B2C113FAA0078CEF8 /* TimestampSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimestampSection.swift; sourceTree = "<group>"; };
 		BD39577D2C1140810078CEF8 /* TransitionSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionSection.swift; sourceTree = "<group>"; };
+		BDA623522D0D0854009A157F /* SelectUserBottomBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectUserBottomBar.swift; sourceTree = "<group>"; };
 		C40CD924271F8D1E000FB198 /* ItemTypeLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemTypeLibraryViewModel.swift; sourceTree = "<group>"; };
 		C44FA6DE2AACD19C00EDEB56 /* LiveSmallPlaybackButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveSmallPlaybackButton.swift; sourceTree = "<group>"; };
 		C44FA6DF2AACD19C00EDEB56 /* LiveLargePlaybackButtons.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveLargePlaybackButtons.swift; sourceTree = "<group>"; };
@@ -4027,6 +4029,7 @@
 				E1763A282BF3046A004DF6AB /* AddUserButton.swift */,
 				E1763A262BF303C9004DF6AB /* ServerSelectionMenu.swift */,
 				E1763A2A2BF3046E004DF6AB /* UserGridButton.swift */,
+				BDA623522D0D0854009A157F /* SelectUserBottomBar.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -5572,6 +5575,7 @@
 				E1D90D772C051D44000EA787 /* BackPort+ScrollIndicatorVisibility.swift in Sources */,
 				E10231582BCF8AF8009D71FC /* WideChannelGridItem.swift in Sources */,
 				E15D4F082B1B12C300442DB8 /* Backport.swift in Sources */,
+				BDA623532D0D0854009A157F /* SelectUserBottomBar.swift in Sources */,
 				E1D4BF8F271A079A00A11E64 /* BasicAppSettingsView.swift in Sources */,
 				E1575E9A293E7B1E001665B1 /* Array.swift in Sources */,
 				E1575E8D293E7B1E001665B1 /* URLComponents.swift in Sources */,
