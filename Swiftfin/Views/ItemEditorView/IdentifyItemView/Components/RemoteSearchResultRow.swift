@@ -21,7 +21,7 @@ extension IdentifyItemView {
         // MARK: - Remote Search Result Action
 
         let onSelect: () -> Void
-        
+
         // MARK: - Result Title
 
         private var resultTitle: String {
