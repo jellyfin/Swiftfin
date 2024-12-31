@@ -7,9 +7,6 @@
 /// Accent Color
 "accentColor" = "Accent Color";
 
-/// Some views may need an app restart to update.
-"accentColorDescription" = "Some views may need an app restart to update.";
-
 /// Access
 "access" = "Access";
 
@@ -135,9 +132,6 @@
 
 /// Application Name
 "applicationName" = "Application Name";
-
-/// Applying media information
-"applyingMediaInformation" = "Applying media information";
 
 /// Arranger
 "arranger" = "Arranger";
@@ -1872,9 +1866,6 @@
 
 /// URL
 "url" = "URL";
-
-/// Use as item
-"useAsItem" = "Use as item";
 
 /// Use as Transcoding Profile
 "useAsTranscodingProfile" = "Use as Transcoding Profile";
