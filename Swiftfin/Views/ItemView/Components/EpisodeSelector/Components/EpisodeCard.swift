@@ -59,7 +59,7 @@ extension SeriesEpisodeSelector {
                     ZStack {
                         Color.clear
 
-                        ImageView(episode.imageSource(.primary, maxWidth: 500))
+                        ImageView(episode.imageSource(.primary, maxWidth: 250))
                             .failure {
                                 SystemImageContentView(systemName: episode.systemImage)
                             }

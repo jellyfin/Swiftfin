@@ -10,6 +10,14 @@ import Foundation
 
 extension URL {
 
+    init?(string: String?) {
+        guard let string = string else { return nil }
+        self.init(string: string)
+    }
+}
+
+extension URL {
+
     static var documents: URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
@@ -61,7 +69,7 @@ extension URL {
     }
 
     // doesn't have `?` but doesn't matter
-    func pathAndQuery() -> String? {
+    var pathAndQuery: String? {
         path + (query ?? "")
     }
 
@@ -72,5 +80,9 @@ extension URL {
         } catch {
             return -1
         }
+    }
+
+    var components: URLComponents? {
+        URLComponents(url: self, resolvingAgainstBaseURL: false)
     }
 }

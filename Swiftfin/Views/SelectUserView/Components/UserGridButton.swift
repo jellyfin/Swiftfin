@@ -50,25 +50,6 @@ extension SelectUserView {
             return isSelected ? .primary : .secondary
         }
 
-        @ViewBuilder
-        private var personView: some View {
-            ZStack {
-                Group {
-                    if colorScheme == .light {
-                        Color.secondarySystemFill
-                    } else {
-                        Color.tertiarySystemBackground
-                    }
-                }
-                .posterShadow()
-
-                RelativeSystemImageView(systemName: "person.fill", ratio: 0.5)
-                    .foregroundStyle(.secondary)
-            }
-            .clipShape(.circle)
-            .aspectRatio(1, contentMode: .fill)
-        }
-
         var body: some View {
             Button {
                 action()
@@ -77,21 +58,15 @@ extension SelectUserView {
                     ZStack {
                         Color.clear
 
-                        ImageView(user.profileImageSource(client: server.client, maxWidth: 120))
-                            .pipeline(.Swiftfin.branding)
-                            .image { image in
-                                image
-                                    .posterBorder(ratio: 1 / 2, of: \.width)
-                            }
-                            .placeholder { _ in
-                                personView
-                            }
-                            .failure {
-                                personView
-                            }
+                        UserProfileImage(
+                            userID: user.id,
+                            source: user.profileImageSource(
+                                client: server.client,
+                                maxWidth: 120
+                            ),
+                            pipeline: .Swiftfin.local
+                        )
                     }
-                    .aspectRatio(contentMode: .fill)
-                    .clipShape(.circle)
                     .overlay {
                         if isEditing {
                             ZStack(alignment: .bottomTrailing) {

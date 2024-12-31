@@ -22,9 +22,9 @@ extension Color {
 
     // TODO: Correct and add colors
     #if os(tvOS) // tvOS doesn't have these
-    static let systemFill = Color(UIColor.white)
-    static let secondarySystemFill = Color(UIColor.gray)
-    static let tertiarySystemFill = Color(UIColor.black)
+    static let systemFill = Color.white
+    static let secondarySystemFill = Color.gray
+    static let tertiarySystemFill = Color.black
     static let lightGray = Color(UIColor.lightGray)
 
     #else

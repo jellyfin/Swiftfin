@@ -60,6 +60,7 @@ struct ImageView: View {
                 }
             }
             .pipeline(pipeline)
+            .onDisappear(.lowerPriority)
         } else {
             failure()
                 .eraseToAnyView()

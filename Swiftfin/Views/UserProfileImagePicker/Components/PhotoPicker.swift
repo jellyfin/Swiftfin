@@ -19,13 +19,19 @@ extension UserProfileImagePicker {
 
     struct PhotoPicker: UIViewControllerRepresentable {
 
+        // MARK: - Photo Picker Actions
+
         var onCancel: () -> Void
         var onSelectedImage: (UIImage) -> Void
+
+        // MARK: - Initializer
 
         init(onCancel: @escaping () -> Void, onSelectedImage: @escaping (UIImage) -> Void) {
             self.onCancel = onCancel
             self.onSelectedImage = onSelectedImage
         }
+
+        // MARK: - UIView Controller
 
         func makeUIViewController(context: Context) -> PHPickerViewController {
 
@@ -45,11 +51,17 @@ extension UserProfileImagePicker {
             return picker
         }
 
+        // MARK: - Update UIView Controller
+
         func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) {}
+
+        // MARK: - Make Coordinator
 
         func makeCoordinator() -> Coordinator {
             Coordinator()
         }
+
+        // MARK: - Coordinator
 
         class Coordinator: PHPickerViewControllerDelegate {
 
