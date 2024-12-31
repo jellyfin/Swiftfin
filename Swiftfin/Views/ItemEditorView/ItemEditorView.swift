@@ -101,7 +101,7 @@ struct ItemEditorView: View {
             if [.boxSet, .movie, .person, .series].contains(viewModel.item.type) {
                 ChevronButton(L10n.identify)
                     .onSelect {
-                        router.route(to: \.editIdentity, viewModel.item)
+                        router.route(to: \.identifyItem, viewModel.item)
                     }
             }
             ChevronButton(L10n.metadata)
