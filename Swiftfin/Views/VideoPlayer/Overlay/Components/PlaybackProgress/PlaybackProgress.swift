@@ -12,12 +12,6 @@ import SwiftUI
 
 // TODO: bar color default to style
 // TODO: possible issue with runTimeSeconds == 0
-// TODO: live tv
-//       - custom timestamp
-// TODO: scrubbing with preview view
-//       - size
-//       - location
-//       - enabled
 
 extension VideoPlayer.Overlay {
 
@@ -43,14 +37,13 @@ extension VideoPlayer.Overlay {
         @State
         private var capsuleSliderSize = CGSize.zero
         @State
-        private var liveIndicatorSize: CGSize = .zero
-        @State
         private var sliderSize: CGSize = .zero
 
         private var progress: Double {
             scrubbedSeconds / manager.item.runTimeSeconds
         }
 
+        // TODO: kept for future reference for trickplay scrubbing
         private var previewXOffset: CGFloat {
             let p = sliderSize.width * progress
             return clamp(p, min: 100, max: sliderSize.width - 100)
@@ -66,9 +59,8 @@ extension VideoPlayer.Overlay {
                 .padding(.vertical, 2)
                 .background {
                     Capsule()
-                        .fill(Color(uiColor: .gray))
+                        .fill(Color.gray)
                 }
-                .trackingSize($liveIndicatorSize)
         }
 
         @ViewBuilder
@@ -107,8 +99,11 @@ extension VideoPlayer.Overlay {
         }
 
         var body: some View {
-            VStack(alignment: .center, spacing: 10) {
-                if !manager.item.isLiveStream {
+            VStack(spacing: 10) {
+                if manager.item.isLiveStream {
+                    liveIndicator
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                } else {
                     Group {
                         switch sliderType {
                         case .capsule: capsuleSlider
@@ -116,7 +111,7 @@ extension VideoPlayer.Overlay {
                         }
                     }
                     .trackingSize($sliderSize)
-
+                    
                     SplitTimeStamp()
                         .if(sliderType == .capsule) { view in
                             view.offset(y: isScrubbing ? 5 : 0)
@@ -126,13 +121,8 @@ extension VideoPlayer.Overlay {
             }
             .disabled(manager.state == .loadingItem)
             .frame(maxWidth: .infinity)
-            .overlay(alignment: .topLeading) {
-                if manager.item.isLiveStream {
-                    liveIndicator
-                        .offset(y: -(liveIndicatorSize.height + 10))
-                        .isVisible(!isScrubbing)
-                }
-            }
+            .animation(.bouncy(duration: 0.4, extraBounce: 0.1), value: isScrubbing)
+            // TODO: kept for future reference for trickplay scrubbing
 //            .overlay(alignment: .top) {
 //                RoundedRectangle(cornerRadius: 16)
 //                    .fill(Color.white.opacity(0.5))
@@ -141,7 +131,6 @@ extension VideoPlayer.Overlay {
 //                    .position(x: previewXOffset, y: -75)
 //                    .isVisible(isScrubbing)
 //            }
-            .animation(.bouncy(duration: 0.4, extraBounce: 0.1), value: isScrubbing)
         }
     }
 }

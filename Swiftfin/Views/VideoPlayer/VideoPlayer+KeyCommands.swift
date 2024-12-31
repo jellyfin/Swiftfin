@@ -31,6 +31,18 @@ extension VideoPlayer {
 
         var body: some View {
             keyCommands {
+                
+                // MARK: Aspect Fille
+
+                KeyCommandAction(
+                    title: "Aspect Fill",
+                    input: "f",
+                    modifierFlags: .command
+                ) {
+                    DispatchQueue.main.async {
+                        isAspectFilled.toggle()
+                    }
+                }
 
                 KeyCommandAction(
                     title: L10n.playAndPause,
@@ -42,14 +54,34 @@ extension VideoPlayer {
                     case .paused:
                         manager.proxy?.play()
                     }
-                    //                if videoPlayerManager.state == .playing {
-                    //                    videoPlayerManager.proxy?.pause()
-                    //                    updateViewProxy.present(systemName: "pause.fill", title: "Pause")
-                    //                } else {
-                    //                    videoPlayerManager.proxy?.play()
-                    //                    updateViewProxy.present(systemName: "play.fill", title: "Play")
-                    //                }
+//                if videoPlayerManager.state == .playing {
+//                    videoPlayerManager.proxy?.pause()
+//                    updateViewProxy.present(systemName: "pause.fill", title: "Pause")
+//                } else {
+//                    videoPlayerManager.proxy?.play()
+//                    updateViewProxy.present(systemName: "play.fill", title: "Play")
+//                }
                 }
+                
+                // MARK: - Decrease Playback Speed
+                
+                KeyCommandAction(
+                    title: "Decrease Playback Speed",
+                    input: "[",
+                    modifierFlags: .command
+                ) {
+                    let newRate = clamp(
+                        manager.rate - 0.25,
+                        min: 0.25,
+                        max: 4
+                    )
+                    
+                    manager.set(rate: newRate)
+                    
+                    toastProxy.present(Text(newRate, format: .playbackRate), systemName: "speedometer")
+                }
+                
+                // MARK: - Increase Playback Speed
                 
                 KeyCommandAction(
                     title: "Increase Playback Speed",
@@ -66,10 +98,46 @@ extension VideoPlayer {
                     
                     toastProxy.present(Text(newRate, format: .playbackRate), systemName: "speedometer")
                 }
+                
+                // MARK: Reset Playback Speed
+
+                KeyCommandAction(
+                    title: "Reset Playback Speed",
+                    input: "\\",
+                    modifierFlags: .command
+                ) {
+                    manager.set(rate: 1)
+                    toastProxy.present(Text(1, format: .playbackRate), systemName: "speedometer")
+                }
+                
+                
+                // MARK: Play Next Item
+
+                KeyCommandAction(
+                    title: L10n.nextItem,
+                    input: UIKeyCommand.inputRightArrow,
+                    modifierFlags: .command
+                ) {
+                    guard let nextItem = manager.queue?.nextItem else { return }
+                    manager.send(.playNew(item: nextItem))
+                }
+
+                // MARK: Play Previous Item
+
+                KeyCommandAction(
+                    title: L10n.previousItem,
+                    input: UIKeyCommand.inputLeftArrow,
+                    modifierFlags: .command
+                ) {
+                    guard let previousItem = manager.queue?.previousItem else { return }
+                    manager.send(.playNew(item: previousItem))
+                }
             }
         }
     }
 }
+
+// MARK: - OLD
 
 struct VideoPlayerKeyCommandsModifier: ViewModifier {
 
@@ -77,10 +145,6 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
     private var jumpBackwardInterval
     @Default(.VideoPlayer.jumpForwardInterval)
     private var jumpForwardInterval
-
-    @Environment(\.isAspectFilled)
-    @Binding
-    private var isAspectFilled
 
     @EnvironmentObject
     private var manager: MediaPlayerManager
@@ -162,104 +226,6 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
 //
 //                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
 //                }
-            }
-
-            // MARK: aspect fill
-
-            KeyCommandAction(
-                title: "Aspect Fill",
-                input: "f",
-                modifierFlags: .command
-            ) {
-                DispatchQueue.main.async {
-                    isAspectFilled.toggle()
-                }
-            }
-
-            // MARK: decrease playback speed
-
-            KeyCommandAction(
-                title: "Decrease Playback Speed",
-                input: "[",
-                modifierFlags: .command
-            ) {
-                
-//                let clampedPlaybackSpeed = clamp(
-//                    videoPlayerManager.playbackRate.rate - 0.25,
-//                    min: 0.25,
-//                    max: 2.0
-//                )
-
-//                let newPlaybackSpeed = PlaybackSpeed(rawValue: clampedPlaybackSpeed) ?? .one
-//                videoPlayerManager.playbackSpeed = newPlaybackSpeed
-//                videoPlayerManager.proxy.setRate(Float(newPlaybackSpeed.rawValue))
-
-//                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
-            }
-
-            // MARK: increase playback speed
-
-            KeyCommandAction(
-                title: "Increase Playback Speed",
-                input: "]",
-                modifierFlags: .command
-            ) {
-                let newRate = clamp(
-                    manager.rate + 0.25,
-                    min: 0.25,
-                    max: 4
-                )
-                
-                manager.set(rate: newRate)
-                
-                toastProxy.present(Text(newRate, format: .playbackRate), systemName: "speedometer")
-                
-//                let clampedPlaybackSpeed = clamp(
-//                    videoPlayerManager.playbackSpeed.rawValue + 0.25,
-//                    min: 0.25,
-//                    max: 2.0
-//                )
-
-//                let newPlaybackSpeed = PlaybackSpeed(rawValue: clampedPlaybackSpeed) ?? .one
-//                videoPlayerManager.playbackSpeed = newPlaybackSpeed
-//                videoPlayerManager.proxy.setRate(Float(newPlaybackSpeed.rawValue))
-
-//                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
-            }
-
-            // MARK: reset playback speed
-
-            KeyCommandAction(
-                title: "Reset Playback Speed",
-                input: "\\",
-                modifierFlags: .command
-            ) {
-//                let newPlaybackSpeed = PlaybackSpeed.one
-
-//                videoPlayerManager.playbackSpeed = newPlaybackSpeed
-//                videoPlayerManager.proxy.setRate(Float(newPlaybackSpeed.rawValue))
-
-//                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
-            }
-
-            // MARK: next item
-
-            KeyCommandAction(
-                title: L10n.nextItem,
-                input: UIKeyCommand.inputRightArrow,
-                modifierFlags: .command
-            ) {
-//                videoPlayerManager.selectNextViewModel()
-            }
-
-            // MARK: previous item
-
-            KeyCommandAction(
-                title: L10n.previousItem,
-                input: UIKeyCommand.inputLeftArrow,
-                modifierFlags: .command
-            ) {
-//                videoPlayerManager.selectPreviousViewModel()
             }
         }
     }

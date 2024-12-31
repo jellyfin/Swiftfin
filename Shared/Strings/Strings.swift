@@ -16,8 +16,6 @@ internal enum L10n {
   internal static let absolute = L10n.tr("Localizable", "absolute", fallback: "Absolute")
   /// Accent Color
   internal static let accentColor = L10n.tr("Localizable", "accentColor", fallback: "Accent Color")
-  /// Some views may need an app restart to update.
-  internal static let accentColorDescription = L10n.tr("Localizable", "accentColorDescription", fallback: "Some views may need an app restart to update.")
   /// Access
   internal static let access = L10n.tr("Localizable", "access", fallback: "Access")
   /// Accessibility
@@ -106,8 +104,6 @@ internal enum L10n {
   internal static let appIcon = L10n.tr("Localizable", "appIcon", fallback: "App Icon")
   /// Application Name
   internal static let applicationName = L10n.tr("Localizable", "applicationName", fallback: "Application Name")
-  /// Applying media information
-  internal static let applyingMediaInformation = L10n.tr("Localizable", "applyingMediaInformation", fallback: "Applying media information")
   /// Arranger
   internal static let arranger = L10n.tr("Localizable", "arranger", fallback: "Arranger")
   /// Artist
@@ -1308,8 +1304,6 @@ internal enum L10n {
   internal static let unsavedChangesMessage = L10n.tr("Localizable", "unsavedChangesMessage", fallback: "You have unsaved changes. Are you sure you want to discard them?")
   /// URL
   internal static let url = L10n.tr("Localizable", "url", fallback: "URL")
-  /// Use as item
-  internal static let useAsItem = L10n.tr("Localizable", "useAsItem", fallback: "Use as item")
   /// Use as Transcoding Profile
   internal static let useAsTranscodingProfile = L10n.tr("Localizable", "useAsTranscodingProfile", fallback: "Use as Transcoding Profile")
   /// Use Primary Image

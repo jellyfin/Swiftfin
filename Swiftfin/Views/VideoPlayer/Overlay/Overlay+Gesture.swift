@@ -65,6 +65,8 @@ extension VideoPlayer.Overlay {
         private var manager: MediaPlayerManager
         @EnvironmentObject
         private var toastProxy: ToastProxy
+        
+        // MARK: - States
 
         @State
         private var brightnessPanGestureState: PanGestureState<CGFloat> = .zero
@@ -95,6 +97,8 @@ extension VideoPlayer.Overlay {
         }
     }
 }
+
+// MARK: - Handle
 
 extension VideoPlayer.Overlay.GestureLayer {
 
@@ -153,6 +157,8 @@ extension VideoPlayer.Overlay.GestureLayer {
 // MARK: - Pan
 
 extension VideoPlayer.Overlay.GestureLayer {
+    
+    // MARK: - Offset
 
     private func mediaOffsetAction(
         state: UIGestureRecognizer.State,
@@ -184,6 +190,8 @@ extension VideoPlayer.Overlay.GestureLayer {
 //            systemName: "heart.fill"
 //        )
     }
+    
+    // MARK: - Brightness
 
     private func brightnessAction(
         state: UIGestureRecognizer.State,
@@ -204,6 +212,8 @@ extension VideoPlayer.Overlay.GestureLayer {
             UIScreen.main.brightness = newBrightness
         }
     }
+    
+    // MARK: - Playback Rate
 
     private func playbackRateAction(
         state: UIGestureRecognizer.State,
@@ -225,6 +235,8 @@ extension VideoPlayer.Overlay.GestureLayer {
 
         manager.set(rate: Float(clampedRate))
     }
+    
+    // MARK: - Scrub
 
     private func scrubAction(
         state: UIGestureRecognizer.State,
@@ -246,6 +258,8 @@ extension VideoPlayer.Overlay.GestureLayer {
             .runTimeSeconds
         scrubbedSeconds = clamp(newSeconds, min: 0, max: manager.item.runTimeSeconds)
     }
+    
+    // MARK: - Volume
 
     private func volumeAction(
         state: UIGestureRecognizer.State,
@@ -274,6 +288,8 @@ extension VideoPlayer.Overlay.GestureLayer {
 // MARK: - Pinch
 
 extension VideoPlayer.Overlay.GestureLayer {
+    
+    // MARK: - Aspect Fill
 
     private func aspectFillAction(
         state: UIGestureRecognizer.State,

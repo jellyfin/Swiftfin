@@ -121,9 +121,6 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
         self.queue?.manager = self
 
-//        supplements = [MediaInfoSupplement(item: item)]
-//            .appending(ifLet: queue)
-
         // TODO: don't build on init?
         buildMediaItem(from: playbackItemProvider) { @MainActor newItem in
             self.state = .playback
@@ -139,9 +136,6 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         super.init()
 
         self.queue?.manager = self
-
-//        supplements = [MediaInfoSupplement(item: playbackItem.baseItem)]
-//            .appending(ifLet: queue)
 
         state = .playback
         self.playbackItem = playbackItem

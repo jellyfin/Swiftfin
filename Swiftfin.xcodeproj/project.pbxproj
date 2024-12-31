@@ -3749,9 +3749,9 @@
 				E10B1EAF2BD9769500A92EAF /* SelectUserView */,
 				E19D41AB2BF288110082B8B2 /* ServerCheckView.swift */,
 				E1E5D54A2783E26100692DFE /* SettingsView */,
+				F870343A899C4063606E78DC /* UserProfileImagePicker */,
 				E1171A1A28A2215800FA1AF5 /* UserSignInView */,
 				E193D5452719418B00900D82 /* VideoPlayer */,
-				F870343A899C4063606E78DC /* UserProfileImagePicker */,
 			);
 			path = Views;
 			sourceTree = "<group>";

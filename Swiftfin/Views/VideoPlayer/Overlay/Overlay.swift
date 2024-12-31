@@ -9,17 +9,7 @@
 import Defaults
 import SwiftUI
 
-//extension VideoPlayer {
-//    
-//    struct OverlayState {
-//        
-//        var isGestureLocked: Bool = false
-//        var isPresentingOverlay: Bool = false
-//        var selectedSupplement: AnyMediaPlayerSupplement?
-//    }
-//}
-
-// TODO: drawer animation fixes
+// TODO: supplement transition animation fixes
 
 extension VideoPlayer {
 
@@ -56,7 +46,7 @@ extension VideoPlayer {
         @StateObject
         private var toastProxy: ToastProxy = .init()
 
-        private var isPresentingDrawer: Bool {
+        private var isPresentingSupplement: Bool {
             selectedSupplement != nil
         }
 
@@ -68,7 +58,7 @@ extension VideoPlayer {
 
         @ViewBuilder
         private var bottomContent: some View {
-            if !isPresentingDrawer {
+            if !isPresentingSupplement {
                 PlaybackProgress()
                     .isVisible(isScrubbing || isPresentingOverlay)
                     .transition(.move(edge: .top).combined(with: .opacity))
@@ -132,7 +122,7 @@ extension VideoPlayer {
                             .offset(y: isPresentingOverlay ? 0 : 20)
 
                         // TODO: changing supplement transition
-                        if isPresentingDrawer, let selectedSupplement {
+                        if isPresentingSupplement, let selectedSupplement {
                             selectedSupplement.supplement
                                 .videoPlayerBody()
                                 .eraseToAnyView()
@@ -144,7 +134,6 @@ extension VideoPlayer {
 
                         Color.clear
                             .frame(height: EdgeInsets.edgePadding)
-                            .allowsHitTesting(false)
                     }
                     .background {
                         if isPresentingOverlay {
@@ -153,7 +142,7 @@ extension VideoPlayer {
                     }
                 }
 
-                if !isPresentingDrawer {
+                if !isPresentingSupplement {
                     PlaybackButtons()
                         .isVisible(!isScrubbing && isPresentingOverlay)
                         .transition(.opacity)
@@ -164,7 +153,7 @@ extension VideoPlayer {
                     .edgePadding()
             }
             .animation(.linear(duration: 0.1), value: isScrubbing)
-            .animation(.bouncy(duration: 0.4), value: isPresentingDrawer)
+            .animation(.bouncy(duration: 0.4), value: isPresentingSupplement)
             .animation(.bouncy(duration: 0.25), value: isPresentingOverlay)
             .environment(\.isPresentingOverlay, $isPresentingOverlay)
             .environment(\.selectedMediaPlayerSupplement, $selectedSupplement)
@@ -223,6 +212,7 @@ struct VideoPlayer_Overlay_Previews: PreviewProvider {
                 MediaPlayerManager(
                     playbackItem: .init(
                         baseItem: .init(
+//                            channelType: .tv,
                             indexNumber: 1,
                             name: "The Bear",
                             parentIndexNumber: 1,

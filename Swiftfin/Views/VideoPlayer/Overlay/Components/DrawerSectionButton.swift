@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+// TODO: rename `SupplementTitleButton`
 extension VideoPlayer.Overlay {
 
     struct DrawerSectionButton: View {
