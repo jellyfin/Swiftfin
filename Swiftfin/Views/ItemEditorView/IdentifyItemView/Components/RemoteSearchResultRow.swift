@@ -21,6 +21,13 @@ extension IdentifyItemView {
         // MARK: - Remote Search Result Action
 
         let onSelect: () -> Void
+        
+        // MARK: - Result Title
+
+        private var resultTitle: String {
+            result.displayTitle
+                .appending(" (\(result.premiereDate!.formatted(.dateTime.year())))", if: result.premiereDate != nil)
+        }
 
         // MARK: - Body
 
@@ -35,24 +42,15 @@ extension IdentifyItemView {
                         .foregroundStyle(.primary)
 
                     if let overview = result.overview {
-                        HStack {
-                            Text(overview)
-                                .lineLimit(3)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
+                        Text(overview)
+                            .lineLimit(3)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
                     }
                 }
             }
             .onSelect(perform: onSelect)
             .isSeparatorVisible(false)
-        }
-
-        // MARK: - Result Title
-
-        private var resultTitle: String {
-            result.displayTitle
-                .appending(" (\(result.premiereDate!.formatted(.dateTime.year())))", if: result.premiereDate != nil)
         }
     }
 }
