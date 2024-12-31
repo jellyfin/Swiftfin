@@ -10,10 +10,33 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-extension RemoteSearchResult: @retroactive Equatable, @retroactive Identifiable {
+extension RemoteSearchResult: Displayable {
 
-    public var id: String {
-        UUID().uuidString
+    var displayTitle: String {
+        name ?? L10n.unknown
+    }
+}
+
+// TODO: fix in SDK, should already be equatable
+extension RemoteSearchResult: @retroactive Hashable, @retroactive Identifiable {
+
+    public var id: Int {
+        hashValue
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(albumArtist)
+        hasher.combine(artists)
+        hasher.combine(imageURL)
+        hasher.combine(indexNumber)
+        hasher.combine(indexNumberEnd)
+        hasher.combine(name)
+        hasher.combine(overview)
+        hasher.combine(parentIndexNumber)
+        hasher.combine(premiereDate)
+        hasher.combine(productionYear)
+        hasher.combine(providerIDs)
+        hasher.combine(searchProviderName)
     }
 
     public static func == (lhs: RemoteSearchResult, rhs: RemoteSearchResult) -> Bool {

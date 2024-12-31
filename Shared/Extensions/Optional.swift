@@ -10,6 +10,10 @@ import Foundation
 
 extension Optional where Wrapped: Collection {
 
+    var isNilOrEmpty: Bool {
+        self?.isEmpty ?? true
+    }
+
     mutating func appendedOrInit(_ element: Wrapped.Element) -> [Wrapped.Element] {
         if let self {
             return self + [element]

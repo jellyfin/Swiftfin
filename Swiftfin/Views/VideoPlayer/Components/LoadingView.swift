@@ -20,10 +20,25 @@ extension VideoPlayer {
             ZStack {
                 Color.black
 
-                CancellableLoadingButton(L10n.retrievingMediaInformation) {
-                    router.dismissCoordinator()
+                VStack(spacing: 10) {
+
+                    Text(L10n.retrievingMediaInformation)
+                        .foregroundColor(.white)
+
+                    ProgressView()
+
+                    Button {
+                        router.dismissCoordinator()
+                    } label: {
+                        Text(L10n.cancel)
+                            .foregroundColor(.red)
+                            .padding()
+                            .overlay {
+                                Capsule()
+                                    .stroke(Color.red, lineWidth: 1)
+                            }
+                    }
                 }
-                .foregroundStyle(.white)
             }
         }
     }

@@ -12,7 +12,7 @@ import Get
 import JellyfinAPI
 import OrderedCollections
 
-class ItemIdentifyViewModel: ViewModel, Stateful, Eventful {
+class IdentifyItemViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: - Events
 
@@ -30,28 +30,20 @@ class ItemIdentifyViewModel: ViewModel, Stateful, Eventful {
         case update(RemoteSearchResult)
     }
 
-    // MARK: BackgroundState
-
-    enum BackgroundState: Hashable {
-        case searching
-        case refreshing
-    }
-
     // MARK: - State
 
     enum State: Hashable {
-        case initial
+        case content
+        case searching
         case updating
     }
 
-    @Published
-    var backgroundStates: OrderedSet<BackgroundState> = []
     @Published
     var item: BaseItemDto
     @Published
     var searchResults: [RemoteSearchResult] = []
     @Published
-    var state: State = .initial
+    var state: State = .content
 
     private var updateTask: AnyCancellable?
     private var searchTask: AnyCancellable?
@@ -59,7 +51,9 @@ class ItemIdentifyViewModel: ViewModel, Stateful, Eventful {
     private let eventSubject = PassthroughSubject<Event, Never>()
 
     var events: AnyPublisher<Event, Never> {
-        eventSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
+        eventSubject
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
     }
 
     // MARK: - Initializer
@@ -78,69 +72,54 @@ class ItemIdentifyViewModel: ViewModel, Stateful, Eventful {
             updateTask?.cancel()
             searchTask?.cancel()
 
-            self.backgroundStates = []
-            self.state = .initial
-
-            return state
+            return .content
 
         case let .search(name, originalTitle, year):
             searchTask?.cancel()
 
-            searchTask = Task { [weak self] in
-                guard let self else { return }
-
+            searchTask = Task {
                 do {
-                    await MainActor.run {
-                        _ = self.backgroundStates.append(.searching)
-                    }
-
-                    let allElements = try await self.searchItem(
+                    let newResults = try await self.searchItem(
                         name: name,
                         originalTitle: originalTitle,
                         year: year
                     )
 
                     await MainActor.run {
-                        self.searchResults = allElements
-                        _ = self.backgroundStates.remove(.searching)
+                        self.searchResults = newResults
+                        self.state = .content
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
-                        self.state = .initial
+                        self.state = .content
                         self.eventSubject.send(.error(apiError))
                     }
                 }
             }.asAnyCancellable()
-            return state
+            return .searching
 
         case let .update(searchResult):
             updateTask?.cancel()
 
-            updateTask = Task { [weak self] in
-                guard let self else { return }
-
+            updateTask = Task {
                 do {
-                    await MainActor.run {
-                        self.state = .updating
-                    }
-
                     try await updateItem(searchResult)
 
                     await MainActor.run {
-                        self.state = .initial
+                        self.state = .content
                         self.eventSubject.send(.updated)
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
-                        self.state = .initial
+                        self.state = .content
                         self.eventSubject.send(.error(apiError))
                     }
                 }
             }.asAnyCancellable()
 
-            return state
+            return .updating
         }
     }
 
@@ -152,14 +131,14 @@ class ItemIdentifyViewModel: ViewModel, Stateful, Eventful {
         year: Int?
     ) async throws -> [RemoteSearchResult] {
 
-        guard let itemId = item.id, let itemType = item.type else {
+        guard let itemID = item.id, let itemType = item.type else {
             return []
         }
 
         switch itemType {
         case .boxSet:
             let parameters = BoxSetInfoRemoteSearchQuery(
-                itemID: itemId,
+                itemID: itemID,
                 searchInfo: BoxSetInfo(
                     name: name,
                     originalTitle: originalTitle,
@@ -173,7 +152,7 @@ class ItemIdentifyViewModel: ViewModel, Stateful, Eventful {
 
         case .movie:
             let parameters = MovieInfoRemoteSearchQuery(
-                itemID: itemId,
+                itemID: itemID,
                 searchInfo: MovieInfo(
                     name: name,
                     originalTitle: originalTitle,
@@ -187,7 +166,7 @@ class ItemIdentifyViewModel: ViewModel, Stateful, Eventful {
 
         case .person:
             let parameters = PersonLookupInfoRemoteSearchQuery(
-                itemID: itemId,
+                itemID: itemID,
                 searchInfo: PersonLookupInfo(
                     name: name,
                     originalTitle: originalTitle,
@@ -201,7 +180,7 @@ class ItemIdentifyViewModel: ViewModel, Stateful, Eventful {
 
         case .series:
             let parameters = SeriesInfoRemoteSearchQuery(
-                itemID: itemId,
+                itemID: itemID,
                 searchInfo: SeriesInfo(
                     name: name,
                     originalTitle: originalTitle,
@@ -221,9 +200,9 @@ class ItemIdentifyViewModel: ViewModel, Stateful, Eventful {
     // MARK: - Save Updated Item to Server
 
     private func updateItem(_ match: RemoteSearchResult) async throws {
-        guard let itemId = item.id else { return }
+        guard let itemID = item.id else { return }
 
-        let request = Paths.applySearchCriteria(itemID: itemId, match)
+        let request = Paths.applySearchCriteria(itemID: itemID, match)
         _ = try await userSession.client.send(request)
 
         try await refreshItem()
@@ -232,20 +211,14 @@ class ItemIdentifyViewModel: ViewModel, Stateful, Eventful {
     // MARK: - Refresh Item
 
     private func refreshItem() async throws {
-        guard let itemId = item.id else { return }
+        guard let itemID = item.id else { return }
 
-        await MainActor.run {
-            _ = self.backgroundStates.append(.refreshing)
-        }
-
-        let request = Paths.getItem(userID: userSession.user.id, itemID: itemId)
+        let request = Paths.getItem(userID: userSession.user.id, itemID: itemID)
         let response = try await userSession.client.send(request)
 
         await MainActor.run {
             self.item = response.value
-            _ = self.backgroundStates.remove(.refreshing)
-
-            Notifications[.itemMetadataDidChange].post(item)
+            Notifications[.itemShouldRefreshMetadata].post(itemID)
         }
     }
 }
