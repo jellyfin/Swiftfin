@@ -22,21 +22,23 @@ struct ListRowButton: View {
     }
 
     var body: some View {
-        Button(title) {
-            action()
-        }
-        .font(.body.weight(.bold))
-        .buttonStyle(ListRowButtonStyle())
-        .listRowInsets(.init(.zero))
+        Button(title, action: action)
+            .font(.body.weight(.bold))
+            .buttonStyle(ListRowButtonStyle())
+            .listRowInsets(.init(.zero))
     }
 }
 
+// TODO: implement `role`
 private struct ListRowButtonStyle: ButtonStyle {
+
+    @Environment(\.isEnabled)
+    private var isEnabled
 
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
             Rectangle()
-                .foregroundStyle(.secondary)
+                .foregroundStyle(isEnabled ? AnyShapeStyle(HierarchicalShapeStyle.secondary) : AnyShapeStyle(Color.gray))
 
             configuration.label
                 .foregroundStyle(.primary)

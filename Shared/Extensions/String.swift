@@ -35,6 +35,14 @@ extension String {
         self + String(element)
     }
 
+    func appending(_ element: @autoclosure () -> String, if condition: Bool) -> String {
+        if condition {
+            return self + element()
+        } else {
+            return self
+        }
+    }
+
     func prepending(_ element: String) -> String {
         element + self
     }

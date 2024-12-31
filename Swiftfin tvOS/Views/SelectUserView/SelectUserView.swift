@@ -17,17 +17,22 @@ import SwiftUI
 
 struct SelectUserView: View {
 
-    // MARK: - Defaults
-
-    @Default(.selectUserServerSelection)
-    private var serverSelection
-
     // MARK: - User Grid Item Enum
 
     private enum UserGridItem: Hashable {
         case user(UserState, server: ServerState)
         case addUser
     }
+
+    // MARK: - Defaults
+
+    @Default(.selectUserServerSelection)
+    private var serverSelection
+
+    // MARK: - Environment Variable
+
+    @Environment(\.colorScheme)
+    private var colorScheme
 
     // MARK: - State & Environment Objects
 
@@ -46,14 +51,31 @@ struct SelectUserView: View {
     @State
     private var gridItemSize: CGSize = .zero
     @State
+    private var isEditingUsers: Bool = false
+    @State
     private var padGridItemColumnCount: Int = 1
     @State
     private var scrollViewOffset: CGFloat = 0
     @State
+    private var selectedUsers: Set<UserState> = []
+    @State
     private var splashScreenImageSource: ImageSource? = nil
+
+    private var users: [UserState] {
+        gridItems.compactMap { item in
+            switch item {
+            case let .user(user, _):
+                return user
+            default:
+                return nil
+            }
+        }
+    }
 
     // MARK: - Dialog States
 
+    @State
+    private var isPresentingConfirmDeleteUsers = false
     @State
     private var isPresentingServers: Bool = false
 
@@ -175,17 +197,17 @@ struct SelectUserView: View {
                 server: server,
                 showServer: serverSelection == .all
             ) {
-//                if isEditingUsers {
-//                    selectedUsers.toggle(value: user)
-//                } else {
-                viewModel.send(.signIn(user, pin: ""))
-//                }
+                if isEditingUsers {
+                    selectedUsers.toggle(value: user)
+                } else {
+                    viewModel.send(.signIn(user, pin: ""))
+                }
             } onDelete: {
-//                selectedUsers.insert(user)
-//                isPresentingConfirmDeleteUsers = true
+                selectedUsers.insert(user)
+                isPresentingConfirmDeleteUsers = true
             }
-//            .environment(\.isEditing, isEditingUsers)
-//            .environment(\.isSelected, selectedUsers.contains(user))
+            .environment(\.isEditing, isEditingUsers)
+            .environment(\.isSelected, selectedUsers.contains(user))
         case .addUser:
             AddUserButton(
                 serverSelection: $serverSelection,
@@ -193,6 +215,7 @@ struct SelectUserView: View {
             ) { server in
                 router.route(to: \.userSignIn, server)
             }
+            .environment(\.isEnabled, !isEditingUsers)
         }
     }
 
@@ -211,24 +234,34 @@ struct SelectUserView: View {
                         .frame(height: 100)
 
                     gridContentView
+                        .focusSection()
                 }
                 .scrollIfLargerThanContainer(padding: 100)
                 .scrollViewOffset($scrollViewOffset)
             }
 
-            HStack {
-                ServerSelectionMenu(
-                    selection: $serverSelection,
-                    viewModel: viewModel
-                )
+            SelectUserBottomBar(
+                isEditing: $isEditingUsers,
+                serverSelection: $serverSelection,
+                areUsersSelected: selectedUsers.isNotEmpty,
+                viewModel: viewModel,
+                userCount: gridItems.count,
+                onDelete: {
+                    isPresentingConfirmDeleteUsers = true
+                }
+            ) {
+                if selectedUsers.count == users.count {
+                    selectedUsers.removeAll()
+                } else {
+                    selectedUsers.insert(contentsOf: users)
+                }
             }
+            .focusSection()
         }
         .animation(.linear(duration: 0.1), value: scrollViewOffset)
         .background {
             if let splashScreenImageSource {
                 ZStack {
-                    Color.clear
-
                     ImageView(splashScreenImageSource)
                         .aspectRatio(contentMode: .fill)
                         .id(splashScreenImageSource)
@@ -278,6 +311,32 @@ struct SelectUserView: View {
         }
     }
 
+    // MARK: - Functions
+
+    private func didDelete(_ server: ServerState) {
+        viewModel.send(.getServers)
+
+        if case let SelectUserServerSelection.server(id: id) = serverSelection, server.id == id {
+            if viewModel.servers.keys.count == 1, let first = viewModel.servers.keys.first {
+                serverSelection = .server(id: first.id)
+            } else {
+                serverSelection = .all
+            }
+        }
+
+        // change splash screen selection if necessary
+//            selectUserAllServersSplashscreen = serverSelection
+    }
+
+    private func didAppear() {
+        viewModel.send(.getServers)
+
+        splashScreenImageSource = makeSplashScreenImageSource(
+            serverSelection: serverSelection,
+            allServersSelection: .all
+        )
+    }
+
     // MARK: - Body
 
     var body: some View {
@@ -291,22 +350,11 @@ struct SelectUserView: View {
         .ignoresSafeArea()
         .navigationBarBranding()
         .onAppear {
-            viewModel.send(.getServers)
-
-            splashScreenImageSource = makeSplashScreenImageSource(
-                serverSelection: serverSelection,
-                allServersSelection: .all
-            )
-
-//            gridItems = OrderedSet(
-//                (0 ..< 20)
-//                    .map { i in
-//                        UserState(accessToken: "", id: "\(i)", serverID: "", username: "\(i)")
-//                    }
-//                    .map { u in
-//                        UserGridItem.user(u, server: .init(urls: [], currentURL: URL(string: "/")!, name: "Test", id: "", usersIDs: []))
-//                    }
-//            )
+            didAppear()
+        }
+        .onChange(of: isEditingUsers) { _, newValue in
+            guard !newValue else { return }
+            selectedUsers.removeAll()
         }
         .onChange(of: serverSelection) { _, newValue in
             gridItems = makeGridItems(for: newValue)
@@ -343,18 +391,23 @@ struct SelectUserView: View {
             serverSelection = .server(id: server.id)
         }
         .onNotification(.didDeleteServer) { server in
-            viewModel.send(.getServers)
-
-            if case let SelectUserServerSelection.server(id: id) = serverSelection, server.id == id {
-                if viewModel.servers.keys.count == 1, let first = viewModel.servers.keys.first {
-                    serverSelection = .server(id: first.id)
-                } else {
-                    serverSelection = .all
-                }
+            didDelete(server)
+        }
+        .confirmationDialog(
+            Text(L10n.deleteUser),
+            isPresented: $isPresentingConfirmDeleteUsers,
+            presenting: selectedUsers
+        ) { selectedUsers in
+            Button(L10n.delete, role: .destructive) {
+                viewModel.send(.deleteUsers(Array(selectedUsers)))
+                isEditingUsers = false
             }
-
-            // change splash screen selection if necessary
-//            selectUserAllServersSplashscreen = serverSelection
+        } message: { selectedUsers in
+            if selectedUsers.count == 1, let first = selectedUsers.first {
+                Text(L10n.deleteUserSingleConfirmation(first.username))
+            } else {
+                Text(L10n.deleteUserMultipleConfirmation(selectedUsers.count))
+            }
         }
         .errorMessage($error)
     }
