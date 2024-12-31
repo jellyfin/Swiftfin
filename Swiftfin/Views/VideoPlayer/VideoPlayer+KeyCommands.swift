@@ -32,7 +32,7 @@ extension VideoPlayer {
         var body: some View {
             keyCommands {
                 
-                // MARK: Aspect Fille
+                // MARK: Aspect Fill
 
                 KeyCommandAction(
                     title: "Aspect Fill",
