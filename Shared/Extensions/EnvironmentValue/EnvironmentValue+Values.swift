@@ -35,6 +35,11 @@ extension EnvironmentValues {
         set { self[IsEditingKey.self] = newValue }
     }
     
+    var isInMenu: Bool {
+        get { self[IsInMenuKey.self] }
+        set { self[IsInMenuKey.self] = newValue }
+    }
+    
     var isGestureLocked: Binding<Bool> {
         get { self[IsGestureLockedKey.self] }
         set { self[IsGestureLockedKey.self] = newValue }

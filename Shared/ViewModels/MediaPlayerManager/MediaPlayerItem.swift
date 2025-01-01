@@ -17,9 +17,17 @@ import VLCUI
 class MediaPlayerItem: ViewModel, MediaPlayerListener {
 
     @Published
-    var selectedAudioStreamIndex: Int? = nil
+    var selectedAudioStreamIndex: Int? = nil {
+        didSet {
+            manager?.proxy?.setAudioStream(.init(index: selectedAudioStreamIndex))
+        }
+    }
     @Published
-    var selectedSubtitleStreamIndex: Int? = nil
+    var selectedSubtitleStreamIndex: Int? = nil {
+        didSet {
+            manager?.proxy?.setSubtitleStream(.init(index: selectedSubtitleStreamIndex))
+        }
+    }
 
     weak var manager: MediaPlayerManager? {
         didSet {
@@ -100,6 +108,8 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
     // MARK: build
 
     static func build(for item: BaseItemDto, mediaSource: MediaSourceInfo) async throws -> MediaPlayerItem {
+        
+        let logger = Container.shared.logService()
 
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
         let currentVideoBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
@@ -113,7 +123,10 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
             maxBitrate: maxBitrate
         )
 
-        let userSession = Container.shared.currentUserSession()!
+        guard let userSession = Container.shared.currentUserSession() else {
+            logger.error("No user session while building online media player item!")
+            throw JellyfinAPIError(L10n.unknownError)
+        }
 
         let playbackInfo = PlaybackInfoDto(deviceProfile: profile)
         let playbackInfoParameters = Paths.GetPostedPlaybackInfoParameters(
@@ -146,8 +159,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
                 }
             }
 
-            Container.shared.logService()
-                .log(level: .warning, "Unable to find matching media source, defaulting to first media source")
+            logger.warning("Unable to find matching media source, defaulting to first media source")
 
             return mediaSources.first
         }()

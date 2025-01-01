@@ -8,18 +8,42 @@
 
 import SwiftUI
 
+// TODO: figure out better way of value observation rather
+//       than onAppear and onChange
+
 extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
 
     struct Audio: View {
+        
+        @Environment(\.isInMenu)
+        private var isInMenu
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
+        
+        @State
+        private var selectedAudioStreamIndex: Int?
 
         private var systemImage: String {
-            if manager.playbackItem?.selectedAudioStreamIndex == nil {
+            if selectedAudioStreamIndex == nil {
                 "speaker.wave.2"
             } else {
                 "speaker.wave.2.fill"
+            }
+        }
+        
+        @ViewBuilder
+        private func content(playbackItem: MediaPlayerItem) -> some View {
+            ForEach(playbackItem.audioStreams, id: \.index) { stream in
+                Button {
+                    playbackItem.selectedAudioStreamIndex = stream.index ?? -1
+                } label: {
+                    if selectedAudioStreamIndex == stream.index {
+                        Label(stream.displayTitle ?? L10n.unknown, systemImage: "checkmark")
+                    } else {
+                        Text(stream.displayTitle ?? L10n.unknown)
+                    }
+                }
             }
         }
 
@@ -29,22 +53,21 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
                     L10n.audio,
                     systemImage: systemImage
                 ) {
-                    Section(L10n.audio) {
-                        ForEach(playbackItem.audioStreams, id: \.index) { stream in
-                            Button {
-                                playbackItem.selectedAudioStreamIndex = stream.index ?? -1
-                            } label: {
-                                if playbackItem.selectedAudioStreamIndex == stream.index {
-                                    Label(stream.displayTitle ?? L10n.unknown, systemImage: "checkmark")
-                                } else {
-                                    Text(stream.displayTitle ?? L10n.unknown)
-                                }
-                            }
+                    if isInMenu {
+                        content(playbackItem: playbackItem)
+                    } else {
+                        Section(L10n.audio) {
+                            content(playbackItem: playbackItem)
                         }
                     }
                 }
                 .videoPlayerActionButtonTransition()
-                .id(systemImage)
+                .onAppear {
+                    selectedAudioStreamIndex = playbackItem.selectedAudioStreamIndex
+                }
+                .onChange(of: playbackItem.selectedAudioStreamIndex) {
+                    selectedAudioStreamIndex = $0
+                }
             }
         }
     }

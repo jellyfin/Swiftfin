@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: will be removed and made its own supplement section instead
+
 extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
 
     struct ChaptersButton: View {

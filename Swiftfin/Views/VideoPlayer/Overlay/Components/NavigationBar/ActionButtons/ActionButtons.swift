@@ -69,6 +69,7 @@ extension VideoPlayer.Overlay.NavigationBar {
                     menuActionButtons,
                     content: view(for:)
                 )
+                .environment(\.isInMenu, true)
             }
             .iOS16 { menu in
                 menu

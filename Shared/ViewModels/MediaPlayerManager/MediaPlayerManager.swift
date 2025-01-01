@@ -66,7 +66,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     }
 
     @Published
-    private(set) var playbackItem: MediaPlayerItem? = nil {
+    var playbackItem: MediaPlayerItem? = nil {
         didSet {
             if let playbackItem {
                 seconds = playbackItem.baseItem.startTimeSeconds

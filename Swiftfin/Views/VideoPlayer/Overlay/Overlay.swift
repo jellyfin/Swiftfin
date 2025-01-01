@@ -68,7 +68,7 @@ extension VideoPlayer {
             // TODO: only here for current chapters implementation,
             //       replace with below
             if let selectedSupplement {
-                DrawerSectionButton(supplement: selectedSupplement)
+                SupplementTitleButton(supplement: selectedSupplement)
             }
             
 //            HStack(spacing: 10) {
@@ -85,6 +85,8 @@ extension VideoPlayer {
 
         var body: some View {
             ZStack {
+                
+                // MARK: - Dark
 
                 ZStack(alignment: .bottom) {
 
@@ -102,9 +104,16 @@ extension VideoPlayer {
                 }
                 .animation(.linear(duration: 0.25), value: isPresentingOverlay)
 
+                // MARK: - Gestures
+                
                 GestureLayer()
                 
+                // MARK: - Key Commands
+                
+                // TODO: causes crash!?
 //                KeyCommandsLayer()
+                
+                // MARK: - Buttons and Supplements
 
                 VStack {
                     navigationBar

@@ -23,6 +23,10 @@ extension EnvironmentValues {
         static let defaultValue: Bool = false
     }
     
+    struct IsInMenuKey: EnvironmentKey {
+        static let defaultValue: Bool = false
+    }
+    
     struct IsGestureLockedKey: EnvironmentKey {
         static let defaultValue: Binding<Bool> = .constant(false)
     }

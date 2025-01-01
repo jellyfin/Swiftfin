@@ -8,18 +8,42 @@
 
 import SwiftUI
 
+// TODO: figure out better way of value observation rather
+//       than onAppear and onChange
+
 extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
 
     struct Subtitles: View {
+        
+        @Environment(\.isInMenu)
+        private var isInMenu
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
+        
+        @State
+        private var selectedSubtitleStreamIndex: Int?
 
         private var systemImage: String {
-            if manager.playbackItem?.selectedSubtitleStreamIndex == nil {
+            if selectedSubtitleStreamIndex == nil {
                 "captions.bubble"
             } else {
                 "captions.bubble.fill"
+            }
+        }
+        
+        @ViewBuilder
+        private func content(playbackItem: MediaPlayerItem) -> some View {
+            ForEach(playbackItem.subtitleStreams.prepending(.none), id: \.index) { stream in
+                Button {
+                    playbackItem.selectedSubtitleStreamIndex = stream.index ?? -1
+                } label: {
+                    if selectedSubtitleStreamIndex == stream.index {
+                        Label(stream.displayTitle ?? L10n.unknown, systemImage: "checkmark")
+                    } else {
+                        Text(stream.displayTitle ?? L10n.unknown)
+                    }
+                }
             }
         }
 
@@ -29,22 +53,21 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
                     L10n.subtitles,
                     systemImage: systemImage
                 ) {
-                    Section(L10n.subtitles) {
-                        ForEach(playbackItem.subtitleStreams.prepending(.none), id: \.index) { stream in
-                            Button {
-                                playbackItem.selectedSubtitleStreamIndex = stream.index ?? -1
-                            } label: {
-                                if playbackItem.selectedSubtitleStreamIndex == stream.index {
-                                    Label(stream.displayTitle ?? L10n.unknown, systemImage: "checkmark")
-                                } else {
-                                    Text(stream.displayTitle ?? L10n.unknown)
-                                }
-                            }
+                    if isInMenu {
+                        content(playbackItem: playbackItem)
+                    } else {
+                        Section(L10n.subtitles) {
+                            content(playbackItem: playbackItem)
                         }
                     }
                 }
                 .videoPlayerActionButtonTransition()
-                .id(systemImage)
+                .onAppear {
+                    selectedSubtitleStreamIndex = playbackItem.selectedSubtitleStreamIndex
+                }
+                .onChange(of: playbackItem.selectedSubtitleStreamIndex) {
+                    selectedSubtitleStreamIndex = $0
+                }
             }
         }
     }
