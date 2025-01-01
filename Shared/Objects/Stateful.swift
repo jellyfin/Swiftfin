@@ -17,22 +17,21 @@ import OrderedCollections
 // TODO: official way for a cleaner `respond` method so it doesn't have all Task
 //       construction and get bloated
 // TODO: make Action: Hashable just for consistency
+// TODO: make lastAction an event subject
 
-protocol Stateful: AnyObject {
+protocol Stateful: ObservableObject {
 
     associatedtype Action: Equatable
     associatedtype BackgroundState: Hashable = Never
     associatedtype State: Hashable
 
-    /// Background states that the conformer can be in.
-    /// Usually used to indicate background events that shouldn't
-    /// set the conformer to a primary state.
+    /// Background states that the conformer can have.
     var backgroundStates: OrderedSet<BackgroundState> { get set }
 
     var lastAction: Action? { get set }
     var state: State { get set }
 
-    /// Respond to a sent action and return the new state
+    /// Respond to a sent action and return a new state.
     @MainActor
     func respond(to action: Action) -> State
 
@@ -51,8 +50,15 @@ extension Stateful {
 
     @MainActor
     func send(_ action: Action) {
-        state = respond(to: action)
-        lastAction = action
+        let newState = respond(to: action)
+
+        if newState != state {
+            state = newState
+        }
+
+        if action != lastAction {
+            lastAction = action
+        }
     }
 }
 

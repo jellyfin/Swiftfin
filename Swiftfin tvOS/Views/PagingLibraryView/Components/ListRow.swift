@@ -47,7 +47,7 @@ struct ListRow<Leading: View, Content: View>: View {
             Color.secondarySystemFill
                 .frame(width: contentSize.width, height: 1)
                 .padding(.trailing, insets.trailing)
-                .visible(isSeparatorVisible)
+                .isVisible(isSeparatorVisible)
         }
     }
 }

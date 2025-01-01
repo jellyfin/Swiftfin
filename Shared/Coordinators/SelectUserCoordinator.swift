@@ -39,7 +39,8 @@ final class SelectUserCoordinator: NavigationCoordinatable {
     func makeEditServer(server: ServerState) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             EditServerView(server: server)
-                .environment(\.isEditing, true)
+                .environment(\.editMode, .constant(.active))
+//                .environment(\.isEditing, true)
             #if os(iOS)
                 .navigationBarCloseButton {
                     self.popLast()

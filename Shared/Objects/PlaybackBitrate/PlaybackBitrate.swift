@@ -7,10 +7,14 @@
 //
 
 import Defaults
+import Factory
 import Foundation
 import JellyfinAPI
 
-enum PlaybackBitrate: Int, CaseIterable, Defaults.Serializable, Displayable {
+// TODO: move bitrate test to `MediaPlayerManager`
+
+enum PlaybackBitrate: Int, CaseIterable, Displayable, Storable {
+
     case auto = 0
     case max = 360_000_000
     case mbps120 = 120_000_000
@@ -63,5 +67,27 @@ enum PlaybackBitrate: Int, CaseIterable, Defaults.Serializable, Displayable {
         case .kbps420:
             return L10n.bitrateKbps420
         }
+    }
+
+    func getMaxBitrate() async throws -> Int {
+
+        guard self == .auto else { return rawValue }
+
+        let bitrateTestSize = Defaults[.VideoPlayer.appMaximumBitrateTest]
+        return try await testBitrate(with: bitrateTestSize.rawValue)
+    }
+
+    private func testBitrate(with testSize: Int) async throws -> Int {
+        precondition(testSize > 0, "testSize must be greater than zero")
+
+        let userSession = Container.shared.currentUserSession()!
+
+        let testStartTime = Date()
+        let _ = try await userSession.client.send(Paths.getBitrateTestBytes(size: testSize))
+        let testDuration = Date().timeIntervalSince(testStartTime)
+        let testSizeBits = Double(testSize * 8)
+        let testBitrate = testSizeBits / testDuration
+
+        return Int(testBitrate)
     }
 }

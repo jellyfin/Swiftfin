@@ -73,25 +73,27 @@ struct ChannelLibraryView: View {
 
     // MARK: item view
 
+    private func onChannelSelected(_ channel: BaseItemDto) {
+        guard let mediaSource = channel.mediaSources?.first else { return }
+
+        let manager = MediaPlayerManager(item: channel) { _ in
+            try await MediaPlayerItem.build(for: channel, mediaSource: mediaSource)
+        }
+
+        mainRouter.route(to: \.videoPlayer, manager)
+    }
+
     private func compactChannelView(channel: ChannelProgram) -> some View {
         CompactChannelView(channel: channel.channel)
             .onSelect {
-                guard let mediaSource = channel.channel.mediaSources?.first else { return }
-                mainRouter.route(
-                    to: \.liveVideoPlayer,
-                    LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource)
-                )
+                onChannelSelected(channel.channel)
             }
     }
 
     private func detailedChannelView(channel: ChannelProgram) -> some View {
         DetailedChannelView(channel: channel)
             .onSelect {
-                guard let mediaSource = channel.channel.mediaSources?.first else { return }
-                mainRouter.route(
-                    to: \.liveVideoPlayer,
-                    LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource)
-                )
+                onChannelSelected(channel.channel)
             }
     }
 

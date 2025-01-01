@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// A type that provides a `systemImage`
 protocol SystemImageable {
 
     var systemImage: String { get }
