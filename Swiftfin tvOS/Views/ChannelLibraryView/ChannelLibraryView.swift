@@ -40,7 +40,7 @@ struct ChannelLibraryView: View {
     }
 
     var body: some View {
-        WrappedView {
+        ZStack {
             switch viewModel.state {
             case .content:
                 if viewModel.elements.isEmpty {

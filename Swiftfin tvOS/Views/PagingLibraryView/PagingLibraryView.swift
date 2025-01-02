@@ -60,16 +60,6 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         )
     }
 
-    // MARK: Error View
-
-    @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.send(.refresh)
-            }
-    }
-
     // MARK: onSelect
 
     private func onSelect(_ element: Element) {
@@ -196,7 +186,10 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
 
             switch viewModel.state {
             case let .error(error):
-                errorView(with: error)
+                ErrorView(error: error)
+                    .onRetry {
+                        viewModel.send(.refresh)
+                    }
             case .initial, .refreshing:
                 ProgressView()
             case .content:

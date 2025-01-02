@@ -47,7 +47,7 @@ struct QuickConnectView: View {
     }
 
     var body: some View {
-        WrappedView {
+        ZStack {
             switch viewModel.state {
             case .idle, .authenticated:
                 Color.clear
@@ -57,6 +57,9 @@ struct QuickConnectView: View {
                 pollingView(code: code)
             case let .error(error):
                 ErrorView(error: error)
+                    .onRetry {
+                        viewModel.start()
+                    }
             }
         }
         .edgePadding()

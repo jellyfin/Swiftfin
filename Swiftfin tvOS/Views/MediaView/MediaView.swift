@@ -21,14 +21,6 @@ struct MediaView: View {
     private var viewModel = MediaViewModel()
 
     @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.send(.refresh)
-            }
-    }
-
-    @ViewBuilder
     private var contentView: some View {
         CollectionVGrid(
             uniqueElements: viewModel.mediaItems,
@@ -66,7 +58,10 @@ struct MediaView: View {
             case .content:
                 contentView
             case let .error(error):
-                errorView(with: error)
+                ErrorView(error: error)
+                    .onRetry {
+                        viewModel.send(.refresh)
+                    }
             case .initial, .refreshing:
                 ProgressView()
             }

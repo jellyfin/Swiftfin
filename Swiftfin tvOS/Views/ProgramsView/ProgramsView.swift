@@ -78,7 +78,7 @@ struct ProgramsView: View {
     }
 
     var body: some View {
-        WrappedView {
+        ZStack {
             switch programsViewModel.state {
             case .content:
                 if programsViewModel.hasNoResults {

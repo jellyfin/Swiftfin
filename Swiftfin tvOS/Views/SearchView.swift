@@ -40,14 +40,6 @@ struct SearchView: View {
     }
 
     @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.send(.search(query: searchQuery))
-            }
-    }
-
-    @ViewBuilder
     private var resultsView: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {
@@ -121,7 +113,10 @@ struct SearchView: View {
         ZStack {
             switch viewModel.state {
             case let .error(error):
-                errorView(with: error)
+                ErrorView(error: error)
+                    .onRetry {
+                        viewModel.send(.search(query: searchQuery))
+                    }
             case .initial:
                 suggestionsView
             case .content:

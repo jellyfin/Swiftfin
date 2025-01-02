@@ -62,7 +62,7 @@ extension SeriesEpisodeSelector {
         }
 
         var body: some View {
-            WrappedView {
+            ZStack {
                 switch viewModel.state {
                 case .content:
                     contentView(viewModel: viewModel)

@@ -23,14 +23,6 @@ struct HomeView: View {
     private var showRecentlyAdded
 
     @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.send(.refresh)
-            }
-    }
-
-    @ViewBuilder
     private var contentView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
@@ -64,7 +56,10 @@ struct HomeView: View {
             case .content:
                 contentView
             case let .error(error):
-                errorView(with: error)
+                ErrorView(error: error)
+                    .onRetry {
+                        viewModel.send(.refresh)
+                    }
             case .initial, .refreshing:
                 ProgressView()
             }
