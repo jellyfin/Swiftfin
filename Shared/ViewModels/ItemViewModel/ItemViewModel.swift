@@ -14,6 +14,8 @@ import JellyfinAPI
 import OrderedCollections
 import UIKit
 
+// TODO: come up with a cleaner, more defined way for item update notifications
+
 class ItemViewModel: ViewModel, Stateful {
 
     // MARK: Action
@@ -89,10 +91,10 @@ class ItemViewModel: ViewModel, Stateful {
         self.item = item
         super.init()
 
-        Notifications[.itemShouldRefresh]
+        Notifications[.itemShouldRefreshMetadata]
             .publisher
-            .sink { itemID, parentID in
-                guard itemID == self.item.id || parentID == self.item.id else { return }
+            .sink { itemID in
+                guard itemID == self.item.id else { return }
 
                 Task {
                     await self.send(.backgroundRefresh)
@@ -141,9 +143,16 @@ class ItemViewModel: ViewModel, Stateful {
 
                     await MainActor.run {
                         self.backgroundStates.remove(.refresh)
-                        self.item = results.fullItem
+
+                        // see TODO, as the item will be set in
+                        // itemMetadataDidChange notification but
+                        // is a bit redundant
+//                        self.item = results.fullItem
+
                         self.similarItems = results.similarItems
                         self.specialFeatures = results.specialFeatures
+
+                        Notifications[.itemMetadataDidChange].post(results.fullItem)
                     }
                 } catch {
                     guard !Task.isCancelled else { return }
@@ -332,7 +341,7 @@ class ItemViewModel: ViewModel, Stateful {
         }
 
         let _ = try await userSession.client.send(request)
-        Notifications[.itemShouldRefresh].post((itemID, nil))
+        Notifications[.itemShouldRefreshMetadata].post(itemID)
     }
 
     private func setIsFavorite(_ isFavorite: Bool) async throws {

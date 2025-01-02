@@ -8,8 +8,8 @@
 
 import CollectionHStack
 import Defaults
+import IdentifiedCollections
 import JellyfinAPI
-import OrderedCollections
 import SwiftUI
 
 // TODO: rename `AboutItemView`
@@ -22,8 +22,7 @@ extension ItemView {
 
     struct AboutView: View {
 
-        private enum AboutViewItem: Hashable, Identifiable {
-
+        private enum AboutViewItem: Identifiable {
             case image
             case overview
             case mediaSource(MediaSourceInfo)
@@ -43,21 +42,14 @@ extension ItemView {
             }
         }
 
-        @Default(.accentColor)
-        private var accentColor
-
         @ObservedObject
         var viewModel: ItemViewModel
 
         @State
         private var contentSize: CGSize = .zero
-        @State
-        private var items: OrderedSet<AboutViewItem>
 
-        init(viewModel: ItemViewModel) {
-            self.viewModel = viewModel
-
-            var items: OrderedSet<AboutViewItem> = [
+        private var items: [AboutViewItem] {
+            var items: [AboutViewItem] = [
                 .image,
                 .overview,
             ]
@@ -70,7 +62,11 @@ extension ItemView {
                 items.append(.ratings)
             }
 
-            self._items = State(initialValue: items)
+            return items
+        }
+
+        init(viewModel: ItemViewModel) {
+            self.viewModel = viewModel
         }
 
         // TODO: break out into a general solution for general use?
@@ -161,6 +157,7 @@ extension ItemView {
                 .scrollBehavior(.continuousLeadingEdge)
             }
             .trackingSize($contentSize)
+            .id(viewModel.item.hashValue)
         }
     }
 }

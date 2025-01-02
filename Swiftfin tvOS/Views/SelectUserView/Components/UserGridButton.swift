@@ -60,62 +60,61 @@ extension SelectUserView {
             .aspectRatio(1, contentMode: .fill)
         }
 
+        @ViewBuilder
+        private var userImage: some View {
+            UserProfileImage(
+                userID: user.id,
+                source: user.profileImageSource(
+                    client: server.client,
+                    maxWidth: 120
+                )
+            )
+            .aspectRatio(1, contentMode: .fill)
+            .overlay {
+                if isEditing {
+                    Color.black
+                        .opacity(isSelected ? 0 : 0.5)
+                        .clipShape(.circle)
+                }
+            }
+        }
+
         var body: some View {
             VStack {
                 Button {
                     action()
                 } label: {
-                    VStack(alignment: .center) {
-                        ZStack {
-                            Color.clear
+                    userImage
+                        .hoverEffect(.highlight)
 
-                            UserProfileImage(
-                                userID: user.id,
-                                source: user.profileImageSource(
-                                    client: server.client,
-                                    maxWidth: 120
-                                )
-                            )
-                        }
-                        .aspectRatio(1, contentMode: .fill)
+                    Text(user.username)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(labelForegroundStyle)
+                        .lineLimit(1)
+
+                    if showServer {
+                        Text(server.name)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
                     }
                 }
-                .buttonStyle(.card)
-                .buttonBorderShape(.circleBackport)
-                //            .contextMenu {
-                //                Button(L10n.delete, role: .destructive) {
-                //                    onDelete()
-                //                }
-                //            }
-
-                Text(user.username)
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(labelForegroundStyle)
-                    .lineLimit(1)
-
-                if showServer {
-                    Text(server.name)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
+                .buttonStyle(.borderless)
+                .buttonBorderShape(.circle)
+                .contextMenu {
+                    Button("Delete", role: .destructive) {
+                        onDelete()
+                    }
                 }
             }
             .overlay {
-                if isEditing {
-                    ZStack(alignment: .bottomTrailing) {
-                        Color.black
-                            .opacity(isSelected ? 0 : 0.5)
-                            .clipShape(.circle)
-
-                        if isSelected {
-                            Image(systemName: "checkmark.circle.fill")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 40, height: 40, alignment: .bottomTrailing)
-                                .symbolRenderingMode(.palette)
-                                .foregroundStyle(accentColor.overlayColor, accentColor)
-                        }
-                    }
+                if isEditing && isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 40, height: 40, alignment: .bottomTrailing)
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(accentColor.overlayColor, accentColor)
                 }
             }
         }

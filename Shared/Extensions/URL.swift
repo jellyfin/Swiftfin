@@ -17,6 +17,14 @@ extension URL: Identifiable {
 
 extension URL {
 
+    init?(string: String?) {
+        guard let string = string else { return nil }
+        self.init(string: string)
+    }
+}
+
+extension URL {
+
     static var documents: URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
