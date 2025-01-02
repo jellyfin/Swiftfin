@@ -4032,8 +4032,8 @@
 			children = (
 				E1763A282BF3046A004DF6AB /* AddUserButton.swift */,
 				E1763A262BF303C9004DF6AB /* ServerSelectionMenu.swift */,
-				E1763A2A2BF3046E004DF6AB /* UserGridButton.swift */,
 				BDA623522D0D0854009A157F /* SelectUserBottomBar.swift */,
+				E1763A2A2BF3046E004DF6AB /* UserGridButton.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";

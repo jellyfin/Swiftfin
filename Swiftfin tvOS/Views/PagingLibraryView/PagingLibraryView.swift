@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import CollectionVGrid
@@ -58,6 +58,16 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 listColumnCount: listColumnCount
             )
         )
+    }
+
+    // MARK: Error View
+
+    @ViewBuilder
+    private func errorView(with error: some Error) -> some View {
+        ErrorView(error: error)
+            .onRetry {
+                viewModel.send(.refresh)
+            }
     }
 
     // MARK: onSelect
@@ -184,26 +194,22 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                     .blurred()
             }
 
-            WrappedView {
-                switch viewModel.state {
-                case let .error(error):
-                    ErrorView(error: error)
-                        .onRetry {
-                            viewModel.send(.refresh)
-                        }
-                case .initial, .refreshing:
-                    ProgressView()
-                case .content:
-                    if viewModel.elements.isEmpty {
-                        L10n.noResults.text
-                    } else {
-                        contentView
-                    }
+            switch viewModel.state {
+            case let .error(error):
+                errorView(with: error)
+            case .initial, .refreshing:
+                ProgressView()
+            case .content:
+                if viewModel.elements.isEmpty {
+                    L10n.noResults.text
+                } else {
+                    contentView
                 }
             }
         }
-        .ignoresSafeArea()
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
+        .transition(.opacity.animation(.linear(duration: 0.2)))
+        .ignoresSafeArea()
         .onFirstAppear {
             if viewModel.state == .initial {
                 viewModel.send(.refresh)

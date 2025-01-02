@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -37,6 +37,14 @@ struct SearchView: View {
                 .foregroundStyle(.secondary)
             }
         }
+    }
+
+    @ViewBuilder
+    private func errorView(with error: some Error) -> some View {
+        ErrorView(error: error)
+            .onRetry {
+                viewModel.send(.search(query: searchQuery))
+            }
     }
 
     @ViewBuilder
@@ -110,10 +118,10 @@ struct SearchView: View {
     }
 
     var body: some View {
-        WrappedView {
+        ZStack {
             switch viewModel.state {
             case let .error(error):
-                ErrorView(error: error)
+                errorView(with: error)
             case .initial:
                 suggestionsView
             case .content:

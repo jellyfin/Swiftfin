@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import CollectionVGrid
@@ -19,6 +19,14 @@ struct MediaView: View {
 
     @StateObject
     private var viewModel = MediaViewModel()
+
+    @ViewBuilder
+    private func errorView(with error: some Error) -> some View {
+        ErrorView(error: error)
+            .onRetry {
+                viewModel.send(.refresh)
+            }
+    }
 
     @ViewBuilder
     private var contentView: some View {
@@ -52,15 +60,13 @@ struct MediaView: View {
     }
 
     var body: some View {
-        WrappedView {
+        ZStack {
+            Color.clear
             switch viewModel.state {
             case .content:
                 contentView
             case let .error(error):
-                ErrorView(error: error)
-                    .onRetry {
-                        viewModel.send(.refresh)
-                    }
+                errorView(with: error)
             case .initial, .refreshing:
                 ProgressView()
             }
