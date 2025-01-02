@@ -57,21 +57,22 @@ extension SelectUserView {
                     }
                     .clipShape(.circle)
                     .aspectRatio(1, contentMode: .fill)
+                    .hoverEffect(.highlight)
+
+                    Text(L10n.addUser)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(isEnabled ? .primary : .secondary)
+
+                    if serverSelection == .all {
+                        Text(L10n.hidden)
+                            .font(.footnote)
+                            .hidden()
+                    }
                 }
-                .buttonStyle(.card)
-                .buttonBorderShape(.circleBackport)
+                .buttonStyle(.borderless)
+                .buttonBorderShape(.circle)
                 .disabled(!isEnabled)
-
-                Text(L10n.addUser)
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(isEnabled ? .primary : .secondary)
-
-                if serverSelection == .all {
-                    Text(L10n.hidden)
-                        .font(.footnote)
-                        .hidden()
-                }
             }
         }
     }
