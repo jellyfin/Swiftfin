@@ -6,20 +6,30 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
 extension HomeView {
 
-    struct CinematicRecentlyAddedView: View {
+    struct ResumeView: View {
+
+        // MARK: - Defaults
+
+        @Default(.Customization.resumePosterType)
+        private var posterType
+
+        // MARK: - Observed & Environment Objects
 
         @EnvironmentObject
         private var router: HomeCoordinator.Router
 
         @ObservedObject
-        var viewModel: RecentlyAddedLibraryViewModel
+        var viewModel: HomeViewModel
 
-        private func itemSelectorImageSource(for item: BaseItemDto) -> ImageSource {
+        // MARK: - Cinematic Image Source
+
+        private func cinematicImageSource(for item: BaseItemDto) -> ImageSource {
             if item.type == .episode {
                 return item.seriesImageSource(
                     .logo,
@@ -35,10 +45,16 @@ extension HomeView {
             }
         }
 
+        // MARK: - Body
+
         var body: some View {
-            CinematicItemSelector(items: viewModel.elements.elements)
+            if viewModel.resumeItems.isNotEmpty {
+                CinematicItemSelector(
+                    items: viewModel.resumeItems.elements,
+                    posterType: posterType
+                )
                 .topContent { item in
-                    ImageView(itemSelectorImageSource(for: item))
+                    ImageView(cinematicImageSource(for: item))
                         .placeholder { _ in
                             EmptyView()
                         }
@@ -51,9 +67,24 @@ extension HomeView {
                         .aspectRatio(contentMode: .fit)
                         .frame(height: 200, alignment: .bottomLeading)
                 }
+                .content { item in
+                    // TODO: clean up
+                    if item.type == .episode {
+                        PosterButton<BaseItemDto>.EpisodeContentSubtitleContent.Subtitle(item: item)
+                    } else {
+                        Text(" ")
+                    }
+                }
+                .itemImageOverlay { item in
+                    LandscapePosterProgressBar(
+                        title: item.progressLabel ?? L10n.continue,
+                        progress: (item.userData?.playedPercentage ?? 0) / 100
+                    )
+                }
                 .onSelect { item in
                     router.route(to: \.item, item)
                 }
+            }
         }
     }
 }

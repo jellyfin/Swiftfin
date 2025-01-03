@@ -102,7 +102,7 @@ extension SelectUserView {
                 .buttonStyle(.borderless)
                 .buttonBorderShape(.circle)
                 .contextMenu {
-                    Button("Delete", role: .destructive) {
+                    Button(L10n.delete, role: .destructive) {
                         onDelete()
                     }
                 }

@@ -13,64 +13,81 @@ import SwiftUI
 
 struct HomeView: View {
 
+    // MARK: - Defaults
+
+    @Default(.Customization.Home.showRecentlyAdded)
+    private var showRecentlyAdded
+
+    // MARK: - State & Environment Objects
+
     @EnvironmentObject
     private var router: HomeCoordinator.Router
 
     @StateObject
-    private var viewModel = HomeViewModel()
+    private var viewModel: HomeViewModel = {
+        let viewModel = HomeViewModel()
+        viewModel.send(.refresh)
+        return viewModel
+    }()
 
-    @Default(.Customization.Home.showRecentlyAdded)
-    private var showRecentlyAdded
+    // MARK: - Body
+
+    var body: some View {
+        ZStack {
+            Color.clear
+            switch viewModel.state {
+            case .content:
+                contentView
+            case let .error(error):
+                ErrorView(error: error)
+                    .onRetry {
+                        viewModel.send(.refresh)
+                    }
+            case .initial, .refreshing:
+                ProgressView()
+            }
+        }
+        .transition(.opacity.animation(.linear(duration: 0.2)))
+        .ignoresSafeArea()
+        .sinceLastDisappear { interval in
+            if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {
+                viewModel.send(.backgroundRefresh)
+                viewModel.notificationsReceived.remove(.itemMetadataDidChange)
+            }
+        }
+    }
+
+    // MARK: - Content View
 
     @ViewBuilder
     private var contentView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
 
-                if viewModel.resumeItems.isNotEmpty {
-                    CinematicResumeView(viewModel: viewModel)
+                ResumeView(viewModel: viewModel)
 
-                    NextUpView(viewModel: viewModel.nextUpViewModel)
+                NextUpView(
+                    viewModel: viewModel.nextUpViewModel,
+                    cinematic: viewModel.resumeItems.isEmpty
+                )
 
-                    if showRecentlyAdded {
-                        RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
-                    }
-                } else {
-                    if showRecentlyAdded {
-                        CinematicRecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
-                    }
-                    NextUpView(viewModel: viewModel.nextUpViewModel)
+                if showRecentlyAdded {
+                    RecentlyAddedView(
+                        viewModel: viewModel.recentlyAddedViewModel,
+                        cinematic: viewModel.nextUpViewModel.elements.isEmpty
+                            && viewModel.resumeItems.isEmpty
+                    )
                 }
 
-                ForEach(viewModel.libraries) { viewModel in
-                    LatestInLibraryView(viewModel: viewModel)
+                ForEach(viewModel.libraries.indices, id: \.self) { index in
+                    LatestInLibraryView(
+                        viewModel: viewModel.libraries[index],
+                        cinematic: index == 0
+                            && (viewModel.recentlyAddedViewModel.elements.isEmpty || !showRecentlyAdded)
+                            && viewModel.nextUpViewModel.elements.isEmpty
+                            && viewModel.resumeItems.isEmpty
+                    )
                 }
-            }
-        }
-    }
-
-    var body: some View {
-        WrappedView {
-            Group {
-                switch viewModel.state {
-                case .content:
-                    contentView
-                case let .error(error):
-                    Text(error.localizedDescription)
-                case .initial, .refreshing:
-                    ProgressView()
-                }
-            }
-            .transition(.opacity.animation(.linear(duration: 0.2)))
-        }
-        .onFirstAppear {
-            viewModel.send(.refresh)
-        }
-        .ignoresSafeArea()
-        .sinceLastDisappear { interval in
-            if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {
-                viewModel.send(.backgroundRefresh)
-                viewModel.notificationsReceived.remove(.itemMetadataDidChange)
             }
         }
     }

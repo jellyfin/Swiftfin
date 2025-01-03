@@ -110,25 +110,26 @@ struct SearchView: View {
     }
 
     var body: some View {
-        WrappedView {
-            Group {
-                switch viewModel.state {
-                case let .error(error):
-                    Text(error.localizedDescription)
-                case .initial:
-                    suggestionsView
-                case .content:
-                    if viewModel.hasNoResults {
-                        L10n.noResults.text
-                    } else {
-                        resultsView
+        ZStack {
+            switch viewModel.state {
+            case let .error(error):
+                ErrorView(error: error)
+                    .onRetry {
+                        viewModel.send(.search(query: searchQuery))
                     }
-                case .searching:
-                    ProgressView()
+            case .initial:
+                suggestionsView
+            case .content:
+                if viewModel.hasNoResults {
+                    L10n.noResults.text
+                } else {
+                    resultsView
                 }
+            case .searching:
+                ProgressView()
             }
-            .transition(.opacity.animation(.linear(duration: 0.2)))
         }
+        .transition(.opacity.animation(.linear(duration: 0.2)))
         .ignoresSafeArea(edges: [.bottom, .horizontal])
         .onFirstAppear {
             viewModel.send(.getSuggestions)

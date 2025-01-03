@@ -18,6 +18,8 @@ struct CustomizeViewsSettings: View {
 
     @Default(.Customization.showPosterLabels)
     private var showPosterLabels
+    @Default(.Customization.resumePosterType)
+    private var resumePosterType
     @Default(.Customization.nextUpPosterType)
     private var nextUpPosterType
     @Default(.Customization.recentlyAddedPosterType)
@@ -72,6 +74,8 @@ struct CustomizeViewsSettings: View {
                         }
 
                     Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
+
+                    InlineEnumToggle(title: L10n.resume, selection: $resumePosterType)
 
                     InlineEnumToggle(title: L10n.next, selection: $nextUpPosterType)
 
