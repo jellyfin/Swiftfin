@@ -88,11 +88,11 @@
 /// Allow collection management
 "allowCollectionManagement" = "Allow collection management";
 
-/// Allow media item deletion
-"allowItemDeletion" = "Allow media item deletion";
+/// Allow item deletion
+"allowItemDeletion" = "Allow item deletion";
 
-/// Allow media item editing
-"allowItemEditing" = "Allow media item editing";
+/// Allow item editing
+"allowItemEditing" = "Allow item editing";
 
 /// All Servers
 "allServers" = "All Servers";
@@ -730,9 +730,6 @@
 /// Episode
 "episode" = "Episode";
 
-/// Episode Landscape Poster
-"episodeLandscapePoster" = "Episode Landscape Poster";
-
 /// Episode %1$@
 "episodeNumber" = "Episode %1$@";
 
@@ -1045,6 +1042,9 @@
 /// Media playback
 "mediaPlayback" = "Media playback";
 
+/// How are libraries presented.
+"mediaSettingsDescription" = "How are libraries presented.";
+
 /// Mbps
 "megabitsPerSecond" = "Mbps";
 
@@ -1068,6 +1068,9 @@
 
 /// Missing Items
 "missingItems" = "Missing Items";
+
+/// Missing items will be displayed if available.
+"missingItemsDisplayed" = "Missing items will be displayed if available.";
 
 /// Mixer
 "mixer" = "Mixer";
@@ -1114,14 +1117,17 @@
 /// Next Up
 "nextUp" = "Next Up";
 
-/// Days in Next Up
-"nextUpDays" = "Days in Next Up";
+/// Maximum days
+"nextUpDays" = "Maximum days";
 
 /// Set the maximum amount of days a show should stay in the 'Next Up' list without watching it.
 "nextUpDaysDescription" = "Set the maximum amount of days a show should stay in the 'Next Up' list without watching it.";
 
-/// Rewatching in Next Up
-"nextUpRewatch" = "Rewatching in Next Up";
+/// Include rewatched items
+"nextUpRewatch" = "Include rewatched items";
+
+/// Configure which items are visible in 'Next Up'.
+"nextUpSettingsDescription" = "Configure which items are visible in 'Next Up'.";
 
 /// No
 "no" = "No";
@@ -1375,6 +1381,15 @@
 /// Release Date
 "releaseDate" = "Release Date";
 
+/// Remember layout
+"rememberLayout" = "Remember layout";
+
+/// Remember the last preferences for each library.
+"rememberPreferencesPerLibrary" = "Remember the last preferences for each library.";
+
+/// Remember sorting
+"rememberSorting" = "Remember sorting";
+
 /// Remixer
 "remixer" = "Remixer";
 
@@ -1534,8 +1549,11 @@
 /// Series
 "series" = "Series";
 
-/// Series Backdrop
-"seriesBackdrop" = "Series Backdrop";
+/// Use series posters
+"seriesBackdrop" = "Use series posters";
+
+/// Uses series images for episodes when available.
+"seriesBackdropDescription" = "Uses series images for episodes when available.";
 
 /// Server
 "server" = "Server";
