@@ -92,7 +92,7 @@ struct AddAccessScheduleView: View {
 
     var body: some View {
         contentView
-            .navigationTitle(L10n.addAccessSchedule)
+            .navigationTitle(L10n.addAccessSchedule.localizedCapitalized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.dismissCoordinator()
