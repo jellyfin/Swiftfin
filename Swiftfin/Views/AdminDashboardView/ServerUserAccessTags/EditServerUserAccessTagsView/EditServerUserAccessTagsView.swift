@@ -28,8 +28,6 @@ struct EditServerUserAccessTagsView: View {
     // MARK: - Dialog States
 
     @State
-    private var isBlockedExpanded: Bool = true
-    @State
     private var isPresentingDeleteConfirmation = false
 
     // MARK: - Editing States
@@ -180,10 +178,9 @@ struct EditServerUserAccessTagsView: View {
                     router.route(to: \.userAddAccessTag, viewModel)
                 }
             } else {
-                DisclosureGroup(
-                    L10n.blocked,
-                    isExpanded: $isBlockedExpanded
-                ) {
+
+                // TODO: with allowed, use `DisclosureGroup` instead
+                Section(L10n.blocked) {
                     ForEach(
                         blockedTags,
                         id: \.self,
