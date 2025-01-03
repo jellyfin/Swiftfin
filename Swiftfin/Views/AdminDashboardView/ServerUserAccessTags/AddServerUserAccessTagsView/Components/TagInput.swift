@@ -15,6 +15,9 @@ extension AddServerUserAccessTagsView {
 
         // MARK: - Element Variables
 
+        @FocusState
+        private var isTagFocused: Bool
+
         @Binding
         var access: Bool
         @Binding
@@ -26,40 +29,34 @@ extension AddServerUserAccessTagsView {
         // MARK: - Body
 
         var body: some View {
-            tagView
-        }
-
-        // MARK: - Tag View
-
-        @ViewBuilder
-        private var tagView: some View {
-            Section {
-                Picker(L10n.access, selection: $access) {
-                    Text(L10n.allowed).tag(true)
-                    Text(L10n.blocked).tag(false)
-                }
-                // TODO: Enable on 10.10
-                .disabled(true)
-            } header: {
-                Text(L10n.access)
-            } footer: {
-                LearnMoreButton(L10n.accessTags) {
-                    TextPair(
-                        title: L10n.allowed,
-                        subtitle: L10n.accessTagAllowDescription
-                    )
-                    TextPair(
-                        title: L10n.blocked,
-                        subtitle: L10n.accessTagBlockDescription
-                    )
-                }
-            }
+            // TODO: Enable on 10.10
+//            Section {
+//                Picker(L10n.access, selection: $access) {
+//                    Text(L10n.allowed).tag(true)
+//                    Text(L10n.blocked).tag(false)
+//                }
+//                .disabled(true)
+//            } header: {
+//                Text(L10n.access)
+//            } footer: {
+//                LearnMoreButton(L10n.accessTags) {
+//                    TextPair(
+//                        title: L10n.allowed,
+//                        subtitle: L10n.accessTagAllowDescription
+//                    )
+//                    TextPair(
+//                        title: L10n.blocked,
+//                        subtitle: L10n.accessTagBlockDescription
+//                    )
+//                }
+//            }
 
             Section {
                 TextField(L10n.name, text: $tag)
                     .autocorrectionDisabled()
+                    .focused($isTagFocused)
             } footer: {
-                if tag.isEmpty || tag == "" {
+                if tag.isEmpty {
                     Label(
                         L10n.required,
                         systemImage: "exclamationmark.circle.fill"
@@ -86,6 +83,9 @@ extension AddServerUserAccessTagsView {
                         .labelStyle(.sectionFooterWithImage(imageStyle: .blue))
                     }
                 }
+            }
+            .onFirstAppear {
+                isTagFocused = true
             }
         }
     }

@@ -19,7 +19,7 @@ struct AddServerUserAccessTagsView: View {
     @ObservedObject
     private var viewModel: ServerUserAdminViewModel
 
-    @ObservedObject
+    @StateObject
     private var tagViewModel: TagEditorViewModel
 
     // MARK: - Access Tag Variables
@@ -30,11 +30,6 @@ struct AddServerUserAccessTagsView: View {
     private var tempTag: String = ""
     @State
     private var access: Bool = false
-
-    // MARK: - Trie Data Loaded
-
-    @State
-    private var loaded: Bool = false
 
     // MARK: - Error State
 
@@ -65,7 +60,7 @@ struct AddServerUserAccessTagsView: View {
     init(viewModel: ServerUserAdminViewModel) {
         self.viewModel = viewModel
         self.tempPolicy = viewModel.user.policy!
-        self.tagViewModel = TagEditorViewModel(item: .init())
+        self._tagViewModel = StateObject(wrappedValue: TagEditorViewModel(item: .init()))
     }
 
     // MARK: - Body
@@ -126,7 +121,6 @@ struct AddServerUserAccessTagsView: View {
                 case .updated:
                     break
                 case .loaded:
-                    loaded = true
                     tagViewModel.send(.search(tempTag))
                 case let .error(eventError):
                     UIDevice.feedback(.error)
@@ -149,7 +143,7 @@ struct AddServerUserAccessTagsView: View {
 
             SearchResultsSection(
                 tag: $tempTag,
-                population: tagViewModel.matches,
+                tags: tagViewModel.matches,
                 isSearching: tagViewModel.backgroundStates.contains(.searching)
             )
         }

@@ -20,7 +20,7 @@ extension AddServerUserAccessTagsView {
 
         // MARK: - Element Search Variables
 
-        let population: [String]
+        let tags: [String]
         let isSearching: Bool
 
         // MARK: - Body
@@ -28,26 +28,25 @@ extension AddServerUserAccessTagsView {
         var body: some View {
             if tag.isNotEmpty {
                 Section {
-                    if population.isNotEmpty {
+                    if tags.isNotEmpty {
                         resultsView
-                            .animation(.easeInOut, value: population.count)
                     } else if !isSearching {
                         noResultsView
-                            .transition(.opacity)
-                            .animation(.easeInOut, value: population.count)
                     }
                 } header: {
                     HStack {
                         Text(L10n.existingItems)
+
                         if isSearching {
-                            DelayedProgressView()
+                            ProgressView()
                         } else {
                             Text("-")
-                            Text(population.count.description)
+
+                            Text(tags.count, format: .number)
                         }
                     }
-                    .animation(.easeInOut, value: isSearching)
                 }
+                .animation(.linear(duration: 0.2), value: tags)
             }
         }
 
@@ -56,23 +55,17 @@ extension AddServerUserAccessTagsView {
         private var noResultsView: some View {
             Text(L10n.none)
                 .foregroundStyle(.secondary)
-                .frame(maxWidth: .infinity, alignment: .center)
         }
 
         // MARK: - Results View
 
         private var resultsView: some View {
-            ForEach(population, id: \.self) { result in
-                Button {
+            ForEach(tags, id: \.self) { result in
+                Button(result) {
                     tag = result
-                } label: {
-                    Text(result)
-                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .foregroundStyle(.primary)
                 .disabled(tag == result)
-                .transition(.opacity.combined(with: .move(edge: .top)))
-                .animation(.easeInOut, value: population.count)
             }
         }
     }

@@ -12,10 +12,10 @@ import SwiftUI
 
 struct EditServerUserAccessTagsView: View {
 
-    // MARK: - Defaults
-
-    @Default(.accentColor)
-    private var accentColor
+    private struct TagWithAccess: Hashable {
+        let tag: String
+        let access: Bool
+    }
 
     // MARK: - Observed, State, & Environment Objects
 
@@ -28,14 +28,14 @@ struct EditServerUserAccessTagsView: View {
     // MARK: - Dialog States
 
     @State
-    private var isPresentingDeleteConfirmation = false
+    private var isBlockedExpanded: Bool = true
     @State
-    private var isPresentingDeleteSelectionConfirmation = false
+    private var isPresentingDeleteConfirmation = false
 
     // MARK: - Editing States
 
     @State
-    private var selectedTags: Set<[String: Bool]> = []
+    private var selectedTags: Set<TagWithAccess> = []
     @State
     private var isEditing: Bool = false
 
@@ -44,15 +44,17 @@ struct EditServerUserAccessTagsView: View {
     @State
     private var error: Error?
 
-    // MARK: - Computed Policy Tags
-
-    private var policyTags: Set<[String: Bool]> {
-        let blockedTags = viewModel.user.policy?.blockedTags?.map { [$0: false] } ?? []
-        // let allowedTags = viewModel.user.policy?.allowedTags?.map { [$0: true] } ?? []
-
-        // return Set(allowedTags + blockedTags)
-        return Set(blockedTags)
+    private var blockedTags: [TagWithAccess] {
+        viewModel.user.policy?.blockedTags?
+            .sorted()
+            .map { TagWithAccess(tag: $0, access: false) } ?? []
     }
+
+//    private var allowedTags: [TagWithAccess] {
+//        viewModel.user.policy?.allowedTags?
+//            .sorted()
+//            .map { TagWithAccess(tag: $0, access: true) } ?? []
+//    }
 
     // MARK: - Initializera
 
@@ -71,7 +73,7 @@ struct EditServerUserAccessTagsView: View {
                 errorView(with: error)
             }
         }
-        .navigationBarTitle(L10n.accessTags)
+        .navigationTitle(L10n.accessTags)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(isEditing)
         .toolbar {
@@ -83,20 +85,17 @@ struct EditServerUserAccessTagsView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 if isEditing {
                     Button(L10n.cancel) {
-                        if isEditing {
-                            isEditing.toggle()
-                        }
+                        isEditing = false
                         UIDevice.impact(.light)
                         selectedTags.removeAll()
                     }
                     .buttonStyle(.toolbarPill)
-                    .foregroundStyle(accentColor)
                 }
             }
             ToolbarItem(placement: .bottomBar) {
                 if isEditing {
                     Button(L10n.delete) {
-                        isPresentingDeleteSelectionConfirmation = true
+                        isPresentingDeleteConfirmation = true
                     }
                     .buttonStyle(.toolbarPill(.red))
                     .disabled(selectedTags.isEmpty)
@@ -107,8 +106,7 @@ struct EditServerUserAccessTagsView: View {
         .navigationBarMenuButton(
             isLoading: viewModel.backgroundStates.contains(.refreshing),
             isHidden: isEditing || (
-                viewModel.user.policy?.blockedTags == [] &&
-                    viewModel.user.policy?.blockedTags == []
+                viewModel.user.policy?.blockedTags?.isEmpty == true
             )
         ) {
             Button(L10n.add, systemImage: "plus") {
@@ -121,32 +119,22 @@ struct EditServerUserAccessTagsView: View {
                 }
             }
         }
-        .onReceive(viewModel.events) { events in
-            switch events {
+        .onReceive(viewModel.events) { event in
+            switch event {
             case let .error(eventError):
                 error = eventError
             default:
                 break
             }
         }
-        .errorMessage($error)
-        .confirmationDialog(
-            L10n.delete,
-            isPresented: $isPresentingDeleteSelectionConfirmation,
-            titleVisibility: .visible
-        ) {
-            deleteSelectedConfirmationActions
-        } message: {
-            Text(L10n.deleteSelectedConfirmation)
-        }
         .confirmationDialog(
             L10n.delete,
             isPresented: $isPresentingDeleteConfirmation,
             titleVisibility: .visible
         ) {
-            deleteConfirmationActions
+            deleteSelectedConfirmationActions
         } message: {
-            Text(L10n.deleteItemConfirmation)
+            Text(L10n.deleteSelectedConfirmation)
         }
         .errorMessage($error)
     }
@@ -161,8 +149,23 @@ struct EditServerUserAccessTagsView: View {
             }
     }
 
+    @ViewBuilder
+    private func makeRow(tag: TagWithAccess) -> some View {
+        EditAccessTagRow(tag: tag.tag) {
+            if isEditing {
+                selectedTags.toggle(value: tag)
+            }
+        } onDelete: {
+            selectedTags = [tag]
+            isPresentingDeleteConfirmation = true
+        }
+        .environment(\.isEditing, isEditing)
+        .environment(\.isSelected, selectedTags.contains(tag))
+    }
+
     // MARK: - Content View
 
+    @ViewBuilder
     private var contentView: some View {
         List {
             ListTitleSection(
@@ -172,39 +175,23 @@ struct EditServerUserAccessTagsView: View {
                 UIApplication.shared.open(.jellyfinDocsManagingUsers)
             }
 
-            if policyTags.isEmpty {
+            if blockedTags.isEmpty {
                 Button(L10n.add) {
                     router.route(to: \.userAddAccessTag, viewModel)
                 }
             } else {
-                ForEach(policyTags.sorted(by: {
-                    if $0.values.first == $1.values.first {
-                        return $0.keys.first ?? "" < $1.keys.first ?? ""
-                    } else {
-                        return $0.values.first == true
-                    }
-                }), id: \.self) { tagEntry in
-                    if let tag = tagEntry.keys.first, let access = tagEntry.values.first {
-                        EditAccessTagRow(
-                            item: tag,
-                            access: access
-                        ) {
-                            if isEditing {
-                                if selectedTags.contains(tagEntry) {
-                                    selectedTags.remove(tagEntry)
-                                } else {
-                                    selectedTags.insert(tagEntry)
-                                }
-                            }
-                        } onDelete: {
-                            selectedTags.removeAll()
-                            selectedTags.insert(tagEntry)
-                            isPresentingDeleteConfirmation = true
-                        }
-                        .environment(\.isEditing, isEditing)
-                        .environment(\.isSelected, selectedTags.contains(tagEntry))
-                    }
+                DisclosureGroup(
+                    L10n.blocked,
+                    isExpanded: $isBlockedExpanded
+                ) {
+                    ForEach(
+                        blockedTags,
+                        id: \.self,
+                        content: makeRow
+                    )
                 }
+
+                // TODO: allowed with 10.10
             }
         }
     }
@@ -213,13 +200,13 @@ struct EditServerUserAccessTagsView: View {
 
     @ViewBuilder
     private var navigationBarSelectView: some View {
-        let isAllSelected = selectedTags.count == policyTags.count
+        let isAllSelected = selectedTags.count == blockedTags.count
+
         Button(isAllSelected ? L10n.removeAll : L10n.selectAll) {
-            selectedTags = isAllSelected ? [] : policyTags
+            selectedTags = isAllSelected ? [] : Set(blockedTags)
         }
         .buttonStyle(.toolbarPill)
         .disabled(!isEditing)
-        .foregroundStyle(accentColor)
     }
 
     // MARK: - Delete Selected Confirmation Actions
@@ -228,43 +215,20 @@ struct EditServerUserAccessTagsView: View {
     private var deleteSelectedConfirmationActions: some View {
         Button(L10n.cancel, role: .cancel) {}
 
-        Button(L10n.confirm, role: .destructive) {
+        Button(L10n.delete, role: .destructive) {
             var tempPolicy = viewModel.user.policy ?? UserPolicy()
-            for tagEntry in selectedTags {
-                if let tag = tagEntry.keys.first, let isAllowed = tagEntry.values.first {
-                    if isAllowed {
-                        // tempPolicy.allowedTags?.removeAll { $0 == tag }
-                    } else {
-                        tempPolicy.blockedTags?.removeAll { $0 == tag }
-                    }
+
+            for tag in selectedTags {
+                if tag.access {
+                    // tempPolicy.allowedTags?.removeAll { $0 == tag.tag }
+                } else {
+                    tempPolicy.blockedTags?.removeAll { $0 == tag.tag }
                 }
             }
+
             viewModel.send(.updatePolicy(tempPolicy))
             selectedTags.removeAll()
             isEditing = false
-        }
-    }
-
-    // MARK: - Delete Single Confirmation Actions
-
-    @ViewBuilder
-    private var deleteConfirmationActions: some View {
-        Button(L10n.cancel, role: .cancel) {}
-
-        Button(L10n.delete, role: .destructive) {
-            var tempPolicy = viewModel.user.policy ?? UserPolicy()
-            if let tagEntry = selectedTags.first, selectedTags.count == 1 {
-                if let tag = tagEntry.keys.first, let isAllowed = tagEntry.values.first {
-                    if isAllowed {
-                        // tempPolicy.allowedTags?.removeAll { $0 == tag }
-                    } else {
-                        tempPolicy.blockedTags?.removeAll { $0 == tag }
-                    }
-                    viewModel.send(.updatePolicy(tempPolicy))
-                    selectedTags.removeAll()
-                    isEditing = false
-                }
-            }
         }
     }
 }

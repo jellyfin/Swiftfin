@@ -14,17 +14,9 @@ extension EditServerUserAccessTagsView {
 
     struct EditAccessTagRow: View {
 
-        // MARK: - Enviroment Variables
-
-        @Environment(\.isEditing)
-        private var isEditing
-        @Environment(\.isSelected)
-        private var isSelected
-
         // MARK: - Metadata Variables
 
-        let item: String
-        let access: Bool
+        let tag: String
 
         // MARK: - Row Actions
 
@@ -34,36 +26,22 @@ extension EditServerUserAccessTagsView {
         // MARK: - Body
 
         var body: some View {
-            ListRow {} content: {
-                rowContent
-            }
-            .onSelect(perform: onSelect)
-            .isSeparatorVisible(false)
-            .swipeActions {
-                Button(L10n.delete, systemImage: "trash", action: onDelete)
-                    .tint(.red)
-            }
-        }
+            Button(action: onSelect) {
+                HStack {
+                    Text(tag)
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
-        // MARK: - Row Content
-
-        @ViewBuilder
-        private var rowContent: some View {
-            HStack {
-                VStack(alignment: .leading) {
-                    TextPairView(
-                        leading: item,
-                        trailing: access ? L10n.allowed : L10n.blocked
-                    )
-                    .foregroundStyle(
-                        isEditing ? (isSelected ? .primary : .secondary) : .primary, .secondary
-                    )
-                    .font(.headline)
+                    ListRowCheckbox()
                 }
-
-                ListRowCheckbox()
-                    .environment(\.isEditing, isEditing)
-                    .environment(\.isSelected, isSelected)
+            }
+            .foregroundStyle(.primary)
+            .swipeActions {
+                Button(
+                    L10n.delete,
+                    systemImage: "trash",
+                    action: onDelete
+                )
+                .tint(.red)
             }
         }
     }

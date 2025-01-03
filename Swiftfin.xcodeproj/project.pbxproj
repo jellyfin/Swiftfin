@@ -2901,8 +2901,8 @@
 		4EFAC1312D1E373B00E40880 /* AddServerUserAccessTagsView */ = {
 			isa = PBXGroup;
 			children = (
-				4EFAC1322D1E8C6B00E40880 /* AddServerUserAccessTagsView.swift */,
 				4EFAC1342D1FB19700E40880 /* Components */,
+				4EFAC1322D1E8C6B00E40880 /* AddServerUserAccessTagsView.swift */,
 			);
 			path = AddServerUserAccessTagsView;
 			sourceTree = "<group>";
