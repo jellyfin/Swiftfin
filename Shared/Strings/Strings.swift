@@ -16,8 +16,6 @@ internal enum L10n {
   internal static let absolute = L10n.tr("Localizable", "absolute", fallback: "Absolute")
   /// Accent Color
   internal static let accentColor = L10n.tr("Localizable", "accentColor", fallback: "Accent Color")
-  /// Some views may need an app restart to update.
-  internal static let accentColorDescription = L10n.tr("Localizable", "accentColorDescription", fallback: "Some views may need an app restart to update.")
   /// Access
   internal static let access = L10n.tr("Localizable", "access", fallback: "Access")
   /// Accessibility
@@ -28,6 +26,16 @@ internal enum L10n {
   internal static let accessSchedules = L10n.tr("Localizable", "accessSchedules", fallback: "Access Schedules")
   /// Define the allowed hours for usage and restrict access outside those times.
   internal static let accessSchedulesDescription = L10n.tr("Localizable", "accessSchedulesDescription", fallback: "Define the allowed hours for usage and restrict access outside those times.")
+  /// User will have access to no media unless it contains at least one allowed tag.
+  internal static let accessTagAllowDescription = L10n.tr("Localizable", "accessTagAllowDescription", fallback: "User will have access to no media unless it contains at least one allowed tag.")
+  /// Access tag already exists
+  internal static let accessTagAlreadyExists = L10n.tr("Localizable", "accessTagAlreadyExists", fallback: "Access tag already exists")
+  /// User will have access to all media except when it contains any blocked tag.
+  internal static let accessTagBlockDescription = L10n.tr("Localizable", "accessTagBlockDescription", fallback: "User will have access to all media except when it contains any blocked tag.")
+  /// Access Tags
+  internal static let accessTags = L10n.tr("Localizable", "accessTags", fallback: "Access Tags")
+  /// Use tags to grant or restrict this user's access to media.
+  internal static let accessTagsDescription = L10n.tr("Localizable", "accessTagsDescription", fallback: "Use tags to grant or restrict this user's access to media.")
   /// Active
   internal static let active = L10n.tr("Localizable", "active", fallback: "Active")
   /// Activity
@@ -36,8 +44,10 @@ internal enum L10n {
   internal static let actor = L10n.tr("Localizable", "actor", fallback: "Actor")
   /// Add
   internal static let add = L10n.tr("Localizable", "add", fallback: "Add")
-  /// Add Access Schedule
-  internal static let addAccessSchedule = L10n.tr("Localizable", "addAccessSchedule", fallback: "Add Access Schedule")
+  /// Add access schedule
+  internal static let addAccessSchedule = L10n.tr("Localizable", "addAccessSchedule", fallback: "Add access schedule")
+  /// Add access tag
+  internal static let addAccessTag = L10n.tr("Localizable", "addAccessTag", fallback: "Add access tag")
   /// Add API key
   internal static let addAPIKey = L10n.tr("Localizable", "addAPIKey", fallback: "Add API key")
   /// Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.
@@ -76,6 +86,8 @@ internal enum L10n {
   internal static let allMedia = L10n.tr("Localizable", "allMedia", fallback: "All Media")
   /// Allow collection management
   internal static let allowCollectionManagement = L10n.tr("Localizable", "allowCollectionManagement", fallback: "Allow collection management")
+  /// Allowed
+  internal static let allowed = L10n.tr("Localizable", "allowed", fallback: "Allowed")
   /// Allow media item deletion
   internal static let allowItemDeletion = L10n.tr("Localizable", "allowItemDeletion", fallback: "Allow media item deletion")
   /// Allow media item editing
@@ -106,8 +118,6 @@ internal enum L10n {
   internal static let appIcon = L10n.tr("Localizable", "appIcon", fallback: "App Icon")
   /// Application Name
   internal static let applicationName = L10n.tr("Localizable", "applicationName", fallback: "Application Name")
-  /// Applying media information
-  internal static let applyingMediaInformation = L10n.tr("Localizable", "applyingMediaInformation", fallback: "Applying media information")
   /// Arranger
   internal static let arranger = L10n.tr("Localizable", "arranger", fallback: "Arranger")
   /// Artist
@@ -202,6 +212,8 @@ internal enum L10n {
   internal static let bitrateTestDisclaimer = L10n.tr("Localizable", "bitrateTestDisclaimer", fallback: "Longer tests are more accurate but may result in a delayed playback.")
   /// bps
   internal static let bitsPerSecond = L10n.tr("Localizable", "bitsPerSecond", fallback: "bps")
+  /// Blocked
+  internal static let blocked = L10n.tr("Localizable", "blocked", fallback: "Blocked")
   /// Block unrated items
   internal static let blockUnratedItems = L10n.tr("Localizable", "blockUnratedItems", fallback: "Block unrated items")
   /// Block items from this user with no or unrecognized rating information.
@@ -1210,6 +1222,8 @@ internal enum L10n {
   internal static let syncPlay = L10n.tr("Localizable", "syncPlay", fallback: "SyncPlay")
   /// System
   internal static let system = L10n.tr("Localizable", "system", fallback: "System")
+  /// Tag
+  internal static let tag = L10n.tr("Localizable", "tag", fallback: "Tag")
   /// Tagline
   internal static let tagline = L10n.tr("Localizable", "tagline", fallback: "Tagline")
   /// Taglines
@@ -1312,8 +1326,6 @@ internal enum L10n {
   internal static let unsavedChangesMessage = L10n.tr("Localizable", "unsavedChangesMessage", fallback: "You have unsaved changes. Are you sure you want to discard them?")
   /// URL
   internal static let url = L10n.tr("Localizable", "url", fallback: "URL")
-  /// Use as item
-  internal static let useAsItem = L10n.tr("Localizable", "useAsItem", fallback: "Use as item")
   /// Use as Transcoding Profile
   internal static let useAsTranscodingProfile = L10n.tr("Localizable", "useAsTranscodingProfile", fallback: "Use as Transcoding Profile")
   /// Use Primary Image
