@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -22,9 +22,9 @@ extension Color {
 
     // TODO: Correct and add colors
     #if os(tvOS) // tvOS doesn't have these
-    static let systemFill = Color(UIColor.white)
-    static let secondarySystemFill = Color(UIColor.gray)
-    static let tertiarySystemFill = Color(UIColor.black)
+    static let systemFill = Color.white
+    static let secondarySystemFill = Color.gray
+    static let tertiarySystemFill = Color.black
     static let lightGray = Color(UIColor.lightGray)
 
     #else

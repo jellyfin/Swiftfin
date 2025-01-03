@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -90,12 +90,9 @@ extension SelectUserView {
                 }
                 .font(.body.weight(.semibold))
                 .foregroundStyle(Color.primary)
-                .frame(height: 50)
-                .frame(maxWidth: 400)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .frame(width: 400, height: 50)
             }
             .menuOrder(.fixed)
-            .padding()
         }
     }
 }
