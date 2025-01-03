@@ -13,41 +13,24 @@ import SwiftUI
 
 struct HomeView: View {
 
-    @EnvironmentObject
-    private var router: HomeCoordinator.Router
-
-    @StateObject
-    private var viewModel = HomeViewModel()
+    // MARK: - Defaults
 
     @Default(.Customization.Home.showRecentlyAdded)
     private var showRecentlyAdded
 
-    @ViewBuilder
-    private var contentView: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
+    // MARK: - State & Environment Objects
 
-                if viewModel.resumeItems.isNotEmpty {
-                    CinematicResumeView(viewModel: viewModel)
+    @EnvironmentObject
+    private var router: HomeCoordinator.Router
 
-                    NextUpView(viewModel: viewModel.nextUpViewModel)
+    @StateObject
+    private var viewModel: HomeViewModel = {
+        let viewModel = HomeViewModel()
+        viewModel.send(.refresh)
+        return viewModel
+    }()
 
-                    if showRecentlyAdded {
-                        RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
-                    }
-                } else {
-                    if showRecentlyAdded {
-                        CinematicRecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
-                    }
-                    NextUpView(viewModel: viewModel.nextUpViewModel)
-                }
-
-                ForEach(viewModel.libraries) { viewModel in
-                    LatestInLibraryView(viewModel: viewModel)
-                }
-            }
-        }
-    }
+    // MARK: - Body
 
     var body: some View {
         ZStack {
@@ -65,14 +48,46 @@ struct HomeView: View {
             }
         }
         .transition(.opacity.animation(.linear(duration: 0.2)))
-        .onFirstAppear {
-            viewModel.send(.refresh)
-        }
         .ignoresSafeArea()
         .sinceLastDisappear { interval in
             if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {
                 viewModel.send(.backgroundRefresh)
                 viewModel.notificationsReceived.remove(.itemMetadataDidChange)
+            }
+        }
+    }
+
+    // MARK: - Content View
+
+    @ViewBuilder
+    private var contentView: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+
+                ResumeView(viewModel: viewModel)
+
+                NextUpView(
+                    viewModel: viewModel.nextUpViewModel,
+                    cinematic: viewModel.resumeItems.isEmpty
+                )
+
+                if showRecentlyAdded {
+                    RecentlyAddedView(
+                        viewModel: viewModel.recentlyAddedViewModel,
+                        cinematic: viewModel.nextUpViewModel.elements.isEmpty
+                            && viewModel.resumeItems.isEmpty
+                    )
+                }
+
+                ForEach(viewModel.libraries.indices, id: \.self) { index in
+                    LatestInLibraryView(
+                        viewModel: viewModel.libraries[index],
+                        cinematic: index == 0
+                            && (viewModel.recentlyAddedViewModel.elements.isEmpty || !showRecentlyAdded)
+                            && viewModel.nextUpViewModel.elements.isEmpty
+                            && viewModel.resumeItems.isEmpty
+                    )
+                }
             }
         }
     }

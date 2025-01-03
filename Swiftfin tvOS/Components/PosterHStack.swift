@@ -59,7 +59,7 @@ struct PosterHStack<Element: Poster & Identifiable, Data: Collection>: View wher
             .clipsToBounds(false)
             .dataPrefix(20)
             .insets(horizontal: EdgeInsets.edgePadding, vertical: 20)
-            .itemSpacing(EdgeInsets.edgePadding - 20)
+            .itemSpacing(EdgeInsets.edgePadding - (type == .landscape ? 15 : 20))
             .scrollBehavior(.continuousLeadingEdge)
         }
         .focusSection()
