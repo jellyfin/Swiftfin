@@ -87,7 +87,7 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
         EditItemImagesView(viewModel: ItemImagesViewModel(item: item))
     }
 
-    func makeAddImage(viewModel: RemoteImageInfoViewModel) -> some View {
+    func makeAddImage(viewModel: ItemImagesViewModel) -> some View {
         AddItemImageView(viewModel: viewModel)
     }
 

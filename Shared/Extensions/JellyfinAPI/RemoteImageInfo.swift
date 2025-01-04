@@ -10,7 +10,23 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-extension RemoteImageInfo: @retroactive Identifiable {
+extension RemoteImageInfo: @retroactive Identifiable, Poster {
+
+    var displayTitle: String {
+        self.providerName ?? L10n.unknown
+    }
+
+    var unwrappedIDHashOrZero: Int {
+        self.id
+    }
+
+    var subtitle: String? {
+        self.language
+    }
+
+    var systemImage: String {
+        "circle"
+    }
 
     public var id: Int {
         self.hashValue

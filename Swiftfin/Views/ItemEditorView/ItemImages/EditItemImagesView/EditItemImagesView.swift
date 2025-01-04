@@ -32,8 +32,6 @@ struct EditItemImagesView: View {
 
     @State
     private var selectedImage: ImageInfo?
-    @State
-    private var uploadType: ImageType?
 
     // MARK: - Error State
 
@@ -63,19 +61,14 @@ struct EditItemImagesView: View {
                 deletionSheet(imageInfo)
             }
             .fileImporter(
-                isPresented: .constant(uploadType != nil),
+                isPresented: .constant(viewModel.selectedType != nil),
                 allowedContentTypes: [.image],
                 allowsMultipleSelection: false
             ) {
                 switch $0 {
                 case let .success(urls):
                     if let url = urls.first {
-                        do {
-                            if let uploadType {
-                                viewModel.send(.uploadImage(url: url, type: uploadType))
-                            }
-                            uploadType = nil
-                        }
+                        viewModel.send(.uploadImage(url))
                     }
                 case let .failure(fileError):
                     self.error = fileError
@@ -143,12 +136,10 @@ struct EditItemImagesView: View {
             Spacer()
             Menu(L10n.options, systemImage: "plus") {
                 Button(action: {
+                    viewModel.send(.selectType(imageType))
                     router.route(
                         to: \.addImage,
-                        RemoteImageInfoViewModel(
-                            item: viewModel.item,
-                            imageType: imageType
-                        )
+                        viewModel
                     )
                 }) {
                     Label(L10n.search, systemImage: "magnifyingglass")
@@ -157,13 +148,13 @@ struct EditItemImagesView: View {
                 Divider()
 
                 Button(action: {
-                    uploadType = imageType
+                    viewModel.send(.selectType(imageType))
                 }) {
                     Label(L10n.uploadFile, systemImage: "document.badge.plus")
                 }
 
                 Button(action: {
-                    uploadType = imageType
+                    viewModel.send(.selectType(imageType))
                 }) {
                     Label(L10n.uploadPhoto, systemImage: "photo.badge.plus")
                 }

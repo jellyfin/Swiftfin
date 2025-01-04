@@ -12,6 +12,7 @@ import IdentifiedCollections
 import JellyfinAPI
 import OrderedCollections
 import SwiftUI
+import UniformTypeIdentifiers
 
 class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
@@ -22,9 +23,12 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
     }
 
     enum Action: Equatable {
+        case cancel
         case refresh
         case backgroundRefresh
-        case uploadImage(url: URL, type: ImageType)
+        case selectType(ImageType?)
+        case setImage(RemoteImageInfo)
+        case uploadImage(URL)
         case deleteImage(ImageInfo)
     }
 
@@ -48,6 +52,8 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
     @Published
     var item: BaseItemDto
+    @Published
+    var selectedType: ImageType?
     @Published
     var images: [ImageInfo: UIImage] = [:]
 
@@ -76,25 +82,25 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         self.item = item
         self.includeAllLanguages = includeAllLanguages
         super.init()
-
-        Notifications[.itemMetadataDidChange]
-            .publisher
-            .sink { [weak self] item in
-                guard let self else { return }
-                self.item = item
-                Task {
-                    await MainActor.run {
-                        self.send(.backgroundRefresh)
-                    }
-                }
-            }
-            .store(in: &cancellables)
     }
 
     // MARK: - Respond to Actions
 
     func respond(to action: Action) -> State {
         switch action {
+
+        case .cancel:
+            task?.cancel()
+            self.state = .initial
+
+            return state
+
+        case let .selectType(type):
+            task?.cancel()
+
+            self.selectedType = type
+
+            return state
 
         case .backgroundRefresh:
             task?.cancel()
@@ -152,7 +158,34 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
             return state
 
-        case let .uploadImage(url, imageType):
+        case let .setImage(remoteImageInfo):
+            task?.cancel()
+
+            task = Task { [weak self] in
+                guard let self = self else { return }
+                do {
+                    await MainActor.run {
+                        _ = self.state = .updating
+                    }
+
+                    try await self.setImage(remoteImageInfo)
+
+                    await MainActor.run {
+                        self.eventSubject.send(.updated)
+                        _ = self.state = .updating
+                    }
+                } catch {
+                    let apiError = JellyfinAPIError(error.localizedDescription)
+                    await MainActor.run {
+                        self.eventSubject.send(.error(apiError))
+                        _ = self.state = .updating
+                    }
+                }
+            }.asAnyCancellable()
+
+            return state
+
+        case let .uploadImage(url):
             task?.cancel()
 
             task = Task { [weak self] in
@@ -162,7 +195,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                         self.state = .updating
                     }
 
-                    try await self.uploadImage(url, type: imageType)
+                    try await self.uploadImage(url)
                     try await self.refreshItem()
 
                     await MainActor.run {
@@ -263,68 +296,89 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         }
     }
 
+    // MARK: - Set Image From URL
+
+    private func setImage(_ remoteImageInfo: RemoteImageInfo) async throws {
+        guard let itemID = item.id,
+              let type = remoteImageInfo.type,
+              let imageURL = remoteImageInfo.url else { return }
+
+        let parameters = Paths.DownloadRemoteImageParameters(type: type, imageURL: imageURL)
+        let imageRequest = Paths.downloadRemoteImage(itemID: itemID, parameters: parameters)
+        try await userSession.client.send(imageRequest)
+
+        await MainActor.run {
+            self.selectedType = nil
+        }
+    }
+
     // MARK: - Upload Image
 
-    private func uploadImage(_ url: URL, type: ImageType) async throws {
-        guard let itemID = item.id else { return }
+    private func uploadImage(_ url: URL) async throws {
+        guard let itemID = item.id,
+              let type = selectedType else { return }
 
         guard url.startAccessingSecurityScopedResource() else {
             throw JellyfinAPIError("Unable to access file at \(url)")
         }
         defer { url.stopAccessingSecurityScopedResource() }
 
-        let data = try Data(contentsOf: url)
-        guard let image = UIImage(data: data) else {
-            throw JellyfinAPIError("Unable to load image from file")
-        }
+        let fileData = try Data(contentsOf: url)
+        let fileSize = fileData.count
 
-        let maxDimension: CGFloat = 3000
-        let resizedImage = image.size.width > maxDimension || image.size.height > maxDimension
-            ? resizeImage(image, maxDimension: maxDimension)
-            : image
+        guard fileSize < 30_000_000 else {
+            throw JellyfinAPIError(
+                "This image is too large (\(fileSize.formatted(.byteCount(style: .file)))). The upload limit for images is 30 MB."
+            )
+        }
 
         let contentType: String
         let imageData: Data
 
-        if let pngData = resizedImage.pngData() {
-            contentType = "image/png"
-            imageData = pngData.base64EncodedData()
-        } else if let jpgData = resizedImage.jpegData(compressionQuality: 1) {
-            contentType = "image/jpeg"
-            imageData = jpgData.base64EncodedData()
+        if let fileType = UTType(filenameExtension: url.pathExtension) {
+            if fileType.conforms(to: .png) {
+                contentType = "image/png"
+                imageData = fileData
+            } else if fileType.conforms(to: .jpeg) {
+                contentType = "image/jpeg"
+                imageData = fileData
+            } else {
+                guard let image = UIImage(data: fileData) else {
+                    throw JellyfinAPIError("Unable to load image from file")
+                }
+
+                if let pngData = image.pngData() {
+                    contentType = "image/png"
+                    imageData = pngData
+                } else if let jpgData = image.jpegData(compressionQuality: 1) {
+                    contentType = "image/jpeg"
+                    imageData = jpgData
+                } else {
+                    throw JellyfinAPIError("Failed to convert image to png/jpg")
+                }
+            }
         } else {
-            throw JellyfinAPIError("Failed to convert image to png/jpg")
+            throw JellyfinAPIError("Unsupported file type")
         }
 
         var request = Paths.setItemImage(
             itemID: itemID,
             imageType: type.rawValue,
-            imageData
+            imageData.base64EncodedData()
         )
         request.headers = ["Content-Type": contentType]
 
-        _ = try await userSession.client.send(request)
-    }
-
-    // MARK: - Resize Large Image
-
-    private func resizeImage(_ image: UIImage, maxDimension: CGFloat) -> UIImage {
-        let size = image.size
-        let aspectRatio = size.width / size.height
-
-        var newSize: CGSize
-        if size.width > size.height {
-            newSize = CGSize(width: maxDimension, height: maxDimension / aspectRatio)
-        } else {
-            newSize = CGSize(width: maxDimension * aspectRatio, height: maxDimension)
+        guard request.bodySize < 30_000_000 else {
+            throw JellyfinAPIError(
+                "Converting this image into a valid format has resulted in a larger image (\(request.bodySize.formatted(.byteCount(style: .file)))) that is now too large for upload. Before conversion this image was \(fileData.count.formatted(.byteCount(style: .file))). The upload limit for images is 30 MB."
+            )
         }
 
-        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
-        image.draw(in: CGRect(origin: .zero, size: newSize))
-        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
+        _ = try await userSession.client.send(request)
 
-        return resizedImage ?? image
+        await MainActor.run {
+            self.selectedType = nil
+        }
     }
 
     // MARK: - Delete Image
@@ -374,6 +428,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                     result[updatedInfo] = pair.value
                 }
 
+            self.selectedType = nil
             self.images = updatedImages
         }
     }
@@ -397,7 +452,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         await MainActor.run {
             self.item = response.value
             _ = backgroundStates.remove(.refreshing)
-            // Notifications[.itemMetadataDidChange].post(item)
+            Notifications[.itemMetadataDidChange].post(item)
         }
     }
 }

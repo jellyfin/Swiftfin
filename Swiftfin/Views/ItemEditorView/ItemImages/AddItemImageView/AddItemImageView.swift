@@ -25,8 +25,11 @@ struct AddItemImageView: View {
     @EnvironmentObject
     private var router: ItemEditorCoordinator.Router
 
+    @ObservedObject
+    private var viewModel: ItemImagesViewModel
+
     @StateObject
-    var viewModel: RemoteImageInfoViewModel
+    private var remoteImageInfoViewModel: RemoteImageInfoViewModel
 
     // MARK: - Dialog States
 
@@ -43,11 +46,21 @@ struct AddItemImageView: View {
     @State
     private var layout: CollectionVGridLayout = .minWidth(150)
 
+    // MARK: - Initializer
+
+    init(viewModel: ItemImagesViewModel) {
+        self._viewModel = ObservedObject(wrappedValue: viewModel)
+        self._remoteImageInfoViewModel = StateObject(wrappedValue: RemoteImageInfoViewModel(
+            item: viewModel.item,
+            imageType: viewModel.selectedType!
+        ))
+    }
+
     // MARK: - Body
 
     var body: some View {
         contentView
-            .navigationBarTitle(viewModel.imageType.rawValue.localizedCapitalized)
+            .navigationBarTitle(remoteImageInfoViewModel.imageType.rawValue.localizedCapitalized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(viewModel.state == .updating)
             .topBarTrailing {
@@ -56,10 +69,12 @@ struct AddItemImageView: View {
                 }
             }
             .onFirstAppear {
-                viewModel.send(.refresh)
+                remoteImageInfoViewModel.send(.refresh)
             }
             .onReceive(viewModel.events) { event in
                 switch event {
+                case .deleted:
+                    break
                 case .updated:
                     UIDevice.feedback(.success)
                     router.pop()
@@ -80,13 +95,11 @@ struct AddItemImageView: View {
 
     @ViewBuilder
     private var contentView: some View {
-        switch viewModel.state {
-        case .initial:
+        switch remoteImageInfoViewModel.state {
+        case .initial, .refreshing:
             DelayedProgressView()
         case .content:
             gridView
-        case .updating:
-            updateView
         case let .error(error):
             ErrorView(error: error)
                 .onRetry {
@@ -106,13 +119,13 @@ struct AddItemImageView: View {
                 .listRowInsets(.zero)
         } else {
             CollectionVGrid(
-                uniqueElements: viewModel.images,
+                uniqueElements: remoteImageInfoViewModel.elements,
                 layout: layout
             ) { image in
                 imageButton(image)
             }
             .onReachedBottomEdge(offset: .offset(300)) {
-                viewModel.send(.getNextPage)
+                remoteImageInfoViewModel.send(.getNextPage)
             }
         }
     }
@@ -178,21 +191,21 @@ struct AddItemImageView: View {
     // MARK: - Set Image Confirmation
 
     @ViewBuilder
-    private func confirmationSheet(_ image: RemoteImageInfo) -> some View {
+    private func confirmationSheet(_ remoteImageInfo: RemoteImageInfo) -> some View {
         NavigationView {
             VStack {
                 posterImage(
-                    image,
-                    posterStyle: image.height ?? 0 > image.width ?? 0 ? .portrait : .landscape
+                    remoteImageInfo,
+                    posterStyle: remoteImageInfo.height ?? 0 > remoteImageInfo.width ?? 0 ? .portrait : .landscape
                 )
                 .scaledToFit()
 
-                if let imageWidth = image.width, let imageHeight = image.height {
+                if let imageWidth = remoteImageInfo.width, let imageHeight = remoteImageInfo.height {
                     Text("\(imageWidth) x \(imageHeight)")
                         .font(.body)
                 }
 
-                Text(image.providerName ?? .emptyDash)
+                Text(remoteImageInfo.providerName ?? .emptyDash)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -204,10 +217,7 @@ struct AddItemImageView: View {
             }
             .topBarTrailing {
                 Button(L10n.save) {
-                    if let newURL = image.url {
-                        viewModel.send(.setImage(url: newURL, type: viewModel.imageType))
-                    }
-                    selectedImage = nil
+                    viewModel.send(.setImage(remoteImageInfo))
                 }
                 .buttonStyle(.toolbarPill)
             }
