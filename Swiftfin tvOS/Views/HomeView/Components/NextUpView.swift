@@ -52,14 +52,28 @@ extension HomeView {
         // MARK: - Body
 
         var body: some View {
-            if viewModel.elements.isNotEmpty {
-                switch cinematic {
-                case true:
-                    cinematicView
-                case false:
-                    standardView
+            ZStack {
+                switch viewModel.state {
+                case .content:
+                    if viewModel.elements.isNotEmpty {
+                        switch cinematic {
+                        case true:
+                            cinematicView
+                        case false:
+                            standardView
+                        }
+                    }
+                case let .error(error):
+                    ErrorView(error: error)
+                        .onRetry {
+                            viewModel.send(.refresh)
+                        }
+                case .initial, .refreshing:
+                    ProgressView()
                 }
             }
+            .animation(.linear(duration: 0.1), value: viewModel.state)
+            .ignoresSafeArea()
         }
 
         // MARK: - Cinematic View

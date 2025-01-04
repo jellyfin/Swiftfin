@@ -71,24 +71,18 @@ struct HomeView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
 
-                if !viewModel.resumeItems.isEmpty {
-                    ResumeView(viewModel: viewModel)
-                }
+                ResumeView(viewModel: viewModel)
 
-                if !viewModel.nextUpViewModel.elements.isEmpty {
-                    NextUpView(
-                        viewModel: viewModel.nextUpViewModel,
-                        cinematic: viewModel.resumeItems.isEmpty
-                    )
-                }
+                NextUpView(
+                    viewModel: viewModel.nextUpViewModel,
+                    cinematic: viewModel.resumeItems.isEmpty
+                )
 
-                if showRecentlyAdded && !viewModel.recentlyAddedViewModel.elements.isEmpty {
-                    RecentlyAddedView(
-                        viewModel: viewModel.recentlyAddedViewModel,
-                        cinematic: viewModel.resumeItems.isEmpty &&
-                            viewModel.nextUpViewModel.elements.isEmpty
-                    )
-                }
+                RecentlyAddedView(
+                    viewModel: viewModel.recentlyAddedViewModel,
+                    cinematic: viewModel.resumeItems.isEmpty &&
+                        viewModel.nextUpViewModel.elements.isEmpty
+                )
 
                 ForEach(viewModel.libraries.indices, id: \.self) { index in
                     LatestInLibraryView(

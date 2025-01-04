@@ -48,42 +48,63 @@ extension HomeView {
         // MARK: - Body
 
         var body: some View {
-            if viewModel.resumeItems.isNotEmpty {
-                CinematicItemSelector(
-                    items: viewModel.resumeItems.elements,
-                    type: posterType
-                )
-                .topContent { item in
-                    ImageView(cinematicImageSource(for: item))
-                        .placeholder { _ in
-                            EmptyView()
-                        }
-                        .failure {
-                            Text(item.displayTitle)
-                                .font(.largeTitle)
-                                .fontWeight(.semibold)
-                        }
-                        .edgePadding(.leading)
-                        .aspectRatio(contentMode: .fit)
-                        .frame(height: 200, alignment: .bottomLeading)
-                }
-                .content { item in
-                    // TODO: clean up
-                    if item.type == .episode {
-                        PosterButton<BaseItemDto>.EpisodeContentSubtitleContent.Subtitle(item: item)
-                    } else {
-                        Text(" ")
+            ZStack {
+                switch viewModel.state {
+                case .content:
+                    if viewModel.resumeItems.isNotEmpty {
+                        contentView
                     }
+                case let .error(error):
+                    ErrorView(error: error)
+                        .onRetry {
+                            viewModel.send(.refresh)
+                        }
+                case .initial, .refreshing:
+                    ProgressView()
                 }
-                .itemImageOverlay { item in
-                    LandscapePosterProgressBar(
-                        title: item.progressLabel ?? L10n.continue,
-                        progress: (item.userData?.playedPercentage ?? 0) / 100
-                    )
+            }
+            .animation(.linear(duration: 0.1), value: viewModel.state)
+            .ignoresSafeArea()
+        }
+
+        // MARK: - Content View
+
+        @ViewBuilder
+        var contentView: some View {
+            CinematicItemSelector(
+                items: viewModel.resumeItems.elements,
+                type: posterType
+            )
+            .topContent { item in
+                ImageView(cinematicImageSource(for: item))
+                    .placeholder { _ in
+                        EmptyView()
+                    }
+                    .failure {
+                        Text(item.displayTitle)
+                            .font(.largeTitle)
+                            .fontWeight(.semibold)
+                    }
+                    .edgePadding(.leading)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 200, alignment: .bottomLeading)
+            }
+            .content { item in
+                // TODO: clean up
+                if item.type == .episode {
+                    PosterButton<BaseItemDto>.EpisodeContentSubtitleContent.Subtitle(item: item)
+                } else {
+                    Text(" ")
                 }
-                .onSelect { item in
-                    router.route(to: \.item, item)
-                }
+            }
+            .itemImageOverlay { item in
+                LandscapePosterProgressBar(
+                    title: item.progressLabel ?? L10n.continue,
+                    progress: (item.userData?.playedPercentage ?? 0) / 100
+                )
+            }
+            .onSelect { item in
+                router.route(to: \.item, item)
             }
         }
     }
