@@ -12,6 +12,6 @@ import JellyfinAPI
 // TODO: How SHOULD I get Identifiable
 extension ImageInfo: @retroactive Identifiable {
     public var id: String {
-        self.imageTag?.hashString ?? UUID().uuidString
+        self.hashString
     }
 }

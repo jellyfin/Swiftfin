@@ -8,7 +8,6 @@
 
 import Combine
 import Foundation
-import Get
 import IdentifiedCollections
 import JellyfinAPI
 import OrderedCollections

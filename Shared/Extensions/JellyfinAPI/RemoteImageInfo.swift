@@ -10,11 +10,7 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-extension RemoteImageInfo: @retroactive Identifiable, LibraryIdentifiable {
-
-    var unwrappedIDHashOrZero: Int {
-        id.hashValue
-    }
+extension RemoteImageInfo: @retroactive Identifiable {
 
     public var id: Int {
         self.hashValue

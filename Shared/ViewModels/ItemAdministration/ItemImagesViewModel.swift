@@ -76,6 +76,19 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         self.item = item
         self.includeAllLanguages = includeAllLanguages
         super.init()
+
+        Notifications[.itemMetadataDidChange]
+            .publisher
+            .sink { [weak self] item in
+                guard let self else { return }
+                self.item = item
+                Task {
+                    await MainActor.run {
+                        self.send(.backgroundRefresh)
+                    }
+                }
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Respond to Actions
@@ -276,7 +289,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         if let pngData = resizedImage.pngData() {
             contentType = "image/png"
             imageData = pngData.base64EncodedData()
-        } else if let jpgData = resizedImage.jpegData(compressionQuality: 0.8) {
+        } else if let jpgData = resizedImage.jpegData(compressionQuality: 1) {
             contentType = "image/jpeg"
             imageData = jpgData.base64EncodedData()
         } else {
@@ -318,16 +331,24 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
     private func deleteImage(_ imageInfo: ImageInfo) async throws {
         guard let itemID = item.id,
-              let imageType = imageInfo.imageType?.rawValue,
-              let imageIndex = imageInfo.imageIndex else { return }
+              let imageType = imageInfo.imageType?.rawValue else { return }
 
-        let request = Paths.deleteItemImageByIndex(
-            itemID: itemID,
-            imageType: imageType,
-            imageIndex: imageIndex
-        )
+        if let imageIndex = imageInfo.imageIndex {
+            let request = Paths.deleteItemImageByIndex(
+                itemID: itemID,
+                imageType: imageType,
+                imageIndex: imageIndex
+            )
 
-        _ = try await userSession.client.send(request)
+            try await userSession.client.send(request)
+        } else {
+            let request = Paths.deleteItemImage(
+                itemID: itemID,
+                imageType: imageType
+            )
+
+            try await userSession.client.send(request)
+        }
 
         await MainActor.run {
             self.images.removeValue(forKey: imageInfo)
@@ -376,7 +397,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         await MainActor.run {
             self.item = response.value
             _ = backgroundStates.remove(.refreshing)
-            Notifications[.itemMetadataDidChange].post(item)
+            // Notifications[.itemMetadataDidChange].post(item)
         }
     }
 }

@@ -2570,7 +2570,6 @@
 				4E37F6192D17EB3C0022AADD /* ItemMetadata */,
 				4EE766F32D131F6E009658F0 /* IdentifyItemView */,
 				4E8F74A42CE03D3800CC8969 /* ItemEditorView.swift */,
-				4E3766192D2144BA00C5D7A5 /* ItemElements */,
 			);
 			path = ItemEditorView;
 			sourceTree = "<group>";

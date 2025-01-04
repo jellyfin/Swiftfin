@@ -117,9 +117,13 @@ struct EditItemImagesView: View {
         let imageArray = Array(filteredImages)
 
         if !imageArray.isEmpty {
+            let sortedImageArray = imageArray.sorted { lhs, rhs in
+                (lhs.key.imageIndex ?? 0) < (rhs.key.imageIndex ?? 0)
+            }
+
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
-                    ForEach(imageArray, id: \.key) { imageData in
+                    ForEach(sortedImageArray, id: \.key) { imageData in
                         imageButton(imageData.value) {
                             selectedImage = imageData.key
                         }
