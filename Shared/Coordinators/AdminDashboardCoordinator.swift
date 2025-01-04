@@ -72,6 +72,10 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     var userEditAccessSchedules = makeUserEditAccessSchedules
     @Route(.modal)
     var userAddAccessSchedule = makeUserAddAccessSchedule
+    @Route(.push)
+    var userEditAccessTags = makeUserEditAccessTags
+    @Route(.modal)
+    var userAddAccessTag = makeUserAddAccessTag
     @Route(.modal)
     var userPhotoPicker = makeUserPhotoPicker
 
@@ -180,6 +184,17 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeUserEditAccessSchedules(viewModel: ServerUserAdminViewModel) -> some View {
         EditAccessScheduleView(viewModel: viewModel)
+    }
+
+    @ViewBuilder
+    func makeUserEditAccessTags(viewModel: ServerUserAdminViewModel) -> some View {
+        EditServerUserAccessTagsView(viewModel: viewModel)
+    }
+
+    func makeUserAddAccessTag(viewModel: ServerUserAdminViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            AddServerUserAccessTagsView(viewModel: viewModel)
+        }
     }
 
     func makeUserAddAccessSchedule(viewModel: ServerUserAdminViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
