@@ -51,7 +51,7 @@ extension HomeView {
             if viewModel.resumeItems.isNotEmpty {
                 CinematicItemSelector(
                     items: viewModel.resumeItems.elements,
-                    posterType: posterType
+                    type: posterType
                 )
                 .topContent { item in
                     ImageView(cinematicImageSource(for: item))

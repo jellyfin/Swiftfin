@@ -818,6 +818,8 @@ internal enum L10n {
   }
   /// No title
   internal static let noTitle = L10n.tr("Localizable", "noTitle", fallback: "No title")
+  /// This Jellyfin server does not have any libraries that are active in Swiftfin. Swiftfin only supports Shows & Movies at this time.
+  internal static let noValidLibrariesError = L10n.tr("Localizable", "noValidLibrariesError", fallback: "This Jellyfin server does not have any libraries that are active in Swiftfin. Swiftfin only supports Shows & Movies at this time.")
   /// Official Rating
   internal static let officialRating = L10n.tr("Localizable", "officialRating", fallback: "Official Rating")
   /// Offset
@@ -956,6 +958,8 @@ internal enum L10n {
   internal static let red = L10n.tr("Localizable", "red", fallback: "Red")
   /// The number of reference frames is not supported
   internal static let refFramesNotSupported = L10n.tr("Localizable", "refFramesNotSupported", fallback: "The number of reference frames is not supported")
+  /// Refresh
+  internal static let refresh = L10n.tr("Localizable", "refresh", fallback: "Refresh")
   /// Refresh Metadata
   internal static let refreshMetadata = L10n.tr("Localizable", "refreshMetadata", fallback: "Refresh Metadata")
   /// Regional

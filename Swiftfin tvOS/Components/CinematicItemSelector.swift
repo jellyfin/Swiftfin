@@ -29,7 +29,7 @@ struct CinematicItemSelector<Item: Poster>: View {
     private var onSelect: (Item) -> Void
 
     let items: [Item]
-    let posterType: PosterDisplayType
+    let type: PosterDisplayType
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
@@ -47,7 +47,7 @@ struct CinematicItemSelector<Item: Poster>: View {
                         .transition(.opacity)
                 }
 
-                PosterHStack(type: posterType, items: items)
+                PosterHStack(type: type, items: items)
                     .content(itemContent)
                     .imageOverlay(itemImageOverlay)
                     .contextMenu(itemContextMenu)
@@ -99,7 +99,7 @@ struct CinematicItemSelector<Item: Poster>: View {
 
 extension CinematicItemSelector {
 
-    init(items: [Item], posterType: PosterDisplayType) {
+    init(items: [Item], type: PosterDisplayType) {
         self.init(
             topContent: { _ in EmptyView() },
             itemContent: { _ in EmptyView() },
@@ -108,7 +108,7 @@ extension CinematicItemSelector {
             trailingContent: { EmptyView() },
             onSelect: { _ in },
             items: items,
-            posterType: posterType
+            type: type
         )
     }
 }

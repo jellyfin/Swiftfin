@@ -67,7 +67,7 @@ extension HomeView {
         var cinematicView: some View {
             CinematicItemSelector(
                 items: viewModel.elements.elements,
-                posterType: posterType
+                type: posterType
             )
             .topContent { item in
                 ImageView(cinematicImageSource(for: item))

@@ -21,14 +21,12 @@ struct ErrorView<ErrorType: Error>: View {
                 .foregroundColor(Color.red)
 
             Text(error.localizedDescription)
-                .frame(minWidth: UIScreen.main.bounds.width / 4, maxWidth: UIScreen.main.bounds.width / 3)
+                .frame(maxWidth: 500)
                 .multilineTextAlignment(.center)
 
             if let onRetry {
                 PrimaryButton(title: L10n.retry)
                     .onSelect(onRetry)
-                    .frame(maxWidth: UIScreen.main.bounds.width / 3)
-                    .frame(height: 75)
             }
         }
     }

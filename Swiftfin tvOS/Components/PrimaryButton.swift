@@ -16,22 +16,28 @@ struct PrimaryButton: View {
     @Default(.accentColor)
     private var accentColor
 
+    // MARK: - Focus State
+
+    @FocusState
+    private var isFocused
+
     // MARK: - Primary Button Variables
 
     private let title: String
     private var onSelect: () -> Void
 
-    // MARK: - Primary Button Width
-
-    private let maxWidth: CGFloat = UIScreen.main.bounds.width / 3
-
     // MARK: - body
 
     var body: some View {
-        ListRowButton(title) {
-            onSelect()
+        ZStack {
+            ListRowButton(title) {
+                onSelect()
+            }
+            .focused($isFocused)
+            .foregroundStyle(accentColor.overlayColor, isFocused ? Color.jellyfinPurple : Color.gray)
         }
-        .foregroundStyle(accentColor.overlayColor, Color.jellyfinPurple)
+        .frame(maxWidth: 500)
+        .frame(height: 75)
     }
 }
 

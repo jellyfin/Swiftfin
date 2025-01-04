@@ -24,11 +24,7 @@ struct HomeView: View {
     private var router: HomeCoordinator.Router
 
     @StateObject
-    private var viewModel: HomeViewModel = {
-        let viewModel = HomeViewModel()
-        viewModel.send(.refresh)
-        return viewModel
-    }()
+    private var viewModel = HomeViewModel()
 
     // MARK: - Body
 
@@ -37,7 +33,15 @@ struct HomeView: View {
             Color.clear
             switch viewModel.state {
             case .content:
-                contentView
+                if viewModel.libraries.isEmpty {
+                    ErrorView(
+                        error: JellyfinAPIError(
+                            L10n.noValidLibrariesError
+                        )
+                    )
+                } else {
+                    contentView
+                }
             case let .error(error):
                 ErrorView(error: error)
                     .onRetry {
@@ -47,8 +51,11 @@ struct HomeView: View {
                 ProgressView()
             }
         }
-        .transition(.opacity.animation(.linear(duration: 0.2)))
+        .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
+        .onFirstAppear {
+            viewModel.send(.refresh)
+        }
         .sinceLastDisappear { interval in
             if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {
                 viewModel.send(.backgroundRefresh)
@@ -64,31 +71,52 @@ struct HomeView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
 
-                ResumeView(viewModel: viewModel)
+                if !viewModel.resumeItems.isEmpty {
+                    ResumeView(viewModel: viewModel)
+                }
 
-                NextUpView(
-                    viewModel: viewModel.nextUpViewModel,
-                    cinematic: viewModel.resumeItems.isEmpty
-                )
+                if !viewModel.nextUpViewModel.elements.isEmpty {
+                    NextUpView(
+                        viewModel: viewModel.nextUpViewModel,
+                        cinematic: viewModel.resumeItems.isEmpty
+                    )
+                }
 
-                if showRecentlyAdded {
+                if showRecentlyAdded && !viewModel.recentlyAddedViewModel.elements.isEmpty {
                     RecentlyAddedView(
                         viewModel: viewModel.recentlyAddedViewModel,
-                        cinematic: viewModel.nextUpViewModel.elements.isEmpty
-                            && viewModel.resumeItems.isEmpty
+                        cinematic: viewModel.resumeItems.isEmpty &&
+                            viewModel.nextUpViewModel.elements.isEmpty
                     )
                 }
 
                 ForEach(viewModel.libraries.indices, id: \.self) { index in
                     LatestInLibraryView(
                         viewModel: viewModel.libraries[index],
-                        cinematic: index == 0
-                            && (viewModel.recentlyAddedViewModel.elements.isEmpty || !showRecentlyAdded)
-                            && viewModel.nextUpViewModel.elements.isEmpty
-                            && viewModel.resumeItems.isEmpty
+                        cinematic: viewModel.resumeItems.isEmpty &&
+                            viewModel.nextUpViewModel.elements.isEmpty &&
+                            (!showRecentlyAdded || viewModel.recentlyAddedViewModel.elements.isEmpty) &&
+                            index == 0
                     )
                 }
+
+                Divider()
+
+                refreshButtonView
             }
         }
+    }
+
+    private var refreshButtonView: some View {
+        HStack {
+            Spacer()
+            PrimaryButton(title: L10n.refresh)
+                .onSelect {
+                    viewModel.send(.refresh)
+                }
+            Spacer()
+        }
+        .focusSection()
+        .padding()
     }
 }

@@ -1159,6 +1159,9 @@
 /// No title
 "noTitle" = "No title";
 
+/// This Jellyfin server does not have any libraries that are active in Swiftfin. Swiftfin only supports Shows & Movies at this time.
+"noValidLibrariesError" = "This Jellyfin server does not have any libraries that are active in Swiftfin. Swiftfin only supports Shows & Movies at this time.";
+
 /// Official Rating
 "officialRating" = "Official Rating";
 
@@ -1362,6 +1365,9 @@
 
 /// The number of reference frames is not supported
 "refFramesNotSupported" = "The number of reference frames is not supported";
+
+/// Refresh
+"refresh" = "Refresh";
 
 /// Refresh Metadata
 "refreshMetadata" = "Refresh Metadata";

@@ -201,7 +201,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             }
         }
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
-        .transition(.opacity.animation(.linear(duration: 0.2)))
+        .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
         .onFirstAppear {
             if viewModel.state == .initial {
