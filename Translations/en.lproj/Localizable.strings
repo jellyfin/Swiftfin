@@ -562,6 +562,9 @@
 /// Are you sure you wish to delete this device? This session will be logged out.
 "deleteDeviceWarning" = "Are you sure you wish to delete this device? This session will be logged out.";
 
+/// Delete image
+"deleteImage" = "Delete image";
+
 /// Are you sure you want to delete this item?
 "deleteItemConfirmation" = "Are you sure you want to delete this item?";
 
@@ -879,6 +882,9 @@
 
 /// Illustrator
 "illustrator" = "Illustrator";
+
+/// Images
+"images" = "Images";
 
 /// Indicators
 "indicators" = "Indicators";
@@ -1890,6 +1896,12 @@
 
 /// You have unsaved changes. Are you sure you want to discard them?
 "unsavedChangesMessage" = "You have unsaved changes. Are you sure you want to discard them?";
+
+/// Upload file
+"uploadFile" = "Upload file";
+
+/// Upload photo
+"uploadPhoto" = "Upload photo";
 
 /// URL
 "url" = "URL";
