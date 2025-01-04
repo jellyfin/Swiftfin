@@ -135,23 +135,41 @@ struct EditItemImagesView: View {
     private func sectionHeader(for imageType: ImageType) -> some View {
         HStack(alignment: .center, spacing: 16) {
             Text(imageType.rawValue.localizedCapitalized)
+                .font(.headline)
             Spacer()
-            Button(action: {
-                router.route(
-                    to: \.addImage,
-                    RemoteImageInfoViewModel(
-                        item: viewModel.item,
-                        imageType: imageType
+            Menu(L10n.options, systemImage: "plus") {
+                Button(action: {
+                    router.route(
+                        to: \.addImage,
+                        RemoteImageInfoViewModel(
+                            item: viewModel.item,
+                            imageType: imageType
+                        )
                     )
-                )
-            }) {
-                Image(systemName: "magnifyingglass")
+                }) {
+                    Label(L10n.search, systemImage: "magnifyingglass")
+                }
+
+                Divider()
+
+                Button(action: {
+                    uploadType = imageType
+                }) {
+                    Label(L10n.uploadFile, systemImage: "document.badge.plus")
+                }
+
+                Button(action: {
+                    uploadType = imageType
+                }) {
+                    Label(L10n.uploadPhoto, systemImage: "photo.badge.plus")
+                }
             }
-            Button(action: { uploadType = imageType }) {
-                Image(systemName: "plus")
-            }
+            .font(.body)
+            .labelStyle(.iconOnly)
+            .backport
+            .fontWeight(.semibold)
+            .foregroundStyle(accentColor)
         }
-        .font(.headline)
         .padding(.horizontal, 30)
     }
 

@@ -1897,6 +1897,12 @@
 /// You have unsaved changes. Are you sure you want to discard them?
 "unsavedChangesMessage" = "You have unsaved changes. Are you sure you want to discard them?";
 
+/// Upload file
+"uploadFile" = "Upload file";
+
+/// Upload photo
+"uploadPhoto" = "Upload photo";
+
 /// URL
 "url" = "URL";
 

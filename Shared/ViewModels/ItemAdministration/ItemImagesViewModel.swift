@@ -76,19 +76,6 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         self.item = item
         self.includeAllLanguages = includeAllLanguages
         super.init()
-
-        Notifications[.itemMetadataDidChange]
-            .publisher
-            .sink { [weak self] item in
-                guard let self else { return }
-                self.item = item
-                Task {
-                    await MainActor.run {
-                        self.send(.backgroundRefresh)
-                    }
-                }
-            }
-            .store(in: &cancellables)
     }
 
     // MARK: - Respond to Actions
@@ -145,7 +132,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                     await MainActor.run {
                         self.state = .error(apiError)
                         self.eventSubject.send(.error(apiError))
-                        _ = self.backgroundStates.remove(.refreshing)
+                        self.backgroundStates.remove(.refreshing)
                     }
                 }
             }.asAnyCancellable()
@@ -159,20 +146,21 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                 guard let self = self else { return }
                 do {
                     await MainActor.run {
-                        _ = self.state = .updating
+                        self.state = .updating
                     }
 
                     try await self.uploadImage(url, type: imageType)
+                    try await self.refreshItem()
 
                     await MainActor.run {
+                        self.state = .content
                         self.eventSubject.send(.updated)
-                        _ = self.state = .updating
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
+                        self.state = .error(apiError)
                         self.eventSubject.send(.error(apiError))
-                        _ = self.state = .updating
                     }
                 }
             }.asAnyCancellable()
@@ -186,20 +174,21 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                 guard let self = self else { return }
                 do {
                     await MainActor.run {
-                        _ = self.state = .deleting
+                        self.state = .deleting
                     }
 
-                    try await self.deleteImage(imageInfo)
+                    try await deleteImage(imageInfo)
+                    try await refreshItem()
 
                     await MainActor.run {
                         self.eventSubject.send(.deleted)
-                        _ = self.state = .deleting
+                        self.state = .deleting
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
+                        self.state = .deleting
                         self.eventSubject.send(.error(apiError))
-                        _ = self.state = .deleting
                     }
                 }
             }.asAnyCancellable()
@@ -213,27 +202,21 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
     private func getAllImages() async throws {
         guard let itemID = item.id else { return }
 
-        // Get all of the ImageInfos for the Item
         let imageRequest = Paths.getItemImageInfos(itemID: itemID)
         let imageResponse = try await self.userSession.client.send(imageRequest)
         let imageInfos = imageResponse.value
 
-        // Get Current vs New ImageInfos for comparison
         let currentImageInfos = Set(self.images.keys)
         let newImageInfos = Set(imageInfos)
 
-        // Exit if all ImageInfos are the same
         guard currentImageInfos != newImageInfos else { return }
 
-        // Remove missing ImageInfos from published Images
         await MainActor.run {
             self.images = self.images.filter { newImageInfos.contains($0.key) }
         }
 
-        // Identify missing ImageInfos in the published Images
         let missingImageInfos = imageInfos.filter { !self.images.keys.contains($0) }
 
-        // Get all UIImages for all missing ImageInfos
         try await withThrowingTaskGroup(of: (ImageInfo, UIImage).self) { group in
             for imageInfo in missingImageInfos {
                 group.addTask {
@@ -249,7 +232,6 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                         )
                         let response = try await self.userSession.client.send(request)
 
-                        // Convert the Response Data into a UIImage
                         if let image = UIImage(data: response.value) {
                             return (imageInfo, image)
                         }
@@ -260,7 +242,6 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                 }
             }
 
-            // Publish ImageInfos
             for try await (imageInfo, image) in group {
                 await MainActor.run {
                     self.images[imageInfo] = image
@@ -271,30 +252,35 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: - Upload Image
 
-    // TODO: Make actually work. 500 error. Bad format.
     private func uploadImage(_ url: URL, type: ImageType) async throws {
         guard let itemID = item.id else { return }
 
-        // Start accessing security-scoped resource
         guard url.startAccessingSecurityScopedResource() else {
             throw JellyfinAPIError("Unable to access file at \(url)")
         }
         defer { url.stopAccessingSecurityScopedResource() }
 
         let data = try Data(contentsOf: url)
-        let image = UIImage(data: data)!
+        guard let image = UIImage(data: data) else {
+            throw JellyfinAPIError("Unable to load image from file")
+        }
+
+        let maxDimension: CGFloat = 3000
+        let resizedImage = image.size.width > maxDimension || image.size.height > maxDimension
+            ? resizeImage(image, maxDimension: maxDimension)
+            : image
+
         let contentType: String
         let imageData: Data
 
-        if let pngData = image.pngData() {
+        if let pngData = resizedImage.pngData() {
             contentType = "image/png"
-            imageData = pngData
-        } else if let jpgData = image.jpegData(compressionQuality: 1) {
+            imageData = pngData.base64EncodedData()
+        } else if let jpgData = resizedImage.jpegData(compressionQuality: 0.8) {
             contentType = "image/jpeg"
-            imageData = jpgData
+            imageData = jpgData.base64EncodedData()
         } else {
-            logger.error("Unable to convert given profile image to png/jpg")
-            throw JellyfinAPIError("An internal error occurred")
+            throw JellyfinAPIError("Failed to convert image to png/jpg")
         }
 
         var request = Paths.setItemImage(
@@ -305,8 +291,27 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         request.headers = ["Content-Type": contentType]
 
         _ = try await userSession.client.send(request)
+    }
 
-        try await refreshItem()
+    // MARK: - Resize Large Image
+
+    private func resizeImage(_ image: UIImage, maxDimension: CGFloat) -> UIImage {
+        let size = image.size
+        let aspectRatio = size.width / size.height
+
+        var newSize: CGSize
+        if size.width > size.height {
+            newSize = CGSize(width: maxDimension, height: maxDimension / aspectRatio)
+        } else {
+            newSize = CGSize(width: maxDimension * aspectRatio, height: maxDimension)
+        }
+
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+        image.draw(in: CGRect(origin: .zero, size: newSize))
+        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return resizedImage ?? image
     }
 
     // MARK: - Delete Image
@@ -323,8 +328,6 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         )
 
         _ = try await userSession.client.send(request)
-
-        try await refreshItem()
 
         await MainActor.run {
             self.images.removeValue(forKey: imageInfo)
