@@ -13,7 +13,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct EditItemImagesView: View {
+struct ItemImagesView: View {
 
     // MARK: - Defaults
 
@@ -23,7 +23,7 @@ struct EditItemImagesView: View {
     // MARK: - Observed & Environment Objects
 
     @EnvironmentObject
-    private var router: ItemEditorCoordinator.Router
+    private var router: ItemImagesCoordinator.Router
 
     @StateObject
     var viewModel: ItemImagesViewModel
@@ -31,7 +31,7 @@ struct EditItemImagesView: View {
     // MARK: - Dialog State
 
     @State
-    private var selectedImage: ImageInfo?
+    private var selectedType: ImageType?
 
     // MARK: - Error State
 
@@ -57,18 +57,18 @@ struct EditItemImagesView: View {
             .onFirstAppear {
                 viewModel.send(.refresh)
             }
-            .sheet(item: $selectedImage) { imageInfo in
-                deletionSheet(imageInfo)
+            .navigationBarCloseButton {
+                router.dismissCoordinator()
             }
             .fileImporter(
-                isPresented: .constant(viewModel.selectedType != nil),
+                isPresented: .constant(selectedType != nil),
                 allowedContentTypes: [.image],
                 allowsMultipleSelection: false
             ) {
                 switch $0 {
                 case let .success(urls):
-                    if let url = urls.first {
-                        viewModel.send(.uploadImage(url))
+                    if let file = urls.first, let type = selectedType {
+                        viewModel.send(.uploadImage(file: file, type: type))
                     }
                 case let .failure(fileError):
                     self.error = fileError
@@ -118,7 +118,7 @@ struct EditItemImagesView: View {
                 HStack {
                     ForEach(sortedImageArray, id: \.key) { imageData in
                         imageButton(imageData.value) {
-                            selectedImage = imageData.key
+                            router.route(to: \.deleteImage, imageData)
                         }
                     }
                 }
@@ -136,10 +136,9 @@ struct EditItemImagesView: View {
             Spacer()
             Menu(L10n.options, systemImage: "plus") {
                 Button(action: {
-                    viewModel.send(.selectType(imageType))
                     router.route(
                         to: \.addImage,
-                        viewModel
+                        imageType
                     )
                 }) {
                     Label(L10n.search, systemImage: "magnifyingglass")
@@ -148,13 +147,13 @@ struct EditItemImagesView: View {
                 Divider()
 
                 Button(action: {
-                    viewModel.send(.selectType(imageType))
+                    selectedType = imageType
                 }) {
                     Label(L10n.uploadFile, systemImage: "document.badge.plus")
                 }
 
                 Button(action: {
-                    viewModel.send(.selectType(imageType))
+                    selectedType = imageType
                 }) {
                     Label(L10n.uploadPhoto, systemImage: "photo.badge.plus")
                 }
@@ -182,39 +181,6 @@ struct EditItemImagesView: View {
             .frame(maxHeight: 150)
             .shadow(radius: 4)
             .padding(16)
-        }
-    }
-
-    // MARK: - Delete Image Confirmation Sheet
-
-    @ViewBuilder
-    private func deletionSheet(_ imageInfo: ImageInfo) -> some View {
-        if let image = viewModel.images[imageInfo] {
-            NavigationView {
-                VStack {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-
-                    Text("\(Int(image.size.width)) x \(Int(image.size.height))")
-                        .font(.headline)
-                }
-                .padding(.horizontal)
-                .navigationTitle(L10n.deleteImage)
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationBarCloseButton {
-                    selectedImage = nil
-                }
-                .topBarTrailing {
-                    Button(L10n.delete, role: .destructive) {
-                        viewModel.send(.deleteImage(imageInfo))
-                        selectedImage = nil
-                    }
-                    .buttonStyle(.toolbarPill(.red))
-                }
-            }
-        } else {
-            ErrorView(error: JellyfinAPIError(L10n.unknownError))
         }
     }
 }

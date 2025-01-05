@@ -20,26 +20,21 @@ struct AddItemImageView: View {
     @Default(.accentColor)
     private var accentColor
 
-    // MARK: - State, Observed, & Environment Objects
+    // MARK: - Observed, & Environment Objects
 
     @EnvironmentObject
-    private var router: ItemEditorCoordinator.Router
+    private var router: ItemImagesCoordinator.Router
 
     @ObservedObject
     private var viewModel: ItemImagesViewModel
 
-    @StateObject
+    @ObservedObject
     private var remoteImageInfoViewModel: RemoteImageInfoViewModel
 
     // MARK: - Dialog States
 
     @State
     private var error: Error?
-
-    // MARK: - Selected Image
-
-    @State
-    private var selectedImage: RemoteImageInfo?
 
     // MARK: - Collection Layout
 
@@ -48,12 +43,14 @@ struct AddItemImageView: View {
 
     // MARK: - Initializer
 
-    init(viewModel: ItemImagesViewModel) {
+    init(viewModel: ItemImagesViewModel, imageType: ImageType) {
         self._viewModel = ObservedObject(wrappedValue: viewModel)
-        self._remoteImageInfoViewModel = StateObject(wrappedValue: RemoteImageInfoViewModel(
-            item: viewModel.item,
-            imageType: viewModel.selectedType!
-        ))
+        self._remoteImageInfoViewModel = ObservedObject(
+            initialValue: RemoteImageInfoViewModel(
+                item: viewModel.item,
+                imageType: imageType
+            )
+        )
     }
 
     // MARK: - Body
@@ -68,7 +65,7 @@ struct AddItemImageView: View {
                     ProgressView()
                 }
             }
-            .onFirstAppear {
+            .onAppear {
                 remoteImageInfoViewModel.send(.refresh)
             }
             .onReceive(viewModel.events) { event in
@@ -84,11 +81,6 @@ struct AddItemImageView: View {
                 }
             }
             .errorMessage($error)
-            .sheet(item: $selectedImage, onDismiss: {
-                selectedImage = nil
-            }) { selectedImage in
-                confirmationSheet(selectedImage)
-            }
     }
 
     // MARK: - Content View
@@ -148,7 +140,9 @@ struct AddItemImageView: View {
 
     private func imageButton(_ image: RemoteImageInfo?) -> some View {
         Button {
-            selectedImage = image
+            if let image {
+                router.route(to: \.selectImage, image)
+            }
         } label: {
             posterImage(
                 image,
@@ -186,41 +180,5 @@ struct AddItemImageView: View {
                 .font(.headline)
         }
         .posterStyle(posterStyle)
-    }
-
-    // MARK: - Set Image Confirmation
-
-    @ViewBuilder
-    private func confirmationSheet(_ remoteImageInfo: RemoteImageInfo) -> some View {
-        NavigationView {
-            VStack {
-                posterImage(
-                    remoteImageInfo,
-                    posterStyle: remoteImageInfo.height ?? 0 > remoteImageInfo.width ?? 0 ? .portrait : .landscape
-                )
-                .scaledToFit()
-
-                if let imageWidth = remoteImageInfo.width, let imageHeight = remoteImageInfo.height {
-                    Text("\(imageWidth) x \(imageHeight)")
-                        .font(.body)
-                }
-
-                Text(remoteImageInfo.providerName ?? .emptyDash)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            .padding(.horizontal)
-            .navigationTitle(L10n.replaceImages)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarCloseButton {
-                selectedImage = nil
-            }
-            .topBarTrailing {
-                Button(L10n.save) {
-                    viewModel.send(.setImage(remoteImageInfo))
-                }
-                .buttonStyle(.toolbarPill)
-            }
-        }
     }
 }

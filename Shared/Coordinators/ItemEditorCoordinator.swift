@@ -26,12 +26,10 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
     @Route(.modal)
     var editMetadata = makeEditMetadata
 
-    // MARK: - Route to Metadata
+    // MARK: - Route to Images
 
-    @Route(.push)
-    var editImages = makeEditImages
-    @Route(.push)
-    var addImage = makeAddImage
+    @Route(.modal)
+    var imageEditor = makeImageEditor
 
     // MARK: - Route to Genres
 
@@ -82,13 +80,8 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
 
     // MARK: - Item Images
 
-    @ViewBuilder
-    func makeEditImages(item: BaseItemDto) -> some View {
-        EditItemImagesView(viewModel: ItemImagesViewModel(item: item))
-    }
-
-    func makeAddImage(viewModel: ItemImagesViewModel) -> some View {
-        AddItemImageView(viewModel: viewModel)
+    func makeImageEditor(viewModel: ItemImagesViewModel) -> NavigationViewCoordinator<ItemImagesCoordinator> {
+        NavigationViewCoordinator(ItemImagesCoordinator(viewModel: viewModel))
     }
 
     // MARK: - Item Genres

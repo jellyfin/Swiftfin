@@ -77,7 +77,7 @@
 		4E3A24DC2CFE35D50083A72C /* NameInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3A24DB2CFE35CC0083A72C /* NameInput.swift */; };
 		4E45939E2D04E20000E277E1 /* ItemImagesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E45939D2D04E1E600E277E1 /* ItemImagesViewModel.swift */; };
 		4E45939F2D04E20000E277E1 /* ItemImagesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E45939D2D04E1E600E277E1 /* ItemImagesViewModel.swift */; };
-		4E4593A32D04E2B500E277E1 /* EditItemImagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4593A22D04E2AF00E277E1 /* EditItemImagesView.swift */; };
+		4E4593A32D04E2B500E277E1 /* ItemImagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4593A22D04E2AF00E277E1 /* ItemImagesView.swift */; };
 		4E4593A62D04E4E300E277E1 /* AddItemImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4593A52D04E4DE00E277E1 /* AddItemImageView.swift */; };
 		4E49DECB2CE54AA200352DCD /* SessionsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E49DECA2CE54A9200352DCD /* SessionsSection.swift */; };
 		4E49DECD2CE54C7A00352DCD /* PermissionSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E49DECC2CE54C7200352DCD /* PermissionSection.swift */; };
@@ -186,6 +186,11 @@
 		4EA397472CD31CC000904C25 /* AddServerUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA397452CD31CB900904C25 /* AddServerUserViewModel.swift */; };
 		4EA78B0F2D29B0880093BFCE /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA78B0E2D29B0820093BFCE /* Request.swift */; };
 		4EA78B102D29B0880093BFCE /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA78B0E2D29B0820093BFCE /* Request.swift */; };
+		4EA78B122D29F62E0093BFCE /* ItemImagesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA78B112D29F6240093BFCE /* ItemImagesCoordinator.swift */; };
+		4EA78B132D29F62E0093BFCE /* ItemImagesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA78B112D29F6240093BFCE /* ItemImagesCoordinator.swift */; };
+		4EA78B162D2A0C4A0093BFCE /* ItemImageDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA78B142D2A0C4A0093BFCE /* ItemImageDetailsView.swift */; };
+		4EA78B182D2A265E0093BFCE /* RemoteImageInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA78B172D2A26560093BFCE /* RemoteImageInfoView.swift */; };
+		4EA78B1A2D2A26670093BFCE /* LocalImageInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA78B192D2A26600093BFCE /* LocalImageInfoView.swift */; };
 		4EB1404C2C8E45B1008691F3 /* StreamSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1404B2C8E45B1008691F3 /* StreamSection.swift */; };
 		4EB1A8CA2C9A766200F43898 /* ActiveSessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1A8C92C9A765800F43898 /* ActiveSessionsView.swift */; };
 		4EB1A8CC2C9B1BA200F43898 /* DestructiveServerTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1A8CB2C9B1B9700F43898 /* DestructiveServerTask.swift */; };
@@ -1252,7 +1257,7 @@
 		4E3A24D92CFE349A0083A72C /* SearchResultsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsSection.swift; sourceTree = "<group>"; };
 		4E3A24DB2CFE35CC0083A72C /* NameInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameInput.swift; sourceTree = "<group>"; };
 		4E45939D2D04E1E600E277E1 /* ItemImagesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemImagesViewModel.swift; sourceTree = "<group>"; };
-		4E4593A22D04E2AF00E277E1 /* EditItemImagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditItemImagesView.swift; sourceTree = "<group>"; };
+		4E4593A22D04E2AF00E277E1 /* ItemImagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemImagesView.swift; sourceTree = "<group>"; };
 		4E4593A52D04E4DE00E277E1 /* AddItemImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemImageView.swift; sourceTree = "<group>"; };
 		4E49DECA2CE54A9200352DCD /* SessionsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionsSection.swift; sourceTree = "<group>"; };
 		4E49DECC2CE54C7200352DCD /* PermissionSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionSection.swift; sourceTree = "<group>"; };
@@ -1335,6 +1340,10 @@
 		4EA09DE32CC4E85700CB27E4 /* APIKeysRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeysRow.swift; sourceTree = "<group>"; };
 		4EA397452CD31CB900904C25 /* AddServerUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddServerUserViewModel.swift; sourceTree = "<group>"; };
 		4EA78B0E2D29B0820093BFCE /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
+		4EA78B112D29F6240093BFCE /* ItemImagesCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemImagesCoordinator.swift; sourceTree = "<group>"; };
+		4EA78B142D2A0C4A0093BFCE /* ItemImageDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemImageDetailsView.swift; sourceTree = "<group>"; };
+		4EA78B172D2A26560093BFCE /* RemoteImageInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageInfoView.swift; sourceTree = "<group>"; };
+		4EA78B192D2A26600093BFCE /* LocalImageInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalImageInfoView.swift; sourceTree = "<group>"; };
 		4EB1404B2C8E45B1008691F3 /* StreamSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamSection.swift; sourceTree = "<group>"; };
 		4EB1A8C92C9A765800F43898 /* ActiveSessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionsView.swift; sourceTree = "<group>"; };
 		4EB1A8CB2C9B1B9700F43898 /* DestructiveServerTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestructiveServerTask.swift; sourceTree = "<group>"; };
@@ -2292,7 +2301,8 @@
 			isa = PBXGroup;
 			children = (
 				4E4593A42D04E4D600E277E1 /* AddItemImageView */,
-				4E4593A12D04E2A200E277E1 /* EditItemImagesView */,
+				4EA78B152D2A0C4A0093BFCE /* ItemImageDetailsView */,
+				4E4593A12D04E2A200E277E1 /* ItemImagesView */,
 			);
 			path = ItemImages;
 			sourceTree = "<group>";
@@ -2316,12 +2326,12 @@
 			path = PlaybackBitrate;
 			sourceTree = "<group>";
 		};
-		4E4593A12D04E2A200E277E1 /* EditItemImagesView */ = {
+		4E4593A12D04E2A200E277E1 /* ItemImagesView */ = {
 			isa = PBXGroup;
 			children = (
-				4E4593A22D04E2AF00E277E1 /* EditItemImagesView.swift */,
+				4E4593A22D04E2AF00E277E1 /* ItemImagesView.swift */,
 			);
-			path = EditItemImagesView;
+			path = ItemImagesView;
 			sourceTree = "<group>";
 		};
 		4E4593A42D04E4D600E277E1 /* AddItemImageView */ = {
@@ -2684,6 +2694,24 @@
 			isa = PBXGroup;
 			children = (
 				4EA09DE32CC4E85700CB27E4 /* APIKeysRow.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4EA78B152D2A0C4A0093BFCE /* ItemImageDetailsView */ = {
+			isa = PBXGroup;
+			children = (
+				4EA78B1B2D2A266A0093BFCE /* Components */,
+				4EA78B142D2A0C4A0093BFCE /* ItemImageDetailsView.swift */,
+			);
+			path = ItemImageDetailsView;
+			sourceTree = "<group>";
+		};
+		4EA78B1B2D2A266A0093BFCE /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4EA78B192D2A26600093BFCE /* LocalImageInfoView.swift */,
+				4EA78B172D2A26560093BFCE /* RemoteImageInfoView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -3490,6 +3518,7 @@
 				62C29EA526D1036A00C1D2E7 /* HomeCoordinator.swift */,
 				6220D0BF26D61C5000B8E046 /* ItemCoordinator.swift */,
 				4E8F74A02CE03C8B00CC8969 /* ItemEditorCoordinator.swift */,
+				4EA78B112D29F6240093BFCE /* ItemImagesCoordinator.swift */,
 				6220D0B326D5ED8000B8E046 /* LibraryCoordinator.swift */,
 				E102312B2BCF8A08009D71FC /* LiveTVCoordinator */,
 				C46DD8D12A8DC1F60046A504 /* LiveVideoPlayerCoordinator.swift */,
@@ -5723,6 +5752,7 @@
 				E1C9261B288756BD002A7A66 /* DotHStack.swift in Sources */,
 				E1CB757D2C80F00D00217C76 /* TranscodingProfile.swift in Sources */,
 				E104C873296E0D0A00C1C3F9 /* IndicatorSettingsView.swift in Sources */,
+				4EA78B122D29F62E0093BFCE /* ItemImagesCoordinator.swift in Sources */,
 				E18ACA8D2A14773500BB4F35 /* (null) in Sources */,
 				E10B1E8E2BD7708900A92EAF /* QuickConnectView.swift in Sources */,
 			);
@@ -5771,6 +5801,7 @@
 				62E632EC267D410B0063E547 /* SeriesItemViewModel.swift in Sources */,
 				625CB5732678C32A00530A6E /* HomeViewModel.swift in Sources */,
 				62C29EA826D103D500C1D2E7 /* MediaCoordinator.swift in Sources */,
+				4EA78B182D2A265E0093BFCE /* RemoteImageInfoView.swift in Sources */,
 				E1F5CF052CB09EA000607465 /* CurrentDate.swift in Sources */,
 				E13316FE2ADE42B6009BF865 /* OnSizeChangedModifier.swift in Sources */,
 				62E632DC267D2E130063E547 /* SearchViewModel.swift in Sources */,
@@ -5789,7 +5820,7 @@
 				E102314A2BCF8A6D009D71FC /* ProgramsViewModel.swift in Sources */,
 				E1721FAA28FB7CAC00762992 /* CompactTimeStamp.swift in Sources */,
 				E1803EA12BFBD6CF0039F90E /* Hashable.swift in Sources */,
-				4E4593A32D04E2B500E277E1 /* EditItemImagesView.swift in Sources */,
+				4E4593A32D04E2B500E277E1 /* ItemImagesView.swift in Sources */,
 				4E699BB92CB33FC2007CBD5D /* HomeSection.swift in Sources */,
 				62C29E9F26D1016600C1D2E7 /* iOSMainCoordinator.swift in Sources */,
 				E12CC1B128D1008F00678D5D /* NextUpView.swift in Sources */,
@@ -5960,6 +5991,7 @@
 				62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */,
 				E10E67B72CF515130095365B /* Binding.swift in Sources */,
 				E119696A2CC99EA9001A58BE /* ServerTaskProgressSection.swift in Sources */,
+				4EA78B132D29F62E0093BFCE /* ItemImagesCoordinator.swift in Sources */,
 				E1BAFE102BE921270069C4D7 /* SwiftfinApp+ValueObservation.swift in Sources */,
 				E1ED7FDE2CAA641F00ACB6E3 /* ListTitleSection.swift in Sources */,
 				62E632E6267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
@@ -6030,6 +6062,7 @@
 				E102313B2BCF8A3C009D71FC /* ProgramProgressOverlay.swift in Sources */,
 				4E01446D2D0292E200193038 /* Trie.swift in Sources */,
 				E1937A61288F32DB00CB80AA /* Poster.swift in Sources */,
+				4EA78B162D2A0C4A0093BFCE /* ItemImageDetailsView.swift in Sources */,
 				4E2182E62CAF67F50094806B /* PlayMethod.swift in Sources */,
 				E145EB482BE0C136003BF6F3 /* ScrollIfLargerThanContainerModifier.swift in Sources */,
 				E1CB757C2C80F00D00217C76 /* TranscodingProfile.swift in Sources */,
@@ -6121,6 +6154,7 @@
 				4E35CE612CBED3F300DBD886 /* TimeLimitSection.swift in Sources */,
 				E11B1B6C2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */,
 				4E182C9C2C94993200FBEFD5 /* ServerTasksView.swift in Sources */,
+				4EA78B1A2D2A26670093BFCE /* LocalImageInfoView.swift in Sources */,
 				E1D4BF812719D22800A11E64 /* AppAppearance.swift in Sources */,
 				4E6619FD2CEFE2BE00025C99 /* ItemEditorViewModel.swift in Sources */,
 				E1BDF2EF29522A5900CC0294 /* AudioActionButton.swift in Sources */,

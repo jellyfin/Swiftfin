@@ -12,7 +12,6 @@ import IdentifiedCollections
 import JellyfinAPI
 import OrderedCollections
 import SwiftUI
-import UniformTypeIdentifiers
 
 class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
@@ -26,9 +25,9 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         case cancel
         case refresh
         case backgroundRefresh
-        case selectType(ImageType?)
         case setImage(RemoteImageInfo)
-        case uploadImage(URL)
+        case uploadPhoto(image: UIImage, type: ImageType)
+        case uploadImage(file: URL, type: ImageType)
         case deleteImage(ImageInfo)
     }
 
@@ -52,8 +51,6 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
     @Published
     var item: BaseItemDto
-    @Published
-    var selectedType: ImageType?
     @Published
     var images: [ImageInfo: UIImage] = [:]
 
@@ -92,13 +89,6 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         case .cancel:
             task?.cancel()
             self.state = .initial
-
-            return state
-
-        case let .selectType(type):
-            task?.cancel()
-
-            self.selectedType = type
 
             return state
 
@@ -185,7 +175,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
             return state
 
-        case let .uploadImage(url):
+        case let .uploadPhoto(image, type):
             task?.cancel()
 
             task = Task { [weak self] in
@@ -195,7 +185,35 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                         self.state = .updating
                     }
 
-                    try await self.uploadImage(url)
+                    try await self.uploadPhoto(image, type: type)
+                    try await self.refreshItem()
+
+                    await MainActor.run {
+                        self.state = .content
+                        self.eventSubject.send(.updated)
+                    }
+                } catch {
+                    let apiError = JellyfinAPIError(error.localizedDescription)
+                    await MainActor.run {
+                        self.state = .error(apiError)
+                        self.eventSubject.send(.error(apiError))
+                    }
+                }
+            }.asAnyCancellable()
+
+            return state
+
+        case let .uploadImage(url, type):
+            task?.cancel()
+
+            task = Task { [weak self] in
+                guard let self = self else { return }
+                do {
+                    await MainActor.run {
+                        self.state = .updating
+                    }
+
+                    try await self.uploadImage(url, type: type)
                     try await self.refreshItem()
 
                     await MainActor.run {
@@ -306,79 +324,94 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         let parameters = Paths.DownloadRemoteImageParameters(type: type, imageURL: imageURL)
         let imageRequest = Paths.downloadRemoteImage(itemID: itemID, parameters: parameters)
         try await userSession.client.send(imageRequest)
-
-        await MainActor.run {
-            self.selectedType = nil
-        }
     }
 
-    // MARK: - Upload Image
+    // MARK: - Upload Image/File
 
-    private func uploadImage(_ url: URL) async throws {
-        guard let itemID = item.id,
-              let type = selectedType else { return }
+    private func upload(imageData: Data, imageType: ImageType, contentType: String) async throws {
+        guard let itemID = item.id else { return }
 
+        let uploadLimit: Int = 30_000_000
+
+        guard imageData.count <= uploadLimit else {
+            throw JellyfinAPIError(
+                "This image (\(imageData.count.formatted(.byteCount(style: .file)))) exceeds the maximum allowed size for upload (\(uploadLimit.formatted(.byteCount(style: .file)))."
+            )
+        }
+
+        var request = Paths.setItemImage(
+            itemID: itemID,
+            imageType: imageType.rawValue,
+            imageData.base64EncodedData()
+        )
+        request.headers = ["Content-Type": contentType]
+
+        _ = try await userSession.client.send(request)
+    }
+
+    // MARK: - Prepare Photo for Upload
+
+    private func uploadPhoto(_ image: UIImage, type: ImageType) async throws {
+        let contentType: String
+        let imageData: Data
+
+        if let pngData = image.pngData() {
+            contentType = "image/png"
+            imageData = pngData
+        } else if let jpgData = image.jpegData(compressionQuality: 1) {
+            contentType = "image/jpeg"
+            imageData = jpgData
+        } else {
+            logger.error("Unable to convert given profile image to png/jpg")
+            throw JellyfinAPIError("An internal error occurred")
+        }
+
+        try await upload(
+            imageData: imageData,
+            imageType: type,
+            contentType: contentType
+        )
+    }
+
+    // MARK: - Prepare Image for Upload
+
+    private func uploadImage(_ url: URL, type: ImageType) async throws {
         guard url.startAccessingSecurityScopedResource() else {
             throw JellyfinAPIError("Unable to access file at \(url)")
         }
         defer { url.stopAccessingSecurityScopedResource() }
 
-        let fileData = try Data(contentsOf: url)
-        let fileSize = fileData.count
-
-        guard fileSize < 30_000_000 else {
-            throw JellyfinAPIError(
-                "This image is too large (\(fileSize.formatted(.byteCount(style: .file)))). The upload limit for images is 30 MB."
-            )
-        }
-
         let contentType: String
         let imageData: Data
 
-        if let fileType = UTType(filenameExtension: url.pathExtension) {
-            if fileType.conforms(to: .png) {
-                contentType = "image/png"
-                imageData = fileData
-            } else if fileType.conforms(to: .jpeg) {
-                contentType = "image/jpeg"
-                imageData = fileData
-            } else {
-                guard let image = UIImage(data: fileData) else {
-                    throw JellyfinAPIError("Unable to load image from file")
-                }
-
-                if let pngData = image.pngData() {
-                    contentType = "image/png"
-                    imageData = pngData
-                } else if let jpgData = image.jpegData(compressionQuality: 1) {
-                    contentType = "image/jpeg"
-                    imageData = jpgData
-                } else {
-                    throw JellyfinAPIError("Failed to convert image to png/jpg")
-                }
+        switch url.pathExtension.lowercased() {
+        case "png":
+            contentType = "image/png"
+            imageData = try Data(contentsOf: url)
+        case "jpeg", "jpg":
+            contentType = "image/jpeg"
+            imageData = try Data(contentsOf: url)
+        default:
+            guard let image = try UIImage(data: Data(contentsOf: url)) else {
+                throw JellyfinAPIError("Unable to load image from file")
             }
-        } else {
-            throw JellyfinAPIError("Unsupported file type")
+
+            if let pngData = image.pngData() {
+                contentType = "image/png"
+                imageData = pngData
+            } else if let jpgData = image.jpegData(compressionQuality: 1) {
+                contentType = "image/jpeg"
+                imageData = jpgData
+            } else {
+                throw JellyfinAPIError("Failed to convert image to png/jpg")
+            }
         }
 
-        var request = Paths.setItemImage(
-            itemID: itemID,
-            imageType: type.rawValue,
-            imageData.base64EncodedData()
+        try await upload(
+            imageData: imageData,
+            imageType: type,
+            contentType: contentType
         )
-        request.headers = ["Content-Type": contentType]
-
-        guard request.bodySize < 30_000_000 else {
-            throw JellyfinAPIError(
-                "Converting this image into a valid format has resulted in a larger image (\(request.bodySize.formatted(.byteCount(style: .file)))) that is now too large for upload. Before conversion this image was \(fileData.count.formatted(.byteCount(style: .file))). The upload limit for images is 30 MB."
-            )
-        }
-
-        _ = try await userSession.client.send(request)
-
-        await MainActor.run {
-            self.selectedType = nil
-        }
     }
 
     // MARK: - Delete Image
@@ -428,7 +461,6 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                     result[updatedInfo] = pair.value
                 }
 
-            self.selectedType = nil
             self.images = updatedImages
         }
     }
