@@ -68,18 +68,6 @@ struct AddItemImageView: View {
             .onFirstAppear {
                 remoteImageInfoViewModel.send(.refresh)
             }
-            .onReceive(viewModel.events) { event in
-                switch event {
-                case .deleted:
-                    break
-                case .updated:
-                    UIDevice.feedback(.success)
-                    router.pop()
-                case let .error(eventError):
-                    UIDevice.feedback(.error)
-                    error = eventError
-                }
-            }
             .errorMessage($error)
     }
 
