@@ -65,7 +65,7 @@ struct AddItemImageView: View {
                     ProgressView()
                 }
             }
-            .onAppear {
+            .onFirstAppear {
                 remoteImageInfoViewModel.send(.refresh)
             }
             .onReceive(viewModel.events) { event in
