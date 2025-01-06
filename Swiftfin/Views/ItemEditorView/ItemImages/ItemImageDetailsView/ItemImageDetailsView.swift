@@ -73,11 +73,9 @@ struct ItemImageDetailsView: View {
             }
             .onReceive(viewModel.events) { event in
                 switch event {
-                case .deleted:
+                case .deleted, .updated:
                     UIDevice.feedback(.success)
                     router.dismissCoordinator()
-                case .updated:
-                    break
                 case let .error(eventError):
                     UIDevice.feedback(.error)
                     error = eventError

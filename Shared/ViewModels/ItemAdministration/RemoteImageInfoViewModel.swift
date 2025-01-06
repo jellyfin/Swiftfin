@@ -19,21 +19,22 @@ class RemoteImageInfoViewModel: PagingLibraryViewModel<RemoteImageInfo> {
 
     @Published
     var item: BaseItemDto
-
     @Published
     var imageType: ImageType
 
-    @Published
-    var includeAllLanguages: Bool
+    let providerName: String?
+    let includeAllLanguages: Bool
 
     init(
         item: BaseItemDto,
         imageType: ImageType,
+        providerName: String? = nil,
         includeAllLanguages: Bool = false,
         pageSize: Int = DefaultPageSize
     ) {
         self.item = item
         self.imageType = imageType
+        self.providerName = providerName
         self.includeAllLanguages = includeAllLanguages
         super.init(parent: nil, pageSize: pageSize)
     }
@@ -42,12 +43,17 @@ class RemoteImageInfoViewModel: PagingLibraryViewModel<RemoteImageInfo> {
         guard let itemID = item.id else { return [] }
 
         let startIndex = page * pageSize
-        let parameters = Paths.GetRemoteImagesParameters(
+        var parameters = Paths.GetRemoteImagesParameters(
             type: imageType,
             startIndex: startIndex,
             limit: pageSize,
+            providerName: providerName,
             isIncludeAllLanguages: includeAllLanguages
         )
+
+        if let providerName = providerName {
+            parameters.providerName = providerName
+        }
 
         let request = Paths.getRemoteImages(itemID: itemID, parameters: parameters)
         let response = try await userSession.client.send(request)

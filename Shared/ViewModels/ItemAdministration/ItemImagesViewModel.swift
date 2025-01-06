@@ -296,6 +296,8 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                         )
                         let response = try await self.userSession.client.send(request)
 
+                        // TODO: Is there a way for me to just get the Image URL so I can use
+                        // ImageView instead of passing/storing the full images?
                         if let image = UIImage(data: response.value) {
                             return (imageInfo, image)
                         }

@@ -92,7 +92,7 @@ struct AddItemImageView: View {
 
     @ViewBuilder
     private var gridView: some View {
-        if viewModel.images.isEmpty {
+        if remoteImageInfoViewModel.elements.isEmpty {
             Text(L10n.none)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                 .listRowSeparator(.hidden)

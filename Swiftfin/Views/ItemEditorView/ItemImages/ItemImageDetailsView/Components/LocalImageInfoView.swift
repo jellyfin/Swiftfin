@@ -32,9 +32,17 @@ extension ItemImageDetailsView {
         @ViewBuilder
         private var header: some View {
             Section {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
+                ZStack {
+                    Color.secondarySystemFill
+
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
+                }
+                .scaledToFit()
+                .posterStyle(imageInfo.height ?? 0 > imageInfo.width ?? 0 ? .portrait : .landscape)
+                .frame(maxWidth: .infinity)
+                .accessibilityIgnoresInvertColors()
             }
             .listRowBackground(Color.clear)
             .listRowCornerRadius(0)
@@ -50,15 +58,11 @@ extension ItemImageDetailsView {
                 TextPairView(leading: L10n.id, trailing: imageInfo.id.description)
 
                 if let index = imageInfo.imageIndex {
-                    TextPairView(leading: L10n.type, trailing: index.description)
+                    TextPairView(leading: "Index", trailing: index.description)
                 }
 
                 if let imageTag = imageInfo.imageTag {
                     TextPairView(leading: L10n.tag, trailing: imageTag)
-                }
-
-                if let imageType = imageInfo.imageType {
-                    TextPairView(leading: L10n.type, trailing: imageType.rawValue)
                 }
 
                 if let width = imageInfo.width, let height = imageInfo.height {

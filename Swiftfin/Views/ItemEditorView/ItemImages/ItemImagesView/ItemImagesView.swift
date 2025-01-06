@@ -109,7 +109,7 @@ struct ItemImagesView: View {
         let filteredImages = viewModel.images.filter { $0.key.imageType == imageType }
         let imageArray = Array(filteredImages)
 
-        if !imageArray.isEmpty {
+        if imageArray.isNotEmpty {
             let sortedImageArray = imageArray.sorted { lhs, rhs in
                 (lhs.key.imageIndex ?? 0) < (rhs.key.imageIndex ?? 0)
             }
@@ -153,7 +153,7 @@ struct ItemImagesView: View {
                 }
 
                 Button(action: {
-                    selectedType = imageType
+                    router.route(to: \.photoPicker, imageType)
                 }) {
                     Label(L10n.uploadPhoto, systemImage: "photo.badge.plus")
                 }
@@ -177,6 +177,7 @@ struct ItemImagesView: View {
                     .resizable()
                     .scaledToFill()
             }
+            .scaledToFit()
             .posterStyle(image.size.height > image.size.width ? .portrait : .landscape)
             .frame(maxHeight: 150)
             .shadow(radius: 4)

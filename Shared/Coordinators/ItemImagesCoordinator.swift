@@ -28,6 +28,8 @@ final class ItemImagesCoordinator: ObservableObject, NavigationCoordinatable {
     var deleteImage = makeDeleteImage
     @Route(.modal)
     var selectImage = makeSelectImage
+    @Route(.modal)
+    var photoPicker = makePhotoPicker
 
     // MARK: - Initializer
 
@@ -52,6 +54,10 @@ final class ItemImagesCoordinator: ObservableObject, NavigationCoordinatable {
         NavigationViewCoordinator {
             ItemImageDetailsView(viewModel: self.viewModel, remoteImageInfo: remoteImageInfo)
         }
+    }
+
+    func makePhotoPicker(type: ImageType) -> NavigationViewCoordinator<ItemPhotoCoordinator> {
+        NavigationViewCoordinator(ItemPhotoCoordinator(viewModel: self.viewModel, type: type))
     }
 
     // MARK: - Start

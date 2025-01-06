@@ -34,6 +34,7 @@ extension ItemImageDetailsView {
                     }
                     .scaledToFit()
                     .frame(maxWidth: .infinity)
+                    .posterStyle(imageInfo.height ?? 0 > imageInfo.width ?? 0 ? .portrait : .landscape)
                     .accessibilityIgnoresInvertColors()
             }
             .listRowBackground(Color.clear)
@@ -63,10 +64,6 @@ extension ItemImageDetailsView {
 
                 if let language = imageInfo.language {
                     TextPairView(leading: L10n.language, trailing: language)
-                }
-
-                if let imageType = imageInfo.type {
-                    TextPairView(leading: L10n.type, trailing: imageType.rawValue)
                 }
 
                 if let width = imageInfo.width, let height = imageInfo.height {
