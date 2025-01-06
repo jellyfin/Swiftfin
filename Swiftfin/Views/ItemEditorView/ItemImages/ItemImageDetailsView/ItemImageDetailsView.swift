@@ -31,7 +31,7 @@ struct ItemImageDetailsView: View {
 
     // MARK: - Image Variable
 
-    private let localImageInfo: (key: ImageInfo, value: UIImage)?
+    private let localImageInfo: (key: ImageInfo, value: URL)?
 
     private let remoteImageInfo: RemoteImageInfo?
 
@@ -47,7 +47,7 @@ struct ItemImageDetailsView: View {
 
     // MARK: - Initializer
 
-    init(viewModel: ItemImagesViewModel, localImageInfo: (key: ImageInfo, value: UIImage)? = nil, remoteImageInfo: RemoteImageInfo? = nil) {
+    init(viewModel: ItemImagesViewModel, localImageInfo: (key: ImageInfo, value: URL)? = nil, remoteImageInfo: RemoteImageInfo? = nil) {
         self._viewModel = ObservedObject(wrappedValue: viewModel)
         self.localImageInfo = localImageInfo
         self.remoteImageInfo = remoteImageInfo
@@ -89,7 +89,7 @@ struct ItemImageDetailsView: View {
     @ViewBuilder
     var contentView: some View {
         if let imageInfo = localImageInfo {
-            LocalImageInfoView(imageInfo: imageInfo.key, image: imageInfo.value) {
+            LocalImageInfoView(imageInfo: imageInfo.key, imageURL: imageInfo.value) {
                 viewModel.send(.deleteImage(imageInfo.key))
             }
         } else if let imageInfo = remoteImageInfo {

@@ -21,7 +21,7 @@ extension ItemImageDetailsView {
         // MARK: - Image Info
 
         let imageInfo: ImageInfo
-        let image: UIImage
+        let imageURL: URL
 
         // MARK: - Image Functions
 
@@ -32,17 +32,17 @@ extension ItemImageDetailsView {
         @ViewBuilder
         private var header: some View {
             Section {
-                ZStack {
-                    Color.secondarySystemFill
-
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFill()
-                }
-                .scaledToFit()
-                .posterStyle(imageInfo.height ?? 0 > imageInfo.width ?? 0 ? .portrait : .landscape)
-                .frame(maxWidth: .infinity)
-                .accessibilityIgnoresInvertColors()
+                ImageView(imageURL)
+                    .placeholder { _ in
+                        Image(systemName: "circle")
+                    }
+                    .failure {
+                        Image(systemName: "circle")
+                    }
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .posterStyle(imageInfo.height ?? 0 > imageInfo.width ?? 0 ? .portrait : .landscape)
+                    .accessibilityIgnoresInvertColors()
             }
             .listRowBackground(Color.clear)
             .listRowCornerRadius(0)

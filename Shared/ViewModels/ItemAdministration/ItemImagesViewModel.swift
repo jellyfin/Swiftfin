@@ -52,7 +52,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
     @Published
     var item: BaseItemDto
     @Published
-    var images: [ImageInfo: UIImage] = [:]
+    var images: [ImageInfo: URL] = [:]
 
     // MARK: - State Management
 
@@ -281,7 +281,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
         let missingImageInfos = imageInfos.filter { !self.images.keys.contains($0) }
 
-        try await withThrowingTaskGroup(of: (ImageInfo, UIImage).self) { group in
+        try await withThrowingTaskGroup(of: (ImageInfo, URL).self) { group in
             for imageInfo in missingImageInfos {
                 group.addTask {
                     do {
@@ -294,23 +294,18 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                             imageType: imageInfo.imageType?.rawValue ?? "",
                             parameters: parameters
                         )
-                        let response = try await self.userSession.client.send(request)
 
-                        // TODO: Is there a way for me to just get the Image URL so I can use
-                        // ImageView instead of passing/storing the full images?
-                        if let image = UIImage(data: response.value) {
-                            return (imageInfo, image)
+                        if let imageURL = self.userSession.client.fullURL(with: request) {
+                            return (imageInfo, imageURL)
                         }
-                    } catch {
-                        throw JellyfinAPIError("Failed to fetch image for \(imageInfo): \(error)")
                     }
                     throw JellyfinAPIError("Failed to fetch image for \(imageInfo)")
                 }
             }
 
-            for try await (imageInfo, image) in group {
+            for try await (imageInfo, URL) in group {
                 await MainActor.run {
-                    self.images[imageInfo] = image
+                    self.images[imageInfo] = URL
                 }
             }
         }
@@ -452,7 +447,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                     }
                     return (lhs.key.imageIndex ?? 0) < (rhs.key.imageIndex ?? 0)
                 }
-                .reduce(into: [ImageInfo: UIImage]()) { result, pair in
+                .reduce(into: [ImageInfo: URL]()) { result, pair in
                     var updatedInfo = pair.key
                     if updatedInfo.imageType == imageInfo.imageType,
                        let index = updatedInfo.imageIndex,

@@ -117,7 +117,7 @@ struct ItemImagesView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(sortedImageArray, id: \.key) { imageData in
-                        imageButton(imageData.value) {
+                        imageButton(imageInfo: imageData.key, imageURL: imageData.value) {
                             router.route(to: \.deleteImage, imageData)
                         }
                     }
@@ -165,16 +165,22 @@ struct ItemImagesView: View {
 
     // MARK: - Image Button
 
-    private func imageButton(_ image: UIImage, onSelect: @escaping () -> Void) -> some View {
+    private func imageButton(imageInfo: ImageInfo, imageURL: URL?, onSelect: @escaping () -> Void) -> some View {
         Button(action: onSelect) {
             ZStack {
                 Color.secondarySystemFill
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFill()
+                ImageView(imageURL)
+                    .placeholder { _ in
+                        Image(systemName: "circle")
+                    }
+                    .failure {
+                        Image(systemName: "circle")
+                    }
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
             }
             .scaledToFit()
-            .posterStyle(image.size.height > image.size.width ? .portrait : .landscape)
+            .posterStyle(imageInfo.height ?? 0 > imageInfo.width ?? 0 ? .portrait : .landscape)
             .frame(maxHeight: 150)
             .shadow(radius: 4)
             .padding(16)

@@ -33,7 +33,7 @@ struct UserProfileImageCropView: View {
     // MARK: - Error State
 
     @State
-    private var error: Error? = nil
+    private var error: Error?
 
     // MARK: - Body
 
