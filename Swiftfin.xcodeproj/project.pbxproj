@@ -827,8 +827,6 @@
 		E17FB55728C1256400311DFE /* CastAndCrewHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55628C1256400311DFE /* CastAndCrewHStack.swift */; };
 		E17FB55928C125E900311DFE /* StudiosHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55828C125E900311DFE /* StudiosHStack.swift */; };
 		E17FB55B28C1266400311DFE /* GenresHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55A28C1266400311DFE /* GenresHStack.swift */; };
-		E1803EA12BFBD6CF0039F90E /* Hashable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1803EA02BFBD6CF0039F90E /* Hashable.swift */; };
-		E1803EA22BFBD6CF0039F90E /* Hashable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1803EA02BFBD6CF0039F90E /* Hashable.swift */; };
 		E18121062CBE428000682985 /* ChevronButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A1528728FD229500600579 /* ChevronButton.swift */; };
 		E18295E429CAC6F100F91ED0 /* BasicNavigationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E154967D296CCB6C00C4EF88 /* BasicNavigationCoordinator.swift */; };
 		E18443CB2A037773002DDDC8 /* UDPBroadcast in Frameworks */ = {isa = PBXBuildFile; productRef = E18443CA2A037773002DDDC8 /* UDPBroadcast */; };
@@ -1782,7 +1780,6 @@
 		E17FB55628C1256400311DFE /* CastAndCrewHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastAndCrewHStack.swift; sourceTree = "<group>"; };
 		E17FB55828C125E900311DFE /* StudiosHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudiosHStack.swift; sourceTree = "<group>"; };
 		E17FB55A28C1266400311DFE /* GenresHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenresHStack.swift; sourceTree = "<group>"; };
-		E1803EA02BFBD6CF0039F90E /* Hashable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hashable.swift; sourceTree = "<group>"; };
 		E185920528CDAA6400326F80 /* CastAndCrewHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastAndCrewHStack.swift; sourceTree = "<group>"; };
 		E185920728CDAAA200326F80 /* SimilarItemsHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimilarItemsHStack.swift; sourceTree = "<group>"; };
 		E185920928CEF23A00326F80 /* FocusGuide.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FocusGuide.swift; sourceTree = "<group>"; };
@@ -3507,7 +3504,6 @@
 				E133328729538D8D00EE76AB /* Files.swift */,
 				E11CEB8C28999B4A003E74C7 /* Font.swift */,
 				E10432F52BE4426F006FF9DD /* FormatStyle.swift */,
-				E1803EA02BFBD6CF0039F90E /* Hashable.swift */,
 				E1E6C44A29AED2B70064123F /* HorizontalAlignment.swift */,
 				E139CC1E28EC83E400688DE2 /* Int.swift */,
 				E1AD105226D96D5F003E4A08 /* JellyfinAPI */,
@@ -5514,7 +5510,6 @@
 				E1C9261A288756BD002A7A66 /* PosterButton.swift in Sources */,
 				E1CB75782C80ECF100217C76 /* VideoPlayerType+Native.swift in Sources */,
 				E1575E5F293E77B5001665B1 /* StreamType.swift in Sources */,
-				E1803EA22BFBD6CF0039F90E /* Hashable.swift in Sources */,
 				4E49DEE32CE55FB900352DCD /* SyncPlayUserAccessType.swift in Sources */,
 				E1388A42293F0AAD009721B1 /* PreferenceUIHostingSwizzling.swift in Sources */,
 				E1575E93293E7B1E001665B1 /* Double.swift in Sources */,
@@ -5863,7 +5858,6 @@
 				4EB7C8D52CCED6E7000CC011 /* AddServerUserView.swift in Sources */,
 				E102314A2BCF8A6D009D71FC /* ProgramsViewModel.swift in Sources */,
 				E1721FAA28FB7CAC00762992 /* CompactTimeStamp.swift in Sources */,
-				E1803EA12BFBD6CF0039F90E /* Hashable.swift in Sources */,
 				4E4593A32D04E2B500E277E1 /* ItemImagesView.swift in Sources */,
 				4E699BB92CB33FC2007CBD5D /* HomeSection.swift in Sources */,
 				62C29E9F26D1016600C1D2E7 /* iOSMainCoordinator.swift in Sources */,

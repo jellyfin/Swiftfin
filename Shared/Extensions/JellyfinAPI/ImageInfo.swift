@@ -9,9 +9,9 @@
 import Foundation
 import JellyfinAPI
 
-// TODO: How SHOULD I get Identifiable
 extension ImageInfo: @retroactive Identifiable {
-    public var id: String {
-        self.hashString
+
+    public var id: Int {
+        hashValue
     }
 }

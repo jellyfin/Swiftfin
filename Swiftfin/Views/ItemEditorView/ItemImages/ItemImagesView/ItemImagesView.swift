@@ -133,29 +133,25 @@ struct ItemImagesView: View {
         HStack(alignment: .center, spacing: 16) {
             Text(imageType.rawValue.localizedCapitalized)
                 .font(.headline)
+
             Spacer()
+
             Menu(L10n.options, systemImage: "plus") {
-                Button(action: {
+                Button(L10n.search, systemImage: "magnifyingglass") {
                     router.route(
                         to: \.addImage,
                         imageType
                     )
-                }) {
-                    Label(L10n.search, systemImage: "magnifyingglass")
                 }
 
                 Divider()
 
-                Button(action: {
+                Button(L10n.uploadFile, systemImage: "document.badge.plus") {
                     selectedType = imageType
-                }) {
-                    Label(L10n.uploadFile, systemImage: "document.badge.plus")
                 }
 
-                Button(action: {
+                Button(L10n.uploadPhoto, systemImage: "photo.badge.plus") {
                     router.route(to: \.photoPicker, imageType)
-                }) {
-                    Label(L10n.uploadPhoto, systemImage: "photo.badge.plus")
                 }
             }
             .font(.body)
