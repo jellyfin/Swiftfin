@@ -6,25 +6,23 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
-struct UserProfileImagePicker: View {
+struct ItemImagePicker: View {
 
     // MARK: - Observed, & Environment Objects
 
     @EnvironmentObject
-    private var router: UserProfileImageCoordinator.Router
-
-    @ObservedObject
-    var viewModel: UserProfileImageViewModel
+    private var router: ItemPhotoCoordinator.Router
 
     // MARK: - Body
 
     var body: some View {
-        PhotoPicker {
+        PhotoPickerView {
+            router.route(to: \.cropImage, $0)
+        } onCancel: {
             router.dismissCoordinator()
-        } onSelectedImage: { image in
-            router.route(to: \.cropImage, image)
         }
     }
 }

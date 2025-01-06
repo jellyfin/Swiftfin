@@ -42,7 +42,7 @@ final class ItemPhotoCoordinator: NavigationCoordinatable {
 
     func makeCropImage(image: UIImage) -> some View {
         #if os(iOS)
-        ItemImagePicker.ImageCropView(viewModel: viewModel, image: image, type: type)
+        ItemPhotoCropView(viewModel: viewModel, image: image, type: type)
         #else
         AssertionFailureView("not implemented")
         #endif

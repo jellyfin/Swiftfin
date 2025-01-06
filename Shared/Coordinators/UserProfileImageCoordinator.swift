@@ -38,7 +38,7 @@ final class UserProfileImageCoordinator: NavigationCoordinatable {
 
     func makeCropImage(image: UIImage) -> some View {
         #if os(iOS)
-        UserProfileImagePicker.SquareImageCropView(viewModel: viewModel, image: image)
+        UserProfileImageCropView(viewModel: viewModel, image: image)
         #else
         AssertionFailureView("not implemented")
         #endif
@@ -47,7 +47,7 @@ final class UserProfileImageCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeStart() -> some View {
         #if os(iOS)
-        UserProfileImagePicker(viewModel: viewModel)
+        UserProfileImagePickerView(viewModel: viewModel)
         #else
         AssertionFailureView("not implemented")
         #endif
