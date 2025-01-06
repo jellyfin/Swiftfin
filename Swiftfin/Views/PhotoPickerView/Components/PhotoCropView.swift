@@ -32,11 +32,6 @@ struct PhotoCropView: View {
     let onSave: (UIImage) -> Void
     let onCancel: () -> Void
 
-    // MARK: - Error State
-
-    @State
-    private var error: Error? = nil
-
     // MARK: - Body
 
     var body: some View {

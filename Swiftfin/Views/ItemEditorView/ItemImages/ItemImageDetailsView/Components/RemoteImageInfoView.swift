@@ -25,7 +25,7 @@ extension ItemImageDetailsView {
         @ViewBuilder
         private var header: some View {
             Section {
-                ImageView(URL(string: imageInfo.url ?? nil))
+                ImageView(URL(string: imageInfo.url))
                     .placeholder { _ in
                         Image(systemName: imageInfo.systemImage)
                     }
@@ -78,6 +78,8 @@ extension ItemImageDetailsView {
                 }
             }
         }
+
+        // MARK: - Body
 
         var body: some View {
             List {

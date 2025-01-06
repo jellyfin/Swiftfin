@@ -78,6 +78,8 @@ extension ItemImageDetailsView {
             }
         }
 
+        // MARK: - Delete Button
+
         var deleteButton: some View {
             ListRowButton(L10n.delete) {
                 onDelete()
@@ -87,6 +89,8 @@ extension ItemImageDetailsView {
                 .red
             )
         }
+
+        // MARK: - Body
 
         var body: some View {
             List {

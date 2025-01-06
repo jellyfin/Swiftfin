@@ -32,11 +32,6 @@ struct ItemPhotoCropView: View {
 
     let type: ImageType
 
-    // MARK: - Error State
-
-    @State
-    private var error: Error? = nil
-
     // MARK: - Body
 
     var body: some View {
