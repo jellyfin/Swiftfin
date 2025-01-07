@@ -9,16 +9,10 @@
 import BlurHashKit
 import CollectionVGrid
 import Combine
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
 struct AddItemImageView: View {
-
-    // MARK: - Defaults
-
-    @Default(.accentColor)
-    private var accentColor
 
     // MARK: - Observed, & Environment Objects
 
@@ -68,6 +62,21 @@ struct AddItemImageView: View {
             .onFirstAppear {
                 remoteImageInfoViewModel.send(.refresh)
             }
+            .onReceive(viewModel.events) { event in
+                switch event {
+                case .deleted:
+                    break
+                case .updated:
+                    UIDevice.feedback(.success)
+                    // TODO: Why does this crash without the delay?
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        router.pop()
+                    }
+                case let .error(eventError):
+                    UIDevice.feedback(.error)
+                    error = eventError
+                }
+            }
             .errorMessage($error)
     }
 
@@ -107,20 +116,6 @@ struct AddItemImageView: View {
             .onReachedBottomEdge(offset: .offset(300)) {
                 remoteImageInfoViewModel.send(.getNextPage)
             }
-        }
-    }
-
-    // MARK: - Update View
-
-    @ViewBuilder
-    var updateView: some View {
-        VStack(alignment: .center, spacing: 16) {
-            ProgressView()
-            Button(L10n.cancel, role: .destructive) {
-                viewModel.send(.cancel)
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(.red)
         }
     }
 

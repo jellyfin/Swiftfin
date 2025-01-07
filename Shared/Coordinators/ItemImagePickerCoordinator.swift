@@ -10,11 +10,11 @@ import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-final class ItemPhotoCoordinator: NavigationCoordinatable {
+final class ItemImagePickerCoordinator: NavigationCoordinatable {
 
-    // MARK: - Navigation Components
+    // MARK: - Navigation Stack
 
-    let stack = Stinsen.NavigationStack(initial: \ItemPhotoCoordinator.start)
+    let stack = Stinsen.NavigationStack(initial: \ItemImagePickerCoordinator.start)
 
     @Root
     var start = makeStart
@@ -29,6 +29,8 @@ final class ItemPhotoCoordinator: NavigationCoordinatable {
     @ObservedObject
     var viewModel: ItemImagesViewModel
 
+    // MARK: - Image Variable
+
     let type: ImageType
 
     // MARK: - Initializer
@@ -38,22 +40,14 @@ final class ItemPhotoCoordinator: NavigationCoordinatable {
         self.type = type
     }
 
-    // MARK: - Views
+    // MARK: - Crop Image View
 
     func makeCropImage(image: UIImage) -> some View {
-        #if os(iOS)
         ItemPhotoCropView(viewModel: viewModel, image: image, type: type)
-        #else
-        AssertionFailureView("not implemented")
-        #endif
     }
 
     @ViewBuilder
     func makeStart() -> some View {
-        #if os(iOS)
         ItemImagePicker()
-        #else
-        AssertionFailureView("not implemented")
-        #endif
     }
 }

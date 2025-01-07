@@ -21,7 +21,7 @@ struct ItemPhotoCropView: View {
     // MARK: - State, Observed, & Environment Objects
 
     @EnvironmentObject
-    private var router: ItemPhotoCoordinator.Router
+    private var router: ItemImagePickerCoordinator.Router
 
     @ObservedObject
     var viewModel: ItemImagesViewModel
@@ -29,7 +29,6 @@ struct ItemPhotoCropView: View {
     // MARK: - Image Variable
 
     let image: UIImage
-
     let type: ImageType
 
     // MARK: - Error State

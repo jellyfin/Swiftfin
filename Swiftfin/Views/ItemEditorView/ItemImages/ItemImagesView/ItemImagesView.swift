@@ -85,7 +85,7 @@ struct ItemImagesView: View {
             .onReceive(viewModel.events) { event in
                 switch event {
                 case .updated:
-                    viewModel.send(.refresh)
+                    break // viewModel.send(.refresh)
                 case .deleted:
                     break
                 case let .error(eventError):

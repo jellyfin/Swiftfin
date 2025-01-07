@@ -14,7 +14,7 @@ struct ItemImagePicker: View {
     // MARK: - Observed, & Environment Objects
 
     @EnvironmentObject
-    private var router: ItemPhotoCoordinator.Router
+    private var router: ItemImagePickerCoordinator.Router
 
     // MARK: - Body
 

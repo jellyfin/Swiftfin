@@ -24,7 +24,6 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
     enum Action: Equatable {
         case cancel
         case refresh
-        case backgroundRefresh
         case setImage(RemoteImageInfo)
         case uploadPhoto(image: UIImage, type: ImageType)
         case uploadImage(file: URL, type: ImageType)
@@ -83,32 +82,6 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
             return state
 
-        case .backgroundRefresh:
-            task?.cancel()
-
-            task = Task { [weak self] in
-                guard let self else { return }
-                do {
-                    await MainActor.run {
-                        _ = self.backgroundStates.append(.refreshing)
-                    }
-
-                    try await self.getAllImages()
-
-                    await MainActor.run {
-                        _ = self.backgroundStates.remove(.refreshing)
-                    }
-                } catch {
-                    let apiError = JellyfinAPIError(error.localizedDescription)
-                    await MainActor.run {
-                        self.eventSubject.send(.error(apiError))
-                        _ = self.backgroundStates.remove(.refreshing)
-                    }
-                }
-            }.asAnyCancellable()
-
-            return state
-
         case .refresh:
             task?.cancel()
 
@@ -150,6 +123,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                     }
 
                     try await self.setImage(remoteImageInfo)
+                    try await self.getAllImages()
 
                     await MainActor.run {
                         self.eventSubject.send(.updated)
@@ -177,7 +151,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                     }
 
                     try await self.uploadPhoto(image, type: type)
-                    try await self.refreshItem()
+                    try await self.getAllImages()
 
                     await MainActor.run {
                         self.state = .content
@@ -205,7 +179,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                     }
 
                     try await self.uploadImage(url, type: type)
-                    try await self.refreshItem()
+                    try await self.getAllImages()
 
                     await MainActor.run {
                         self.state = .content

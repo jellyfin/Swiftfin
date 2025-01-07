@@ -48,6 +48,9 @@ struct ItemImageDetailsView: View {
     private let rating: Double?
     private let ratingType: RatingType?
     private let ratingVotes: Int?
+
+    // MARK: - RemoteImageInfo vs ImageInfo
+
     private let isLocal: Bool
 
     // MARK: - Image Actions
@@ -55,7 +58,7 @@ struct ItemImageDetailsView: View {
     private let onSave: (() -> Void)?
     private let onDelete: (() -> Void)?
 
-    // MARK: - Dialog States
+    // MARK: - Error State
 
     @State
     private var error: Error?

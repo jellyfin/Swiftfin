@@ -11,7 +11,7 @@ import SwiftUI
 
 final class UserProfileImageCoordinator: NavigationCoordinatable {
 
-    // MARK: - Navigation Components
+    // MARK: - Navigation Stack
 
     let stack = Stinsen.NavigationStack(initial: \UserProfileImageCoordinator.start)
 
@@ -37,19 +37,11 @@ final class UserProfileImageCoordinator: NavigationCoordinatable {
     // MARK: - Views
 
     func makeCropImage(image: UIImage) -> some View {
-        #if os(iOS)
         UserProfileImageCropView(viewModel: viewModel, image: image)
-        #else
-        AssertionFailureView("not implemented")
-        #endif
     }
 
     @ViewBuilder
     func makeStart() -> some View {
-        #if os(iOS)
         UserProfileImagePickerView()
-        #else
-        AssertionFailureView("not implemented")
-        #endif
     }
 }

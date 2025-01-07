@@ -13,15 +13,23 @@ extension ItemImageDetailsView {
 
     struct DetailsSection: View {
 
-        let url: URL?
+        // MARK: - Image Details Variables
+
         let index: Int?
         let language: String?
         let width: Int?
         let height: Int?
         let provider: String?
+
+        // MARK: - Image Ratings Variables
+
         let rating: Double?
         let ratingType: RatingType?
         let ratingVotes: Int?
+
+        // MARK: - Image Source Variable
+
+        let url: URL?
 
         // MARK: - Initializer
 

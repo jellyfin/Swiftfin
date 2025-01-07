@@ -28,7 +28,7 @@ extension ItemImageDetailsView {
         @State
         var isPresentingConfirmation: Bool = false
 
-        // MARK: - Header
+        // MARK: - Body
 
         @ViewBuilder
         var body: some View {

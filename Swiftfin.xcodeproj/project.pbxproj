@@ -188,8 +188,8 @@
 		4EA78B162D2A0C4A0093BFCE /* ItemImageDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA78B142D2A0C4A0093BFCE /* ItemImageDetailsView.swift */; };
 		4EA78B202D2B5AA30093BFCE /* ItemPhotoPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA78B1F2D2B5A9E0093BFCE /* ItemPhotoPickerView.swift */; };
 		4EA78B232D2B5CFC0093BFCE /* ItemPhotoCropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA78B222D2B5CEF0093BFCE /* ItemPhotoCropView.swift */; };
-		4EA78B252D2B5DBD0093BFCE /* ItemPhotoCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA78B242D2B5DB20093BFCE /* ItemPhotoCoordinator.swift */; };
-		4EA78B262D2B5DBD0093BFCE /* ItemPhotoCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA78B242D2B5DB20093BFCE /* ItemPhotoCoordinator.swift */; };
+		4EA78B252D2B5DBD0093BFCE /* ItemImagePickerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA78B242D2B5DB20093BFCE /* ItemImagePickerCoordinator.swift */; };
+		4EA78B262D2B5DBD0093BFCE /* ItemImagePickerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA78B242D2B5DB20093BFCE /* ItemImagePickerCoordinator.swift */; };
 		4EB132EF2D2CF6D600B5A8E5 /* ImageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB132EE2D2CF6D300B5A8E5 /* ImageType.swift */; };
 		4EB132F02D2CF6D600B5A8E5 /* ImageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB132EE2D2CF6D300B5A8E5 /* ImageType.swift */; };
 		4EB1404C2C8E45B1008691F3 /* StreamSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1404B2C8E45B1008691F3 /* StreamSection.swift */; };
@@ -544,7 +544,6 @@
 		E11BDF972B865F550045C54A /* ItemTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11BDF962B865F550045C54A /* ItemTag.swift */; };
 		E11BDF982B865F550045C54A /* ItemTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11BDF962B865F550045C54A /* ItemTag.swift */; };
 		E11C15352BF7C505006BC9B6 /* UserProfileImageCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11C15342BF7C505006BC9B6 /* UserProfileImageCoordinator.swift */; };
-		E11C15362BF7C505006BC9B6 /* UserProfileImageCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11C15342BF7C505006BC9B6 /* UserProfileImageCoordinator.swift */; };
 		E11CEB8928998549003E74C7 /* BottomEdgeGradientModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19E551E2897326C003CE330 /* BottomEdgeGradientModifier.swift */; };
 		E11CEB8B28998552003E74C7 /* View-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11CEB8A28998552003E74C7 /* View-iOS.swift */; };
 		E11CEB8D28999B4A003E74C7 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11CEB8C28999B4A003E74C7 /* Font.swift */; };
@@ -1349,7 +1348,7 @@
 		4EA78B142D2A0C4A0093BFCE /* ItemImageDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemImageDetailsView.swift; sourceTree = "<group>"; };
 		4EA78B1F2D2B5A9E0093BFCE /* ItemPhotoPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemPhotoPickerView.swift; sourceTree = "<group>"; };
 		4EA78B222D2B5CEF0093BFCE /* ItemPhotoCropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemPhotoCropView.swift; sourceTree = "<group>"; };
-		4EA78B242D2B5DB20093BFCE /* ItemPhotoCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemPhotoCoordinator.swift; sourceTree = "<group>"; };
+		4EA78B242D2B5DB20093BFCE /* ItemImagePickerCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemImagePickerCoordinator.swift; sourceTree = "<group>"; };
 		4EB132EE2D2CF6D300B5A8E5 /* ImageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageType.swift; sourceTree = "<group>"; };
 		4EB1404B2C8E45B1008691F3 /* StreamSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamSection.swift; sourceTree = "<group>"; };
 		4EB1A8C92C9A765800F43898 /* ActiveSessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionsView.swift; sourceTree = "<group>"; };
@@ -3566,8 +3565,8 @@
 				62C29EA526D1036A00C1D2E7 /* HomeCoordinator.swift */,
 				6220D0BF26D61C5000B8E046 /* ItemCoordinator.swift */,
 				4E8F74A02CE03C8B00CC8969 /* ItemEditorCoordinator.swift */,
+				4EA78B242D2B5DB20093BFCE /* ItemImagePickerCoordinator.swift */,
 				4EA78B112D29F6240093BFCE /* ItemImagesCoordinator.swift */,
-				4EA78B242D2B5DB20093BFCE /* ItemPhotoCoordinator.swift */,
 				6220D0B326D5ED8000B8E046 /* LibraryCoordinator.swift */,
 				E102312B2BCF8A08009D71FC /* LiveTVCoordinator */,
 				C46DD8D12A8DC1F60046A504 /* LiveVideoPlayerCoordinator.swift */,
@@ -5474,7 +5473,6 @@
 				E178859E2780F53B0094FBCF /* SliderView.swift in Sources */,
 				E1575E95293E7B1E001665B1 /* Font.swift in Sources */,
 				4E49DED02CE54D3000352DCD /* MaxBitratePolicy.swift in Sources */,
-				E11C15362BF7C505006BC9B6 /* UserProfileImageCoordinator.swift in Sources */,
 				E172D3AE2BAC9DF8007B4647 /* SeasonItemViewModel.swift in Sources */,
 				4EC1C8532C7FDFA300E2879E /* PlaybackDeviceProfile.swift in Sources */,
 				4E24ECFC2D076F6200A473A9 /* ListRowCheckbox.swift in Sources */,
@@ -5766,7 +5764,7 @@
 				E10231582BCF8AF8009D71FC /* WideChannelGridItem.swift in Sources */,
 				E15D4F082B1B12C300442DB8 /* Backport.swift in Sources */,
 				BDA623532D0D0854009A157F /* SelectUserBottomBar.swift in Sources */,
-				4EA78B262D2B5DBD0093BFCE /* ItemPhotoCoordinator.swift in Sources */,
+				4EA78B262D2B5DBD0093BFCE /* ItemImagePickerCoordinator.swift in Sources */,
 				E1D4BF8F271A079A00A11E64 /* BasicAppSettingsView.swift in Sources */,
 				E1575E9A293E7B1E001665B1 /* Array.swift in Sources */,
 				E1575E8D293E7B1E001665B1 /* URLComponents.swift in Sources */,
@@ -6254,7 +6252,7 @@
 				E10B1ECD2BD9AFD800A92EAF /* SwiftfinStore+V2.swift in Sources */,
 				E1401CA92938140700E8B599 /* DarkAppIcon.swift in Sources */,
 				E1A1529028FD23D600600579 /* PlaybackSettingsCoordinator.swift in Sources */,
-				4EA78B252D2B5DBD0093BFCE /* ItemPhotoCoordinator.swift in Sources */,
+				4EA78B252D2B5DBD0093BFCE /* ItemImagePickerCoordinator.swift in Sources */,
 				E11042752B8013DF00821020 /* Stateful.swift in Sources */,
 				E1AA331F2782639D00F6439C /* OverlayType.swift in Sources */,
 				E12376AE2A33D680001F5B44 /* AboutView+Card.swift in Sources */,

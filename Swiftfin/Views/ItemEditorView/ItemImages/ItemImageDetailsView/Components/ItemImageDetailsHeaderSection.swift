@@ -33,6 +33,7 @@ extension ItemImageDetailsView {
                     }
             }
             .scaledToFit()
+            .frame(maxHeight: 300)
             .posterStyle(posterType)
             .frame(maxWidth: .infinity)
             .listRowBackground(Color.clear)

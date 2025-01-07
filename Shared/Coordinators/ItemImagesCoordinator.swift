@@ -13,8 +13,12 @@ import SwiftUI
 
 final class ItemImagesCoordinator: ObservableObject, NavigationCoordinatable {
 
+    // MARK: - User Session
+
     @Injected(\.currentUserSession)
     private var userSession
+
+    // MARK: - Navigation Stack
 
     let stack = NavigationStack(initial: \ItemImagesCoordinator.start)
 
@@ -24,14 +28,20 @@ final class ItemImagesCoordinator: ObservableObject, NavigationCoordinatable {
     @ObservedObject
     private var viewModel: ItemImagesViewModel
 
-    // MARK: - Route to Views
+    // MARK: - Route to Delete Local Image
+
+    @Route(.modal)
+    var deleteImage = makeDeleteImage
+
+    // MARK: - Route to Add Remote Image
 
     @Route(.push)
     var addImage = makeAddImage
     @Route(.modal)
-    var deleteImage = makeDeleteImage
-    @Route(.modal)
     var selectImage = makeSelectImage
+
+    // MARK: - Route to Photo Picker
+
     @Route(.modal)
     var photoPicker = makePhotoPicker
 
@@ -41,31 +51,11 @@ final class ItemImagesCoordinator: ObservableObject, NavigationCoordinatable {
         self._viewModel = ObservedObject(wrappedValue: viewModel)
     }
 
-    // MARK: - Item Images
+    // MARK: - Add Remote Images View
 
     @ViewBuilder
     func makeAddImage(imageType: ImageType) -> some View {
         AddItemImageView(viewModel: viewModel, imageType: imageType)
-    }
-
-    func makeDeleteImage(imageInfo: ImageInfo) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator {
-            ItemImageDetailsView(
-                title: imageInfo.imageType?.displayTitle ?? "",
-                viewModel: self.viewModel,
-                imageSource: imageInfo.itemImageSource(
-                    itemID: self.viewModel.item.id!,
-                    client: self.userSession!.client
-                ),
-                index: imageInfo.imageIndex,
-                width: imageInfo.width,
-                height: imageInfo.height,
-                isLocal: true,
-                onDelete: {
-                    self.viewModel.send(.deleteImage(imageInfo))
-                }
-            )
-        }
     }
 
     func makeSelectImage(remoteImageInfo: RemoteImageInfo) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
@@ -89,8 +79,32 @@ final class ItemImagesCoordinator: ObservableObject, NavigationCoordinatable {
         }
     }
 
-    func makePhotoPicker(type: ImageType) -> NavigationViewCoordinator<ItemPhotoCoordinator> {
-        NavigationViewCoordinator(ItemPhotoCoordinator(viewModel: self.viewModel, type: type))
+    // MARK: - Delete Local Image View
+
+    func makeDeleteImage(imageInfo: ImageInfo) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            ItemImageDetailsView(
+                title: imageInfo.imageType?.displayTitle ?? "",
+                viewModel: self.viewModel,
+                imageSource: imageInfo.itemImageSource(
+                    itemID: self.viewModel.item.id!,
+                    client: self.userSession!.client
+                ),
+                index: imageInfo.imageIndex,
+                width: imageInfo.width,
+                height: imageInfo.height,
+                isLocal: true,
+                onDelete: {
+                    self.viewModel.send(.deleteImage(imageInfo))
+                }
+            )
+        }
+    }
+
+    // MARK: - Photo Picker View
+
+    func makePhotoPicker(type: ImageType) -> NavigationViewCoordinator<ItemImagePickerCoordinator> {
+        NavigationViewCoordinator(ItemImagePickerCoordinator(viewModel: self.viewModel, type: type))
     }
 
     // MARK: - Start
