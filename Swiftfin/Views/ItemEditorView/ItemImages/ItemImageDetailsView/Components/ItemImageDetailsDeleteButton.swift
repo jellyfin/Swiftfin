@@ -23,17 +23,36 @@ extension ItemImageDetailsView {
 
         let onDelete: () -> Void
 
+        // MARK: - Dialog State
+
+        @State
+        var isPresentingConfirmation: Bool = false
+
         // MARK: - Header
 
         @ViewBuilder
         var body: some View {
             ListRowButton(L10n.delete) {
-                onDelete()
+                isPresentingConfirmation = true
             }
             .foregroundStyle(
                 accentColor.overlayColor,
                 .red
             )
+            .confirmationDialog(
+                L10n.delete,
+                isPresented: $isPresentingConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button(L10n.delete, role: .destructive) {
+                    onDelete()
+                }
+                Button(L10n.cancel, role: .cancel) {
+                    isPresentingConfirmation = false
+                }
+            } message: {
+                Text(L10n.deleteItemConfirmationMessage)
+            }
         }
     }
 }
