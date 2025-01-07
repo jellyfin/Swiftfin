@@ -89,15 +89,60 @@ struct ItemImageDetailsView: View {
     @ViewBuilder
     var contentView: some View {
         if let imageInfo = localImageInfo {
-            LocalImageInfoView(imageInfo: imageInfo.key, imageURL: imageInfo.value) {
-                viewModel.send(.deleteImage(imageInfo.key))
-            }
+            localImageView(imageInfo: imageInfo.key, imageURL: imageInfo.value)
         } else if let imageInfo = remoteImageInfo {
-            RemoteImageInfoView(imageInfo: imageInfo) {
-                viewModel.send(.setImage(imageInfo))
-            }
+            remoteImageView(imageInfo: imageInfo)
         } else {
             ErrorView(error: JellyfinAPIError("No image provided."))
+        }
+    }
+
+    @ViewBuilder
+    func localImageView(imageInfo: ImageInfo, imageURL: URL) -> some View {
+        List {
+            HeaderSection(
+                imageURL: imageURL,
+                imageType: imageInfo.height ?? 0 > imageInfo.width ?? 0 ? .portrait : .landscape
+            )
+            DetailsSection(
+                imageID: imageInfo.id,
+                imageURL: imageURL,
+                imageIndex: imageInfo.imageIndex,
+                imageWidth: imageInfo.width,
+                imageHeight: imageInfo.height
+            )
+            DeleteButton {
+                viewModel.send(.deleteImage(imageInfo))
+            }
+        }
+    }
+
+    @ViewBuilder
+    func remoteImageView(imageInfo: RemoteImageInfo) -> some View {
+        let imageURL = URL(string: imageInfo.url)
+
+        List {
+            HeaderSection(
+                imageURL: URL(string: imageInfo.url),
+                imageType: imageInfo.height ?? 0 > imageInfo.width ?? 0 ? .portrait : .landscape
+            )
+            DetailsSection(
+                imageID: imageInfo.id,
+                imageURL: imageURL,
+                imageLanguage: imageInfo.language,
+                imageWidth: imageInfo.width,
+                imageHeight: imageInfo.height,
+                provider: imageInfo.providerName,
+                rating: imageInfo.communityRating,
+                ratingType: imageInfo.ratingType,
+                ratingVotes: imageInfo.voteCount
+            )
+        }
+        .topBarTrailing {
+            Button(L10n.save) {
+                viewModel.send(.setImage(imageInfo))
+            }
+            .buttonStyle(.toolbarPill)
         }
     }
 }

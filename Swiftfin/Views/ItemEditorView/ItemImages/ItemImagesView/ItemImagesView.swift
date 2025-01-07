@@ -69,9 +69,11 @@ struct ItemImagesView: View {
                 case let .success(urls):
                     if let file = urls.first, let type = selectedType {
                         viewModel.send(.uploadImage(file: file, type: type))
+                        selectedType = nil
                     }
                 case let .failure(fileError):
-                    self.error = fileError
+                    error = fileError
+                    selectedType = nil
                 }
             }
             .onReceive(viewModel.events) { event in

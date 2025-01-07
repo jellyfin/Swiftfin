@@ -655,6 +655,9 @@
 /// Digital
 "digital" = "Digital";
 
+/// Dimensions
+"dimensions" = "Dimensions";
+
 /// Direct Play
 "direct" = "Direct Play";
 
@@ -886,6 +889,12 @@
 /// Images
 "images" = "Images";
 
+/// Image source
+"imageSource" = "Image source";
+
+/// Index
+"index" = "Index";
+
 /// Indicators
 "indicators" = "Indicators";
 
@@ -984,6 +993,9 @@
 
 /// Liked Items
 "likedItems" = "Liked Items";
+
+/// Likes
+"likes" = "Likes";
 
 /// List
 "list" = "List";
@@ -1531,6 +1543,9 @@
 /// Schedule already exists
 "scheduleAlreadyExists" = "Schedule already exists";
 
+/// Score
+"score" = "Score";
+
 /// Scrub Current Time
 "scrubCurrentTime" = "Scrub Current Time";
 
@@ -1980,6 +1995,9 @@
 
 /// Some views may need an app restart to update.
 "viewsMayRequireRestart" = "Some views may need an app restart to update.";
+
+/// Votes
+"votes" = "Votes";
 
 /// Weekday
 "weekday" = "Weekday";
