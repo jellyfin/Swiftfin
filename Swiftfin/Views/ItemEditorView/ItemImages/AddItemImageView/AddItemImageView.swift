@@ -69,7 +69,7 @@ struct AddItemImageView: View {
                 case .updated:
                     UIDevice.feedback(.success)
                     // TODO: Why does this crash without the delay?
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         router.pop()
                     }
                 case let .error(eventError):

@@ -85,7 +85,7 @@ struct ItemImagesView: View {
             .onReceive(viewModel.events) { event in
                 switch event {
                 case .updated:
-                    break // viewModel.send(.refresh)
+                    break
                 case .deleted:
                     break
                 case let .error(eventError):
@@ -204,7 +204,7 @@ struct ItemImagesView: View {
                     Image(systemName: "circle")
                 }
                 .failure {
-                    Image(systemName: "circle")
+                    Image(systemName: "questionmark")
                 }
                 .scaledToFit()
                 .frame(maxWidth: .infinity)
