@@ -37,7 +37,7 @@ struct PhotoPickerView: UIViewControllerRepresentable {
 
         configuration.filter = .all(of: [.images, .not(.livePhotos)])
         configuration.preferredAssetRepresentationMode = .current
-        configuration.selection = .ordered
+        configuration.selection = .default
         configuration.selectionLimit = 1
 
         let picker = PHPickerViewController(configuration: configuration)

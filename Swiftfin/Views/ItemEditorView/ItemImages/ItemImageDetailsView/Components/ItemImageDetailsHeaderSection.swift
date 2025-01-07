@@ -32,11 +32,10 @@ extension ItemImageDetailsView {
                     .failure {
                         Image(systemName: "circle")
                     }
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity)
             }
             .scaledToFit()
             .posterStyle(imageType)
+            .frame(maxWidth: .infinity)
             .listRowBackground(Color.clear)
             .listRowCornerRadius(0)
             .listRowInsets(.zero)

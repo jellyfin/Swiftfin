@@ -47,7 +47,7 @@ final class UserProfileImageCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeStart() -> some View {
         #if os(iOS)
-        UserProfileImagePickerView(viewModel: viewModel)
+        UserProfileImagePickerView()
         #else
         AssertionFailureView("not implemented")
         #endif

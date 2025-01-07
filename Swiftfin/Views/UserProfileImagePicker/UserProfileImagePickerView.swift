@@ -15,9 +15,6 @@ struct UserProfileImagePickerView: View {
     @EnvironmentObject
     private var router: UserProfileImageCoordinator.Router
 
-    @ObservedObject
-    var viewModel: UserProfileImageViewModel
-
     // MARK: - Body
 
     var body: some View {
