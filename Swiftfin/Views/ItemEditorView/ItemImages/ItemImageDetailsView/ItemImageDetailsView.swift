@@ -149,13 +149,13 @@ struct ItemImageDetailsView: View {
             )
 
             DeleteButton {
-                if !isLocal, let onDelete {
+                if isLocal, let onDelete {
                     onDelete()
                 }
             }
         }
         .topBarTrailing {
-            if isLocal, let onSave {
+            if !isLocal, let onSave {
                 Button(L10n.save, action: onSave)
                     .buttonStyle(.toolbarPill)
             }

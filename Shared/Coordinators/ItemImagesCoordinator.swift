@@ -60,7 +60,8 @@ final class ItemImagesCoordinator: ObservableObject, NavigationCoordinatable {
                 index: imageInfo.imageIndex,
                 width: imageInfo.width,
                 height: imageInfo.height,
-                isLocal: false, onDelete: {
+                isLocal: true,
+                onDelete: {
                     self.viewModel.send(.deleteImage(imageInfo))
                 }
             )
@@ -80,7 +81,8 @@ final class ItemImagesCoordinator: ObservableObject, NavigationCoordinatable {
                 rating: remoteImageInfo.communityRating,
                 ratingType: remoteImageInfo.ratingType,
                 ratingVotes: remoteImageInfo.voteCount,
-                isLocal: false, onSave: {
+                isLocal: false,
+                onSave: {
                     self.viewModel.send(.setImage(remoteImageInfo))
                 }
             )
