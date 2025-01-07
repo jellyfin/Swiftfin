@@ -157,6 +157,9 @@
 /// Arranger
 "arranger" = "Arranger";
 
+/// Art
+"art" = "Art";
+
 /// Artist
 "artist" = "Artist";
 
@@ -210,6 +213,12 @@
 
 /// Back
 "back" = "Back";
+
+/// Backdrop
+"backdrop" = "Backdrop";
+
+/// Banner
+"banner" = "Banner";
 
 /// Bar Buttons
 "barButtons" = "Bar Buttons";
@@ -307,6 +316,12 @@
 /// Books
 "books" = "Books";
 
+/// Box
+"box" = "Box";
+
+/// BoxRear
+"boxRear" = "BoxRear";
+
 /// Bugs and Features
 "bugsAndFeatures" = "Bugs and Features";
 
@@ -336,6 +351,9 @@
 
 /// Channels
 "channels" = "Channels";
+
+/// Chapter
+"chapter" = "Chapter";
 
 /// Chapters
 "chapters" = "Chapters";
@@ -678,6 +696,9 @@
 
 /// Disabled
 "disabled" = "Disabled";
+
+/// Disc
+"disc" = "Disc";
 
 /// Disclaimer
 "disclaimer" = "Disclaimer";
@@ -1030,6 +1051,9 @@
 /// Locked users
 "lockedUsers" = "Locked users";
 
+/// Logo
+"logo" = "Logo";
+
 /// Logs
 "logs" = "Logs";
 
@@ -1089,6 +1113,9 @@
 
 /// Mbps
 "megabitsPerSecond" = "Mbps";
+
+/// Menu
+"menu" = "Menu";
 
 /// Menu Buttons
 "menuButtons" = "Menu Buttons";
@@ -1339,6 +1366,9 @@
 /// Production Year
 "productionYear" = "Production Year";
 
+/// Profile
+"profile" = "Profile";
+
 /// Profile Image
 "profileImage" = "Profile Image";
 
@@ -1545,6 +1575,9 @@
 
 /// Score
 "score" = "Score";
+
+/// Screenshot
+"screenshot" = "Screenshot";
 
 /// Scrub Current Time
 "scrubCurrentTime" = "Scrub Current Time";
@@ -1809,6 +1842,9 @@
 
 /// Test Size
 "testSize" = "Test Size";
+
+/// Thumb
+"thumb" = "Thumb";
 
 /// Time
 "time" = "Time";

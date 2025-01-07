@@ -9,9 +9,46 @@
 import Foundation
 import JellyfinAPI
 
-extension ImageInfo: @retroactive Identifiable {
+extension ImageInfo: @retroactive Identifiable, Poster {
 
     public var id: Int {
         hashValue
+    }
+
+    // TODO: Remove if not using PosterHStack ->
+    var unwrappedIDHashOrZero: Int {
+        id
+    }
+
+    var displayTitle: String {
+        if let imageIndex {
+            "\(imageType?.displayTitle ?? L10n.unknown)-\(imageIndex)"
+        } else {
+            imageType?.displayTitle ?? L10n.unknown
+        }
+    }
+
+    var systemImage: String {
+        "circle"
+    }
+    // TODO: <- Remove if not using PosterHStack
+}
+
+extension ImageInfo {
+
+    func itemImageSource(itemID: String, client: JellyfinClient) -> ImageSource {
+        let parameters = Paths.GetItemImageParameters(
+            tag: imageTag,
+            imageIndex: imageIndex
+        )
+        let request = Paths.getItemImage(
+            itemID: itemID,
+            imageType: imageType?.rawValue ?? "",
+            parameters: parameters
+        )
+
+        let itemImageURL = client.fullURL(with: request)
+
+        return ImageSource(url: itemImageURL)
     }
 }

@@ -16,16 +16,15 @@ extension ItemImageDetailsView {
 
         // MARK: - Image Info
 
-        let imageURL: URL?
-
-        let imageType: PosterDisplayType
+        let imageSource: ImageSource
+        let posterType: PosterDisplayType
 
         // MARK: - Header
 
         @ViewBuilder
         var body: some View {
             Section {
-                ImageView(imageURL)
+                ImageView(imageSource)
                     .placeholder { _ in
                         Image(systemName: "circle")
                     }
@@ -34,7 +33,7 @@ extension ItemImageDetailsView {
                     }
             }
             .scaledToFit()
-            .posterStyle(imageType)
+            .posterStyle(posterType)
             .frame(maxWidth: .infinity)
             .listRowBackground(Color.clear)
             .listRowCornerRadius(0)

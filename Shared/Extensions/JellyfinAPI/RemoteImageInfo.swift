@@ -13,15 +13,15 @@ import SwiftUI
 extension RemoteImageInfo: @retroactive Identifiable, Poster {
 
     var displayTitle: String {
-        self.providerName ?? L10n.unknown
+        providerName ?? L10n.unknown
     }
 
     var unwrappedIDHashOrZero: Int {
-        self.id
+        id
     }
 
     var subtitle: String? {
-        self.language
+        language
     }
 
     var systemImage: String {
@@ -29,6 +29,6 @@ extension RemoteImageInfo: @retroactive Identifiable, Poster {
     }
 
     public var id: Int {
-        self.hashValue
+        hashValue
     }
 }

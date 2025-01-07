@@ -10,6 +10,7 @@ import BlurHashKit
 import CollectionVGrid
 import Combine
 import Defaults
+import Factory
 import JellyfinAPI
 import SwiftUI
 
@@ -19,6 +20,11 @@ struct ItemImagesView: View {
 
     @Default(.accentColor)
     private var accentColor
+
+    // MARK: - User Session
+
+    @Injected(\.currentUserSession)
+    private var userSession
 
     // MARK: - Observed & Environment Objects
 
@@ -92,6 +98,25 @@ struct ItemImagesView: View {
     // MARK: - Content View
 
     private var contentView: some View {
+        ZStack {
+            switch viewModel.state {
+            case .content, .deleting, .updating:
+                imageView
+            case .initial:
+                DelayedProgressView()
+            case let .error(error):
+                ErrorView(error: error)
+                    .onRetry {
+                        viewModel.send(.refresh)
+                    }
+            }
+        }
+    }
+
+    // MARK: - Image View
+
+    @ViewBuilder
+    private var imageView: some View {
         ScrollView {
             ForEach(orderedItems, id: \.self) { imageType in
                 Section {
@@ -104,23 +129,18 @@ struct ItemImagesView: View {
         }
     }
 
-    // MARK: - Image Scrolle View
+    // MARK: - Image Scroll View
 
     @ViewBuilder
     private func imageScrollView(for imageType: ImageType) -> some View {
-        let filteredImages = viewModel.images.filter { $0.key.imageType == imageType }
-        let imageArray = Array(filteredImages)
+        let imageArray = viewModel.images.filter { $0.imageType == imageType }
 
         if imageArray.isNotEmpty {
-            let sortedImageArray = imageArray.sorted { lhs, rhs in
-                (lhs.key.imageIndex ?? 0) < (rhs.key.imageIndex ?? 0)
-            }
-
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
-                    ForEach(sortedImageArray, id: \.key) { imageData in
-                        imageButton(imageInfo: imageData.key, imageURL: imageData.value) {
-                            router.route(to: \.deleteImage, imageData)
+                    ForEach(imageArray, id: \.self) { imageInfo in
+                        imageButton(imageInfo: imageInfo) {
+                            router.route(to: \.deleteImage, imageInfo)
                         }
                     }
                 }
@@ -167,19 +187,27 @@ struct ItemImagesView: View {
 
     // MARK: - Image Button
 
-    private func imageButton(imageInfo: ImageInfo, imageURL: URL?, onSelect: @escaping () -> Void) -> some View {
+    private func imageButton(
+        imageInfo: ImageInfo,
+        onSelect: @escaping () -> Void
+    ) -> some View {
         Button(action: onSelect) {
             ZStack {
                 Color.secondarySystemFill
-                ImageView(imageURL)
-                    .placeholder { _ in
-                        Image(systemName: "circle")
-                    }
-                    .failure {
-                        Image(systemName: "circle")
-                    }
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity)
+                ImageView(
+                    imageInfo.itemImageSource(
+                        itemID: viewModel.item.id!,
+                        client: userSession!.client
+                    )
+                )
+                .placeholder { _ in
+                    Image(systemName: "circle")
+                }
+                .failure {
+                    Image(systemName: "circle")
+                }
+                .scaledToFit()
+                .frame(maxWidth: .infinity)
             }
             .scaledToFit()
             .posterStyle(imageInfo.height ?? 0 > imageInfo.width ?? 0 ? .portrait : .landscape)

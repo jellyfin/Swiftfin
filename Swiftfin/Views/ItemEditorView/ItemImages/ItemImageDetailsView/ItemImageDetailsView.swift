@@ -10,6 +10,7 @@ import BlurHashKit
 import CollectionVGrid
 import Combine
 import Defaults
+import Factory
 import JellyfinAPI
 import Nuke
 import SwiftUI
@@ -21,6 +22,11 @@ struct ItemImageDetailsView: View {
     @Default(.accentColor)
     private var accentColor
 
+    // MARK: - User Session
+
+    @Injected(\.currentUserSession)
+    private var userSession
+
     // MARK: - State, Observed, & Environment Objects
 
     @EnvironmentObject
@@ -31,7 +37,7 @@ struct ItemImageDetailsView: View {
 
     // MARK: - Image Variable
 
-    private let localImageInfo: (key: ImageInfo, value: URL)?
+    private let localImageInfo: ImageInfo?
 
     private let remoteImageInfo: RemoteImageInfo?
 
@@ -47,7 +53,11 @@ struct ItemImageDetailsView: View {
 
     // MARK: - Initializer
 
-    init(viewModel: ItemImagesViewModel, localImageInfo: (key: ImageInfo, value: URL)? = nil, remoteImageInfo: RemoteImageInfo? = nil) {
+    init(
+        viewModel: ItemImagesViewModel,
+        localImageInfo: ImageInfo? = nil,
+        remoteImageInfo: RemoteImageInfo? = nil
+    ) {
         self._viewModel = ObservedObject(wrappedValue: viewModel)
         self.localImageInfo = localImageInfo
         self.remoteImageInfo = remoteImageInfo
@@ -58,7 +68,7 @@ struct ItemImageDetailsView: View {
     var body: some View {
         contentView
             .navigationBarTitle(
-                localImageInfo?.key.imageType?.rawValue.localizedCapitalized ??
+                localImageInfo?.imageType?.rawValue.localizedCapitalized ??
                     remoteImageInfo?.type?.rawValue.localizedCapitalized ??
                     ""
             )
@@ -89,7 +99,7 @@ struct ItemImageDetailsView: View {
     @ViewBuilder
     var contentView: some View {
         if let imageInfo = localImageInfo {
-            localImageView(imageInfo: imageInfo.key, imageURL: imageInfo.value)
+            localImageView(imageInfo: imageInfo)
         } else if let imageInfo = remoteImageInfo {
             remoteImageView(imageInfo: imageInfo)
         } else {
@@ -98,15 +108,19 @@ struct ItemImageDetailsView: View {
     }
 
     @ViewBuilder
-    func localImageView(imageInfo: ImageInfo, imageURL: URL) -> some View {
+    func localImageView(imageInfo: ImageInfo) -> some View {
+        let imageSource = imageInfo.itemImageSource(
+            itemID: viewModel.item.id!,
+            client: userSession!.client
+        )
+
         List {
             HeaderSection(
-                imageURL: imageURL,
-                imageType: imageInfo.height ?? 0 > imageInfo.width ?? 0 ? .portrait : .landscape
+                imageSource: imageSource,
+                posterType: imageInfo.height ?? 0 > imageInfo.width ?? 0 ? .portrait : .landscape
             )
             DetailsSection(
-                imageID: imageInfo.id,
-                imageURL: imageURL,
+                imageURL: imageSource.url,
                 imageIndex: imageInfo.imageIndex,
                 imageWidth: imageInfo.width,
                 imageHeight: imageInfo.height
@@ -120,14 +134,14 @@ struct ItemImageDetailsView: View {
     @ViewBuilder
     func remoteImageView(imageInfo: RemoteImageInfo) -> some View {
         let imageURL = URL(string: imageInfo.url)
+        let imageSource = ImageSource(url: imageURL)
 
         List {
             HeaderSection(
-                imageURL: URL(string: imageInfo.url),
-                imageType: imageInfo.height ?? 0 > imageInfo.width ?? 0 ? .portrait : .landscape
+                imageSource: imageSource,
+                posterType: imageInfo.height ?? 0 > imageInfo.width ?? 0 ? .portrait : .landscape
             )
             DetailsSection(
-                imageID: imageInfo.id,
                 imageURL: imageURL,
                 imageLanguage: imageInfo.language,
                 imageWidth: imageInfo.width,

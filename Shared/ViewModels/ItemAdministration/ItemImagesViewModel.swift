@@ -52,7 +52,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
     @Published
     var item: BaseItemDto
     @Published
-    var images: [ImageInfo: URL] = [:]
+    var images: IdentifiedArray<Int, ImageInfo> = []
 
     // MARK: - State Management
 
@@ -266,48 +266,18 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
     private func getAllImages() async throws {
         guard let itemID = item.id else { return }
 
-        let imageRequest = Paths.getItemImageInfos(itemID: itemID)
-        let imageResponse = try await self.userSession.client.send(imageRequest)
-        let imageInfos = imageResponse.value
-
-        let currentImageInfos = Set(self.images.keys)
-        let newImageInfos = Set(imageInfos)
-
-        guard currentImageInfos != newImageInfos else { return }
+        let request = Paths.getItemImageInfos(itemID: itemID)
+        let response = try await self.userSession.client.send(request)
 
         await MainActor.run {
-            self.images = self.images.filter { newImageInfos.contains($0.key) }
-        }
-
-        let missingImageInfos = imageInfos.filter { !self.images.keys.contains($0) }
-
-        try await withThrowingTaskGroup(of: (ImageInfo, URL).self) { group in
-            for imageInfo in missingImageInfos {
-                group.addTask {
-                    do {
-                        let parameters = Paths.GetItemImageParameters(
-                            tag: imageInfo.imageTag ?? "",
-                            imageIndex: imageInfo.imageIndex
-                        )
-                        let request = Paths.getItemImage(
-                            itemID: itemID,
-                            imageType: imageInfo.imageType?.rawValue ?? "",
-                            parameters: parameters
-                        )
-
-                        if let imageURL = self.userSession.client.fullURL(with: request) {
-                            return (imageInfo, imageURL)
-                        }
-                    }
-                    throw JellyfinAPIError("Failed to fetch image for \(imageInfo)")
+            let updatedImages = response.value.sorted {
+                if $0.imageType == $1.imageType {
+                    return $0.imageIndex ?? 0 < $1.imageIndex ?? 0
                 }
+                return $0.imageType?.rawValue ?? "" < $1.imageType?.rawValue ?? ""
             }
 
-            for try await (imageInfo, URL) in group {
-                await MainActor.run {
-                    self.images[imageInfo] = URL
-                }
-            }
+            self.images = IdentifiedArray(uniqueElements: updatedImages)
         }
     }
 
@@ -435,30 +405,25 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         }
 
         await MainActor.run {
-            self.images.removeValue(forKey: imageInfo)
+            /// Remove the ImageInfo from local storage
+            self.images.removeAll { $0 == imageInfo }
 
-            let updatedImages = self.images
-                .sorted { lhs, rhs in
-                    guard let lhsType = lhs.key.imageType, let rhsType = rhs.key.imageType else {
-                        return false
+            /// Ensure that the remaining items have the correct new indexes
+            if imageInfo.imageIndex != nil {
+                self.images = IdentifiedArray(
+                    uniqueElements: self.images.map { image in
+                        var updatedImage = image
+                        if updatedImage.imageType == imageInfo.imageType,
+                           let imageIndex = updatedImage.imageIndex,
+                           let targetIndex = imageInfo.imageIndex,
+                           imageIndex > targetIndex
+                        {
+                            updatedImage.imageIndex = imageIndex - 1
+                        }
+                        return updatedImage
                     }
-                    if lhsType != rhsType {
-                        return lhsType.rawValue < rhsType.rawValue
-                    }
-                    return (lhs.key.imageIndex ?? 0) < (rhs.key.imageIndex ?? 0)
-                }
-                .reduce(into: [ImageInfo: URL]()) { result, pair in
-                    var updatedInfo = pair.key
-                    if updatedInfo.imageType == imageInfo.imageType,
-                       let index = updatedInfo.imageIndex,
-                       index > imageInfo.imageIndex!
-                    {
-                        updatedInfo.imageIndex = index - 1
-                    }
-                    result[updatedInfo] = pair.value
-                }
-
-            self.images = updatedImages
+                )
+            }
         }
     }
 

@@ -44,7 +44,7 @@ final class ItemImagesCoordinator: ObservableObject, NavigationCoordinatable {
         AddItemImageView(viewModel: viewModel, imageType: imageType)
     }
 
-    func makeDeleteImage(imageInfo: (key: ImageInfo, value: URL)) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+    func makeDeleteImage(imageInfo: ImageInfo) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             ItemImageDetailsView(viewModel: self.viewModel, localImageInfo: imageInfo)
         }

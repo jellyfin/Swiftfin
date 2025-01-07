@@ -13,7 +13,6 @@ extension ItemImageDetailsView {
 
     struct DetailsSection: View {
 
-        let imageID: Int?
         let imageURL: URL?
         let imageIndex: Int?
         let imageLanguage: String?
@@ -27,7 +26,6 @@ extension ItemImageDetailsView {
         // MARK: - Initializer
 
         init(
-            imageID: Int? = nil,
             imageURL: URL? = nil,
             imageIndex: Int? = nil,
             imageLanguage: String? = nil,
@@ -38,7 +36,6 @@ extension ItemImageDetailsView {
             ratingType: RatingType? = nil,
             ratingVotes: Int? = nil
         ) {
-            self.imageID = imageID
             self.imageURL = imageURL
             self.imageIndex = imageIndex
             self.imageLanguage = imageLanguage
@@ -59,14 +56,6 @@ extension ItemImageDetailsView {
                     TextPairView(leading: L10n.provider, trailing: provider)
                 }
 
-                if let imageID {
-                    TextPairView(leading: L10n.id, trailing: imageID.description)
-                }
-
-                if let imageIndex {
-                    TextPairView(leading: L10n.index, trailing: imageIndex.description)
-                }
-
                 if let imageLanguage {
                     TextPairView(leading: L10n.language, trailing: imageLanguage)
                 }
@@ -76,6 +65,10 @@ extension ItemImageDetailsView {
                         leading: L10n.dimensions,
                         trailing: "\(imageWidth) x \(imageHeight)"
                     )
+                }
+
+                if let imageIndex {
+                    TextPairView(leading: L10n.index, trailing: imageIndex.description)
                 }
             }
 
