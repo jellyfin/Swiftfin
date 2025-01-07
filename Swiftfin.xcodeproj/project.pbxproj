@@ -189,7 +189,6 @@
 		4EA78B202D2B5AA30093BFCE /* ItemPhotoPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA78B1F2D2B5A9E0093BFCE /* ItemPhotoPickerView.swift */; };
 		4EA78B232D2B5CFC0093BFCE /* ItemPhotoCropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA78B222D2B5CEF0093BFCE /* ItemPhotoCropView.swift */; };
 		4EA78B252D2B5DBD0093BFCE /* ItemImagePickerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA78B242D2B5DB20093BFCE /* ItemImagePickerCoordinator.swift */; };
-		4EA78B262D2B5DBD0093BFCE /* ItemImagePickerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA78B242D2B5DB20093BFCE /* ItemImagePickerCoordinator.swift */; };
 		4EB132EF2D2CF6D600B5A8E5 /* ImageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB132EE2D2CF6D300B5A8E5 /* ImageType.swift */; };
 		4EB132F02D2CF6D600B5A8E5 /* ImageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB132EE2D2CF6D300B5A8E5 /* ImageType.swift */; };
 		4EB1404C2C8E45B1008691F3 /* StreamSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1404B2C8E45B1008691F3 /* StreamSection.swift */; };
@@ -5764,7 +5763,6 @@
 				E10231582BCF8AF8009D71FC /* WideChannelGridItem.swift in Sources */,
 				E15D4F082B1B12C300442DB8 /* Backport.swift in Sources */,
 				BDA623532D0D0854009A157F /* SelectUserBottomBar.swift in Sources */,
-				4EA78B262D2B5DBD0093BFCE /* ItemImagePickerCoordinator.swift in Sources */,
 				E1D4BF8F271A079A00A11E64 /* BasicAppSettingsView.swift in Sources */,
 				E1575E9A293E7B1E001665B1 /* Array.swift in Sources */,
 				E1575E8D293E7B1E001665B1 /* URLComponents.swift in Sources */,
