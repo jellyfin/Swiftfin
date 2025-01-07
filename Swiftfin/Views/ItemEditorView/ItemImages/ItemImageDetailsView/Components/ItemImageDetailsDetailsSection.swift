@@ -84,7 +84,7 @@ extension ItemImageDetailsView {
                     TextPairView(leading: L10n.rating, trailing: rating.formatted(.number.precision(.fractionLength(2))))
 
                     if let ratingType {
-                        TextPairView(leading: L10n.rating, trailing: ratingType.displayTitle)
+                        TextPairView(leading: L10n.type, trailing: ratingType.displayTitle)
                     }
 
                     if let ratingVotes {
