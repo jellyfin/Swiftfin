@@ -75,12 +75,11 @@ struct PhotoPickerView: UIViewControllerRepresentable {
 
             let itemProvider = image.itemProvider
 
-            if itemProvider.canLoadObject(ofClass: UIImage.self) {
-                itemProvider.loadObject(ofClass: UIImage.self) { image, _ in
-                    if let image = image as? UIImage {
-                        self.onSelect?(image)
-                    }
-                }
+            guard itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
+
+            itemProvider.loadObject(ofClass: UIImage.self) { image, _ in
+                guard let image = image as? UIImage else { return }
+                self.onSelect?(image)
             }
         }
     }

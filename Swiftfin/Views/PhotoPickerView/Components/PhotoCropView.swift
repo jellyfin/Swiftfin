@@ -12,11 +12,6 @@ import SwiftUI
 
 struct PhotoCropView: View {
 
-    // MARK: - Defaults
-
-    @Default(.accentColor)
-    private var accentColor
-
     // MARK: - State, Observed, & Environment Objects
 
     @StateObject
@@ -24,7 +19,6 @@ struct PhotoCropView: View {
 
     // MARK: - Image Variable
 
-    let isReady: Bool
     let isSaving: Bool
     let image: UIImage
     let cropShape: Mantis.CropShapeType
@@ -39,38 +33,23 @@ struct PhotoCropView: View {
             initialImage: image,
             cropShape: cropShape,
             presetRatio: presetRatio,
-            proxy: proxy
-        ) {
-            onSave($0)
-        }
+            proxy: proxy,
+            onImageCropped: onSave
+        )
         .topBarTrailing {
 
-            if isReady {
-                Button(L10n.rotate, systemImage: "rotate.right") {
-                    proxy.rotate()
-                }
-                .foregroundStyle(.gray)
+            Button(L10n.rotate, systemImage: "rotate.right") {
+                proxy.rotate()
             }
 
             if isSaving {
-                Button(L10n.cancel) {
-                    onCancel()
-                }
-                .foregroundStyle(.red)
+                Button(L10n.cancel, action: onCancel)
+                    .buttonStyle(.toolbarPill(.red))
             } else {
-                Button {
+                Button(L10n.save) {
                     proxy.crop()
-                } label: {
-                    Text(L10n.save)
-                        .foregroundStyle(accentColor.overlayColor)
-                        .font(.headline)
-                        .padding(.vertical, 5)
-                        .padding(.horizontal, 10)
-                        .background {
-                            accentColor
-                        }
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
+                .buttonStyle(.toolbarPill)
             }
         }
         .toolbar {
@@ -95,7 +74,7 @@ struct PhotoCropView: View {
 
 // MARK: - Photo Crop View
 
-struct _PhotoCropView: UIViewControllerRepresentable {
+private struct _PhotoCropView: UIViewControllerRepresentable {
 
     class Proxy: ObservableObject {
 

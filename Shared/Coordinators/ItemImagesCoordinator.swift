@@ -13,11 +13,6 @@ import SwiftUI
 
 final class ItemImagesCoordinator: ObservableObject, NavigationCoordinatable {
 
-    // MARK: - User Session
-
-    @Injected(\.currentUserSession)
-    private var userSession
-
     // MARK: - Navigation Stack
 
     let stack = NavigationStack(initial: \ItemImagesCoordinator.start)
@@ -25,6 +20,7 @@ final class ItemImagesCoordinator: ObservableObject, NavigationCoordinatable {
     @Root
     var start = makeStart
 
+    // Okay for now since `ObservedObject` is on `MainActor`
     @ObservedObject
     private var viewModel: ItemImagesViewModel
 
@@ -61,7 +57,6 @@ final class ItemImagesCoordinator: ObservableObject, NavigationCoordinatable {
     func makeSelectImage(remoteImageInfo: RemoteImageInfo) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             ItemImageDetailsView(
-                title: remoteImageInfo.type?.displayTitle ?? "",
                 viewModel: self.viewModel,
                 imageSource: ImageSource(url: URL(string: remoteImageInfo.url)),
                 width: remoteImageInfo.width,
@@ -71,11 +66,11 @@ final class ItemImagesCoordinator: ObservableObject, NavigationCoordinatable {
                 rating: remoteImageInfo.communityRating,
                 ratingType: remoteImageInfo.ratingType,
                 ratingVotes: remoteImageInfo.voteCount,
-                isLocal: false,
                 onSave: {
                     self.viewModel.send(.setImage(remoteImageInfo))
                 }
             )
+            .navigationTitle(remoteImageInfo.type?.displayTitle ?? "")
         }
     }
 
@@ -84,20 +79,20 @@ final class ItemImagesCoordinator: ObservableObject, NavigationCoordinatable {
     func makeDeleteImage(imageInfo: ImageInfo) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             ItemImageDetailsView(
-                title: imageInfo.imageType?.displayTitle ?? "",
                 viewModel: self.viewModel,
                 imageSource: imageInfo.itemImageSource(
                     itemID: self.viewModel.item.id!,
-                    client: self.userSession!.client
+                    client: self.viewModel.userSession.client
                 ),
                 index: imageInfo.imageIndex,
                 width: imageInfo.width,
                 height: imageInfo.height,
-                isLocal: true,
                 onDelete: {
                     self.viewModel.send(.deleteImage(imageInfo))
                 }
             )
+            .navigationTitle(imageInfo.imageType?.displayTitle ?? "")
+            .environment(\.isEditing, true)
         }
     }
 

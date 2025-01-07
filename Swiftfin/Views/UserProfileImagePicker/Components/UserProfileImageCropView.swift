@@ -13,11 +13,6 @@ import SwiftUI
 
 struct UserProfileImageCropView: View {
 
-    // MARK: - Defaults
-
-    @Default(.accentColor)
-    private var accentColor
-
     // MARK: - State, Observed, & Environment Objects
 
     @EnvironmentObject
@@ -39,7 +34,6 @@ struct UserProfileImageCropView: View {
 
     var body: some View {
         PhotoCropView(
-            isReady: viewModel.state == .initial,
             isSaving: viewModel.state == .uploading,
             image: image,
             cropShape: .square,

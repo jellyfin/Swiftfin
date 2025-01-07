@@ -17,10 +17,8 @@ import SwiftUI
 
 struct ItemImageDetailsView: View {
 
-    // MARK: - Defaults
-
-    @Default(.accentColor)
-    private var accentColor
+    @Environment(\.isEditing)
+    private var isEditing
 
     // MARK: - State, Observed, & Environment Objects
 
@@ -34,10 +32,6 @@ struct ItemImageDetailsView: View {
 
     private let imageSource: ImageSource
 
-    // MARK: - Navigation Title
-
-    private let title: String
-
     // MARK: - Description Variables
 
     private let index: Int?
@@ -49,10 +43,6 @@ struct ItemImageDetailsView: View {
     private let ratingType: RatingType?
     private let ratingVotes: Int?
 
-    // MARK: - RemoteImageInfo vs ImageInfo
-
-    private let isLocal: Bool
-
     // MARK: - Image Actions
 
     private let onSave: (() -> Void)?
@@ -63,15 +53,9 @@ struct ItemImageDetailsView: View {
     @State
     private var error: Error?
 
-    // MARK: - Collection Layout
-
-    @State
-    private var layout: CollectionVGridLayout = .minWidth(150)
-
     // MARK: - Initializer
 
     init(
-        title: String,
         viewModel: ItemImagesViewModel,
         imageSource: ImageSource,
         index: Int? = nil,
@@ -82,11 +66,9 @@ struct ItemImageDetailsView: View {
         rating: Double? = nil,
         ratingType: RatingType? = nil,
         ratingVotes: Int? = nil,
-        isLocal: Bool,
         onSave: (() -> Void)? = nil,
         onDelete: (() -> Void)? = nil
     ) {
-        self.title = title
         self._viewModel = ObservedObject(wrappedValue: viewModel)
         self.imageSource = imageSource
         self.index = index
@@ -97,7 +79,6 @@ struct ItemImageDetailsView: View {
         self.rating = rating
         self.ratingType = ratingType
         self.ratingVotes = ratingVotes
-        self.isLocal = isLocal
         self.onSave = onSave
         self.onDelete = onDelete
     }
@@ -106,7 +87,6 @@ struct ItemImageDetailsView: View {
 
     var body: some View {
         contentView
-            .navigationBarTitle(title.localizedCapitalized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.dismissCoordinator()
@@ -114,6 +94,11 @@ struct ItemImageDetailsView: View {
             .topBarTrailing {
                 if viewModel.backgroundStates.contains(.refreshing) {
                     ProgressView()
+                }
+
+                if let onSave {
+                    Button(L10n.save, action: onSave)
+                        .buttonStyle(.toolbarPill)
                 }
             }
             .onReceive(viewModel.events) { event in
@@ -132,7 +117,7 @@ struct ItemImageDetailsView: View {
     // MARK: - Content View
 
     @ViewBuilder
-    var contentView: some View {
+    private var contentView: some View {
         List {
             HeaderSection(
                 imageSource: imageSource,
@@ -151,16 +136,10 @@ struct ItemImageDetailsView: View {
                 ratingVotes: ratingVotes
             )
 
-            if isLocal, let onDelete {
+            if isEditing, let onDelete {
                 DeleteButton {
                     onDelete()
                 }
-            }
-        }
-        .topBarTrailing {
-            if !isLocal, let onSave {
-                Button(L10n.save, action: onSave)
-                    .buttonStyle(.toolbarPill)
             }
         }
     }

@@ -38,66 +38,17 @@ struct ItemImagesView: View {
 
     @State
     private var selectedType: ImageType?
+    @State
+    private var isFilePickerPresented = false
 
     // MARK: - Error State
 
     @State
     private var error: Error?
 
-    // MARK: - Ordered ImageTypes
-
-    private var orderedItems: [ImageType] {
-        ImageType.allCases.sorted { lhs, rhs in
-            if lhs == .primary { return true }
-            if rhs == .primary { return false }
-            return lhs.rawValue.localizedCaseInsensitiveCompare(rhs.rawValue) == .orderedAscending
-        }
-    }
-
     // MARK: - Body
 
     var body: some View {
-        contentView
-            .navigationBarTitle(L10n.images)
-            .navigationBarTitleDisplayMode(.inline)
-            .onFirstAppear {
-                viewModel.send(.refresh)
-            }
-            .navigationBarCloseButton {
-                router.dismissCoordinator()
-            }
-            .fileImporter(
-                isPresented: .constant(selectedType != nil),
-                allowedContentTypes: [.image],
-                allowsMultipleSelection: false
-            ) {
-                switch $0 {
-                case let .success(urls):
-                    if let file = urls.first, let type = selectedType {
-                        viewModel.send(.uploadImage(file: file, type: type))
-                        selectedType = nil
-                    }
-                case let .failure(fileError):
-                    error = fileError
-                    selectedType = nil
-                }
-            }
-            .onReceive(viewModel.events) { event in
-                switch event {
-                case .updated:
-                    break
-                case .deleted:
-                    break
-                case let .error(eventError):
-                    self.error = eventError
-                }
-            }
-            .errorMessage($error)
-    }
-
-    // MARK: - Content View
-
-    private var contentView: some View {
         ZStack {
             switch viewModel.state {
             case .content, .deleting, .updating:
@@ -111,6 +62,41 @@ struct ItemImagesView: View {
                     }
             }
         }
+        .navigationBarTitle(L10n.images)
+        .navigationBarTitleDisplayMode(.inline)
+        .onFirstAppear {
+            viewModel.send(.refresh)
+        }
+        .navigationBarCloseButton {
+            router.dismissCoordinator()
+        }
+        .fileImporter(
+            isPresented: $isFilePickerPresented,
+            allowedContentTypes: [.png, .jpeg, .heic],
+            allowsMultipleSelection: false
+        ) {
+            switch $0 {
+            case let .success(urls):
+                if let file = urls.first, let type = selectedType {
+                    viewModel.send(.uploadImage(file: file, type: type))
+                    selectedType = nil
+                }
+            case let .failure(fileError):
+                error = fileError
+                selectedType = nil
+            }
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .updated:
+                break
+            case .deleted:
+                break
+            case let .error(eventError):
+                self.error = eventError
+            }
+        }
+        .errorMessage($error)
     }
 
     // MARK: - Image View
@@ -118,10 +104,12 @@ struct ItemImagesView: View {
     @ViewBuilder
     private var imageView: some View {
         ScrollView {
-            ForEach(orderedItems, id: \.self) { imageType in
+            ForEach(ImageType.allCases.sorted(using: \.rawValue), id: \.self) { imageType in
                 Section {
                     imageScrollView(for: imageType)
-                    Divider().padding(.vertical, 16)
+
+                    Divider()
+                        .padding(.vertical, 16)
                 } header: {
                     sectionHeader(for: imageType)
                 }
@@ -170,6 +158,7 @@ struct ItemImagesView: View {
 
                 Button(L10n.uploadFile, systemImage: "document.badge.plus") {
                     selectedType = imageType
+                    isFilePickerPresented = true
                 }
 
                 Button(L10n.uploadPhoto, systemImage: "photo.badge.plus") {
@@ -187,6 +176,7 @@ struct ItemImagesView: View {
 
     // MARK: - Image Button
 
+    @ViewBuilder
     private func imageButton(
         imageInfo: ImageInfo,
         onSelect: @escaping () -> Void
@@ -194,6 +184,7 @@ struct ItemImagesView: View {
         Button(action: onSelect) {
             ZStack {
                 Color.secondarySystemFill
+
                 ImageView(
                     imageInfo.itemImageSource(
                         itemID: viewModel.item.id!,

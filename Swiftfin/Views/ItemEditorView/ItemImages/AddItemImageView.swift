@@ -22,7 +22,7 @@ struct AddItemImageView: View {
     @ObservedObject
     private var viewModel: ItemImagesViewModel
 
-    @ObservedObject
+    @StateObject
     private var remoteImageInfoViewModel: RemoteImageInfoViewModel
 
     // MARK: - Dialog States
@@ -38,63 +38,56 @@ struct AddItemImageView: View {
     // MARK: - Initializer
 
     init(viewModel: ItemImagesViewModel, imageType: ImageType) {
-        self._viewModel = ObservedObject(wrappedValue: viewModel)
-        self._remoteImageInfoViewModel = ObservedObject(
-            initialValue: RemoteImageInfoViewModel(
-                item: viewModel.item,
-                imageType: imageType
-            )
-        )
+        self.viewModel = viewModel
+        self._remoteImageInfoViewModel = StateObject(wrappedValue: RemoteImageInfoViewModel(
+            item: viewModel.item,
+            imageType: imageType
+        ))
     }
 
     // MARK: - Body
 
     var body: some View {
-        contentView
-            .navigationBarTitle(remoteImageInfoViewModel.imageType.rawValue.localizedCapitalized)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(viewModel.state == .updating)
-            .topBarTrailing {
-                if viewModel.backgroundStates.contains(.refreshing) {
-                    ProgressView()
-                }
-            }
-            .onFirstAppear {
-                remoteImageInfoViewModel.send(.refresh)
-            }
-            .onReceive(viewModel.events) { event in
-                switch event {
-                case .deleted:
-                    break
-                case .updated:
-                    UIDevice.feedback(.success)
-                    // TODO: Why does this crash without the delay?
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        router.pop()
+        ZStack {
+            switch remoteImageInfoViewModel.state {
+            case .initial, .refreshing:
+                DelayedProgressView()
+            case .content:
+                gridView
+            case let .error(error):
+                ErrorView(error: error)
+                    .onRetry {
+                        viewModel.send(.refresh)
                     }
-                case let .error(eventError):
-                    UIDevice.feedback(.error)
-                    error = eventError
-                }
             }
-            .errorMessage($error)
-    }
-
-    // MARK: - Content View
-
-    @ViewBuilder
-    private var contentView: some View {
-        switch remoteImageInfoViewModel.state {
-        case .initial, .refreshing:
-            DelayedProgressView()
-        case .content:
-            gridView
-        case let .error(error):
-            ErrorView(error: error)
-                .onRetry {
-                    viewModel.send(.refresh)
-                }
         }
+        .navigationTitle(remoteImageInfoViewModel.imageType.displayTitle)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(viewModel.state == .updating)
+        .topBarTrailing {
+            if viewModel.backgroundStates.contains(.refreshing) {
+                ProgressView()
+            }
+        }
+        .onFirstAppear {
+            remoteImageInfoViewModel.send(.refresh)
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .deleted:
+                break
+            case .updated:
+                UIDevice.feedback(.success)
+                // TODO: Why does this crash without the delay?
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    router.pop()
+                }
+            case let .error(eventError):
+                UIDevice.feedback(.error)
+                error = eventError
+            }
+        }
+        .errorMessage($error)
     }
 
     // MARK: - Content Grid View
@@ -103,9 +96,6 @@ struct AddItemImageView: View {
     private var gridView: some View {
         if remoteImageInfoViewModel.elements.isEmpty {
             Text(L10n.none)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                .listRowSeparator(.hidden)
-                .listRowInsets(.zero)
         } else {
             CollectionVGrid(
                 uniqueElements: remoteImageInfoViewModel.elements,
@@ -121,6 +111,7 @@ struct AddItemImageView: View {
 
     // MARK: - Poster Image Button
 
+    @ViewBuilder
     private func imageButton(_ image: RemoteImageInfo?) -> some View {
         Button {
             if let image {
@@ -136,6 +127,7 @@ struct AddItemImageView: View {
 
     // MARK: - Poster Image
 
+    @ViewBuilder
     private func posterImage(
         _ posterImageInfo: RemoteImageInfo?,
         posterStyle: PosterDisplayType

@@ -2311,9 +2311,9 @@
 		4E37F6182D17EB220022AADD /* ItemImages */ = {
 			isa = PBXGroup;
 			children = (
-				4E4593A42D04E4D600E277E1 /* AddItemImageView */,
+				4E4593A52D04E4DE00E277E1 /* AddItemImageView.swift */,
 				4EA78B152D2A0C4A0093BFCE /* ItemImageDetailsView */,
-				4E4593A12D04E2A200E277E1 /* ItemImagesView */,
+				4E4593A22D04E2AF00E277E1 /* ItemImagesView.swift */,
 				4EA78B1E2D2B5A960093BFCE /* ItemPhotoPickerView */,
 			);
 			path = ItemImages;
@@ -2336,22 +2336,6 @@
 				4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */,
 			);
 			path = PlaybackBitrate;
-			sourceTree = "<group>";
-		};
-		4E4593A12D04E2A200E277E1 /* ItemImagesView */ = {
-			isa = PBXGroup;
-			children = (
-				4E4593A22D04E2AF00E277E1 /* ItemImagesView.swift */,
-			);
-			path = ItemImagesView;
-			sourceTree = "<group>";
-		};
-		4E4593A42D04E4D600E277E1 /* AddItemImageView */ = {
-			isa = PBXGroup;
-			children = (
-				4E4593A52D04E4DE00E277E1 /* AddItemImageView.swift */,
-			);
-			path = AddItemImageView;
 			sourceTree = "<group>";
 		};
 		4E49DEDE2CE55F7F00352DCD /* Components */ = {

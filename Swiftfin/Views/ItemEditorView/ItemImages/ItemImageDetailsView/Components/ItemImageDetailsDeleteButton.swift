@@ -26,7 +26,7 @@ extension ItemImageDetailsView {
         // MARK: - Dialog State
 
         @State
-        var isPresentingConfirmation: Bool = false
+        private var isPresentingConfirmation: Bool = false
 
         // MARK: - Body
 
@@ -35,18 +35,18 @@ extension ItemImageDetailsView {
             ListRowButton(L10n.delete) {
                 isPresentingConfirmation = true
             }
-            .foregroundStyle(
-                accentColor.overlayColor,
-                .red
-            )
+            .foregroundStyle(.red, .red.opacity(0.2))
             .confirmationDialog(
                 L10n.delete,
                 isPresented: $isPresentingConfirmation,
                 titleVisibility: .visible
             ) {
-                Button(L10n.delete, role: .destructive) {
-                    onDelete()
-                }
+                Button(
+                    L10n.delete,
+                    role: .destructive,
+                    action: onDelete
+                )
+
                 Button(L10n.cancel, role: .cancel) {
                     isPresentingConfirmation = false
                 }

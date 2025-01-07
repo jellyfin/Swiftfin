@@ -96,19 +96,12 @@ extension ItemImageDetailsView {
 
             if let url {
                 Section {
-                    Button {
+                    ChevronButton(
+                        L10n.imageSource,
+                        external: true
+                    )
+                    .onSelect {
                         UIApplication.shared.open(url)
-                    } label: {
-                        HStack {
-                            Text(L10n.imageSource)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .foregroundColor(.primary)
-
-                            Image(systemName: "arrow.up.forward")
-                                .font(.body.weight(.regular))
-                                .foregroundColor(.secondary)
-                        }
-                        .foregroundStyle(.primary, .secondary)
                     }
                 }
             }
