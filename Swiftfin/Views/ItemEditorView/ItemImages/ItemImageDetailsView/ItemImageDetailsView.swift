@@ -148,8 +148,8 @@ struct ItemImageDetailsView: View {
                 ratingVotes: ratingVotes
             )
 
-            DeleteButton {
-                if isLocal, let onDelete {
+            if isLocal, let onDelete {
+                DeleteButton {
                     onDelete()
                 }
             }
