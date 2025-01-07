@@ -6,11 +6,15 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import JellyfinAPI
 import Stinsen
 import SwiftUI
 
 final class ItemImagesCoordinator: ObservableObject, NavigationCoordinatable {
+
+    @Injected(\.currentUserSession)
+    private var userSession
 
     let stack = NavigationStack(initial: \ItemImagesCoordinator.start)
 
@@ -46,13 +50,40 @@ final class ItemImagesCoordinator: ObservableObject, NavigationCoordinatable {
 
     func makeDeleteImage(imageInfo: ImageInfo) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
-            ItemImageDetailsView(viewModel: self.viewModel, localImageInfo: imageInfo)
+            ItemImageDetailsView(
+                title: imageInfo.imageType?.displayTitle ?? "",
+                viewModel: self.viewModel,
+                imageSource: imageInfo.itemImageSource(
+                    itemID: self.viewModel.item.id!,
+                    client: self.userSession!.client
+                ),
+                index: imageInfo.imageIndex,
+                width: imageInfo.width,
+                height: imageInfo.height,
+                isLocal: false, onDelete: {
+                    self.viewModel.send(.deleteImage(imageInfo))
+                }
+            )
         }
     }
 
     func makeSelectImage(remoteImageInfo: RemoteImageInfo) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
-            ItemImageDetailsView(viewModel: self.viewModel, remoteImageInfo: remoteImageInfo)
+            ItemImageDetailsView(
+                title: remoteImageInfo.type?.displayTitle ?? "",
+                viewModel: self.viewModel,
+                imageSource: ImageSource(url: URL(string: remoteImageInfo.url)),
+                width: remoteImageInfo.width,
+                height: remoteImageInfo.height,
+                language: remoteImageInfo.language,
+                provider: remoteImageInfo.providerName,
+                rating: remoteImageInfo.communityRating,
+                ratingType: remoteImageInfo.ratingType,
+                ratingVotes: remoteImageInfo.voteCount,
+                isLocal: false, onSave: {
+                    self.viewModel.send(.setImage(remoteImageInfo))
+                }
+            )
         }
     }
 

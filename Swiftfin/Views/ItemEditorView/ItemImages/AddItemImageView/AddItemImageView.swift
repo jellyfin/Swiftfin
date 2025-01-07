@@ -159,10 +159,7 @@ struct AddItemImageView: View {
                     }
                 }
                 .failure {
-                    VStack(spacing: 8) {
-                        Image(systemName: "photo")
-                        Text(L10n.none)
-                    }
+                    Image(systemName: "questionmark")
                 }
                 .foregroundColor(.secondary)
                 .font(.headline)

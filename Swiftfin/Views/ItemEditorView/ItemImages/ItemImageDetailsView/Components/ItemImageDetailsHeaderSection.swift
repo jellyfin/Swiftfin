@@ -19,7 +19,7 @@ extension ItemImageDetailsView {
         let imageSource: ImageSource
         let posterType: PosterDisplayType
 
-        // MARK: - Header
+        // MARK: - Body
 
         @ViewBuilder
         var body: some View {

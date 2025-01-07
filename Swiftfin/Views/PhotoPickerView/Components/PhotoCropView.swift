@@ -24,8 +24,8 @@ struct PhotoCropView: View {
 
     // MARK: - Image Variable
 
-    var isReady: Bool
-    var isSaving: Bool
+    let isReady: Bool
+    let isSaving: Bool
     let image: UIImage
     let cropShape: Mantis.CropShapeType
     let presetRatio: Mantis.PresetFixedRatioType

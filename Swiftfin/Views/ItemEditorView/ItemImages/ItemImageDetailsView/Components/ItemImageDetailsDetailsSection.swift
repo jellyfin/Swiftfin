@@ -13,11 +13,11 @@ extension ItemImageDetailsView {
 
     struct DetailsSection: View {
 
-        let imageURL: URL?
-        let imageIndex: Int?
-        let imageLanguage: String?
-        let imageWidth: Int?
-        let imageHeight: Int?
+        let url: URL?
+        let index: Int?
+        let language: String?
+        let width: Int?
+        let height: Int?
         let provider: String?
         let rating: Double?
         let ratingType: RatingType?
@@ -26,21 +26,21 @@ extension ItemImageDetailsView {
         // MARK: - Initializer
 
         init(
-            imageURL: URL? = nil,
-            imageIndex: Int? = nil,
-            imageLanguage: String? = nil,
-            imageWidth: Int? = nil,
-            imageHeight: Int? = nil,
+            url: URL? = nil,
+            index: Int? = nil,
+            language: String? = nil,
+            width: Int? = nil,
+            height: Int? = nil,
             provider: String? = nil,
             rating: Double? = nil,
             ratingType: RatingType? = nil,
             ratingVotes: Int? = nil
         ) {
-            self.imageURL = imageURL
-            self.imageIndex = imageIndex
-            self.imageLanguage = imageLanguage
-            self.imageWidth = imageWidth
-            self.imageHeight = imageHeight
+            self.url = url
+            self.index = index
+            self.language = language
+            self.width = width
+            self.height = height
             self.provider = provider
             self.rating = rating
             self.ratingType = ratingType
@@ -56,19 +56,19 @@ extension ItemImageDetailsView {
                     TextPairView(leading: L10n.provider, trailing: provider)
                 }
 
-                if let imageLanguage {
-                    TextPairView(leading: L10n.language, trailing: imageLanguage)
+                if let language {
+                    TextPairView(leading: L10n.language, trailing: language)
                 }
 
-                if let imageWidth, let imageHeight {
+                if let width, let height {
                     TextPairView(
                         leading: L10n.dimensions,
-                        trailing: "\(imageWidth) x \(imageHeight)"
+                        trailing: "\(width) x \(height)"
                     )
                 }
 
-                if let imageIndex {
-                    TextPairView(leading: L10n.index, trailing: imageIndex.description)
+                if let index {
+                    TextPairView(leading: L10n.index, trailing: index.description)
                 }
             }
 
@@ -86,10 +86,10 @@ extension ItemImageDetailsView {
                 }
             }
 
-            if let imageURL = imageURL {
+            if let url {
                 Section {
                     Button {
-                        UIApplication.shared.open(imageURL)
+                        UIApplication.shared.open(url)
                     } label: {
                         HStack {
                             Text(L10n.imageSource)

@@ -43,10 +43,6 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         case error(JellyfinAPIError)
     }
 
-    // MARK: - Image Variables
-
-    private let includeAllLanguages: Bool
-
     // MARK: - Published Variables
 
     @Published
@@ -72,13 +68,8 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: - Init
 
-    init(
-        item: BaseItemDto,
-        includeAllLanguages: Bool = false
-    ) {
+    init(item: BaseItemDto) {
         self.item = item
-        self.includeAllLanguages = includeAllLanguages
-        super.init()
     }
 
     // MARK: - Respond to Actions

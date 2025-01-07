@@ -22,24 +22,38 @@ struct ItemImageDetailsView: View {
     @Default(.accentColor)
     private var accentColor
 
-    // MARK: - User Session
-
-    @Injected(\.currentUserSession)
-    private var userSession
-
     // MARK: - State, Observed, & Environment Objects
 
     @EnvironmentObject
     private var router: BasicNavigationViewCoordinator.Router
 
     @ObservedObject
-    var viewModel: ItemImagesViewModel
+    private var viewModel: ItemImagesViewModel
 
     // MARK: - Image Variable
 
-    private let localImageInfo: ImageInfo?
+    private let imageSource: ImageSource
 
-    private let remoteImageInfo: RemoteImageInfo?
+    // MARK: - Navigation Title
+
+    private let title: String
+
+    // MARK: - Description Variables
+
+    private let index: Int?
+    private let width: Int?
+    private let height: Int?
+    private let language: String?
+    private let provider: String?
+    private let rating: Double?
+    private let ratingType: RatingType?
+    private let ratingVotes: Int?
+    private let isLocal: Bool
+
+    // MARK: - Image Actions
+
+    private let onSave: (() -> Void)?
+    private let onDelete: (() -> Void)?
 
     // MARK: - Dialog States
 
@@ -54,24 +68,42 @@ struct ItemImageDetailsView: View {
     // MARK: - Initializer
 
     init(
+        title: String,
         viewModel: ItemImagesViewModel,
-        localImageInfo: ImageInfo? = nil,
-        remoteImageInfo: RemoteImageInfo? = nil
+        imageSource: ImageSource,
+        index: Int? = nil,
+        width: Int? = nil,
+        height: Int? = nil,
+        language: String? = nil,
+        provider: String? = nil,
+        rating: Double? = nil,
+        ratingType: RatingType? = nil,
+        ratingVotes: Int? = nil,
+        isLocal: Bool,
+        onSave: (() -> Void)? = nil,
+        onDelete: (() -> Void)? = nil
     ) {
+        self.title = title
         self._viewModel = ObservedObject(wrappedValue: viewModel)
-        self.localImageInfo = localImageInfo
-        self.remoteImageInfo = remoteImageInfo
+        self.imageSource = imageSource
+        self.index = index
+        self.width = width
+        self.height = height
+        self.language = language
+        self.provider = provider
+        self.rating = rating
+        self.ratingType = ratingType
+        self.ratingVotes = ratingVotes
+        self.isLocal = isLocal
+        self.onSave = onSave
+        self.onDelete = onDelete
     }
 
     // MARK: - Body
 
     var body: some View {
         contentView
-            .navigationBarTitle(
-                localImageInfo?.imageType?.rawValue.localizedCapitalized ??
-                    remoteImageInfo?.type?.rawValue.localizedCapitalized ??
-                    ""
-            )
+            .navigationBarTitle(title.localizedCapitalized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.dismissCoordinator()
@@ -98,65 +130,35 @@ struct ItemImageDetailsView: View {
 
     @ViewBuilder
     var contentView: some View {
-        if let imageInfo = localImageInfo {
-            localImageView(imageInfo: imageInfo)
-        } else if let imageInfo = remoteImageInfo {
-            remoteImageView(imageInfo: imageInfo)
-        } else {
-            ErrorView(error: JellyfinAPIError("No image provided."))
-        }
-    }
-
-    @ViewBuilder
-    func localImageView(imageInfo: ImageInfo) -> some View {
-        let imageSource = imageInfo.itemImageSource(
-            itemID: viewModel.item.id!,
-            client: userSession!.client
-        )
-
         List {
             HeaderSection(
                 imageSource: imageSource,
-                posterType: imageInfo.height ?? 0 > imageInfo.width ?? 0 ? .portrait : .landscape
+                posterType: height ?? 0 > width ?? 0 ? .portrait : .landscape
             )
+
             DetailsSection(
-                imageURL: imageSource.url,
-                imageIndex: imageInfo.imageIndex,
-                imageWidth: imageInfo.width,
-                imageHeight: imageInfo.height
+                url: imageSource.url,
+                index: index,
+                language: language,
+                width: width,
+                height: height,
+                provider: provider,
+                rating: rating,
+                ratingType: ratingType,
+                ratingVotes: ratingVotes
             )
+
             DeleteButton {
-                viewModel.send(.deleteImage(imageInfo))
+                if !isLocal, let onDelete {
+                    onDelete()
+                }
             }
-        }
-    }
-
-    @ViewBuilder
-    func remoteImageView(imageInfo: RemoteImageInfo) -> some View {
-        let imageURL = URL(string: imageInfo.url)
-        let imageSource = ImageSource(url: imageURL)
-
-        List {
-            HeaderSection(
-                imageSource: imageSource,
-                posterType: imageInfo.height ?? 0 > imageInfo.width ?? 0 ? .portrait : .landscape
-            )
-            DetailsSection(
-                imageURL: imageURL,
-                imageLanguage: imageInfo.language,
-                imageWidth: imageInfo.width,
-                imageHeight: imageInfo.height,
-                provider: imageInfo.providerName,
-                rating: imageInfo.communityRating,
-                ratingType: imageInfo.ratingType,
-                ratingVotes: imageInfo.voteCount
-            )
         }
         .topBarTrailing {
-            Button(L10n.save) {
-                viewModel.send(.setImage(imageInfo))
+            if isLocal, let onSave {
+                Button(L10n.save, action: onSave)
+                    .buttonStyle(.toolbarPill)
             }
-            .buttonStyle(.toolbarPill)
         }
     }
 }
