@@ -62,7 +62,7 @@ struct ItemImagesView: View {
                     }
             }
         }
-        .navigationBarTitle(L10n.images)
+        .navigationTitle(L10n.images)
         .navigationBarTitleDisplayMode(.inline)
         .onFirstAppear {
             viewModel.send(.refresh)
@@ -88,10 +88,7 @@ struct ItemImagesView: View {
         }
         .onReceive(viewModel.events) { event in
             switch event {
-            case .updated:
-                break
-            case .deleted:
-                break
+            case .updated, .deleted: ()
             case let .error(eventError):
                 self.error = eventError
             }
