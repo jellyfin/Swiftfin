@@ -444,17 +444,17 @@ struct SelectUserView: View {
         }
         .alert(L10n.signIn, isPresented: $isPresentingLocalPin) {
 
-            TextField(L10n.pin, text: $pin)
+            // TODO: Verify on tvOS 18
+            // https://forums.developer.apple.com/forums/thread/739545
+            // TextField(L10n.pin, text: $pin)
+            TextField(text: $pin)
                 .keyboardType(.numberPad)
 
-            // bug in SwiftUI: having .disabled will dismiss
-            // alert but not call the closure (for length)
             Button(L10n.signIn) {
                 guard let user = selectedUsers.first else {
                     assertionFailure("User not selected")
                     return
                 }
-
                 select(user: user, needsPin: false)
             }
 
