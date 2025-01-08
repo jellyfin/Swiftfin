@@ -79,6 +79,10 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var videoPlayerSettings = makeVideoPlayerSettings
     @Route(.modal)
     var playbackQualitySettings = makePlaybackQualitySettings
+    @Route(.push)
+    var userProfile = makeUserProfileSettings
+    @Route(.push)
+    var localSecurity = makeLocalSecurity
     #endif
 
     #if os(iOS)
@@ -181,6 +185,15 @@ final class SettingsCoordinator: NavigationCoordinatable {
     #endif
 
     #if os(tvOS)
+    @ViewBuilder
+    func makeUserProfileSettings(viewModel: SettingsViewModel) -> some View {
+        UserProfileSettingsView(viewModel: viewModel)
+    }
+    @ViewBuilder
+    func makeLocalSecurity() -> some View {
+        UserLocalSecurityView()
+    }
+
     func makeCustomizeViewsSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator(
             BasicNavigationViewCoordinator {
