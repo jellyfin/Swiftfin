@@ -447,7 +447,7 @@ struct SelectUserView: View {
             // TODO: Verify on tvOS 18
             // https://forums.developer.apple.com/forums/thread/739545
             // TextField(L10n.pin, text: $pin)
-            TextField(text: $pin)
+            TextField(text: $pin) {}
                 .keyboardType(.numberPad)
 
             Button(L10n.signIn) {
