@@ -103,7 +103,7 @@ struct TruncatedText: View {
             }
             .hidden()
         }
-        .onChange(of: isTruncated) { newValue in
+        .onChange(of: isTruncated) { _, newValue in
             isTruncatedBinding.wrappedValue = newValue
         }
     }
