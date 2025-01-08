@@ -9,7 +9,6 @@
 import Combine
 import Defaults
 import KeychainSwift
-import LocalAuthentication
 import SwiftUI
 
 // TODO: present toast when authentication successfully changed
@@ -81,77 +80,80 @@ struct UserLocalSecurityView: View {
         viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: pinHint)
     }
 
-    // MARK: - Perform Device Authentication
+    // MARK: - Body
 
-    // error logging/presentation is handled within here, just
-    // use try+thrown error in local Task for early return
-    private func performDeviceAuthentication(reason: String) async throws {
-        let context = LAContext()
-        var policyError: NSError?
+    private var sectionFooter: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(L10n.additionalSecurityAccessDescription)
 
-        guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &policyError) else {
-            viewModel.logger.critical("\(policyError!.localizedDescription)")
+            // frame necessary with bug within BulletedList
+            BulletedList {
 
-            await MainActor.run {
-                self
-                    .error = JellyfinAPIError(L10n.unableToPerformDeviceAuthFaceID)
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(UserAccessPolicy.requireDeviceAuthentication.displayTitle)
+                        .fontWeight(.semibold)
+
+                    Text(L10n.requireDeviceAuthDescription)
+                }
+                .padding(.bottom, 15)
+
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(UserAccessPolicy.requirePin.displayTitle)
+                        .fontWeight(.semibold)
+
+                    Text(L10n.requirePinDescription)
+                }
+                .padding(.bottom, 15)
+
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(UserAccessPolicy.none.displayTitle)
+                        .fontWeight(.semibold)
+
+                    Text(L10n.saveUserWithoutAuthDescription)
+                }
             }
-
-            throw JellyfinAPIError(L10n.deviceAuthFailed)
-        }
-
-        do {
-            try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason)
-        } catch {
-            viewModel.logger.critical("\(error.localizedDescription)")
-
-            await MainActor.run {
-                self.error = JellyfinAPIError(L10n.unableToPerformDeviceAuth)
-            }
-
-            throw JellyfinAPIError(L10n.deviceAuthFailed)
+            .frame(width: max(10, listSize.width - 50))
         }
     }
 
-    // MARK: - Body
+    private func onReceive(_ event: UserLocalSecurityViewModel.Event) {
+        switch event {
+        case let .error(eventError):
+            error = eventError
+        case .promptForOldPin:
+            onPinCompletion = {
+                Task {
+                    try viewModel.check(oldPin: pin)
+
+                    checkNewPolicy()
+                }
+            }
+
+            pin = ""
+            isPresentingOldPinPrompt = true
+        case .promptForNewPin:
+            onPinCompletion = {
+                viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: pinHint)
+                router.popLast()
+            }
+
+            pin = ""
+            isPresentingNewPinPrompt = true
+        case .promptForOldDeviceAuth, .promptForNewDeviceAuth:
+            break
+        }
+    }
 
     var body: some View {
         List {
-
             Section {
-                CaseIterablePicker(L10n.security, selection: $signInPolicy)
-            } footer: {
-                VStack(alignment: .leading, spacing: 10) {
-                    Text(L10n.additionalSecurityAccessDescription)
-
-                    // frame necessary with bug within BulletedList
-                    BulletedList {
-
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(UserAccessPolicy.requireDeviceAuthentication.displayTitle)
-                                .fontWeight(.semibold)
-
-                            Text(L10n.requireDeviceAuthDescription)
-                        }
-                        .padding(.bottom, 15)
-
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(UserAccessPolicy.requirePin.displayTitle)
-                                .fontWeight(.semibold)
-
-                            Text(L10n.requirePinDescription)
-                        }
-                        .padding(.bottom, 15)
-
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(UserAccessPolicy.none.displayTitle)
-                                .fontWeight(.semibold)
-
-                            Text(L10n.saveUserWithoutAuthDescription)
-                        }
+                Picker(L10n.security, selection: $signInPolicy) {
+                    ForEach(UserAccessPolicy.allCases.filter { $0 != .requireDeviceAuthentication }, id: \.self) { policy in
+                        Text(policy.displayTitle)
                     }
-                    .frame(width: max(10, listSize.width - 50))
                 }
+            } footer: {
+                sectionFooter
             }
 
             if signInPolicy == .requirePin {
@@ -166,53 +168,12 @@ struct UserLocalSecurityView: View {
         }
         .animation(.linear, value: signInPolicy)
         .navigationTitle(L10n.security)
-        .navigationBarTitleDisplayMode(.inline)
         .onFirstAppear {
             pinHint = viewModel.userSession.user.pinHint
             signInPolicy = viewModel.userSession.user.accessPolicy
         }
         .onReceive(viewModel.events) { event in
-            switch event {
-            case let .error(eventError):
-                UIDevice.feedback(.error)
-                error = eventError
-            case .promptForOldDeviceAuth:
-                Task { @MainActor in
-                    try await performDeviceAuthentication(
-                        reason: L10n.userRequiresDeviceAuthentication(viewModel.userSession.user.username)
-                    )
-
-                    checkNewPolicy()
-                }
-            case .promptForOldPin:
-                onPinCompletion = {
-                    Task {
-                        try viewModel.check(oldPin: pin)
-
-                        checkNewPolicy()
-                    }
-                }
-
-                pin = ""
-                isPresentingOldPinPrompt = true
-            case .promptForNewDeviceAuth:
-                Task { @MainActor in
-                    try await performDeviceAuthentication(
-                        reason: L10n.userRequiresDeviceAuthentication(viewModel.userSession.user.username)
-                    )
-
-                    viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: "")
-                    router.popLast()
-                }
-            case .promptForNewPin:
-                onPinCompletion = {
-                    viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: pinHint)
-                    router.popLast()
-                }
-
-                pin = ""
-                isPresentingNewPinPrompt = true
-            }
+            onReceive(event)
         }
         .topBarTrailing {
             Button {

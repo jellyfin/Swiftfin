@@ -31,29 +31,20 @@ struct UserProfileSettingsView: View {
 
     var body: some View {
         List {
-            UserProfileHeroImage(
-                user: profileImageViewModel.user,
-                source: viewModel.userSession.user.profileImageSource(
-                    client: viewModel.userSession.client,
-                    maxWidth: 150
-                )
-            ) {
-                router.route(to: \.photoPicker, profileImageViewModel)
-            } onDelete: {
-                profileImageViewModel.send(.delete)
-            }
+//            UserProfileImage(
+//                userID: profileImageViewModel.user.id,
+//                source: profileImageViewModel.user.profileImageSource(
+//                    client: server.client,
+//                    maxWidth: 120
+//                )
+//            )
 
-            Section {
-                ChevronButton(L10n.quickConnect)
-                    .onSelect {
-                        router.route(to: \.quickConnect)
-                    }
-
-                ChevronButton(L10n.password)
-                    .onSelect {
-                        router.route(to: \.resetUserPassword, viewModel.userSession.user.id)
-                    }
-            }
+//            Section {
+//                ChevronButton(L10n.password)
+//                    .onSelect {
+//                        router.route(to: \.resetUserPassword, viewModel.userSession.user.id)
+//                    }
+//            }
 
             Section {
                 ChevronButton(L10n.security)

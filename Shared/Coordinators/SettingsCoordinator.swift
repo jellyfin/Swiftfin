@@ -189,6 +189,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     func makeUserProfileSettings(viewModel: SettingsViewModel) -> some View {
         UserProfileSettingsView(viewModel: viewModel)
     }
+
     @ViewBuilder
     func makeLocalSecurity() -> some View {
         UserLocalSecurityView()
