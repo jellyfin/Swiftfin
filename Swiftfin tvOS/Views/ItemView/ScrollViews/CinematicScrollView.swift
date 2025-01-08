@@ -21,7 +21,7 @@ extension ItemView {
         var body: some View {
             ZStack {
                 if viewModel.item.type == .episode {
-                    ImageView(viewModel.item.imageSource(.primary, maxWidth: 1920))
+                    ImageView(viewModel.item.seriesImageSource(.backdrop, maxWidth: 1920))
                 } else {
                     ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1920))
                 }

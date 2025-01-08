@@ -20,7 +20,12 @@ extension BaseItemDto: Poster {
         case .episode:
             seasonEpisodeLabel
         case .video:
-            extraType?.displayTitle
+            /// Don't show any subtitle if it's unknown
+            if let extraType, extraType != .unknown {
+                extraType.displayTitle
+            } else {
+                nil
+            }
         default:
             nil
         }

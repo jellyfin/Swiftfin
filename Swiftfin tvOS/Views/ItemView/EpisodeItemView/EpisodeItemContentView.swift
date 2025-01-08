@@ -89,60 +89,82 @@ extension EpisodeItemView.ContentView {
                     .focusable()
                     .focused($focusedLayer, equals: .top)
 
-                HStack(alignment: .bottom) {
+                VStack(alignment: .leading, spacing: 16) {
 
-                    VStack(alignment: .leading, spacing: 20) {
-
-                        if let seriesName = viewModel.item.seriesName {
-                            Text(seriesName)
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.secondary)
-                        }
-
-                        Text(viewModel.item.displayTitle)
-                            .font(.title2)
+                    if let seriesName = viewModel.item.seriesName {
+                        Text(seriesName)
+                            .font(.headline)
                             .fontWeight(.semibold)
-                            .lineLimit(1)
-                            .multilineTextAlignment(.leading)
-                            .foregroundColor(.white)
+                            .foregroundColor(.secondary)
+                    }
 
-                        if let overview = viewModel.item.overview {
-                            Text(overview)
-                                .font(.subheadline)
-                                .lineLimit(3)
-                        } else {
-                            L10n.noOverviewAvailable.text
-                        }
+                    HStack(alignment: .bottom) {
 
-                        HStack {
-                            DotHStack {
-                                if let premiereYear = viewModel.item.premiereDateYear {
-                                    Text(premiereYear)
+                        HStack(alignment: .bottom, spacing: 16) {
+
+                            ImageView(viewModel.item.imageSource(
+                                .primary,
+                                maxHeight: 250
+                            ))
+                            .placeholder { _ in
+                                EmptyView()
+                            }
+                            .failure {
+                                EmptyView()
+                            }
+                            .aspectRatio(contentMode: .fit)
+                            .posterShadow()
+                            .frame(maxHeight: 250, alignment: .bottomLeading)
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+                            VStack(alignment: .leading, spacing: 20) {
+
+                                Text(viewModel.item.displayTitle)
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                                    .lineLimit(1)
+                                    .multilineTextAlignment(.leading)
+                                    .foregroundColor(.white)
+
+                                if let overview = viewModel.item.overview {
+                                    Text(overview)
+                                        .font(.subheadline)
+                                        .multilineTextAlignment(.leading)
+                                        .lineLimit(3)
+                                } else {
+                                    L10n.noOverviewAvailable.text
                                 }
 
-                                if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
-                                    Text(runtime)
+                                HStack {
+                                    DotHStack {
+                                        if let premiereYear = viewModel.item.premiereDateYear {
+                                            Text(premiereYear)
+                                        }
+
+                                        if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
+                                            Text(runtime)
+                                        }
+                                    }
+                                    .font(.caption)
+                                    .foregroundColor(Color(UIColor.lightGray))
+
+                                    ItemView.AttributesHStack(viewModel: viewModel)
                                 }
                             }
-                            .font(.caption)
-                            .foregroundColor(Color(UIColor.lightGray))
-
-                            ItemView.AttributesHStack(viewModel: viewModel)
                         }
+
+                        Spacer()
+
+                        VStack {
+                            ItemView.PlayButton(viewModel: viewModel)
+                                .focused($focusedLayer, equals: .playButton)
+
+                            ItemView.ActionButtonHStack(viewModel: viewModel)
+                                .frame(width: 400)
+                        }
+                        .frame(width: 450)
+                        .padding(.leading, 150)
                     }
-
-                    Spacer()
-
-                    VStack {
-                        ItemView.PlayButton(viewModel: viewModel)
-                            .focused($focusedLayer, equals: .playButton)
-
-                        ItemView.ActionButtonHStack(viewModel: viewModel)
-                            .frame(width: 400)
-                    }
-                    .frame(width: 450)
-                    .padding(.leading, 150)
                 }
             }
             .padding(.horizontal, 50)
