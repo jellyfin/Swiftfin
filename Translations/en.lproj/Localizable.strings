@@ -22,6 +22,9 @@
 /// Define the allowed hours for usage and restrict access outside those times.
 "accessSchedulesDescription" = "Define the allowed hours for usage and restrict access outside those times.";
 
+/// Account
+"account" = "Account";
+
 /// Active
 "active" = "Active";
 

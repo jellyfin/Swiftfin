@@ -26,6 +26,8 @@ internal enum L10n {
   internal static let accessSchedules = L10n.tr("Localizable", "accessSchedules", fallback: "Access Schedules")
   /// Define the allowed hours for usage and restrict access outside those times.
   internal static let accessSchedulesDescription = L10n.tr("Localizable", "accessSchedulesDescription", fallback: "Define the allowed hours for usage and restrict access outside those times.")
+  /// Account
+  internal static let account = L10n.tr("Localizable", "account", fallback: "Account")
   /// Active
   internal static let active = L10n.tr("Localizable", "active", fallback: "Active")
   /// Activity
