@@ -31,14 +31,7 @@ struct UserProfileSettingsView: View {
 
     var body: some View {
         List {
-//            UserProfileImage(
-//                userID: profileImageViewModel.user.id,
-//                source: profileImageViewModel.user.profileImageSource(
-//                    client: server.client,
-//                    maxWidth: 120
-//                )
-//            )
-
+            // TODO: bring reset password to tvOS
 //            Section {
 //                ChevronButton(L10n.password)
 //                    .onSelect {
@@ -53,16 +46,17 @@ struct UserProfileSettingsView: View {
                     }
             }
 
-            Section {
-                // TODO: move under future "Storage" tab
-                //       when downloads implemented
-                Button(L10n.resetSettings) {
-                    isPresentingConfirmReset = true
-                }
-                .foregroundStyle(.red)
-            } footer: {
-                Text(L10n.resetSettingsDescription)
-            }
+            // TODO: Do we want this option on tvOS?
+//            Section {
+//                // TODO: move under future "Storage" tab
+//                //       when downloads implemented
+//                Button(L10n.resetSettings) {
+//                    isPresentingConfirmReset = true
+//                }
+//                .foregroundStyle(.red)
+//            } footer: {
+//                Text(L10n.resetSettingsDescription)
+//            }
         }
         .confirmationDialog(
             L10n.resetSettings,

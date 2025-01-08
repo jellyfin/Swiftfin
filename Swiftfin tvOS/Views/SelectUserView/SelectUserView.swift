@@ -226,7 +226,7 @@ struct SelectUserView: View {
                 if isEditingUsers {
                     selectedUsers.toggle(value: user)
                 } else {
-                    viewModel.send(.signIn(user, pin: ""))
+                    select(user: user)
                 }
             } onDelete: {
                 selectedUsers.insert(user)

@@ -88,15 +88,6 @@ struct UserLocalSecurityView: View {
 
             // frame necessary with bug within BulletedList
             BulletedList {
-
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(UserAccessPolicy.requireDeviceAuthentication.displayTitle)
-                        .fontWeight(.semibold)
-
-                    Text(L10n.requireDeviceAuthDescription)
-                }
-                .padding(.bottom, 15)
-
                 VStack(alignment: .leading, spacing: 5) {
                     Text(UserAccessPolicy.requirePin.displayTitle)
                         .fontWeight(.semibold)
