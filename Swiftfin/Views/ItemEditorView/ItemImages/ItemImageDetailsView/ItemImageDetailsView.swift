@@ -45,13 +45,9 @@ struct ItemImageDetailsView: View {
 
     // MARK: - Image Actions
 
+    private let onClose: () -> Void
     private let onSave: (() -> Void)?
     private let onDelete: (() -> Void)?
-
-    // MARK: - Error State
-
-    @State
-    private var error: Error?
 
     // MARK: - Initializer
 
@@ -66,6 +62,7 @@ struct ItemImageDetailsView: View {
         rating: Double? = nil,
         ratingType: RatingType? = nil,
         ratingVotes: Int? = nil,
+        onClose: @escaping () -> Void,
         onSave: (() -> Void)? = nil,
         onDelete: (() -> Void)? = nil
     ) {
@@ -79,6 +76,7 @@ struct ItemImageDetailsView: View {
         self.rating = rating
         self.ratingType = ratingType
         self.ratingVotes = ratingVotes
+        self.onClose = onClose
         self.onSave = onSave
         self.onDelete = onDelete
     }
@@ -86,32 +84,23 @@ struct ItemImageDetailsView: View {
     // MARK: - Body
 
     var body: some View {
-        contentView
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarCloseButton {
-                router.dismissCoordinator()
-            }
-            .topBarTrailing {
-                if viewModel.backgroundStates.contains(.refreshing) {
-                    ProgressView()
+        NavigationView {
+            contentView
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationBarCloseButton {
+                    onClose()
                 }
+                .topBarTrailing {
+                    if viewModel.backgroundStates.contains(.refreshing) {
+                        ProgressView()
+                    }
 
-                if let onSave {
-                    Button(L10n.save, action: onSave)
-                        .buttonStyle(.toolbarPill)
+                    if let onSave {
+                        Button(L10n.save, action: onSave)
+                            .buttonStyle(.toolbarPill)
+                    }
                 }
-            }
-            .onReceive(viewModel.events) { event in
-                switch event {
-                case .deleted, .updated:
-                    UIDevice.feedback(.success)
-                    router.dismissCoordinator()
-                case let .error(eventError):
-                    UIDevice.feedback(.error)
-                    error = eventError
-                }
-            }
-            .errorMessage($error)
+        }
     }
 
     // MARK: - Content View

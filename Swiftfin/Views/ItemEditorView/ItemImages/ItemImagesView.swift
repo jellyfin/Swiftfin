@@ -37,6 +37,8 @@ struct ItemImagesView: View {
     // MARK: - Dialog State
 
     @State
+    private var selectedImage: ImageInfo?
+    @State
     private var selectedType: ImageType?
     @State
     private var isFilePickerPresented = false
@@ -69,6 +71,29 @@ struct ItemImagesView: View {
         }
         .navigationBarCloseButton {
             router.dismissCoordinator()
+        }
+        .sheet(item: $selectedImage) {
+            selectedImage = nil
+        } content: { imageInfo in
+            ItemImageDetailsView(
+                viewModel: viewModel,
+                imageSource: imageInfo.itemImageSource(
+                    itemID: viewModel.item.id!,
+                    client: viewModel.userSession.client
+                ),
+                index: imageInfo.imageIndex,
+                width: imageInfo.width,
+                height: imageInfo.height,
+                onClose: {
+                    selectedImage = nil
+                },
+                onDelete: {
+                    viewModel.send(.deleteImage(imageInfo))
+                    selectedImage = nil
+                }
+            )
+            .navigationTitle(imageInfo.imageType?.displayTitle ?? "")
+            .environment(\.isEditing, true)
         }
         .fileImporter(
             isPresented: $isFilePickerPresented,
@@ -125,7 +150,7 @@ struct ItemImagesView: View {
                 HStack {
                     ForEach(imageArray, id: \.self) { imageInfo in
                         imageButton(imageInfo: imageInfo) {
-                            router.route(to: \.deleteImage, imageInfo)
+                            selectedImage = imageInfo
                         }
                     }
                 }

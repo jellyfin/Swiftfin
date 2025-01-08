@@ -25,8 +25,10 @@ struct AddItemImageView: View {
     @StateObject
     private var remoteImageInfoViewModel: RemoteImageInfoViewModel
 
-    // MARK: - Dialog States
+    // MARK: - Dialog State
 
+    @State
+    private var selectedImage: RemoteImageInfo?
     @State
     private var error: Error?
 
@@ -69,6 +71,30 @@ struct AddItemImageView: View {
                 ProgressView()
             }
         }
+        .sheet(item: $selectedImage) {
+            selectedImage = nil
+        } content: { remoteImageInfo in
+            ItemImageDetailsView(
+                viewModel: viewModel,
+                imageSource: ImageSource(url: URL(string: remoteImageInfo.url)),
+                width: remoteImageInfo.width,
+                height: remoteImageInfo.height,
+                language: remoteImageInfo.language,
+                provider: remoteImageInfo.providerName,
+                rating: remoteImageInfo.communityRating,
+                ratingType: remoteImageInfo.ratingType,
+                ratingVotes: remoteImageInfo.voteCount,
+                onClose: {
+                    selectedImage = nil
+                },
+                onSave: {
+                    viewModel.send(.setImage(remoteImageInfo))
+                    selectedImage = nil
+                }
+            )
+            .navigationTitle(remoteImageInfo.type?.displayTitle ?? "")
+            .environment(\.isEditing, true)
+        }
         .onFirstAppear {
             remoteImageInfoViewModel.send(.refresh)
         }
@@ -78,10 +104,7 @@ struct AddItemImageView: View {
                 break
             case .updated:
                 UIDevice.feedback(.success)
-                // TODO: Why does this crash without the delay?
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    router.pop()
-                }
+                router.pop()
             case let .error(eventError):
                 UIDevice.feedback(.error)
                 error = eventError
@@ -115,7 +138,7 @@ struct AddItemImageView: View {
     private func imageButton(_ image: RemoteImageInfo?) -> some View {
         Button {
             if let image {
-                router.route(to: \.selectImage, image)
+                selectedImage = image
             }
         } label: {
             posterImage(

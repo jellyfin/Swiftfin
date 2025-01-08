@@ -24,17 +24,10 @@ final class ItemImagesCoordinator: ObservableObject, NavigationCoordinatable {
     @ObservedObject
     private var viewModel: ItemImagesViewModel
 
-    // MARK: - Route to Delete Local Image
-
-    @Route(.modal)
-    var deleteImage = makeDeleteImage
-
     // MARK: - Route to Add Remote Image
 
     @Route(.push)
     var addImage = makeAddImage
-    @Route(.modal)
-    var selectImage = makeSelectImage
 
     // MARK: - Route to Photo Picker
 
@@ -52,48 +45,6 @@ final class ItemImagesCoordinator: ObservableObject, NavigationCoordinatable {
     @ViewBuilder
     func makeAddImage(imageType: ImageType) -> some View {
         AddItemImageView(viewModel: viewModel, imageType: imageType)
-    }
-
-    func makeSelectImage(remoteImageInfo: RemoteImageInfo) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator {
-            ItemImageDetailsView(
-                viewModel: self.viewModel,
-                imageSource: ImageSource(url: URL(string: remoteImageInfo.url)),
-                width: remoteImageInfo.width,
-                height: remoteImageInfo.height,
-                language: remoteImageInfo.language,
-                provider: remoteImageInfo.providerName,
-                rating: remoteImageInfo.communityRating,
-                ratingType: remoteImageInfo.ratingType,
-                ratingVotes: remoteImageInfo.voteCount,
-                onSave: {
-                    self.viewModel.send(.setImage(remoteImageInfo))
-                }
-            )
-            .navigationTitle(remoteImageInfo.type?.displayTitle ?? "")
-        }
-    }
-
-    // MARK: - Delete Local Image View
-
-    func makeDeleteImage(imageInfo: ImageInfo) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator {
-            ItemImageDetailsView(
-                viewModel: self.viewModel,
-                imageSource: imageInfo.itemImageSource(
-                    itemID: self.viewModel.item.id!,
-                    client: self.viewModel.userSession.client
-                ),
-                index: imageInfo.imageIndex,
-                width: imageInfo.width,
-                height: imageInfo.height,
-                onDelete: {
-                    self.viewModel.send(.deleteImage(imageInfo))
-                }
-            )
-            .navigationTitle(imageInfo.imageType?.displayTitle ?? "")
-            .environment(\.isEditing, true)
-        }
     }
 
     // MARK: - Photo Picker View
