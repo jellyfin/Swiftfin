@@ -126,14 +126,14 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                     try await self.getAllImages()
 
                     await MainActor.run {
+                        self.state = .updating
                         self.eventSubject.send(.updated)
-                        _ = self.state = .updating
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
+                        self.state = .content
                         self.eventSubject.send(.error(apiError))
-                        _ = self.state = .updating
                     }
                 }
             }.asAnyCancellable()
@@ -160,7 +160,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
-                        self.state = .error(apiError)
+                        self.state = .content
                         self.eventSubject.send(.error(apiError))
                     }
                 }
@@ -188,7 +188,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
-                        self.state = .error(apiError)
+                        self.state = .content
                         self.eventSubject.send(.error(apiError))
                     }
                 }
@@ -210,13 +210,13 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                     try await refreshItem()
 
                     await MainActor.run {
-                        self.eventSubject.send(.deleted)
                         self.state = .deleting
+                        self.eventSubject.send(.deleted)
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
-                        self.state = .deleting
+                        self.state = .content
                         self.eventSubject.send(.error(apiError))
                     }
                 }
