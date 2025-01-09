@@ -12,7 +12,7 @@ import SwiftUI
 
 extension HomeView {
 
-    struct ResumeView: View {
+    struct ContinueWatchingView: View {
 
         // MARK: - Defaults
 
@@ -95,6 +95,19 @@ extension HomeView {
                     PosterButton<BaseItemDto>.EpisodeContentSubtitleContent.Subtitle(item: item)
                 } else {
                     Text(" ")
+                }
+            }
+            .contextMenu { item in
+                Button {
+                    viewModel.send(.setIsPlayed(true, item))
+                } label: {
+                    Label(L10n.played, systemImage: "checkmark.circle")
+                }
+
+                Button(role: .destructive) {
+                    viewModel.send(.setIsPlayed(false, item))
+                } label: {
+                    Label(L10n.unplayed, systemImage: "minus.circle")
                 }
             }
             .itemImageOverlay { item in

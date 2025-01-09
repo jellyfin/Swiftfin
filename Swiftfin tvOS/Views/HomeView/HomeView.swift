@@ -16,7 +16,7 @@ struct HomeView: View {
     // MARK: - Cinematic Row
 
     private enum CinematicRow {
-        case resume
+        case continueWatching
         case nextUp
         case recentlyAdded
         case library
@@ -60,7 +60,7 @@ struct HomeView: View {
 
     private var cinematicRow: CinematicRow {
         if hasResumeContent {
-            return .resume
+            return .continueWatching
         } else if hasNextUpContent {
             return .nextUp
         } else if hasRecentContent {
@@ -68,6 +68,7 @@ struct HomeView: View {
         } else if activeLibraries.isNotEmpty {
             return .library
         } else {
+            viewModel.send(.error(JellyfinAPIError(L10n.noResults)))
             return .none
         }
     }
@@ -132,14 +133,20 @@ struct HomeView: View {
     @ViewBuilder
     private var conditionalContentView: some View {
         switch cinematicRow {
-        case .resume:
-            ResumeView(viewModel: viewModel)
+        case .continueWatching:
+            ContinueWatchingView(viewModel: viewModel)
             NextUpView(viewModel: viewModel.nextUpViewModel)
-            RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+
+            if showRecentlyAdded {
+                RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+            }
 
         case .nextUp:
             NextUpView(viewModel: viewModel.nextUpViewModel, cinematic: true)
-            RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+
+            if showRecentlyAdded {
+                RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+            }
 
         case .recentlyAdded:
             RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel, cinematic: true)
