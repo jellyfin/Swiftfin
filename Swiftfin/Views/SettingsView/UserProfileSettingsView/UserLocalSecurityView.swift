@@ -37,7 +37,7 @@ struct UserLocalSecurityView: View {
     @State
     private var listSize: CGSize = .zero
     @State
-    private var onPinCompletion: (() -> Void)? = nil
+    private var onPinCompletion: (() -> Void)?
     @State
     private var pin: String = ""
     @State

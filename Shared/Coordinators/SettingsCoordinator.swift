@@ -79,6 +79,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var videoPlayerSettings = makeVideoPlayerSettings
     @Route(.modal)
     var playbackQualitySettings = makePlaybackQualitySettings
+    @Route(.modal)
+    var userProfile = makeUserProfileSettings
     #endif
 
     #if os(iOS)
@@ -181,13 +183,24 @@ final class SettingsCoordinator: NavigationCoordinatable {
     #endif
 
     #if os(tvOS)
-    func makeCustomizeViewsSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+
+    // MARK: - User Profile View
+
+    func makeUserProfileSettings(viewModel: SettingsViewModel) -> NavigationViewCoordinator<UserProfileSettingsCoordinator> {
         NavigationViewCoordinator(
-            BasicNavigationViewCoordinator {
-                CustomizeViewsSettings()
-            }
+            UserProfileSettingsCoordinator(viewModel: viewModel)
         )
     }
+
+    // MARK: - Customize Settings View
+
+    func makeCustomizeViewsSettings() -> NavigationViewCoordinator<CustomizeSettingsCoordinator> {
+        NavigationViewCoordinator(
+            CustomizeSettingsCoordinator()
+        )
+    }
+
+    // MARK: - Experimental Settings View
 
     func makeExperimentalSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator(
@@ -197,11 +210,15 @@ final class SettingsCoordinator: NavigationCoordinatable {
         )
     }
 
+    // MARK: - Poster Indicator Settings View
+
     func makeIndicatorSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             IndicatorSettingsView()
         }
     }
+
+    // MARK: - Server Settings View
 
     func makeServerDetail(server: ServerState) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
@@ -209,11 +226,15 @@ final class SettingsCoordinator: NavigationCoordinatable {
         }
     }
 
+    // MARK: - Video Player Settings View
+
     func makeVideoPlayerSettings() -> NavigationViewCoordinator<VideoPlayerSettingsCoordinator> {
         NavigationViewCoordinator(
             VideoPlayerSettingsCoordinator()
         )
     }
+
+    // MARK: - Playback Settings View
 
     func makePlaybackQualitySettings() -> NavigationViewCoordinator<PlaybackQualitySettingsCoordinator> {
         NavigationViewCoordinator(
