@@ -13,6 +13,9 @@ import Get
 import JellyfinAPI
 import OrderedCollections
 
+/// 100ms
+let childPollDuration: UInt64 = 100_000_000
+
 final class HomeViewModel: ViewModel, Stateful {
 
     // MARK: Action
@@ -58,8 +61,11 @@ final class HomeViewModel: ViewModel, Stateful {
 
     private var backgroundRefreshTask: AnyCancellable?
     private var refreshTask: AnyCancellable?
+    private var childRefreshTasks: [Task<Void, Error>] = []
 
+    @Published
     var nextUpViewModel: NextUpLibraryViewModel = .init()
+    @Published
     var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
 
     override init() {
@@ -81,14 +87,27 @@ final class HomeViewModel: ViewModel, Stateful {
     func respond(to action: Action) -> State {
         switch action {
         case .backgroundRefresh:
-
             backgroundRefreshTask?.cancel()
             backgroundStates.append(.refresh)
 
             backgroundRefreshTask = Task { [weak self] in
                 do {
-                    self?.nextUpViewModel.send(.refresh)
-                    self?.recentlyAddedViewModel.send(.refresh)
+                    let nextUpTask = Task {
+                        self?.nextUpViewModel.send(.refresh)
+                        while self?.nextUpViewModel.state == .refreshing {
+                            try await Task.sleep(nanoseconds: childPollDuration)
+                        }
+                    }
+
+                    let recentlyAddedTask = Task {
+                        self?.recentlyAddedViewModel.send(.refresh)
+                        while self?.recentlyAddedViewModel.state == .refreshing {
+                            try await Task.sleep(nanoseconds: childPollDuration)
+                        }
+                    }
+
+                    try await nextUpTask.value
+                    try await recentlyAddedTask.value
 
                     let resumeItems = try await self?.getResumeItems() ?? []
 
@@ -114,23 +133,52 @@ final class HomeViewModel: ViewModel, Stateful {
             .asAnyCancellable()
 
             return state
+
         case let .error(error):
             return .error(error)
-        case let .setIsPlayed(isPlayed, item): ()
+
+        case let .setIsPlayed(isPlayed, item):
             Task {
                 try await setIsPlayed(isPlayed, for: item)
-
                 self.send(.backgroundRefresh)
             }
             .store(in: &cancellables)
 
             return state
+
         case .refresh:
             backgroundRefreshTask?.cancel()
             refreshTask?.cancel()
 
+            childRefreshTasks.forEach { $0.cancel() }
+            childRefreshTasks.removeAll()
+
             refreshTask = Task { [weak self] in
                 do {
+                    await MainActor.run {
+                        guard let self else { return }
+                        self.state = .refreshing
+                    }
+
+                    let nextUpTask = Task {
+                        self?.nextUpViewModel.send(.refresh)
+                        while self?.nextUpViewModel.state == .refreshing {
+                            try await Task.sleep(nanoseconds: childPollDuration)
+                        }
+                    }
+
+                    let recentlyAddedTask = Task {
+                        self?.recentlyAddedViewModel.send(.refresh)
+                        while self?.recentlyAddedViewModel.state == .refreshing {
+                            try await Task.sleep(nanoseconds: childPollDuration)
+                        }
+                    }
+
+                    self?.childRefreshTasks = [nextUpTask, recentlyAddedTask]
+
+                    try await nextUpTask.value
+                    try await recentlyAddedTask.value
+
                     try await self?.refresh()
 
                     guard !Task.isCancelled else { return }
@@ -152,20 +200,31 @@ final class HomeViewModel: ViewModel, Stateful {
             }
             .asAnyCancellable()
 
-            return .refreshing
+            return state
         }
     }
 
     private func refresh() async throws {
-
-        await nextUpViewModel.send(.refresh)
-        await recentlyAddedViewModel.send(.refresh)
-
         let resumeItems = try await getResumeItems()
         let libraries = try await getLibraries()
 
-        for library in libraries {
-            await library.send(.refresh)
+        let libraryTasks = libraries.map { library in
+            Task {
+                await library.send(.refresh)
+                while library.state == .refreshing {
+                    try await Task.sleep(nanoseconds: childPollDuration)
+                }
+            }
+        }
+
+        /// Wait for all library refreshes to complete before state change
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for task in libraryTasks {
+                group.addTask {
+                    try await task.value
+                }
+            }
+            try await group.waitForAll()
         }
 
         await MainActor.run {

@@ -15,6 +15,9 @@ import SwiftUI
 
 struct CinematicItemSelector<Item: Poster>: View {
 
+    @FocusState
+    private var isViewFocused: Bool
+
     @State
     private var focusedItem: Item?
 
@@ -87,6 +90,12 @@ struct CinematicItemSelector<Item: Poster>: View {
         }
         .frame(height: UIScreen.main.bounds.height - 75)
         .frame(maxWidth: .infinity)
+        .onChange(of: isViewFocused) { _, newFocused in
+            if newFocused {
+                focusedItem = items.first
+                viewModel.select(item: focusedItem ?? items.first!)
+            }
+        }
         .onChange(of: focusedItem) { _, newValue in
             guard let newValue else { return }
             viewModel.select(item: newValue)

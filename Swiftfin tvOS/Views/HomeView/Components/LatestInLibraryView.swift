@@ -29,7 +29,7 @@ extension HomeView {
 
         // MARK: - Libary Cinematic Background
 
-        let cinematic: Bool
+        var cinematic: Bool = false
 
         // MARK: - Cinematic Image Source
 

@@ -29,7 +29,7 @@ extension HomeView {
 
         // MARK: - Libary Cinematic Background
 
-        let cinematic: Bool
+        var cinematic: Bool = false
 
         // MARK: - Cinematic Image Source
 
@@ -107,7 +107,7 @@ extension HomeView {
         @ViewBuilder
         var standardView: some View {
             PosterHStack(
-                title: L10n.nextUp,
+                title: L10n.recentlyAdded,
                 type: posterType,
                 items: viewModel.elements
             )
