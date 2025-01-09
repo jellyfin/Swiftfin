@@ -50,7 +50,7 @@ struct SeriesEpisodeSelector: View {
                 selection = viewModel.seasons.first?.id
             }
         }
-        .onChange(of: selection) { _ in
+        .onChange(of: selection) { _, _ in
             guard let selectionViewModel else { return }
 
             if selectionViewModel.state == .initial {
