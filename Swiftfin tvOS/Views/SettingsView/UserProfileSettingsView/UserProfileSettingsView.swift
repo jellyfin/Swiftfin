@@ -72,7 +72,7 @@ struct UserProfileSettingsView: View {
 //            }
             }
             .withDescriptionTopPadding()
-            .navigationTitle(L10n.account)
+            .navigationTitle(L10n.user)
             .confirmationDialog(
                 L10n.resetSettings,
                 isPresented: $isPresentingConfirmReset,
