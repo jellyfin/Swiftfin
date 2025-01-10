@@ -27,20 +27,6 @@ extension HomeView {
         @ObservedObject
         var viewModel: LatestInLibraryViewModel
 
-        // MARK: - Libary Cinematic Background
-
-        var cinematic: Bool = false
-
-        // MARK: - Cinematic Image Source
-
-        private func cinematicImageSource(for item: BaseItemDto) -> ImageSource {
-            item.imageSource(
-                .logo,
-                maxWidth: UIScreen.main.bounds.width * 0.4,
-                maxHeight: 200
-            )
-        }
-
         // MARK: - Body
 
         var body: some View {
@@ -48,12 +34,7 @@ extension HomeView {
                 switch viewModel.state {
                 case .content:
                     if viewModel.elements.isNotEmpty {
-                        switch cinematic {
-                        case true:
-                            cinematicView
-                        case false:
-                            standardView
-                        }
+                        contentView
                     }
                 case let .error(error):
                     ErrorView(error: error)
@@ -68,37 +49,10 @@ extension HomeView {
             .ignoresSafeArea()
         }
 
-        // MARK: - Cinematic View
+        // MARK: - Content View
 
         @ViewBuilder
-        var cinematicView: some View {
-            CinematicItemSelector(
-                items: viewModel.elements.elements,
-                type: posterType
-            )
-            .topContent { item in
-                ImageView(cinematicImageSource(for: item))
-                    .placeholder { _ in
-                        EmptyView()
-                    }
-                    .failure {
-                        Text(item.displayTitle)
-                            .font(.largeTitle)
-                            .fontWeight(.semibold)
-                    }
-                    .edgePadding(.leading)
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: 200, alignment: .bottomLeading)
-            }
-            .onSelect { item in
-                router.route(to: \.item, item)
-            }
-        }
-
-        // MARK: - Standard View
-
-        @ViewBuilder
-        var standardView: some View {
+        var contentView: some View {
             PosterHStack(
                 title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
                 type: posterType,

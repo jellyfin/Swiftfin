@@ -13,9 +13,6 @@ import Get
 import JellyfinAPI
 import OrderedCollections
 
-/// 100ms
-let childPollDuration: UInt64 = 100_000_000
-
 final class HomeViewModel: ViewModel, Stateful {
 
     // MARK: Action
@@ -27,7 +24,7 @@ final class HomeViewModel: ViewModel, Stateful {
         case refresh
     }
 
-    // MARK: BackgroundState
+    // MARK: Background State
 
     enum BackgroundState: Hashable {
         case refresh
@@ -42,10 +39,14 @@ final class HomeViewModel: ViewModel, Stateful {
         case refreshing
     }
 
+    // MARK: - Published Variables
+
     @Published
     private(set) var libraries: [LatestInLibraryViewModel] = []
     @Published
     var resumeItems: OrderedSet<BaseItemDto> = []
+
+    // MARK: - State Management
 
     @Published
     var backgroundStates: OrderedSet<BackgroundState> = []
@@ -54,19 +55,26 @@ final class HomeViewModel: ViewModel, Stateful {
     @Published
     var state: State = .initial
 
+    // MARK: - Notifications
+
     // TODO: replace with views checking what notifications were
     //       posted since last disappear
     @Published
     var notificationsReceived: NotificationSet = .init()
 
-    private var backgroundRefreshTask: AnyCancellable?
-    private var refreshTask: AnyCancellable?
-    private var childRefreshTasks: [Task<Void, Error>] = []
+    // MARK: - Child View Models
 
     @Published
     var nextUpViewModel: NextUpLibraryViewModel = .init()
     @Published
     var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
+
+    // MARK: - Refresh Tasks
+
+    private var backgroundRefreshTask: AnyCancellable?
+    private var refreshTask: AnyCancellable?
+
+    // MARK: - Initialize
 
     override init() {
         super.init()
@@ -84,6 +92,8 @@ final class HomeViewModel: ViewModel, Stateful {
             .store(in: &cancellables)
     }
 
+    // MARK: - Respond to Action
+
     func respond(to action: Action) -> State {
         switch action {
         case .backgroundRefresh:
@@ -92,22 +102,23 @@ final class HomeViewModel: ViewModel, Stateful {
 
             backgroundRefreshTask = Task { [weak self] in
                 do {
-                    let nextUpTask = Task {
-                        self?.nextUpViewModel.send(.refresh)
-                        while self?.nextUpViewModel.state == .refreshing {
-                            try await Task.sleep(nanoseconds: childPollDuration)
+                    try await withThrowingTaskGroup(of: Void.self) { group in
+                        group.addTask {
+                            await self?.nextUpViewModel.send(.refresh)
+                            while self?.nextUpViewModel.state == .refreshing {
+                                try await Task.sleep(nanoseconds: 100_000_000)
+                            }
                         }
-                    }
 
-                    let recentlyAddedTask = Task {
-                        self?.recentlyAddedViewModel.send(.refresh)
-                        while self?.recentlyAddedViewModel.state == .refreshing {
-                            try await Task.sleep(nanoseconds: childPollDuration)
+                        group.addTask {
+                            await self?.recentlyAddedViewModel.send(.refresh)
+                            while self?.recentlyAddedViewModel.state == .refreshing {
+                                try await Task.sleep(nanoseconds: 100_000_000)
+                            }
                         }
-                    }
 
-                    try await nextUpTask.value
-                    try await recentlyAddedTask.value
+                        try await group.waitForAll()
+                    }
 
                     let resumeItems = try await self?.getResumeItems() ?? []
 
@@ -150,9 +161,6 @@ final class HomeViewModel: ViewModel, Stateful {
             backgroundRefreshTask?.cancel()
             refreshTask?.cancel()
 
-            childRefreshTasks.forEach { $0.cancel() }
-            childRefreshTasks.removeAll()
-
             refreshTask = Task { [weak self] in
                 do {
                     await MainActor.run {
@@ -160,24 +168,23 @@ final class HomeViewModel: ViewModel, Stateful {
                         self.state = .refreshing
                     }
 
-                    let nextUpTask = Task {
-                        self?.nextUpViewModel.send(.refresh)
-                        while self?.nextUpViewModel.state == .refreshing {
-                            try await Task.sleep(nanoseconds: childPollDuration)
+                    try await withThrowingTaskGroup(of: Void.self) { group in
+                        group.addTask {
+                            await self?.nextUpViewModel.send(.refresh)
+                            while self?.nextUpViewModel.state == .refreshing {
+                                try await Task.sleep(nanoseconds: 100_000_000)
+                            }
                         }
-                    }
 
-                    let recentlyAddedTask = Task {
-                        self?.recentlyAddedViewModel.send(.refresh)
-                        while self?.recentlyAddedViewModel.state == .refreshing {
-                            try await Task.sleep(nanoseconds: childPollDuration)
+                        group.addTask {
+                            await self?.recentlyAddedViewModel.send(.refresh)
+                            while self?.recentlyAddedViewModel.state == .refreshing {
+                                try await Task.sleep(nanoseconds: 100_000_000)
+                            }
                         }
+
+                        try await group.waitForAll()
                     }
-
-                    self?.childRefreshTasks = [nextUpTask, recentlyAddedTask]
-
-                    try await nextUpTask.value
-                    try await recentlyAddedTask.value
 
                     try await self?.refresh()
 
@@ -204,24 +211,19 @@ final class HomeViewModel: ViewModel, Stateful {
         }
     }
 
+    // MARK: - Refresh
+
     private func refresh() async throws {
         let resumeItems = try await getResumeItems()
         let libraries = try await getLibraries()
 
-        let libraryTasks = libraries.map { library in
-            Task {
-                await library.send(.refresh)
-                while library.state == .refreshing {
-                    try await Task.sleep(nanoseconds: childPollDuration)
-                }
-            }
-        }
-
-        /// Wait for all library refreshes to complete before state change
         try await withThrowingTaskGroup(of: Void.self) { group in
-            for task in libraryTasks {
+            for library in libraries {
                 group.addTask {
-                    try await task.value
+                    await library.send(.refresh)
+                    while library.state == .refreshing {
+                        try await Task.sleep(nanoseconds: 100_000_000)
+                    }
                 }
             }
             try await group.waitForAll()
@@ -232,6 +234,8 @@ final class HomeViewModel: ViewModel, Stateful {
             self.libraries = libraries
         }
     }
+
+    // MARK: - Get Resume Items
 
     private func getResumeItems() async throws -> [BaseItemDto] {
         var parameters = Paths.GetResumeItemsParameters()
@@ -246,6 +250,8 @@ final class HomeViewModel: ViewModel, Stateful {
         return response.value.items ?? []
     }
 
+    // MARK: - Get Libraries
+
     private func getLibraries() async throws -> [LatestInLibraryViewModel] {
 
         let userViewsPath = Paths.getUserViews(userID: userSession.user.id)
@@ -259,6 +265,8 @@ final class HomeViewModel: ViewModel, Stateful {
             .map { LatestInLibraryViewModel(parent: $0) }
     }
 
+    // MARK: - Get Excluded Libraries
+
     // TODO: use the more updated server/user data when implemented
     private func getExcludedLibraries() async throws -> [String] {
         let currentUserPath = Paths.getCurrentUser
@@ -266,6 +274,8 @@ final class HomeViewModel: ViewModel, Stateful {
 
         return response.value.configuration?.latestItemsExcludes ?? []
     }
+
+    // MARK: - Toggle Played Status
 
     private func setIsPlayed(_ isPlayed: Bool, for item: BaseItemDto) async throws {
         let request: Request<UserItemDataDto>

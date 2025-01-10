@@ -13,16 +13,6 @@ import SwiftUI
 
 struct HomeView: View {
 
-    // MARK: - Cinematic Row
-
-    private enum CinematicRow {
-        case continueWatching
-        case nextUp
-        case recentlyAdded
-        case library
-        case none
-    }
-
     // MARK: - Defaults
 
     @Default(.Customization.Home.showRecentlyAdded)
@@ -36,42 +26,10 @@ struct HomeView: View {
     @StateObject
     private var viewModel = HomeViewModel()
 
-    // MARK: - Conditional Content Validation
+    // MARK: - Cinematic State
 
-    private var hasResumeContent: Bool {
-        viewModel.resumeItems.isNotEmpty
-    }
-
-    private var hasNextUpContent: Bool {
-        viewModel.nextUpViewModel.elements.isNotEmpty
-    }
-
-    private var hasRecentContent: Bool {
-        viewModel.recentlyAddedViewModel.elements.isNotEmpty && showRecentlyAdded
-    }
-
-    // MARK: - Active Libraries
-
-    private var activeLibraries: [LatestInLibraryViewModel] {
-        viewModel.libraries.filter(\.elements.isNotEmpty)
-    }
-
-    // MARK: - Conditional Cinematic Row
-
-    private var cinematicRow: CinematicRow {
-        if hasResumeContent {
-            return .continueWatching
-        } else if hasNextUpContent {
-            return .nextUp
-        } else if hasRecentContent {
-            return .recentlyAdded
-        } else if activeLibraries.isNotEmpty {
-            return .library
-        } else {
-            viewModel.send(.error(JellyfinAPIError(L10n.noResults)))
-            return .none
-        }
-    }
+    @State
+    private var isCinematic: Bool = true
 
     // MARK: - Body
 
@@ -97,7 +55,7 @@ struct HomeView: View {
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
-        .ignoresSafeArea()
+        .ignoresSafeArea(isCinematic ? .all : [])
         .onFirstAppear {
             viewModel.send(.refresh)
         }
@@ -120,54 +78,30 @@ struct HomeView: View {
     private var contentView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                conditionalContentView
-                libraryContentView
+
+                ContinueWatchingView(viewModel: viewModel)
+
+                NextUpView(
+                    viewModel: viewModel.nextUpViewModel,
+                    cinematic: viewModel.resumeItems.isEmpty
+                )
+
+                if showRecentlyAdded {
+                    RecentlyAddedView(
+                        viewModel: viewModel.recentlyAddedViewModel,
+                        cinematic: viewModel.resumeItems.isEmpty
+                            && viewModel.nextUpViewModel.elements.isEmpty
+                    )
+                }
+
+                ForEach(viewModel.libraries.indices, id: \.self) { index in
+                    LatestInLibraryView(viewModel: viewModel.libraries[index])
+                }
+
                 Divider()
+
                 refreshButtonView
             }
-        }
-    }
-
-    // MARK: - Conditional Content View
-
-    @ViewBuilder
-    private var conditionalContentView: some View {
-        switch cinematicRow {
-        case .continueWatching:
-            ContinueWatchingView(viewModel: viewModel)
-            NextUpView(viewModel: viewModel.nextUpViewModel)
-
-            if showRecentlyAdded {
-                RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
-            }
-
-        case .nextUp:
-            NextUpView(viewModel: viewModel.nextUpViewModel, cinematic: true)
-
-            if showRecentlyAdded {
-                RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
-            }
-
-        case .recentlyAdded:
-            RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel, cinematic: true)
-
-        case .library:
-            EmptyView()
-
-        case .none, _:
-            Spacer()
-        }
-    }
-
-    // MARK: - Library Content View
-
-    @ViewBuilder
-    private var libraryContentView: some View {
-        ForEach(activeLibraries.indices, id: \.self) { index in
-            LatestInLibraryView(
-                viewModel: activeLibraries[index],
-                cinematic: index == 0 && cinematicRow == .library
-            )
         }
     }
 
