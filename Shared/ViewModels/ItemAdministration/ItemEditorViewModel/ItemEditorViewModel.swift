@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -279,6 +279,8 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
 
     // MARK: - Reorder Elements (To Be Overridden)
 
+    // TODO: should instead move to an index-based self insertion
+    //       instead of replacement
     func reorderComponents(_ tags: [Element]) async throws {
         fatalError("This method should be overridden in subclasses")
     }

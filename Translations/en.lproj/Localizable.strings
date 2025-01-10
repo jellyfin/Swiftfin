@@ -7,9 +7,6 @@
 /// Accent Color
 "accentColor" = "Accent Color";
 
-/// Some views may need an app restart to update.
-"accentColorDescription" = "Some views may need an app restart to update.";
-
 /// Access
 "access" = "Access";
 
@@ -25,6 +22,21 @@
 /// Define the allowed hours for usage and restrict access outside those times.
 "accessSchedulesDescription" = "Define the allowed hours for usage and restrict access outside those times.";
 
+/// User will have access to no media unless it contains at least one allowed tag.
+"accessTagAllowDescription" = "User will have access to no media unless it contains at least one allowed tag.";
+
+/// Access tag already exists
+"accessTagAlreadyExists" = "Access tag already exists";
+
+/// User will have access to all media except when it contains any blocked tag.
+"accessTagBlockDescription" = "User will have access to all media except when it contains any blocked tag.";
+
+/// Access Tags
+"accessTags" = "Access Tags";
+
+/// Use tags to grant or restrict this user's access to media.
+"accessTagsDescription" = "Use tags to grant or restrict this user's access to media.";
+
 /// Active
 "active" = "Active";
 
@@ -37,8 +49,11 @@
 /// Add
 "add" = "Add";
 
-/// Add Access Schedule
-"addAccessSchedule" = "Add Access Schedule";
+/// Add access schedule
+"addAccessSchedule" = "Add access schedule";
+
+/// Add access tag
+"addAccessTag" = "Add access tag";
 
 /// Add API key
 "addAPIKey" = "Add API key";
@@ -93,6 +108,12 @@
 
 /// Allow item deletion
 "allowItemDeletion" = "Allow item deletion";
+
+/// Allowed
+"allowed" = "Allowed";
+
+/// Allow media item deletion
+"allowItemDeletion" = "Allow media item deletion";
 
 /// Allow item editing
 "allowItemEditing" = "Allow item editing";
@@ -273,6 +294,9 @@
 
 /// bps
 "bitsPerSecond" = "bps";
+
+/// Blocked
+"blocked" = "Blocked";
 
 /// Block unrated items
 "blockUnratedItems" = "Block unrated items";
@@ -844,6 +868,12 @@
 /// Hours
 "hours" = "Hours";
 
+/// ID
+"id" = "ID";
+
+/// Identify
+"identify" = "Identify";
+
 /// Idle
 "idle" = "Idle";
 
@@ -1297,6 +1327,9 @@
 /// Production Locations
 "productionLocations" = "Production Locations";
 
+/// Production Year
+"productionYear" = "Production Year";
+
 /// Profile Image
 "profileImage" = "Profile Image";
 
@@ -1308,6 +1341,9 @@
 
 /// Progress
 "progress" = "Progress";
+
+/// Provider
+"provider" = "Provider";
 
 /// Public Users
 "publicUsers" = "Public Users";
@@ -1725,6 +1761,9 @@
 
 /// System
 "system" = "System";
+
+/// Tag
+"tag" = "Tag";
 
 /// Tagline
 "tagline" = "Tagline";
