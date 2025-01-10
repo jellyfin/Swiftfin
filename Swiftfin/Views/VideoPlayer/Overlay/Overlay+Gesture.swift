@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -36,7 +36,7 @@ extension VideoPlayer.Overlay {
         @Environment(\.isAspectFilled)
         @Binding
         private var isAspectFilled
-        
+
         @Environment(\.isGestureLocked)
         @Binding
         private var isGestureLocked
@@ -65,7 +65,7 @@ extension VideoPlayer.Overlay {
         private var manager: MediaPlayerManager
         @EnvironmentObject
         private var toastProxy: ToastProxy
-        
+
         // MARK: - States
 
         @State
@@ -157,7 +157,7 @@ extension VideoPlayer.Overlay.GestureLayer {
 // MARK: - Pan
 
 extension VideoPlayer.Overlay.GestureLayer {
-    
+
     // MARK: - Offset
 
     private func mediaOffsetAction(
@@ -190,7 +190,7 @@ extension VideoPlayer.Overlay.GestureLayer {
 //            systemName: "heart.fill"
 //        )
     }
-    
+
     // MARK: - Brightness
 
     private func brightnessAction(
@@ -212,7 +212,7 @@ extension VideoPlayer.Overlay.GestureLayer {
             UIScreen.main.brightness = newBrightness
         }
     }
-    
+
     // MARK: - Playback Rate
 
     private func playbackRateAction(
@@ -235,7 +235,7 @@ extension VideoPlayer.Overlay.GestureLayer {
 
         manager.set(rate: Float(clampedRate))
     }
-    
+
     // MARK: - Scrub
 
     private func scrubAction(
@@ -258,7 +258,7 @@ extension VideoPlayer.Overlay.GestureLayer {
             .runTimeSeconds
         scrubbedSeconds = clamp(newSeconds, min: 0, max: manager.item.runTimeSeconds)
     }
-    
+
     // MARK: - Volume
 
     private func volumeAction(
@@ -288,7 +288,7 @@ extension VideoPlayer.Overlay.GestureLayer {
 // MARK: - Pinch
 
 extension VideoPlayer.Overlay.GestureLayer {
-    
+
     // MARK: - Aspect Fill
 
     private func aspectFillAction(

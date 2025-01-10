@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -31,7 +31,7 @@ extension VideoPlayer {
 
         var body: some View {
             keyCommands {
-                
+
                 // MARK: Aspect Fill
 
                 KeyCommandAction(
@@ -62,9 +62,9 @@ extension VideoPlayer {
 //                    updateViewProxy.present(systemName: "play.fill", title: "Play")
 //                }
                 }
-                
+
                 // MARK: - Decrease Playback Speed
-                
+
                 KeyCommandAction(
                     title: "Decrease Playback Speed",
                     input: "[",
@@ -75,14 +75,14 @@ extension VideoPlayer {
                         min: 0.25,
                         max: 4
                     )
-                    
+
                     manager.set(rate: newRate)
-                    
+
                     toastProxy.present(Text(newRate, format: .playbackRate), systemName: "speedometer")
                 }
-                
+
                 // MARK: - Increase Playback Speed
-                
+
                 KeyCommandAction(
                     title: "Increase Playback Speed",
                     input: "]",
@@ -93,12 +93,12 @@ extension VideoPlayer {
                         min: 0.25,
                         max: 4
                     )
-                    
+
                     manager.set(rate: newRate)
-                    
+
                     toastProxy.present(Text(newRate, format: .playbackRate), systemName: "speedometer")
                 }
-                
+
                 // MARK: Reset Playback Speed
 
                 KeyCommandAction(
@@ -109,8 +109,7 @@ extension VideoPlayer {
                     manager.set(rate: 1)
                     toastProxy.present(Text(1, format: .playbackRate), systemName: "speedometer")
                 }
-                
-                
+
                 // MARK: Play Next Item
 
                 KeyCommandAction(

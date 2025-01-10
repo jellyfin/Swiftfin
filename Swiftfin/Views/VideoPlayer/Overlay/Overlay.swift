@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -70,7 +70,7 @@ extension VideoPlayer {
             if let selectedSupplement {
                 SupplementTitleButton(supplement: selectedSupplement)
             }
-            
+
 //            HStack(spacing: 10) {
 //                ForEach(manager.supplements.map(\.asAny)) { supplement in
 //                    DrawerSectionButton(
@@ -85,7 +85,7 @@ extension VideoPlayer {
 
         var body: some View {
             ZStack {
-                
+
                 // MARK: - Dark
 
                 ZStack(alignment: .bottom) {
@@ -105,14 +105,14 @@ extension VideoPlayer {
                 .animation(.linear(duration: 0.25), value: isPresentingOverlay)
 
                 // MARK: - Gestures
-                
+
                 GestureLayer()
-                
+
                 // MARK: - Key Commands
-                
+
                 // TODO: causes crash!?
 //                KeyCommandsLayer()
-                
+
                 // MARK: - Buttons and Supplements
 
                 VStack {
@@ -221,7 +221,7 @@ struct VideoPlayer_Overlay_Previews: PreviewProvider {
                 MediaPlayerManager(
                     playbackItem: .init(
                         baseItem: .init(
-//                            channelType: .tv,
+                            //                            channelType: .tv,
                             indexNumber: 1,
                             name: "The Bear",
                             parentIndexNumber: 1,
