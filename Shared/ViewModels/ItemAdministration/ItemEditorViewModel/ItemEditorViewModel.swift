@@ -279,6 +279,8 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
 
     // MARK: - Reorder Elements (To Be Overridden)
 
+    // TODO: should instead move to an index-based self insertion
+    //       instead of replacement
     func reorderComponents(_ tags: [Element]) async throws {
         fatalError("This method should be overridden in subclasses")
     }

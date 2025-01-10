@@ -22,6 +22,21 @@
 /// Define the allowed hours for usage and restrict access outside those times.
 "accessSchedulesDescription" = "Define the allowed hours for usage and restrict access outside those times.";
 
+/// User will have access to no media unless it contains at least one allowed tag.
+"accessTagAllowDescription" = "User will have access to no media unless it contains at least one allowed tag.";
+
+/// Access tag already exists
+"accessTagAlreadyExists" = "Access tag already exists";
+
+/// User will have access to all media except when it contains any blocked tag.
+"accessTagBlockDescription" = "User will have access to all media except when it contains any blocked tag.";
+
+/// Access Tags
+"accessTags" = "Access Tags";
+
+/// Use tags to grant or restrict this user's access to media.
+"accessTagsDescription" = "Use tags to grant or restrict this user's access to media.";
+
 /// Active
 "active" = "Active";
 
@@ -34,8 +49,11 @@
 /// Add
 "add" = "Add";
 
-/// Add Access Schedule
-"addAccessSchedule" = "Add Access Schedule";
+/// Add access schedule
+"addAccessSchedule" = "Add access schedule";
+
+/// Add access tag
+"addAccessTag" = "Add access tag";
 
 /// Add API key
 "addAPIKey" = "Add API key";
@@ -87,6 +105,9 @@
 
 /// Allow collection management
 "allowCollectionManagement" = "Allow collection management";
+
+/// Allowed
+"allowed" = "Allowed";
 
 /// Allow media item deletion
 "allowItemDeletion" = "Allow media item deletion";
@@ -270,6 +291,9 @@
 
 /// bps
 "bitsPerSecond" = "bps";
+
+/// Blocked
+"blocked" = "Blocked";
 
 /// Block unrated items
 "blockUnratedItems" = "Block unrated items";
@@ -1716,6 +1740,9 @@
 
 /// System
 "system" = "System";
+
+/// Tag
+"tag" = "Tag";
 
 /// Tagline
 "tagline" = "Tagline";
