@@ -46,7 +46,7 @@ final class HomeViewModel: ViewModel, Stateful {
     @Published
     var resumeItems: OrderedSet<BaseItemDto> = []
 
-    // MARK: - State Management
+    // MARK: - Stateful Variables
 
     @Published
     var backgroundStates: OrderedSet<BackgroundState> = []
@@ -55,7 +55,10 @@ final class HomeViewModel: ViewModel, Stateful {
     @Published
     var state: State = .initial
 
-    // MARK: - Notifications
+    private var backgroundRefreshTask: AnyCancellable?
+    private var refreshTask: AnyCancellable?
+
+    // MARK: - Notification Handler
 
     // TODO: replace with views checking what notifications were
     //       posted since last disappear
@@ -64,17 +67,10 @@ final class HomeViewModel: ViewModel, Stateful {
 
     // MARK: - Child View Models
 
-    @Published
     var nextUpViewModel: NextUpLibraryViewModel = .init()
-    @Published
     var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
 
-    // MARK: - Refresh Tasks
-
-    private var backgroundRefreshTask: AnyCancellable?
-    private var refreshTask: AnyCancellable?
-
-    // MARK: - Initialize
+    // MARK: - Initializer
 
     override init() {
         super.init()
@@ -97,28 +93,14 @@ final class HomeViewModel: ViewModel, Stateful {
     func respond(to action: Action) -> State {
         switch action {
         case .backgroundRefresh:
+
             backgroundRefreshTask?.cancel()
             backgroundStates.append(.refresh)
 
             backgroundRefreshTask = Task { [weak self] in
                 do {
-                    try await withThrowingTaskGroup(of: Void.self) { group in
-                        group.addTask {
-                            await self?.nextUpViewModel.send(.refresh)
-                            while self?.nextUpViewModel.state == .refreshing {
-                                try await Task.sleep(nanoseconds: 100_000_000)
-                            }
-                        }
-
-                        group.addTask {
-                            await self?.recentlyAddedViewModel.send(.refresh)
-                            while self?.recentlyAddedViewModel.state == .refreshing {
-                                try await Task.sleep(nanoseconds: 100_000_000)
-                            }
-                        }
-
-                        try await group.waitForAll()
-                    }
+                    self?.nextUpViewModel.send(.refresh)
+                    self?.recentlyAddedViewModel.send(.refresh)
 
                     let resumeItems = try await self?.getResumeItems() ?? []
 
@@ -151,6 +133,7 @@ final class HomeViewModel: ViewModel, Stateful {
         case let .setIsPlayed(isPlayed, item):
             Task {
                 try await setIsPlayed(isPlayed, for: item)
+
                 self.send(.backgroundRefresh)
             }
             .store(in: &cancellables)
@@ -163,29 +146,6 @@ final class HomeViewModel: ViewModel, Stateful {
 
             refreshTask = Task { [weak self] in
                 do {
-                    await MainActor.run {
-                        guard let self else { return }
-                        self.state = .refreshing
-                    }
-
-                    try await withThrowingTaskGroup(of: Void.self) { group in
-                        group.addTask {
-                            await self?.nextUpViewModel.send(.refresh)
-                            while self?.nextUpViewModel.state == .refreshing {
-                                try await Task.sleep(nanoseconds: 100_000_000)
-                            }
-                        }
-
-                        group.addTask {
-                            await self?.recentlyAddedViewModel.send(.refresh)
-                            while self?.recentlyAddedViewModel.state == .refreshing {
-                                try await Task.sleep(nanoseconds: 100_000_000)
-                            }
-                        }
-
-                        try await group.waitForAll()
-                    }
-
                     try await self?.refresh()
 
                     guard !Task.isCancelled else { return }
@@ -214,19 +174,15 @@ final class HomeViewModel: ViewModel, Stateful {
     // MARK: - Refresh
 
     private func refresh() async throws {
+
+        await nextUpViewModel.send(.refresh)
+        await recentlyAddedViewModel.send(.refresh)
+
         let resumeItems = try await getResumeItems()
         let libraries = try await getLibraries()
 
-        try await withThrowingTaskGroup(of: Void.self) { group in
-            for library in libraries {
-                group.addTask {
-                    await library.send(.refresh)
-                    while library.state == .refreshing {
-                        try await Task.sleep(nanoseconds: 100_000_000)
-                    }
-                }
-            }
-            try await group.waitForAll()
+        for library in libraries {
+            await library.send(.refresh)
         }
 
         await MainActor.run {

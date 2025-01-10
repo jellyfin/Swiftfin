@@ -42,7 +42,10 @@ extension HomeView {
                             viewModel.send(.refresh)
                         }
                 case .initial, .refreshing:
-                    ProgressView()
+                    LoadingView(
+                        title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
+                        posterType: posterType
+                    )
                 }
             }
             .animation(.linear(duration: 0.1), value: viewModel.state)
