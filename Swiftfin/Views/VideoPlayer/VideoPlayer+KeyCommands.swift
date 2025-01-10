@@ -13,8 +13,8 @@ import VLCUI
 
 extension VideoPlayer {
 
-    struct KeyCommandsLayer: View {
-
+    struct KeyCommandsModifier: ViewModifier {
+        
         @Default(.VideoPlayer.jumpBackwardInterval)
         private var jumpBackwardInterval
         @Default(.VideoPlayer.jumpForwardInterval)
@@ -28,117 +28,118 @@ extension VideoPlayer {
         private var toastProxy: ToastProxy
         @EnvironmentObject
         private var manager: MediaPlayerManager
+        
+        func body(content: Content) -> some View {
+            content
+                .keyCommands {
+                    
+                    // MARK: Aspect Fill
 
-        var body: some View {
-            keyCommands {
+                    KeyCommandAction(
+                        title: "Aspect Fill",
+                        input: "f",
+                        modifierFlags: .command
+                    ) {
+                        DispatchQueue.main.async {
+                            isAspectFilled.toggle()
+                        }
+                    }
 
-                // MARK: Aspect Fill
+                    KeyCommandAction(
+                        title: L10n.playAndPause,
+                        input: " "
+                    ) {
+                        switch manager.playbackRequestStatus {
+                        case .playing:
+                            manager.proxy?.pause()
+                        case .paused:
+                            manager.proxy?.play()
+                        }
+    //                if videoPlayerManager.state == .playing {
+    //                    videoPlayerManager.proxy?.pause()
+    //                    updateViewProxy.present(systemName: "pause.fill", title: "Pause")
+    //                } else {
+    //                    videoPlayerManager.proxy?.play()
+    //                    updateViewProxy.present(systemName: "play.fill", title: "Play")
+    //                }
+                    }
 
-                KeyCommandAction(
-                    title: "Aspect Fill",
-                    input: "f",
-                    modifierFlags: .command
-                ) {
-                    DispatchQueue.main.async {
-                        isAspectFilled.toggle()
+                    // MARK: - Decrease Playback Speed
+
+                    KeyCommandAction(
+                        title: "Decrease Playback Speed",
+                        input: "[",
+                        modifierFlags: .command
+                    ) {
+                        let newRate = clamp(
+                            manager.rate - 0.25,
+                            min: 0.25,
+                            max: 4
+                        )
+
+                        manager.set(rate: newRate)
+
+                        toastProxy.present(Text(newRate, format: .playbackRate), systemName: "speedometer")
+                    }
+
+                    // MARK: - Increase Playback Speed
+
+                    KeyCommandAction(
+                        title: "Increase Playback Speed",
+                        input: "]",
+                        modifierFlags: .command
+                    ) {
+                        let newRate = clamp(
+                            manager.rate + 0.25,
+                            min: 0.25,
+                            max: 4
+                        )
+
+                        manager.set(rate: newRate)
+
+                        toastProxy.present(Text(newRate, format: .playbackRate), systemName: "speedometer")
+                    }
+
+                    // MARK: Reset Playback Speed
+
+                    KeyCommandAction(
+                        title: "Reset Playback Speed",
+                        input: "\\",
+                        modifierFlags: .command
+                    ) {
+                        manager.set(rate: 1)
+                        toastProxy.present(Text(1, format: .playbackRate), systemName: "speedometer")
+                    }
+
+                    // MARK: Play Next Item
+
+                    KeyCommandAction(
+                        title: L10n.nextItem,
+                        input: UIKeyCommand.inputRightArrow,
+                        modifierFlags: .command
+                    ) {
+                        guard let nextItem = manager.queue?.nextItem else { return }
+                        manager.send(.playNew(item: nextItem))
+                    }
+
+                    // MARK: Play Previous Item
+
+                    KeyCommandAction(
+                        title: L10n.previousItem,
+                        input: UIKeyCommand.inputLeftArrow,
+                        modifierFlags: .command
+                    ) {
+                        guard let previousItem = manager.queue?.previousItem else { return }
+                        manager.send(.playNew(item: previousItem))
                     }
                 }
-
-                KeyCommandAction(
-                    title: L10n.playAndPause,
-                    input: " "
-                ) {
-                    switch manager.playbackRequestStatus {
-                    case .playing:
-                        manager.proxy?.pause()
-                    case .paused:
-                        manager.proxy?.play()
-                    }
-//                if videoPlayerManager.state == .playing {
-//                    videoPlayerManager.proxy?.pause()
-//                    updateViewProxy.present(systemName: "pause.fill", title: "Pause")
-//                } else {
-//                    videoPlayerManager.proxy?.play()
-//                    updateViewProxy.present(systemName: "play.fill", title: "Play")
-//                }
-                }
-
-                // MARK: - Decrease Playback Speed
-
-                KeyCommandAction(
-                    title: "Decrease Playback Speed",
-                    input: "[",
-                    modifierFlags: .command
-                ) {
-                    let newRate = clamp(
-                        manager.rate - 0.25,
-                        min: 0.25,
-                        max: 4
-                    )
-
-                    manager.set(rate: newRate)
-
-                    toastProxy.present(Text(newRate, format: .playbackRate), systemName: "speedometer")
-                }
-
-                // MARK: - Increase Playback Speed
-
-                KeyCommandAction(
-                    title: "Increase Playback Speed",
-                    input: "]",
-                    modifierFlags: .command
-                ) {
-                    let newRate = clamp(
-                        manager.rate + 0.25,
-                        min: 0.25,
-                        max: 4
-                    )
-
-                    manager.set(rate: newRate)
-
-                    toastProxy.present(Text(newRate, format: .playbackRate), systemName: "speedometer")
-                }
-
-                // MARK: Reset Playback Speed
-
-                KeyCommandAction(
-                    title: "Reset Playback Speed",
-                    input: "\\",
-                    modifierFlags: .command
-                ) {
-                    manager.set(rate: 1)
-                    toastProxy.present(Text(1, format: .playbackRate), systemName: "speedometer")
-                }
-
-                // MARK: Play Next Item
-
-                KeyCommandAction(
-                    title: L10n.nextItem,
-                    input: UIKeyCommand.inputRightArrow,
-                    modifierFlags: .command
-                ) {
-                    guard let nextItem = manager.queue?.nextItem else { return }
-                    manager.send(.playNew(item: nextItem))
-                }
-
-                // MARK: Play Previous Item
-
-                KeyCommandAction(
-                    title: L10n.previousItem,
-                    input: UIKeyCommand.inputLeftArrow,
-                    modifierFlags: .command
-                ) {
-                    guard let previousItem = manager.queue?.previousItem else { return }
-                    manager.send(.playNew(item: previousItem))
-                }
-            }
         }
     }
 }
 
 // MARK: - OLD
 
-struct VideoPlayerKeyCommandsModifier: ViewModifier {
+struct OldVideoPlayerKeyCommandsModifier: ViewModifier {
 
     @Default(.VideoPlayer.jumpBackwardInterval)
     private var jumpBackwardInterval

@@ -15,9 +15,6 @@ extension VideoPlayer {
 
     struct Overlay: View {
 
-        @ObserveInjection
-        private var injection
-
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
@@ -161,6 +158,7 @@ extension VideoPlayer {
                 ToastView()
                     .edgePadding()
             }
+            .modifier(VideoPlayer.KeyCommandsModifier())
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.bouncy(duration: 0.4), value: isPresentingSupplement)
             .animation(.bouncy(duration: 0.25), value: isPresentingOverlay)
@@ -206,7 +204,6 @@ extension VideoPlayer {
                     )
                 }
             }
-            .enableInjection()
         }
     }
 }
