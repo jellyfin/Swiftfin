@@ -16,7 +16,7 @@ import SwiftUI
 
 struct GestureSettingsView: View {
 
-    @Default(.VideoPlayer.Gesture.panAction)
+    @Default(.VideoPlayer.Gesture.horizontalPanAction)
     private var horizontalPanGesture
     @Default(.VideoPlayer.Gesture.horizontalSwipeGesture)
     private var horizontalSwipeGesture
@@ -28,10 +28,10 @@ struct GestureSettingsView: View {
     private var doubleTouchGesture
     @Default(.VideoPlayer.Gesture.pinchGesture)
     private var pinchGesture
-    @Default(.VideoPlayer.Gesture.verticalPanGestureLeft)
-    private var verticalPanGestureLeft
-    @Default(.VideoPlayer.Gesture.verticalPanGestureRight)
-    private var verticalPanGestureRight
+    @Default(.VideoPlayer.Gesture.verticalPanLeftAction)
+    private var verticalPanLeftAction
+    @Default(.VideoPlayer.Gesture.verticalPanRightAction)
+    private var verticalPanRightAction
 
     var body: some View {
         Form {
@@ -52,9 +52,9 @@ struct GestureSettingsView: View {
 
                 CaseIterablePicker("Pinch", selection: $pinchGesture)
 
-                CaseIterablePicker("Left Vertical Pan", selection: $verticalPanGestureLeft)
+                CaseIterablePicker("Left Vertical Pan", selection: $verticalPanLeftAction)
 
-                CaseIterablePicker("Right Vertical Pan", selection: $verticalPanGestureRight)
+                CaseIterablePicker("Right Vertical Pan", selection: $verticalPanRightAction)
             }
         }
         .navigationTitle(L10n.gestures)

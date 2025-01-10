@@ -85,7 +85,7 @@ extension VideoPlayer.Overlay {
 
         var body: some View {
             GestureView()
-                .onHorizontalPan(handlePan)
+                .onHorizontalPan(handleHorizontalPan)
                 .onPinch(handlePinch)
                 .onTap(samePointPadding: 10, samePointTimeout: 0.7) { _, _ in
                     if isPresentingDrawer {
@@ -94,6 +94,7 @@ extension VideoPlayer.Overlay {
                         isPresentingOverlay.toggle()
                     }
                 }
+                .onVerticalPan(handleVerticalPan)
         }
     }
 }
@@ -102,7 +103,7 @@ extension VideoPlayer.Overlay {
 
 extension VideoPlayer.Overlay.GestureLayer {
 
-    private func handlePan(
+    private func handleHorizontalPan(
         state: UIGestureRecognizer.State,
         point: UnitPoint,
         velocity: CGFloat,
@@ -113,13 +114,58 @@ extension VideoPlayer.Overlay.GestureLayer {
             return
         }
 
-        let action = Defaults[.VideoPlayer.Gesture.panAction]
-
+        _handlePan(
+            action: Defaults[.VideoPlayer.Gesture.horizontalPanAction],
+            state: state,
+            point: point,
+            pointComponent: \.x,
+            velocity: velocity,
+            translation: translation
+        )
+    }
+    
+    private func handleVerticalPan(
+        state: UIGestureRecognizer.State,
+        point: UnitPoint,
+        velocity: CGFloat,
+        translation: CGFloat
+    ) {
+        guard !isGestureLocked else {
+            toastProxy.present("Gesture lock", systemName: "lock.fill")
+            return
+        }
+        
+        let action: PanAction = if point.x <= 0.5 {
+            Defaults[.VideoPlayer.Gesture.verticalPanLeftAction]
+        } else {
+            Defaults[.VideoPlayer.Gesture.verticalPanRightAction]
+        }
+        
+        // Invert point for "up == +, down == -"
+        _handlePan(
+            action: action,
+            state: state,
+            point: point.inverted,
+            pointComponent: \.y,
+            velocity: velocity,
+            translation: translation
+        )
+    }
+    
+    private func _handlePan(
+        action: PanAction,
+        state: UIGestureRecognizer.State,
+        point: UnitPoint,
+        pointComponent: KeyPath<UnitPoint, CGFloat>,
+        velocity: CGFloat,
+        translation: CGFloat
+    ) {
         switch action {
-        case .audioffset: ()
+        case .none: ()
+        case .audioffset:
             mediaOffsetAction(state: state, translation: translation, source: _audioOffset.wrappedValue)
         case .brightness:
-            brightnessAction(state: state, point: point)
+            brightnessAction(state: state, point: point, pointComponent: pointComponent)
         case .playbackSpeed:
             playbackRateAction(state: state, translation: translation)
         case .scrub:
@@ -130,7 +176,6 @@ extension VideoPlayer.Overlay.GestureLayer {
             mediaOffsetAction(state: state, translation: translation, source: _subtitleOffset.wrappedValue)
         case .volume:
             volumeAction(state: state, point: point)
-        case .none: ()
         }
     }
 
@@ -195,7 +240,8 @@ extension VideoPlayer.Overlay.GestureLayer {
 
     private func brightnessAction(
         state: UIGestureRecognizer.State,
-        point: UnitPoint
+        point: UnitPoint,
+        pointComponent: KeyPath<UnitPoint, CGFloat>
     ) {
         if state == .began {
             brightnessPanGestureState = .zero
@@ -205,8 +251,10 @@ extension VideoPlayer.Overlay.GestureLayer {
             return
         }
 
-        let n = brightnessPanGestureState.startValue - (brightnessPanGestureState.startPoint.x - point.x)
+        let n = brightnessPanGestureState.startValue - (brightnessPanGestureState.startPoint[keyPath: pointComponent] - point[keyPath: pointComponent])
         let newBrightness = clamp(n, min: 0, max: 1.0)
+        
+        toastProxy.present(Text(newBrightness, format: .percent.precision(.fractionLength(0))), systemName: "sun.max.fill")
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             UIScreen.main.brightness = newBrightness
@@ -231,9 +279,11 @@ extension VideoPlayer.Overlay.GestureLayer {
             abs(playbackRatePanGestureState.startTranslation - translation) * 2,
             toNearest: 0.25
         )
-        let clampedRate = clamp(newRate, min: 0.25, max: 5.0)
+        let clampedRate = Float(clamp(newRate, min: 0.25, max: 5.0))
 
-        manager.set(rate: Float(clampedRate))
+        manager.set(rate: clampedRate)
+        
+        toastProxy.present(Text(clampedRate, format: .playbackRate), systemName: "speedometer")
     }
 
     // MARK: - Scrub

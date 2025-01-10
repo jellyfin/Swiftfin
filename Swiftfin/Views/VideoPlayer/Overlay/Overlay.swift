@@ -105,11 +105,6 @@ extension VideoPlayer {
 
                 GestureLayer()
 
-                // MARK: - Key Commands
-
-                // TODO: causes crash!?
-//                KeyCommandsLayer()
-
                 // MARK: - Buttons and Supplements
 
                 VStack {

@@ -70,7 +70,6 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         didSet {
             if let playbackItem {
                 seconds = playbackItem.baseItem.startTimeSeconds
-                supplements += playbackItem.supplements
                 playbackItem.manager = self
             }
         }
@@ -113,7 +112,11 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
     // MARK: init
 
-    init(item: BaseItemDto, queue: (any MediaPlayerQueue)? = nil, playbackItemProvider: @escaping MediaPlayerItemProvider) {
+    init(
+        item: BaseItemDto,
+        queue: (any MediaPlayerQueue)? = nil,
+        playbackItemProvider: @escaping MediaPlayerItemProvider
+    ) {
         self.item = item
         self.queue = queue
         self.playbackItemProvider = playbackItemProvider
@@ -129,7 +132,11 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         }
     }
 
-    init(playbackItem: MediaPlayerItem, queue: (any MediaPlayerQueue)? = nil, playbackItemProvider: MediaPlayerItemProvider? = nil) {
+    init(
+        playbackItem: MediaPlayerItem,
+        queue: (any MediaPlayerQueue)? = nil,
+        playbackItemProvider: MediaPlayerItemProvider? = nil
+    ) {
         self.item = playbackItem.baseItem
         self.queue = queue
         self.playbackItemProvider = playbackItemProvider
@@ -208,8 +215,6 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
                 }
 
                 let playbackItem = try await provider(self.item)
-
-//                try await Task.sleep(nanoseconds: 3_000_000_000)
 
                 await onComplete(playbackItem)
             } catch {

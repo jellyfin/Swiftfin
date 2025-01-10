@@ -33,7 +33,6 @@ extension VideoPlayer.Overlay.PlaybackProgress {
                         Color.white
                     }
                     .frame(
-                        //                        maxWidth: contentSize.width * (chapter.secondsRange.upperBound - chapter.secondsRange.lowerBound) / item
                         maxWidth: contentSize.width * (chapter.unitRange.upperBound - chapter.unitRange.lowerBound)
                     )
                 }

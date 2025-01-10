@@ -180,11 +180,11 @@ class UIGestureView: UIView {
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(didPerformLongPress))
         longPressGesture.minimumPressDuration = longPressMinimumDuration
 
-//        let verticalPanGesture = PanDirectionGestureRecognizer(
-//            direction: .vertical,
-//            target: self,
-//            action: #selector(didPerformVerticalPan)
-//        )
+        let verticalPanGesture = PanDirectionGestureRecognizer(
+            direction: .vertical,
+            target: self,
+            action: #selector(didPerformVerticalPan)
+        )
         let horizontalPanGesture = PanDirectionGestureRecognizer(
             direction: .horizontal,
             target: self,
@@ -197,7 +197,7 @@ class UIGestureView: UIView {
         addGestureRecognizer(tapGesture)
 //        addGestureRecognizer(doubleTouchGesture)
 //        addGestureRecognizer(longPressGesture)
-//        addGestureRecognizer(verticalPanGesture)
+        addGestureRecognizer(verticalPanGesture)
         addGestureRecognizer(horizontalPanGesture)
     }
 

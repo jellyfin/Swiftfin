@@ -60,7 +60,7 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
 //            .store(in: &cancellables)
 
         manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
-        manager.$seconds.sink(receiveValue: secondsDidChange).store(in: &cancellables)
+//        manager.$seconds.sink(receiveValue: secondsDidChange).store(in: &cancellables)
         manager.$playbackRequestStatus.sink(receiveValue: playbackStatusDidChange).store(in: &cancellables)
     }
 

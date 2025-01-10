@@ -122,7 +122,7 @@ extension VideoPlayer.Overlay {
             .disabled(manager.state == .loadingItem)
             .frame(maxWidth: .infinity)
             .animation(.bouncy(duration: 0.4, extraBounce: 0.1), value: isScrubbing)
-            // TODO: kept for future reference for trickplay scrubbing
+            // TODO: kept for future reference for trickplay/chapter image scrubbing
 //            .overlay(alignment: .top) {
 //                RoundedRectangle(cornerRadius: 16)
 //                    .fill(Color.white.opacity(0.5))

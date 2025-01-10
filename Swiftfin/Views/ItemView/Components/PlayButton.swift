@@ -41,9 +41,8 @@ extension ItemView {
                 if let playButtonItem = viewModel.playButtonItem, let selectedMediaSource = viewModel.selectedMediaSource {
                     let manager = MediaPlayerManager(
                         item: playButtonItem
-//                        queue: EpisodeMediaPlayerQueue(episode: playButtonItem)
                     ) { item in
-                        try await MediaPlayerItem.build(for: item, mediaSource: item.mediaSources!.first!)
+                        try await MediaPlayerItem.build(for: item, mediaSource: selectedMediaSource)
                     }
 
                     mainRouter.route(to: \.videoPlayer, manager)
