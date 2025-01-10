@@ -33,11 +33,8 @@ struct SettingsView: View {
             .contentView {
                 Section(L10n.jellyfin) {
 
-                    Button {} label: {
-                        TextPairView(
-                            leading: L10n.user,
-                            trailing: viewModel.userSession.user.username
-                        )
+                    UserProfileRow(user: viewModel.userSession.user.data) {
+                        router.route(to: \.userProfile, viewModel)
                     }
 
                     ChevronButton(
