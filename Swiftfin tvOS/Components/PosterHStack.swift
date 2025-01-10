@@ -55,7 +55,6 @@ struct PosterHStack<Element: Poster & Identifiable, Data: Collection>: View wher
                             if isFocused { focusedItem.wrappedValue = item }
                         }
                     }
-                    .scrollClipDisabled()
             }
             .clipsToBounds(false)
             .dataPrefix(20)
