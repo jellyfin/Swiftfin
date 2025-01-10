@@ -118,9 +118,6 @@ struct VideoPlayer: View {
     // MARK: body
 
     var body: some View {
-
-//        let _ = Self._printChanges()
-
         playerView
             .ignoresSafeArea()
             .navigationBarHidden()

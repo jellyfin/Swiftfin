@@ -228,13 +228,10 @@ extension View {
         }
     }
 
-    func trackingSize(_ binding: Binding<CGSize>) -> some View {
-        onSizeChanged { newSize in
-            binding.wrappedValue = newSize
-        }
-    }
-
-    func trackingSize(_ sizeBinding: Binding<CGSize>, _ safeAreaInsetBinding: Binding<EdgeInsets>) -> some View {
+    func trackingSize(
+        _ sizeBinding: Binding<CGSize>,
+        _ safeAreaInsetBinding: Binding<EdgeInsets> = .constant(.zero)
+    ) -> some View {
         onSizeChanged {
             sizeBinding.wrappedValue = $0
             safeAreaInsetBinding.wrappedValue = $1

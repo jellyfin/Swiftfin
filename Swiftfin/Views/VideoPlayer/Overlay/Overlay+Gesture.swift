@@ -163,19 +163,48 @@ extension VideoPlayer.Overlay.GestureLayer {
         switch action {
         case .none: ()
         case .audioffset:
-            mediaOffsetAction(state: state, translation: translation, source: _audioOffset.wrappedValue)
+            mediaOffsetAction(
+                state: state,
+                translation: translation,
+                source: _audioOffset.wrappedValue
+            )
         case .brightness:
-            brightnessAction(state: state, point: point, pointComponent: pointComponent)
+            brightnessAction(
+                state: state,
+                point: point,
+                pointComponent: pointComponent
+            )
         case .playbackSpeed:
-            playbackRateAction(state: state, translation: translation)
+            playbackRateAction(
+                state: state,
+                translation: translation
+            )
         case .scrub:
-            scrubAction(state: state, point: point, rate: 1)
+            scrubAction(
+                state: state,
+                point: point,
+                pointComponent: pointComponent,
+                rate: 1
+            )
         case .slowScrub:
-            scrubAction(state: state, point: point, rate: 0.1)
+            scrubAction(
+                state: state,
+                point: point,
+                pointComponent: pointComponent,
+                rate: 0.1
+            )
         case .subtitleOffset:
-            mediaOffsetAction(state: state, translation: translation, source: _subtitleOffset.wrappedValue)
+            mediaOffsetAction(
+                state: state,
+                translation: translation,
+                source: _subtitleOffset.wrappedValue
+            )
         case .volume:
-            volumeAction(state: state, point: point)
+            volumeAction(
+                state: state,
+                point: point,
+                pointComponent: pointComponent
+            )
         }
     }
 
@@ -254,7 +283,10 @@ extension VideoPlayer.Overlay.GestureLayer {
         let n = brightnessPanGestureState.startValue - (brightnessPanGestureState.startPoint[keyPath: pointComponent] - point[keyPath: pointComponent])
         let newBrightness = clamp(n, min: 0, max: 1.0)
         
-        toastProxy.present(Text(newBrightness, format: .percent.precision(.fractionLength(0))), systemName: "sun.max.fill")
+        toastProxy.present(
+            Text(newBrightness, format: .percent.precision(.fractionLength(0))),
+            systemName: "sun.max.fill"
+        )
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             UIScreen.main.brightness = newBrightness
@@ -283,7 +315,10 @@ extension VideoPlayer.Overlay.GestureLayer {
 
         manager.set(rate: clampedRate)
         
-        toastProxy.present(Text(clampedRate, format: .playbackRate), systemName: "speedometer")
+        toastProxy.present(
+            Text(clampedRate, format: .playbackRate),
+            systemName: "speedometer"
+        )
     }
 
     // MARK: - Scrub
@@ -291,6 +326,7 @@ extension VideoPlayer.Overlay.GestureLayer {
     private func scrubAction(
         state: UIGestureRecognizer.State,
         point: UnitPoint,
+        pointComponent: KeyPath<UnitPoint, CGFloat>,
         rate: CGFloat
     ) {
         if state == .began {
@@ -304,7 +340,7 @@ extension VideoPlayer.Overlay.GestureLayer {
             return
         }
 
-        let newSeconds = scrubPanGestureState.startValue - (scrubPanGestureState.startPoint.x - point.x) * rate * manager.item
+        let newSeconds = scrubPanGestureState.startValue - (scrubPanGestureState.startPoint[keyPath: pointComponent] - point[keyPath: pointComponent]) * rate * manager.item
             .runTimeSeconds
         scrubbedSeconds = clamp(newSeconds, min: 0, max: manager.item.runTimeSeconds)
     }
@@ -313,7 +349,8 @@ extension VideoPlayer.Overlay.GestureLayer {
 
     private func volumeAction(
         state: UIGestureRecognizer.State,
-        point: UnitPoint
+        point: UnitPoint,
+        pointComponent: KeyPath<UnitPoint, CGFloat>
     ) {
         guard let slider = MPVolumeView()
             .subviews
@@ -327,7 +364,7 @@ extension VideoPlayer.Overlay.GestureLayer {
             return
         }
 
-        let newVolume = volumePanGestureState.startValue - Float(volumePanGestureState.startPoint.x - point.x)
+        let newVolume = volumePanGestureState.startValue - Float(volumePanGestureState.startPoint[keyPath: pointComponent] - point[keyPath: pointComponent])
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             slider.value = clamp(newVolume, min: 0, max: 1)
