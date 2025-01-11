@@ -46,7 +46,6 @@ class ToastProxy: ObservableObject {
 
     private func poke() {
         isPresenting = true
-        // TODO: could equality check previous title instead
         messageID = UUID().uuidString
         pokeTimer.poke()
     }

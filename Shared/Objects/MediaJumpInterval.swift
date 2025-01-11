@@ -7,7 +7,7 @@
 //
 
 import Defaults
-import UIKit
+import Foundation
 
 enum MediaJumpInterval: Storable {
 

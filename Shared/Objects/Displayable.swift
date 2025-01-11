@@ -6,8 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-
 /// A type that is displayed with a title
 protocol Displayable {
 

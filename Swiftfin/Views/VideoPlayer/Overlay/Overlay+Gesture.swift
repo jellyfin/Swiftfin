@@ -232,7 +232,7 @@ extension VideoPlayer.Overlay.GestureLayer {
     
     private func handleHorizontalSwipe(
         point: UnitPoint,
-        direction: GestureView.SwipeDirection,
+        direction: Direction,
         amount: Int
     ) {
         guard checkGestureLock() else { return }

@@ -647,7 +647,6 @@
 		E1575E3C293C6B15001665B1 /* Files in Frameworks */ = {isa = PBXBuildFile; productRef = E1575E3B293C6B15001665B1 /* Files */; };
 		E1575E58293E7685001665B1 /* Files in Frameworks */ = {isa = PBXBuildFile; productRef = E1575E57293E7685001665B1 /* Files */; };
 		E1575E5D293E77B5001665B1 /* ItemViewType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C925F328875037002A7A66 /* ItemViewType.swift */; };
-		E1575E5F293E77B5001665B1 /* StreamType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EF4C402911B783008CC695 /* StreamType.swift */; };
 		E1575E63293E77B5001665B1 /* CaseIterablePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129429728F4785200796AC6 /* CaseIterablePicker.swift */; };
 		E1575E65293E77B5001665B1 /* MediaJumpInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* MediaJumpInterval.swift */; };
 		E1575E66293E77B5001665B1 /* Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1937A60288F32DB00CB80AA /* Poster.swift */; };
@@ -661,7 +660,7 @@
 		E1575E6F293E77B5001665B1 /* GestureAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1092F4B29106F9F00163F57 /* GestureAction.swift */; };
 		E1575E70293E77B5001665B1 /* TextPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A1528428FD191A00600579 /* TextPair.swift */; };
 		E1575E72293E77B5001665B1 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D8429229340B8300D1041A /* Utilities.swift */; };
-		E1575E74293E77B5001665B1 /* PanDirectionGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C925F62887504B002A7A66 /* PanDirectionGestureRecognizer.swift */; };
+		E1575E74293E77B5001665B1 /* DirectionalPanGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C925F62887504B002A7A66 /* DirectionalPanGestureRecognizer.swift */; };
 		E1575E75293E77B5001665B1 /* LibraryDisplayType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13F05EB28BC9000003499D2 /* LibraryDisplayType.swift */; };
 		E1575E78293E77B5001665B1 /* TrailingTimestampType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C8CE7B28FF015000DF5D7B /* TrailingTimestampType.swift */; };
 		E1575E7C293E77B5001665B1 /* PokeIntervalTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E306CC28EF6E8000537998 /* PokeIntervalTimer.swift */; };
@@ -716,6 +715,9 @@
 		E169C7B8296D2E8200AE25F9 /* SpecialFeaturesHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E169C7B7296D2E8200AE25F9 /* SpecialFeaturesHStack.swift */; };
 		E16AA60828A364A6009A983C /* PosterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16AA60728A364A6009A983C /* PosterButton.swift */; };
 		E16AF11C292C98A7001422A8 /* GestureSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16AF11B292C98A7001422A8 /* GestureSettingsView.swift */; };
+		E16CB1D52D331ABC00370174 /* JumpProgressObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16CB1D42D331ABC00370174 /* JumpProgressObserver.swift */; };
+		E16CB1D72D331D5900370174 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16CB1D62D331D5900370174 /* Direction.swift */; };
+		E16CB1D82D331D5900370174 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16CB1D62D331D5900370174 /* Direction.swift */; };
 		E16DEAC228EFCF590058F196 /* EnvironmentValue+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16DEAC128EFCF590058F196 /* EnvironmentValue+Keys.swift */; };
 		E16DF13B2D31DE9400B1921E /* UnitPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16DF13A2D31DE9400B1921E /* UnitPoint.swift */; };
 		E16DF13C2D31DE9400B1921E /* UnitPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16DF13A2D31DE9400B1921E /* UnitPoint.swift */; };
@@ -940,7 +942,7 @@
 		E1C8CE5B28FE512400DF5D7B /* CGPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C8CE5A28FE512400DF5D7B /* CGPoint.swift */; };
 		E1C8CE7C28FF015000DF5D7B /* TrailingTimestampType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C8CE7B28FF015000DF5D7B /* TrailingTimestampType.swift */; };
 		E1C925F428875037002A7A66 /* ItemViewType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C925F328875037002A7A66 /* ItemViewType.swift */; };
-		E1C925F72887504B002A7A66 /* PanDirectionGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C925F62887504B002A7A66 /* PanDirectionGestureRecognizer.swift */; };
+		E1C925F72887504B002A7A66 /* DirectionalPanGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C925F62887504B002A7A66 /* DirectionalPanGestureRecognizer.swift */; };
 		E1C925F928875647002A7A66 /* LatestInLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C925F828875647002A7A66 /* LatestInLibraryView.swift */; };
 		E1C9260B2887565C002A7A66 /* MovieItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C925FB2887565C002A7A66 /* MovieItemView.swift */; };
 		E1C9260C2887565C002A7A66 /* MovieItemContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C925FC2887565C002A7A66 /* MovieItemContentView.swift */; };
@@ -1103,7 +1105,6 @@
 		E1EDFB4A2C75310500C42FD3 /* MediaPlayerProxy+AVPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EDFB492C75310500C42FD3 /* MediaPlayerProxy+AVPlayer.swift */; };
 		E1EDFB4B2C75310500C42FD3 /* MediaPlayerProxy+AVPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EDFB492C75310500C42FD3 /* MediaPlayerProxy+AVPlayer.swift */; };
 		E1EF473A289A0F610034046B /* TruncatedText.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EBCB41278BD174009FE6E9 /* TruncatedText.swift */; };
-		E1EF4C412911B783008CC695 /* StreamType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EF4C402911B783008CC695 /* StreamType.swift */; };
 		E1F0204E26CCCA74001C1C3B /* MediaJumpInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* MediaJumpInterval.swift */; };
 		E1F5CF052CB09EA000607465 /* CurrentDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F5CF042CB09EA000607465 /* CurrentDate.swift */; };
 		E1F5CF062CB09EA000607465 /* CurrentDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F5CF042CB09EA000607465 /* CurrentDate.swift */; };
@@ -1655,6 +1656,8 @@
 		E169C7B7296D2E8200AE25F9 /* SpecialFeaturesHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialFeaturesHStack.swift; sourceTree = "<group>"; };
 		E16AA60728A364A6009A983C /* PosterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterButton.swift; sourceTree = "<group>"; };
 		E16AF11B292C98A7001422A8 /* GestureSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureSettingsView.swift; sourceTree = "<group>"; };
+		E16CB1D42D331ABC00370174 /* JumpProgressObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JumpProgressObserver.swift; sourceTree = "<group>"; };
+		E16CB1D62D331D5900370174 /* Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
 		E16DEAC128EFCF590058F196 /* EnvironmentValue+Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EnvironmentValue+Keys.swift"; sourceTree = "<group>"; };
 		E16DF13A2D31DE9400B1921E /* UnitPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitPoint.swift; sourceTree = "<group>"; };
 		E170D0E3294CC8AB0017224C /* VideoPlayer+KeyCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VideoPlayer+KeyCommands.swift"; sourceTree = "<group>"; };
@@ -1812,7 +1815,7 @@
 		E1C8CE5A28FE512400DF5D7B /* CGPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGPoint.swift; sourceTree = "<group>"; };
 		E1C8CE7B28FF015000DF5D7B /* TrailingTimestampType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrailingTimestampType.swift; sourceTree = "<group>"; };
 		E1C925F328875037002A7A66 /* ItemViewType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemViewType.swift; sourceTree = "<group>"; };
-		E1C925F62887504B002A7A66 /* PanDirectionGestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PanDirectionGestureRecognizer.swift; sourceTree = "<group>"; };
+		E1C925F62887504B002A7A66 /* DirectionalPanGestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirectionalPanGestureRecognizer.swift; sourceTree = "<group>"; };
 		E1C925F828875647002A7A66 /* LatestInLibraryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LatestInLibraryView.swift; sourceTree = "<group>"; };
 		E1C925FB2887565C002A7A66 /* MovieItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieItemView.swift; sourceTree = "<group>"; };
 		E1C925FC2887565C002A7A66 /* MovieItemContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieItemContentView.swift; sourceTree = "<group>"; };
@@ -1928,7 +1931,6 @@
 		E1EDFB422C752ACE00C42FD3 /* MediaPlayerProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPlayerProxy.swift; sourceTree = "<group>"; };
 		E1EDFB462C7530B900C42FD3 /* MediaPlayerProxy+VLC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MediaPlayerProxy+VLC.swift"; sourceTree = "<group>"; };
 		E1EDFB492C75310500C42FD3 /* MediaPlayerProxy+AVPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MediaPlayerProxy+AVPlayer.swift"; sourceTree = "<group>"; };
-		E1EF4C402911B783008CC695 /* StreamType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamType.swift; sourceTree = "<group>"; };
 		E1F0204D26CCCA74001C1C3B /* MediaJumpInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaJumpInterval.swift; sourceTree = "<group>"; };
 		E1F5CF042CB09EA000607465 /* CurrentDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentDate.swift; sourceTree = "<group>"; };
 		E1F5CF072CB0A04500607465 /* Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
@@ -2550,19 +2552,24 @@
 				E1CB756E2C80E66700217C76 /* CommaStringBuilder.swift */,
 				E1F5CF042CB09EA000607465 /* CurrentDate.swift */,
 				4E2AC4BD2C6C48D200DD600D /* CustomDeviceProfileAction.swift */,
+				E16CB1D62D331D5900370174 /* Direction.swift */,
+				E1C925F62887504B002A7A66 /* DirectionalPanGestureRecognizer.swift */,
 				E17FB55128C119D400311DFE /* Displayable.swift */,
+				AD85858EA8623A6C5453C12B /* DisplayOrder */,
 				E1579EA62B97DC1500A31CA1 /* Eventful.swift */,
 				E1092F4B29106F9F00163F57 /* GestureAction.swift */,
 				E1D37F4A2B9CEA5C00343D2B /* ImageSource.swift */,
+				9DC67760F835E549CE117064 /* ItemArrayElements.swift */,
 				E14EDECA2B8FB66F000F00A4 /* ItemFilter */,
 				E1C925F328875037002A7A66 /* ItemViewType.swift */,
+				E16CB1D42D331ABC00370174 /* JumpProgressObserver.swift */,
 				4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */,
 				E13F05EB28BC9000003499D2 /* LibraryDisplayType.swift */,
 				E1DE2B4E2B983F3200F6715F /* LibraryParent */,
 				4E2AC4C02C6C48EB00DD600D /* MediaComponents */,
 				E1F0204D26CCCA74001C1C3B /* MediaJumpInterval.swift */,
+				6D4EF0EDCECB7346E699CD0F /* NotificationSet.swift */,
 				E1AA331E2782639D00F6439C /* OverlayType.swift */,
-				E1C925F62887504B002A7A66 /* PanDirectionGestureRecognizer.swift */,
 				4E3A785D2C3B87A400D33C11 /* PlaybackBitrate */,
 				E190704A2C858B7B0004600E /* PlaybackCompatibility */,
 				4EC1C8512C7FDFA300E2879E /* PlaybackDeviceProfile.swift */,
@@ -2571,25 +2578,21 @@
 				E1CCF12D28ABF989006CAC9E /* PosterDisplayType.swift */,
 				E1E9017A28DAAE4D001B1594 /* RoundedCorner.swift */,
 				E164A7F52BE4814700A54B18 /* SelectUserServerSelection.swift */,
+				DC309555A791637DB8A3FC74 /* SeriesStatus.swift */,
 				E129429228F2845000796AC6 /* SliderType.swift */,
 				E11042742B8013DF00821020 /* Stateful.swift */,
 				E149CCAC2BE6ECC8008B9331 /* Storable.swift */,
-				E1EF4C402911B783008CC695 /* StreamType.swift */,
 				E11BDF792B85529D0045C54A /* SupportedCaseIterable.swift */,
 				E15D63EE2BD6DFC200AA665D /* SystemImageable.swift */,
 				E1A1528428FD191A00600579 /* TextPair.swift */,
 				E1C8CE7B28FF015000DF5D7B /* TrailingTimestampType.swift */,
+				32C83744A9704BF62E06AA4B /* Trie.swift */,
 				E1EA09682BED78BB004CDE76 /* UserAccessPolicy.swift */,
+				B96E95BC9702171691B1D43D /* UserPermissions.swift */,
 				DFB7C3DE2C7AA42700CE7CDC /* UserSignInState.swift */,
 				E1D8429229340B8300D1041A /* Utilities.swift */,
 				E1BDF2E42951475300CC0294 /* VideoPlayerActionButton.swift */,
 				E1CB757A2C80EF9D00217C76 /* VideoPlayerType */,
-				AD85858EA8623A6C5453C12B /* DisplayOrder */,
-				9DC67760F835E549CE117064 /* ItemArrayElements.swift */,
-				6D4EF0EDCECB7346E699CD0F /* NotificationSet.swift */,
-				DC309555A791637DB8A3FC74 /* SeriesStatus.swift */,
-				32C83744A9704BF62E06AA4B /* Trie.swift */,
-				B96E95BC9702171691B1D43D /* UserPermissions.swift */,
 			);
 			path = Objects;
 			sourceTree = "<group>";
@@ -5263,7 +5266,7 @@
 				E122A9142788EAAD0060FA63 /* MediaStream.swift in Sources */,
 				4E2AC4D62C6C4CDC00DD600D /* PlaybackQualitySettingsView.swift in Sources */,
 				E102314E2BCF8A7E009D71FC /* AlternateLayoutView.swift in Sources */,
-				E1575E74293E77B5001665B1 /* PanDirectionGestureRecognizer.swift in Sources */,
+				E1575E74293E77B5001665B1 /* DirectionalPanGestureRecognizer.swift in Sources */,
 				E1575E85293E7A00001665B1 /* DarkAppIcon.swift in Sources */,
 				E1763A762BF3FF01004DF6AB /* AppLoadingView.swift in Sources */,
 				E18121062CBE428000682985 /* ChevronButton.swift in Sources */,
@@ -5313,11 +5316,11 @@
 				E1575E9E293E7B1E001665B1 /* Equatable.swift in Sources */,
 				E1C9261A288756BD002A7A66 /* PosterButton.swift in Sources */,
 				E1CB75782C80ECF100217C76 /* VideoPlayerType+Native.swift in Sources */,
-				E1575E5F293E77B5001665B1 /* StreamType.swift in Sources */,
 				E1803EA22BFBD6CF0039F90E /* Hashable.swift in Sources */,
 				E1388A42293F0AAD009721B1 /* PreferenceUIHostingSwizzling.swift in Sources */,
 				E1B5784228F8AFCB00D42911 /* WrappedView.swift in Sources */,
 				E11895AA289383BC0042947B /* ScrollViewOffsetModifier.swift in Sources */,
+				E16CB1D82D331D5900370174 /* Direction.swift in Sources */,
 				E10B1EBF2BD9AD5C00A92EAF /* V1ServerModel.swift in Sources */,
 				E17AC96B2954D00E003D2BC2 /* URLResponse.swift in Sources */,
 				E1763A2B2BF3046E004DF6AB /* UserGridButton.swift in Sources */,
@@ -5750,6 +5753,7 @@
 				E1A8261C2C8F89190034361B /* Section.swift in Sources */,
 				E13332942953BAA100EE76AB /* DownloadTaskContentView.swift in Sources */,
 				E18E01E1288747230022598C /* EpisodeItemContentView.swift in Sources */,
+				E16CB1D72D331D5900370174 /* Direction.swift in Sources */,
 				E1E9017B28DAAE4D001B1594 /* RoundedCorner.swift in Sources */,
 				E18E01F2288747230022598C /* ActionButtonHStack.swift in Sources */,
 				4E2AC4C52C6C492700DD600D /* MediaContainer.swift in Sources */,
@@ -5888,7 +5892,6 @@
 				E1DE84142B9531C1008CCE21 /* OrderedSectionSelectorView.swift in Sources */,
 				E13DD3FC2717EAE8009D4DAF /* SelectUserView.swift in Sources */,
 				E18E01DE288747230022598C /* iPadOSSeriesItemView.swift in Sources */,
-				E1EF4C412911B783008CC695 /* StreamType.swift in Sources */,
 				6220D0CC26D640C400B8E046 /* AppURLHandler.swift in Sources */,
 				E1A3E4CF2BB7E02B005C59F8 /* DelayedProgressView.swift in Sources */,
 				E1ED6FAB2C867FD60099B892 /* RedrawOnNotificationView.swift in Sources */,
@@ -5949,7 +5952,7 @@
 				4EB1A8CE2C9B2D0800F43898 /* ActiveSessionRow.swift in Sources */,
 				E1DC983D296DEB9B00982F06 /* UnwatchedIndicator.swift in Sources */,
 				E1FE69AA28C29CC20021BC93 /* LandscapePosterProgressBar.swift in Sources */,
-				E1C925F72887504B002A7A66 /* PanDirectionGestureRecognizer.swift in Sources */,
+				E1C925F72887504B002A7A66 /* DirectionalPanGestureRecognizer.swift in Sources */,
 				E1CB758C2C80F9EC00217C76 /* CodecProfile.swift in Sources */,
 				E18E01E9288747230022598C /* SeriesItemView.swift in Sources */,
 				E13ECC712C922EDF0094601F /* MediaPlayerSupplement.swift in Sources */,
@@ -6049,6 +6052,7 @@
 				5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */,
 				E1D8429529346C6400D1041A /* BasicStepper.swift in Sources */,
 				E18E01EA288747230022598C /* MovieItemView.swift in Sources */,
+				E16CB1D52D331ABC00370174 /* JumpProgressObserver.swift in Sources */,
 				6220D0B726D5EE1100B8E046 /* SearchCoordinator.swift in Sources */,
 				E164A7F42BE4736300A54B18 /* SignOutIntervalSection.swift in Sources */,
 				E148128528C15472003B8787 /* SortOrder+ItemSortOrder.swift in Sources */,

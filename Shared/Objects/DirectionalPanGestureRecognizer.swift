@@ -8,12 +8,7 @@
 
 import UIKit
 
-class PanDirectionGestureRecognizer: UIPanGestureRecognizer {
-
-    enum Direction {
-        case vertical
-        case horizontal
-    }
+class DirectionalPanGestureRecognizer: UIPanGestureRecognizer {
 
     private let direction: Direction
 

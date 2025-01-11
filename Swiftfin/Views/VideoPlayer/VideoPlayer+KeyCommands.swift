@@ -25,6 +25,8 @@ extension VideoPlayer {
         private var isAspectFilled
 
         @EnvironmentObject
+        private var jumpProgressObserver: JumpProgressObserver
+        @EnvironmentObject
         private var toastProxy: ToastProxy
         @EnvironmentObject
         private var manager: MediaPlayerManager
@@ -39,10 +41,8 @@ extension VideoPlayer {
                         title: "Aspect Fill",
                         input: "f",
                         modifierFlags: .command
-                    ) {
-                        DispatchQueue.main.async {
-                            isAspectFilled.toggle()
-                        }
+                    ) { @MainActor in
+                        isAspectFilled.toggle()
                     }
 
                     KeyCommandAction(
@@ -132,101 +132,33 @@ extension VideoPlayer {
                         guard let previousItem = manager.queue?.previousItem else { return }
                         manager.send(.playNew(item: previousItem))
                     }
+                    
+                    KeyCommandAction(
+                        title: L10n.jumpBackward,
+                        input: UIKeyCommand.inputLeftArrow
+                    ) {
+                        jumpProgressObserver.jumpBackward()
+                        manager.proxy?.jumpBackward(jumpBackwardInterval.interval)
+                        
+                        toastProxy.present(
+                            Text(Double(jumpProgressObserver.jumps) * jumpBackwardInterval.interval, format: .minuteSeconds),
+                            systemName: "gobackward"
+                        )
+                    }
+                    
+                    KeyCommandAction(
+                        title: L10n.jumpForward,
+                        input: UIKeyCommand.inputRightArrow
+                    ) {
+                        jumpProgressObserver.jumpForward()
+                        manager.proxy?.jumpForward(jumpForwardInterval.interval)
+                        
+                        toastProxy.present(
+                            Text(Double(jumpProgressObserver.jumps) * jumpForwardInterval.interval, format: .minuteSeconds),
+                            systemName: "goforward"
+                        )
+                    }
                 }
-        }
-    }
-}
-
-// MARK: - OLD
-
-struct OldVideoPlayerKeyCommandsModifier: ViewModifier {
-
-    @Default(.VideoPlayer.jumpBackwardInterval)
-    private var jumpBackwardInterval
-    @Default(.VideoPlayer.jumpForwardInterval)
-    private var jumpForwardInterval
-
-    @EnvironmentObject
-    private var manager: MediaPlayerManager
-    @EnvironmentObject
-    private var toastProxy: ToastProxy
-
-    func body(content: Content) -> some View {
-        content.keyCommands {
-
-            // MARK: jump forward
-
-            KeyCommandAction(
-                title: L10n.jumpForward,
-                input: UIKeyCommand.inputRightArrow
-            ) {
-//                if gestureStateHandler.jumpForwardKeyPressActive {
-//                    gestureStateHandler.jumpForwardKeyPressAmount += 1
-//                    gestureStateHandler.jumpForwardKeyPressWorkItem?.cancel()
-//
-//                    videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
-//
-//                    let task = DispatchWorkItem {
-//                        gestureStateHandler.jumpForwardKeyPressActive = false
-//                        gestureStateHandler.jumpForwardKeyPressAmount = 0
-//                    }
-//
-//                    gestureStateHandler.jumpForwardKeyPressWorkItem = task
-//
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-//                } else {
-//                    gestureStateHandler.jumpForwardKeyPressActive = true
-//                    gestureStateHandler.jumpForwardKeyPressAmount += 1
-//
-//                    videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
-//
-//                    let task = DispatchWorkItem {
-//                        gestureStateHandler.jumpForwardKeyPressActive = false
-//                        gestureStateHandler.jumpForwardKeyPressAmount = 0
-//                    }
-//
-//                    gestureStateHandler.jumpForwardKeyPressWorkItem = task
-//
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-//                }
-            }
-
-            // MARK: jump backward
-
-            KeyCommandAction(
-                title: L10n.jumpBackward,
-                input: UIKeyCommand.inputLeftArrow
-            ) {
-//                if gestureStateHandler.jumpBackwardKeyPressActive {
-//                    gestureStateHandler.jumpBackwardKeyPressAmount += 1
-//                    gestureStateHandler.jumpBackwardKeyPressWorkItem?.cancel()
-//
-//                    videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
-//
-//                    let task = DispatchWorkItem {
-//                        gestureStateHandler.jumpBackwardKeyPressActive = false
-//                        gestureStateHandler.jumpBackwardKeyPressAmount = 0
-//                    }
-//
-//                    gestureStateHandler.jumpBackwardKeyPressWorkItem = task
-//
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-//                } else {
-//                    gestureStateHandler.jumpBackwardKeyPressActive = true
-//                    gestureStateHandler.jumpBackwardKeyPressAmount += 1
-//
-//                    videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
-//
-//                    let task = DispatchWorkItem {
-//                        gestureStateHandler.jumpBackwardKeyPressActive = false
-//                        gestureStateHandler.jumpBackwardKeyPressAmount = 0
-//                    }
-//
-//                    gestureStateHandler.jumpBackwardKeyPressWorkItem = task
-//
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-//                }
-            }
         }
     }
 }

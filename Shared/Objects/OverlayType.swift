@@ -6,9 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Foundation
-
 enum PlaybackButtonType: String, CaseIterable, Displayable, Storable {
 
     case large

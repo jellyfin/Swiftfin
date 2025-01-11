@@ -6,9 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Foundation
-
 // TODO: remove Chapters. Will be replaced as a media player supplement
 enum VideoPlayerActionButton: String, CaseIterable, Displayable, Identifiable, Storable, SystemImageable {
 

@@ -6,8 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-
 enum SliderType: String, CaseIterable, Displayable, Storable {
 
     case thumb

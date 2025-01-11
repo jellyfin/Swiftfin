@@ -7,7 +7,7 @@
 //
 
 import Combine
-import SwiftUI
+import Foundation
 
 class PokeIntervalTimer: ObservableObject {
 

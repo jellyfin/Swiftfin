@@ -6,8 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-
 enum TrailingTimestampType: String, CaseIterable, Displayable, Storable {
 
     case timeLeft

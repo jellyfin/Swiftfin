@@ -7,7 +7,6 @@
 //
 
 import Defaults
-import Foundation
 
 enum LibraryDisplayType: String, CaseIterable, Displayable, Storable, SystemImageable {
 

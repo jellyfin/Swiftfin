@@ -6,8 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-
 enum UserSignInState: RawRepresentable, Equatable, Hashable, Storable {
 
     case signedOut

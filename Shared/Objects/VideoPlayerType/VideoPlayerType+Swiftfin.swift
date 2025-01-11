@@ -57,7 +57,7 @@ extension VideoPlayerType {
             context: .streaming,
             maxAudioChannels: "8",
             minSegments: 2,
-            protocol: StreamType.hls.rawValue,
+            protocol: "hls",
             type: .video
         ) {
             AudioCodec.aac

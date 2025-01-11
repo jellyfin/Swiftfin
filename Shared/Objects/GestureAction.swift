@@ -6,8 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-
 // TODO: split out into separate files under folder `GestureAction`
 
 // Optional values aren't yet supported in Defaults

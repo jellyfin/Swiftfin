@@ -39,6 +39,8 @@ extension VideoPlayer {
         private var selectedSupplement: AnyMediaPlayerSupplement?
 
         @StateObject
+        private var jumpProgressObserver: JumpProgressObserver = .init()
+        @StateObject
         private var overlayTimer: PokeIntervalTimer = .init()
         @StateObject
         private var toastProxy: ToastProxy = .init()
@@ -159,6 +161,7 @@ extension VideoPlayer {
             .animation(.bouncy(duration: 0.25), value: isPresentingOverlay)
             .environment(\.isPresentingOverlay, $isPresentingOverlay)
             .environment(\.selectedMediaPlayerSupplement, $selectedSupplement)
+            .environmentObject(jumpProgressObserver)
             .environmentObject(overlayTimer)
             .environmentObject(toastProxy)
             .onChange(of: isPresentingOverlay) { newValue in

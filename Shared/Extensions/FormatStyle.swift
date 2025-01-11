@@ -25,6 +25,21 @@ extension FormatStyle where Self == HourMinuteFormatStyle {
     static var hourMinute: HourMinuteFormatStyle { HourMinuteFormatStyle() }
 }
 
+struct MinuteSecondsFormatStyle: FormatStyle {
+    
+    func format(_ value: TimeInterval) -> String {
+        let formatter = DateComponentsFormatter()
+        formatter.unitsStyle = .abbreviated
+        formatter.allowedUnits = [.minute, .second]
+        return formatter.string(from: value) ?? .emptyDash
+    }
+}
+
+extension FormatStyle where Self == MinuteSecondsFormatStyle {
+
+    static var minuteSeconds: MinuteSecondsFormatStyle { MinuteSecondsFormatStyle() }
+}
+
 struct RunTimeFormatStyle: FormatStyle {
 
     private var isNegated: Bool = false
