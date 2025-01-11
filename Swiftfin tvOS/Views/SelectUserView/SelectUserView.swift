@@ -55,6 +55,8 @@ struct SelectUserView: View {
     @State
     private var padGridItemColumnCount: Int = 1
     @State
+    private var pin: String = ""
+    @State
     private var scrollViewOffset: CGFloat = 0
     @State
     private var selectedUsers: Set<UserState> = []
@@ -78,6 +80,8 @@ struct SelectUserView: View {
     private var isPresentingConfirmDeleteUsers = false
     @State
     private var isPresentingServers: Bool = false
+    @State
+    private var isPresentingLocalPin: Bool = false
 
     // MARK: - Error State
 
@@ -163,6 +167,28 @@ struct SelectUserView: View {
         return CGFloat(lastRowMissing) * (gridItemSize.width + EdgeInsets.edgePadding) / 2
     }
 
+    // MARK: - Select User(s)
+
+    private func select(user: UserState, needsPin: Bool = true) {
+        Task { @MainActor in
+            selectedUsers.insert(user)
+
+            switch user.accessPolicy {
+            case .requireDeviceAuthentication:
+                // Do nothing, no device authentication on tvOS
+                break
+            case .requirePin:
+                if needsPin {
+                    isPresentingLocalPin = true
+                    return
+                }
+            case .none: ()
+            }
+
+            viewModel.send(.signIn(user, pin: pin))
+        }
+    }
+
     // MARK: - Grid Content View
 
     @ViewBuilder
@@ -200,7 +226,7 @@ struct SelectUserView: View {
                 if isEditingUsers {
                     selectedUsers.toggle(value: user)
                 } else {
-                    viewModel.send(.signIn(user, pin: ""))
+                    select(user: user)
                 }
             } onDelete: {
                 selectedUsers.insert(user)
@@ -364,6 +390,13 @@ struct SelectUserView: View {
                 allServersSelection: .all
             )
         }
+        .onChange(of: isPresentingLocalPin) { _, newValue in
+            if newValue {
+                pin = ""
+            } else {
+                selectedUsers.removeAll()
+            }
+        }
         .onChange(of: viewModel.servers) { _, _ in
             gridItems = makeGridItems(for: serverSelection)
 
@@ -407,6 +440,32 @@ struct SelectUserView: View {
                 Text(L10n.deleteUserSingleConfirmation(first.username))
             } else {
                 Text(L10n.deleteUserMultipleConfirmation(selectedUsers.count))
+            }
+        }
+        .alert(L10n.signIn, isPresented: $isPresentingLocalPin) {
+
+            // TODO: Verify on tvOS 18
+            // https://forums.developer.apple.com/forums/thread/739545
+            // TextField(L10n.pin, text: $pin)
+            TextField(text: $pin) {}
+                .keyboardType(.numberPad)
+
+            Button(L10n.signIn) {
+                guard let user = selectedUsers.first else {
+                    assertionFailure("User not selected")
+                    return
+                }
+                select(user: user, needsPin: false)
+            }
+
+            Button(L10n.cancel, role: .cancel) {}
+        } message: {
+            if let user = selectedUsers.first, user.pinHint.isNotEmpty {
+                Text(user.pinHint)
+            } else {
+                let username = selectedUsers.first?.username ?? .emptyDash
+
+                Text(L10n.enterPinForUser(username))
             }
         }
         .errorMessage($error)
