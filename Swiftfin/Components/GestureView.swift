@@ -19,11 +19,18 @@ typealias PanGestureHandler = (UIGestureRecognizer.State, UnitPoint, CGFloat, CG
 // state, point, scale
 typealias PinchGestureHandler = (UIGestureRecognizer.State, UnitPoint, CGFloat) -> Void
 // point, direction, amount
-typealias SwipeGestureHandler = (UnitPoint, Bool, Int) -> Void
+typealias SwipeGestureHandler = (UnitPoint, GestureView.SwipeDirection, Int) -> Void
 // point, amount
 typealias TapGestureHandler = (UnitPoint, Int) -> Void
 
 struct GestureView: UIViewRepresentable {
+    
+    enum SwipeDirection {
+        case up
+        case down
+        case left
+        case right
+    }
 
     private var onHorizontalPan: PanGestureHandler?
     private var onHorizontalSwipe: SwipeGestureHandler?
@@ -136,7 +143,7 @@ class UIGestureView: UIView {
     private var sameSwipeDirectionTimeout: TimeInterval
 
     private var hasSwiped: Bool = false
-    private var lastSwipeDirection: Bool?
+    private var lastSwipeDirection: GestureView.SwipeDirection?
     private var lastTouchLocation: CGPoint?
     private var multiTapWorkItem: DispatchWorkItem?
     private var sameSwipeWorkItem: DispatchWorkItem?
@@ -218,7 +225,7 @@ class UIGestureView: UIView {
            abs(translation) >= swipeTranslation,
            abs(velocity) >= swipeVelocity
         {
-            didPerformSwipe(unitPoint: unitPoint, direction: translation > 0)
+            didPerformSwipe(unitPoint: unitPoint, direction: translation > 0 ? .right : .left)
 
             hasSwiped = true
         }
@@ -228,7 +235,7 @@ class UIGestureView: UIView {
         }
     }
 
-    private func didPerformSwipe(unitPoint: UnitPoint, direction: Bool) {
+    private func didPerformSwipe(unitPoint: UnitPoint, direction: GestureView.SwipeDirection) {
 
         if lastSwipeDirection == direction {
             sameSwipeOccurred(unitPoint: unitPoint, direction: direction)
@@ -239,7 +246,7 @@ class UIGestureView: UIView {
         }
     }
 
-    private func sameSwipeOccurred(unitPoint: UnitPoint, direction: Bool) {
+    private func sameSwipeOccurred(unitPoint: UnitPoint, direction: GestureView.SwipeDirection) {
         guard sameSwipeDirectionTimeout > 0 else { return }
         lastSwipeDirection = direction
 

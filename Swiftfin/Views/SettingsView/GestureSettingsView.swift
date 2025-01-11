@@ -18,8 +18,8 @@ struct GestureSettingsView: View {
 
     @Default(.VideoPlayer.Gesture.horizontalPanAction)
     private var horizontalPanGesture
-    @Default(.VideoPlayer.Gesture.horizontalSwipeGesture)
-    private var horizontalSwipeGesture
+    @Default(.VideoPlayer.Gesture.horizontalSwipeAction)
+    private var horizontalSwipeAction
     @Default(.VideoPlayer.Gesture.longPressAction)
     private var longPressGesture
     @Default(.VideoPlayer.Gesture.multiTapGesture)
@@ -39,10 +39,10 @@ struct GestureSettingsView: View {
             Section {
 
                 CaseIterablePicker("Horizontal Pan", selection: $horizontalPanGesture)
-                    .disabled(horizontalSwipeGesture != .none && horizontalPanGesture == .none)
+                    .disabled(horizontalSwipeAction != .none && horizontalPanGesture == .none)
 
-                CaseIterablePicker("Horizontal Swipe", selection: $horizontalSwipeGesture)
-                    .disabled(horizontalPanGesture != .none && horizontalSwipeGesture == .none)
+                CaseIterablePicker("Horizontal Swipe", selection: $horizontalSwipeAction)
+                    .disabled(horizontalPanGesture != .none && horizontalSwipeAction == .none)
 
                 CaseIterablePicker("Long Press", selection: $longPressGesture)
 
