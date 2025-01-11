@@ -133,6 +133,8 @@ extension VideoPlayer {
                         manager.send(.playNew(item: previousItem))
                     }
                     
+                    // MARK: - Jump Backward
+                    
                     KeyCommandAction(
                         title: L10n.jumpBackward,
                         input: UIKeyCommand.inputLeftArrow
@@ -145,6 +147,8 @@ extension VideoPlayer {
                             systemName: "gobackward"
                         )
                     }
+                    
+                    // MARK: - Jump Forward
                     
                     KeyCommandAction(
                         title: L10n.jumpForward,

@@ -28,6 +28,11 @@ extension VideoPlayer.Overlay.GestureLayer {
 extension VideoPlayer.Overlay {
 
     struct GestureLayer: View {
+        
+        @Default(.VideoPlayer.jumpBackwardInterval)
+        private var jumpBackwardInterval
+        @Default(.VideoPlayer.jumpForwardInterval)
+        private var jumpForwardInterval
 
         @Environment(\.audioOffset)
         @Binding
@@ -61,6 +66,8 @@ extension VideoPlayer.Overlay {
         @Binding
         private var subtitleOffset: TimeInterval
 
+        @EnvironmentObject
+        private var jumpProgressObserver: JumpProgressObserver
         @EnvironmentObject
         private var manager: MediaPlayerManager
         @EnvironmentObject
@@ -232,17 +239,16 @@ extension VideoPlayer.Overlay.GestureLayer {
     
     private func handleHorizontalSwipe(
         point: UnitPoint,
-        direction: Direction,
-        amount: Int
+        direction: Direction
     ) {
         guard checkGestureLock() else { return }
         
         let action = Defaults[.VideoPlayer.Gesture.horizontalSwipeAction]
         
-        // TODO: implement
         switch action {
         case .none: ()
-        case .jump: ()
+        case .jump:
+            jumpAction(point: point, direction: direction)
         }
     }
 
@@ -429,6 +435,33 @@ extension VideoPlayer.Overlay.GestureLayer {
             isAspectFilled = true
         } else if scale < 1, isAspectFilled {
             isAspectFilled = false
+        }
+    }
+}
+
+// MARK: - Swipe
+
+extension VideoPlayer.Overlay.GestureLayer {
+    
+    private func jumpAction(point: UnitPoint, direction: Direction) {
+        switch direction {
+        case .left:
+            jumpProgressObserver.jumpBackward()
+            manager.proxy?.jumpBackward(jumpBackwardInterval.interval)
+            
+            toastProxy.present(
+                Text(Double(jumpProgressObserver.jumps) * jumpBackwardInterval.interval, format: .minuteSeconds),
+                systemName: "gobackward"
+            )
+        case .right:
+            jumpProgressObserver.jumpForward()
+            manager.proxy?.jumpForward(jumpForwardInterval.interval)
+            
+            toastProxy.present(
+                Text(Double(jumpProgressObserver.jumps) * jumpForwardInterval.interval, format: .minuteSeconds),
+                systemName: "goforward"
+            )
+        default: ()
         }
     }
 }

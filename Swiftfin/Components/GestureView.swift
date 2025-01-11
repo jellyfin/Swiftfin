@@ -19,7 +19,7 @@ typealias PanGestureHandler = (UIGestureRecognizer.State, UnitPoint, CGFloat, CG
 // state, point, scale
 typealias PinchGestureHandler = (UIGestureRecognizer.State, UnitPoint, CGFloat) -> Void
 // point, direction, amount
-typealias SwipeGestureHandler = (UnitPoint, Direction, Int) -> Void
+typealias SwipeGestureHandler = (UnitPoint, Direction) -> Void
 // point, amount
 typealias TapGestureHandler = (UnitPoint, Int) -> Void
 
@@ -141,7 +141,6 @@ class UIGestureView: UIView {
     private var multiTapWorkItem: DispatchWorkItem?
     private var sameSwipeWorkItem: DispatchWorkItem?
     private var multiTapAmount: Int = 0
-    private var sameSwipeAmount: Int = 0
 
     init(
         onHorizontalPan: PanGestureHandler?,
@@ -218,42 +217,13 @@ class UIGestureView: UIView {
            abs(translation) >= swipeTranslation,
            abs(velocity) >= swipeVelocity
         {
-            didPerformSwipe(unitPoint: unitPoint, direction: translation > 0 ? .right : .left)
-
+            onHorizontalSwipe?(unitPoint, translation > 0 ? .right : .left)
             hasSwiped = true
         }
 
         if gestureRecognizer.state == .ended {
             hasSwiped = false
         }
-    }
-
-    private func didPerformSwipe(unitPoint: UnitPoint, direction: Direction) {
-
-        if lastSwipeDirection == direction {
-            sameSwipeOccurred(unitPoint: unitPoint, direction: direction)
-            onHorizontalSwipe?(unitPoint, direction, sameSwipeAmount)
-        } else {
-            sameSwipeOccurred(unitPoint: unitPoint, direction: direction)
-            onHorizontalSwipe?(unitPoint, direction, 1)
-        }
-    }
-
-    private func sameSwipeOccurred(unitPoint: UnitPoint, direction: Direction) {
-        guard sameSwipeDirectionTimeout > 0 else { return }
-        lastSwipeDirection = direction
-
-        sameSwipeAmount += 1
-
-        sameSwipeWorkItem?.cancel()
-        let task = DispatchWorkItem {
-            self.sameSwipeAmount = 0
-            self.lastSwipeDirection = nil
-        }
-
-        sameSwipeWorkItem = task
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + sameSwipeDirectionTimeout, execute: task)
     }
 
     @objc

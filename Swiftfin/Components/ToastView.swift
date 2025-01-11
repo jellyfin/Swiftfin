@@ -17,7 +17,7 @@ class ToastProxy: ObservableObject {
     private(set) var systemName: String? = nil
     @Published
     private(set) var title: Text = Text("")
-    @State
+    @Published
     private(set) var messageID: String = ""
 
     private let pokeTimer = PokeIntervalTimer(defaultInterval: 1)
