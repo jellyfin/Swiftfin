@@ -16,7 +16,7 @@ class ToastProxy: ObservableObject {
     @Published
     private(set) var systemName: String? = nil
     @Published
-    private(set) var text: Text = Text("")
+    private(set) var title: Text = Text("")
     @State
     private(set) var messageID: String = ""
 
@@ -30,15 +30,15 @@ class ToastProxy: ObservableObject {
             }
     }
 
-    func present(_ text: String, systemName: String? = nil) {
-        self.text = Text(text)
+    func present(_ title: String, systemName: String? = nil) {
+        self.title = Text(title)
         self.systemName = systemName
 
         poke()
     }
 
-    func present(_ text: Text, systemName: String? = nil) {
-        self.text = text
+    func present(_ title: Text, systemName: String? = nil) {
+        self.title = title
         self.systemName = systemName
 
         poke()
@@ -46,6 +46,7 @@ class ToastProxy: ObservableObject {
 
     private func poke() {
         isPresenting = true
+        // TODO: could equality check previous title instead
         messageID = UUID().uuidString
         pokeTimer.poke()
     }
@@ -68,7 +69,7 @@ struct ToastView: View {
                             .frame(width: 25, height: 25)
                     }
 
-                    proxy.text
+                    proxy.title
                         .font(.body)
                         .fontWeight(.bold)
                         .monospacedDigit()

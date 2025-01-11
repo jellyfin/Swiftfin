@@ -86,8 +86,11 @@ extension VideoPlayer.Overlay {
         var body: some View {
             GestureView()
                 .onHorizontalPan(handleHorizontalPan)
+                .onLongPress(minimumDuration: 1, handleLongPress)
                 .onPinch(handlePinch)
                 .onTap(samePointPadding: 10, samePointTimeout: 0.7) { _, _ in
+                    guard checkGestureLock() else { return }
+                    
                     if isPresentingDrawer {
                         selectedSupplement = nil
                     } else {
@@ -102,6 +105,27 @@ extension VideoPlayer.Overlay {
 // MARK: - Handle
 
 extension VideoPlayer.Overlay.GestureLayer {
+    
+    private func checkGestureLock() -> Bool {
+        if isGestureLocked {
+            toastProxy.present("Gesture lock", systemName: "lock.fill")
+            return false
+        }
+        
+        return true
+    }
+    
+    private func handleLongPress(point: UnitPoint) {
+        let action = Defaults[.VideoPlayer.Gesture.longPressAction]
+        
+        switch action {
+        case .none:
+            return
+        case .gestureLock:
+            guard !isPresentingOverlay else { return }
+            isGestureLocked.toggle()
+        }
+    }
 
     private func handleHorizontalPan(
         state: UIGestureRecognizer.State,
@@ -109,10 +133,7 @@ extension VideoPlayer.Overlay.GestureLayer {
         velocity: CGFloat,
         translation: CGFloat
     ) {
-        guard !isGestureLocked else {
-            toastProxy.present("Gesture lock", systemName: "lock.fill")
-            return
-        }
+        guard checkGestureLock() else { return }
 
         _handlePan(
             action: Defaults[.VideoPlayer.Gesture.horizontalPanAction],
@@ -130,10 +151,7 @@ extension VideoPlayer.Overlay.GestureLayer {
         velocity: CGFloat,
         translation: CGFloat
     ) {
-        guard !isGestureLocked else {
-            toastProxy.present("Gesture lock", systemName: "lock.fill")
-            return
-        }
+        guard checkGestureLock() else { return }
         
         let action: PanAction = if point.x <= 0.5 {
             Defaults[.VideoPlayer.Gesture.verticalPanLeftAction]
@@ -213,10 +231,7 @@ extension VideoPlayer.Overlay.GestureLayer {
         unitPoint: UnitPoint,
         scale: CGFloat
     ) {
-        guard !isGestureLocked else {
-            toastProxy.present("Gesture lock", systemName: "lock.fill")
-            return
-        }
+        guard checkGestureLock() else { return }
 
         let action = Defaults[.VideoPlayer.Gesture.pinchGesture]
 
@@ -226,6 +241,12 @@ extension VideoPlayer.Overlay.GestureLayer {
         case .none: ()
         }
     }
+}
+
+// MARK: - Long press
+
+extension VideoPlayer.Overlay.GestureLayer {
+    
 }
 
 // MARK: - Pan

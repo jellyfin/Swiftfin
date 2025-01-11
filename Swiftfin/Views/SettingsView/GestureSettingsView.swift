@@ -20,7 +20,7 @@ struct GestureSettingsView: View {
     private var horizontalPanGesture
     @Default(.VideoPlayer.Gesture.horizontalSwipeGesture)
     private var horizontalSwipeGesture
-    @Default(.VideoPlayer.Gesture.longPressGesture)
+    @Default(.VideoPlayer.Gesture.longPressAction)
     private var longPressGesture
     @Default(.VideoPlayer.Gesture.multiTapGesture)
     private var multiTapGesture

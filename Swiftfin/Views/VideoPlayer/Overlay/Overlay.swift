@@ -28,7 +28,7 @@ extension VideoPlayer {
         private var manager: MediaPlayerManager
 
         @State
-        private var effectiveSafeArea: EdgeInsets = .zero
+        private var effectiveSafeArea: EdgeInsets = .init(vertical: 0, horizontal: 50)
         @State
         private var isGestureLocked: Bool = false
         @State

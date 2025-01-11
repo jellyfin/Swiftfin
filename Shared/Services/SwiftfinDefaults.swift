@@ -205,7 +205,7 @@ extension Defaults.Keys {
 
             static let horizontalPanAction: Key<PanAction> = UserKey("videoPlayerHorizontalPanGesture", default: .none)
             static let horizontalSwipeGesture: Key<SwipeAction> = UserKey("videoPlayerHorizontalSwipeGesture", default: .none)
-            static let longPressGesture: Key<LongPressAction> = UserKey("videoPlayerLongPressGesture", default: .gestureLock)
+            static let longPressAction: Key<LongPressAction> = UserKey("videoPlayerLongPressGesture", default: .gestureLock)
             static let multiTapGesture: Key<MultiTapAction> = UserKey("videoPlayerMultiTapGesture", default: .none)
             static let doubleTouchGesture: Key<DoubleTouchAction> = UserKey("videoPlayerDoubleTouchGesture", default: .none)
             static let pinchGesture: Key<PinchAction> = UserKey("videoPlayerSwipeGesture", default: .aspectFill)
