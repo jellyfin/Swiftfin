@@ -14,7 +14,7 @@ import VLCUI
 extension VideoPlayer {
 
     struct KeyCommandsModifier: ViewModifier {
-        
+
         @Default(.VideoPlayer.jumpBackwardInterval)
         private var jumpBackwardInterval
         @Default(.VideoPlayer.jumpForwardInterval)
@@ -30,11 +30,11 @@ extension VideoPlayer {
         private var toastProxy: ToastProxy
         @EnvironmentObject
         private var manager: MediaPlayerManager
-        
+
         func body(content: Content) -> some View {
             content
                 .keyCommands {
-                    
+
                     // MARK: Aspect Fill
 
                     KeyCommandAction(
@@ -55,13 +55,13 @@ extension VideoPlayer {
                         case .paused:
                             manager.proxy?.play()
                         }
-    //                if videoPlayerManager.state == .playing {
-    //                    videoPlayerManager.proxy?.pause()
-    //                    updateViewProxy.present(systemName: "pause.fill", title: "Pause")
-    //                } else {
-    //                    videoPlayerManager.proxy?.play()
-    //                    updateViewProxy.present(systemName: "play.fill", title: "Play")
-    //                }
+                        //                if videoPlayerManager.state == .playing {
+                        //                    videoPlayerManager.proxy?.pause()
+                        //                    updateViewProxy.present(systemName: "pause.fill", title: "Pause")
+                        //                } else {
+                        //                    videoPlayerManager.proxy?.play()
+                        //                    updateViewProxy.present(systemName: "play.fill", title: "Play")
+                        //                }
                     }
 
                     // MARK: - Decrease Playback Speed
@@ -132,31 +132,31 @@ extension VideoPlayer {
                         guard let previousItem = manager.queue?.previousItem else { return }
                         manager.send(.playNew(item: previousItem))
                     }
-                    
+
                     // MARK: - Jump Backward
-                    
+
                     KeyCommandAction(
                         title: L10n.jumpBackward,
                         input: UIKeyCommand.inputLeftArrow
                     ) {
                         jumpProgressObserver.jumpBackward()
                         manager.proxy?.jumpBackward(jumpBackwardInterval.interval)
-                        
+
                         toastProxy.present(
                             Text(Double(jumpProgressObserver.jumps) * jumpBackwardInterval.interval, format: .minuteSeconds),
                             systemName: "gobackward"
                         )
                     }
-                    
+
                     // MARK: - Jump Forward
-                    
+
                     KeyCommandAction(
                         title: L10n.jumpForward,
                         input: UIKeyCommand.inputRightArrow
                     ) {
                         jumpProgressObserver.jumpForward()
                         manager.proxy?.jumpForward(jumpForwardInterval.interval)
-                        
+
                         toastProxy.present(
                             Text(Double(jumpProgressObserver.jumps) * jumpForwardInterval.interval, format: .minuteSeconds),
                             systemName: "goforward"

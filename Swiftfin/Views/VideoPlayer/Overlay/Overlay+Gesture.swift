@@ -28,7 +28,7 @@ extension VideoPlayer.Overlay.GestureLayer {
 extension VideoPlayer.Overlay {
 
     struct GestureLayer: View {
-        
+
         @Default(.VideoPlayer.jumpBackwardInterval)
         private var jumpBackwardInterval
         @Default(.VideoPlayer.jumpForwardInterval)
@@ -89,26 +89,26 @@ extension VideoPlayer.Overlay {
         private var isPresentingDrawer: Bool {
             selectedSupplement != nil
         }
-        
+
         // MARK: - body
 
         var body: some View {
             GestureView()
 //                .onDoubleTouch TODO: implement
-                .onHorizontalPan(handleHorizontalPan)
-                .onHorizontalSwipe(translation: 100, velocity: 1500, sameSwipeDirectionTimeout: 1, handleHorizontalSwipe)
-                .onLongPress(minimumDuration: 1, handleLongPress)
-                .onPinch(handlePinch)
-                .onTap(samePointPadding: 10, samePointTimeout: 0.7) { _, _ in
-                    guard checkGestureLock() else { return }
-                    
-                    if isPresentingDrawer {
-                        selectedSupplement = nil
-                    } else {
-                        isPresentingOverlay.toggle()
+                    .onHorizontalPan(handleHorizontalPan)
+                    .onHorizontalSwipe(translation: 100, velocity: 1500, sameSwipeDirectionTimeout: 1, handleHorizontalSwipe)
+                    .onLongPress(minimumDuration: 1, handleLongPress)
+                    .onPinch(handlePinch)
+                    .onTap(samePointPadding: 10, samePointTimeout: 0.7) { _, _ in
+                        guard checkGestureLock() else { return }
+
+                        if isPresentingDrawer {
+                            selectedSupplement = nil
+                        } else {
+                            isPresentingOverlay.toggle()
+                        }
                     }
-                }
-                .onVerticalPan(handleVerticalPan)
+                    .onVerticalPan(handleVerticalPan)
         }
     }
 }
@@ -116,19 +116,19 @@ extension VideoPlayer.Overlay {
 // MARK: - Handle
 
 extension VideoPlayer.Overlay.GestureLayer {
-    
+
     private func checkGestureLock() -> Bool {
         if isGestureLocked {
             toastProxy.present("Gesture lock", systemName: "lock.fill")
             return false
         }
-        
+
         return true
     }
-    
+
     private func handleLongPress(point: UnitPoint) {
         let action = Defaults[.VideoPlayer.Gesture.longPressAction]
-        
+
         switch action {
         case .none:
             return
@@ -155,7 +155,7 @@ extension VideoPlayer.Overlay.GestureLayer {
             translation: translation
         )
     }
-    
+
     private func handleVerticalPan(
         state: UIGestureRecognizer.State,
         point: UnitPoint,
@@ -163,13 +163,13 @@ extension VideoPlayer.Overlay.GestureLayer {
         translation: CGFloat
     ) {
         guard checkGestureLock() else { return }
-        
+
         let action: PanAction = if point.x <= 0.5 {
             Defaults[.VideoPlayer.Gesture.verticalPanLeftAction]
         } else {
             Defaults[.VideoPlayer.Gesture.verticalPanRightAction]
         }
-        
+
         // Invert point for "up == +, down == -"
         _handlePan(
             action: action,
@@ -180,7 +180,7 @@ extension VideoPlayer.Overlay.GestureLayer {
             translation: translation
         )
     }
-    
+
     private func _handlePan(
         action: PanAction,
         state: UIGestureRecognizer.State,
@@ -236,15 +236,15 @@ extension VideoPlayer.Overlay.GestureLayer {
             )
         }
     }
-    
+
     private func handleHorizontalSwipe(
         point: UnitPoint,
         direction: Direction
     ) {
         guard checkGestureLock() else { return }
-        
+
         let action = Defaults[.VideoPlayer.Gesture.horizontalSwipeAction]
-        
+
         switch action {
         case .none: ()
         case .jump:
@@ -271,9 +271,7 @@ extension VideoPlayer.Overlay.GestureLayer {
 
 // MARK: - Long press
 
-extension VideoPlayer.Overlay.GestureLayer {
-    
-}
+extension VideoPlayer.Overlay.GestureLayer {}
 
 // MARK: - Pan
 
@@ -327,9 +325,10 @@ extension VideoPlayer.Overlay.GestureLayer {
             return
         }
 
-        let n = brightnessPanGestureState.startValue - (brightnessPanGestureState.startPoint[keyPath: pointComponent] - point[keyPath: pointComponent])
+        let n = brightnessPanGestureState
+            .startValue - (brightnessPanGestureState.startPoint[keyPath: pointComponent] - point[keyPath: pointComponent])
         let newBrightness = clamp(n, min: 0, max: 1.0)
-        
+
         toastProxy.present(
             Text(newBrightness, format: .percent.precision(.fractionLength(0))),
             systemName: "sun.max.fill"
@@ -361,7 +360,7 @@ extension VideoPlayer.Overlay.GestureLayer {
         let clampedRate = Float(clamp(newRate, min: 0.25, max: 5.0))
 
         manager.set(rate: clampedRate)
-        
+
         toastProxy.present(
             Text(clampedRate, format: .playbackRate),
             systemName: "speedometer"
@@ -387,7 +386,8 @@ extension VideoPlayer.Overlay.GestureLayer {
             return
         }
 
-        let newSeconds = scrubPanGestureState.startValue - (scrubPanGestureState.startPoint[keyPath: pointComponent] - point[keyPath: pointComponent]) * rate * manager.item
+        let newSeconds = scrubPanGestureState
+            .startValue - (scrubPanGestureState.startPoint[keyPath: pointComponent] - point[keyPath: pointComponent]) * rate * manager.item
             .runTimeSeconds
         scrubbedSeconds = clamp(newSeconds, min: 0, max: manager.item.runTimeSeconds)
     }
@@ -411,7 +411,8 @@ extension VideoPlayer.Overlay.GestureLayer {
             return
         }
 
-        let newVolume = volumePanGestureState.startValue - Float(volumePanGestureState.startPoint[keyPath: pointComponent] - point[keyPath: pointComponent])
+        let newVolume = volumePanGestureState
+            .startValue - Float(volumePanGestureState.startPoint[keyPath: pointComponent] - point[keyPath: pointComponent])
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             slider.value = clamp(newVolume, min: 0, max: 1)
@@ -442,13 +443,13 @@ extension VideoPlayer.Overlay.GestureLayer {
 // MARK: - Swipe
 
 extension VideoPlayer.Overlay.GestureLayer {
-    
+
     private func jumpAction(point: UnitPoint, direction: Direction) {
         switch direction {
         case .left:
             jumpProgressObserver.jumpBackward()
             manager.proxy?.jumpBackward(jumpBackwardInterval.interval)
-            
+
             toastProxy.present(
                 Text(Double(jumpProgressObserver.jumps) * jumpBackwardInterval.interval, format: .minuteSeconds),
                 systemName: "gobackward"
@@ -456,7 +457,7 @@ extension VideoPlayer.Overlay.GestureLayer {
         case .right:
             jumpProgressObserver.jumpForward()
             manager.proxy?.jumpForward(jumpForwardInterval.interval)
-            
+
             toastProxy.present(
                 Text(Double(jumpProgressObserver.jumps) * jumpForwardInterval.interval, format: .minuteSeconds),
                 systemName: "goforward"

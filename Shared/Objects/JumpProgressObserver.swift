@@ -9,20 +9,20 @@
 import Combine
 
 class JumpProgressObserver: ObservableObject {
-    
+
     private var timer: PokeIntervalTimer = .init(defaultInterval: 2)
     private var timerCancellable: AnyCancellable?
-    
+
     private(set) var jumps: Int = 0
     private var isForward = true
-    
+
     init() {
         timerCancellable = timer.hasFired
             .sink { _ in
                 self.jumps = 0
             }
     }
-    
+
     func jumpForward() {
         if isForward {
             jumps += 1
@@ -30,10 +30,10 @@ class JumpProgressObserver: ObservableObject {
             jumps = 1
             isForward = true
         }
-        
+
         timer.poke()
     }
-    
+
     func jumpBackward() {
         if !isForward {
             jumps += 1
@@ -41,7 +41,7 @@ class JumpProgressObserver: ObservableObject {
             jumps = 1
             isForward = false
         }
-        
+
         timer.poke()
     }
 }

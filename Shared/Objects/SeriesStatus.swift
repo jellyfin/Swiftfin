@@ -9,7 +9,7 @@
 // TODO: move to SDK
 
 enum SeriesStatus: String, CaseIterable {
-    
+
     case continuing = "Continuing"
     case ended = "Ended"
     case unreleased = "Unreleased"

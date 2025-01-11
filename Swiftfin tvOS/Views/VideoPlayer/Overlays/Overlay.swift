@@ -22,7 +22,6 @@ extension VideoPlayer {
         // since this view ignores safe area, it must
         // get safe area insets from parent views
         @Environment(\.safeAreaInsets)
-        @Binding
         private var safeAreaInsets
 
         @EnvironmentObject
@@ -42,8 +41,74 @@ extension VideoPlayer {
         @StateObject
         private var overlayTimer: PokeIntervalTimer = .init()
 
+        private var isPresentingSupplement: Bool {
+            selectedSupplement != nil
+        }
+
+        @ViewBuilder
+        private var bottomContent: some View {
+            if !isPresentingSupplement {
+
+                NavigationBar()
+                    .focusSection()
+
+                PlaybackProgress()
+                    .isVisible(isScrubbing || isPresentingOverlay)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .trackingFrame($progressViewFrame)
+            }
+
+//            HStack(spacing: 10) {
+//                ForEach(manager.supplements.map(\.asAny)) { supplement in
+//                    DrawerSectionButton(
+//                        supplement: supplement
+//                    )
+//                }
+//            }
+//            .isVisible(!isScrubbing && isPresentingOverlay)
+        }
+
         var body: some View {
-            PlaybackProgress()
+            ZStack {
+
+                VStack {
+                    Spacer()
+
+                    bottomContent
+                }
+            }
+            .animation(.linear(duration: 0.1), value: isScrubbing)
+            .animation(.bouncy(duration: 0.4), value: isPresentingSupplement)
+            .animation(.bouncy(duration: 0.25), value: isPresentingOverlay)
+            .environment(\.isPresentingOverlay, $isPresentingOverlay)
+            .environment(\.selectedMediaPlayerSupplement, $selectedSupplement)
+//            .environmentObject(jumpProgressObserver)
+            .environmentObject(overlayTimer)
+            .onChange(of: isPresentingOverlay) {
+                guard isPresentingOverlay, !isScrubbing else { return }
+                overlayTimer.poke()
+            }
+            .onChange(of: isScrubbing) {
+                if isScrubbing {
+                    overlayTimer.stop()
+                } else {
+                    overlayTimer.poke()
+                }
+            }
+            .onReceive(overlayTimer.hasFired) {
+                guard !isScrubbing else { return }
+
+                withAnimation(.linear(duration: 0.25)) {
+                    isPresentingOverlay = false
+                }
+            }
+            .onChange(of: selectedSupplement) {
+                if selectedSupplement == nil {
+                    overlayTimer.poke()
+                } else {
+                    overlayTimer.stop()
+                }
+            }
         }
     }
 }

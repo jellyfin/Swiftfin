@@ -34,7 +34,7 @@ class BindingBox<Wrapped>: ObservableObject {
             self?.source?.wrappedValue = $0
         }
     }
-    
+
     init(initialValue: Wrapped) {
         source = nil
         value = initialValue

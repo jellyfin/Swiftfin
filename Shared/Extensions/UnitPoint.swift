@@ -9,7 +9,7 @@
 import SwiftUI
 
 extension UnitPoint {
-    
+
     var inverted: UnitPoint {
         UnitPoint(x: 1 - x, y: 1 - y)
     }

@@ -40,20 +40,6 @@ extension VideoPlayer.Overlay {
             VStack(alignment: .center, spacing: 10) {
                 tvOSSliderView(value: .constant(1.0))
             }
-//            VStack(alignment: .center, spacing: 10) {
-//                switch sliderType {
-//                case .capsule: capsuleSlider
-//                case .thumb: thumbSlider
-//                }
-//
-//                SplitTimeStamp()
-//                    .if(sliderType == .capsule) { view in
-//                        view.offset(y: isScrubbing ? 5 : 0)
-//                            .frame(maxWidth: isScrubbing ? nil : max(0, capsuleSliderSize.width - 30))
-//                    }
-//            }
-//            .animation(.bouncy(duration: 0.4, extraBounce: 0.1), value: isScrubbing)
-//            .disabled(manager.state == .loadingItem)
         }
     }
 }

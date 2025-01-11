@@ -31,11 +31,13 @@ struct VideoPlayer: View {
     @State
     private var isAspectFilled: Bool = false
     @State
+    private var isGestureLocked: Bool = false
+    @State
     private var isScrubbing: Bool = false
     @State
     private var safeAreaInsets: EdgeInsets = .zero
     @State
-    private var scrubbedSeconds: TimeInterval = 0.0
+    private var scrubbedSeconds: TimeInterval = 0
     @State
     private var subtitleOffset: TimeInterval = 0
 
@@ -105,8 +107,9 @@ struct VideoPlayer: View {
             Overlay()
                 .environment(\.audioOffset, $audioOffset)
                 .environment(\.isAspectFilled, $isAspectFilled)
+                .environment(\.isGestureLocked, $isGestureLocked)
                 .environment(\.isScrubbing, $isScrubbing)
-                .environment(\.safeAreaInsets, $safeAreaInsets)
+                .environment(\.safeAreaInsets, safeAreaInsets)
                 .environment(\.scrubbedSeconds, $scrubbedSeconds)
                 .environmentObject(manager)
         }
@@ -115,9 +118,6 @@ struct VideoPlayer: View {
     // MARK: body
 
     var body: some View {
-
-//        let _ = Self._printChanges()
-
         playerView
             .ignoresSafeArea()
             .navigationBarHidden()

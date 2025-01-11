@@ -85,12 +85,3 @@ struct SeriesEpisodeSelector: View {
         }
     }
 }
-
-// unwrappedIDHashOrZero
-
-extension Optional where Wrapped: Hashable {
-
-    var hashValueOrZero: Int {
-        self?.hashValue ?? 0
-    }
-}

@@ -9,7 +9,7 @@
 import Defaults
 import SwiftUI
 
-extension VideoPlayer.Overlay {
+extension VideoPlayer.Overlay.NavigationBar {
 
     struct ActionButtons: View {
 
@@ -24,15 +24,43 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private func view(for button: VideoPlayerActionButton) -> some View {
             switch button {
-//            case .aspectFill: AspectFill()
-//            case .audio: Audio()
-//            case .autoPlay: AutoPlay()
-//            case .playbackSpeed: PlaybackRateMenu()
-//            case .playNextItem: PlayNextItem()
-//            case .playPreviousItem: PlayPreviousItem()
-//            case .subtitles: Subtitles()
+            case .aspectFill:
+                AspectFill()
             default: EmptyView()
             }
+
+//            switch button {
+//            case .aspectFill:
+//                AspectFill()
+//            case .audio:
+//                if manager.playbackItem?.audioStreams.isNotEmpty == true {
+//                    Audio()
+//                }
+//            case .autoPlay:
+//                if manager.queue != nil {
+//                    AutoPlay()
+//                }
+//            case .chapters:
+//                if manager.item.fullChapterInfo.isNotEmpty {
+//                    ChaptersButton()
+//                }
+//            case .playbackSpeed:
+//                if !manager.item.isLiveStream {
+//                    PlaybackRateMenu()
+//                }
+//            case .playNextItem:
+//                if manager.queue != nil {
+//                    PlayNextItem()
+//                }
+//            case .playPreviousItem:
+//                if manager.queue != nil {
+//                    PlayPreviousItem()
+//                }
+//            case .subtitles:
+//                if manager.playbackItem?.subtitleStreams.isNotEmpty == true {
+//                    Subtitles()
+//                }
+//            }
         }
 
         @ViewBuilder
@@ -49,13 +77,18 @@ extension VideoPlayer.Overlay {
 
         var body: some View {
             HStack(spacing: 0) {
-                ForEach(barActionButtons) { actionButton in
-                    view(for: actionButton)
-                }
+                ForEach(
+                    VideoPlayerActionButton.allCases,
+                    content: view(for:)
+                )
 
-                if menuActionButtons.isNotEmpty {
-                    menuButtons
-                }
+//                ForEach(barActionButtons) { actionButton in
+//                    view(for: actionButton)
+//                }
+//
+//                if menuActionButtons.isNotEmpty {
+//                    menuButtons
+//                }
             }
         }
     }

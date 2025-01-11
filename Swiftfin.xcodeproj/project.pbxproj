@@ -718,6 +718,8 @@
 		E16CB1D52D331ABC00370174 /* JumpProgressObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16CB1D42D331ABC00370174 /* JumpProgressObserver.swift */; };
 		E16CB1D72D331D5900370174 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16CB1D62D331D5900370174 /* Direction.swift */; };
 		E16CB1D82D331D5900370174 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16CB1D62D331D5900370174 /* Direction.swift */; };
+		E16CB1DA2D332BF700370174 /* NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16CB1D92D332BF700370174 /* NavigationBar.swift */; };
+		E16CB1DC2D332D6E00370174 /* AspectFillActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16CB1DB2D332D6E00370174 /* AspectFillActionButton.swift */; };
 		E16DEAC228EFCF590058F196 /* EnvironmentValue+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16DEAC128EFCF590058F196 /* EnvironmentValue+Keys.swift */; };
 		E16DF13B2D31DE9400B1921E /* UnitPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16DF13A2D31DE9400B1921E /* UnitPoint.swift */; };
 		E16DF13C2D31DE9400B1921E /* UnitPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16DF13A2D31DE9400B1921E /* UnitPoint.swift */; };
@@ -1050,16 +1052,12 @@
 		E1E5D553278419D900692DFE /* ConfirmCloseOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D552278419D900692DFE /* ConfirmCloseOverlay.swift */; };
 		E1E657F22CCC78C8001D5B7B /* Inject in Frameworks */ = {isa = PBXBuildFile; productRef = E1E657F12CCC78C8001D5B7B /* Inject */; };
 		E1E657F72CCCAC62001D5B7B /* OverlayButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E657F62CCCAC62001D5B7B /* OverlayButtonStyle.swift */; };
-		E1E6C43B29AECBD30064123F /* BottomBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E6C43A29AECBD30064123F /* BottomBarView.swift */; };
-		E1E6C43D29AECC310064123F /* BarActionButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E6C43C29AECC310064123F /* BarActionButtons.swift */; };
 		E1E6C44229AECCD50064123F /* ActionButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E6C44129AECCD50064123F /* ActionButtons.swift */; };
 		E1E6C44529AECCF20064123F /* PlayNextItemActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E6C44429AECCF20064123F /* PlayNextItemActionButton.swift */; };
 		E1E6C44729AECD5D0064123F /* PlayPreviousItemActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E6C44629AECD5D0064123F /* PlayPreviousItemActionButton.swift */; };
 		E1E6C44929AECEE70064123F /* AutoPlayActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E6C44829AECEE70064123F /* AutoPlayActionButton.swift */; };
-		E1E6C44E29AEE9DC0064123F /* SmallMenuOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E6C44D29AEE9DC0064123F /* SmallMenuOverlay.swift */; };
 		E1E6C45029B104840064123F /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E6C44F29B104840064123F /* Button.swift */; };
 		E1E6C45129B104850064123F /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E6C44F29B104840064123F /* Button.swift */; };
-		E1E6C45629B130F50064123F /* ChapterOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E6C45529B130F50064123F /* ChapterOverlay.swift */; };
 		E1E750682A33E9B400B2C1EE /* OverviewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E750652A33E9B400B2C1EE /* OverviewCard.swift */; };
 		E1E750692A33E9B400B2C1EE /* MediaSourcesCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E750662A33E9B400B2C1EE /* MediaSourcesCard.swift */; };
 		E1E7506A2A33E9B400B2C1EE /* RatingsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E750672A33E9B400B2C1EE /* RatingsCard.swift */; };
@@ -1658,6 +1656,8 @@
 		E16AF11B292C98A7001422A8 /* GestureSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureSettingsView.swift; sourceTree = "<group>"; };
 		E16CB1D42D331ABC00370174 /* JumpProgressObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JumpProgressObserver.swift; sourceTree = "<group>"; };
 		E16CB1D62D331D5900370174 /* Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
+		E16CB1D92D332BF700370174 /* NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBar.swift; sourceTree = "<group>"; };
+		E16CB1DB2D332D6E00370174 /* AspectFillActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AspectFillActionButton.swift; sourceTree = "<group>"; };
 		E16DEAC128EFCF590058F196 /* EnvironmentValue+Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EnvironmentValue+Keys.swift"; sourceTree = "<group>"; };
 		E16DF13A2D31DE9400B1921E /* UnitPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitPoint.swift; sourceTree = "<group>"; };
 		E170D0E3294CC8AB0017224C /* VideoPlayer+KeyCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VideoPlayer+KeyCommands.swift"; sourceTree = "<group>"; };
@@ -1895,15 +1895,11 @@
 		E1E5D5502783E67700692DFE /* ExperimentalSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentalSettingsView.swift; sourceTree = "<group>"; };
 		E1E5D552278419D900692DFE /* ConfirmCloseOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmCloseOverlay.swift; sourceTree = "<group>"; };
 		E1E657F62CCCAC62001D5B7B /* OverlayButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayButtonStyle.swift; sourceTree = "<group>"; };
-		E1E6C43A29AECBD30064123F /* BottomBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomBarView.swift; sourceTree = "<group>"; };
-		E1E6C43C29AECC310064123F /* BarActionButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarActionButtons.swift; sourceTree = "<group>"; };
 		E1E6C44129AECCD50064123F /* ActionButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButtons.swift; sourceTree = "<group>"; };
 		E1E6C44429AECCF20064123F /* PlayNextItemActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayNextItemActionButton.swift; sourceTree = "<group>"; };
 		E1E6C44629AECD5D0064123F /* PlayPreviousItemActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayPreviousItemActionButton.swift; sourceTree = "<group>"; };
 		E1E6C44829AECEE70064123F /* AutoPlayActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoPlayActionButton.swift; sourceTree = "<group>"; };
-		E1E6C44D29AEE9DC0064123F /* SmallMenuOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallMenuOverlay.swift; sourceTree = "<group>"; };
 		E1E6C44F29B104840064123F /* Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
-		E1E6C45529B130F50064123F /* ChapterOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterOverlay.swift; sourceTree = "<group>"; };
 		E1E750652A33E9B400B2C1EE /* OverviewCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverviewCard.swift; sourceTree = "<group>"; };
 		E1E750662A33E9B400B2C1EE /* MediaSourcesCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaSourcesCard.swift; sourceTree = "<group>"; };
 		E1E750672A33E9B400B2C1EE /* RatingsCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RatingsCard.swift; sourceTree = "<group>"; };
@@ -3712,23 +3708,23 @@
 				E1763A752BF3FF01004DF6AB /* AppLoadingView.swift */,
 				E1D4BF8E271A079A00A11E64 /* BasicAppSettingsView.swift */,
 				E10231522BCF8AF8009D71FC /* ChannelLibraryView */,
+				7FEE08D3CBCD4752B5140090 /* ConnectToServerView */,
 				E154967B296CBB1A00C4EF88 /* FontPickerView.swift */,
 				E1A42E4D28CBD3B200A14DCB /* HomeView */,
 				E12376B22A33DFAC001F5B44 /* ItemOverviewView.swift */,
 				E193D54E271942C000900D82 /* ItemView */,
+				4B50A3481E1148E87C0EC0FB /* LearnMoreModal.swift */,
 				E158C8D02A31947500C527C5 /* MediaSourceInfoView.swift */,
 				E103DF932BCF31C5000229B2 /* MediaView */,
+				4EF18B232CB9932F00343666 /* PagingLibraryView */,
 				E10231572BCF8AF8009D71FC /* ProgramsView */,
 				E10B1E8C2BD7708900A92EAF /* QuickConnectView.swift */,
 				E1E1643928BAC2EF00323B0A /* SearchView.swift */,
-				4EF18B232CB9932F00343666 /* PagingLibraryView */,
 				E164A8122BE4995200A54B18 /* SelectUserView */,
 				E193D54F2719430400900D82 /* ServerDetailView.swift */,
 				E1E5D54D2783E66600692DFE /* SettingsView */,
 				E1763A672BF3D168004DF6AB /* UserSignInView */,
 				5310694F2684E7EE00CFFDBA /* VideoPlayer */,
-				4B50A3481E1148E87C0EC0FB /* LearnMoreModal.swift */,
-				7FEE08D3CBCD4752B5140090 /* ConnectToServerView */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -4103,8 +4099,6 @@
 			children = (
 				E18A17F4298C6A7300C22F62 /* Components */,
 				E1E5D552278419D900692DFE /* ConfirmCloseOverlay.swift */,
-				E1E6C45529B130F50064123F /* ChapterOverlay.swift */,
-				E1E6C44D29AEE9DC0064123F /* SmallMenuOverlay.swift */,
 				E18A17EF298C68B700C22F62 /* Overlay.swift */,
 			);
 			path = Overlays;
@@ -4114,9 +4108,8 @@
 			isa = PBXGroup;
 			children = (
 				E1E6C44329AECCD80064123F /* ActionButtons */,
-				E1E6C43A29AECBD30064123F /* BottomBarView.swift */,
-				E1E6C43C29AECC310064123F /* BarActionButtons.swift */,
 				E1088C022CC71443006D94EE /* PlaybackProgress.swift */,
+				E16CB1D92D332BF700370174 /* NavigationBar.swift */,
 				E178859C2780F5300094FBCF /* tvOSSLider */,
 			);
 			path = Components;
@@ -4691,6 +4684,7 @@
 			isa = PBXGroup;
 			children = (
 				E1E6C44129AECCD50064123F /* ActionButtons.swift */,
+				E16CB1DB2D332D6E00370174 /* AspectFillActionButton.swift */,
 				E1E6C44829AECEE70064123F /* AutoPlayActionButton.swift */,
 				E1E6C44429AECCF20064123F /* PlayNextItemActionButton.swift */,
 				E1E6C44629AECD5D0064123F /* PlayPreviousItemActionButton.swift */,
@@ -5213,7 +5207,6 @@
 				E1575E6F293E77B5001665B1 /* GestureAction.swift in Sources */,
 				E1A826282C8FA0B90034361B /* PulseViewModifier.swift in Sources */,
 				E10B1ED12BD9AFF200A92EAF /* V2UserModel.swift in Sources */,
-				E1E6C43B29AECBD30064123F /* BottomBarView.swift in Sources */,
 				E190704C2C858CEB0004600E /* VideoPlayerType+Shared.swift in Sources */,
 				E1088C032CC71443006D94EE /* PlaybackProgress.swift in Sources */,
 				E152107D2947ACA000375CC2 /* InvertedLightAppIcon.swift in Sources */,
@@ -5253,7 +5246,6 @@
 				E10B1EC82BD9AF6100A92EAF /* V2ServerModel.swift in Sources */,
 				E1C9260C2887565C002A7A66 /* MovieItemContentView.swift in Sources */,
 				E1C9260B2887565C002A7A66 /* MovieItemView.swift in Sources */,
-				E1E6C45629B130F50064123F /* ChapterOverlay.swift in Sources */,
 				E1A8261D2C8F89190034361B /* Section.swift in Sources */,
 				E1549665296CA2EF00C4EF88 /* SwiftfinStore.swift in Sources */,
 				E1E9EFEB28C7EA2C00CC1F8B /* UserDto.swift in Sources */,
@@ -5392,6 +5384,7 @@
 				E19D41B32BF2BFEF0082B8B2 /* URLSessionConfiguration.swift in Sources */,
 				E10B1ECE2BD9AFD800A92EAF /* SwiftfinStore+V2.swift in Sources */,
 				E1763A722BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift in Sources */,
+				E16CB1DC2D332D6E00370174 /* AspectFillActionButton.swift in Sources */,
 				E1937A3C288E54AD00CB80AA /* BaseItemDto+Images.swift in Sources */,
 				E18A17F0298C68B700C22F62 /* Overlay.swift in Sources */,
 				4E4A53222CBE0A1C003BD24D /* ChevronAlertButton.swift in Sources */,
@@ -5492,7 +5485,6 @@
 				E1C9260D2887565C002A7A66 /* CinematicScrollView.swift in Sources */,
 				E1575E90293E7B1E001665B1 /* EdgeInsets.swift in Sources */,
 				4E762AAF2C3A1A95004D1579 /* PlaybackBitrate.swift in Sources */,
-				E1E6C43D29AECC310064123F /* BarActionButtons.swift in Sources */,
 				E1E6C44529AECCF20064123F /* PlayNextItemActionButton.swift in Sources */,
 				6264E88D273850380081A12A /* Strings.swift in Sources */,
 				E1C926102887565C002A7A66 /* PlayButton.swift in Sources */,
@@ -5517,7 +5509,6 @@
 				E18E021C2887492B0022598C /* BlurView.swift in Sources */,
 				E187F7682B8E6A1C005400FE /* EnvironmentValue+Values.swift in Sources */,
 				E1E6C44729AECD5D0064123F /* PlayPreviousItemActionButton.swift in Sources */,
-				E1E6C44E29AEE9DC0064123F /* SmallMenuOverlay.swift in Sources */,
 				E1CB75832C80F66900217C76 /* VideoPlayerType+Swiftfin.swift in Sources */,
 				E10B1ECB2BD9AF8200A92EAF /* SwiftfinStore+V1.swift in Sources */,
 				E154966B296CA2EF00C4EF88 /* DownloadManager.swift in Sources */,
@@ -5543,6 +5534,7 @@
 				E1CAF6632BA363840087D991 /* UIHostingController.swift in Sources */,
 				E10231492BCF8A6D009D71FC /* ChannelLibraryViewModel.swift in Sources */,
 				E1CB75702C80E66700217C76 /* CommaStringBuilder.swift in Sources */,
+				E16CB1DA2D332BF700370174 /* NavigationBar.swift in Sources */,
 				5364F456266CA0DC0026ECBA /* BaseItemPerson.swift in Sources */,
 				E1A42E5128CBE44500A14DCB /* LandscapePosterProgressBar.swift in Sources */,
 				E1575E7C293E77B5001665B1 /* PokeIntervalTimer.swift in Sources */,

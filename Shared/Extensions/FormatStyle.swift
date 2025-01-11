@@ -26,7 +26,7 @@ extension FormatStyle where Self == HourMinuteFormatStyle {
 }
 
 struct MinuteSecondsFormatStyle: FormatStyle {
-    
+
     func format(_ value: TimeInterval) -> String {
         let formatter = DateComponentsFormatter()
         formatter.unitsStyle = .abbreviated
