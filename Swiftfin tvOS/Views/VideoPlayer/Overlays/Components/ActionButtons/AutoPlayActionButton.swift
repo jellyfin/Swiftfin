@@ -9,25 +9,42 @@
 import Defaults
 import SwiftUI
 
-// extension VideoPlayer.Overlay.ActionButtons {
-//
-//    struct AutoPlay: View {
-//
-//        @Default(.VideoPlayer.autoPlayEnabled)
-//        private var autoPlayEnabled
-//
+extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
+
+    struct AutoPlay: View {
+
+        @Default(.VideoPlayer.autoPlayEnabled)
+        private var isAutoPlayEnabled
+
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
 //        @EnvironmentObject
-//        private var overlayTimer: DelayIntervalTimer
-//
-//        var body: some View {
-//            SFSymbolButton(
-//                systemName: autoPlayEnabled ? "play.circle.fill" : "stop.circle"
-//            )
-//            .onSelect {
-//                autoPlayEnabled.toggle()
-//                overlayTimer.delay()
-//            }
-//            .frame(maxWidth: 30, maxHeight: 30)
-//        }
-//    }
-// }
+//        private var toastProxy: ToastProxy
+
+        private var systemImage: String {
+            if isAutoPlayEnabled {
+                "play.circle.fill"
+            } else {
+                "stop.circle"
+            }
+        }
+
+        var body: some View {
+            RoundActionButton(
+                "Autoplay",
+                systemImage: systemImage
+            ) {
+                isAutoPlayEnabled.toggle()
+
+//                if isAutoPlayEnabled {
+//                    toastProxy.present("Auto Play enabled", systemName: "play.circle.fill")
+//                } else {
+//                    toastProxy.present("Auto Play disabled", systemName: "stop.circle")
+//                }
+            }
+            .videoPlayerActionButtonTransition()
+            .id(isAutoPlayEnabled)
+            .disabled(manager.queue == nil)
+        }
+    }
+}

@@ -19,6 +19,8 @@ extension VideoPlayer.Overlay.NavigationBar {
         private var menuActionButtons
 
         @EnvironmentObject
+        private var manager: MediaPlayerManager
+        @EnvironmentObject
         private var overlayTimer: PokeIntervalTimer
 
         @ViewBuilder
@@ -26,41 +28,35 @@ extension VideoPlayer.Overlay.NavigationBar {
             switch button {
             case .aspectFill:
                 AspectFill()
-            default: EmptyView()
-            }
-
-//            switch button {
-//            case .aspectFill:
-//                AspectFill()
-//            case .audio:
-//                if manager.playbackItem?.audioStreams.isNotEmpty == true {
-//                    Audio()
-//                }
-//            case .autoPlay:
-//                if manager.queue != nil {
-//                    AutoPlay()
-//                }
-//            case .chapters:
+            case .audio:
+                if manager.playbackItem?.audioStreams.isNotEmpty == true {
+                    Audio()
+                }
+            case .autoPlay:
+                if manager.queue != nil {
+                    AutoPlay()
+                }
+            case .chapters: EmptyView()
 //                if manager.item.fullChapterInfo.isNotEmpty {
 //                    ChaptersButton()
 //                }
-//            case .playbackSpeed:
+            case .playbackSpeed: EmptyView()
 //                if !manager.item.isLiveStream {
 //                    PlaybackRateMenu()
 //                }
-//            case .playNextItem:
-//                if manager.queue != nil {
-//                    PlayNextItem()
-//                }
-//            case .playPreviousItem:
-//                if manager.queue != nil {
-//                    PlayPreviousItem()
-//                }
-//            case .subtitles:
-//                if manager.playbackItem?.subtitleStreams.isNotEmpty == true {
-//                    Subtitles()
-//                }
-//            }
+            case .playNextItem:
+                if manager.queue != nil {
+                    PlayNextItem()
+                }
+            case .playPreviousItem:
+                if manager.queue != nil {
+                    PlayPreviousItem()
+                }
+            case .subtitles:
+                if manager.playbackItem?.subtitleStreams.isNotEmpty == true {
+                    Subtitles()
+                }
+            }
         }
 
         @ViewBuilder
@@ -90,6 +86,33 @@ extension VideoPlayer.Overlay.NavigationBar {
 //                    menuButtons
 //                }
             }
+        }
+    }
+}
+
+extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
+
+    struct RoundActionButton: View {
+
+        let title: String
+        let systemImage: String
+        let action: () -> Void
+
+        init(_ title: String, systemImage: String, action: @escaping () -> Void) {
+            self.title = title
+            self.systemImage = systemImage
+            self.action = action
+        }
+
+        var body: some View {
+            Button(
+                title,
+                systemImage: systemImage,
+                action: action
+            )
+            .labelStyle(.iconOnly)
+            .buttonBorderShape(.circle)
+            .buttonStyle(.plain)
         }
     }
 }

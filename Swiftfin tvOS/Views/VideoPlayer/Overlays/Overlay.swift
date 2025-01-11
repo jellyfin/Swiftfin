@@ -52,10 +52,10 @@ extension VideoPlayer {
                 NavigationBar()
                     .focusSection()
 
-                PlaybackProgress()
-                    .isVisible(isScrubbing || isPresentingOverlay)
-                    .transition(.move(edge: .top).combined(with: .opacity))
-                    .trackingFrame($progressViewFrame)
+//                PlaybackProgress()
+//                    .isVisible(isScrubbing || isPresentingOverlay)
+//                    .transition(.move(edge: .top).combined(with: .opacity))
+//                    .trackingFrame($progressViewFrame)
             }
 
 //            HStack(spacing: 10) {
@@ -283,3 +283,48 @@ extension VideoPlayer {
 //        }
 //    }
 // }
+
+import VLCUI
+
+struct VideoPlayer_Overlay_Previews: PreviewProvider {
+
+    static var previews: some View {
+        VideoPlayer.Overlay()
+            .environmentObject(
+                MediaPlayerManager(
+                    playbackItem: .init(
+                        baseItem: .init(
+                            //                            channelType: .tv,
+                            indexNumber: 1,
+                            name: "The Bear",
+                            parentIndexNumber: 1,
+                            runTimeTicks: 10_000_000_000,
+                            type: .episode
+                        ),
+                        mediaSource: .init(),
+                        playSessionID: "",
+                        url: URL(string: "/")!
+                    )
+                )
+            )
+            .environmentObject(VLCVideoPlayer.Proxy())
+            .environment(\.isScrubbing, .mock(false))
+            .environment(\.isAspectFilled, .mock(false))
+            .environment(\.isPresentingOverlay, .constant(true))
+//            .environment(\.playbackSpeed, .constant(1.0))
+            .environment(\.selectedMediaPlayerSupplement, .mock(nil))
+            .previewInterfaceOrientation(.landscapeLeft)
+            .preferredColorScheme(.dark)
+    }
+}
+
+extension Binding {
+
+    static func mock(_ value: Value) -> Self {
+        var value = value
+        return Binding(
+            get: { value },
+            set: { value = $0 }
+        )
+    }
+}

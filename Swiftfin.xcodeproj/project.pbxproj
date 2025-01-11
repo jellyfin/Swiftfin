@@ -720,6 +720,8 @@
 		E16CB1D82D331D5900370174 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16CB1D62D331D5900370174 /* Direction.swift */; };
 		E16CB1DA2D332BF700370174 /* NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16CB1D92D332BF700370174 /* NavigationBar.swift */; };
 		E16CB1DC2D332D6E00370174 /* AspectFillActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16CB1DB2D332D6E00370174 /* AspectFillActionButton.swift */; };
+		E16CB1DE2D33333C00370174 /* SubtitleActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16CB1DD2D33333C00370174 /* SubtitleActionButton.swift */; };
+		E16CB1E02D3333BF00370174 /* AudioActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16CB1DF2D3333BF00370174 /* AudioActionButton.swift */; };
 		E16DEAC228EFCF590058F196 /* EnvironmentValue+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16DEAC128EFCF590058F196 /* EnvironmentValue+Keys.swift */; };
 		E16DF13B2D31DE9400B1921E /* UnitPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16DF13A2D31DE9400B1921E /* UnitPoint.swift */; };
 		E16DF13C2D31DE9400B1921E /* UnitPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16DF13A2D31DE9400B1921E /* UnitPoint.swift */; };
@@ -1658,6 +1660,8 @@
 		E16CB1D62D331D5900370174 /* Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
 		E16CB1D92D332BF700370174 /* NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBar.swift; sourceTree = "<group>"; };
 		E16CB1DB2D332D6E00370174 /* AspectFillActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AspectFillActionButton.swift; sourceTree = "<group>"; };
+		E16CB1DD2D33333C00370174 /* SubtitleActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleActionButton.swift; sourceTree = "<group>"; };
+		E16CB1DF2D3333BF00370174 /* AudioActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioActionButton.swift; sourceTree = "<group>"; };
 		E16DEAC128EFCF590058F196 /* EnvironmentValue+Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EnvironmentValue+Keys.swift"; sourceTree = "<group>"; };
 		E16DF13A2D31DE9400B1921E /* UnitPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitPoint.swift; sourceTree = "<group>"; };
 		E170D0E3294CC8AB0017224C /* VideoPlayer+KeyCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VideoPlayer+KeyCommands.swift"; sourceTree = "<group>"; };
@@ -4684,10 +4688,12 @@
 			isa = PBXGroup;
 			children = (
 				E1E6C44129AECCD50064123F /* ActionButtons.swift */,
+				E16CB1DF2D3333BF00370174 /* AudioActionButton.swift */,
 				E16CB1DB2D332D6E00370174 /* AspectFillActionButton.swift */,
 				E1E6C44829AECEE70064123F /* AutoPlayActionButton.swift */,
 				E1E6C44429AECCF20064123F /* PlayNextItemActionButton.swift */,
 				E1E6C44629AECD5D0064123F /* PlayPreviousItemActionButton.swift */,
+				E16CB1DD2D33333C00370174 /* SubtitleActionButton.swift */,
 			);
 			path = ActionButtons;
 			sourceTree = "<group>";
@@ -5365,6 +5371,7 @@
 				E10E842A29A587110064EA49 /* LoadingView.swift in Sources */,
 				E193D53927193F8E00900D82 /* SearchCoordinator.swift in Sources */,
 				E13316FF2ADE42B6009BF865 /* OnSizeChangedModifier.swift in Sources */,
+				E16CB1E02D3333BF00370174 /* AudioActionButton.swift in Sources */,
 				E148128928C154BF003B8787 /* ItemFilter+ItemTrait.swift in Sources */,
 				E1F5CF082CB0A04500607465 /* Text.swift in Sources */,
 				E43918672AD5C8310045A18C /* OnScenePhaseChangedModifier.swift in Sources */,
@@ -5565,6 +5572,7 @@
 				5D68A9465845E8E9BB0116A6 /* Video3DFormat.swift in Sources */,
 				A9DDA6094694BED888B118E4 /* ItemSection.swift in Sources */,
 				799ABEE04DF3EBC9E6BB015C /* NotificationSet.swift in Sources */,
+				E16CB1DE2D33333C00370174 /* SubtitleActionButton.swift in Sources */,
 				5BF35A9FD5324F6B08409E3A /* ItemEditorViewModel.swift in Sources */,
 				65A5597C1145284F5CCF4042 /* MetadataField.swift in Sources */,
 				FD43F32F2F9909E52E1CE067 /* DeleteItemViewModel.swift in Sources */,

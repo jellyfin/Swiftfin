@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension VideoPlayer.Overlay.NavigationBar {
+extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
 
     struct AspectFill: View {
 
@@ -25,7 +25,7 @@ extension VideoPlayer.Overlay.NavigationBar {
         }
 
         var body: some View {
-            Button(
+            RoundActionButton(
                 "Aspect Fill",
                 systemImage: systemImage
             ) {
@@ -33,9 +33,6 @@ extension VideoPlayer.Overlay.NavigationBar {
             }
 //            .videoPlayerActionButtonTransition()
 //            .id(isAspectFilled)
-            .buttonStyle(.card)
-            .buttonBorderShape(.circle)
-            .labelStyle(.iconOnly)
         }
     }
 }
