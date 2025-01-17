@@ -49,6 +49,14 @@ extension iPadOSSeriesItemView {
                     RowDivider()
                 }
 
+                // MARK: Special Features
+
+                if viewModel.specialFeatures.isNotEmpty {
+                    ItemView.SpecialFeaturesHStack(items: viewModel.specialFeatures)
+
+                    RowDivider()
+                }
+
                 // MARK: Similar
 
                 if viewModel.similarItems.isNotEmpty {
