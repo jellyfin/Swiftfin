@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -21,16 +20,16 @@ extension ItemImageDetailsView {
 
         // MARK: - Body
 
-        @ViewBuilder
         var body: some View {
             Section {
                 ImageView(imageSource)
                     .placeholder { _ in
-                        Image(systemName: "circle")
+                        Image(systemName: "photo")
                     }
                     .failure {
-                        Image(systemName: "circle")
+                        Image(systemName: "photo")
                     }
+                    .pipeline(.Swiftfin.other)
             }
             .scaledToFit()
             .frame(maxHeight: 300)

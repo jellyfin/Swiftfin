@@ -20,6 +20,7 @@ extension ButtonStyle where Self == ToolbarPillButtonStyle {
     }
 }
 
+// TODO: don't take `Color`, take generic `ShapeStyle`
 struct ToolbarPillButtonStyle: ButtonStyle {
 
     @Environment(\.isEnabled)

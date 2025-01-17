@@ -94,11 +94,17 @@
 /// Album Artist
 "albumArtist" = "Album Artist";
 
+/// All
+"all" = "All";
+
 /// All Audiences
 "allAudiences" = "All Audiences";
 
 /// View all past and present devices that have connected.
 "allDevicesDescription" = "View all past and present devices that have connected.";
+
+/// All languages
+"allLanguages" = "All languages";
 
 /// All Media
 "allMedia" = "All Media";
@@ -906,6 +912,9 @@
 
 /// Illustrator
 "illustrator" = "Illustrator";
+
+/// Images
+"image" = "Images";
 
 /// Images
 "images" = "Images";

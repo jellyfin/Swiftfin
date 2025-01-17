@@ -6,18 +6,12 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
 extension ItemImageDetailsView {
 
     struct DeleteButton: View {
-
-        // MARK: - Defaults
-
-        @Default(.accentColor)
-        private var accentColor
 
         // MARK: - Delete Action
 
@@ -30,12 +24,10 @@ extension ItemImageDetailsView {
 
         // MARK: - Body
 
-        @ViewBuilder
         var body: some View {
-            ListRowButton(L10n.delete) {
+            ListRowButton(L10n.delete, role: .destructive) {
                 isPresentingConfirmation = true
             }
-            .foregroundStyle(.red, .red.opacity(0.2))
             .confirmationDialog(
                 L10n.delete,
                 isPresented: $isPresentingConfirmation,

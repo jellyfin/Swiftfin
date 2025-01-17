@@ -8,7 +8,7 @@
 
 import JellyfinAPI
 
-extension RatingType: @retroactive Displayable {
+extension RatingType: Displayable {
 
     var displayTitle: String {
         switch self {

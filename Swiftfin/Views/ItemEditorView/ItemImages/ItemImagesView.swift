@@ -6,11 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import BlurHashKit
-import CollectionVGrid
-import Combine
 import Defaults
-import Factory
 import JellyfinAPI
 import SwiftUI
 
@@ -20,11 +16,6 @@ struct ItemImagesView: View {
 
     @Default(.accentColor)
     private var accentColor
-
-    // MARK: - User Session
-
-    @Injected(\.currentUserSession)
-    private var userSession
 
     // MARK: - Observed & Environment Objects
 
@@ -53,7 +44,7 @@ struct ItemImagesView: View {
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .content, .deleting, .updating:
+            case .content:
                 imageView
             case .initial:
                 DelayedProgressView()
@@ -92,7 +83,6 @@ struct ItemImagesView: View {
                     selectedImage = nil
                 }
             )
-            .navigationTitle(imageInfo.imageType?.displayTitle ?? "")
             .environment(\.isEditing, true)
         }
         .fileImporter(
@@ -103,7 +93,7 @@ struct ItemImagesView: View {
             switch $0 {
             case let .success(urls):
                 if let file = urls.first, let type = selectedType {
-                    viewModel.send(.uploadImage(file: file, type: type))
+                    viewModel.send(.uploadFile(file: file, type: type))
                     selectedType = nil
                 }
             case let .failure(fileError):
@@ -113,7 +103,7 @@ struct ItemImagesView: View {
         }
         .onReceive(viewModel.events) { event in
             switch event {
-            case .updated, .deleted: ()
+            case .updated: ()
             case let .error(eventError):
                 self.error = eventError
             }
@@ -130,7 +120,7 @@ struct ItemImagesView: View {
                 Section {
                     imageScrollView(for: imageType)
 
-                    Divider()
+                    RowDivider()
                         .padding(.vertical, 16)
                 } header: {
                     sectionHeader(for: imageType)
@@ -143,17 +133,18 @@ struct ItemImagesView: View {
 
     @ViewBuilder
     private func imageScrollView(for imageType: ImageType) -> some View {
-        let imageArray = viewModel.images.filter { $0.imageType == imageType }
+        let images = viewModel.images[imageType] ?? []
 
-        if imageArray.isNotEmpty {
+        if images.isNotEmpty {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
-                    ForEach(imageArray, id: \.self) { imageInfo in
+                    ForEach(images, id: \.self) { imageInfo in
                         imageButton(imageInfo: imageInfo) {
                             selectedImage = imageInfo
                         }
                     }
                 }
+                .edgePadding(.horizontal)
             }
         }
     }
@@ -162,8 +153,8 @@ struct ItemImagesView: View {
 
     @ViewBuilder
     private func sectionHeader(for imageType: ImageType) -> some View {
-        HStack(alignment: .center, spacing: 16) {
-            Text(imageType.rawValue.localizedCapitalized)
+        HStack {
+            Text(imageType.displayTitle)
                 .font(.headline)
 
             Spacer()
@@ -193,11 +184,13 @@ struct ItemImagesView: View {
             .fontWeight(.semibold)
             .foregroundStyle(accentColor)
         }
-        .padding(.horizontal, 30)
+        .edgePadding(.horizontal)
     }
 
     // MARK: - Image Button
 
+    // TODO: instead of using `posterStyle`, should be sized based on
+    //       the image type and just ignore and poster styling
     @ViewBuilder
     private func imageButton(
         imageInfo: ImageInfo,
@@ -210,23 +203,20 @@ struct ItemImagesView: View {
                 ImageView(
                     imageInfo.itemImageSource(
                         itemID: viewModel.item.id!,
-                        client: userSession!.client
+                        client: viewModel.userSession.client
                     )
                 )
                 .placeholder { _ in
-                    Image(systemName: "circle")
+                    Image(systemName: "photo")
                 }
                 .failure {
-                    Image(systemName: "questionmark")
+                    Image(systemName: "photo")
                 }
-                .scaledToFit()
-                .frame(maxWidth: .infinity)
+                .pipeline(.Swiftfin.other)
             }
-            .scaledToFit()
             .posterStyle(imageInfo.height ?? 0 > imageInfo.width ?? 0 ? .portrait : .landscape)
             .frame(maxHeight: 150)
-            .shadow(radius: 4)
-            .padding(16)
+            .posterShadow()
         }
     }
 }

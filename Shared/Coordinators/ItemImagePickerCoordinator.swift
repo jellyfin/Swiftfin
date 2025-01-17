@@ -26,8 +26,7 @@ final class ItemImagePickerCoordinator: NavigationCoordinatable {
 
     // MARK: - Observed Object
 
-    @ObservedObject
-    var viewModel: ItemImagesViewModel
+    private let viewModel: ItemImagesViewModel
 
     // MARK: - Image Variable
 

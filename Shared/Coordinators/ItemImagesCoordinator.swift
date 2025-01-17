@@ -20,9 +20,7 @@ final class ItemImagesCoordinator: ObservableObject, NavigationCoordinatable {
     @Root
     var start = makeStart
 
-    // Okay for now since `ObservedObject` is on `MainActor`
-    @ObservedObject
-    private var viewModel: ItemImagesViewModel
+    private let viewModel: ItemImagesViewModel
 
     // MARK: - Route to Add Remote Image
 
@@ -37,7 +35,7 @@ final class ItemImagesCoordinator: ObservableObject, NavigationCoordinatable {
     // MARK: - Initializer
 
     init(viewModel: ItemImagesViewModel) {
-        self._viewModel = ObservedObject(wrappedValue: viewModel)
+        self.viewModel = viewModel
     }
 
     // MARK: - Add Remote Images View
