@@ -37,6 +37,10 @@ extension SeriesItemView {
                     ItemView.CastAndCrewHStack(people: castAndCrew)
                 }
 
+                if viewModel.specialFeatures.isNotEmpty {
+                    ItemView.SpecialFeaturesHStack(items: viewModel.specialFeatures)
+                }
+
                 if viewModel.similarItems.isNotEmpty {
                     ItemView.SimilarItemsHStack(items: viewModel.similarItems)
                 }
