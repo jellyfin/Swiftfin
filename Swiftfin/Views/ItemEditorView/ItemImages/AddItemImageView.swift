@@ -12,6 +12,8 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
+// TODO: have images use different pipeline
+
 struct AddItemImageView: View {
 
     // MARK: - Observed, & Environment Objects
@@ -41,10 +43,12 @@ struct AddItemImageView: View {
 
     init(viewModel: ItemImagesViewModel, imageType: ImageType) {
         self.viewModel = viewModel
-        self._remoteImageInfoViewModel = StateObject(wrappedValue: RemoteImageInfoViewModel(
-            item: viewModel.item,
-            imageType: imageType
-        ))
+        self._remoteImageInfoViewModel = StateObject(
+            wrappedValue: RemoteImageInfoViewModel(
+                imageType: imageType,
+                parent: viewModel.item
+            )
+        )
     }
 
     // MARK: - Body
@@ -63,12 +67,49 @@ struct AddItemImageView: View {
                     }
             }
         }
+        .animation(.linear(duration: 0.1), value: remoteImageInfoViewModel.state)
         .navigationTitle(remoteImageInfoViewModel.imageType.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(viewModel.state == .updating)
-        .topBarTrailing {
-            if viewModel.backgroundStates.contains(.refreshing) {
-                ProgressView()
+        .navigationBarBackButtonHidden(viewModel.backgroundStates.contains(.updating))
+        .navigationBarMenuButton(isLoading: viewModel.backgroundStates.contains(.updating)) {
+            Button {
+                remoteImageInfoViewModel.includeAllLanguages.toggle()
+            } label: {
+                if remoteImageInfoViewModel.includeAllLanguages {
+                    Label("All languages", systemImage: "checkmark")
+                } else {
+                    Text("All languages")
+                }
+            }
+
+            if remoteImageInfoViewModel.providers.isNotEmpty {
+                Menu {
+                    Button {
+                        remoteImageInfoViewModel.provider = nil
+                    } label: {
+                        if remoteImageInfoViewModel.provider == nil {
+                            Label("All", systemImage: "checkmark")
+                        } else {
+                            Text("All")
+                        }
+                    }
+
+                    ForEach(remoteImageInfoViewModel.providers, id: \.self) { provider in
+                        Button {
+                            remoteImageInfoViewModel.provider = provider
+                        } label: {
+                            if remoteImageInfoViewModel.provider == provider {
+                                Label(provider, systemImage: "checkmark")
+                            } else {
+                                Text(provider)
+                            }
+                        }
+                    }
+                } label: {
+                    Text(L10n.provider)
+
+                    Text(remoteImageInfoViewModel.provider ?? "All")
+                }
             }
         }
         .sheet(item: $selectedImage) {
@@ -76,13 +117,12 @@ struct AddItemImageView: View {
         } content: { remoteImageInfo in
             ItemImageDetailsView(
                 viewModel: viewModel,
-                imageSource: ImageSource(url: URL(string: remoteImageInfo.url)),
+                imageSource: ImageSource(url: remoteImageInfo.url?.url),
                 width: remoteImageInfo.width,
                 height: remoteImageInfo.height,
                 language: remoteImageInfo.language,
                 provider: remoteImageInfo.providerName,
                 rating: remoteImageInfo.communityRating,
-                ratingType: remoteImageInfo.ratingType,
                 ratingVotes: remoteImageInfo.voteCount,
                 onClose: {
                     selectedImage = nil
@@ -92,16 +132,12 @@ struct AddItemImageView: View {
                     selectedImage = nil
                 }
             )
-            .navigationTitle(remoteImageInfo.type?.displayTitle ?? "")
-            .environment(\.isEditing, true)
         }
         .onFirstAppear {
             remoteImageInfoViewModel.send(.refresh)
         }
         .onReceive(viewModel.events) { event in
             switch event {
-            case .deleted:
-                break
             case .updated:
                 UIDevice.feedback(.success)
                 router.pop()
@@ -135,15 +171,13 @@ struct AddItemImageView: View {
     // MARK: - Poster Image Button
 
     @ViewBuilder
-    private func imageButton(_ image: RemoteImageInfo?) -> some View {
+    private func imageButton(_ image: RemoteImageInfo) -> some View {
         Button {
-            if let image {
-                selectedImage = image
-            }
+            selectedImage = image
         } label: {
             posterImage(
                 image,
-                posterStyle: image?.height ?? 0 > image?.width ?? 0 ? .portrait : .landscape
+                posterStyle: (image.height ?? 0) > (image.width ?? 0) ? .portrait : .landscape
             )
         }
     }
@@ -159,19 +193,20 @@ struct AddItemImageView: View {
             Color.secondarySystemFill
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            ImageView(URL(string: posterImageInfo?.url ?? ""))
+            ImageView(posterImageInfo?.url?.url)
                 .placeholder { source in
                     if let blurHash = source.blurHash {
-                        BlurHashView(blurHash: blurHash, size: .Square(length: 8))
+                        BlurHashView(blurHash: blurHash)
                             .scaledToFit()
                     } else {
-                        Image(systemName: "circle")
+                        Image(systemName: "photo")
                     }
                 }
                 .failure {
-                    Image(systemName: "questionmark")
+                    Image(systemName: "photo")
                 }
-                .foregroundColor(.secondary)
+                .pipeline(.Swiftfin.other)
+                .foregroundStyle(.secondary)
                 .font(.headline)
         }
         .posterStyle(posterStyle)

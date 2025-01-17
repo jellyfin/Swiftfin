@@ -6,13 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import BlurHashKit
-import CollectionVGrid
-import Combine
-import Defaults
-import Factory
 import JellyfinAPI
-import Nuke
 import SwiftUI
 
 struct ItemImageDetailsView: View {
@@ -40,7 +34,6 @@ struct ItemImageDetailsView: View {
     private let language: String?
     private let provider: String?
     private let rating: Double?
-    private let ratingType: RatingType?
     private let ratingVotes: Int?
 
     // MARK: - Image Actions
@@ -60,13 +53,12 @@ struct ItemImageDetailsView: View {
         language: String? = nil,
         provider: String? = nil,
         rating: Double? = nil,
-        ratingType: RatingType? = nil,
         ratingVotes: Int? = nil,
         onClose: @escaping () -> Void,
         onSave: (() -> Void)? = nil,
         onDelete: (() -> Void)? = nil
     ) {
-        self._viewModel = ObservedObject(wrappedValue: viewModel)
+        self.viewModel = viewModel
         self.imageSource = imageSource
         self.index = index
         self.width = width
@@ -74,7 +66,6 @@ struct ItemImageDetailsView: View {
         self.language = language
         self.provider = provider
         self.rating = rating
-        self.ratingType = ratingType
         self.ratingVotes = ratingVotes
         self.onClose = onClose
         self.onSave = onSave
@@ -86,12 +77,13 @@ struct ItemImageDetailsView: View {
     var body: some View {
         NavigationView {
             contentView
+                .navigationTitle("Image")
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationBarCloseButton {
                     onClose()
                 }
                 .topBarTrailing {
-                    if viewModel.backgroundStates.contains(.refreshing) {
+                    if viewModel.backgroundStates.contains(.updating) {
                         ProgressView()
                     }
 
@@ -121,7 +113,6 @@ struct ItemImageDetailsView: View {
                 height: height,
                 provider: provider,
                 rating: rating,
-                ratingType: ratingType,
                 ratingVotes: ratingVotes
             )
 

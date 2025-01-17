@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import Mantis
 import SwiftUI
@@ -35,24 +34,22 @@ struct ItemPhotoCropView: View {
 
     var body: some View {
         PhotoCropView(
-            isSaving: viewModel.state == .updating,
+            isSaving: viewModel.backgroundStates.contains(.updating),
             image: image,
             cropShape: .rect,
             presetRatio: .canUseMultiplePresetFixedRatio()
         ) {
-            viewModel.send(.uploadPhoto(image: $0, type: type))
+            viewModel.send(.uploadImage(image: $0, type: type))
         } onCancel: {
             router.dismissCoordinator()
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
-        .interactiveDismissDisabled(viewModel.state == .updating)
-        .navigationBarBackButtonHidden(viewModel.state == .updating)
+        .interactiveDismissDisabled(viewModel.backgroundStates.contains(.updating))
+        .navigationBarBackButtonHidden(viewModel.backgroundStates.contains(.updating))
         .onReceive(viewModel.events) { event in
             switch event {
             case let .error(eventError):
                 error = eventError
-            case .deleted:
-                break
             case .updated:
                 router.dismissCoordinator()
             }

@@ -6,57 +6,58 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import Foundation
-import IdentifiedCollections
 import JellyfinAPI
-import OrderedCollections
-import UIKit
-
-private let DefaultPageSize = 50
 
 class RemoteImageInfoViewModel: PagingLibraryViewModel<RemoteImageInfo> {
 
+    // Image providers come from the paging call
     @Published
-    var item: BaseItemDto
+    private(set) var providers: [String] = []
+
     @Published
-    var imageType: ImageType
+    var includeAllLanguages: Bool = false {
+        didSet {
+            DispatchQueue.main.async {
+                self.send(.refresh)
+            }
+        }
+    }
 
-    let providerName: String?
-    let includeAllLanguages: Bool
+    @Published
+    var provider: String? = nil {
+        didSet {
+            DispatchQueue.main.async {
+                self.send(.refresh)
+            }
+        }
+    }
 
-    init(
-        item: BaseItemDto,
-        imageType: ImageType,
-        providerName: String? = nil,
-        includeAllLanguages: Bool = false,
-        pageSize: Int = DefaultPageSize
-    ) {
-        self.item = item
+    let imageType: ImageType
+
+    init(imageType: ImageType, parent: BaseItemDto) {
+
         self.imageType = imageType
-        self.providerName = providerName
-        self.includeAllLanguages = includeAllLanguages
-        super.init(parent: nil, pageSize: pageSize)
+
+        super.init(parent: parent)
     }
 
     override func get(page: Int) async throws -> [RemoteImageInfo] {
-        guard let itemID = item.id else { return [] }
+        guard let itemID = parent?.id else { return [] }
 
-        let startIndex = page * pageSize
-        var parameters = Paths.GetRemoteImagesParameters(
-            type: imageType,
-            startIndex: startIndex,
-            limit: pageSize,
-            providerName: providerName,
-            isIncludeAllLanguages: includeAllLanguages
-        )
-
-        if let providerName = providerName {
-            parameters.providerName = providerName
-        }
+        var parameters = Paths.GetRemoteImagesParameters()
+        parameters.isIncludeAllLanguages = includeAllLanguages
+        parameters.limit = pageSize
+        parameters.providerName = provider
+        parameters.startIndex = page * pageSize
+        parameters.type = imageType
 
         let request = Paths.getRemoteImages(itemID: itemID, parameters: parameters)
         let response = try await userSession.client.send(request)
+
+        await MainActor.run {
+            providers = response.value.providers ?? []
+        }
 
         return response.value.images ?? []
     }

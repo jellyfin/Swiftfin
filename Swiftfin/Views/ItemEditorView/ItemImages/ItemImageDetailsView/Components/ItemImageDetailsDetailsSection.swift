@@ -15,21 +15,20 @@ extension ItemImageDetailsView {
 
         // MARK: - Image Details Variables
 
-        let index: Int?
-        let language: String?
-        let width: Int?
-        let height: Int?
-        let provider: String?
+        private let index: Int?
+        private let language: String?
+        private let width: Int?
+        private let height: Int?
+        private let provider: String?
 
         // MARK: - Image Ratings Variables
 
-        let rating: Double?
-        let ratingType: RatingType?
-        let ratingVotes: Int?
+        private let rating: Double?
+        private let ratingVotes: Int?
 
         // MARK: - Image Source Variable
 
-        let url: URL?
+        private let url: URL?
 
         // MARK: - Initializer
 
@@ -51,13 +50,11 @@ extension ItemImageDetailsView {
             self.height = height
             self.provider = provider
             self.rating = rating
-            self.ratingType = ratingType
             self.ratingVotes = ratingVotes
         }
 
         // MARK: - Body
 
-        @ViewBuilder
         var body: some View {
             Section(L10n.details) {
                 if let provider {
@@ -84,12 +81,8 @@ extension ItemImageDetailsView {
                 Section(L10n.ratings) {
                     TextPairView(leading: L10n.rating, trailing: rating.formatted(.number.precision(.fractionLength(2))))
 
-                    if let ratingType {
-                        TextPairView(leading: L10n.type, trailing: ratingType.displayTitle)
-                    }
-
                     if let ratingVotes {
-                        TextPairView(leading: L10n.votes, trailing: ratingVotes.description)
+                        TextPairView(L10n.votes, value: Text(ratingVotes, format: .number))
                     }
                 }
             }

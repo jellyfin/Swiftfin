@@ -25,7 +25,7 @@ extension RemoteImageInfo: @retroactive Identifiable, Poster {
     }
 
     var systemImage: String {
-        "circle"
+        "photo"
     }
 
     public var id: Int {

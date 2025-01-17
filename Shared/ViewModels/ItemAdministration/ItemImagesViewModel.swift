@@ -8,7 +8,6 @@
 
 import Combine
 import Foundation
-import IdentifiedCollections
 import JellyfinAPI
 import OrderedCollections
 import SwiftUI
@@ -17,7 +16,6 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
     enum Event: Equatable {
         case updated
-        case deleted
         case error(JellyfinAPIError)
     }
 
@@ -25,20 +23,18 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         case cancel
         case refresh
         case setImage(RemoteImageInfo)
-        case uploadPhoto(image: UIImage, type: ImageType)
-        case uploadImage(file: URL, type: ImageType)
+        case uploadImage(image: UIImage, type: ImageType)
+        case uploadFile(file: URL, type: ImageType)
         case deleteImage(ImageInfo)
     }
 
     enum BackgroundState: Hashable {
-        case refreshing
+        case updating
     }
 
     enum State: Hashable {
         case initial
         case content
-        case updating
-        case deleting
         case error(JellyfinAPIError)
     }
 
@@ -47,7 +43,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
     @Published
     var item: BaseItemDto
     @Published
-    var images: IdentifiedArray<Int, ImageInfo> = []
+    var images: [ImageType: [ImageInfo]] = [:]
 
     // MARK: - State Management
 
@@ -62,7 +58,9 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
     // MARK: - Eventful
 
     var events: AnyPublisher<Event, Never> {
-        eventSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
+        eventSubject
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
     }
 
     // MARK: - Init
@@ -78,9 +76,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
         case .cancel:
             task?.cancel()
-            self.state = .initial
-
-            return state
+            return .initial
 
         case .refresh:
             task?.cancel()
@@ -89,8 +85,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                 guard let self else { return }
                 do {
                     await MainActor.run {
-                        self.state = .initial
-                        _ = self.backgroundStates.append(.refreshing)
+                        _ = self.backgroundStates.append(.updating)
                         self.images.removeAll()
                     }
 
@@ -98,19 +93,19 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
                     await MainActor.run {
                         self.state = .content
-                        _ = self.backgroundStates.remove(.refreshing)
+                        _ = self.backgroundStates.remove(.updating)
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
                         self.state = .error(apiError)
                         self.eventSubject.send(.error(apiError))
-                        self.backgroundStates.remove(.refreshing)
+                        self.backgroundStates.remove(.updating)
                     }
                 }
             }.asAnyCancellable()
 
-            return state
+            return .initial
 
         case let .setImage(remoteImageInfo):
             task?.cancel()
@@ -119,82 +114,84 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                 guard let self = self else { return }
                 do {
                     await MainActor.run {
-                        _ = self.state = .updating
+                        _ = self.backgroundStates.append(.updating)
                     }
 
                     try await self.setImage(remoteImageInfo)
                     try await self.getAllImages()
 
                     await MainActor.run {
-                        self.state = .updating
                         self.eventSubject.send(.updated)
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
-                        self.state = .content
                         self.eventSubject.send(.error(apiError))
                     }
                 }
+
+                await MainActor.run {
+                    _ = self.backgroundStates.remove(.updating)
+                }
             }.asAnyCancellable()
 
-            return state
+            return .content
 
-        case let .uploadPhoto(image, type):
+        case let .uploadImage(image, type):
             task?.cancel()
 
             task = Task { [weak self] in
                 guard let self = self else { return }
                 do {
                     await MainActor.run {
-                        self.state = .updating
+                        _ = self.backgroundStates.append(.updating)
                     }
 
                     try await self.uploadPhoto(image, type: type)
                     try await self.getAllImages()
-
-                    await MainActor.run {
-                        self.state = .content
-                        self.eventSubject.send(.updated)
-                    }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
-                        self.state = .content
                         self.eventSubject.send(.error(apiError))
                     }
                 }
+
+                await MainActor.run {
+                    _ = self.backgroundStates.remove(.updating)
+                }
             }.asAnyCancellable()
 
-            return state
+            return .content
 
-        case let .uploadImage(url, type):
+        case let .uploadFile(url, type):
             task?.cancel()
 
             task = Task { [weak self] in
                 guard let self = self else { return }
                 do {
                     await MainActor.run {
-                        self.state = .updating
+                        _ = self.backgroundStates.append(.updating)
                     }
 
-                    try await self.uploadImage(url, type: type)
+                    try await self.uploadFile(url, type: type)
                     try await self.getAllImages()
 
                     await MainActor.run {
-                        self.state = .content
                         self.eventSubject.send(.updated)
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
-                        self.state = .content
                         self.eventSubject.send(.error(apiError))
                     }
                 }
+
+                await MainActor.run {
+                    _ = self.backgroundStates.remove(.updating)
+                }
             }.asAnyCancellable()
 
-            return state
+            return .content
 
         case let .deleteImage(imageInfo):
             task?.cancel()
@@ -203,26 +200,28 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                 guard let self = self else { return }
                 do {
                     await MainActor.run {
-                        self.state = .deleting
+                        _ = self.backgroundStates.append(.updating)
                     }
 
                     try await deleteImage(imageInfo)
                     try await refreshItem()
 
                     await MainActor.run {
-                        self.state = .deleting
-                        self.eventSubject.send(.deleted)
+                        self.eventSubject.send(.updated)
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
-                        self.state = .content
                         self.eventSubject.send(.error(apiError))
                     }
                 }
+
+                await MainActor.run {
+                    _ = self.backgroundStates.remove(.updating)
+                }
             }.asAnyCancellable()
 
-            return state
+            return .content
         }
     }
 
@@ -234,15 +233,15 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         let request = Paths.getItemImageInfos(itemID: itemID)
         let response = try await self.userSession.client.send(request)
 
-        await MainActor.run {
-            let updatedImages = response.value.sorted {
-                if $0.imageType == $1.imageType {
-                    return $0.imageIndex ?? 0 < $1.imageIndex ?? 0
-                }
-                return $0.imageType?.rawValue ?? "" < $1.imageType?.rawValue ?? ""
+        let newImages: [ImageType: [ImageInfo]] = response.value.grouped(by: \.imageType)
+            .mapValues { $0.sorted(using: \.imageIndex) }
+            .reduce(into: [:]) { partialResult, kv in
+                guard let k = kv.key else { return }
+                partialResult[k] = kv.value
             }
 
-            self.images = IdentifiedArray(uniqueElements: updatedImages)
+        await MainActor.run {
+            self.images = newImages
         }
     }
 
@@ -307,9 +306,10 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: - Prepare Image for Upload
 
-    private func uploadImage(_ url: URL, type: ImageType) async throws {
+    private func uploadFile(_ url: URL, type: ImageType) async throws {
         guard url.startAccessingSecurityScopedResource() else {
-            throw JellyfinAPIError("Unable to access file at \(url)")
+            logger.error("Unable to access file at \(url)")
+            throw JellyfinAPIError("An internal error occurred.")
         }
         defer { url.stopAccessingSecurityScopedResource() }
 
@@ -325,7 +325,8 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
             imageData = try Data(contentsOf: url)
         default:
             guard let image = try UIImage(data: Data(contentsOf: url)) else {
-                throw JellyfinAPIError("Unable to load image from file")
+                logger.error("Unable to load image from file")
+                throw JellyfinAPIError("An internal error occurred.")
             }
 
             if let pngData = image.pngData() {
@@ -335,7 +336,8 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                 contentType = "image/jpeg"
                 imageData = jpgData
             } else {
-                throw JellyfinAPIError("Failed to convert image to png/jpg")
+                logger.error("Failed to convert image to png/jpg")
+                throw JellyfinAPIError("An internal error occurred.")
             }
         }
 
@@ -350,12 +352,12 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
     private func deleteImage(_ imageInfo: ImageInfo) async throws {
         guard let itemID = item.id,
-              let imageType = imageInfo.imageType?.rawValue else { return }
+              let imageType = imageInfo.imageType else { return }
 
         if let imageIndex = imageInfo.imageIndex {
             let request = Paths.deleteItemImageByIndex(
                 itemID: itemID,
-                imageType: imageType,
+                imageType: imageType.rawValue,
                 imageIndex: imageIndex
             )
 
@@ -363,33 +365,13 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         } else {
             let request = Paths.deleteItemImage(
                 itemID: itemID,
-                imageType: imageType
+                imageType: imageType.rawValue
             )
 
             try await userSession.client.send(request)
         }
 
-        await MainActor.run {
-            /// Remove the ImageInfo from local storage
-            self.images.removeAll { $0 == imageInfo }
-
-            /// Ensure that the remaining items have the correct new indexes
-            if imageInfo.imageIndex != nil {
-                self.images = IdentifiedArray(
-                    uniqueElements: self.images.map { image in
-                        var updatedImage = image
-                        if updatedImage.imageType == imageInfo.imageType,
-                           let imageIndex = updatedImage.imageIndex,
-                           let targetIndex = imageInfo.imageIndex,
-                           imageIndex > targetIndex
-                        {
-                            updatedImage.imageIndex = imageIndex - 1
-                        }
-                        return updatedImage
-                    }
-                )
-            }
-        }
+        try await getAllImages()
     }
 
     // MARK: - Refresh Item
@@ -398,7 +380,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         guard let itemID = item.id else { return }
 
         await MainActor.run {
-            _ = backgroundStates.append(.refreshing)
+            _ = backgroundStates.append(.updating)
         }
 
         let request = Paths.getItem(
@@ -410,7 +392,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
         await MainActor.run {
             self.item = response.value
-            _ = backgroundStates.remove(.refreshing)
+            _ = backgroundStates.remove(.updating)
             Notifications[.itemMetadataDidChange].post(item)
         }
     }
