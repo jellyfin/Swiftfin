@@ -189,6 +189,8 @@ struct ItemImagesView: View {
 
     // MARK: - Image Button
 
+    // TODO: instead of using `posterStyle`, should be sized based on
+    //       the image type and just ignore and poster styling
     @ViewBuilder
     private func imageButton(
         imageInfo: ImageInfo,
