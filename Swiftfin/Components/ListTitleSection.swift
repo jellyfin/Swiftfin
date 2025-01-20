@@ -25,6 +25,7 @@ struct ListTitleSection: View {
                 Text(title)
                     .font(.title3)
                     .fontWeight(.semibold)
+                    .multilineTextAlignment(.center)
 
                 if let description {
                     Text(description)

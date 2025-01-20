@@ -6,14 +6,15 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-final class UserProfileImageCoordinator: NavigationCoordinatable {
+final class ItemImagePickerCoordinator: NavigationCoordinatable {
 
     // MARK: - Navigation Stack
 
-    let stack = Stinsen.NavigationStack(initial: \UserProfileImageCoordinator.start)
+    let stack = Stinsen.NavigationStack(initial: \ItemImagePickerCoordinator.start)
 
     @Root
     var start = makeStart
@@ -25,23 +26,27 @@ final class UserProfileImageCoordinator: NavigationCoordinatable {
 
     // MARK: - Observed Object
 
-    @ObservedObject
-    var viewModel: UserProfileImageViewModel
+    private let viewModel: ItemImagesViewModel
+
+    // MARK: - Image Variable
+
+    let type: ImageType
 
     // MARK: - Initializer
 
-    init(viewModel: UserProfileImageViewModel) {
+    init(viewModel: ItemImagesViewModel, type: ImageType) {
         self.viewModel = viewModel
+        self.type = type
     }
 
-    // MARK: - Views
+    // MARK: - Crop Image View
 
     func makeCropImage(image: UIImage) -> some View {
-        UserProfileImageCropView(viewModel: viewModel, image: image)
+        ItemPhotoCropView(viewModel: viewModel, image: image, type: type)
     }
 
     @ViewBuilder
     func makeStart() -> some View {
-        UserProfileImagePickerView()
+        ItemImagePicker()
     }
 }

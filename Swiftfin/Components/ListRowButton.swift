@@ -13,38 +13,53 @@ import SwiftUI
 // Meant to be used within `List` or `Form`
 struct ListRowButton: View {
 
-    let title: String
-    let action: () -> Void
+    private let title: String
+    private let role: ButtonRole?
+    private let action: () -> Void
 
-    init(_ title: String, action: @escaping () -> Void) {
+    init(_ title: String, role: ButtonRole? = nil, action: @escaping () -> Void) {
         self.title = title
+        self.role = role
         self.action = action
     }
 
     var body: some View {
-        Button(title, action: action)
-            .font(.body.weight(.bold))
+        Button(title, role: role, action: action)
             .buttonStyle(ListRowButtonStyle())
-            .listRowInsets(.init(.zero))
+            .listRowInsets(.zero)
     }
 }
 
-// TODO: implement `role`
 private struct ListRowButtonStyle: ButtonStyle {
 
     @Environment(\.isEnabled)
     private var isEnabled
 
+    private func primaryStyle(configuration: Configuration) -> some ShapeStyle {
+        if configuration.role == .destructive || configuration.role == .cancel {
+            return AnyShapeStyle(Color.red)
+        } else {
+            return AnyShapeStyle(HierarchicalShapeStyle.primary)
+        }
+    }
+
+    private func secondaryStyle(configuration: Configuration) -> some ShapeStyle {
+        if configuration.role == .destructive {
+            return AnyShapeStyle(Color.red.opacity(0.2))
+        } else {
+            return isEnabled ? AnyShapeStyle(HierarchicalShapeStyle.secondary) : AnyShapeStyle(Color.gray)
+        }
+    }
+
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
             Rectangle()
-                .foregroundStyle(isEnabled ? AnyShapeStyle(HierarchicalShapeStyle.secondary) : AnyShapeStyle(Color.gray))
+                .fill(secondaryStyle(configuration: configuration))
 
             configuration.label
-                .foregroundStyle(.primary)
+                .foregroundStyle(primaryStyle(configuration: configuration))
         }
         .opacity(configuration.isPressed ? 0.75 : 1)
-        .frame(maxWidth: .infinity)
-        .listRowInsets(.zero)
+        .font(.body.weight(.bold))
     }
 }
