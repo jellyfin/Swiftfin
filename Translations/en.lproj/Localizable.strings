@@ -94,11 +94,17 @@
 /// Album Artist
 "albumArtist" = "Album Artist";
 
+/// All
+"all" = "All";
+
 /// All Audiences
 "allAudiences" = "All Audiences";
 
 /// View all past and present devices that have connected.
 "allDevicesDescription" = "View all past and present devices that have connected.";
+
+/// All languages
+"allLanguages" = "All languages";
 
 /// All Media
 "allMedia" = "All Media";
@@ -157,6 +163,9 @@
 /// Arranger
 "arranger" = "Arranger";
 
+/// Art
+"art" = "Art";
+
 /// Artist
 "artist" = "Artist";
 
@@ -210,6 +219,12 @@
 
 /// Back
 "back" = "Back";
+
+/// Backdrop
+"backdrop" = "Backdrop";
+
+/// Banner
+"banner" = "Banner";
 
 /// Bar Buttons
 "barButtons" = "Bar Buttons";
@@ -307,6 +322,12 @@
 /// Books
 "books" = "Books";
 
+/// Box
+"box" = "Box";
+
+/// BoxRear
+"boxRear" = "BoxRear";
+
 /// Bugs and Features
 "bugsAndFeatures" = "Bugs and Features";
 
@@ -336,6 +357,9 @@
 
 /// Channels
 "channels" = "Channels";
+
+/// Chapter
+"chapter" = "Chapter";
 
 /// Chapters
 "chapters" = "Chapters";
@@ -562,6 +586,9 @@
 /// Are you sure you wish to delete this device? This session will be logged out.
 "deleteDeviceWarning" = "Are you sure you wish to delete this device? This session will be logged out.";
 
+/// Delete image
+"deleteImage" = "Delete image";
+
 /// Are you sure you want to delete this item?
 "deleteItemConfirmation" = "Are you sure you want to delete this item?";
 
@@ -652,6 +679,9 @@
 /// Digital
 "digital" = "Digital";
 
+/// Dimensions
+"dimensions" = "Dimensions";
+
 /// Direct Play
 "direct" = "Direct Play";
 
@@ -672,6 +702,9 @@
 
 /// Disabled
 "disabled" = "Disabled";
+
+/// Disc
+"disc" = "Disc";
 
 /// Disclaimer
 "disclaimer" = "Disclaimer";
@@ -880,6 +913,18 @@
 /// Illustrator
 "illustrator" = "Illustrator";
 
+/// Images
+"image" = "Images";
+
+/// Images
+"images" = "Images";
+
+/// Image source
+"imageSource" = "Image source";
+
+/// Index
+"index" = "Index";
+
 /// Indicators
 "indicators" = "Indicators";
 
@@ -979,6 +1024,9 @@
 /// Liked Items
 "likedItems" = "Liked Items";
 
+/// Likes
+"likes" = "Likes";
+
 /// List
 "list" = "List";
 
@@ -1011,6 +1059,9 @@
 
 /// Locked users
 "lockedUsers" = "Locked users";
+
+/// Logo
+"logo" = "Logo";
 
 /// Logs
 "logs" = "Logs";
@@ -1071,6 +1122,9 @@
 
 /// Mbps
 "megabitsPerSecond" = "Mbps";
+
+/// Menu
+"menu" = "Menu";
 
 /// Menu Buttons
 "menuButtons" = "Menu Buttons";
@@ -1321,6 +1375,9 @@
 /// Production Year
 "productionYear" = "Production Year";
 
+/// Profile
+"profile" = "Profile";
+
 /// Profile Image
 "profileImage" = "Profile Image";
 
@@ -1524,6 +1581,12 @@
 
 /// Schedule already exists
 "scheduleAlreadyExists" = "Schedule already exists";
+
+/// Score
+"score" = "Score";
+
+/// Screenshot
+"screenshot" = "Screenshot";
 
 /// Scrub Current Time
 "scrubCurrentTime" = "Scrub Current Time";
@@ -1789,6 +1852,9 @@
 /// Test Size
 "testSize" = "Test Size";
 
+/// Thumb
+"thumb" = "Thumb";
+
 /// Time
 "time" = "Time";
 
@@ -1891,6 +1957,12 @@
 /// You have unsaved changes. Are you sure you want to discard them?
 "unsavedChangesMessage" = "You have unsaved changes. Are you sure you want to discard them?";
 
+/// Upload file
+"uploadFile" = "Upload file";
+
+/// Upload photo
+"uploadPhoto" = "Upload photo";
+
 /// URL
 "url" = "URL";
 
@@ -1968,6 +2040,9 @@
 
 /// Some views may need an app restart to update.
 "viewsMayRequireRestart" = "Some views may need an app restart to update.";
+
+/// Votes
+"votes" = "Votes";
 
 /// Weekday
 "weekday" = "Weekday";

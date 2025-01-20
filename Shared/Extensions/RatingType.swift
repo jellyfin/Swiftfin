@@ -6,11 +6,16 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
+import JellyfinAPI
 
-extension Hashable {
+extension RatingType: Displayable {
 
-    var hashString: String {
-        "\(hashValue)"
+    var displayTitle: String {
+        switch self {
+        case .score:
+            return L10n.score
+        case .likes:
+            return L10n.likes
+        }
     }
 }

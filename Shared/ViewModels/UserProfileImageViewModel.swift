@@ -151,6 +151,12 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
         )
         request.headers = ["Content-Type": contentType]
 
+        guard imageData.count <= 30_000_000 else {
+            throw JellyfinAPIError(
+                "This profile image is too large (\(imageData.count.formatted(.byteCount(style: .file)))). The upload limit for images is 30 MB."
+            )
+        }
+
         let _ = try await userSession.client.send(request)
 
         sweepProfileImageCache()

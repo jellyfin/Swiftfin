@@ -8,23 +8,20 @@
 
 import SwiftUI
 
-struct UserProfileImagePicker: View {
+struct UserProfileImagePickerView: View {
 
     // MARK: - Observed, & Environment Objects
 
     @EnvironmentObject
     private var router: UserProfileImageCoordinator.Router
 
-    @ObservedObject
-    var viewModel: UserProfileImageViewModel
-
     // MARK: - Body
 
     var body: some View {
-        PhotoPicker {
+        PhotoPickerView {
+            router.route(to: \.cropImage, $0)
+        } onCancel: {
             router.dismissCoordinator()
-        } onSelectedImage: { image in
-            router.route(to: \.cropImage, image)
         }
     }
 }
