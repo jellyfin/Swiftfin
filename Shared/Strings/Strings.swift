@@ -78,10 +78,14 @@ internal enum L10n {
   }
   /// Album Artist
   internal static let albumArtist = L10n.tr("Localizable", "albumArtist", fallback: "Album Artist")
+  /// All
+  internal static let all = L10n.tr("Localizable", "all", fallback: "All")
   /// All Audiences
   internal static let allAudiences = L10n.tr("Localizable", "allAudiences", fallback: "All Audiences")
   /// View all past and present devices that have connected.
   internal static let allDevicesDescription = L10n.tr("Localizable", "allDevicesDescription", fallback: "View all past and present devices that have connected.")
+  /// All languages
+  internal static let allLanguages = L10n.tr("Localizable", "allLanguages", fallback: "All languages")
   /// All Media
   internal static let allMedia = L10n.tr("Localizable", "allMedia", fallback: "All Media")
   /// Allow collection management
@@ -642,6 +646,8 @@ internal enum L10n {
   internal static let idle = L10n.tr("Localizable", "idle", fallback: "Idle")
   /// Illustrator
   internal static let illustrator = L10n.tr("Localizable", "illustrator", fallback: "Illustrator")
+  /// Images
+  internal static let image = L10n.tr("Localizable", "image", fallback: "Images")
   /// Images
   internal static let images = L10n.tr("Localizable", "images", fallback: "Images")
   /// Image source

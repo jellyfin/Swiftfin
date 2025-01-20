@@ -8,11 +8,8 @@
 
 import BlurHashKit
 import CollectionVGrid
-import Combine
 import JellyfinAPI
 import SwiftUI
-
-// TODO: have images use different pipeline
 
 struct AddItemImageView: View {
 
@@ -76,9 +73,9 @@ struct AddItemImageView: View {
                 remoteImageInfoViewModel.includeAllLanguages.toggle()
             } label: {
                 if remoteImageInfoViewModel.includeAllLanguages {
-                    Label("All languages", systemImage: "checkmark")
+                    Label(L10n.allLanguages, systemImage: "checkmark")
                 } else {
-                    Text("All languages")
+                    Text(L10n.allLanguages)
                 }
             }
 
@@ -88,9 +85,9 @@ struct AddItemImageView: View {
                         remoteImageInfoViewModel.provider = nil
                     } label: {
                         if remoteImageInfoViewModel.provider == nil {
-                            Label("All", systemImage: "checkmark")
+                            Label(L10n.all, systemImage: "checkmark")
                         } else {
-                            Text("All")
+                            Text(L10n.all)
                         }
                     }
 
@@ -108,7 +105,7 @@ struct AddItemImageView: View {
                 } label: {
                     Text(L10n.provider)
 
-                    Text(remoteImageInfoViewModel.provider ?? "All")
+                    Text(remoteImageInfoViewModel.provider ?? L10n.all)
                 }
             }
         }
