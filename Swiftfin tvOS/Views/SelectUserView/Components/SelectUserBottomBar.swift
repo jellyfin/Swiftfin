@@ -43,12 +43,12 @@ extension SelectUserView {
                 //     router.route(to: \.advancedSettings)
                 // }
             } label: {
-                Image(systemName: "gearshape.fill")
+                Label(L10n.advanced, systemImage: "gearshape.fill")
                     .font(.body.weight(.semibold))
                     .foregroundStyle(Color.primary)
+                    .labelStyle(.iconOnly)
                     .frame(width: 50, height: 50)
             }
-            .accessibilityLabel(L10n.advanced)
 
             // TODO: Do we want to support a grid view and list view like iOS?
 //            if !viewModel.servers.isEmpty {

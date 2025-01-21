@@ -241,7 +241,7 @@ struct SelectUserView: View {
             ) { server in
                 router.route(to: \.userSignIn, server)
             }
-            .environment(\.isEnabled, !isEditingUsers && serverSelection != .all)
+            .environment(\.isEnabled, !isEditingUsers)
         }
     }
 
