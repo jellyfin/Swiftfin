@@ -75,18 +75,17 @@ struct EditServerView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
-                    .buttonStyle(.plain)
+                    .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                 }
 
                 if isEditing {
                     Section {
-                        ListRowButton(L10n.delete) {
+                        ListRowButton(L10n.delete, role: .destructive) {
                             isPresentingConfirmDeletion = true
                         }
-                        .buttonStyle(.plain)
+                        .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                        .foregroundStyle(.primary, .red.opacity(0.5))
                     }
                 }
             }

@@ -91,16 +91,10 @@ extension SelectUserView {
         // MARK: - Delete User Button
 
         private var deleteUsersButton: some View {
-            Button(role: .destructive) {
+            ListRowButton(L10n.delete, role: .destructive) {
                 onDelete()
-            } label: {
-                Text(L10n.delete)
-                    .foregroundStyle(areUsersSelected ? Color.primary : Color.secondary)
-                    .font(.body.weight(.semibold))
-                    .frame(width: 400, height: 50)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
             }
-            .opacity(areUsersSelected ? 1.0 : 0.5)
+            .frame(width: 400, height: 50)
             .disabled(!areUsersSelected)
         }
 
