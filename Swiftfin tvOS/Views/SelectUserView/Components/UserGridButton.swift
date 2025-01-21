@@ -28,6 +28,8 @@ extension SelectUserView {
         private let action: () -> Void
         private let onDelete: () -> Void
 
+        // MARK: - Initializer
+
         init(
             user: UserState,
             server: ServerState,
@@ -42,55 +44,52 @@ extension SelectUserView {
             self.onDelete = onDelete
         }
 
+        // MARK: - Label Foreground Style
+
         private var labelForegroundStyle: some ShapeStyle {
             guard isEditing else { return .primary }
 
             return isSelected ? .primary : .secondary
         }
 
-        @ViewBuilder
-        private var personView: some View {
-            ZStack {
-                Color.secondarySystemFill
+        // MARK: - User Portrait
 
-                RelativeSystemImageView(systemName: "person.fill", ratio: 0.5)
-                    .foregroundStyle(.secondary)
-            }
-            .clipShape(.circle)
-            .aspectRatio(1, contentMode: .fill)
-        }
-
-        @ViewBuilder
-        private var userImage: some View {
+        private var userPortrait: some View {
             UserProfileImage(
                 userID: user.id,
                 source: user.profileImageSource(
                     client: server.client,
                     maxWidth: 120
-                )
+                ),
+                pipeline: .Swiftfin.local
             )
-            .aspectRatio(1, contentMode: .fill)
             .overlay {
-                if isEditing && isSelected {
-                    RelativeSystemImageView(systemName: "trash.circle.fill", ratio: 1)
-                        .foregroundStyle(accentColor.overlayColor, .red)
-                        .symbolRenderingMode(.palette)
-                        .opacity(0.5)
-                        .hoverEffect(.highlight)
-                } else if isEditing {
-                    Color.black
-                        .opacity(isSelected ? 0 : 0.5)
-                        .clipShape(.circle)
+                if isEditing {
+                    ZStack(alignment: .bottom) {
+                        Color.black
+                            .opacity(isSelected ? 0 : 0.5)
+
+                        if isSelected {
+                            Image(systemName: "checkmark.circle.fill")
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 75, height: 75)
+                                .symbolRenderingMode(.palette)
+                                .foregroundStyle(accentColor.overlayColor, accentColor)
+                        }
+                    }
                 }
             }
         }
+
+        // MARK: - Body
 
         var body: some View {
             VStack {
                 Button {
                     action()
                 } label: {
-                    userImage
+                    userPortrait
                         .hoverEffect(.highlight)
 
                     Text(user.username)

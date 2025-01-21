@@ -18,6 +18,9 @@ extension SelectUserView {
         @Binding
         private var serverSelection: SelectUserServerSelection
 
+        @EnvironmentObject
+        private var router: SelectUserCoordinator.Router
+
         @ObservedObject
         private var viewModel: SelectUserViewModel
 
@@ -66,6 +69,27 @@ extension SelectUserView {
 //            }
         }
 
+        // MARK: - Add User Button
+
+        @ViewBuilder
+        private var addUserButton: some View {
+            Menu {
+                ForEach(viewModel.servers.keys, id: \.self) { server in
+                    Button(server.name, systemImage: "person.crop.circle.fill.badge.plus") {
+                        router.route(to: \.userSignIn, server)
+                    }
+                }
+            } label: {
+                Image(systemName: "person.fill.badge.plus")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(Color.primary)
+                    .frame(width: 50, height: 50)
+            }
+            .accessibilityLabel(L10n.addUser)
+        }
+
+        // MARK: - Delete User Button
+
         private var deleteUsersButton: some View {
             Button(role: .destructive) {
                 onDelete()
@@ -76,10 +100,11 @@ extension SelectUserView {
                     .frame(width: 400, height: 50)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
             }
-            .foregroundStyle(Color.primary, .red)
             .opacity(areUsersSelected ? 1.0 : 0.5)
             .disabled(!areUsersSelected)
         }
+
+        // MARK: - Initializer
 
         init(
             isEditing: Binding<Bool>,
@@ -98,6 +123,8 @@ extension SelectUserView {
             self.onDelete = onDelete
             self.toggleAllUsersSelected = toggleAllUsersSelected
         }
+
+        // MARK: - Content View
 
         @ViewBuilder
         private var contentView: some View {
@@ -125,17 +152,19 @@ extension SelectUserView {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 } else {
+                    addUserButton
+
                     ServerSelectionMenu(
                         selection: $serverSelection,
                         viewModel: viewModel
                     )
 
-                    if userCount > 1 {
-                        advancedMenu
-                    }
+                    advancedMenu
                 }
             }
         }
+
+        // MARK: - Body
 
         var body: some View {
             // `Menu` with custom label has some weird additional

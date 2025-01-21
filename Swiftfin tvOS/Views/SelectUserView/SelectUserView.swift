@@ -103,9 +103,13 @@ struct SelectUserView: View {
     // MARK: - Make Grid Items
 
     private func makeGridItems(for serverSelection: SelectUserServerSelection) -> OrderedSet<UserGridItem> {
+
+        var items: [UserGridItem] = []
+
         switch serverSelection {
         case .all:
-            let items = viewModel.servers
+
+            items = viewModel.servers
                 .map { server, users in
                     users.map { (server: server, user: $0) }
                 }
@@ -113,19 +117,22 @@ struct SelectUserView: View {
                 .sorted(using: \.user.username)
                 .reversed()
                 .map { UserGridItem.user($0.user, server: $0.server) }
-                .appending(.addUser)
 
             return OrderedSet(items)
+
         case let .server(id: id):
             guard let server = viewModel.servers.keys.first(where: { server in server.id == id }) else {
                 assertionFailure("server with ID not found?")
                 return [.addUser]
             }
 
-            let items = viewModel.servers[server]!
-                .sorted(using: \.username)
-                .map { UserGridItem.user($0, server: server) }
-                .appending(.addUser)
+            if let serverUsers = viewModel.servers[server], serverUsers.isNotEmpty {
+                items = serverUsers
+                    .sorted(using: \.username)
+                    .map { UserGridItem.user($0, server: server) }
+            } else {
+                items = [.addUser]
+            }
 
             return OrderedSet(items)
         }
@@ -338,13 +345,20 @@ struct SelectUserView: View {
             }
         }
 
-        // change splash screen selection if necessary
-//            selectUserAllServersSplashscreen = serverSelection
+        setSplashScreenImageSource()
     }
+
+    // MARK: - Did Appear
 
     private func didAppear() {
         viewModel.send(.getServers)
 
+        setSplashScreenImageSource()
+    }
+
+    // MARK: - Set Splash Screen Image Source
+
+    private func setSplashScreenImageSource() {
         splashScreenImageSource = makeSplashScreenImageSource(
             serverSelection: serverSelection,
             allServersSelection: .all
@@ -373,10 +387,7 @@ struct SelectUserView: View {
         .onChange(of: serverSelection) { _, newValue in
             gridItems = makeGridItems(for: newValue)
 
-            splashScreenImageSource = makeSplashScreenImageSource(
-                serverSelection: newValue,
-                allServersSelection: .all
-            )
+            setSplashScreenImageSource()
         }
         .onChange(of: isPresentingLocalPin) { _, newValue in
             if newValue {
