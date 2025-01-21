@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Factory
 import Foundation
 import JellyfinAPI
 
@@ -44,6 +45,7 @@ class ServerCheckViewModel: ViewModel, Stateful {
                     await MainActor.run {
                         userSession.user.data = response.value
                         self.state = .connected
+                        Container.shared.currentUserSession.reset()
                     }
                 } catch {
                     await MainActor.run {
