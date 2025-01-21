@@ -241,7 +241,7 @@ struct SelectUserView: View {
             ) { server in
                 router.route(to: \.userSignIn, server)
             }
-            .environment(\.isEnabled, !isEditingUsers)
+            .environment(\.isEnabled, !isEditingUsers && serverSelection != .all)
         }
     }
 
@@ -306,34 +306,22 @@ struct SelectUserView: View {
 
     @ViewBuilder
     private var emptyView: some View {
-        ZStack {
-            VStack {
-                Image(.jellyfinBlobBlue)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: 100)
-                    .edgePadding()
+        VStack(spacing: 50) {
+            L10n.connectToJellyfinServerStart.text
+                .font(.body)
+                .frame(minWidth: 50, maxWidth: 500)
+                .multilineTextAlignment(.center)
 
-                Color.clear
+            Button {
+                router.route(to: \.connectToServer)
+            } label: {
+                L10n.connect.text
+                    .font(.callout)
+                    .fontWeight(.bold)
+                    .frame(width: 400, height: 75)
+                    .background(Color.jellyfinPurple)
             }
-
-            VStack(spacing: 50) {
-                L10n.connectToJellyfinServerStart.text
-                    .font(.body)
-                    .frame(minWidth: 50, maxWidth: 500)
-                    .multilineTextAlignment(.center)
-
-                Button {
-                    router.route(to: \.connectToServer)
-                } label: {
-                    L10n.connect.text
-                        .font(.callout)
-                        .fontWeight(.bold)
-                        .frame(width: 400, height: 75)
-                        .background(Color.jellyfinPurple)
-                }
-                .buttonStyle(.card)
-            }
+            .buttonStyle(.card)
         }
     }
 

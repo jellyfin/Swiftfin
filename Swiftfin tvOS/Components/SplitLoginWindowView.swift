@@ -22,6 +22,10 @@ struct SplitLoginWindowView<Leading: View, Trailing: View>: View {
     private let trailingTitle: String
     private let trailingContentView: () -> Trailing
 
+    // MARK: - Background Variable
+
+    private let backgroundImageSource: ImageSource?
+
     // MARK: - Body
 
     var body: some View {
@@ -52,6 +56,21 @@ struct SplitLoginWindowView<Leading: View, Trailing: View>: View {
             }
         }
         .navigationBarBranding(isLoading: isLoading)
+        .background {
+            if let backgroundImageSource {
+                ZStack {
+                    ImageView(backgroundImageSource)
+                        .aspectRatio(contentMode: .fill)
+                        .id(backgroundImageSource)
+                        .transition(.opacity)
+                        .animation(.linear, value: backgroundImageSource)
+
+                    Color.black
+                        .opacity(0.9)
+                }
+                .ignoresSafeArea()
+            }
+        }
     }
 }
 
@@ -61,6 +80,7 @@ extension SplitLoginWindowView {
         isLoading: Bool = false,
         leadingTitle: String,
         trailingTitle: String,
+        backgroundImageSource: ImageSource? = nil,
         @ViewBuilder leadingContentView: @escaping () -> Leading,
         @ViewBuilder trailingContentView: @escaping () -> Trailing
     ) {
@@ -69,5 +89,6 @@ extension SplitLoginWindowView {
         self.trailingTitle = trailingTitle
         self.leadingContentView = leadingContentView
         self.trailingContentView = trailingContentView
+        self.backgroundImageSource = backgroundImageSource
     }
 }

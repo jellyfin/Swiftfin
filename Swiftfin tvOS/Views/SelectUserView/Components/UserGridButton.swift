@@ -71,7 +71,13 @@ extension SelectUserView {
             )
             .aspectRatio(1, contentMode: .fill)
             .overlay {
-                if isEditing {
+                if isEditing && isSelected {
+                    RelativeSystemImageView(systemName: "trash.circle.fill", ratio: 1)
+                        .foregroundStyle(accentColor.overlayColor, .red)
+                        .symbolRenderingMode(.palette)
+                        .opacity(0.5)
+                        .hoverEffect(.highlight)
+                } else if isEditing {
                     Color.black
                         .opacity(isSelected ? 0 : 0.5)
                         .clipShape(.circle)
@@ -105,16 +111,6 @@ extension SelectUserView {
                     Button(L10n.delete, role: .destructive) {
                         onDelete()
                     }
-                }
-            }
-            .overlay {
-                if isEditing && isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 40, height: 40, alignment: .bottomTrailing)
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(accentColor.overlayColor, accentColor)
                 }
             }
         }

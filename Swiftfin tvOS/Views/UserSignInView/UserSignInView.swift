@@ -166,7 +166,8 @@ struct UserSignInView: View {
         SplitLoginWindowView(
             isLoading: viewModel.state == .signingIn,
             leadingTitle: L10n.signInToServer(viewModel.server.name),
-            trailingTitle: L10n.publicUsers
+            trailingTitle: L10n.publicUsers,
+            backgroundImageSource: viewModel.server.splashScreenImageSource()
         ) {
             signInSection
         } trailingContentView: {
