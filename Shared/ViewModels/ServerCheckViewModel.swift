@@ -36,6 +36,8 @@ class ServerCheckViewModel: ViewModel, Stateful {
             // TODO: also server stuff
             connectCancellable = Task {
                 do {
+                    try await userSession.server.updateServerInfo()
+
                     let request = Paths.getCurrentUser
                     let response = try await userSession.client.send(request)
 
