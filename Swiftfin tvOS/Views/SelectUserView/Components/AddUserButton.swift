@@ -70,7 +70,7 @@ extension SelectUserView {
         var body: some View {
             if serverSelection == .all {
                 Menu {
-                    Text("Select Server")
+                    Text(L10n.selectServer)
 
                     ForEach(servers) { server in
                         Button {
