@@ -103,13 +103,10 @@ struct SelectUserView: View {
     // MARK: - Make Grid Items
 
     private func makeGridItems(for serverSelection: SelectUserServerSelection) -> OrderedSet<UserGridItem> {
-
-        var items: [UserGridItem] = []
-
         switch serverSelection {
         case .all:
 
-            items = viewModel.servers
+            let items = viewModel.servers
                 .map { server, users in
                     users.map { (server: server, user: $0) }
                 }
@@ -117,6 +114,7 @@ struct SelectUserView: View {
                 .sorted(using: \.user.username)
                 .reversed()
                 .map { UserGridItem.user($0.user, server: $0.server) }
+                .appending(.addUser)
 
             return OrderedSet(items)
 
@@ -126,13 +124,10 @@ struct SelectUserView: View {
                 return [.addUser]
             }
 
-            if let serverUsers = viewModel.servers[server], serverUsers.isNotEmpty {
-                items = serverUsers
-                    .sorted(using: \.username)
-                    .map { UserGridItem.user($0, server: server) }
-            } else {
-                items = [.addUser]
-            }
+            let items = viewModel.servers[server]!
+                .sorted(using: \.username)
+                .map { UserGridItem.user($0, server: server) }
+                .appending(.addUser)
 
             return OrderedSet(items)
         }

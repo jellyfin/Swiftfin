@@ -18,9 +18,6 @@ extension SelectUserView {
         @Binding
         private var serverSelection: SelectUserServerSelection
 
-        @EnvironmentObject
-        private var router: SelectUserCoordinator.Router
-
         @ObservedObject
         private var viewModel: SelectUserViewModel
 
@@ -67,25 +64,6 @@ extension SelectUserView {
 //                }
 //                .pickerStyle(.menu)
 //            }
-        }
-
-        // MARK: - Add User Button
-
-        @ViewBuilder
-        private var addUserButton: some View {
-            Menu {
-                ForEach(viewModel.servers.keys, id: \.self) { server in
-                    Button(server.name, systemImage: "person.crop.circle.fill.badge.plus") {
-                        router.route(to: \.userSignIn, server)
-                    }
-                }
-            } label: {
-                Image(systemName: "person.fill.badge.plus")
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(Color.primary)
-                    .frame(width: 50, height: 50)
-            }
-            .accessibilityLabel(L10n.addUser)
         }
 
         // MARK: - Delete User Button
@@ -146,8 +124,6 @@ extension SelectUserView {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 } else {
-                    addUserButton
-
                     ServerSelectionMenu(
                         selection: $serverSelection,
                         viewModel: viewModel
