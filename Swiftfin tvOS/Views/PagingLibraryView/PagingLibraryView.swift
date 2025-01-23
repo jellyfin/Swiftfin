@@ -223,7 +223,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 listItemView(item: item, posterType: posterType)
             }
         }
-        .onReachedBottomEdge(offset: .offset(300)) {
+        .onReachedBottomEdge(offset: .rows(3)) {
             viewModel.send(.getNextPage)
         }
         .proxy(collectionVGridProxy)
