@@ -297,15 +297,20 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         .onChange(of: defaultPosterType) { _, newValue in
             guard !Defaults[.Customization.Library.rememberLayout] else { return }
 
-            if defaultDisplayType == .list {
-                collectionVGridProxy.layout()
-            } else {
-                layout = Self.makeLayout(
-                    posterType: newValue,
-                    viewType: defaultDisplayType,
-                    listColumnCount: defaultListColumnCount
-                )
-            }
+            layout = Self.makeLayout(
+                posterType: newValue,
+                viewType: defaultDisplayType,
+                listColumnCount: defaultListColumnCount
+            )
+        }
+        .onChange(of: defaultDisplayType) { _, newValue in
+            guard !Defaults[.Customization.Library.rememberLayout] else { return }
+
+            layout = Self.makeLayout(
+                posterType: defaultPosterType,
+                viewType: newValue,
+                listColumnCount: defaultListColumnCount
+            )
         }
         .onChange(of: defaultListColumnCount) { _, newValue in
             guard !Defaults[.Customization.Library.rememberLayout] else { return }
@@ -316,18 +321,12 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 listColumnCount: newValue
             )
         }
-        .onChange(of: defaultPosterType) { _, newValue in
-            guard !Defaults[.Customization.Library.rememberLayout] else { return }
-
-            if defaultDisplayType == .list {
-                collectionVGridProxy.layout()
-            } else {
-                layout = Self.makeLayout(
-                    posterType: newValue,
-                    viewType: defaultDisplayType,
-                    listColumnCount: defaultListColumnCount
-                )
-            }
+        .onChange(of: posterType) { _, newValue in
+            layout = Self.makeLayout(
+                posterType: newValue,
+                viewType: displayType,
+                listColumnCount: listColumnCount
+            )
         }
         .onChange(of: displayType) { _, newValue in
             layout = Self.makeLayout(
@@ -342,17 +341,6 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 viewType: displayType,
                 listColumnCount: newValue
             )
-        }
-        .onChange(of: posterType) { _, newValue in
-            if displayType == .list {
-                collectionVGridProxy.layout()
-            } else {
-                layout = Self.makeLayout(
-                    posterType: newValue,
-                    viewType: displayType,
-                    listColumnCount: listColumnCount
-                )
-            }
         }
         .onChange(of: rememberLayout) { _, newValue in
             let newDisplayType = newValue ? displayType : defaultDisplayType
@@ -376,20 +364,6 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 StoredValues[.User.libraryFilters(parentID: id)] = newStoredFilters
             }
         }
-        .onReceive(viewModel.events) { event in
-            switch event {
-            case let .gotRandomItem(item):
-                switch item {
-                case let item as BaseItemDto:
-                    router.route(to: \.item, item)
-                case let item as BaseItemPerson:
-                    let viewModel = ItemLibraryViewModel(parent: item, filters: .default)
-                    router.route(to: \.library, viewModel)
-                default:
-                    assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
-                }
-            }
-        }
         .onChange(of: focusedItem) { _, newValue in
             guard let newValue else {
                 withAnimation {
@@ -403,6 +377,20 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             if !presentBackground {
                 withAnimation {
                     presentBackground = true
+                }
+            }
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case let .gotRandomItem(item):
+                switch item {
+                case let item as BaseItemDto:
+                    router.route(to: \.item, item)
+                case let item as BaseItemPerson:
+                    let viewModel = ItemLibraryViewModel(parent: item, filters: .default)
+                    router.route(to: \.library, viewModel)
+                default:
+                    assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
                 }
             }
         }
