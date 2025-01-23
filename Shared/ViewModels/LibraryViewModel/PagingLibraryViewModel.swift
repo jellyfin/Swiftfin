@@ -218,6 +218,52 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         }
     }
 
+    // paging item type
+    init(
+        itemTypes: [BaseItemKind],
+        filters: ItemFilterCollection? = nil,
+        pageSize: Int = DefaultPageSize
+    ) {
+        self.elements = IdentifiedArray([], id: \.unwrappedIDHashOrZero, uniquingIDsWith: { x, _ in x })
+        self.isStatic = false
+        self.pageSize = pageSize
+
+        self.parent = nil
+
+        if let filters {
+            self.filterViewModel = .init(
+                itemTypes: itemTypes,
+                currentFilters: filters
+            )
+        } else {
+            self.filterViewModel = nil
+        }
+
+        super.init()
+
+        Notifications[.didDeleteItem]
+            .publisher
+            .sink { id in
+                self.elements.remove(id: id.hashValue)
+            }
+            .store(in: &cancellables)
+
+        if let filterViewModel {
+            filterViewModel.$currentFilters
+                .dropFirst()
+                .debounce(for: 1, scheduler: RunLoop.main)
+                .removeDuplicates()
+                .sink { [weak self] _ in
+                    guard let self else { return }
+
+                    Task { @MainActor in
+                        self.send(.refresh)
+                    }
+                }
+                .store(in: &cancellables)
+        }
+    }
+
     convenience init(
         title: String,
         id: String?,

@@ -231,6 +231,9 @@
 		4EE766FB2D132954009658F0 /* RemoteSearchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE766F92D13294F009658F0 /* RemoteSearchResult.swift */; };
 		4EE767082D13403F009658F0 /* RemoteSearchResultRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE767072D134020009658F0 /* RemoteSearchResultRow.swift */; };
 		4EE7670A2D135CBA009658F0 /* RemoteSearchResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE767092D135CAC009658F0 /* RemoteSearchResultView.swift */; };
+		4EEACAA42D420FEF00F1D54D /* LetterPickerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEACAA22D420FEF00F1D54D /* LetterPickerBar.swift */; };
+		4EEACAA52D420FEF00F1D54D /* LetterPickerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEACAA02D420FEF00F1D54D /* LetterPickerButton.swift */; };
+		4EEACAA72D4210FD00F1D54D /* FiltersSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEACAA62D4210F900F1D54D /* FiltersSection.swift */; };
 		4EECA4E32D2C7D530080A863 /* PhotoPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EECA4E22D2C7D530080A863 /* PhotoPickerView.swift */; };
 		4EECA4E62D2C7D650080A863 /* PhotoCropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EECA4E52D2C7D650080A863 /* PhotoCropView.swift */; };
 		4EECA4ED2D2C89D70080A863 /* UserProfileImageCropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EECA4EC2D2C89D20080A863 /* UserProfileImageCropView.swift */; };
@@ -1384,6 +1387,9 @@
 		4EE766F92D13294F009658F0 /* RemoteSearchResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteSearchResult.swift; sourceTree = "<group>"; };
 		4EE767072D134020009658F0 /* RemoteSearchResultRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteSearchResultRow.swift; sourceTree = "<group>"; };
 		4EE767092D135CAC009658F0 /* RemoteSearchResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteSearchResultView.swift; sourceTree = "<group>"; };
+		4EEACAA02D420FEF00F1D54D /* LetterPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerButton.swift; sourceTree = "<group>"; };
+		4EEACAA22D420FEF00F1D54D /* LetterPickerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerBar.swift; sourceTree = "<group>"; };
+		4EEACAA62D4210F900F1D54D /* FiltersSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersSection.swift; sourceTree = "<group>"; };
 		4EECA4E22D2C7D530080A863 /* PhotoPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPickerView.swift; sourceTree = "<group>"; };
 		4EECA4E52D2C7D650080A863 /* PhotoCropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCropView.swift; sourceTree = "<group>"; };
 		4EECA4EC2D2C89D20080A863 /* UserProfileImageCropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileImageCropView.swift; sourceTree = "<group>"; };
@@ -2522,6 +2528,7 @@
 		4E699BBE2CB3474C007CBD5D /* Sections */ = {
 			isa = PBXGroup;
 			children = (
+				4EEACAA62D4210F900F1D54D /* FiltersSection.swift */,
 				4E699BBF2CB34775007CBD5D /* HomeSection.swift */,
 				4E97D1822D064748004B89AD /* ItemSection.swift */,
 			);
@@ -2894,6 +2901,23 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
+		4EEACAA12D420FEF00F1D54D /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4EEACAA02D420FEF00F1D54D /* LetterPickerButton.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4EEACAA32D420FEF00F1D54D /* LetterPickerBar */ = {
+			isa = PBXGroup;
+			children = (
+				4EEACAA12D420FEF00F1D54D /* Components */,
+				4EEACAA22D420FEF00F1D54D /* LetterPickerBar.swift */,
+			);
+			path = LetterPickerBar;
+			sourceTree = "<group>";
+		};
 		4EECA4E12D2C7D450080A863 /* PhotoPickerView */ = {
 			isa = PBXGroup;
 			children = (
@@ -3242,6 +3266,7 @@
 				E12E30F4296392EC0022FAC9 /* EnumPickerView.swift */,
 				E1549677296CB22B00C4EF88 /* InlineEnumToggle.swift */,
 				E1A42E5028CBE44500A14DCB /* LandscapePosterProgressBar.swift */,
+				4EEACAA32D420FEF00F1D54D /* LetterPickerBar */,
 				E1763A632BF3C9AA004DF6AB /* ListRowButton.swift */,
 				E10E842B29A589860064EA49 /* NonePosterButton.swift */,
 				4E2AC4D32C6C4C1200DD600D /* OrderedSectionSelectorView.swift */,
@@ -5517,6 +5542,8 @@
 				E1FCD08926C35A0D007C8DCF /* NetworkError.swift in Sources */,
 				C46DD8D32A8DC1F60046A504 /* LiveVideoPlayerCoordinator.swift in Sources */,
 				E1549661296CA2EF00C4EF88 /* SwiftfinDefaults.swift in Sources */,
+				4EEACAA42D420FEF00F1D54D /* LetterPickerBar.swift in Sources */,
+				4EEACAA52D420FEF00F1D54D /* LetterPickerButton.swift in Sources */,
 				E158C8D12A31947500C527C5 /* MediaSourceInfoView.swift in Sources */,
 				E11BDF782B8513B40045C54A /* ItemGenre.swift in Sources */,
 				4E01446C2D0292E200193038 /* Trie.swift in Sources */,
@@ -5644,6 +5671,7 @@
 				BD0BA22C2AD6503B00306A8D /* OnlineVideoPlayerManager.swift in Sources */,
 				E1575EA2293E7B1E001665B1 /* Color.swift in Sources */,
 				E12E30F5296392EC0022FAC9 /* EnumPickerView.swift in Sources */,
+				4EEACAA72D4210FD00F1D54D /* FiltersSection.swift in Sources */,
 				E1575E72293E77B5001665B1 /* Utilities.swift in Sources */,
 				E164A7F72BE4816500A54B18 /* SelectUserServerSelection.swift in Sources */,
 				E1575E84293E7A00001665B1 /* PrimaryAppIcon.swift in Sources */,

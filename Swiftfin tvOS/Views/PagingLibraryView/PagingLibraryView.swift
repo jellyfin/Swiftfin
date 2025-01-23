@@ -27,6 +27,11 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     @Default(.Customization.showPosterLabels)
     private var showPosterLabels
 
+    @Default(.Customization.Library.letterPickerEnabled)
+    private var letterPickerEnabled
+    @Default(.Customization.Library.letterPickerOrientation)
+    private var letterPickerOrientation
+
     @EnvironmentObject
     private var router: LibraryCoordinator<Element>.Router
 
@@ -37,6 +42,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     private var presentBackground = false
     @State
     private var layout: CollectionVGridLayout
+    @State
+    private var safeArea: EdgeInsets = .zero
 
     @StateObject
     private var viewModel: PagingLibraryViewModel<Element>
@@ -157,7 +164,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     }
 
     @ViewBuilder
-    private var contentView: some View {
+    private var gridView: some View {
         CollectionVGrid(
             uniqueElements: viewModel.elements,
             layout: layout
@@ -171,8 +178,39 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 listItemView(item: item, posterType: posterType)
             }
         }
-        .onReachedBottomEdge(offset: .rows(3)) {
-            viewModel.send(.getNextPage)
+    }
+
+    @ViewBuilder
+    private var innerContent: some View {
+        switch viewModel.state {
+        case .content:
+            if viewModel.elements.isEmpty {
+                L10n.noResults.text
+            } else {
+                gridView
+            }
+        case .initial, .refreshing:
+            ProgressView()
+        default:
+            AssertionFailureView("Expected view for unexpected state")
+        }
+    }
+
+    @ViewBuilder
+    private var contentView: some View {
+        if /* letterPickerEnabled, */ let filterViewModel = viewModel.filterViewModel {
+            ZStack(alignment: letterPickerOrientation.alignment) {
+                innerContent
+                    .padding(letterPickerOrientation.edge, LetterPickerBar.size + 10)
+                    .frame(maxWidth: .infinity)
+
+                LetterPickerBar(viewModel: filterViewModel)
+                    .padding(.top, safeArea.top)
+                    .padding(.bottom, safeArea.bottom)
+                    .padding(letterPickerOrientation.edge, 10)
+            }
+        } else {
+            innerContent
         }
     }
 

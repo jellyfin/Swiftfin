@@ -48,7 +48,10 @@ final class MainTabCoordinator: TabCoordinatable {
     }
 
     func makeTVShows() -> NavigationViewCoordinator<LibraryCoordinator<BaseItemDto>> {
-        let viewModel = ItemTypeLibraryViewModel(itemTypes: [.series])
+        let viewModel = ItemTypeLibraryViewModel(
+            itemTypes: [.series],
+            filters: .default
+        )
         return NavigationViewCoordinator(LibraryCoordinator(viewModel: viewModel))
     }
 
@@ -62,7 +65,10 @@ final class MainTabCoordinator: TabCoordinatable {
     }
 
     func makeMovies() -> NavigationViewCoordinator<LibraryCoordinator<BaseItemDto>> {
-        let viewModel = ItemTypeLibraryViewModel(itemTypes: [.movie])
+        let viewModel = ItemTypeLibraryViewModel(
+            itemTypes: [.movie],
+            filters: .default
+        )
         return NavigationViewCoordinator(LibraryCoordinator(viewModel: viewModel))
     }
 
