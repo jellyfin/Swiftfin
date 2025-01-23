@@ -163,15 +163,15 @@ struct CustomizeViewsSettings: View {
             HomeSection()
 
             Section {
-                Toggle("Remember layout", isOn: $rememberLibraryLayout)
+                Toggle(L10n.rememberLayout, isOn: $rememberLibraryLayout)
             } footer: {
-                Text("Remember layout for individual libraries")
+                Text(L10n.rememberLayoutFooter)
             }
 
             Section {
-                Toggle("Remember sorting", isOn: $rememberLibrarySort)
+                Toggle(L10n.rememberSorting, isOn: $rememberLibrarySort)
             } footer: {
-                Text("Remember sorting for individual libraries")
+                Text(L10n.rememberSortingFooter)
             }
 
             Section {

@@ -1456,6 +1456,18 @@
 /// Release Date
 "releaseDate" = "Release Date";
 
+/// Remember layout
+"rememberLayout" = "Remember layout";
+
+/// Remember layout for individual libraries
+"rememberLayoutFooter" = "Remember layout for individual libraries";
+
+/// Remember sorting
+"rememberSorting" = "Remember sorting";
+
+/// Remember sorting for individual libraries
+"rememberSortingFooter" = "Remember sorting for individual libraries";
+
 /// Remixer
 "remixer" = "Remixer";
 
