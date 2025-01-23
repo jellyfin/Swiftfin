@@ -198,7 +198,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
 
     @ViewBuilder
     private var contentView: some View {
-        if /* letterPickerEnabled, */ let filterViewModel = viewModel.filterViewModel {
+        if letterPickerEnabled, let filterViewModel = viewModel.filterViewModel {
             ZStack(alignment: letterPickerOrientation.alignment) {
                 innerContent
                     .padding(letterPickerOrientation.edge, LetterPickerBar.size + 10)

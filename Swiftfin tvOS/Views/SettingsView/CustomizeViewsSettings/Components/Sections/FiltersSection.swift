@@ -24,8 +24,8 @@ extension CustomizeViewsSettings {
                 Toggle(L10n.letterPicker, isOn: $letterPickerEnabled)
 
                 if letterPickerEnabled {
-                    CaseIterablePicker(
-                        L10n.orientation,
+                    InlineEnumToggle(
+                        title: L10n.orientation,
                         selection: $letterPickerOrientation
                     )
                 }
