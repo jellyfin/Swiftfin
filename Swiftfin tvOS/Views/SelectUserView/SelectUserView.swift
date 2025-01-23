@@ -105,7 +105,6 @@ struct SelectUserView: View {
     private func makeGridItems(for serverSelection: SelectUserServerSelection) -> OrderedSet<UserGridItem> {
         switch serverSelection {
         case .all:
-
             let items = viewModel.servers
                 .map { server, users in
                     users.map { (server: server, user: $0) }
@@ -117,7 +116,6 @@ struct SelectUserView: View {
                 .appending(.addUser)
 
             return OrderedSet(items)
-
         case let .server(id: id):
             guard let server = viewModel.servers.keys.first(where: { server in server.id == id }) else {
                 assertionFailure("server with ID not found?")
