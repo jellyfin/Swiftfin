@@ -288,9 +288,27 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     private var contentView: some View {
 
         innerContent
-            // Moving this to the Body gives build errors?
+            // These exist here to alleviate type-checker issues
+                .onChange(of: posterType) {
+                    setCustomLayout()
+                }
+                .onChange(of: defaultPosterType) {
+                    guard !Defaults[.Customization.Library.rememberLayout] else { return }
+                    setDefaultLayout()
+                }
+                .onChange(of: displayType) {
+                    setCustomLayout()
+                }
+                .onChange(of: defaultDisplayType) {
+                    guard !Defaults[.Customization.Library.rememberLayout] else { return }
+                    setDefaultLayout()
+                }
                 .onChange(of: listColumnCount) {
                     setCustomLayout()
+                }
+                .onChange(of: defaultListColumnCount) {
+                    guard !Defaults[.Customization.Library.rememberLayout] else { return }
+                    setDefaultLayout()
                 }
 
         // Logic for LetterPicker. Enable when ready
@@ -308,6 +326,28 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
              }
          } else {
             innerContent
+         }
+         // These exist here to alleviate type-checker issues
+         .onChange(of: posterType) {
+             setCustomLayout()
+         }
+         .onChange(of: defaultPosterType) {
+             guard !Defaults[.Customization.Library.rememberLayout] else { return }
+             setDefaultLayout()
+         }
+         .onChange(of: displayType) {
+             setCustomLayout()
+         }
+         .onChange(of: defaultDisplayType) {
+             guard !Defaults[.Customization.Library.rememberLayout] else { return }
+             setDefaultLayout()
+         }
+         .onChange(of: listColumnCount) {
+             setCustomLayout()
+         }
+         .onChange(of: defaultListColumnCount) {
+             guard !Defaults[.Customization.Library.rememberLayout] else { return }
+             setDefaultLayout()
          }*/
     }
 
@@ -370,24 +410,6 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                     presentBackground = true
                 }
             }
-        }
-        .onChange(of: posterType) {
-            setCustomLayout()
-        }
-        .onChange(of: defaultPosterType) {
-            guard !Defaults[.Customization.Library.rememberLayout] else { return }
-            setDefaultLayout()
-        }
-        .onChange(of: displayType) {
-            setCustomLayout()
-        }
-        .onChange(of: defaultDisplayType) {
-            guard !Defaults[.Customization.Library.rememberLayout] else { return }
-            setDefaultLayout()
-        }
-        .onChange(of: defaultListColumnCount) {
-            guard !Defaults[.Customization.Library.rememberLayout] else { return }
-            setDefaultLayout()
         }
         .onReceive(viewModel.events) { event in
             switch event {
