@@ -1618,6 +1618,9 @@
 /// Select Image
 "selectImage" = "Select Image";
 
+/// Select server
+"selectServer" = "Select server";
+
 /// Series
 "series" = "Series";
 

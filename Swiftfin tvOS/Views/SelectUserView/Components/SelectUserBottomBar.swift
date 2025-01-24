@@ -31,13 +31,26 @@ extension SelectUserView {
 
         @ViewBuilder
         private var advancedMenu: some View {
-            Menu(L10n.advanced, systemImage: "gearshape.fill") {
-
+            Menu {
                 Button(L10n.editUsers, systemImage: "person.crop.circle") {
                     isEditing.toggle()
                 }
+                // TODO: Advanced settings on tvOS?
+                //
+                // Divider()
+                //
+                // Button(L10n.advanced, systemImage: "gearshape.fill") {
+                //     router.route(to: \.advancedSettings)
+                // }
+            } label: {
+                Label(L10n.advanced, systemImage: "gearshape.fill")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(Color.primary)
+                    .labelStyle(.iconOnly)
+                    .frame(width: 50, height: 50)
+            }
 
-                // TODO: Do we want to support a grid view and list view like iOS?
+            // TODO: Do we want to support a grid view and list view like iOS?
 //            if !viewModel.servers.isEmpty {
 //                Picker(selection: $userListDisplayType) {
 //                    ForEach(LibraryDisplayType.allCases, id: \.hashValue) {
@@ -51,39 +64,19 @@ extension SelectUserView {
 //                }
 //                .pickerStyle(.menu)
 //            }
-
-                // TODO: Advanced settings on tvOS?
-//            Section {
-//                Button(L10n.advanced, systemImage: "gearshape.fill") {
-//                    router.route(to: \.advancedSettings)
-//                }
-//            }
-            }
-            .labelStyle(.iconOnly)
         }
+
+        // MARK: - Delete User Button
 
         private var deleteUsersButton: some View {
-            Button {
+            ListRowButton(L10n.delete, role: .destructive) {
                 onDelete()
-            } label: {
-                ZStack {
-                    Color.red
-
-                    Text(L10n.delete)
-                        .font(.body.weight(.semibold))
-                        .foregroundStyle(areUsersSelected ? .primary : .secondary)
-
-                    if !areUsersSelected {
-                        Color.black
-                            .opacity(0.5)
-                    }
-                }
-                .frame(width: 400, height: 65)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
             }
+            .frame(width: 400, height: 50)
             .disabled(!areUsersSelected)
-            .buttonStyle(.card)
         }
+
+        // MARK: - Initializer
 
         init(
             isEditing: Binding<Bool>,
@@ -103,6 +96,8 @@ extension SelectUserView {
             self.toggleAllUsersSelected = toggleAllUsersSelected
         }
 
+        // MARK: - Content View
+
         @ViewBuilder
         private var contentView: some View {
             HStack(alignment: .center) {
@@ -113,16 +108,20 @@ extension SelectUserView {
                         toggleAllUsersSelected()
                     } label: {
                         Text(areUsersSelected ? L10n.removeAll : L10n.selectAll)
-                            .font(.body.weight(.semibold))
                             .foregroundStyle(Color.primary)
+                            .font(.body.weight(.semibold))
+                            .frame(width: 200, height: 50)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
 
                     Button {
                         isEditing = false
                     } label: {
-                        L10n.cancel.text
-                            .font(.body.weight(.semibold))
+                        Text(L10n.cancel)
                             .foregroundStyle(Color.primary)
+                            .font(.body.weight(.semibold))
+                            .frame(width: 200, height: 50)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 } else {
                     ServerSelectionMenu(
@@ -130,12 +129,12 @@ extension SelectUserView {
                         viewModel: viewModel
                     )
 
-                    if userCount > 1 {
-                        advancedMenu
-                    }
+                    advancedMenu
                 }
             }
         }
+
+        // MARK: - Body
 
         var body: some View {
             // `Menu` with custom label has some weird additional
