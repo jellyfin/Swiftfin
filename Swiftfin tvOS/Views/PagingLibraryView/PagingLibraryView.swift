@@ -146,6 +146,16 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         )
     }
 
+    // MARK: Set Custom Layout
+
+    private func setCustomLayout() {
+        layout = Self.makeLayout(
+            posterType: posterType,
+            viewType: displayType,
+            listColumnCount: listColumnCount
+        )
+    }
+
     // MARK: Landscape Grid Item View
 
     private func landscapeGridItemView(item: Element) -> some View {
@@ -278,6 +288,10 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     private var contentView: some View {
 
         innerContent
+            // Moving this to the Body gives build errors?
+                .onChange(of: listColumnCount) {
+                    setCustomLayout()
+                }
 
         // Logic for LetterPicker. Enable when ready
 
@@ -293,8 +307,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                      .padding(letterPickerOrientation.edge, 10)
              }
          } else {
-             innerContent
-         } */
+            innerContent
+         }*/
     }
 
     // MARK: Body
@@ -319,27 +333,6 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
-        .onChange(of: posterType) { _, newValue in
-            layout = Self.makeLayout(
-                posterType: newValue,
-                viewType: displayType,
-                listColumnCount: listColumnCount
-            )
-        }
-        .onChange(of: displayType) { _, newValue in
-            layout = Self.makeLayout(
-                posterType: posterType,
-                viewType: newValue,
-                listColumnCount: listColumnCount
-            )
-        }
-        .onChange(of: listColumnCount) { _, newValue in
-            layout = Self.makeLayout(
-                posterType: posterType,
-                viewType: displayType,
-                listColumnCount: newValue
-            )
-        }
         .onChange(of: rememberLayout) { _, newValue in
             let newDisplayType = newValue ? displayType : defaultDisplayType
             let newListColumnCount = newValue ? listColumnCount : defaultListColumnCount
@@ -378,19 +371,22 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 }
             }
         }
+        .onChange(of: posterType) {
+            setCustomLayout()
+        }
         .onChange(of: defaultPosterType) {
             guard !Defaults[.Customization.Library.rememberLayout] else { return }
-
             setDefaultLayout()
+        }
+        .onChange(of: displayType) {
+            setCustomLayout()
         }
         .onChange(of: defaultDisplayType) {
             guard !Defaults[.Customization.Library.rememberLayout] else { return }
-
             setDefaultLayout()
         }
         .onChange(of: defaultListColumnCount) {
             guard !Defaults[.Customization.Library.rememberLayout] else { return }
-
             setDefaultLayout()
         }
         .onReceive(viewModel.events) { event in
