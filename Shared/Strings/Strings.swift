@@ -1018,6 +1018,14 @@ internal enum L10n {
   internal static let regular = L10n.tr("Localizable", "regular", fallback: "Regular")
   /// Release Date
   internal static let releaseDate = L10n.tr("Localizable", "releaseDate", fallback: "Release Date")
+  /// Remember layout
+  internal static let rememberLayout = L10n.tr("Localizable", "rememberLayout", fallback: "Remember layout")
+  /// Remember layout for individual libraries
+  internal static let rememberLayoutFooter = L10n.tr("Localizable", "rememberLayoutFooter", fallback: "Remember layout for individual libraries")
+  /// Remember sorting
+  internal static let rememberSorting = L10n.tr("Localizable", "rememberSorting", fallback: "Remember sorting")
+  /// Remember sorting for individual libraries
+  internal static let rememberSortingFooter = L10n.tr("Localizable", "rememberSortingFooter", fallback: "Remember sorting for individual libraries")
   /// Remixer
   internal static let remixer = L10n.tr("Localizable", "remixer", fallback: "Remixer")
   /// Remote connections
