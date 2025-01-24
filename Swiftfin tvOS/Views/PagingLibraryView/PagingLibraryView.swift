@@ -84,7 +84,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         )
     }
 
-    // MARK: onSelect
+    // MARK: On Select
 
     private func onSelect(_ element: Element) {
         switch element {
@@ -96,6 +96,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
         }
     }
+
+    // MARK: Select Item
 
     private func select(item: BaseItemDto) {
         switch item.type {
@@ -110,12 +112,14 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         }
     }
 
+    // MARK: Select Person
+
     private func select(person: BaseItemPerson) {
         let viewModel = ItemLibraryViewModel(parent: person)
         router.route(to: \.library, viewModel)
     }
 
-    // MARK: layout
+    // MARK: Make Layout
 
     private static func makeLayout(
         posterType: PosterDisplayType,
@@ -131,6 +135,18 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             return .columns(listColumnCount, insets: .init(50), itemSpacing: 50, lineSpacing: 50)
         }
     }
+
+    // MARK: Set Default Layout
+
+    private func setDefaultLayout() {
+        layout = Self.makeLayout(
+            posterType: defaultPosterType,
+            viewType: defaultDisplayType,
+            listColumnCount: defaultListColumnCount
+        )
+    }
+
+    // MARK: Landscape Grid Item View
 
     private func landscapeGridItemView(item: Element) -> some View {
         PosterButton(item: item, type: .landscape)
@@ -155,6 +171,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 onSelect(item)
             }
     }
+
+    // MARK: Portrait Grid Item View
 
     @ViewBuilder
     private func portraitGridItemView(item: Element) -> some View {
@@ -181,6 +199,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             }
     }
 
+    // MARK: List Item View
+
     @ViewBuilder
     private func listItemView(item: Element, posterType: PosterDisplayType) -> some View {
         LibraryRow(item: item, posterType: posterType)
@@ -194,6 +214,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             }
     }
 
+    // MARK: Error View
+
     @ViewBuilder
     private func errorView(with error: some Error) -> some View {
         Text(error.localizedDescription)
@@ -202,6 +224,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
              viewModel.send(.refresh)
          } */
     }
+
+    // MARK: Grid View
 
     @ViewBuilder
     private var gridView: some View {
@@ -230,6 +254,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         .scrollIndicatorsVisible(false)
     }
 
+    // MARK: Inner Content View
+
     @ViewBuilder
     private var innerContent: some View {
         switch viewModel.state {
@@ -245,6 +271,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             AssertionFailureView("Expected view for unexpected state")
         }
     }
+
+    // MARK: Content View
 
     @ViewBuilder
     private var contentView: some View {
@@ -269,6 +297,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
          } */
     }
 
+    // MARK: Body
+
     var body: some View {
         ZStack {
             Color.clear
@@ -289,38 +319,6 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
-        .onFirstAppear {
-            if viewModel.state == .initial {
-                viewModel.send(.refresh)
-            }
-        }
-        .onChange(of: defaultPosterType) { _, newValue in
-            guard !Defaults[.Customization.Library.rememberLayout] else { return }
-
-            layout = Self.makeLayout(
-                posterType: newValue,
-                viewType: defaultDisplayType,
-                listColumnCount: defaultListColumnCount
-            )
-        }
-        .onChange(of: defaultDisplayType) { _, newValue in
-            guard !Defaults[.Customization.Library.rememberLayout] else { return }
-
-            layout = Self.makeLayout(
-                posterType: defaultPosterType,
-                viewType: newValue,
-                listColumnCount: defaultListColumnCount
-            )
-        }
-        .onChange(of: defaultListColumnCount) { _, newValue in
-            guard !Defaults[.Customization.Library.rememberLayout] else { return }
-
-            layout = Self.makeLayout(
-                posterType: defaultPosterType,
-                viewType: defaultDisplayType,
-                listColumnCount: newValue
-            )
-        }
         .onChange(of: posterType) { _, newValue in
             layout = Self.makeLayout(
                 posterType: newValue,
@@ -379,6 +377,21 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                     presentBackground = true
                 }
             }
+        }
+        .onChange(of: defaultPosterType) {
+            guard !Defaults[.Customization.Library.rememberLayout] else { return }
+
+            setDefaultLayout()
+        }
+        .onChange(of: defaultDisplayType) {
+            guard !Defaults[.Customization.Library.rememberLayout] else { return }
+
+            setDefaultLayout()
+        }
+        .onChange(of: defaultListColumnCount) {
+            guard !Defaults[.Customization.Library.rememberLayout] else { return }
+
+            setDefaultLayout()
         }
         .onReceive(viewModel.events) { event in
             switch event {
