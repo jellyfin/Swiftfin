@@ -156,6 +156,25 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         )
     }
 
+    // MARK: Set Cinematic Background
+
+    private func setCinematicBackground() {
+        guard let focusedItem else {
+            withAnimation {
+                presentBackground = false
+            }
+            return
+        }
+
+        cinematicBackgroundViewModel.select(item: focusedItem)
+
+        if !presentBackground {
+            withAnimation {
+                presentBackground = true
+            }
+        }
+    }
+
     // MARK: Landscape Grid Item View
 
     private func landscapeGridItemView(item: Element) -> some View {
@@ -292,23 +311,11 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 .onChange(of: posterType) {
                     setCustomLayout()
                 }
-                .onChange(of: defaultPosterType) {
-                    guard !Defaults[.Customization.Library.rememberLayout] else { return }
-                    setDefaultLayout()
-                }
                 .onChange(of: displayType) {
                     setCustomLayout()
                 }
-                .onChange(of: defaultDisplayType) {
-                    guard !Defaults[.Customization.Library.rememberLayout] else { return }
-                    setDefaultLayout()
-                }
                 .onChange(of: listColumnCount) {
                     setCustomLayout()
-                }
-                .onChange(of: defaultListColumnCount) {
-                    guard !Defaults[.Customization.Library.rememberLayout] else { return }
-                    setDefaultLayout()
                 }
 
         // Logic for LetterPicker. Enable when ready
@@ -373,16 +380,27 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
-        .onChange(of: rememberLayout) { _, newValue in
-            let newDisplayType = newValue ? displayType : defaultDisplayType
-            let newListColumnCount = newValue ? listColumnCount : defaultListColumnCount
-            let newPosterType = newValue ? posterType : defaultPosterType
-
-            layout = Self.makeLayout(
-                posterType: newPosterType,
-                viewType: newDisplayType,
-                listColumnCount: newListColumnCount
-            )
+        .onChange(of: focusedItem) {
+            setCinematicBackground()
+        }
+        .onChange(of: rememberLayout) {
+            if rememberLayout {
+                setCustomLayout()
+            } else {
+                setDefaultLayout()
+            }
+        }
+        .onChange(of: defaultPosterType) {
+            guard !Defaults[.Customization.Library.rememberLayout] else { return }
+            setDefaultLayout()
+        }
+        .onChange(of: defaultDisplayType) {
+            guard !Defaults[.Customization.Library.rememberLayout] else { return }
+            setDefaultLayout()
+        }
+        .onChange(of: defaultListColumnCount) {
+            guard !Defaults[.Customization.Library.rememberLayout] else { return }
+            setDefaultLayout()
         }
         .onChange(of: viewModel.filterViewModel?.currentFilters) { _, newValue in
             guard let newValue, let id = viewModel.parent?.id else { return }
@@ -393,22 +411,6 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                     .mutating(\.sortOrder, with: newValue.sortOrder)
 
                 StoredValues[.User.libraryFilters(parentID: id)] = newStoredFilters
-            }
-        }
-        .onChange(of: focusedItem) { _, newValue in
-            guard let newValue else {
-                withAnimation {
-                    presentBackground = false
-                }
-                return
-            }
-
-            cinematicBackgroundViewModel.select(item: newValue)
-
-            if !presentBackground {
-                withAnimation {
-                    presentBackground = true
-                }
             }
         }
         .onReceive(viewModel.events) { event in
