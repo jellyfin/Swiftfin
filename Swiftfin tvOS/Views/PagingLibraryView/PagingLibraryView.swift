@@ -338,23 +338,11 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
          .onChange(of: posterType) {
              setCustomLayout()
          }
-         .onChange(of: defaultPosterType) {
-             guard !Defaults[.Customization.Library.rememberLayout] else { return }
-             setDefaultLayout()
-         }
          .onChange(of: displayType) {
              setCustomLayout()
          }
-         .onChange(of: defaultDisplayType) {
-             guard !Defaults[.Customization.Library.rememberLayout] else { return }
-             setDefaultLayout()
-         }
          .onChange(of: listColumnCount) {
              setCustomLayout()
-         }
-         .onChange(of: defaultListColumnCount) {
-             guard !Defaults[.Customization.Library.rememberLayout] else { return }
-             setDefaultLayout()
          }*/
     }
 
