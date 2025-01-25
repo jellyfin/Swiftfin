@@ -54,15 +54,6 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     @StoredValue
     private var posterType: PosterDisplayType
 
-    @StoredValue
-    private var displayType: LibraryDisplayType
-    @StoredValue
-    private var listColumnCount: Int
-    @StoredValue
-    private var posterType: PosterDisplayType
-
-    @StateObject
-    private var collectionVGridProxy: CollectionVGridProxy = .init()
     @StateObject
     private var collectionVGridProxy: CollectionVGridProxy = .init()
     @StateObject
@@ -317,19 +308,21 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
 
     @ViewBuilder
     private var contentView: some View {
-        if letterPickerEnabled, let filterViewModel = viewModel.filterViewModel {
-            ZStack(alignment: letterPickerOrientation.alignment) {
-                innerContent
-                    .padding(letterPickerOrientation.edge, LetterPickerBar.size + 10)
-                    .frame(maxWidth: .infinity)
+        Group {
+            if letterPickerEnabled, let filterViewModel = viewModel.filterViewModel {
+                ZStack(alignment: letterPickerOrientation.alignment) {
+                    innerContent
+                        .padding(letterPickerOrientation.edge, LetterPickerBar.size + 10)
+                        .frame(maxWidth: .infinity)
 
-                LetterPickerBar(viewModel: filterViewModel)
-                    .padding(.top, safeArea.top)
-                    .padding(.bottom, safeArea.bottom)
-                    .padding(letterPickerOrientation.edge, 10)
+                    LetterPickerBar(viewModel: filterViewModel)
+                        .padding(.top, safeArea.top)
+                        .padding(.bottom, safeArea.bottom)
+                        .padding(letterPickerOrientation.edge, 10)
+                }
+            } else {
+                innerContent
             }
-        } else {
-            innerContent
         }
         // These exist here to alleviate type-checker issues
         .onChange(of: posterType) {
