@@ -19,12 +19,24 @@ final class FilterViewModel: ViewModel {
     var allFilters: ItemFilterCollection = .all
 
     private let parent: (any LibraryParent)?
+    private let itemTypes: [BaseItemKind]?
 
     init(
         parent: (any LibraryParent)? = nil,
         currentFilters: ItemFilterCollection = .default
     ) {
         self.parent = parent
+        self.itemTypes = nil
+        self.currentFilters = currentFilters
+        super.init()
+    }
+
+    init(
+        itemTypes: [BaseItemKind],
+        currentFilters: ItemFilterCollection = .default
+    ) {
+        self.parent = nil
+        self.itemTypes = itemTypes
         self.currentFilters = currentFilters
         super.init()
     }
@@ -43,7 +55,8 @@ final class FilterViewModel: ViewModel {
     private func getQueryFilters() async -> (genres: [ItemGenre], tags: [ItemTag], years: [ItemYear]) {
         let parameters = Paths.GetQueryFiltersLegacyParameters(
             userID: userSession.user.id,
-            parentID: parent?.id as? String
+            parentID: parent?.id as? String,
+            includeItemTypes: itemTypes
         )
 
         let request = Paths.getQueryFiltersLegacy(parameters: parameters)
