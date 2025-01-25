@@ -12,8 +12,6 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: Figure out proper tab bar handling with the collection offset
-// TODO: list columns
-// TODO: list row view (LibraryRow)
 // TODO: fix paging for next item focusing the tab
 
 struct PagingLibraryView<Element: Poster & Identifiable>: View {
@@ -56,6 +54,15 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     @StoredValue
     private var posterType: PosterDisplayType
 
+    @StoredValue
+    private var displayType: LibraryDisplayType
+    @StoredValue
+    private var listColumnCount: Int
+    @StoredValue
+    private var posterType: PosterDisplayType
+
+    @StateObject
+    private var collectionVGridProxy: CollectionVGridProxy = .init()
     @StateObject
     private var collectionVGridProxy: CollectionVGridProxy = .init()
     @StateObject
@@ -91,7 +98,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         )
     }
 
-    // MARK: onSelect
+    // MARK: On Select
 
     private func onSelect(_ element: Element) {
         switch element {
@@ -103,6 +110,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
         }
     }
+
+    // MARK: Select Item
 
     private func select(item: BaseItemDto) {
         switch item.type {
@@ -117,12 +126,14 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         }
     }
 
+    // MARK: Select Person
+
     private func select(person: BaseItemPerson) {
         let viewModel = ItemLibraryViewModel(parent: person)
         router.route(to: \.library, viewModel)
     }
 
-    // MARK: layout
+    // MARK: Make Layout
 
     private static func makeLayout(
         posterType: PosterDisplayType,
@@ -138,6 +149,47 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             return .columns(listColumnCount, insets: .init(50), itemSpacing: 50, lineSpacing: 50)
         }
     }
+
+    // MARK: Set Default Layout
+
+    private func setDefaultLayout() {
+        layout = Self.makeLayout(
+            posterType: defaultPosterType,
+            viewType: defaultDisplayType,
+            listColumnCount: defaultListColumnCount
+        )
+    }
+
+    // MARK: Set Custom Layout
+
+    private func setCustomLayout() {
+        layout = Self.makeLayout(
+            posterType: posterType,
+            viewType: displayType,
+            listColumnCount: listColumnCount
+        )
+    }
+
+    // MARK: Set Cinematic Background
+
+    private func setCinematicBackground() {
+        guard let focusedItem else {
+            withAnimation {
+                presentBackground = false
+            }
+            return
+        }
+
+        cinematicBackgroundViewModel.select(item: focusedItem)
+
+        if !presentBackground {
+            withAnimation {
+                presentBackground = true
+            }
+        }
+    }
+
+    // MARK: Landscape Grid Item View
 
     private func landscapeGridItemView(item: Element) -> some View {
         PosterButton(item: item, type: .landscape)
@@ -162,6 +214,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 onSelect(item)
             }
     }
+
+    // MARK: Portrait Grid Item View
 
     @ViewBuilder
     private func portraitGridItemView(item: Element) -> some View {
@@ -188,6 +242,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             }
     }
 
+    // MARK: List Item View
+
     @ViewBuilder
     private func listItemView(item: Element, posterType: PosterDisplayType) -> some View {
         LibraryRow(item: item, posterType: posterType)
@@ -201,6 +257,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             }
     }
 
+    // MARK: Error View
+
     @ViewBuilder
     private func errorView(with error: some Error) -> some View {
         Text(error.localizedDescription)
@@ -209,6 +267,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
              viewModel.send(.refresh)
          } */
     }
+
+    // MARK: Grid View
 
     @ViewBuilder
     private var gridView: some View {
@@ -236,6 +296,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         .proxy(collectionVGridProxy)
         .scrollIndicatorsVisible(false)
     }
+
+    // MARK: Inner Content View
 
     @ViewBuilder
     private var innerContent: some View {
@@ -269,7 +331,19 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         } else {
             innerContent
         }
+        // These exist here to alleviate type-checker issues
+        .onChange(of: posterType) {
+            setCustomLayout()
+        }
+        .onChange(of: displayType) {
+            setCustomLayout()
+        }
+        .onChange(of: listColumnCount) {
+            setCustomLayout()
+        }
     }
+
+    // MARK: Body
 
     var body: some View {
         ZStack {
@@ -291,81 +365,27 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
-        .onFirstAppear {
-            if viewModel.state == .initial {
-                viewModel.send(.refresh)
-            }
+        .onChange(of: focusedItem) {
+            setCinematicBackground()
         }
-        .onChange(of: defaultPosterType) { _, newValue in
-            guard !Defaults[.Customization.Library.rememberLayout] else { return }
-
-            if defaultDisplayType == .list {
-                collectionVGridProxy.layout()
+        .onChange(of: rememberLayout) {
+            if rememberLayout {
+                setCustomLayout()
             } else {
-                layout = Self.makeLayout(
-                    posterType: newValue,
-                    viewType: defaultDisplayType,
-                    listColumnCount: defaultListColumnCount
-                )
+                setDefaultLayout()
             }
         }
-        .onChange(of: defaultListColumnCount) { _, newValue in
+        .onChange(of: defaultPosterType) {
             guard !Defaults[.Customization.Library.rememberLayout] else { return }
-
-            layout = Self.makeLayout(
-                posterType: defaultPosterType,
-                viewType: defaultDisplayType,
-                listColumnCount: newValue
-            )
+            setDefaultLayout()
         }
-        .onChange(of: defaultPosterType) { _, newValue in
+        .onChange(of: defaultDisplayType) {
             guard !Defaults[.Customization.Library.rememberLayout] else { return }
-
-            if defaultDisplayType == .list {
-                collectionVGridProxy.layout()
-            } else {
-                layout = Self.makeLayout(
-                    posterType: newValue,
-                    viewType: defaultDisplayType,
-                    listColumnCount: defaultListColumnCount
-                )
-            }
+            setDefaultLayout()
         }
-        .onChange(of: displayType) { _, newValue in
-            layout = Self.makeLayout(
-                posterType: posterType,
-                viewType: newValue,
-                listColumnCount: listColumnCount
-            )
-        }
-        .onChange(of: listColumnCount) { _, newValue in
-            layout = Self.makeLayout(
-                posterType: posterType,
-                viewType: displayType,
-                listColumnCount: newValue
-            )
-        }
-        .onChange(of: posterType) { _, newValue in
-            if displayType == .list {
-                collectionVGridProxy.layout()
-            } else {
-                layout = Self.makeLayout(
-                    posterType: newValue,
-                    viewType: displayType,
-                    listColumnCount: listColumnCount
-                )
-            }
-        }
-        .onChange(of: rememberLayout) { _, newValue in
-            let newDisplayType = newValue ? displayType : defaultDisplayType
-            let newListColumnCount = newValue ? listColumnCount : defaultListColumnCount
-            let newPosterType = newValue ? posterType : defaultPosterType
-
-            layout = Self.makeLayout(
-                posterType: newPosterType,
-                viewType: newDisplayType,
-                listColumnCount: newListColumnCount
-            )
+        .onChange(of: defaultListColumnCount) {
+            guard !Defaults[.Customization.Library.rememberLayout] else { return }
+            setDefaultLayout()
         }
         .onChange(of: viewModel.filterViewModel?.currentFilters) { _, newValue in
             guard let newValue, let id = viewModel.parent?.id else { return }
@@ -389,22 +409,6 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                     router.route(to: \.library, viewModel)
                 default:
                     assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
-                }
-            }
-        }
-        .onChange(of: focusedItem) { _, newValue in
-            guard let newValue else {
-                withAnimation {
-                    presentBackground = false
-                }
-                return
-            }
-
-            cinematicBackgroundViewModel.select(item: newValue)
-
-            if !presentBackground {
-                withAnimation {
-                    presentBackground = true
                 }
             }
         }
