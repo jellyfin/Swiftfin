@@ -19,10 +19,20 @@ struct ItemFilterCollection: Codable, Defaults.Serializable, Hashable {
     var sortOrder: [ItemSortOrder] = [ItemSortOrder.ascending]
     var tags: [ItemTag] = []
     var traits: [ItemTrait] = []
+    var types: [BaseItemKind] = [.movie, .series, .boxSet]
     var years: [ItemYear] = []
 
     /// The default collection of filters
     static let `default`: ItemFilterCollection = .init()
+
+    /// The default collection of filters by a BaseItemKind
+    static func typeDefault(_ type: BaseItemKind) -> ItemFilterCollection {
+        var filters: ItemFilterCollection = .init()
+
+        filters.types = [type]
+
+        return filters
+    }
 
     static let favorites: ItemFilterCollection = .init(
         traits: [ItemTrait.isFavorite]

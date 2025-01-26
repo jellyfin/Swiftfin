@@ -53,7 +53,6 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         var libraryID: String?
         var personIDs: [String]?
         var studioIDs: [String]?
-        var includeItemTypes: [BaseItemKind] = [.movie, .series, .boxSet]
         var isRecursive: Bool? = true
 
         // TODO: this logic should be moved to a `LibraryParent` function
@@ -67,7 +66,6 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
             case .folder:
                 libraryID = id
                 isRecursive = nil
-                includeItemTypes = [.movie, .series, .boxSet, .folder, .collectionFolder]
             case .person:
                 personIDs = [id]
             case .studio:
@@ -79,7 +77,6 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
-        parameters.includeItemTypes = includeItemTypes
         parameters.isRecursive = isRecursive
         parameters.parentID = libraryID
         parameters.personIDs = personIDs
@@ -99,6 +96,7 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
             parameters.sortBy = filters.sortBy.map(\.rawValue)
             parameters.sortOrder = filters.sortOrder
             parameters.tags = filters.tags.map(\.value)
+            parameters.includeItemTypes = filters.types
             parameters.years = filters.years.compactMap { Int($0.value) }
 
             if filters.letter.first?.value == "#" {
