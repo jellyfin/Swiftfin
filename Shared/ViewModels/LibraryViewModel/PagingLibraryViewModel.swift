@@ -49,6 +49,8 @@ protocol LibraryIdentifiable: Identifiable {
 //       on refresh. Should make bidirectional/offset index start?
 //       - use startIndex/index ranges instead of pages
 //       - source of data doesn't guarantee that all items in 0 ..< startIndex exist
+// TODO: have `filterViewModel` be private to the parent and the `get_` overrides recieve the
+//       current filters as a parameter
 
 /*
  Note: if `rememberSort == true`, then will override given filters with stored sorts

@@ -11,7 +11,8 @@ import Foundation
 import Get
 import JellyfinAPI
 
-// TODO: atow, this is only really used for tvOS tabs
+// TODO: filtering on `itemTypes` should be moved to `ItemFilterCollection`,
+//       but there is additional logic based on the parent type, mainly `.folder`.
 final class ItemTypeLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
     let itemTypes: [BaseItemKind]
