@@ -1024,10 +1024,12 @@ internal enum L10n {
   internal static let releaseDate = L10n.tr("Localizable", "releaseDate", fallback: "Release Date")
   /// Remember layout
   internal static let rememberLayout = L10n.tr("Localizable", "rememberLayout", fallback: "Remember layout")
-  /// Remember the last preferences for each library separately.
-  internal static let rememberPreferencesPerLibrary = L10n.tr("Localizable", "rememberPreferencesPerLibrary", fallback: "Remember the last preferences for each library separately.")
+  /// Remember layout for individual libraries
+  internal static let rememberLayoutFooter = L10n.tr("Localizable", "rememberLayoutFooter", fallback: "Remember layout for individual libraries")
   /// Remember sorting
   internal static let rememberSorting = L10n.tr("Localizable", "rememberSorting", fallback: "Remember sorting")
+  /// Remember sorting for individual libraries
+  internal static let rememberSortingFooter = L10n.tr("Localizable", "rememberSortingFooter", fallback: "Remember sorting for individual libraries")
   /// Remixer
   internal static let remixer = L10n.tr("Localizable", "remixer", fallback: "Remixer")
   /// Remote connections
@@ -1140,6 +1142,8 @@ internal enum L10n {
   internal static let selectAll = L10n.tr("Localizable", "selectAll", fallback: "Select All")
   /// Select Image
   internal static let selectImage = L10n.tr("Localizable", "selectImage", fallback: "Select Image")
+  /// Select server
+  internal static let selectServer = L10n.tr("Localizable", "selectServer", fallback: "Select server")
   /// Series
   internal static let series = L10n.tr("Localizable", "series", fallback: "Series")
   /// Use series posters

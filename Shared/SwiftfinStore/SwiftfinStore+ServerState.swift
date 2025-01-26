@@ -78,4 +78,21 @@ extension ServerState {
         let request = Paths.getSplashscreen()
         return ImageSource(url: client.fullURL(with: request))
     }
+
+    func updateServerInfo() async throws {
+        guard let server = try? SwiftfinStore.dataStack.fetchOne(
+            From<ServerModel>()
+        ) else { return }
+
+        let publicInfo = try await getPublicSystemInfo()
+
+        try SwiftfinStore.dataStack.perform { transaction in
+            guard let newServer = transaction.edit(server) else { return }
+
+            newServer.name = publicInfo.serverName ?? newServer.name
+            newServer.id = publicInfo.id ?? newServer.id
+        }
+
+        StoredValues[.Server.publicInfo(id: server.id)] = publicInfo
+    }
 }

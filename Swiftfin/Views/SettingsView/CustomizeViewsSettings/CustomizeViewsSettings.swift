@@ -22,6 +22,27 @@ struct CustomizeViewsSettings: View {
             FilterSection()
 
             ItemSection()
+
+            HomeSection()
+
+            Section {
+                Toggle(L10n.rememberLayout, isOn: $rememberLibraryLayout)
+            } footer: {
+                Text(L10n.rememberLayoutFooter)
+            }
+
+            Section {
+                Toggle(L10n.rememberSorting, isOn: $rememberLibrarySort)
+            } footer: {
+                Text(L10n.rememberSortingFooter)
+            }
+
+            Section {
+                Toggle(L10n.seriesBackdrop, isOn: $useSeriesLandscapeBackdrop)
+            } header: {
+                // TODO: think of a better name
+                L10n.episodeLandscapePoster.text
+            }
         }
         .navigationTitle(L10n.customize)
     }

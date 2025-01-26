@@ -149,6 +149,10 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
                     try await self.uploadPhoto(image, type: type)
                     try await self.getAllImages()
+
+                    await MainActor.run {
+                        self.eventSubject.send(.updated)
+                    }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
