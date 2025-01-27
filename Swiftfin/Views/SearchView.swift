@@ -90,7 +90,7 @@ struct SearchView: View {
     private func select(_ item: BaseItemDto) {
         switch item.type {
         case .person:
-            let viewModel = ItemLibraryViewModel(parent: item)
+            let viewModel = ItemLibraryViewModel(parent: item, filters: .default)
             router.route(to: \.library, viewModel)
         case .program:
             mainRouter.route(

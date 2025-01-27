@@ -130,7 +130,7 @@ struct PagingLibraryView<Element: Poster>: View {
             let viewModel = ItemLibraryViewModel(parent: item, filters: .default)
             router.route(to: \.library, viewModel)
         case .person:
-            let viewModel = ItemLibraryViewModel(parent: item)
+            let viewModel = ItemLibraryViewModel(parent: item, filters: .default)
             router.route(to: \.library, viewModel)
         default:
             router.route(to: \.item, item)
@@ -138,7 +138,7 @@ struct PagingLibraryView<Element: Poster>: View {
     }
 
     private func select(person: BaseItemPerson) {
-        let viewModel = ItemLibraryViewModel(parent: person)
+        let viewModel = ItemLibraryViewModel(parent: person, filters: .default)
         router.route(to: \.library, viewModel)
     }
 
