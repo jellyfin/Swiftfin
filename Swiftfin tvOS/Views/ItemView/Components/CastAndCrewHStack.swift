@@ -25,7 +25,7 @@ extension ItemView {
                 items: people.filter(\.isDisplayed)
             )
             .onSelect { person in
-                let viewModel = ItemLibraryViewModel(parent: person, filters: .init(types: [.movie, .series]))
+                let viewModel = ItemLibraryViewModel(parent: person)
                 router.route(to: \.library, viewModel)
             }
         }

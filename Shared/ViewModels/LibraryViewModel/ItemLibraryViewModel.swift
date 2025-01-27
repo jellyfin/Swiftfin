@@ -115,6 +115,11 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
             if filters.sortBy.first == ItemSortBy.random {
                 parameters.excludeItemIDs = elements.compactMap(\.id)
             }
+        } else {
+            // Default item types & sort order
+            parameters.includeItemTypes = [.movie, .series, .boxSet]
+            parameters.sortOrder = [.ascending]
+            parameters.sortBy = [ItemSortBy.name.rawValue]
         }
 
         return parameters

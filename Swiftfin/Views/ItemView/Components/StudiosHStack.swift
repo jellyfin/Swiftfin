@@ -23,7 +23,7 @@ extension ItemView {
                 title: L10n.studios,
                 items: studios
             ).onSelect { studio in
-                let viewModel = ItemLibraryViewModel(parent: studio, filters: .default)
+                let viewModel = ItemLibraryViewModel(parent: studio)
                 router.route(to: \.library, viewModel)
             }
         }
