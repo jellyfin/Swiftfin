@@ -305,10 +305,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             pagingTask?.cancel()
             randomItemTask?.cancel()
 
-            filterQueryTask = Task {
-                await filterViewModel?.setQueryFilters()
-            }
-            .asAnyCancellable()
+            filterViewModel?.send(.refresh)
 
             pagingTask = Task { [weak self] in
                 guard let self else { return }
