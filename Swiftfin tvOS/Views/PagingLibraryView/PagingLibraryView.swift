@@ -247,11 +247,10 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
 
     @ViewBuilder
     private func errorView(with error: some Error) -> some View {
-        Text(error.localizedDescription)
-        /* ErrorView(error: error)
-         .onRetry {
-             viewModel.send(.refresh)
-         } */
+        ErrorView(error: error)
+            .onRetry {
+                viewModel.send(.refresh)
+            }
     }
 
     // MARK: Grid View

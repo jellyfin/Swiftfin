@@ -6,9 +6,15 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
-struct ListRowButton: View {
+struct PrimaryButton: View {
+
+    // MARK: - Defaults
+
+    @Default(.accentColor)
+    private var accentColor
 
     // MARK: - Environment
 
@@ -22,27 +28,18 @@ struct ListRowButton: View {
 
     // MARK: - Button Variables
 
-    let title: String
-    let role: ButtonRole?
-    let action: () -> Void
-
-    // MARK: - Initializer
-
-    init(_ title: String, role: ButtonRole? = nil, action: @escaping () -> Void) {
-        self.title = title
-        self.role = role
-        self.action = action
-    }
+    private let title: String
+    private var onSelect: () -> Void
 
     // MARK: - Body
 
     var body: some View {
         Button {
-            action()
+            onSelect()
         } label: {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(secondaryStyle)
+                    .fill(accentColor)
 
                 if !isEnabled {
                     Color.black.opacity(0.5)
@@ -51,32 +48,29 @@ struct ListRowButton: View {
                 }
 
                 Text(title)
-                    .foregroundStyle(primaryStyle)
-                    .font(.body.weight(.bold))
+                    .fontWeight(.bold)
+                    .foregroundStyle(isFocused ? Color.black : accentColor.overlayColor)
             }
         }
         .buttonStyle(.card)
         .frame(height: 75)
+        .frame(maxWidth: 750)
         .focused($isFocused)
     }
+}
 
-    // MARK: - Primary Style
+extension PrimaryButton {
 
-    private var primaryStyle: some ShapeStyle {
-        if role == .destructive {
-            return AnyShapeStyle(Color.red)
-        } else {
-            return AnyShapeStyle(.primary)
-        }
+    // MARK: - Initializer
+
+    init(title: String) {
+        self.init(
+            title: title,
+            onSelect: {}
+        )
     }
 
-    // MARK: - Secondary Style
-
-    private var secondaryStyle: some ShapeStyle {
-        if role == .destructive {
-            return AnyShapeStyle(Color.red.opacity(0.2))
-        } else {
-            return AnyShapeStyle(.secondary)
-        }
+    func onSelect(_ action: @escaping () -> Void) -> Self {
+        copy(modifying: \.onSelect, with: action)
     }
 }

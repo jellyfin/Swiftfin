@@ -47,7 +47,7 @@ struct QuickConnectView: View {
     }
 
     var body: some View {
-        WrappedView {
+        ZStack {
             switch viewModel.state {
             case .idle, .authenticated:
                 Color.clear
@@ -56,10 +56,13 @@ struct QuickConnectView: View {
             case let .polling(code):
                 pollingView(code: code)
             case let .error(error):
-                Text(error.localizedDescription)
-//                ErrorView(error: error)
+                ErrorView(error: error)
+                    .onRetry {
+                        viewModel.start()
+                    }
             }
         }
+        .animation(.linear(duration: 0.1), value: viewModel.state)
         .edgePadding()
         .navigationTitle(L10n.quickConnect)
         .onFirstAppear {
