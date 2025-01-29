@@ -56,7 +56,7 @@ struct ListRowButton: View {
             }
         }
         .buttonStyle(.card)
-        .frame(height: 75)
+        .frame(maxHeight: 75)
         .focused($isFocused)
     }
 
