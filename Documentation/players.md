@@ -93,7 +93,7 @@ Swiftfin offers two player options: Swiftfin (VLCKit) and Native (AVKit). The Sw
 | **VP8**     | ✅                | ❌             |
 | **VP9**     | ✅                | ❌             |
 
-- AV1 is disabled by default but can be enabled for Native (AVKit) using Custom Device Profiles. Enabling AV1 may result in a [poor experience for non-A17 SOCs and higher](https://en.wikipedia.org/wiki/Apple_A17).
+- AV1 is disabled by default but can be enabled for Native (AVKit) using Custom Device Profiles. Enabling AV1 may result in a [poor experience for SOCs prior to A17](https://en.wikipedia.org/wiki/Apple_A17).
 
 ---
 
