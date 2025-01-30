@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import OrderedCollections
@@ -42,36 +42,59 @@ extension SelectUserView {
             self.servers = servers
         }
 
+        @ViewBuilder
+        private var content: some View {
+            ZStack {
+                Color.secondarySystemFill
+
+                RelativeSystemImageView(systemName: "plus")
+                    .foregroundStyle(.secondary)
+            }
+            .clipShape(.circle)
+            .aspectRatio(1, contentMode: .fill)
+            .hoverEffect(.highlight)
+
+            Text(L10n.addUser)
+                .font(.title3)
+                .fontWeight(.semibold)
+                .foregroundStyle(isEnabled ? .primary : .secondary)
+
+            if serverSelection == .all {
+                // For layout, not to be localized
+                Text("Hidden")
+                    .font(.footnote)
+                    .hidden()
+            }
+        }
+
         var body: some View {
-            VStack {
+            if serverSelection == .all {
+                Menu {
+                    Text(L10n.selectServer)
+
+                    ForEach(servers) { server in
+                        Button {
+                            action(server)
+                        } label: {
+                            Text(server.name)
+                            Text(server.currentURL.absoluteString)
+                        }
+                    }
+                } label: {
+                    content
+                }
+                .buttonStyle(.borderless)
+                .buttonBorderShape(.circle)
+            } else {
                 Button {
                     if let selectedServer {
                         action(selectedServer)
                     }
                 } label: {
-                    ZStack {
-                        Color.secondarySystemFill
-
-                        RelativeSystemImageView(systemName: "plus")
-                            .foregroundStyle(.secondary)
-                    }
-                    .clipShape(.circle)
-                    .aspectRatio(1, contentMode: .fill)
+                    content
                 }
-                .buttonStyle(.card)
-                .buttonBorderShape(.circleBackport)
-                .disabled(!isEnabled)
-
-                Text("Add User")
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(isEnabled ? .primary : .secondary)
-
-                if serverSelection == .all {
-                    Text("Hidden")
-                        .font(.footnote)
-                        .hidden()
-                }
+                .buttonStyle(.borderless)
+                .buttonBorderShape(.circle)
             }
         }
     }

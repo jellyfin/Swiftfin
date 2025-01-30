@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import CoreStore
@@ -15,7 +15,6 @@ import JellyfinAPI
 import UIKit
 
 // TODO: should probably break out into a `Settings` and `AppSettings` view models
-//       - don't need delete user profile image from app settings
 //       - could clean up all settings view models
 
 final class SettingsViewModel: ViewModel {
@@ -59,25 +58,6 @@ final class SettingsViewModel: ViewModel {
             servers = try getServers()
         } catch {
             logger.critical("Could not retrieve servers")
-        }
-    }
-
-    func deleteCurrentUserProfileImage() {
-        Task {
-            let request = Paths.deleteUserImage(
-                userID: userSession.user.id,
-                imageType: "Primary"
-            )
-            let _ = try await userSession.client.send(request)
-
-            let currentUserRequest = Paths.getCurrentUser
-            let response = try await userSession.client.send(currentUserRequest)
-
-            await MainActor.run {
-                userSession.user.data = response.value
-
-                Notifications[.didChangeUserProfileImage].post()
-            }
         }
     }
 

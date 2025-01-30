@@ -3,10 +3,11 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import Algorithms
+import CryptoKit
 import Foundation
 import SwiftUI
 
@@ -32,6 +33,14 @@ extension String {
 
     func appending(_ element: String.Element) -> String {
         self + String(element)
+    }
+
+    func appending(_ element: @autoclosure () -> String, if condition: Bool) -> String {
+        if condition {
+            return self + element()
+        } else {
+            return self
+        }
     }
 
     func prepending(_ element: String) -> String {
@@ -115,6 +124,23 @@ extension String {
         }
 
         return s
+    }
+
+    var sha1: String? {
+        guard let input = data(using: .utf8) else { return nil }
+        return Insecure.SHA1.hash(data: input)
+            .reduce(into: "") { partialResult, byte in
+                partialResult += String(format: "%02x", byte)
+            }
+    }
+
+    var base64: String? {
+        guard let input = data(using: .utf8) else { return nil }
+        return input.base64EncodedString()
+    }
+
+    var url: URL? {
+        URL(string: self)
     }
 
     // TODO: remove after iOS 15 support removed

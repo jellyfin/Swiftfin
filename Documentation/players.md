@@ -46,7 +46,6 @@ Swiftfin offers two player options: Swiftfin (VLCKit) and Native (AVKit). The Sw
 **Notes**
 
 - Unsupported containers will require transcoding or remuxing to play.
-- AV1 is disabled by default but can be enabled for Native (AVKit) using Custom Device Profiles.
 
 ---
 
@@ -86,13 +85,15 @@ Swiftfin offers two player options: Swiftfin (VLCKit) and Native (AVKit). The Sw
 
 | Video Codec | Swiftfin (VLCKit) | Native (AVKit) |
 |-------------|-------------------|----------------|
-| **AV1**     | ✅                | ❌             |
+| **AV1**     | ✅                | 🟡 Limited support |
 | **H.264**   | ✅                | ✅             |
 | **H.265**   | ✅                | ✅             |
 | **MPEG-2**  | ✅                | ❌             |
 | **MPEG-4**  | ✅                | ✅             |
 | **VP8**     | ✅                | ❌             |
 | **VP9**     | ✅                | ❌             |
+
+- AV1 is disabled by default but can be enabled for Native (AVKit) using Custom Device Profiles. Enabling AV1 may result in a [poor experience for SOCs prior to A17](https://en.wikipedia.org/wiki/Apple_A17).
 
 ---
 

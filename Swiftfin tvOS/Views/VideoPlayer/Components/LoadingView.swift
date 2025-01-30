@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import Stinsen
@@ -22,7 +22,7 @@ extension VideoPlayer {
 
                 VStack(spacing: 10) {
 
-                    Text("Retrieving media information")
+                    Text(L10n.retrievingMediaInformation)
                         .foregroundColor(.white)
 
                     ProgressView()
@@ -30,7 +30,7 @@ extension VideoPlayer {
                     Button {
                         router.dismissCoordinator()
                     } label: {
-                        Text("Cancel")
+                        Text(L10n.cancel)
                             .foregroundColor(.red)
                             .padding()
                             .overlay {

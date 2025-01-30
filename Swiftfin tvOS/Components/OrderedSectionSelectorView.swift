@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import Factory
@@ -64,13 +64,13 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
                                         Text(L10n.enabled)
                                         Spacer()
                                         if editMode?.wrappedValue.isEditing ?? false {
-                                            Button("Done") {
+                                            Button(L10n.done) {
                                                 withAnimation {
                                                     editMode?.wrappedValue = .inactive
                                                 }
                                             }
                                         } else {
-                                            Button("Edit") {
+                                            Button(L10n.edit) {
                                                 withAnimation {
                                                     editMode?.wrappedValue = .active
                                                 }

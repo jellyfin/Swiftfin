@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -51,7 +51,7 @@ struct AppSettingsView: View {
 //                        )
 //                    }
 //
-//                    ChevronButton("Logs")
+//                    ChevronButton(L10n.logs)
 //                        .onSelect {
 //                            router.route(to: \.log)
 //                        }
@@ -68,7 +68,7 @@ struct AppSettingsView: View {
 //                    Button {
 //                        removeAllServersSelected = true
 //                    } label: {
-//                        Text("Remove All Servers")
+//                        Text(L10n.removeAllServers)
 //                    }
 //                }
 //            }
@@ -79,9 +79,9 @@ struct AppSettingsView: View {
 ////                    viewModel.resetUserSettings()
 //                }
 //            } message: {
-//                Text("Reset all settings back to defaults.")
+//                Text(L10n.resetAllSettings)
 //            }
-//            .alert("Remove All Servers", isPresented: $removeAllServersSelected) {
+//            .alert(L10n.removeAllServers, isPresented: $removeAllServersSelected) {
 //                Button(L10n.reset, role: .destructive) {
 ////                    viewModel.removeAllServers()
 //                }

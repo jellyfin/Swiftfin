@@ -3,12 +3,15 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
 import JellyfinAPI
 import SwiftUI
+
+private let landscapeMaxWidth: CGFloat = 110
+private let portraitMaxWidth: CGFloat = 60
 
 extension PagingLibraryView {
 
@@ -21,9 +24,9 @@ extension PagingLibraryView {
         private func imageView(from element: Element) -> ImageView {
             switch posterType {
             case .landscape:
-                ImageView(element.landscapeImageSources(maxWidth: 110))
+                ImageView(element.landscapeImageSources(maxWidth: landscapeMaxWidth))
             case .portrait:
-                ImageView(element.portraitImageSources(maxWidth: 60))
+                ImageView(element.portraitImageSources(maxWidth: portraitMaxWidth))
             }
         }
 
@@ -96,7 +99,7 @@ extension PagingLibraryView {
                     }
             }
             .posterStyle(posterType)
-            .frame(width: posterType == .landscape ? 110 : 60)
+            .frame(width: posterType == .landscape ? landscapeMaxWidth : portraitMaxWidth)
             .posterShadow()
             .padding(.vertical, 8)
         }

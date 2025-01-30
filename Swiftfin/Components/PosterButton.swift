@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -13,9 +13,13 @@ import SwiftUI
 // TODO: expose `ImageView.image` modifier for image aspect fill/fit
 // TODO: allow `content` to trigger `onSelect`?
 //       - not in button label to avoid context menu visual oddities
-// TODO: get width/height for images from layout size?
 // TODO: why don't shadows work with failure image views?
 //       - due to `Color`?
+
+/// Retrieving images by exact pixel dimensions is a bit
+/// intense for normal usage and eases cache usage and modifications.
+private let landscapeMaxWidth: CGFloat = 200
+private let portraitMaxWidth: CGFloat = 200
 
 struct PosterButton<Item: Poster>: View {
 
@@ -29,9 +33,9 @@ struct PosterButton<Item: Poster>: View {
     private func imageView(from item: Item) -> ImageView {
         switch type {
         case .landscape:
-            ImageView(item.landscapeImageSources(maxWidth: 500))
+            ImageView(item.landscapeImageSources(maxWidth: landscapeMaxWidth))
         case .portrait:
-            ImageView(item.portraitImageSources(maxWidth: 200))
+            ImageView(item.portraitImageSources(maxWidth: portraitMaxWidth))
         }
     }
 

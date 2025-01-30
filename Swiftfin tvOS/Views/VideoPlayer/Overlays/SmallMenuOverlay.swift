@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -20,11 +20,11 @@ extension VideoPlayer {
             var displayTitle: String {
                 switch self {
                 case .audio:
-                    return "Audio"
+                    return L10n.audio
                 case .playbackSpeed:
-                    return "Playback Speed"
+                    return L10n.playbackSpeed
                 case .subtitles:
-                    return "Subtitles"
+                    return L10n.subtitles
                 }
             }
         }

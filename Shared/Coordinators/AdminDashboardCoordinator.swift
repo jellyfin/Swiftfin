@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import JellyfinAPI
@@ -34,9 +34,9 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     // MARK: - Route: Server Tasks
 
     @Route(.push)
-    var editServerTask = makeEditServerTask
-    @Route(.push)
     var tasks = makeTasks
+    @Route(.push)
+    var editServerTask = makeEditServerTask
     @Route(.modal)
     var addServerTaskTrigger = makeAddServerTaskTrigger
 
@@ -52,6 +52,11 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     @Route(.push)
     var userDetails = makeUserDetails
     @Route(.modal)
+    var addServerUser = makeAddServerUser
+
+    // MARK: - Route: User Policy
+
+    @Route(.modal)
     var userDeviceAccess = makeUserDeviceAccess
     @Route(.modal)
     var userMediaAccess = makeUserMediaAccess
@@ -63,8 +68,16 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     var userParentalRatings = makeUserParentalRatings
     @Route(.modal)
     var resetUserPassword = makeResetUserPassword
+    @Route(.push)
+    var userEditAccessSchedules = makeUserEditAccessSchedules
     @Route(.modal)
-    var addServerUser = makeAddServerUser
+    var userAddAccessSchedule = makeUserAddAccessSchedule
+    @Route(.push)
+    var userEditAccessTags = makeUserEditAccessTags
+    @Route(.modal)
+    var userAddAccessTag = makeUserAddAccessTag
+    @Route(.modal)
+    var userPhotoPicker = makeUserPhotoPicker
 
     // MARK: - Route: API Keys
 
@@ -132,11 +145,17 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
         ServerUserDetailsView(user: user)
     }
 
+    func makeUserPhotoPicker(viewModel: UserProfileImageViewModel) -> NavigationViewCoordinator<UserProfileImageCoordinator> {
+        NavigationViewCoordinator(UserProfileImageCoordinator(viewModel: viewModel))
+    }
+
     func makeAddServerUser() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             AddServerUserView()
         }
     }
+
+    // MARK: - Views: User Policy
 
     func makeUserDeviceAccess(viewModel: ServerUserAdminViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
@@ -159,6 +178,28 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     func makeUserPermissions(viewModel: ServerUserAdminViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             ServerUserPermissionsView(viewModel: viewModel)
+        }
+    }
+
+    @ViewBuilder
+    func makeUserEditAccessSchedules(viewModel: ServerUserAdminViewModel) -> some View {
+        EditAccessScheduleView(viewModel: viewModel)
+    }
+
+    @ViewBuilder
+    func makeUserEditAccessTags(viewModel: ServerUserAdminViewModel) -> some View {
+        EditServerUserAccessTagsView(viewModel: viewModel)
+    }
+
+    func makeUserAddAccessTag(viewModel: ServerUserAdminViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            AddServerUserAccessTagsView(viewModel: viewModel)
+        }
+    }
+
+    func makeUserAddAccessSchedule(viewModel: ServerUserAdminViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            AddAccessScheduleView(viewModel: viewModel)
         }
     }
 

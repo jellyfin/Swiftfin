@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -28,6 +28,8 @@ extension SelectUserView {
         private let action: () -> Void
         private let onDelete: () -> Void
 
+        // MARK: - Initializer
+
         init(
             user: UserState,
             server: ServerState,
@@ -42,83 +44,71 @@ extension SelectUserView {
             self.onDelete = onDelete
         }
 
+        // MARK: - Label Foreground Style
+
         private var labelForegroundStyle: some ShapeStyle {
             guard isEditing else { return .primary }
 
             return isSelected ? .primary : .secondary
         }
 
-        @ViewBuilder
-        private var personView: some View {
-            ZStack {
-                Color.secondarySystemFill
+        // MARK: - User Portrait
 
-                RelativeSystemImageView(systemName: "person.fill", ratio: 0.5)
-                    .foregroundStyle(.secondary)
+        private var userPortrait: some View {
+            UserProfileImage(
+                userID: user.id,
+                source: user.profileImageSource(
+                    client: server.client,
+                    maxWidth: 120
+                ),
+                pipeline: .Swiftfin.local
+            )
+            .overlay {
+                if isEditing {
+                    ZStack(alignment: .bottom) {
+                        Color.black
+                            .opacity(isSelected ? 0 : 0.5)
+
+                        if isSelected {
+                            Image(systemName: "checkmark.circle.fill")
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 75, height: 75)
+                                .symbolRenderingMode(.palette)
+                                .foregroundStyle(accentColor.overlayColor, accentColor)
+                        }
+                    }
+                }
             }
-            .clipShape(.circle)
-            .aspectRatio(1, contentMode: .fill)
         }
+
+        // MARK: - Body
 
         var body: some View {
             VStack {
                 Button {
                     action()
                 } label: {
-                    VStack(alignment: .center) {
-                        ZStack {
-                            Color.clear
+                    userPortrait
+                        .hoverEffect(.highlight)
 
-                            ImageView(user.profileImageSource(client: server.client, maxWidth: 120))
-                                .image { image in
-                                    image
-                                        .posterBorder(ratio: 1 / 2, of: \.width)
-                                }
-                                .placeholder { _ in
-                                    personView
-                                }
-                                .failure {
-                                    personView
-                                }
-                        }
-                        .aspectRatio(1, contentMode: .fill)
+                    Text(user.username)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(labelForegroundStyle)
+                        .lineLimit(1)
+
+                    if showServer {
+                        Text(server.name)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
                     }
                 }
-                .buttonStyle(.card)
-                .buttonBorderShape(.circleBackport)
-                //            .contextMenu {
-                //                Button("Delete", role: .destructive) {
-                //                    onDelete()
-                //                }
-                //            }
-
-                Text(user.username)
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(labelForegroundStyle)
-                    .lineLimit(1)
-
-                if showServer {
-                    Text(server.name)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            .overlay {
-                if isEditing {
-                    ZStack(alignment: .bottomTrailing) {
-                        Color.black
-                            .opacity(isSelected ? 0 : 0.5)
-                            .clipShape(.circle)
-
-                        if isSelected {
-                            Image(systemName: "checkmark.circle.fill")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 40, height: 40, alignment: .bottomTrailing)
-                                .symbolRenderingMode(.palette)
-                                .foregroundStyle(accentColor.overlayColor, accentColor)
-                        }
+                .buttonStyle(.borderless)
+                .buttonBorderShape(.circle)
+                .contextMenu {
+                    Button(L10n.delete, role: .destructive) {
+                        onDelete()
                     }
                 }
             }

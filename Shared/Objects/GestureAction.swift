@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -41,7 +41,7 @@ enum MultiTapAction: String, GestureAction {
         case .none:
             return L10n.none
         case .jump:
-            return "Jump"
+            return L10n.jump
         }
     }
 }
@@ -58,11 +58,11 @@ enum DoubleTouchAction: String, GestureAction {
         case .none:
             return L10n.none
         case .aspectFill:
-            return "Aspect Fill"
+            return L10n.aspectFill
         case .gestureLock:
             return "Gesture Lock"
         case .pausePlay:
-            return "Pause/Play"
+            return L10n.playAndPause
         }
     }
 }
@@ -83,17 +83,17 @@ enum PanAction: String, GestureAction {
         case .none:
             return L10n.none
         case .audioffset:
-            return "Audio Offset"
+            return L10n.audioOffset
         case .brightness:
             return "Brightness"
         case .playbackSpeed:
-            return "Playback Speed"
+            return L10n.playbackSpeed
         case .scrub:
             return "Scrub"
         case .slowScrub:
             return "Slow Scrub"
         case .subtitleOffset:
-            return "Subtitle Offset"
+            return L10n.subtitleOffset
         case .volume:
             return "Volume"
         }
@@ -110,7 +110,7 @@ enum PinchAction: String, GestureAction {
         case .none:
             return L10n.none
         case .aspectFill:
-            return "Aspect Fill"
+            return L10n.aspectFill
         }
     }
 }
@@ -125,7 +125,7 @@ enum SwipeAction: String, GestureAction {
         case .none:
             return L10n.none
         case .jump:
-            return "Jump"
+            return L10n.jump
         }
     }
 }

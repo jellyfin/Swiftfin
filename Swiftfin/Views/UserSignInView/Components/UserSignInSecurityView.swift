@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -43,7 +43,7 @@ extension UserSignInView {
             List {
 
                 Section {
-                    CaseIterablePicker("Security", selection: $updateSignInPolicy)
+                    CaseIterablePicker(L10n.security, selection: $updateSignInPolicy)
                 } footer: {
                     // TODO: descriptions of each section
 
@@ -59,7 +59,7 @@ extension UserSignInView {
                                 Text(UserAccessPolicy.requireDeviceAuthentication.displayTitle)
                                     .fontWeight(.semibold)
 
-                                Text("Require device authentication when signing in to the user.")
+                                Text(L10n.requireDeviceAuthDescription)
                             }
                             .padding(.bottom, 15)
 
@@ -67,7 +67,7 @@ extension UserSignInView {
                                 Text(UserAccessPolicy.requirePin.displayTitle)
                                     .fontWeight(.semibold)
 
-                                Text("Require a local pin when signing in to the user. This pin is unrecoverable.")
+                                Text(L10n.requirePinDescription)
                             }
                             .padding(.bottom, 15)
 
@@ -75,7 +75,7 @@ extension UserSignInView {
                                 Text(UserAccessPolicy.none.displayTitle)
                                     .fontWeight(.semibold)
 
-                                Text("Save the user to this device without any local authentication.")
+                                Text(L10n.saveUserWithoutAuthDescription)
                             }
                         }
                         .frame(width: max(10, listSize.width - 50))
@@ -84,16 +84,16 @@ extension UserSignInView {
 
                 if accessPolicy == .requirePin {
                     Section {
-                        TextField("Hint", text: $updatePinHint)
+                        TextField(L10n.hint, text: $updatePinHint)
                     } header: {
-                        Text("Hint")
+                        Text(L10n.hint)
                     } footer: {
-                        Text("Set a hint when prompting for the pin.")
+                        Text(L10n.setPinHintDescription)
                     }
                 }
             }
             .animation(.linear, value: accessPolicy)
-            .navigationTitle("Security")
+            .navigationTitle(L10n.security)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.popLast()

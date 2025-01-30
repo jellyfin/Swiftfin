@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -59,7 +59,7 @@ extension PagingLibraryView {
                     }
                 }
 
-                Section("Layout") {
+                Section(L10n.layout) {
                     Button {
                         viewType = .grid
                     } label: {
@@ -87,9 +87,9 @@ extension PagingLibraryView {
             } label: {
                 switch viewType {
                 case .grid:
-                    Label("Layout", systemImage: "square.grid.2x2.fill")
+                    Label(L10n.layout, systemImage: "square.grid.2x2.fill")
                 case .list:
-                    Label("Layout", systemImage: "square.fill.text.grid.1x2")
+                    Label(L10n.layout, systemImage: "square.fill.text.grid.1x2")
                 }
             }
         }

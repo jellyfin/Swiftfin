@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -56,9 +56,9 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         var includeItemTypes: [BaseItemKind] = [.movie, .series, .boxSet]
         var isRecursive: Bool? = true
 
-        // TODO: determine `includeItemTypes` better
-        //       - look at parent collection type if necessary
-        //       - condense supported values
+        // TODO: this logic should be moved to a `LibraryParent` function
+        //       that transforms a `GetItemsByUserIDParameters` struct, instead
+        //       of having to do this case-by-case.
 
         if let libraryType = parent?.libraryType, let id = parent?.id {
             switch libraryType {

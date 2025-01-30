@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import CoreStore
@@ -77,5 +77,22 @@ extension ServerState {
     func splashScreenImageSource() -> ImageSource {
         let request = Paths.getSplashscreen()
         return ImageSource(url: client.fullURL(with: request))
+    }
+
+    func updateServerInfo() async throws {
+        guard let server = try? SwiftfinStore.dataStack.fetchOne(
+            From<ServerModel>()
+        ) else { return }
+
+        let publicInfo = try await getPublicSystemInfo()
+
+        try SwiftfinStore.dataStack.perform { transaction in
+            guard let newServer = transaction.edit(server) else { return }
+
+            newServer.name = publicInfo.serverName ?? newServer.name
+            newServer.id = publicInfo.id ?? newServer.id
+        }
+
+        StoredValues[.Server.publicInfo(id: server.id)] = publicInfo
     }
 }

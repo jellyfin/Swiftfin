@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -45,21 +45,21 @@ extension SelectUserView {
         var body: some View {
             Menu {
                 Section {
-                    Button("Add Server", systemImage: "plus") {
+                    Button(L10n.addServer, systemImage: "plus") {
                         router.route(to: \.connectToServer)
                     }
 
                     if let selectedServer {
-                        Button("Edit Server", systemImage: "server.rack") {
+                        Button(L10n.editServer, systemImage: "server.rack") {
                             router.route(to: \.editServer, selectedServer)
                         }
                     }
                 }
 
-                Picker("Servers", selection: _serverSelection) {
+                Picker(L10n.servers, selection: _serverSelection) {
 
                     if viewModel.servers.keys.count > 1 {
-                        Label("All Servers", systemImage: "person.2.fill")
+                        Label(L10n.allServers, systemImage: "person.2.fill")
                             .tag(SelectUserServerSelection.all)
                     }
 
@@ -83,7 +83,7 @@ extension SelectUserView {
                     HStack {
                         switch serverSelection {
                         case .all:
-                            Label("All Servers", systemImage: "person.2.fill")
+                            Label(L10n.allServers, systemImage: "person.2.fill")
                         case let .server(id):
                             if let server = viewModel.servers.keys.first(where: { $0.id == id }) {
                                 Label(server.name, systemImage: "server.rack")

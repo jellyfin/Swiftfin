@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -33,11 +33,8 @@ struct SettingsView: View {
             .contentView {
                 Section(L10n.jellyfin) {
 
-                    Button {} label: {
-                        TextPairView(
-                            leading: L10n.user,
-                            trailing: viewModel.userSession.user.username
-                        )
+                    UserProfileRow(user: viewModel.userSession.user.data) {
+                        router.route(to: \.userProfile, viewModel)
                     }
 
                     ChevronButton(

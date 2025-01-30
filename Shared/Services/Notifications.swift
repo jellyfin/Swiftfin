@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -124,12 +124,15 @@ extension Notifications.Key {
 
     // MARK: - Media Items
 
+    // TODO: come up with a cleaner, more defined way for item update notifications
+
     /// - Payload: The new item with updated metadata.
     static var itemMetadataDidChange: Key<BaseItemDto> {
         Key("itemMetadataDidChange")
     }
 
-    static var itemShouldRefresh: Key<(itemID: String, parentID: String?)> {
+    /// - Payload: The ID of the item that should refresh
+    static var itemShouldRefreshMetadata: Key<String> {
         Key("itemShouldRefresh")
     }
 
@@ -150,8 +153,9 @@ extension Notifications.Key {
 
     // MARK: - User
 
-    static var didChangeUserProfileImage: Key<Void> {
-        Key("didChangeUserProfileImage")
+    /// - Payload: The ID of the user whose Profile Image changed.
+    static var didChangeUserProfile: Key<String> {
+        Key("didChangeUserProfile")
     }
 
     static var didAddServerUser: Key<UserDto> {

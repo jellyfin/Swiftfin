@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
 import Stinsen
@@ -11,30 +11,37 @@ import SwiftUI
 
 final class UserProfileImageCoordinator: NavigationCoordinatable {
 
+    // MARK: - Navigation Stack
+
     let stack = Stinsen.NavigationStack(initial: \UserProfileImageCoordinator.start)
 
     @Root
     var start = makeStart
 
+    // MARK: - Routes
+
     @Route(.push)
     var cropImage = makeCropImage
 
+    // MARK: - Observed Object
+
+    @ObservedObject
+    var viewModel: UserProfileImageViewModel
+
+    // MARK: - Initializer
+
+    init(viewModel: UserProfileImageViewModel) {
+        self.viewModel = viewModel
+    }
+
+    // MARK: - Views
+
     func makeCropImage(image: UIImage) -> some View {
-        #if os(iOS)
-        UserProfileImagePicker.SquareImageCropView(
-            image: image
-        )
-        #else
-        AssertionFailureView("not implemented")
-        #endif
+        UserProfileImageCropView(viewModel: viewModel, image: image)
     }
 
     @ViewBuilder
     func makeStart() -> some View {
-        #if os(iOS)
-        UserProfileImagePicker()
-        #else
-        AssertionFailureView("not implemented")
-        #endif
+        UserProfileImagePickerView()
     }
 }
