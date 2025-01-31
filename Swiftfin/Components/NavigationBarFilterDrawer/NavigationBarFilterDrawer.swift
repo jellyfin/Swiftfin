@@ -41,8 +41,7 @@ struct NavigationBarFilterDrawer: View {
                     }
                     .environment(
                         \.isSelected,
-                        viewModel.currentFilters[keyPath: type.collectionAnyKeyPath] != ItemFilterCollection
-                            .default[keyPath: type.collectionAnyKeyPath]
+                        viewModel.modifiedFilters.contains(type)
                     )
                 }
             }

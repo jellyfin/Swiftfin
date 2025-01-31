@@ -43,8 +43,7 @@ struct FilterView: View {
             }
             .environment(
                 \.isEnabled,
-                viewModel.currentFilters[keyPath: type.collectionAnyKeyPath] != ItemFilterCollection
-                    .default[keyPath: type.collectionAnyKeyPath]
+                viewModel.modifiedFilters.isNotEmpty
             )
         }
     }

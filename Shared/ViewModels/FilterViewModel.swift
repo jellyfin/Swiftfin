@@ -43,7 +43,7 @@ final class FilterViewModel: ViewModel, Stateful {
 
     /// Tracks modified filters as a tuple of value and modification state
     @Published
-    var modifiedFilters: [(ItemFilterType, Bool)]
+    var modifiedFilters: Set<ItemFilterType>
 
     /// All filters available
     @Published
@@ -79,14 +79,16 @@ final class FilterViewModel: ViewModel, Stateful {
 
         let defaultFilters: ItemFilterCollection = .default
 
-        var modifiedFiltersList: [(ItemFilterType, Bool)] = []
+        var modifiedFiltersSet: Set<ItemFilterType> = []
 
         for type in ItemFilterType.allCases {
             let isModified = currentFilters[keyPath: type.collectionAnyKeyPath] != defaultFilters[keyPath: type.collectionAnyKeyPath]
-            modifiedFiltersList.append((type, isModified))
+            if isModified {
+                modifiedFiltersSet.insert(type)
+            }
         }
 
-        self.modifiedFilters = modifiedFiltersList
+        self.modifiedFilters = modifiedFiltersSet
 
         super.init()
     }
@@ -103,14 +105,16 @@ final class FilterViewModel: ViewModel, Stateful {
 
         let defaultFilters: ItemFilterCollection = .default
 
-        var modifiedFiltersList: [(ItemFilterType, Bool)] = []
+        var modifiedFiltersSet: Set<ItemFilterType> = []
 
         for type in ItemFilterType.allCases {
             let isModified = currentFilters[keyPath: type.collectionAnyKeyPath] != defaultFilters[keyPath: type.collectionAnyKeyPath]
-            modifiedFiltersList.append((type, isModified))
+            if isModified {
+                modifiedFiltersSet.insert(type)
+            }
         }
 
-        self.modifiedFilters = modifiedFiltersList
+        self.modifiedFilters = modifiedFiltersSet
 
         super.init()
     }
@@ -158,18 +162,7 @@ final class FilterViewModel: ViewModel, Stateful {
                     toggleModifiedState(for: type)
                 } else {
                     self.currentFilters = .default
-
-                    let defaultFilters: ItemFilterCollection = .default
-
-                    var modifiedFiltersList: [(ItemFilterType, Bool)] = []
-
-                    for type in ItemFilterType.allCases {
-                        let isModified = currentFilters[keyPath: type.collectionAnyKeyPath] !=
-                            defaultFilters[keyPath: type.collectionAnyKeyPath]
-                        modifiedFiltersList.append((type, isModified))
-                    }
-
-                    self.modifiedFilters = modifiedFiltersList
+                    self.modifiedFilters.removeAll()
                 }
 
                 await MainActor.run {
@@ -206,13 +199,11 @@ final class FilterViewModel: ViewModel, Stateful {
 
     /// Check if the current filter for a specific type has been modified and update `modifiedFilters`
     private func toggleModifiedState(for type: ItemFilterType) {
-        let isModified = currentFilters[keyPath: type.collectionAnyKeyPath] != ItemFilterCollection
-            .default[keyPath: type.collectionAnyKeyPath]
 
-        if let index = modifiedFilters.firstIndex(where: { $0.0 == type }) {
-            modifiedFilters[index] = (type, isModified)
+        if currentFilters[keyPath: type.collectionAnyKeyPath] != ItemFilterCollection.default[keyPath: type.collectionAnyKeyPath] {
+            self.modifiedFilters.insert(type)
         } else {
-            modifiedFilters.append((type, isModified))
+            self.modifiedFilters.remove(type)
         }
     }
 
