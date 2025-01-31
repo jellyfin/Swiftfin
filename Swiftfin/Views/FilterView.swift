@@ -43,7 +43,7 @@ struct FilterView: View {
             }
             .environment(
                 \.isEnabled,
-                !viewModel.modifiedFilters.contains(type)
+                viewModel.modifiedFilters.contains(type)
             )
         }
     }
