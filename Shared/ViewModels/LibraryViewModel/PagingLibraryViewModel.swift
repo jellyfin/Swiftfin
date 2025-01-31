@@ -119,7 +119,6 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     // tasks
 
-    private var filterQueryTask: AnyCancellable?
     private var pagingTask: AnyCancellable?
     private var randomItemTask: AnyCancellable?
 
@@ -301,7 +300,6 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             return .error(error)
         case .refresh:
 
-            filterQueryTask?.cancel()
             pagingTask?.cancel()
             randomItemTask?.cancel()
 
