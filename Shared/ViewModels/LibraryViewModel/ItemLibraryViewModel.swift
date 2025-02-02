@@ -55,7 +55,9 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
 
-        // Default sort, expected to be overridden by filters
+        // Default values, expected to be overridden
+        // by parent or filters
+        parameters.includeItemTypes = BaseItemKind.supportedCases
         parameters.sortOrder = [.ascending]
         parameters.sortBy = [ItemSortBy.name.rawValue]
 
