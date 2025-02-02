@@ -55,6 +55,10 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
 
+        // Default sort, expected to be overridden by filters
+        parameters.sortOrder = [.ascending]
+        parameters.sortBy = [ItemSortBy.name.rawValue]
+
         // Parent
         if let parent {
             parameters = parent.setParentParameters(parameters)
@@ -98,11 +102,6 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
             if filters.sortBy.first == ItemSortBy.random {
                 parameters.excludeItemIDs = elements.compactMap(\.id)
             }
-        } else {
-            // Default item types & sort order
-            parameters.includeItemTypes = BaseItemKind.supportedCases
-            parameters.sortOrder = [.ascending]
-            parameters.sortBy = [ItemSortBy.name.rawValue]
         }
 
         return parameters
