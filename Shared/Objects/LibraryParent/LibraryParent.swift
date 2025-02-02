@@ -6,17 +6,58 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
 import JellyfinAPI
 
 protocol LibraryParent: Displayable, Hashable, Identifiable<String?> {
 
-    // Only called `libraryType` because `BaseItemPerson` has
-    // a different `type` property. However, people should have
-    // different views so this can be renamed when they do, or
-    // this protocol to be removed entirely and replace just with
-    // a concrete `BaseItemDto`
-    //
-    // edit: studios also implement `LibraryParent` - reconsider above comment
+    /// The type of the library, reusing `BaseItemKind` for some
+    /// ease of provided variety like `folder` and `userView`.
     var libraryType: BaseItemKind? { get }
+
+    /// The `BaseItemKind` types that this library parent
+    /// support. Mainly used for `.folder` support.
+    ///
+    /// When using filters, this is used to determine the initial
+    /// set of supported types and then
+    var supportedItemTypes: [BaseItemKind] { get }
+
+    /// Modifies the parameters for the items request per this library parent.
+    func setParentParameters(_ parameters: Paths.GetItemsByUserIDParameters) -> Paths.GetItemsByUserIDParameters
+}
+
+extension LibraryParent {
+
+    var supportedItemTypes: [BaseItemKind] {
+        switch libraryType {
+        case .folder:
+            BaseItemKind.supportedCases
+                .appending([.folder, .collectionFolder])
+        default:
+            BaseItemKind.supportedCases
+        }
+    }
+
+    func setParentParameters(_ parameters: Paths.GetItemsByUserIDParameters) -> Paths.GetItemsByUserIDParameters {
+
+        guard let id else { return parameters }
+
+        var parameters = parameters
+        parameters.isRecursive = true
+        parameters.includeItemTypes = supportedItemTypes
+
+        switch libraryType {
+        case .collectionFolder, .userView:
+            parameters.parentID = id
+        case .folder:
+            parameters.parentID = id
+            parameters.isRecursive = nil
+        case .person:
+            parameters.personIDs = [id]
+        case .studio:
+            parameters.studioIDs = [id]
+        default: ()
+        }
+
+        return parameters
+    }
 }
