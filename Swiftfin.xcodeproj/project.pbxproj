@@ -587,6 +587,8 @@
 		E133328F2953B71000EE76AB /* DownloadTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E133328E2953B71000EE76AB /* DownloadTaskView.swift */; };
 		E13332912953B91000EE76AB /* DownloadTaskCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13332902953B91000EE76AB /* DownloadTaskCoordinator.swift */; };
 		E13332942953BAA100EE76AB /* DownloadTaskContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13332932953BAA100EE76AB /* DownloadTaskContentView.swift */; };
+		E1343DAD2D4EE4C8003145A8 /* BaseItemKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1343DAC2D4EE4C8003145A8 /* BaseItemKind.swift */; };
+		E1343DAE2D4EE4C8003145A8 /* BaseItemKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1343DAC2D4EE4C8003145A8 /* BaseItemKind.swift */; };
 		E1356E0329A730B200382563 /* SeparatorHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1356E0129A7309D00382563 /* SeparatorHStack.swift */; };
 		E1356E0429A731EB00382563 /* SeparatorHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1356E0129A7309D00382563 /* SeparatorHStack.swift */; };
 		E1366A222C826DA700A36DED /* EditCustomDeviceProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC1C8572C80332500E2879E /* EditCustomDeviceProfileCoordinator.swift */; };
@@ -1661,6 +1663,7 @@
 		E133328E2953B71000EE76AB /* DownloadTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTaskView.swift; sourceTree = "<group>"; };
 		E13332902953B91000EE76AB /* DownloadTaskCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTaskCoordinator.swift; sourceTree = "<group>"; };
 		E13332932953BAA100EE76AB /* DownloadTaskContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTaskContentView.swift; sourceTree = "<group>"; };
+		E1343DAC2D4EE4C8003145A8 /* BaseItemKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseItemKind.swift; sourceTree = "<group>"; };
 		E1356E0129A7309D00382563 /* SeparatorHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeparatorHStack.swift; sourceTree = "<group>"; };
 		E1388A40293F0AAD009721B1 /* PreferenceUIHostingSwizzling.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceUIHostingSwizzling.swift; sourceTree = "<group>"; };
 		E1388A41293F0AAD009721B1 /* PreferenceUIHostingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceUIHostingController.swift; sourceTree = "<group>"; };
@@ -4609,6 +4612,7 @@
 			children = (
 				4E49DED12CE54D6900352DCD /* ActiveSessionsPolicy.swift */,
 				E1D37F5B2B9CF02600343D2B /* BaseItemDto */,
+				E1343DAC2D4EE4C8003145A8 /* BaseItemKind.swift */,
 				E1D37F5A2B9CF01F00343D2B /* BaseItemPerson */,
 				E1002B632793CEE700E47059 /* ChapterInfo.swift */,
 				E1CB758A2C80F9EC00217C76 /* CodecProfile.swift */,
@@ -5505,6 +5509,7 @@
 				E12376B32A33DFAC001F5B44 /* ItemOverviewView.swift in Sources */,
 				E1ED7FDB2CAA4B6D00ACB6E3 /* PlayerStateInfo.swift in Sources */,
 				4E661A222CEFE61000025C99 /* ParentalRatingsViewModel.swift in Sources */,
+				E1343DAD2D4EE4C8003145A8 /* BaseItemKind.swift in Sources */,
 				E1A7F0E02BD4EC7400620DDD /* Dictionary.swift in Sources */,
 				E1CAF6602BA345830087D991 /* MediaViewModel.swift in Sources */,
 				E19D41A82BEEDC5F0082B8B2 /* UserLocalSecurityViewModel.swift in Sources */,
@@ -6263,6 +6268,7 @@
 				E1DA654C28E69B0500592A73 /* SpecialFeatureType.swift in Sources */,
 				E11CEB8B28998552003E74C7 /* View-iOS.swift in Sources */,
 				E10B1ECD2BD9AFD800A92EAF /* SwiftfinStore+V2.swift in Sources */,
+				E1343DAE2D4EE4C8003145A8 /* BaseItemKind.swift in Sources */,
 				E1401CA92938140700E8B599 /* DarkAppIcon.swift in Sources */,
 				E1A1529028FD23D600600579 /* PlaybackSettingsCoordinator.swift in Sources */,
 				4EA78B252D2B5DBD0093BFCE /* ItemImagePickerCoordinator.swift in Sources */,

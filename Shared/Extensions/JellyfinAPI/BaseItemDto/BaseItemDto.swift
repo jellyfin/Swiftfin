@@ -22,6 +22,7 @@ extension BaseItemDto: Displayable {
 }
 
 extension BaseItemDto: LibraryParent {
+
     var libraryType: BaseItemKind? {
         type
     }

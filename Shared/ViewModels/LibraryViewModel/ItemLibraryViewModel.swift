@@ -48,39 +48,17 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
     // MARK: item parameters
 
-    func itemParameters(for page: Int?) -> Paths.GetItemsByUserIDParameters {
-
-        var libraryID: String?
-        var personIDs: [String]?
-        var studioIDs: [String]?
-        var isRecursive: Bool? = true
-
-        // TODO: this logic should be moved to a `LibraryParent` function
-        //       that transforms a `GetItemsByUserIDParameters` struct, instead
-        //       of having to do this case-by-case.
-
-        if let libraryType = parent?.libraryType, let id = parent?.id {
-            switch libraryType {
-            case .collectionFolder, .userView:
-                libraryID = id
-            case .folder:
-                libraryID = id
-                isRecursive = nil
-            case .person:
-                personIDs = [id]
-            case .studio:
-                studioIDs = [id]
-            default: ()
-            }
-        }
+    private func itemParameters(for page: Int?) -> Paths.GetItemsByUserIDParameters {
 
         var parameters = Paths.GetItemsByUserIDParameters()
+
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
-        parameters.isRecursive = isRecursive
-        parameters.parentID = libraryID
-        parameters.personIDs = personIDs
-        parameters.studioIDs = studioIDs
+
+        // Parent
+        if let parent {
+            parameters = parent.setParentParameters(parameters)
+        }
 
         // Page size
         if let page {
@@ -96,8 +74,13 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
             parameters.sortBy = filters.sortBy.map(\.rawValue)
             parameters.sortOrder = filters.sortOrder
             parameters.tags = filters.tags.map(\.value)
-            parameters.includeItemTypes = filters.types
             parameters.years = filters.years.compactMap { Int($0.value) }
+
+            // Only set filtering on item types if selected, where
+            // supported values should have been set by the parent.
+            if filters.itemTypes.isNotEmpty {
+                parameters.includeItemTypes = filters.itemTypes
+            }
 
             if filters.letter.first?.value == "#" {
                 parameters.nameLessThan = "A"
@@ -117,7 +100,7 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
             }
         } else {
             // Default item types & sort order
-            parameters.includeItemTypes = [.movie, .series, .boxSet]
+            parameters.includeItemTypes = BaseItemKind.supportedCases
             parameters.sortOrder = [.ascending]
             parameters.sortBy = [ItemSortBy.name.rawValue]
         }
