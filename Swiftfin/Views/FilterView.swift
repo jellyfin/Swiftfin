@@ -56,7 +56,7 @@ extension FilterView {
         type: ItemFilterType
     ) {
 
-        let selectionBinding = Binding<[AnyItemFilter]> {
+        let selectionBinding: Binding<[AnyItemFilter]> = Binding {
             viewModel.currentFilters[keyPath: type.collectionAnyKeyPath]
         } set: { newValue in
             viewModel.send(.update(type, newValue))

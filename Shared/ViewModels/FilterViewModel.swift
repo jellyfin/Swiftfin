@@ -60,7 +60,6 @@ final class FilterViewModel: ViewModel, Stateful {
     // MARK: - Filter Variables
 
     private let parent: (any LibraryParent)?
-    private let itemTypes: [BaseItemKind]?
 
     // MARK: - Tasks
 
@@ -74,7 +73,6 @@ final class FilterViewModel: ViewModel, Stateful {
         currentFilters: ItemFilterCollection = .default
     ) {
         self.parent = parent
-        self.itemTypes = nil
         self.currentFilters = currentFilters
 
         let defaultFilters: ItemFilterCollection = .default
@@ -91,7 +89,6 @@ final class FilterViewModel: ViewModel, Stateful {
         self.modifiedFilters = modifiedFiltersSet
 
         super.init()
-    }
 
     // MARK: - Initialize from Item Type
 
@@ -117,6 +114,9 @@ final class FilterViewModel: ViewModel, Stateful {
         self.modifiedFilters = modifiedFiltersSet
 
         super.init()
+        if let parent {
+            self.allFilters.itemTypes = parent.supportedItemTypes
+        }
     }
 
     // MARK: - Respond to Action
@@ -268,10 +268,10 @@ final class FilterViewModel: ViewModel, Stateful {
 
     /// Gets the query filters from the parent
     private func getQueryFilters() async -> (genres: [ItemGenre], tags: [ItemTag], years: [ItemYear]) {
+
         let parameters = Paths.GetQueryFiltersLegacyParameters(
             userID: userSession.user.id,
-            parentID: parent?.id as? String,
-            includeItemTypes: itemTypes
+            parentID: parent?.id
         )
 
         let request = Paths.getQueryFiltersLegacy(parameters: parameters)
