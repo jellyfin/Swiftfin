@@ -90,30 +90,6 @@ final class FilterViewModel: ViewModel, Stateful {
 
         super.init()
 
-    // MARK: - Initialize from Item Type
-
-    init(
-        itemTypes: [BaseItemKind],
-        currentFilters: ItemFilterCollection = .default
-    ) {
-        self.parent = nil
-        self.itemTypes = itemTypes
-        self.currentFilters = currentFilters
-
-        let defaultFilters: ItemFilterCollection = .default
-
-        var modifiedFiltersSet: Set<ItemFilterType> = []
-
-        for type in ItemFilterType.allCases {
-            let isModified = currentFilters[keyPath: type.collectionAnyKeyPath] != defaultFilters[keyPath: type.collectionAnyKeyPath]
-            if isModified {
-                modifiedFiltersSet.insert(type)
-            }
-        }
-
-        self.modifiedFilters = modifiedFiltersSet
-
-        super.init()
         if let parent {
             self.allFilters.itemTypes = parent.supportedItemTypes
         }
