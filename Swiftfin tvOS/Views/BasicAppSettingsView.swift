@@ -53,12 +53,12 @@ struct AppSettingsView: View {
 //                                router.route(to: \.appIconSelector, viewModel)
                         }
 
-                    if !selectUserUseSplashscreen {
-                        CaseIterablePicker(
-                            L10n.appearance,
-                            selection: $appearance
-                        )
-                    }
+//                    if !selectUserUseSplashscreen {
+//                        CaseIterablePicker(
+//                            L10n.appearance,
+//                            selection: $appearance
+//                        )
+//                    }
                 }
 
                 Section {
