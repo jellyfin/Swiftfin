@@ -10,81 +10,89 @@ import Defaults
 import Stinsen
 import SwiftUI
 
-#warning("TODO: implement")
-
 struct AppSettingsView: View {
 
+    @Default(.selectUserUseSplashscreen)
+    private var selectUserUseSplashscreen
+    @Default(.selectUserAllServersSplashscreen)
+    private var selectUserAllServersSplashscreen
+
+    @Default(.appAppearance)
+    private var appearance
+
+    @EnvironmentObject
+    private var router: AppSettingsCoordinator.Router
+
+    @ObservedObject
+    var viewModel = SettingsViewModel()
+
+    @State
+    private var resetUserSettingsSelected: Bool = false
+    @State
+    private var removeAllServersSelected: Bool = false
+
     var body: some View {
-        Text("TODO")
+        SplitFormWindowView()
+            .descriptionView {
+                Image(.jellyfinBlobBlue)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: 400)
+            }
+            .contentView {
+
+                ChevronButton(L10n.about)
+                    .onSelect {
+//                            router.route(to: \.about, viewModel)
+                    }
+
+                Section(L10n.accessibility) {
+
+                    ChevronButton(L10n.appIcon)
+                        .onSelect {
+//                                router.route(to: \.appIconSelector, viewModel)
+                        }
+
+                    if !selectUserUseSplashscreen {
+                        CaseIterablePicker(
+                            L10n.appearance,
+                            selection: $appearance
+                        )
+                    }
+                }
+
+                Section {
+
+                    Toggle("Use splashscreen", isOn: $selectUserUseSplashscreen)
+
+                    if selectUserUseSplashscreen {
+                        Picker(L10n.servers, selection: $selectUserAllServersSplashscreen) {
+
+                            Section {
+                                Label(L10n.random, systemImage: "dice.fill")
+                                    .tag(SelectUserServerSelection.all)
+                            }
+
+                            ForEach(viewModel.servers) { server in
+                                Text(server.name)
+                                    .tag(SelectUserServerSelection.server(id: server.id))
+                            }
+                        }
+                    }
+                } header: {
+                    Text("Splashscreen")
+                } footer: {
+                    if selectUserUseSplashscreen {
+                        Text("When All Servers is selected, use the splashscreen from a single server or a random server")
+                    }
+                }
+
+//                    SignOutIntervalSection()
+
+                ChevronButton(L10n.logs)
+                    .onSelect {
+                        router.route(to: \.log)
+                    }
+            }
     }
 }
-
-// struct BasicAppSettingsView: View {
-//
-//    @EnvironmentObject
-//    private var router: BasicAppSettingsCoordinator.Router
-//
-//    @ObservedObject
-//    var viewModel: SettingsViewModel
-//
-//    @State
-//    private var resetUserSettingsSelected: Bool = false
-//    @State
-//    private var removeAllServersSelected: Bool = false
-//
-//    var body: some View {
-//        SplitFormWindowView()
-//            .descriptionView {
-//                Image(.jellyfinBlobBlue)
-//                    .resizable()
-//                    .aspectRatio(contentMode: .fit)
-//                    .frame(maxWidth: 400)
-//            }
-//            .contentView {
-//
-//                Section {
-//
-//                    Button {
-//                        TextPairView(
-//                            leading: L10n.version,
-//                            trailing: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
-//                        )
-//                    }
-//
-//                    ChevronButton(L10n.logs)
-//                        .onSelect {
-//                            router.route(to: \.log)
-//                        }
-//                }
-//
-//                Section {
-//
-//                    Button {
-//                        resetUserSettingsSelected = true
-//                    } label: {
-//                        L10n.resetUserSettings.text
-//                    }
-//
-//                    Button {
-//                        removeAllServersSelected = true
-//                    } label: {
-//                        Text(L10n.removeAllServers)
-//                    }
-//                }
-//            }
-//            .withDescriptionTopPadding()
-//            .navigationTitle(L10n.settings)
-//            .alert(L10n.resetUserSettings, isPresented: $resetUserSettingsSelected) {
-//                Button(L10n.reset, role: .destructive) {
-////                    viewModel.resetUserSettings()
-//                }
-//            } message: {
-//                Text(L10n.resetAllSettings)
-//            }
-//            .alert(L10n.removeAllServers, isPresented: $removeAllServersSelected) {
-//                Button(L10n.reset, role: .destructive) {
-////                    viewModel.removeAllServers()
-//                }
-//            }
-//    }
-// }
