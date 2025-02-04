@@ -41,10 +41,10 @@ struct AppSettingsView: View {
             }
             .contentView {
 
-                ChevronButton(L10n.about)
-                    .onSelect {
-//                            router.route(to: \.about, viewModel)
-                    }
+                TextPairView(
+                    leading: L10n.version,
+                    trailing: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
+                )
 
                 Section(L10n.accessibility) {
 
