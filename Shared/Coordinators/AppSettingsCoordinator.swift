@@ -17,18 +17,14 @@ final class AppSettingsCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
 
+    @Route(.modal)
+    var log = makeLog
+
     #if os(iOS)
     @Route(.push)
     var about = makeAbout
     @Route(.push)
     var appIconSelector = makeAppIconSelector
-    @Route(.push)
-    var log = makeLog
-    #endif
-
-    #if os(tvOS)
-    @Route(.modal)
-    var log = makeLog
     #endif
 
     init() {}
