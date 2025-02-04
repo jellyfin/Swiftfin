@@ -48,10 +48,11 @@ struct AppSettingsView: View {
 
                 Section(L10n.accessibility) {
 
-                    ChevronButton(L10n.appIcon)
-                        .onSelect {
+                    // TODO: supposedly supported but not working
+//                    ChevronButton(L10n.appIcon)
+//                        .onSelect {
 //                                router.route(to: \.appIconSelector, viewModel)
-                        }
+//                        }
 
 //                    if !selectUserUseSplashscreen {
 //                        CaseIterablePicker(
