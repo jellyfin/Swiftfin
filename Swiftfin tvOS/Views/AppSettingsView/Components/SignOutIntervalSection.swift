@@ -25,18 +25,18 @@ extension AppSettingsView {
 
         var body: some View {
             Section {
-                Toggle("Sign out on close", isOn: $signOutOnClose)
+                Toggle(L10n.signoutClose, isOn: $signOutOnClose)
             } footer: {
-                Text("Signs out the last user when Swiftfin has been force closed")
+                Text(L10n.signoutCloseFooter)
             }
 
             // TODO: need to consider date picker options to re-enable
 //            Section {
-//                Toggle("Sign out on background", isOn: $signOutOnBackground)
+//                Toggle(L10n.signoutBackground, isOn: $signOutOnBackground)
 //
 //                if signOutOnBackground {
 //                    HStack {
-//                        Text("Duration")
+//                        Text(L10n.duration)
 //
 //                        Spacer()
 //
@@ -63,7 +63,7 @@ extension AppSettingsView {
 //                }
 //            } footer: {
 //                Text(
-//                    "Signs out the last user when Swiftfin has been in the background without media playback after some time"
+//                    L10n.signoutBackgroundFooter
 //                )
 //            }
 //            .animation(.linear(duration: 0.15), value: isEditingBackgroundSignOutInterval)
