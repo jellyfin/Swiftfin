@@ -89,7 +89,7 @@ struct AppSettingsView: View {
                     }
                 }
 
-//                    SignOutIntervalSection()
+                SignOutIntervalSection()
 
                 ChevronButton(L10n.logs)
                     .onSelect {
