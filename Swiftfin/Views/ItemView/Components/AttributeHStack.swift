@@ -17,6 +17,33 @@ extension ItemView {
 
         var body: some View {
             HStack {
+                if let criticRating = viewModel.item.criticRating {
+                    HStack(spacing: 2) {
+                        Group {
+                            if criticRating >= 60 {
+                                Image(.tomatoFresh)
+                                    .symbolRenderingMode(.hierarchical)
+                            } else {
+                                Image(.tomatoRotten)
+                            }
+                        }
+                        .font(.caption2)
+
+                        Text("\(criticRating, specifier: "%.0f")")
+                    }
+                    .asAttributeStyle(.outline)
+                }
+
+                if let communityRating = viewModel.item.communityRating {
+                    HStack(spacing: 2) {
+                        Image(systemName: "star.fill")
+                            .font(.caption2)
+
+                        Text("\(communityRating, specifier: "%.1f")")
+                    }
+                    .asAttributeStyle(.outline)
+                }
+
                 if let officialRating = viewModel.item.officialRating {
                     Text(officialRating)
                         .asAttributeStyle(.outline)
