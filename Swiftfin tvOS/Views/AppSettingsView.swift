@@ -54,6 +54,7 @@ struct AppSettingsView: View {
 //                                router.route(to: \.appIconSelector, viewModel)
 //                        }
 
+                    // Disabled until tvOS can alter app appearance
 //                    if !selectUserUseSplashscreen {
 //                        CaseIterablePicker(
 //                            L10n.appearance,
