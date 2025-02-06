@@ -102,7 +102,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     private func select(item: BaseItemDto) {
         switch item.type {
         case .collectionFolder, .folder:
-            let viewModel = ItemLibraryViewModel(parent: item)
+            let viewModel = ItemLibraryViewModel(parent: item, filters: .default)
             router.route(to: \.library, viewModel)
         case .person:
             let viewModel = ItemLibraryViewModel(parent: item)
