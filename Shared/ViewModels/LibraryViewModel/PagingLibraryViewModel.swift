@@ -173,68 +173,19 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         self.pageSize = pageSize
         self.parent = parent
 
-        if let filters {
-            var filters = filters
-
+        if var filters {
             if let id = parent?.id, Defaults[.Customization.Library.rememberSort] {
                 // TODO: see `StoredValues.User.libraryFilters` for TODO
                 //       on remembering other filters
 
                 let storedFilters = StoredValues[.User.libraryFilters(parentID: id)]
 
-                filters = filters
-                    .mutating(\.sortBy, with: storedFilters.sortBy)
-                    .mutating(\.sortOrder, with: storedFilters.sortOrder)
+                filters.sortBy = storedFilters.sortBy
+                filters.sortOrder = storedFilters.sortOrder
             }
 
             self.filterViewModel = .init(
                 parent: parent,
-                currentFilters: filters
-            )
-        } else {
-            self.filterViewModel = nil
-        }
-
-        super.init()
-
-        Notifications[.didDeleteItem]
-            .publisher
-            .sink { id in
-                self.elements.remove(id: id.hashValue)
-            }
-            .store(in: &cancellables)
-
-        if let filterViewModel {
-            filterViewModel.$currentFilters
-                .dropFirst()
-                .debounce(for: 1, scheduler: RunLoop.main)
-                .removeDuplicates()
-                .sink { [weak self] _ in
-                    guard let self else { return }
-
-                    Task { @MainActor in
-                        self.send(.refresh)
-                    }
-                }
-                .store(in: &cancellables)
-        }
-    }
-
-    // paging item type
-    init(
-        itemTypes: [BaseItemKind],
-        filters: ItemFilterCollection? = nil,
-        pageSize: Int = DefaultPageSize
-    ) {
-        self.elements = IdentifiedArray([], id: \.unwrappedIDHashOrZero, uniquingIDsWith: { x, _ in x })
-        self.isStatic = false
-        self.pageSize = pageSize
-
-        self.parent = nil
-
-        if let filters {
-            self.filterViewModel = .init(
-                itemTypes: itemTypes,
                 currentFilters: filters
             )
         } else {

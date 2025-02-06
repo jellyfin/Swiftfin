@@ -72,7 +72,7 @@ extension FilterView {
         type: ItemFilterType
     ) {
 
-        let selectionBinding = Binding {
+        let selectionBinding: Binding<[AnyItemFilter]> = Binding {
             viewModel.currentFilters[keyPath: type.collectionAnyKeyPath]
         } set: { newValue in
             switch type {
