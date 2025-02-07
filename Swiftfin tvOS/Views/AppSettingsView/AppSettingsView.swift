@@ -23,8 +23,8 @@ struct AppSettingsView: View {
     @EnvironmentObject
     private var router: AppSettingsCoordinator.Router
 
-    @ObservedObject
-    var viewModel = SettingsViewModel()
+    @StateObject
+    private var viewModel = SettingsViewModel()
 
     @State
     private var resetUserSettingsSelected: Bool = false
@@ -46,40 +46,40 @@ struct AppSettingsView: View {
                     trailing: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
                 )
 
-                Section(L10n.accessibility) {
-
-                    // TODO: supposedly supported but not working
-//                    ChevronButton(L10n.appIcon)
-//                        .onSelect {
-//                                router.route(to: \.appIconSelector, viewModel)
-//                        }
-
-                    // Disabled until tvOS can alter app appearance
-//                    if !selectUserUseSplashscreen {
-//                        CaseIterablePicker(
-//                            L10n.appearance,
-//                            selection: $appearance
-//                        )
-//                    }
-                }
-
                 Section {
 
                     Toggle(L10n.useSplashscreen, isOn: $selectUserUseSplashscreen)
 
                     if selectUserUseSplashscreen {
-                        Picker(L10n.servers, selection: $selectUserAllServersSplashscreen) {
+                        Menu {
+                            Picker(L10n.servers, selection: $selectUserAllServersSplashscreen) {
 
-                            Section {
                                 Label(L10n.random, systemImage: "dice.fill")
                                     .tag(SelectUserServerSelection.all)
-                            }
 
-                            ForEach(viewModel.servers) { server in
-                                Text(server.name)
-                                    .tag(SelectUserServerSelection.server(id: server.id))
+                                ForEach(viewModel.servers) { server in
+                                    Text(server.name)
+                                        .tag(SelectUserServerSelection.server(id: server.id))
+                                }
+                            }
+                        } label: {
+                            HStack {
+                                Text(L10n.servers)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                                if selectUserAllServersSplashscreen == .all {
+                                    Label(L10n.random, systemImage: "dice.fill")
+                                } else if let server = viewModel.servers.first(
+                                    where: { server in
+                                        selectUserAllServersSplashscreen == .server(id: server.id)
+                                    }
+                                ) {
+                                    Text(server.name)
+                                }
                             }
                         }
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(.zero)
                     }
                 } header: {
                     Text(L10n.splashscreen)
