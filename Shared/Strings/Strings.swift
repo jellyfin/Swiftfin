@@ -516,6 +516,8 @@ internal enum L10n {
   internal static func duplicateUserSaved(_ p1: Any) -> String {
     return L10n.tr("Localizable", "duplicateUserSaved", String(describing: p1), fallback: "%@ is already saved")
   }
+  /// Duration
+  internal static let duration = L10n.tr("Localizable", "duration", fallback: "Duration")
   /// DVD
   internal static let dvd = L10n.tr("Localizable", "dvd", fallback: "DVD")
   /// Edit
@@ -1202,6 +1204,14 @@ internal enum L10n {
   internal static func signInToServer(_ p1: UnsafePointer<CChar>) -> String {
     return L10n.tr("Localizable", "signInToServer", p1, fallback: "Sign In to %s")
   }
+  /// Sign out on background
+  internal static let signoutBackground = L10n.tr("Localizable", "signoutBackground", fallback: "Sign out on background")
+  /// Signs out the last user when Swiftfin has been in the background without media playback after some time
+  internal static let signoutBackgroundFooter = L10n.tr("Localizable", "signoutBackgroundFooter", fallback: "Signs out the last user when Swiftfin has been in the background without media playback after some time")
+  /// Sign out on close
+  internal static let signoutClose = L10n.tr("Localizable", "signoutClose", fallback: "Sign out on close")
+  /// Signs out the last user when Swiftfin has been force closed
+  internal static let signoutCloseFooter = L10n.tr("Localizable", "signoutCloseFooter", fallback: "Signs out the last user when Swiftfin has been force closed")
   /// Slider
   internal static let slider = L10n.tr("Localizable", "slider", fallback: "Slider")
   /// Slider Color
@@ -1222,6 +1232,10 @@ internal enum L10n {
   internal static let sourceCode = L10n.tr("Localizable", "sourceCode", fallback: "Source Code")
   /// Special Features
   internal static let specialFeatures = L10n.tr("Localizable", "specialFeatures", fallback: "Special Features")
+  /// Splashscreen
+  internal static let splashscreen = L10n.tr("Localizable", "splashscreen", fallback: "Splashscreen")
+  /// When All Servers is selected, use the splashscreen from a single server or a random server
+  internal static let splashscreenFooter = L10n.tr("Localizable", "splashscreenFooter", fallback: "When All Servers is selected, use the splashscreen from a single server or a random server")
   /// Sports
   internal static let sports = L10n.tr("Localizable", "sports", fallback: "Sports")
   /// Start Time
@@ -1402,6 +1416,8 @@ internal enum L10n {
   }
   /// Users
   internal static let users = L10n.tr("Localizable", "users", fallback: "Users")
+  /// Use splashscreen
+  internal static let useSplashscreen = L10n.tr("Localizable", "useSplashscreen", fallback: "Use splashscreen")
   /// Version
   internal static let version = L10n.tr("Localizable", "version", fallback: "Version")
   /// Video

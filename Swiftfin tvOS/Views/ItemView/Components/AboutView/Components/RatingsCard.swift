@@ -23,9 +23,9 @@ extension ItemView.AboutView {
                             VStack {
                                 Group {
                                     if criticRating >= 60 {
-                                        Image("tomato.fresh")
+                                        Image(.tomatoFresh)
                                     } else {
-                                        Image("tomato.fresh")
+                                        Image(.tomatoRotten)
                                     }
                                 }
                                 .symbolRenderingMode(.multicolor)
