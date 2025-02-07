@@ -394,6 +394,9 @@
 /// Community
 "community" = "Community";
 
+/// Community ratings
+"communityRatings" = "Community ratings";
+
 /// Compact
 "compact" = "Compact";
 
@@ -477,6 +480,9 @@
 
 /// Creator
 "creator" = "Creator";
+
+/// Critic ratings
+"criticRatings" = "Critic ratings";
 
 /// Critics
 "critics" = "Critics";

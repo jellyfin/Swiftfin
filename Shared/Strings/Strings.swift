@@ -280,6 +280,8 @@ internal enum L10n {
   internal static let columns = L10n.tr("Localizable", "columns", fallback: "Columns")
   /// Community
   internal static let community = L10n.tr("Localizable", "community", fallback: "Community")
+  /// Community ratings
+  internal static let communityRatings = L10n.tr("Localizable", "communityRatings", fallback: "Community ratings")
   /// Compact
   internal static let compact = L10n.tr("Localizable", "compact", fallback: "Compact")
   /// Compact Logo
@@ -338,6 +340,8 @@ internal enum L10n {
   }
   /// Creator
   internal static let creator = L10n.tr("Localizable", "creator", fallback: "Creator")
+  /// Critic ratings
+  internal static let criticRatings = L10n.tr("Localizable", "criticRatings", fallback: "Critic ratings")
   /// Critics
   internal static let critics = L10n.tr("Localizable", "critics", fallback: "Critics")
   /// Current

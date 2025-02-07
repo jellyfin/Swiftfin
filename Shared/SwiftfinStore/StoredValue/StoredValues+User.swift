@@ -172,5 +172,21 @@ extension StoredValues.Keys {
                 default: false
             )
         }
+
+        static var enableCriticRatings: Key<Bool> {
+            CurrentUserKey(
+                "enableCriticRatings",
+                domain: "enableCriticRatings",
+                default: true
+            )
+        }
+
+        static var enableCommunityRatings: Key<Bool> {
+            CurrentUserKey(
+                "enableCommunityRatings",
+                domain: "enableCommunityRatings",
+                default: true
+            )
+        }
     }
 }

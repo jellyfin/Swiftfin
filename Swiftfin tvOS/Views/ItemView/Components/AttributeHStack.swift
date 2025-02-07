@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 extension ItemView {
@@ -15,8 +16,41 @@ extension ItemView {
         @ObservedObject
         var viewModel: ItemViewModel
 
+        @StoredValue(.User.enableCriticRatings)
+        private var enableCriticRatings
+
+        @StoredValue(.User.enableCommunityRatings)
+        private var enableCommunityRatings
+
         var body: some View {
             HStack(spacing: 25) {
+
+                if let criticRating = viewModel.item.criticRating, enableCriticRatings {
+                    HStack(spacing: 2) {
+                        Group {
+                            if criticRating >= 60 {
+                                Image(.tomatoFresh)
+                                    .symbolRenderingMode(.hierarchical)
+                            } else {
+                                Image(.tomatoRotten)
+                            }
+                        }
+                        .font(.caption2)
+
+                        Text("\(criticRating, specifier: "%.0f")")
+                    }
+                    .asAttributeStyle(.outline)
+                }
+
+                if let communityRating = viewModel.item.communityRating, enableCommunityRatings {
+                    HStack(spacing: 2) {
+                        Image(systemName: "star.fill")
+                            .font(.caption2)
+
+                        Text("\(communityRating, specifier: "%.1f")")
+                    }
+                    .asAttributeStyle(.outline)
+                }
 
                 if let officialRating = viewModel.item.officialRating {
                     Text(officialRating)

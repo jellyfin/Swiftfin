@@ -17,6 +17,11 @@ extension CustomizeViewsSettings {
         @Injected(\.currentUserSession)
         private var userSession
 
+        @StoredValue(.User.enableCriticRatings)
+        private var enableCriticRatings
+        @StoredValue(.User.enableCommunityRatings)
+        private var enableCommunityRatings
+
         @StoredValue(.User.enableItemEditing)
         private var enableItemEditing
         @StoredValue(.User.enableItemDeletion)
@@ -25,12 +30,19 @@ extension CustomizeViewsSettings {
         private var enableCollectionManagement
 
         var body: some View {
+            Section(L10n.items) {
+
+                Toggle(L10n.criticRatings, isOn: $enableCriticRatings)
+
+                Toggle(L10n.communityRatings, isOn: $enableCommunityRatings)
+            }
+
             if userSession?.user.permissions.items.canEditMetadata ?? false ||
                 userSession?.user.permissions.items.canDelete ?? false ||
                 userSession?.user.permissions.items.canManageCollections ?? false
             {
+                Section(L10n.management) {
 
-                Section(L10n.items) {
                     /// Enable Refreshing Items from All Visible LIbraries
                     if userSession?.user.permissions.items.canEditMetadata ?? false {
                         Toggle(L10n.allowItemEditing, isOn: $enableItemEditing)
