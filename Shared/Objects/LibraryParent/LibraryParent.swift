@@ -50,7 +50,6 @@ extension LibraryParent {
             parameters.parentID = id
         case .folder:
             parameters.parentID = id
-            parameters.isRecursive = nil
         case .person:
             parameters.personIDs = [id]
         case .studio:

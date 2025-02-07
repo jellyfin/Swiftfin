@@ -57,6 +57,7 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
         // Default values, expected to be overridden
         // by parent or filters
+        parameters.isRecursive = true
         parameters.includeItemTypes = BaseItemKind.supportedCases
         parameters.sortOrder = [.ascending]
         parameters.sortBy = [ItemSortBy.name.rawValue]
@@ -85,7 +86,6 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
             // Only set filtering on item types if selected, where
             // supported values should have been set by the parent.
             if filters.itemTypes.isNotEmpty {
-                parameters.isRecursive = true
                 parameters.includeItemTypes = filters.itemTypes
             }
 
