@@ -52,6 +52,11 @@ struct SwiftfinApp: App {
         // UIKit
 
         UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.label]
+
+        // don't keep last user id
+        if Defaults[.signOutOnClose] {
+            Defaults[.lastSignedInUserID] = .signedOut
+        }
     }
 
     var body: some Scene {

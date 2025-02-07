@@ -28,6 +28,8 @@ struct SelectUserView: View {
 
     @Default(.selectUserServerSelection)
     private var serverSelection
+    @Default(.selectUserUseSplashscreen)
+    private var selectUserUseSplashscreen
 
     // MARK: - Environment Variable
 
@@ -286,7 +288,7 @@ struct SelectUserView: View {
         }
         .animation(.linear(duration: 0.1), value: scrollViewOffset)
         .background {
-            if let splashScreenImageSource {
+            if let splashScreenImageSource, selectUserUseSplashscreen {
                 ZStack {
                     ImageView(splashScreenImageSource)
                         .aspectRatio(contentMode: .fill)
