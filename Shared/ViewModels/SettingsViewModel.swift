@@ -26,30 +26,28 @@ final class SettingsViewModel: ViewModel {
 
     override init() {
 
-        guard let iconName = UIApplication.shared.alternateIconName else {
+        if let iconName = UIApplication.shared.alternateIconName {
+            if let appicon = PrimaryAppIcon.createCase(iconName: iconName) {
+                currentAppIcon = appicon
+            }
+
+            if let appicon = DarkAppIcon.createCase(iconName: iconName) {
+                currentAppIcon = appicon
+            }
+
+            if let appicon = InvertedDarkAppIcon.createCase(iconName: iconName) {
+                currentAppIcon = appicon
+            }
+
+            if let appicon = InvertedLightAppIcon.createCase(iconName: iconName) {
+                currentAppIcon = appicon
+            }
+
+            if let appicon = LightAppIcon.createCase(iconName: iconName) {
+                currentAppIcon = appicon
+            }
+        } else {
             currentAppIcon = PrimaryAppIcon.primary
-            super.init()
-            return
-        }
-
-        if let appicon = PrimaryAppIcon.createCase(iconName: iconName) {
-            currentAppIcon = appicon
-        }
-
-        if let appicon = DarkAppIcon.createCase(iconName: iconName) {
-            currentAppIcon = appicon
-        }
-
-        if let appicon = InvertedDarkAppIcon.createCase(iconName: iconName) {
-            currentAppIcon = appicon
-        }
-
-        if let appicon = InvertedLightAppIcon.createCase(iconName: iconName) {
-            currentAppIcon = appicon
-        }
-
-        if let appicon = LightAppIcon.createCase(iconName: iconName) {
-            currentAppIcon = appicon
         }
 
         super.init()

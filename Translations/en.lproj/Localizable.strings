@@ -727,6 +727,9 @@
 /// %@ is already saved
 "duplicateUserSaved" = "%@ is already saved";
 
+/// Duration
+"duration" = "Duration";
+
 /// DVD
 "dvd" = "DVD";
 
@@ -1717,6 +1720,18 @@
 /// Sign In to %s
 "signInToServer" = "Sign In to %s";
 
+/// Sign out on background
+"signoutBackground" = "Sign out on background";
+
+/// Signs out the last user when Swiftfin has been in the background without media playback after some time
+"signoutBackgroundFooter" = "Signs out the last user when Swiftfin has been in the background without media playback after some time";
+
+/// Sign out on close
+"signoutClose" = "Sign out on close";
+
+/// Signs out the last user when Swiftfin has been force closed
+"signoutCloseFooter" = "Signs out the last user when Swiftfin has been force closed";
+
 /// Slider
 "slider" = "Slider";
 
@@ -1746,6 +1761,12 @@
 
 /// Special Features
 "specialFeatures" = "Special Features";
+
+/// Splashscreen
+"splashscreen" = "Splashscreen";
+
+/// When All Servers is selected, use the splashscreen from a single server or a random server
+"splashscreenFooter" = "When All Servers is selected, use the splashscreen from a single server or a random server";
 
 /// Sports
 "sports" = "Sports";
@@ -2010,6 +2031,9 @@
 
 /// Users
 "users" = "Users";
+
+/// Use splashscreen
+"useSplashscreen" = "Use splashscreen";
 
 /// Version
 "version" = "Version";

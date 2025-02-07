@@ -12,6 +12,11 @@ extension SelectUserView {
 
     struct SelectUserBottomBar: View {
 
+        // MARK: - State & Environment Objects
+
+        @EnvironmentObject
+        private var router: SelectUserCoordinator.Router
+
         @Binding
         private var isEditing: Bool
 
@@ -20,6 +25,8 @@ extension SelectUserView {
 
         @ObservedObject
         private var viewModel: SelectUserViewModel
+
+        // MARK: - Variables
 
         private let areUsersSelected: Bool
         private let userCount: Int
@@ -35,13 +42,12 @@ extension SelectUserView {
                 Button(L10n.editUsers, systemImage: "person.crop.circle") {
                     isEditing.toggle()
                 }
-                // TODO: Advanced settings on tvOS?
-                //
-                // Divider()
-                //
-                // Button(L10n.advanced, systemImage: "gearshape.fill") {
-                //     router.route(to: \.advancedSettings)
-                // }
+
+                Divider()
+
+                Button(L10n.advanced, systemImage: "gearshape.fill") {
+                    router.route(to: \.advancedSettings)
+                }
             } label: {
                 Label(L10n.advanced, systemImage: "gearshape.fill")
                     .font(.body.weight(.semibold))
