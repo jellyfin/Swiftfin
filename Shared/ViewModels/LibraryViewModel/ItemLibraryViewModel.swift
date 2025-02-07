@@ -85,6 +85,7 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
             // Only set filtering on item types if selected, where
             // supported values should have been set by the parent.
             if filters.itemTypes.isNotEmpty {
+                parameters.isRecursive = true
                 parameters.includeItemTypes = filters.itemTypes
             }
 
