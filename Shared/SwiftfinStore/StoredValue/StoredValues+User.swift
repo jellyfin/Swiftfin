@@ -173,19 +173,11 @@ extension StoredValues.Keys {
             )
         }
 
-        static var enableCriticRatings: Key<Bool> {
+        static var itemViewAttributes: Key<[ItemViewAttribute]> {
             CurrentUserKey(
-                "enableCriticRatings",
-                domain: "enableCriticRatings",
-                default: true
-            )
-        }
-
-        static var enableCommunityRatings: Key<Bool> {
-            CurrentUserKey(
-                "enableCommunityRatings",
-                domain: "enableCommunityRatings",
-                default: true
+                "itemViewAttributes",
+                domain: "itemViewAttributes",
+                default: ItemViewAttribute.allCases
             )
         }
     }
