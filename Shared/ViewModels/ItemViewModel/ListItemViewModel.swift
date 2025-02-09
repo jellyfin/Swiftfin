@@ -42,7 +42,7 @@ final class ListItemViewModel: ItemViewModel {
         parameters.parentID = item.id
 
         // Hide unsupported item types
-        parameters.includeItemTypes = [.movie, .episode]
+        parameters.includeItemTypes = [.movie, .episode, .series]
 
         let request = Paths.getItemsByUserID(
             userID: userSession.user.id,
