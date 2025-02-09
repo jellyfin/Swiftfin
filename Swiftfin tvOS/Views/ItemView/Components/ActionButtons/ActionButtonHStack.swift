@@ -64,6 +64,13 @@ extension ItemView {
             }
         }
 
+        // MARK: - Select Item(s)
+
+        private var multipleVersions: Bool {
+            guard let mediaSources = viewModel.playButtonItem?.mediaSources else { return false }
+            return mediaSources.count > 1
+        }
+
         // MARK: - Initializer
 
         init(viewModel: ItemViewModel) {
@@ -75,7 +82,7 @@ extension ItemView {
 
         /// Shrink to minWidth 100 (button) / 50 (menu) and 16 spacing to get 3 buttons + menu
         var body: some View {
-            HStack(alignment: .center, spacing: 24) {
+            HStack(alignment: .center, spacing: 16) {
 
                 // MARK: - Toggle Played
 
@@ -105,8 +112,12 @@ extension ItemView {
 
                 // MARK: - Additional Menu Options
 
-                if canRefresh || canDelete {
+                if canRefresh || canDelete || multipleVersions {
                     ActionMenu {
+                        if multipleVersions {
+                            SelectVersionButton(viewModel: viewModel)
+                        }
+
                         if canRefresh {
                             RefreshMetadataButton(item: viewModel.item)
                         }
@@ -118,7 +129,7 @@ extension ItemView {
                             }
                         }
                     }
-                    .frame(width: 70)
+                    .frame(width: 50)
                 }
             }
             .frame(height: 100)
