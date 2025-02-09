@@ -8,12 +8,12 @@
 
 import SwiftUI
 
-extension CollectionItemView {
+extension ListItemView {
 
     struct ContentView: View {
 
         @ObservedObject
-        var viewModel: CollectionItemViewModel
+        var viewModel: ListItemViewModel
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
@@ -25,15 +25,19 @@ extension CollectionItemView {
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
-                if viewModel.collectionItems.isNotEmpty {
+                if viewModel.listItems.isNotEmpty {
                     PosterHStack(
                         title: L10n.items,
                         type: .portrait,
-                        items: viewModel.collectionItems
+                        items: viewModel.listItems
                     )
                     .onSelect { item in
                         router.route(to: \.item, item)
                     }
+                }
+
+                if viewModel.similarItems.isNotEmpty {
+                    ItemView.SimilarItemsHStack(items: viewModel.similarItems)
                 }
 
                 ItemView.AboutView(viewModel: viewModel)

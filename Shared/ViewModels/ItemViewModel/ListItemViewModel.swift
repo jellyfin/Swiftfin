@@ -10,24 +10,39 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-final class PlaylistItemViewModel: ItemViewModel {
+final class ListItemViewModel: ItemViewModel {
 
     @Published
-    private(set) var playlistItems: [BaseItemDto] = []
+    private(set) var listItems: [BaseItemDto] = []
 
     override func onRefresh() async throws {
-        let playlistItems = try await self.getPlaylistItems()
+        let listItems = try await self.getListItems()
 
         await MainActor.run {
-            self.playlistItems = playlistItems
+            self.listItems = listItems
+        }
+
+        let firstUnplayed = listItems.first { $0.userData?.isPlayed == false }
+
+        if firstUnplayed != nil {
+            await MainActor.run {
+                self.playButtonItem = firstUnplayed
+            }
+        } else if let first = listItems.first {
+            await MainActor.run {
+                self.playButtonItem = first
+            }
         }
     }
 
-    private func getPlaylistItems() async throws -> [BaseItemDto] {
+    private func getListItems() async throws -> [BaseItemDto] {
 
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.fields = .MinimumFields
         parameters.parentID = item.id
+
+        // Hide unsupported item types
+        parameters.includeItemTypes = [.movie, .episode]
 
         let request = Paths.getItemsByUserID(
             userID: userSession.user.id,

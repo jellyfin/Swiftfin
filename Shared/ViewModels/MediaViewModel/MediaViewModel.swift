@@ -14,7 +14,7 @@ import OrderedCollections
 final class MediaViewModel: ViewModel, Stateful {
 
     // TODO: remove once collection types become an enum
-    static let supportedCollectionTypes: [String] = ["boxsets", "folders", "movies", "tvshows", "livetv"]
+    static let supportedCollectionTypes: [String] = ["boxsets", "folders", "movies", "playlists", "tvshows", "livetv"]
 
     // MARK: Action
 
@@ -146,7 +146,7 @@ final class MediaViewModel: ViewModel, Stateful {
         parameters.limit = 3
         parameters.isRecursive = true
         parameters.parentID = parentID
-        parameters.includeItemTypes = [.movie, .series, .boxSet]
+        parameters.includeItemTypes = [.movie, .series, .boxSet, .playlist]
         parameters.filters = filters
         parameters.sortBy = [ItemSortBy.random.rawValue]
 

@@ -6,16 +6,15 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
 import SwiftUI
 
-struct iPadOSCollectionItemView: View {
+struct ListItemView: View {
 
     @ObservedObject
-    var viewModel: CollectionItemViewModel
+    var viewModel: ListItemViewModel
 
     var body: some View {
-        ItemView.iPadOSCinematicScrollView(viewModel: viewModel) {
+        ItemView.CinematicScrollView(viewModel: viewModel) {
             ContentView(viewModel: viewModel)
         }
     }

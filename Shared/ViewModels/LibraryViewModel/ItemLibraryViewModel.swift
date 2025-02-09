@@ -66,6 +66,9 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
             parameters = parent.setParentParameters(parameters)
         }
 
+        // Temp
+        parameters.isRecursive = true
+
         // Page size
         if let page {
             parameters.limit = pageSize

@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension iPadOSCollectionItemView {
+extension iPadOSListItemView {
 
     struct ContentView: View {
 
@@ -17,10 +17,25 @@ extension iPadOSCollectionItemView {
         private var router: ItemCoordinator.Router
 
         @ObservedObject
-        var viewModel: CollectionItemViewModel
+        var viewModel: ListItemViewModel
 
         var body: some View {
             VStack(alignment: .leading, spacing: 20) {
+
+                // MARK: Items
+
+                if viewModel.listItems.isNotEmpty {
+                    PosterHStack(
+                        title: L10n.items,
+                        type: .portrait,
+                        items: viewModel.listItems
+                    )
+                    .onSelect { item in
+                        router.route(to: \.item, item)
+                    }
+
+                    RowDivider()
+                }
 
                 // MARK: Genres
 
@@ -38,17 +53,12 @@ extension iPadOSCollectionItemView {
                     RowDivider()
                 }
 
-                // MARK: Items
+                // MARK: Similar
 
-                if viewModel.collectionItems.isNotEmpty {
-                    PosterHStack(
-                        title: L10n.items,
-                        type: .portrait,
-                        items: viewModel.collectionItems
-                    )
-                    .onSelect { item in
-                        router.route(to: \.item, item)
-                    }
+                if viewModel.similarItems.isNotEmpty {
+                    ItemView.SimilarItemsHStack(items: viewModel.similarItems)
+
+                    RowDivider()
                 }
 
                 ItemView.AboutView(viewModel: viewModel)
