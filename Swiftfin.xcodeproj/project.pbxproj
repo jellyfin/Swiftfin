@@ -138,6 +138,10 @@
 		4E661A322CEFE7BC00025C99 /* SeriesStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E661A302CEFE7B900025C99 /* SeriesStatus.swift */; };
 		4E699BB92CB33FC2007CBD5D /* HomeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E699BB82CB33FB5007CBD5D /* HomeSection.swift */; };
 		4E699BC02CB3477D007CBD5D /* HomeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E699BBF2CB34775007CBD5D /* HomeSection.swift */; };
+		4E6C1E7D2D591ADB003E71E1 /* PlaylistItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6C1E7C2D591AD4003E71E1 /* PlaylistItemViewModel.swift */; };
+		4E6C1E7E2D591ADB003E71E1 /* PlaylistItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6C1E7C2D591AD4003E71E1 /* PlaylistItemViewModel.swift */; };
+		4E6C1E822D591B8D003E71E1 /* PlaylistItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6C1E802D591B8D003E71E1 /* PlaylistItemView.swift */; };
+		4E6C1E832D591B8D003E71E1 /* PlaylistItemContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6C1E7F2D591B8D003E71E1 /* PlaylistItemContentView.swift */; };
 		4E6C27082C8BD0AD00FD2185 /* ServerSessionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6C27072C8BD0AD00FD2185 /* ServerSessionDetailView.swift */; };
 		4E71D6892C80910900A0174D /* EditCustomDeviceProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E71D6882C80910900A0174D /* EditCustomDeviceProfileView.swift */; };
 		4E7315742D14772700EA2A95 /* UserProfileHeroImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7315732D14770E00EA2A95 /* UserProfileHeroImage.swift */; };
@@ -1366,6 +1370,9 @@
 		4E661A302CEFE7B900025C99 /* SeriesStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesStatus.swift; sourceTree = "<group>"; };
 		4E699BB82CB33FB5007CBD5D /* HomeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSection.swift; sourceTree = "<group>"; };
 		4E699BBF2CB34775007CBD5D /* HomeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSection.swift; sourceTree = "<group>"; };
+		4E6C1E7C2D591AD4003E71E1 /* PlaylistItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistItemViewModel.swift; sourceTree = "<group>"; };
+		4E6C1E7F2D591B8D003E71E1 /* PlaylistItemContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistItemContentView.swift; sourceTree = "<group>"; };
+		4E6C1E802D591B8D003E71E1 /* PlaylistItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistItemView.swift; sourceTree = "<group>"; };
 		4E6C27072C8BD0AD00FD2185 /* ServerSessionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSessionDetailView.swift; sourceTree = "<group>"; };
 		4E71D6882C80910900A0174D /* EditCustomDeviceProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCustomDeviceProfileView.swift; sourceTree = "<group>"; };
 		4E7315732D14770E00EA2A95 /* UserProfileHeroImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileHeroImage.swift; sourceTree = "<group>"; };
@@ -2618,6 +2625,15 @@
 				4EAE340B2D42B852006FBAD3 /* LibrarySection.swift */,
 			);
 			path = Sections;
+			sourceTree = "<group>";
+		};
+		4E6C1E812D591B8D003E71E1 /* PlaylistItemView */ = {
+			isa = PBXGroup;
+			children = (
+				4E6C1E7F2D591B8D003E71E1 /* PlaylistItemContentView.swift */,
+				4E6C1E802D591B8D003E71E1 /* PlaylistItemView.swift */,
+			);
+			path = PlaylistItemView;
 			sourceTree = "<group>";
 		};
 		4E6C27062C8BD09200FD2185 /* ActiveSessionDetailView */ = {
@@ -4169,6 +4185,7 @@
 				62E632E5267D3F5B0063E547 /* EpisodeItemViewModel.swift */,
 				62E632F2267D54030063E547 /* ItemViewModel.swift */,
 				62E632E2267D3BA60063E547 /* MovieItemViewModel.swift */,
+				4E6C1E7C2D591AD4003E71E1 /* PlaylistItemViewModel.swift */,
 				E172D3AC2BAC9DF8007B4647 /* SeasonItemViewModel.swift */,
 				62E632EB267D410B0063E547 /* SeriesItemViewModel.swift */,
 			);
@@ -4949,6 +4966,7 @@
 				E1C925FF2887565C002A7A66 /* Components */,
 				E11CEB9228999D8D003E74C7 /* EpisodeItemView */,
 				E1C925FA2887565C002A7A66 /* MovieItemView */,
+				4E6C1E812D591B8D003E71E1 /* PlaylistItemView */,
 				E1C925FD2887565C002A7A66 /* ScrollViews */,
 				E1C926042887565C002A7A66 /* SeriesItemView */,
 			);
@@ -5857,6 +5875,7 @@
 				E1AEFA392BE36C4C00CFAFD8 /* SwiftfinStore+ServerState.swift in Sources */,
 				E15D4F0B2B1BD88900442DB8 /* Edge.swift in Sources */,
 				E193D53627193F8500900D82 /* LibraryCoordinator.swift in Sources */,
+				4E6C1E832D591B8D003E71E1 /* PlaylistItemContentView.swift in Sources */,
 				E18845F626DD631E00B0C5B7 /* BaseItemDto+Poster.swift in Sources */,
 				E145EB262BE055AD003BF6F3 /* ServerResponse.swift in Sources */,
 				E1B490452967E26300D3EDCE /* PersistentLogHandler.swift in Sources */,
@@ -5975,6 +5994,7 @@
 				C46DD8D32A8DC1F60046A504 /* LiveVideoPlayerCoordinator.swift in Sources */,
 				E1549661296CA2EF00C4EF88 /* SwiftfinDefaults.swift in Sources */,
 				E158C8D12A31947500C527C5 /* MediaSourceInfoView.swift in Sources */,
+				4E6C1E822D591B8D003E71E1 /* PlaylistItemView.swift in Sources */,
 				E11BDF782B8513B40045C54A /* ItemGenre.swift in Sources */,
 				4E01446C2D0292E200193038 /* Trie.swift in Sources */,
 				E14EA16A2BF7333B00DE757A /* UserProfileImageViewModel.swift in Sources */,
@@ -6165,6 +6185,7 @@
 				C46008742A97DFF2002B1C7A /* LiveLoadingOverlay.swift in Sources */,
 				4E556AB12D036F6900733377 /* UserPermissions.swift in Sources */,
 				E1575EA0293E7B1E001665B1 /* CGPoint.swift in Sources */,
+				4E6C1E7D2D591ADB003E71E1 /* PlaylistItemViewModel.swift in Sources */,
 				E1C926132887565C002A7A66 /* EpisodeSelector.swift in Sources */,
 				E12CC1CD28D135C700678D5D /* NextUpView.swift in Sources */,
 				E18E02232887492B0022598C /* ImageView.swift in Sources */,
@@ -6419,6 +6440,7 @@
 				E1BDF2F129524AB700CC0294 /* AutoPlayActionButton.swift in Sources */,
 				E145EB452BE0AD4E003BF6F3 /* Set.swift in Sources */,
 				E1BDF2F929524FDA00CC0294 /* PlayPreviousItemActionButton.swift in Sources */,
+				4E6C1E7E2D591ADB003E71E1 /* PlaylistItemViewModel.swift in Sources */,
 				C46DD8E02A8DC7790046A504 /* LiveOverlay.swift in Sources */,
 				E111D8F828D03BF900400001 /* PagingLibraryView.swift in Sources */,
 				E187F7672B8E6A1C005400FE /* EnvironmentValue+Values.swift in Sources */,

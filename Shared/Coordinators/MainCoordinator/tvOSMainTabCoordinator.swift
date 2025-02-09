@@ -17,6 +17,7 @@ final class MainTabCoordinator: TabCoordinatable {
         \MainTabCoordinator.home,
         \MainTabCoordinator.tvShows,
         \MainTabCoordinator.movies,
+        \MainTabCoordinator.playlists,
         \MainTabCoordinator.search,
         \MainTabCoordinator.media,
         \MainTabCoordinator.settings,
@@ -28,6 +29,8 @@ final class MainTabCoordinator: TabCoordinatable {
     var tvShows = makeTVShows
     @Route(tabItem: makeMoviesTab)
     var movies = makeMovies
+    @Route(tabItem: makePlaylistsTab)
+    var playlists = makePlaylists
     @Route(tabItem: makeSearchTab)
     var search = makeSearch
     @Route(tabItem: makeMediaTab)
@@ -75,6 +78,21 @@ final class MainTabCoordinator: TabCoordinatable {
         HStack {
             Image(systemName: "film")
             L10n.movies.text
+        }
+    }
+
+    func makePlaylists() -> NavigationViewCoordinator<LibraryCoordinator<BaseItemDto>> {
+        let viewModel = ItemLibraryViewModel(
+            filters: .init(itemTypes: [.playlist])
+        )
+        return NavigationViewCoordinator(LibraryCoordinator(viewModel: viewModel))
+    }
+
+    @ViewBuilder
+    func makePlaylistsTab(isActive: Bool) -> some View {
+        HStack {
+            Image(systemName: "list")
+            "L10n.playlist".text
         }
     }
 
