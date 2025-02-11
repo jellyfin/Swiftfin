@@ -6,6 +6,8 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
+import Factory
 import SwiftUI
 
 struct ServerCheckView: View {
@@ -40,6 +42,39 @@ struct ServerCheckView: View {
         }
     }
 
+    @ViewBuilder
+    private func loginInvalidatedView() -> some View {
+        VStack(spacing: 10) {
+            Image(systemName: "xmark.circle.fill")
+                .font(.system(size: 72))
+                .foregroundColor(Color.red)
+
+            Text(viewModel.userSession.server.name)
+                .fontWeight(.semibold)
+                .foregroundStyle(.secondary)
+
+            Text(
+                "\(viewModel.userSession.user.username): The login for this user has been invalidated by the server. Please try registering the user again."
+            )
+            .frame(minWidth: 50, maxWidth: 240)
+            .multilineTextAlignment(.center)
+
+            PrimaryButton(title: L10n.ok)
+                .onSelect {
+                    do {
+                        try viewModel.userSession.user.delete()
+                        Defaults[.lastSignedInUserID] = .signedOut
+                        Container.shared.currentUserSession.reset()
+                        Notifications[.didSignOut].post()
+                    } catch {
+                        print(error)
+                    }
+                }
+                .frame(maxWidth: 300)
+                .frame(height: 50)
+        }
+    }
+
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -51,6 +86,8 @@ struct ServerCheckView: View {
                 }
             case let .error(error):
                 errorView(error)
+            case .loginInvalidated:
+                loginInvalidatedView()
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
