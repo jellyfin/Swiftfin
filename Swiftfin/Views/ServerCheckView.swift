@@ -32,13 +32,6 @@ struct ServerCheckView: View {
             Text(error.localizedDescription)
                 .frame(minWidth: 50, maxWidth: 240)
                 .multilineTextAlignment(.center)
-
-            PrimaryButton(title: L10n.retry)
-                .onSelect {
-                    viewModel.send(.checkServer)
-                }
-                .frame(maxWidth: 300)
-                .frame(height: 50)
         }
     }
 
@@ -54,21 +47,23 @@ struct ServerCheckView: View {
                 .foregroundStyle(.secondary)
 
             Text(
-                "\(viewModel.userSession.user.username): The login for this user has been invalidated by the server. Please try registering the user again."
+                "\(viewModel.userSession.user.username): \(L10n.invalidatedLogin)"
             )
             .frame(minWidth: 50, maxWidth: 240)
             .multilineTextAlignment(.center)
 
-            PrimaryButton(title: L10n.ok)
+            PrimaryButton(title: L10n.retry)
                 .onSelect {
-                    do {
-                        try viewModel.userSession.user.delete()
-                        Defaults[.lastSignedInUserID] = .signedOut
-                        Container.shared.currentUserSession.reset()
-                        Notifications[.didSignOut].post()
-                    } catch {
-                        print(error)
-                    }
+                    viewModel.send(.checkServer)
+                }
+                .frame(maxWidth: 300)
+                .frame(height: 50)
+            
+            PrimaryButton(title: L10n.signIn)
+                .onSelect {
+                    // Clear accessToken
+                    let currentServer = viewModel.userSession.server
+                    router.route(to: \.userSignIn, currentServer)
                 }
                 .frame(maxWidth: 300)
                 .frame(height: 50)
