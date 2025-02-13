@@ -32,7 +32,7 @@ struct UnmaskSecureField: UIViewRepresentable {
     func makeUIView(context: Context) -> UITextField {
 
         let textField = UITextField()
-        textField.font = UIFont.preferredFont(forTextStyle: .body)
+        textField.font = context.environment.font?.uiFont ?? UIFont.preferredFont(forTextStyle: .body)
         textField.adjustsFontForContentSizeCategory = true
         textField.isSecureTextEntry = true
         textField.keyboardType = .asciiCapable
