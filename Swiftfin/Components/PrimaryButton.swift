@@ -15,6 +15,7 @@ struct PrimaryButton: View {
     private var accentColor
 
     private let title: String
+    private let role: ButtonRole?
     private var onSelect: () -> Void
 
     var body: some View {
@@ -23,14 +24,14 @@ struct PrimaryButton: View {
         } label: {
             ZStack {
                 Rectangle()
-                    .foregroundColor(accentColor)
+                    .foregroundColor(role == .destructive ? Color.red.opacity(0.2) : accentColor)
                     .frame(maxWidth: 400)
                     .frame(height: 50)
                     .cornerRadius(10)
 
                 Text(title)
                     .fontWeight(.bold)
-                    .foregroundColor(accentColor.overlayColor)
+                    .foregroundColor(role == .destructive ? Color.red : accentColor.overlayColor)
             }
         }
     }
@@ -38,9 +39,10 @@ struct PrimaryButton: View {
 
 extension PrimaryButton {
 
-    init(title: String) {
+    init(title: String, role: ButtonRole? = nil) {
         self.init(
             title: title,
+            role: role,
             onSelect: {}
         )
     }

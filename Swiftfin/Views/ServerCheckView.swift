@@ -47,7 +47,7 @@ struct ServerCheckView: View {
                 .foregroundStyle(.secondary)
 
             Text(
-                "\(viewModel.userSession.user.username):   The login for this user has been invalidated by the server. Please retry or re-add the user."
+                "401: \(L10n.invalidatedLogin)"
             )
             .frame(minWidth: 50, maxWidth: 240)
             .multilineTextAlignment(.center)
@@ -59,9 +59,11 @@ struct ServerCheckView: View {
                 .frame(maxWidth: 300)
                 .frame(height: 50)
 
-            PrimaryButton(title: L10n.back)
+            PrimaryButton(title: L10n.back, role: .destructive)
                 .onSelect {
-                    router.root(\.selectUser)
+                    Defaults[.lastSignedInUserID] = .signedOut
+                    Container.shared.currentUserSession.reset()
+                    Notifications[.didSignOut].post()
                 }
                 .frame(maxWidth: 300)
                 .frame(height: 50)
