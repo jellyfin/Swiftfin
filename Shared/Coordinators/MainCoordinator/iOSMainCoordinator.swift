@@ -41,8 +41,6 @@ final class MainCoordinator: NavigationCoordinatable {
     var settings = makeSettings
     @Route(.fullScreen)
     var videoPlayer = makeVideoPlayer
-    @Route(.modal)
-    var userSignIn = makeUserSignIn
 
     init() {
 
@@ -89,8 +87,6 @@ final class MainCoordinator: NavigationCoordinatable {
     func didSignIn() {
         logger.info("Signed in")
 
-        // TODO: Not sure how to use the stack.isInStack() API, want to have a check for the userSignIn route
-        self.popLast()
         withAnimation(.linear(duration: 0.1)) {
             let _ = root(\.serverCheck)
         }
@@ -158,9 +154,5 @@ final class MainCoordinator: NavigationCoordinatable {
 
     func makeLiveVideoPlayer(manager: LiveVideoPlayerManager) -> LiveVideoPlayerCoordinator {
         LiveVideoPlayerCoordinator(manager: manager)
-    }
-
-    func makeUserSignIn(server: ServerState) -> NavigationViewCoordinator<UserSignInCoordinator> {
-        NavigationViewCoordinator(UserSignInCoordinator(server: server))
     }
 }

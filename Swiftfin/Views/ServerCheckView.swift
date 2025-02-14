@@ -47,7 +47,7 @@ struct ServerCheckView: View {
                 .foregroundStyle(.secondary)
 
             Text(
-                "\(viewModel.userSession.user.username): \(L10n.invalidatedLogin)"
+                "\(viewModel.userSession.user.username):   The login for this user has been invalidated by the server. Please retry or re-add the user."
             )
             .frame(minWidth: 50, maxWidth: 240)
             .multilineTextAlignment(.center)
@@ -58,12 +58,10 @@ struct ServerCheckView: View {
                 }
                 .frame(maxWidth: 300)
                 .frame(height: 50)
-            
-            PrimaryButton(title: L10n.signIn)
+
+            PrimaryButton(title: L10n.back)
                 .onSelect {
-                    // Clear accessToken
-                    let currentServer = viewModel.userSession.server
-                    router.route(to: \.userSignIn, currentServer)
+                    router.root(\.selectUser)
                 }
                 .frame(maxWidth: 300)
                 .frame(height: 50)

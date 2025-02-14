@@ -7,11 +7,11 @@
 //
 
 import Combine
+import Defaults
 import Factory
 import Foundation
 import Get
 import JellyfinAPI
-import Defaults
 
 class ServerCheckViewModel: ViewModel, Stateful {
 
@@ -64,17 +64,5 @@ class ServerCheckViewModel: ViewModel, Stateful {
 
             return .connecting
         }
-    }
-    
-    func signOut() {
-        // Clear user accessToken to allow setting a new token on next sign in
-        userSession.user.accessToken = ""
-        
-        // Update states
-        Defaults[.lastSignedInUserID] = .signedOut
-        Container.shared.currentUserSession.reset()
-        
-        // Segue root to SelectUserView
-        Notifications[.didSignOut].post()
     }
 }

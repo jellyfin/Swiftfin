@@ -133,26 +133,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
 
             signInTask = Task {
                 do {
-                    let authentication = try await makeSignInRequest(username: username, password: password)
-
-                    guard let userData = authentication.user,
-                          let id = userData.id
-                    else {
-                        logger.critical("Missing user data from network call")
-                        throw JellyfinAPIError("An internal error has occurred")
-                    }
-
-                    // UserState.accessToken setter persists changes to the keychain automatically.
-                    // Need to check if UserState exists before setting new accessToken.
-                    if let existingUser = getExistingUser(userId: id) {
-                        try await handleExistingUser(user: existingUser, authentication: authentication, policy: policy)
-                    } else {
-                        try await handleNewUser(authentication: authentication, policy: policy)
-                    }
-
-                    await MainActor.run {
-                        self.state = .initial
-                    }
+                    try await signIn(username: username, password: password, policy: policy)
                 } catch is CancellationError {
                     // cancel doesn't matter
                 } catch {
@@ -180,20 +161,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
 
             signInTask = Task {
                 do {
-                    let authentication = try await server.client.signIn(quickConnectSecret: secret)
-
-                    guard let userData = authentication.user,
-                          let id = userData.id
-                    else {
-                        logger.critical("Missing user data from network call")
-                        throw JellyfinAPIError("An internal error has occurred")
-                    }
-
-                    if let existingUser = getExistingUser(userId: id) {
-                        try await handleExistingUser(user: existingUser, authentication: authentication, policy: policy)
-                    } else {
-                        try await handleNewUser(authentication: authentication, policy: policy)
-                    }
+                    try await signIn(secret: secret, policy: policy)
                 } catch is CancellationError {
                     // cancel doesn't matter
                 } catch {
@@ -223,6 +191,65 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
             .trimmingCharacters(in: .objectReplacement)
 
         return try await server.client.signIn(username: username, password: password)
+    }
+
+    private func signIn(secret: String, policy: UserAccessPolicy) async throws {
+        let authentication = try await server.client.signIn(quickConnectSecret: secret)
+
+        guard let userData = authentication.user,
+              let id = userData.id
+        else {
+            logger.critical("Missing user data from network call")
+            throw JellyfinAPIError("An internal error has occurred")
+        }
+
+        if let existingUser = getExistingUser(userId: id) {
+            try await handleExistingUser(user: existingUser, authentication: authentication, policy: policy)
+        } else {
+            try await handleNewUser(authentication: authentication, policy: policy)
+        }
+    }
+
+    private func signIn(username: String, password: String, policy: UserAccessPolicy) async throws {
+        let authentication = try await makeSignInRequest(username: username, password: password)
+
+        guard let userData = authentication.user,
+              let id = userData.id
+        else {
+            logger.critical("Missing user data from network call")
+            throw JellyfinAPIError("An internal error has occurred")
+        }
+
+        // UserState.accessToken setter persists changes to the keychain automatically.
+        // Need to check if UserState exists before setting new accessToken.
+        if let existingUser = getExistingUser(userId: id) {
+            try await handleExistingUser(user: existingUser, authentication: authentication, policy: policy)
+        } else {
+            try await handleNewUser(authentication: authentication, policy: policy)
+        }
+
+        await MainActor.run {
+            self.state = .initial
+        }
+    }
+
+    private func handleExistingUser(user: UserState, authentication: AuthenticationResult, policy: UserAccessPolicy) async throws {
+        try updateUserState(user: user, authentication: authentication, policy: policy)
+
+        await MainActor.run {
+            self.state = .initial
+            self.eventSubject.send(.signedIn(user))
+        }
+    }
+
+    private func handleNewUser(authentication: AuthenticationResult, policy: UserAccessPolicy) async throws {
+        let newUser = try createUserState(authentication: authentication, policy: policy)
+        try await save(user: newUser)
+
+        await MainActor.run {
+            self.state = .initial
+            self.eventSubject.send(.signedIn(newUser))
+        }
     }
 
     private func createUserState(authentication: AuthenticationResult, policy: UserAccessPolicy) throws -> UserState {
@@ -278,35 +305,6 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         }
 
         return existingUser.accessToken == ""
-    }
-
-    private func handleExistingUser(user: UserState, authentication: AuthenticationResult, policy: UserAccessPolicy) async throws {
-        // If accessToken was previously cleared, update UserState
-        if shouldReauthenticate(userId: user.id) {
-            try updateUserState(user: user, authentication: authentication, policy: policy)
-
-            await MainActor.run {
-                self.state = .initial
-                self.eventSubject.send(.signedIn(user))
-            }
-        } else {
-            // TODO: Address duplicate user case
-            await MainActor.run {
-                // user has same id, but new access token
-                self.state = .initial
-                self.eventSubject.send(.duplicateUser(user))
-            }
-        }
-    }
-
-    private func handleNewUser(authentication: AuthenticationResult, policy: UserAccessPolicy) async throws {
-        let newUser = try createUserState(authentication: authentication, policy: policy)
-        try await save(user: newUser)
-
-        await MainActor.run {
-            self.state = .initial
-            self.eventSubject.send(.signedIn(newUser))
-        }
     }
 
     @MainActor
