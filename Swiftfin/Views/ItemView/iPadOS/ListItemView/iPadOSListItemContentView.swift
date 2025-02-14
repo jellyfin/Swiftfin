@@ -25,16 +25,34 @@ extension iPadOSListItemView {
                 // MARK: Items
 
                 if viewModel.listItems.isNotEmpty {
-                    PosterHStack(
-                        title: L10n.items,
-                        type: .portrait,
-                        items: viewModel.listItems
-                    )
-                    .onSelect { item in
-                        router.route(to: \.item, item)
-                    }
 
-                    RowDivider()
+                    ForEach(BaseItemKind.allCases, id: \.self) { sectionType in
+                        let sectionItems = viewModel.listItems.filter { $0.type == sectionType }
+
+                        if sectionItems.isNotEmpty {
+                            PosterHStack(
+                                title: sectionType.displayTitle,
+                                type: .portrait,
+                                items: sectionItems
+                            )
+                            .trailing {
+                                SeeAllButton()
+                                    .onSelect {
+                                        let viewModel = ItemLibraryViewModel(
+                                            title: viewModel.item.displayTitle,
+                                            id: viewModel.item.id,
+                                            sectionItems
+                                        )
+                                        router.route(to: \.library, viewModel)
+                                    }
+                            }
+                            .onSelect { item in
+                                router.route(to: \.item, item)
+                            }
+
+                            RowDivider()
+                        }
+                    }
                 }
 
                 // MARK: Genres

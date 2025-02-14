@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 extension ListItemView {
@@ -26,13 +27,22 @@ extension ListItemView {
                     .padding(.bottom, 50)
 
                 if viewModel.listItems.isNotEmpty {
-                    PosterHStack(
-                        title: L10n.items,
-                        type: .portrait,
-                        items: viewModel.listItems
-                    )
-                    .onSelect { item in
-                        router.route(to: \.item, item)
+
+                    ForEach(BaseItemKind.allCases, id: \.self) { sectionType in
+                        let sectionItems = viewModel.listItems.filter { $0.type == sectionType }
+
+                        if sectionItems.isNotEmpty {
+                            PosterHStack(
+                                title: sectionType.displayTitle,
+                                type: .portrait,
+                                items: sectionItems
+                            )
+                            .onSelect { item in
+                                router.route(to: \.item, item)
+                            }
+
+                            RowDivider()
+                        }
                     }
                 }
 
