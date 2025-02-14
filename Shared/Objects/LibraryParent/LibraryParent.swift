@@ -42,7 +42,6 @@ extension LibraryParent {
         guard let id else { return parameters }
 
         var parameters = parameters
-        parameters.isRecursive = true
         parameters.includeItemTypes = supportedItemTypes
 
         switch libraryType {
