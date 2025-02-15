@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: on focus, make the cancel and destructive style
+//       match style like in an `alert`
 struct ListRowButton: View {
 
     // MARK: - Environment
@@ -37,18 +39,11 @@ struct ListRowButton: View {
     // MARK: - Body
 
     var body: some View {
-        Button {
-            action()
-        } label: {
+        Button(action: action) {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(secondaryStyle)
-
-                if !isEnabled {
-                    Color.black.opacity(0.5)
-                } else if isFocused {
-                    Color.white.opacity(0.25)
-                }
+                    .brightness(isFocused ? 0.25 : 0)
 
                 Text(title)
                     .foregroundStyle(primaryStyle)
@@ -63,20 +58,20 @@ struct ListRowButton: View {
     // MARK: - Primary Style
 
     private var primaryStyle: some ShapeStyle {
-        if role == .destructive {
+        if role == .destructive || role == .cancel {
             return AnyShapeStyle(Color.red)
         } else {
-            return AnyShapeStyle(.primary)
+            return AnyShapeStyle(HierarchicalShapeStyle.primary)
         }
     }
 
     // MARK: - Secondary Style
 
     private var secondaryStyle: some ShapeStyle {
-        if role == .destructive {
+        if role == .destructive || role == .cancel {
             return AnyShapeStyle(Color.red.opacity(0.2))
         } else {
-            return AnyShapeStyle(.secondary)
+            return AnyShapeStyle(HierarchicalShapeStyle.secondary)
         }
     }
 }

@@ -244,7 +244,6 @@
 		4EED874B2CBF824B002354D2 /* DevicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EED87482CBF824B002354D2 /* DevicesView.swift */; };
 		4EED87512CBF84AD002354D2 /* DevicesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EED874F2CBF84AD002354D2 /* DevicesViewModel.swift */; };
 		4EEEEA242CFA8E1500527D79 /* NavigationBarMenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEEEA232CFA8E1500527D79 /* NavigationBarMenuButton.swift */; };
-		4EF0DCA72D4965D9005A5194 /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF0DCA62D4965D9005A5194 /* PrimaryButton.swift */; };
 		4EF0DCA92D49751B005A5194 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF0DCA82D49751B005A5194 /* ErrorView.swift */; };
 		4EF18B262CB9934C00343666 /* LibraryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF18B252CB9934700343666 /* LibraryRow.swift */; };
 		4EF18B282CB9936D00343666 /* ListColumnsPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF18B272CB9936400343666 /* ListColumnsPickerView.swift */; };
@@ -1457,7 +1456,6 @@
 		4EED87482CBF824B002354D2 /* DevicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesView.swift; sourceTree = "<group>"; };
 		4EED874F2CBF84AD002354D2 /* DevicesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesViewModel.swift; sourceTree = "<group>"; };
 		4EEEEA232CFA8E1500527D79 /* NavigationBarMenuButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBarMenuButton.swift; sourceTree = "<group>"; };
-		4EF0DCA62D4965D9005A5194 /* PrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButton.swift; sourceTree = "<group>"; };
 		4EF0DCA82D49751B005A5194 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		4EF18B252CB9934700343666 /* LibraryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryRow.swift; sourceTree = "<group>"; };
 		4EF18B272CB9936400343666 /* ListColumnsPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListColumnsPickerView.swift; sourceTree = "<group>"; };
@@ -3371,7 +3369,6 @@
 				4E2AC4D32C6C4C1200DD600D /* OrderedSectionSelectorView.swift */,
 				E1C92617288756BD002A7A66 /* PosterButton.swift */,
 				E1C92619288756BD002A7A66 /* PosterHStack.swift */,
-				4EF0DCA62D4965D9005A5194 /* PrimaryButton.swift */,
 				E12CC1C428D12D9B00678D5D /* SeeAllPosterButton.swift */,
 				E1E9EFE928C6B96400CC1F8B /* ServerButton.swift */,
 				E17885A3278105170094FBCF /* SFSymbolButton.swift */,
@@ -6119,7 +6116,6 @@
 				E1A1528B28FD22F600600579 /* TextPairView.swift in Sources */,
 				E11042762B8013DF00821020 /* Stateful.swift in Sources */,
 				091B5A8D268315D400D78B61 /* ServerDiscovery.swift in Sources */,
-				4EF0DCA72D4965D9005A5194 /* PrimaryButton.swift in Sources */,
 				E1575E66293E77B5001665B1 /* Poster.swift in Sources */,
 				E18E021F2887492B0022598C /* SystemImageContentView.swift in Sources */,
 				E19D41B42BF2C0020082B8B2 /* StoredValues+Temp.swift in Sources */,

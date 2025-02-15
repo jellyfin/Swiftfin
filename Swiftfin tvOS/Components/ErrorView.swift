@@ -6,10 +6,14 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 // TODO: should use environment refresh instead?
 struct ErrorView<ErrorType: Error>: View {
+
+    @Default(.accentColor)
+    private var accentColor
 
     private let error: ErrorType
     private var onRetry: (() -> Void)?
@@ -25,8 +29,9 @@ struct ErrorView<ErrorType: Error>: View {
                 .multilineTextAlignment(.center)
 
             if let onRetry {
-                PrimaryButton(title: L10n.retry)
-                    .onSelect(onRetry)
+                ListRowButton(L10n.retry, action: onRetry)
+                    .foregroundStyle(accentColor.overlayColor, accentColor)
+                    .frame(maxWidth: 750)
             }
         }
     }
