@@ -17,8 +17,8 @@ final class FilterViewModel: ViewModel, Stateful {
     // MARK: - Action
 
     enum Action: Equatable {
-        case refresh
         case cancel
+        case getQueryFilters
         case reset(ItemFilterType? = nil)
         case update(ItemFilterType, [AnyItemFilter])
     }
@@ -26,28 +26,23 @@ final class FilterViewModel: ViewModel, Stateful {
     // MARK: - Background State
 
     enum BackgroundState: Hashable {
-        case refreshing
-        case updating
+        case gettingQueryFilters
+        case failedToGetQueryFilters
     }
 
     // MARK: - State
 
     enum State: Hashable {
-        case initial
         case content
     }
 
     /// Tracks the current filters
     @Published
-    var currentFilters: ItemFilterCollection
-
-    /// Tracks modified filters as a tuple of value and modification state
-    @Published
-    var modifiedFilters: Set<ItemFilterType>
+    private(set) var currentFilters: ItemFilterCollection
 
     /// All filters available
     @Published
-    var allFilters: ItemFilterCollection = .all
+    private(set) var allFilters: ItemFilterCollection = .all
 
     /// ViewModel Background State(s)
     @Published
@@ -55,16 +50,11 @@ final class FilterViewModel: ViewModel, Stateful {
 
     /// ViewModel State
     @Published
-    var state: State = .initial
-
-    // MARK: - Filter Variables
+    var state: State = .content
 
     private let parent: (any LibraryParent)?
 
-    // MARK: - Tasks
-
-    private var backgroundTask: AnyCancellable?
-    private var task: AnyCancellable?
+    private var queryFiltersTask: AnyCancellable?
 
     // MARK: - Initialize from Library Parent
 
@@ -75,19 +65,6 @@ final class FilterViewModel: ViewModel, Stateful {
         self.parent = parent
         self.currentFilters = currentFilters
 
-        let defaultFilters: ItemFilterCollection = .default
-
-        var modifiedFiltersSet: Set<ItemFilterType> = []
-
-        for type in ItemFilterType.allCases {
-            let isModified = currentFilters[keyPath: type.collectionAnyKeyPath] != defaultFilters[keyPath: type.collectionAnyKeyPath]
-            if isModified {
-                modifiedFiltersSet.insert(type)
-            }
-        }
-
-        self.modifiedFilters = modifiedFiltersSet
-
         super.init()
 
         if let parent {
@@ -95,92 +72,51 @@ final class FilterViewModel: ViewModel, Stateful {
         }
     }
 
+    func isFilterSelected(type: ItemFilterType) -> Bool {
+        currentFilters[keyPath: type.collectionAnyKeyPath] != ItemFilterCollection.default[keyPath: type.collectionAnyKeyPath]
+    }
+
     // MARK: - Respond to Action
 
     func respond(to action: Action) -> State {
         switch action {
         case .cancel:
-            backgroundTask?.cancel()
-            task?.cancel()
+            queryFiltersTask?.cancel()
+            backgroundStates.removeAll()
 
-            return state
-
-        case .refresh:
-            backgroundTask?.cancel()
-            backgroundTask = Task {
+        case .getQueryFilters:
+            queryFiltersTask?.cancel()
+            queryFiltersTask = Task {
                 do {
                     await MainActor.run {
-                        self.state = .initial
-                        _ = self.backgroundStates.append(.refreshing)
+                        _ = self.backgroundStates.append(.gettingQueryFilters)
                     }
 
-                    await self.setQueryFilters()
-
+                    try await setQueryFilters()
+                } catch {
                     await MainActor.run {
-                        self.state = .content
-                        _ = self.backgroundStates.remove(.refreshing)
+                        _ = self.backgroundStates.append(.failedToGetQueryFilters)
                     }
+                }
+
+                await MainActor.run {
+                    _ = self.backgroundStates.remove(.gettingQueryFilters)
                 }
             }
             .asAnyCancellable()
-
-            return state
 
         case let .reset(type):
-            task?.cancel()
-            task = Task {
-                await MainActor.run {
-                    _ = backgroundStates.append(.updating)
-                }
-
-                if let type {
-                    resetCurrentFilters(for: type)
-                    toggleModifiedState(for: type)
-                } else {
-                    self.currentFilters = .default
-                    self.modifiedFilters.removeAll()
-                }
-
-                await MainActor.run {
-                    _ = backgroundStates.remove(.updating)
-                }
+            if let type {
+                resetCurrentFilters(for: type)
+            } else {
+                currentFilters = .default
             }
-            .asAnyCancellable()
-
-            return state
 
         case let .update(type, filters):
-            task?.cancel()
-            task = Task {
-                do {
-                    await MainActor.run {
-                        _ = backgroundStates.append(.updating)
-                    }
-
-                    updateCurrentFilters(for: type, with: filters)
-                    toggleModifiedState(for: type)
-
-                    await MainActor.run {
-                        _ = backgroundStates.remove(.updating)
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return state
+            updateCurrentFilters(for: type, with: filters)
         }
-    }
 
-    // MARK: - Toggle Modified Filter State
-
-    /// Check if the current filter for a specific type has been modified and update `modifiedFilters`
-    private func toggleModifiedState(for type: ItemFilterType) {
-
-        if currentFilters[keyPath: type.collectionAnyKeyPath] != ItemFilterCollection.default[keyPath: type.collectionAnyKeyPath] {
-            self.modifiedFilters.insert(type)
-        } else {
-            self.modifiedFilters.remove(type)
-        }
+        return state
     }
 
     // MARK: - Reset Current Filters
@@ -230,8 +166,8 @@ final class FilterViewModel: ViewModel, Stateful {
     // MARK: - Set Query Filters
 
     /// Sets the query filters from the parent
-    private func setQueryFilters() async {
-        let queryFilters = await getQueryFilters()
+    private func setQueryFilters() async throws {
+        let queryFilters = try await getQueryFilters()
 
         await MainActor.run {
             allFilters.genres = queryFilters.genres
@@ -243,7 +179,7 @@ final class FilterViewModel: ViewModel, Stateful {
     // MARK: - Get Query Filters
 
     /// Gets the query filters from the parent
-    private func getQueryFilters() async -> (genres: [ItemGenre], tags: [ItemTag], years: [ItemYear]) {
+    private func getQueryFilters() async throws -> (genres: [ItemGenre], tags: [ItemTag], years: [ItemYear]) {
 
         let parameters = Paths.GetQueryFiltersLegacyParameters(
             userID: userSession.user.id,
@@ -251,7 +187,7 @@ final class FilterViewModel: ViewModel, Stateful {
         )
 
         let request = Paths.getQueryFiltersLegacy(parameters: parameters)
-        guard let response = try? await userSession.client.send(request) else { return ([], [], []) }
+        let response = try await userSession.client.send(request)
 
         let genres: [ItemGenre] = (response.value.genres ?? [])
             .map(ItemGenre.init)

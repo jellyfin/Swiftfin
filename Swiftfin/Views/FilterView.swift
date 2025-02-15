@@ -9,8 +9,6 @@
 import JellyfinAPI
 import SwiftUI
 
-// Note: Keep all of the ItemFilterCollection/ItemFilter/AnyItemFilter KeyPath wackiness in this file
-
 // TODO: multiple filter types?
 //       - for sort order and sort by combined
 struct FilterView: View {
@@ -43,7 +41,7 @@ struct FilterView: View {
             }
             .environment(
                 \.isEnabled,
-                viewModel.modifiedFilters.contains(type)
+                viewModel.isFilterSelected(type: type)
             )
         }
     }

@@ -41,7 +41,7 @@ struct NavigationBarFilterDrawer: View {
                     }
                     .environment(
                         \.isSelected,
-                        viewModel.modifiedFilters.contains(type)
+                        viewModel.isFilterSelected(type: type)
                     )
                 }
             }

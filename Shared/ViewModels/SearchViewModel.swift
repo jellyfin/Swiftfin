@@ -117,7 +117,7 @@ final class SearchViewModel: ViewModel, Stateful {
                 return .searching
             }
         case .getSuggestions:
-            filterViewModel.send(.refresh)
+            filterViewModel.send(.getQueryFilters)
 
             Task {
                 let suggestions = try await getSuggestions()
