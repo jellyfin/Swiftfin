@@ -6,10 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Foundation
-
-enum ItemViewAttribute: String, CaseIterable, Codable, Displayable, Defaults.Serializable {
+enum ItemViewAttribute: String, CaseIterable, Displayable, Storable {
 
     case ratingCritics
     case ratingCommunity

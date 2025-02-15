@@ -22,7 +22,7 @@ extension ItemView {
                     getAttribute(attribute)
                 }
             }
-            .foregroundColor(Color(UIColor.darkGray))
+            .foregroundStyle(Color(UIColor.darkGray))
         }
 
         @ViewBuilder
