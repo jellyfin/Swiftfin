@@ -8,11 +8,27 @@
 
 import SwiftUI
 
+// TODO: on focus, make the cancel and destructive style
+//       match style like in an `alert`
 struct ListRowButton: View {
+
+    // MARK: - Environment
+
+    @Environment(\.isEnabled)
+    private var isEnabled
+
+    // MARK: - Focus State
+
+    @FocusState
+    private var isFocused: Bool
+
+    // MARK: - Button Variables
 
     let title: String
     let role: ButtonRole?
     let action: () -> Void
+
+    // MARK: - Initializer
 
     init(_ title: String, role: ButtonRole? = nil, action: @escaping () -> Void) {
         self.title = title
@@ -20,13 +36,14 @@ struct ListRowButton: View {
         self.action = action
     }
 
+    // MARK: - Body
+
     var body: some View {
-        Button {
-            action()
-        } label: {
+        Button(action: action) {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(secondaryStyle)
+                    .brightness(isFocused ? 0.25 : 0)
 
                 Text(title)
                     .foregroundStyle(primaryStyle)
@@ -34,24 +51,27 @@ struct ListRowButton: View {
             }
         }
         .buttonStyle(.card)
-        .frame(height: 75)
+        .frame(maxHeight: 75)
+        .focused($isFocused)
     }
 
-    // MARK: - Styles
+    // MARK: - Primary Style
 
     private var primaryStyle: some ShapeStyle {
-        if role == .destructive {
+        if role == .destructive || role == .cancel {
             return AnyShapeStyle(Color.red)
         } else {
-            return AnyShapeStyle(.primary)
+            return AnyShapeStyle(HierarchicalShapeStyle.primary)
         }
     }
 
+    // MARK: - Secondary Style
+
     private var secondaryStyle: some ShapeStyle {
-        if role == .destructive {
+        if role == .destructive || role == .cancel {
             return AnyShapeStyle(Color.red.opacity(0.2))
         } else {
-            return AnyShapeStyle(.secondary)
+            return AnyShapeStyle(HierarchicalShapeStyle.secondary)
         }
     }
 }

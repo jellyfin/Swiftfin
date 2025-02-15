@@ -244,6 +244,7 @@
 		4EED874B2CBF824B002354D2 /* DevicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EED87482CBF824B002354D2 /* DevicesView.swift */; };
 		4EED87512CBF84AD002354D2 /* DevicesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EED874F2CBF84AD002354D2 /* DevicesViewModel.swift */; };
 		4EEEEA242CFA8E1500527D79 /* NavigationBarMenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEEEA232CFA8E1500527D79 /* NavigationBarMenuButton.swift */; };
+		4EF0DCA92D49751B005A5194 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF0DCA82D49751B005A5194 /* ErrorView.swift */; };
 		4EF18B262CB9934C00343666 /* LibraryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF18B252CB9934700343666 /* LibraryRow.swift */; };
 		4EF18B282CB9936D00343666 /* ListColumnsPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF18B272CB9936400343666 /* ListColumnsPickerView.swift */; };
 		4EF18B2A2CB993BD00343666 /* ListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF18B292CB993AD00343666 /* ListRow.swift */; };
@@ -1015,7 +1016,6 @@
 		E1A3E4CF2BB7E02B005C59F8 /* DelayedProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A3E4CE2BB7E02B005C59F8 /* DelayedProgressView.swift */; };
 		E1A3E4D12BB7F5BF005C59F8 /* ErrorCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A3E4D02BB7F5BF005C59F8 /* ErrorCard.swift */; };
 		E1A42E4A28CA6CCD00A14DCB /* CinematicItemSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A42E4928CA6CCD00A14DCB /* CinematicItemSelector.swift */; };
-		E1A42E4F28CBD3E100A14DCB /* HomeErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A42E4E28CBD3E100A14DCB /* HomeErrorView.swift */; };
 		E1A42E5128CBE44500A14DCB /* LandscapePosterProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A42E5028CBE44500A14DCB /* LandscapePosterProgressBar.swift */; };
 		E1A5056A2D0B733F007EE305 /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A505692D0B733F007EE305 /* Optional.swift */; };
 		E1A5056B2D0B733F007EE305 /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A505692D0B733F007EE305 /* Optional.swift */; };
@@ -1456,6 +1456,7 @@
 		4EED87482CBF824B002354D2 /* DevicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesView.swift; sourceTree = "<group>"; };
 		4EED874F2CBF84AD002354D2 /* DevicesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesViewModel.swift; sourceTree = "<group>"; };
 		4EEEEA232CFA8E1500527D79 /* NavigationBarMenuButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBarMenuButton.swift; sourceTree = "<group>"; };
+		4EF0DCA82D49751B005A5194 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		4EF18B252CB9934700343666 /* LibraryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryRow.swift; sourceTree = "<group>"; };
 		4EF18B272CB9936400343666 /* ListColumnsPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListColumnsPickerView.swift; sourceTree = "<group>"; };
 		4EF18B292CB993AD00343666 /* ListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRow.swift; sourceTree = "<group>"; };
@@ -1953,7 +1954,6 @@
 		E1A3E4CE2BB7E02B005C59F8 /* DelayedProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DelayedProgressView.swift; sourceTree = "<group>"; };
 		E1A3E4D02BB7F5BF005C59F8 /* ErrorCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorCard.swift; sourceTree = "<group>"; };
 		E1A42E4928CA6CCD00A14DCB /* CinematicItemSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinematicItemSelector.swift; sourceTree = "<group>"; };
-		E1A42E4E28CBD3E100A14DCB /* HomeErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeErrorView.swift; sourceTree = "<group>"; };
 		E1A42E5028CBE44500A14DCB /* LandscapePosterProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandscapePosterProgressBar.swift; sourceTree = "<group>"; };
 		E1A505692D0B733F007EE305 /* Optional.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Optional.swift; sourceTree = "<group>"; };
 		E1A7F0DE2BD4EC7400620DDD /* Dictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
@@ -3361,6 +3361,7 @@
 				E1A42E4928CA6CCD00A14DCB /* CinematicItemSelector.swift */,
 				E1C92618288756BD002A7A66 /* DotHStack.swift */,
 				E12E30F4296392EC0022FAC9 /* EnumPickerView.swift */,
+				4EF0DCA82D49751B005A5194 /* ErrorView.swift */,
 				E1549677296CB22B00C4EF88 /* InlineEnumToggle.swift */,
 				E1A42E5028CBE44500A14DCB /* LandscapePosterProgressBar.swift */,
 				E1763A632BF3C9AA004DF6AB /* ListRowButton.swift */,
@@ -4968,7 +4969,6 @@
 			isa = PBXGroup;
 			children = (
 				E12CC1C328D12D6300678D5D /* Components */,
-				E1A42E4E28CBD3E100A14DCB /* HomeErrorView.swift */,
 				531690E6267ABD79005D8AB9 /* HomeView.swift */,
 			);
 			path = HomeView;
@@ -5931,7 +5931,6 @@
 				4E2AC4C32C6C491200DD600D /* AudoCodec.swift in Sources */,
 				E1575EA6293E7D40001665B1 /* VideoPlayer.swift in Sources */,
 				E185920628CDAA6400326F80 /* CastAndCrewHStack.swift in Sources */,
-				E1A42E4F28CBD3E100A14DCB /* HomeErrorView.swift in Sources */,
 				4E8F74AB2CE03DD300CC8969 /* DeleteItemViewModel.swift in Sources */,
 				53CD2A40268A49C2002ABD4E /* ItemView.swift in Sources */,
 				E122A9142788EAAD0060FA63 /* MediaStream.swift in Sources */,
@@ -6107,6 +6106,7 @@
 				E1575E84293E7A00001665B1 /* PrimaryAppIcon.swift in Sources */,
 				E1153DCD2BBB633B00424D36 /* FastSVGView.swift in Sources */,
 				E1ED7FE22CAA6BAF00ACB6E3 /* ServerLogsViewModel.swift in Sources */,
+				4EF0DCA92D49751B005A5194 /* ErrorView.swift in Sources */,
 				E1CB75762C80EAFA00217C76 /* ArrayBuilder.swift in Sources */,
 				E102315B2BCF8AF8009D71FC /* ProgramProgressOverlay.swift in Sources */,
 				E1E6C45129B104850064123F /* Button.swift in Sources */,
