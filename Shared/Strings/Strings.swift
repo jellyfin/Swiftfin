@@ -280,6 +280,8 @@ internal enum L10n {
   internal static let columns = L10n.tr("Localizable", "columns", fallback: "Columns")
   /// Community
   internal static let community = L10n.tr("Localizable", "community", fallback: "Community")
+  /// Community rating
+  internal static let communityRating = L10n.tr("Localizable", "communityRating", fallback: "Community rating")
   /// Compact
   internal static let compact = L10n.tr("Localizable", "compact", fallback: "Compact")
   /// Compact Logo
@@ -338,12 +340,14 @@ internal enum L10n {
   }
   /// Creator
   internal static let creator = L10n.tr("Localizable", "creator", fallback: "Creator")
+  /// Critic rating
+  internal static let criticRating = L10n.tr("Localizable", "criticRating", fallback: "Critic rating")
   /// Critics
   internal static let critics = L10n.tr("Localizable", "critics", fallback: "Critics")
   /// Current
   internal static let current = L10n.tr("Localizable", "current", fallback: "Current")
-  /// Current Password
-  internal static let currentPassword = L10n.tr("Localizable", "currentPassword", fallback: "Current Password")
+  /// Current password
+  internal static let currentPassword = L10n.tr("Localizable", "currentPassword", fallback: "Current password")
   /// Custom
   internal static let custom = L10n.tr("Localizable", "custom", fallback: "Custom")
   /// Custom bitrate
@@ -368,10 +372,10 @@ internal enum L10n {
   internal static let customFailedLogins = L10n.tr("Localizable", "customFailedLogins", fallback: "Custom failed logins")
   /// Customize
   internal static let customize = L10n.tr("Localizable", "customize", fallback: "Customize")
-  /// Custom Profile
-  internal static let customProfile = L10n.tr("Localizable", "customProfile", fallback: "Custom Profile")
-  /// Custom Rating
-  internal static let customRating = L10n.tr("Localizable", "customRating", fallback: "Custom Rating")
+  /// Custom profile
+  internal static let customProfile = L10n.tr("Localizable", "customProfile", fallback: "Custom profile")
+  /// Custom rating
+  internal static let customRating = L10n.tr("Localizable", "customRating", fallback: "Custom rating")
   /// Custom sessions
   internal static let customSessions = L10n.tr("Localizable", "customSessions", fallback: "Custom sessions")
   /// Daily
@@ -384,10 +388,10 @@ internal enum L10n {
   internal static let dashboardDescription = L10n.tr("Localizable", "dashboardDescription", fallback: "Perform administrative tasks for your Jellyfin server.")
   /// Date Added
   internal static let dateAdded = L10n.tr("Localizable", "dateAdded", fallback: "Date Added")
-  /// Date Created
-  internal static let dateCreated = L10n.tr("Localizable", "dateCreated", fallback: "Date Created")
-  /// Date Modified
-  internal static let dateModified = L10n.tr("Localizable", "dateModified", fallback: "Date Modified")
+  /// Date created
+  internal static let dateCreated = L10n.tr("Localizable", "dateCreated", fallback: "Date created")
+  /// Date modified
+  internal static let dateModified = L10n.tr("Localizable", "dateModified", fallback: "Date modified")
   /// Date of death
   internal static let dateOfDeath = L10n.tr("Localizable", "dateOfDeath", fallback: "Date of death")
   /// Dates
@@ -788,6 +792,8 @@ internal enum L10n {
   internal static let media = L10n.tr("Localizable", "media", fallback: "Media")
   /// Media Access
   internal static let mediaAccess = L10n.tr("Localizable", "mediaAccess", fallback: "Media Access")
+  /// Media attributes
+  internal static let mediaAttributes = L10n.tr("Localizable", "mediaAttributes", fallback: "Media attributes")
   /// Media downloads
   internal static let mediaDownloads = L10n.tr("Localizable", "mediaDownloads", fallback: "Media downloads")
   /// Media playback
@@ -872,8 +878,8 @@ internal enum L10n {
   }
   /// No title
   internal static let noTitle = L10n.tr("Localizable", "noTitle", fallback: "No title")
-  /// Official Rating
-  internal static let officialRating = L10n.tr("Localizable", "officialRating", fallback: "Official Rating")
+  /// Official rating
+  internal static let officialRating = L10n.tr("Localizable", "officialRating", fallback: "Official rating")
   /// Offset
   internal static let offset = L10n.tr("Localizable", "offset", fallback: "Offset")
   /// OK
@@ -902,8 +908,8 @@ internal enum L10n {
   internal static let overview = L10n.tr("Localizable", "overview", fallback: "Overview")
   /// Parental controls
   internal static let parentalControls = L10n.tr("Localizable", "parentalControls", fallback: "Parental controls")
-  /// Parental Rating
-  internal static let parentalRating = L10n.tr("Localizable", "parentalRating", fallback: "Parental Rating")
+  /// Parental rating
+  internal static let parentalRating = L10n.tr("Localizable", "parentalRating", fallback: "Parental rating")
   /// Password
   internal static let password = L10n.tr("Localizable", "password", fallback: "Password")
   /// User password has been changed.
@@ -994,8 +1000,8 @@ internal enum L10n {
   internal static let quickConnectSuccessMessage = L10n.tr("Localizable", "quickConnectSuccessMessage", fallback: "Authorizing Quick Connect successful. Please continue on your other device.")
   /// Random
   internal static let random = L10n.tr("Localizable", "random", fallback: "Random")
-  /// Random Image
-  internal static let randomImage = L10n.tr("Localizable", "randomImage", fallback: "Random Image")
+  /// Random image
+  internal static let randomImage = L10n.tr("Localizable", "randomImage", fallback: "Random image")
   /// Rating
   internal static let rating = L10n.tr("Localizable", "rating", fallback: "Rating")
   /// %@ rating on a scale from 1 to 10.

@@ -44,6 +44,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var indicatorSettings = makeIndicatorSettings
     @Route(.push)
+    var itemViewAttributes = makeItemViewAttributes
+    @Route(.push)
     var serverConnection = makeServerConnection
     @Route(.push)
     var videoPlayerSettings = makeVideoPlayerSettings
@@ -147,6 +149,12 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeIndicatorSettings() -> some View {
         IndicatorSettingsView()
+    }
+
+    @ViewBuilder
+    func makeItemViewAttributes(selection: Binding<[ItemViewAttribute]>) -> some View {
+        OrderedSectionSelectorView(selection: selection, sources: ItemViewAttribute.allCases)
+            .navigationTitle(L10n.mediaAttributes.localizedCapitalized)
     }
 
     @ViewBuilder
