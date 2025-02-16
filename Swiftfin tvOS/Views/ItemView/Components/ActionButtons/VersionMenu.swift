@@ -21,7 +21,7 @@ extension ItemView {
         @ObservedObject
         var viewModel: ItemViewModel
 
-        var mediaSources: [MediaSourceInfo]?
+        let mediaSources: [MediaSourceInfo]?
 
         // MARK: - Body
 
