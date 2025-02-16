@@ -61,11 +61,27 @@ extension SeriesEpisodeSelector {
             }
         }
 
+        @ViewBuilder
+        private var emptyView: some View {
+            VStack {
+                Text(L10n.noEpisodesAvailable)
+                Button(L10n.retry) {
+                    viewModel.send(.refresh)
+                }
+                .buttonStyle(.bordered)
+                .focused($focusedEpisodeID, equals: "RefreshButton")
+            }
+        }
+
         var body: some View {
-            WrappedView {
+            ZStack {
                 switch viewModel.state {
                 case .content:
-                    contentView(viewModel: viewModel)
+                    if viewModel.elements.isEmpty {
+                         emptyView
+                     } else {
+                         contentView(viewModel: viewModel)
+                     }
                 case let .error(error):
                     ErrorHStack(viewModel: viewModel, error: error)
                 case .initial, .refreshing:
@@ -76,7 +92,7 @@ extension SeriesEpisodeSelector {
             .focusGuide(
                 focusGuide,
                 tag: "episodes",
-                onContentFocus: { focusedEpisodeID = lastFocusedEpisodeID },
+                onContentFocus: { focusedEpisodeID = viewModel.elements.isEmpty ? "RefreshButton" : lastFocusedEpisodeID },
                 top: "seasons"
             )
             .onChange(of: viewModel.id) {
