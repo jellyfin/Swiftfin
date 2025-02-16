@@ -66,7 +66,7 @@ extension ItemView {
 
         // MARK: - Select Item(s)
 
-        private var multipleVersions: Bool {
+        private var hasMultipleVersions: Bool {
             guard let mediaSources = viewModel.playButtonItem?.mediaSources else { return false }
             return mediaSources.count > 1
         }

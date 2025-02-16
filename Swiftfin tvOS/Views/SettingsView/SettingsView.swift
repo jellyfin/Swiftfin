@@ -44,22 +44,14 @@ struct SettingsView: View {
                     .onSelect {
                         router.route(to: \.serverDetail, viewModel.userSession.server)
                     }
+                }
 
-                    Button {
+                Section {
+                    ListRowButton(L10n.switchUser) {
                         viewModel.signOut()
-                    } label: {
-                        HStack {
-
-                            Text(L10n.switchUser)
-                                .foregroundColor(.jellyfinPurple)
-
-                            Spacer()
-
-                            Image(systemName: "chevron.right")
-                                .font(.body.weight(.regular))
-                                .foregroundColor(.secondary)
-                        }
                     }
+                    .foregroundStyle(Color.jellyfinPurple.overlayColor, Color.jellyfinPurple)
+                    .listRowInsets(.zero)
                 }
 
                 Section(L10n.videoPlayer) {

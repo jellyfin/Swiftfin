@@ -9,8 +9,6 @@
 import JellyfinAPI
 import SwiftUI
 
-// Note: Keep all of the ItemFilterCollection/ItemFilter/AnyItemFilter KeyPath wackiness in this file
-
 // TODO: multiple filter types?
 //       - for sort order and sort by combined
 struct FilterView: View {
@@ -39,27 +37,11 @@ struct FilterView: View {
         }
         .topBarTrailing {
             Button(L10n.reset) {
-                switch type {
-                case .genres:
-                    viewModel.currentFilters.genres = ItemFilterCollection.default.genres
-                case .letter:
-                    viewModel.currentFilters.letter = ItemFilterCollection.default.letter
-                case .sortBy:
-                    viewModel.currentFilters.sortBy = ItemFilterCollection.default.sortBy
-                case .sortOrder:
-                    viewModel.currentFilters.sortOrder = ItemFilterCollection.default.sortOrder
-                case .tags:
-                    viewModel.currentFilters.tags = ItemFilterCollection.default.tags
-                case .traits:
-                    viewModel.currentFilters.traits = ItemFilterCollection.default.traits
-                case .years:
-                    viewModel.currentFilters.years = ItemFilterCollection.default.years
-                }
+                viewModel.send(.reset(type))
             }
             .environment(
                 \.isEnabled,
-                viewModel.currentFilters[keyPath: type.collectionAnyKeyPath] != ItemFilterCollection
-                    .default[keyPath: type.collectionAnyKeyPath]
+                viewModel.isFilterSelected(type: type)
             )
         }
     }
@@ -75,22 +57,7 @@ extension FilterView {
         let selectionBinding: Binding<[AnyItemFilter]> = Binding {
             viewModel.currentFilters[keyPath: type.collectionAnyKeyPath]
         } set: { newValue in
-            switch type {
-            case .genres:
-                viewModel.currentFilters.genres = newValue.map(ItemGenre.init)
-            case .letter:
-                viewModel.currentFilters.letter = newValue.map(ItemLetter.init)
-            case .sortBy:
-                viewModel.currentFilters.sortBy = newValue.map(ItemSortBy.init)
-            case .sortOrder:
-                viewModel.currentFilters.sortOrder = newValue.map(ItemSortOrder.init)
-            case .tags:
-                viewModel.currentFilters.tags = newValue.map(ItemTag.init)
-            case .traits:
-                viewModel.currentFilters.traits = newValue.map(ItemTrait.init)
-            case .years:
-                viewModel.currentFilters.years = newValue.map(ItemYear.init)
-            }
+            viewModel.send(.update(type, newValue))
         }
 
         self.init(
