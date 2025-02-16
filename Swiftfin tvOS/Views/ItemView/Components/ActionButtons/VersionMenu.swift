@@ -21,14 +21,13 @@ extension ItemView {
         @ObservedObject
         var viewModel: ItemViewModel
 
+        var mediaSources: [MediaSourceInfo]?
+
         // MARK: - Body
 
         var body: some View {
             Menu {
-                if let playButtonItem = viewModel.playButtonItem,
-                   let mediaSources = playButtonItem.mediaSources,
-                   mediaSources.count > 1
-                {
+                if let mediaSources {
                     ForEach(mediaSources, id: \.hashValue) { mediaSource in
                         Button {
                             viewModel.send(.selectMediaSource(mediaSource))

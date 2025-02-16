@@ -111,8 +111,8 @@ extension ItemView {
 
                 // MARK: - Select Merged Version
 
-                if multipleVersions {
-                    VersionMenu(viewModel: viewModel)
+                if hasMultipleVersions {
+                    VersionMenu(viewModel: viewModel, mediaSources: viewModel.playButtonItem?.mediaSources)
                         .frame(minWidth: 80, maxWidth: .infinity)
                 }
 
@@ -131,7 +131,7 @@ extension ItemView {
                             }
                         }
                     }
-                    .frame(width: 40)
+                    .frame(minWidth: 30, maxWidth: 50)
                 }
             }
             .frame(height: 100)
