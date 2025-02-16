@@ -12,9 +12,7 @@ import JellyfinAPI
 import SwiftUI
 
 extension SeriesEpisodeSelector {
-
     struct EpisodeHStack: View {
-
         @EnvironmentObject
         private var focusGuide: FocusGuide
 
@@ -78,10 +76,10 @@ extension SeriesEpisodeSelector {
                 switch viewModel.state {
                 case .content:
                     if viewModel.elements.isEmpty {
-                         emptyView
-                     } else {
-                         contentView(viewModel: viewModel)
-                     }
+                        emptyView
+                    } else {
+                        contentView(viewModel: viewModel)
+                    }
                 case let .error(error):
                     ErrorHStack(viewModel: viewModel, error: error)
                 case .initial, .refreshing:
@@ -111,7 +109,6 @@ extension SeriesEpisodeSelector {
     }
 
     struct ErrorHStack: View {
-
         @ObservedObject
         var viewModel: SeasonItemViewModel
 
