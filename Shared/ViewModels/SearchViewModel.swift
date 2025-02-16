@@ -117,10 +117,7 @@ final class SearchViewModel: ViewModel, Stateful {
                 return .searching
             }
         case .getSuggestions:
-            Task {
-                await filterViewModel.setQueryFilters()
-            }
-            .store(in: &cancellables)
+            filterViewModel.send(.getQueryFilters)
 
             Task {
                 let suggestions = try await getSuggestions()
@@ -222,6 +219,15 @@ final class SearchViewModel: ViewModel, Stateful {
         parameters.sortOrder = filters.sortOrder
         parameters.tags = filters.tags.map(\.value)
         parameters.years = filters.years.map(\.intValue)
+
+        if filters.letter.first?.value == "#" {
+            parameters.nameLessThan = "A"
+        } else {
+            parameters.nameStartsWith = filters.letter
+                .map(\.value)
+                .filter { $0 != "#" }
+                .first
+        }
 
         let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
         let response = try await userSession.client.send(request)

@@ -22,8 +22,13 @@ struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
     @Default(.accentColor)
     private var accentColor
 
-    @StateObject
-    private var selection: BindingBox<Set<Element>>
+    @State
+    private var selectedItems: Set<Element>
+
+    private let selectionBinding: Binding<Set<Element>>
+    private let sources: [Element]
+    private var label: (Element) -> Label
+    private let type: SelectorType
 
     private init(
         selection: Binding<Set<Element>>,
@@ -31,15 +36,12 @@ struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
         label: @escaping (Element) -> Label,
         type: SelectorType
     ) {
-        self._selection = StateObject(wrappedValue: BindingBox(source: selection))
+        self.selectionBinding = selection
+        self._selectedItems = State(initialValue: selection.wrappedValue)
         self.sources = sources
         self.label = label
         self.type = type
     }
-
-    private let sources: [Element]
-    private var label: (Element) -> Label
-    private let type: SelectorType
 
     var body: some View {
         List(sources, id: \.hashValue) { element in
@@ -56,7 +58,7 @@ struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
 
                     Spacer()
 
-                    if selection.value.contains(element) {
+                    if selectedItems.contains(element) {
                         Image(systemName: "checkmark.circle.fill")
                             .resizable()
                             .backport
@@ -69,33 +71,37 @@ struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
                 }
             }
         }
+        .onChange(of: selectionBinding.wrappedValue) { newValue in
+            selectedItems = newValue
+        }
     }
 
     private func handleSingleSelect(with element: Element) {
-        selection.value = [element]
+        selectedItems = [element]
+        selectionBinding.wrappedValue = selectedItems
     }
 
     private func handleMultiSelect(with element: Element) {
-        if selection.value.contains(element) {
-            selection.value.remove(element)
+        if selectedItems.contains(element) {
+            selectedItems.remove(element)
         } else {
-            selection.value.insert(element)
+            selectedItems.insert(element)
         }
+        selectionBinding.wrappedValue = selectedItems
     }
 }
 
 extension SelectorView where Label == Text {
-
     init(selection: Binding<[Element]>, sources: [Element], type: SelectorType) {
-
-        let selectionBinding = Binding {
-            Set(selection.wrappedValue)
-        } set: { newValue in
-            selection.wrappedValue = sources.intersection(newValue)
-        }
+        let setBinding = Binding<Set<Element>>(
+            get: { Set(selection.wrappedValue) },
+            set: { newValue in
+                selection.wrappedValue = Array(newValue)
+            }
+        )
 
         self.init(
-            selection: selectionBinding,
+            selection: setBinding,
             sources: sources,
             label: { Text($0.displayTitle).foregroundColor(.primary) },
             type: type
@@ -103,15 +109,17 @@ extension SelectorView where Label == Text {
     }
 
     init(selection: Binding<Element>, sources: [Element]) {
-
-        let selectionBinding = Binding {
-            Set([selection.wrappedValue])
-        } set: { newValue in
-            selection.wrappedValue = newValue.first!
-        }
+        let setBinding = Binding<Set<Element>>(
+            get: { Set([selection.wrappedValue]) },
+            set: { newValue in
+                if let first = newValue.first {
+                    selection.wrappedValue = first
+                }
+            }
+        )
 
         self.init(
-            selection: selectionBinding,
+            selection: setBinding,
             sources: sources,
             label: { Text($0.displayTitle).foregroundColor(.primary) },
             type: .single

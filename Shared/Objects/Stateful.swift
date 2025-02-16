@@ -16,7 +16,7 @@ import OrderedCollections
 //       parent class actions
 // TODO: official way for a cleaner `respond` method so it doesn't have all Task
 //       construction and get bloated
-// TODO: make Action: Hashable just for consistency
+// TODO: move backgroundStates to just a `Set`
 
 protocol Stateful: AnyObject {
 
