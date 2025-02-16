@@ -78,7 +78,7 @@ extension SelectUserView {
             ListRowButton(L10n.delete, role: .destructive) {
                 onDelete()
             }
-            .frame(width: 400, height: 50)
+            .frame(width: 400, height: 75)
             .disabled(!areUsersSelected)
         }
 

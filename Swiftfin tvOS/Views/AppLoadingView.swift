@@ -18,9 +18,19 @@ struct AppLoadingView: View {
         ZStack {
             Color.clear
 
-            if didFailMigration {
-                Text("An internal error occurred.")
+            if !didFailMigration {
+                ProgressView()
             }
+
+            if didFailMigration {
+                ErrorView(error: JellyfinAPIError("An internal error occurred."))
+            }
+        }
+        .topBarTrailing {
+            Button(L10n.advanced, systemImage: "gearshape.fill") {}
+                .foregroundStyle(.secondary)
+                .disabled(true)
+                .opacity(didFailMigration ? 0 : 1)
         }
         .onNotification(.didFailMigration) { _ in
             didFailMigration = true

@@ -394,6 +394,9 @@
 /// Community
 "community" = "Community";
 
+/// Community rating
+"communityRating" = "Community rating";
+
 /// Compact
 "compact" = "Compact";
 
@@ -478,14 +481,17 @@
 /// Creator
 "creator" = "Creator";
 
+/// Critic rating
+"criticRating" = "Critic rating";
+
 /// Critics
 "critics" = "Critics";
 
 /// Current
 "current" = "Current";
 
-/// Current Password
-"currentPassword" = "Current Password";
+/// Current password
+"currentPassword" = "Current password";
 
 /// Custom
 "custom" = "Custom";
@@ -520,11 +526,11 @@
 /// Customize
 "customize" = "Customize";
 
-/// Custom Profile
-"customProfile" = "Custom Profile";
+/// Custom profile
+"customProfile" = "Custom profile";
 
-/// Custom Rating
-"customRating" = "Custom Rating";
+/// Custom rating
+"customRating" = "Custom rating";
 
 /// Custom sessions
 "customSessions" = "Custom sessions";
@@ -544,11 +550,11 @@
 /// Date Added
 "dateAdded" = "Date Added";
 
-/// Date Created
-"dateCreated" = "Date Created";
+/// Date created
+"dateCreated" = "Date created";
 
-/// Date Modified
-"dateModified" = "Date Modified";
+/// Date modified
+"dateModified" = "Date modified";
 
 /// Date of death
 "dateOfDeath" = "Date of death";
@@ -1117,6 +1123,9 @@
 /// Media Access
 "mediaAccess" = "Media Access";
 
+/// Media attributes
+"mediaAttributes" = "Media attributes";
+
 /// Media downloads
 "mediaDownloads" = "Media downloads";
 
@@ -1240,8 +1249,8 @@
 /// No title
 "noTitle" = "No title";
 
-/// Official Rating
-"officialRating" = "Official Rating";
+/// Official rating
+"officialRating" = "Official rating";
 
 /// Offset
 "offset" = "Offset";
@@ -1285,8 +1294,8 @@
 /// Parental controls
 "parentalControls" = "Parental controls";
 
-/// Parental Rating
-"parentalRating" = "Parental Rating";
+/// Parental rating
+"parentalRating" = "Parental rating";
 
 /// Password
 "password" = "Password";
@@ -1423,8 +1432,8 @@
 /// Random
 "random" = "Random";
 
-/// Random Image
-"randomImage" = "Random Image";
+/// Random image
+"randomImage" = "Random image";
 
 /// Rating
 "rating" = "Rating";
