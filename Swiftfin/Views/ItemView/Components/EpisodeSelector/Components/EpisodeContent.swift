@@ -66,7 +66,7 @@ extension SeriesEpisodeSelector {
                             v.frame(
                                 height: "A\nA\nA".height(
                                     withConstrainedWidth: 10,
-                                    font: Font.caption.uiFont
+                                    font: Font.caption.uiFont ?? UIFont.preferredFont(forTextStyle: .body)
                                 )
                             )
                         }

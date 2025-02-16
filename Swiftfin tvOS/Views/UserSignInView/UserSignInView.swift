@@ -85,10 +85,9 @@ struct UserSignInView: View {
             }
 
         if case .signingIn = viewModel.state {
-            ListRowButton(L10n.cancel) {
+            ListRowButton(L10n.cancel, role: .cancel) {
                 viewModel.send(.cancel)
             }
-            .foregroundStyle(.red, accentColor)
             .padding(.vertical)
         } else {
             ListRowButton(L10n.signIn) {
