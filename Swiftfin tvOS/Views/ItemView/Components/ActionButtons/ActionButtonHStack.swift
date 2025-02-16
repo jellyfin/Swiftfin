@@ -80,9 +80,8 @@ extension ItemView {
 
         // MARK: - Body
 
-        /// Shrink to minWidth 100 (button) / 50 (menu) and 16 spacing to get 3 buttons + menu
         var body: some View {
-            HStack(alignment: .center, spacing: 16) {
+            HStack(alignment: .center, spacing: 24) {
 
                 // MARK: - Toggle Played
 
@@ -95,7 +94,7 @@ extension ItemView {
                 }
                 .foregroundStyle(.purple)
                 .environment(\.isSelected, viewModel.item.userData?.isPlayed ?? false)
-                .frame(minWidth: 140, maxWidth: .infinity)
+                .frame(minWidth: 80, maxWidth: .infinity)
 
                 // MARK: - Toggle Favorite
 
@@ -108,16 +107,19 @@ extension ItemView {
                 }
                 .foregroundStyle(.pink)
                 .environment(\.isSelected, viewModel.item.userData?.isFavorite ?? false)
-                .frame(minWidth: 140, maxWidth: .infinity)
+                .frame(minWidth: 80, maxWidth: .infinity)
+
+                // MARK: - Select Merged Version
+
+                if multipleVersions {
+                    VersionMenu(viewModel: viewModel)
+                        .frame(minWidth: 80, maxWidth: .infinity)
+                }
 
                 // MARK: - Additional Menu Options
 
-                if canRefresh || canDelete || multipleVersions {
+                if canRefresh || canDelete {
                     ActionMenu {
-                        if multipleVersions {
-                            SelectVersionButton(viewModel: viewModel)
-                        }
-
                         if canRefresh {
                             RefreshMetadataButton(item: viewModel.item)
                         }
@@ -129,7 +131,7 @@ extension ItemView {
                             }
                         }
                     }
-                    .frame(width: 50)
+                    .frame(width: 40)
                 }
             }
             .frame(height: 100)

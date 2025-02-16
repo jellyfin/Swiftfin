@@ -11,7 +11,12 @@ import SwiftUI
 
 extension ItemView {
 
-    struct SelectVersionButton: View {
+    struct VersionMenu: View {
+
+        // MARK: - Focus State
+
+        @FocusState
+        private var isFocused: Bool
 
         @ObservedObject
         var viewModel: ItemViewModel
@@ -37,19 +42,25 @@ extension ItemView {
                     }
                 }
             } label: {
-                HStack {
-                    Text(L10n.version)
-                        .foregroundStyle(.primary)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(isFocused ? Color.white : Color.white.opacity(0.5))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.clear, lineWidth: 2)
+                        )
 
-                    Spacer()
-
-                    Image(systemName: "list.dash")
-                        .foregroundStyle(.secondary)
-                        .backport
+                    Label(L10n.version, systemImage: "list.dash")
+                        .font(.title3)
                         .fontWeight(.semibold)
+                        .foregroundStyle(.black)
+                        .labelStyle(.iconOnly)
                 }
             }
-            .foregroundStyle(.primary, .secondary)
+            .focused($isFocused)
+            .scaleEffect(isFocused ? 1.20 : 1.0)
+            .animation(.easeInOut(duration: 0.15), value: isFocused)
+            .menuStyle(.borderlessButton)
         }
     }
 }
