@@ -135,7 +135,7 @@ struct ItemView: View {
         .navigationBarMenuButton(
             isLoading: viewModel.backgroundStates.contains(.refresh)
         ) {
-            Button("Add to playlist", systemImage: "text.badge.plus") {
+            Button(L10n.addToPlaylist, systemImage: "text.badge.plus") {
                 router.route(to: \.addToPlaylist, viewModel.item)
             }
 

@@ -9,6 +9,7 @@
 import Combine
 import Foundation
 import JellyfinAPI
+import OrderedCollections
 
 // TODO: Some rework is required for 10.10
 class PlaylistViewModel: ViewModel, Stateful, Eventful {
@@ -29,26 +30,42 @@ class PlaylistViewModel: ViewModel, Stateful, Eventful {
         case moveItem(itemID: String, index: Int)
         case getPlaylists
         case setPlaylist(BaseItemDto?)
+
+        // TODO: 10.10 remove this action
         case createPlaylist(CreatePlaylistDto)
 
-        // TODO: Enable & build logic out for 10.10
-        /* case updatePlaylist(
-             playlistID: String,
-             name: String? = nil,
-             ids: [String]? = nil,
-             userCanEdit: [String: Bool]? = nil,
-             isPublic: Bool? = nil
+        // TODO: 10.10 enable these actions
+        // TODO: 10.10 build responses for these actions
+        /*
+         case createPlaylist(
+            name: String,
+            ids: [String]? = nil,
+            mediaType: PlaylistViewModel.PlaylistType = .unknown,
+            users: [String]? = nil,
+            isPublic: Bool = false
+         )
+         case updatePlaylist(
+            playlistID: String,
+            name: String? = nil,
+            ids: [String]? = nil,
+            userCanEdit: [String: Bool]? = nil,
+            isPublic: Bool? = nil
          )
          case getUsers
          case editUser(playlistID: String, userID: String, canEdit: Bool)
          case removeUser(playlistID: String, userID: String) */
     }
 
+    // MARK: - Background State
+
+    enum BackgroundState: Hashable {
+        case updatingPlaylist
+    }
+
     // MARK: - State
 
     enum State: Hashable {
         case initial
-        case updating
         case content
         case error(JellyfinAPIError)
     }
@@ -56,18 +73,24 @@ class PlaylistViewModel: ViewModel, Stateful, Eventful {
     @Published
     final var state: State = .initial
 
-    // MARK: - Published Item
+    // MARK: - Published Selected Playlist Variables
 
     @Published
     var selectedPlaylist: BaseItemDto?
-
     @Published
-    var items: [BaseItemDto] = []
+    var selectedPlaylistItems: [BaseItemDto] = []
+
+    // MARK: - Published All Available Playlist Variable
 
     @Published
     var playlists: [BaseItemDto] = []
 
-    // MARK: Event Variables
+    // MARK: - Background State(s)
+
+    @Published
+    var backgroundStates: OrderedSet<BackgroundState> = []
+
+    // MARK: - Event Variables
 
     private var playlistsTask: AnyCancellable?
     private var eventSubject: PassthroughSubject<Event, Never> = .init()
@@ -103,13 +126,21 @@ class PlaylistViewModel: ViewModel, Stateful, Eventful {
             playlistsTask = Task { [weak self] in
                 guard let self = self else { return }
                 do {
-                    try await self.addItems(itemIDs)
                     await MainActor.run {
+                        _ = self.backgroundStates.append(.updatingPlaylist)
+                    }
+
+                    // Add item(s) to the selected playlist
+                    try await self.addItems(itemIDs)
+
+                    await MainActor.run {
+                        _ = self.backgroundStates.append(.updatingPlaylist)
                         self.eventSubject.send(.updated)
                     }
                 } catch {
                     guard !Task.isCancelled else { return }
                     await MainActor.run {
+                        _ = self.backgroundStates.remove(.updatingPlaylist)
                         self.eventSubject.send(.error(JellyfinAPIError(error.localizedDescription)))
                     }
                 }
@@ -124,13 +155,21 @@ class PlaylistViewModel: ViewModel, Stateful, Eventful {
             playlistsTask = Task { [weak self] in
                 guard let self = self else { return }
                 do {
-                    try await self.removeItems(itemIDs)
                     await MainActor.run {
+                        _ = self.backgroundStates.append(.updatingPlaylist)
+                    }
+
+                    // Remove item(s) from the selected playlist
+                    try await self.removeItems(itemIDs)
+
+                    await MainActor.run {
+                        _ = self.backgroundStates.remove(.updatingPlaylist)
                         self.eventSubject.send(.updated)
                     }
                 } catch {
                     guard !Task.isCancelled else { return }
                     await MainActor.run {
+                        _ = self.backgroundStates.remove(.updatingPlaylist)
                         self.eventSubject.send(.error(JellyfinAPIError(error.localizedDescription)))
                     }
                 }
@@ -145,13 +184,21 @@ class PlaylistViewModel: ViewModel, Stateful, Eventful {
             playlistsTask = Task { [weak self] in
                 guard let self = self else { return }
                 do {
-                    try await self.moveItem(itemID: itemID, index: index)
                     await MainActor.run {
+                        _ = self.backgroundStates.append(.updatingPlaylist)
+                    }
+
+                    // Move an item to a new index in the selected playlist
+                    try await self.moveItem(itemID: itemID, index: index)
+
+                    await MainActor.run {
+                        _ = self.backgroundStates.remove(.updatingPlaylist)
                         self.eventSubject.send(.updated)
                     }
                 } catch {
                     guard !Task.isCancelled else { return }
                     await MainActor.run {
+                        _ = self.backgroundStates.remove(.updatingPlaylist)
                         self.eventSubject.send(.error(JellyfinAPIError(error.localizedDescription)))
                     }
                 }
@@ -166,7 +213,13 @@ class PlaylistViewModel: ViewModel, Stateful, Eventful {
             playlistsTask = Task { [weak self] in
                 guard let self = self else { return }
                 do {
-                    try await self.getPlaylists()
+                    await MainActor.run {
+                        self.state = .initial
+                    }
+
+                    // Get all playlists available to the user
+                    self.playlists = try await self.getPlaylists()
+
                     await MainActor.run {
                         self.state = .content
                     }
@@ -174,7 +227,6 @@ class PlaylistViewModel: ViewModel, Stateful, Eventful {
                     guard !Task.isCancelled else { return }
                     await MainActor.run {
                         self.state = .error(JellyfinAPIError(error.localizedDescription))
-                        self.eventSubject.send(.error(JellyfinAPIError(error.localizedDescription)))
                     }
                 }
             }
@@ -188,15 +240,24 @@ class PlaylistViewModel: ViewModel, Stateful, Eventful {
             playlistsTask = Task { [weak self] in
                 guard let self = self else { return }
                 do {
-                    self.selectedPlaylist = newPlaylist
-                    try await getPlaylistItems()
                     await MainActor.run {
-                        self.state = .updating
+                        _ = self.backgroundStates.append(.updatingPlaylist)
+                    }
+
+                    // Set the selected playlist to the new playlist
+                    try await setPlaylist(newPlaylist)
+
+                    // Get the playlist items for the new selected playlist
+                    self.selectedPlaylistItems = try await getPlaylistItems()
+
+                    await MainActor.run {
+                        _ = self.backgroundStates.remove(.updatingPlaylist)
                     }
                 } catch {
                     guard !Task.isCancelled else { return }
                     await MainActor.run {
-                        self.state = .error(JellyfinAPIError(error.localizedDescription))
+                        _ = self.backgroundStates.remove(.updatingPlaylist)
+                        self.eventSubject.send(.error(JellyfinAPIError(error.localizedDescription)))
                     }
                 }
             }
@@ -210,13 +271,30 @@ class PlaylistViewModel: ViewModel, Stateful, Eventful {
             playlistsTask = Task { [weak self] in
                 guard let self = self else { return }
                 do {
-                    try await self.createPlaylist(parameters: parameters)
                     await MainActor.run {
+                        _ = self.backgroundStates.append(.updatingPlaylist)
+                    }
+
+                    // Create a new playlist from parameters
+                    let newPlaylistID = try await self.createPlaylist(parameters: parameters)
+
+                    // Get the full playlist BaseItemDto from the server
+                    let newPlaylist = try await self.getPlaylist(id: newPlaylistID)
+
+                    // Set the selected playlist to the new playlist
+                    try await setPlaylist(newPlaylist)
+
+                    // Get the playlist items for the new selected playlist
+                    self.selectedPlaylistItems = try await getPlaylistItems()
+
+                    await MainActor.run {
+                        _ = self.backgroundStates.remove(.updatingPlaylist)
                         self.eventSubject.send(.created)
                     }
                 } catch {
                     guard !Task.isCancelled else { return }
                     await MainActor.run {
+                        _ = self.backgroundStates.remove(.updatingPlaylist)
                         self.eventSubject.send(.error(JellyfinAPIError(error.localizedDescription)))
                     }
                 }
@@ -227,71 +305,102 @@ class PlaylistViewModel: ViewModel, Stateful, Eventful {
         }
     }
 
-    // MARK: - Add Item(s) to Playlist
+    // MARK: - Add Item(s) to the Selected Playlist
 
     private func addItems(_ itemIDs: [String]) async throws {
         guard let playlistID = selectedPlaylist?.id else {
-            throw JellyfinAPIError(L10n.unknownError)
+            throw JellyfinAPIError("A playlist must be selected before adding items to it")
         }
 
         let request = Paths.addToPlaylist(playlistID: playlistID, ids: itemIDs)
         _ = try await userSession.client.send(request)
     }
 
-    // MARK: - Remove Item(s) from Playlist
+    // MARK: - Remove Item(s) from the Selected Playlist
 
     private func removeItems(_ itemIDs: [String]) async throws {
         guard let playlistID = selectedPlaylist?.id else {
-            throw JellyfinAPIError(L10n.unknownError)
+            throw JellyfinAPIError("A playlist must be selected before removing items from it")
         }
 
         let request = Paths.removeFromPlaylist(playlistID: playlistID, entryIDs: itemIDs)
         _ = try await userSession.client.send(request)
     }
 
-    // MARK: - Move Item's Index in Playlist
+    // MARK: - Move an Item to a New Index in the Selected Playlist
 
     private func moveItem(itemID: String, index: Int) async throws {
         guard let playlistID = selectedPlaylist?.id else {
-            throw JellyfinAPIError(L10n.unknownError)
+            throw JellyfinAPIError("A playlist must be selected before moving items in it")
         }
 
         let request = Paths.moveItem(playlistID: playlistID, itemID: itemID, newIndex: index)
         _ = try await userSession.client.send(request)
     }
 
-    // MARK: - Create Playlist
+    // MARK: - Create a Playlist from Parameters
 
-    private func createPlaylist(parameters: CreatePlaylistDto) async throws {
+    private func createPlaylist(parameters: CreatePlaylistDto) async throws -> String {
         let request = Paths.createPlaylist(parameters)
         let response = try await userSession.client.send(request)
 
-        try await setPlaylist(response.value.id!)
+        guard let newPlaylist = response.value.id else {
+            throw JellyfinAPIError("Failed to create a playlist")
+        }
+
+        return newPlaylist
     }
 
-    // This SHOULD be used but doesn't appear active in 10.8
+    // TODO: 10.10 use this create func instead
     /* private func createPlaylist(
-         name: String,
-         ids: [String]? = nil,
-         mediaType: PlaylistViewModel.PlaylistType = .unknown,
-         users: [String]? = nil,
-         isPublic: Bool = false
-     ) async throws {
+          name: String,
+          ids: [String]? = nil,
+          mediaType: PlaylistViewModel.PlaylistType = .unknown,
+          users: [String]? = nil,
+          isPublic: Bool = false
+      ) async throws -> String {
 
-         let parameters = Paths.CreatePlaylistParameters(
-             name: name,
-             ids: ids,
-             userID: userSession.user.id,
-             mediaType: mediaType.rawValue,
-             users: users,
-             isPublic: isPublic
-         )*/
+          let parameters = Paths.CreatePlaylistParameters(
+              name: name,
+              ids: ids,
+              userID: userSession.user.id,
+              mediaType: mediaType.rawValue,
+              users: users,
+              isPublic: isPublic
+          )
+          let request = Paths.createPlaylist(parameters)
+          let response = try await userSession.client.send(request)
 
-    // MARK: - Get All Available Playlists
+          guard let newPlaylist = response.value.id else {
+              throw JellyfinAPIError("Failed to create playlist")
+          }
 
-    private func getPlaylists() async throws {
+          return newPlaylist
+     } */
 
-        // TODO: Use ListItemViewModel instead? Can we page a Picker?
+    // MARK: - Validate & Set the Playlist from a BaseItemDto
+
+    private func setPlaylist(_ newPlaylist: BaseItemDto?) async throws {
+        // Check if the New Playlist is a BaseItemDto or Nil
+        if let newPlaylist {
+            // Ensure that the BaseItemDto is a valid Playlist
+            if newPlaylist.type == .playlist {
+                await MainActor.run {
+                    self.selectedPlaylist = newPlaylist
+                }
+            } else {
+                throw JellyfinAPIError("The provided item is not a playlist")
+            }
+        } else {
+            await MainActor.run {
+                self.selectedPlaylist = nil
+            }
+        }
+    }
+
+    // MARK: - Get All Available Playlists for this User
+
+    private func getPlaylists() async throws -> [BaseItemDto] {
 
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.fields = .MinimumFields
@@ -304,20 +413,16 @@ class PlaylistViewModel: ViewModel, Stateful, Eventful {
         )
         let response = try await userSession.client.send(request)
 
-        await MainActor.run {
-            self.playlists = response.value.items ?? []
-        }
+        return response.value.items ?? []
     }
 
-    // MARK: - Get All Available Playlists
+    // MARK: - Get Playlist BaseItemDto from its Id
 
-    private func setPlaylist(_ id: String) async throws {
-
-        // TODO: Use ListItemViewModel instead? Or is this fine since it's one Playlist?
+    private func getPlaylist(id: String) async throws -> BaseItemDto {
 
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.fields = .MinimumFields
-        parameters.mediaTypes = ["playlist"]
+        parameters.includeItemTypes = [.playlist]
         parameters.ids = [id]
 
         let request = Paths.getItemsByUserID(
@@ -327,29 +432,25 @@ class PlaylistViewModel: ViewModel, Stateful, Eventful {
         let response = try await userSession.client.send(request)
 
         guard let foundPlaylist = response.value.items?.first! else {
-            throw JellyfinAPIError("No playlist found")
+            throw JellyfinAPIError("This playlist does not exist")
         }
 
-        await MainActor.run {
-            self.selectedPlaylist = foundPlaylist
-        }
+        return foundPlaylist
     }
 
-    // MARK: - Get All Playlist Items
+    // MARK: - Get All Playlist Items for the Selected Playlist
 
-    private func getPlaylistItems() async throws {
+    private func getPlaylistItems() async throws -> [BaseItemDto] {
         guard let playlistID = selectedPlaylist?.id else {
-            throw JellyfinAPIError(L10n.unknownError)
+            return []
         }
-
-        // TODO: 100% this should use ListItemViewModel instead
 
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.fields = .MinimumFields
         parameters.parentID = playlistID
 
         // Hide unsupported item types
-        parameters.includeItemTypes = [.movie, .episode, .series, .boxSet]
+        parameters.includeItemTypes = [.movie, .episode, .series, .boxSet, .video]
 
         let request = Paths.getItemsByUserID(
             userID: userSession.user.id,
@@ -357,8 +458,6 @@ class PlaylistViewModel: ViewModel, Stateful, Eventful {
         )
         let response = try await userSession.client.send(request)
 
-        await MainActor.run {
-            self.items = response.value.items ?? []
-        }
+        return response.value.items ?? []
     }
 }

@@ -39,6 +39,8 @@ final class ItemCoordinator: NavigationCoordinatable {
 
     #if os(tvOS)
     @Route(.fullScreen)
+    var addToPlaylist = makeAddToPlaylist
+    @Route(.fullScreen)
     var itemOverview = makeItemOverview
     @Route(.fullScreen)
     var mediaSourceInfo = makeMediaSourceInfo
@@ -83,7 +85,7 @@ final class ItemCoordinator: NavigationCoordinatable {
 
     func makeAddToPlaylist(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
-            ItemPlaylistView(item: item)
+            AddToPlaylistView(item: item)
         }
     }
 
