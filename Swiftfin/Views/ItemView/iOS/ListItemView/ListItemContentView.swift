@@ -32,6 +32,7 @@ extension ListItemView {
 
                         if sectionItems.isNotEmpty {
                             PosterHStack(
+                                // TODO: Is there a way to make this plural without creating a pluralDisplayTitle?
                                 title: sectionType.displayTitle,
                                 type: .portrait,
                                 items: sectionItems
