@@ -10,7 +10,7 @@ import SwiftUI
 
 extension Font {
 
-    var uiFont: UIFont {
+    var uiFont: UIFont? {
         switch self {
         #if os(iOS)
         case .largeTitle:
@@ -37,7 +37,7 @@ extension Font {
         case .body:
             return UIFont.preferredFont(forTextStyle: .body)
         default:
-            return UIFont.preferredFont(forTextStyle: .body)
+            return nil
         }
     }
 }

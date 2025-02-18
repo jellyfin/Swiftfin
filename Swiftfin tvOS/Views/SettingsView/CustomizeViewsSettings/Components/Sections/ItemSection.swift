@@ -17,6 +17,12 @@ extension CustomizeViewsSettings {
         @Injected(\.currentUserSession)
         private var userSession
 
+        @EnvironmentObject
+        private var router: CustomizeSettingsCoordinator.Router
+
+        @StoredValue(.User.itemViewAttributes)
+        private var itemViewAttributes
+
         @StoredValue(.User.enableItemEditing)
         private var enableItemEditing
         @StoredValue(.User.enableItemDeletion)
@@ -25,24 +31,24 @@ extension CustomizeViewsSettings {
         private var enableCollectionManagement
 
         var body: some View {
-            if userSession?.user.permissions.items.canEditMetadata ?? false ||
-                userSession?.user.permissions.items.canDelete ?? false ||
-                userSession?.user.permissions.items.canManageCollections ?? false
-            {
+            Section(L10n.items) {
 
-                Section(L10n.items) {
-                    /// Enable Refreshing Items from All Visible LIbraries
-                    if userSession?.user.permissions.items.canEditMetadata ?? false {
-                        Toggle(L10n.allowItemEditing, isOn: $enableItemEditing)
+                ChevronButton(L10n.mediaAttributes)
+                    .onSelect {
+                        router.route(to: \.itemViewAttributes, $itemViewAttributes)
                     }
-                    /// Enable Deleting Items from Approved Libraries
-                    if userSession?.user.permissions.items.canDelete ?? false {
-                        Toggle(L10n.allowItemDeletion, isOn: $enableItemDeletion)
-                    }
-                    /// Enable Refreshing & Deleting Collections
-                    if userSession?.user.permissions.items.canManageCollections ?? false {
-                        Toggle(L10n.allowCollectionManagement, isOn: $enableCollectionManagement)
-                    }
+
+                /// Enable Refreshing Items from All Visible LIbraries
+                if userSession?.user.permissions.items.canEditMetadata ?? false {
+                    Toggle(L10n.allowItemEditing, isOn: $enableItemEditing)
+                }
+                /// Enable Deleting Items from Approved Libraries
+                if userSession?.user.permissions.items.canDelete ?? false {
+                    Toggle(L10n.allowItemDeletion, isOn: $enableItemDeletion)
+                }
+                /// Enable Refreshing & Deleting Collections
+                if userSession?.user.permissions.items.canManageCollections ?? false {
+                    Toggle(L10n.allowCollectionManagement, isOn: $enableCollectionManagement)
                 }
             }
         }

@@ -40,7 +40,7 @@ struct ChannelLibraryView: View {
     }
 
     var body: some View {
-        WrappedView {
+        ZStack {
             switch viewModel.state {
             case .content:
                 if viewModel.elements.isEmpty {
@@ -49,11 +49,15 @@ struct ChannelLibraryView: View {
                     contentView
                 }
             case let .error(error):
-                Text(error.localizedDescription)
+                ErrorView(error: error)
+                    .onRetry {
+                        viewModel.send(.refresh)
+                    }
             case .initial, .refreshing:
                 ProgressView()
             }
         }
+        .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
         .onFirstAppear {
             if viewModel.state == .initial {
