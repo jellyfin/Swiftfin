@@ -40,6 +40,8 @@ struct AddToPlaylistView: View {
     // @State
     // private var playlistPublic: Bool = false
 
+    // MARK: - Remove Item Variables
+
     @State
     private var isPresentingRemovalConfirmation: Bool = false
     @State

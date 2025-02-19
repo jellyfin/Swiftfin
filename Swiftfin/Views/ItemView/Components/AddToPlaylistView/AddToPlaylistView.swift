@@ -40,6 +40,13 @@ struct AddToPlaylistView: View {
     // @State
     // private var playlistPublic: Bool = false
 
+    // MARK: - Remove Item Variables
+
+    @State
+    private var isPresentingRemovalConfirmation: Bool = false
+    @State
+    private var selectedItem: BaseItemDto? = nil
+
     // MARK: - Error State
 
     @State
@@ -118,23 +125,38 @@ struct AddToPlaylistView: View {
             .buttonStyle(.toolbarPill)
             .disabled(!isValid)
         }
-        .onReceive(viewModel.events) { event in
-            switch event {
-            case .created, .updated:
-                router.dismissCoordinator()
-            case let .error(eventError):
-                error = eventError
-            }
-        }
-        .errorMessage($error)
         .navigationBarTitle(L10n.addToPlaylist.localizedCapitalized)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismissCoordinator()
         }
+        .confirmationDialog(
+            L10n.removeItem(selectedItem?.name ?? selectedItem?.type?.displayTitle ?? L10n.items),
+            isPresented: $isPresentingRemovalConfirmation
+        ) {
+            Button(L10n.remove, role: .destructive) {
+                if let item = selectedItem {
+                    viewModel.send(.removeItems([item.id!]))
+                }
+            }
+        } message: {
+            Text(L10n.removeItemConfirmationMessage)
+        }
         .onFirstAppear {
             viewModel.send(.getPlaylists)
         }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .created, .added, .updated:
+                router.dismissCoordinator()
+            case .removed:
+                selectedItem = nil
+                isPresentingRemovalConfirmation = false
+            case let .error(eventError):
+                error = eventError
+            }
+        }
+        .errorMessage($error)
     }
 
     // MARK: - Content View
@@ -143,18 +165,11 @@ struct AddToPlaylistView: View {
         VStack {
             List {
                 playlistPickerView
-                detailsView
+
+                playlistDetailsView
             }
 
-            // MARK: Playlist Items
-
-            if viewModel.selectedPlaylistItems.isNotEmpty {
-                PosterHStack(
-                    title: L10n.items,
-                    type: .portrait,
-                    items: viewModel.selectedPlaylistItems
-                )
-            }
+            playlistItemsView
         }
     }
 
@@ -188,7 +203,7 @@ struct AddToPlaylistView: View {
     // MARK: - Playlist Details View
 
     @ViewBuilder
-    private var detailsView: some View {
+    private var playlistDetailsView: some View {
         if let selectedPlaylist = viewModel.selectedPlaylist {
             if let overview = selectedPlaylist.overview {
                 Section(L10n.overview) {
@@ -206,6 +221,31 @@ struct AddToPlaylistView: View {
                     ForEach(PlaylistViewModel.PlaylistType.allCases) { type in
                         Text(type.displayTitle)
                             .tag(type)
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Playlist Items View
+
+    @ViewBuilder
+    private var playlistItemsView: some View {
+        if !viewModel.selectedPlaylistItems.isEmpty {
+            ScrollView {
+                ForEach(BaseItemKind.allCases, id: \.self) { sectionType in
+                    let sectionItems = viewModel.selectedPlaylistItems.filter { $0.type == sectionType }
+
+                    if !sectionItems.isEmpty {
+                        PosterHStack(
+                            title: sectionType.displayTitle,
+                            type: .portrait,
+                            items: sectionItems
+                        )
+                        .onSelect {
+                            selectedItem = $0
+                            isPresentingRemovalConfirmation = true
+                        }
                     }
                 }
             }
