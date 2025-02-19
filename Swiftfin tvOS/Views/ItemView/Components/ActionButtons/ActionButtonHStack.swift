@@ -21,7 +21,7 @@ extension ItemView {
         var viewModel: ItemViewModel
 
         @StateObject
-        var deleteViewModel: DeleteItemViewModel
+        private var deleteViewModel: DeleteItemViewModel
 
         // MARK: - Defaults
 
@@ -64,13 +64,6 @@ extension ItemView {
             }
         }
 
-        // MARK: - Select Item(s)
-
-        private var hasMultipleVersions: Bool {
-            guard let mediaSources = viewModel.playButtonItem?.mediaSources else { return false }
-            return mediaSources.count > 1
-        }
-
         // MARK: - Initializer
 
         init(viewModel: ItemViewModel) {
@@ -111,8 +104,8 @@ extension ItemView {
 
                 // MARK: - Select Merged Version
 
-                if hasMultipleVersions {
-                    VersionMenu(viewModel: viewModel, mediaSources: viewModel.playButtonItem?.mediaSources)
+                if let mediaSources = viewModel.playButtonItem?.mediaSources, mediaSources.count > 1 {
+                    VersionMenu(viewModel: viewModel, mediaSources: mediaSources)
                         .frame(minWidth: 80, maxWidth: .infinity)
                 }
 

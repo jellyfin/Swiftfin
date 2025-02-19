@@ -21,22 +21,20 @@ extension ItemView {
         @ObservedObject
         var viewModel: ItemViewModel
 
-        let mediaSources: [MediaSourceInfo]?
+        let mediaSources: [MediaSourceInfo]
 
         // MARK: - Body
 
         var body: some View {
             Menu {
-                if let mediaSources {
-                    ForEach(mediaSources, id: \.hashValue) { mediaSource in
-                        Button {
-                            viewModel.send(.selectMediaSource(mediaSource))
-                        } label: {
-                            if let selectedMediaSource = viewModel.selectedMediaSource, selectedMediaSource == mediaSource {
-                                Label(selectedMediaSource.displayTitle, systemImage: "checkmark")
-                            } else {
-                                Text(mediaSource.displayTitle)
-                            }
+                ForEach(mediaSources, id: \.hashValue) { mediaSource in
+                    Button {
+                        viewModel.send(.selectMediaSource(mediaSource))
+                    } label: {
+                        if let selectedMediaSource = viewModel.selectedMediaSource, selectedMediaSource == mediaSource {
+                            Label(selectedMediaSource.displayTitle, systemImage: "checkmark")
+                        } else {
+                            Text(mediaSource.displayTitle)
                         }
                     }
                 }
@@ -44,10 +42,6 @@ extension ItemView {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(isFocused ? Color.white : Color.white.opacity(0.5))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.clear, lineWidth: 2)
-                        )
 
                     Label(L10n.version, systemImage: "list.dash")
                         .font(.title3)
