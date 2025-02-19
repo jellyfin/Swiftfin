@@ -1052,10 +1052,18 @@ internal enum L10n {
   internal static let remoteConnections = L10n.tr("Localizable", "remoteConnections", fallback: "Remote connections")
   /// Remote control
   internal static let remoteControl = L10n.tr("Localizable", "remoteControl", fallback: "Remote control")
+  /// Remove
+  internal static let remove = L10n.tr("Localizable", "remove", fallback: "Remove")
   /// Remove All
   internal static let removeAll = L10n.tr("Localizable", "removeAll", fallback: "Remove All")
   /// Remove All Servers
   internal static let removeAllServers = L10n.tr("Localizable", "removeAllServers", fallback: "Remove All Servers")
+  /// Remove %1$@
+  internal static func removeItem(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "removeItem", String(describing: p1), fallback: "Remove %1$@")
+  }
+  /// Are you sure you want to remove this item? This action cannot be undone.
+  internal static let removeItemConfirmationMessage = L10n.tr("Localizable", "removeItemConfirmationMessage", fallback: "Are you sure you want to remove this item? This action cannot be undone.")
   /// Remux
   internal static let remux = L10n.tr("Localizable", "remux", fallback: "Remux")
   /// Reorder

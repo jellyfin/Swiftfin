@@ -40,6 +40,11 @@ struct AddToPlaylistView: View {
     // @State
     // private var playlistPublic: Bool = false
 
+    @State
+    private var isPresentingRemovalConfirmation: Bool = false
+    @State
+    private var selectedItem: BaseItemDto? = nil
+
     // MARK: - Error State
 
     @State
@@ -109,80 +114,97 @@ struct AddToPlaylistView: View {
             }
             .disabled(!isValid)
         }
+        .navigationBarTitle(L10n.addToPlaylist.localizedCapitalized)
+        .confirmationDialog(
+            L10n.removeItem(selectedItem?.name ?? selectedItem?.type?.displayTitle ?? L10n.items),
+            isPresented: $isPresentingRemovalConfirmation
+        ) {
+            Button(L10n.remove, role: .destructive) {
+                if let item = selectedItem {
+                    viewModel.send(.removeItems([item.id!]))
+                }
+            }
+        } message: {
+            Text(L10n.removeItemConfirmationMessage)
+        }
+        .onFirstAppear {
+            viewModel.send(.getPlaylists)
+        }
         .onReceive(viewModel.events) { event in
             switch event {
-            case .created, .updated:
+            case .created, .added, .updated:
                 router.dismissCoordinator()
+            case .removed:
+                selectedItem = nil
+                isPresentingRemovalConfirmation = false
             case let .error(eventError):
                 error = eventError
             }
         }
         .errorMessage($error)
-        .navigationBarTitle(L10n.addToPlaylist.localizedCapitalized)
-        .onFirstAppear {
-            viewModel.send(.getPlaylists)
-        }
     }
 
     // MARK: - Content View
 
     private var contentView: some View {
-        VStack {
-            Form {
-                playlistPickerView
-                detailsView
+        SplitFormWindowView()
+            .descriptionView {
+                playlistPosterView
             }
+            .contentView {
+                playlistPickerView
 
-            // MARK: Playlist Items
+                playlistDetailsView
 
-            if viewModel.selectedPlaylistItems.isNotEmpty {
-                PosterHStack(
-                    title: L10n.items,
-                    type: .portrait,
-                    items: viewModel.selectedPlaylistItems
-                )
+                playlistItemsView
+            }
+    }
+
+    // MARK: - Playlist Poster View
+
+    private var playlistPosterView: some View {
+        Group {
+            if let selectedPlaylist = viewModel.selectedPlaylist {
+                ImageView(selectedPlaylist.portraitImageSources(maxWidth: 400))
+            } else {
+                Image(systemName: "text.badge.plus")
+                    .resizable()
             }
         }
+        .aspectRatio(contentMode: .fit)
+        .frame(maxWidth: 400)
+        .clipShape(
+            RoundedRectangle(cornerRadius: 10)
+        )
     }
 
     // MARK: - Playlist Picker View
 
     private var playlistPickerView: some View {
         Section {
-            Menu {
-                Button {
-                    viewModel.send(.setPlaylist(nil))
-                } label: {
-                    HStack {
-                        Text(L10n.createPlaylist)
-                        if viewModel.selectedPlaylist == nil {
-                            Image(systemName: "checkmark")
-                        }
+            Picker(
+                L10n.playlist,
+                selection: Binding(
+                    get: { viewModel.selectedPlaylist },
+                    set: { newValue in
+                        viewModel.send(.setPlaylist(newValue))
                     }
-                }
+                )
+            ) {
+                Text(L10n.createPlaylist)
+                    .tag(nil as BaseItemDto?)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                 ForEach(viewModel.playlists) { playlist in
-                    Button {
-                        viewModel.send(.setPlaylist(playlist))
-                    } label: {
-                        HStack {
-                            Text(playlist.name ?? L10n.unknown)
-                            if viewModel.selectedPlaylist == playlist {
-                                Image(systemName: "checkmark")
-                            }
-                        }
-                    }
-                }
-            } label: {
-                HStack {
-                    Text(L10n.playlist)
-                    Spacer()
-                    Text(viewModel.selectedPlaylist?.name ?? L10n.createPlaylist)
+                    Text(playlist.name ?? L10n.unknown)
+                        .tag(playlist as BaseItemDto?)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
-            .listRowInsets(.zero)
-        }
-        header: {
+            .pickerStyle(.menu)
+            .font(.body)
+
+        } header: {
             Text(L10n.playlist)
         } footer: {
             if !isUnique {
@@ -192,12 +214,14 @@ struct AddToPlaylistView: View {
                 )
             }
         }
+        .background(Color.clear)
+        .listRowInsets(.zero)
     }
 
     // MARK: - Playlist Details View
 
     @ViewBuilder
-    private var detailsView: some View {
+    private var playlistDetailsView: some View {
         if let selectedPlaylist = viewModel.selectedPlaylist {
             if let overview = selectedPlaylist.overview {
                 Section(L10n.overview) {
@@ -213,6 +237,33 @@ struct AddToPlaylistView: View {
                 // Toggle(L10n.public, isOn: $playlistPublic)
 
                 InlineEnumToggle(title: L10n.type, selection: $playlistType)
+            }
+        }
+    }
+
+    // MARK: - Playlist Items View
+
+    @ViewBuilder
+    private var playlistItemsView: some View {
+        if !viewModel.selectedPlaylistItems.isEmpty {
+            ForEach(BaseItemKind.allCases, id: \.self) { sectionType in
+                let sectionItems = viewModel.selectedPlaylistItems.filter { $0.type == sectionType }
+
+                if !sectionItems.isEmpty {
+                    Section(sectionType.displayTitle) {
+                        PosterHStack(
+                            type: .portrait,
+                            items: sectionItems
+                        )
+                        .onSelect {
+                            selectedItem = $0
+                            isPresentingRemovalConfirmation = true
+                        }
+                        .focusSection()
+                        .frame(height: 240)
+                        .listRowInsets(.zero)
+                    }
+                }
             }
         }
     }

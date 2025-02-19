@@ -1504,11 +1504,20 @@
 /// Remote control
 "remoteControl" = "Remote control";
 
+/// Remove
+"remove" = "Remove";
+
 /// Remove All
 "removeAll" = "Remove All";
 
 /// Remove All Servers
 "removeAllServers" = "Remove All Servers";
+
+/// Remove %1$@
+"removeItem" = "Remove %1$@";
+
+/// Are you sure you want to remove this item? This action cannot be undone.
+"removeItemConfirmationMessage" = "Are you sure you want to remove this item? This action cannot be undone.";
 
 /// Remux
 "remux" = "Remux";

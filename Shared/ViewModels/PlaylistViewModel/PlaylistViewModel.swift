@@ -17,6 +17,8 @@ class PlaylistViewModel: ViewModel, Stateful, Eventful {
     // MARK: - Events
 
     enum Event: Equatable {
+        case added
+        case removed
         case updated
         case created
         case error(JellyfinAPIError)
@@ -135,7 +137,7 @@ class PlaylistViewModel: ViewModel, Stateful, Eventful {
 
                     await MainActor.run {
                         _ = self.backgroundStates.append(.updatingPlaylist)
-                        self.eventSubject.send(.updated)
+                        self.eventSubject.send(.added)
                     }
                 } catch {
                     guard !Task.isCancelled else { return }
@@ -164,7 +166,7 @@ class PlaylistViewModel: ViewModel, Stateful, Eventful {
 
                     await MainActor.run {
                         _ = self.backgroundStates.remove(.updatingPlaylist)
-                        self.eventSubject.send(.updated)
+                        self.eventSubject.send(.removed)
                     }
                 } catch {
                     guard !Task.isCancelled else { return }
@@ -314,6 +316,12 @@ class PlaylistViewModel: ViewModel, Stateful, Eventful {
 
         let request = Paths.addToPlaylist(playlistID: playlistID, ids: itemIDs)
         _ = try await userSession.client.send(request)
+
+        let newItems = try await getPlaylistItems()
+
+        await MainActor.run {
+            self.selectedPlaylistItems = newItems
+        }
     }
 
     // MARK: - Remove Item(s) from the Selected Playlist
@@ -325,6 +333,12 @@ class PlaylistViewModel: ViewModel, Stateful, Eventful {
 
         let request = Paths.removeFromPlaylist(playlistID: playlistID, entryIDs: itemIDs)
         _ = try await userSession.client.send(request)
+
+        await MainActor.run {
+            self.selectedPlaylistItems.removeAll { item in
+                item.id.map(itemIDs.contains) ?? false
+            }
+        }
     }
 
     // MARK: - Move an Item to a New Index in the Selected Playlist
@@ -336,6 +350,14 @@ class PlaylistViewModel: ViewModel, Stateful, Eventful {
 
         let request = Paths.moveItem(playlistID: playlistID, itemID: itemID, newIndex: index)
         _ = try await userSession.client.send(request)
+
+        await MainActor.run {
+            if let currentIndex = selectedPlaylistItems.firstIndex(where: { $0.id == itemID }) {
+                let item = selectedPlaylistItems.remove(at: currentIndex)
+                let newIndex = min(max(index, 0), selectedPlaylistItems.count)
+                selectedPlaylistItems.insert(item, at: newIndex)
+            }
+        }
     }
 
     // MARK: - Create a Playlist from Parameters
