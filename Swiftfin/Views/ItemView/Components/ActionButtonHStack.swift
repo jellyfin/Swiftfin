@@ -80,7 +80,7 @@ extension ItemView {
                     Menu {
                         ForEach(mediaSources, id: \.hashValue) { mediaSource in
                             Button {
-//                                viewModel.selectedMediaSource = mediaSource
+                                viewModel.send(.selectMediaSource(mediaSource))
                             } label: {
                                 if let selectedMediaSource = viewModel.selectedMediaSource, selectedMediaSource == mediaSource {
                                     Label(selectedMediaSource.displayTitle, systemImage: "checkmark")
