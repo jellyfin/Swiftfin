@@ -26,14 +26,7 @@ extension ItemView {
 
                 ScrollView(.horizontal) {
                     HStack(alignment: .top, spacing: 30) {
-                        PosterButton(item: viewModel.item, type: .portrait)
-                            .content {
-                                EmptyView()
-                            }
-                            .imageOverlay {
-                                EmptyView()
-                            }
-                            .frame(height: 405)
+                        ImageCard(viewModel: viewModel)
 
                         OverviewCard(item: viewModel.item)
 
