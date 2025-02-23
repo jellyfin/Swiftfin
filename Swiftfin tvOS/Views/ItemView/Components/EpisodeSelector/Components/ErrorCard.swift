@@ -25,10 +25,10 @@ extension SeriesEpisodeSelector {
         }
 
         var body: some View {
-            Button {
-                onSelect()
-            } label: {
-                VStack(alignment: .leading) {
+            VStack(alignment: .leading) {
+                Button {
+                    onSelect()
+                } label: {
                     Color.secondarySystemFill
                         .opacity(0.75)
                         .posterStyle(.landscape)
@@ -36,13 +36,15 @@ extension SeriesEpisodeSelector {
                             Image(systemName: "arrow.clockwise.circle.fill")
                                 .font(.system(size: 40))
                         }
-
-                    SeriesEpisodeSelector.EpisodeContent(
-                        subHeader: .emptyDash,
-                        header: L10n.error,
-                        content: error.localizedDescription
-                    )
                 }
+                .buttonStyle(.card)
+                .posterShadow()
+
+                SeriesEpisodeSelector.EpisodeContent(
+                    subHeader: .emptyDash,
+                    header: L10n.error,
+                    content: error.localizedDescription
+                )
             }
         }
     }
