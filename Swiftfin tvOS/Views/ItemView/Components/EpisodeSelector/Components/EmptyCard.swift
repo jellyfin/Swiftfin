@@ -37,7 +37,6 @@ extension SeriesEpisodeSelector {
                 }
                 .buttonStyle(.card)
                 .posterShadow()
-                .focusable()
 
                 SeriesEpisodeSelector.EpisodeContent(
                     subHeader: .emptyDash,

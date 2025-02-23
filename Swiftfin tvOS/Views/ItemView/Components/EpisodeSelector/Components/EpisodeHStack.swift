@@ -55,7 +55,6 @@ extension SeriesEpisodeSelector {
 
                 lastFocusedEpisodeID = playButtonItem?.id
 
-                // good enough?
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     guard let playButtonItem else { return }
                     proxy.scrollTo(element: playButtonItem, animated: false)
@@ -70,21 +69,35 @@ extension SeriesEpisodeSelector {
                 switch viewModel.state {
                 case .content:
                     if viewModel.elements.isEmpty {
-                        EmptyHStack()
+                        EmptyHStack(focusedEpisodeID: $focusedEpisodeID)
                     } else {
                         contentView(viewModel: viewModel)
                     }
                 case let .error(error):
-                    ErrorHStack(viewModel: viewModel, error: error)
+                    ErrorHStack(viewModel: viewModel, error: error, focusedEpisodeID: $focusedEpisodeID)
                 case .initial, .refreshing:
                     LoadingHStack()
                 }
             }
+            .padding(.bottom, 45)
             .focusSection()
             .focusGuide(
                 focusGuide,
                 tag: "episodes",
-                onContentFocus: { focusedEpisodeID = viewModel.elements.isEmpty ? "RefreshButton" : lastFocusedEpisodeID },
+                onContentFocus: {
+                    switch viewModel.state {
+                    case .content:
+                        if viewModel.elements.isEmpty {
+                            focusedEpisodeID = "EmptyCard"
+                        } else {
+                            focusedEpisodeID = lastFocusedEpisodeID
+                        }
+                    case .error:
+                        focusedEpisodeID = "ErrorCard"
+                    case .initial, .refreshing:
+                        focusedEpisodeID = lastFocusedEpisodeID
+                    }
+                },
                 top: "seasons"
             )
             .onChange(of: viewModel.id) {
@@ -106,15 +119,20 @@ extension SeriesEpisodeSelector {
 
     struct EmptyHStack: View {
 
+        var focusedEpisodeID: FocusState<String?>.Binding
+
+        init(focusedEpisodeID: FocusState<String?>.Binding) {
+            self.focusedEpisodeID = focusedEpisodeID
+        }
+
         var body: some View {
             CollectionHStack(
                 count: 1,
                 columns: 3.5
             ) { _ in
                 SeriesEpisodeSelector.EmptyCard()
-                    .onSelect {
-                        print("Work?")
-                    }
+                    .focused(focusedEpisodeID, equals: "EmptyCard")
+                    .padding(.horizontal, 4)
             }
             .allowScrolling(false)
             .insets(horizontal: EdgeInsets.edgePadding)
@@ -131,6 +149,14 @@ extension SeriesEpisodeSelector {
 
         let error: JellyfinAPIError
 
+        var focusedEpisodeID: FocusState<String?>.Binding
+
+        init(viewModel: SeasonItemViewModel, error: JellyfinAPIError, focusedEpisodeID: FocusState<String?>.Binding) {
+            self.viewModel = viewModel
+            self.error = error
+            self.focusedEpisodeID = focusedEpisodeID
+        }
+
         var body: some View {
             CollectionHStack(
                 count: 1,
@@ -140,6 +166,8 @@ extension SeriesEpisodeSelector {
                     .onSelect {
                         viewModel.send(.refresh)
                     }
+                    .focused(focusedEpisodeID, equals: "ErrorCard")
+                    .padding(.horizontal, 4)
             }
             .allowScrolling(false)
             .insets(horizontal: EdgeInsets.edgePadding)
@@ -157,6 +185,7 @@ extension SeriesEpisodeSelector {
                 columns: 3.5
             ) { _ in
                 SeriesEpisodeSelector.LoadingCard()
+                    .padding(.horizontal, 4)
             }
             .allowScrolling(false)
             .insets(horizontal: EdgeInsets.edgePadding)
