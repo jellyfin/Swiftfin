@@ -29,17 +29,6 @@ extension EpisodeItemView {
                     ItemView.CastAndCrewHStack(people: castAndCrew)
                 }
 
-                if let seriesItem = viewModel.seriesItem {
-                    PosterHStack(
-                        title: L10n.series,
-                        type: .portrait,
-                        items: [seriesItem]
-                    )
-                    .onSelect { item in
-                        router.route(to: \.item, item)
-                    }
-                }
-
                 ItemView.AboutView(viewModel: viewModel)
             }
             .background {
