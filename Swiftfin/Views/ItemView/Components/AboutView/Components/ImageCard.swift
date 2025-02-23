@@ -25,37 +25,10 @@ extension ItemView.AboutView {
         // MARK: - Body
 
         var body: some View {
-            switch viewModel.item.type {
-            case .episode:
-                imageButton
-            default:
-                // Don't present this image as a button unless it's necessary
-                imageView
-            }
-        }
-
-        @ViewBuilder
-        private var imageButton: some View {
-            Button {
-                onSelect()
-            } label: {
-                imageView
-            }
-        }
-
-        @ViewBuilder
-        private var imageView: some View {
-            ZStack {
-                Color.clear
-
-                ImageView(
-                    viewModel.item.type == .episode ? viewModel.item.seriesImageSource(.primary, maxWidth: 300) : viewModel
-                        .item.imageSource(.primary, maxWidth: 300)
-                )
-                .accessibilityIgnoresInvertColors()
-            }
-            .posterStyle(.portrait)
-            .posterShadow()
+            PosterButton(item: viewModel.item, type: .portrait)
+                .content { EmptyView() }
+                .imageOverlay { EmptyView() }
+                .onSelect(onSelect)
         }
 
         // MARK: - On Select

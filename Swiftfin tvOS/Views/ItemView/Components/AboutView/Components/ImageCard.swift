@@ -26,19 +26,9 @@ extension ItemView.AboutView {
 
         var body: some View {
             PosterButton(item: viewModel.item, type: .portrait)
-                .content {
-                    EmptyView()
-                }
-                .imageOverlay {
-                    EmptyView()
-                }
-                .onSelect {
-                    if let episodeViewModel = viewModel as? EpisodeItemViewModel,
-                       let seriesItem = episodeViewModel.seriesItem
-                    {
-                        router.route(to: \.item, seriesItem)
-                    }
-                }
+                .content { EmptyView() }
+                .imageOverlay { EmptyView() }
+                .onSelect(onSelect)
                 .frame(height: 405)
         }
 
