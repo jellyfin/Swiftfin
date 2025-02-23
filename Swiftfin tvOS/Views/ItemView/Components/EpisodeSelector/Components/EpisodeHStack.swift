@@ -12,7 +12,9 @@ import JellyfinAPI
 import SwiftUI
 
 extension SeriesEpisodeSelector {
+
     struct EpisodeHStack: View {
+
         @EnvironmentObject
         private var focusGuide: FocusGuide
 
@@ -31,6 +33,8 @@ extension SeriesEpisodeSelector {
         private var proxy = CollectionHStackProxy()
 
         let playButtonItem: BaseItemDto?
+
+        // MARK: - Content View
 
         private func contentView(viewModel: SeasonItemViewModel) -> some View {
             CollectionHStack(
@@ -59,24 +63,14 @@ extension SeriesEpisodeSelector {
             }
         }
 
-        @ViewBuilder
-        private var emptyView: some View {
-            VStack {
-                Text(L10n.noEpisodesAvailable)
-                Button(L10n.retry) {
-                    viewModel.send(.refresh)
-                }
-                .buttonStyle(.bordered)
-                .focused($focusedEpisodeID, equals: "RefreshButton")
-            }
-        }
+        // MARK: - Body
 
         var body: some View {
             ZStack {
                 switch viewModel.state {
                 case .content:
                     if viewModel.elements.isEmpty {
-                        emptyView
+                        EmptyHStack()
                     } else {
                         contentView(viewModel: viewModel)
                     }
@@ -108,7 +102,30 @@ extension SeriesEpisodeSelector {
         }
     }
 
+    // MARK: - Empty HStack
+
+    struct EmptyHStack: View {
+
+        var body: some View {
+            CollectionHStack(
+                count: 1,
+                columns: 3.5
+            ) { _ in
+                SeriesEpisodeSelector.EmptyCard()
+                    .onSelect {
+                        print("Work?")
+                    }
+            }
+            .allowScrolling(false)
+            .insets(horizontal: EdgeInsets.edgePadding)
+            .itemSpacing(EdgeInsets.edgePadding / 2)
+        }
+    }
+
+    // MARK: - Error HStack
+
     struct ErrorHStack: View {
+
         @ObservedObject
         var viewModel: SeasonItemViewModel
 
@@ -129,6 +146,8 @@ extension SeriesEpisodeSelector {
             .itemSpacing(EdgeInsets.edgePadding / 2)
         }
     }
+
+    // MARK: - Loading HStack
 
     struct LoadingHStack: View {
 

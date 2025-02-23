@@ -10,7 +10,7 @@ import SwiftUI
 
 extension SeriesEpisodeSelector {
 
-    struct LoadingCard: View {
+    struct EmptyCard: View {
 
         private var onSelect: () -> Void
 
@@ -31,18 +31,19 @@ extension SeriesEpisodeSelector {
                         .opacity(0.75)
                         .posterStyle(.landscape)
                         .overlay {
-                            ProgressView()
+                            Image(systemName: "questionmark")
+                                .font(.system(size: 40))
                         }
                 }
                 .buttonStyle(.card)
                 .posterShadow()
+                .focusable()
 
                 SeriesEpisodeSelector.EpisodeContent(
-                    subHeader: String.random(count: 7 ..< 12),
-                    header: String.random(count: 10 ..< 20),
-                    content: String.random(count: 20 ..< 80)
+                    subHeader: .emptyDash,
+                    header: L10n.noResults,
+                    content: L10n.noEpisodesAvailable
                 )
-                .redacted(reason: .placeholder)
             }
         }
     }

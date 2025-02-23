@@ -26,6 +26,7 @@ extension SeriesEpisodeSelector {
             Text(subHeader)
                 .font(.caption)
                 .foregroundColor(.secondary)
+                .lineLimit(1)
         }
 
         @ViewBuilder
@@ -46,6 +47,7 @@ extension SeriesEpisodeSelector {
                 .multilineTextAlignment(.leading)
                 .backport
                 .lineLimit(3, reservesSpace: true)
+                .font(.caption.weight(.light))
         }
 
         var body: some View {
