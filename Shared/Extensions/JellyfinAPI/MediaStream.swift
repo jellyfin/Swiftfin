@@ -216,36 +216,97 @@ extension MediaStream {
 
 extension [MediaStream] {
 
-    // TODO: explain why adjustment is necessary
-    func adjustExternalSubtitleIndexes(audioStreamCount: Int) -> [MediaStream] {
-        guard allSatisfy({ $0.type == .subtitle }) else { return self }
-        let embeddedSubtitleCount = filter { !($0.isExternal ?? false) }.count
+    /// What is this?
+    /// Jellyfin maintains a sequential indexing system across all tracks with external at the beginning
+    /// VLCKit handles external tracks (added separately to the media) by appending them to the end of the track list
+    /// These functions change the order of the track list to reflect VLCKit's expectated order
 
+    /// Adjust track indexes based on the a count of external tracks
+    func adjustedAudio(
+        for streamType: StreamType,
+        embeddedSubtitleCount: Int,
+        externalSubtitleCount: Int
+    ) -> [MediaStream] {
+        guard allSatisfy({ $0.type == .audio }) else { return self }
+
+        // Get the count for embedded/external audio tracks
+        let embeddedAudioCount = filter { !($0.isExternal ?? false) }.count
+        let externalAudioCount = filter { $0.isExternal ?? false }.count
+
+        // Get the default audio tracks
+        let defaultAudioTracks = filter { $0.isDefault ?? false }
+
+        // Create working version of the [MediaStream]
         var mediaStreams = self
 
         for (i, mediaStream) in mediaStreams.enumerated() {
-            guard mediaStream.isExternal ?? false else { continue }
+            // Create a working version of the Audio Media Streams
             var copy = mediaStream
-            copy.index = (copy.index ?? 0) + 1 + embeddedSubtitleCount + audioStreamCount
 
-            mediaStreams[i] = copy
+            // Handle indexing based on the Stream Type
+            switch streamType {
+            case .direct, .hls:
+                // For DirectPlay, migrate external tracks to the end
+                if copy.isExternal ?? false {
+                    // Move external tracks to the end
+                    copy.index = (copy.index ?? 0) + embeddedSubtitleCount + embeddedAudioCount
+                } else {
+                    // Move internal tracks to the beginning
+                    copy.index = (copy.index ?? 0) - (externalAudioCount + externalSubtitleCount)
+                }
+                // Update the working copy with updated audio track indexes
+                mediaStreams[i] = copy
+            default:
+                // TODO: Figure out tracks.
+                break
+            }
         }
-
         return mediaStreams
     }
 
-    // TODO: explain why adjustment is necessary
-    func adjustAudioForExternalSubtitles(externalMediaStreamCount: Int) -> [MediaStream] {
-        guard allSatisfy({ $0.type == .audio }) else { return self }
+    /// Adjust track indexes based on the a count of external tracks
+    func adjustedSubtitles(
+        for streamType: StreamType,
+        embeddedAudioCount: Int,
+        externalAudioCount: Int
+    ) -> [MediaStream] {
+        guard allSatisfy({ $0.type == .subtitle }) else { return self }
 
+        // Get the count for embedded/external subtitle tracks
+        let embeddedSubtitleCount = filter { !($0.isExternal ?? false) }.count
+        let externalSubtitleCount = filter { $0.isExternal ?? false }.count
+
+        // Create working version of the [MediaStream]
         var mediaStreams = self
 
+        // For transcode, use a counter for sequential subtitles
+        var subtitleCounter = 0
+
         for (i, mediaStream) in mediaStreams.enumerated() {
+            // Create a working version of the Audio Media Streams
             var copy = mediaStream
-            copy.index = (copy.index ?? 0) - externalMediaStreamCount
+
+            // Handle indexing based on the Stream Type
+            switch streamType {
+            case .direct, .hls:
+                if copy.isExternal ?? false {
+                    // Move external tracks to the end
+                    copy.index = (copy.index ?? 0) + embeddedSubtitleCount + embeddedAudioCount + externalAudioCount
+                } else {
+                    // Move internal tracks to the beginning
+                    copy.index = (copy.index ?? 0) - (externalAudioCount + externalSubtitleCount)
+                }
+            default:
+                // In transcoded streams, video is 0, audio is 1, and subtitles start at 2
+                let subtitleBaseIndex = 2
+
+                // Assign a sequential index for subtitles starting from subtitleBaseIndex
+                copy.index = subtitleBaseIndex + subtitleCounter
+                subtitleCounter += 1
+            }
+            // Update the working copy with updated subtitle track indexes
             mediaStreams[i] = copy
         }
-
         return mediaStreams
     }
 
