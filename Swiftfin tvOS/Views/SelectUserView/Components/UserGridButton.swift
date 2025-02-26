@@ -63,6 +63,8 @@ extension SelectUserView {
                 ),
                 pipeline: .Swiftfin.local
             )
+            .aspectRatio(1, contentMode: .fill)
+            .clipShape(.circle)
             .overlay {
                 if isEditing {
                     ZStack(alignment: .bottom) {
