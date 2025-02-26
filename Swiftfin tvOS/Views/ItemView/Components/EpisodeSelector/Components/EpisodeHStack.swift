@@ -119,11 +119,7 @@ extension SeriesEpisodeSelector {
 
     struct EmptyHStack: View {
 
-        var focusedEpisodeID: FocusState<String?>.Binding
-
-        init(focusedEpisodeID: FocusState<String?>.Binding) {
-            self.focusedEpisodeID = focusedEpisodeID
-        }
+        let focusedEpisodeID: FocusState<String?>.Binding
 
         var body: some View {
             CollectionHStack(
@@ -148,14 +144,7 @@ extension SeriesEpisodeSelector {
         var viewModel: SeasonItemViewModel
 
         let error: JellyfinAPIError
-
-        var focusedEpisodeID: FocusState<String?>.Binding
-
-        init(viewModel: SeasonItemViewModel, error: JellyfinAPIError, focusedEpisodeID: FocusState<String?>.Binding) {
-            self.viewModel = viewModel
-            self.error = error
-            self.focusedEpisodeID = focusedEpisodeID
-        }
+        let focusedEpisodeID: FocusState<String?>.Binding
 
         var body: some View {
             CollectionHStack(
