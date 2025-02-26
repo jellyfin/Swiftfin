@@ -11,7 +11,9 @@ import JellyfinAPI
 import SwiftUI
 
 extension SeriesEpisodeSelector {
+
     struct EpisodeContent: View {
+
         @Default(.accentColor)
         private var accentColor
 

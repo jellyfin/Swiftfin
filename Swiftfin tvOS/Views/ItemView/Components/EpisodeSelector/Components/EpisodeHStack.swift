@@ -76,7 +76,7 @@ extension SeriesEpisodeSelector {
                 case let .error(error):
                     ErrorHStack(viewModel: viewModel, error: error, focusedEpisodeID: $focusedEpisodeID)
                 case .initial, .refreshing:
-                    LoadingHStack()
+                    LoadingHStack(focusedEpisodeID: $focusedEpisodeID)
                 }
             }
             .padding(.bottom, 45)
@@ -95,7 +95,7 @@ extension SeriesEpisodeSelector {
                     case .error:
                         focusedEpisodeID = "ErrorCard"
                     case .initial, .refreshing:
-                        focusedEpisodeID = lastFocusedEpisodeID
+                        focusedEpisodeID = "LoadingCard"
                     }
                 },
                 top: "seasons"
@@ -168,12 +168,15 @@ extension SeriesEpisodeSelector {
 
     struct LoadingHStack: View {
 
+        let focusedEpisodeID: FocusState<String?>.Binding
+
         var body: some View {
             CollectionHStack(
-                count: Int.random(in: 2 ..< 5),
+                count: 1,
                 columns: 3.5
             ) { _ in
                 SeriesEpisodeSelector.LoadingCard()
+                    .focused(focusedEpisodeID, equals: "LoadingCard")
                     .padding(.horizontal, 4)
             }
             .allowScrolling(false)

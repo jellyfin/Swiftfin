@@ -12,20 +12,33 @@ import SwiftUI
 
 struct SeriesEpisodeSelector: View {
 
+    // MARK: - Observed & Environment Objects
+
     @ObservedObject
     var viewModel: SeriesItemViewModel
 
     @EnvironmentObject
     private var parentFocusGuide: FocusGuide
 
+    // MARK: - State Variables
+
     @State
     private var didSelectPlayButtonSeason = false
     @State
     private var selection: SeasonItemViewModel.ID?
 
+    // MARK: - Focus States
+
+    @FocusState
+    private var focusedSection: String?
+
+    // MARK: - Calculated Variables
+
     private var selectionViewModel: SeasonItemViewModel? {
         viewModel.seasons.first(where: { $0.id == selection })
     }
+
+    // MARK: - Body
 
     var body: some View {
         VStack(spacing: 0) {
@@ -36,7 +49,9 @@ struct SeriesEpisodeSelector: View {
                 EpisodeHStack(viewModel: selectionViewModel, playButtonItem: viewModel.playButtonItem)
                     .environmentObject(parentFocusGuide)
             } else {
-                LoadingHStack()
+                LoadingHStack(focusedEpisodeID: $focusedSection)
+                    .environmentObject(parentFocusGuide)
+                    .focused($focusedSection, equals: "LoadingCard")
             }
         }
         .onReceive(viewModel.playButtonItem.publisher) { newValue in

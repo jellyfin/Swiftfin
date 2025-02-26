@@ -33,7 +33,7 @@ extension SeriesEpisodeSelector {
                         .opacity(0.75)
                         .posterStyle(.landscape)
                         .overlay {
-                            Image(systemName: "arrow.clockwise.circle.fill")
+                            Image(systemName: "arrow.clockwise")
                                 .font(.system(size: 40))
                         }
                 }
