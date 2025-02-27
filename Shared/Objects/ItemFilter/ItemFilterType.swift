@@ -48,7 +48,7 @@ enum ItemFilterType: String, CaseIterable, Defaults.Serializable {
     }
 }
 
-extension ItemFilterType: Displayable {
+extension ItemFilterType: Displayable, SystemImageable {
 
     var displayTitle: String {
         switch self {
@@ -66,6 +66,25 @@ extension ItemFilterType: Displayable {
             L10n.filters
         case .years:
             L10n.years
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .genres:
+            "theatermasks"
+        case .letter:
+            "character"
+        case .sortBy:
+            "line.3.horizontal.decrease"
+        case .sortOrder:
+            "arrow.up.arrow.down"
+        case .tags:
+            "tag"
+        case .traits:
+            "arrowtriangle.down"
+        case .years:
+            "calendar"
         }
     }
 }

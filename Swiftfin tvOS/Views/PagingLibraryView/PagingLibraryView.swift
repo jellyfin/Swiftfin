@@ -323,6 +323,14 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 innerContent
             }
         }
+        .ifLet(viewModel.filterViewModel) { view, filterViewModel in
+            view.leadingBarFilterDrawer(
+                viewModel: filterViewModel,
+                types: enabledDrawerFilters
+            ) {
+                router.route(to: \.filter, $0)
+            }
+        }
         // These exist here to alleviate type-checker issues
         .onChange(of: posterType) {
             setCustomLayout()

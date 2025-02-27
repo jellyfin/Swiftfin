@@ -24,6 +24,8 @@ final class LibraryCoordinator<Element: Poster>: NavigationCoordinatable {
     var item = makeItem
     @Route(.push)
     var library = makeLibrary
+    @Route(.fullScreen)
+    var filter = makeFilter
     #else
     @Route(.push)
     var item = makeItem
@@ -51,6 +53,10 @@ final class LibraryCoordinator<Element: Poster>: NavigationCoordinatable {
 
     func makeLibrary(viewModel: PagingLibraryViewModel<BaseItemDto>) -> NavigationViewCoordinator<LibraryCoordinator<BaseItemDto>> {
         NavigationViewCoordinator(LibraryCoordinator<BaseItemDto>(viewModel: viewModel))
+    }
+
+    func makeFilter(parameters: FilterCoordinator.Parameters) -> NavigationViewCoordinator<FilterCoordinator> {
+        NavigationViewCoordinator(FilterCoordinator(parameters: parameters))
     }
     #else
     func makeItem(item: BaseItemDto) -> ItemCoordinator {

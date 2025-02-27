@@ -22,4 +22,28 @@ extension View {
             )
         )
     }
+
+    @ViewBuilder
+    func leadingBarFilterDrawer<Filters: View>(@ViewBuilder _ filters: @escaping () -> Filters) -> some View {
+        modifier(LeadingBarFilterDrawerModifier(filters: filters))
+    }
+
+    @ViewBuilder
+    func leadingBarFilterDrawer(
+        viewModel: FilterViewModel,
+        types: [ItemFilterType],
+        onSelect: @escaping (FilterCoordinator.Parameters) -> Void
+    ) -> some View {
+        if types.isEmpty {
+            self
+        } else {
+            leadingBarFilterDrawer {
+                LeadingBarFilterDrawer(
+                    viewModel: viewModel,
+                    types: types
+                )
+                .onSelect(onSelect)
+            }
+        }
+    }
 }
