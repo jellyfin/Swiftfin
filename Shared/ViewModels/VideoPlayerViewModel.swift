@@ -29,8 +29,7 @@ class VideoPlayerViewModel: ViewModel {
     let streamType: StreamType
 
     var hlsPlaybackURL: URL {
-
-        var parameters = Paths.GetMasterHlsVideoPlaylistParameters(
+        let parameters = Paths.GetMasterHlsVideoPlaylistParameters(
             isStatic: true,
             tag: mediaSource.eTag,
             playSessionID: playSessionID,
@@ -42,13 +41,13 @@ class VideoPlayerViewModel: ViewModel {
                 .compactMap(\.codec)
                 .joined(separator: ","),
             isBreakOnNonKeyFrames: true,
+            // startTimeTicks: item.userData?.playbackPositionTicks ?? 0,
             requireAvc: false,
             transcodingMaxAudioChannels: 8,
             videoCodec: videoStreams
                 .compactMap(\.codec)
                 .joined(separator: ","),
             videoStreamIndex: videoStreams.first?.index,
-            streamOptions: ["includeAllStreams": "true"], // Get all Audio Streams
             enableAdaptiveBitrateStreaming: true
         )
         let request = Paths.getMasterHlsVideoPlaylist(

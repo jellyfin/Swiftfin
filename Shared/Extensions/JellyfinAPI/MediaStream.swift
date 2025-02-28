@@ -257,7 +257,7 @@ extension [MediaStream] {
                 // Update the working copy with updated audio track indexes
                 mediaStreams[i] = copy
             default:
-                // TODO: Figure out tracks.
+                // TODO: Figure out audio tracks.
                 break
             }
         }
