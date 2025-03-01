@@ -24,8 +24,11 @@ extension View {
     }
 
     @ViewBuilder
-    func leadingBarFilterDrawer<Filters: View>(@ViewBuilder _ filters: @escaping () -> Filters) -> some View {
-        modifier(LeadingBarFilterDrawerModifier(filters: filters))
+    func libraryFilterDrawer<Filters: View, Letters: View>(
+        @ViewBuilder filters: @escaping () -> Filters,
+        @ViewBuilder letters: @escaping () -> Letters = { EmptyView() }
+    ) -> some View {
+        modifier(LibraryFilterModifier(filters: filters, letters: letters))
     }
 
     @ViewBuilder
@@ -37,13 +40,18 @@ extension View {
         if types.isEmpty {
             self
         } else {
-            leadingBarFilterDrawer {
-                LeadingBarFilterDrawer(
-                    viewModel: viewModel,
-                    types: types
-                )
-                .onSelect(onSelect)
-            }
+            libraryFilterDrawer(
+                filters: {
+                    FilterDrawer(
+                        viewModel: viewModel,
+                        types: types
+                    )
+                    .onSelect(onSelect)
+                },
+                letters: {
+                    LetterPickerBar(viewModel: viewModel)
+                }
+            )
         }
     }
 }

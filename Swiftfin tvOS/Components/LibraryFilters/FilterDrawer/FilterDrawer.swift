@@ -10,13 +10,19 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct LeadingBarFilterDrawer: View {
+struct FilterDrawer: View {
+
+    // MARK: - Observed Object
 
     @ObservedObject
     private var viewModel: FilterViewModel
 
+    // MARK: - Filter Variables
+
     private var filterTypes: [ItemFilterType]
     private var onSelect: (FilterCoordinator.Parameters) -> Void
+
+    // MARK: - Body
 
     var body: some View {
         VStack {
@@ -45,13 +51,12 @@ struct LeadingBarFilterDrawer: View {
                 )
             }
         }
-        .padding(.horizontal)
+        .padding(.horizontal, 0)
         .padding(.vertical, 1)
     }
 }
 
-extension LeadingBarFilterDrawer {
-
+extension FilterDrawer {
     init(viewModel: FilterViewModel, types: [ItemFilterType]) {
         self.init(
             viewModel: viewModel,

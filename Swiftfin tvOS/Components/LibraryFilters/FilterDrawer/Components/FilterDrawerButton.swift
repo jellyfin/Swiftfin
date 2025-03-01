@@ -9,7 +9,7 @@
 import Defaults
 import SwiftUI
 
-extension LeadingBarFilterDrawer {
+extension FilterDrawer {
 
     struct FilterDrawerButton: View {
 
@@ -39,9 +39,26 @@ extension LeadingBarFilterDrawer {
         private let expandedWidth: CGFloat
         private let collapsedWidth: CGFloat = 75
 
+        // MARK: - Position Detection Variables
+
+        @State
+        private var screenPosition: CGFloat = 0
+        @State
+        private var screenWidth: CGFloat = UIScreen.main.bounds.width
+
+        // TODO: Feels expensive to calculate...
+        private var expansionDirection: Alignment {
+            screenPosition < screenWidth / 2 ? .trailing : .leading
+        }
+
         // MARK: - Initializer
 
-        init(systemName: String?, title: String, expandedWidth: CGFloat, onSelect: @escaping () -> Void) {
+        init(
+            systemName: String?,
+            title: String,
+            expandedWidth: CGFloat,
+            onSelect: @escaping () -> Void
+        ) {
             self.systemName = systemName
             self.title = title
             self.expandedWidth = expandedWidth
@@ -54,16 +71,30 @@ extension LeadingBarFilterDrawer {
             Button {
                 onSelect()
             } label: {
+                // TODO: Is there a cleaner way to get this switch directions?
                 HStack(spacing: 8) {
-                    if let systemName = systemName {
-                        Image(systemName: systemName)
-                            .frame(width: collapsedWidth, alignment: .center)
-                            .focusable(false)
-                    }
-                    if isFocused {
-                        Text(title)
-                            .transition(.move(edge: .leading).combined(with: .opacity))
-                        Spacer(minLength: 0)
+                    if expansionDirection == .trailing {
+                        if let systemName = systemName {
+                            Image(systemName: systemName)
+                                .frame(width: collapsedWidth, alignment: .center)
+                                .focusable(false)
+                        }
+                        if isFocused {
+                            Text(title)
+                                .transition(.move(edge: .leading).combined(with: .opacity))
+                            Spacer(minLength: 0)
+                        }
+                    } else {
+                        if isFocused {
+                            Spacer(minLength: 0)
+                            Text(title)
+                                .transition(.move(edge: .trailing).combined(with: .opacity))
+                        }
+                        if let systemName = systemName {
+                            Image(systemName: systemName)
+                                .frame(width: collapsedWidth, alignment: .center)
+                                .focusable(false)
+                        }
                     }
                 }
                 .font(.footnote.weight(.semibold))
@@ -71,7 +102,7 @@ extension LeadingBarFilterDrawer {
                 .frame(
                     width: isFocused ? expandedWidth : collapsedWidth,
                     height: collapsedWidth,
-                    alignment: .leading
+                    alignment: expansionDirection == .trailing ? .leading : .trailing
                 )
                 .background {
                     Capsule()
@@ -86,15 +117,27 @@ extension LeadingBarFilterDrawer {
                 }
                 .animation(.easeInOut(duration: 0.25), value: isFocused)
             }
-            .frame(width: collapsedWidth, height: collapsedWidth, alignment: .leading)
+            .frame(width: collapsedWidth, height: collapsedWidth, alignment: expansionDirection == .trailing ? .leading : .trailing)
+            .padding(0)
             .buttonStyle(.borderless)
             .focused($isFocused)
+            .background(
+                GeometryReader { geometry -> Color in
+                    let globalFrame = geometry.frame(in: .global)
+
+                    DispatchQueue.main.async {
+                        screenPosition = globalFrame.midX
+                        screenWidth = UIScreen.main.bounds.width
+                    }
+
+                    return Color.clear
+                }
+            )
         }
     }
 }
 
-extension LeadingBarFilterDrawer.FilterDrawerButton {
-
+extension FilterDrawer.FilterDrawerButton {
     init(systemName: String, title: String) {
         self.init(
             systemName: systemName,

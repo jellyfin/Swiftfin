@@ -13,24 +13,36 @@ extension LetterPickerBar {
 
     struct LetterPickerButton: View {
 
+        // MARK: - Defaults
+
         @Default(.accentColor)
         private var accentColor
+
+        // MARK: - Environment Varable
 
         @Environment(\.isSelected)
         private var isSelected
 
+        // MARK: - Focus State
+
         @FocusState
         private var isFocused
+
+        // MARK: - Letter Variables
 
         private let letter: ItemLetter
         private let size: CGFloat
         private let viewModel: FilterViewModel
+
+        // MARK: - Initializer
 
         init(letter: ItemLetter, size: CGFloat, viewModel: FilterViewModel) {
             self.letter = letter
             self.size = size
             self.viewModel = viewModel
         }
+
+        // MARK: - Body
 
         var body: some View {
             Button {

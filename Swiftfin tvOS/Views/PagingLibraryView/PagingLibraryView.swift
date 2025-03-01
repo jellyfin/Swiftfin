@@ -30,11 +30,6 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     @Default
     private var defaultPosterType: PosterDisplayType
 
-    @Default(.Customization.Library.letterPickerEnabled)
-    private var letterPickerEnabled
-    @Default(.Customization.Library.letterPickerOrientation)
-    private var letterPickerOrientation
-
     @EnvironmentObject
     private var router: LibraryCoordinator<Element>.Router
 
@@ -44,8 +39,6 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     private var presentBackground = false
     @State
     private var layout: CollectionVGridLayout
-    @State
-    private var safeArea: EdgeInsets = .zero
 
     @StoredValue
     private var displayType: LibraryDisplayType
@@ -307,40 +300,25 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
 
     @ViewBuilder
     private var contentView: some View {
-        Group {
-            if letterPickerEnabled, let filterViewModel = viewModel.filterViewModel {
-                ZStack(alignment: letterPickerOrientation.alignment) {
-                    innerContent
-                        .padding(letterPickerOrientation.edge, LetterPickerBar.size + 10)
-                        .frame(maxWidth: .infinity)
-
-                    LetterPickerBar(viewModel: filterViewModel)
-                        .padding(.top, safeArea.top)
-                        .padding(.bottom, safeArea.bottom)
-                        .padding(letterPickerOrientation.edge, 10)
+        innerContent
+            .ifLet(viewModel.filterViewModel) { view, filterViewModel in
+                view.leadingBarFilterDrawer(
+                    viewModel: filterViewModel,
+                    types: enabledDrawerFilters
+                ) {
+                    router.route(to: \.filter, $0)
                 }
-            } else {
-                innerContent
             }
-        }
-        .ifLet(viewModel.filterViewModel) { view, filterViewModel in
-            view.leadingBarFilterDrawer(
-                viewModel: filterViewModel,
-                types: enabledDrawerFilters
-            ) {
-                router.route(to: \.filter, $0)
+            // These exist here to alleviate type-checker issues
+            .onChange(of: posterType) {
+                setCustomLayout()
             }
-        }
-        // These exist here to alleviate type-checker issues
-        .onChange(of: posterType) {
-            setCustomLayout()
-        }
-        .onChange(of: displayType) {
-            setCustomLayout()
-        }
-        .onChange(of: listColumnCount) {
-            setCustomLayout()
-        }
+            .onChange(of: displayType) {
+                setCustomLayout()
+            }
+            .onChange(of: listColumnCount) {
+                setCustomLayout()
+            }
     }
 
     // MARK: Body
