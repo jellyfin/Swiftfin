@@ -109,7 +109,8 @@ final class FilterViewModel: ViewModel, Stateful {
             if let type {
                 resetCurrentFilters(for: type)
             } else {
-                currentFilters = .default
+                // This is exclusively for tvOS ItemType libraries
+                currentFilters = .init(itemTypes: currentFilters.itemTypes)
             }
 
         case let .update(type, filters):

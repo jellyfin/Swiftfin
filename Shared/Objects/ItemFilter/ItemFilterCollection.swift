@@ -44,8 +44,17 @@ struct ItemFilterCollection: Codable, Defaults.Serializable, Hashable {
         traits: ItemTrait.supportedCases
     )
 
+    // TODO: This is bad and inefficient
     var hasFilters: Bool {
-        self != Self.default
+        var selfCopy = self
+        let defaultCopy = Self.default
+
+        selfCopy.itemTypes = defaultCopy.itemTypes
+
+        return selfCopy != defaultCopy
+
+        // Previous version:
+        // self != Self.default
     }
 
     var activeFilterCount: Int {
