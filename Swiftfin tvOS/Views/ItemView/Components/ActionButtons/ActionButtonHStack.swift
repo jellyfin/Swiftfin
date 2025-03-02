@@ -21,7 +21,7 @@ extension ItemView {
         var viewModel: ItemViewModel
 
         @StateObject
-        var deleteViewModel: DeleteItemViewModel
+        private var deleteViewModel: DeleteItemViewModel
 
         // MARK: - Defaults
 
@@ -73,7 +73,6 @@ extension ItemView {
 
         // MARK: - Body
 
-        /// Shrink to minWidth 100 (button) / 50 (menu) and 16 spacing to get 3 buttons + menu
         var body: some View {
             HStack(alignment: .center, spacing: 24) {
 
@@ -88,7 +87,7 @@ extension ItemView {
                 }
                 .foregroundStyle(.purple)
                 .environment(\.isSelected, viewModel.item.userData?.isPlayed ?? false)
-                .frame(minWidth: 140, maxWidth: .infinity)
+                .frame(minWidth: 80, maxWidth: .infinity)
 
                 // MARK: - Toggle Favorite
 
@@ -101,7 +100,14 @@ extension ItemView {
                 }
                 .foregroundStyle(.pink)
                 .environment(\.isSelected, viewModel.item.userData?.isFavorite ?? false)
-                .frame(minWidth: 140, maxWidth: .infinity)
+                .frame(minWidth: 80, maxWidth: .infinity)
+
+                // MARK: - Select Merged Version
+
+                if let mediaSources = viewModel.playButtonItem?.mediaSources, mediaSources.count > 1 {
+                    VersionMenu(viewModel: viewModel, mediaSources: mediaSources)
+                        .frame(minWidth: 80, maxWidth: .infinity)
+                }
 
                 // MARK: - Additional Menu Options
 
@@ -118,7 +124,7 @@ extension ItemView {
                             }
                         }
                     }
-                    .frame(width: 70)
+                    .frame(minWidth: 30, maxWidth: 50)
                 }
             }
             .frame(height: 100)
