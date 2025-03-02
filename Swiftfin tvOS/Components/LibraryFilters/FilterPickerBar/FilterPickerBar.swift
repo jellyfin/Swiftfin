@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct FilterBar: View {
+struct FilterPickerBar: View {
 
     // MARK: - Observed Object
 
@@ -27,7 +27,7 @@ struct FilterBar: View {
     var body: some View {
         VStack(spacing: 20) {
             if viewModel.currentFilters.hasFilters {
-                FilterButton(
+                FilterPickerButton(
                     systemName: "line.3.horizontal.decrease.circle.fill",
                     title: L10n.reset,
                     role: .destructive
@@ -37,12 +37,13 @@ struct FilterBar: View {
                 }
                 .environment(\.isSelected, true)
             } else {
+                // Leave space for the Reset Button
                 Spacer()
                     .frame(width: 75, height: 75)
             }
 
             ForEach(filterTypes, id: \.self) { type in
-                FilterButton(
+                FilterPickerButton(
                     systemName: type.systemImage,
                     title: type.displayTitle
                 )
@@ -60,7 +61,7 @@ struct FilterBar: View {
     }
 }
 
-extension FilterBar {
+extension FilterPickerBar {
     init(viewModel: FilterViewModel, types: [ItemFilterType]) {
         self.init(
             viewModel: viewModel,

@@ -80,7 +80,7 @@
 		4E45939E2D04E20000E277E1 /* ItemImagesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E45939D2D04E1E600E277E1 /* ItemImagesViewModel.swift */; };
 		4E4593A32D04E2B500E277E1 /* ItemImagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4593A22D04E2AF00E277E1 /* ItemImagesView.swift */; };
 		4E4593A62D04E4E300E277E1 /* AddItemImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4593A52D04E4DE00E277E1 /* AddItemImageView.swift */; };
-		4E4803F02D74334200B5F1ED /* FilterBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4803EF2D74333F00B5F1ED /* FilterBar.swift */; };
+		4E4803F02D74334200B5F1ED /* FilterPickerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4803EF2D74333F00B5F1ED /* FilterPickerBar.swift */; };
 		4E49DECB2CE54AA200352DCD /* SessionsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E49DECA2CE54A9200352DCD /* SessionsSection.swift */; };
 		4E49DECD2CE54C7A00352DCD /* PermissionSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E49DECC2CE54C7200352DCD /* PermissionSection.swift */; };
 		4E49DECF2CE54D3000352DCD /* MaxBitratePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E49DECE2CE54D2700352DCD /* MaxBitratePolicy.swift */; };
@@ -1329,7 +1329,7 @@
 		4E45939D2D04E1E600E277E1 /* ItemImagesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemImagesViewModel.swift; sourceTree = "<group>"; };
 		4E4593A22D04E2AF00E277E1 /* ItemImagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemImagesView.swift; sourceTree = "<group>"; };
 		4E4593A52D04E4DE00E277E1 /* AddItemImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemImageView.swift; sourceTree = "<group>"; };
-		4E4803EF2D74333F00B5F1ED /* FilterBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterBar.swift; sourceTree = "<group>"; };
+		4E4803EF2D74333F00B5F1ED /* FilterPickerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterPickerBar.swift; sourceTree = "<group>"; };
 		4E49DECA2CE54A9200352DCD /* SessionsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionsSection.swift; sourceTree = "<group>"; };
 		4E49DECC2CE54C7200352DCD /* PermissionSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionSection.swift; sourceTree = "<group>"; };
 		4E49DECE2CE54D2700352DCD /* MaxBitratePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxBitratePolicy.swift; sourceTree = "<group>"; };
@@ -2665,13 +2665,13 @@
 			path = Translations;
 			sourceTree = "<group>";
 		};
-		4E81D2B42D72B17100CA71CC /* FilterViews */ = {
+		4E81D2B42D72B17100CA71CC /* FilterPickerBar */ = {
 			isa = PBXGroup;
 			children = (
 				4E81D2B52D72B1D600CA71CC /* Components */,
-				4E4803EF2D74333F00B5F1ED /* FilterBar.swift */,
+				4E4803EF2D74333F00B5F1ED /* FilterPickerBar.swift */,
 			);
-			path = FilterViews;
+			path = FilterPickerBar;
 			sourceTree = "<group>";
 		};
 		4E81D2B52D72B1D600CA71CC /* Components */ = {
@@ -2913,7 +2913,7 @@
 			isa = PBXGroup;
 			children = (
 				4E81D2B62D72BE3900CA71CC /* FilterView.swift */,
-				4E81D2B42D72B17100CA71CC /* FilterViews */,
+				4E81D2B42D72B17100CA71CC /* FilterPickerBar */,
 				4EEACAA32D420FEF00F1D54D /* LetterPickerBar */,
 			);
 			path = LibraryFilters;
@@ -6185,7 +6185,7 @@
 				E1DC981A296DD1CD00982F06 /* CinematicBackgroundView.swift in Sources */,
 				E1A1528B28FD22F600600579 /* TextPairView.swift in Sources */,
 				E11042762B8013DF00821020 /* Stateful.swift in Sources */,
-				4E4803F02D74334200B5F1ED /* FilterBar.swift in Sources */,
+				4E4803F02D74334200B5F1ED /* FilterPickerBar.swift in Sources */,
 				091B5A8D268315D400D78B61 /* ServerDiscovery.swift in Sources */,
 				E1575E66293E77B5001665B1 /* Poster.swift in Sources */,
 				E18E021F2887492B0022598C /* SystemImageContentView.swift in Sources */,

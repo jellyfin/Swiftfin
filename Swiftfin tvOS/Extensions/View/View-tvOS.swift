@@ -43,7 +43,7 @@ extension View {
         } else {
             libraryFilterBars(
                 filters: {
-                    FilterBar(
+                    FilterPickerBar(
                         viewModel: viewModel,
                         types: types
                     )
