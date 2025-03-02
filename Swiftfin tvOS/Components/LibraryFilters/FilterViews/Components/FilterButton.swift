@@ -33,7 +33,7 @@ struct FilterButton: View {
     private let role: ButtonRole?
     private var onSelect: () -> Void
 
-    // MARK: - Button Widths
+    // MARK: - Button Dimensions
 
     private let collapsedWidth: CGFloat = 75
 
@@ -44,11 +44,11 @@ struct FilterButton: View {
     // MARK: - Button Styles
 
     private var buttonColor: Color {
-        isSelected ? ((role == .destructive && isFocused) ? .red : accentColor) : Color.secondarySystemFill
+        isSelected ? ((role == .destructive && isFocused) ? Color.red.opacity(0.2) : accentColor) : Color.secondarySystemFill
     }
 
     private var textColor: Color {
-        isFocused ? ((role == .destructive) ? Color.red.opacity(0.2) : .black) : .primary
+        isFocused ? ((role == .destructive) ? .red : .black) : .primary
     }
 
     // MARK: - Initializer
@@ -83,9 +83,20 @@ struct FilterButton: View {
     // MARK: - Body
 
     var body: some View {
-        Button {
-            onSelect()
-        } label: {
+        ZStack(alignment: .leading) {
+            // Visual background that expands/contracts
+            Capsule()
+                .foregroundColor(buttonColor)
+                .brightness(isFocused ? 0.25 : 0)
+                .opacity(isFocused ? 1 : 0.5)
+                .frame(width: isFocused ? expandedWidth : collapsedWidth, height: collapsedWidth)
+                .overlay {
+                    Capsule()
+                        .stroke(buttonColor, lineWidth: 1)
+                        .brightness(isFocused ? 0.25 : 0)
+                }
+                .allowsHitTesting(false)
+
             HStack(spacing: 10) {
                 if let systemName = systemName {
                     Image(systemName: systemName)
@@ -93,38 +104,32 @@ struct FilterButton: View {
                         .focusEffectDisabled()
                         .foregroundColor(textColor)
                         .frame(width: collapsedWidth, alignment: .center)
-                        .focusable(false)
                 }
+
                 if isFocused {
                     Text(title)
                         .foregroundColor(textColor)
                         .transition(.move(edge: .leading).combined(with: .opacity))
+
                     Spacer(minLength: 0)
                 }
             }
             .font(.footnote.weight(.semibold))
-            .frame(
-                width: isFocused ? expandedWidth : collapsedWidth,
-                height: collapsedWidth,
-                alignment: .leading
-            )
-            .background {
-                Capsule()
-                    .foregroundColor(buttonColor)
-                    .brightness(isFocused ? 0.25 : 0)
-                    .opacity(isFocused ? 1 : 0.5)
+            .frame(height: collapsedWidth)
+            .allowsHitTesting(false)
+
+            Button {
+                onSelect()
+            } label: {
+                Color.clear
+                    .frame(width: collapsedWidth, height: collapsedWidth)
             }
-            .overlay {
-                Capsule()
-                    .stroke(buttonColor, lineWidth: 1)
-                    .brightness(isFocused ? 0.25 : 0)
-            }
-            .animation(.easeInOut(duration: 0.25), value: isFocused)
+            .padding(0)
+            .buttonStyle(.borderless)
+            .focused($isFocused)
         }
         .frame(width: collapsedWidth, height: collapsedWidth, alignment: .leading)
-        .padding(0)
-        .buttonStyle(.borderless)
-        .focused($isFocused)
+        .animation(.easeIn(duration: 0.2), value: isFocused)
     }
 }
 

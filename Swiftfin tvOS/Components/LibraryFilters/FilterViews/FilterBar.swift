@@ -25,7 +25,7 @@ struct FilterBar: View {
     // MARK: - Body
 
     var body: some View {
-        VStack {
+        VStack(spacing: 20) {
             if viewModel.currentFilters.hasFilters {
                 FilterButton(
                     systemName: "line.3.horizontal.decrease.circle.fill",
@@ -36,6 +36,9 @@ struct FilterBar: View {
                     viewModel.send(.reset())
                 }
                 .environment(\.isSelected, true)
+            } else {
+                Spacer()
+                    .frame(width: 75, height: 75)
             }
 
             ForEach(filterTypes, id: \.self) { type in
