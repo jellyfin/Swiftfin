@@ -29,7 +29,8 @@ struct FilterBar: View {
             if viewModel.currentFilters.hasFilters {
                 FilterButton(
                     systemName: "line.3.horizontal.decrease.circle.fill",
-                    title: L10n.reset
+                    title: L10n.reset,
+                    role: .destructive
                 )
                 .onSelect {
                     viewModel.send(.reset())

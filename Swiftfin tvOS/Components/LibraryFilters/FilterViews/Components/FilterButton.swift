@@ -30,25 +30,54 @@ struct FilterButton: View {
 
     private let systemName: String?
     private let title: String
+    private let role: ButtonRole?
     private var onSelect: () -> Void
 
-    // MARK: - Collapsing Variables
+    // MARK: - Button Widths
 
-    private let expandedWidth: CGFloat
     private let collapsedWidth: CGFloat = 75
+
+    private var expandedWidth: CGFloat {
+        textWidth(for: title) + 20 + collapsedWidth
+    }
+
+    // MARK: - Button Styles
+
+    private var buttonColor: Color {
+        isSelected ? ((role == .destructive && isFocused) ? .red : accentColor) : Color.secondarySystemFill
+    }
+
+    private var textColor: Color {
+        isFocused ? ((role == .destructive) ? Color.red.opacity(0.2) : .black) : .primary
+    }
 
     // MARK: - Initializer
 
     init(
         systemName: String?,
         title: String,
-        expandedWidth: CGFloat,
+        role: ButtonRole?,
         onSelect: @escaping () -> Void
     ) {
         self.systemName = systemName
         self.title = title
-        self.expandedWidth = expandedWidth
+        self.role = role
         self.onSelect = onSelect
+    }
+
+    // MARK: - Text Width
+
+    private func textWidth(for text: String) -> CGFloat {
+        let textSize = String().height(
+            withConstrainedWidth: CGFloat.greatestFiniteMagnitude,
+            font: UIFont.preferredFont(
+                forTextStyle: .footnote
+            )
+        )
+        let font = UIFont.systemFont(ofSize: textSize, weight: .semibold)
+        let attributes = [NSAttributedString.Key.font: font]
+        let size = (text as NSString).size(withAttributes: attributes)
+        return size.width
     }
 
     // MARK: - Body
@@ -57,22 +86,23 @@ struct FilterButton: View {
         Button {
             onSelect()
         } label: {
-            HStack(spacing: 8) {
+            HStack(spacing: 10) {
                 if let systemName = systemName {
                     Image(systemName: systemName)
-                        .foregroundColor(isFocused ? .black : .primary)
+                        .hoverEffectDisabled()
+                        .focusEffectDisabled()
+                        .foregroundColor(textColor)
                         .frame(width: collapsedWidth, alignment: .center)
                         .focusable(false)
                 }
                 if isFocused {
                     Text(title)
+                        .foregroundColor(textColor)
                         .transition(.move(edge: .leading).combined(with: .opacity))
-                        .shadow(radius: 3)
                     Spacer(minLength: 0)
                 }
             }
             .font(.footnote.weight(.semibold))
-            .foregroundColor(isFocused ? .black : .primary)
             .frame(
                 width: isFocused ? expandedWidth : collapsedWidth,
                 height: collapsedWidth,
@@ -80,13 +110,13 @@ struct FilterButton: View {
             )
             .background {
                 Capsule()
-                    .foregroundColor(isSelected ? accentColor : Color.secondarySystemFill)
+                    .foregroundColor(buttonColor)
                     .brightness(isFocused ? 0.25 : 0)
                     .opacity(isFocused ? 1 : 0.5)
             }
             .overlay {
                 Capsule()
-                    .stroke(isSelected ? accentColor : Color.secondarySystemFill, lineWidth: 1)
+                    .stroke(buttonColor, lineWidth: 1)
                     .brightness(isFocused ? 0.25 : 0)
             }
             .animation(.easeInOut(duration: 0.25), value: isFocused)
@@ -99,11 +129,11 @@ struct FilterButton: View {
 }
 
 extension FilterButton {
-    init(systemName: String, title: String) {
+    init(systemName: String, title: String, role: ButtonRole? = nil) {
         self.init(
             systemName: systemName,
             title: title,
-            expandedWidth: 200,
+            role: role,
             onSelect: {}
         )
     }
