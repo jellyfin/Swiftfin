@@ -106,22 +106,6 @@ extension ItemView {
             return CGSize(width: width, height: height)
         }
 
-        @ViewBuilder
-        private var imageView: some View {
-            ZStack {
-                Color.clear
-
-                ImageView(
-                    viewModel.item.type == .episode ? viewModel.item.seriesImageSource(.primary, maxWidth: 300) : viewModel
-                        .item.imageSource(.primary, maxWidth: 300)
-                )
-                .accessibilityIgnoresInvertColors()
-            }
-            .posterStyle(.portrait)
-            .posterShadow()
-            .frame(width: UIDevice.isPad ? padImageWidth : phoneImageWidth)
-        }
-
         var body: some View {
             VStack(alignment: .leading) {
                 L10n.about.text
@@ -136,7 +120,8 @@ extension ItemView {
                 ) { item in
                     switch item {
                     case .image:
-                        imageView
+                        ImageCard(viewModel: viewModel)
+                            .frame(width: UIDevice.isPad ? padImageWidth : phoneImageWidth)
                     case .overview:
                         OverviewCard(item: viewModel.item)
                             .frame(width: cardSize.width, height: cardSize.height)
