@@ -41,12 +41,13 @@ class VideoPlayerViewModel: ViewModel {
                 .compactMap(\.codec)
                 .joined(separator: ","),
             isBreakOnNonKeyFrames: true,
-            // startTimeTicks: item.userData?.playbackPositionTicks ?? 0,
+            isCopyTimestamps: false,
             requireAvc: false,
             transcodingMaxAudioChannels: 8,
             videoCodec: videoStreams
                 .compactMap(\.codec)
                 .joined(separator: ","),
+            audioStreamIndex: selectedAudioStreamIndex,
             videoStreamIndex: videoStreams.first?.index,
             enableAdaptiveBitrateStreaming: true
         )
