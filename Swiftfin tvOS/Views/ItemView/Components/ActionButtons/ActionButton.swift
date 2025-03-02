@@ -56,6 +56,7 @@ extension ItemView {
                         .labelStyle(.iconOnly)
                 }
             }
+            .padding(0)
             .focused($isFocused)
             .buttonStyle(.card)
         }
