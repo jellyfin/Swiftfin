@@ -40,7 +40,7 @@ extension FilterPickerBar {
         private let collapsedWidth: CGFloat = 75
 
         private var expandedWidth: CGFloat {
-            textWidth(for: title) + 20 + collapsedWidth
+            FilterPickerBar.FilterPickerButton.textWidth(for: title) + 20 + collapsedWidth
         }
 
         // MARK: - Button Styles
@@ -69,7 +69,7 @@ extension FilterPickerBar {
 
         // MARK: - Text Width
 
-        private func textWidth(for text: String) -> CGFloat {
+        static func textWidth(for text: String) -> CGFloat {
             let textSize = String().height(
                 withConstrainedWidth: CGFloat.greatestFiniteMagnitude,
                 font: UIFont.preferredFont(

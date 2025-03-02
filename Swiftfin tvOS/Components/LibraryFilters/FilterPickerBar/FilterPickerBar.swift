@@ -22,42 +22,76 @@ struct FilterPickerBar: View {
     private var filterTypes: [ItemFilterType]
     private var onSelect: (FilterCoordinator.Parameters) -> Void
 
+    @FocusState
+    private var isFocused: Bool
+
     // MARK: - Body
 
     var body: some View {
-        VStack(spacing: 20) {
-            if viewModel.currentFilters.hasFilters {
-                FilterPickerButton(
-                    systemName: "line.3.horizontal.decrease.circle.fill",
-                    title: L10n.reset,
-                    role: .destructive
-                )
-                .onSelect {
-                    viewModel.send(.reset())
-                }
-                .environment(\.isSelected, true)
-            } else {
-                // Leave space for the Reset Button
-                Spacer()
-                    .frame(width: 75, height: 75)
+        ZStack(alignment: .leading) {
+
+            if isFocused {
+                selectedButtonBackground
+                    .animation(.easeIn(duration: 0.2), value: isFocused)
+                    .transition(.move(edge: .leading).combined(with: .opacity))
             }
 
-            ForEach(filterTypes, id: \.self) { type in
-                FilterPickerButton(
-                    systemName: type.systemImage,
-                    title: type.displayTitle
-                )
-                .onSelect {
-                    onSelect(.init(type: type, viewModel: viewModel))
+            VStack(spacing: 20) {
+                if viewModel.currentFilters.hasFilters {
+                    FilterPickerButton(
+                        systemName: "line.3.horizontal.decrease.circle.fill",
+                        title: L10n.reset,
+                        role: .destructive
+                    )
+                    .onSelect {
+                        viewModel.send(.reset())
+                    }
+                    .environment(\.isSelected, true)
+                    .background(
+                        selectedButtonBackground
+                    )
+                } else {
+                    // Leave space for the Reset Button
+                    Spacer()
+                        .frame(width: 75, height: 75)
                 }
-                .environment(
-                    \.isSelected,
-                    viewModel.isFilterSelected(type: type)
-                )
+
+                ForEach(filterTypes, id: \.self) { type in
+                    FilterPickerButton(
+                        systemName: type.systemImage,
+                        title: type.displayTitle
+                    )
+                    .onSelect {
+                        onSelect(.init(type: type, viewModel: viewModel))
+                    }
+                    .environment(
+                        \.isSelected,
+                        viewModel.isFilterSelected(type: type)
+                    )
+                    .background(
+                        viewModel.isFilterSelected(type: type) ? selectedButtonBackground : nil
+                    )
+                }
             }
+            .focused($isFocused)
+            .padding(.horizontal, 0)
+            .padding(.vertical, 1)
         }
-        .padding(.horizontal, 0)
-        .padding(.vertical, 1)
+    }
+
+    private var selectedButtonBackground: some View {
+        Rectangle()
+            .fill(.regularMaterial)
+            .frame(
+                width: FilterPickerBar.FilterPickerButton
+                    .textWidth(
+                        for: filterTypes.map(\.displayTitle)
+                            .max(by: { $0.count < $1.count }) ?? ""
+                    ) + 150
+            )
+            .ignoresSafeArea()
+            .edgesIgnoringSafeArea(.leading)
+            .edgesIgnoringSafeArea(.vertical)
     }
 }
 
