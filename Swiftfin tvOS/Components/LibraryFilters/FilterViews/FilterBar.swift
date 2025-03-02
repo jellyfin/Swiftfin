@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct FilterDrawer: View {
+struct FilterBar: View {
 
     // MARK: - Observed Object
 
@@ -27,7 +27,7 @@ struct FilterDrawer: View {
     var body: some View {
         VStack {
             if viewModel.currentFilters.hasFilters {
-                FilterDrawerButton(
+                FilterButton(
                     systemName: "line.3.horizontal.decrease.circle.fill",
                     title: L10n.reset
                 )
@@ -38,7 +38,7 @@ struct FilterDrawer: View {
             }
 
             ForEach(filterTypes, id: \.self) { type in
-                FilterDrawerButton(
+                FilterButton(
                     systemName: type.systemImage,
                     title: type.displayTitle
                 )
@@ -56,7 +56,7 @@ struct FilterDrawer: View {
     }
 }
 
-extension FilterDrawer {
+extension FilterBar {
     init(viewModel: FilterViewModel, types: [ItemFilterType]) {
         self.init(
             viewModel: viewModel,

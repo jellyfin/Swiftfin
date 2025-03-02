@@ -18,6 +18,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
 
     @Default(.Customization.Library.cinematicBackground)
     private var cinematicBackground
+    @Default(.Customization.Library.letterPickerEnabled)
+    private var letterPickerEnabled
     @Default(.Customization.Library.enabledDrawerFilters)
     private var enabledDrawerFilters
     @Default(.Customization.Library.rememberLayout)
@@ -302,8 +304,9 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     private var contentView: some View {
         innerContent
             .ifLet(viewModel.filterViewModel) { view, filterViewModel in
-                view.leadingBarFilterDrawer(
+                view.libraryFilterBars(
                     viewModel: filterViewModel,
+                    letterPicker: letterPickerEnabled,
                     types: enabledDrawerFilters
                 ) {
                     router.route(to: \.filter, $0)

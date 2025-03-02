@@ -6,65 +6,49 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
+import Combine
 import SwiftUI
 
 struct LibraryFilterModifier<Filters: View, Letters: View>: ViewModifier {
 
-    @Default(.Customization.Library.letterPickerEnabled)
-    private var letterPickerEnabled
-    @Default(.Customization.Library.letterPickerOrientation)
-    private var letterPickerOrientation
-
     let filters: () -> Filters
-    let letters: () -> Letters
+    let letters: () -> Letters?
 
     @State
     private var safeArea: EdgeInsets = .zero
 
+    private let collapsedWidth: CGFloat = 75
     private let expandedWidth: CGFloat = 200
 
-    @State
-    private var isExpanded: Bool = false
-
-    private var filtersAlignment: Alignment {
-        letterPickerOrientation == .leading ? .trailing : .leading
-    }
-
-    private var filtersEdge: Edge.Set {
-        letterPickerOrientation == .leading ? .trailing : .leading
-    }
+    @FocusState
+    private var isFilterFocused: Bool
 
     func body(content: Content) -> some View {
         ZStack {
             content
-                .frame(maxWidth: .infinity)
-                .padding(.leading, expandedWidth + 10)
-                .padding(.trailing, expandedWidth + 10)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.leading, collapsedWidth + 20)
+                .padding(.trailing, collapsedWidth + 20)
 
-            filters()
-                .ignoresSafeArea(edges: filtersEdge)
-                .frame(width: expandedWidth + 10)
-                .position(
-                    x: filtersAlignment == .leading ? (expandedWidth + 10) / 2 : UIScreen.main.bounds.width - (expandedWidth + 10) / 2,
-                    y: UIScreen.main.bounds.height / 2
-                )
-                .padding(.bottom, safeArea.bottom)
-                .padding(.top, safeArea.top)
-
-            if letterPickerEnabled {
-                letters()
-                    .ignoresSafeArea(edges: letterPickerOrientation.edge)
-                    .frame(width: expandedWidth + 10, alignment: .center)
-                    .position(
-                        x: letterPickerOrientation.alignment == .leading ? (expandedWidth + 10) / 2 : UIScreen.main.bounds
-                            .width - (expandedWidth + 10) / 2,
-                        y: UIScreen.main.bounds.height / 2
-                    )
+            HStack(spacing: 0) {
+                filters()
+                    .frame(width: (isFilterFocused ? expandedWidth : collapsedWidth) + 10, alignment: .leading)
+                    .padding(.leading, 20)
                     .padding(.bottom, safeArea.bottom)
                     .padding(.top, safeArea.top)
+                    .focusSection()
+                    .focused($isFilterFocused)
+
+                Spacer()
+
+                if let letterPickerBar = letters() {
+                    letterPickerBar
+                        .frame(width: collapsedWidth, alignment: .center)
+                        .padding(.trailing, 20)
+                        .padding(.bottom, safeArea.bottom)
+                        .padding(.top, safeArea.top)
+                }
             }
         }
-        .edgesIgnoringSafeArea(.all)
     }
 }
