@@ -37,10 +37,10 @@ extension FilterPickerBar {
 
         // MARK: - Button Dimensions
 
-        private let collapsedWidth: CGFloat = 75
+        private let collapsedWidth: CGFloat = 70
 
         private var expandedWidth: CGFloat {
-            FilterPickerBar.FilterPickerButton.textWidth(for: title) + 20 + collapsedWidth
+            title.width(font: .footnote, weight: .semibold) + 30 + collapsedWidth
         }
 
         // MARK: - Button Styles
@@ -65,21 +65,6 @@ extension FilterPickerBar {
             self.title = title
             self.role = role
             self.onSelect = onSelect
-        }
-
-        // MARK: - Text Width
-
-        static func textWidth(for text: String) -> CGFloat {
-            let textSize = String().height(
-                withConstrainedWidth: CGFloat.greatestFiniteMagnitude,
-                font: UIFont.preferredFont(
-                    forTextStyle: .footnote
-                )
-            )
-            let font = UIFont.systemFont(ofSize: textSize, weight: .semibold)
-            let attributes = [NSAttributedString.Key.font: font]
-            let size = (text as NSString).size(withAttributes: attributes)
-            return size.width
         }
 
         // MARK: - Body
@@ -112,7 +97,7 @@ extension FilterPickerBar {
                             .foregroundColor(textColor)
                             .transition(.move(edge: .leading).combined(with: .opacity))
 
-                        Spacer(minLength: 0)
+                        Spacer(minLength: 10)
                     }
                 }
                 .font(.footnote.weight(.semibold))

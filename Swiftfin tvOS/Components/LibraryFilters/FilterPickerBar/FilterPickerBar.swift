@@ -22,8 +22,22 @@ struct FilterPickerBar: View {
     private var filterTypes: [ItemFilterType]
     private var onSelect: (FilterCoordinator.Parameters) -> Void
 
+    // MARK: - Focus State
+
     @FocusState
     private var isFocused: Bool
+
+    // MARK: - Longest Filter Width
+
+    private var filterWidth: CGFloat {
+        let longestFilter = filterTypes.map(\.displayTitle)
+            .max(by: { $0.count < $1.count }) ?? ""
+
+        return longestFilter.width(
+            font: .footnote,
+            weight: .semibold
+        )
+    }
 
     // MARK: - Body
 
@@ -47,9 +61,6 @@ struct FilterPickerBar: View {
                         viewModel.send(.reset())
                     }
                     .environment(\.isSelected, true)
-                    .background(
-                        selectedButtonBackground
-                    )
                 } else {
                     // Leave space for the Reset Button
                     Spacer()
@@ -68,9 +79,6 @@ struct FilterPickerBar: View {
                         \.isSelected,
                         viewModel.isFilterSelected(type: type)
                     )
-                    .background(
-                        viewModel.isFilterSelected(type: type) ? selectedButtonBackground : nil
-                    )
                 }
             }
             .focused($isFocused)
@@ -82,16 +90,18 @@ struct FilterPickerBar: View {
     private var selectedButtonBackground: some View {
         Rectangle()
             .fill(.regularMaterial)
-            .frame(
-                width: FilterPickerBar.FilterPickerButton
-                    .textWidth(
-                        for: filterTypes.map(\.displayTitle)
-                            .max(by: { $0.count < $1.count }) ?? ""
-                    ) + 150
-            )
-            .ignoresSafeArea()
+            .brightness(-0.05)
+            .frame(width: filterWidth + 200)
             .edgesIgnoringSafeArea(.leading)
             .edgesIgnoringSafeArea(.vertical)
+            .overlay(alignment: .trailing) {
+                Rectangle()
+                    .fill(Color.secondarySystemFill)
+                    .frame(width: 1)
+                    .edgesIgnoringSafeArea(.leading)
+                    .edgesIgnoringSafeArea(.vertical)
+                    .padding(.trailing, 20)
+            }
     }
 }
 
