@@ -34,8 +34,8 @@ struct SeriesEpisodeSelector: View {
 
     // MARK: - Calculated Variables
 
-    private var selectionViewModel: SeasonItemViewModel? {
-        viewModel.seasons.first(where: { $0.id == selection })
+    private var selectionViewModel: SeasonItemViewModel {
+        viewModel.seasons.first(where: { $0.id == selection }) ?? SeasonItemViewModel(season: BaseItemDto())
     }
 
     // MARK: - Body
@@ -45,14 +45,8 @@ struct SeriesEpisodeSelector: View {
             SeasonsHStack(viewModel: viewModel, selection: $selection)
                 .environmentObject(parentFocusGuide)
 
-            if let selectionViewModel {
-                EpisodeHStack(viewModel: selectionViewModel, playButtonItem: viewModel.playButtonItem)
-                    .environmentObject(parentFocusGuide)
-            } else {
-                LoadingHStack(focusedEpisodeID: $focusedSection)
-                    .environmentObject(parentFocusGuide)
-                    .focused($focusedSection, equals: "LoadingCard")
-            }
+            EpisodeHStack(viewModel: selectionViewModel, playButtonItem: viewModel.playButtonItem)
+                .environmentObject(parentFocusGuide)
         }
         .onReceive(viewModel.playButtonItem.publisher) { newValue in
 
