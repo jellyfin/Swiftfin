@@ -40,12 +40,10 @@ struct AddToPlaylistView: View {
     // @State
     // private var playlistPublic: Bool = false
 
-    // MARK: - Remove Item Variables
+    // MARK: - Edit Playlist View State
 
     @State
-    private var isPresentingRemovalConfirmation: Bool = false
-    @State
-    private var selectedItem: BaseItemDto? = nil
+    private var isPresentingContents: Bool = false
 
     // MARK: - Error State
 
@@ -130,17 +128,15 @@ struct AddToPlaylistView: View {
         .navigationBarCloseButton {
             router.dismissCoordinator()
         }
-        .confirmationDialog(
-            L10n.removeItem(selectedItem?.name ?? selectedItem?.type?.displayTitle ?? L10n.items),
-            isPresented: $isPresentingRemovalConfirmation
-        ) {
-            Button(L10n.remove, role: .destructive) {
-                if let item = selectedItem {
-                    viewModel.send(.removeItems([item.id!]))
+        .sheet(isPresented: $isPresentingContents) {
+            isPresentingContents = false
+        } content: {
+            EditPlaylistView(
+                viewModel: viewModel,
+                onClose: {
+                    isPresentingContents = false
                 }
-            }
-        } message: {
-            Text(L10n.removeItemConfirmationMessage)
+            )
         }
         .onFirstAppear {
             viewModel.send(.getPlaylists)
@@ -150,8 +146,7 @@ struct AddToPlaylistView: View {
             case .created, .added, .updated:
                 router.dismissCoordinator()
             case .removed:
-                selectedItem = nil
-                isPresentingRemovalConfirmation = false
+                break
             case let .error(eventError):
                 error = eventError
             }
@@ -162,14 +157,10 @@ struct AddToPlaylistView: View {
     // MARK: - Content View
 
     private var contentView: some View {
-        VStack {
-            List {
-                playlistPickerView
+        List {
+            playlistPickerView
 
-                playlistDetailsView
-            }
-
-            playlistItemsView
+            playlistDetailsView
         }
     }
 
@@ -210,6 +201,13 @@ struct AddToPlaylistView: View {
                     Text(overview)
                 }
             }
+
+            Section(L10n.options) {
+                ChevronButton(L10n.existingItems)
+                    .onSelect {
+                        isPresentingContents = true
+                    }
+            }
         } else {
             Section(L10n.createPlaylist) {
                 TextField(L10n.name, text: $playlistName)
@@ -221,31 +219,6 @@ struct AddToPlaylistView: View {
                     ForEach(PlaylistViewModel.PlaylistType.allCases) { type in
                         Text(type.displayTitle)
                             .tag(type)
-                    }
-                }
-            }
-        }
-    }
-
-    // MARK: - Playlist Items View
-
-    @ViewBuilder
-    private var playlistItemsView: some View {
-        if !viewModel.selectedPlaylistItems.isEmpty {
-            ScrollView {
-                ForEach(BaseItemKind.allCases, id: \.self) { sectionType in
-                    let sectionItems = viewModel.selectedPlaylistItems.filter { $0.type == sectionType }
-
-                    if !sectionItems.isEmpty {
-                        PosterHStack(
-                            title: sectionType.displayTitle,
-                            type: .portrait,
-                            items: sectionItems
-                        )
-                        .onSelect {
-                            selectedItem = $0
-                            isPresentingRemovalConfirmation = true
-                        }
                     }
                 }
             }
