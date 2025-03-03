@@ -34,8 +34,8 @@ struct SeriesEpisodeSelector: View {
 
     // MARK: - Calculated Variables
 
-    private var selectionViewModel: SeasonItemViewModel {
-        viewModel.seasons.first(where: { $0.id == selection })!
+    private var selectionViewModel: SeasonItemViewModel? {
+        viewModel.seasons.first(where: { $0.id == selection })
     }
 
     // MARK: - Body
@@ -45,8 +45,10 @@ struct SeriesEpisodeSelector: View {
             SeasonsHStack(viewModel: viewModel, selection: $selection)
                 .environmentObject(parentFocusGuide)
 
-            EpisodeHStack(viewModel: selectionViewModel, playButtonItem: viewModel.playButtonItem)
-                .environmentObject(parentFocusGuide)
+            if let selectionViewModel {
+                EpisodeHStack(viewModel: selectionViewModel, playButtonItem: viewModel.playButtonItem)
+                    .environmentObject(parentFocusGuide)
+            }
         }
         .onReceive(viewModel.playButtonItem.publisher) { newValue in
 
