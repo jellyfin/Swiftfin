@@ -131,6 +131,6 @@ extension BaseItemDto {
         let testBitrate = testSizeBits / testDuration
 
         /// Exceeding 500 mbps will produce an invalid URL
-        return min(Int(testBitrate), 500_000_000)
+        return min(Int(testBitrate), PlaybackBitrate.max.rawValue)
     }
 }
