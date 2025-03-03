@@ -229,24 +229,16 @@ extension [MediaStream] {
     ) -> [MediaStream] {
         guard allSatisfy({ $0.type == .audio }) else { return self }
 
-        // Get the count for embedded/external audio tracks
         let embeddedAudioCount = filter { !($0.isExternal ?? false) }.count
         let externalAudioCount = filter { $0.isExternal ?? false }.count
 
-        // Get the default audio tracks
-        let defaultAudioTracks = filter { $0.isDefault ?? false }
-
-        // Create working version of the [MediaStream]
         var mediaStreams = self
 
         for (i, mediaStream) in mediaStreams.enumerated() {
-            // Create a working version of the Audio Media Streams
             var copy = mediaStream
 
-            // Handle indexing based on the Stream Type
             switch streamType {
             case .direct, .hls:
-                // For DirectPlay, migrate external tracks to the end
                 if copy.isExternal ?? false {
                     // Move external tracks to the end
                     copy.index = (copy.index ?? 0) + embeddedSubtitleCount + embeddedAudioCount
@@ -254,10 +246,9 @@ extension [MediaStream] {
                     // Move internal tracks to the beginning
                     copy.index = (copy.index ?? 0) - (externalAudioCount + externalSubtitleCount)
                 }
-                // Update the working copy with updated audio track indexes
                 mediaStreams[i] = copy
             default:
-                // TODO: Figure out audio tracks.
+                // TODO: Transcode Audio Tracks will need something like: https://github.com/jellyfin/jellyfin-web/blob/master/src/components/playback/playbackmanager.js#L1691
                 break
             }
         }
@@ -272,21 +263,15 @@ extension [MediaStream] {
     ) -> [MediaStream] {
         guard allSatisfy({ $0.type == .subtitle }) else { return self }
 
-        // Get the count for embedded/external subtitle tracks
         let embeddedSubtitleCount = filter { !($0.isExternal ?? false) }.count
         let externalSubtitleCount = filter { $0.isExternal ?? false }.count
 
-        // Create working version of the [MediaStream]
         var mediaStreams = self
-
-        // For transcode, use a counter for sequential subtitles
         var subtitleCounter = 0
 
         for (i, mediaStream) in mediaStreams.enumerated() {
-            // Create a working version of the Audio Media Streams
             var copy = mediaStream
 
-            // Handle indexing based on the Stream Type
             switch streamType {
             case .direct, .hls:
                 if copy.isExternal ?? false {
@@ -304,7 +289,6 @@ extension [MediaStream] {
                 copy.index = subtitleBaseIndex + subtitleCounter
                 subtitleCounter += 1
             }
-            // Update the working copy with updated subtitle track indexes
             mediaStreams[i] = copy
         }
         return mediaStreams
