@@ -27,11 +27,6 @@ struct SeriesEpisodeSelector: View {
     @State
     private var selection: SeasonItemViewModel.ID?
 
-    // MARK: - Focus States
-
-    @FocusState
-    private var focusedSection: String?
-
     // MARK: - Calculated Variables
 
     private var selectionViewModel: SeasonItemViewModel? {
