@@ -35,7 +35,7 @@ struct SeriesEpisodeSelector: View {
     // MARK: - Calculated Variables
 
     private var selectionViewModel: SeasonItemViewModel {
-        viewModel.seasons.first(where: { $0.id == selection }) ?? SeasonItemViewModel(season: BaseItemDto())
+        viewModel.seasons.first(where: { $0.id == selection })!
     }
 
     // MARK: - Body
