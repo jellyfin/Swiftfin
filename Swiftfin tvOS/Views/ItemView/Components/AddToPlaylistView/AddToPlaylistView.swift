@@ -33,19 +33,10 @@ struct AddToPlaylistView: View {
 
     @State
     private var playlistName: String = ""
-    @State
-    private var playlistType: PlaylistViewModel.PlaylistType = .unknown
 
     // TODO: Enable for 10.10
     // @State
     // private var playlistPublic: Bool = false
-
-    // MARK: - Remove Item Variables
-
-    @State
-    private var isPresentingRemovalConfirmation: Bool = false
-    @State
-    private var selectedItem: BaseItemDto? = nil
 
     // MARK: - Error State
 
@@ -98,37 +89,8 @@ struct AddToPlaylistView: View {
             if viewModel.backgroundStates.contains(.updatingPlaylist) {
                 ProgressView()
             }
-            Button(L10n.add) {
-                if let itemID = item.id {
-                    if viewModel.selectedPlaylist == nil {
-                        let newPlaylist = CreatePlaylistDto(
-                            ids: [itemID],
-                            mediaType: playlistType.rawValue,
-                            name: playlistName,
-                            userID: userSession?.user.id
-                        )
-
-                        viewModel.send(.createPlaylist(newPlaylist))
-                    } else {
-                        viewModel.send(.addItems([itemID]))
-                    }
-                }
-            }
-            .disabled(!isValid)
         }
         .navigationBarTitle(L10n.addToPlaylist.localizedCapitalized)
-        .confirmationDialog(
-            L10n.removeItem(selectedItem?.name ?? selectedItem?.type?.displayTitle ?? L10n.items),
-            isPresented: $isPresentingRemovalConfirmation
-        ) {
-            Button(L10n.remove, role: .destructive) {
-                if let item = selectedItem {
-                    viewModel.send(.removeItems([item.id!]))
-                }
-            }
-        } message: {
-            Text(L10n.removeItemConfirmationMessage)
-        }
         .onFirstAppear {
             viewModel.send(.getPlaylists)
         }
@@ -137,8 +99,7 @@ struct AddToPlaylistView: View {
             case .created, .added, .updated:
                 router.dismissCoordinator()
             case .removed:
-                selectedItem = nil
-                isPresentingRemovalConfirmation = false
+                break
             case let .error(eventError):
                 error = eventError
             }
@@ -158,7 +119,7 @@ struct AddToPlaylistView: View {
 
                 playlistDetailsView
 
-                playlistItemsView
+                commitButtonView
             }
     }
 
@@ -230,6 +191,17 @@ struct AddToPlaylistView: View {
                     Text(overview)
                 }
             }
+            Section(L10n.details) {
+                if let mediaType = selectedPlaylist.mediaType {
+                    TextPairView(leading: L10n.type, trailing: mediaType.displayTitle)
+                }
+                if let runTimeTicks = selectedPlaylist.runTimeTicks {
+                    TextPairView(leading: L10n.duration, trailing: runTimeTicks.seconds.formatted(.hourMinute))
+                }
+                if let childCount = selectedPlaylist.childCount {
+                    TextPairView(leading: L10n.items, trailing: childCount.description)
+                }
+            }
         } else {
             Section(L10n.createPlaylist) {
                 TextField(L10n.name, text: $playlistName)
@@ -237,36 +209,36 @@ struct AddToPlaylistView: View {
 
                 // TODO: Enable for 10.10
                 // Toggle(L10n.public, isOn: $playlistPublic)
-
-                InlineEnumToggle(title: L10n.type, selection: $playlistType)
             }
         }
     }
 
-    // MARK: - Playlist Items View
-
     @ViewBuilder
-    private var playlistItemsView: some View {
-        if !viewModel.selectedPlaylistItems.isEmpty {
-            ForEach(BaseItemKind.allCases, id: \.self) { sectionType in
-                let sectionItems = viewModel.selectedPlaylistItems.filter { $0.type == sectionType }
+    private var commitButtonView: some View {
+        let createNewPlaylist: Bool = viewModel.selectedPlaylist == nil
 
-                if !sectionItems.isEmpty {
-                    Section(sectionType.displayTitle) {
-                        PosterHStack(
-                            type: .portrait,
-                            items: sectionItems
+        Section {
+            ListRowButton(createNewPlaylist ? L10n.createPlaylist.localizedCapitalized : L10n.add) {
+                if let itemID = item.id {
+                    if createNewPlaylist {
+                        let newPlaylist = CreatePlaylistDto(
+                            ids: [itemID],
+                            name: playlistName,
+                            userID: userSession?.user.id
                         )
-                        .onSelect {
-                            selectedItem = $0
-                            isPresentingRemovalConfirmation = true
-                        }
-                        .focusSection()
-                        .frame(height: 240)
-                        .listRowInsets(.zero)
+                        viewModel.send(.createPlaylist(newPlaylist))
+                    } else {
+                        viewModel.send(.addItems([itemID]))
                     }
                 }
             }
+            .disabled(!isValid)
+            .foregroundStyle(
+                Color.jellyfinPurple.overlayColor,
+                isValid ? Color.jellyfinPurple : Color.white.opacity(0.5)
+            )
+            .opacity(isValid ? 1 : 0.5)
+            .listRowInsets(.zero)
         }
     }
 }

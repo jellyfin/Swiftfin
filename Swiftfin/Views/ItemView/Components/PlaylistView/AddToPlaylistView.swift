@@ -33,17 +33,10 @@ struct AddToPlaylistView: View {
 
     @State
     private var playlistName: String = ""
-    @State
-    private var playlistType: PlaylistViewModel.PlaylistType = .unknown
 
     // TODO: Enable for 10.10
     // @State
     // private var playlistPublic: Bool = false
-
-    // MARK: - Edit Playlist View State
-
-    @State
-    private var isPresentingContents: Bool = false
 
     // MARK: - Error State
 
@@ -109,7 +102,6 @@ struct AddToPlaylistView: View {
                     if viewModel.selectedPlaylist == nil {
                         let newPlaylist = CreatePlaylistDto(
                             ids: [itemID],
-                            mediaType: playlistType.rawValue,
                             name: playlistName,
                             userID: userSession?.user.id
                         )
@@ -127,16 +119,6 @@ struct AddToPlaylistView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismissCoordinator()
-        }
-        .sheet(isPresented: $isPresentingContents) {
-            isPresentingContents = false
-        } content: {
-            EditPlaylistView(
-                viewModel: viewModel,
-                onClose: {
-                    isPresentingContents = false
-                }
-            )
         }
         .onFirstAppear {
             viewModel.send(.getPlaylists)
@@ -201,12 +183,16 @@ struct AddToPlaylistView: View {
                     Text(overview)
                 }
             }
-
-            Section(L10n.options) {
-                ChevronButton(L10n.existingItems)
-                    .onSelect {
-                        isPresentingContents = true
-                    }
+            Section(L10n.details) {
+                if let mediaType = selectedPlaylist.mediaType {
+                    TextPairView(leading: L10n.type, trailing: mediaType.displayTitle)
+                }
+                if let runTimeTicks = selectedPlaylist.runTimeTicks {
+                    TextPairView(leading: L10n.duration, trailing: runTimeTicks.seconds.formatted(.hourMinute))
+                }
+                if let childCount = selectedPlaylist.childCount {
+                    TextPairView(leading: L10n.items, trailing: childCount.description)
+                }
             }
         } else {
             Section(L10n.createPlaylist) {
@@ -214,13 +200,6 @@ struct AddToPlaylistView: View {
 
                 // TODO: Enable for 10.10
                 // Toggle(L10n.public, isOn: $playlistPublic)
-
-                Picker(L10n.type, selection: $playlistType) {
-                    ForEach(PlaylistViewModel.PlaylistType.allCases) { type in
-                        Text(type.displayTitle)
-                            .tag(type)
-                    }
-                }
             }
         }
     }
