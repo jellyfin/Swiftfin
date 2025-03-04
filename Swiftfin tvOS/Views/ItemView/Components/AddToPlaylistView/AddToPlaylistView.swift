@@ -128,6 +128,7 @@ struct AddToPlaylistView: View {
     private var playlistPosterView: some View {
         Group {
             if let selectedPlaylist = viewModel.selectedPlaylist {
+                // TODO: This doesn't update between playlists
                 ImageView(selectedPlaylist.portraitImageSources(maxWidth: 400))
             } else {
                 Image(systemName: "text.badge.plus")
