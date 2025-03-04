@@ -34,6 +34,8 @@ extension SeriesEpisodeSelector {
 
         let playButtonItem: BaseItemDto?
 
+        // MARK: - Content View
+
         private func contentView(viewModel: SeasonItemViewModel) -> some View {
             CollectionHStack(
                 uniqueElements: viewModel.elements,
@@ -53,7 +55,6 @@ extension SeriesEpisodeSelector {
 
                 lastFocusedEpisodeID = playButtonItem?.id
 
-                // good enough?
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     guard let playButtonItem else { return }
                     proxy.scrollTo(element: playButtonItem, animated: false)
@@ -61,22 +62,42 @@ extension SeriesEpisodeSelector {
             }
         }
 
+        // MARK: - Body
+
         var body: some View {
-            WrappedView {
+            ZStack {
                 switch viewModel.state {
                 case .content:
-                    contentView(viewModel: viewModel)
+                    if viewModel.elements.isEmpty {
+                        EmptyHStack(focusedEpisodeID: $focusedEpisodeID)
+                    } else {
+                        contentView(viewModel: viewModel)
+                    }
                 case let .error(error):
-                    ErrorHStack(viewModel: viewModel, error: error)
+                    ErrorHStack(viewModel: viewModel, error: error, focusedEpisodeID: $focusedEpisodeID)
                 case .initial, .refreshing:
-                    LoadingHStack()
+                    LoadingHStack(focusedEpisodeID: $focusedEpisodeID)
                 }
             }
+            .padding(.bottom, 45)
             .focusSection()
             .focusGuide(
                 focusGuide,
                 tag: "episodes",
-                onContentFocus: { focusedEpisodeID = lastFocusedEpisodeID },
+                onContentFocus: {
+                    switch viewModel.state {
+                    case .content:
+                        if viewModel.elements.isEmpty {
+                            focusedEpisodeID = "EmptyCard"
+                        } else {
+                            focusedEpisodeID = lastFocusedEpisodeID
+                        }
+                    case .error:
+                        focusedEpisodeID = "ErrorCard"
+                    case .initial, .refreshing:
+                        focusedEpisodeID = "LoadingCard"
+                    }
+                },
                 top: "seasons"
             )
             .onChange(of: viewModel.id) {
@@ -94,12 +115,36 @@ extension SeriesEpisodeSelector {
         }
     }
 
+    // MARK: - Empty HStack
+
+    struct EmptyHStack: View {
+
+        let focusedEpisodeID: FocusState<String?>.Binding
+
+        var body: some View {
+            CollectionHStack(
+                count: 1,
+                columns: 3.5
+            ) { _ in
+                SeriesEpisodeSelector.EmptyCard()
+                    .focused(focusedEpisodeID, equals: "EmptyCard")
+                    .padding(.horizontal, 4)
+            }
+            .allowScrolling(false)
+            .insets(horizontal: EdgeInsets.edgePadding)
+            .itemSpacing(EdgeInsets.edgePadding / 2)
+        }
+    }
+
+    // MARK: - Error HStack
+
     struct ErrorHStack: View {
 
         @ObservedObject
         var viewModel: SeasonItemViewModel
 
         let error: JellyfinAPIError
+        let focusedEpisodeID: FocusState<String?>.Binding
 
         var body: some View {
             CollectionHStack(
@@ -110,6 +155,8 @@ extension SeriesEpisodeSelector {
                     .onSelect {
                         viewModel.send(.refresh)
                     }
+                    .focused(focusedEpisodeID, equals: "ErrorCard")
+                    .padding(.horizontal, 4)
             }
             .allowScrolling(false)
             .insets(horizontal: EdgeInsets.edgePadding)
@@ -117,14 +164,20 @@ extension SeriesEpisodeSelector {
         }
     }
 
+    // MARK: - Loading HStack
+
     struct LoadingHStack: View {
+
+        let focusedEpisodeID: FocusState<String?>.Binding
 
         var body: some View {
             CollectionHStack(
-                count: Int.random(in: 2 ..< 5),
+                count: 1,
                 columns: 3.5
             ) { _ in
                 SeriesEpisodeSelector.LoadingCard()
+                    .focused(focusedEpisodeID, equals: "LoadingCard")
+                    .padding(.horizontal, 4)
             }
             .allowScrolling(false)
             .insets(horizontal: EdgeInsets.edgePadding)
