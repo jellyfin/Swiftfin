@@ -7,11 +7,18 @@
 //
 
 import Defaults
+import Factory
 import SwiftUI
 
 extension CustomizeViewsSettings {
 
     struct HomeSection: View {
+
+        @Injected(\.currentUserSession)
+        private var userSession
+
+        @StoredValue(.User.activeSessionIndicator)
+        private var activeSessionIndicator
 
         @Default(.Customization.Home.showRecentlyAdded)
         private var showRecentlyAdded
@@ -22,6 +29,10 @@ extension CustomizeViewsSettings {
 
         var body: some View {
             Section(L10n.home) {
+
+                if userSession?.user.isAdministrator ?? false {
+                    Toggle(L10n.activityIndicator, isOn: $activeSessionIndicator)
+                }
 
                 Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)
 

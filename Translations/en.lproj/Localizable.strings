@@ -1063,7 +1063,11 @@
 /// Lock All Fields
 "lockAllFields" = "Lock All Fields";
 
-/// Locked Fields
+// Activity Indicator - Setting
+// Setting to enable/disable the HomeView Activity Indicator
+// Appears in CustomizeSettingView
+"activityIndicator" = "Activity Indicator";
+
 "lockedFields" = "Locked Fields";
 
 /// Locked users
