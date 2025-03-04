@@ -56,8 +56,9 @@ struct SeriesEpisodeSelector: View {
                 selection = viewModel.seasons.first?.id
             }
         }
-        .onChange(of: selection) { _, _ in
-            guard let selectionViewModel else { return }
+        .onChange(of: selection) { _, newValue in
+
+            guard let selectionViewModel = viewModel.seasons.first(where: { $0.id == newValue }) else { return }
 
             if selectionViewModel.state == .initial {
                 selectionViewModel.send(.refresh)
