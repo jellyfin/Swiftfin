@@ -133,22 +133,15 @@ extension ItemView.iPadOSCinematicScrollView {
 
                 Spacer()
 
-                // TODO: remove when/if collections have a different view
+                VStack(spacing: 10) {
+                    ItemView.PlayButton(viewModel: viewModel)
+                        .frame(height: 50)
 
-                if !(viewModel is CollectionItemViewModel) {
-                    VStack(spacing: 10) {
-                        ItemView.PlayButton(viewModel: viewModel)
-                            .frame(height: 50)
-
-                        ItemView.ActionButtonHStack(viewModel: viewModel)
-                            .font(.title)
-                            .foregroundColor(.white)
-                    }
-                    .frame(width: 250)
-                } else {
-                    Color.clear
-                        .frame(width: 250)
+                    ItemView.ActionButtonHStack(viewModel: viewModel)
+                        .font(.title)
+                        .foregroundColor(.white)
                 }
+                .frame(width: 250)
             }
         }
     }
