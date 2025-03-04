@@ -48,19 +48,6 @@ extension iPadOSEpisodeItemView {
                     RowDivider()
                 }
 
-                // MARK: Series
-
-                if let seriesItem = viewModel.seriesItem {
-                    PosterHStack(
-                        title: L10n.series,
-                        type: .portrait,
-                        items: [seriesItem]
-                    )
-                    .onSelect { item in
-                        router.route(to: \.item, item)
-                    }
-                }
-
                 ItemView.AboutView(viewModel: viewModel)
             }
         }

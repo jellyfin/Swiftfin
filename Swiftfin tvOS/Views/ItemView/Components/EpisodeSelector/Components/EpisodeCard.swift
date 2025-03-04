@@ -6,13 +6,13 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Factory
 import JellyfinAPI
 import SwiftUI
 
 extension SeriesEpisodeSelector {
+
     struct EpisodeCard: View {
+
         @EnvironmentObject
         private var router: ItemCoordinator.Router
 
@@ -22,15 +22,24 @@ extension SeriesEpisodeSelector {
         private var isFocused: Bool
 
         @ViewBuilder
-        private var imageOverlay: some View {
+        private var overlayView: some View {
             ZStack {
-                if episode.userData?.isPlayed ?? false {
-                    WatchedIndicator(size: 45)
-                } else if (episode.userData?.playbackPositionTicks ?? 0) > 0 {
+                if let progressLabel = episode.progressLabel {
                     LandscapePosterProgressBar(
-                        title: episode.progressLabel ?? L10n.continue,
+                        title: progressLabel,
                         progress: (episode.userData?.playedPercentage ?? 0) / 100
                     )
+                } else if episode.userData?.isPlayed ?? false {
+                    ZStack(alignment: .bottomTrailing) {
+                        Color.clear
+
+                        Image(systemName: "checkmark.circle.fill")
+                            .resizable()
+                            .frame(width: 30, height: 30, alignment: .bottomTrailing)
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(.white, .black)
+                            .padding()
+                    }
                 }
 
                 if isFocused {
@@ -64,7 +73,7 @@ extension SeriesEpisodeSelector {
                                 SystemImageContentView(systemName: episode.systemImage)
                             }
 
-                        imageOverlay
+                        overlayView
                     }
                     .posterStyle(.landscape)
                 }
