@@ -125,11 +125,12 @@ extension BaseItemDto {
         let userSession = Container.shared.currentUserSession()!
 
         let testStartTime = Date()
-        try await userSession.client.send(Paths.getBitrateTestBytes(size: testSize))
+        _ = try await userSession.client.send(Paths.getBitrateTestBytes(size: testSize))
         let testDuration = Date().timeIntervalSince(testStartTime)
         let testSizeBits = Double(testSize * 8)
         let testBitrate = testSizeBits / testDuration
 
-        return Int(testBitrate)
+        /// Exceeding 500 mbps will produce an invalid URL
+        return min(Int(testBitrate), PlaybackBitrate.max.rawValue)
     }
 }

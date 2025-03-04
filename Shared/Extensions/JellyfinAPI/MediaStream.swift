@@ -216,36 +216,81 @@ extension MediaStream {
 
 extension [MediaStream] {
 
-    // TODO: explain why adjustment is necessary
-    func adjustExternalSubtitleIndexes(audioStreamCount: Int) -> [MediaStream] {
-        guard allSatisfy({ $0.type == .subtitle }) else { return self }
-        let embeddedSubtitleCount = filter { !($0.isExternal ?? false) }.count
+    /// What is this?
+    /// Jellyfin maintains a sequential indexing system across all tracks with external at the beginning
+    /// VLCKit handles external tracks (added separately to the media) by appending them to the end of the track list
+    /// These functions change the order of the track list to reflect VLCKit's expectated order
+
+    /// Adjust track indexes based on the a count of external tracks
+    func adjustedAudio(
+        for streamType: StreamType,
+        embeddedSubtitleCount: Int,
+        externalSubtitleCount: Int
+    ) -> [MediaStream] {
+        guard allSatisfy({ $0.type == .audio }) else { return self }
+
+        let embeddedAudioCount = filter { !($0.isExternal ?? false) }.count
+        let externalAudioCount = filter { $0.isExternal ?? false }.count
 
         var mediaStreams = self
 
         for (i, mediaStream) in mediaStreams.enumerated() {
-            guard mediaStream.isExternal ?? false else { continue }
             var copy = mediaStream
-            copy.index = (copy.index ?? 0) + 1 + embeddedSubtitleCount + audioStreamCount
 
-            mediaStreams[i] = copy
+            switch streamType {
+            case .direct, .hls:
+                if copy.isExternal ?? false {
+                    // Move external tracks to the end
+                    copy.index = (copy.index ?? 0) + embeddedSubtitleCount + embeddedAudioCount
+                } else {
+                    // Move internal tracks to the beginning
+                    copy.index = (copy.index ?? 0) - (externalAudioCount + externalSubtitleCount)
+                }
+                mediaStreams[i] = copy
+            default:
+                // TODO: Transcode Audio Tracks will need something like: https://github.com/jellyfin/jellyfin-web/blob/master/src/components/playback/playbackmanager.js#L1691
+                break
+            }
         }
-
         return mediaStreams
     }
 
-    // TODO: explain why adjustment is necessary
-    func adjustAudioForExternalSubtitles(externalMediaStreamCount: Int) -> [MediaStream] {
-        guard allSatisfy({ $0.type == .audio }) else { return self }
+    /// Adjust track indexes based on the a count of external tracks
+    func adjustedSubtitles(
+        for streamType: StreamType,
+        embeddedAudioCount: Int,
+        externalAudioCount: Int
+    ) -> [MediaStream] {
+        guard allSatisfy({ $0.type == .subtitle }) else { return self }
+
+        let embeddedSubtitleCount = filter { !($0.isExternal ?? false) }.count
+        let externalSubtitleCount = filter { $0.isExternal ?? false }.count
 
         var mediaStreams = self
+        var subtitleCounter = 0
 
         for (i, mediaStream) in mediaStreams.enumerated() {
             var copy = mediaStream
-            copy.index = (copy.index ?? 0) - externalMediaStreamCount
+
+            switch streamType {
+            case .direct, .hls:
+                if copy.isExternal ?? false {
+                    // Move external tracks to the end
+                    copy.index = (copy.index ?? 0) + embeddedSubtitleCount + embeddedAudioCount + externalAudioCount
+                } else {
+                    // Move internal tracks to the beginning
+                    copy.index = (copy.index ?? 0) - (externalAudioCount + externalSubtitleCount)
+                }
+            default:
+                // In transcoded streams, video is 0, audio is 1, and subtitles start at 2
+                let subtitleBaseIndex = 2
+
+                // Assign a sequential index for subtitles starting from subtitleBaseIndex
+                copy.index = subtitleBaseIndex + subtitleCounter
+                subtitleCounter += 1
+            }
             mediaStreams[i] = copy
         }
-
         return mediaStreams
     }
 

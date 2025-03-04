@@ -29,7 +29,6 @@ class VideoPlayerViewModel: ViewModel {
     let streamType: StreamType
 
     var hlsPlaybackURL: URL {
-
         let parameters = Paths.GetMasterHlsVideoPlaylistParameters(
             isStatic: true,
             tag: mediaSource.eTag,
@@ -103,10 +102,21 @@ class VideoPlayerViewModel: ViewModel {
         self.playSessionID = playSessionID
         self.playbackURL = playbackURL
         self.videoStreams = videoStreams
-        self.audioStreams = audioStreams
-            .adjustAudioForExternalSubtitles(externalMediaStreamCount: subtitleStreams.filter { $0.isExternal ?? false }.count)
-        self.subtitleStreams = subtitleStreams
-            .adjustExternalSubtitleIndexes(audioStreamCount: audioStreams.count)
+
+        // Adjust Audio Indexes based on StreamType & External Tracks
+        self.audioStreams = audioStreams.adjustedAudio(
+            for: streamType,
+            embeddedSubtitleCount: subtitleStreams.filter { !($0.isExternal ?? false) }.count,
+            externalSubtitleCount: subtitleStreams.filter { $0.isExternal ?? false }.count
+        )
+
+        // Adjust Subtitle Indexes based on StreamType & External Tracks
+        self.subtitleStreams = subtitleStreams.adjustedSubtitles(
+            for: streamType,
+            embeddedAudioCount: audioStreams.filter { !($0.isExternal ?? false) }.count,
+            externalAudioCount: audioStreams.filter { $0.isExternal ?? false }.count
+        )
+
         self.selectedAudioStreamIndex = selectedAudioStreamIndex
         self.selectedSubtitleStreamIndex = selectedSubtitleStreamIndex
         self.chapters = chapters
