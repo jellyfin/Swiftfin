@@ -30,12 +30,16 @@ final class ItemCoordinator: NavigationCoordinatable {
     @Route(.modal)
     var itemEditor = makeItemEditor
     @Route(.modal)
+    var addToPlaylist = makeAddToPlaylist
+    @Route(.modal)
     var mediaSourceInfo = makeMediaSourceInfo
     @Route(.modal)
     var downloadTask = makeDownloadTask
     #endif
 
     #if os(tvOS)
+    @Route(.fullScreen)
+    var addToPlaylist = makeAddToPlaylist
     @Route(.fullScreen)
     var itemOverview = makeItemOverview
     @Route(.fullScreen)
@@ -77,6 +81,12 @@ final class ItemCoordinator: NavigationCoordinatable {
 
     func makeMediaSourceInfo(source: MediaSourceInfo) -> NavigationViewCoordinator<MediaSourceInfoCoordinator> {
         NavigationViewCoordinator(MediaSourceInfoCoordinator(mediaSourceInfo: source))
+    }
+
+    func makeAddToPlaylist(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            AddToPlaylistView(item: item)
+        }
     }
 
     #if os(iOS)

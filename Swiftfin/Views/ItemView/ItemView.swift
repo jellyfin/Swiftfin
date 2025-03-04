@@ -53,12 +53,6 @@ struct ItemView: View {
         }
     }
 
-    // Use to hide the menu button when not needed.
-    // Add more checks as needed. For example, canDownload.
-    private var enableMenu: Bool {
-        canDelete || canEdit
-    }
-
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
         switch item.type {
         case .boxSet:
@@ -139,9 +133,12 @@ struct ItemView: View {
             viewModel.send(.refresh)
         }
         .navigationBarMenuButton(
-            isLoading: viewModel.backgroundStates.contains(.refresh),
-            isHidden: !enableMenu
+            isLoading: viewModel.backgroundStates.contains(.refresh)
         ) {
+            Button(L10n.addToPlaylist, systemImage: "text.badge.plus") {
+                router.route(to: \.addToPlaylist, viewModel.item)
+            }
+
             if canEdit {
                 Button(L10n.edit, systemImage: "pencil") {
                     router.route(to: \.itemEditor, viewModel)

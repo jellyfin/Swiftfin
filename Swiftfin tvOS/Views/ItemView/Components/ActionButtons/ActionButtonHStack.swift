@@ -111,21 +111,23 @@ extension ItemView {
 
                 // MARK: - Additional Menu Options
 
-                if canRefresh || canDelete {
-                    ActionMenu {
-                        if canRefresh {
-                            RefreshMetadataButton(item: viewModel.item)
-                        }
+                ActionMenu {
+                    Button(L10n.addToPlaylist, systemImage: "text.badge.plus") {
+                        router.route(to: \.addToPlaylist, viewModel.item)
+                    }
 
-                        if canDelete {
-                            Divider()
-                            Button(L10n.delete, systemImage: "trash", role: .destructive) {
-                                showConfirmationDialog = true
-                            }
+                    if canRefresh {
+                        RefreshMetadataButton(item: viewModel.item)
+                    }
+
+                    if canDelete {
+                        Divider()
+                        Button(L10n.delete, systemImage: "trash", role: .destructive) {
+                            showConfirmationDialog = true
                         }
                     }
-                    .frame(minWidth: 30, maxWidth: 50)
                 }
+                .frame(width: 70)
             }
             .frame(height: 100)
             .confirmationDialog(
