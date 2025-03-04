@@ -10,13 +10,11 @@ import SwiftUI
 
 extension SeriesEpisodeSelector {
 
-    struct ErrorCard: View {
+    struct EmptyCard: View {
 
-        let error: JellyfinAPIError
         private var onSelect: () -> Void
 
-        init(error: JellyfinAPIError) {
-            self.error = error
+        init() {
             self.onSelect = {}
         }
 
@@ -33,7 +31,7 @@ extension SeriesEpisodeSelector {
                         .opacity(0.75)
                         .posterStyle(.landscape)
                         .overlay {
-                            Image(systemName: "arrow.clockwise")
+                            Image(systemName: "questionmark")
                                 .font(.system(size: 40))
                         }
                 }
@@ -42,8 +40,8 @@ extension SeriesEpisodeSelector {
 
                 SeriesEpisodeSelector.EpisodeContent(
                     subHeader: .emptyDash,
-                    header: L10n.error,
-                    content: error.localizedDescription
+                    header: L10n.noResults,
+                    content: L10n.noEpisodesAvailable
                 )
             }
         }
