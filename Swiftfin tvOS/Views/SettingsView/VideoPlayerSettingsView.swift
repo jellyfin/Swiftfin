@@ -74,7 +74,7 @@ struct VideoPlayerSettingsView: View {
                     Toggle(L10n.playOnActive, isOn: $playOnActive)
                 }
                 .navigationTitle(L10n.videoPlayer.text)
-                .blurFullScreenCover(isPresented: $isPresentingResumeOffsetStepper) {
+                .blurredFullScreenCover(isPresented: $isPresentingResumeOffsetStepper) {
                     StepperView(
                         title: L10n.resumeOffsetTitle,
                         description: L10n.resumeOffsetDescription,
