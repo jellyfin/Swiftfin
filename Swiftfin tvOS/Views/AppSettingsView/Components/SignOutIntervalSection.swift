@@ -30,43 +30,38 @@ extension AppSettingsView {
                 Text(L10n.signoutCloseFooter)
             }
 
-            // TODO: need to consider date picker options to re-enable
-//            Section {
-//                Toggle(L10n.signoutBackground, isOn: $signOutOnBackground)
-//
-//                if signOutOnBackground {
-//                    HStack {
-//                        Text(L10n.duration)
-//
-//                        Spacer()
-//
-//                        Button {
-//                            isEditingBackgroundSignOutInterval.toggle()
-//                        } label: {
-//                            HStack {
-//                                Text(backgroundSignOutInterval, format: .hourMinute)
-//                                    .foregroundStyle(.secondary)
-//
-//                                Image(systemName: "chevron.right")
-//                                    .font(.body.weight(.semibold))
-//                                    .foregroundStyle(.secondary)
-//                                    .rotationEffect(isEditingBackgroundSignOutInterval ? .degrees(90) : .zero)
-//                                    .animation(.linear(duration: 0.075), value: isEditingBackgroundSignOutInterval)
-//                            }
-//                        }
-//                        .foregroundStyle(.primary, .secondary)
-//                    }
-//
-//                    if isEditingBackgroundSignOutInterval {
-//                        HourMinutePicker(interval: $backgroundSignOutInterval)
-//                    }
-//                }
-//            } footer: {
-//                Text(
-//                    L10n.signoutBackgroundFooter
-//                )
-//            }
-//            .animation(.linear(duration: 0.15), value: isEditingBackgroundSignOutInterval)
+            Section {
+                Toggle(L10n.signoutBackground, isOn: $signOutOnBackground)
+
+                if signOutOnBackground {
+                    HStack {
+                        Text(L10n.duration)
+
+                        Spacer()
+
+                        Button {
+                            isEditingBackgroundSignOutInterval.toggle()
+                        } label: {
+                            HStack {
+                                Text(backgroundSignOutInterval, format: .hourMinute)
+                                    .foregroundStyle(.secondary)
+
+                                Image(systemName: "chevron.right")
+                                    .font(.body.weight(.semibold))
+                                    .foregroundStyle(.secondary)
+                                    .rotationEffect(isEditingBackgroundSignOutInterval ? .degrees(90) : .zero)
+                                    .animation(.linear(duration: 0.075), value: isEditingBackgroundSignOutInterval)
+                            }
+                        }
+                        .foregroundStyle(.primary, .secondary)
+                    }
+                }
+            } footer: {
+                Text(
+                    L10n.signoutBackgroundFooter
+                )
+            }
+            .animation(.linear(duration: 0.15), value: isEditingBackgroundSignOutInterval)
         }
     }
 }
