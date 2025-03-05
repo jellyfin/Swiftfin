@@ -23,7 +23,7 @@ struct SeriesEpisodeSelector: View {
     // MARK: - State Variables
 
     @State
-    private var didSelectPlayButtonSeason = false
+    private var didScrollToPlayButtonSeason = false
     @State
     private var selection: SeasonItemViewModel.ID?
 
@@ -46,9 +46,9 @@ struct SeriesEpisodeSelector: View {
             }
         }
         .onReceive(viewModel.playButtonItem.publisher) { newValue in
-            guard !didSelectPlayButtonSeason else { return }
+            guard !didScrollToPlayButtonSeason else { return }
 
-            didSelectPlayButtonSeason = true
+            didScrollToPlayButtonSeason = true
 
             if let playButtonSeason = viewModel.seasons.first(where: { $0.id == newValue.seasonID }) {
                 selection = playButtonSeason.id
@@ -84,7 +84,7 @@ extension SeriesEpisodeSelector {
         var selection: Binding<SeasonItemViewModel.ID?>
 
         @State
-        private var didScrollToPlayButtonItem = false
+        private var didScrollToPlayButtonSeason = false
 
         @StateObject
         private var proxy = CollectionHStackProxy()
@@ -92,15 +92,11 @@ extension SeriesEpisodeSelector {
         // MARK: - Extracted helper methods
 
         private func scrollToSelectedSeason() {
-            let selectedID = selection.wrappedValue
-            let seasons = viewModel.seasons
-
-            if let selectedID = selectedID,
-               let index = seasons.firstIndex(where: { $0.id == selectedID })
+            if let selectedID = selection.wrappedValue,
+               let index = viewModel.seasons.firstIndex(where: { $0.id == selectedID }),
+               index > 0
             {
                 proxy.scrollTo(index: index, animated: false)
-            } else if !seasons.isEmpty {
-                proxy.scrollTo(index: 0, animated: false)
             }
         }
 
@@ -138,8 +134,8 @@ extension SeriesEpisodeSelector {
                 bottom: "episodes"
             )
             .onFirstAppear {
-                guard !didScrollToPlayButtonItem else { return }
-                didScrollToPlayButtonItem = true
+                guard !didScrollToPlayButtonSeason else { return }
+                didScrollToPlayButtonSeason = true
 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     scrollToSelectedSeason()
@@ -149,29 +145,22 @@ extension SeriesEpisodeSelector {
 
         // MARK: - Season Button
 
-        private func seasonButton(viewModel seasonViewModel: SeasonItemViewModel) -> some View {
-            // Create the base button content
-            let text = Text(seasonViewModel.season.displayTitle)
-                .fixedSize()
-                .font(.headline)
-                .fontWeight(.semibold)
-                .padding(.vertical, 10)
-                .padding(.horizontal, 20)
-
-            // Apply conditional styling
-            let isSelected = selection.wrappedValue == seasonViewModel.id
-            let styledText = text
-                .background(isSelected ? Color.white : Color.clear)
-                .foregroundColor(isSelected ? Color.black : Color.white)
-
-            // Create the button
-            return Button {
-                // Empty action
-            } label: {
-                styledText
+        private func seasonButton(viewModel: SeasonItemViewModel) -> some View {
+            Button {} label: {
+                Text(viewModel.season.displayTitle)
+                    .fixedSize()
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 20)
+                    .if(selection.wrappedValue == viewModel.id) { text in
+                        text
+                            .background(Color.white)
+                            .foregroundColor(.black)
+                    }
             }
             .buttonStyle(.card)
-            .focused($focusedSeason, equals: seasonViewModel.id)
+            .focused($focusedSeason, equals: viewModel.id)
         }
     }
 }
