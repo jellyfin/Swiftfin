@@ -46,8 +46,8 @@ struct SeriesEpisodeSelector: View {
             }
         }
         .onReceive(viewModel.playButtonItem.publisher) { newValue in
-
             guard !didSelectPlayButtonSeason else { return }
+
             didSelectPlayButtonSeason = true
 
             if let playButtonSeason = viewModel.seasons.first(where: { $0.id == newValue.seasonID }) {
@@ -57,7 +57,6 @@ struct SeriesEpisodeSelector: View {
             }
         }
         .onChange(of: selection) { _, newValue in
-
             guard let selectionViewModel = viewModel.seasons.first(where: { $0.id == newValue }) else { return }
 
             if selectionViewModel.state == .initial {
@@ -84,57 +83,95 @@ extension SeriesEpisodeSelector {
 
         var selection: Binding<SeasonItemViewModel.ID?>
 
-        var body: some View {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(viewModel.seasons) { seasonViewModel in
-                        Button {
-                            Text(seasonViewModel.season.displayTitle)
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .padding(.vertical, 10)
-                                .padding(.horizontal, 20)
-                                .if(selection.wrappedValue == seasonViewModel.id) { text in
-                                    text
-                                        .background(Color.white)
-                                        .foregroundColor(.black)
-                                }
-                        }
-                        .buttonStyle(.card)
-                        .focused($focusedSeason, equals: seasonViewModel.id)
-                    }
-                }
-                .focusGuide(
-                    focusGuide,
-                    tag: "seasons",
-                    onContentFocus: { focusedSeason = selection.wrappedValue },
-                    top: "top",
-                    bottom: "episodes"
-                )
-                .frame(height: 70)
-                .padding(.horizontal, 50)
-                .padding(.top)
-                .padding(.bottom, 45)
-            }
-            .mask {
-                VStack(spacing: 0) {
-                    Color.white
+        @State
+        private var didScrollToPlayButtonItem = false
 
-                    LinearGradient(
-                        stops: [
-                            .init(color: .white, location: 0),
-                            .init(color: .clear, location: 1),
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 20)
+        @StateObject
+        private var proxy = CollectionHStackProxy()
+
+        // MARK: - Extracted helper methods
+
+        private func scrollToSelectedSeason() {
+            let selectedID = selection.wrappedValue
+            let seasons = viewModel.seasons
+
+            if let selectedID = selectedID,
+               let index = seasons.firstIndex(where: { $0.id == selectedID })
+            {
+                proxy.scrollTo(index: index, animated: false)
+            } else if !seasons.isEmpty {
+                proxy.scrollTo(index: 0, animated: false)
+            }
+        }
+
+        private func onFocusSeasonChanged(_ newValue: SeasonItemViewModel.ID?) {
+            guard let newValue = newValue else { return }
+            selection.wrappedValue = newValue
+        }
+
+        // MARK: - Body
+
+        var body: some View {
+            CollectionHStack(
+                uniqueElements: viewModel.seasons,
+                id: \.id,
+                variadicWidths: true
+            ) { season in
+                seasonButton(viewModel: season)
+                    .id(season.id)
+            }
+            .scrollBehavior(.continuousLeadingEdge)
+            .insets(horizontal: EdgeInsets.edgePadding)
+            .itemSpacing(EdgeInsets.edgePadding)
+            .proxy(proxy)
+            .frame(height: 70)
+            .padding(.top)
+            .padding(.bottom, 45)
+            .onChange(of: focusedSeason) { _, newValue in
+                onFocusSeasonChanged(newValue)
+            }
+            .focusGuide(
+                focusGuide,
+                tag: "seasons",
+                onContentFocus: { focusedSeason = selection.wrappedValue },
+                top: "top",
+                bottom: "episodes"
+            )
+            .onFirstAppear {
+                guard !didScrollToPlayButtonItem else { return }
+                didScrollToPlayButtonItem = true
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    scrollToSelectedSeason()
                 }
             }
-            .onChange(of: focusedSeason) { _, newValue in
-                guard let newValue else { return }
-                selection.wrappedValue = newValue
+        }
+
+        // MARK: - Season Button
+
+        private func seasonButton(viewModel seasonViewModel: SeasonItemViewModel) -> some View {
+            // Create the base button content
+            let text = Text(seasonViewModel.season.displayTitle)
+                .fixedSize()
+                .font(.headline)
+                .fontWeight(.semibold)
+                .padding(.vertical, 10)
+                .padding(.horizontal, 20)
+
+            // Apply conditional styling
+            let isSelected = selection.wrappedValue == seasonViewModel.id
+            let styledText = text
+                .background(isSelected ? Color.white : Color.clear)
+                .foregroundColor(isSelected ? Color.black : Color.white)
+
+            // Create the button
+            return Button {
+                // Empty action
+            } label: {
+                styledText
             }
+            .buttonStyle(.card)
+            .focused($focusedSeason, equals: seasonViewModel.id)
         }
     }
 }
