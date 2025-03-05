@@ -62,6 +62,9 @@ extension AppSettingsView {
                 )
             }
             .animation(.linear(duration: 0.15), value: isEditingBackgroundSignOutInterval)
+            .blurredFullScreenCover(isPresented: $isEditingBackgroundSignOutInterval) {
+                HourMinutePicker(interval: $backgroundSignOutInterval)
+            }
         }
     }
 }
