@@ -45,6 +45,21 @@ extension SeriesEpisodeSelector {
                 top: "top",
                 bottom: "episodes"
             )
+            .mask {
+                VStack(spacing: 0) {
+                    Color.white
+
+                    LinearGradient(
+                        stops: [
+                            .init(color: .white, location: 0),
+                            .init(color: .clear, location: 1),
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 20)
+                }
+            }
             .onChange(of: focusedSeason) { _, newValue in
                 if let newValue = newValue {
                     selection = newValue
