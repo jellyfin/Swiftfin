@@ -129,18 +129,6 @@ extension SeriesEpisodeSelector {
                 guard let newValue else { return }
                 lastFocusedEpisodeID = newValue
             }
-            .onChange(of: viewModel.state) { _, newValue in
-                if newValue == .content {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        if focusGuide.focusedTag == "episodes" {
-                            lastFocusedEpisodeID = viewModel.elements.first?.id
-                            focusedEpisodeID = lastFocusedEpisodeID
-
-                            focusGuide.transition(to: "episodes")
-                        }
-                    }
-                }
-            }
         }
     }
 
