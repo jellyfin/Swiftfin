@@ -21,7 +21,7 @@ struct SeriesEpisodeSelector: View {
     // MARK: - State Variables
 
     @State
-    private var didScrollToPlayButtonSeason = false
+    private var didSelectPlayButtonSeason = false
     @State
     private var selection: SeasonItemViewModel.ID?
 
@@ -35,7 +35,7 @@ struct SeriesEpisodeSelector: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            SeasonHStack(viewModel: viewModel, selection: $selection)
+            SeasonsHStack(viewModel: viewModel, selection: $selection)
                 .environmentObject(parentFocusGuide)
 
             if let selectionViewModel {
@@ -44,9 +44,9 @@ struct SeriesEpisodeSelector: View {
             }
         }
         .onReceive(viewModel.playButtonItem.publisher) { newValue in
-            guard !didScrollToPlayButtonSeason else { return }
+            guard !didSelectPlayButtonSeason else { return }
 
-            didScrollToPlayButtonSeason = true
+            didSelectPlayButtonSeason = true
 
             if let playButtonSeason = viewModel.seasons.first(where: { $0.id == newValue.seasonID }) {
                 selection = playButtonSeason.id

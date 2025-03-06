@@ -10,7 +10,7 @@ import SwiftUI
 
 extension SeriesEpisodeSelector {
 
-    struct SeasonHStack: View {
+    struct SeasonsHStack: View {
 
         @EnvironmentObject
         private var focusGuide: FocusGuide
