@@ -47,7 +47,7 @@ extension SeriesEpisodeSelector {
                     guard let playButtonItem else { return }
 
                     if let itemIndex = viewModel.elements.firstIndex(where: { $0.id == playButtonItem.id }),
-                     itemIndex > 0
+                       itemIndex > 0
                     {
                         proxy.scrollTo(index: itemIndex, animated: false)
                     }
