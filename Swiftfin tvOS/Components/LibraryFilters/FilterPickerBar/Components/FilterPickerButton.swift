@@ -37,11 +37,8 @@ extension FilterPickerBar {
 
         // MARK: - Button Dimensions
 
-        private let collapsedWidth: CGFloat = 70
-
-        private var expandedWidth: CGFloat {
-            title.width(font: .footnote, weight: .semibold) + 30 + collapsedWidth
-        }
+        private let minWidth: CGFloat
+        private let maxWidth: CGFloat
 
         // MARK: - Button Styles
 
@@ -58,11 +55,15 @@ extension FilterPickerBar {
         init(
             systemName: String?,
             title: String,
+            minWidth: CGFloat,
+            maxWidth: CGFloat,
             role: ButtonRole?,
             onSelect: @escaping () -> Void
         ) {
             self.systemName = systemName
             self.title = title
+            self.minWidth = minWidth
+            self.maxWidth = maxWidth
             self.role = role
             self.onSelect = onSelect
         }
@@ -75,7 +76,7 @@ extension FilterPickerBar {
                     .foregroundColor(buttonColor)
                     .brightness(isFocused ? 0.25 : 0)
                     .opacity(isFocused ? 1 : 0.5)
-                    .frame(width: isFocused ? expandedWidth : collapsedWidth, height: collapsedWidth)
+                    .frame(width: isFocused ? maxWidth : minWidth, height: minWidth)
                     .overlay {
                         Capsule()
                             .stroke(buttonColor, lineWidth: 1)
@@ -89,7 +90,7 @@ extension FilterPickerBar {
                             .hoverEffectDisabled()
                             .focusEffectDisabled()
                             .foregroundColor(textColor)
-                            .frame(width: collapsedWidth, alignment: .center)
+                            .frame(width: minWidth, alignment: .center)
                     }
 
                     if isFocused {
@@ -101,30 +102,37 @@ extension FilterPickerBar {
                     }
                 }
                 .font(.footnote.weight(.semibold))
-                .frame(height: collapsedWidth)
+                .frame(height: minWidth)
                 .allowsHitTesting(false)
 
                 Button {
                     onSelect()
                 } label: {
                     Color.clear
-                        .frame(width: collapsedWidth, height: collapsedWidth)
+                        .frame(width: minWidth, height: minWidth)
                 }
-                .padding(0)
                 .buttonStyle(.borderless)
                 .focused($isFocused)
             }
-            .frame(width: collapsedWidth, height: collapsedWidth, alignment: .leading)
+            .frame(width: minWidth, height: minWidth, alignment: .leading)
             .animation(.easeIn(duration: 0.2), value: isFocused)
         }
     }
 }
 
 extension FilterPickerBar.FilterPickerButton {
-    init(systemName: String, title: String, role: ButtonRole? = nil) {
+    init(
+        systemName: String,
+        title: String,
+        minWidth: CGFloat = 70,
+        maxWidth: CGFloat,
+        role: ButtonRole? = nil
+    ) {
         self.init(
             systemName: systemName,
             title: title,
+            minWidth: minWidth,
+            maxWidth: maxWidth,
             role: role,
             onSelect: {}
         )

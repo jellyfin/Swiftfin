@@ -32,14 +32,13 @@ struct LibraryFilterModifier<Filters: View, Letters: View>: ViewModifier {
         ZStack {
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.leading, 100)
+                .padding(.leading, 115)
                 .padding(.trailing, LetterPickerBar.size + 20)
                 .focusSection()
 
             HStack(spacing: 0) {
                 filters()
                     .frame(alignment: .leading)
-                    .padding(.leading, 20)
                     .padding(.bottom, safeArea.bottom)
                     .padding(.top, safeArea.top)
                     .focusSection()

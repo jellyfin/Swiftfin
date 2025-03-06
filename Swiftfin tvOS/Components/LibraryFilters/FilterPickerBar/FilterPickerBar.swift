@@ -29,11 +29,12 @@ struct FilterPickerBar: View {
 
     // MARK: - Longest Filter Width
 
+    /// Ensure the filter is large enough to fit the longest filter name
     private var filterWidth: CGFloat {
-        let longestFilter = filterTypes.map(\.displayTitle)
+        let longestFilterString = filterTypes.map(\.displayTitle)
             .max(by: { $0.count < $1.count }) ?? ""
 
-        return longestFilter.width(
+        return longestFilterString.width(
             font: .footnote,
             weight: .semibold
         )
@@ -55,6 +56,7 @@ struct FilterPickerBar: View {
                     FilterPickerButton(
                         systemName: "line.3.horizontal.decrease.circle.fill",
                         title: L10n.reset,
+                        maxWidth: filterWidth + 120,
                         role: .destructive
                     )
                     .onSelect {
@@ -70,7 +72,8 @@ struct FilterPickerBar: View {
                 ForEach(filterTypes, id: \.self) { type in
                     FilterPickerButton(
                         systemName: type.systemImage,
-                        title: type.displayTitle
+                        title: type.displayTitle,
+                        maxWidth: filterWidth + 120
                     )
                     .onSelect {
                         onSelect(.init(type: type, viewModel: viewModel))
@@ -82,7 +85,7 @@ struct FilterPickerBar: View {
                 }
             }
             .focused($isFocused)
-            .padding(.horizontal, 0)
+            .padding(.horizontal, 20)
             .padding(.vertical, 1)
         }
     }
@@ -91,7 +94,7 @@ struct FilterPickerBar: View {
         Rectangle()
             .fill(.regularMaterial)
             .brightness(-0.05)
-            .frame(width: filterWidth + 200)
+            .frame(width: filterWidth + 170)
             .edgesIgnoringSafeArea(.leading)
             .edgesIgnoringSafeArea(.vertical)
             .overlay(alignment: .trailing) {
@@ -100,7 +103,6 @@ struct FilterPickerBar: View {
                     .frame(width: 1)
                     .edgesIgnoringSafeArea(.leading)
                     .edgesIgnoringSafeArea(.vertical)
-                    .padding(.trailing, 20)
             }
     }
 }
