@@ -6,8 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionHStack
-import JellyfinAPI
 import SwiftUI
 
 struct SeriesEpisodeSelector: View {
@@ -37,7 +35,7 @@ struct SeriesEpisodeSelector: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            SeasonsHStack(viewModel: viewModel, selection: $selection)
+            SeasonHStack(viewModel: viewModel, selection: $selection)
                 .environmentObject(parentFocusGuide)
 
             if let selectionViewModel {
@@ -61,6 +59,11 @@ struct SeriesEpisodeSelector: View {
 
             if selectionViewModel.state == .initial {
                 selectionViewModel.send(.refresh)
+            }
+        }
+        .onFirstAppear {
+            if selection == nil {
+                selection = viewModel.seasons.first?.id
             }
         }
     }

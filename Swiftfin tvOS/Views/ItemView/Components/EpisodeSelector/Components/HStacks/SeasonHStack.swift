@@ -6,14 +6,11 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionHStack
 import SwiftUI
 
 extension SeriesEpisodeSelector {
 
-    // MARK: SeasonsHStack
-
-    struct SeasonsHStack: View {
+    struct SeasonHStack: View {
 
         @EnvironmentObject
         private var focusGuide: FocusGuide
@@ -27,49 +24,20 @@ extension SeriesEpisodeSelector {
         @Binding
         var selection: SeasonItemViewModel.ID?
 
-        @State
-        private var didScrollToPlayButtonSeason = false
-
-        @StateObject
-        private var proxy = CollectionHStackProxy()
-
-        // MARK: - Extracted helper methods
-
-        private func scrollToSelectedSeason() {
-            if let selectedID = selection,
-               let index = viewModel.seasons.firstIndex(where: { $0.id == selectedID }),
-               index > 0
-            {
-                proxy.scrollTo(index: index, animated: false)
-            }
-        }
-
-        private func onFocusSeasonChanged(_ newValue: SeasonItemViewModel.ID?) {
-            guard let newValue = newValue else { return }
-            selection = newValue
-        }
-
         // MARK: - Body
 
         var body: some View {
-            CollectionHStack(
-                uniqueElements: viewModel.seasons,
-                id: \.id,
-                variadicWidths: true
-            ) { season in
-                seasonButton(season: season)
-                    .id(season.id)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: EdgeInsets.edgePadding / 2) {
+                    ForEach(viewModel.seasons) { season in
+                        seasonButton(season: season)
+                            .id(season.id)
+                    }
+                }
+                .padding(.horizontal, EdgeInsets.edgePadding)
             }
-            .scrollBehavior(.continuous)
-            .insets(horizontal: EdgeInsets.edgePadding)
-            .itemSpacing(EdgeInsets.edgePadding)
-            .proxy(proxy)
-            .frame(height: 70)
-            .padding(.top)
             .padding(.bottom, 45)
-            .onChange(of: focusedSeason) { _, newValue in
-                onFocusSeasonChanged(newValue)
-            }
+            .focusSection()
             .focusGuide(
                 focusGuide,
                 tag: "seasons",
@@ -77,31 +45,35 @@ extension SeriesEpisodeSelector {
                 top: "top",
                 bottom: "episodes"
             )
-            .onFirstAppear {
-                guard !didScrollToPlayButtonSeason else { return }
-                didScrollToPlayButtonSeason = true
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    scrollToSelectedSeason()
+            .onChange(of: focusedSeason) { _, newValue in
+                if let newValue = newValue {
+                    selection = newValue
                 }
             }
         }
 
         // MARK: - Season Button
 
+        @ViewBuilder
         private func seasonButton(season: SeasonItemViewModel) -> some View {
-            Button {} label: {
+            Button {
+                selection = season.id
+            } label: {
                 Text(season.season.displayTitle)
-                    .fixedSize()
                     .font(.headline)
                     .fontWeight(.semibold)
                     .padding(.vertical, 10)
                     .padding(.horizontal, 20)
-                    .background(selection == season.id ? Color.white : Color.clear)
-                    .foregroundColor(selection == season.id ? Color.black : Color.white)
+                    .if(selection == season.id) { text in
+                        text
+                            .background(.white)
+                            .foregroundColor(.black)
+                    }
             }
-            .buttonStyle(.card)
             .focused($focusedSeason, equals: season.id)
+            .buttonStyle(.card)
+            .padding(.horizontal, 4)
+            .padding(.vertical)
         }
     }
 }
