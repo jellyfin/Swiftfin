@@ -64,14 +64,14 @@ struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
                             .backport
                             .fontWeight(.bold)
                             .aspectRatio(1, contentMode: .fit)
-                            .frame(width: 24, height: 24)
+                            .frame(width: 36, height: 36)
                             .symbolRenderingMode(.palette)
                             .foregroundStyle(accentColor.overlayColor, accentColor)
                     }
                 }
             }
         }
-        .onChange(of: selectionBinding.wrappedValue) { newValue in
+        .onChange(of: selectionBinding.wrappedValue) { _, newValue in
             selectedItems = newValue
         }
     }
