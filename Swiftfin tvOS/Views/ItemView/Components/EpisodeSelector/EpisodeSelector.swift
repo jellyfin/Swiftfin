@@ -6,8 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionHStack
-import JellyfinAPI
 import SwiftUI
 
 struct SeriesEpisodeSelector: View {
@@ -23,7 +21,7 @@ struct SeriesEpisodeSelector: View {
     // MARK: - State Variables
 
     @State
-    private var didSelectPlayButtonSeason = false
+    private var didScrollToPlayButtonSeason = false
     @State
     private var selection: SeasonItemViewModel.ID?
 
@@ -37,7 +35,7 @@ struct SeriesEpisodeSelector: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            SeasonsHStack(viewModel: viewModel, selection: $selection)
+            SeasonHStack(viewModel: viewModel, selection: $selection)
                 .environmentObject(parentFocusGuide)
 
             if let selectionViewModel {
@@ -46,9 +44,9 @@ struct SeriesEpisodeSelector: View {
             }
         }
         .onReceive(viewModel.playButtonItem.publisher) { newValue in
+            guard !didScrollToPlayButtonSeason else { return }
 
-            guard !didSelectPlayButtonSeason else { return }
-            didSelectPlayButtonSeason = true
+            didScrollToPlayButtonSeason = true
 
             if let playButtonSeason = viewModel.seasons.first(where: { $0.id == newValue.seasonID }) {
                 selection = playButtonSeason.id
@@ -56,83 +54,16 @@ struct SeriesEpisodeSelector: View {
                 selection = viewModel.seasons.first?.id
             }
         }
-        .onChange(of: selection) { _, _ in
-            guard let selectionViewModel else { return }
+        .onChange(of: selection) { _, newValue in
+            guard let selectionViewModel = viewModel.seasons.first(where: { $0.id == newValue }) else { return }
 
             if selectionViewModel.state == .initial {
                 selectionViewModel.send(.refresh)
             }
         }
-    }
-}
-
-extension SeriesEpisodeSelector {
-
-    // MARK: SeasonsHStack
-
-    struct SeasonsHStack: View {
-
-        @EnvironmentObject
-        private var focusGuide: FocusGuide
-
-        @FocusState
-        private var focusedSeason: SeasonItemViewModel.ID?
-
-        @ObservedObject
-        var viewModel: SeriesItemViewModel
-
-        var selection: Binding<SeasonItemViewModel.ID?>
-
-        var body: some View {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(viewModel.seasons) { seasonViewModel in
-                        Button {
-                            Text(seasonViewModel.season.displayTitle)
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .padding(.vertical, 10)
-                                .padding(.horizontal, 20)
-                                .if(selection.wrappedValue == seasonViewModel.id) { text in
-                                    text
-                                        .background(Color.white)
-                                        .foregroundColor(.black)
-                                }
-                        }
-                        .buttonStyle(.card)
-                        .focused($focusedSeason, equals: seasonViewModel.id)
-                    }
-                }
-                .focusGuide(
-                    focusGuide,
-                    tag: "seasons",
-                    onContentFocus: { focusedSeason = selection.wrappedValue },
-                    top: "top",
-                    bottom: "episodes"
-                )
-                .frame(height: 70)
-                .padding(.horizontal, 50)
-                .padding(.top)
-                .padding(.bottom, 45)
-            }
-            .mask {
-                VStack(spacing: 0) {
-                    Color.white
-
-                    LinearGradient(
-                        stops: [
-                            .init(color: .white, location: 0),
-                            .init(color: .clear, location: 1),
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 20)
-                }
-            }
-            .onChange(of: focusedSeason) { _, newValue in
-                guard let newValue else { return }
-                selection.wrappedValue = newValue
+        .onFirstAppear {
+            if selection == nil {
+                selection = viewModel.seasons.first?.id
             }
         }
     }

@@ -57,8 +57,41 @@ extension SeriesEpisodeSelector {
 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     guard let playButtonItem else { return }
-                    proxy.scrollTo(element: playButtonItem, animated: false)
+
+                    if let itemIndex = viewModel.elements.firstIndex(where: { $0.id == playButtonItem.id }),
+                       itemIndex > 0
+                    {
+                        proxy.scrollTo(index: itemIndex, animated: false)
+                    }
                 }
+            }
+        }
+
+        // MARK: - Determine Which Episode should be Focused
+
+        private func getContentFocus() {
+            switch viewModel.state {
+            case .content:
+                if viewModel.elements.isEmpty {
+                    /// Focus the EmptyCard if the Season has no elements
+                    focusedEpisodeID = "emptyCard"
+                } else {
+                    if let lastFocusedEpisodeID,
+                       viewModel.elements.contains(where: { $0.id == lastFocusedEpisodeID })
+                    {
+                        /// Return focus to the Last Focused Episode if it exists in the current Season
+                        focusedEpisodeID = lastFocusedEpisodeID
+                    } else {
+                        /// Focus the First Episode in the season as a last resort
+                        focusedEpisodeID = viewModel.elements.first?.id
+                    }
+                }
+            case .error:
+                /// Focus the ErrorCard if the Season failed to load
+                focusedEpisodeID = "errorCard"
+            case .initial, .refreshing:
+                /// Focus the LoadingCard if the Season is currently loading
+                focusedEpisodeID = "loadingCard"
             }
         }
 
@@ -85,18 +118,7 @@ extension SeriesEpisodeSelector {
                 focusGuide,
                 tag: "episodes",
                 onContentFocus: {
-                    switch viewModel.state {
-                    case .content:
-                        if viewModel.elements.isEmpty {
-                            focusedEpisodeID = "EmptyCard"
-                        } else {
-                            focusedEpisodeID = lastFocusedEpisodeID
-                        }
-                    case .error:
-                        focusedEpisodeID = "ErrorCard"
-                    case .initial, .refreshing:
-                        focusedEpisodeID = "LoadingCard"
-                    }
+                    getContentFocus()
                 },
                 top: "seasons"
             )
@@ -109,7 +131,14 @@ extension SeriesEpisodeSelector {
             }
             .onChange(of: viewModel.state) { _, newValue in
                 if newValue == .content {
-                    lastFocusedEpisodeID = viewModel.elements.first?.id
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        if focusGuide.focusedTag == "episodes" {
+                            lastFocusedEpisodeID = viewModel.elements.first?.id
+                            focusedEpisodeID = lastFocusedEpisodeID
+
+                            focusGuide.transition(to: "episodes")
+                        }
+                    }
                 }
             }
         }
@@ -127,7 +156,7 @@ extension SeriesEpisodeSelector {
                 columns: 3.5
             ) { _ in
                 SeriesEpisodeSelector.EmptyCard()
-                    .focused(focusedEpisodeID, equals: "EmptyCard")
+                    .focused(focusedEpisodeID, equals: "emptyCard")
                     .padding(.horizontal, 4)
             }
             .allowScrolling(false)
@@ -155,7 +184,7 @@ extension SeriesEpisodeSelector {
                     .onSelect {
                         viewModel.send(.refresh)
                     }
-                    .focused(focusedEpisodeID, equals: "ErrorCard")
+                    .focused(focusedEpisodeID, equals: "errorCard")
                     .padding(.horizontal, 4)
             }
             .allowScrolling(false)
@@ -176,7 +205,7 @@ extension SeriesEpisodeSelector {
                 columns: 3.5
             ) { _ in
                 SeriesEpisodeSelector.LoadingCard()
-                    .focused(focusedEpisodeID, equals: "LoadingCard")
+                    .focused(focusedEpisodeID, equals: "loadingCard")
                     .padding(.horizontal, 4)
             }
             .allowScrolling(false)
