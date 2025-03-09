@@ -219,7 +219,7 @@ extension [MediaStream] {
     /// What is this?
     /// Jellyfin maintains a sequential indexing system across all tracks with external at the beginning
     /// VLCKit handles external tracks (added separately to the media) by appending them to the end of the track list
-    /// These functions change the order of the track list to reflect VLCKit's expectated order
+    /// These functions change the order of the track list to reflect VLCKit's expected order
 
     /// Adjust track indexes based on the a count of external tracks
     func adjustedAudio(
