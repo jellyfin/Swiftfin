@@ -39,6 +39,7 @@ extension SeriesEpisodeSelector {
         private func contentView(viewModel: SeasonItemViewModel) -> some View {
             CollectionHStack(
                 uniqueElements: viewModel.elements,
+                id: \.unwrappedIDHashOrZero,
                 columns: 3.5
             ) { episode in
                 SeriesEpisodeSelector.EpisodeCard(episode: episode)
@@ -58,11 +59,7 @@ extension SeriesEpisodeSelector {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     guard let playButtonItem else { return }
 
-                    if let itemIndex = viewModel.elements.firstIndex(where: { $0.id == playButtonItem.id }),
-                       itemIndex > 0
-                    {
-                        proxy.scrollTo(index: itemIndex, animated: false)
-                    }
+                    proxy.scrollTo(element: playButtonItem, animated: false)
                 }
             }
         }

@@ -65,6 +65,19 @@ extension SeriesEpisodeSelector {
                     selection = newValue
                 }
             }
+            /*
+             .onFirstAppear {
+                 guard !didScrollToPlayButtonSeason else { return }
+                 didScrollToPlayButtonSeason = true
+
+                 lastFocusedEpisodeID = playButtonItem?.
+
+                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                     guard let playButtonItem else { return }
+
+                     proxy.scrollTo(element: playButtonItem, animated: false)
+                 }
+             }*/
         }
 
         // MARK: - Season Button
