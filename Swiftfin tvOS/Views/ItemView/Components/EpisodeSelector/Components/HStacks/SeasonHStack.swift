@@ -24,60 +24,67 @@ extension SeriesEpisodeSelector {
         @Binding
         var selection: SeasonItemViewModel.ID?
 
+        // Add properties for the scroll functionality
+        @State
+        private var didScrollToPlayButtonSeason = false
+
+        // A scroll proxy is needed to programmatically scroll
+        @Namespace
+        private var scrollSpace
+
         // MARK: - Body
 
         var body: some View {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: EdgeInsets.edgePadding / 2) {
-                    ForEach(viewModel.seasons) { season in
-                        seasonButton(season: season)
-                            .id(season.id)
+            ScrollViewReader { proxy in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: EdgeInsets.edgePadding / 2) {
+                        ForEach(viewModel.seasons) { season in
+                            seasonButton(season: season)
+                                .id(season.id)
+                        }
+                    }
+                    .padding(.horizontal, EdgeInsets.edgePadding)
+                }
+                .padding(.bottom, 45)
+                .focusSection()
+                .focusGuide(
+                    focusGuide,
+                    tag: "seasons",
+                    onContentFocus: { focusedSeason = selection },
+                    top: "top",
+                    bottom: "episodes"
+                )
+                .mask {
+                    VStack(spacing: 0) {
+                        Color.white
+
+                        LinearGradient(
+                            stops: [
+                                .init(color: .white, location: 0),
+                                .init(color: .clear, location: 1),
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(height: 20)
                     }
                 }
-                .padding(.horizontal, EdgeInsets.edgePadding)
-            }
-            .padding(.bottom, 45)
-            .focusSection()
-            .focusGuide(
-                focusGuide,
-                tag: "seasons",
-                onContentFocus: { focusedSeason = selection },
-                top: "top",
-                bottom: "episodes"
-            )
-            .mask {
-                VStack(spacing: 0) {
-                    Color.white
+                .onChange(of: focusedSeason) { _, newValue in
+                    if let newValue = newValue {
+                        selection = newValue
+                    }
+                }
+                .onFirstAppear {
+                    guard !didScrollToPlayButtonSeason else { return }
+                    didScrollToPlayButtonSeason = true
 
-                    LinearGradient(
-                        stops: [
-                            .init(color: .white, location: 0),
-                            .init(color: .clear, location: 1),
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 20)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        guard let selection else { return }
+
+                        proxy.scrollTo(selection)
+                    }
                 }
             }
-            .onChange(of: focusedSeason) { _, newValue in
-                if let newValue = newValue {
-                    selection = newValue
-                }
-            }
-            /*
-             .onFirstAppear {
-                 guard !didScrollToPlayButtonSeason else { return }
-                 didScrollToPlayButtonSeason = true
-
-                 lastFocusedEpisodeID = playButtonItem?.
-
-                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                     guard let playButtonItem else { return }
-
-                     proxy.scrollTo(element: playButtonItem, animated: false)
-                 }
-             }*/
         }
 
         // MARK: - Season Button
