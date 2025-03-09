@@ -229,7 +229,7 @@ extension [MediaStream] {
     ) -> [MediaStream] {
         guard allSatisfy({ $0.type == .audio }) else { return self }
 
-        let embeddedAudioCount = filter { !($0.isExternal ?? false) }.count
+        let embeddedAudioCount = filter { $0.isExternal == false }.count
         let externalAudioCount = filter { $0.isExternal ?? false }.count
 
         var mediaStreams = self
