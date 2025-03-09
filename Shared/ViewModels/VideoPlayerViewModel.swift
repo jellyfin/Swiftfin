@@ -108,7 +108,7 @@ class VideoPlayerViewModel: ViewModel {
             fatalError("Media source does not have any streams")
         }
 
-        let adjustedStreams = mediaStreams.adjustedTrackIndexes(for: streamType)
+        let adjustedStreams = mediaStreams.adjustedTrackIndexes(for: streamType, selectedAudioStreamIndex: selectedAudioStreamIndex)
 
         self.videoStreams = adjustedStreams.filter { $0.type == .video }
         self.audioStreams = adjustedStreams.filter { $0.type == .audio }

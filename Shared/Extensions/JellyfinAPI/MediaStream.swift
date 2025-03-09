@@ -223,13 +223,14 @@ extension [MediaStream] {
     /// For transcode stream type:
     ///   Only the first internal video track and the first internal audio track are included, in that order.
     /// In both cases, external tracks are appended in their original order with indexes continuing after internal tracks.
-    func adjustedTrackIndexes(for streamType: StreamType) -> [MediaStream] {
+    func adjustedTrackIndexes(for streamType: StreamType, selectedAudioStreamIndex: Int) -> [MediaStream] {
         let internalTracks = self.filter { !($0.isExternal ?? false) }
         let externalTracks = self.filter { $0.isExternal ?? false }
 
         var orderedInternal: [MediaStream] = []
 
         let subtitleInternal = internalTracks.filter { $0.type == .subtitle }
+
         // TODO: Do we need this for other media types? I think movies/shows we only care about video, audio, and subtitles.
         let otherInternal = internalTracks.filter { $0.type != .video && $0.type != .audio && $0.type != .subtitle }
 
@@ -241,8 +242,8 @@ extension [MediaStream] {
             if let firstVideo = videoInternal.first {
                 orderedInternal.append(firstVideo)
             }
-            if let firstAudio = audioInternal.first {
-                orderedInternal.append(firstAudio)
+            if let selectedAudio = audioInternal.first(where: { $0.index == selectedAudioStreamIndex }) {
+                orderedInternal.append(selectedAudio)
             }
 
             orderedInternal += subtitleInternal
@@ -250,7 +251,6 @@ extension [MediaStream] {
         } else {
             let videoInternal = internalTracks.filter { $0.type == .video }
             let audioInternal = internalTracks.filter { $0.type == .audio }
-            let subtitleInternal = internalTracks.filter { $0.type == .subtitle }
 
             orderedInternal = videoInternal + audioInternal + subtitleInternal + otherInternal
         }
