@@ -29,7 +29,6 @@ class VideoPlayerViewModel: ViewModel {
     let streamType: StreamType
 
     var hlsPlaybackURL: URL {
-
         let parameters = Paths.GetMasterHlsVideoPlaylistParameters(
             isStatic: true,
             tag: mediaSource.eTag,
@@ -90,9 +89,11 @@ class VideoPlayerViewModel: ViewModel {
         item: BaseItemDto,
         mediaSource: MediaSourceInfo,
         playSessionID: String,
+        // TODO: Remove?
         videoStreams: [MediaStream],
         audioStreams: [MediaStream],
         subtitleStreams: [MediaStream],
+        // <- End of Potential Remove?
         selectedAudioStreamIndex: Int,
         selectedSubtitleStreamIndex: Int,
         chapters: [ChapterInfo.FullInfo],
@@ -102,11 +103,17 @@ class VideoPlayerViewModel: ViewModel {
         self.mediaSource = mediaSource
         self.playSessionID = playSessionID
         self.playbackURL = playbackURL
-        self.videoStreams = videoStreams
-        self.audioStreams = audioStreams
-            .adjustAudioForExternalSubtitles(externalMediaStreamCount: subtitleStreams.filter { $0.isExternal ?? false }.count)
-        self.subtitleStreams = subtitleStreams
-            .adjustExternalSubtitleIndexes(audioStreamCount: audioStreams.count)
+
+        guard let mediaStreams = mediaSource.mediaStreams else {
+            fatalError("Media source does not have any streams")
+        }
+
+        let adjustedStreams = mediaStreams.adjustedTrackIndexes(for: streamType, selectedAudioStreamIndex: selectedAudioStreamIndex)
+
+        self.videoStreams = adjustedStreams.filter { $0.type == .video }
+        self.audioStreams = adjustedStreams.filter { $0.type == .audio }
+        self.subtitleStreams = adjustedStreams.filter { $0.type == .subtitle }
+
         self.selectedAudioStreamIndex = selectedAudioStreamIndex
         self.selectedSubtitleStreamIndex = selectedSubtitleStreamIndex
         self.chapters = chapters

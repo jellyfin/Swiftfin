@@ -216,37 +216,59 @@ extension MediaStream {
 
 extension [MediaStream] {
 
-    // TODO: explain why adjustment is necessary
-    func adjustExternalSubtitleIndexes(audioStreamCount: Int) -> [MediaStream] {
-        guard allSatisfy({ $0.type == .subtitle }) else { return self }
-        let embeddedSubtitleCount = filter { !($0.isExternal ?? false) }.count
+    /// Adjusts track indexes for a full set of media streams.
+    /// For non-transcode stream types:
+    ///   Internal tracks (non-external) are ordered as: Video, Audio, Subtitles, then any others.
+    ///   Their relative order within each group is preserved and indexes start at 0.
+    /// For transcode stream type:
+    ///   Only the first internal video track and the first internal audio track are included, in that order.
+    /// In both cases, external tracks are appended in their original order with indexes continuing after internal tracks.
+    func adjustedTrackIndexes(for streamType: StreamType, selectedAudioStreamIndex: Int) -> [MediaStream] {
+        let internalTracks = self.filter { !($0.isExternal ?? false) }
+        let externalTracks = self.filter { $0.isExternal ?? false }
 
-        var mediaStreams = self
+        var orderedInternal: [MediaStream] = []
 
-        for (i, mediaStream) in mediaStreams.enumerated() {
-            guard mediaStream.isExternal ?? false else { continue }
-            var copy = mediaStream
-            copy.index = (copy.index ?? 0) + 1 + embeddedSubtitleCount + audioStreamCount
+        let subtitleInternal = internalTracks.filter { $0.type == .subtitle }
 
-            mediaStreams[i] = copy
+        // TODO: Do we need this for other media types? I think movies/shows we only care about video, audio, and subtitles.
+        let otherInternal = internalTracks.filter { $0.type != .video && $0.type != .audio && $0.type != .subtitle }
+
+        if streamType == .transcode {
+            // Only include the first video and first audio track for transcode.
+            let videoInternal = internalTracks.filter { $0.type == .video }
+            let audioInternal = internalTracks.filter { $0.type == .audio }
+
+            if let firstVideo = videoInternal.first {
+                orderedInternal.append(firstVideo)
+            }
+            if let selectedAudio = audioInternal.first(where: { $0.index == selectedAudioStreamIndex }) {
+                orderedInternal.append(selectedAudio)
+            }
+
+            orderedInternal += subtitleInternal
+            orderedInternal += otherInternal
+        } else {
+            let videoInternal = internalTracks.filter { $0.type == .video }
+            let audioInternal = internalTracks.filter { $0.type == .audio }
+
+            orderedInternal = videoInternal + audioInternal + subtitleInternal + otherInternal
         }
 
-        return mediaStreams
-    }
-
-    // TODO: explain why adjustment is necessary
-    func adjustAudioForExternalSubtitles(externalMediaStreamCount: Int) -> [MediaStream] {
-        guard allSatisfy({ $0.type == .audio }) else { return self }
-
-        var mediaStreams = self
-
-        for (i, mediaStream) in mediaStreams.enumerated() {
-            var copy = mediaStream
-            copy.index = (copy.index ?? 0) - externalMediaStreamCount
-            mediaStreams[i] = copy
+        var newInternalTracks: [MediaStream] = []
+        for (index, var track) in orderedInternal.enumerated() {
+            track.index = index
+            newInternalTracks.append(track)
         }
 
-        return mediaStreams
+        var newExternalTracks: [MediaStream] = []
+        let startingIndexForExternal = newInternalTracks.count
+        for (offset, var track) in externalTracks.enumerated() {
+            track.index = startingIndexForExternal + offset
+            newExternalTracks.append(track)
+        }
+
+        return newInternalTracks + newExternalTracks
     }
 
     var has4KVideo: Bool {
