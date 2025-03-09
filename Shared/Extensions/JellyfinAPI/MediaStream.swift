@@ -239,7 +239,7 @@ extension [MediaStream] {
 
             switch streamType {
             case .direct, .hls:
-                if copy.isExternal ?? false {
+                if copy.isExternal == true {
                     // Move external tracks to the end
                     copy.index = (copy.index ?? 0) + embeddedSubtitleCount + embeddedAudioCount
                 } else {
