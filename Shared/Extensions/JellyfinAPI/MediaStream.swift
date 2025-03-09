@@ -216,82 +216,59 @@ extension MediaStream {
 
 extension [MediaStream] {
 
-    /// What is this?
-    /// Jellyfin maintains a sequential indexing system across all tracks with external at the beginning
-    /// VLCKit handles external tracks (added separately to the media) by appending them to the end of the track list
-    /// These functions change the order of the track list to reflect VLCKit's expected order
+    /// Adjusts track indexes for a full set of media streams.
+    /// For non-transcode stream types:
+    ///   Internal tracks (non-external) are ordered as: Video, Audio, Subtitles, then any others.
+    ///   Their relative order within each group is preserved and indexes start at 0.
+    /// For transcode stream type:
+    ///   Only the first internal video track and the first internal audio track are included, in that order.
+    /// In both cases, external tracks are appended in their original order with indexes continuing after internal tracks.
+    func adjustedTrackIndexes(for streamType: StreamType) -> [MediaStream] {
+        let internalTracks = self.filter { !($0.isExternal ?? false) }
+        let externalTracks = self.filter { $0.isExternal ?? false }
 
-    /// Adjust track indexes based on the a count of external tracks
-    func adjustedAudio(
-        for streamType: StreamType,
-        embeddedSubtitleCount: Int,
-        externalSubtitleCount: Int
-    ) -> [MediaStream] {
-        guard allSatisfy({ $0.type == .audio }) else { return self }
+        var orderedInternal: [MediaStream] = []
 
-        let embeddedAudioCount = filter { $0.isExternal == false }.count
-        let externalAudioCount = filter { $0.isExternal == true }.count
+        let subtitleInternal = internalTracks.filter { $0.type == .subtitle }
+        // TODO: Do we need this for other media types? I think movies/shows we only care about video, audio, and subtitles.
+        let otherInternal = internalTracks.filter { $0.type != .video && $0.type != .audio && $0.type != .subtitle }
 
-        var mediaStreams = self
+        if streamType == .transcode {
+            // Only include the first video and first audio track for transcode.
+            let videoInternal = internalTracks.filter { $0.type == .video }
+            let audioInternal = internalTracks.filter { $0.type == .audio }
 
-        for (i, mediaStream) in mediaStreams.enumerated() {
-            var copy = mediaStream
-
-            switch streamType {
-            case .direct, .hls:
-                if copy.isExternal == true {
-                    // Move external tracks to the end
-                    copy.index = (copy.index ?? 0) + embeddedSubtitleCount + embeddedAudioCount
-                } else {
-                    // Move internal tracks to the beginning
-                    copy.index = (copy.index ?? 0) - (externalAudioCount + externalSubtitleCount)
-                }
-                mediaStreams[i] = copy
-            default:
-                // TODO: Transcode Audio Tracks will need something like: https://github.com/jellyfin/jellyfin-web/blob/master/src/components/playback/playbackmanager.js#L1691
-                break
+            if let firstVideo = videoInternal.first {
+                orderedInternal.append(firstVideo)
             }
-        }
-        return mediaStreams
-    }
-
-    /// Adjust track indexes based on the a count of external tracks
-    func adjustedSubtitles(
-        for streamType: StreamType,
-        embeddedAudioCount: Int,
-        externalAudioCount: Int
-    ) -> [MediaStream] {
-        guard allSatisfy({ $0.type == .subtitle }) else { return self }
-
-        let embeddedSubtitleCount = filter { !($0.isExternal ?? false) }.count
-        let externalSubtitleCount = filter { $0.isExternal ?? false }.count
-
-        var mediaStreams = self
-        var subtitleCounter = 0
-
-        for (i, mediaStream) in mediaStreams.enumerated() {
-            var copy = mediaStream
-
-            switch streamType {
-            case .direct, .hls:
-                if copy.isExternal ?? false {
-                    // Move external tracks to the end
-                    copy.index = (copy.index ?? 0) + embeddedSubtitleCount + embeddedAudioCount + externalAudioCount
-                } else {
-                    // Move internal tracks to the beginning
-                    copy.index = (copy.index ?? 0) - (externalAudioCount + externalSubtitleCount)
-                }
-            default:
-                // In transcoded streams, video is 0, audio is 1, and subtitles start at 2
-                let subtitleBaseIndex = 2
-
-                // Assign a sequential index for subtitles starting from subtitleBaseIndex
-                copy.index = subtitleBaseIndex + subtitleCounter
-                subtitleCounter += 1
+            if let firstAudio = audioInternal.first {
+                orderedInternal.append(firstAudio)
             }
-            mediaStreams[i] = copy
+
+            orderedInternal += subtitleInternal
+            orderedInternal += otherInternal
+        } else {
+            let videoInternal = internalTracks.filter { $0.type == .video }
+            let audioInternal = internalTracks.filter { $0.type == .audio }
+            let subtitleInternal = internalTracks.filter { $0.type == .subtitle }
+
+            orderedInternal = videoInternal + audioInternal + subtitleInternal + otherInternal
         }
-        return mediaStreams
+
+        var newInternalTracks: [MediaStream] = []
+        for (index, var track) in orderedInternal.enumerated() {
+            track.index = index
+            newInternalTracks.append(track)
+        }
+
+        var newExternalTracks: [MediaStream] = []
+        let startingIndexForExternal = newInternalTracks.count
+        for (offset, var track) in externalTracks.enumerated() {
+            track.index = startingIndexForExternal + offset
+            newExternalTracks.append(track)
+        }
+
+        return newInternalTracks + newExternalTracks
     }
 
     var has4KVideo: Bool {

@@ -89,9 +89,11 @@ class VideoPlayerViewModel: ViewModel {
         item: BaseItemDto,
         mediaSource: MediaSourceInfo,
         playSessionID: String,
+        // TODO: Remove?
         videoStreams: [MediaStream],
         audioStreams: [MediaStream],
         subtitleStreams: [MediaStream],
+        // <- End of Potential Remove?
         selectedAudioStreamIndex: Int,
         selectedSubtitleStreamIndex: Int,
         chapters: [ChapterInfo.FullInfo],
@@ -101,21 +103,16 @@ class VideoPlayerViewModel: ViewModel {
         self.mediaSource = mediaSource
         self.playSessionID = playSessionID
         self.playbackURL = playbackURL
-        self.videoStreams = videoStreams
 
-        // Adjust Audio Indexes based on StreamType & External Tracks
-        self.audioStreams = audioStreams.adjustedAudio(
-            for: streamType,
-            embeddedSubtitleCount: subtitleStreams.filter { !($0.isExternal ?? false) }.count,
-            externalSubtitleCount: subtitleStreams.filter { $0.isExternal ?? false }.count
-        )
+        guard let mediaStreams = mediaSource.mediaStreams else {
+            fatalError("Media source does not have any streams")
+        }
 
-        // Adjust Subtitle Indexes based on StreamType & External Tracks
-        self.subtitleStreams = subtitleStreams.adjustedSubtitles(
-            for: streamType,
-            embeddedAudioCount: audioStreams.filter { !($0.isExternal ?? false) }.count,
-            externalAudioCount: audioStreams.filter { $0.isExternal ?? false }.count
-        )
+        let adjustedStreams = mediaStreams.adjustedTrackIndexes(for: streamType)
+
+        self.videoStreams = adjustedStreams.filter { $0.type == .video }
+        self.audioStreams = adjustedStreams.filter { $0.type == .audio }
+        self.subtitleStreams = adjustedStreams.filter { $0.type == .subtitle }
 
         self.selectedAudioStreamIndex = selectedAudioStreamIndex
         self.selectedSubtitleStreamIndex = selectedSubtitleStreamIndex
