@@ -17,12 +17,16 @@ extension ItemView {
         private var itemViewAttributes
 
         var body: some View {
-            HStack(spacing: 25) {
-                ForEach(itemViewAttributes, id: \.self) { attribute in
-                    getAttribute(attribute)
+            if itemViewAttributes.isNotEmpty {
+                HStack(spacing: 25) {
+                    ForEach(itemViewAttributes, id: \.self) { attribute in
+                        getAttribute(attribute)
+                            .fixedSize(horizontal: true, vertical: false)
+                    }
                 }
+                .lineLimit(1)
+                .foregroundStyle(Color(UIColor.darkGray))
             }
-            .foregroundStyle(Color(UIColor.darkGray))
         }
 
         @ViewBuilder
@@ -30,58 +34,78 @@ extension ItemView {
             switch attribute {
             case .ratingCritics:
                 if let criticRating = viewModel.item.criticRating {
-                    HStack(spacing: 2) {
-                        Group {
-                            if criticRating >= 60 {
-                                Image(.tomatoFresh)
-                                    .symbolRenderingMode(.hierarchical)
-                            } else {
-                                Image(.tomatoRotten)
+                    AttributeBadge(style: .outline) {
+                        HStack(spacing: 2) {
+                            Group {
+                                if criticRating >= 60 {
+                                    Image(.tomatoFresh)
+                                        .symbolRenderingMode(.hierarchical)
+                                } else {
+                                    Image(.tomatoRotten)
+                                }
                             }
+                            .font(.caption2)
+                            Text("\(criticRating, specifier: "%.0f")")
                         }
-                        .font(.caption2)
-
-                        Text("\(criticRating, specifier: "%.0f")")
                     }
-                    .asAttributeStyle(.outline)
                 }
             case .ratingCommunity:
                 if let communityRating = viewModel.item.communityRating {
-                    HStack(spacing: 2) {
-                        Image(systemName: "star.fill")
-                            .font(.caption2)
-
-                        Text("\(communityRating, specifier: "%.1f")")
+                    AttributeBadge(style: .outline) {
+                        HStack(spacing: 2) {
+                            Image(systemName: "star.fill")
+                                .font(.caption2)
+                            Text("\(communityRating, specifier: "%.1f")")
+                        }
                     }
-                    .asAttributeStyle(.outline)
                 }
             case .ratingOfficial:
                 if let officialRating = viewModel.item.officialRating {
-                    Text(officialRating)
-                        .asAttributeStyle(.outline)
+                    AttributeBadge(style: .outline) {
+                        Text(officialRating)
+                    }
                 }
             case .videoQuality:
                 if viewModel.selectedMediaSource?.mediaStreams?.hasHDVideo == true {
-                    Text("HD")
-                        .asAttributeStyle(.fill)
+                    AttributeBadge(style: .fill) {
+                        Text("HD")
+                    }
                 }
                 if viewModel.selectedMediaSource?.mediaStreams?.has4KVideo == true {
-                    Text("4K")
-                        .asAttributeStyle(.fill)
+                    AttributeBadge(style: .fill) {
+                        Text("4K")
+                    }
+                }
+                if viewModel.selectedMediaSource?.mediaStreams?.hasDolbyVision == true {
+                    AttributeBadge(style: .fill) {
+                        Text("DV")
+                    }
+                }
+                if viewModel.selectedMediaSource?.mediaStreams?.hasHDRVideo == true {
+                    AttributeBadge(style: .fill) {
+                        Text("HDR")
+                    }
+                } else {
+                    AttributeBadge(style: .fill) {
+                        Text("SDR")
+                    }
                 }
             case .audioChannels:
                 if viewModel.selectedMediaSource?.mediaStreams?.has51AudioChannelLayout == true {
-                    Text("5.1")
-                        .asAttributeStyle(.fill)
+                    AttributeBadge(style: .fill) {
+                        Text("5.1")
+                    }
                 }
                 if viewModel.selectedMediaSource?.mediaStreams?.has71AudioChannelLayout == true {
-                    Text("7.1")
-                        .asAttributeStyle(.fill)
+                    AttributeBadge(style: .fill) {
+                        Text("7.1")
+                    }
                 }
             case .subtitles:
                 if viewModel.selectedMediaSource?.mediaStreams?.hasSubtitles == true {
-                    Text("CC")
-                        .asAttributeStyle(.outline)
+                    AttributeBadge(style: .outline) {
+                        Text("CC")
+                    }
                 }
             }
         }
