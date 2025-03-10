@@ -23,6 +23,7 @@ struct AttributeViewModifier: ViewModifier {
         if style == .fill {
             content
                 .font(.caption.weight(.semibold))
+                .lineLimit(1)
                 .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
                 .hidden()
                 .background {
@@ -37,6 +38,7 @@ struct AttributeViewModifier: ViewModifier {
         } else {
             content
                 .font(.caption.weight(.semibold))
+                .lineLimit(1)
                 .foregroundColor(Color(UIColor.lightGray))
                 .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
                 .overlay(

@@ -17,12 +17,16 @@ extension ItemView {
         private var itemViewAttributes
 
         var body: some View {
-            HStack {
-                ForEach(itemViewAttributes, id: \.self) { attribute in
-                    getAttribute(attribute)
+            if itemViewAttributes.isNotEmpty {
+                HStack {
+                    ForEach(itemViewAttributes, id: \.self) { attribute in
+                        getAttribute(attribute)
+                            .fixedSize(horizontal: true, vertical: false)
+                    }
                 }
+                .foregroundStyle(Color(UIColor.darkGray))
+                .frame(maxWidth: .infinity, alignment: .center)
             }
-            .foregroundStyle(Color(UIColor.darkGray))
         }
 
         @ViewBuilder
