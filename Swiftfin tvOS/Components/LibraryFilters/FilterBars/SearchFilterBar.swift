@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct FilterPickerBar: View {
+struct SearchFilterBar: View {
 
     // MARK: - Observed Object
 
@@ -43,17 +43,10 @@ struct FilterPickerBar: View {
     // MARK: - Body
 
     var body: some View {
-        ZStack(alignment: .leading) {
-
-            if isFocused {
-                selectedButtonBackground
-                    .animation(.easeIn(duration: 0.2), value: isFocused)
-                    .transition(.move(edge: .leading).combined(with: .opacity))
-            }
-
-            VStack(spacing: 20) {
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHStack(spacing: 20) {
                 if viewModel.currentFilters.hasFilters {
-                    FilterPickerButton(
+                    FilterButton(
                         systemName: "line.3.horizontal.decrease.circle.fill",
                         title: L10n.reset,
                         maxWidth: filterWidth + 120,
@@ -63,14 +56,10 @@ struct FilterPickerBar: View {
                         viewModel.send(.reset())
                     }
                     .environment(\.isSelected, true)
-                } else {
-                    // Leave space for the Reset Button
-                    Spacer()
-                        .frame(width: 75, height: 75)
                 }
 
                 ForEach(filterTypes, id: \.self) { type in
-                    FilterPickerButton(
+                    FilterButton(
                         systemName: type.systemImage,
                         title: type.displayTitle,
                         maxWidth: filterWidth + 120
@@ -85,29 +74,13 @@ struct FilterPickerBar: View {
                 }
             }
             .focused($isFocused)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 1)
+            .padding(.horizontal, 1)
+            .padding(.vertical, 10)
         }
-    }
-
-    private var selectedButtonBackground: some View {
-        Rectangle()
-            .fill(.regularMaterial)
-            .brightness(-0.05)
-            .frame(width: filterWidth + 170)
-            .edgesIgnoringSafeArea(.leading)
-            .edgesIgnoringSafeArea(.vertical)
-            .overlay(alignment: .trailing) {
-                Rectangle()
-                    .fill(Color.secondarySystemFill)
-                    .frame(width: 1)
-                    .edgesIgnoringSafeArea(.leading)
-                    .edgesIgnoringSafeArea(.vertical)
-            }
     }
 }
 
-extension FilterPickerBar {
+extension SearchFilterBar {
     init(viewModel: FilterViewModel, types: [ItemFilterType]) {
         self.init(
             viewModel: viewModel,

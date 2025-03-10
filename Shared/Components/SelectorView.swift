@@ -71,7 +71,7 @@ struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
                 }
             }
         }
-        .onChange(of: selectionBinding.wrappedValue) { _, newValue in
+        .onChange(of: selectionBinding.wrappedValue) { newValue in
             selectedItems = newValue
         }
     }
