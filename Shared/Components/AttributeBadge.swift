@@ -8,34 +8,38 @@
 
 import SwiftUI
 
-// TODO: remove as a `ViewModifier` and instead a wrapper view
+struct AttributeBadge<Content: View>: View {
 
-struct AttributeViewModifier: ViewModifier {
-
-    enum Style {
+    enum AttributeStyle {
         case fill
         case outline
     }
 
-    let style: Style
+    let style: AttributeStyle
+    let content: () -> Content
 
-    func body(content: Content) -> some View {
+    init(style: AttributeStyle, @ViewBuilder content: @escaping () -> Content) {
+        self.style = style
+        self.content = content
+    }
+
+    var body: some View {
         if style == .fill {
-            content
+            content()
                 .font(.caption.weight(.semibold))
                 .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
-                .hidden()
+                .opacity(0)
                 .background {
                     Color(UIColor.lightGray)
                         .cornerRadius(2)
                         .inverseMask {
-                            content
+                            content()
                                 .font(.caption.weight(.semibold))
                                 .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
                         }
                 }
         } else {
-            content
+            content()
                 .font(.caption.weight(.semibold))
                 .foregroundColor(Color(UIColor.lightGray))
                 .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
