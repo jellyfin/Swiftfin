@@ -58,7 +58,6 @@ extension SeriesEpisodeSelector {
 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     guard let playButtonItem else { return }
-
                     proxy.scrollTo(element: playButtonItem, animated: false)
                 }
             }

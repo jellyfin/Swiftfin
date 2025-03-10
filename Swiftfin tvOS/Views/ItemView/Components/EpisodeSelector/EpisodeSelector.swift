@@ -6,6 +6,8 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionHStack
+import JellyfinAPI
 import SwiftUI
 
 struct SeriesEpisodeSelector: View {
@@ -44,8 +46,8 @@ struct SeriesEpisodeSelector: View {
             }
         }
         .onReceive(viewModel.playButtonItem.publisher) { newValue in
-            guard !didSelectPlayButtonSeason else { return }
 
+            guard !didSelectPlayButtonSeason else { return }
             didSelectPlayButtonSeason = true
 
             if let playButtonSeason = viewModel.seasons.first(where: { $0.id == newValue.seasonID }) {
@@ -54,16 +56,11 @@ struct SeriesEpisodeSelector: View {
                 selection = viewModel.seasons.first?.id
             }
         }
-        .onChange(of: selection) { _, newValue in
-            guard let selectionViewModel = viewModel.seasons.first(where: { $0.id == newValue }) else { return }
+        .onChange(of: selection) { _, _ in
+            guard let selectionViewModel else { return }
 
             if selectionViewModel.state == .initial {
                 selectionViewModel.send(.refresh)
-            }
-        }
-        .onFirstAppear {
-            if selection == nil {
-                selection = viewModel.seasons.first?.id
             }
         }
     }
