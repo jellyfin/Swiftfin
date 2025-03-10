@@ -13,6 +13,7 @@ extension SeriesEpisodeSelector {
     struct SeasonsHStack: View {
 
         // MARK: - Environment & Observed Objects
+
         @EnvironmentObject
         private var focusGuide: FocusGuide
 
