@@ -69,6 +69,17 @@ extension ItemView {
                     Text("4K")
                         .asAttributeStyle(.fill)
                 }
+                if viewModel.selectedMediaSource?.mediaStreams?.hasDolbyVision == true {
+                    Text("DV")
+                        .asAttributeStyle(.fill)
+                }
+                if viewModel.selectedMediaSource?.mediaStreams?.hasHDRVideo == true {
+                    Text("HDR")
+                        .asAttributeStyle(.fill)
+                } else {
+                    Text("SDR")
+                        .asAttributeStyle(.fill)
+                }
             case .audioChannels:
                 if viewModel.selectedMediaSource?.mediaStreams?.has51AudioChannelLayout == true {
                     Text("5.1")
