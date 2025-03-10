@@ -31,6 +31,7 @@ extension SeriesEpisodeSelector {
         private func contentView(viewModel: SeasonItemViewModel) -> some View {
             CollectionHStack(
                 uniqueElements: viewModel.elements,
+                id: \.unwrappedIDHashOrZero,
                 columns: UIDevice.isPhone ? 1.5 : 3.5
             ) { episode in
                 SeriesEpisodeSelector.EpisodeCard(episode: episode)
