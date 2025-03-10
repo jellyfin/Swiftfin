@@ -12,25 +12,25 @@ extension SeriesEpisodeSelector {
 
     struct SeasonsHStack: View {
 
+        // MARK: - Environment & Observed Objects
         @EnvironmentObject
         private var focusGuide: FocusGuide
-
-        @FocusState
-        private var focusedSeason: SeasonItemViewModel.ID?
 
         @ObservedObject
         var viewModel: SeriesItemViewModel
 
+        // MARK: - Selection Binding
+
         @Binding
         var selection: SeasonItemViewModel.ID?
 
-        // Add properties for the scroll functionality
+        // MARK: - Focus Variables
+
+        @FocusState
+        private var focusedSeason: SeasonItemViewModel.ID?
+
         @State
         private var didScrollToPlayButtonSeason = false
-
-        // A scroll proxy is needed to programmatically scroll
-        @Namespace
-        private var scrollSpace
 
         // MARK: - Body
 
