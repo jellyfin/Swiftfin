@@ -59,19 +59,16 @@ extension ItemView {
                     AttributeBadge(style: .outline, title: officialRating)
                 }
             case .videoQuality:
-                if viewModel.selectedMediaSource?.mediaStreams?.hasHDVideo == true {
-                    AttributeBadge(style: .fill, title: "HD")
-                }
                 if viewModel.selectedMediaSource?.mediaStreams?.has4KVideo == true {
                     AttributeBadge(style: .fill, title: "4K")
+                } else if viewModel.selectedMediaSource?.mediaStreams?.hasHDVideo == true {
+                    AttributeBadge(style: .fill, title: "HD")
                 }
                 if viewModel.selectedMediaSource?.mediaStreams?.hasDolbyVision == true {
                     AttributeBadge(style: .fill, title: "DV")
                 }
                 if viewModel.selectedMediaSource?.mediaStreams?.hasHDRVideo == true {
                     AttributeBadge(style: .fill, title: "HDR")
-                } else {
-                    AttributeBadge(style: .fill, title: "SDR")
                 }
             case .audioChannels:
                 if viewModel.selectedMediaSource?.mediaStreams?.has51AudioChannelLayout == true {
