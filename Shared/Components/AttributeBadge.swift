@@ -10,43 +10,149 @@ import SwiftUI
 
 struct AttributeBadge<Content: View>: View {
 
+    @Environment(\.font)
+    private var font
+
     enum AttributeStyle {
         case fill
         case outline
     }
 
-    let style: AttributeStyle
-    let content: () -> Content
+    private let style: AttributeStyle
+    private let content: () -> Content
 
-    init(style: AttributeStyle, @ViewBuilder content: @escaping () -> Content) {
-        self.style = style
-        self.content = content
+    private var usedFont: Font {
+        font ?? .caption.weight(.semibold)
     }
 
-    var body: some View {
+    @ViewBuilder
+    private var innerBody: some View {
         if style == .fill {
             content()
-                .font(.caption.weight(.semibold))
-                .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
-                .opacity(0)
+                .padding(.init(vertical: 1, horizontal: 4))
+                .hidden()
                 .background {
                     Color(UIColor.lightGray)
                         .cornerRadius(2)
                         .inverseMask {
                             content()
-                                .font(.caption.weight(.semibold))
-                                .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+                                .padding(.init(vertical: 1, horizontal: 4))
                         }
                 }
         } else {
             content()
-                .font(.caption.weight(.semibold))
-                .foregroundColor(Color(UIColor.lightGray))
-                .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
+                .foregroundStyle(Color(UIColor.lightGray))
+                .padding(.init(vertical: 1, horizontal: 4))
                 .overlay(
                     RoundedRectangle(cornerRadius: 2)
                         .stroke(Color(UIColor.lightGray), lineWidth: 1)
                 )
+        }
+    }
+
+    var body: some View {
+        innerBody
+            .labelStyle(AttributeBadgeLabelStyle())
+            .font(usedFont)
+    }
+}
+
+extension AttributeBadge where Content == Text {
+
+    init(
+        style: AttributeStyle,
+        title: @autoclosure @escaping () -> Text
+    ) {
+        self.init(style: style) {
+            title()
+        }
+    }
+
+    init(
+        style: AttributeStyle,
+        title: String
+    ) {
+        self.init(style: style) {
+            Text(title)
+        }
+    }
+}
+
+extension AttributeBadge where Content == Label<Text, Image> {
+
+    init(
+        style: AttributeStyle,
+        title: String,
+        image: Image
+    ) {
+        self.style = style
+        self.content = {
+            Label { Text(title) } icon: { image }
+        }
+    }
+
+    init(
+        style: AttributeStyle,
+        title: String,
+        image: @escaping () -> Image
+    ) {
+        self.style = style
+        self.content = {
+            Label { Text(title) } icon: { image() }
+        }
+    }
+
+    init(
+        style: AttributeStyle,
+        title: String,
+        systemName: String
+    ) {
+        self.style = style
+        self.content = {
+            Label { Text(title) } icon: { Image(systemName: systemName) }
+        }
+    }
+
+    init(
+        style: AttributeStyle,
+        title: Text,
+        image: Image
+    ) {
+        self.style = style
+        self.content = {
+            Label { title } icon: { image }
+        }
+    }
+
+    init(
+        style: AttributeStyle,
+        title: Text,
+        image: @escaping () -> Image
+    ) {
+        self.style = style
+        self.content = {
+            Label { title } icon: { image() }
+        }
+    }
+
+    init(
+        style: AttributeStyle,
+        title: Text,
+        systemName: String
+    ) {
+        self.style = style
+        self.content = {
+            Label { title } icon: { Image(systemName: systemName) }
+        }
+    }
+}
+
+private struct AttributeBadgeLabelStyle: LabelStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack(spacing: 2) {
+            configuration.icon
+
+            configuration.title
         }
     }
 }

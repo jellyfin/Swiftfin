@@ -35,78 +35,55 @@ extension ItemView {
             switch attribute {
             case .ratingCritics:
                 if let criticRating = viewModel.item.criticRating {
-                    AttributeBadge(style: .outline) {
-                        HStack(spacing: 2) {
-                            Group {
-                                if criticRating >= 60 {
-                                    Image(.tomatoFresh)
-                                        .symbolRenderingMode(.hierarchical)
-                                } else {
-                                    Image(.tomatoRotten)
-                                }
-                            }
-                            .font(.caption2)
-                            Text("\(criticRating, specifier: "%.0f")")
+                    AttributeBadge(
+                        style: .outline,
+                        title: Text("\(criticRating, specifier: "%.0f")")
+                    ) {
+                        if criticRating >= 60 {
+                            Image(.tomatoFresh)
+                                .symbolRenderingMode(.hierarchical)
+                        } else {
+                            Image(.tomatoRotten)
                         }
                     }
                 }
             case .ratingCommunity:
                 if let communityRating = viewModel.item.communityRating {
-                    AttributeBadge(style: .outline) {
-                        HStack(spacing: 2) {
-                            Image(systemName: "star.fill")
-                                .font(.caption2)
-                            Text("\(communityRating, specifier: "%.1f")")
-                        }
-                    }
+                    AttributeBadge(
+                        style: .outline,
+                        title: Text("\(communityRating, specifier: "%.01f")"),
+                        systemName: "star.fill"
+                    )
                 }
             case .ratingOfficial:
                 if let officialRating = viewModel.item.officialRating {
-                    AttributeBadge(style: .outline) {
-                        Text(officialRating)
-                    }
+                    AttributeBadge(style: .outline, title: officialRating)
                 }
             case .videoQuality:
                 if viewModel.selectedMediaSource?.mediaStreams?.hasHDVideo == true {
-                    AttributeBadge(style: .fill) {
-                        Text("HD")
-                    }
+                    AttributeBadge(style: .fill, title: "HD")
                 }
                 if viewModel.selectedMediaSource?.mediaStreams?.has4KVideo == true {
-                    AttributeBadge(style: .fill) {
-                        Text("4K")
-                    }
+                    AttributeBadge(style: .fill, title: "4K")
                 }
                 if viewModel.selectedMediaSource?.mediaStreams?.hasDolbyVision == true {
-                    AttributeBadge(style: .fill) {
-                        Text("DV")
-                    }
+                    AttributeBadge(style: .fill, title: "DV")
                 }
                 if viewModel.selectedMediaSource?.mediaStreams?.hasHDRVideo == true {
-                    AttributeBadge(style: .fill) {
-                        Text("HDR")
-                    }
+                    AttributeBadge(style: .fill, title: "HDR")
                 } else {
-                    AttributeBadge(style: .fill) {
-                        Text("SDR")
-                    }
+                    AttributeBadge(style: .fill, title: "SDR")
                 }
             case .audioChannels:
                 if viewModel.selectedMediaSource?.mediaStreams?.has51AudioChannelLayout == true {
-                    AttributeBadge(style: .fill) {
-                        Text("5.1")
-                    }
+                    AttributeBadge(style: .fill, title: "5.1")
                 }
                 if viewModel.selectedMediaSource?.mediaStreams?.has71AudioChannelLayout == true {
-                    AttributeBadge(style: .fill) {
-                        Text("7.1")
-                    }
+                    AttributeBadge(style: .fill, title: "7.1")
                 }
             case .subtitles:
                 if viewModel.selectedMediaSource?.mediaStreams?.hasSubtitles == true {
-                    AttributeBadge(style: .outline) {
-                        Text("CC")
-                    }
+                    AttributeBadge(style: .outline, title: "CC")
                 }
             }
         }
