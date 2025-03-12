@@ -23,7 +23,7 @@ struct HourMinutePicker: UIViewRepresentable {
 //        picker.translatesAutoresizingMaskIntoConstraints = false
 
         context.coordinator.add(picker: picker)
-        context.coordinator.call = { interval in
+        context.coordinator.callback = { interval in
             backgroundSignOutInterval = interval
         }
 
@@ -33,11 +33,19 @@ struct HourMinutePicker: UIViewRepresentable {
     func updateUIView(_ uiView: UIViewType, context: Context) {}
 
     func makeCoordinator() -> Coordinator {
-        Coordinator()
+        Coordinator(previousInterval: backgroundSignOutInterval)
     }
 
     class Coordinator: TVOSPickerViewDelegate {
-        var call: ((TimeInterval) -> Void)?
+        var callback: ((TimeInterval) -> Void)?
+        private var selectedHour: TimeInterval = 0
+        private var selectedMinute: TimeInterval = 0
+
+        private let previousInterval: TimeInterval
+
+        init(previousInterval: TimeInterval) {
+            self.previousInterval = previousInterval
+        }
 
         func add(picker: TVOSPickerView) {
             picker.delegate = self
@@ -60,28 +68,27 @@ struct HourMinutePicker: UIViewRepresentable {
         func pickerView(_ pickerView: TVOSPickerView, titleForRow row: Int, inComponent component: Int) -> String? {
             // string to display in each row
             if component == 0 {
-                "hours"
+                "\(row) hours"
             } else {
-                "min"
+                "\(row) min"
             }
         }
 
         func pickerView(_ pickerView: TVOSPickerView, didSelectRow row: Int, inComponent component: Int) {
             // update state with the newly selected row
 
-            var interval: TimeInterval = 0
             if component == 0 {
-                interval += Double(row * 3600)
+                selectedHour = Double(row * 3600)
             } else {
-                interval += Double(row * 60)
+                selectedMinute += Double(row * 60)
             }
 
-            call?(interval)
+            callback?(selectedHour + selectedMinute)
         }
 
         func indexOfSelectedRow(inComponent component: Int, ofPickerView pickerView: TVOSPickerView) -> Int? {
             // provide an index of selected row - used as initially focused index as well as after each reloadData
-            nil
+            0
         }
     }
 }
