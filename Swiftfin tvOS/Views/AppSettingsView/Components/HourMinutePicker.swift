@@ -72,9 +72,9 @@ struct HourMinutePicker: UIViewRepresentable {
         func pickerView(_ pickerView: TVOSPickerView, titleForRow row: Int, inComponent component: Int) -> String? {
             // string to display in each row
             if component == 0 {
-                "\(row) hours"
+                "\(row) \(L10n.hours)"
             } else {
-                "\(row) min"
+                "\(row) \(L10n.minutes)"
             }
         }
 
