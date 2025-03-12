@@ -21,6 +21,8 @@ struct HourMinutePicker: UIViewRepresentable {
         )
 
         context.coordinator.add(picker: picker)
+
+        // Defaults doesn't provide a binding so utilize a callback
         context.coordinator.callback = { interval in
             backgroundSignOutInterval = interval
         }
@@ -35,10 +37,14 @@ struct HourMinutePicker: UIViewRepresentable {
     }
 
     class Coordinator: TVOSPickerViewDelegate {
+        // callback to set the value to defaults
         var callback: ((TimeInterval) -> Void)?
+
+        // selected values
         private var selectedHour: TimeInterval = 0
         private var selectedMinute: TimeInterval = 0
 
+        // previousInterval helps set the default values of the picker
         private let previousInterval: TimeInterval
 
         init(previousInterval: TimeInterval) {
@@ -87,9 +93,9 @@ struct HourMinutePicker: UIViewRepresentable {
         func indexOfSelectedRow(inComponent component: Int, ofPickerView pickerView: TVOSPickerView) -> Int? {
             // provide an index of selected row - used as initially focused index as well as after each reloadData
             if component == 0 {
-                Int(previousInterval) / 3600
+                Int(previousInterval) / 3600 // select the previous hour
             } else {
-                (Int(previousInterval) / 60) % 60
+                (Int(previousInterval) / 60) % 60 // select the previous minute
             }
         }
     }
