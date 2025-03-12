@@ -29,6 +29,9 @@ final class AppSettingsCoordinator: NavigationCoordinatable {
     #if os(tvOS)
     @Route(.modal)
     var log = makeLog
+
+    @Route(.fullScreen)
+    var hourPicker = makeHourPicker
     #endif
 
     init() {}
@@ -53,5 +56,15 @@ final class AppSettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeStart() -> some View {
         AppSettingsView()
+    }
+
+    @ViewBuilder
+    func makeHourPicker() -> some View {
+        ZStack {
+            BlurView()
+
+            HourMinutePicker()
+        }
+        .ignoresSafeArea()
     }
 }

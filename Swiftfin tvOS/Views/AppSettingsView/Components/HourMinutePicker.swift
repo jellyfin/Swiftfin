@@ -6,25 +6,26 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 import TVOSPicker
 
 struct HourMinutePicker: UIViewRepresentable {
 
-    let interval: Binding<TimeInterval>
+    @Default(.backgroundSignOutInterval)
+    private var backgroundSignOutInterval
 
     func makeUIView(context: Context) -> some UIView {
         let picker = TVOSPickerView(
             style: .default // pass custom style here if needed
         )
 
-//        let picker = UIDatePicker(frame: .zero)
-//        picker.datePickerMode = .countDownTimer
-//        picker.countDownDuration = interval.wrappedValue
         picker.translatesAutoresizingMaskIntoConstraints = false
 
         context.coordinator.add(picker: picker)
-        context.coordinator.interval = interval
+        context.coordinator.call = { interval in
+            backgroundSignOutInterval = interval
+        }
 
         return picker
     }
@@ -36,7 +37,7 @@ struct HourMinutePicker: UIViewRepresentable {
     }
 
     class Coordinator: TVOSPickerViewDelegate {
-        var interval: Binding<TimeInterval>!
+        var call: ((TimeInterval) -> Void)?
 
         func add(picker: TVOSPickerView) {
             picker.delegate = self
@@ -58,7 +59,7 @@ struct HourMinutePicker: UIViewRepresentable {
 
         func pickerView(_ pickerView: TVOSPickerView, titleForRow row: Int, inComponent component: Int) -> String? {
             // string to display in each row
-            if row == 0 {
+            if component == 0 {
                 "hours"
             } else {
                 "min"
@@ -75,7 +76,7 @@ struct HourMinutePicker: UIViewRepresentable {
                 interval += Double(row * 60)
             }
 
-            self.interval.wrappedValue = interval
+            call?(interval)
         }
 
         func indexOfSelectedRow(inComponent component: Int, ofPickerView pickerView: TVOSPickerView) -> Int? {

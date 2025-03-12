@@ -12,6 +12,8 @@ import SwiftUI
 extension AppSettingsView {
 
     struct SignOutIntervalSection: View {
+        @EnvironmentObject
+        private var router: AppSettingsCoordinator.Router
 
         @Default(.backgroundSignOutInterval)
         private var backgroundSignOutInterval
@@ -41,6 +43,7 @@ extension AppSettingsView {
 
                         Button {
                             isEditingBackgroundSignOutInterval.toggle()
+                            router.route(to: \.hourPicker)
                         } label: {
                             HStack {
                                 Text(backgroundSignOutInterval, format: .hourMinute)
@@ -60,10 +63,6 @@ extension AppSettingsView {
                 Text(
                     L10n.signoutBackgroundFooter
                 )
-            }
-            .animation(.linear(duration: 0.15), value: isEditingBackgroundSignOutInterval)
-            .blurredFullScreenCover(isPresented: $isEditingBackgroundSignOutInterval) {
-                HourMinutePicker(interval: $backgroundSignOutInterval)
             }
         }
     }
