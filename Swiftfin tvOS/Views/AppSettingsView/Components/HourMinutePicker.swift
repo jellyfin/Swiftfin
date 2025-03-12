@@ -80,7 +80,7 @@ struct HourMinutePicker: UIViewRepresentable {
             if component == 0 {
                 selectedHour = Double(row * 3600)
             } else {
-                selectedMinute += Double(row * 60)
+                selectedMinute = Double(row * 60)
             }
 
             callback?(selectedHour + selectedMinute)
@@ -88,7 +88,11 @@ struct HourMinutePicker: UIViewRepresentable {
 
         func indexOfSelectedRow(inComponent component: Int, ofPickerView pickerView: TVOSPickerView) -> Int? {
             // provide an index of selected row - used as initially focused index as well as after each reloadData
-            0
+            if component == 0 {
+                Int(previousInterval) / 3600
+            } else {
+                (Int(previousInterval) / 60) % 60
+            }
         }
     }
 }
