@@ -62,9 +62,9 @@ final class AppSettingsCoordinator: NavigationCoordinatable {
     func makeHourPicker() -> some View {
         ZStack {
             BlurView()
+                .ignoresSafeArea()
 
             HourMinutePicker()
         }
-        .ignoresSafeArea()
     }
 }

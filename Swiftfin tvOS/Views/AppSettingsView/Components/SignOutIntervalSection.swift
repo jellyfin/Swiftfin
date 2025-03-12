@@ -42,7 +42,6 @@ extension AppSettingsView {
                         Spacer()
 
                         Button {
-                            isEditingBackgroundSignOutInterval.toggle()
                             router.route(to: \.hourPicker)
                         } label: {
                             HStack {
@@ -52,8 +51,6 @@ extension AppSettingsView {
                                 Image(systemName: "chevron.right")
                                     .font(.body.weight(.semibold))
                                     .foregroundStyle(.secondary)
-                                    .rotationEffect(isEditingBackgroundSignOutInterval ? .degrees(90) : .zero)
-                                    .animation(.linear(duration: 0.075), value: isEditingBackgroundSignOutInterval)
                             }
                         }
                         .foregroundStyle(.primary, .secondary)

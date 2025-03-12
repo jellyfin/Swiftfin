@@ -20,7 +20,7 @@ struct HourMinutePicker: UIViewRepresentable {
             style: .default // pass custom style here if needed
         )
 
-        picker.translatesAutoresizingMaskIntoConstraints = false
+//        picker.translatesAutoresizingMaskIntoConstraints = false
 
         context.coordinator.add(picker: picker)
         context.coordinator.call = { interval in
