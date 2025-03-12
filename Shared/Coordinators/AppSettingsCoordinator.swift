@@ -58,6 +58,7 @@ final class AppSettingsCoordinator: NavigationCoordinatable {
         AppSettingsView()
     }
 
+    #if os(tvOS)
     @ViewBuilder
     func makeHourPicker() -> some View {
         ZStack {
@@ -67,4 +68,5 @@ final class AppSettingsCoordinator: NavigationCoordinatable {
             HourMinutePicker()
         }
     }
+    #endif
 }
