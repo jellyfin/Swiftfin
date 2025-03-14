@@ -1,5 +1,5 @@
 {
-  "originHash" : "06a5dcccf9b916d25a75602bcb345218714cc642e54ef793a56ac6adc5439df8",
+  "originHash" : "66bff9f26defe8d2dfa92b4e65d0ae348e3b586d0fbb7de49c9c937459e6b55c",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -224,6 +224,15 @@
       "state" : {
         "branch" : "master",
         "revision" : "e2d31c646182bf94a496b173c6ee5ad191230e9a"
+      }
+    },
+    {
+      "identity" : "tvospicker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ViacomInc/TVOSPicker",
+      "state" : {
+        "revision" : "90806460f3b3e7564344647241c157aeb0b27a71",
+        "version" : "0.3.0"
       }
     },
     {

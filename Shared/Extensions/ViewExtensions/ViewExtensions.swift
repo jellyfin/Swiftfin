@@ -266,8 +266,7 @@ extension View {
         }
     }
 
-    // TODO: rename `blurredFullScreenCover`
-    func blurFullScreenCover(
+    func blurredFullScreenCover(
         isPresented: Binding<Bool>,
         onDismiss: (() -> Void)? = nil,
         @ViewBuilder content: @escaping () -> any View
