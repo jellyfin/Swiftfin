@@ -1,5 +1,5 @@
 {
-  "originHash" : "b7189175c8066640649da818750e83deee8ef2f766db25c34025f23d451b301d",
+  "originHash" : "66bff9f26defe8d2dfa92b4e65d0ae348e3b586d0fbb7de49c9c937459e6b55c",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -227,6 +227,15 @@
       }
     },
     {
+      "identity" : "tvospicker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ViacomInc/TVOSPicker",
+      "state" : {
+        "revision" : "90806460f3b3e7564344647241c157aeb0b27a71",
+        "version" : "0.3.0"
+      }
+    },
+    {
       "identity" : "udpbroadcastconnection",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/gunterhager/UDPBroadcastConnection",
@@ -251,6 +260,15 @@
       "state" : {
         "branch" : "main",
         "revision" : "50d4f6ec05a2d8333952def0d8e45019a4207132"
+      }
+    },
+    {
+      "identity" : "wrappinghstack",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/dkk/WrappingHStack",
+      "state" : {
+        "revision" : "425d9488ba55f58f0b34498c64c054c77fc2a44b",
+        "version" : "2.2.11"
       }
     }
   ],
