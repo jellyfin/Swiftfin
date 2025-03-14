@@ -266,10 +266,6 @@ extension View {
         }
     }
 
-    func asAttributeStyle(_ style: AttributeViewModifier.Style) -> some View {
-        modifier(AttributeViewModifier(style: style))
-    }
-
     func blurredFullScreenCover(
         isPresented: Binding<Bool>,
         onDismiss: (() -> Void)? = nil,
