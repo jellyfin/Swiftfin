@@ -265,6 +265,14 @@ extension [MediaStream] {
         contains { $0.isHDVideo }
     }
 
+    var hasHDRVideo: Bool {
+        contains { VideoRangeType(from: $0.videoRangeType).isHDR }
+    }
+
+    var hasDolbyVision: Bool {
+        contains { VideoRangeType(from: $0.videoRangeType).isDolbyVision }
+    }
+
     var hasSubtitles: Bool {
         contains { $0.type == .subtitle }
     }
