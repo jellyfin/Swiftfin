@@ -45,8 +45,6 @@ struct EditServerView: View {
                 }
 
                 Section(L10n.url) {
-                    ChevronButton("Filler")
-                    ChevronButton("Filler", subtitle: "Button")
                     ListRowMenu(L10n.serverURL, subtitle: viewModel.server.currentURL.absoluteString) {
                         ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
                             Button(action: {
@@ -68,38 +66,6 @@ struct EditServerView: View {
                             }
                         }
                     }
-                    Menu {
-                        ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
-                            Button(action: {
-                                guard viewModel.server.currentURL != url else { return }
-                                viewModel.setCurrentURL(to: url)
-                            }) {
-                                HStack {
-                                    Text(url.absoluteString)
-                                        .foregroundColor(.primary)
-
-                                    Spacer()
-
-                                    if viewModel.server.currentURL == url {
-                                        Image(systemName: "checkmark")
-                                            .font(.body.weight(.regular))
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
-                            }
-                        }
-                    } label: {
-                        HStack {
-                            Text(viewModel.server.currentURL.absoluteString)
-                                .foregroundColor(.primary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Spacer()
-                            Image(systemName: "chevron.down")
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                    .listRowBackground(Color.clear)
-                    .listRowInsets(.zero)
                 }
 
                 if isEditing {

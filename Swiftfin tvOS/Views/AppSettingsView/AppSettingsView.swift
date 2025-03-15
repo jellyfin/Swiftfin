@@ -51,35 +51,32 @@ struct AppSettingsView: View {
                     Toggle(L10n.useSplashscreen, isOn: $selectUserUseSplashscreen)
 
                     if selectUserUseSplashscreen {
-                        Menu {
-                            Picker(L10n.servers, selection: $selectUserAllServersSplashscreen) {
-
-                                Label(L10n.random, systemImage: "dice.fill")
-                                    .tag(SelectUserServerSelection.all)
-
-                                ForEach(viewModel.servers) { server in
-                                    Text(server.name)
-                                        .tag(SelectUserServerSelection.server(id: server.id))
-                                }
-                            }
-                        } label: {
-                            HStack {
-                                Text(L10n.servers)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-
+                        ListRowMenu(
+                            L10n.servers,
+                            subtitleView: {
                                 if selectUserAllServersSplashscreen == .all {
-                                    Label(L10n.random, systemImage: "dice.fill")
+                                    return AnyView(Label(L10n.random, systemImage: "dice.fill"))
                                 } else if let server = viewModel.servers.first(
                                     where: { server in
                                         selectUserAllServersSplashscreen == .server(id: server.id)
                                     }
                                 ) {
+                                    return AnyView(Text(server.name))
+                                } else {
+                                    return AnyView(Text(L10n.none))
+                                }
+                            }()
+                        ) {
+                            Picker(L10n.servers, selection: $selectUserAllServersSplashscreen) {
+                                Label(L10n.random, systemImage: "dice.fill")
+                                    .tag(SelectUserServerSelection.all)
+                                
+                                ForEach(viewModel.servers) { server in
                                     Text(server.name)
+                                        .tag(SelectUserServerSelection.server(id: server.id))
                                 }
                             }
                         }
-                        .listRowBackground(Color.clear)
-                        .listRowInsets(.zero)
                     }
                 } header: {
                     Text(L10n.splashscreen)
@@ -96,5 +93,6 @@ struct AppSettingsView: View {
                         router.route(to: \.log)
                     }
             }
+            .navigationTitle(L10n.advanced)
     }
 }
