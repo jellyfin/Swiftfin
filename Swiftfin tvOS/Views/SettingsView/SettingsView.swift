@@ -15,12 +15,28 @@ struct SettingsView: View {
 
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
+    @Default(.accentColor)
+    private var accentColor
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
     @StateObject
     private var viewModel = SettingsViewModel()
+
+    struct NamedColor: Hashable {
+        let name: String
+        let value: Color
+
+        static let availableColors: [NamedColor] = [
+            NamedColor(name: L10n.jellyfin, value: .jellyfinPurple),
+            NamedColor(name: L10n.red, value: .red),
+            NamedColor(name: L10n.orange, value: .orange),
+            NamedColor(name: L10n.yellow, value: .yellow),
+            NamedColor(name: L10n.green, value: .green),
+            NamedColor(name: L10n.blue, value: .blue),
+        ]
+    }
 
     var body: some View {
         SplitFormWindowView()
@@ -50,7 +66,7 @@ struct SettingsView: View {
                     ListRowButton(L10n.switchUser) {
                         viewModel.signOut()
                     }
-                    .foregroundStyle(Color.jellyfinPurple.overlayColor, Color.jellyfinPurple)
+                    .foregroundStyle(accentColor.overlayColor, accentColor)
                     .listRowInsets(.zero)
                 }
 
@@ -80,6 +96,31 @@ struct SettingsView: View {
 //                        .onSelect {
 //                            router.route(to: \.experimentalSettings)
 //                        }
+                }
+
+                Section(L10n.appearance) {
+                    Menu {
+                        ForEach(NamedColor.availableColors, id: \.self) { color in
+                            Button(action: {
+                                guard accentColor != color.value else { return }
+                                accentColor = color.value
+                            }) {
+                                Text(color.name)
+                                    .foregroundColor(.primary)
+                            }
+                        }
+                    } label: {
+                        HStack {
+                            Text(L10n.accentColor)
+                            Spacer()
+                            Circle()
+                                .fill(accentColor)
+                                .frame(width: 16, height: 16)
+                        }
+                    }
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(.zero)
+                    .foregroundStyle(.primary, .secondary)
                 }
 
                 Section {
