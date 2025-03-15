@@ -45,6 +45,7 @@ struct ListRowMenu<Content: View>: View {
                 HStack {
                     title
                         .foregroundStyle(isFocused ? Color.black : Color.white)
+                        .padding(.leading, 4)
 
                     Spacer()
 

@@ -70,7 +70,7 @@ struct AppSettingsView: View {
                             Picker(L10n.servers, selection: $selectUserAllServersSplashscreen) {
                                 Label(L10n.random, systemImage: "dice.fill")
                                     .tag(SelectUserServerSelection.all)
-                                
+
                                 ForEach(viewModel.servers) { server in
                                     Text(server.name)
                                         .tag(SelectUserServerSelection.server(id: server.id))
