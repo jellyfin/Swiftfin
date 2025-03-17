@@ -146,28 +146,28 @@ struct AddToPlaylistView: View {
 
     private var playlistPickerView: some View {
         Section {
-            Picker(
-                L10n.playlist,
-                selection: Binding(
-                    get: { viewModel.selectedPlaylist },
-                    set: { newValue in
-                        viewModel.send(.setPlaylist(newValue))
-                    }
-                )
-            ) {
-                Text(L10n.createPlaylist)
-                    .tag(nil as BaseItemDto?)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                ForEach(viewModel.playlists) { playlist in
-                    Text(playlist.name ?? L10n.unknown)
-                        .tag(playlist as BaseItemDto?)
+            ListRowMenu(L10n.playlist, subtitle: viewModel.selectedPlaylist?.name ?? L10n.createPlaylist) {
+                Picker(
+                    L10n.playlist,
+                    selection: Binding(
+                        get: { viewModel.selectedPlaylist },
+                        set: { newValue in
+                            viewModel.send(.setPlaylist(newValue))
+                        }
+                    )
+                ) {
+                    Text(L10n.createPlaylist)
+                        .tag(nil as BaseItemDto?)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                }
-            }
-            .pickerStyle(.menu)
-            .font(.body)
 
+                    ForEach(viewModel.playlists) { playlist in
+                        Text(playlist.name ?? L10n.unknown)
+                            .tag(playlist as BaseItemDto?)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+                .font(.body)
+            }
         } header: {
             Text(L10n.playlist)
         } footer: {
