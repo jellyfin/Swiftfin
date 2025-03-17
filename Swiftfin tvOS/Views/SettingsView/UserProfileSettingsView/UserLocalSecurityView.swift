@@ -145,7 +145,7 @@ struct UserLocalSecurityView: View {
 
                 if signInPolicy == .requirePin {
                     Section {
-                        ChevronAlertButton(
+                        ChevronButton(
                             L10n.hint,
                             subtitle: pinHint,
                             description: L10n.setPinHintDescription

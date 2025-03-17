@@ -37,17 +37,15 @@ struct AppSettingsView: View {
     var body: some View {
         Form {
 
-            ChevronButton(L10n.about)
-                .onSelect {
-                    router.route(to: \.about, viewModel)
-                }
+            ChevronButton(L10n.about) {
+                router.route(to: \.about, viewModel)
+            }
 
             Section(L10n.accessibility) {
 
-                ChevronButton(L10n.appIcon)
-                    .onSelect {
-                        router.route(to: \.appIconSelector, viewModel)
-                    }
+                ChevronButton(L10n.appIcon) {
+                    router.route(to: \.appIconSelector, viewModel)
+                }
 
                 if !selectUserUseSplashscreen {
                     CaseIterablePicker(
@@ -85,10 +83,9 @@ struct AppSettingsView: View {
 
             SignOutIntervalSection()
 
-            ChevronButton(L10n.logs)
-                .onSelect {
-                    router.route(to: \.log)
-                }
+            ChevronButton(L10n.logs) {
+                router.route(to: \.log)
+            }
         }
         .animation(.linear, value: selectUserUseSplashscreen)
         .navigationTitle(L10n.advanced)

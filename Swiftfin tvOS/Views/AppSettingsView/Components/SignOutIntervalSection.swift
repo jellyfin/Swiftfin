@@ -40,8 +40,7 @@ extension AppSettingsView {
                     ChevronButton(
                         L10n.duration,
                         subtitle: Text(backgroundSignOutInterval, format: .hourMinute)
-                    )
-                    .onSelect {
+                    ) {
                         router.route(to: \.hourPicker)
                     }
                 }

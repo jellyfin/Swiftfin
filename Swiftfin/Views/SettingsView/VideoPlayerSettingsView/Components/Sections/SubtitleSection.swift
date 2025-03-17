@@ -23,10 +23,9 @@ extension VideoPlayerSettingsView {
 
         var body: some View {
             Section {
-                ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName)
-                    .onSelect {
-                        router.route(to: \.fontPicker, $subtitleFontName)
-                    }
+                ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName) {
+                    router.route(to: \.fontPicker, $subtitleFontName)
+                }
 
                 BasicStepper(
                     title: L10n.subtitleSize,

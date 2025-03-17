@@ -104,15 +104,13 @@ struct CustomizeViewsSettings: View {
                     )
                 }
 
-                ChevronButton(L10n.library)
-                    .onSelect {
-                        router.route(to: \.itemFilterDrawerSelector, $libraryEnabledDrawerFilters)
-                    }
+                ChevronButton(L10n.library) {
+                    router.route(to: \.itemFilterDrawerSelector, $libraryEnabledDrawerFilters)
+                }
 
-                ChevronButton(L10n.search)
-                    .onSelect {
-                        router.route(to: \.itemFilterDrawerSelector, $searchEnabledDrawerFilters)
-                    }
+                ChevronButton(L10n.search) {
+                    router.route(to: \.itemFilterDrawerSelector, $searchEnabledDrawerFilters)
+                }
 
             } header: {
                 L10n.filters.text
@@ -127,10 +125,9 @@ struct CustomizeViewsSettings: View {
 
             Section(L10n.posters) {
 
-                ChevronButton(L10n.indicators)
-                    .onSelect {
-                        router.route(to: \.indicatorSettings)
-                    }
+                ChevronButton(L10n.indicators) {
+                    router.route(to: \.indicatorSettings)
+                }
 
                 Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 

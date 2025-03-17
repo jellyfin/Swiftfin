@@ -27,7 +27,7 @@ extension CustomizeViewsSettings {
 
                 Toggle(L10n.nextUpRewatch, isOn: $resumeNextUp)
 
-                ChevronAlertButton(
+                ChevronButton(
                     L10n.nextUpDays,
                     subtitle: {
                         if maxNextUp > 0 {
