@@ -56,7 +56,7 @@ struct SettingsView: View {
 
                 Section(L10n.videoPlayer) {
 
-                    InlineEnumToggle(title: L10n.videoPlayerType, selection: $videoPlayerType)
+                    ListRowMenu(L10n.videoPlayerType, selection: $videoPlayerType)
 
                     ChevronButton(L10n.videoPlayer)
                         .onSelect {

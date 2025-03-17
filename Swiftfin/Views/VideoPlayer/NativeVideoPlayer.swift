@@ -116,6 +116,9 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        // Add external screen support configuration
+        player?.usesExternalPlaybackWhileExternalScreenIsActive = true
     }
 
     override func viewWillDisappear(_ animated: Bool) {
