@@ -31,6 +31,12 @@ struct AppSettingsView: View {
     @State
     private var removeAllServersSelected: Bool = false
 
+    private var selectedServer: ServerState? {
+        viewModel.servers.first { server in
+            selectUserAllServersSplashscreen == .server(id: server.id)
+        }
+    }
+
     var body: some View {
         SplitFormWindowView()
             .descriptionView {
@@ -51,9 +57,16 @@ struct AppSettingsView: View {
                     Toggle(L10n.useSplashscreen, isOn: $selectUserUseSplashscreen)
 
                     if selectUserUseSplashscreen {
-                        Menu {
+                        ListRowMenu(L10n.servers) {
+                            if selectUserAllServersSplashscreen == .all {
+                                Label(L10n.random, systemImage: "dice.fill")
+                            } else if let selectedServer {
+                                Text(selectedServer.name)
+                            } else {
+                                Text(L10n.none)
+                            }
+                        } content: {
                             Picker(L10n.servers, selection: $selectUserAllServersSplashscreen) {
-
                                 Label(L10n.random, systemImage: "dice.fill")
                                     .tag(SelectUserServerSelection.all)
 
@@ -62,24 +75,7 @@ struct AppSettingsView: View {
                                         .tag(SelectUserServerSelection.server(id: server.id))
                                 }
                             }
-                        } label: {
-                            HStack {
-                                Text(L10n.servers)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                                if selectUserAllServersSplashscreen == .all {
-                                    Label(L10n.random, systemImage: "dice.fill")
-                                } else if let server = viewModel.servers.first(
-                                    where: { server in
-                                        selectUserAllServersSplashscreen == .server(id: server.id)
-                                    }
-                                ) {
-                                    Text(server.name)
-                                }
-                            }
                         }
-                        .listRowBackground(Color.clear)
-                        .listRowInsets(.zero)
                     }
                 } header: {
                     Text(L10n.splashscreen)
@@ -96,5 +92,6 @@ struct AppSettingsView: View {
                         router.route(to: \.log)
                     }
             }
+            .navigationTitle(L10n.advanced)
     }
 }
