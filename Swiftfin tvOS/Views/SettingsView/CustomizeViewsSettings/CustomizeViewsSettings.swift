@@ -60,15 +60,15 @@ struct CustomizeViewsSettings: View {
 
                     Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 
-                    InlineEnumToggle(title: L10n.next, selection: $nextUpPosterType)
+                    ListRowMenu(L10n.next, selection: $nextUpPosterType)
 
-                    InlineEnumToggle(title: L10n.recentlyAdded, selection: $recentlyAddedPosterType)
+                    ListRowMenu(L10n.recentlyAdded, selection: $recentlyAddedPosterType)
 
-                    InlineEnumToggle(title: L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType)
+                    ListRowMenu(L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType)
 
-                    InlineEnumToggle(title: L10n.recommended, selection: $similarPosterType)
+                    ListRowMenu(L10n.recommended, selection: $similarPosterType)
 
-                    InlineEnumToggle(title: L10n.search, selection: $searchPosterType)
+                    ListRowMenu(L10n.search, selection: $searchPosterType)
                 }
 
                 LibrarySection()

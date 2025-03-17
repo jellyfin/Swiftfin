@@ -49,9 +49,9 @@ extension CustomizeViewsSettings {
             Section(L10n.library) {
                 Toggle(L10n.cinematicBackground, isOn: $cinematicBackground)
 
-                InlineEnumToggle(title: L10n.posters, selection: $libraryPosterType)
+                ListRowMenu(L10n.posters, selection: $libraryPosterType)
 
-                InlineEnumToggle(title: L10n.library, selection: $libraryDisplayType)
+                ListRowMenu(L10n.library, selection: $libraryDisplayType)
 
                 if libraryDisplayType == .list {
                     ChevronButton(
