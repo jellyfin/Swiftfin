@@ -176,3 +176,12 @@ Swiftfin track selection is limited by compatibility with each player. In testin
 | External Audio + Internal Audio + External Subtitles  | 🟡         | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
 | External Audio + Internal Audio + Internal Subtitles  | 🟡         | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
 | External Audio + Internal Audio + Internal Subtitles + External Subtitles | 🟡 | ❌ | - The default audio track will played </br> - subtitles cannot be selected. |
+
+--- 
+
+### Miscellaneous
+
+| Feature | Swiftfin (VLCKit) | Native (AVKit) | Notes |
+|-------------|-------------------|----------------|----------------|
+| **External Display Support** | 🟡        | ✅        | Swiftfin Player can only be mirrored. As a result, the player will retain the source device dimensions. |
+
