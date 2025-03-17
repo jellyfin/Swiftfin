@@ -118,58 +118,24 @@ extension ListRowMenu {
 
 // Initialize from a CaseIterable Enum
 extension ListRowMenu {
-
     init<ItemType>(
         _ title: String,
         selection: Binding<ItemType>
     ) where ItemType: CaseIterable & Displayable & Hashable,
         ItemType.AllCases: RandomAccessCollection,
         Subtitle == Text,
-        Content == ForEach<[ItemType], ItemType, Button<HStack<TupleView<(Text, Spacer, Image?)>>>>
+        Content == AnyView
     {
         self.title = Text(title)
         self.subtitle = Text(selection.wrappedValue.displayTitle)
         self.content = {
-            ForEach(Array(ItemType.allCases), id: \.self) { option in
-                Button {
-                    selection.wrappedValue = option
-                } label: {
-                    HStack {
-                        Text(option.displayTitle)
-                        Spacer()
-                        if option == selection.wrappedValue {
-                            Image(systemName: "checkmark")
-                        }
+            AnyView(
+                Picker(title, selection: selection) {
+                    ForEach(Array(ItemType.allCases), id: \.self) { option in
+                        Text(option.displayTitle).tag(option)
                     }
                 }
-            }
-        }
-    }
-
-    init<ItemType>(
-        title: Text,
-        selection: Binding<ItemType>
-    ) where ItemType: CaseIterable & Displayable & Hashable,
-        ItemType.AllCases: RandomAccessCollection,
-        Subtitle == Text,
-        Content == ForEach<[ItemType], ItemType, Button<HStack<TupleView<(Text, Spacer, Image?)>>>>
-    {
-        self.title = title
-        self.subtitle = Text(selection.wrappedValue.displayTitle)
-        self.content = {
-            ForEach(Array(ItemType.allCases), id: \.self) { option in
-                Button {
-                    selection.wrappedValue = option
-                } label: {
-                    HStack {
-                        Text(option.displayTitle)
-                        Spacer()
-                        if option == selection.wrappedValue {
-                            Image(systemName: "checkmark")
-                        }
-                    }
-                }
-            }
+            )
         }
     }
 }
