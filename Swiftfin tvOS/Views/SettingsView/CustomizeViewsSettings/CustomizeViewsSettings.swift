@@ -51,6 +51,8 @@ struct CustomizeViewsSettings: View {
                     Toggle(L10n.showMissingEpisodes, isOn: $shouldShowMissingEpisodes)
                 }
 
+                FiltersSection()
+
                 Section(L10n.posters) {
 
                     ChevronButton(L10n.indicators)
