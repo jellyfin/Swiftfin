@@ -28,7 +28,7 @@ extension BaseItemDto: Poster {
 
     var showTitle: Bool {
         switch type {
-        case .episode, .series, .movie, .boxSet, .collectionFolder:
+        case .episode, .series, .movie, .boxSet, .collectionFolder, .playlist:
             Defaults[.Customization.showPosterLabels]
         default:
             true
@@ -49,6 +49,8 @@ extension BaseItemDto: Poster {
             "folder.fill"
         case .person:
             "person.fill"
+        case .playlist:
+            "list.bullet"
         default:
             "circle"
         }
@@ -58,7 +60,7 @@ extension BaseItemDto: Poster {
         switch type {
         case .episode:
             [seriesImageSource(.primary, maxWidth: maxWidth)]
-        case .boxSet, .channel, .tvChannel, .liveTvChannel, .movie, .series:
+        case .boxSet, .channel, .tvChannel, .liveTvChannel, .movie, .series, .playlist:
             [imageSource(.primary, maxWidth: maxWidth)]
         default:
             []
@@ -98,7 +100,7 @@ extension BaseItemDto: Poster {
 
     func squareImageSources(maxWidth: CGFloat?) -> [ImageSource] {
         switch type {
-        case .audio, .musicAlbum:
+        case .audio, .musicAlbum, .playlist:
             [imageSource(.primary, maxWidth: maxWidth)]
         default:
             []

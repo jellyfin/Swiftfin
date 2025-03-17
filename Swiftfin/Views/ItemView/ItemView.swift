@@ -38,17 +38,32 @@ struct ItemView: View {
     private var enableCollectionManagement: Bool
 
     private var canDelete: Bool {
-        if viewModel.item.type == .boxSet {
-            return enableCollectionManagement && viewModel.item.canDelete ?? false
-        } else {
-            return enableItemDeletion && viewModel.item.canDelete ?? false
+
+        guard viewModel.item.canDelete ?? false else {
+            return false
+        }
+
+        switch viewModel.item.type {
+        case .boxSet:
+            return enableCollectionManagement
+        case .playlist:
+            // Playlists should always be deletable by their owner
+            return true
+        default:
+            return enableItemDeletion
         }
     }
 
     private var canEdit: Bool {
-        if viewModel.item.type == .boxSet {
+
+        switch viewModel.item.type {
+        case .boxSet:
             return enableCollectionManagement
-        } else {
+        // As of 10.10, only Administrators can edit playlist metadata/images
+        // Users can edit the playlist name & public status but using a different API
+        // case .playlist:
+        // return true
+        default:
             return enableItemEditing
         }
     }
@@ -61,8 +76,8 @@ struct ItemView: View {
 
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
         switch item.type {
-        case .boxSet:
-            return CollectionItemViewModel(item: item)
+        case .boxSet, .playlist:
+            return ListItemViewModel(item: item)
         case .episode:
             return EpisodeItemViewModel(item: item)
         case .movie:
@@ -83,8 +98,8 @@ struct ItemView: View {
     @ViewBuilder
     private var padView: some View {
         switch viewModel.item.type {
-        case .boxSet:
-            iPadOSCollectionItemView(viewModel: viewModel as! CollectionItemViewModel)
+        case .boxSet, .playlist:
+            iPadOSListItemView(viewModel: viewModel as! ListItemViewModel)
         case .episode:
             iPadOSEpisodeItemView(viewModel: viewModel as! EpisodeItemViewModel)
         case .movie:
@@ -99,8 +114,8 @@ struct ItemView: View {
     @ViewBuilder
     private var phoneView: some View {
         switch viewModel.item.type {
-        case .boxSet:
-            CollectionItemView(viewModel: viewModel as! CollectionItemViewModel)
+        case .boxSet, .playlist:
+            ListItemView(viewModel: viewModel as! ListItemViewModel)
         case .episode:
             EpisodeItemView(viewModel: viewModel as! EpisodeItemViewModel)
         case .movie:

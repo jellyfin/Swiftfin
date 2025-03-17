@@ -17,8 +17,8 @@ struct ItemView: View {
 
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
         switch item.type {
-        case .boxSet:
-            return CollectionItemViewModel(item: item)
+        case .boxSet, .playlist:
+            return ListItemViewModel(item: item)
         case .episode:
             return EpisodeItemViewModel(item: item)
         case .movie:
@@ -38,8 +38,8 @@ struct ItemView: View {
     @ViewBuilder
     private var contentView: some View {
         switch viewModel.item.type {
-        case .boxSet:
-            CollectionItemView(viewModel: viewModel as! CollectionItemViewModel)
+        case .boxSet, .playlist:
+            ListItemView(viewModel: viewModel as! ListItemViewModel)
         case .episode:
             EpisodeItemView(viewModel: viewModel as! EpisodeItemViewModel)
         case .movie:
