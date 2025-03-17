@@ -45,10 +45,7 @@ struct CustomDeviceProfileSettingsView: View {
             }
             .contentView {
                 Section {
-                    InlineEnumToggle(
-                        title: L10n.behavior,
-                        selection: $customDeviceProfileAction
-                    )
+                    ListRowMenu(L10n.behavior, selection: $customDeviceProfileAction)
                 } header: {
                     L10n.behavior.text
                 } footer: {
