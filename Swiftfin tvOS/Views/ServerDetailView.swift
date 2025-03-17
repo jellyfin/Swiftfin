@@ -45,12 +45,12 @@ struct EditServerView: View {
                 }
 
                 Section(L10n.url) {
-                    Menu {
+                    ListRowMenu(L10n.serverURL, subtitle: viewModel.server.currentURL.absoluteString) {
                         ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
-                            Button(action: {
+                            Button {
                                 guard viewModel.server.currentURL != url else { return }
                                 viewModel.setCurrentURL(to: url)
-                            }) {
+                            } label: {
                                 HStack {
                                     Text(url.absoluteString)
                                         .foregroundColor(.primary)
@@ -65,18 +65,7 @@ struct EditServerView: View {
                                 }
                             }
                         }
-                    } label: {
-                        HStack {
-                            Text(viewModel.server.currentURL.absoluteString)
-                                .foregroundColor(.primary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Spacer()
-                            Image(systemName: "chevron.down")
-                                .foregroundColor(.secondary)
-                        }
                     }
-                    .listRowBackground(Color.clear)
-                    .listRowInsets(.zero)
                 }
 
                 if isEditing {
