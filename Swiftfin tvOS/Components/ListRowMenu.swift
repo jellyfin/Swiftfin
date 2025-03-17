@@ -8,40 +8,27 @@
 
 import SwiftUI
 
-struct ListRowMenu<Content: View>: View {
-
-    // MARK: - Properties
-
-    private let title: Text
-    private let subtitle: AnyView?
-    private let content: Content
+struct ListRowMenu<Content: View, Subtitle: View>: View {
 
     // MARK: - Focus State
 
     @FocusState
     private var isFocused: Bool
 
-    // MARK: - Main Initializer
+    // MARK: - Properties
 
-    private init(
-        title: Text,
-        subtitle: AnyView? = nil,
-        @ViewBuilder content: () -> Content
-    ) {
-        self.title = title
-        self.subtitle = subtitle
-        self.content = content()
-    }
+    private let title: Text
+    private let subtitle: Subtitle?
+    private let content: () -> Content
 
     // MARK: - Body
 
     var body: some View {
-        Menu {
-            content
-        } label: {
+        Menu(content: content) {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(isFocused ? Color.white : Color.clear)
+
                 HStack {
                     title
                         .foregroundStyle(isFocused ? Color.black : Color.white)
@@ -49,7 +36,7 @@ struct ListRowMenu<Content: View>: View {
 
                     Spacer()
 
-                    if let subtitle = subtitle {
+                    if let subtitle {
                         subtitle
                             .foregroundStyle(isFocused ? Color.black : Color.secondary)
                             .brightness(isFocused ? 0.4 : 0)
@@ -57,7 +44,7 @@ struct ListRowMenu<Content: View>: View {
 
                     Image(systemName: "chevron.up.chevron.down")
                         .font(.body.weight(.regular))
-                        .foregroundColor(isFocused ? Color.black : Color.secondary)
+                        .foregroundStyle(isFocused ? Color.black : Color.secondary)
                         .brightness(isFocused ? 0.4 : 0)
                 }
                 .padding(.horizontal)
@@ -73,74 +60,58 @@ struct ListRowMenu<Content: View>: View {
 
 // MARK: - Initializers
 
+// Base initializer
+extension ListRowMenu where Subtitle == Text? {
+
+    init(_ title: Text, @ViewBuilder content: @escaping () -> Content) {
+        self.title = title
+        self.subtitle = nil
+        self.content = content
+    }
+
+    init(_ title: Text, subtitle: Text?, @ViewBuilder content: @escaping () -> Content) {
+        self.title = title
+        self.subtitle = subtitle
+        self.content = content
+    }
+
+    init(_ title: Text, subtitle: String?, @ViewBuilder content: @escaping () -> Content) {
+        self.title = title
+        self.subtitle = subtitle.map { Text($0) }
+        self.content = content
+    }
+
+    init(_ title: String, @ViewBuilder content: @escaping () -> Content) {
+        self.title = Text(title)
+        self.subtitle = nil
+        self.content = content
+    }
+
+    init(_ title: String, subtitle: String?, @ViewBuilder content: @escaping () -> Content) {
+        self.title = Text(title)
+        self.subtitle = subtitle.map { Text($0) }
+        self.content = content
+    }
+
+    init(_ title: String, subtitle: Text?, @ViewBuilder content: @escaping () -> Content) {
+        self.title = Text(title)
+        self.subtitle = subtitle
+        self.content = content
+    }
+}
+
+// Custom view subtitles
 extension ListRowMenu {
-    // String title, no subtitle
-    init(_ title: String, @ViewBuilder content: () -> Content) {
-        self.init(
-            title: Text(title),
-            content: content
-        )
+
+    init(_ title: String, @ViewBuilder subtitle: @escaping () -> Subtitle, @ViewBuilder content: @escaping () -> Content) {
+        self.title = Text(title)
+        self.subtitle = subtitle()
+        self.content = content
     }
 
-    // String title, string subtitle
-    init(_ title: String, subtitle: String?, @ViewBuilder content: () -> Content) {
-        self.init(
-            title: Text(title),
-            subtitle: subtitle == nil ? nil : AnyView(Text(subtitle ?? "Unknown")),
-            content: content
-        )
-    }
-
-    // Text title, no subtitle
-    init(_ title: Text, @ViewBuilder content: () -> Content) {
-        self.init(
-            title: title,
-            content: content
-        )
-    }
-
-    // Text title, string subtitle
-    init(title: Text, subtitle: String?, @ViewBuilder content: () -> Content) {
-        self.init(
-            title: title,
-            subtitle: subtitle == nil ? nil : AnyView(Text(subtitle ?? "Unknown")),
-            content: content
-        )
-    }
-
-    // String title, Text subtitle
-    init(_ title: String, subtitleText: Text?, @ViewBuilder content: () -> Content) {
-        self.init(
-            title: Text(title),
-            subtitle: subtitleText == nil ? nil : AnyView(subtitleText!),
-            content: content
-        )
-    }
-
-    // Text title, Text subtitle
-    init(title: Text, subtitleText: Text?, @ViewBuilder content: () -> Content) {
-        self.init(
-            title: title,
-            subtitle: subtitleText == nil ? nil : AnyView(subtitleText!),
-            content: content
-        )
-    }
-
-    // String title, custom view subtitle
-    init<S: View>(_ title: String, subtitleView: S, @ViewBuilder content: () -> Content) {
-        self.init(
-            title: Text(title),
-            subtitle: AnyView(subtitleView),
-            content: content
-        )
-    }
-
-    // Text title, custom view subtitle
-    init<S: View>(title: Text, subtitleView: S, @ViewBuilder content: () -> Content) {
-        self.init(
-            title: title,
-            subtitle: AnyView(subtitleView),
-            content: content
-        )
+    init(_ title: Text, @ViewBuilder subtitle: @escaping () -> Subtitle, @ViewBuilder content: @escaping () -> Content) {
+        self.title = title
+        self.subtitle = subtitle()
+        self.content = content
     }
 }

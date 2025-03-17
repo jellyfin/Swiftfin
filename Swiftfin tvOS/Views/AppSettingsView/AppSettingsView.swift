@@ -31,6 +31,12 @@ struct AppSettingsView: View {
     @State
     private var removeAllServersSelected: Bool = false
 
+    private var selectedServer: ServerState? {
+        viewModel.servers.first { server in
+            selectUserAllServersSplashscreen == .server(id: server.id)
+        }
+    }
+
     var body: some View {
         SplitFormWindowView()
             .descriptionView {
@@ -51,22 +57,15 @@ struct AppSettingsView: View {
                     Toggle(L10n.useSplashscreen, isOn: $selectUserUseSplashscreen)
 
                     if selectUserUseSplashscreen {
-                        ListRowMenu(
-                            L10n.servers,
-                            subtitleView: {
-                                if selectUserAllServersSplashscreen == .all {
-                                    return AnyView(Label(L10n.random, systemImage: "dice.fill"))
-                                } else if let server = viewModel.servers.first(
-                                    where: { server in
-                                        selectUserAllServersSplashscreen == .server(id: server.id)
-                                    }
-                                ) {
-                                    return AnyView(Text(server.name))
-                                } else {
-                                    return AnyView(Text(L10n.none))
-                                }
-                            }()
-                        ) {
+                        ListRowMenu(L10n.servers) {
+                            if selectUserAllServersSplashscreen == .all {
+                                Label(L10n.random, systemImage: "dice.fill")
+                            } else if let selectedServer {
+                                Text(selectedServer.name)
+                            } else {
+                                Text(L10n.none)
+                            }
+                        } content: {
                             Picker(L10n.servers, selection: $selectUserAllServersSplashscreen) {
                                 Label(L10n.random, systemImage: "dice.fill")
                                     .tag(SelectUserServerSelection.all)

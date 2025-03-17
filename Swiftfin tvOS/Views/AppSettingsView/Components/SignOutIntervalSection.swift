@@ -12,6 +12,7 @@ import SwiftUI
 extension AppSettingsView {
 
     struct SignOutIntervalSection: View {
+
         @EnvironmentObject
         private var router: AppSettingsCoordinator.Router
 
@@ -39,7 +40,6 @@ extension AppSettingsView {
                     ChevronButton(
                         L10n.duration,
                         subtitle: Text(backgroundSignOutInterval, format: .hourMinute)
-                            .foregroundStyle(.secondary)
                     )
                     .onSelect {
                         router.route(to: \.hourPicker)
