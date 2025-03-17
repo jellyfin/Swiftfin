@@ -47,10 +47,10 @@ struct EditServerView: View {
                 Section(L10n.url) {
                     ListRowMenu(L10n.serverURL, subtitle: viewModel.server.currentURL.absoluteString) {
                         ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
-                            Button(action: {
+                            Button {
                                 guard viewModel.server.currentURL != url else { return }
                                 viewModel.setCurrentURL(to: url)
-                            }) {
+                            } label: {
                                 HStack {
                                     Text(url.absoluteString)
                                         .foregroundColor(.primary)

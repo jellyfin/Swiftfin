@@ -49,7 +49,7 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
                 }
                 .padding(.horizontal)
             }
-            .scaleEffect(isFocused ? 1.05 : 1.0, anchor: .center)
+            .scaleEffect(isFocused ? 1.05 : 1.0)
             .animation(.spring(response: 0.15, dampingFraction: 0.75), value: isFocused)
         }
         .menuStyle(.borderlessButton)
@@ -117,25 +117,23 @@ extension ListRowMenu {
 }
 
 // Initialize from a CaseIterable Enum
-extension ListRowMenu {
+extension ListRowMenu where Subtitle == Text, Content == AnyView {
+
     init<ItemType>(
         _ title: String,
         selection: Binding<ItemType>
     ) where ItemType: CaseIterable & Displayable & Hashable,
-        ItemType.AllCases: RandomAccessCollection,
-        Subtitle == Text,
-        Content == AnyView
+        ItemType.AllCases: RandomAccessCollection
     {
         self.title = Text(title)
         self.subtitle = Text(selection.wrappedValue.displayTitle)
         self.content = {
-            AnyView(
-                Picker(title, selection: selection) {
-                    ForEach(Array(ItemType.allCases), id: \.self) { option in
-                        Text(option.displayTitle).tag(option)
-                    }
+            Picker(title, selection: selection) {
+                ForEach(Array(ItemType.allCases), id: \.self) { option in
+                    Text(option.displayTitle).tag(option)
                 }
-            )
+            }
+            .eraseToAnyView()
         }
     }
 }
