@@ -72,6 +72,8 @@ class ItemViewModel: ViewModel, Stateful {
     private(set) var similarItems: [BaseItemDto] = []
     @Published
     private(set) var specialFeatures: [BaseItemDto] = []
+    @Published
+    private(set) var trailers: [BaseItemDto] = []
 
     @Published
     final var backgroundStates: OrderedSet<BackgroundState> = []
@@ -129,6 +131,7 @@ class ItemViewModel: ViewModel, Stateful {
                     async let fullItem = getFullItem()
                     async let similarItems = getSimilarItems()
                     async let specialFeatures = getSpecialFeatures()
+                    async let trailers = getTrailers()
 
                     let results = try await (
                         fullItem: fullItem,
@@ -179,6 +182,7 @@ class ItemViewModel: ViewModel, Stateful {
                     async let fullItem = getFullItem()
                     async let similarItems = getSimilarItems()
                     async let specialFeatures = getSpecialFeatures()
+                    async let trailers = getTrailers()
 
                     let results = try await (
                         fullItem: fullItem,
@@ -326,6 +330,15 @@ class ItemViewModel: ViewModel, Stateful {
 
         return (response?.value ?? [])
             .filter { $0.extraType?.isVideo ?? false }
+    }
+
+    private func getTrailers() async -> [BaseItemDto] {
+
+        let parameters = Paths.GetTrailersParameters(userID: userSession.user.id, parentID: item.id)
+        let request = Paths.getTrailers(parameters: parameters)
+        let response = try? await userSession.client.send(request)
+
+        return response?.value.items ?? []
     }
 
     private func setIsPlayed(_ isPlayed: Bool) async throws {
