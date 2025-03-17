@@ -946,6 +946,9 @@
 /// Interval
 "interval" = "Interval";
 
+/// The login for this user may have expired. Please retry or re-add the user.
+"invalidatedLogin" = "The login for this user may have expired. Please retry or re-add the user.";
+
 /// Inverted Dark
 "invertedDark" = "Inverted Dark";
 

@@ -668,6 +668,8 @@ internal enum L10n {
   internal static let interlacedVideoNotSupported = L10n.tr("Localizable", "interlacedVideoNotSupported", fallback: "Interlaced video is not supported")
   /// Interval
   internal static let interval = L10n.tr("Localizable", "interval", fallback: "Interval")
+  /// The login for this user may have expired. Please retry or re-add the user.
+  internal static let invalidatedLogin = L10n.tr("Localizable", "invalidatedLogin", fallback: "The login for this user may have expired. Please retry or re-add the user.")
   /// Inverted Dark
   internal static let invertedDark = L10n.tr("Localizable", "invertedDark", fallback: "Inverted Dark")
   /// Inverted Light

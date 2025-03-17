@@ -7,8 +7,10 @@
 //
 
 import Combine
+import Defaults
 import Factory
 import Foundation
+import Get
 import JellyfinAPI
 
 class ServerCheckViewModel: ViewModel, Stateful {
@@ -21,6 +23,7 @@ class ServerCheckViewModel: ViewModel, Stateful {
         case connecting
         case connected
         case error(JellyfinAPIError)
+        case loginInvalidated
         case initial
     }
 
@@ -46,6 +49,10 @@ class ServerCheckViewModel: ViewModel, Stateful {
                         userSession.user.data = response.value
                         self.state = .connected
                         Container.shared.currentUserSession.reset()
+                    }
+                } catch let Get.APIError.unacceptableStatusCode(code) where code == 401 {
+                    await MainActor.run {
+                        self.state = .loginInvalidated
                     }
                 } catch {
                     await MainActor.run {
