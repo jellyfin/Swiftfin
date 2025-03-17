@@ -39,18 +39,8 @@ struct PlaybackQualitySettingsView: View {
             }
             .contentView {
                 Section {
-                    ListRowMenu(
-                        L10n.maximumBitrate,
-                        subtitle: appMaximumBitrate.displayTitle
-                    ) {
-                        Picker(L10n.maximumBitrate, selection: $appMaximumBitrate) {
-                            ForEach(PlaybackBitrate.allCases, id: \.self) { bitrate in
-                                Text(bitrate.displayTitle)
-                                    .tag(bitrate)
-                            }
-                        }
-                    }
-                    .focused($focusedItem, equals: .maximumBitrate)
+                    ListRowMenu(L10n.maximumBitrate, selection: $appMaximumBitrate)
+                        .focused($focusedItem, equals: .maximumBitrate)
                 } header: {
                     L10n.bitrateDefault.text
                 } footer: {
