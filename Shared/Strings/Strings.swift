@@ -54,6 +54,8 @@ internal enum L10n {
   internal static let additionalSecurityAccessDescription = L10n.tr("Localizable", "additionalSecurityAccessDescription", fallback: "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.")
   /// Add Server
   internal static let addServer = L10n.tr("Localizable", "addServer", fallback: "Add Server")
+  /// Add to playlist
+  internal static let addToPlaylist = L10n.tr("Localizable", "addToPlaylist", fallback: "Add to playlist")
   /// Add trigger
   internal static let addTrigger = L10n.tr("Localizable", "addTrigger", fallback: "Add trigger")
   /// Add URL
@@ -338,6 +340,8 @@ internal enum L10n {
   internal static func createPinForUser(_ p1: Any) -> String {
     return L10n.tr("Localizable", "createPinForUser", String(describing: p1), fallback: "Create a pin to sign in to %@ on this device")
   }
+  /// Create playlist
+  internal static let createPlaylist = L10n.tr("Localizable", "createPlaylist", fallback: "Create playlist")
   /// Creator
   internal static let creator = L10n.tr("Localizable", "creator", fallback: "Creator")
   /// Critic rating
@@ -672,6 +676,10 @@ internal enum L10n {
   internal static let invertedDark = L10n.tr("Localizable", "invertedDark", fallback: "Inverted Dark")
   /// Inverted Light
   internal static let invertedLight = L10n.tr("Localizable", "invertedLight", fallback: "Inverted Light")
+  /// %1$@ is already in this playlist
+  internal static func itemAlreadyInPlaylist(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "itemAlreadyInPlaylist", String(describing: p1), fallback: "%1$@ is already in this playlist")
+  }
   /// %1$@ at %2$@
   internal static func itemAtItem(_ p1: Any, _ p2: Any) -> String {
     return L10n.tr("Localizable", "itemAtItem", String(describing: p1), String(describing: p2), fallback: "%1$@ at %2$@")
@@ -946,6 +954,8 @@ internal enum L10n {
   internal static let played = L10n.tr("Localizable", "played", fallback: "Played")
   /// Play From Beginning
   internal static let playFromBeginning = L10n.tr("Localizable", "playFromBeginning", fallback: "Play From Beginning")
+  /// Playlist
+  internal static let playlist = L10n.tr("Localizable", "playlist", fallback: "Playlist")
   /// Play Next Item
   internal static let playNextItem = L10n.tr("Localizable", "playNextItem", fallback: "Play Next Item")
   /// Play on active
@@ -982,6 +992,8 @@ internal enum L10n {
   internal static let progress = L10n.tr("Localizable", "progress", fallback: "Progress")
   /// Provider
   internal static let provider = L10n.tr("Localizable", "provider", fallback: "Provider")
+  /// Public
+  internal static let `public` = L10n.tr("Localizable", "public", fallback: "Public")
   /// Public Users
   internal static let publicUsers = L10n.tr("Localizable", "publicUsers", fallback: "Public Users")
   /// Quick Connect
@@ -1040,10 +1052,18 @@ internal enum L10n {
   internal static let remoteConnections = L10n.tr("Localizable", "remoteConnections", fallback: "Remote connections")
   /// Remote control
   internal static let remoteControl = L10n.tr("Localizable", "remoteControl", fallback: "Remote control")
+  /// Remove
+  internal static let remove = L10n.tr("Localizable", "remove", fallback: "Remove")
   /// Remove All
   internal static let removeAll = L10n.tr("Localizable", "removeAll", fallback: "Remove All")
   /// Remove All Servers
   internal static let removeAllServers = L10n.tr("Localizable", "removeAllServers", fallback: "Remove All Servers")
+  /// Remove %1$@
+  internal static func removeItem(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "removeItem", String(describing: p1), fallback: "Remove %1$@")
+  }
+  /// Are you sure you want to remove this item? This action cannot be undone.
+  internal static let removeItemConfirmationMessage = L10n.tr("Localizable", "removeItemConfirmationMessage", fallback: "Are you sure you want to remove this item? This action cannot be undone.")
   /// Remux
   internal static let remux = L10n.tr("Localizable", "remux", fallback: "Remux")
   /// Reorder
