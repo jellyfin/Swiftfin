@@ -50,21 +50,15 @@ struct PlaybackQualitySettingsView: View {
 
                 if appMaximumBitrate == .auto {
                     Section {
-                        InlineEnumToggle(
-                            title: L10n.testSize,
-                            selection: $appMaximumBitrateTest
-                        )
+                        ListRowMenu(L10n.testSize, selection: $appMaximumBitrateTest)
                     } footer: {
                         L10n.bitrateTestDisclaimer.text
                     }
                 }
 
                 Section {
-                    InlineEnumToggle(
-                        title: L10n.compatibility,
-                        selection: $compatibilityMode
-                    )
-                    .focused($focusedItem, equals: .compatibility)
+                    ListRowMenu(L10n.compatibility, selection: $compatibilityMode)
+                        .focused($focusedItem, equals: .compatibility)
 
                     if compatibilityMode == .custom {
                         ChevronButton(L10n.profiles)
