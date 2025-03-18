@@ -114,7 +114,7 @@ extension ItemView {
 
                 // MARK: Advanced Options
 
-                if canRefresh || canDelete || true {
+                if canRefresh || canDelete {
                     ActionButton(L10n.advanced, icon: "ellipsis") {
                         if canRefresh {
                             RefreshMetadataButton(item: viewModel.item)
