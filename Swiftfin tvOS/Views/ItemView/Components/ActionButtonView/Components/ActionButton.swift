@@ -153,7 +153,7 @@ struct ActionButtonStyle: ButtonStyle {
 
     private func getExpansionAmount(isPressed: Bool) -> CGFloat {
         if isPressed {
-            return -16
+            return 4
         } else if isFocused {
             return 16
         } else {
