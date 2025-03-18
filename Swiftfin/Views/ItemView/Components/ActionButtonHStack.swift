@@ -11,6 +11,9 @@ import Factory
 import JellyfinAPI
 import SwiftUI
 
+// TODO: Favorited and played accessibility labels
+//       based on value
+
 extension ItemView {
 
     struct ActionButtonHStack: View {
@@ -36,125 +39,125 @@ extension ItemView {
             self.equalSpacing = equalSpacing
         }
 
+        private var hasTrailers: Bool {
+            viewModel.item.remoteTrailers?.isNotEmpty == true ||
+                viewModel.localTrailers.isNotEmpty
+        }
+
+        @ViewBuilder
+        private var isPlayedButton: some View {
+            let isPlayed = viewModel.item.userData?.isPlayed == true
+
+            Button(
+                L10n.played,
+                systemImage: isPlayed ? "checkmark.circle.fill" : "checkmark.circle"
+            ) {
+                UIDevice.impact(.light)
+                viewModel.send(.toggleIsPlayed)
+            }
+            .symbolRenderingMode(.palette)
+            .foregroundStyle(
+                .primary,
+                isPlayed ? AnyShapeStyle(accentColor) : AnyShapeStyle(.primary)
+            )
+        }
+
+        @ViewBuilder
+        private var isFavoriteButton: some View {
+            let isFavorited = viewModel.item.userData?.isFavorite == true
+
+            Button(
+                L10n.favorited,
+                systemImage: isFavorited ? "heart.fill" : "heart"
+            ) {
+                UIDevice.impact(.light)
+                viewModel.send(.toggleIsFavorite)
+            }
+            .symbolRenderingMode(.palette)
+            .foregroundStyle(isFavorited ? AnyShapeStyle(Color.red) : AnyShapeStyle(.primary))
+        }
+
+        @ViewBuilder
+        private var trailerMenu: some View {
+            Menu(L10n.trailers, systemImage: "movieclapper") {
+                if viewModel.localTrailers.isNotEmpty {
+                    Section(L10n.local) {
+                        ForEach(viewModel.localTrailers, id: \.self) { trailer in
+                            Button(trailer.name ?? L10n.trailer, systemImage: "play.fill") {
+                                if let selectedMediaSource = trailer.mediaSources?.first {
+                                    UIDevice.feedback(.success)
+                                    mainRouter.route(
+                                        to: \.videoPlayer,
+                                        OnlineVideoPlayerManager(item: trailer, mediaSource: selectedMediaSource)
+                                    )
+                                } else {
+                                    UIDevice.feedback(.error)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if let externaltrailers = viewModel.item.remoteTrailers {
+                    Section(L10n.external) {
+                        ForEach(externaltrailers, id: \.url) { trailer in
+                            Button(trailer.name ?? L10n.trailer, systemImage: "arrow.up.forward") {
+                                if let url = URL(string: trailer.url) {
+                                    UIApplication.shared.open(url)
+                                    UIDevice.feedback(.success)
+                                } else {
+                                    UIDevice.feedback(.error)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        @ViewBuilder
+        private func mediaSourcesMenu(mediaSources: [MediaSourceInfo]) -> some View {
+            Menu(L10n.media, systemImage: "list.dash") {
+                ForEach(mediaSources, id: \.hashValue) { mediaSource in
+                    Button {
+                        viewModel.send(.selectMediaSource(mediaSource))
+                    } label: {
+                        if let selectedMediaSource = viewModel.selectedMediaSource, selectedMediaSource == mediaSource {
+                            Label(selectedMediaSource.displayTitle, systemImage: "checkmark")
+                        } else {
+                            Text(mediaSource.displayTitle)
+                        }
+                    }
+                }
+            }
+        }
+
         var body: some View {
             HStack(alignment: .center, spacing: 15) {
-                Button {
-                    UIDevice.impact(.light)
-                    viewModel.send(.toggleIsPlayed)
-                } label: {
-                    if viewModel.item.userData?.isPlayed ?? false {
-                        Image(systemName: "checkmark.circle.fill")
-                            .symbolRenderingMode(.palette)
-                            .foregroundStyle(
-                                .primary,
-                                accentColor
-                            )
-                    } else {
-                        Image(systemName: "checkmark.circle")
-                    }
-                }
-                .buttonStyle(.plain)
-                .if(equalSpacing) { view in
-                    view.frame(maxWidth: .infinity)
-                }
-
-                Button {
-                    UIDevice.impact(.light)
-                    viewModel.send(.toggleIsFavorite)
-                } label: {
-                    if viewModel.item.userData?.isFavorite ?? false {
-                        Image(systemName: "heart.fill")
-                            .symbolRenderingMode(.palette)
-                            .foregroundStyle(Color.red)
-                    } else {
-                        Image(systemName: "heart")
-                    }
-                }
-                .buttonStyle(.plain)
-                .if(equalSpacing) { view in
-                    view.frame(maxWidth: .infinity)
-                }
-
-                if viewModel.item.remoteTrailers?.isNotEmpty ?? false || viewModel.localTrailers.isNotEmpty {
-                    Menu {
-                        if viewModel.localTrailers.isNotEmpty {
-                            Section(L10n.local) {
-                                ForEach(viewModel.localTrailers, id: \.self) { trailer in
-                                    Button {
-                                        if let selectedMediaSource = trailer.mediaSources?.first {
-                                            UIDevice.feedback(.success)
-                                            mainRouter.route(
-                                                to: \.videoPlayer,
-                                                OnlineVideoPlayerManager(item: trailer, mediaSource: selectedMediaSource)
-                                            )
-                                        } else {
-                                            UIDevice.feedback(.error)
-                                        }
-                                    } label: {
-                                        HStack {
-                                            Text(trailer.name ?? L10n.trailer)
-                                            Spacer()
-                                            Image(systemName: "play")
-                                        }
-                                        .font(.body.weight(.bold))
-                                    }
-                                }
-                            }
-                        }
-
-                        if let externaltrailers = viewModel.item.remoteTrailers {
-                            Section(L10n.external) {
-                                ForEach(externaltrailers, id: \.url) { trailer in
-                                    Button {
-                                        if let url = trailer.url, let nsUrl = URL(string: url.description) {
-                                            UIApplication.shared.open(nsUrl)
-                                            UIDevice.feedback(.success)
-                                        } else {
-                                            UIDevice.feedback(.error)
-                                        }
-                                    } label: {
-                                        HStack {
-                                            Text(trailer.name ?? L10n.trailer)
-                                            Spacer()
-                                            Image(systemName: "arrow.up.forward")
-                                        }
-                                        .font(.body.weight(.bold))
-                                    }
-                                }
-                            }
-                        }
-                    } label: {
-                        Image(systemName: "movieclapper")
-                    }
-                    .menuStyle(.borderlessButton)
+                isPlayedButton
                     .if(equalSpacing) { view in
                         view.frame(maxWidth: .infinity)
                     }
+
+                isFavoriteButton
+                    .if(equalSpacing) { view in
+                        view.frame(maxWidth: .infinity)
+                    }
+
+                if hasTrailers {
+                    trailerMenu
+                        .if(equalSpacing) { view in
+                            view.frame(maxWidth: .infinity)
+                        }
                 }
 
-                if let playButtonItem = viewModel.playButtonItem,
-                   let mediaSources = playButtonItem.mediaSources,
+                if let mediaSources = viewModel.playButtonItem?.mediaSources,
                    mediaSources.count > 1
                 {
-                    Menu {
-                        ForEach(mediaSources, id: \.hashValue) { mediaSource in
-                            Button {
-                                viewModel.send(.selectMediaSource(mediaSource))
-                            } label: {
-                                if let selectedMediaSource = viewModel.selectedMediaSource, selectedMediaSource == mediaSource {
-                                    Label(selectedMediaSource.displayTitle, systemImage: "checkmark")
-                                } else {
-                                    Text(mediaSource.displayTitle)
-                                }
-                            }
+                    mediaSourcesMenu(mediaSources: mediaSources)
+                        .if(equalSpacing) { view in
+                            view.frame(maxWidth: .infinity)
                         }
-                    } label: {
-                        Image(systemName: "list.dash")
-                    }
-                    .buttonStyle(.plain)
-                    .if(equalSpacing) { view in
-                        view.frame(maxWidth: .infinity)
-                    }
                 }
 
                 if viewModel.item.type == .movie ||
@@ -172,6 +175,34 @@ extension ItemView {
                         }
                 }
             }
+            .labelStyle(.iconOnly)
         }
     }
+}
+
+#Preview {
+    VStack {
+
+        let isFavorited = false
+
+        Button(L10n.favorited, systemImage: isFavorited ? "heart.fill" : "heart") {}
+            .symbolRenderingMode(.palette)
+            .foregroundStyle(isFavorited ? AnyShapeStyle(Color.red) : AnyShapeStyle(.primary))
+
+        let isPlayed = false
+
+        Button(
+            L10n.played,
+            systemImage: isPlayed ? "checkmark.circle.fill" : "checkmark.circle"
+        ) {
+//            UIDevice.impact(.light)
+//            viewModel.send(.toggleIsPlayed)
+        }
+        .symbolRenderingMode(.palette)
+        .foregroundStyle(
+            .primary,
+            isPlayed ? AnyShapeStyle(Color.red) : AnyShapeStyle(.primary)
+        )
+    }
+    .labelStyle(.iconOnly)
 }
