@@ -23,6 +23,8 @@ extension ItemView {
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
+        @EnvironmentObject
+        private var mainRouter: MainCoordinator.Router
 
         @ObservedObject
         private var viewModel: ItemViewModel
@@ -71,6 +73,68 @@ extension ItemView {
                 .buttonStyle(.plain)
                 .if(equalSpacing) { view in
                     view.frame(maxWidth: .infinity)
+                }
+
+                if viewModel.item.remoteTrailers?.isNotEmpty ?? false || viewModel.localTrailers.isNotEmpty {
+                    Menu {
+                        if viewModel.localTrailers.isNotEmpty {
+                            Section("Local") {
+                                ForEach(viewModel.localTrailers, id: \.self) { trailer in
+                                    Button {
+                                        if let selectedMediaSource = trailer.mediaSources?.first {
+                                            UIDevice.feedback(.success)
+                                            mainRouter.route(
+                                                to: \.videoPlayer,
+                                                OnlineVideoPlayerManager(item: trailer, mediaSource: selectedMediaSource)
+                                            )
+                                        } else {
+                                            UIDevice.feedback(.error)
+                                        }
+                                    } label: {
+                                        HStack {
+                                            Text(trailer.name ?? "Local Trailer")
+                                            Spacer()
+                                            Image(systemName: "play")
+                                        }
+                                        .font(.body.weight(.bold))
+                                    }
+                                }
+                            }
+                        }
+
+                        // TODO: This is bad. Figure out how to do this better.
+                        if viewModel.item.remoteTrailers?.isNotEmpty ?? false && viewModel.localTrailers.isNotEmpty {
+                            Divider()
+                        }
+
+                        if let externaltrailers = viewModel.item.remoteTrailers {
+                            Section("Remote") {
+                                ForEach(externaltrailers, id: \.url) { trailer in
+                                    Button {
+                                        if let url = trailer.url, let nsUrl = URL(string: url.description) {
+                                            UIApplication.shared.open(nsUrl)
+                                            UIDevice.feedback(.success)
+                                        } else {
+                                            UIDevice.feedback(.error)
+                                        }
+                                    } label: {
+                                        HStack {
+                                            Text(trailer.name ?? "Online Trailer")
+                                            Spacer()
+                                            Image(systemName: "arrow.up.forward")
+                                        }
+                                        .font(.body.weight(.bold))
+                                    }
+                                }
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "movieclapper")
+                    }
+                    .menuStyle(.borderlessButton)
+                    .if(equalSpacing) { view in
+                        view.frame(maxWidth: .infinity)
+                    }
                 }
 
                 if let playButtonItem = viewModel.playButtonItem,
