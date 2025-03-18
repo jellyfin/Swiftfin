@@ -109,6 +109,11 @@ extension ItemView {
                         .frame(minWidth: 80, maxWidth: .infinity)
                 }
 
+                if viewModel.item.remoteTrailers?.isNotEmpty ?? false || viewModel.localTrailers.isNotEmpty {
+                    TrailerMenu(viewModel: viewModel)
+                        .frame(minWidth: 80, maxWidth: .infinity)
+                }
+
                 // MARK: - Additional Menu Options
 
                 if canRefresh || canDelete {

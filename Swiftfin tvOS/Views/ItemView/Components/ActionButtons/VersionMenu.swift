@@ -52,7 +52,7 @@ extension ItemView {
             }
             .focused($isFocused)
             .scaleEffect(isFocused ? 1.20 : 1.0)
-            .animation(.easeInOut(duration: 0.15), value: isFocused)
+            .animation(.easeInOut(duration: 0.2), value: isFocused)
             .menuStyle(.borderlessButton)
         }
     }
