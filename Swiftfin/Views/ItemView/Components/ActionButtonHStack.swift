@@ -179,30 +179,3 @@ extension ItemView {
         }
     }
 }
-
-#Preview {
-    VStack {
-
-        let isFavorited = false
-
-        Button(L10n.favorited, systemImage: isFavorited ? "heart.fill" : "heart") {}
-            .symbolRenderingMode(.palette)
-            .foregroundStyle(isFavorited ? AnyShapeStyle(Color.red) : AnyShapeStyle(.primary))
-
-        let isPlayed = false
-
-        Button(
-            L10n.played,
-            systemImage: isPlayed ? "checkmark.circle.fill" : "checkmark.circle"
-        ) {
-//            UIDevice.impact(.light)
-//            viewModel.send(.toggleIsPlayed)
-        }
-        .symbolRenderingMode(.palette)
-        .foregroundStyle(
-            .primary,
-            isPlayed ? AnyShapeStyle(Color.red) : AnyShapeStyle(.primary)
-        )
-    }
-    .labelStyle(.iconOnly)
-}
