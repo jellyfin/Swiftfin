@@ -26,7 +26,8 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            Menu {
+            ActionMenu(L10n.trailers, icon: "list.dash") {
+                // TODO: Replace with Picker
                 ForEach(mediaSources, id: \.hashValue) { mediaSource in
                     Button {
                         viewModel.send(.selectMediaSource(mediaSource))
@@ -38,22 +39,7 @@ extension ItemView {
                         }
                     }
                 }
-            } label: {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(isFocused ? Color.white : Color.white.opacity(0.5))
-
-                    Label(L10n.version, systemImage: "list.dash")
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.black)
-                        .labelStyle(.iconOnly)
-                }
             }
-            .focused($isFocused)
-            .scaleEffect(isFocused ? 1.20 : 1.0)
-            .animation(.easeInOut(duration: 0.2), value: isFocused)
-            .menuStyle(.borderlessButton)
         }
     }
 }

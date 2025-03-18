@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 extension ItemView {
@@ -18,16 +17,32 @@ extension ItemView {
         @FocusState
         private var isFocused: Bool
 
-        // MARK: - Menu Items
+        // MARK: - Properties
 
-        @ViewBuilder
-        let menuItems: Content
+        private let title: String
+        private let icon: String
+        private let imageRotation: Angle
+        private let content: () -> Content
+
+        // MARK: - Initializers
+
+        init(
+            _ title: String,
+            icon: String,
+            imageRotation: Angle = .degrees(0),
+            @ViewBuilder content: @escaping () -> Content
+        ) {
+            self.title = title
+            self.icon = icon
+            self.imageRotation = imageRotation
+            self.content = content
+        }
 
         // MARK: - Body
 
         var body: some View {
             Menu {
-                menuItems
+                content()
             } label: {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
@@ -37,16 +52,18 @@ extension ItemView {
                                 .stroke(Color.clear, lineWidth: 2)
                         )
 
-                    Label(L10n.menuButtons, systemImage: "ellipsis")
+                    Label(title, systemImage: icon)
                         .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundStyle(.black)
                         .labelStyle(.iconOnly)
-                        .rotationEffect(.degrees(90))
+                        .rotationEffect(imageRotation)
                 }
+                .accessibilityLabel(title)
             }
+            .padding(0)
             .focused($isFocused)
-            .scaleEffect(isFocused ? 1.20 : 1.0)
+            .scaleEffect(isFocused ? 1.2 : 1.0)
             .animation(.easeInOut(duration: 0.15), value: isFocused)
             .menuStyle(.borderlessButton)
         }

@@ -30,7 +30,7 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            Menu {
+            ActionMenu(L10n.trailers, icon: "movieclapper") {
                 if viewModel.localTrailers.isNotEmpty {
                     Section(L10n.local) {
                         ForEach(viewModel.localTrailers, id: \.self) { trailer in
@@ -75,22 +75,7 @@ extension ItemView {
                         }
                     }
                 }
-            } label: {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(isFocused ? Color.white : Color.white.opacity(0.5))
-
-                    Label(L10n.version, systemImage: "movieclapper")
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.black)
-                        .labelStyle(.iconOnly)
-                }
             }
-            .focused($isFocused)
-            .scaleEffect(isFocused ? 1.20 : 1.0)
-            .animation(.easeInOut(duration: 0.2), value: isFocused)
-            .menuStyle(.borderlessButton)
             .errorMessage($error)
         }
     }

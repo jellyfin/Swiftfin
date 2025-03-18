@@ -116,8 +116,8 @@ extension ItemView {
 
                 // MARK: - Additional Menu Options
 
-                if canRefresh || canDelete {
-                    ActionMenu {
+                if canRefresh || canDelete || true {
+                    ActionMenu(L10n.advanced, icon: "ellipsis", imageRotation: .degrees(90)) {
                         if canRefresh {
                             RefreshMetadataButton(item: viewModel.item)
                         }
