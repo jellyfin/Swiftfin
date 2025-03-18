@@ -78,7 +78,7 @@ extension ItemView {
                 if viewModel.item.remoteTrailers?.isNotEmpty ?? false || viewModel.localTrailers.isNotEmpty {
                     Menu {
                         if viewModel.localTrailers.isNotEmpty {
-                            Section("Local") {
+                            Section(L10n.local) {
                                 ForEach(viewModel.localTrailers, id: \.self) { trailer in
                                     Button {
                                         if let selectedMediaSource = trailer.mediaSources?.first {
@@ -92,7 +92,7 @@ extension ItemView {
                                         }
                                     } label: {
                                         HStack {
-                                            Text(trailer.name ?? "Local Trailer")
+                                            Text(trailer.name ?? L10n.trailer)
                                             Spacer()
                                             Image(systemName: "play")
                                         }
@@ -102,13 +102,8 @@ extension ItemView {
                             }
                         }
 
-                        // TODO: This is bad. Figure out how to do this better.
-                        if viewModel.item.remoteTrailers?.isNotEmpty ?? false && viewModel.localTrailers.isNotEmpty {
-                            Divider()
-                        }
-
                         if let externaltrailers = viewModel.item.remoteTrailers {
-                            Section("Remote") {
+                            Section(L10n.external) {
                                 ForEach(externaltrailers, id: \.url) { trailer in
                                     Button {
                                         if let url = trailer.url, let nsUrl = URL(string: url.description) {
@@ -119,7 +114,7 @@ extension ItemView {
                                         }
                                     } label: {
                                         HStack {
-                                            Text(trailer.name ?? "Online Trailer")
+                                            Text(trailer.name ?? L10n.trailer)
                                             Spacer()
                                             Image(systemName: "arrow.up.forward")
                                         }

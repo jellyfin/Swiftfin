@@ -835,6 +835,9 @@
 /// Experimental
 "experimental" = "Experimental";
 
+/// External
+"external" = "External";
+
 /// Failed logins
 "failedLogins" = "Failed logins";
 
@@ -1056,6 +1059,9 @@
 
 /// Loading user failed
 "loadingUserFailed" = "Loading user failed";
+
+/// Local
+"local" = "Local";
 
 /// Local Servers
 "localServers" = "Local Servers";
@@ -1917,6 +1923,9 @@
 
 /// Title
 "title" = "Title";
+
+/// Trailer
+"trailer" = "Trailer";
 
 /// Trailers
 "trailers" = "Trailers";
