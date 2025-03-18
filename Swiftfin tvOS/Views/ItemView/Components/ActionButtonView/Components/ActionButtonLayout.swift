@@ -13,14 +13,24 @@ import SwiftUI
 // TODO: Verify this does everything we need/want it to do
 struct ActionButtonLayout: Layout {
 
-    var horizontalSpacing: CGFloat = 25
-    var verticalSpacing: CGFloat = 20
-    var minItemWidth: CGFloat = 100
-    var maxItemsPerRow: Int?
-    var alignment: HorizontalAlignment = .center
-    var itemHeight: CGFloat = 100
+    // MARK: - Static Item Spacing
 
+    let horizontalSpacing: CGFloat = 25
+    let verticalSpacing: CGFloat = 20
+
+    // MARK: - Static Item Sizing
+
+    let minItemWidth: CGFloat = 100
+    let itemHeight: CGFloat = 100
+
+    // MARK: - Track Row Sizing
+
+    @State
+    var maxItemsPerRow: Int?
+    @State
     var menuItemIndex: Int?
+
+    // MARK: - Actions
 
     var onRowsComputed: (([[Int]]) -> Void)?
 
@@ -41,15 +51,12 @@ struct ActionButtonLayout: Layout {
                 height += verticalSpacing
             }
         }
-
-        // Width is just the available width from the proposal
         let width = proposal.width ?? 0
 
         return CGSize(width: width, height: height)
     }
 
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        // Early return for empty subviews
         guard !subviews.isEmpty else { return }
 
         // Use our enhanced row computation that considers menu position
@@ -204,10 +211,8 @@ struct ActionButtonLayout: Layout {
             if rows[0].count < 4 {
 
                 if rows[0].isEmpty {
-                    // First row is empty, just add it
                     rows[0].append(menuIndex)
                 } else {
-                    // Insert it at the end of first row
                     rows[0].append(menuIndex)
                 }
             } else {

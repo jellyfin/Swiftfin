@@ -50,7 +50,8 @@ extension ItemView {
                     }
 
                     Label(title, systemImage: isSelected ? selectedIcon : icon)
-                        .focusable(false)
+                        .hoverEffectDisabled()
+                        .focusEffectDisabled()
                         .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundStyle(.black)
@@ -58,13 +59,21 @@ extension ItemView {
                 }
                 .accessibilityLabel(title)
             }
-            .padding(0)
             .focused($isFocused)
             .scaleEffect(isFocused ? 1.1 : 1.0)
             .focusEffectDisabled()
             .animation(.easeInOut(duration: 0.15), value: isFocused)
-            .buttonStyle(.borderless)
-            .buttonStyle(.card)
+            .buttonStyle(ActionButtonStyle())
+        }
+    }
+
+    // MARK: - Action Button Style
+
+    struct ActionButtonStyle: ButtonStyle {
+        func makeBody(configuration: Configuration) -> some View {
+            configuration.label
+                .scaleEffect(configuration.isPressed ? 0.9 : 1.0)
+                .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
         }
     }
 }

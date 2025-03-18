@@ -60,9 +60,29 @@ extension ItemView {
                         ForEach(externaltrailers, id: \.url) { trailer in
                             Button {
                                 if let url = trailer.url, let nsUrl = URL(string: url.description) {
-                                    UIApplication.shared.open(nsUrl, options: [:], completionHandler: nil)
+                                    if UIApplication.shared.canOpenURL(nsUrl) {
+                                        UIApplication.shared.open(nsUrl, options: [:], completionHandler: { success in
+                                            if !success {
+                                                self.error = JellyfinAPIError(
+                                                    """
+                                                    Failed to open this trailer. Please ensure that you have the appropriate app to play this trailer installed on your device.
+
+                                                    \(url)
+                                                    """
+                                                )
+                                            }
+                                        })
+                                    } else {
+                                        self.error = JellyfinAPIError(
+                                            """
+                                            Unable to open this trailer.
+
+                                            \(url)
+                                            """
+                                        )
+                                    }
                                 } else {
-                                    error = JellyfinAPIError("No media sources found")
+                                    error = JellyfinAPIError("This trailer does not have a valid URL.")
                                 }
                             } label: {
                                 HStack {

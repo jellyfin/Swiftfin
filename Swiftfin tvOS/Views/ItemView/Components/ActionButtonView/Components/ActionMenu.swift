@@ -44,13 +44,10 @@ extension ItemView {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(isFocused ? Color.white : Color.white.opacity(0.5))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.clear, lineWidth: 2)
-                        )
 
                     Label(title, systemImage: icon)
-                        .focusable(false)
+                        .hoverEffectDisabled()
+                        .focusEffectDisabled()
                         .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundStyle(.black)
@@ -58,12 +55,10 @@ extension ItemView {
                 }
                 .accessibilityLabel(title)
             }
-            .padding(0)
             .focused($isFocused)
             .scaleEffect(isFocused ? 1.1 : 1.0)
             .animation(.easeInOut(duration: 0.15), value: isFocused)
             .menuStyle(.borderlessButton)
-            .buttonStyle(.card)
         }
     }
 }
