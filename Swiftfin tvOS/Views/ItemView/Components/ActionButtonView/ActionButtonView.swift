@@ -87,7 +87,6 @@ extension ItemView {
                 }
                 .foregroundStyle(.purple)
                 .environment(\.isSelected, viewModel.item.userData?.isPlayed ?? false)
-                .frame(maxWidth: .infinity)
 
                 // MARK: Toggle Favorite
 
@@ -100,23 +99,20 @@ extension ItemView {
                 }
                 .foregroundStyle(.pink)
                 .environment(\.isSelected, viewModel.item.userData?.isFavorite ?? false)
-                .frame(maxWidth: .infinity)
 
                 // MARK: Select Merged Version
 
                 if let mediaSources = viewModel.playButtonItem?.mediaSources, mediaSources.count > 1 {
                     VersionMenu(viewModel: viewModel, mediaSources: mediaSources)
-                        .frame(maxWidth: .infinity)
                 }
 
-                // MARK: Watch an Item Trailer
+                // MARK: Watch a Trailer
 
                 if viewModel.item.remoteTrailers?.isNotEmpty ?? false || viewModel.localTrailers.isNotEmpty {
                     TrailerMenu(viewModel: viewModel)
-                        .frame(maxWidth: .infinity)
                 }
 
-                // MARK: Additional Menu Options
+                // MARK: Advanced Options
 
                 if canRefresh || canDelete {
                     ActionMenu(L10n.advanced, icon: "ellipsis") {
@@ -125,7 +121,6 @@ extension ItemView {
                         }
 
                         if canDelete {
-                            Divider()
                             Button(L10n.delete, systemImage: "trash", role: .destructive) {
                                 showConfirmationDialog = true
                             }
