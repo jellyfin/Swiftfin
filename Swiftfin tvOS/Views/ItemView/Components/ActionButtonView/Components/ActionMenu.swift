@@ -21,7 +21,6 @@ extension ItemView {
 
         private let title: String
         private let icon: String
-        private let imageRotation: Angle
         private let content: () -> Content
 
         // MARK: - Initializers
@@ -29,12 +28,10 @@ extension ItemView {
         init(
             _ title: String,
             icon: String,
-            imageRotation: Angle = .degrees(0),
             @ViewBuilder content: @escaping () -> Content
         ) {
             self.title = title
             self.icon = icon
-            self.imageRotation = imageRotation
             self.content = content
         }
 
@@ -53,19 +50,20 @@ extension ItemView {
                         )
 
                     Label(title, systemImage: icon)
+                        .focusable(false)
                         .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundStyle(.black)
                         .labelStyle(.iconOnly)
-                        .rotationEffect(imageRotation)
                 }
                 .accessibilityLabel(title)
             }
             .padding(0)
             .focused($isFocused)
-            .scaleEffect(isFocused ? 1.2 : 1.0)
+            .scaleEffect(isFocused ? 1.1 : 1.0)
             .animation(.easeInOut(duration: 0.15), value: isFocused)
             .menuStyle(.borderlessButton)
+            .buttonStyle(.card)
         }
     }
 }

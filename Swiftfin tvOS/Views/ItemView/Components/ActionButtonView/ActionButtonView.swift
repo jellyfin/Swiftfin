@@ -10,7 +10,7 @@ import SwiftUI
 
 extension ItemView {
 
-    struct ActionButtonHStack: View {
+    struct ActionButtonView: View {
 
         // MARK: - Observed, State, & Environment Objects
 
@@ -74,9 +74,9 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            HStack(alignment: .center, spacing: 24) {
+            ActionButtonLayout {
 
-                // MARK: - Toggle Played
+                // MARK: Toggle Played
 
                 ActionButton(
                     title: L10n.played,
@@ -87,9 +87,9 @@ extension ItemView {
                 }
                 .foregroundStyle(.purple)
                 .environment(\.isSelected, viewModel.item.userData?.isPlayed ?? false)
-                .frame(minWidth: 80, maxWidth: .infinity)
+                .frame(maxWidth: .infinity)
 
-                // MARK: - Toggle Favorite
+                // MARK: Toggle Favorite
 
                 ActionButton(
                     title: L10n.favorited,
@@ -100,24 +100,26 @@ extension ItemView {
                 }
                 .foregroundStyle(.pink)
                 .environment(\.isSelected, viewModel.item.userData?.isFavorite ?? false)
-                .frame(minWidth: 80, maxWidth: .infinity)
+                .frame(maxWidth: .infinity)
 
-                // MARK: - Select Merged Version
+                // MARK: Select Merged Version
 
                 if let mediaSources = viewModel.playButtonItem?.mediaSources, mediaSources.count > 1 {
                     VersionMenu(viewModel: viewModel, mediaSources: mediaSources)
-                        .frame(minWidth: 80, maxWidth: .infinity)
+                        .frame(maxWidth: .infinity)
                 }
+
+                // MARK: Watch an Item Trailer
 
                 if viewModel.item.remoteTrailers?.isNotEmpty ?? false || viewModel.localTrailers.isNotEmpty {
                     TrailerMenu(viewModel: viewModel)
-                        .frame(minWidth: 80, maxWidth: .infinity)
+                        .frame(maxWidth: .infinity)
                 }
 
-                // MARK: - Additional Menu Options
+                // MARK: Additional Menu Options
 
-                if canRefresh || canDelete || true {
-                    ActionMenu(L10n.advanced, icon: "ellipsis", imageRotation: .degrees(90)) {
+                if canRefresh || canDelete {
+                    ActionMenu(L10n.advanced, icon: "ellipsis") {
                         if canRefresh {
                             RefreshMetadataButton(item: viewModel.item)
                         }
@@ -129,10 +131,11 @@ extension ItemView {
                             }
                         }
                     }
-                    .frame(minWidth: 30, maxWidth: 50)
+                    .frame(maxWidth: .infinity)
                 }
             }
-            .frame(height: 100)
+            .padding(.top, 1)
+            .padding(.bottom, 10)
             .confirmationDialog(
                 L10n.deleteItemConfirmationMessage,
                 isPresented: $showConfirmationDialog,

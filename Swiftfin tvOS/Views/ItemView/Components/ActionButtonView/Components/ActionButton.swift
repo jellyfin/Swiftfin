@@ -39,25 +39,31 @@ extension ItemView {
             Button(action: onSelect) {
                 ZStack {
                     if isSelected {
-                        Rectangle()
+                        RoundedRectangle(cornerRadius: 10)
                             .fill(
                                 isFocused ? AnyShapeStyle(HierarchicalShapeStyle.primary) :
                                     AnyShapeStyle(HierarchicalShapeStyle.primary.opacity(0.5))
                             )
                     } else {
-                        Rectangle()
+                        RoundedRectangle(cornerRadius: 10)
                             .fill(isFocused ? Color.white : Color.white.opacity(0.5))
                     }
 
                     Label(title, systemImage: isSelected ? selectedIcon : icon)
+                        .focusable(false)
                         .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundStyle(.black)
                         .labelStyle(.iconOnly)
                 }
+                .accessibilityLabel(title)
             }
             .padding(0)
             .focused($isFocused)
+            .scaleEffect(isFocused ? 1.1 : 1.0)
+            .focusEffectDisabled()
+            .animation(.easeInOut(duration: 0.15), value: isFocused)
+            .buttonStyle(.borderless)
             .buttonStyle(.card)
         }
     }
