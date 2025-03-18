@@ -153,9 +153,9 @@ struct ActionButtonStyle: ButtonStyle {
 
     private func getExpansionAmount(isPressed: Bool) -> CGFloat {
         if isPressed {
-            return -12
+            return -16
         } else if isFocused {
-            return 12
+            return 16
         } else {
             return 0
         }
@@ -199,7 +199,7 @@ struct ActionButtonScaleModifier: ViewModifier {
         if expansion == 0 {
             return 1.0
         }
-        let baseSize = min(size.width, size.height)
+        let baseSize = max(size.width, size.height)
 
         guard baseSize > 0 else { return 1.0 }
 
