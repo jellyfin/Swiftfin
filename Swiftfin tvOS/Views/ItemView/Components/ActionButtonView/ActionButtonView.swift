@@ -79,7 +79,7 @@ extension ItemView {
                 // MARK: Toggle Played
 
                 ActionButton(
-                    title: L10n.played,
+                    L10n.played,
                     icon: "checkmark.circle",
                     selectedIcon: "checkmark.circle.fill"
                 ) {
@@ -91,7 +91,7 @@ extension ItemView {
                 // MARK: Toggle Favorite
 
                 ActionButton(
-                    title: L10n.favorited,
+                    L10n.favorited,
                     icon: "heart.circle",
                     selectedIcon: "heart.circle.fill"
                 ) {
@@ -115,7 +115,7 @@ extension ItemView {
                 // MARK: Advanced Options
 
                 if canRefresh || canDelete {
-                    ActionMenu(L10n.advanced, icon: "ellipsis") {
+                    ActionButton(L10n.advanced, icon: "ellipsis") {
                         if canRefresh {
                             RefreshMetadataButton(item: viewModel.item)
                         }

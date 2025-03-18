@@ -30,7 +30,7 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            ActionMenu(L10n.trailers, icon: "movieclapper") {
+            ActionButton(L10n.trailers, icon: "movieclapper") {
                 if viewModel.localTrailers.isNotEmpty {
                     Section(L10n.local) {
                         ForEach(viewModel.localTrailers, id: \.self) { trailer in

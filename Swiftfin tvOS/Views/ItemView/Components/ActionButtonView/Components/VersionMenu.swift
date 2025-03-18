@@ -26,7 +26,7 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            ActionMenu(L10n.trailers, icon: "list.dash") {
+            ActionButton(L10n.trailers, icon: "list.dash") {
                 // TODO: Replace with Picker
                 ForEach(mediaSources, id: \.hashValue) { mediaSource in
                     Button {

@@ -258,7 +258,6 @@
 		4EF18B282CB9936D00343666 /* ListColumnsPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF18B272CB9936400343666 /* ListColumnsPickerView.swift */; };
 		4EF18B2A2CB993BD00343666 /* ListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF18B292CB993AD00343666 /* ListRow.swift */; };
 		4EF3D80B2CF7D6670081AD20 /* ServerUserAccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF3D8092CF7D6670081AD20 /* ServerUserAccessView.swift */; };
-		4EF659E32CDD270D00E0BE5D /* ActionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF659E22CDD270B00E0BE5D /* ActionMenu.swift */; };
 		4EFAC12C2D1E255900E40880 /* EditServerUserAccessTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFAC12B2D1E255600E40880 /* EditServerUserAccessTagsView.swift */; };
 		4EFAC1302D1E2EB900E40880 /* EditAccessTagRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFAC12E2D1E2EB900E40880 /* EditAccessTagRow.swift */; };
 		4EFAC1332D1E8C6B00E40880 /* AddServerUserAccessTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFAC1322D1E8C6B00E40880 /* AddServerUserAccessTagsView.swift */; };
@@ -1479,7 +1478,6 @@
 		4EF18B272CB9936400343666 /* ListColumnsPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListColumnsPickerView.swift; sourceTree = "<group>"; };
 		4EF18B292CB993AD00343666 /* ListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRow.swift; sourceTree = "<group>"; };
 		4EF3D8092CF7D6670081AD20 /* ServerUserAccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerUserAccessView.swift; sourceTree = "<group>"; };
-		4EF659E22CDD270B00E0BE5D /* ActionMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionMenu.swift; sourceTree = "<group>"; };
 		4EFAC12B2D1E255600E40880 /* EditServerUserAccessTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditServerUserAccessTagsView.swift; sourceTree = "<group>"; };
 		4EFAC12E2D1E2EB900E40880 /* EditAccessTagRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAccessTagRow.swift; sourceTree = "<group>"; };
 		4EFAC1322D1E8C6B00E40880 /* AddServerUserAccessTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddServerUserAccessTagsView.swift; sourceTree = "<group>"; };
@@ -2531,7 +2529,6 @@
 			children = (
 				4E5334A12CD1A28400D59FA8 /* ActionButton.swift */,
 				4E5D3ECE2D8944F4003E2772 /* ActionButtonLayout.swift */,
-				4EF659E22CDD270B00E0BE5D /* ActionMenu.swift */,
 				4E97D1842D064B43004B89AD /* RefreshMetadataButton.swift */,
 				4E5D3EC72D8920AF003E2772 /* TrailerMenu.swift */,
 				4EDDB49B2D596E0700DA16E8 /* VersionMenu.swift */,
@@ -5941,7 +5938,6 @@
 				E152107D2947ACA000375CC2 /* InvertedLightAppIcon.swift in Sources */,
 				E1549663296CA2EF00C4EF88 /* UserSession.swift in Sources */,
 				4EF18B2A2CB993BD00343666 /* ListRow.swift in Sources */,
-				4EF659E32CDD270D00E0BE5D /* ActionMenu.swift in Sources */,
 				531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */,
 				4E4DAC372D11EE5E00E13FF9 /* SplitLoginWindowView.swift in Sources */,
 				4E97D1832D064748004B89AD /* ItemSection.swift in Sources */,
