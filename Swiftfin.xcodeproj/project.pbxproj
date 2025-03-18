@@ -106,7 +106,7 @@
 		4E556AB02D036F6900733377 /* UserPermissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E556AAF2D036F5E00733377 /* UserPermissions.swift */; };
 		4E556AB12D036F6900733377 /* UserPermissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E556AAF2D036F5E00733377 /* UserPermissions.swift */; };
 		4E5D3EC82D8920AF003E2772 /* TrailerMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5D3EC72D8920AF003E2772 /* TrailerMenu.swift */; };
-		4E5D3ECF2D89450E003E2772 /* ActionButtonLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5D3ECE2D8944F4003E2772 /* ActionButtonLayout.swift */; };
+		4E5D3ECF2D89450E003E2772 /* ActionButtonViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5D3ECE2D8944F4003E2772 /* ActionButtonViewLayout.swift */; };
 		4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
 		4E5EE5512D67CE9500982290 /* ImageCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5EE5502D67CE9000982290 /* ImageCard.swift */; };
 		4E5EE5532D67CFAB00982290 /* ImageCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5EE5522D67CFAB00982290 /* ImageCard.swift */; };
@@ -232,6 +232,8 @@
 		4ED25CA12D07E3590010333C /* EditAccessScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED25CA02D07E3520010333C /* EditAccessScheduleView.swift */; };
 		4ED25CA42D07E4990010333C /* EditAccessScheduleRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED25CA22D07E4990010333C /* EditAccessScheduleRow.swift */; };
 		4EDDB49C2D596E1200DA16E8 /* VersionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDDB49B2D596E0700DA16E8 /* VersionMenu.swift */; };
+		4EE0601D2D8A0B2A00EEB772 /* ActionButtonScaleModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE0601C2D8A0B2300EEB772 /* ActionButtonScaleModifier.swift */; };
+		4EE0601F2D8A0B6900EEB772 /* ActionButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE0601E2D8A0B6500EEB772 /* ActionButtonStyle.swift */; };
 		4EE07CBB2D08B19700B0B636 /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE07CBA2D08B19100B0B636 /* ErrorMessage.swift */; };
 		4EE07CBC2D08B19700B0B636 /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE07CBA2D08B19100B0B636 /* ErrorMessage.swift */; };
 		4EE141692C8BABDF0045B661 /* ActiveSessionProgressSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE141682C8BABDF0045B661 /* ActiveSessionProgressSection.swift */; };
@@ -1349,7 +1351,7 @@
 		4E5508722D13AFE3002A5345 /* UserProfileImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileImage.swift; sourceTree = "<group>"; };
 		4E556AAF2D036F5E00733377 /* UserPermissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPermissions.swift; sourceTree = "<group>"; };
 		4E5D3EC72D8920AF003E2772 /* TrailerMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrailerMenu.swift; sourceTree = "<group>"; };
-		4E5D3ECE2D8944F4003E2772 /* ActionButtonLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButtonLayout.swift; sourceTree = "<group>"; };
+		4E5D3ECE2D8944F4003E2772 /* ActionButtonViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButtonViewLayout.swift; sourceTree = "<group>"; };
 		4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		4E5EE5502D67CE9000982290 /* ImageCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCard.swift; sourceTree = "<group>"; };
 		4E5EE5522D67CFAB00982290 /* ImageCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCard.swift; sourceTree = "<group>"; };
@@ -1455,6 +1457,8 @@
 		4ED25CA22D07E4990010333C /* EditAccessScheduleRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAccessScheduleRow.swift; sourceTree = "<group>"; };
 		4EDBDCD02CBDD6510033D347 /* SessionInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionInfo.swift; sourceTree = "<group>"; };
 		4EDDB49B2D596E0700DA16E8 /* VersionMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionMenu.swift; sourceTree = "<group>"; };
+		4EE0601C2D8A0B2300EEB772 /* ActionButtonScaleModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButtonScaleModifier.swift; sourceTree = "<group>"; };
+		4EE0601E2D8A0B6500EEB772 /* ActionButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButtonStyle.swift; sourceTree = "<group>"; };
 		4EE07CBA2D08B19100B0B636 /* ErrorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
 		4EE141682C8BABDF0045B661 /* ActiveSessionProgressSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionProgressSection.swift; sourceTree = "<group>"; };
 		4EE766F42D131FB7009658F0 /* IdentifyItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifyItemView.swift; sourceTree = "<group>"; };
@@ -2527,8 +2531,8 @@
 		4E5D3ECB2D893F0B003E2772 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				4E5334A12CD1A28400D59FA8 /* ActionButton.swift */,
-				4E5D3ECE2D8944F4003E2772 /* ActionButtonLayout.swift */,
+				4EE0601A2D8A0B0800EEB772 /* ActionButton */,
+				4E5D3ECE2D8944F4003E2772 /* ActionButtonViewLayout.swift */,
 				4E97D1842D064B43004B89AD /* RefreshMetadataButton.swift */,
 				4E5D3EC72D8920AF003E2772 /* TrailerMenu.swift */,
 				4EDDB49B2D596E0700DA16E8 /* VersionMenu.swift */,
@@ -2995,6 +2999,24 @@
 				4ED25CA02D07E3520010333C /* EditAccessScheduleView.swift */,
 			);
 			path = EditAccessScheduleView;
+			sourceTree = "<group>";
+		};
+		4EE0601A2D8A0B0800EEB772 /* ActionButton */ = {
+			isa = PBXGroup;
+			children = (
+				4E5334A12CD1A28400D59FA8 /* ActionButton.swift */,
+				4EE0601B2D8A0B1700EEB772 /* Components */,
+			);
+			path = ActionButton;
+			sourceTree = "<group>";
+		};
+		4EE0601B2D8A0B1700EEB772 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4EE0601E2D8A0B6500EEB772 /* ActionButtonStyle.swift */,
+				4EE0601C2D8A0B2300EEB772 /* ActionButtonScaleModifier.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 		4EE766F32D131F6E009658F0 /* IdentifyItemView */ = {
@@ -5963,7 +5985,7 @@
 				E102314B2BCF8A6D009D71FC /* ProgramsViewModel.swift in Sources */,
 				E1DD55382B6EE533007501C0 /* Task.swift in Sources */,
 				E1575EA1293E7B1E001665B1 /* String.swift in Sources */,
-				4E5D3ECF2D89450E003E2772 /* ActionButtonLayout.swift in Sources */,
+				4E5D3ECF2D89450E003E2772 /* ActionButtonViewLayout.swift in Sources */,
 				4E699BC02CB3477D007CBD5D /* HomeSection.swift in Sources */,
 				E1E6C45429B1304E0064123F /* ChaptersActionButton.swift in Sources */,
 				E1763A292BF3046A004DF6AB /* AddUserButton.swift in Sources */,
@@ -6007,6 +6029,7 @@
 				E12CC1C528D12D9B00678D5D /* SeeAllPosterButton.swift in Sources */,
 				E18A8E8128D6083700333B9A /* MediaSourceInfo+ItemVideoPlayerViewModel.swift in Sources */,
 				E1002B652793CEE800E47059 /* ChapterInfo.swift in Sources */,
+				4EE0601F2D8A0B6900EEB772 /* ActionButtonStyle.swift in Sources */,
 				4E9A24E62C82B5A50023DA83 /* CustomDeviceProfileSettingsView.swift in Sources */,
 				E1153D9A2BBA3E9800424D36 /* ErrorCard.swift in Sources */,
 				E1ED91162B95897500802036 /* LatestInLibraryViewModel.swift in Sources */,
@@ -6280,6 +6303,7 @@
 				4E2AC4C62C6C492700DD600D /* MediaContainer.swift in Sources */,
 				E18E021C2887492B0022598C /* BlurView.swift in Sources */,
 				E187F7682B8E6A1C005400FE /* EnvironmentValue+Values.swift in Sources */,
+				4EE0601D2D8A0B2A00EEB772 /* ActionButtonScaleModifier.swift in Sources */,
 				E1E6C44729AECD5D0064123F /* PlayPreviousItemActionButton.swift in Sources */,
 				4E1AA0052D0640AA00524970 /* RemoteImageInfo.swift in Sources */,
 				E1A5056B2D0B733F007EE305 /* Optional.swift in Sources */,

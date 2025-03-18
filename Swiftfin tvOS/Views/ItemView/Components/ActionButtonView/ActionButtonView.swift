@@ -74,7 +74,7 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            ActionButtonLayout {
+            ActionButtonViewLayout {
 
                 // MARK: Toggle Played
 
@@ -114,7 +114,7 @@ extension ItemView {
 
                 // MARK: Advanced Options
 
-                if canRefresh || canDelete {
+                if canRefresh || canDelete || true {
                     ActionButton(L10n.advanced, icon: "ellipsis") {
                         if canRefresh {
                             RefreshMetadataButton(item: viewModel.item)

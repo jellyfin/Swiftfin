@@ -11,7 +11,7 @@ import SwiftUI
 // TODO: Rewrite this or something to make sense to humans
 // TODO: Remove all the AI comments
 // TODO: Verify this does everything we need/want it to do
-struct ActionButtonLayout: Layout {
+struct ActionButtonViewLayout: Layout {
 
     // MARK: - Static Item Spacing
 
