@@ -49,6 +49,7 @@ struct PosterButton<Item: Poster>: View {
 
     // MARK: Management
 
+    private var onAddToPlaylist: (() -> Void)?
     private var onDownload: (() -> Void)?
     private var onRefresh: (() -> Void)?
     private var onDelete: (() -> Void)?
@@ -191,6 +192,15 @@ struct PosterButton<Item: Poster>: View {
             .eraseToAnyView()
 
         // MARK: Management
+
+        /// Add to Playlist
+        if let onAddToPlaylist {
+            contextButton(
+                "Add to Playlist",
+                icon: "text.badge.plus",
+                action: onAddToPlaylist
+            )
+        }
 
         /// Download
         if let onDownload {
