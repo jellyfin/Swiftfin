@@ -222,6 +222,7 @@ struct PosterButton<Item: Poster>: View {
 
         /// Delete Item
         if let onDelete {
+            Divider()
             contextButton(
                 L10n.delete,
                 icon: "trash",

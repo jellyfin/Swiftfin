@@ -184,6 +184,9 @@ struct PagingLibraryView<Element: Poster>: View {
 
     @ViewBuilder
     private func landscapeGridItemView(item: Element) -> some View {
+
+        let baseItem = item as! BaseItemDto
+
         PosterButton(item: item, type: .landscape)
             .content {
                 if item.showTitle {
@@ -209,19 +212,23 @@ struct PagingLibraryView<Element: Poster>: View {
                 itemViewModel.send(.toggleIsFavorite)
             }
             .onRefresh {
-                let refreshMetadataViewModel = RefreshMetadataViewModel(item: item as! BaseItemDto)
-                refreshMetadataViewModel.send(
-                    .refreshMetadata(
-                        metadataRefreshMode: .default,
-                        imageRefreshMode: .default,
-                        replaceMetadata: false,
-                        replaceImages: false
+                if userSession?.user.permissions.items.canEditMetadata ?? false {
+                    let refreshMetadataViewModel = RefreshMetadataViewModel(item: baseItem)
+                    refreshMetadataViewModel.send(
+                        .refreshMetadata(
+                            metadataRefreshMode: .default,
+                            imageRefreshMode: .default,
+                            replaceMetadata: false,
+                            replaceImages: false
+                        )
                     )
-                )
+                }
             }
             .onDelete {
-                let deleteItemViewModel = DeleteItemViewModel(item: item as! BaseItemDto)
-                deleteItemViewModel.send(.delete)
+                if userSession?.user.permissions.items.canDelete ?? false && baseItem.canDelete ?? false {
+                    let deleteItemViewModel = DeleteItemViewModel(item: baseItem)
+                    deleteItemViewModel.send(.delete)
+                }
             }
     }
 
