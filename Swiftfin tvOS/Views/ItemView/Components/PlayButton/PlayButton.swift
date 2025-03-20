@@ -32,7 +32,7 @@ extension ItemView {
             viewModel.playButtonItem?.mediaSources ?? []
         }
 
-        // MARK: - Are there Multiple Media Sources?
+        // MARK: - Multiple Media Sources
 
         private var multipleVersions: Bool {
             mediaSources.count > 1
@@ -54,7 +54,7 @@ extension ItemView {
 
         var body: some View {
             HStack(spacing: 20) {
-                playButtonView
+                playButton
 
                 if multipleVersions {
                     VersionMenu(viewModel: viewModel, mediaSources: mediaSources)
@@ -65,7 +65,7 @@ extension ItemView {
 
         // MARK: - Play Button
 
-        private var playButtonView: some View {
+        private var playButton: some View {
             Button {
                 if let playButtonItem = viewModel.playButtonItem, let selectedMediaSource = viewModel.selectedMediaSource {
                     router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: playButtonItem, mediaSource: selectedMediaSource))
@@ -78,15 +78,9 @@ extension ItemView {
                         .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
                         .font(.title3)
 
-                    if multipleVersions {
-                        ScrollingText(title, alignment: .center)
-                            .foregroundStyle(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
-                            .fontWeight(.semibold)
-                    } else {
-                        Text(title)
-                            .foregroundStyle(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
-                            .fontWeight(.semibold)
-                    }
+                    ScrollingText(title, alignment: .leading)
+                        .foregroundStyle(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
+                        .fontWeight(.semibold)
                 }
                 .padding(20)
                 .frame(width: multipleVersions ? 320 : 440, height: 100, alignment: .center)

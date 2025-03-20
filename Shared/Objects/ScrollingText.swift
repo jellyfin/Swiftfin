@@ -30,14 +30,33 @@ public struct ScrollingText: View {
     @State
     private var animate = false
 
+    // MARK: - Initializer
+
+    private init(
+        text: String,
+        font: UIFont? = nil,
+        leftFade: CGFloat = 8,
+        rightFade: CGFloat = 8,
+        startDelay: Double = 3.0,
+        alignment: Alignment = .center
+    ) {
+        self.text = text
+        self.font = font
+        self.leftFade = leftFade
+        self.rightFade = rightFade
+        self.startDelay = startDelay
+        self.alignment = alignment
+    }
+
     // MARK: - Body
 
     public var body: some View {
+
+        /// Use the provided Font to determine the Text Height and Width
         let currentFont = font ?? UIFont.preferredFont(forTextStyle: .body)
         let stringWidth = widthOfString(text: text, usingFont: currentFont)
         let stringHeight = heightOfString(text: text, usingFont: currentFont)
 
-        // Create our animations
         let animation = Animation
             .linear(duration: Double(stringWidth) / 30)
             .delay(startDelay)
@@ -46,7 +65,7 @@ public struct ScrollingText: View {
         let nullAnimation = Animation.linear(duration: 0)
 
         GeometryReader { geo in
-            // Decide if scrolling is needed
+            /// Only enable scrolling if the Text exceeds the width of its parent
             let needsScrolling = (stringWidth > geo.size.width)
 
             ZStack {
@@ -62,13 +81,13 @@ public struct ScrollingText: View {
                         nullAnimation: nullAnimation,
                         currentFont: currentFont
                     )
-                    // force left alignment when scrolling
+                    /// Enforce leading alignment when scrolling
                     .frame(
                             minWidth: 0,
                             maxWidth: .infinity,
                             minHeight: 0,
                             maxHeight: .infinity,
-                            alignment: .topLeading
+                            alignment: .leading
                         )
                         .offset(x: leftFade)
                         .mask(
@@ -85,6 +104,7 @@ public struct ScrollingText: View {
                     Text(text)
                         .foregroundStyle(.primary)
                         .font(font == nil ? nil : .init(currentFont))
+                        // TODO: 'onChange(of:perform:)' was deprecated in tvOS 17.0
                         .onChange(of: text) { _ in
                             self.animate = false
                         }
@@ -97,17 +117,18 @@ public struct ScrollingText: View {
                         )
                 }
             }
-            .onAppear {
-                // Trigger scrolling if needed
+            .onFirstAppear {
+                /// Trigger scrolling if needed
                 self.animate = needsScrolling
             }
+            // TODO: 'onChange(of:perform:)' was deprecated in tvOS 17.0
             .onChange(of: text) { newValue in
                 let newStringWidth = widthOfString(text: newValue, usingFont: currentFont)
                 if newStringWidth > geo.size.width {
-                    // Stop the old animation first
+                    /// Stop the old animation the Text changes
                     self.animate = false
 
-                    // Kick off a new animation on the next runloop
+                    /// Begin the new animation on the next 'run loop'
                     DispatchQueue.main.async {
                         self.animate = true
                     }
@@ -116,6 +137,7 @@ public struct ScrollingText: View {
                 }
             }
         }
+        /// Enforce the exact size of the text for the Frame
         .frame(height: stringHeight)
         .frame(maxWidth: stringWidth)
         .onDisappear {
@@ -123,7 +145,7 @@ public struct ScrollingText: View {
         }
     }
 
-    // MARK: - Scrolling pair of texts
+    // MARK: - Scrolling Pair of Texts
 
     @ViewBuilder
     private func makeScrollingTexts(
@@ -151,7 +173,7 @@ public struct ScrollingText: View {
         }
     }
 
-    // MARK: - Fade mask
+    // MARK: - Fade Mask
 
     @ViewBuilder
     private func fadeMask(leftFade: CGFloat, rightFade: CGFloat) -> some View {
@@ -182,7 +204,7 @@ public struct ScrollingText: View {
         }
     }
 
-    // MARK: - String Measurement Functions
+    // MARK: - Get the String's Width
 
     private func widthOfString(text: String, usingFont font: UIFont) -> CGFloat {
         let semiboldFont = UIFont(descriptor: font.fontDescriptor.withSymbolicTraits(.traitBold)!, size: font.pointSize)
@@ -192,6 +214,8 @@ public struct ScrollingText: View {
         return size.width
     }
 
+    // MARK: - Get the String's Height
+
     private func heightOfString(text: String, usingFont font: UIFont) -> CGFloat {
         let semiboldFont = UIFont(descriptor: font.fontDescriptor.withSymbolicTraits(.traitBold)!, size: font.pointSize)
 
@@ -199,32 +223,17 @@ public struct ScrollingText: View {
         let size = text.size(withAttributes: fontAttributes)
         return size.height
     }
-
-    // MARK: - Initializer
-
-    private init(
-        text: String,
-        font: UIFont? = nil,
-        leftFade: CGFloat = 8,
-        rightFade: CGFloat = 8,
-        startDelay: Double = 3.0,
-        alignment: Alignment = .center
-    ) {
-        self.text = text
-        self.font = font
-        self.leftFade = leftFade
-        self.rightFade = rightFade
-        self.startDelay = startDelay
-        self.alignment = alignment
-    }
 }
 
-// MARK: - Public Initializers
-
 public extension ScrollingText {
+
+    // MARK: - Initialize using Default Values
+
     init(_ text: String, alignment: Alignment = .center) {
         self.init(text: text, font: nil, alignment: alignment)
     }
+
+    // MARK: - Initialize using Custom Values
 
     init(
         _ text: String,
@@ -243,17 +252,7 @@ public extension ScrollingText {
         )
     }
 
-    init(
-        _ text: String,
-        font: UIFont? = nil,
-        alignment: Alignment = .center
-    ) {
-        self.init(
-            text: text,
-            font: font,
-            alignment: alignment
-        )
-    }
+    // MARK: - Font Modifier
 
     func font(_ font: UIFont) -> Self {
         var copy = self

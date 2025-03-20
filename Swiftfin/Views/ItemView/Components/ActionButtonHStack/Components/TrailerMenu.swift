@@ -54,7 +54,7 @@ extension ItemView {
         var viewModel: ItemViewModel
 
         @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        private var router: MainCoordinator.Router
 
         // MARK: - Error State
 

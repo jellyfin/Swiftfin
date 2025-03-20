@@ -64,6 +64,13 @@ extension ItemView {
             }
         }
 
+        // MARK: - Has Trailers
+
+        private var hasTrailers: Bool {
+            viewModel.item.remoteTrailers?.isNotEmpty == true ||
+                viewModel.localTrailers.isNotEmpty
+        }
+
         // MARK: - Initializer
 
         init(viewModel: ItemViewModel) {
@@ -75,6 +82,7 @@ extension ItemView {
 
         var body: some View {
             HStack(alignment: .center, spacing: 20) {
+
                 // MARK: Toggle Played
 
                 ActionButton(
@@ -103,14 +111,14 @@ extension ItemView {
 
                 // MARK: Watch a Trailer
 
-                if viewModel.item.remoteTrailers?.isNotEmpty ?? false || viewModel.localTrailers.isNotEmpty {
+                if hasTrailers {
                     TrailerMenu(viewModel: viewModel)
                         .frame(minWidth: 100, maxWidth: .infinity)
                 }
 
-                // MARK: Advanced Options - Separate from the layout
+                // MARK: Advanced Options
 
-                if canRefresh || canDelete || true {
+                if canRefresh || canDelete {
                     ActionButton(L10n.advanced, icon: "ellipsis", iconAngle: .degrees(90)) {
                         if canRefresh {
                             RefreshMetadataButton(item: viewModel.item)

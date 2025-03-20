@@ -722,6 +722,10 @@ internal enum L10n {
   internal static let layout = L10n.tr("Localizable", "layout", fallback: "Layout")
   /// Learn more...
   internal static let learnMoreEllipsis = L10n.tr("Localizable", "learnMoreEllipsis", fallback: "Learn more...")
+  /// Leaving Swiftfin
+  internal static let leavingSwiftfin = L10n.tr("Localizable", "leavingSwiftfin", fallback: "Leaving Swiftfin")
+  /// This will open content outside of Swiftfin. Are you sure you want to continue?
+  internal static let leavingSwiftfinWarning = L10n.tr("Localizable", "leavingSwiftfinWarning", fallback: "This will open content outside of Swiftfin. Are you sure you want to continue?")
   /// Left
   internal static let `left` = L10n.tr("Localizable", "left", fallback: "Left")
   /// Letter

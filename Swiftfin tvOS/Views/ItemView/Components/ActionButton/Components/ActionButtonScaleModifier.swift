@@ -8,8 +8,6 @@
 
 import SwiftUI
 
-/// Since ActionButtons are variable in size, a 10% increase is too much for the largest button size but too little for the smallest button
-/// This Modifier ensures a fixed PIXEL expansion/contraction is used to ensure a consistent animation
 struct ActionButtonScaleModifier: ViewModifier {
 
     // MARK: - Button Properties

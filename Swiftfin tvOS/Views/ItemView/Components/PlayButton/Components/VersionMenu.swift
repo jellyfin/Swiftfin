@@ -23,20 +23,29 @@ extension ItemView {
 
         let mediaSources: [MediaSourceInfo]
 
+        // MARK: - Selected Media Source Binding
+
+        private var selectedMediaSource: Binding<MediaSourceInfo?> {
+            Binding(
+                get: { viewModel.selectedMediaSource },
+                set: { newSource in
+                    if let newSource = newSource {
+                        viewModel.send(.selectMediaSource(newSource))
+                    }
+                }
+            )
+        }
+
         // MARK: - Body
 
         var body: some View {
-            ActionButton(L10n.trailers, icon: "list.dash") {
-                // TODO: Replace with Picker
-                ForEach(mediaSources, id: \.hashValue) { mediaSource in
-                    Button {
-                        viewModel.send(.selectMediaSource(mediaSource))
-                    } label: {
-                        if let selectedMediaSource = viewModel.selectedMediaSource, selectedMediaSource == mediaSource {
-                            Label(selectedMediaSource.displayTitle, systemImage: "checkmark")
-                        } else {
+            ActionButton(L10n.version, icon: "list.dash") {
+                Picker(L10n.version, selection: selectedMediaSource) {
+                    ForEach(mediaSources, id: \.hashValue) { mediaSource in
+                        Button {
                             Text(mediaSource.displayTitle)
                         }
+                        .tag(mediaSource as MediaSourceInfo?)
                     }
                 }
             }
