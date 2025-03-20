@@ -6,8 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-
 /// A type that provides a collection of a subset of all of its values.
 ///
 /// Using types that conform to `CaseIterable` may contain values that

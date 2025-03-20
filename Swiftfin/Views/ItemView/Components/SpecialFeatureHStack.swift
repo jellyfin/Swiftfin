@@ -25,9 +25,9 @@ extension ItemView {
                 type: .landscape,
                 items: items
             )
-            .onSelect { item in
-                guard let mediaSource = item.mediaSources?.first else { return }
-                router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: item, mediaSource: mediaSource))
+            .onSelect { _ in
+//                guard let mediaSource = item.mediaSources?.first else { return }
+//                router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: item, mediaSource: mediaSource))
             }
         }
     }

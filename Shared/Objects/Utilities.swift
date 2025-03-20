@@ -14,6 +14,13 @@ func clamp<T: Comparable>(_ x: T, min y: T, max z: T) -> T {
 }
 
 @inlinable
+func copy<P, Value>(_ p: P, modifying keyPath: WritableKeyPath<P, Value>, to newValue: Value) -> P {
+    var copy = p
+    copy[keyPath: keyPath] = newValue
+    return copy
+}
+
+@inlinable
 func round<T: BinaryFloatingPoint>(_ value: T, toNearest: T) -> T {
     round(value / toNearest) * toNearest
 }
@@ -21,4 +28,10 @@ func round<T: BinaryFloatingPoint>(_ value: T, toNearest: T) -> T {
 @inlinable
 func round<T: BinaryInteger>(_ value: T, toNearest: T) -> T {
     T(round(Double(value), toNearest: Double(toNearest)))
+}
+
+func with<V>(_ value: V, modify: @escaping (inout V) -> Void) -> V {
+    var value = value
+    modify(&value)
+    return value
 }

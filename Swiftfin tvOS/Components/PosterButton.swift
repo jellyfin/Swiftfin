@@ -64,7 +64,7 @@ struct PosterButton<Item: Poster>: View {
                 }
                 .posterStyle(type)
             }
-            .buttonStyle(.card)
+//            .buttonStyle(.card)
             .contextMenu(menuItems: {
                 contextMenu()
                     .eraseToAnyView()
@@ -78,6 +78,7 @@ struct PosterButton<Item: Poster>: View {
                     }
             }
             .accessibilityLabel(item.displayTitle)
+            .hoverEffect(.highlight)
 
             content()
                 .eraseToAnyView()
@@ -249,21 +250,21 @@ extension PosterButton {
                 if let item = item as? BaseItemDto {
                     if item.userData?.isPlayed ?? false {
                         WatchedIndicator(size: 45)
-                            .visible(showPlayed)
+                            .isVisible(showPlayed)
                     } else {
                         if (item.userData?.playbackPositionTicks ?? 0) > 0 {
                             ProgressIndicator(progress: (item.userData?.playedPercentage ?? 0) / 100, height: 10)
-                                .visible(showProgress)
+                                .isVisible(showProgress)
                         } else {
                             UnwatchedIndicator(size: 45)
                                 .foregroundColor(.jellyfinPurple)
-                                .visible(showUnplayed)
+                                .isVisible(showUnplayed)
                         }
                     }
 
                     if item.userData?.isFavorite ?? false {
                         FavoriteIndicator(size: 45)
-                            .visible(showFavorited)
+                            .isVisible(showFavorited)
                     }
                 }
             }

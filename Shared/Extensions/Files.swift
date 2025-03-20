@@ -8,6 +8,8 @@
 
 import Foundation
 
+// TODO: move to iOS
+
 #if os(iOS)
 extension FileManager {
 

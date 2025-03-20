@@ -11,8 +11,8 @@ import JellyfinAPI
 
 extension PlayerStateInfo {
 
-    var positionSeconds: Int? {
+    var positionSeconds: TimeInterval? {
         guard let positionTicks else { return nil }
-        return positionTicks / 10_000_000
+        return TimeInterval(positionTicks) / 10_000_000
     }
 }

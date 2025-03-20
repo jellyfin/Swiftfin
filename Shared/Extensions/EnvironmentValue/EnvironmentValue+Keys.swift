@@ -11,24 +11,24 @@ import SwiftUI
 
 extension EnvironmentValues {
 
-    struct AccentColor: EnvironmentKey {
-        static let defaultValue: Binding<Color> = .constant(Color.jellyfinPurple)
-    }
-
     struct AudioOffsetKey: EnvironmentKey {
-        static let defaultValue: Binding<Int> = .constant(0)
+        static let defaultValue: Binding<TimeInterval> = .constant(0)
     }
 
     struct AspectFilledKey: EnvironmentKey {
         static let defaultValue: Binding<Bool> = .constant(false)
     }
 
-    struct CurrentOverlayTypeKey: EnvironmentKey {
-        static let defaultValue: Binding<VideoPlayer.OverlayType> = .constant(.main)
-    }
-
     struct IsEditingKey: EnvironmentKey {
         static let defaultValue: Bool = false
+    }
+
+    struct IsInMenuKey: EnvironmentKey {
+        static let defaultValue: Bool = false
+    }
+
+    struct IsGestureLockedKey: EnvironmentKey {
+        static let defaultValue: Binding<Bool> = .constant(false)
     }
 
     struct IsScrubbingKey: EnvironmentKey {
@@ -39,22 +39,27 @@ extension EnvironmentValues {
         static let defaultValue: Bool = false
     }
 
-    struct PlaybackSpeedKey: EnvironmentKey {
-        static let defaultValue: Binding<Double> = .constant(1)
-    }
-
-    // TODO: See if we can use a root `GeometryReader` that sets the environment value
     struct SafeAreaInsetsKey: EnvironmentKey {
-        static var defaultValue: EdgeInsets {
-            UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero
-        }
+        static var defaultValue: EdgeInsets = .zero
     }
 
     struct SubtitleOffsetKey: EnvironmentKey {
-        static let defaultValue: Binding<Int> = .constant(0)
+        static let defaultValue: Binding<TimeInterval> = .constant(0)
     }
 
     struct IsPresentingOverlayKey: EnvironmentKey {
         static let defaultValue: Binding<Bool> = .constant(false)
+    }
+
+    struct IsPresentingDrawerKey: EnvironmentKey {
+        static let defaultValue: Binding<Bool> = .constant(false)
+    }
+
+    struct SelectedMediaPlayerSupplementKey: EnvironmentKey {
+        static let defaultValue: Binding<AnyMediaPlayerSupplement?> = .constant(nil)
+    }
+
+    struct ScrubbedSecondsKey: EnvironmentKey {
+        static let defaultValue: Binding<TimeInterval> = .constant(0)
     }
 }

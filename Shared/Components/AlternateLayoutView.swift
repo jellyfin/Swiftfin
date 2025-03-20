@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: remove frame
+
 /// A view that takes a view to affect layout while overlaying the content.
 struct AlternateLayoutView<Content: View, Layout: View>: View {
 
@@ -27,6 +29,7 @@ struct AlternateLayoutView<Content: View, Layout: View>: View {
 
     var body: some View {
         layout()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .hidden()
             .overlay(alignment: alignment) {
                 content()

@@ -9,6 +9,8 @@
 import Defaults
 import SwiftUI
 
+// TODO: should use environment `isEnabled` instead?
+
 struct NavigationBarCloseButtonModifier: ViewModifier {
 
     @Default(.accentColor)

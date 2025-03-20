@@ -39,7 +39,7 @@ struct AppSettingsView: View {
 
             ChevronButton(L10n.about)
                 .onSelect {
-                    router.route(to: \.about, viewModel)
+                    router.route(to: \.about)
                 }
 
             Section(L10n.accessibility) {

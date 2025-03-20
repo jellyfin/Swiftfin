@@ -6,10 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Foundation
-
-enum SliderType: String, CaseIterable, Displayable, Defaults.Serializable {
+enum SliderType: String, CaseIterable, Displayable, Storable {
 
     case thumb
     case capsule

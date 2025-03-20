@@ -11,217 +11,158 @@ import PreferencesView
 import SwiftUI
 import VLCUI
 
-extension View {
+extension VideoPlayer {
 
-    func videoPlayerKeyCommands(
-        gestureStateHandler: VideoPlayer.GestureStateHandler,
-        updateViewProxy: UpdateViewProxy
-    ) -> some View {
-        modifier(
-            VideoPlayerKeyCommandsModifier(
-                gestureStateHandler: gestureStateHandler,
-                updateViewProxy: updateViewProxy
-            )
-        )
-    }
-}
+    struct KeyCommandsModifier: ViewModifier {
 
-struct VideoPlayerKeyCommandsModifier: ViewModifier {
+        @Default(.VideoPlayer.jumpBackwardInterval)
+        private var jumpBackwardInterval
+        @Default(.VideoPlayer.jumpForwardInterval)
+        private var jumpForwardInterval
 
-    @Default(.VideoPlayer.jumpBackwardLength)
-    private var jumpBackwardLength
-    @Default(.VideoPlayer.jumpForwardLength)
-    private var jumpForwardLength
+        @Environment(\.isAspectFilled)
+        @Binding
+        private var isAspectFilled
 
-    @Environment(\.aspectFilled)
-    private var isAspectFilled
+        @EnvironmentObject
+        private var jumpProgressObserver: JumpProgressObserver
+        @EnvironmentObject
+        private var toastProxy: ToastProxy
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
 
-    @EnvironmentObject
-    private var videoPlayerManager: VideoPlayerManager
-    @EnvironmentObject
-    private var videoPlayerProxy: VLCVideoPlayer.Proxy
+        func body(content: Content) -> some View {
+            content
+                .keyCommands {
 
-    let gestureStateHandler: VideoPlayer.GestureStateHandler
-    let updateViewProxy: UpdateViewProxy
+                    // MARK: Aspect Fill
 
-    func body(content: Content) -> some View {
-        content.keyCommands {
-
-            // MARK: play/pause
-
-            KeyCommandAction(
-                title: L10n.playAndPause,
-                input: " "
-            ) {
-                if videoPlayerManager.state == .playing {
-                    videoPlayerManager.proxy.pause()
-                    updateViewProxy.present(systemName: "pause.fill", title: "Pause")
-                } else {
-                    videoPlayerManager.proxy.play()
-                    updateViewProxy.present(systemName: "play.fill", title: "Play")
-                }
-            }
-
-            // MARK: jump forward
-
-            KeyCommandAction(
-                title: L10n.jumpForward,
-                input: UIKeyCommand.inputRightArrow
-            ) {
-                if gestureStateHandler.jumpForwardKeyPressActive {
-                    gestureStateHandler.jumpForwardKeyPressAmount += 1
-                    gestureStateHandler.jumpForwardKeyPressWorkItem?.cancel()
-
-                    videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
-
-                    let task = DispatchWorkItem {
-                        gestureStateHandler.jumpForwardKeyPressActive = false
-                        gestureStateHandler.jumpForwardKeyPressAmount = 0
+                    KeyCommandAction(
+                        title: "Aspect Fill",
+                        input: "f",
+                        modifierFlags: .command
+                    ) { @MainActor in
+                        isAspectFilled.toggle()
                     }
 
-                    gestureStateHandler.jumpForwardKeyPressWorkItem = task
-
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-                } else {
-                    gestureStateHandler.jumpForwardKeyPressActive = true
-                    gestureStateHandler.jumpForwardKeyPressAmount += 1
-
-                    videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
-
-                    let task = DispatchWorkItem {
-                        gestureStateHandler.jumpForwardKeyPressActive = false
-                        gestureStateHandler.jumpForwardKeyPressAmount = 0
+                    KeyCommandAction(
+                        title: L10n.playAndPause,
+                        input: " "
+                    ) {
+                        switch manager.playbackRequestStatus {
+                        case .playing:
+                            manager.proxy?.pause()
+                        case .paused:
+                            manager.proxy?.play()
+                        }
+                        //                if videoPlayerManager.state == .playing {
+                        //                    videoPlayerManager.proxy?.pause()
+                        //                    updateViewProxy.present(systemName: "pause.fill", title: "Pause")
+                        //                } else {
+                        //                    videoPlayerManager.proxy?.play()
+                        //                    updateViewProxy.present(systemName: "play.fill", title: "Play")
+                        //                }
                     }
 
-                    gestureStateHandler.jumpForwardKeyPressWorkItem = task
+                    // MARK: - Decrease Playback Speed
 
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-                }
-            }
+                    KeyCommandAction(
+                        title: "Decrease Playback Speed",
+                        input: "[",
+                        modifierFlags: .command
+                    ) {
+                        let newRate = clamp(
+                            manager.rate - 0.25,
+                            min: 0.25,
+                            max: 4
+                        )
 
-            // MARK: jump backward
+                        manager.set(rate: newRate)
 
-            KeyCommandAction(
-                title: L10n.jumpBackward,
-                input: UIKeyCommand.inputLeftArrow
-            ) {
-                if gestureStateHandler.jumpBackwardKeyPressActive {
-                    gestureStateHandler.jumpBackwardKeyPressAmount += 1
-                    gestureStateHandler.jumpBackwardKeyPressWorkItem?.cancel()
-
-                    videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
-
-                    let task = DispatchWorkItem {
-                        gestureStateHandler.jumpBackwardKeyPressActive = false
-                        gestureStateHandler.jumpBackwardKeyPressAmount = 0
+                        toastProxy.present(Text(newRate, format: .playbackRate), systemName: "speedometer")
                     }
 
-                    gestureStateHandler.jumpBackwardKeyPressWorkItem = task
+                    // MARK: - Increase Playback Speed
 
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-                } else {
-                    gestureStateHandler.jumpBackwardKeyPressActive = true
-                    gestureStateHandler.jumpBackwardKeyPressAmount += 1
+                    KeyCommandAction(
+                        title: "Increase Playback Speed",
+                        input: "]",
+                        modifierFlags: .command
+                    ) {
+                        let newRate = clamp(
+                            manager.rate + 0.25,
+                            min: 0.25,
+                            max: 4
+                        )
 
-                    videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
+                        manager.set(rate: newRate)
 
-                    let task = DispatchWorkItem {
-                        gestureStateHandler.jumpBackwardKeyPressActive = false
-                        gestureStateHandler.jumpBackwardKeyPressAmount = 0
+                        toastProxy.present(Text(newRate, format: .playbackRate), systemName: "speedometer")
                     }
 
-                    gestureStateHandler.jumpBackwardKeyPressWorkItem = task
+                    // MARK: Reset Playback Speed
 
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+                    KeyCommandAction(
+                        title: "Reset Playback Speed",
+                        input: "\\",
+                        modifierFlags: .command
+                    ) {
+                        manager.set(rate: 1)
+                        toastProxy.present(Text(1, format: .playbackRate), systemName: "speedometer")
+                    }
+
+                    // MARK: Play Next Item
+
+                    KeyCommandAction(
+                        title: L10n.nextItem,
+                        input: UIKeyCommand.inputRightArrow,
+                        modifierFlags: .command
+                    ) {
+                        guard let nextItem = manager.queue?.nextItem else { return }
+                        manager.send(.playNew(item: nextItem))
+                    }
+
+                    // MARK: Play Previous Item
+
+                    KeyCommandAction(
+                        title: L10n.previousItem,
+                        input: UIKeyCommand.inputLeftArrow,
+                        modifierFlags: .command
+                    ) {
+                        guard let previousItem = manager.queue?.previousItem else { return }
+                        manager.send(.playNew(item: previousItem))
+                    }
+
+                    // MARK: - Jump Backward
+
+                    KeyCommandAction(
+                        title: L10n.jumpBackward,
+                        input: UIKeyCommand.inputLeftArrow
+                    ) {
+                        jumpProgressObserver.jumpBackward()
+                        manager.proxy?.jumpBackward(jumpBackwardInterval.interval)
+
+                        toastProxy.present(
+                            Text(Double(jumpProgressObserver.jumps) * jumpBackwardInterval.interval, format: .minuteSeconds),
+                            systemName: "gobackward"
+                        )
+                    }
+
+                    // MARK: - Jump Forward
+
+                    KeyCommandAction(
+                        title: L10n.jumpForward,
+                        input: UIKeyCommand.inputRightArrow
+                    ) {
+                        jumpProgressObserver.jumpForward()
+                        manager.proxy?.jumpForward(jumpForwardInterval.interval)
+
+                        toastProxy.present(
+                            Text(Double(jumpProgressObserver.jumps) * jumpForwardInterval.interval, format: .minuteSeconds),
+                            systemName: "goforward"
+                        )
+                    }
                 }
-            }
-
-            // MARK: aspect fill
-
-            KeyCommandAction(
-                title: "Aspect Fill",
-                input: "f",
-                modifierFlags: .command
-            ) {
-                DispatchQueue.main.async {
-                    isAspectFilled.wrappedValue.toggle()
-                }
-            }
-
-            // MARK: decrease playback speed
-
-            KeyCommandAction(
-                title: "Decrease Playback Speed",
-                input: "[",
-                modifierFlags: .command
-            ) {
-                let clampedPlaybackSpeed = clamp(
-                    videoPlayerManager.playbackSpeed.rawValue - 0.25,
-                    min: 0.25,
-                    max: 2.0
-                )
-
-                let newPlaybackSpeed = PlaybackSpeed(rawValue: clampedPlaybackSpeed) ?? .one
-                videoPlayerManager.playbackSpeed = newPlaybackSpeed
-                videoPlayerManager.proxy.setRate(.absolute(Float(newPlaybackSpeed.rawValue)))
-
-                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
-            }
-
-            // MARK: increase playback speed
-
-            KeyCommandAction(
-                title: "Increase Playback Speed",
-                input: "]",
-                modifierFlags: .command
-            ) {
-                let clampedPlaybackSpeed = clamp(
-                    videoPlayerManager.playbackSpeed.rawValue + 0.25,
-                    min: 0.25,
-                    max: 2.0
-                )
-
-                let newPlaybackSpeed = PlaybackSpeed(rawValue: clampedPlaybackSpeed) ?? .one
-                videoPlayerManager.playbackSpeed = newPlaybackSpeed
-                videoPlayerManager.proxy.setRate(.absolute(Float(newPlaybackSpeed.rawValue)))
-
-                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
-            }
-
-            // MARK: reset playback speed
-
-            KeyCommandAction(
-                title: "Reset Playback Speed",
-                input: "\\",
-                modifierFlags: .command
-            ) {
-                let newPlaybackSpeed = PlaybackSpeed.one
-
-                videoPlayerManager.playbackSpeed = newPlaybackSpeed
-                videoPlayerManager.proxy.setRate(.absolute(Float(newPlaybackSpeed.rawValue)))
-
-                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
-            }
-
-            // MARK: next item
-
-            KeyCommandAction(
-                title: L10n.nextItem,
-                input: UIKeyCommand.inputRightArrow,
-                modifierFlags: .command
-            ) {
-                videoPlayerManager.selectNextViewModel()
-            }
-
-            // MARK: previous item
-
-            KeyCommandAction(
-                title: L10n.previousItem,
-                input: UIKeyCommand.inputLeftArrow,
-                modifierFlags: .command
-            ) {
-                videoPlayerManager.selectPreviousViewModel()
-            }
         }
     }
 }

@@ -6,13 +6,9 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Foundation
+// TODO: remove Chapters. Will be replaced as a media player supplement
+enum VideoPlayerActionButton: String, CaseIterable, Displayable, Identifiable, Storable, SystemImageable {
 
-// TODO: atow, advanced was removed to be redesigned before being released
-enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displayable, Identifiable {
-
-//    case advanced
     case aspectFill
     case audio
     case autoPlay
@@ -49,26 +45,16 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
         rawValue
     }
 
-    var settingsSystemImage: String {
+    var systemImage: String {
         switch self {
-//        case .advanced:
-//            return "gearshape.fill"
-        case .aspectFill:
-            return "arrow.up.left.and.arrow.down.right"
-        case .audio:
-            return "speaker.wave.2"
-        case .autoPlay:
-            return "play.circle.fill"
-        case .chapters:
-            return "list.bullet.circle"
-        case .playbackSpeed:
-            return "speedometer"
-        case .playNextItem:
-            return "chevron.right.circle"
-        case .playPreviousItem:
-            return "chevron.left.circle"
-        case .subtitles:
-            return "captions.bubble"
+        case .aspectFill: "arrow.up.left.and.arrow.down.right"
+        case .audio: "speaker.wave.2"
+        case .autoPlay: "play.circle.fill"
+        case .chapters: "list.bullet"
+        case .playbackSpeed: "speedometer"
+        case .playNextItem: "chevron.right.circle"
+        case .playPreviousItem: "chevron.left.circle"
+        case .subtitles: "captions.bubble"
         }
     }
 
@@ -83,7 +69,5 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
         .audio,
         .subtitles,
         .playbackSpeed,
-        .chapters,
-//        .advanced,
     ]
 }

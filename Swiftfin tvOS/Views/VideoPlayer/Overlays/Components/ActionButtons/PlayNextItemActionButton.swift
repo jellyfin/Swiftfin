@@ -8,22 +8,22 @@
 
 import SwiftUI
 
-extension VideoPlayer.Overlay.ActionButtons {
+extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
 
     struct PlayNextItem: View {
 
         @EnvironmentObject
-        private var overlayTimer: TimerProxy
-        @EnvironmentObject
-        private var videoPlayerManager: VideoPlayerManager
+        private var manager: MediaPlayerManager
 
         var body: some View {
-            SFSymbolButton(systemName: "chevron.right.circle")
-                .onSelect {
-                    videoPlayerManager.selectNextViewModel()
-                    overlayTimer.start(5)
-                }
-                .frame(maxWidth: 30, maxHeight: 30)
+            RoundActionButton(
+                L10n.playNextItem,
+                systemImage: "forward.end.circle.fill"
+            ) {
+                guard let nextItem = manager.queue?.nextItem else { return }
+                manager.send(.playNew(item: nextItem))
+            }
+            .disabled(manager.queue?.hasNextItem == false)
         }
     }
 }
