@@ -54,11 +54,11 @@ extension Stateful {
         let newState = respond(to: action)
 
         if newState != state {
-            state = newState
+//            state = newState
         }
 
         if action != lastAction {
-            lastAction = action
+//            lastAction = action
         }
     }
 }

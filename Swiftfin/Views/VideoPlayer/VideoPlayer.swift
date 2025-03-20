@@ -37,12 +37,18 @@ struct VideoPlayer: View {
     @State
     private var safeAreaInsets: EdgeInsets = .zero
     @State
-    private var scrubbedSeconds: TimeInterval = 0
-    @State
     private var subtitleOffset: TimeInterval = 0
 
     @StateObject
     private var manager: MediaPlayerManager
+    
+    /// The current scrubbed seconds for UI presentation and editing.
+    ///
+    /// - Note: This is value is boxed to avoid unnecessary `View` updates
+    ///         for views that do not implement the current value.
+    @StateObject
+    private var scrubbedSeconds: PublishedBox<TimeInterval> = .init(initialValue: 0)
+    
     @StateObject
     private var vlcUIProxy: VLCVideoPlayer.Proxy
 
@@ -74,12 +80,13 @@ struct VideoPlayer: View {
                 VLCVideoPlayer(configuration: playbackitem.vlcConfiguration)
                     .proxy(vlcUIProxy)
                     .onSecondsUpdated { newSeconds, _ in
+                        
+                        // TODO: fix menu pulsing issue
 
                         if !isScrubbing {
-                            scrubbedSeconds = newSeconds
+                            scrubbedSeconds.value = newSeconds
                         }
 
-                        // TODO: fix menu pulsing issue
                         manager.set(seconds: newSeconds)
                     }
                     .onStateUpdated { state, _ in
@@ -110,8 +117,8 @@ struct VideoPlayer: View {
                 .environment(\.isGestureLocked, $isGestureLocked)
                 .environment(\.isScrubbing, $isScrubbing)
                 .environment(\.safeAreaInsets, safeAreaInsets)
-                .environment(\.scrubbedSeconds, $scrubbedSeconds)
                 .environmentObject(manager)
+                .environmentObject(scrubbedSeconds)
         }
     }
 
@@ -134,8 +141,8 @@ struct VideoPlayer: View {
             .onChange(of: isScrubbing) { isScrubbing in
                 guard !isScrubbing else { return }
 
-                manager.proxy?.setTime(scrubbedSeconds)
-                manager.set(seconds: scrubbedSeconds)
+                manager.proxy?.setTime(scrubbedSeconds.value)
+                manager.set(seconds: scrubbedSeconds.value)
             }
             .onChange(of: subtitleColor) { newValue in
                 vlcUIProxy.setSubtitleColor(.absolute(newValue.uiColor))
@@ -163,7 +170,7 @@ struct VideoPlayer: View {
                         .startTime
                         .asSeconds
 
-                    scrubbedSeconds = seconds
+                    scrubbedSeconds.value = seconds
                     vlcUIProxy.playNewMedia(item.vlcConfiguration)
                 }
             }

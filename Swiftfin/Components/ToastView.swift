@@ -31,22 +31,23 @@ class ToastProxy: ObservableObject {
     }
 
     func present(_ title: String, systemName: String? = nil) {
-        self.title = Text(title)
-        self.systemName = systemName
-
-        poke()
+        present(Text(title), systemName: systemName)
     }
 
     func present(_ title: Text, systemName: String? = nil) {
         self.title = title
         self.systemName = systemName
 
-        poke()
+        poke(equalsPrevious: title == self.title)
     }
 
-    private func poke() {
+    private func poke(equalsPrevious: Bool) {
         isPresenting = true
-        messageID = UUID().uuidString
+        
+        if equalsPrevious {
+            messageID = UUID().uuidString
+        }
+        
         pokeTimer.poke()
     }
 }

@@ -71,23 +71,6 @@ extension VideoPlayer.Overlay.NavigationBar {
                 )
                 .environment(\.isInMenu, true)
             }
-            .iOS16 { menu in
-                menu
-//                    .labelStyle(.iconOnly)
-                        .frame(width: 40, height: 40)
-                        .contentShape(Rectangle())
-//                    .background {
-//                        if configuration.isPressed {
-//                            Circle()
-//                                .fill(Color.white)
-//                                .opacity(0.5)
-//                                .transition(.opacity.animation(.linear(duration: 0.2).delay(0.2)))
-//                        }
-//                    }
-//                    .onChange(of: configuration.isPressed) { newValue in
-//                        onPress(newValue)
-//                    }
-            }
         }
 
         var body: some View {

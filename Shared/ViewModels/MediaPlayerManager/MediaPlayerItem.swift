@@ -64,20 +64,24 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
         self.mediaSource = mediaSource
         self.playSessionID = playSessionID
         self.url = url
-
-        let audioStreams = mediaSource.audioStreams ?? []
-        let subtitleStreams = mediaSource.subtitleStreams ?? []
-
-        let startSeconds = max(0, baseItem.startTimeSeconds - TimeInterval(Defaults[.VideoPlayer.resumeOffset]))
-
-        self.videoStreams = mediaSource.videoStreams ?? []
+        
+        let adjustedMediaStreams = mediaSource.mediaStreams?.adjustedTrackIndexes(
+            isTranscoded: mediaSource.transcodingURL != nil,
+            selectedAudioStreamIndex: mediaSource.defaultAudioStreamIndex ?? 0
+        )
+        
+        let audioStreams = adjustedMediaStreams?.filter { $0.type == .audio } ?? []
+        let subtitleStreams = adjustedMediaStreams?.filter { $0.type == .subtitle } ?? []
+        let videoStreams = adjustedMediaStreams?.filter { $0.type == .video } ?? []
+        
         self.audioStreams = audioStreams
-            .adjustAudioForExternalSubtitles(externalMediaStreamCount: subtitleStreams.filter { $0.isExternal ?? false }.count)
         self.subtitleStreams = subtitleStreams
-            .adjustExternalSubtitleIndexes(audioStreamCount: audioStreams.count)
+        self.videoStreams = videoStreams
 
         let configuration = VLCVideoPlayer.Configuration(url: url)
         configuration.autoPlay = true
+        
+        let startSeconds = max(0, baseItem.startTimeSeconds - TimeInterval(Defaults[.VideoPlayer.resumeOffset]))
 
         if !baseItem.isLiveStream {
             configuration.startTime = .seconds(startSeconds)

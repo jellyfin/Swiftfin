@@ -15,10 +15,11 @@ extension EnvironmentValues {
         set { self[SelectedMediaPlayerSupplementKey.self] = newValue }
     }
 
-    var scrubbedSeconds: Binding<TimeInterval> {
-        get { self[ScrubbedSecondsKey.self] }
-        set { self[ScrubbedSecondsKey.self] = newValue }
-    }
+    // changed to PublishedBox<TimeInterval>
+//    var scrubbedSeconds: Binding<TimeInterval> {
+//        get { self[ScrubbedSecondsKey.self] }
+//        set { self[ScrubbedSecondsKey.self] = newValue }
+//    }
 
     var audioOffset: Binding<TimeInterval> {
         get { self[AudioOffsetKey.self] }

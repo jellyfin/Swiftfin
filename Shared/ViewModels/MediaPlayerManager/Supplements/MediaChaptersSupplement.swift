@@ -87,7 +87,7 @@ extension MediaChaptersSupplement {
                             }
                     }
                     .overlay {
-                        if chapter.secondsRange.contains(manager.seconds) {
+                        if chapter.secondsRange.contains(manager.seconds.value) {
                             RoundedRectangle(cornerRadius: contentSize.width / 30)
                                 .stroke(accentColor, lineWidth: 8)
                         }

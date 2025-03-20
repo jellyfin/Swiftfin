@@ -19,12 +19,18 @@ extension VideoPlayer.Overlay {
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
-        @Environment(\.scrubbedSeconds)
-        @Binding
-        private var scrubbedSeconds: TimeInterval
+//        @Environment(\.scrubbedSeconds)
+//        @Binding
+//        private var scrubbedSeconds: TimeInterval
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
+        @EnvironmentObject
+        private var scrubbedSecondsBox: PublishedBox<TimeInterval>
+        
+        private var scrubbedSeconds: TimeInterval {
+            scrubbedSecondsBox.value
+        }
 
         @ViewBuilder
         private var leadingTimestamp: some View {
@@ -35,7 +41,7 @@ extension VideoPlayer.Overlay {
                 Group {
                     Text("/")
 
-                    Text(manager.seconds, format: .runtime)
+                    Text(manager.seconds.value, format: .runtime)
                 }
                 .foregroundStyle(.secondary)
                 .isVisible(isScrubbing)
@@ -46,7 +52,7 @@ extension VideoPlayer.Overlay {
         private var trailingTimestamp: some View {
             HStack(spacing: 2) {
                 Group {
-                    Text(manager.item.runTimeSeconds - manager.seconds, format: .runtime.negated)
+                    Text(manager.item.runTimeSeconds - manager.seconds.value, format: .runtime.negated)
 
                     Text("/")
                 }

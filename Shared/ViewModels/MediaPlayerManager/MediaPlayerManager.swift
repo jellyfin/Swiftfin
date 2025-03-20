@@ -11,6 +11,17 @@ import Foundation
 import JellyfinAPI
 import VLCUI
 
+/// A box for a `Published` value
+class PublishedBox<Value>: ObservableObject {
+    
+    @Published
+    var value: Value
+    
+    init(initialValue: Value) {
+        self.value = initialValue
+    }
+}
+
 // TODO: proper error catching
 // TODO: set playback rate
 //       - what if proxy couldn't set rate?
@@ -69,7 +80,8 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     var playbackItem: MediaPlayerItem? = nil {
         didSet {
             if let playbackItem {
-                seconds = playbackItem.baseItem.startTimeSeconds
+                seconds.value = playbackItem.baseItem.startTimeSeconds
+//                seconds = playbackItem.baseItem.startTimeSeconds
                 playbackItem.manager = self
             }
         }
@@ -83,9 +95,13 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     @Published
     private(set) var rate: Float = 1.0
     @Published
-    private(set) var seconds: TimeInterval = 0
-    @Published
     final var state: State = .playback
+    
+    /// The current seconds media playback is set to.
+    ///
+    /// - Note: This is boxed to avoid unnecessary `View` updates for
+    ///         views that do not implement the current value.
+    private(set) var seconds: PublishedBox<TimeInterval> = .init(initialValue: 0)
 
     var proxy: MediaPlayerProxy?
     var queue: (any MediaPlayerQueue)?
@@ -185,7 +201,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
     @MainActor
     func set(seconds: TimeInterval) {
-        self.seconds = seconds
+        self.seconds.value = seconds
     }
 
     @MainActor

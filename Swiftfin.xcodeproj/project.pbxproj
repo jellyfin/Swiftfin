@@ -934,6 +934,8 @@
 		E1AEFA372BE317E200CFAFD8 /* ListRowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AEFA362BE317E200CFAFD8 /* ListRowButton.swift */; };
 		E1AEFA382BE36C4900CFAFD8 /* SwiftinStore+UserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB4C2BE1688E003BF6F3 /* SwiftinStore+UserState.swift */; };
 		E1AEFA392BE36C4C00CFAFD8 /* SwiftfinStore+ServerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB4E2BE168AC003BF6F3 /* SwiftfinStore+ServerState.swift */; };
+		E1B2ACC92D8B9F9800C9921D /* WrappingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = 53D8600497561D7518CEBE98 /* WrappingHStack */; };
+		E1B2ACCA2D8B9F9800C9921D /* TVOSPicker in Frameworks */ = {isa = PBXBuildFile; productRef = CC4CCC8E3E79FDF40088BB2A /* TVOSPicker */; };
 		E1B33EB028EA890D0073B0FD /* Equatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B33EAF28EA890D0073B0FD /* Equatable.swift */; };
 		E1B33ED128EB860A0073B0FD /* PlaybackButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B33ED028EB860A0073B0FD /* PlaybackButtons.swift */; };
 		E1B490442967E26300D3EDCE /* PersistentLogHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B490432967E26300D3EDCE /* PersistentLogHandler.swift */; };
@@ -2048,6 +2050,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1B2ACCA2D8B9F9800C9921D /* TVOSPicker in Frameworks */,
 				E1EA960E2D0B8580007C2706 /* IdentifiedCollections in Frameworks */,
 				E15BC8162C8FFA9500E4F770 /* VLCUI in Frameworks */,
 				62666E1727E501CC00EC0ECD /* CFNetwork.framework in Frameworks */,
@@ -2096,6 +2099,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1B2ACC92D8B9F9800C9921D /* WrappingHStack in Frameworks */,
 				E1EA960D2D0B8580007C2706 /* CollectionVGrid in Frameworks */,
 				E1EA960C2D0B8580007C2706 /* CollectionHStack in Frameworks */,
 				E1EA960B2D0B8580007C2706 /* CollectionHStack in Frameworks */,
@@ -4245,6 +4249,7 @@
 				E103DF922BCF2F23000229B2 /* MediaView */,
 				E14F7B9A2C8A33D600EB1E46 /* NativeVideoPlayer */,
 				E1EDA8D62B92C9D700F9A57E /* PagingLibraryView */,
+				7C80B1E07A14F790D0394F49 /* PhotoPickerView */,
 				E10231342BCF8A3C009D71FC /* ProgramsView */,
 				E1171A1828A2212600FA1AF5 /* QuickConnectView.swift */,
 				FFC3A1F4A706A5B4080BD91D /* ResetUserPasswordView */,
@@ -4255,7 +4260,6 @@
 				F870343A899C4063606E78DC /* UserProfileImagePicker */,
 				E1171A1A28A2215800FA1AF5 /* UserSignInView */,
 				E193D5452719418B00900D82 /* VideoPlayer */,
-				7C80B1E07A14F790D0394F49 /* PhotoPickerView */,
 			);
 			path = Views;
 			sourceTree = "<group>";

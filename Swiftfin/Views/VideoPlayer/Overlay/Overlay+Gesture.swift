@@ -58,9 +58,9 @@ extension VideoPlayer.Overlay {
         @Binding
         private var selectedSupplement: AnyMediaPlayerSupplement?
 
-        @Environment(\.scrubbedSeconds)
-        @Binding
-        private var scrubbedSeconds: TimeInterval
+//        @Environment(\.scrubbedSeconds)
+//        @Binding
+//        private var scrubbedSeconds: TimeInterval
 
         @Environment(\.subtitleOffset)
         @Binding
@@ -70,6 +70,8 @@ extension VideoPlayer.Overlay {
         private var jumpProgressObserver: JumpProgressObserver
         @EnvironmentObject
         private var manager: MediaPlayerManager
+        @EnvironmentObject
+        private var scrubbedSecondsBox: PublishedBox<TimeInterval>
         @EnvironmentObject
         private var toastProxy: ToastProxy
 
@@ -88,6 +90,10 @@ extension VideoPlayer.Overlay {
 
         private var isPresentingDrawer: Bool {
             selectedSupplement != nil
+        }
+        
+        private var scrubbedSeconds: TimeInterval {
+            scrubbedSecondsBox.value
         }
 
         // MARK: - body
@@ -389,7 +395,7 @@ extension VideoPlayer.Overlay.GestureLayer {
         let newSeconds = scrubPanGestureState
             .startValue - (scrubPanGestureState.startPoint[keyPath: pointComponent] - point[keyPath: pointComponent]) * rate * manager.item
             .runTimeSeconds
-        scrubbedSeconds = clamp(newSeconds, min: 0, max: manager.item.runTimeSeconds)
+        scrubbedSecondsBox.value = clamp(newSeconds, min: 0, max: manager.item.runTimeSeconds)
     }
 
     // MARK: - Volume
