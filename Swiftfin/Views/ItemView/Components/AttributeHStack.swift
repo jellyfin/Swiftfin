@@ -7,50 +7,156 @@
 //
 
 import SwiftUI
+import WrappingHStack
 
 extension ItemView {
-
     struct AttributesHStack: View {
-
         @ObservedObject
         var viewModel: ItemViewModel
 
+        @StoredValue(.User.itemViewAttributes)
+        private var itemViewAttributes
+
+        // MARK: - Body
+
         var body: some View {
-            HStack {
-                if let officialRating = viewModel.item.officialRating {
-                    Text(officialRating)
-                        .asAttributeStyle(.outline)
+            let badges = computeBadges()
+            if !badges.isEmpty {
+                WrappingHStack(badges, id: \.self, alignment: .center, spacing: .constant(8), lineSpacing: 8) { badgeItem in
+                    badgeItem
+                        .fixedSize(horizontal: true, vertical: false)
                 }
+                .foregroundStyle(Color(UIColor.darkGray))
+                .lineLimit(1)
+                .frame(maxWidth: 300)
+            }
+        }
 
-                if let mediaStreams = viewModel.selectedMediaSource?.mediaStreams {
+        // MARK: - Compute Badges
 
-                    if mediaStreams.hasHDVideo {
-                        Text("HD")
-                            .asAttributeStyle(.fill)
+        private func computeBadges() -> [AnyView] {
+            var badges: [AnyView] = []
+            var processedGroups = Set<ItemViewAttribute>()
+
+            for attribute in itemViewAttributes {
+
+                if processedGroups.contains(attribute) { continue }
+                processedGroups.insert(attribute)
+
+                switch attribute {
+                case .ratingCritics:
+                    if let criticRating = viewModel.item.criticRating {
+                        let badge = AnyView(
+                            AttributeBadge(
+                                style: .outline,
+                                title: Text("\(criticRating, specifier: "%.0f")")
+                            ) {
+                                if criticRating >= 60 {
+                                    Image(.tomatoFresh)
+                                        .symbolRenderingMode(.hierarchical)
+                                } else {
+                                    Image(.tomatoRotten)
+                                }
+                            }
+                        )
+                        badges.append(badge)
                     }
-
-                    if mediaStreams.has4KVideo {
-                        Text("4K")
-                            .asAttributeStyle(.fill)
+                case .ratingCommunity:
+                    if let communityRating = viewModel.item.communityRating {
+                        let badge = AnyView(
+                            AttributeBadge(
+                                style: .outline,
+                                title: Text("\(communityRating, specifier: "%.01f")"),
+                                systemName: "star.fill"
+                            )
+                        )
+                        badges.append(badge)
                     }
-
-                    if mediaStreams.has51AudioChannelLayout {
-                        Text("5.1")
-                            .asAttributeStyle(.fill)
+                case .ratingOfficial:
+                    if let officialRating = viewModel.item.officialRating {
+                        let badge = AnyView(
+                            AttributeBadge(
+                                style: .outline,
+                                title: officialRating
+                            )
+                        )
+                        badges.append(badge)
                     }
-
-                    if mediaStreams.has71AudioChannelLayout {
-                        Text("7.1")
-                            .asAttributeStyle(.fill)
+                case .videoQuality:
+                    if let mediaStreams = viewModel.selectedMediaSource?.mediaStreams {
+                        // Resolution badge (if available). Only one of 4K or HD is shown.
+                        if mediaStreams.has4KVideo {
+                            let badge = AnyView(
+                                AttributeBadge(
+                                    style: .fill,
+                                    title: "4K"
+                                )
+                            )
+                            badges.append(badge)
+                        } else if mediaStreams.hasHDVideo {
+                            let badge = AnyView(
+                                AttributeBadge(
+                                    style: .fill,
+                                    title: "HD"
+                                )
+                            )
+                            badges.append(badge)
+                        }
+                        if mediaStreams.hasDolbyVision {
+                            let badge = AnyView(
+                                AttributeBadge(
+                                    style: .fill,
+                                    title: "DV"
+                                )
+                            )
+                            badges.append(badge)
+                        }
+                        if mediaStreams.hasHDRVideo {
+                            let badge = AnyView(
+                                AttributeBadge(
+                                    style: .fill,
+                                    title: "HDR"
+                                )
+                            )
+                            badges.append(badge)
+                        }
                     }
-
-                    if mediaStreams.hasSubtitles {
-                        Text("CC")
-                            .asAttributeStyle(.outline)
+                case .audioChannels:
+                    if let mediaStreams = viewModel.selectedMediaSource?.mediaStreams {
+                        if mediaStreams.has51AudioChannelLayout {
+                            let badge = AnyView(
+                                AttributeBadge(
+                                    style: .fill,
+                                    title: "5.1"
+                                )
+                            )
+                            badges.append(badge)
+                        }
+                        if mediaStreams.has71AudioChannelLayout {
+                            let badge = AnyView(
+                                AttributeBadge(
+                                    style: .fill,
+                                    title: "7.1"
+                                )
+                            )
+                            badges.append(badge)
+                        }
+                    }
+                case .subtitles:
+                    if let mediaStreams = viewModel.selectedMediaSource?.mediaStreams,
+                       mediaStreams.hasSubtitles
+                    {
+                        let badge = AnyView(
+                            AttributeBadge(
+                                style: .outline,
+                                title: "CC"
+                            )
+                        )
+                        badges.append(badge)
                     }
                 }
             }
-            .foregroundColor(Color(UIColor.darkGray))
+            return badges
         }
     }
 }

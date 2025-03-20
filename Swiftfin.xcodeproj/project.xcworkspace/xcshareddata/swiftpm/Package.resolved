@@ -1,5 +1,5 @@
 {
-  "originHash" : "9b1d194c94a0f8f770fb3d8d3363309830c5d459647f8d06d3216585c1ac197c",
+  "originHash" : "66bff9f26defe8d2dfa92b4e65d0ae348e3b586d0fbb7de49c9c937459e6b55c",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -89,15 +89,6 @@
       "state" : {
         "revision" : "74dba201ebe42e9c15c1db6ee1cc893025bbef94",
         "version" : "2.2.0"
-      }
-    },
-    {
-      "identity" : "inject",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/krzysztofzablocki/Inject",
-      "state" : {
-        "revision" : "728c56639ecb3df441d51d5bc6747329afabcfc9",
-        "version" : "1.5.2"
       }
     },
     {
@@ -236,6 +227,15 @@
       }
     },
     {
+      "identity" : "tvospicker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ViacomInc/TVOSPicker",
+      "state" : {
+        "revision" : "90806460f3b3e7564344647241c157aeb0b27a71",
+        "version" : "0.3.0"
+      }
+    },
+    {
       "identity" : "udpbroadcastconnection",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/gunterhager/UDPBroadcastConnection",
@@ -251,6 +251,24 @@
       "state" : {
         "revision" : "4ce950479707ea109f229d7230ec074a133b15d7",
         "version" : "0.2.1"
+      }
+    },
+    {
+      "identity" : "vlcui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LePips/VLCUI",
+      "state" : {
+        "branch" : "main",
+        "revision" : "50d4f6ec05a2d8333952def0d8e45019a4207132"
+      }
+    },
+    {
+      "identity" : "wrappinghstack",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/dkk/WrappingHStack",
+      "state" : {
+        "revision" : "425d9488ba55f58f0b34498c64c054c77fc2a44b",
+        "version" : "2.2.11"
       }
     }
   ],

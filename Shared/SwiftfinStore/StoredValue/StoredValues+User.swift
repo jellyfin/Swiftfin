@@ -172,5 +172,13 @@ extension StoredValues.Keys {
                 default: false
             )
         }
+
+        static var itemViewAttributes: Key<[ItemViewAttribute]> {
+            CurrentUserKey(
+                "itemViewAttributes",
+                domain: "itemViewAttributes",
+                default: ItemViewAttribute.allCases
+            )
+        }
     }
 }

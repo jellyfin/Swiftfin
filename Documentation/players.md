@@ -46,7 +46,6 @@ Swiftfin offers two player options: Swiftfin (VLCKit) and Native (AVKit). The Sw
 **Notes**
 
 - Unsupported containers will require transcoding or remuxing to play.
-- AV1 is disabled by default but can be enabled for Native (AVKit) using Custom Device Profiles.
 
 ---
 
@@ -86,13 +85,15 @@ Swiftfin offers two player options: Swiftfin (VLCKit) and Native (AVKit). The Sw
 
 | Video Codec | Swiftfin (VLCKit) | Native (AVKit) |
 |-------------|-------------------|----------------|
-| **AV1**     | ✅                | ❌             |
+| **AV1**     | ✅                | 🟡 Limited support |
 | **H.264**   | ✅                | ✅             |
 | **H.265**   | ✅                | ✅             |
 | **MPEG-2**  | ✅                | ❌             |
 | **MPEG-4**  | ✅                | ✅             |
 | **VP8**     | ✅                | ❌             |
 | **VP9**     | ✅                | ❌             |
+
+- AV1 is disabled by default but can be enabled for Native (AVKit) using Custom Device Profiles. Enabling AV1 may result in a [poor experience for SOCs prior to A17](https://en.wikipedia.org/wiki/Apple_A17).
 
 ---
 
@@ -101,15 +102,15 @@ Swiftfin offers two player options: Swiftfin (VLCKit) and Native (AVKit). The Sw
 | Subtitle Format | Swiftfin (VLCKit) | Native (AVKit) |
 |----------------|-------------------|----------------|
 | **ASS**        | ✅                | ❌             |
-| **CC_DEC**     | ✅                | 🟡             |
+| **CC_DEC**     | ✅                | ✅             |
 | **DVBSub**     | ✅                | ❌             |
 | **DVDSub**     | ✅                | ❌             |
 | **PGSSub**     | ✅                | ❌             |
 | **SRT**        | ✅                | ❌             |
 | **SSA**        | ✅                | ❌             |
 | **Teletext**   | ✅                | ❌             |
-| **TTML**       | ✅                | 🟡             |
-| **VTT**        | ✅                | 🟡             |
+| **TTML**       | ✅                | ✅             |
+| **VTT**        | ✅                | ✅             |
 | **XSub**       | ✅                | ❌             |
 
 **Notes**
@@ -137,3 +138,50 @@ Swiftfin offers two player options: Swiftfin (VLCKit) and Native (AVKit). The Sw
 - Swiftfin (VLCKit) does not support HDR playback natively. HDR content may play back without the intended high dynamic range effect.
 
 --- 
+
+### Track Selection
+
+Swiftfin track selection is limited by compatibility with each player. In testing, as of Swiftfin 1.3, the following interactions have been tested.
+
+✅ Working correctly </br>
+🟡 Partially working with limitations </br>
+❌ Not working
+
+## Swiftfin Player
+
+| File Configuration                                       | DirectPlay | Transcode | Notes |
+|---------------------------------------------------------|------------|-----------|------------------------------------------------|
+| Internal Audio                                          | ✅         | ✅        |                                                |
+| Internal Audio + Internal Subtitles                    | ✅         | 🟡        | - Subtitles do not work if Non-External *(DVDSUB)* |
+| Internal Audio + External Subtitles                    | ✅         | ✅        |                                                |
+| Internal Audio + Internal Subtitles + External Subtitles | ✅         | 🟡        | - Subtitles do not work if Non-External *(DVDSUB)* |
+| Multiple Internal Audio + Multiple Internal Subtitles  | ✅         | 🟡        | - Subtitles do not work if Non-External *(DVDSUB)* |
+| Multiple Internal Audio + Multiple External Subtitles  | ✅         | ✅        |                                                |
+| Multiple Internal Audio + Internal Subtitles + External Subtitles | ✅ | 🟡 | - Subtitles do not work if Non-External *(DVDSUB)* |
+| External Audio + Internal Audio + External Subtitles   | ✅         | ✅        | - Cannot play external audio track if transcoding is required </br> - Subtitles do not work if Non-External *(DVDSUB)* |
+| External Audio + Internal Audio + Internal Subtitles   | ✅         | ✅        | - Cannot play external audio track if transcoding is required </br> - Subtitles do not work if Non-External *(DVDSUB)* |
+| External Audio + Internal Audio + Internal Subtitles + External Subtitles | ✅ | ✅ | - Cannot play external audio track if transcoding is required </br> - Subtitles do not work if Non-External *(DVDSUB)* |
+
+## Native Player
+
+| File Configuration                                      | DirectPlay | Transcode | Notes |
+|--------------------------------------------------------|------------|-----------|------------------------------------------------|
+| Internal Audio                                         | ✅         | ✅        |                                                |
+| Internal Audio + Internal Subtitles                   | 🟡         | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
+| Internal Audio + External Subtitles                   | 🟡         | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
+| Internal Audio + Internal Subtitles + External Subtitles | 🟡      | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
+| Multiple Internal Audio + Multiple Internal Subtitles | 🟡         | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
+| Multiple Internal Audio + Multiple External Subtitles | 🟡         | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
+| Multiple Internal Audio + Internal Subtitles + External Subtitles | 🟡 | ❌ | - The default audio track will played </br> - subtitles cannot be selected. |
+| External Audio + Internal Audio + External Subtitles  | 🟡         | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
+| External Audio + Internal Audio + Internal Subtitles  | 🟡         | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
+| External Audio + Internal Audio + Internal Subtitles + External Subtitles | 🟡 | ❌ | - The default audio track will played </br> - subtitles cannot be selected. |
+
+--- 
+
+### Miscellaneous
+
+| Feature | Swiftfin (VLCKit) | Native (AVKit) | Notes |
+|-------------|-------------------|----------------|----------------|
+| **External Display Support** | 🟡        | ✅        | Swiftfin Player can only be mirrored. As a result, the player will retain the source device dimensions. |
+

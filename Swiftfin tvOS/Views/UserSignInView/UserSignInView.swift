@@ -85,10 +85,9 @@ struct UserSignInView: View {
             }
 
         if case .signingIn = viewModel.state {
-            ListRowButton(L10n.cancel) {
+            ListRowButton(L10n.cancel, role: .cancel) {
                 viewModel.send(.cancel)
             }
-            .foregroundStyle(.red, accentColor)
             .padding(.vertical)
         } else {
             ListRowButton(L10n.signIn) {
@@ -166,7 +165,8 @@ struct UserSignInView: View {
         SplitLoginWindowView(
             isLoading: viewModel.state == .signingIn,
             leadingTitle: L10n.signInToServer(viewModel.server.name),
-            trailingTitle: L10n.publicUsers
+            trailingTitle: L10n.publicUsers,
+            backgroundImageSource: viewModel.server.splashScreenImageSource()
         ) {
             signInSection
         } trailingContentView: {

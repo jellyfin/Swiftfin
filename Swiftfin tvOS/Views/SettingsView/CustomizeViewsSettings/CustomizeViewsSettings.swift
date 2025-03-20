@@ -31,19 +31,6 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.Library.displayType)
     private var libraryViewType
 
-    @Default(.Customization.Library.cinematicBackground)
-    private var cinematicBackground
-    @Default(.Customization.Library.randomImage)
-    private var libraryRandomImage
-    @Default(.Customization.Library.showFavorites)
-    private var showFavorites
-    @Default(.Customization.Library.displayType)
-    private var libraryDisplayType
-    @Default(.Customization.Library.posterType)
-    private var libraryPosterType
-    @Default(.Customization.Library.listColumnCount)
-    private var listColumnCount
-
     @EnvironmentObject
     private var router: CustomizeSettingsCoordinator.Router
 
@@ -73,37 +60,18 @@ struct CustomizeViewsSettings: View {
 
                     Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 
-                    InlineEnumToggle(title: L10n.next, selection: $nextUpPosterType)
+                    ListRowMenu(L10n.next, selection: $nextUpPosterType)
 
-                    InlineEnumToggle(title: L10n.recentlyAdded, selection: $recentlyAddedPosterType)
+                    ListRowMenu(L10n.recentlyAdded, selection: $recentlyAddedPosterType)
 
-                    InlineEnumToggle(title: L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType)
+                    ListRowMenu(L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType)
 
-                    InlineEnumToggle(title: L10n.recommended, selection: $similarPosterType)
+                    ListRowMenu(L10n.recommended, selection: $similarPosterType)
 
-                    InlineEnumToggle(title: L10n.search, selection: $searchPosterType)
+                    ListRowMenu(L10n.search, selection: $searchPosterType)
                 }
 
-                Section(L10n.library) {
-
-                    Toggle(L10n.cinematicBackground, isOn: $cinematicBackground)
-
-                    Toggle(L10n.randomImage, isOn: $libraryRandomImage)
-
-                    Toggle(L10n.showFavorites, isOn: $showFavorites)
-
-                    InlineEnumToggle(title: L10n.posters, selection: $libraryPosterType)
-                    InlineEnumToggle(title: L10n.library, selection: $libraryDisplayType)
-                    if libraryDisplayType == .list {
-                        ChevronButton(
-                            L10n.columns,
-                            subtitle: listColumnCount.description
-                        )
-                        .onSelect {
-                            router.route(to: \.listColumnSettings, $listColumnCount)
-                        }
-                    }
-                }
+                LibrarySection()
 
                 ItemSection()
 

@@ -13,6 +13,7 @@ import JellyfinAPI
 struct ItemFilterCollection: Hashable, Storable {
 
     var genres: [ItemGenre] = []
+    var itemTypes: [BaseItemKind] = []
     var letter: [ItemLetter] = []
     var sortBy: [ItemSortBy] = [ItemSortBy.name]
     var sortOrder: [ItemSortOrder] = [ItemSortOrder.ascending]
@@ -31,7 +32,10 @@ struct ItemFilterCollection: Hashable, Storable {
         sortOrder: [ItemSortOrder.descending]
     )
 
-    /// A collection that has all statically available values
+    /// A collection that has all statically available values.
+    ///
+    /// These may be altered when used to better represent all
+    /// available values within the current context.
     static let all: ItemFilterCollection = .init(
         letter: ItemLetter.allCases,
         sortBy: ItemSortBy.allCases,

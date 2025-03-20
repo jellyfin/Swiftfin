@@ -55,6 +55,9 @@ extension ImagePipeline.Swiftfin {
     static let local: ImagePipeline = ImagePipeline(delegate: SwiftfinImagePipelineDelegate()) {
         $0.dataCache = DataCache.Swiftfin.local
     }
+
+    /// An `ImagePipeline` for images to prevent more important images from losing their cache.
+    static let other: ImagePipeline = ImagePipeline(configuration: .withURLCache)
 }
 
 final class SwiftfinImagePipelineDelegate: ImagePipelineDelegate {

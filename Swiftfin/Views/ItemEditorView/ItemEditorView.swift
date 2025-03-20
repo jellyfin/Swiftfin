@@ -104,6 +104,10 @@ struct ItemEditorView: View {
                         router.route(to: \.identifyItem, viewModel.item)
                     }
             }
+            ChevronButton(L10n.images)
+                .onSelect {
+                    router.route(to: \.editImages, ItemImagesViewModel(item: viewModel.item))
+                }
             ChevronButton(L10n.metadata)
                 .onSelect {
                     router.route(to: \.editMetadata, viewModel.item)

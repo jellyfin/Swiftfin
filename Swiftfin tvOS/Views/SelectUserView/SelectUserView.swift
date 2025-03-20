@@ -28,6 +28,8 @@ struct SelectUserView: View {
 
     @Default(.selectUserServerSelection)
     private var serverSelection
+    @Default(.selectUserUseSplashscreen)
+    private var selectUserUseSplashscreen
 
     // MARK: - Environment Variable
 
@@ -286,7 +288,7 @@ struct SelectUserView: View {
         }
         .animation(.linear(duration: 0.1), value: scrollViewOffset)
         .background {
-            if let splashScreenImageSource {
+            if let splashScreenImageSource, selectUserUseSplashscreen {
                 ZStack {
                     ImageView(splashScreenImageSource)
                         .aspectRatio(contentMode: .fill)
@@ -306,34 +308,22 @@ struct SelectUserView: View {
 
     @ViewBuilder
     private var emptyView: some View {
-        ZStack {
-            VStack {
-                Image(.jellyfinBlobBlue)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: 100)
-                    .edgePadding()
+        VStack(spacing: 50) {
+            L10n.connectToJellyfinServerStart.text
+                .font(.body)
+                .frame(minWidth: 50, maxWidth: 500)
+                .multilineTextAlignment(.center)
 
-                Color.clear
+            Button {
+                router.route(to: \.connectToServer)
+            } label: {
+                L10n.connect.text
+                    .font(.callout)
+                    .fontWeight(.bold)
+                    .frame(width: 400, height: 75)
+                    .background(Color.jellyfinPurple)
             }
-
-            VStack(spacing: 50) {
-                L10n.connectToJellyfinServerStart.text
-                    .font(.body)
-                    .frame(minWidth: 50, maxWidth: 500)
-                    .multilineTextAlignment(.center)
-
-                Button {
-                    router.route(to: \.connectToServer)
-                } label: {
-                    L10n.connect.text
-                        .font(.callout)
-                        .fontWeight(.bold)
-                        .frame(width: 400, height: 75)
-                        .background(Color.jellyfinPurple)
-                }
-                .buttonStyle(.card)
-            }
+            .buttonStyle(.card)
         }
     }
 
@@ -350,13 +340,20 @@ struct SelectUserView: View {
             }
         }
 
-        // change splash screen selection if necessary
-//            selectUserAllServersSplashscreen = serverSelection
+        setSplashScreenImageSource()
     }
+
+    // MARK: - Did Appear
 
     private func didAppear() {
         viewModel.send(.getServers)
 
+        setSplashScreenImageSource()
+    }
+
+    // MARK: - Set Splash Screen Image Source
+
+    private func setSplashScreenImageSource() {
         splashScreenImageSource = makeSplashScreenImageSource(
             serverSelection: serverSelection,
             allServersSelection: .all
@@ -385,10 +382,7 @@ struct SelectUserView: View {
         .onChange(of: serverSelection) { _, newValue in
             gridItems = makeGridItems(for: newValue)
 
-            splashScreenImageSource = makeSplashScreenImageSource(
-                serverSelection: newValue,
-                allServersSelection: .all
-            )
+            setSplashScreenImageSource()
         }
         .onChange(of: isPresentingLocalPin) { _, newValue in
             if newValue {

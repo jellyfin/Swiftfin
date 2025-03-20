@@ -59,7 +59,7 @@ struct AppSettingsView: View {
 
             Section {
 
-                Toggle("Use splashscreen", isOn: $selectUserUseSplashscreen)
+                Toggle(L10n.useSplashscreen, isOn: $selectUserUseSplashscreen)
 
                 if selectUserUseSplashscreen {
                     Picker(L10n.servers, selection: $selectUserAllServersSplashscreen) {
@@ -76,10 +76,10 @@ struct AppSettingsView: View {
                     }
                 }
             } header: {
-                Text("Splashscreen")
+                Text(L10n.splashscreen)
             } footer: {
                 if selectUserUseSplashscreen {
-                    Text("When All Servers is selected, use the splashscreen from a single server or a random server")
+                    Text(L10n.splashscreenFooter)
                 }
             }
 

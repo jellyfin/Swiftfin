@@ -18,6 +18,7 @@ import OrderedCollections
 //       construction and get bloated
 // TODO: make Action: Hashable just for consistency
 // TODO: make lastAction an event subject
+// TODO: move backgroundStates to just a `Set`
 
 protocol Stateful: ObservableObject {
 

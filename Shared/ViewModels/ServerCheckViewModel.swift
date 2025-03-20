@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Factory
 import Foundation
 import JellyfinAPI
 
@@ -36,12 +37,15 @@ class ServerCheckViewModel: ViewModel, Stateful {
             // TODO: also server stuff
             connectCancellable = Task {
                 do {
+                    try await userSession.server.updateServerInfo()
+
                     let request = Paths.getCurrentUser
                     let response = try await userSession.client.send(request)
 
                     await MainActor.run {
                         userSession.user.data = response.value
                         self.state = .connected
+                        Container.shared.currentUserSession.reset()
                     }
                 } catch {
                     await MainActor.run {

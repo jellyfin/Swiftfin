@@ -27,6 +27,7 @@ class ItemViewModel: ViewModel, Stateful {
         case replace(BaseItemDto)
         case toggleIsFavorite
         case toggleIsPlayed
+        case selectMediaSource(MediaSourceInfo)
     }
 
     // MARK: BackgroundState
@@ -276,6 +277,11 @@ class ItemViewModel: ViewModel, Stateful {
                 }
             }
             .asAnyCancellable()
+
+            return state
+        case let .selectMediaSource(newSource):
+
+            selectedMediaSource = newSource
 
             return state
         }

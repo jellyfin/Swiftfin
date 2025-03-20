@@ -57,6 +57,7 @@ struct PosterButton<Item: Poster>: View {
                                 )
                             }
                         }
+                        .accessibilityIgnoresInvertColors()
 
                     imageOverlay()
                         .eraseToAnyView()

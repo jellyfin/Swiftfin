@@ -74,13 +74,19 @@ struct IdentifyItemView: View {
         .navigationTitle(L10n.identify)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(viewModel.state == .updating)
-        .sheet(item: $selectedResult) { result in
-            RemoteSearchResultView(result: result) {
-                selectedResult = nil
-                viewModel.send(.update(result))
-            } onClose: {
-                selectedResult = nil
-            }
+        .sheet(item: $selectedResult) {
+            selectedResult = nil
+        } content: { result in
+            RemoteSearchResultView(
+                result: result,
+                onSave: {
+                    selectedResult = nil
+                    viewModel.send(.update(result))
+                },
+                onClose: {
+                    selectedResult = nil
+                }
+            )
         }
         .onReceive(viewModel.events) { events in
             switch events {
