@@ -13,10 +13,42 @@ extension ItemView {
 
     struct TrailerMenu: View {
 
+        // MARK: - Generic Trailer Enum
+
+        private enum Trailer: Displayable {
+            case local(BaseItemDto)
+            case remote(MediaURL)
+
+            var displayTitle: String {
+                switch self {
+                case let .local(item):
+                    return item.name ?? L10n.trailer
+                case let .remote(url):
+                    return url.name ?? L10n.trailer
+                }
+            }
+
+            var section: String {
+                switch self {
+                case .local:
+                    return L10n.local
+                case .remote:
+                    return L10n.external
+                }
+            }
+        }
+
+        // MARK: - Stored Value
+
+        @StoredValue(.User.enableRemoteTrailers)
+        private var enableRemoteTrailers: Bool
+
         // MARK: - Focus State
 
         @FocusState
         private var isFocused: Bool
+
+        // MARK: - Observed & Envirnoment Objects
 
         @ObservedObject
         var viewModel: ItemViewModel
@@ -24,79 +56,151 @@ extension ItemView {
         @EnvironmentObject
         private var router: ItemCoordinator.Router
 
+        // MARK: - Error State
+
         @State
         private var error: Error?
+
+        // MARK: - Valid Trailers
+
+        private var trailers: [Trailer] {
+            var allTrailers = [Trailer]()
+
+            /// Always add local trailers
+            for localTrailer in viewModel.localTrailers {
+                allTrailers.append(.local(localTrailer))
+            }
+
+            /// Only add remote trailers if enabled
+            if enableRemoteTrailers {
+                for remoteTrailer in viewModel.item.remoteTrailers ?? [] {
+                    allTrailers.append(.remote(remoteTrailer))
+                }
+            }
+
+            return allTrailers
+        }
+
+        // MARK: - Initializer
+
+        init(viewModel: ItemViewModel) {
+            self.viewModel = viewModel
+        }
 
         // MARK: - Body
 
         var body: some View {
-            ActionButton(L10n.trailers, icon: "movieclapper") {
-                if viewModel.localTrailers.isNotEmpty {
-                    Section(L10n.local) {
-                        ForEach(viewModel.localTrailers, id: \.self) { trailer in
-                            Button {
-                                if let selectedMediaSource = trailer.mediaSources?.first {
-                                    router.route(
-                                        to: \.videoPlayer,
-                                        OnlineVideoPlayerManager(item: trailer, mediaSource: selectedMediaSource)
-                                    )
-                                } else {
-                                    error = JellyfinAPIError("No media sources found")
-                                }
-                            } label: {
-                                HStack {
-                                    Text(trailer.name ?? L10n.trailer)
-                                    Spacer()
-                                    Image(systemName: "play")
-                                }
-                                .font(.body.weight(.bold))
-                            }
-                        }
-                    }
+            switch trailers.count {
+            case 0:
+                EmptyView()
+            case 1:
+                trailerButton
+            default:
+                trailerMenu
+            }
+        }
+
+        // MARK: - Single Trailer Button
+
+        private var trailerButton: some View {
+            ActionButton(L10n.trailers, icon: "movieclapper", selectedIcon: "movieclapper.fill") {
+                if let trailer = trailers.first {
+                    playTrailer(trailer)
                 }
+            }
+        }
 
-                if let externaltrailers = viewModel.item.remoteTrailers {
-                    Section(L10n.external) {
-                        ForEach(externaltrailers, id: \.url) { trailer in
-                            Button {
-                                if let url = trailer.url, let nsUrl = URL(string: url.description) {
-                                    if UIApplication.shared.canOpenURL(nsUrl) {
-                                        UIApplication.shared.open(nsUrl, options: [:], completionHandler: { success in
-                                            if !success {
-                                                self.error = JellyfinAPIError(
-                                                    """
-                                                    Failed to open this trailer. Please ensure that you have the appropriate app to play this trailer installed on your device.
+        // MARK: - Multiple Trailers Menu Button
 
-                                                    \(url)
-                                                    """
-                                                )
-                                            }
-                                        })
-                                    } else {
-                                        self.error = JellyfinAPIError(
-                                            """
-                                            Unable to open this trailer.
+        private var trailerMenu: some View {
+            ActionButton(L10n.trailers, icon: "movieclapper") {
+                let groupedTrailers = Dictionary(grouping: trailers) { $0.section }
 
-                                            \(url)
-                                            """
-                                        )
+                ForEach(groupedTrailers.keys.sorted(), id: \.self) { section in
+                    if let trailersInSection = groupedTrailers[section] {
+                        Section(section) {
+                            ForEach(Array(trailersInSection.enumerated()), id: \.offset) { _, trailer in
+                                Button {
+                                    playTrailer(trailer)
+                                } label: {
+                                    HStack {
+                                        Text(trailer.displayTitle)
+                                        Spacer()
+                                        Image(systemName: trailerIcon(for: trailer))
                                     }
-                                } else {
-                                    error = JellyfinAPIError("This trailer does not have a valid URL.")
+                                    .font(.body.weight(.bold))
                                 }
-                            } label: {
-                                HStack {
-                                    Text(trailer.name ?? L10n.trailer)
-                                    Spacer()
-                                    Image(systemName: "arrow.up.forward")
-                                }
-                                .font(.body.weight(.bold))
                             }
                         }
                     }
                 }
             }
             .errorMessage($error)
+        }
+
+        // MARK: - Play: Generic Trailer
+
+        private func playTrailer(_ trailer: Trailer) {
+            switch trailer {
+            case let .local(item):
+                playLocalTrailer(item)
+            case let .remote(mediaURL):
+                playRemoteTrailer(mediaURL)
+            }
+        }
+
+        // MARK: - Play: Local Trailer
+
+        private func playLocalTrailer(_ trailer: BaseItemDto) {
+            if let selectedMediaSource = trailer.mediaSources?.first {
+                router.route(
+                    to: \.videoPlayer,
+                    OnlineVideoPlayerManager(item: trailer, mediaSource: selectedMediaSource)
+                )
+            } else {
+                error = JellyfinAPIError("No media sources found")
+            }
+        }
+
+        // MARK: - Play: Remote Trailer
+
+        private func playRemoteTrailer(_ trailer: MediaURL) {
+            if let url = trailer.url, let nsUrl = URL(string: url.description) {
+                if UIApplication.shared.canOpenURL(nsUrl) {
+                    UIApplication.shared.open(nsUrl, options: [:], completionHandler: { success in
+                        if !success {
+                            self.error = JellyfinAPIError(
+                                """
+                                Failed to open this trailer. Please ensure that you have the appropriate app to play this trailer installed on your device.
+
+                                \(url)
+                                """
+                            )
+                        }
+                    })
+                } else {
+                    self.error = JellyfinAPIError(
+                        """
+                        Unable to open this trailer.
+
+                        \(url)
+                        """
+                    )
+                }
+            } else {
+                error = JellyfinAPIError("This trailer does not have a valid URL.")
+            }
+        }
+
+        // MARK: - Trailer Icon
+
+        private func trailerIcon(for trailer: Trailer) -> String {
+            switch trailer {
+            case .local:
+                return "play"
+            case .remote:
+                return "arrow.up.forward"
+            }
         }
     }
 }

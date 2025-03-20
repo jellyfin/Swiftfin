@@ -34,6 +34,7 @@ extension ItemView {
         private let mode: Mode
         private let title: String
         private let icon: String
+        private let iconAngle: Angle
 
         // MARK: - Button Properties
 
@@ -81,12 +82,14 @@ extension ItemView {
                 }
 
                 Label(title, systemImage: (mode == .button && isSelected) ? (selectedIcon ?? icon) : icon)
+                    .padding(0)
                     .hoverEffectDisabled()
                     .focusEffectDisabled()
                     .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundStyle(.black)
                     .labelStyle(.iconOnly)
+                    .rotationEffect(iconAngle)
             }
             .accessibilityLabel(title)
         }
@@ -103,11 +106,13 @@ extension ItemView.ActionButton {
         _ title: String,
         icon: String,
         selectedIcon: String,
+        iconAngle: Angle = .degrees(0),
         onSelect: @escaping () -> Void
     ) where Content == EmptyView {
         self.mode = .button
         self.title = title
         self.icon = icon
+        self.iconAngle = iconAngle
         self.selectedIcon = selectedIcon
         self.onSelect = onSelect
         self.content = nil
@@ -118,11 +123,13 @@ extension ItemView.ActionButton {
     init(
         _ title: String,
         icon: String,
+        iconAngle: Angle = .degrees(0),
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.mode = .menu
         self.title = title
         self.icon = icon
+        self.iconAngle = iconAngle
         self.selectedIcon = nil
         self.onSelect = nil
         self.content = content

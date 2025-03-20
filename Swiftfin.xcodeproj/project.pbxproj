@@ -2535,7 +2535,6 @@
 				4E5D3ECE2D8944F4003E2772 /* ActionButtonViewLayout.swift */,
 				4E97D1842D064B43004B89AD /* RefreshMetadataButton.swift */,
 				4E5D3EC72D8920AF003E2772 /* TrailerMenu.swift */,
-				4EDDB49B2D596E0700DA16E8 /* VersionMenu.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -3147,6 +3146,15 @@
 				4EFAC1372D1FB26600E40880 /* TagInput.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		4EFACFC22D8BCA4C00D09281 /* PlayButton */ = {
+			isa = PBXGroup;
+			children = (
+				E1C926022887565C002A7A66 /* PlayButton.swift */,
+				4EDDB49B2D596E0700DA16E8 /* VersionMenu.swift */,
+			);
+			path = PlayButton;
 			sourceTree = "<group>";
 		};
 		4EFE80842D3EF80E0029CCB6 /* ActiveSessions */ = {
@@ -5211,7 +5219,7 @@
 				E1C926012887565C002A7A66 /* AttributeHStack.swift */,
 				E185920528CDAA6400326F80 /* CastAndCrewHStack.swift */,
 				E1153D982BBA3E6100424D36 /* EpisodeSelector */,
-				E1C926022887565C002A7A66 /* PlayButton.swift */,
+				4EFACFC22D8BCA4C00D09281 /* PlayButton */,
 				E185920728CDAAA200326F80 /* SimilarItemsHStack.swift */,
 				E169C7B7296D2E8200AE25F9 /* SpecialFeaturesHStack.swift */,
 			);

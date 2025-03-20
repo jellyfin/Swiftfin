@@ -74,48 +74,43 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            ActionButtonViewLayout {
+            HStack(spacing: 16) {
+                ActionButtonViewLayout {
+                    // MARK: Toggle Played
 
-                // MARK: Toggle Played
+                    ActionButton(
+                        L10n.played,
+                        icon: "checkmark.circle",
+                        selectedIcon: "checkmark.circle.fill"
+                    ) {
+                        viewModel.send(.toggleIsPlayed)
+                    }
+                    .foregroundStyle(.purple)
+                    .environment(\.isSelected, viewModel.item.userData?.isPlayed ?? false)
 
-                ActionButton(
-                    L10n.played,
-                    icon: "checkmark.circle",
-                    selectedIcon: "checkmark.circle.fill"
-                ) {
-                    viewModel.send(.toggleIsPlayed)
-                }
-                .foregroundStyle(.purple)
-                .environment(\.isSelected, viewModel.item.userData?.isPlayed ?? false)
+                    // MARK: Toggle Favorite
 
-                // MARK: Toggle Favorite
+                    ActionButton(
+                        L10n.favorited,
+                        icon: "heart.circle",
+                        selectedIcon: "heart.circle.fill"
+                    ) {
+                        viewModel.send(.toggleIsFavorite)
+                    }
+                    .foregroundStyle(.pink)
+                    .environment(\.isSelected, viewModel.item.userData?.isFavorite ?? false)
 
-                ActionButton(
-                    L10n.favorited,
-                    icon: "heart.circle",
-                    selectedIcon: "heart.circle.fill"
-                ) {
-                    viewModel.send(.toggleIsFavorite)
-                }
-                .foregroundStyle(.pink)
-                .environment(\.isSelected, viewModel.item.userData?.isFavorite ?? false)
+                    // MARK: Watch a Trailer
 
-                // MARK: Select Merged Version
-
-                if let mediaSources = viewModel.playButtonItem?.mediaSources, mediaSources.count > 1 {
-                    VersionMenu(viewModel: viewModel, mediaSources: mediaSources)
-                }
-
-                // MARK: Watch a Trailer
-
-                if viewModel.item.remoteTrailers?.isNotEmpty ?? false || viewModel.localTrailers.isNotEmpty {
-                    TrailerMenu(viewModel: viewModel)
+                    if viewModel.item.remoteTrailers?.isNotEmpty ?? false || viewModel.localTrailers.isNotEmpty {
+                        TrailerMenu(viewModel: viewModel)
+                    }
                 }
 
-                // MARK: Advanced Options
+                // MARK: Advanced Options - Separate from the layout
 
-                if canRefresh || canDelete {
-                    ActionButton(L10n.advanced, icon: "ellipsis") {
+                if canRefresh || canDelete || true {
+                    ActionButton(L10n.advanced, icon: "ellipsis", iconAngle: .degrees(90)) {
                         if canRefresh {
                             RefreshMetadataButton(item: viewModel.item)
                         }
@@ -126,7 +121,7 @@ extension ItemView {
                             }
                         }
                     }
-                    .frame(maxWidth: .infinity)
+                    .frame(width: 60, height: 100)
                 }
             }
             .padding(.top, 1)
