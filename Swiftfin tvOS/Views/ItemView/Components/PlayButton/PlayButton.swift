@@ -29,9 +29,7 @@ extension ItemView {
         // MARK: - Media Sources
 
         private var mediaSources: [MediaSourceInfo] {
-            var sources = viewModel.playButtonItem?.mediaSources ?? []
-            sources.append(MediaSourceInfo(name: "TEST"))
-            return sources
+            viewModel.playButtonItem?.mediaSources ?? []
         }
 
         // MARK: - Are there Multiple Media Sources?
