@@ -29,26 +29,26 @@ extension ItemView {
         // MARK: - Media Sources
 
         private var mediaSources: [MediaSourceInfo] {
-            viewModel.playButtonItem?.mediaSources ?? []
+            var sources = viewModel.playButtonItem?.mediaSources ?? []
+            sources.append(MediaSourceInfo(name: "TEST"))
+            return sources
+        }
+
+        // MARK: - Are there Multiple Media Sources?
+
+        private var multipleVersions: Bool {
+            mediaSources.count > 1
         }
 
         // MARK: - Title
 
         private var title: String {
-            if let seriesViewModel = viewModel as? SeriesItemViewModel {
+            if let displayTitle = viewModel.selectedMediaSource?.displayTitle, multipleVersions {
+                return displayTitle
+            } else if let seriesViewModel = viewModel as? SeriesItemViewModel {
                 return seriesViewModel.playButtonItem?.seasonEpisodeLabel ?? L10n.play
             } else {
                 return viewModel.playButtonItem?.playButtonLabel ?? L10n.play
-            }
-        }
-
-        // MARK: - Subtitle
-
-        private var subtitle: String? {
-            if mediaSources.count > 1 {
-                return viewModel.selectedMediaSource?.displayTitle
-            } else {
-                return nil
             }
         }
 
@@ -56,70 +56,72 @@ extension ItemView {
 
         var body: some View {
             HStack(spacing: 20) {
-                Button {
-                    if let playButtonItem = viewModel.playButtonItem, let selectedMediaSource = viewModel.selectedMediaSource {
-                        router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: playButtonItem, mediaSource: selectedMediaSource))
-                    } else {
-                        logger.error("No media source available")
-                    }
-                } label: {
-                    ZStack {
-                        if let subtitle, false {
-                            VStack {
-                                Spacer()
-                                Text(subtitle)
-                                    .lineLimit(1)
-                                    .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
-                                    .fontWeight(.semibold)
-                            }
-                        }
-                        HStack(spacing: 15) {
-                            Image(systemName: "play.fill")
-                                .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
-                                .font(.title3)
+                playButtonView
 
-                            Text(title)
-                                .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
-                                .fontWeight(.semibold)
-                        }
-                    }
-                    .frame(width: mediaSources.count > 1 ? 280 : 400, height: 100)
-                    .background {
-                        if isFocused {
-                            viewModel.playButtonItem == nil ? Color.secondarySystemFill : Color.white
-                        } else {
-                            Color.white
-                                .opacity(0.5)
-                        }
-                    }
-                    .cornerRadius(10)
-                }
-                .focused($isFocused)
-                .buttonStyle(.card)
-                //            .contextMenu {
-                //                if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
-                //                    Button {
-                //                        if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-                //                            selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
-                //                            router.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
-                //                        } else {
-                //                            logger.error("Attempted to play item but no playback information available")
-                //                        }
-                //                    } label: {
-                //                        Label(L10n.playFromBeginning, systemImage: "gobackward")
-                //                    }
-                //
-                //                    Button(role: .cancel) {} label: {
-                //                        L10n.cancel.text
-                //                    }
-                //                }
-                //            }
-
-                if mediaSources.count > 1 {
+                if multipleVersions {
                     VersionMenu(viewModel: viewModel, mediaSources: mediaSources)
                         .frame(width: 100, height: 100)
                 }
             }
+        }
+
+        // MARK: - Play Button
+
+        private var playButtonView: some View {
+            Button {
+                if let playButtonItem = viewModel.playButtonItem, let selectedMediaSource = viewModel.selectedMediaSource {
+                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: playButtonItem, mediaSource: selectedMediaSource))
+                } else {
+                    logger.error("No media source available")
+                }
+            } label: {
+                HStack(spacing: 15) {
+                    Image(systemName: "play.fill")
+                        .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
+                        .font(.title3)
+
+                    if multipleVersions {
+                        ScrollingText(title, alignment: .center)
+                            .foregroundStyle(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
+                            .fontWeight(.semibold)
+                    } else {
+                        Text(title)
+                            .foregroundStyle(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
+                            .fontWeight(.semibold)
+                    }
+                }
+                .padding(20)
+                .frame(width: multipleVersions ? 320 : 440, height: 100, alignment: .center)
+                .background {
+                    if isFocused {
+                        viewModel.playButtonItem == nil ? Color.secondarySystemFill : Color.white
+                    } else {
+                        Color.white
+                            .opacity(0.5)
+                    }
+                }
+                .cornerRadius(10)
+            }
+            .focused($isFocused)
+            .buttonStyle(.card)
+//            .contextMenu {
+//                if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
+//                    Button {
+//                        if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
+//                            selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
+//                            router.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
+//                        } else {
+//                            logger.error("Attempted to play item but no playback information available")
+//                        }
+//                    } label: {
+//                        Label(L10n.playFromBeginning, systemImage: "gobackward")
+//                    }
+//
+//                    Button(role: .cancel) {} label: {
+//                        L10n.cancel.text
+//                    }
+//                }
+//            }
         }
     }
 }

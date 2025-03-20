@@ -31,17 +31,17 @@ extension ItemView {
             var section: String {
                 switch self {
                 case .local:
-                    return L10n.local
+                    return TrailerType.local.displayTitle
                 case .remote:
-                    return L10n.external
+                    return TrailerType.remote.displayTitle
                 }
             }
         }
 
         // MARK: - Stored Value
 
-        @StoredValue(.User.enableRemoteTrailers)
-        private var enableRemoteTrailers: Bool
+        @StoredValue(.User.enabledTrailers)
+        private var enabledTrailers: TrailerType
 
         // MARK: - Focus State
 
@@ -66,13 +66,20 @@ extension ItemView {
         private var trailers: [Trailer] {
             var allTrailers = [Trailer]()
 
-            /// Always add local trailers
-            for localTrailer in viewModel.localTrailers {
-                allTrailers.append(.local(localTrailer))
+            /// If no trailers are enabled, return empty array
+            if enabledTrailers == .none {
+                return allTrailers
             }
 
-            /// Only add remote trailers if enabled
-            if enableRemoteTrailers {
+            /// Add local trailers if enabled
+            if enabledTrailers == .all || enabledTrailers == .local {
+                for localTrailer in viewModel.localTrailers {
+                    allTrailers.append(.local(localTrailer))
+                }
+            }
+
+            /// Add remote trailers if enabled
+            if enabledTrailers == .all || enabledTrailers == .remote {
                 for remoteTrailer in viewModel.item.remoteTrailers ?? [] {
                     allTrailers.append(.remote(remoteTrailer))
                 }

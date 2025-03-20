@@ -10,7 +10,7 @@ import SwiftUI
 
 extension ItemView {
 
-    struct ActionButtonView: View {
+    struct ActionButtonHStack: View {
 
         // MARK: - Observed, State, & Environment Objects
 
@@ -74,42 +74,43 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            HStack(spacing: 20) {
-                ActionButtonViewLayout {
-                    // MARK: Toggle Played
+            HStack(alignment: .center, spacing: 20) {
+                // MARK: Toggle Played
 
-                    ActionButton(
-                        L10n.played,
-                        icon: "checkmark.circle",
-                        selectedIcon: "checkmark.circle.fill"
-                    ) {
-                        viewModel.send(.toggleIsPlayed)
-                    }
-                    .foregroundStyle(.purple)
-                    .environment(\.isSelected, viewModel.item.userData?.isPlayed ?? false)
+                ActionButton(
+                    L10n.played,
+                    icon: "checkmark.circle",
+                    selectedIcon: "checkmark.circle.fill"
+                ) {
+                    viewModel.send(.toggleIsPlayed)
+                }
+                .foregroundStyle(.purple)
+                .environment(\.isSelected, viewModel.item.userData?.isPlayed ?? false)
+                .frame(minWidth: 100, maxWidth: .infinity)
 
-                    // MARK: Toggle Favorite
+                // MARK: Toggle Favorite
 
-                    ActionButton(
-                        L10n.favorited,
-                        icon: "heart.circle",
-                        selectedIcon: "heart.circle.fill"
-                    ) {
-                        viewModel.send(.toggleIsFavorite)
-                    }
-                    .foregroundStyle(.pink)
-                    .environment(\.isSelected, viewModel.item.userData?.isFavorite ?? false)
+                ActionButton(
+                    L10n.favorited,
+                    icon: "heart.circle",
+                    selectedIcon: "heart.circle.fill"
+                ) {
+                    viewModel.send(.toggleIsFavorite)
+                }
+                .foregroundStyle(.pink)
+                .environment(\.isSelected, viewModel.item.userData?.isFavorite ?? false)
+                .frame(minWidth: 100, maxWidth: .infinity)
 
-                    // MARK: Watch a Trailer
+                // MARK: Watch a Trailer
 
-                    if viewModel.item.remoteTrailers?.isNotEmpty ?? false || viewModel.localTrailers.isNotEmpty {
-                        TrailerMenu(viewModel: viewModel)
-                    }
+                if viewModel.item.remoteTrailers?.isNotEmpty ?? false || viewModel.localTrailers.isNotEmpty {
+                    TrailerMenu(viewModel: viewModel)
+                        .frame(minWidth: 100, maxWidth: .infinity)
                 }
 
                 // MARK: Advanced Options - Separate from the layout
 
-                if canRefresh || canDelete {
+                if canRefresh || canDelete || true {
                     ActionButton(L10n.advanced, icon: "ellipsis", iconAngle: .degrees(90)) {
                         if canRefresh {
                             RefreshMetadataButton(item: viewModel.item)
@@ -121,9 +122,10 @@ extension ItemView {
                             }
                         }
                     }
-                    .frame(width: 60, height: 100)
+                    .frame(width: 60)
                 }
             }
+            .frame(height: 100)
             .padding(.top, 1)
             .padding(.bottom, 10)
             .confirmationDialog(

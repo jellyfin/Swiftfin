@@ -760,6 +760,9 @@
 /// Enabled
 "enabled" = "Enabled";
 
+/// Enabled trailers
+"enabledTrailers" = "Enabled trailers";
+
 /// End Date
 "endDate" = "End Date";
 

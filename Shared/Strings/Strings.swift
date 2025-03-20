@@ -538,6 +538,8 @@ internal enum L10n {
   internal static let enableAllLibraries = L10n.tr("Localizable", "enableAllLibraries", fallback: "Enable all libraries")
   /// Enabled
   internal static let enabled = L10n.tr("Localizable", "enabled", fallback: "Enabled")
+  /// Enabled trailers
+  internal static let enabledTrailers = L10n.tr("Localizable", "enabledTrailers", fallback: "Enabled trailers")
   /// End Date
   internal static let endDate = L10n.tr("Localizable", "endDate", fallback: "End Date")
   /// Ended
