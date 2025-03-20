@@ -181,20 +181,20 @@ public struct ScrollingText: View {
             Rectangle().frame(width: 2).opacity(0)
         }
     }
-    
+
     // MARK: - String Measurement Functions
-    
+
     private func widthOfString(text: String, usingFont font: UIFont) -> CGFloat {
         let semiboldFont = UIFont(descriptor: font.fontDescriptor.withSymbolicTraits(.traitBold)!, size: font.pointSize)
-        
+
         let fontAttributes = [NSAttributedString.Key.font: semiboldFont]
         let size = text.size(withAttributes: fontAttributes)
         return size.width
     }
-    
+
     private func heightOfString(text: String, usingFont font: UIFont) -> CGFloat {
         let semiboldFont = UIFont(descriptor: font.fontDescriptor.withSymbolicTraits(.traitBold)!, size: font.pointSize)
-        
+
         let fontAttributes = [NSAttributedString.Key.font: semiboldFont]
         let size = text.size(withAttributes: fontAttributes)
         return size.height
