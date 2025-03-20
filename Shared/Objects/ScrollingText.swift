@@ -29,14 +29,13 @@ public struct ScrollingText: View {
 
     @State
     private var animate = false
-    private var isCompact = false
 
     // MARK: - Body
 
     public var body: some View {
         let currentFont = font ?? UIFont.preferredFont(forTextStyle: .body)
-        let stringWidth = text.widthOfString(usingFont: currentFont)
-        let stringHeight = text.heightOfString(usingFont: currentFont)
+        let stringWidth = widthOfString(text: text, usingFont: currentFont)
+        let stringHeight = heightOfString(text: text, usingFont: currentFont)
 
         // Create our animations
         let animation = Animation
@@ -103,7 +102,7 @@ public struct ScrollingText: View {
                 self.animate = needsScrolling
             }
             .onChange(of: text) { newValue in
-                let newStringWidth = newValue.widthOfString(usingFont: currentFont)
+                let newStringWidth = widthOfString(text: newValue, usingFont: currentFont)
                 if newStringWidth > geo.size.width {
                     // Stop the old animation first
                     self.animate = false
@@ -118,7 +117,7 @@ public struct ScrollingText: View {
             }
         }
         .frame(height: stringHeight)
-        .frame(maxWidth: isCompact ? stringWidth : nil)
+        .frame(maxWidth: stringWidth)
         .onDisappear {
             self.animate = false
         }
@@ -182,6 +181,24 @@ public struct ScrollingText: View {
             Rectangle().frame(width: 2).opacity(0)
         }
     }
+    
+    // MARK: - String Measurement Functions
+    
+    private func widthOfString(text: String, usingFont font: UIFont) -> CGFloat {
+        let semiboldFont = UIFont(descriptor: font.fontDescriptor.withSymbolicTraits(.traitBold)!, size: font.pointSize)
+        
+        let fontAttributes = [NSAttributedString.Key.font: semiboldFont]
+        let size = text.size(withAttributes: fontAttributes)
+        return size.width
+    }
+    
+    private func heightOfString(text: String, usingFont font: UIFont) -> CGFloat {
+        let semiboldFont = UIFont(descriptor: font.fontDescriptor.withSymbolicTraits(.traitBold)!, size: font.pointSize)
+        
+        let fontAttributes = [NSAttributedString.Key.font: semiboldFont]
+        let size = text.size(withAttributes: fontAttributes)
+        return size.height
+    }
 
     // MARK: - Initializer
 
@@ -242,19 +259,5 @@ public extension ScrollingText {
         var copy = self
         copy.font = font
         return copy
-    }
-}
-
-extension String {
-    func widthOfString(usingFont font: UIFont) -> CGFloat {
-        let fontAttributes = [NSAttributedString.Key.font: font]
-        let size = self.size(withAttributes: fontAttributes)
-        return size.width
-    }
-
-    func heightOfString(usingFont font: UIFont) -> CGFloat {
-        let fontAttributes = [NSAttributedString.Key.font: font]
-        let size = self.size(withAttributes: fontAttributes)
-        return size.height
     }
 }
