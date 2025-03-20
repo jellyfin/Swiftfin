@@ -14,7 +14,7 @@ struct ActionButtonViewLayout: Layout {
 
     // MARK: - Item Spacing
 
-    let horizontalSpacing: CGFloat = 16
+    let horizontalSpacing: CGFloat = 20
 
     // MARK: - Item Sizing
 

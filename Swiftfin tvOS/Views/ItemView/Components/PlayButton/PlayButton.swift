@@ -55,7 +55,7 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            HStack(spacing: 16) {
+            HStack(spacing: 20) {
                 Button {
                     if let playButtonItem = viewModel.playButtonItem, let selectedMediaSource = viewModel.selectedMediaSource {
                         router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: playButtonItem, mediaSource: selectedMediaSource))
@@ -83,7 +83,7 @@ extension ItemView {
                                 .fontWeight(.semibold)
                         }
                     }
-                    .frame(width: mediaSources.count > 1 ? 284 : 400, height: 100)
+                    .frame(width: mediaSources.count > 1 ? 280 : 400, height: 100)
                     .background {
                         if isFocused {
                             viewModel.playButtonItem == nil ? Color.secondarySystemFill : Color.white

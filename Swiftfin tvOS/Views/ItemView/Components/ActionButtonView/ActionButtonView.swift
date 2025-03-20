@@ -74,7 +74,7 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            HStack(spacing: 16) {
+            HStack(spacing: 20) {
                 ActionButtonViewLayout {
                     // MARK: Toggle Played
 
@@ -109,7 +109,7 @@ extension ItemView {
 
                 // MARK: Advanced Options - Separate from the layout
 
-                if canRefresh || canDelete || true {
+                if canRefresh || canDelete {
                     ActionButton(L10n.advanced, icon: "ellipsis", iconAngle: .degrees(90)) {
                         if canRefresh {
                             RefreshMetadataButton(item: viewModel.item)

@@ -82,7 +82,6 @@ extension ItemView {
                 }
 
                 Label(title, systemImage: (mode == .button && isSelected) ? (selectedIcon ?? icon) : icon)
-                    .padding(0)
                     .hoverEffectDisabled()
                     .focusEffectDisabled()
                     .font(.title3)
@@ -91,6 +90,7 @@ extension ItemView {
                     .labelStyle(.iconOnly)
                     .rotationEffect(iconAngle)
             }
+            .padding(0)
             .accessibilityLabel(title)
         }
     }
