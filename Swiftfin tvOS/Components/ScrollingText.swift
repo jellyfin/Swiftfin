@@ -105,7 +105,7 @@ public struct ScrollingText: View {
                         .foregroundStyle(.primary)
                         .font(font == nil ? nil : .init(currentFont))
                         // TODO: 'onChange(of:perform:)' was deprecated in tvOS 17.0
-                        .onChange(of: text) { _ in
+                        .onChange(of: text) {
                             self.animate = false
                         }
                         .frame(
@@ -122,7 +122,7 @@ public struct ScrollingText: View {
                 self.animate = needsScrolling
             }
             // TODO: 'onChange(of:perform:)' was deprecated in tvOS 17.0
-            .onChange(of: text) { newValue in
+            .onChange(of: text) { _, newValue in
                 let newStringWidth = widthOfString(text: newValue, usingFont: currentFont)
                 if newStringWidth > geo.size.width {
                     /// Stop the old animation the Text changes

@@ -196,7 +196,6 @@
 		4EB1A8CE2C9B2D0800F43898 /* ActiveSessionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1A8CD2C9B2D0100F43898 /* ActiveSessionRow.swift */; };
 		4EB3F02B2D8C804200EBEDAA /* TrailerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB3F02A2D8C803F00EBEDAA /* TrailerType.swift */; };
 		4EB3F02C2D8C804200EBEDAA /* TrailerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB3F02A2D8C803F00EBEDAA /* TrailerType.swift */; };
-		4EB3F02E2D8C85D000EBEDAA /* ScrollingText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB3F02D2D8C85C600EBEDAA /* ScrollingText.swift */; };
 		4EB3F02F2D8C85D000EBEDAA /* ScrollingText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB3F02D2D8C85C600EBEDAA /* ScrollingText.swift */; };
 		4EB3F0372D8CD33300EBEDAA /* ActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB3F0362D8CD33100EBEDAA /* ActionButton.swift */; };
 		4EB3F0392D8CD5CF00EBEDAA /* TrailerMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB3F0382D8CD5CC00EBEDAA /* TrailerMenu.swift */; };
@@ -3432,7 +3431,6 @@
 				E18CE0B328A22EDA0092E7F1 /* RepeatingTimer.swift */,
 				E1E9017A28DAAE4D001B1594 /* RoundedCorner.swift */,
 				E18ACA8A2A14301800BB4F35 /* ScalingButtonStyle.swift */,
-				4EB3F02D2D8C85C600EBEDAA /* ScrollingText.swift */,
 				E164A7F52BE4814700A54B18 /* SelectUserServerSelection.swift */,
 				4E661A302CEFE7B900025C99 /* SeriesStatus.swift */,
 				E129429228F2845000796AC6 /* SliderType.swift */,
@@ -3473,6 +3471,7 @@
 				4E2AC4D32C6C4C1200DD600D /* OrderedSectionSelectorView.swift */,
 				E1C92617288756BD002A7A66 /* PosterButton.swift */,
 				E1C92619288756BD002A7A66 /* PosterHStack.swift */,
+				4EB3F02D2D8C85C600EBEDAA /* ScrollingText.swift */,
 				E12CC1C428D12D9B00678D5D /* SeeAllPosterButton.swift */,
 				E1E9EFE928C6B96400CC1F8B /* ServerButton.swift */,
 				E17885A3278105170094FBCF /* SFSymbolButton.swift */,
@@ -6722,7 +6721,6 @@
 				4E2182E62CAF67F50094806B /* PlayMethod.swift in Sources */,
 				E145EB482BE0C136003BF6F3 /* ScrollIfLargerThanContainerModifier.swift in Sources */,
 				E1CB757C2C80F00D00217C76 /* TranscodingProfile.swift in Sources */,
-				4EB3F02E2D8C85D000EBEDAA /* ScrollingText.swift in Sources */,
 				E1CAF65F2BA345830087D991 /* MediaViewModel.swift in Sources */,
 				E1EA9F6A28F8A79E00BEC442 /* VideoPlayerManager.swift in Sources */,
 				E133328D2953AE4B00EE76AB /* CircularProgressView.swift in Sources */,

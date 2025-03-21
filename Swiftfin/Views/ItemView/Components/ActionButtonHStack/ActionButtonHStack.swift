@@ -83,21 +83,21 @@ extension ItemView {
                     view.frame(maxWidth: .infinity)
                 }
 
-                // MARK: Watch a Trailer
-
-                if hasTrailers {
-                    TrailerMenu(viewModel: viewModel)
-                        .if(equalSpacing) { view in
-                            view.frame(maxWidth: .infinity)
-                        }
-                }
-
                 // MARK: Select a Version
 
                 if let mediaSources = viewModel.playButtonItem?.mediaSources,
                    mediaSources.count > 1
                 {
                     VersionMenu(viewModel: viewModel, mediaSources: mediaSources)
+                        .if(equalSpacing) { view in
+                            view.frame(maxWidth: .infinity)
+                        }
+                }
+
+                // MARK: Watch a Trailer
+
+                if hasTrailers {
+                    TrailerMenu(viewModel: viewModel)
                         .if(equalSpacing) { view in
                             view.frame(maxWidth: .infinity)
                         }
