@@ -64,7 +64,7 @@ extension ItemView {
         // MARK: - Notification State
 
         @State
-        private var selectedRemoteURL: MediaURL? = nil
+        private var selectedRemoteURL: MediaURL?
 
         // MARK: - Valid Trailers
 
