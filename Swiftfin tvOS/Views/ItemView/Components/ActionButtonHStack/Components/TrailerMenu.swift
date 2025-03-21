@@ -112,6 +112,7 @@ extension ItemView {
                     trailerMenu
                 }
             }
+            .errorMessage($error)
             .alert(L10n.leavingSwiftfin, isPresented: .constant(selectedRemoteURL != nil)) {
                 Button(L10n.cancel, role: .cancel) {
                     selectedRemoteURL = nil
@@ -162,7 +163,6 @@ extension ItemView {
                     }
                 }
             }
-            .errorMessage($error)
         }
 
         // MARK: - Play: Generic Trailer
