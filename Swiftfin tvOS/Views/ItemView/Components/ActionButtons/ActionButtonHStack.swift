@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 extension ItemView {
@@ -25,6 +26,8 @@ extension ItemView {
 
         // MARK: - Defaults
 
+        @Default(.accentColor)
+        private var accentColor
         @StoredValue(.User.enableItemDeletion)
         private var enableItemDeletion: Bool
         @StoredValue(.User.enableItemEditing)
@@ -85,7 +88,7 @@ extension ItemView {
                 ) {
                     viewModel.send(.toggleIsPlayed)
                 }
-                .foregroundStyle(.purple)
+                .foregroundStyle(accentColor)
                 .environment(\.isSelected, viewModel.item.userData?.isPlayed ?? false)
                 .frame(minWidth: 80, maxWidth: .infinity)
 

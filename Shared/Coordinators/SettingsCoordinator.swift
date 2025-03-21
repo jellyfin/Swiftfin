@@ -83,6 +83,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var playbackQualitySettings = makePlaybackQualitySettings
     @Route(.modal)
     var userProfile = makeUserProfileSettings
+    @Route(.modal)
+    var accentColorSettings = makeAccentColorSettings
     #endif
 
     #if os(iOS)
@@ -197,6 +199,14 @@ final class SettingsCoordinator: NavigationCoordinatable {
     func makeUserProfileSettings(viewModel: SettingsViewModel) -> NavigationViewCoordinator<UserProfileSettingsCoordinator> {
         NavigationViewCoordinator(
             UserProfileSettingsCoordinator(viewModel: viewModel)
+        )
+    }
+
+    // MARK: - Accent Color View
+
+    func makeAccentColorSettings() -> NavigationViewCoordinator<AccentColorSettingsCoordinator> {
+        NavigationViewCoordinator(
+            AccentColorSettingsCoordinator()
         )
     }
 
