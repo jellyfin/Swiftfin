@@ -7,6 +7,7 @@
 //
 
 import Factory
+import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
@@ -25,15 +26,46 @@ extension ItemView {
         @FocusState
         private var isFocused: Bool
 
+        // MARK: - Media Sources
+
+        private var mediaSources: [MediaSourceInfo] {
+            viewModel.playButtonItem?.mediaSources ?? []
+        }
+
+        // MARK: - Multiple Media Sources
+
+        private var multipleVersions: Bool {
+            mediaSources.count > 1
+        }
+
+        // MARK: - Title
+
         private var title: String {
-            if let seriesViewModel = viewModel as? SeriesItemViewModel {
+            if let displayTitle = viewModel.selectedMediaSource?.displayTitle, multipleVersions {
+                return displayTitle
+            } else if let seriesViewModel = viewModel as? SeriesItemViewModel {
                 return seriesViewModel.playButtonItem?.seasonEpisodeLabel ?? L10n.play
             } else {
                 return viewModel.playButtonItem?.playButtonLabel ?? L10n.play
             }
         }
 
+        // MARK: - Body
+
         var body: some View {
+            HStack(spacing: 20) {
+                playButton
+
+                if multipleVersions {
+                    VersionMenu(viewModel: viewModel, mediaSources: mediaSources)
+                        .frame(width: 100, height: 100)
+                }
+            }
+        }
+
+        // MARK: - Play Button
+
+        private var playButton: some View {
             Button {
                 if let playButtonItem = viewModel.playButtonItem, let selectedMediaSource = viewModel.selectedMediaSource {
                     router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: playButtonItem, mediaSource: selectedMediaSource))
@@ -46,11 +78,12 @@ extension ItemView {
                         .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
                         .font(.title3)
 
-                    Text(title)
-                        .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
+                    ScrollingText(title, alignment: .leading)
+                        .foregroundStyle(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
                         .fontWeight(.semibold)
                 }
-                .frame(width: 400, height: 100)
+                .padding(20)
+                .frame(width: multipleVersions ? 320 : 440, height: 100, alignment: .center)
                 .background {
                     if isFocused {
                         viewModel.playButtonItem == nil ? Color.secondarySystemFill : Color.white

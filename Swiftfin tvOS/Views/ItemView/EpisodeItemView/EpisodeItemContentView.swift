@@ -128,7 +128,7 @@ extension EpisodeItemView.ContentView {
                             .focused($focusedLayer, equals: .playButton)
 
                         ItemView.ActionButtonHStack(viewModel: viewModel)
-                            .frame(width: 400)
+                            .frame(width: 440)
                     }
                     .frame(width: 450)
                     .padding(.leading, 150)

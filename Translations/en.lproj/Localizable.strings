@@ -760,6 +760,9 @@
 /// Enabled
 "enabled" = "Enabled";
 
+/// Enabled trailers
+"enabledTrailers" = "Enabled trailers";
+
 /// End Date
 "endDate" = "End Date";
 
@@ -834,6 +837,9 @@
 
 /// Experimental
 "experimental" = "Experimental";
+
+/// External
+"external" = "External";
 
 /// Failed logins
 "failedLogins" = "Failed logins";
@@ -1012,6 +1018,12 @@
 /// Learn more...
 "learnMoreEllipsis" = "Learn more...";
 
+/// Leaving Swiftfin
+"leavingSwiftfin" = "Leaving Swiftfin";
+
+/// This will open content outside of Swiftfin. Are you sure you want to continue?
+"leavingSwiftfinWarning" = "This will open content outside of Swiftfin. Are you sure you want to continue?";
+
 /// Left
 "left" = "Left";
 
@@ -1056,6 +1068,9 @@
 
 /// Loading user failed
 "loadingUserFailed" = "Loading user failed";
+
+/// Local
+"local" = "Local";
 
 /// Local Servers
 "localServers" = "Local Servers";
@@ -1917,6 +1932,9 @@
 
 /// Title
 "title" = "Title";
+
+/// Trailer
+"trailer" = "Trailer";
 
 /// Trailers
 "trailers" = "Trailers";
