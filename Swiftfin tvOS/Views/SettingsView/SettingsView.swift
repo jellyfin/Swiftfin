@@ -24,20 +24,6 @@ struct SettingsView: View {
     @StateObject
     private var viewModel = SettingsViewModel()
 
-    struct NamedColor: Hashable {
-        let name: String
-        let value: Color
-
-        static let availableColors: [NamedColor] = [
-            NamedColor(name: L10n.jellyfin, value: .jellyfinPurple),
-            NamedColor(name: L10n.red, value: .red),
-            NamedColor(name: L10n.orange, value: .orange),
-            NamedColor(name: L10n.yellow, value: .yellow),
-            NamedColor(name: L10n.green, value: .green),
-            NamedColor(name: L10n.blue, value: .blue),
-        ]
-    }
-
     var body: some View {
         SplitFormWindowView()
             .descriptionView {
@@ -99,28 +85,10 @@ struct SettingsView: View {
                 }
 
                 Section(L10n.appearance) {
-                    Menu {
-                        ForEach(NamedColor.availableColors, id: \.self) { color in
-                            Button(action: {
-                                guard accentColor != color.value else { return }
-                                accentColor = color.value
-                            }) {
-                                Text(color.name)
-                                    .foregroundColor(.primary)
-                            }
+                    ChevronButton(L10n.accentColor)
+                        .onSelect {
+                            router.route(to: \.accentColorSettings)
                         }
-                    } label: {
-                        HStack {
-                            Text(L10n.accentColor)
-                            Spacer()
-                            Circle()
-                                .fill(accentColor)
-                                .frame(width: 16, height: 16)
-                        }
-                    }
-                    .listRowBackground(Color.clear)
-                    .listRowInsets(.zero)
-                    .foregroundStyle(.primary, .secondary)
                 }
 
                 Section {

@@ -36,4 +36,8 @@ extension Color {
     static let secondarySystemFill = Color(UIColor.secondarySystemFill)
     static let tertiarySystemFill = Color(UIColor.tertiarySystemFill)
     #endif
+
+    func equals(_ other: Color) -> Bool {
+        self.uiColor.cgColor == other.uiColor.cgColor
+    }
 }
