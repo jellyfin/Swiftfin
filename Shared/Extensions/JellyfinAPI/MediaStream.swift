@@ -247,8 +247,12 @@ extension [MediaStream] {
             let externalSubtitles = externalTracks.filter { $0.type == .subtitle }
 
             /// Transcodes with only internal text-subtitles the first and last track switch places???
-            if subtitleInternal.count > 1 && externalSubtitles.isEmpty && subtitleInternal == subtitleInternal.filter({ $0.isTextSubtitleStream == true }) {
-                var reorderedSubtitleInternal = subtitleInternal
+            if subtitleInternal.count > 1 &&
+                externalSubtitles.isEmpty &&
+                subtitleInternal == subtitleInternal.filter({ $0.isTextSubtitleStream == true })
+            {
+                /// Remove invalid subtitles for transcodes
+                var reorderedSubtitleInternal = subtitleInternal.filter { $0.isSupportsExternalStream == true }
 
                 let firstDeliveryURL = subtitleInternal.first?.deliveryURL
                 let lastDeliveryURL = subtitleInternal.last?.deliveryURL
@@ -263,7 +267,7 @@ extension [MediaStream] {
 
                 orderedInternal += reorderedSubtitleInternal
             } else {
-                orderedInternal += subtitleInternal
+                orderedInternal += subtitleInternal.filter { $0.isSupportsExternalStream == true }
             }
 
             orderedInternal += otherInternal
