@@ -64,7 +64,6 @@ struct LibraryFilterBar: View {
                     }
                     .environment(\.isSelected, true)
                 } else {
-                    // Leave space for the Reset Button
                     Spacer()
                         .frame(width: 75, height: 75)
                 }
@@ -89,6 +88,7 @@ struct LibraryFilterBar: View {
             .padding(.horizontal, 20)
             .padding(.vertical, 1)
         }
+        .frame(width: filterWidth + 170)
     }
 
     private var selectedButtonBackground: some View {

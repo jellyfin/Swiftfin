@@ -16,11 +16,6 @@ struct LibraryFilterModifier<Filters: View, Letters: View>: ViewModifier {
     let filters: () -> Filters
     let letters: () -> Letters?
 
-    // MARK: - Focus State
-
-    @FocusState
-    private var isContentFocused: Bool
-
     // MARK: - State Variables
 
     @State
