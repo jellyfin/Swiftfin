@@ -18,6 +18,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
 
     @Default(.Customization.Library.cinematicBackground)
     private var cinematicBackground
+    @Default(.Customization.Library.letterPickerEnabled)
+    private var letterPickerEnabled
     @Default(.Customization.Library.enabledDrawerFilters)
     private var enabledDrawerFilters
     @Default(.Customization.Library.rememberLayout)
@@ -39,8 +41,6 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     private var presentBackground = false
     @State
     private var layout: CollectionVGridLayout
-    @State
-    private var safeArea: EdgeInsets = .zero
 
     @StoredValue
     private var displayType: LibraryDisplayType
@@ -300,49 +300,28 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         }
     }
 
-    // MARK: Content View
-
     @ViewBuilder
     private var contentView: some View {
-
         innerContent
+            .ifLet(viewModel.filterViewModel) { view, filterViewModel in
+                view.libraryFilterBars(
+                    viewModel: filterViewModel,
+                    letterPicker: letterPickerEnabled,
+                    types: enabledDrawerFilters
+                ) {
+                    router.route(to: \.filter, $0)
+                }
+            }
             // These exist here to alleviate type-checker issues
-                .onChange(of: posterType) {
-                    setCustomLayout()
-                }
-                .onChange(of: displayType) {
-                    setCustomLayout()
-                }
-                .onChange(of: listColumnCount) {
-                    setCustomLayout()
-                }
-
-        // Logic for LetterPicker. Enable when ready
-
-        /* if letterPickerEnabled, let filterViewModel = viewModel.filterViewModel {
-             ZStack(alignment: letterPickerOrientation.alignment) {
-                 innerContent
-                     .padding(letterPickerOrientation.edge, LetterPickerBar.size + 10)
-                     .frame(maxWidth: .infinity)
-
-                 LetterPickerBar(viewModel: filterViewModel)
-                     .padding(.top, safeArea.top)
-                     .padding(.bottom, safeArea.bottom)
-                     .padding(letterPickerOrientation.edge, 10)
-             }
-         } else {
-            innerContent
-         }
-         // These exist here to alleviate type-checker issues
-         .onChange(of: posterType) {
-             setCustomLayout()
-         }
-         .onChange(of: displayType) {
-             setCustomLayout()
-         }
-         .onChange(of: listColumnCount) {
-             setCustomLayout()
-         }*/
+            .onChange(of: posterType) {
+                setCustomLayout()
+            }
+            .onChange(of: displayType) {
+                setCustomLayout()
+            }
+            .onChange(of: listColumnCount) {
+                setCustomLayout()
+            }
     }
 
     // MARK: Body
