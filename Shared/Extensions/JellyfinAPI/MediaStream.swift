@@ -230,13 +230,15 @@ extension [MediaStream] {
         var orderedInternal: [MediaStream] = []
 
         let subtitleInternal = internalTracks.filter { $0.type == .subtitle }
-        let videoInternal = internalTracks.filter { $0.type == .video }
-        let audioInternal = internalTracks.filter { $0.type == .audio }
 
         // TODO: Do we need this for other media types? I think movies/shows we only care about video, audio, and subtitles.
         let otherInternal = internalTracks.filter { $0.type != .video && $0.type != .audio && $0.type != .subtitle }
 
         if streamType == .transcode {
+            // Only include the first video and first audio track for transcode.
+            let videoInternal = internalTracks.filter { $0.type == .video }
+            let audioInternal = internalTracks.filter { $0.type == .audio }
+
             if let firstVideo = videoInternal.first {
                 orderedInternal.append(firstVideo)
             }
@@ -244,28 +246,12 @@ extension [MediaStream] {
                 orderedInternal.append(selectedAudio)
             }
 
-            /// Transcodes with only internal subtitles the first and last track switch places???
-            if subtitleInternal.count > 1 && externalTracks.filter({ $0.type == .subtitle }).isEmpty {
-                var reorderedSubtitleInternal = subtitleInternal
-
-                let firstDeliveryURL = subtitleInternal.first?.deliveryURL
-                let lastDeliveryURL = subtitleInternal.last?.deliveryURL
-
-                if var firstItem = reorderedSubtitleInternal.first, var lastItem = reorderedSubtitleInternal.last {
-                    firstItem.deliveryURL = lastDeliveryURL
-                    lastItem.deliveryURL = firstDeliveryURL
-
-                    reorderedSubtitleInternal[0] = firstItem
-                    reorderedSubtitleInternal[reorderedSubtitleInternal.count - 1] = lastItem
-                }
-
-                orderedInternal += reorderedSubtitleInternal
-            } else {
-                orderedInternal += subtitleInternal
-            }
-
+            orderedInternal += subtitleInternal
             orderedInternal += otherInternal
         } else {
+            let videoInternal = internalTracks.filter { $0.type == .video }
+            let audioInternal = internalTracks.filter { $0.type == .audio }
+
             orderedInternal = videoInternal + audioInternal + subtitleInternal + otherInternal
         }
 
