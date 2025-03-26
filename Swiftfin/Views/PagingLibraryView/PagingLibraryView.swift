@@ -203,33 +203,6 @@ struct PagingLibraryView<Element: Poster>: View {
             .onSelect {
                 onSelect(item)
             }
-            .onToggleIsPlayed {
-                let itemViewModel = ItemViewModel(item: item as! BaseItemDto)
-                itemViewModel.send(.toggleIsPlayed)
-            }
-            .onToggleIsFavorite {
-                let itemViewModel = ItemViewModel(item: item as! BaseItemDto)
-                itemViewModel.send(.toggleIsFavorite)
-            }
-            .onRefresh {
-                if userSession?.user.permissions.items.canEditMetadata ?? false {
-                    let refreshMetadataViewModel = RefreshMetadataViewModel(item: baseItem)
-                    refreshMetadataViewModel.send(
-                        .refreshMetadata(
-                            metadataRefreshMode: .default,
-                            imageRefreshMode: .default,
-                            replaceMetadata: false,
-                            replaceImages: false
-                        )
-                    )
-                }
-            }
-            .onDelete {
-                if userSession?.user.permissions.items.canDelete ?? false && baseItem.canDelete ?? false {
-                    let deleteItemViewModel = DeleteItemViewModel(item: baseItem)
-                    deleteItemViewModel.send(.delete)
-                }
-            }
     }
 
     @ViewBuilder
@@ -252,33 +225,6 @@ struct PagingLibraryView<Element: Poster>: View {
             }
             .onSelect {
                 onSelect(item)
-            }
-            .onToggleIsPlayed {
-                let itemViewModel = ItemViewModel(item: baseItem)
-                itemViewModel.send(.toggleIsPlayed)
-            }
-            .onToggleIsFavorite {
-                let itemViewModel = ItemViewModel(item: baseItem)
-                itemViewModel.send(.toggleIsFavorite)
-            }
-            .onRefresh {
-                if userSession?.user.permissions.items.canEditMetadata ?? false {
-                    let refreshMetadataViewModel = RefreshMetadataViewModel(item: baseItem)
-                    refreshMetadataViewModel.send(
-                        .refreshMetadata(
-                            metadataRefreshMode: .default,
-                            imageRefreshMode: .default,
-                            replaceMetadata: false,
-                            replaceImages: false
-                        )
-                    )
-                }
-            }
-            .onDelete {
-                if userSession?.user.permissions.items.canDelete ?? false && baseItem.canDelete ?? false {
-                    let deleteItemViewModel = DeleteItemViewModel(item: baseItem)
-                    deleteItemViewModel.send(.delete)
-                }
             }
     }
 

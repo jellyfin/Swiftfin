@@ -200,6 +200,42 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             }
             .store(in: &cancellables)
 
+        // TODO: Why can't I just update the element?
+        Notifications[.itemShouldRefreshMetadata]
+            .publisher
+            .receive(on: RunLoop.main)
+            .sink { id in
+                /// Only proceed for BaseItemDtos
+                guard Element.self == BaseItemDto.self else { return }
+
+                /// Find the refreshable item in the elements
+                let index = self.elements.firstIndex(where: { $0.unwrappedIDHashOrZero == id.hashValue })
+
+                /// Remove the refreshable item from the elements
+                self.elements.remove(id: id.hashValue)
+
+                if let index = index {
+                    Task {
+                        do {
+                            /// Refresh this item from Jellyfin
+                            let updatedItem = try await self.refreshItem(id)
+
+                            /// Insert the latest version of this item back into the elements
+                            if let updatedElement = updatedItem as? Element {
+                                try await MainActor.run {
+                                    if index < self.elements.count {
+                                        _ = self.elements.insert(updatedElement, at: index)
+                                    } else {
+                                        throw JellyfinAPIError("Could not update the item at index \(index)")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .store(in: &cancellables)
+
         if let filterViewModel {
             filterViewModel.$currentFilters
                 .dropFirst()
@@ -371,5 +407,13 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     /// come from another source instead.
     func getRandomItem() async throws -> Element? {
         elements.randomElement()
+    }
+
+    /// Gets the latest version of a BaseItemDto from its ItemID
+    func refreshItem(_ itemID: String) async throws -> BaseItemDto {
+        let request = Paths.getItem(userID: userSession.user.id, itemID: itemID)
+        let response = try await userSession.client.send(request)
+
+        return response.value
     }
 }

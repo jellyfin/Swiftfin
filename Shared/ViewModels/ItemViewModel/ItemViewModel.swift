@@ -25,8 +25,8 @@ class ItemViewModel: ViewModel, Stateful {
         case error(JellyfinAPIError)
         case refresh
         case replace(BaseItemDto)
-        case toggleIsFavorite
-        case toggleIsPlayed
+        case toggleIsFavorite(setFavorite: Bool? = nil)
+        case toggleIsPlayed(setPlayed: Bool? = nil)
         case selectMediaSource(MediaSourceInfo)
     }
 
@@ -226,7 +226,7 @@ class ItemViewModel: ViewModel, Stateful {
             .store(in: &cancellables)
 
             return state
-        case .toggleIsFavorite:
+        case let .toggleIsFavorite(setFavorite):
 
             toggleIsFavoriteTask?.cancel()
 
@@ -239,7 +239,11 @@ class ItemViewModel: ViewModel, Stateful {
                 }
 
                 do {
-                    try await setIsFavorite(!beforeIsFavorite)
+                    if let setFavorite {
+                        try await setIsFavorite(setFavorite)
+                    } else {
+                        try await setIsFavorite(!beforeIsFavorite)
+                    }
                 } catch {
                     await MainActor.run {
                         item.userData?.isFavorite = beforeIsFavorite
@@ -250,7 +254,7 @@ class ItemViewModel: ViewModel, Stateful {
             .asAnyCancellable()
 
             return state
-        case .toggleIsPlayed:
+        case let .toggleIsPlayed(setPlayed):
 
             toggleIsPlayedTask?.cancel()
 
@@ -263,7 +267,11 @@ class ItemViewModel: ViewModel, Stateful {
                 }
 
                 do {
-                    try await setIsPlayed(!beforeIsPlayed)
+                    if let setPlayed {
+                        try await setIsPlayed(setPlayed)
+                    } else {
+                        try await setIsPlayed(!beforeIsPlayed)
+                    }
                 } catch {
                     await MainActor.run {
                         item.userData?.isPlayed = beforeIsPlayed
@@ -337,12 +345,12 @@ class ItemViewModel: ViewModel, Stateful {
         if isPlayed {
             request = Paths.markPlayedItem(
                 userID: userSession.user.id,
-                itemID: item.id!
+                itemID: itemID
             )
         } else {
             request = Paths.markUnplayedItem(
                 userID: userSession.user.id,
-                itemID: item.id!
+                itemID: itemID
             )
         }
 
@@ -352,20 +360,23 @@ class ItemViewModel: ViewModel, Stateful {
 
     private func setIsFavorite(_ isFavorite: Bool) async throws {
 
+        guard let itemID = item.id else { return }
+
         let request: Request<UserItemDataDto>
 
         if isFavorite {
             request = Paths.markFavoriteItem(
                 userID: userSession.user.id,
-                itemID: item.id!
+                itemID: itemID
             )
         } else {
             request = Paths.unmarkFavoriteItem(
                 userID: userSession.user.id,
-                itemID: item.id!
+                itemID: itemID
             )
         }
 
         let _ = try await userSession.client.send(request)
+        Notifications[.itemShouldRefreshMetadata].post(itemID)
     }
 }

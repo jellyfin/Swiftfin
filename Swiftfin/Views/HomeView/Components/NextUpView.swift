@@ -40,13 +40,6 @@ extension HomeView {
                         PosterButton.TitleSubtitleContentView(item: item)
                     }
                 }
-                .contextMenu { item in
-                    Button {
-                        onSetPlayed(item)
-                    } label: {
-                        Label(L10n.played, systemImage: "checkmark.circle")
-                    }
-                }
                 .onSelect { item in
                     router.route(to: \.item, item)
                 }

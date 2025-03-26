@@ -39,9 +39,6 @@ struct HomeView: View {
                 ContinueWatchingView(viewModel: viewModel)
 
                 NextUpView(viewModel: viewModel.nextUpViewModel)
-                    .onSetPlayed { item in
-                        viewModel.send(.setIsPlayed(true, item))
-                    }
 
                 if showRecentlyAdded {
                     RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)

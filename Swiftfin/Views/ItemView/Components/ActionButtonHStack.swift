@@ -38,7 +38,7 @@ extension ItemView {
             HStack(alignment: .center, spacing: 15) {
                 Button {
                     UIDevice.impact(.light)
-                    viewModel.send(.toggleIsPlayed)
+                    viewModel.send(.toggleIsPlayed())
                 } label: {
                     if viewModel.item.userData?.isPlayed ?? false {
                         Image(systemName: "checkmark.circle.fill")
@@ -58,7 +58,7 @@ extension ItemView {
 
                 Button {
                     UIDevice.impact(.light)
-                    viewModel.send(.toggleIsFavorite)
+                    viewModel.send(.toggleIsFavorite())
                 } label: {
                     if viewModel.item.userData?.isFavorite ?? false {
                         Image(systemName: "heart.fill")

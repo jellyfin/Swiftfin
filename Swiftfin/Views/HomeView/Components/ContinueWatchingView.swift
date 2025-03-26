@@ -45,19 +45,6 @@ extension HomeView {
                             PosterButton.TitleSubtitleContentView(item: item)
                         }
                     }
-                    .contextMenu {
-                        Button {
-                            viewModel.send(.setIsPlayed(true, item))
-                        } label: {
-                            Label(L10n.played, systemImage: "checkmark.circle")
-                        }
-
-                        Button(role: .destructive) {
-                            viewModel.send(.setIsPlayed(false, item))
-                        } label: {
-                            Label(L10n.unplayed, systemImage: "minus.circle")
-                        }
-                    }
                     .imageOverlay {
                         LandscapePosterProgressBar(
                             title: item.progressLabel ?? L10n.continue,
