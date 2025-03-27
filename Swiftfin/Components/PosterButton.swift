@@ -79,7 +79,7 @@ struct PosterButton<Item: Poster>: View {
             .buttonStyle(.plain)
             .contextMenu(menuItems: {
                 if let item = item as? BaseItemDto {
-                    ItemContextMenu(item)
+                    ContextMenu(item)
                 }
 
                 contextMenu()

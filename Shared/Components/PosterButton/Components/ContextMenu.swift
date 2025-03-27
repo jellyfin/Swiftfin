@@ -12,15 +12,20 @@ import SwiftUI
 
 extension PosterButton {
 
-    struct ItemContextMenu: View {
+    struct ContextMenu: View {
 
         // MARK: - Current User Session
 
         @Injected(\.currentUserSession)
         private var userSession
 
+        #if os(tvOS)
         @EnvironmentObject
-        private var mainRouter: MainCoordinator.Router
+        private var router: ItemCoordinator.Router
+        #else
+        @EnvironmentObject
+        private var router: MainCoordinator.Router
+        #endif
 
         // MARK: - PosterButton ContextMenu Variables
 
@@ -35,24 +40,42 @@ extension PosterButton {
         @StateObject
         private var deleteViewModel: DeleteItemViewModel
 
-        // MARK: - Is The BaseItemDto Playable?
+        // MARK: - Playback Resumables
 
-        private var isPlayable: Bool {
-            item.type == .episode ||
-                item.type == .movie ||
-                item.type == .series ||
-                item.type == .season ||
-                item.type == .collectionFolder ||
-                item.type == .boxSet ||
-                item.type == .playlist ||
-                item.type == .playlistsFolder
+        private var playbackResumable: Bool {
+            item.userData?.playbackPositionTicks ?? 0 > 0
+        }
+
+        // MARK: - Playback Title
+
+        private var playbackSubtitle: String? {
+            if let series = itemViewModel as? SeriesItemViewModel {
+                return series.playButtonItem?.seasonEpisodeLabel
+            } else if playbackResumable {
+                return itemViewModel.playButtonItem?.playButtonLabel
+            } else {
+                return nil
+            }
         }
 
         // MARK: - Initializer
 
         init(_ item: BaseItemDto) {
             self.item = item
-            self._itemViewModel = .init(wrappedValue: .init(item: item))
+
+            switch item.type {
+            case .boxSet:
+                self._itemViewModel = .init(wrappedValue: CollectionItemViewModel(item: item))
+            case .episode:
+                self._itemViewModel = .init(wrappedValue: EpisodeItemViewModel(item: item))
+            case .movie:
+                self._itemViewModel = .init(wrappedValue: MovieItemViewModel(item: item))
+            case .series:
+                self._itemViewModel = .init(wrappedValue: SeriesItemViewModel(item: item))
+            default:
+                self._itemViewModel = .init(wrappedValue: ItemViewModel(item: item))
+            }
+
             self._refreshViewModel = .init(wrappedValue: .init(item: item))
             self._deleteViewModel = .init(wrappedValue: .init(item: item))
         }
@@ -60,49 +83,54 @@ extension PosterButton {
         // MARK: - Body
 
         var body: some View {
-            playbackButtons
-            actionButtons
-            managementButtons
+            Group {
+                playbackButtons
+                actionButtons
+                managementButtons
+            }
+            .onFirstAppear {
+                itemViewModel.send(.refresh)
+            }
         }
 
         // MARK: - Playback Buttons
 
         @ViewBuilder
         private var playbackButtons: some View {
-            if isPlayable {
-                Section(L10n.media) {
-                    /// Play / Resume
+            Section(L10n.media) {
+                /// Play / Resume
+                if let playButtonItem = itemViewModel.playButtonItem {
                     ContextMenuButton(
-                        item.userData?.playbackPositionTicks ?? 0 > 0 ? L10n.resume : L10n.play,
+                        playbackResumable ? L10n.resume : L10n.play,
+                        subtitle: playbackSubtitle,
                         icon: "play",
                         action: {
-                            // TODO: Handle folders/shows/series
-                            mainRouter.route(
+                            router.route(
                                 to: \.videoPlayer,
                                 OnlineVideoPlayerManager(
-                                    item: item,
-                                    mediaSource: item.mediaSources!.first!
+                                    item: playButtonItem,
+                                    mediaSource: playButtonItem.mediaSources!.first!
                                 )
                             )
                         }
                     )
-                    /// Play From Beginning
-                    /* if (item.userData?.playbackPositionTicks ?? 0) > 0 {
-                         ContextMenuButton(
-                             L10n.playFromBeginning,
-                             icon: "repeat",
-                             action: {}
-                         )
-                     }
-                     /// Shuffle Season/Folder
-                     if item.isFolder == true {
-                         ContextMenuButton(
-                             "Shuffle",
-                             icon: "shuffle",
-                             action: {}
-                         )
-                     } */
                 }
+                /// Play From Beginning
+                /* if playbackResumable {
+                     ContextMenuButton(
+                         L10n.playFromBeginning,
+                         icon: "repeat",
+                         action: {}
+                     )
+                 }
+                 /// Shuffle Season/Folder
+                 if item.isFolder == true {
+                     ContextMenuButton(
+                         "Shuffle",
+                         icon: "shuffle",
+                         action: {}
+                     )
+                 } */
             }
         }
 
@@ -111,8 +139,8 @@ extension PosterButton {
         @ViewBuilder
         private var actionButtons: some View {
             Section(L10n.options) {
-                /// Toggle Played
-                if (item.userData?.playbackPositionTicks ?? 0) > 0 || item.userData?.isPlayed ?? false == false {
+                /// Mark as Played
+                if playbackResumable || item.userData?.isPlayed == false {
                     ContextMenuButton(
                         L10n.played,
                         icon: "checkmark.circle",
@@ -122,7 +150,7 @@ extension PosterButton {
                     )
                 }
                 /// Mark as Unplayed
-                if (item.userData?.playbackPositionTicks ?? 0) > 0 || item.userData?.isPlayed ?? false {
+                if playbackResumable || item.userData?.isPlayed ?? false {
                     ContextMenuButton(
                         L10n.unplayed,
                         icon: "minus.circle",
@@ -160,8 +188,20 @@ extension PosterButton {
         @ViewBuilder
         private var managementButtons: some View {
             Section(L10n.management) {
-                /// Refresh Metadata
-                if userSession?.user.permissions.items.canEditMetadata ?? false {
+                if (item.type == .boxSet && userSession?.user.permissions.items.canManageCollections ?? false) ||
+                    userSession?.user.permissions.items.canEditMetadata ?? false
+                {
+                    #if os(iOS)
+                    /// Edit Metadata
+                    ContextMenuButton(
+                        L10n.edit,
+                        icon: "gearshape",
+                        action: {
+                            router.route(to: \.itemEditor, itemViewModel)
+                        }
+                    )
+                    #endif
+                    /// Refresh Metadata
                     ContextMenuButton(
                         L10n.refreshMetadata,
                         icon: "arrow.clockwise",
@@ -178,7 +218,10 @@ extension PosterButton {
                     )
                 }
                 /// Delete Item
-                if userSession?.user.permissions.items.canDelete ?? false && item.canDelete ?? false {
+                if (item.type == .boxSet && userSession?.user.permissions.items.canManageCollections ?? false) ||
+                    userSession?.user.permissions.items.canDelete ?? false &&
+                    item.canDelete ?? false
+                {
                     ContextMenuButton(
                         L10n.delete,
                         icon: "trash",

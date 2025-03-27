@@ -41,6 +41,8 @@ final class MainCoordinator: NavigationCoordinatable {
     var settings = makeSettings
     @Route(.fullScreen)
     var videoPlayer = makeVideoPlayer
+    @Route(.modal)
+    var itemEditor = makeItemEditor
 
     init() {
 
@@ -154,5 +156,9 @@ final class MainCoordinator: NavigationCoordinatable {
 
     func makeLiveVideoPlayer(manager: LiveVideoPlayerManager) -> LiveVideoPlayerCoordinator {
         LiveVideoPlayerCoordinator(manager: manager)
+    }
+
+    func makeItemEditor(viewModel: ItemViewModel) -> NavigationViewCoordinator<ItemEditorCoordinator> {
+        NavigationViewCoordinator(ItemEditorCoordinator(viewModel: viewModel))
     }
 }

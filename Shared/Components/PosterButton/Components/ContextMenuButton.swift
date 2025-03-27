@@ -18,15 +18,17 @@ extension PosterButton {
 
         private let role: ButtonRole?
         private let title: String
+        private let subtitle: String?
         private let icon: String
         private let action: () -> Void
 
         // MARK: - Initializer
 
-        init(_ title: String, icon: String, role: ButtonRole? = nil, action: @escaping () -> Void) {
-            self.role = role
+        init(_ title: String, subtitle: String? = nil, icon: String, role: ButtonRole? = nil, action: @escaping () -> Void) {
             self.title = title
+            self.subtitle = subtitle
             self.icon = icon
+            self.role = role
             self.action = action
         }
 
@@ -35,12 +37,23 @@ extension PosterButton {
         var body: some View {
             Button(role: role, action: action) {
                 HStack {
-                    Text(title)
-                    Spacer()
+                    buttonText
+
                     Image(systemName: icon)
+                        .foregroundStyle(.primary)
                 }
                 .backport
                 .fontWeight(.semibold)
+            }
+        }
+
+        // MARK: - Button Text
+
+        private var buttonText: Text {
+            if let subtitle {
+                return Text("\(title) • \(subtitle)")
+            } else {
+                return Text(title)
             }
         }
     }
