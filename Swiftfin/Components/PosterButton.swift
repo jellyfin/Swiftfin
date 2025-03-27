@@ -23,12 +23,22 @@ private let portraitMaxWidth: CGFloat = 200
 
 struct PosterButton<Item: Poster>: View {
 
+    // MARK: - Poster Button Vairables
+
     private var item: Item
     private var type: PosterDisplayType
     private var content: () -> any View
     private var imageOverlay: () -> any View
+
+    // MARK: - Generic Context Menu
+
     private var contextMenu: () -> any View
+
+    // MARK: - Default Action
+
     private var onSelect: () -> Void
+
+    // MARK: - Image View
 
     private func imageView(from item: Item) -> ImageView {
         switch type {
@@ -38,6 +48,8 @@ struct PosterButton<Item: Poster>: View {
             ImageView(item.portraitImageSources(maxWidth: portraitMaxWidth))
         }
     }
+
+    // MARK: - Body
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -66,6 +78,10 @@ struct PosterButton<Item: Poster>: View {
             }
             .buttonStyle(.plain)
             .contextMenu(menuItems: {
+                if let item = item as? BaseItemDto {
+                    ContextMenu(item)
+                }
+
                 contextMenu()
                     .eraseToAnyView()
             })

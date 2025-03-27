@@ -8,6 +8,7 @@
 
 import CollectionVGrid
 import Defaults
+import Factory
 import JellyfinAPI
 import SwiftUI
 
@@ -37,6 +38,9 @@ import SwiftUI
  */
 
 struct PagingLibraryView<Element: Poster>: View {
+
+    @Injected(\.currentUserSession)
+    private var userSession
 
     @Default(.Customization.Library.enabledDrawerFilters)
     private var enabledDrawerFilters
@@ -100,12 +104,12 @@ struct PagingLibraryView<Element: Poster>: View {
         if UIDevice.isPhone {
             layout = Self.phoneLayout(
                 posterType: initialPosterType,
-                viewType: initialDisplayType
+                displayType: initialDisplayType
             )
         } else {
             layout = Self.padLayout(
                 posterType: initialPosterType,
-                viewType: initialDisplayType,
+                displayType: initialDisplayType,
                 listColumnCount: initialListColumnCount
             )
         }
@@ -144,14 +148,12 @@ struct PagingLibraryView<Element: Poster>: View {
 
     // MARK: layout
 
-    // TODO: rename old "viewType" paramter to "displayType" and sort
-
     private static func padLayout(
         posterType: PosterDisplayType,
-        viewType: LibraryDisplayType,
+        displayType: LibraryDisplayType,
         listColumnCount: Int
     ) -> CollectionVGridLayout {
-        switch (posterType, viewType) {
+        switch (posterType, displayType) {
         case (.landscape, .grid):
             .minWidth(200)
         case (.portrait, .grid):
@@ -163,9 +165,9 @@ struct PagingLibraryView<Element: Poster>: View {
 
     private static func phoneLayout(
         posterType: PosterDisplayType,
-        viewType: LibraryDisplayType
+        displayType: LibraryDisplayType
     ) -> CollectionVGridLayout {
-        switch (posterType, viewType) {
+        switch (posterType, displayType) {
         case (.landscape, .grid):
             .columns(2)
         case (.portrait, .grid):
@@ -182,6 +184,9 @@ struct PagingLibraryView<Element: Poster>: View {
 
     @ViewBuilder
     private func landscapeGridItemView(item: Element) -> some View {
+
+        let baseItem = item as! BaseItemDto
+
         PosterButton(item: item, type: .landscape)
             .content {
                 if item.showTitle {
@@ -202,6 +207,9 @@ struct PagingLibraryView<Element: Poster>: View {
 
     @ViewBuilder
     private func portraitGridItemView(item: Element) -> some View {
+
+        let baseItem = item as! BaseItemDto
+
         PosterButton(item: item, type: .portrait)
             .content {
                 if item.showTitle {
@@ -334,12 +342,12 @@ struct PagingLibraryView<Element: Poster>: View {
             if UIDevice.isPhone {
                 layout = Self.phoneLayout(
                     posterType: defaultPosterType,
-                    viewType: newValue
+                    displayType: newValue
                 )
             } else {
                 layout = Self.padLayout(
                     posterType: defaultPosterType,
-                    viewType: newValue,
+                    displayType: newValue,
                     listColumnCount: defaultListColumnCount
                 )
             }
@@ -350,7 +358,7 @@ struct PagingLibraryView<Element: Poster>: View {
             if UIDevice.isPad {
                 layout = Self.padLayout(
                     posterType: defaultPosterType,
-                    viewType: defaultDisplayType,
+                    displayType: defaultDisplayType,
                     listColumnCount: newValue
                 )
             }
@@ -364,7 +372,7 @@ struct PagingLibraryView<Element: Poster>: View {
                 } else {
                     layout = Self.phoneLayout(
                         posterType: newValue,
-                        viewType: defaultDisplayType
+                        displayType: defaultDisplayType
                     )
                 }
             } else {
@@ -373,7 +381,7 @@ struct PagingLibraryView<Element: Poster>: View {
                 } else {
                     layout = Self.padLayout(
                         posterType: newValue,
-                        viewType: defaultDisplayType,
+                        displayType: defaultDisplayType,
                         listColumnCount: defaultListColumnCount
                     )
                 }
@@ -383,12 +391,12 @@ struct PagingLibraryView<Element: Poster>: View {
             if UIDevice.isPhone {
                 layout = Self.phoneLayout(
                     posterType: posterType,
-                    viewType: newValue
+                    displayType: newValue
                 )
             } else {
                 layout = Self.padLayout(
                     posterType: posterType,
-                    viewType: newValue,
+                    displayType: newValue,
                     listColumnCount: listColumnCount
                 )
             }
@@ -397,7 +405,7 @@ struct PagingLibraryView<Element: Poster>: View {
             if UIDevice.isPad {
                 layout = Self.padLayout(
                     posterType: posterType,
-                    viewType: displayType,
+                    displayType: displayType,
                     listColumnCount: newValue
                 )
             }
@@ -409,7 +417,7 @@ struct PagingLibraryView<Element: Poster>: View {
                 } else {
                     layout = Self.phoneLayout(
                         posterType: newValue,
-                        viewType: displayType
+                        displayType: displayType
                     )
                 }
             } else {
@@ -418,7 +426,7 @@ struct PagingLibraryView<Element: Poster>: View {
                 } else {
                     layout = Self.padLayout(
                         posterType: newValue,
-                        viewType: displayType,
+                        displayType: displayType,
                         listColumnCount: listColumnCount
                     )
                 }
@@ -432,12 +440,12 @@ struct PagingLibraryView<Element: Poster>: View {
             if UIDevice.isPhone {
                 layout = Self.phoneLayout(
                     posterType: newPosterType,
-                    viewType: newDisplayType
+                    displayType: newDisplayType
                 )
             } else {
                 layout = Self.padLayout(
                     posterType: newPosterType,
-                    viewType: newDisplayType,
+                    displayType: newDisplayType,
                     listColumnCount: newListColumnCount
                 )
             }

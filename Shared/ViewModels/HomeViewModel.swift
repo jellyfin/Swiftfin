@@ -20,7 +20,6 @@ final class HomeViewModel: ViewModel, Stateful {
     enum Action: Equatable {
         case backgroundRefresh
         case error(JellyfinAPIError)
-        case setIsPlayed(Bool, BaseItemDto)
         case refresh
     }
 
@@ -76,6 +75,18 @@ final class HomeViewModel: ViewModel, Stateful {
                 }
             }
             .store(in: &cancellables)
+
+        // TODO: Can we just update the changed item instead of a full refresh?
+        Notifications[.itemShouldRefreshMetadata]
+            .publisher
+            .sink { _ in
+                DispatchQueue.main.async {
+                    // TODO: Do I need to pass this in if I'm already refreshing?
+                    self.notificationsReceived.insert(.itemShouldRefreshMetadata)
+                    self.send(.backgroundRefresh)
+                }
+            }
+            .store(in: &cancellables)
     }
 
     func respond(to action: Action) -> State {
@@ -116,15 +127,6 @@ final class HomeViewModel: ViewModel, Stateful {
             return state
         case let .error(error):
             return .error(error)
-        case let .setIsPlayed(isPlayed, item): ()
-            Task {
-                try await setIsPlayed(isPlayed, for: item)
-
-                self.send(.backgroundRefresh)
-            }
-            .store(in: &cancellables)
-
-            return state
         case .refresh:
             backgroundRefreshTask?.cancel()
             refreshTask?.cancel()
@@ -206,23 +208,5 @@ final class HomeViewModel: ViewModel, Stateful {
         let response = try await userSession.client.send(currentUserPath)
 
         return response.value.configuration?.latestItemsExcludes ?? []
-    }
-
-    private func setIsPlayed(_ isPlayed: Bool, for item: BaseItemDto) async throws {
-        let request: Request<UserItemDataDto>
-
-        if isPlayed {
-            request = Paths.markPlayedItem(
-                userID: userSession.user.id,
-                itemID: item.id!
-            )
-        } else {
-            request = Paths.markUnplayedItem(
-                userID: userSession.user.id,
-                itemID: item.id!
-            )
-        }
-
-        let _ = try await userSession.client.send(request)
     }
 }
