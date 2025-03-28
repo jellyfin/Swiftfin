@@ -255,6 +255,8 @@
 		4EF18B2A2CB993BD00343666 /* ListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF18B292CB993AD00343666 /* ListRow.swift */; };
 		4EF36F642D962A430065BB79 /* ItemSortBy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF36F632D962A430065BB79 /* ItemSortBy.swift */; };
 		4EF36F652D962A430065BB79 /* ItemSortBy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF36F632D962A430065BB79 /* ItemSortBy.swift */; };
+		4EF36F662D9649050065BB79 /* SessionInfoDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDBDCD02CBDD6510033D347 /* SessionInfoDto.swift */; };
+		4EF36F672D9649050065BB79 /* SessionInfoDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDBDCD02CBDD6510033D347 /* SessionInfoDto.swift */; };
 		4EF3D80B2CF7D6670081AD20 /* ServerUserAccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF3D8092CF7D6670081AD20 /* ServerUserAccessView.swift */; };
 		4EF659E32CDD270D00E0BE5D /* ActionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF659E22CDD270B00E0BE5D /* ActionMenu.swift */; };
 		4EFAC12C2D1E255900E40880 /* EditServerUserAccessTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFAC12B2D1E255600E40880 /* EditServerUserAccessTagsView.swift */; };
@@ -6035,6 +6037,7 @@
 				E17AC96B2954D00E003D2BC2 /* URLResponse.swift in Sources */,
 				E1763A2B2BF3046E004DF6AB /* UserGridButton.swift in Sources */,
 				E1EF473A289A0F610034046B /* TruncatedText.swift in Sources */,
+				4EF36F672D9649050065BB79 /* SessionInfoDto.swift in Sources */,
 				E1C926112887565C002A7A66 /* ActionButtonHStack.swift in Sources */,
 				4E8274F52D2ECF1900F5E610 /* UserProfileSettingsCoordinator.swift in Sources */,
 				E178859B2780F1F40094FBCF /* tvOSSlider.swift in Sources */,
@@ -6858,6 +6861,7 @@
 				4E661A272CEFE65000025C99 /* LanguagePicker.swift in Sources */,
 				62E1DCC3273CE19800C9AE76 /* URL.swift in Sources */,
 				E11BDF7A2B85529D0045C54A /* SupportedCaseIterable.swift in Sources */,
+				4EF36F662D9649050065BB79 /* SessionInfoDto.swift in Sources */,
 				E170D0E4294CC8AB0017224C /* VideoPlayer+KeyCommands.swift in Sources */,
 				4EC1C8692C808FBB00E2879E /* CustomDeviceProfileSettingsView.swift in Sources */,
 				E18E01E6288747230022598C /* CollectionItemView.swift in Sources */,
