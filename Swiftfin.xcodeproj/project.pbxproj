@@ -7712,9 +7712,9 @@
 		};
 		E150C0BF2BFD62FD00944FFA /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/JPKribs/jellyfin-sdk-swift.git";
+			repositoryURL = "https://github.com/jellyfin/jellyfin-sdk-swift.git";
 			requirement = {
-				branch = 10.10.6;
+				branch = main;
 				kind = branch;
 			};
 		};
