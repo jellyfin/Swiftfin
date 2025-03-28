@@ -92,7 +92,7 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeActiveDeviceDetails(box: BindingBox<SessionInfo?>) -> some View {
+    func makeActiveDeviceDetails(box: BindingBox<SessionInfoDto?>) -> some View {
         ActiveSessionDetailView(box: box)
     }
 
@@ -122,7 +122,7 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeDeviceDetails(device: DeviceInfo) -> some View {
+    func makeDeviceDetails(device: DeviceInfoDto) -> some View {
         DeviceDetailsView(device: device)
     }
 

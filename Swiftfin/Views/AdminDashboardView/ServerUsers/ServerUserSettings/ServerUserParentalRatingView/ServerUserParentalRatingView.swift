@@ -36,7 +36,8 @@ struct ServerUserParentalRatingView: View {
 
     init(viewModel: ServerUserAdminViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self.tempPolicy = viewModel.user.policy ?? UserPolicy()
+        // TODO: 10.10 - What should authenticationProviderID & passwordResetProviderID be?
+        self.tempPolicy = viewModel.user.policy ?? UserPolicy(authenticationProviderID: "", passwordResetProviderID: "")
     }
 
     // MARK: - Body

@@ -29,7 +29,7 @@ struct ItemFilterCollection: Codable, Defaults.Serializable, Hashable {
         traits: [ItemTrait.isFavorite]
     )
     static let recent: ItemFilterCollection = .init(
-        sortBy: [ItemSortBy.dateAdded],
+        sortBy: [ItemSortBy.dateLastContentAdded],
         sortOrder: [ItemSortOrder.descending]
     )
 

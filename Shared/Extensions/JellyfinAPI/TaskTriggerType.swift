@@ -9,7 +9,6 @@
 import Foundation
 
 // TODO: move to SDK as patch file
-
 enum TaskTriggerType: String, Codable, CaseIterable, Displayable, SystemImageable {
 
     case daily = "DailyTrigger"

@@ -39,7 +39,8 @@ struct ServerUserLiveTVAccessView: View {
 
     init(viewModel: ServerUserAdminViewModel) {
         self.viewModel = viewModel
-        self.tempPolicy = viewModel.user.policy ?? UserPolicy()
+        // TODO: 10.10 - What should authenticationProviderID & passwordResetProviderID be?
+        self.tempPolicy = viewModel.user.policy ?? UserPolicy(authenticationProviderID: "", passwordResetProviderID: "")
     }
 
     // MARK: - Body

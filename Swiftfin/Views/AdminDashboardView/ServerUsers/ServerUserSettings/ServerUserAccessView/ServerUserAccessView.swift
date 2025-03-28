@@ -34,7 +34,8 @@ struct ServerUserMediaAccessView: View {
 
     init(viewModel: ServerUserAdminViewModel) {
         self.viewModel = viewModel
-        self.tempPolicy = viewModel.user.policy ?? UserPolicy()
+        // TODO: 10.10 - What should authenticationProviderID & passwordResetProviderID be?
+        self.tempPolicy = viewModel.user.policy ?? UserPolicy(authenticationProviderID: "", passwordResetProviderID: "")
     }
 
     // MARK: - Body
@@ -123,7 +124,7 @@ struct ServerUserMediaAccessView: View {
         if tempPolicy.enableContentDeletion == false {
             Section {
                 ForEach(
-                    viewModel.libraries.filter { $0.collectionType != "boxsets" },
+                    viewModel.libraries.filter { $0.collectionType != .boxsets },
                     id: \.id
                 ) { library in
                     Toggle(
