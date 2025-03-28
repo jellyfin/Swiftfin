@@ -19,25 +19,15 @@ extension AddTaskTriggerView {
         var body: some View {
             Picker(
                 L10n.type,
-                selection: Binding<TaskTriggerType?>(
-                    get: {
-                        if let t = taskTriggerInfo.type {
-                            return taskTriggerInfo.type
-                        } else {
-                            return nil
-                        }
-                    },
-                    set: { newValue in
-                        if taskTriggerInfo.type != newValue {
-                            resetValuesForNewType(newType: newValue)
-                        }
-                    }
-                )
+                selection: $taskTriggerInfo.type
             ) {
                 ForEach(TaskTriggerType.allCases, id: \.self) { type in
                     Text(type.displayTitle)
                         .tag(type as TaskTriggerType?)
                 }
+            }
+            .onChange(of: taskTriggerInfo.type) { newType in
+                resetValuesForNewType(newType: newType)
             }
         }
 
