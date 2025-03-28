@@ -7714,7 +7714,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/JPKribs/jellyfin-sdk-swift.git";
 			requirement = {
-				branch = main;
+				branch = 10.10.6;
 				kind = branch;
 			};
 		};

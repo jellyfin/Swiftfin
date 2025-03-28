@@ -22,13 +22,13 @@ extension AddTaskTriggerView {
                 selection: Binding<TaskTriggerType?>(
                     get: {
                         if let t = taskTriggerInfo.type {
-                            return TaskTriggerType(rawValue: t)
+                            return taskTriggerInfo.type
                         } else {
                             return nil
                         }
                     },
                     set: { newValue in
-                        if taskTriggerInfo.type != newValue?.rawValue {
+                        if taskTriggerInfo.type != newValue {
                             resetValuesForNewType(newType: newValue)
                         }
                     }
@@ -42,7 +42,7 @@ extension AddTaskTriggerView {
         }
 
         private func resetValuesForNewType(newType: TaskTriggerType?) {
-            taskTriggerInfo.type = newType?.rawValue
+            taskTriggerInfo.type = newType
             let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks
 
             switch newType {

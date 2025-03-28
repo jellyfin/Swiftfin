@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-extension SpecialFeatureType: Displayable {
+extension ExtraType: Displayable {
 
     var displayTitle: String {
         switch self {
