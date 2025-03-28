@@ -78,6 +78,18 @@ extension ItemSortBy: Displayable {
             return L10n.searchScore
         }
     }
+
+    // TODO: 10.10 - Filter to only valid SortBy's for each BaseItemKind
+    // Example: .searchScore throws a 500 when used on the library
+    static func getValidFilters() -> [ItemSortBy] {
+        [
+            .premiereDate,
+            .name,
+            .sortName,
+            .dateLastContentAdded,
+            .random,
+        ]
+    }
 }
 
 extension ItemSortBy: ItemFilter {
