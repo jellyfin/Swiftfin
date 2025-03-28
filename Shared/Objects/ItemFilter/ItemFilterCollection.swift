@@ -16,7 +16,7 @@ struct ItemFilterCollection: Codable, Defaults.Serializable, Hashable {
     var genres: [ItemGenre] = []
     var itemTypes: [BaseItemKind] = []
     var letter: [ItemLetter] = []
-    var sortBy: [ItemSortBy] = [ItemSortBy.name]
+    var sortBy: [ItemSortBy] = [ItemSortBy.sortName]
     var sortOrder: [ItemSortOrder] = [ItemSortOrder.ascending]
     var tags: [ItemTag] = []
     var traits: [ItemTrait] = []
