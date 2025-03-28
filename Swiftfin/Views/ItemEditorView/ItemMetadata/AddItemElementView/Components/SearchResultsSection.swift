@@ -24,8 +24,6 @@ extension AddItemElementView {
 
         let type: ItemArrayElements
         let population: [Element]
-
-        // TODO: Why doesn't environment(\.isSearching) work?
         let isSearching: Bool
 
         // MARK: - Body

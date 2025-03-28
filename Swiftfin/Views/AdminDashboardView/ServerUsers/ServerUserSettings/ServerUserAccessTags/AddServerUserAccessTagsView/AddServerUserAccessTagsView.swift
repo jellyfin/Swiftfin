@@ -45,8 +45,7 @@ struct AddServerUserAccessTagsView: View {
     // MARK: - Tag is Already Blocked/Allowed
 
     private var tagIsDuplicate: Bool {
-        viewModel.user.policy!.blockedTags!.contains(tempTag) // &&
-        //! viewModel.user.policy!.allowedTags!.contains(tempTag)
+        viewModel.user.policy!.blockedTags!.contains(tempTag) || viewModel.user.policy!.allowedTags!.contains(tempTag)
     }
 
     // MARK: - Tag Already Exists on Jellyfin
@@ -84,9 +83,8 @@ struct AddServerUserAccessTagsView: View {
                 } else {
                     Button(L10n.save) {
                         if access {
-                            // TODO: Enable on 10.10
-                            /* tempPolicy.allowedTags = tempPolicy.allowedTags
-                             .appendedOrInit(tempTag) */
+                            tempPolicy.allowedTags = tempPolicy.allowedTags
+                                .appendedOrInit(tempTag)
                         } else {
                             tempPolicy.blockedTags = tempPolicy.blockedTags
                                 .appendedOrInit(tempTag)

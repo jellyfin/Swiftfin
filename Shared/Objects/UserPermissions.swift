@@ -31,11 +31,9 @@ struct UserPermissions {
             self.canDelete = policy?.enableContentDeletion ?? false || policy?.enableContentDeletionFromFolders != []
             self.canDownload = policy?.enableContentDownloading ?? false
             self.canEditMetadata = isAdministrator
-            // TODO: SDK 10.9 Enable Comments
-            self.canManageSubtitles = isAdministrator // || policy?.enableSubtitleManagement ?? false
-            self.canManageCollections = isAdministrator // || policy?.enableCollectionManagement ?? false
-            // TODO: SDK 10.10 Enable Comments
-            self.canManageLyrics = isAdministrator // || policy?.enableSubtitleManagement ?? false
+            self.canManageSubtitles = isAdministrator || policy?.enableSubtitleManagement ?? false
+            self.canManageCollections = isAdministrator || policy?.enableCollectionManagement ?? false
+            self.canManageLyrics = isAdministrator || policy?.enableSubtitleManagement ?? false
         }
     }
 }

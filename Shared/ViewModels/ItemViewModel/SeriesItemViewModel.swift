@@ -87,11 +87,12 @@ final class SeriesItemViewModel: ItemViewModel {
     private func getResumeItem() async throws -> BaseItemDto? {
 
         var parameters = Paths.GetResumeItemsParameters()
+        parameters.userID = userSession.user.id
         parameters.fields = .MinimumFields
         parameters.limit = 1
         parameters.parentID = item.id
 
-        let request = Paths.getResumeItems(userID: userSession.user.id, parameters: parameters)
+        let request = Paths.getResumeItems(parameters: parameters)
         let response = try await userSession.client.send(request)
 
         return response.value.items?.first

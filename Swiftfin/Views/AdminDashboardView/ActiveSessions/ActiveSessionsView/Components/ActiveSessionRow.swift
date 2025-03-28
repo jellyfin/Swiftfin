@@ -18,15 +18,15 @@ extension ActiveSessionsView {
         private var currentDate: Date
 
         @ObservedObject
-        private var box: BindingBox<SessionInfo?>
+        private var box: BindingBox<SessionInfoDto?>
 
         private let onSelect: () -> Void
 
-        private var session: SessionInfo {
+        private var session: SessionInfoDto {
             box.value ?? .init()
         }
 
-        init(box: BindingBox<SessionInfo?>, onSelect action: @escaping () -> Void) {
+        init(box: BindingBox<SessionInfoDto?>, onSelect action: @escaping () -> Void) {
             self.box = box
             self.onSelect = action
         }

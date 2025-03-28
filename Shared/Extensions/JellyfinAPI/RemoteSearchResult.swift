@@ -17,7 +17,6 @@ extension RemoteSearchResult: Displayable {
     }
 }
 
-// TODO: fix in SDK, should already be equatable
 extension RemoteSearchResult: @retroactive Hashable, @retroactive Identifiable {
 
     public var id: Int {

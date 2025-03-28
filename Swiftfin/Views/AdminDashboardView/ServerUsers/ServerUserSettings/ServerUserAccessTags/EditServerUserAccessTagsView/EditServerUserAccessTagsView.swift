@@ -42,6 +42,12 @@ struct EditServerUserAccessTagsView: View {
     @State
     private var error: Error?
 
+    private var allowedTags: [TagWithAccess] {
+        viewModel.user.policy?.allowedTags?
+            .sorted()
+            .map { TagWithAccess(tag: $0, access: true) } ?? []
+    }
+
     private var blockedTags: [TagWithAccess] {
         viewModel.user.policy?.blockedTags?
             .sorted()
@@ -173,22 +179,29 @@ struct EditServerUserAccessTagsView: View {
                 UIApplication.shared.open(.jellyfinDocsManagingUsers)
             }
 
-            if blockedTags.isEmpty {
+            if blockedTags.isEmpty && allowedTags.isEmpty {
                 Button(L10n.add) {
                     router.route(to: \.userAddAccessTag, viewModel)
                 }
             } else {
-
-                // TODO: with allowed, use `DisclosureGroup` instead
-                Section(L10n.blocked) {
-                    ForEach(
-                        blockedTags,
-                        id: \.self,
-                        content: makeRow
-                    )
+                if !allowedTags.isEmpty {
+                    DisclosureGroup(L10n.allowed) {
+                        ForEach(
+                            allowedTags,
+                            id: \.self,
+                            content: makeRow
+                        )
+                    }
                 }
-
-                // TODO: allowed with 10.10
+                if !blockedTags.isEmpty {
+                    DisclosureGroup(L10n.blocked) {
+                        ForEach(
+                            blockedTags,
+                            id: \.self,
+                            content: makeRow
+                        )
+                    }
+                }
             }
         }
     }
@@ -213,11 +226,12 @@ struct EditServerUserAccessTagsView: View {
         Button(L10n.cancel, role: .cancel) {}
 
         Button(L10n.delete, role: .destructive) {
-            var tempPolicy = viewModel.user.policy ?? UserPolicy()
+            // TODO: 10.10 - What should authenticationProviderID & passwordResetProviderID be?
+            var tempPolicy = viewModel.user.policy ?? UserPolicy(authenticationProviderID: "", passwordResetProviderID: "")
 
             for tag in selectedTags {
                 if tag.access {
-                    // tempPolicy.allowedTags?.removeAll { $0 == tag.tag }
+                    tempPolicy.allowedTags?.removeAll { $0 == tag.tag }
                 } else {
                     tempPolicy.blockedTags?.removeAll { $0 == tag.tag }
                 }

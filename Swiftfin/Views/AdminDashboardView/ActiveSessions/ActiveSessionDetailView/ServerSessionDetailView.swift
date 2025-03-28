@@ -17,12 +17,12 @@ struct ActiveSessionDetailView: View {
     private var router: AdminDashboardCoordinator.Router
 
     @ObservedObject
-    var box: BindingBox<SessionInfo?>
+    var box: BindingBox<SessionInfoDto?>
 
     // MARK: Create Idle Content View
 
     @ViewBuilder
-    private func idleContent(session: SessionInfo) -> some View {
+    private func idleContent(session: SessionInfoDto) -> some View {
         List {
             if let userID = session.userID {
                 let user = UserDto(id: userID, name: session.userName)
@@ -47,7 +47,7 @@ struct ActiveSessionDetailView: View {
 
     @ViewBuilder
     private func sessionContent(
-        session: SessionInfo,
+        session: SessionInfoDto,
         nowPlayingItem: BaseItemDto,
         playState: PlayerStateInfo
     ) -> some View {

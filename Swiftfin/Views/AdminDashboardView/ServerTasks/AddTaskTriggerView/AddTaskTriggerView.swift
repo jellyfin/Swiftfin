@@ -45,7 +45,7 @@ struct AddTaskTriggerView: View {
             intervalTicks: nil,
             maxRuntimeTicks: nil,
             timeOfDayTicks: nil,
-            type: TaskTriggerType.startup.rawValue
+            type: TaskTriggerType.startup
         )
 
         _taskTriggerInfo = State(initialValue: newTrigger)
@@ -82,11 +82,11 @@ struct AddTaskTriggerView: View {
                 TriggerTypeRow(taskTriggerInfo: $taskTriggerInfo)
 
                 if let taskType = taskTriggerInfo.type {
-                    if taskType == TaskTriggerType.daily.rawValue {
+                    if taskType == TaskTriggerType.daily {
                         dailyView
-                    } else if taskType == TaskTriggerType.weekly.rawValue {
+                    } else if taskType == TaskTriggerType.weekly {
                         weeklyView
-                    } else if taskType == TaskTriggerType.interval.rawValue {
+                    } else if taskType == TaskTriggerType.interval {
                         intervalView
                     }
                 }

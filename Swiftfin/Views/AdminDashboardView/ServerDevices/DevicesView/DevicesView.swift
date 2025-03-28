@@ -11,8 +11,6 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-// TODO: Replace with CustomName when Available
-
 struct DevicesView: View {
 
     @EnvironmentObject

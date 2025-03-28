@@ -29,27 +29,25 @@ extension AddServerUserAccessTagsView {
         // MARK: - Body
 
         var body: some View {
-            // TODO: Enable on 10.10
-//            Section {
-//                Picker(L10n.access, selection: $access) {
-//                    Text(L10n.allowed).tag(true)
-//                    Text(L10n.blocked).tag(false)
-//                }
-//                .disabled(true)
-//            } header: {
-//                Text(L10n.access)
-//            } footer: {
-//                LearnMoreButton(L10n.accessTags) {
-//                    TextPair(
-//                        title: L10n.allowed,
-//                        subtitle: L10n.accessTagAllowDescription
-//                    )
-//                    TextPair(
-//                        title: L10n.blocked,
-//                        subtitle: L10n.accessTagBlockDescription
-//                    )
-//                }
-//            }
+            Section {
+                Picker(L10n.access, selection: $access) {
+                    Text(L10n.allowed).tag(true)
+                    Text(L10n.blocked).tag(false)
+                }
+            } header: {
+                Text(L10n.access)
+            } footer: {
+                LearnMoreButton(L10n.accessTags) {
+                    TextPair(
+                        title: L10n.allowed,
+                        subtitle: L10n.accessTagAllowDescription
+                    )
+                    TextPair(
+                        title: L10n.blocked,
+                        subtitle: L10n.accessTagBlockDescription
+                    )
+                }
+            }
 
             Section {
                 TextField(L10n.name, text: $tag)

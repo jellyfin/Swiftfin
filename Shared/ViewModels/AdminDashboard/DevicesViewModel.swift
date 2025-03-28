@@ -49,7 +49,7 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
     @Published
     final var backgroundStates: OrderedSet<BackgroundState> = []
     @Published
-    final var devices: [DeviceInfo] = []
+    final var devices: [DeviceInfoDto] = []
     @Published
     final var state: State = .initial
 

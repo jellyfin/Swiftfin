@@ -16,14 +16,10 @@ extension EditServerTaskView {
 
         let taskTriggerInfo: TaskTriggerInfo
 
+        // TODO: 10.10 - Add to Patch Files?
         // TODO: remove after `TaskTriggerType` is provided by SDK
-
         private var taskTriggerType: TaskTriggerType {
-            if let t = taskTriggerInfo.type, let type = TaskTriggerType(rawValue: t) {
-                return type
-            } else {
-                return .startup
-            }
+            taskTriggerInfo.type ?? .startup
         }
 
         // MARK: - Body

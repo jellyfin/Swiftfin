@@ -17,7 +17,6 @@ extension EditMetadataView {
         @Binding
         var item: BaseItemDto
 
-        // TODO: Animation when lockAllFields is selected
         var body: some View {
             Section(L10n.lockedFields) {
                 Toggle(

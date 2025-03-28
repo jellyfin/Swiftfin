@@ -42,7 +42,7 @@ final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         parameters.includeItemTypes = [.movie, .series]
         parameters.isRecursive = true
         parameters.limit = pageSize
-        parameters.sortBy = [ItemSortBy.dateAdded.rawValue]
+        parameters.sortBy = [ItemSortBy.dateLastContentAdded.rawValue]
         parameters.sortOrder = [.descending]
         parameters.startIndex = page
 

@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-extension DeviceInfo {
+extension DeviceInfoDto {
 
     var type: DeviceType {
         DeviceType(

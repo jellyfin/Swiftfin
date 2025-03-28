@@ -30,7 +30,8 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         let items = (response.value.items ?? [])
             .filter { item in
                 if let collectionType = item.collectionType {
-                    return ["movies", "tvshows", "mixed", "boxsets"].contains(collectionType)
+                    // TODO: 10.10 - Is there a 'Mixed' item type?
+                    return [.movies, .tvshows, .boxsets].contains(collectionType)
                 }
 
                 return true

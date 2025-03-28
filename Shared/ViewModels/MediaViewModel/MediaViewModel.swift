@@ -14,7 +14,7 @@ import OrderedCollections
 final class MediaViewModel: ViewModel, Stateful {
 
     // TODO: remove once collection types become an enum
-    static let supportedCollectionTypes: [String] = ["boxsets", "folders", "movies", "tvshows", "livetv"]
+    static let supportedCollectionTypes: [CollectionType] = [.boxsets, .folders, .movies, .tvshows, .livetv]
 
     // MARK: Action
 
@@ -74,7 +74,7 @@ final class MediaViewModel: ViewModel, Stateful {
 
         let media: [MediaType] = try await getUserViews()
             .compactMap { userView in
-                if userView.collectionType == "livetv" {
+                if userView.collectionType == .livetv {
                     return .liveTV(userView)
                 }
 
@@ -89,7 +89,7 @@ final class MediaViewModel: ViewModel, Stateful {
 
     private func getUserViews() async throws -> [BaseItemDto] {
 
-        let userViewsPath = Paths.getUserViews(userID: userSession.user.id)
+        let userViewsPath = Paths.getUserViews()
         async let userViews = userSession.client.send(userViewsPath)
 
         async let excludedLibraryIDs = getExcludedLibraries()
@@ -101,7 +101,7 @@ final class MediaViewModel: ViewModel, Stateful {
             .subtracting(excludedLibraryIDs, using: \.id)
             .map { item in
 
-                if item.type == .userView, item.collectionType == "folders" {
+                if item.type == .userView, item.collectionType == .folders {
                     return item.mutating(\.type, with: .folder)
                 }
 
