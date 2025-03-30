@@ -54,12 +54,6 @@ struct EditServerUserAccessTagsView: View {
             .map { TagWithAccess(tag: $0, access: false) } ?? []
     }
 
-//    private var allowedTags: [TagWithAccess] {
-//        viewModel.user.policy?.allowedTags?
-//            .sorted()
-//            .map { TagWithAccess(tag: $0, access: true) } ?? []
-//    }
-
     // MARK: - Initializera
 
     init(viewModel: ServerUserAdminViewModel) {
@@ -179,12 +173,12 @@ struct EditServerUserAccessTagsView: View {
                 UIApplication.shared.open(.jellyfinDocsManagingUsers)
             }
 
-            if blockedTags.isEmpty && allowedTags.isEmpty {
+            if blockedTags.isEmpty, allowedTags.isEmpty {
                 Button(L10n.add) {
                     router.route(to: \.userAddAccessTag, viewModel)
                 }
             } else {
-                if !allowedTags.isEmpty {
+                if allowedTags.isNotEmpty {
                     DisclosureGroup(L10n.allowed) {
                         ForEach(
                             allowedTags,
@@ -193,7 +187,7 @@ struct EditServerUserAccessTagsView: View {
                         )
                     }
                 }
-                if !blockedTags.isEmpty {
+                if blockedTags.isNotEmpty {
                     DisclosureGroup(L10n.blocked) {
                         ForEach(
                             blockedTags,
@@ -231,9 +225,9 @@ struct EditServerUserAccessTagsView: View {
 
             for tag in selectedTags {
                 if tag.access {
-                    tempPolicy.allowedTags?.removeAll { $0 == tag.tag }
+                    tempPolicy.allowedTags?.removeAll(equalTo: tag.tag)
                 } else {
-                    tempPolicy.blockedTags?.removeAll { $0 == tag.tag }
+                    tempPolicy.blockedTags?.removeAll(equalTo: tag.tag)
                 }
             }
 

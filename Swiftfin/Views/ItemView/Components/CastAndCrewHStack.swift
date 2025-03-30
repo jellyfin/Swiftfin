@@ -23,10 +23,7 @@ extension ItemView {
                 title: L10n.castAndCrew,
                 type: .portrait,
                 items: people.filter { person in
-                    guard let personType = person.type else {
-                        return false
-                    }
-                    return PersonKind.supportedCases.contains(personType)
+                    person.type?.isSupported ?? false
                 }
             )
             .trailing {

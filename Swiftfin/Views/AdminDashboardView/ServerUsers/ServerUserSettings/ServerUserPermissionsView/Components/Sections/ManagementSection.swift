@@ -24,20 +24,20 @@ extension ServerUserPermissionsView {
                     isOn: $policy.isAdministrator.coalesce(false)
                 )
 
-                Toggle(L10n.collections, isOn: Binding(
-                    get: { policy.enableCollectionManagement },
-                    set: { policy.enableCollectionManagement = $0 }
-                ))
+                Toggle(
+                    L10n.collections,
+                    isOn: $policy.enableCollectionManagement
+                )
 
-                Toggle(L10n.subtitles, isOn: Binding(
-                    get: { policy.enableSubtitleManagement },
-                    set: { policy.enableSubtitleManagement = $0 }
-                ))
+                Toggle(
+                    L10n.subtitles,
+                    isOn: $policy.enableSubtitleManagement
+                )
 
-                Toggle(L10n.lyrics, isOn: Binding(
-                    get: { policy.enableLyricManagement },
-                    set: { policy.enableLyricManagement = $0 }
-                ))
+                Toggle(
+                    L10n.lyrics,
+                    isOn: $policy.enableLyricManagement
+                )
             }
         }
     }
