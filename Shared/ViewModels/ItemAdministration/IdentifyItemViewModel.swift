@@ -12,7 +12,7 @@ import Get
 import JellyfinAPI
 import OrderedCollections
 
-class IdentifyItemViewModel: ViewModel, Stateful, Eventful {
+final class IdentifyItemViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: - Events
 
