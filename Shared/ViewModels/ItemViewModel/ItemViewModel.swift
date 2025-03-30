@@ -74,11 +74,9 @@ class ItemViewModel: ViewModel, Stateful {
     private(set) var specialFeatures: [BaseItemDto] = []
 
     @Published
-    final var backgroundStates: OrderedSet<BackgroundState> = []
+    var backgroundStates: Set<BackgroundState> = []
     @Published
-    final var lastAction: Action? = nil
-    @Published
-    final var state: State = .initial
+    var state: State = .initial
 
     // tasks
 
@@ -121,7 +119,7 @@ class ItemViewModel: ViewModel, Stateful {
         switch action {
         case .backgroundRefresh:
 
-            backgroundStates.append(.refresh)
+            backgroundStates.insert(.refresh)
 
             Task { [weak self] in
                 guard let self else { return }
@@ -212,7 +210,7 @@ class ItemViewModel: ViewModel, Stateful {
             return .refreshing
         case let .replace(newItem):
 
-            backgroundStates.append(.refresh)
+            backgroundStates.insert(.refresh)
 
             Task { [weak self] in
                 guard let self else { return }

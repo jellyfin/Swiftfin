@@ -50,13 +50,13 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
     // MARK: Published Values
 
     @Published
-    final var backgroundStates: OrderedSet<BackgroundState> = []
+    var backgroundStates: Set<BackgroundState> = []
 
     @Published
-    final var users: IdentifiedArrayOf<UserDto> = []
+    var users: IdentifiedArrayOf<UserDto> = []
 
     @Published
-    final var state: State = .initial
+    var state: State = .initial
 
     var events: AnyPublisher<Event, Never> {
         eventSubject
@@ -88,7 +88,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
         switch action {
         case let .refreshUser(userID):
             userTask?.cancel()
-            backgroundStates.append(.gettingUsers)
+            backgroundStates.insert(.gettingUsers)
 
             userTask = Task {
                 do {
@@ -114,7 +114,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
         case let .getUsers(isHidden, isDisabled):
             userTask?.cancel()
-            backgroundStates.append(.gettingUsers)
+            backgroundStates.insert(.gettingUsers)
 
             userTask = Task {
                 do {
@@ -140,7 +140,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
         case let .deleteUsers(ids):
             userTask?.cancel()
-            backgroundStates.append(.deletingUsers)
+            backgroundStates.insert(.deletingUsers)
 
             userTask = Task {
                 do {
@@ -167,7 +167,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
         case let .appendUser(user):
             userTask?.cancel()
-            backgroundStates.append(.appendingUsers)
+            backgroundStates.insert(.appendingUsers)
 
             userTask = Task {
                 do {

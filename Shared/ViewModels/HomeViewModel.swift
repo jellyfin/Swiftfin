@@ -44,9 +44,7 @@ final class HomeViewModel: ViewModel, Stateful {
     var resumeItems: OrderedSet<BaseItemDto> = []
 
     @Published
-    var backgroundStates: OrderedSet<BackgroundState> = []
-    @Published
-    var lastAction: Action? = nil
+    var backgroundStates: Set<BackgroundState> = []
     @Published
     var state: State = .initial
 
@@ -94,7 +92,7 @@ final class HomeViewModel: ViewModel, Stateful {
         case .backgroundRefresh:
 
             backgroundRefreshTask?.cancel()
-            backgroundStates.append(.refresh)
+            backgroundStates.insert(.refresh)
 
             backgroundRefreshTask = Task { [weak self] in
                 do {
