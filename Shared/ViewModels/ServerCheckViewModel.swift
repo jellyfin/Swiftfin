@@ -11,7 +11,7 @@ import Factory
 import Foundation
 import JellyfinAPI
 
-class ServerCheckViewModel: ViewModel, Stateful {
+final class ServerCheckViewModel: ViewModel, Stateful {
 
     enum Action: Equatable {
         case checkServer

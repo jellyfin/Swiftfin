@@ -18,27 +18,24 @@ final class EpisodeItemViewModel: ItemViewModel {
 
     private var seriesItemTask: AnyCancellable?
 
-    override init(item: BaseItemDto) {
-        super.init(item: item)
+    override func respond(to action: ItemViewModel.Action) -> ItemViewModel.State {
 
-        $lastAction
-            .sink { [weak self] action in
-                guard let self else { return }
+        switch action {
+        case .refresh:
+            seriesItemTask?.cancel()
 
-                if action == .refresh {
-                    seriesItemTask?.cancel()
+            seriesItemTask = Task {
+                let seriesItem = try await self.getSeriesItem()
 
-                    seriesItemTask = Task {
-                        let seriesItem = try await self.getSeriesItem()
-
-                        await MainActor.run {
-                            self.seriesItem = seriesItem
-                        }
-                    }
-                    .asAnyCancellable()
+                await MainActor.run {
+                    self.seriesItem = seriesItem
                 }
             }
-            .store(in: &cancellables)
+            .asAnyCancellable()
+        default: break
+        }
+
+        return super.respond(to: action)
     }
 
     private func getSeriesItem() async throws -> BaseItemDto {

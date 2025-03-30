@@ -12,7 +12,7 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-class ItemImagesViewModel: ViewModel, Stateful, Eventful {
+final class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
     enum Event: Equatable {
         case updated
@@ -50,7 +50,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
     @Published
     var state: State = .initial
     @Published
-    var backgroundStates: OrderedSet<BackgroundState> = []
+    var backgroundStates: Set<BackgroundState> = []
 
     private var task: AnyCancellable?
     private let eventSubject = PassthroughSubject<Event, Never>()
@@ -85,7 +85,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                 guard let self else { return }
                 do {
                     await MainActor.run {
-                        _ = self.backgroundStates.append(.updating)
+                        _ = self.backgroundStates.insert(.updating)
                         self.images.removeAll()
                     }
 
@@ -114,7 +114,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                 guard let self = self else { return }
                 do {
                     await MainActor.run {
-                        _ = self.backgroundStates.append(.updating)
+                        _ = self.backgroundStates.insert(.updating)
                     }
 
                     try await self.setImage(remoteImageInfo)
@@ -144,7 +144,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                 guard let self = self else { return }
                 do {
                     await MainActor.run {
-                        _ = self.backgroundStates.append(.updating)
+                        _ = self.backgroundStates.insert(.updating)
                     }
 
                     try await self.uploadPhoto(image, type: type)
@@ -174,7 +174,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                 guard let self = self else { return }
                 do {
                     await MainActor.run {
-                        _ = self.backgroundStates.append(.updating)
+                        _ = self.backgroundStates.insert(.updating)
                     }
 
                     try await self.uploadFile(url, type: type)
@@ -204,7 +204,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                 guard let self = self else { return }
                 do {
                     await MainActor.run {
-                        _ = self.backgroundStates.append(.updating)
+                        _ = self.backgroundStates.insert(.updating)
                     }
 
                     try await deleteImage(imageInfo)
@@ -384,7 +384,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         guard let itemID = item.id else { return }
 
         await MainActor.run {
-            _ = backgroundStates.append(.updating)
+            _ = backgroundStates.insert(.updating)
         }
 
         let request = Paths.getItem(
