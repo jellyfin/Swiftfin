@@ -23,13 +23,13 @@ extension VideoRangeType: Displayable {
             return "HLG"
         case .dovi:
             return "Dolby Vision"
-        case .dOVIWithHDR10:
+        case .doviWithHDR10:
             return "Dolby Vision / HDR10"
-        case .dOVIWithHLG:
+        case .doviWithHLG:
             return "Dolby Vision / HLG"
-        case .dOVIWithSDR:
+        case .doviWithSDR:
             return "Dolby Vision / SDR"
-        case .hDR10Plus:
+        case .hdr10Plus:
             return "HDR10+"
         }
     }
@@ -37,17 +37,17 @@ extension VideoRangeType: Displayable {
     /// Returns `true` if the video format is HDR (including Dolby Vision).
     var isHDR: Bool {
         switch self {
-        case .unknown, .sdr:
-            return false
-        case .hdr10, .hlg, .dovi, .dOVIWithHDR10, .dOVIWithHLG, .dOVIWithSDR, .hDR10Plus:
+        case .hdr10, .hlg, .hdr10Plus, .dovi, .doviWithHDR10, .doviWithHLG, .doviWithSDR:
             return true
+        default:
+            return false
         }
     }
 
     /// Returns `true` if the video format is Dolby Vision.
     var isDolbyVision: Bool {
         switch self {
-        case .dovi, .dOVIWithHDR10, .dOVIWithHLG, .dOVIWithSDR:
+        case .dovi, .doviWithHDR10, .doviWithHLG, .doviWithSDR:
             return true
         default:
             return false
