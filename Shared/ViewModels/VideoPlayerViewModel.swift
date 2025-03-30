@@ -14,7 +14,7 @@ import JellyfinAPI
 import UIKit
 import VLCUI
 
-class VideoPlayerViewModel: ViewModel {
+final class VideoPlayerViewModel: ViewModel {
 
     let playbackURL: URL
     let item: BaseItemDto

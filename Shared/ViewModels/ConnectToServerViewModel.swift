@@ -48,7 +48,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
     }
 
     @Published
-    var backgroundStates: OrderedSet<BackgroundState> = []
+    var backgroundStates: Set<BackgroundState> = []
 
     // no longer-found servers are not cleared, but not an issue
     @Published

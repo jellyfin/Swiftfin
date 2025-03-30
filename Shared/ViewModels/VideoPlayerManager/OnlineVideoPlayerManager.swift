@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-class OnlineVideoPlayerManager: VideoPlayerManager {
+final class OnlineVideoPlayerManager: VideoPlayerManager {
 
     init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
         super.init()

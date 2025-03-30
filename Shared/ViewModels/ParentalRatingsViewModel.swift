@@ -31,7 +31,7 @@ final class ParentalRatingsViewModel: ViewModel, Stateful {
     private(set) var parentalRatings: [ParentalRating] = []
 
     @Published
-    final var state: State = .initial
+    var state: State = .initial
 
     private var currentRefreshTask: AnyCancellable?
 

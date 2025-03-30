@@ -50,7 +50,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
     }
 
     @Published
-    var backgroundStates: OrderedSet<BackgroundState> = []
+    var backgroundStates: Set<BackgroundState> = []
     @Published
     var item: BaseItemDto
     @Published
@@ -60,7 +60,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
     @Published
     var state: State = .initial
 
-    final var trie = Trie<String, Element>()
+    var trie = Trie<String, Element>()
 
     private var loadTask: AnyCancellable?
     private var updateTask: AnyCancellable?
@@ -69,7 +69,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
 
     private let eventSubject = PassthroughSubject<Event, Never>()
 
-    var events: AnyPublisher<Event, Never> {
+    final var events: AnyPublisher<Event, Never> {
         eventSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
@@ -112,7 +112,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
                     await MainActor.run {
                         self.matches = []
                         self.state = .initial
-                        _ = self.backgroundStates.append(.loading)
+                        _ = self.backgroundStates.insert(.loading)
                     }
 
                     let allElements = try await self.fetchElements()
@@ -178,7 +178,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
 
             do {
                 await MainActor.run {
-                    _ = self.backgroundStates.append(.searching)
+                    _ = self.backgroundStates.insert(.searching)
                 }
 
                 let results = try await self.searchElements(searchTerm)
@@ -247,7 +247,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
         guard let itemId = item.id else { return }
 
         await MainActor.run {
-            _ = self.backgroundStates.append(.refreshing)
+            _ = self.backgroundStates.insert(.refreshing)
         }
 
         let request = Paths.getItem(userID: userSession.user.id, itemID: itemId)
