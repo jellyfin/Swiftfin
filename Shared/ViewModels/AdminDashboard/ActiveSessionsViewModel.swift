@@ -36,11 +36,11 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
     }
 
     @Published
-    final var backgroundStates: OrderedSet<BackgroundState> = []
+    var backgroundStates: Set<BackgroundState> = []
     @Published
-    final var sessions: OrderedDictionary<String, BindingBox<SessionInfo?>> = [:]
+    var sessions: OrderedDictionary<String, BindingBox<SessionInfo?>> = [:]
     @Published
-    final var state: State = .initial
+    var state: State = .initial
 
     private let activeWithinSeconds: Int = 960
     private var sessionTask: AnyCancellable?
@@ -52,7 +52,7 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
 
             sessionTask = Task { [weak self] in
                 await MainActor.run {
-                    let _ = self?.backgroundStates.append(.gettingSessions)
+                    let _ = self?.backgroundStates.insert(.gettingSessions)
                 }
 
                 do {

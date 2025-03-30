@@ -26,9 +26,7 @@ final class ServerLogsViewModel: ViewModel, Stateful {
     @Published
     private(set) var logs: OrderedSet<LogFile> = []
     @Published
-    final var state: State = .initial
-    @Published
-    final var lastAction: Action?
+    var state: State = .initial
 
     func respond(to action: Action) -> State {
         switch action {

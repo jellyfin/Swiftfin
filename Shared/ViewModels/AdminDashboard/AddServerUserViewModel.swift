@@ -45,7 +45,7 @@ final class AddServerUserViewModel: ViewModel, Eventful, Stateful, Identifiable 
     }
 
     @Published
-    final var state: State = .initial
+    var state: State = .initial
 
     private var userTask: AnyCancellable?
     private var eventSubject: PassthroughSubject<Event, Never> = .init()

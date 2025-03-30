@@ -36,9 +36,10 @@ final class MediaViewModel: ViewModel, Stateful {
     var mediaItems: OrderedSet<MediaType> = []
 
     @Published
-    final var state: State = .initial
+    var backgroundStates: Set<BackgroundState> = []
+
     @Published
-    final var lastAction: Action? = nil
+    var state: State = .initial
 
     func respond(to action: Action) -> State {
         switch action {

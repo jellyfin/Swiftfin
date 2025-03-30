@@ -58,7 +58,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
     }
 
     @Published
-    var backgroundStates: OrderedSet<BackgroundState> = []
+    var backgroundStates: Set<BackgroundState> = []
     @Published
     var isQuickConnectEnabled = false
     @Published
@@ -106,7 +106,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
                 do {
 
                     await MainActor.run {
-                        let _ = self?.backgroundStates.append(.gettingPublicData)
+                        let _ = self?.backgroundStates.insert(.gettingPublicData)
                     }
 
                     let isQuickConnectEnabled = try await self?.retrieveQuickConnectEnabled()

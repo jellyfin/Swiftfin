@@ -47,11 +47,11 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
     // MARK: Published Values
 
     @Published
-    final var backgroundStates: OrderedSet<BackgroundState> = []
+    var backgroundStates: Set<BackgroundState> = []
     @Published
-    final var devices: [DeviceInfo] = []
+    var devices: [DeviceInfo] = []
     @Published
-    final var state: State = .initial
+    var state: State = .initial
 
     var events: AnyPublisher<Event, Never> {
         eventSubject
@@ -69,7 +69,7 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
         case .refresh:
             deviceTask?.cancel()
 
-            backgroundStates.append(.refreshing)
+            backgroundStates.insert(.refreshing)
 
             deviceTask = Task { [weak self] in
                 do {
@@ -98,7 +98,7 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
         case let .delete(ids):
             deviceTask?.cancel()
 
-            backgroundStates.append(.deleting)
+            backgroundStates.insert(.deleting)
 
             deviceTask = Task { [weak self] in
                 do {
