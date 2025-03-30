@@ -14,7 +14,7 @@ import JellyfinAPI
 import KeychainSwift
 import OrderedCollections
 
-class SelectUserViewModel: ViewModel, Eventful, Stateful {
+final class SelectUserViewModel: ViewModel, Eventful, Stateful {
 
     // MARK: Event
 

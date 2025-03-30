@@ -49,9 +49,9 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
     // MARK: - Published Values
 
     @Published
-    final var state: State = .initial
+    var state: State = .initial
     @Published
-    final var backgroundStates: OrderedSet<BackgroundState> = []
+    var backgroundStates: Set<BackgroundState> = []
 
     @Published
     private(set) var user: UserDto
@@ -99,7 +99,7 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
             userTaskCancellable = Task {
                 do {
                     await MainActor.run {
-                        _ = backgroundStates.append(.refreshing)
+                        _ = backgroundStates.insert(.refreshing)
                     }
 
                     try await loadDetails()
@@ -126,7 +126,7 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
             userTaskCancellable = Task {
                 do {
                     await MainActor.run {
-                        _ = backgroundStates.append(.refreshing)
+                        _ = backgroundStates.insert(.refreshing)
                     }
 
                     try await loadLibraries(isHidden: isHidden)
@@ -153,7 +153,7 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
             userTaskCancellable = Task {
                 do {
                     await MainActor.run {
-                        _ = backgroundStates.append(.updating)
+                        _ = backgroundStates.insert(.updating)
                     }
 
                     try await updatePolicy(policy: policy)
@@ -181,7 +181,7 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
             userTaskCancellable = Task {
                 do {
                     await MainActor.run {
-                        _ = backgroundStates.append(.updating)
+                        _ = backgroundStates.insert(.updating)
                     }
 
                     try await updateConfiguration(configuration: configuration)
@@ -209,7 +209,7 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
             userTaskCancellable = Task {
                 do {
                     await MainActor.run {
-                        _ = backgroundStates.append(.updating)
+                        _ = backgroundStates.insert(.updating)
                     }
 
                     try await updateUsername(username: username)

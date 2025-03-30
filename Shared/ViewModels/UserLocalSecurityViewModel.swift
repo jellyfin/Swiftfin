@@ -10,7 +10,7 @@ import Combine
 import Foundation
 import KeychainSwift
 
-class UserLocalSecurityViewModel: ViewModel, Eventful {
+final class UserLocalSecurityViewModel: ViewModel, Eventful {
 
     enum Event: Hashable {
         case error(JellyfinAPIError)

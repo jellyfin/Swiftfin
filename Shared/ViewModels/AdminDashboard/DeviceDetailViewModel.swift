@@ -11,7 +11,7 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-class DeviceDetailViewModel: ViewModel, Stateful, Eventful {
+final class DeviceDetailViewModel: ViewModel, Stateful, Eventful {
 
     enum Event {
         case error(JellyfinAPIError)
@@ -31,7 +31,7 @@ class DeviceDetailViewModel: ViewModel, Stateful, Eventful {
     }
 
     @Published
-    var backgroundStates: OrderedSet<BackgroundState> = []
+    var backgroundStates: Set<BackgroundState> = []
     @Published
     var state: State = .initial
 
@@ -57,7 +57,7 @@ class DeviceDetailViewModel: ViewModel, Stateful, Eventful {
 
             Task {
                 await MainActor.run {
-                    _ = backgroundStates.append(.updating)
+                    _ = backgroundStates.insert(.updating)
                 }
 
                 do {
