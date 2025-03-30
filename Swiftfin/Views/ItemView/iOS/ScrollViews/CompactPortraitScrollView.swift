@@ -134,6 +134,7 @@ extension ItemView.CompactPosterScrollView {
                 .foregroundColor(Color(UIColor.lightGray))
 
                 ItemView.AttributesView(viewModel: viewModel, alignment: .leading)
+                    .frame(maxWidth: .infinity)
             }
         }
 

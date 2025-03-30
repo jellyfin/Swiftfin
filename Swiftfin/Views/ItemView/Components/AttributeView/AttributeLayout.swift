@@ -140,29 +140,35 @@ extension ItemView {
                 return ([], Array(0 ..< itemCount))
             }
 
-            /// Items don't all fit in one row use 2 rows
-            /// Calculate how many items can fit in the bottom row
-            var itemsInBottomRow = 0
-            var availableWidth = maxWidth
+            /// We need two rows - first determine how many items to place in each row
+            /// Try to maximize bottom row within width constraints
+            var bottomRowCount = itemCount
+            var bottomRowWidth = totalWidth
 
-            /// Start from the beginning (in reverse-ish order)
-            for i in 0 ..< itemCount {
-                let itemWidth = sizes[i].width
-                let spaceNeeded = itemWidth + (itemsInBottomRow > 0 ? spacing : 0)
+            while bottomRowCount > 0 {
+                /// Remove one item from calculation
+                bottomRowCount -= 1
+                /// Recalculate width without this item
+                let indices = Array((itemCount - bottomRowCount) ..< itemCount)
+                bottomRowWidth = calculateRowWidth(indices: indices, sizes: sizes)
 
-                if spaceNeeded <= availableWidth {
-                    itemsInBottomRow += 1
-                    availableWidth -= spaceNeeded
-                } else {
+                /// If it now fits, we found our bottom row size
+                if bottomRowWidth <= maxWidth {
                     break
                 }
             }
 
-            /// Start from the beginning (in standard order)
-            let bottomRowSize = min(itemsInBottomRow, itemCount)
-            let topRowSize = itemCount - bottomRowSize
+            /// Ensure we have at least one item in bottom row
+            bottomRowCount = max(1, bottomRowCount)
 
-            return (Array(0 ..< topRowSize), Array(topRowSize ..< itemCount))
+            /// Calculate how many go in top row (the rest)
+            let topRowCount = itemCount - bottomRowCount
+
+            /// Create the row arrays in original order
+            let topRowIndices = Array(0 ..< topRowCount)
+            let bottomRowIndices = Array(topRowCount ..< itemCount)
+
+            return (topRowIndices, bottomRowIndices)
         }
     }
 }

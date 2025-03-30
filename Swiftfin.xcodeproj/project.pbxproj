@@ -221,7 +221,6 @@
 		4EC2B1A92CC97C0700D866BE /* ServerUserDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC2B1A82CC97C0400D866BE /* ServerUserDetailsView.swift */; };
 		4EC50D612C934B3A00FC3D0E /* ServerTasksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC50D602C934B3A00FC3D0E /* ServerTasksViewModel.swift */; };
 		4EC6C16B2C92999800FC904B /* TranscodeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC6C16A2C92999800FC904B /* TranscodeSection.swift */; };
-		4ECCF9F92D8504420048B331 /* WrappingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = 321BE8311E445482ED5C95C3 /* WrappingHStack */; };
 		4ECCF9FB2D8505890048B331 /* ListRowMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECCF9FA2D8505860048B331 /* ListRowMenu.swift */; };
 		4ECDAA9E2C920A8E0030F2F5 /* TranscodeReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECDAA9D2C920A8E0030F2F5 /* TranscodeReason.swift */; };
 		4ECDAA9F2C920A8E0030F2F5 /* TranscodeReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECDAA9D2C920A8E0030F2F5 /* TranscodeReason.swift */; };
@@ -2189,7 +2188,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4ECCF9F92D8504420048B331 /* WrappingHStack in Frameworks */,
 				E12B93072947CD0F00CE0BD9 /* Pulse in Frameworks */,
 				62666E3E27E503FA00EC0ECD /* MediaAccessibility.framework in Frameworks */,
 				62666DFF27E5016400EC0ECD /* CFNetwork.framework in Frameworks */,
@@ -5551,7 +5549,6 @@
 				E176EBE82D050925009F4CF1 /* CollectionVGrid */,
 				E1A09F712D05933D00835265 /* CollectionVGrid */,
 				E1A09F742D05935100835265 /* CollectionHStack */,
-				321BE8311E445482ED5C95C3 /* WrappingHStack */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -7527,7 +7524,7 @@
 				INFOPLIST_FILE = Swiftfin/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Swiftfin;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7567,7 +7564,7 @@
 				INFOPLIST_FILE = Swiftfin/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Swiftfin;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7647,14 +7644,6 @@
 			requirement = {
 				branch = master;
 				kind = branch;
-			};
-		};
-		AB8B44708F2D378364397F34 /* XCRemoteSwiftPackageReference "WrappingHStack" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/dkk/WrappingHStack";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.2.11;
 			};
 		};
 		BD88CB402D77E6A0006BB5E3 /* XCRemoteSwiftPackageReference "TVOSPicker" */ = {
@@ -7828,11 +7817,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		321BE8311E445482ED5C95C3 /* WrappingHStack */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AB8B44708F2D378364397F34 /* XCRemoteSwiftPackageReference "WrappingHStack" */;
-			productName = WrappingHStack;
-		};
 		6220D0C826D63F3700B8E046 /* Stinsen */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */;

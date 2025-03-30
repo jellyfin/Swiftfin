@@ -149,7 +149,7 @@ extension ItemView.CinematicScrollView {
                     .foregroundColor(.white)
 
                 ItemView.AttributesView(viewModel: viewModel, alignment: .leading)
-                    .frame(maxWidth: 300)
+                    .frame(maxWidth: .infinity)
             }
         }
     }
