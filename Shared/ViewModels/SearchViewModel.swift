@@ -49,9 +49,7 @@ final class SearchViewModel: ViewModel, Stateful {
     private(set) var suggestions: [BaseItemDto] = []
 
     @Published
-    final var state: State = .initial
-    @Published
-    final var lastAction: Action? = nil
+    var state: State = .initial
 
     private var searchTask: AnyCancellable?
     private var searchQuery: CurrentValueSubject<String, Never> = .init("")
