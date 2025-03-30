@@ -190,7 +190,8 @@ final class HomeViewModel: ViewModel, Stateful {
 
     private func getLibraries() async throws -> [LatestInLibraryViewModel] {
 
-        let userViewsPath = Paths.getUserViews()
+        let parameters = Paths.GetUserViewsParameters(userID: userSession.user.id)
+        let userViewsPath = Paths.getUserViews(parameters: parameters)
         async let userViews = userSession.client.send(userViewsPath)
 
         async let excludedLibraryIDs = getExcludedLibraries()

@@ -89,7 +89,8 @@ final class MediaViewModel: ViewModel, Stateful {
 
     private func getUserViews() async throws -> [BaseItemDto] {
 
-        let userViewsPath = Paths.getUserViews()
+        let parameters = Paths.GetUserViewsParameters(userID: userSession.user.id)
+        let userViewsPath = Paths.getUserViews(parameters: parameters)
         async let userViews = userSession.client.send(userViewsPath)
 
         async let excludedLibraryIDs = getExcludedLibraries()
