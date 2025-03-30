@@ -82,6 +82,9 @@
 /// Age %@
 "agesGroup" = "Age %@";
 
+/// Aggregate Folder
+"aggregateFolder" = "Aggregate Folder";
+
 /// Aired
 "aired" = "Aired";
 
@@ -181,6 +184,9 @@
 /// The audio bitrate is not supported
 "audioBitrateNotSupported" = "The audio bitrate is not supported";
 
+/// Audio Book
+"audioBook" = "Audio Book";
+
 /// The number of audio channels is not supported
 "audioChannelsNotSupported" = "The number of audio channels is not supported";
 
@@ -228,6 +234,9 @@
 
 /// Bar Buttons
 "barButtons" = "Bar Buttons";
+
+/// Base Plugin Folder
+"basePluginFolder" = "Base Plugin Folder";
 
 /// Behavior
 "behavior" = "Behavior";
@@ -319,6 +328,9 @@
 /// Blue
 "blue" = "Blue";
 
+/// Book
+"book" = "Book";
+
 /// Books
 "books" = "Books";
 
@@ -355,6 +367,12 @@
 /// Change Pin
 "changePin" = "Change Pin";
 
+/// Channel
+"channel" = "Channel";
+
+/// Channel Folder Item
+"channelFolderItem" = "Channel Folder Item";
+
 /// Channels
 "channels" = "Channels";
 
@@ -378,6 +396,12 @@
 
 /// Close
 "close" = "Close";
+
+/// Collection
+"collection" = "Collection";
+
+/// Collection Folder
+"collectionFolder" = "Collection Folder";
 
 /// Collections
 "collections" = "Collections";
@@ -853,6 +877,9 @@
 /// Find missing metadata and images.
 "findMissingDescription" = "Find missing metadata and images.";
 
+/// Folder
+"folder" = "Folder";
+
 /// Force remote media transcoding
 "forceRemoteTranscoding" = "Force remote media transcoding";
 
@@ -867,6 +894,9 @@
 
 /// Full Top and Bottom
 "fullTopAndBottom" = "Full Top and Bottom";
+
+/// Genre
+"genre" = "Genre";
 
 /// Genres
 "genres" = "Genres";
@@ -1045,8 +1075,14 @@
 /// Live TV access
 "liveTvAccess" = "Live TV access";
 
+/// Live TV Channel
+"liveTvChannel" = "Live TV Channel";
+
 /// Live TV Channels
 "liveTVChannels" = "Live TV Channels";
+
+/// Live TV Program
+"liveTvProgram" = "Live TV Program";
 
 /// Live TV Programs
 "liveTVPrograms" = "Live TV Programs";
@@ -1086,6 +1122,9 @@
 
 /// Management
 "management" = "Management";
+
+/// Manual Playlists Folder
+"manualPlaylistsFolder" = "Manual Playlists Folder";
 
 /// Maximum Bitrate
 "maximumBitrate" = "Maximum Bitrate";
@@ -1162,11 +1201,26 @@
 /// Mixer
 "mixer" = "Mixer";
 
+/// Movie
+"movie" = "Movie";
+
 /// Movies
 "movies" = "Movies";
 
 /// Music
 "music" = "Music";
+
+/// Music Album
+"musicAlbum" = "Music Album";
+
+/// Music Artist
+"musicArtist" = "Music Artist";
+
+/// Music Genre
+"musicGenre" = "Music Genre";
+
+/// Music Video
+"musicVideo" = "Music Video";
 
 /// MVC
 "mvc" = "MVC";
@@ -1324,6 +1378,15 @@
 /// Permissions
 "permissions" = "Permissions";
 
+/// Person
+"person" = "Person";
+
+/// Photo
+"photo" = "Photo";
+
+/// Photo Album
+"photoAlbum" = "Photo Album";
+
 /// Pin
 "pin" = "Pin";
 
@@ -1350,6 +1413,12 @@
 
 /// Play From Beginning
 "playFromBeginning" = "Play From Beginning";
+
+/// Playlist
+"playlist" = "Playlist";
+
+/// Playlists Folder
+"playlistsFolder" = "Playlists Folder";
 
 /// Play Next Item
 "playNextItem" = "Play Next Item";
@@ -1395,6 +1464,9 @@
 
 /// Profiles
 "profiles" = "Profiles";
+
+/// Program
+"program" = "Program";
 
 /// Programs
 "programs" = "Programs";
@@ -1449,6 +1521,9 @@
 
 /// Recommended
 "recommended" = "Recommended";
+
+/// Recording
+"recording" = "Recording";
 
 /// Red
 "red" = "Red";
@@ -1795,6 +1870,9 @@
 /// Streams
 "streams" = "Streams";
 
+/// Studio
+"studio" = "Studio";
+
 /// Studios
 "studios" = "Studios";
 
@@ -1918,6 +1996,9 @@
 /// Title
 "title" = "Title";
 
+/// Trailer
+"trailer" = "Trailer";
+
 /// Trailers
 "trailers" = "Trailers";
 
@@ -1947,6 +2028,12 @@
 
 /// TV Access
 "tvAccess" = "TV Access";
+
+/// TV Channel
+"tvChannel" = "TV Channel";
+
+/// TV Program
+"tvProgram" = "TV Program";
 
 /// TV Shows
 "tvShows" = "TV Shows";
@@ -2038,8 +2125,14 @@
 /// User %@ requires device authentication
 "userRequiresDeviceAuthentication" = "User %@ requires device authentication";
 
+/// User Root Folder
+"userRootFolder" = "User Root Folder";
+
 /// Users
 "users" = "Users";
+
+/// User View
+"userView" = "User View";
 
 /// Use splashscreen
 "useSplashscreen" = "Use splashscreen";

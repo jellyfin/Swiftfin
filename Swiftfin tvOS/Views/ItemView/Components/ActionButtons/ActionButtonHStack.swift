@@ -47,19 +47,43 @@ extension ItemView {
         // MARK: - Can Delete Item
 
         private var canDelete: Bool {
-            if viewModel.item.type == .boxSet {
-                return enableCollectionManagement && viewModel.item.canDelete ?? false
-            } else {
-                return enableItemDeletion && viewModel.item.canDelete ?? false
+
+            guard viewModel.item.canDelete ?? false else {
+                return false
+            }
+
+            switch viewModel.item.type {
+            case .boxSet:
+                return enableCollectionManagement
+            case .playlist:
+                // Playlists should always be deletable by their owner
+                return true
+            default:
+                return enableItemDeletion
+            }
+        }
+
+        private var canEdit: Bool {
+
+            switch viewModel.item.type {
+            case .boxSet:
+                return enableCollectionManagement
+            // As of 10.10, only Administrators can edit playlist metadata/images
+            // Users can edit the playlist name & public status but using a different API
+            // case .playlist:
+            // return true
+            default:
+                return enableItemEditing
             }
         }
 
         // MARK: - Refresh Item
 
         private var canRefresh: Bool {
-            if viewModel.item.type == .boxSet {
+            switch viewModel.item.type {
+            case .boxSet:
                 return enableCollectionManagement
-            } else {
+            default:
                 return enableItemEditing
             }
         }
