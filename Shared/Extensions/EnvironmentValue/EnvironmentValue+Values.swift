@@ -10,29 +10,40 @@ import SwiftUI
 
 extension EnvironmentValues {
 
-    var accentColor: Binding<Color> {
-        get { self[AccentColor.self] }
-        set { self[AccentColor.self] = newValue }
+    var selectedMediaPlayerSupplement: Binding<AnyMediaPlayerSupplement?> {
+        get { self[SelectedMediaPlayerSupplementKey.self] }
+        set { self[SelectedMediaPlayerSupplementKey.self] = newValue }
     }
 
-    var audioOffset: Binding<Int> {
+    // changed to PublishedBox<TimeInterval>
+//    var scrubbedSeconds: Binding<TimeInterval> {
+//        get { self[ScrubbedSecondsKey.self] }
+//        set { self[ScrubbedSecondsKey.self] = newValue }
+//    }
+
+    var audioOffset: Binding<TimeInterval> {
         get { self[AudioOffsetKey.self] }
         set { self[AudioOffsetKey.self] = newValue }
     }
 
-    var aspectFilled: Binding<Bool> {
+    var isAspectFilled: Binding<Bool> {
         get { self[AspectFilledKey.self] }
         set { self[AspectFilledKey.self] = newValue }
-    }
-
-    var currentOverlayType: Binding<VideoPlayer.OverlayType> {
-        get { self[CurrentOverlayTypeKey.self] }
-        set { self[CurrentOverlayTypeKey.self] = newValue }
     }
 
     var isEditing: Bool {
         get { self[IsEditingKey.self] }
         set { self[IsEditingKey.self] = newValue }
+    }
+
+    var isInMenu: Bool {
+        get { self[IsInMenuKey.self] }
+        set { self[IsInMenuKey.self] = newValue }
+    }
+
+    var isGestureLocked: Binding<Bool> {
+        get { self[IsGestureLockedKey.self] }
+        set { self[IsGestureLockedKey.self] = newValue }
     }
 
     var isPresentingOverlay: Binding<Bool> {
@@ -50,16 +61,12 @@ extension EnvironmentValues {
         set { self[IsSelectedKey.self] = newValue }
     }
 
-    var playbackSpeed: Binding<Double> {
-        get { self[PlaybackSpeedKey.self] }
-        set { self[PlaybackSpeedKey.self] = newValue }
-    }
-
     var safeAreaInsets: EdgeInsets {
-        self[SafeAreaInsetsKey.self]
+        get { self[SafeAreaInsetsKey.self] }
+        set { self[SafeAreaInsetsKey.self] = newValue }
     }
 
-    var subtitleOffset: Binding<Int> {
+    var subtitleOffset: Binding<TimeInterval> {
         get { self[SubtitleOffsetKey.self] }
         set { self[SubtitleOffsetKey.self] = newValue }
     }

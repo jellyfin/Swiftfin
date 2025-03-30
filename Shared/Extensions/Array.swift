@@ -22,6 +22,14 @@ extension Array {
         }
     }
 
+    func appending(ifLet element: Element?) -> [Element] {
+        if let element {
+            return self + [element]
+        } else {
+            return self
+        }
+    }
+
     func appending(_ contents: [Element]) -> [Element] {
         self + contents
     }
@@ -50,8 +58,3 @@ extension Array {
         return removeFirst()
     }
 }
-
-// extension Array where Element: RawRepresentable<String> {
-//
-//    var asCommaString: String {}
-// }

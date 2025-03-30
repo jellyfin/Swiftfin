@@ -6,6 +6,8 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+@_exported import Inject
+
 import CoreStore
 import Defaults
 import Factory
@@ -18,9 +20,6 @@ import SwiftUI
 
 @main
 struct SwiftfinApp: App {
-
-    @UIApplicationDelegateAdaptor(AppDelegate.self)
-    var appDelegate
 
     @StateObject
     private var valueObservation = ValueObservation()

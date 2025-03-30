@@ -23,7 +23,8 @@ struct SeriesEpisodeSelector: View {
     private var selection: SeasonItemViewModel.ID?
 
     private var selectionViewModel: SeasonItemViewModel? {
-        viewModel.seasons.first(where: { $0.id == selection })
+        guard let selection else { return nil }
+        return viewModel.seasons[id: selection]
     }
 
     @ViewBuilder
@@ -69,7 +70,7 @@ struct SeriesEpisodeSelector: View {
             guard !didSelectPlayButtonSeason else { return }
             didSelectPlayButtonSeason = true
 
-            if let playButtonSeason = viewModel.seasons.first(where: { $0.id == newValue.seasonID }) {
+            if let playButtonSeason = viewModel.seasons[id: newValue.seasonID.hashValueOrZero] {
                 selection = playButtonSeason.id
             } else {
                 selection = viewModel.seasons.first?.id

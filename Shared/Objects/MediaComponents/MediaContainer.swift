@@ -6,9 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-
-enum MediaContainer: String, CaseIterable, Codable, Displayable, Defaults.Serializable {
+enum MediaContainer: String, CaseIterable, Displayable, Storable {
 
     case avi
     case flv

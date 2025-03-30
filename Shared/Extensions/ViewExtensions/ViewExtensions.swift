@@ -188,8 +188,6 @@ extension View {
         }
     }
 
-    // TODO: have x/y tracked binding
-
     func onLocationChanged(_ onChange: @escaping (CGPoint) -> Void) -> some View {
         background {
             GeometryReader { reader in
@@ -230,9 +228,13 @@ extension View {
         }
     }
 
-    func trackingSize(_ binding: Binding<CGSize>) -> some View {
-        onSizeChanged { newSize in
-            binding.wrappedValue = newSize
+    func trackingSize(
+        _ sizeBinding: Binding<CGSize>,
+        _ safeAreaInsetBinding: Binding<EdgeInsets> = .constant(.zero)
+    ) -> some View {
+        onSizeChanged {
+            sizeBinding.wrappedValue = $0
+            safeAreaInsetBinding.wrappedValue = $1
         }
     }
 
@@ -242,13 +244,11 @@ extension View {
         return copy
     }
 
-    // TODO: rename isVisible
-
     /// - Important: Do not use this to add or remove a view from the view heirarchy.
     ///              Use a conditional statement instead.
     @inlinable
-    func visible(_ isVisible: Bool) -> some View {
-        opacity(isVisible ? 1 : 0)
+    func isVisible(opacity: Double = 1.0, _ isVisible: Bool) -> some View {
+        self.opacity(isVisible ? opacity : 0)
     }
 
     func blurred(style: UIBlurEffect.Style = .regular) -> some View {
@@ -299,7 +299,7 @@ extension View {
         modifier(OnFinalDisappearModifier(action: action))
     }
 
-    /// Perform an action before the first appearance of a `View`.
+    /// Perform an action on the first appearance of a `View`.
     func onFirstAppear(perform action: @escaping () -> Void) -> some View {
         modifier(OnFirstAppearModifier(action: action))
     }
@@ -331,6 +331,14 @@ extension View {
         modifier(ScrollIfLargerThanContainerModifier(padding: padding))
     }
 
+    func pulse(_ isPulsing: Binding<Bool> = .constant(true)) -> some View {
+        modifier(PulseViewModifier(isPulsing: isPulsing))
+    }
+
+    func videoPlayerActionButtonTransition() -> some View {
+        transition(.opacity.combined(with: .scale).animation(.snappy))
+    }
+
     // MARK: debug
 
     // Useful modifiers during development for layout without RocketSim
@@ -340,6 +348,14 @@ extension View {
         background {
             Rectangle()
                 .fill(fill)
+        }
+    }
+
+    func debugOverlay<S: ShapeStyle>(_ fill: S = .red.opacity(0.5)) -> some View {
+        overlay {
+            Rectangle()
+                .fill(fill)
+                .allowsHitTesting(false)
         }
     }
 

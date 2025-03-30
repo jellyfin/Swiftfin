@@ -6,10 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import JellyfinAPI
-
-enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Defaults.Serializable {
+enum SubtitleFormat: String, CaseIterable, Displayable, Storable {
 
     case ass
     case cc_dec

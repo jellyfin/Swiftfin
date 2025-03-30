@@ -6,10 +6,9 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import Foundation
 
-enum ItemFilterType: String, CaseIterable, Defaults.Serializable {
+enum ItemFilterType: String, CaseIterable, Storable {
 
     case genres
     case letter

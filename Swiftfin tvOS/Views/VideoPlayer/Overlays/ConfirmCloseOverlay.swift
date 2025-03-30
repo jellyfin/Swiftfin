@@ -8,21 +8,21 @@
 
 import SwiftUI
 
-struct ConfirmCloseOverlay: View {
-    var body: some View {
-        VStack {
-            HStack {
+extension VideoPlayer.Overlay {
+
+    struct ConfirmCloseOverlay: View {
+
+        var body: some View {
+            ZStack {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 96))
                     .padding(3)
-                    .background(Color.black.opacity(0.4).mask(Circle()))
-
-                Spacer()
+                    .background {
+                        Circle()
+                            .fill(Color.black.opacity(0.4))
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
-            .padding()
-
-            Spacer()
         }
-        .padding()
     }
 }

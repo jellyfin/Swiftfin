@@ -119,12 +119,12 @@ struct ProgramsView: View {
         .imageOverlay {
             ProgramProgressOverlay(program: $0)
         }
-        .onSelect {
-            mainRouter.route(
-                to: \.liveVideoPlayer,
-                LiveVideoPlayerManager(program: $0)
-            )
-        }
+//        .onSelect {
+//            mainRouter.route(
+//                to: \.liveVideoPlayer,
+//                LiveVideoPlayerManager(program: $0)
+//            )
+//        }
     }
 
     var body: some View {

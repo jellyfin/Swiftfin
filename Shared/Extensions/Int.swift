@@ -8,25 +8,9 @@
 
 import Foundation
 
-extension FixedWidthInteger {
-
-    var timeLabel: String {
-        let hours = self / 3600
-        let minutes = (self % 3600) / 60
-        let seconds = self % 3600 % 60
-
-        let hourText = hours > 0 ? String(hours).appending(":") : ""
-        let minutesText = hours > 0 ? String(minutes).leftPad(maxWidth: 2, with: "0").appending(":") : String(minutes)
-            .appending(":")
-        let secondsText = String(seconds).leftPad(maxWidth: 2, with: "0")
-
-        return hourText
-            .appending(minutesText)
-            .appending(secondsText)
-    }
-}
-
 extension Int {
+
+    // TODO: convert to `FormatStyle`s
 
     /// Label if the current value represents milliseconds
     var millisecondLabel: String {
@@ -41,6 +25,8 @@ extension Int {
             .appending("s")
             .prepending("-", if: isNegative)
     }
+
+    // TODO: remove and have as formatter in `Text`
 
     /// Label if the current value represents seconds
     var secondLabel: String {

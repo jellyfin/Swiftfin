@@ -6,8 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Foundation
 import JellyfinAPI
 
 struct CustomDeviceProfile: Hashable, Storable {
@@ -56,7 +54,7 @@ struct CustomDeviceProfile: Hashable, Storable {
                 context: .streaming,
                 maxAudioChannels: "8",
                 minSegments: 2,
-                protocol: StreamType.hls.rawValue,
+                protocol: "hls",
                 type: .video
             ) {
                 audio

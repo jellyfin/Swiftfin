@@ -6,9 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-
-enum AudioCodec: String, CaseIterable, Codable, Displayable, Defaults.Serializable {
+enum AudioCodec: String, CaseIterable, Displayable, Storable {
 
     case aac
     case ac3

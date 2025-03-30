@@ -6,8 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-
 struct TextPair: Displayable, Identifiable {
 
     let title: String
