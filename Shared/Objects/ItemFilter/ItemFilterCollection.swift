@@ -40,7 +40,7 @@ struct ItemFilterCollection: Codable, Defaults.Serializable, Hashable {
     static let all: ItemFilterCollection = .init(
         letter: ItemLetter.allCases,
         // TODO: 10.10 - Filter to only valid SortBy's for each BaseItemKind
-        sortBy: ItemSortBy.getValidFilters(),
+        sortBy: ItemSortBy.supportedCases,
         sortOrder: ItemSortOrder.allCases,
         traits: ItemTrait.supportedCases
     )

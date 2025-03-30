@@ -169,6 +169,8 @@
 		4E90F7672CC72B1F00417C31 /* TriggerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E90F75F2CC72B1F00417C31 /* TriggerRow.swift */; };
 		4E90F7682CC72B1F00417C31 /* TriggersSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E90F75D2CC72B1F00417C31 /* TriggersSection.swift */; };
 		4E90F76A2CC72B1F00417C31 /* DetailsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E90F7592CC72B1F00417C31 /* DetailsSection.swift */; };
+		4E9654482D99C553006CB024 /* CollectionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9654472D99C551006CB024 /* CollectionType.swift */; };
+		4E9654492D99C553006CB024 /* CollectionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9654472D99C551006CB024 /* CollectionType.swift */; };
 		4E97D1832D064748004B89AD /* ItemSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E97D1822D064748004B89AD /* ItemSection.swift */; };
 		4E97D1852D064B43004B89AD /* RefreshMetadataButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E97D1842D064B43004B89AD /* RefreshMetadataButton.swift */; };
 		4E98F7D22D123AD4001E7518 /* NavigationBarMenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E98F7C12D123AD4001E7518 /* NavigationBarMenuButton.swift */; };
@@ -1396,6 +1398,7 @@
 		4E90F75D2CC72B1F00417C31 /* TriggersSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggersSection.swift; sourceTree = "<group>"; };
 		4E90F75F2CC72B1F00417C31 /* TriggerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerRow.swift; sourceTree = "<group>"; };
 		4E90F7612CC72B1F00417C31 /* EditServerTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditServerTaskView.swift; sourceTree = "<group>"; };
+		4E9654472D99C551006CB024 /* CollectionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionType.swift; sourceTree = "<group>"; };
 		4E97D1822D064748004B89AD /* ItemSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemSection.swift; sourceTree = "<group>"; };
 		4E97D1842D064B43004B89AD /* RefreshMetadataButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshMetadataButton.swift; sourceTree = "<group>"; };
 		4E98F7C12D123AD4001E7518 /* NavigationBarMenuButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBarMenuButton.swift; sourceTree = "<group>"; };
@@ -5009,6 +5012,7 @@
 				E1D37F5A2B9CF01F00343D2B /* BaseItemPerson */,
 				E1002B632793CEE700E47059 /* ChapterInfo.swift */,
 				E1CB758A2C80F9EC00217C76 /* CodecProfile.swift */,
+				4E9654472D99C551006CB024 /* CollectionType.swift */,
 				4E35CE682CBED95F00DBD886 /* DayOfWeek.swift */,
 				4E17498D2CC00A2E00DD07D1 /* DeviceInfoDto.swift */,
 				4EBE06502C7ED0E1004A6C03 /* DeviceProfile.swift */,
@@ -6040,6 +6044,7 @@
 				4EF36F672D9649050065BB79 /* SessionInfoDto.swift in Sources */,
 				E1C926112887565C002A7A66 /* ActionButtonHStack.swift in Sources */,
 				4E8274F52D2ECF1900F5E610 /* UserProfileSettingsCoordinator.swift in Sources */,
+				4E9654482D99C553006CB024 /* CollectionType.swift in Sources */,
 				E178859B2780F1F40094FBCF /* tvOSSlider.swift in Sources */,
 				E103DF952BCF31CD000229B2 /* MediaItem.swift in Sources */,
 				E1ED91192B95993300802036 /* TitledLibraryParent.swift in Sources */,
@@ -6651,6 +6656,7 @@
 				4E8F74AC2CE03DD300CC8969 /* DeleteItemViewModel.swift in Sources */,
 				4EED874B2CBF824B002354D2 /* DevicesView.swift in Sources */,
 				E1DA656F28E78C9900592A73 /* EpisodeSelector.swift in Sources */,
+				4E9654492D99C553006CB024 /* CollectionType.swift in Sources */,
 				4E8F74A22CE03C9000CC8969 /* ItemEditorCoordinator.swift in Sources */,
 				E18E01E0288747230022598C /* iPadOSMovieItemContentView.swift in Sources */,
 				E1A7F0DF2BD4EC7400620DDD /* Dictionary.swift in Sources */,

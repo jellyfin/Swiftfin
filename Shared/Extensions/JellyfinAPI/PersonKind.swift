@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-extension PersonKind: Displayable {
+extension PersonKind: Displayable, SupportedCaseIterable {
     var displayTitle: String {
         switch self {
         case .unknown:
@@ -65,13 +65,7 @@ extension PersonKind: Displayable {
         }
     }
 
-    // Only displayed person types.
-    // Will ignore types like "GuestStar"
-    var displayedTypes: [PersonKind] {
+    static var supportedCases: [PersonKind] {
         [.actor, .director, .writer, .producer]
-    }
-
-    var isDisplayed: Bool {
-        displayedTypes.contains(self)
     }
 }

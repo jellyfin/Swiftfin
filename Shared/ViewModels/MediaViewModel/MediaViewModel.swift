@@ -13,9 +13,6 @@ import OrderedCollections
 
 final class MediaViewModel: ViewModel, Stateful {
 
-    // TODO: remove once collection types become an enum
-    static let supportedCollectionTypes: [CollectionType] = [.boxsets, .folders, .movies, .tvshows, .livetv]
-
     // MARK: Action
 
     enum Action: Equatable {
@@ -99,7 +96,7 @@ final class MediaViewModel: ViewModel, Stateful {
         // folders has `type = UserView`, but we manually
         // force it to `folders` for better view handling
         let supportedUserViews = try await (userViews.value.items ?? [])
-            .intersection(Self.supportedCollectionTypes, using: \.collectionType)
+            .intersection(CollectionType.supportedCases, using: \.collectionType)
             .subtracting(excludedLibraryIDs, using: \.id)
             .map { item in
 

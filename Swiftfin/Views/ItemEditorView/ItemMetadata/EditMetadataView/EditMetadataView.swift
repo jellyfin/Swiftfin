@@ -118,7 +118,7 @@ struct EditMetadataView: View {
 
             ParentalRatingSection(item: $tempItem)
 
-            if [BaseItemKind.movie, .episode].contains(itemType) {
+            if [.movie, .episode].contains(itemType) {
                 MediaFormatSection(item: $tempItem)
             }
 

@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-extension ItemSortBy: Displayable {
+extension ItemSortBy: Displayable, SupportedCaseIterable {
     var displayTitle: String {
         switch self {
         case .default:
@@ -79,9 +79,7 @@ extension ItemSortBy: Displayable {
         }
     }
 
-    // TODO: 10.10 - Filter to only valid SortBy's for each BaseItemKind
-    // Example: .searchScore throws a 500 when used on the library
-    static func getValidFilters() -> [ItemSortBy] {
+    static var supportedCases: [ItemSortBy] {
         [
             .premiereDate,
             .name,
