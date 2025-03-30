@@ -10,7 +10,7 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
+final class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: - Events
 
@@ -37,7 +37,7 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
     }
 
     @Published
-    final var state: State = .initial
+    var state: State = .initial
 
     // MARK: - Published Items
 

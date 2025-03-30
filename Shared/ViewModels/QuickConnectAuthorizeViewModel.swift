@@ -34,8 +34,6 @@ final class QuickConnectAuthorizeViewModel: ViewModel, Eventful, Stateful {
     }
 
     @Published
-    var lastAction: Action? = nil
-    @Published
     var state: State = .initial
 
     var events: AnyPublisher<Event, Never> {

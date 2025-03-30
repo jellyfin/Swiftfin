@@ -12,7 +12,7 @@ import JellyfinAPI
 import Nuke
 import UIKit
 
-class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
+final class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
 
     // MARK: - Action
 

@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-class DownloadVideoPlayerManager: VideoPlayerManager {
+final class DownloadVideoPlayerManager: VideoPlayerManager {
 
     init(downloadTask: DownloadTask) {
         super.init()

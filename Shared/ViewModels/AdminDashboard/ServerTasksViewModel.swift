@@ -41,11 +41,11 @@ final class ServerTasksViewModel: ViewModel, Stateful {
     }
 
     @Published
-    final var backgroundStates: OrderedSet<BackgroundState> = []
+    var backgroundStates: Set<BackgroundState> = []
     @Published
-    final var state: State = .initial
+    var state: State = .initial
     @Published
-    final var tasks: OrderedDictionary<String, [ServerTaskObserver]> = [:]
+    var tasks: OrderedDictionary<String, [ServerTaskObserver]> = [:]
 
     private var getTasksCancellable: AnyCancellable?
 

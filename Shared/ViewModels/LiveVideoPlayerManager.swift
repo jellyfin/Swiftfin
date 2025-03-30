@@ -13,7 +13,7 @@ import JellyfinAPI
 //       with the channel retrieving method below and is mainly just for reference
 //       for how I should probably handle getting the channels of programs elsewhere.
 
-class LiveVideoPlayerManager: VideoPlayerManager {
+final class LiveVideoPlayerManager: VideoPlayerManager {
 
     @Published
     var program: ChannelProgram?
