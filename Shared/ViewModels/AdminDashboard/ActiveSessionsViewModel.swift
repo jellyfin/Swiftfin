@@ -38,7 +38,7 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
     @Published
     var backgroundStates: Set<BackgroundState> = []
     @Published
-    var sessions: OrderedDictionary<String, BindingBox<SessionInfo?>> = [:]
+    var sessions: OrderedDictionary<String, BindingBox<SessionInfoDto?>> = [:]
     @Published
     var state: State = .initial
 
