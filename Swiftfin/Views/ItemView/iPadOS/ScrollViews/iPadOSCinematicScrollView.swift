@@ -110,7 +110,7 @@ extension ItemView.iPadOSCinematicScrollView {
                         .foregroundColor(.white)
 
                     HStack(spacing: 30) {
-                        ItemView.AttributesHStack(viewModel: viewModel)
+                        ItemView.AttributesView(viewModel: viewModel, alignment: .leading)
 
                         DotHStack {
                             if let firstGenre = viewModel.item.genres?.first {
@@ -127,7 +127,10 @@ extension ItemView.iPadOSCinematicScrollView {
                         }
                         .font(.footnote)
                         .foregroundColor(Color(UIColor.lightGray))
+
+                        Spacer()
                     }
+                    .frame(maxWidth: .infinity)
                 }
                 .padding(.trailing, 200)
 
