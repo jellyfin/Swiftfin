@@ -64,6 +64,9 @@
 /// Add Server
 "addServer" = "Add Server";
 
+/// Add to playlist
+"addToPlaylist" = "Add to playlist";
+
 /// Add trigger
 "addTrigger" = "Add trigger";
 
@@ -477,6 +480,9 @@
 
 /// Create a pin to sign in to %@ on this device
 "createPinForUser" = "Create a pin to sign in to %@ on this device";
+
+/// Create playlist
+"createPlaylist" = "Create playlist";
 
 /// Creator
 "creator" = "Creator";
@@ -952,6 +958,9 @@
 /// Inverted Light
 "invertedLight" = "Inverted Light";
 
+/// %1$@ is already in this playlist
+"itemAlreadyInPlaylist" = "%1$@ is already in this playlist";
+
 /// %1$@ at %2$@
 "itemAtItem" = "%1$@ at %2$@";
 
@@ -1351,6 +1360,9 @@
 /// Play From Beginning
 "playFromBeginning" = "Play From Beginning";
 
+/// Playlist
+"playlist" = "Playlist";
+
 /// Play Next Item
 "playNextItem" = "Play Next Item";
 
@@ -1404,6 +1416,9 @@
 
 /// Provider
 "provider" = "Provider";
+
+/// Public
+"public" = "Public";
 
 /// Public Users
 "publicUsers" = "Public Users";
@@ -1489,11 +1504,20 @@
 /// Remote control
 "remoteControl" = "Remote control";
 
+/// Remove
+"remove" = "Remove";
+
 /// Remove All
 "removeAll" = "Remove All";
 
 /// Remove All Servers
 "removeAllServers" = "Remove All Servers";
+
+/// Remove %1$@
+"removeItem" = "Remove %1$@";
+
+/// Are you sure you want to remove this item? This action cannot be undone.
+"removeItemConfirmationMessage" = "Are you sure you want to remove this item? This action cannot be undone.";
 
 /// Remux
 "remux" = "Remux";
