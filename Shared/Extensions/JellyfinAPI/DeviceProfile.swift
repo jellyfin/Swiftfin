@@ -22,8 +22,6 @@ extension DeviceProfile {
         // MARK: - Video Player Specific Logic
 
         deviceProfile.codecProfiles = videoPlayer.codecProfiles
-        // TODO: 10.10 - Removed? Is there something that should be here instead?
-        // deviceProfile.responseProfiles = videoPlayer.responseProfiles
         deviceProfile.subtitleProfiles = videoPlayer.subtitleProfiles
 
         // MARK: - DirectPlay & Transcoding Profiles
