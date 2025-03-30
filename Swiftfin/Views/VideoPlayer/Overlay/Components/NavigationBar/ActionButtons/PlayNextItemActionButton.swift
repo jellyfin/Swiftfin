@@ -21,7 +21,7 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
                 systemImage: "forward.end.circle.fill"
             ) {
                 guard let nextItem = manager.queue?.nextItem else { return }
-                manager.send(.playNew(item: nextItem))
+                manager.send(.playNewBaseItem(item: nextItem))
             }
             .disabled(manager.queue?.hasNextItem == false)
         }

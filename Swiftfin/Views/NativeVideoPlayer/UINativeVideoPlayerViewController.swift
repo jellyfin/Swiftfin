@@ -67,7 +67,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
                 switch event {
                 case .playbackStopped:
                     self.dismiss(animated: true)
-                case let .playNew(playbackItem):
+                case let .itemChanged(playbackItem):
                     self.playNew(playbackItem: playbackItem)
                 }
             }

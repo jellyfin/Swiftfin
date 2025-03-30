@@ -69,7 +69,9 @@ extension MediaChaptersSupplement {
 
         var body: some View {
             Button {
-                manager.set(seconds: chapter.secondsRange.lowerBound)
+//                manager.set(seconds: chapter.secondsRange.lowerBound)
+                
+                
                 manager.proxy?.setTime(chapter.secondsRange.lowerBound)
             } label: {
                 VStack(alignment: .leading, spacing: 5) {

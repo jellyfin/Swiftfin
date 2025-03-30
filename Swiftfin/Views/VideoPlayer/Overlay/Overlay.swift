@@ -105,7 +105,7 @@ extension VideoPlayer {
 
                 // MARK: - Gestures
 
-//                GestureLayer()
+                GestureLayer()
 
                 // MARK: - Buttons and Supplements
 

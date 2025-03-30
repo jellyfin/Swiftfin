@@ -1136,6 +1136,8 @@
 		E1F5CF062CB09EA000607465 /* CurrentDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F5CF042CB09EA000607465 /* CurrentDate.swift */; };
 		E1F5CF082CB0A04500607465 /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F5CF072CB0A04500607465 /* Text.swift */; };
 		E1F5CF092CB0A04500607465 /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F5CF072CB0A04500607465 /* Text.swift */; };
+		E1F9E2132D98E1B800AF4499 /* EpisodeMediaPlayerQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F9E2122D98E1B800AF4499 /* EpisodeMediaPlayerQueue.swift */; };
+		E1F9E2142D98E1B800AF4499 /* EpisodeMediaPlayerQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F9E2122D98E1B800AF4499 /* EpisodeMediaPlayerQueue.swift */; };
 		E1FA891B289A302300176FEB /* iPadOSCollectionItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FA891A289A302300176FEB /* iPadOSCollectionItemView.swift */; };
 		E1FA891E289A305D00176FEB /* iPadOSCollectionItemContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FA891D289A305D00176FEB /* iPadOSCollectionItemContentView.swift */; };
 		E1FAD1C62A0375BA007F5521 /* UDPBroadcast in Frameworks */ = {isa = PBXBuildFile; productRef = E1FAD1C52A0375BA007F5521 /* UDPBroadcast */; };
@@ -2013,6 +2015,7 @@
 		E1F0204D26CCCA74001C1C3B /* MediaJumpInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaJumpInterval.swift; sourceTree = "<group>"; };
 		E1F5CF042CB09EA000607465 /* CurrentDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentDate.swift; sourceTree = "<group>"; };
 		E1F5CF072CB0A04500607465 /* Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
+		E1F9E2122D98E1B800AF4499 /* EpisodeMediaPlayerQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeMediaPlayerQueue.swift; sourceTree = "<group>"; };
 		E1FA891A289A302300176FEB /* iPadOSCollectionItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPadOSCollectionItemView.swift; sourceTree = "<group>"; };
 		E1FA891D289A305D00176FEB /* iPadOSCollectionItemContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPadOSCollectionItemContentView.swift; sourceTree = "<group>"; };
 		E1FCD08726C35A0D007C8DCF /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
@@ -4525,6 +4528,7 @@
 		E18120F92CBDCFB800682985 /* Supplements */ = {
 			isa = PBXGroup;
 			children = (
+				E1F9E2122D98E1B800AF4499 /* EpisodeMediaPlayerQueue.swift */,
 				E12E2F0C2CBBA984008C303A /* MediaChaptersSupplement.swift */,
 				E12E2F062CBB9E97008C303A /* MediaInfoSupplement.swift */,
 				E156D1412CC0D3A800908573 /* MediaPlayerQueue.swift */,
@@ -5928,6 +5932,7 @@
 				E1D37F492B9C648E00343D2B /* MaxHeightText.swift in Sources */,
 				E146A9DC2BE6E9BF0034DA1E /* StoredValues+User.swift in Sources */,
 				E154677A289AF48200087E35 /* CollectionItemContentView.swift in Sources */,
+				E1F9E2142D98E1B800AF4499 /* EpisodeMediaPlayerQueue.swift in Sources */,
 				E1DABAFC2A270EE7008AC34A /* MediaSourcesCard.swift in Sources */,
 				E193D53D27193F9700900D82 /* UserSignInCoordinator.swift in Sources */,
 				E14EDEC62B8FB64E000F00A4 /* AnyItemFilter.swift in Sources */,
@@ -6384,6 +6389,7 @@
 				6267B3D626710B8900A7371D /* Collection.swift in Sources */,
 				E152107C2947ACA000375CC2 /* InvertedLightAppIcon.swift in Sources */,
 				E12E2F0E2CBBA984008C303A /* MediaChaptersSupplement.swift in Sources */,
+				E1F9E2132D98E1B800AF4499 /* EpisodeMediaPlayerQueue.swift in Sources */,
 				E17AC9732955007A003D2BC2 /* DownloadTaskButton.swift in Sources */,
 				E145EB4F2BE168AC003BF6F3 /* SwiftfinStore+ServerState.swift in Sources */,
 				E13DD3F5271793BB009D4DAF /* UserSignInView.swift in Sources */,

@@ -58,10 +58,6 @@ extension VideoPlayer.Overlay {
         @Binding
         private var selectedSupplement: AnyMediaPlayerSupplement?
 
-//        @Environment(\.scrubbedSeconds)
-//        @Binding
-//        private var scrubbedSeconds: TimeInterval
-
         @Environment(\.subtitleOffset)
         @Binding
         private var subtitleOffset: TimeInterval

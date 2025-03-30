@@ -40,7 +40,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     /// request for media playback.
     enum PlaybackRequestStatus {
 
-        /// The player requests more info to be playing
+        /// The player requests media playback
         case playing
 
         /// The player is paused
@@ -51,7 +51,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
     enum Event {
         case playbackStopped
-        case playNew(playbackItem: MediaPlayerItem)
+        case itemChanged(playbackItem: MediaPlayerItem)
     }
 
     // MARK: Action
@@ -63,8 +63,8 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         case ended
         case stop
 
-        case playNew(item: BaseItemDto)
 //        case playNew(item: MediaPlayerItem)
+        case playNewBaseItem(item: BaseItemDto)
     }
 
     // MARK: State
@@ -144,7 +144,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         buildMediaItem(from: playbackItemProvider) { @MainActor newItem in
             self.state = .playback
             self.playbackItem = newItem
-            self.eventSubject.send(.playNew(playbackItem: newItem))
+            self.eventSubject.send(.itemChanged(playbackItem: newItem))
         }
     }
 
@@ -162,7 +162,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
         state = .playback
         self.playbackItem = playbackItem
-        eventSubject.send(.playNew(playbackItem: playbackItem))
+        eventSubject.send(.itemChanged(playbackItem: playbackItem))
     }
 
     // MARK: respond
@@ -183,7 +183,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
                 eventSubject.send(.playbackStopped)
             }
             return .stopped
-        case let .playNew(item: item):
+        case let .playNewBaseItem(item: item):
             guard let playbackItemProvider else {
                 return .error(.init("Attempted to play new item from base item, but no playback item provider was provided"))
             }
@@ -192,17 +192,17 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
             buildMediaItem(from: playbackItemProvider) { @MainActor newItem in
                 self.state = .playback
                 self.playbackItem = newItem
-                self.eventSubject.send(.playNew(playbackItem: newItem))
+                self.eventSubject.send(.itemChanged(playbackItem: newItem))
             }
 
             return .loadingItem
         }
     }
 
-    @MainActor
-    func set(seconds: TimeInterval) {
-        self.seconds.value = seconds
-    }
+//    @MainActor
+//    func set(seconds: TimeInterval) {
+//        self.seconds.value = seconds
+//    }
 
     @MainActor
     func set(playbackRequestStatus: PlaybackRequestStatus) {
