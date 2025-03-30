@@ -6,9 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
-import Foundation
-
 // TODO: documentation
 // TODO: find a better way to handle backgroundStates on action/state transitions
 //       so that conformers don't have to manually insert/remove them
