@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 import VLCUI
 
@@ -16,6 +17,9 @@ extension VideoPlayer {
         @Environment(\.currentOverlayType)
         @Binding
         private var currentOverlayType
+
+        @Default(.accentColor)
+        private var accentColor
 
         @EnvironmentObject
         private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
@@ -58,7 +62,7 @@ extension VideoPlayer {
                                 .imageOverlay {
                                     if chapter.secondsRange.contains(currentProgressHandler.seconds) {
                                         RoundedRectangle(cornerRadius: 6)
-                                            .stroke(Color.jellyfinPurple, lineWidth: 8)
+                                            .stroke(accentColor, lineWidth: 8)
                                     }
                                 }
                                 .content {
