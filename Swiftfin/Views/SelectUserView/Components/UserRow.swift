@@ -82,11 +82,8 @@ extension SelectUserView {
                     ),
                     pipeline: .Swiftfin.local
                 )
-
-                if isEditing {
-                    Color.black
-                        .opacity(isSelected ? 0 : 0.5)
-                }
+                .environment(\.isEditing, isEditing)
+                .environment(\.isSelected, isSelected)
             }
             .aspectRatio(contentMode: .fill)
             .clipShape(.circle)

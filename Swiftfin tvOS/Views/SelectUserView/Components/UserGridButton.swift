@@ -63,22 +63,20 @@ extension SelectUserView {
                 ),
                 pipeline: .Swiftfin.local
             )
+            .environment(\.isEditing, isEditing)
+            .environment(\.isSelected, isSelected)
             .aspectRatio(1, contentMode: .fill)
             .clipShape(.circle)
             .overlay {
-                if isEditing {
-                    ZStack(alignment: .bottom) {
-                        Color.black
-                            .opacity(isSelected ? 0 : 0.5)
-
-                        if isSelected {
-                            Image(systemName: "checkmark.circle.fill")
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 75, height: 75)
-                                .symbolRenderingMode(.palette)
-                                .foregroundStyle(accentColor.overlayColor, accentColor)
-                        }
+                ZStack(alignment: .bottom) {
+                    Color.clear
+                    if isEditing && isSelected {
+                        Image(systemName: "checkmark.circle.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 75, height: 75, alignment: .bottomTrailing)
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(accentColor.overlayColor, accentColor)
                     }
                 }
             }

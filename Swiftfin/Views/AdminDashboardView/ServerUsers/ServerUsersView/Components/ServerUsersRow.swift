@@ -82,12 +82,9 @@ extension ServerUsersView {
                         maxWidth: 60
                     )
                 )
-                .grayscale(userActive ? 0.0 : 1.0)
-
-                if isEditing {
-                    Color.black
-                        .opacity(isSelected ? 0 : 0.5)
-                }
+                .environment(\.isEnabled, userActive)
+                .environment(\.isEditing, isEditing)
+                .environment(\.isSelected, isSelected)
             }
             .frame(width: 60, height: 60)
         }

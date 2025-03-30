@@ -19,12 +19,32 @@ struct UserProfileImage<Placeholder: View>: View {
     @Injected(\.logService)
     private var logger
 
+    // MARK: - Environment Variables
+
+    @Environment(\.isEnabled)
+    private var isEnabled
+    @Environment(\.isEditing)
+    private var isEditing
+    @Environment(\.isSelected)
+    private var isSelected
+
     // MARK: - User Variables
 
     private let userID: String?
     private let source: ImageSource
     private let pipeline: ImagePipeline
     private let placeholder: Placeholder
+
+    // MARK: - Overlay Opacity
+
+    private var overlayOpacity: Double {
+        /// Dim the Profile Image if Editing & Unselected or if Disabled
+        if (isEditing && !isSelected) || !isEnabled {
+            return 0.5
+        } else {
+            return 0.0
+        }
+    }
 
     // MARK: - Body
 
@@ -45,6 +65,9 @@ struct UserProfileImage<Placeholder: View>: View {
                 }
                 .failure {
                     placeholder
+                }
+                .overlay {
+                    Color.black.opacity(overlayOpacity)
                 }
                 .posterShadow()
                 .aspectRatio(1, contentMode: .fill)
