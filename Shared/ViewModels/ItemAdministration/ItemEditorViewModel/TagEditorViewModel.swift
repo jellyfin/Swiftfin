@@ -10,7 +10,7 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-class TagEditorViewModel: ItemEditorViewModel<String> {
+final class TagEditorViewModel: ItemEditorViewModel<String> {
 
     // MARK: - Populate the Trie
 

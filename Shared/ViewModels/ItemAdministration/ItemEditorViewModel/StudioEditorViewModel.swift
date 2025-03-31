@@ -10,7 +10,7 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
+final class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
 
     // MARK: - Populate the Trie
 
