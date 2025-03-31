@@ -7,19 +7,12 @@
 //
 
 import Defaults
+import JellyfinAPI
 import SwiftUI
-import SwiftUIIntrospect
 
-extension View {
+struct LibraryVGrid<Element: Poster & Identifiable>: View {
 
-    @ViewBuilder
-    func navigationBarBranding(
-        isLoading: Bool = false
-    ) -> some View {
-        modifier(
-            NavigationBarBrandingModifier(
-                isLoading: isLoading
-            )
-        )
+    var body: some View {
+        Text("Temporary")
     }
 }

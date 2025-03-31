@@ -12,7 +12,7 @@ import SwiftUI
 
 struct LibraryFilterBar: View {
 
-    // MARK: - Observed Object
+    // MARK: - ObservedObject
 
     @ObservedObject
     private var viewModel: FilterViewModel
@@ -26,10 +26,11 @@ struct LibraryFilterBar: View {
 
     @FocusState
     private var isFocused: Bool
+    @FocusState
+    private var resetButtonFocused: Bool
 
-    // MARK: - Longest Filter Width
+    // MARK: - FilterWidth
 
-    /// Ensure the filter is large enough to fit the longest filter name
     private var filterWidth: CGFloat {
         let longestFilterString = filterTypes.map(\.displayTitle)
             .max(by: { $0.count < $1.count }) ?? ""
@@ -44,10 +45,9 @@ struct LibraryFilterBar: View {
 
     var body: some View {
         ZStack(alignment: .leading) {
-
-            if isFocused {
+            if isFocused || resetButtonFocused {
                 selectedButtonBackground
-                    .animation(.easeIn(duration: 0.2), value: isFocused)
+                    .animation(.easeIn(duration: 0.2), value: isFocused || resetButtonFocused)
                     .transition(.move(edge: .leading).combined(with: .opacity))
             }
 
@@ -63,9 +63,8 @@ struct LibraryFilterBar: View {
                         viewModel.send(.reset())
                     }
                     .environment(\.isSelected, true)
-                } else {
-                    Spacer()
-                        .frame(width: 75, height: 75)
+                    .focused($resetButtonFocused, equals: true)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
                 }
 
                 ForEach(filterTypes, id: \.self) { type in
@@ -87,9 +86,12 @@ struct LibraryFilterBar: View {
             .focused($isFocused)
             .padding(.horizontal, 20)
             .padding(.vertical, 1)
+            .animation(.easeInOut(duration: 0.3), value: viewModel.currentFilters.hasFilters)
         }
         .frame(width: filterWidth + 170)
     }
+
+    // MARK: - Selected Button Background
 
     private var selectedButtonBackground: some View {
         Rectangle()

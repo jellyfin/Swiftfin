@@ -122,6 +122,11 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     private var pagingTask: AnyCancellable?
     private var randomItemTask: AnyCancellable?
 
+    // Page loading queue management
+    private var isLoadingPage = false
+    private var pendingPageLoadRequests = 0
+    private let pageLoadQueue = DispatchQueue(label: "com.jellyfin.swiftfin.pagingLibraryViewModel.gettingNextPage.queue")
+
     // MARK: init
 
     // static
@@ -254,6 +259,12 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             pagingTask?.cancel()
             randomItemTask?.cancel()
 
+            // Reset page loading queue state
+            pageLoadQueue.sync {
+                isLoadingPage = false
+                pendingPageLoadRequests = 0
+            }
+
             filterViewModel?.send(.getQueryFilters)
 
             pagingTask = Task { [weak self] in
@@ -282,28 +293,8 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
             guard hasNextPage else { return state }
 
-            backgroundStates.append(.gettingNextPage)
-
-            pagingTask = Task { [weak self] in
-                do {
-                    try await self?.getNextPage()
-
-                    guard !Task.isCancelled else { return }
-
-                    await MainActor.run {
-                        self?.backgroundStates.remove(.gettingNextPage)
-                        self?.state = .content
-                    }
-                } catch {
-                    guard !Task.isCancelled else { return }
-
-                    await MainActor.run {
-                        self?.backgroundStates.remove(.gettingNextPage)
-                        self?.state = .error(.init(error.localizedDescription))
-                    }
-                }
-            }
-            .asAnyCancellable()
+            // Queue the page loading request
+            queueNextPageLoad()
 
             return .content
         case .getRandomItem:
@@ -324,6 +315,67 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
             return state
         }
+    }
+
+    // MARK: Page loading queue management
+
+    private func queueNextPageLoad() {
+        pageLoadQueue.async { [weak self] in
+            guard let self = self else { return }
+
+            if self.isLoadingPage {
+                // A page is currently loading, increment the pending requests counter
+                self.pendingPageLoadRequests += 1
+                return
+            }
+
+            // No page currently loading, start loading immediately
+            self.isLoadingPage = true
+            self.loadNextPage()
+        }
+    }
+
+    private func loadNextPage() {
+        Task { @MainActor in
+            self.backgroundStates.append(.gettingNextPage)
+        }
+
+        pagingTask = Task { [weak self] in
+            guard let self = self else { return }
+
+            do {
+                try await self.getNextPage()
+
+                guard !Task.isCancelled else { return }
+
+                await MainActor.run {
+                    self.backgroundStates.remove(.gettingNextPage)
+                    self.state = .content
+                }
+            } catch {
+                guard !Task.isCancelled else { return }
+
+                await MainActor.run {
+                    self.backgroundStates.remove(.gettingNextPage)
+                    self.state = .error(.init(error.localizedDescription))
+                }
+            }
+
+            // Check if there are pending requests in the queue
+            self.pageLoadQueue.async { [weak self] in
+                guard let self = self else { return }
+
+                if self.pendingPageLoadRequests > 0 {
+                    self.pendingPageLoadRequests -= 1
+                    // Process the next request in the queue
+                    self.loadNextPage()
+                } else {
+                    // No more pending requests
+                    self.isLoadingPage = false
+                }
+            }
+        }
+        .asAnyCancellable()
     }
 
     // MARK: refresh

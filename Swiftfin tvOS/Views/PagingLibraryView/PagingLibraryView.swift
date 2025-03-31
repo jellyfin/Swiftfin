@@ -302,26 +302,55 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
 
     @ViewBuilder
     private var contentView: some View {
-        innerContent
-            .ifLet(viewModel.filterViewModel) { view, filterViewModel in
-                view.libraryFilterBars(
-                    viewModel: filterViewModel,
-                    letterPicker: letterPickerEnabled,
-                    types: enabledDrawerFilters
-                ) {
-                    router.route(to: \.filter, $0)
+        ZStack {
+            HStack(spacing: 0) {
+                innerContent
+                    .padding(.leading, viewModel.filterViewModel == nil ? 0 : 115)
+                    .padding(.trailing, 0)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .onChange(of: posterType) {
+                        setCustomLayout()
+                    }
+                    .onChange(of: displayType) {
+                        setCustomLayout()
+                    }
+                    .onChange(of: listColumnCount) {
+                        setCustomLayout()
+                    }
+
+                if let filterViewModel = viewModel.filterViewModel, letterPickerEnabled {
+                    LetterPickerBar(viewModel: filterViewModel)
+                        .frame(alignment: .leading)
+                        .padding(.trailing, 20)
+                        .focusSection()
                 }
             }
-            // These exist here to alleviate type-checker issues
-            .onChange(of: posterType) {
-                setCustomLayout()
+
+            HStack {
+                if let filterViewModel = viewModel.filterViewModel {
+                    LibraryFilterBar(
+                        viewModel: filterViewModel,
+                        types: enabledDrawerFilters
+                    )
+                    .onSelect {
+                        router.route(to: \.filter, $0)
+                    }
+                    .frame(alignment: .leading)
+                    .focusSection()
+                }
+                Spacer()
             }
-            .onChange(of: displayType) {
-                setCustomLayout()
-            }
-            .onChange(of: listColumnCount) {
-                setCustomLayout()
-            }
+        }
+        /// These exist here to alleviate type-checker issues
+        .onChange(of: posterType) {
+            setCustomLayout()
+        }
+        .onChange(of: displayType) {
+            setCustomLayout()
+        }
+        .onChange(of: listColumnCount) {
+            setCustomLayout()
+        }
     }
 
     // MARK: Body
