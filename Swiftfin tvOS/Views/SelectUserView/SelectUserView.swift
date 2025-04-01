@@ -274,6 +274,7 @@ struct SelectUserView: View {
                 areUsersSelected: selectedUsers.isNotEmpty,
                 viewModel: viewModel,
                 userCount: gridItems.count,
+                server: selectedServer,
                 onDelete: {
                     isPresentingConfirmDeleteUsers = true
                 }

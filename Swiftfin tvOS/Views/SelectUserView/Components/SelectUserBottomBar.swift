@@ -30,6 +30,7 @@ extension SelectUserView {
 
         private let areUsersSelected: Bool
         private let userCount: Int
+        private let server: ServerState?
 
         private let onDelete: () -> Void
         private let toggleAllUsersSelected: () -> Void
@@ -90,6 +91,7 @@ extension SelectUserView {
             areUsersSelected: Bool,
             viewModel: SelectUserViewModel,
             userCount: Int,
+            server: ServerState?,
             onDelete: @escaping () -> Void,
             toggleAllUsersSelected: @escaping () -> Void
         ) {
@@ -98,6 +100,7 @@ extension SelectUserView {
             self.viewModel = viewModel
             self.areUsersSelected = areUsersSelected
             self.userCount = userCount
+            self.server = server
             self.onDelete = onDelete
             self.toggleAllUsersSelected = toggleAllUsersSelected
         }
@@ -106,7 +109,7 @@ extension SelectUserView {
 
         @ViewBuilder
         private var contentView: some View {
-            HStack(alignment: .center) {
+            HStack(alignment: .top, spacing: 40) {
                 if isEditing {
                     deleteUsersButton
 
@@ -130,10 +133,23 @@ extension SelectUserView {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 } else {
-                    ServerSelectionMenu(
-                        selection: $serverSelection,
-                        viewModel: viewModel
-                    )
+                    HStack(alignment: .top, spacing: 20) {
+                        if let server = server {
+                            Button {
+                                router.route(to: \.userSignIn, server)
+                            } label: {
+                                Label(L10n.addUser, systemImage: "person.crop.circle.badge.plus")
+                                    .foregroundStyle(Color.primary)
+                                    .font(.body.weight(.semibold))
+                                    .frame(width: 200, height: 50)
+                            }
+                        }
+
+                        ServerSelectionMenu(
+                            selection: $serverSelection,
+                            viewModel: viewModel
+                        )
+                    }
 
                     advancedMenu
                 }
