@@ -21,7 +21,7 @@ struct SelectUserView: View {
 
     private enum UserGridItem: Hashable {
         case user(UserState, server: ServerState)
-        case addUser
+        case noUser
     }
 
     // MARK: - Defaults
@@ -115,19 +115,25 @@ struct SelectUserView: View {
                 .sorted(using: \.user.username)
                 .reversed()
                 .map { UserGridItem.user($0.user, server: $0.server) }
-                .appending(.addUser)
+
+            if items.isEmpty {
+                return [.noUser]
+            }
 
             return OrderedSet(items)
         case let .server(id: id):
             guard let server = viewModel.servers.keys.first(where: { server in server.id == id }) else {
                 assertionFailure("server with ID not found?")
-                return [.addUser]
+                return [.noUser]
             }
 
             let items = viewModel.servers[server]!
                 .sorted(using: \.username)
                 .map { UserGridItem.user($0, server: server) }
-                .appending(.addUser)
+
+            if items.isEmpty {
+                return [.noUser]
+            }
 
             return OrderedSet(items)
         }
@@ -236,14 +242,8 @@ struct SelectUserView: View {
             }
             .environment(\.isEditing, isEditingUsers)
             .environment(\.isSelected, selectedUsers.contains(user))
-        case .addUser:
-            AddUserButton(
-                serverSelection: $serverSelection,
-                servers: viewModel.servers.keys
-            ) { server in
-                router.route(to: \.userSignIn, server)
-            }
-            .environment(\.isEnabled, !isEditingUsers)
+        case .noUser:
+            NoUserView()
         }
     }
 

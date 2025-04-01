@@ -869,7 +869,7 @@
 		E17639F82BF2E25B004DF6AB /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19D41A92BF077130082B8B2 /* Keychain.swift */; };
 		E1763A252BF2F77B004DF6AB /* ScrollIfLargerThanContainerModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB472BE0C136003BF6F3 /* ScrollIfLargerThanContainerModifier.swift */; };
 		E1763A272BF303C9004DF6AB /* ServerSelectionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A262BF303C9004DF6AB /* ServerSelectionMenu.swift */; };
-		E1763A292BF3046A004DF6AB /* AddUserButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A282BF3046A004DF6AB /* AddUserButton.swift */; };
+		E1763A292BF3046A004DF6AB /* NoUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A282BF3046A004DF6AB /* NoUserView.swift */; };
 		E1763A2B2BF3046E004DF6AB /* UserGridButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A2A2BF3046E004DF6AB /* UserGridButton.swift */; };
 		E1763A642BF3C9AA004DF6AB /* ListRowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A632BF3C9AA004DF6AB /* ListRowButton.swift */; };
 		E1763A6A2BF3D177004DF6AB /* PublicUserButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A692BF3D177004DF6AB /* PublicUserButton.swift */; };
@@ -1867,7 +1867,7 @@
 		E174120E29AE9D94003EF3B5 /* NavigationCoordinatable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationCoordinatable.swift; sourceTree = "<group>"; };
 		E175AFF2299AC117004DCF52 /* DebugSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugSettingsView.swift; sourceTree = "<group>"; };
 		E1763A262BF303C9004DF6AB /* ServerSelectionMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSelectionMenu.swift; sourceTree = "<group>"; };
-		E1763A282BF3046A004DF6AB /* AddUserButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserButton.swift; sourceTree = "<group>"; };
+		E1763A282BF3046A004DF6AB /* NoUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoUserView.swift; sourceTree = "<group>"; };
 		E1763A2A2BF3046E004DF6AB /* UserGridButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserGridButton.swift; sourceTree = "<group>"; };
 		E1763A632BF3C9AA004DF6AB /* ListRowButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRowButton.swift; sourceTree = "<group>"; };
 		E1763A692BF3D177004DF6AB /* PublicUserButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicUserButton.swift; sourceTree = "<group>"; };
@@ -4629,7 +4629,7 @@
 		E164A8132BE4995800A54B18 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				E1763A282BF3046A004DF6AB /* AddUserButton.swift */,
+				E1763A282BF3046A004DF6AB /* NoUserView.swift */,
 				E1763A262BF303C9004DF6AB /* ServerSelectionMenu.swift */,
 				BDA623522D0D0854009A157F /* SelectUserBottomBar.swift */,
 				E1763A2A2BF3046E004DF6AB /* UserGridButton.swift */,
@@ -5955,7 +5955,7 @@
 				E1575EA1293E7B1E001665B1 /* String.swift in Sources */,
 				4E699BC02CB3477D007CBD5D /* HomeSection.swift in Sources */,
 				E1E6C45429B1304E0064123F /* ChaptersActionButton.swift in Sources */,
-				E1763A292BF3046A004DF6AB /* AddUserButton.swift in Sources */,
+				E1763A292BF3046A004DF6AB /* NoUserView.swift in Sources */,
 				E1E6C44229AECCD50064123F /* ActionButtons.swift in Sources */,
 				E1575E78293E77B5001665B1 /* TrailingTimestampType.swift in Sources */,
 				4E661A2F2CEFE77700025C99 /* MetadataField.swift in Sources */,
