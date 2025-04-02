@@ -21,7 +21,7 @@ struct SelectUserView: View {
 
     private enum UserGridItem: Hashable {
         case user(UserState, server: ServerState)
-        case noUser
+        case addUser
     }
 
     // MARK: - Defaults
@@ -117,14 +117,14 @@ struct SelectUserView: View {
                 .map { UserGridItem.user($0.user, server: $0.server) }
 
             if items.isEmpty {
-                return [.noUser]
+                return [.addUser]
             }
 
             return OrderedSet(items)
         case let .server(id: id):
             guard let server = viewModel.servers.keys.first(where: { server in server.id == id }) else {
                 assertionFailure("server with ID not found?")
-                return [.noUser]
+                return [.addUser]
             }
 
             let items = viewModel.servers[server]!
@@ -132,7 +132,7 @@ struct SelectUserView: View {
                 .map { UserGridItem.user($0, server: server) }
 
             if items.isEmpty {
-                return [.noUser]
+                return [.addUser]
             }
 
             return OrderedSet(items)
@@ -242,8 +242,13 @@ struct SelectUserView: View {
             }
             .environment(\.isEditing, isEditingUsers)
             .environment(\.isSelected, selectedUsers.contains(user))
-        case .noUser:
-            NoUserView()
+        case .addUser:
+            AddUserButton(
+                serverSelection: $serverSelection,
+                servers: viewModel.servers.keys
+            ) { server in
+                router.route(to: \.userSignIn, server)
+            }
         }
     }
 
@@ -273,7 +278,7 @@ struct SelectUserView: View {
                 serverSelection: $serverSelection,
                 areUsersSelected: selectedUsers.isNotEmpty,
                 viewModel: viewModel,
-                userCount: gridItems.count,
+                userCount: gridItems.count == 1 && gridItems.first == .addUser ? 0 : gridItems.count,
                 server: selectedServer,
                 onDelete: {
                     isPresentingConfirmDeleteUsers = true

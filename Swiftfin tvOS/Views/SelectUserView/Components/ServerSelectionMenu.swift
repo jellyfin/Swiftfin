@@ -90,7 +90,7 @@ extension SelectUserView {
                 }
                 .font(.body.weight(.semibold))
                 .foregroundStyle(Color.primary)
-                .frame(width: 200, height: 50)
+                .frame(width: 400, height: 50)
             }
             .menuOrder(.fixed)
         }

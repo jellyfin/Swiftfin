@@ -109,7 +109,7 @@ extension SelectUserView {
 
         @ViewBuilder
         private var contentView: some View {
-            HStack(alignment: .top, spacing: 40) {
+            HStack(alignment: .top, spacing: 20) {
                 if isEditing {
                     deleteUsersButton
 
@@ -133,24 +133,19 @@ extension SelectUserView {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 } else {
-                    HStack(alignment: .top, spacing: 20) {
-                        if let server = server {
-                            Button {
-                                router.route(to: \.userSignIn, server)
-                            } label: {
-                                Label(L10n.addUser, systemImage: "person.crop.circle.badge.plus")
-                                    .foregroundStyle(Color.primary)
-                                    .font(.body.weight(.semibold))
-                                    .frame(width: 200, height: 50)
-                            }
+                    if userCount > 0 {
+                        AddUserBottomButton(
+                            serverSelection: $serverSelection,
+                            servers: viewModel.servers.keys
+                        ) { server in
+                            router.route(to: \.userSignIn, server)
                         }
-
-                        ServerSelectionMenu(
-                            selection: $serverSelection,
-                            viewModel: viewModel
-                        )
                     }
 
+                    ServerSelectionMenu(
+                        selection: $serverSelection,
+                        viewModel: viewModel
+                    )
                     advancedMenu
                 }
             }
