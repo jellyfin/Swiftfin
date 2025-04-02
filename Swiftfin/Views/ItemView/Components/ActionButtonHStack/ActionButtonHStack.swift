@@ -67,10 +67,13 @@ extension ItemView {
                     viewModel.send(.toggleIsPlayed)
                 }
                 .environment(\.isSelected, isCheckmarkSelected)
-                .foregroundStyle(
-                    .primary,
-                    isCheckmarkSelected ? accentColor : .primary
-                )
+                .if(isCheckmarkSelected) { item in
+                    item
+                        .foregroundStyle(
+                            .primary,
+                            accentColor
+                        )
+                }
                 .if(equalSpacing) { view in
                     view.frame(maxWidth: .infinity)
                 }
@@ -88,9 +91,10 @@ extension ItemView {
                     viewModel.send(.toggleIsFavorite)
                 }
                 .environment(\.isSelected, isHeartSelected)
-                .foregroundStyle(
-                    isHeartSelected ? Color.red : .primary
-                )
+                .if(isHeartSelected) { item in
+                    item
+                        .foregroundStyle(Color.red)
+                }
                 .if(equalSpacing) { view in
                     view.frame(maxWidth: .infinity)
                 }
