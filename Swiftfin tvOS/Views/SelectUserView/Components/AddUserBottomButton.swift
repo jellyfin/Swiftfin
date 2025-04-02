@@ -12,12 +12,11 @@ import SwiftUI
 extension SelectUserView {
 
     struct AddUserBottomButton: View {
+        
+        // MARK: Properties
 
         @Binding
         private var serverSelection: SelectUserServerSelection
-
-        @Environment(\.isEnabled)
-        private var isEnabled
 
         private let action: (ServerState) -> Void
         private let servers: OrderedSet<ServerState>
@@ -31,6 +30,19 @@ extension SelectUserView {
 
             return nil
         }
+        
+        // MARK: View Builders
+
+        @ViewBuilder
+        private var buttonLabel: some View {
+            Label(L10n.addUser, systemImage: "person.crop.circle.badge.plus")
+                .foregroundStyle(Color.primary)
+                .font(.body.weight(.semibold))
+                .labelStyle(.iconOnly)
+                .frame(width: 50, height: 50)
+        }
+        
+        // MARK: - Initializer
 
         init(
             serverSelection: Binding<SelectUserServerSelection>,
@@ -41,7 +53,9 @@ extension SelectUserView {
             self.action = action
             self.servers = servers
         }
-
+        
+        // MARK: Body
+        
         var body: some View {
             if serverSelection == .all {
                 Menu {
@@ -56,11 +70,7 @@ extension SelectUserView {
                         }
                     }
                 } label: {
-                    Label(L10n.addUser, systemImage: "person.crop.circle.badge.plus")
-                        .foregroundStyle(Color.primary)
-                        .font(.body.weight(.semibold))
-                        .labelStyle(.iconOnly)
-                        .frame(width: 50, height: 50)
+                    buttonLabel
                 }
 
             } else {
@@ -69,11 +79,7 @@ extension SelectUserView {
                         action(selectedServer)
                     }
                 } label: {
-                    Label(L10n.addUser, systemImage: "person.crop.circle.badge.plus")
-                        .foregroundStyle(Color.primary)
-                        .font(.body.weight(.semibold))
-                        .labelStyle(.iconOnly)
-                        .frame(width: 50, height: 50)
+                    buttonLabel
                 }
             }
         }
