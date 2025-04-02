@@ -173,7 +173,7 @@ extension StoredValues.Keys {
             )
         }
 
-        static var enabledTrailers: Key<TrailerType> {
+        static var enabledTrailers: Key<TrailerSelection> {
             CurrentUserKey(
                 "enabledTrailers",
                 domain: "enabledTrailers",

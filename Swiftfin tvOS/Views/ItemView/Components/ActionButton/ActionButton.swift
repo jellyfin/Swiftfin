@@ -12,13 +12,6 @@ extension ItemView {
 
     struct ActionButton<Content: View>: View {
 
-        // MARK: - Mode
-
-        private enum Mode {
-            case button
-            case menu
-        }
-
         // MARK: - Environment Objects
 
         @Environment(\.isSelected)
@@ -29,35 +22,27 @@ extension ItemView {
         @FocusState
         private var isFocused: Bool
 
-        // MARK: - Required Properties
-
-        private let mode: Mode
-        private let title: String
+        private let content: () -> Content
         private let icon: String
-        private let iconAngle: Angle
-
-        // MARK: - Button Properties
-
+        private let isCompact: Bool
         private let selectedIcon: String?
-        private let onSelect: (() -> Void)?
+        private let title: String
+        private let onSelect: () -> Void
 
-        // MARK: - Menu Properties
-
-        private let content: (() -> Content)?
+        private var labelIconName: String {
+            isSelected ? selectedIcon ?? icon : icon
+        }
 
         // MARK: - Body
 
         var body: some View {
             Group {
-                switch mode {
-                case .button:
-                    Button(action: onSelect!) {
+                if Content.self == EmptyView.self {
+                    Button(action: onSelect) {
                         labelView
                     }
-                case .menu:
-                    Menu {
-                        content?()
-                    } label: {
+                } else {
+                    Menu(content: content) {
                         labelView
                     }
                 }
@@ -70,7 +55,9 @@ extension ItemView {
 
         private var labelView: some View {
             ZStack {
-                if mode == .button && isSelected {
+                let isButton = Content.self == EmptyView.self
+
+                if isButton, isSelected {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(
                             isFocused ? AnyShapeStyle(HierarchicalShapeStyle.primary) :
@@ -81,16 +68,14 @@ extension ItemView {
                         .fill(isFocused ? Color.white : Color.white.opacity(0.5))
                 }
 
-                Label(title, systemImage: (mode == .button && isSelected) ? (selectedIcon ?? icon) : icon)
-                    .hoverEffectDisabled()
+                Label(title, systemImage: labelIconName)
                     .focusEffectDisabled()
                     .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundStyle(.black)
                     .labelStyle(.iconOnly)
-                    .rotationEffect(iconAngle)
+                    .rotationEffect(isCompact ? .degrees(90) : .degrees(0))
             }
-            .padding(0)
             .accessibilityLabel(title)
         }
     }
@@ -106,16 +91,14 @@ extension ItemView.ActionButton {
         _ title: String,
         icon: String,
         selectedIcon: String,
-        iconAngle: Angle = .degrees(0),
         onSelect: @escaping () -> Void
     ) where Content == EmptyView {
-        self.mode = .button
         self.title = title
         self.icon = icon
-        self.iconAngle = iconAngle
+        self.isCompact = false
         self.selectedIcon = selectedIcon
         self.onSelect = onSelect
-        self.content = nil
+        self.content = { EmptyView() }
     }
 
     // MARK: Menu Initializer
@@ -123,15 +106,14 @@ extension ItemView.ActionButton {
     init(
         _ title: String,
         icon: String,
-        iconAngle: Angle = .degrees(0),
+        isCompact: Bool = false,
         @ViewBuilder content: @escaping () -> Content
     ) {
-        self.mode = .menu
         self.title = title
         self.icon = icon
-        self.iconAngle = iconAngle
+        self.isCompact = isCompact
         self.selectedIcon = nil
-        self.onSelect = nil
+        self.onSelect = {}
         self.content = content
     }
 }

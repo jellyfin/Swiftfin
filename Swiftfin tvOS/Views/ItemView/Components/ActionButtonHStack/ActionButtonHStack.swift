@@ -12,6 +12,15 @@ extension ItemView {
 
     struct ActionButtonHStack: View {
 
+        @StoredValue(.User.enableItemDeletion)
+        private var enableItemDeletion: Bool
+        @StoredValue(.User.enableItemEditing)
+        private var enableItemEditing: Bool
+        @StoredValue(.User.enableCollectionManagement)
+        private var enableCollectionManagement: Bool
+        @StoredValue(.User.enabledTrailers)
+        private var enabledTrailers: TrailerSelection
+
         // MARK: - Observed, State, & Environment Objects
 
         @EnvironmentObject
@@ -22,15 +31,6 @@ extension ItemView {
 
         @StateObject
         private var deleteViewModel: DeleteItemViewModel
-
-        // MARK: - Defaults
-
-        @StoredValue(.User.enableItemDeletion)
-        private var enableItemDeletion: Bool
-        @StoredValue(.User.enableItemEditing)
-        private var enableItemEditing: Bool
-        @StoredValue(.User.enableCollectionManagement)
-        private var enableCollectionManagement: Bool
 
         // MARK: - Dialog States
 
@@ -67,8 +67,15 @@ extension ItemView {
         // MARK: - Has Trailers
 
         private var hasTrailers: Bool {
-            viewModel.item.remoteTrailers?.isNotEmpty == true ||
-                viewModel.localTrailers.isNotEmpty
+            if enabledTrailers.contains(.local), viewModel.localTrailers.isNotEmpty {
+                return true
+            }
+
+            if enabledTrailers.contains(.external), viewModel.item.remoteTrailers?.isNotEmpty == true {
+                return true
+            }
+
+            return false
         }
 
         // MARK: - Initializer
@@ -85,6 +92,8 @@ extension ItemView {
 
                 // MARK: Toggle Played
 
+                let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
+
                 ActionButton(
                     L10n.played,
                     icon: "checkmark.circle",
@@ -93,10 +102,12 @@ extension ItemView {
                     viewModel.send(.toggleIsPlayed)
                 }
                 .foregroundStyle(.purple)
-                .environment(\.isSelected, viewModel.item.userData?.isPlayed ?? false)
+                .environment(\.isSelected, isCheckmarkSelected)
                 .frame(minWidth: 100, maxWidth: .infinity)
 
                 // MARK: Toggle Favorite
+
+                let isHeartSelected = viewModel.item.userData?.isFavorite == true
 
                 ActionButton(
                     L10n.favorited,
@@ -106,20 +117,22 @@ extension ItemView {
                     viewModel.send(.toggleIsFavorite)
                 }
                 .foregroundStyle(.pink)
-                .environment(\.isSelected, viewModel.item.userData?.isFavorite ?? false)
+                .environment(\.isSelected, isHeartSelected)
                 .frame(minWidth: 100, maxWidth: .infinity)
 
                 // MARK: Watch a Trailer
 
                 if hasTrailers {
-                    TrailerMenu(viewModel: viewModel)
-                        .frame(minWidth: 100, maxWidth: .infinity)
+                    TrailerMenu(
+                        localTrailers: viewModel.localTrailers,
+                        externalTrailers: viewModel.item.remoteTrailers ?? []
+                    )
                 }
 
                 // MARK: Advanced Options
 
                 if canRefresh || canDelete {
-                    ActionButton(L10n.advanced, icon: "ellipsis", iconAngle: .degrees(90)) {
+                    ActionButton(L10n.advanced, icon: "ellipsis", isCompact: true) {
                         if canRefresh {
                             RefreshMetadataButton(item: viewModel.item)
                         }

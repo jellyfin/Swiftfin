@@ -8,11 +8,16 @@
 
 import SwiftUI
 
-enum TrailerType: String, CaseIterable, Codable, Hashable, Displayable {
-    case all
-    case local
-    case remote
-    case none
+struct TrailerSelection: OptionSet, CaseIterable, Displayable, Hashable, Storable {
+
+    let rawValue: Int
+
+    static let local = TrailerSelection(rawValue: 1 << 0)
+    static let external = TrailerSelection(rawValue: 1 << 1)
+    static let none = TrailerSelection(rawValue: 1 << 2)
+    static let all: TrailerSelection = [.local, .external]
+
+    static let allCases: [TrailerSelection] = [.none, .local, .external, .all]
 
     var displayTitle: String {
         switch self {
@@ -20,10 +25,12 @@ enum TrailerType: String, CaseIterable, Codable, Hashable, Displayable {
             return L10n.all
         case .local:
             return L10n.local
-        case .remote:
+        case .external:
             return L10n.external
         case .none:
             return L10n.none
+        default:
+            return L10n.unknown
         }
     }
 }

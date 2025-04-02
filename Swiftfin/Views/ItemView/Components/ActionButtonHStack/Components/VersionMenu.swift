@@ -13,11 +13,6 @@ extension ItemView {
 
     struct VersionMenu: View {
 
-        // MARK: - Focus State
-
-        @FocusState
-        private var isFocused: Bool
-
         @ObservedObject
         var viewModel: ItemViewModel
 

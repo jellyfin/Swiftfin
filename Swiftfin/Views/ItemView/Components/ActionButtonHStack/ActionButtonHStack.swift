@@ -11,6 +11,8 @@ import Factory
 import JellyfinAPI
 import SwiftUI
 
+// TODO: replace `equalSpacing` handling with a `Layout`
+
 extension ItemView {
 
     struct ActionButtonHStack: View {
@@ -18,13 +20,8 @@ extension ItemView {
         @Default(.accentColor)
         private var accentColor
 
-        @Injected(\.downloadManager)
-        private var downloadManager: DownloadManager
-
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
-        @EnvironmentObject
-        private var mainRouter: MainCoordinator.Router
+        @StoredValue(.User.enabledTrailers)
+        private var enabledTrailers: TrailerSelection
 
         @ObservedObject
         private var viewModel: ItemViewModel
@@ -34,8 +31,15 @@ extension ItemView {
         // MARK: - Has Trailers
 
         private var hasTrailers: Bool {
-            viewModel.item.remoteTrailers?.isNotEmpty == true ||
-                viewModel.localTrailers.isNotEmpty
+            if enabledTrailers.contains(.local), viewModel.localTrailers.isNotEmpty {
+                return true
+            }
+
+            if enabledTrailers.contains(.external), viewModel.item.remoteTrailers?.isNotEmpty == true {
+                return true
+            }
+
+            return false
         }
 
         // MARK: - Initializer
@@ -52,33 +56,41 @@ extension ItemView {
 
                 // MARK: Toggle Played
 
+                let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
+
                 ActionButton(
                     L10n.played,
                     icon: "checkmark.circle",
-                    selectedIcon: "checkmark.circle.fill",
-                    color: Color.jellyfinPurple,
-                    multicolor: true
+                    selectedIcon: "checkmark.circle.fill"
                 ) {
                     UIDevice.impact(.light)
                     viewModel.send(.toggleIsPlayed)
                 }
-                .environment(\.isSelected, viewModel.item.userData?.isPlayed == true)
+                .environment(\.isSelected, isCheckmarkSelected)
+                .foregroundStyle(
+                    .primary,
+                    isCheckmarkSelected ? accentColor : .primary
+                )
                 .if(equalSpacing) { view in
                     view.frame(maxWidth: .infinity)
                 }
 
                 // MARK: Toggle Favorite
 
+                let isHeartSelected = viewModel.item.userData?.isFavorite == true
+
                 ActionButton(
                     L10n.favorited,
                     icon: "heart",
-                    selectedIcon: "heart.fill",
-                    color: Color.red
+                    selectedIcon: "heart.fill"
                 ) {
                     UIDevice.impact(.light)
                     viewModel.send(.toggleIsFavorite)
                 }
-                .environment(\.isSelected, viewModel.item.userData?.isFavorite == true)
+                .environment(\.isSelected, isHeartSelected)
+                .foregroundStyle(
+                    isHeartSelected ? Color.red : .primary
+                )
                 .if(equalSpacing) { view in
                     view.frame(maxWidth: .infinity)
                 }
@@ -97,10 +109,13 @@ extension ItemView {
                 // MARK: Watch a Trailer
 
                 if hasTrailers {
-                    TrailerMenu(viewModel: viewModel)
-                        .if(equalSpacing) { view in
-                            view.frame(maxWidth: .infinity)
-                        }
+                    TrailerMenu(
+                        localTrailers: viewModel.localTrailers,
+                        externalTrailers: viewModel.item.remoteTrailers ?? []
+                    )
+                    .if(equalSpacing) { view in
+                        view.frame(maxWidth: .infinity)
+                    }
                 }
             }
         }

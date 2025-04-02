@@ -13,45 +13,12 @@ extension ItemView {
 
     struct TrailerMenu: View {
 
-        // MARK: - Generic Trailer Enum
-
-        private enum Trailer: Displayable {
-            case local(BaseItemDto)
-            case remote(MediaURL)
-
-            var displayTitle: String {
-                switch self {
-                case let .local(item):
-                    return item.name ?? L10n.trailer
-                case let .remote(url):
-                    return url.name ?? L10n.trailer
-                }
-            }
-
-            var section: String {
-                switch self {
-                case .local:
-                    return TrailerType.local.displayTitle
-                case .remote:
-                    return TrailerType.remote.displayTitle
-                }
-            }
-        }
-
         // MARK: - Stored Value
 
         @StoredValue(.User.enabledTrailers)
-        private var enabledTrailers: TrailerType
-
-        // MARK: - Focus State
-
-        @FocusState
-        private var isFocused: Bool
+        private var enabledTrailers: TrailerSelection
 
         // MARK: - Observed & Envirnoment Objects
-
-        @ObservedObject
-        var viewModel: ItemViewModel
 
         @EnvironmentObject
         private var router: MainCoordinator.Router
@@ -61,51 +28,22 @@ extension ItemView {
         @State
         private var error: Error?
 
-        // MARK: - Notification State
+        let localTrailers: [BaseItemDto]
+        let externalTrailers: [MediaURL]
 
-        @State
-        private var selectedRemoteURL: MediaURL?
-
-        // MARK: - Valid Trailers
-
-        private var trailers: [Trailer] {
-            var allTrailers = [Trailer]()
-
-            /// If no trailers are enabled, return empty array
-            if enabledTrailers == .none {
-                return allTrailers
-            }
-
-            /// Add local trailers if enabled
-            if enabledTrailers == .all || enabledTrailers == .local {
-                for localTrailer in viewModel.localTrailers {
-                    allTrailers.append(.local(localTrailer))
-                }
-            }
-
-            /// Add remote trailers if enabled
-            if enabledTrailers == .all || enabledTrailers == .remote {
-                for remoteTrailer in viewModel.item.remoteTrailers ?? [] {
-                    allTrailers.append(.remote(remoteTrailer))
-                }
-            }
-
-            return allTrailers
+        private var showLocalTrailers: Bool {
+            enabledTrailers.contains(.local) && localTrailers.isNotEmpty
         }
 
-        // MARK: - Initializer
-
-        init(viewModel: ItemViewModel) {
-            self.viewModel = viewModel
+        private var showExternalTrailers: Bool {
+            enabledTrailers.contains(.external) && externalTrailers.isNotEmpty
         }
 
         // MARK: - Body
 
         var body: some View {
-            ZStack {
-                switch trailers.count {
-                case 0:
-                    EmptyView()
+            Group {
+                switch localTrailers.count + externalTrailers.count {
                 case 1:
                     trailerButton
                 default:
@@ -113,66 +51,57 @@ extension ItemView {
                 }
             }
             .errorMessage($error)
-            .alert(L10n.leavingSwiftfin, isPresented: .constant(selectedRemoteURL != nil)) {
-                Button(L10n.cancel, role: .cancel) {
-                    selectedRemoteURL = nil
-                }
-                Button(L10n.ok, role: .destructive) {
-                    if let mediaURL = selectedRemoteURL {
-                        playRemoteTrailer(mediaURL)
-                        selectedRemoteURL = nil
-                    }
-                }
-            } message: {
-                L10n.leavingSwiftfinWarning.text
-            }
         }
 
         // MARK: - Single Trailer Button
 
+        @ViewBuilder
         private var trailerButton: some View {
-            ActionButton(L10n.trailers, icon: "movieclapper", selectedIcon: "movieclapper.fill") {
-                if let trailer = trailers.first {
-                    playTrailer(trailer)
+            ActionButton(
+                L10n.trailers,
+                icon: "movieclapper"
+            ) {
+                if showLocalTrailers, let firstTrailer = localTrailers.first {
+                    playLocalTrailer(firstTrailer)
+                }
+
+                if showExternalTrailers, let firstTrailer = externalTrailers.first {
+                    playExternalTrailer(firstTrailer)
                 }
             }
         }
 
         // MARK: - Multiple Trailers Menu Button
 
+        @ViewBuilder
         private var trailerMenu: some View {
             ActionButton(L10n.trailers, icon: "movieclapper") {
-                let groupedTrailers = Dictionary(grouping: trailers) { $0.section }
 
-                ForEach(groupedTrailers.keys.sorted(), id: \.self) { section in
-                    if let trailersInSection = groupedTrailers[section] {
-                        Section(section) {
-                            ForEach(Array(trailersInSection.enumerated()), id: \.offset) { _, trailer in
-                                Button {
-                                    playTrailer(trailer)
-                                } label: {
-                                    HStack {
-                                        Text(trailer.displayTitle)
-                                        Spacer()
-                                        Image(systemName: trailerIcon(for: trailer))
-                                    }
-                                    .font(.body.weight(.bold))
-                                }
+                if showLocalTrailers {
+                    Section(L10n.local) {
+                        ForEach(localTrailers) { trailer in
+                            Button(
+                                trailer.name ?? L10n.trailer,
+                                systemImage: "play.fill"
+                            ) {
+                                playLocalTrailer(trailer)
                             }
                         }
                     }
                 }
-            }
-        }
 
-        // MARK: - Play: Generic Trailer
-
-        private func playTrailer(_ trailer: Trailer) {
-            switch trailer {
-            case let .local(item):
-                playLocalTrailer(item)
-            case let .remote(mediaURL):
-                selectedRemoteURL = mediaURL
+                if showExternalTrailers {
+                    Section(L10n.external) {
+                        ForEach(externalTrailers, id: \.self) { mediaURL in
+                            Button(
+                                mediaURL.name ?? L10n.trailer,
+                                systemImage: "arrow.up.forward"
+                            ) {
+                                playExternalTrailer(mediaURL)
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -189,44 +118,17 @@ extension ItemView {
             }
         }
 
-        // MARK: - Play: Remote Trailer
+        // MARK: - Play: External Trailer
 
-        private func playRemoteTrailer(_ trailer: MediaURL) {
-            if let url = trailer.url, let nsUrl = URL(string: url.description) {
-                if UIApplication.shared.canOpenURL(nsUrl) {
-                    UIApplication.shared.open(nsUrl, options: [:], completionHandler: { success in
-                        if !success {
-                            self.error = JellyfinAPIError(
-                                """
-                                Failed to open this trailer. Please ensure that you have the appropriate app to play this trailer installed on your device.
+        private func playExternalTrailer(_ trailer: MediaURL) {
+            if let url = URL(string: trailer.url), UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url) { success in
+                    guard !success else { return }
 
-                                \(url)
-                                """
-                            )
-                        }
-                    })
-                } else {
-                    self.error = JellyfinAPIError(
-                        """
-                        Unable to open this trailer.
-
-                        \(url)
-                        """
-                    )
+                    error = JellyfinAPIError("Unable to open trailer")
                 }
             } else {
-                error = JellyfinAPIError("This trailer does not have a valid URL.")
-            }
-        }
-
-        // MARK: - Trailer Icon
-
-        private func trailerIcon(for trailer: Trailer) -> String {
-            switch trailer {
-            case .local:
-                return "play"
-            case .remote:
-                return "arrow.up.forward"
+                error = JellyfinAPIError("Unable to open trailer")
             }
         }
     }
