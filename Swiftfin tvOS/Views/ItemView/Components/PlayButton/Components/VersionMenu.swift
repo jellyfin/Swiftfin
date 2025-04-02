@@ -29,7 +29,7 @@ extension ItemView {
             Binding(
                 get: { viewModel.selectedMediaSource },
                 set: { newSource in
-                    if let newSource = newSource {
+                    if let newSource {
                         viewModel.send(.selectMediaSource(newSource))
                     }
                 }
@@ -42,10 +42,8 @@ extension ItemView {
             ActionButton(L10n.version, icon: "list.dash") {
                 Picker(L10n.version, selection: selectedMediaSource) {
                     ForEach(mediaSources, id: \.hashValue) { mediaSource in
-                        Button {
-                            Text(mediaSource.displayTitle)
-                        }
-                        .tag(mediaSource as MediaSourceInfo?)
+                        Text(mediaSource.displayTitle)
+                            .tag(mediaSource as MediaSourceInfo?)
                     }
                 }
             }
