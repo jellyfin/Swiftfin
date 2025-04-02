@@ -21,30 +21,65 @@ struct ActionButtonScaleModifier: ViewModifier {
 
     // MARK: - Expansion Reason(s)
 
-    let isPressed: Bool
     let isFocused: Bool
+    let isPressed: Bool
+
+    // MARK: - Internal State
+
+    @State
+    private var currentScale: CGFloat = 0.0
+    @State
+    private var isAnimating: Bool = false
+    @State
+    private var animationTask: Task<Void, Never>? = nil
 
     // MARK: - Body
 
     func body(content: Content) -> some View {
-        content
-            .scaleEffect(calculateScaleFactor())
-            .animation(
-                .easeInOut(duration: animationDuration),
-                value: isPressed || isFocused
-            )
-    }
-
-    // MARK: - Calculate Percentage from Properties
-
-    private func calculateScaleFactor() -> CGFloat {
-        if expansion == 0 {
-            return 1.0
-        }
         let baseSize = max(size.width, size.height)
 
-        guard baseSize > 0 else { return 1.0 }
+        return content
+            .scaleEffect((baseSize + (2 * currentScale)) / baseSize)
+            .onChange(of: isPressed) { _, newValue in
+                animationTask?.cancel()
 
-        return (baseSize + (2 * expansion)) / baseSize
+                if newValue {
+                    withAnimation(.easeInOut(duration: animationDuration / 2)) {
+                        currentScale = expansion
+                    }
+
+                    animationTask = Task {
+                        try? await Task.sleep(nanoseconds: UInt64(animationDuration * 0.5 * 1_000_000_000))
+
+                        if !Task.isCancelled {
+                            await MainActor.run {
+                                if !isPressed {
+                                    withAnimation(.easeInOut(duration: animationDuration)) {
+                                        currentScale = isFocused ? expansion : 0.0
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    animationTask = Task {
+                        await MainActor.run {
+                            withAnimation(.easeInOut(duration: animationDuration)) {
+                                currentScale = isFocused ? expansion : 0.0
+                            }
+                        }
+                    }
+                }
+            }
+            .onChange(of: isFocused) { _, newValue in
+                if !isPressed {
+                    withAnimation(.easeInOut(duration: animationDuration)) {
+                        currentScale = newValue ? expansion : 0.0
+                    }
+                }
+            }
+            .onAppear {
+                currentScale = isFocused ? expansion : 0.0
+            }
     }
 }

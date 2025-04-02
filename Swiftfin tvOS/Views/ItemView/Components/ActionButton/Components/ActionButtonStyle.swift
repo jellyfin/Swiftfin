@@ -22,8 +22,8 @@ struct ActionButtonStyle: ButtonStyle {
                     size: geometry.size,
                     expansion: getExpansionAmount(isPressed: configuration.isPressed),
                     animationDuration: 0.15,
-                    isPressed: configuration.isPressed,
-                    isFocused: isFocused
+                    isFocused: isFocused,
+                    isPressed: configuration.isPressed
                 ))
         }
     }
