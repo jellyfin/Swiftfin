@@ -196,7 +196,6 @@
 		4EB1A8CE2C9B2D0800F43898 /* ActiveSessionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1A8CD2C9B2D0100F43898 /* ActiveSessionRow.swift */; };
 		4EB3F02B2D8C804200EBEDAA /* TrailerSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB3F02A2D8C803F00EBEDAA /* TrailerSelection.swift */; };
 		4EB3F02C2D8C804200EBEDAA /* TrailerSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB3F02A2D8C803F00EBEDAA /* TrailerSelection.swift */; };
-		4EB3F02F2D8C85D000EBEDAA /* ScrollingText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB3F02D2D8C85C600EBEDAA /* ScrollingText.swift */; };
 		4EB3F0372D8CD33300EBEDAA /* ActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB3F0362D8CD33100EBEDAA /* ActionButton.swift */; };
 		4EB3F0392D8CD5CF00EBEDAA /* TrailerMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB3F0382D8CD5CC00EBEDAA /* TrailerMenu.swift */; };
 		4EB3F03B2D8CD6A900EBEDAA /* VersionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB3F03A2D8CD6A700EBEDAA /* VersionMenu.swift */; };
@@ -1430,7 +1429,6 @@
 		4EB1A8CB2C9B1B9700F43898 /* DestructiveServerTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestructiveServerTask.swift; sourceTree = "<group>"; };
 		4EB1A8CD2C9B2D0100F43898 /* ActiveSessionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionRow.swift; sourceTree = "<group>"; };
 		4EB3F02A2D8C803F00EBEDAA /* TrailerSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrailerSelection.swift; sourceTree = "<group>"; };
-		4EB3F02D2D8C85C600EBEDAA /* ScrollingText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollingText.swift; sourceTree = "<group>"; };
 		4EB3F0362D8CD33100EBEDAA /* ActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButton.swift; sourceTree = "<group>"; };
 		4EB3F0382D8CD5CC00EBEDAA /* TrailerMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrailerMenu.swift; sourceTree = "<group>"; };
 		4EB3F03A2D8CD6A700EBEDAA /* VersionMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionMenu.swift; sourceTree = "<group>"; };
@@ -3471,7 +3469,6 @@
 				4E2AC4D32C6C4C1200DD600D /* OrderedSectionSelectorView.swift */,
 				E1C92617288756BD002A7A66 /* PosterButton.swift */,
 				E1C92619288756BD002A7A66 /* PosterHStack.swift */,
-				4EB3F02D2D8C85C600EBEDAA /* ScrollingText.swift */,
 				E12CC1C428D12D9B00678D5D /* SeeAllPosterButton.swift */,
 				E1E9EFE928C6B96400CC1F8B /* ServerButton.swift */,
 				E17885A3278105170094FBCF /* SFSymbolButton.swift */,
@@ -6201,7 +6198,6 @@
 				E11B1B6D2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */,
 				4E17498F2CC00A3100DD07D1 /* DeviceInfo.swift in Sources */,
 				E12CC1C928D132B800678D5D /* RecentlyAddedView.swift in Sources */,
-				4EB3F02F2D8C85D000EBEDAA /* ScrollingText.swift in Sources */,
 				E19D41B32BF2BFEF0082B8B2 /* URLSessionConfiguration.swift in Sources */,
 				E10B1ECE2BD9AFD800A92EAF /* SwiftfinStore+V2.swift in Sources */,
 				E150C0BE2BFD45BD00944FFA /* RedrawOnNotificationView.swift in Sources */,

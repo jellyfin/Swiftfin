@@ -41,9 +41,7 @@ extension ItemView {
         // MARK: - Title
 
         private var title: String {
-            if let displayTitle = viewModel.selectedMediaSource?.displayTitle, multipleVersions {
-                return displayTitle
-            } else if let seriesViewModel = viewModel as? SeriesItemViewModel {
+            if let seriesViewModel = viewModel as? SeriesItemViewModel {
                 return seriesViewModel.playButtonItem?.seasonEpisodeLabel ?? L10n.play
             } else {
                 return viewModel.playButtonItem?.playButtonLabel ?? L10n.play
@@ -78,7 +76,7 @@ extension ItemView {
                         .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
                         .font(.title3)
 
-                    ScrollingText(title, alignment: .leading)
+                    Text(title)
                         .foregroundStyle(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
                         .fontWeight(.semibold)
                 }
