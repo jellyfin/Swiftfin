@@ -55,7 +55,6 @@ extension ItemView {
                     .focused($isFocused)
                 }
             }
-            .padding(.bottom, 1)
             .focused($isFocused)
         }
 
