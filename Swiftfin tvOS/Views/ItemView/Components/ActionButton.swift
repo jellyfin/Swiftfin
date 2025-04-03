@@ -48,13 +48,14 @@ extension ItemView {
                     }
                     .scaleEffect(isFocused ? 1.2 : 1.0)
                     .animation(
-                        .spring(response: 0.15, dampingFraction: 0.75), value: isFocused
+                        .spring(response: 0.2, dampingFraction: 1), value: isFocused
                     )
                     .buttonStyle(.plain)
                     .menuStyle(.borderlessButton)
                     .focused($isFocused)
                 }
             }
+            .padding(.bottom, 1)
             .focused($isFocused)
         }
 
