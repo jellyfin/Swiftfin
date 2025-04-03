@@ -41,14 +41,21 @@ extension ItemView {
                     Button(action: onSelect) {
                         labelView
                     }
+                    .buttonStyle(.card)
                 } else {
                     Menu(content: content) {
                         labelView
                     }
+                    .scaleEffect(isFocused ? 1.2 : 1.0)
+                    .animation(
+                        .spring(response: 0.15, dampingFraction: 0.75), value: isFocused
+                    )
+                    .buttonStyle(.plain)
+                    .menuStyle(.borderlessButton)
+                    .focused($isFocused)
                 }
             }
             .focused($isFocused)
-            .buttonStyle(ActionButtonStyle())
         }
 
         // MARK: - Label Views
