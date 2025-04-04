@@ -12,14 +12,12 @@ import SwiftUI
 extension SelectUserView {
 
     struct AddUserBottomButton: View {
-        
-        // MARK: Properties
 
-        @Binding
-        private var serverSelection: SelectUserServerSelection
+        // MARK: Properties
 
         private let action: (ServerState) -> Void
         private let servers: OrderedSet<ServerState>
+        private let serverSelection: SelectUserServerSelection
 
         private var selectedServer: ServerState? {
             if case let SelectUserServerSelection.server(id: id) = serverSelection,
@@ -30,7 +28,7 @@ extension SelectUserView {
 
             return nil
         }
-        
+
         // MARK: View Builders
 
         @ViewBuilder
@@ -41,21 +39,21 @@ extension SelectUserView {
                 .labelStyle(.iconOnly)
                 .frame(width: 50, height: 50)
         }
-        
+
         // MARK: - Initializer
 
         init(
-            serverSelection: Binding<SelectUserServerSelection>,
+            serverSelection: SelectUserServerSelection,
             servers: OrderedSet<ServerState>,
             action: @escaping (ServerState) -> Void
         ) {
-            self._serverSelection = serverSelection
             self.action = action
             self.servers = servers
+            self.serverSelection = serverSelection
         }
-        
+
         // MARK: Body
-        
+
         var body: some View {
             if serverSelection == .all {
                 Menu {

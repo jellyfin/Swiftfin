@@ -13,34 +13,12 @@ extension SelectUserView {
 
     struct AddUserButton: View {
 
-        @Binding
-        private var serverSelection: SelectUserServerSelection
-
         @Environment(\.isEnabled)
         private var isEnabled
 
-        private let action: (ServerState) -> Void
-        private let servers: OrderedSet<ServerState>
-
-        private var selectedServer: ServerState? {
-            if case let SelectUserServerSelection.server(id: id) = serverSelection,
-               let server = servers.first(where: { server in server.id == id })
-            {
-                return server
-            }
-
-            return nil
-        }
-
-        init(
-            serverSelection: Binding<SelectUserServerSelection>,
-            servers: OrderedSet<ServerState>,
-            action: @escaping (ServerState) -> Void
-        ) {
-            self._serverSelection = serverSelection
-            self.action = action
-            self.servers = servers
-        }
+        let selectedServer: ServerState?
+        let servers: OrderedSet<ServerState>
+        let action: (ServerState) -> Void
 
         @ViewBuilder
         private var content: some View {
@@ -59,7 +37,7 @@ extension SelectUserView {
                 .fontWeight(.semibold)
                 .foregroundStyle(isEnabled ? .primary : .secondary)
 
-            if serverSelection == .all {
+            if selectedServer == nil {
                 // For layout, not to be localized
                 Text("Hidden")
                     .font(.footnote)
@@ -68,7 +46,15 @@ extension SelectUserView {
         }
 
         var body: some View {
-            if serverSelection == .all {
+            if let selectedServer {
+                Button {
+                    action(selectedServer)
+                } label: {
+                    content
+                }
+                .buttonStyle(.borderless)
+                .buttonBorderShape(.circle)
+            } else {
                 Menu {
                     Text(L10n.selectServer)
 
@@ -79,16 +65,6 @@ extension SelectUserView {
                             Text(server.name)
                             Text(server.currentURL.absoluteString)
                         }
-                    }
-                } label: {
-                    content
-                }
-                .buttonStyle(.borderless)
-                .buttonBorderShape(.circle)
-            } else {
-                Button {
-                    if let selectedServer {
-                        action(selectedServer)
                     }
                 } label: {
                     content

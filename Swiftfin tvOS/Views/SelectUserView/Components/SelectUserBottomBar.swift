@@ -135,7 +135,7 @@ extension SelectUserView {
                 } else {
                     if userCount > 0 {
                         AddUserBottomButton(
-                            serverSelection: $serverSelection,
+                            serverSelection: serverSelection,
                             servers: viewModel.servers.keys
                         ) { server in
                             router.route(to: \.userSignIn, server)
