@@ -25,41 +25,35 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
 
     var body: some View {
         Menu(content: content) {
-            labelView
+            HStack {
+                title
+                    .foregroundColor(isFocused ? .black : .white)
+                    .padding(.leading, 4)
+
+                Spacer()
+
+                if let subtitle {
+                    subtitle
+                        .foregroundColor(isFocused ? .black : .secondary)
+                }
+
+                Image(systemName: "chevron.up.chevron.down")
+                    .font(.body.weight(.regular))
+                    .foregroundColor(isFocused ? .black : .secondary)
+                    .brightness(isFocused ? 0.4 : 0)
+            }
+            .padding(.horizontal)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(isFocused ? Color.white : Color.clear)
+            )
+            .scaleEffect(isFocused ? 1.04 : 1.0)
+            .animation(.easeInOut(duration: 0.125), value: isFocused)
         }
         .menuStyle(.borderlessButton)
         .listRowInsets(.zero)
         .focused($isFocused)
-    }
-
-    // MARK: - Label View
-
-    private var labelView: some View {
-        HStack {
-            title
-                .foregroundColor(isFocused ? .black : .white)
-                .padding(.leading, 4)
-
-            Spacer()
-
-            if let subtitle {
-                subtitle
-                    .foregroundColor(isFocused ? .black : .secondary)
-            }
-
-            Image(systemName: "chevron.up.chevron.down")
-                .font(.body.weight(.regular))
-                .foregroundColor(isFocused ? .black : .secondary)
-                .brightness(isFocused ? 0.4 : 0)
-        }
-        .padding(.horizontal)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(isFocused ? Color.white : Color.clear)
-        )
-        .scaleEffect(isFocused ? 1.04 : 1.0)
-        .animation(.easeInOut(duration: 0.125), value: isFocused)
     }
 }
 
