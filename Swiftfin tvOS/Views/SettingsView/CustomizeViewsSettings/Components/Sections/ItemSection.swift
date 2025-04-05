@@ -22,6 +22,8 @@ extension CustomizeViewsSettings {
 
         @StoredValue(.User.itemViewAttributes)
         private var itemViewAttributes
+        @StoredValue(.User.enabledTrailers)
+        private var enabledTrailers
 
         @StoredValue(.User.enableItemEditing)
         private var enableItemEditing
@@ -37,6 +39,8 @@ extension CustomizeViewsSettings {
                     .onSelect {
                         router.route(to: \.itemViewAttributes, $itemViewAttributes)
                     }
+
+                ListRowMenu(L10n.enabledTrailers, selection: $enabledTrailers)
 
                 /// Enable Refreshing Items from All Visible LIbraries
                 if userSession?.user.permissions.items.canEditMetadata ?? false {

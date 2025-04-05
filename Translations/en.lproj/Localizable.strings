@@ -760,6 +760,9 @@
 /// Enabled
 "enabled" = "Enabled";
 
+/// Enabled trailers
+"enabledTrailers" = "Enabled trailers";
+
 /// End Date
 "endDate" = "End Date";
 
@@ -834,6 +837,9 @@
 
 /// Experimental
 "experimental" = "Experimental";
+
+/// External
+"external" = "External";
 
 /// Failed logins
 "failedLogins" = "Failed logins";
@@ -1056,6 +1062,9 @@
 
 /// Loading user failed
 "loadingUserFailed" = "Loading user failed";
+
+/// Local
+"local" = "Local";
 
 /// Local Servers
 "localServers" = "Local Servers";
@@ -1918,6 +1927,9 @@
 /// Title
 "title" = "Title";
 
+/// Trailer
+"trailer" = "Trailer";
+
 /// Trailers
 "trailers" = "Trailers";
 
@@ -1956,6 +1968,9 @@
 
 /// Unable to find host
 "unableToFindHost" = "Unable to find host";
+
+/// Unable to open trailer
+"unableToOpenTrailer" = "Unable to open trailer";
 
 /// Unable to perform device authentication
 "unableToPerformDeviceAuth" = "Unable to perform device authentication";
