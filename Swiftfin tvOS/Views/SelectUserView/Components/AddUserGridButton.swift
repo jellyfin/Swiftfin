@@ -65,7 +65,6 @@ extension SelectUserView {
             }
             .buttonStyle(.borderless)
             .buttonBorderShape(.circle)
-            .debugBackground()
         }
     }
 }
