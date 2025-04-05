@@ -133,24 +133,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
 
             signInTask = Task {
                 do {
-                    let user = try await signIn(username: username, password: password, policy: policy)
-
-                    if isDuplicate(user: user) {
-                        await MainActor.run {
-                            // user has same id, but new access token
-                            self.eventSubject.send(.duplicateUser(user))
-                        }
-                    } else {
-                        try await save(user: user)
-
-                        await MainActor.run {
-                            self.eventSubject.send(.signedIn(user))
-                        }
-                    }
-
-                    await MainActor.run {
-                        self.state = .initial
-                    }
+                    try await signIn(username: username, password: password, policy: policy)
                 } catch is CancellationError {
                     // cancel doesn't matter
                 } catch {
@@ -178,24 +161,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
 
             signInTask = Task {
                 do {
-                    let user = try await signIn(secret: secret, policy: policy)
-
-                    if isDuplicate(user: user) {
-                        await MainActor.run {
-                            // user has same id, but new access token
-                            self.eventSubject.send(.duplicateUser(user))
-                        }
-                    } else {
-                        try await save(user: user)
-
-                        await MainActor.run {
-                            self.eventSubject.send(.signedIn(user))
-                        }
-                    }
-
-                    await MainActor.run {
-                        self.state = .initial
-                    }
+                    try await signIn(secret: secret, policy: policy)
                 } catch is CancellationError {
                     // cancel doesn't matter
                 } catch {
@@ -215,7 +181,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         }
     }
 
-    private func signIn(username: String, password: String, policy: UserAccessPolicy) async throws -> UserState {
+    private func makeSignInRequest(username: String, password: String) async throws -> AuthenticationResult {
         let username = username
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
@@ -224,10 +190,72 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
 
-        let response = try await server.client.signIn(username: username, password: password)
+        return try await server.client.signIn(username: username, password: password)
+    }
 
-        guard let accessToken = response.accessToken,
-              let userData = response.user,
+    private func signIn(secret: String, policy: UserAccessPolicy) async throws {
+        let authentication = try await server.client.signIn(quickConnectSecret: secret)
+
+        guard let userData = authentication.user,
+              let id = userData.id
+        else {
+            logger.critical("Missing user data from network call")
+            throw JellyfinAPIError("An internal error has occurred")
+        }
+
+        if let existingUser = getExistingUser(userId: id) {
+            try await handleExistingUser(user: existingUser, authentication: authentication, policy: policy)
+        } else {
+            try await handleNewUser(authentication: authentication, policy: policy)
+        }
+    }
+
+    private func signIn(username: String, password: String, policy: UserAccessPolicy) async throws {
+        let authentication = try await makeSignInRequest(username: username, password: password)
+
+        guard let userData = authentication.user,
+              let id = userData.id
+        else {
+            logger.critical("Missing user data from network call")
+            throw JellyfinAPIError("An internal error has occurred")
+        }
+
+        // UserState.accessToken setter persists changes to the keychain automatically.
+        // Need to check if UserState exists before setting new accessToken.
+        if let existingUser = getExistingUser(userId: id) {
+            try await handleExistingUser(user: existingUser, authentication: authentication, policy: policy)
+        } else {
+            try await handleNewUser(authentication: authentication, policy: policy)
+        }
+
+        await MainActor.run {
+            self.state = .initial
+        }
+    }
+
+    private func handleExistingUser(user: UserState, authentication: AuthenticationResult, policy: UserAccessPolicy) async throws {
+        try updateUserState(user: user, authentication: authentication, policy: policy)
+
+        await MainActor.run {
+            self.state = .initial
+            self.eventSubject.send(.signedIn(user))
+        }
+    }
+
+    private func handleNewUser(authentication: AuthenticationResult, policy: UserAccessPolicy) async throws {
+        let newUser = try createUserState(authentication: authentication, policy: policy)
+        try await save(user: newUser)
+
+        await MainActor.run {
+            self.state = .initial
+            self.eventSubject.send(.signedIn(newUser))
+        }
+    }
+
+    private func createUserState(authentication: AuthenticationResult, policy: UserAccessPolicy) throws -> UserState {
+
+        guard let accessToken = authentication.accessToken,
+              let userData = authentication.user,
               let id = userData.id,
               let username = userData.name
         else {
@@ -249,14 +277,10 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         return newState
     }
 
-    private func signIn(secret: String, policy: UserAccessPolicy) async throws -> UserState {
+    private func updateUserState(user: UserState, authentication: AuthenticationResult, policy: UserAccessPolicy) throws {
 
-        let response = try await server.client.signIn(quickConnectSecret: secret)
-
-        guard let accessToken = response.accessToken,
-              let userData = response.user,
-              let id = userData.id,
-              let username = userData.name
+        guard let accessToken = authentication.accessToken,
+              let userData = authentication.user
         else {
             logger.critical("Missing user data from network call")
             throw JellyfinAPIError("An internal error has occurred")
@@ -265,22 +289,22 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         StoredValues[.Temp.userData] = userData
         StoredValues[.Temp.userAccessPolicy] = policy
 
-        let newState = UserState(
-            id: id,
-            serverID: server.id,
-            username: username
-        )
-
-        newState.accessToken = accessToken
-
-        return newState
+        user.accessToken = accessToken
     }
 
-    private func isDuplicate(user: UserState) -> Bool {
+    private func getExistingUser(userId: String) -> UserState? {
         let existingUser = try? SwiftfinStore
             .dataStack
-            .fetchOne(From<UserModel>().where(\.$id == user.id))
-        return existingUser != nil
+            .fetchOne(From<UserModel>().where(\.$id == userId))
+        return existingUser?.state
+    }
+
+    private func shouldReauthenticate(userId: String) -> Bool {
+        guard let existingUser = getExistingUser(userId: userId) else {
+            return false
+        }
+
+        return existingUser.accessToken == ""
     }
 
     @MainActor

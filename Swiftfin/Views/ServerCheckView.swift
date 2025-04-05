@@ -6,6 +6,8 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
+import Factory
 import SwiftUI
 
 struct ServerCheckView: View {
@@ -30,10 +32,38 @@ struct ServerCheckView: View {
             Text(error.localizedDescription)
                 .frame(minWidth: 50, maxWidth: 240)
                 .multilineTextAlignment(.center)
+        }
+    }
+
+    @ViewBuilder
+    private func loginInvalidatedView() -> some View {
+        VStack(spacing: 10) {
+            Image(systemName: "xmark.circle.fill")
+                .font(.system(size: 72))
+                .foregroundColor(Color.red)
+
+            Text(viewModel.userSession.server.name)
+                .fontWeight(.semibold)
+                .foregroundStyle(.secondary)
+
+            Text(
+                "401: \(L10n.invalidatedLogin)"
+            )
+            .frame(minWidth: 50, maxWidth: 240)
+            .multilineTextAlignment(.center)
 
             PrimaryButton(title: L10n.retry)
                 .onSelect {
                     viewModel.send(.checkServer)
+                }
+                .frame(maxWidth: 300)
+                .frame(height: 50)
+
+            PrimaryButton(title: L10n.back, role: .destructive)
+                .onSelect {
+                    Defaults[.lastSignedInUserID] = .signedOut
+                    Container.shared.currentUserSession.reset()
+                    Notifications[.didSignOut].post()
                 }
                 .frame(maxWidth: 300)
                 .frame(height: 50)
@@ -51,6 +81,8 @@ struct ServerCheckView: View {
                 }
             case let .error(error):
                 errorView(error)
+            case .loginInvalidated:
+                loginInvalidatedView()
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
