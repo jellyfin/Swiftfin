@@ -162,6 +162,7 @@ struct UserLocalSecurityView: View {
                     }
                 }
             }
+            .withDescriptionTopPadding()
             .animation(.linear, value: signInPolicy)
             .navigationTitle(L10n.security)
             .onFirstAppear {

@@ -72,6 +72,7 @@ struct PlaybackQualitySettingsView: View {
                     L10n.deviceProfileDescription.text
                 }
             }
+            .withDescriptionTopPadding()
             .navigationTitle(L10n.playbackQuality)
     }
 

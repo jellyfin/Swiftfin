@@ -6,6 +6,14 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+//
+
 import SwiftUI
 
 struct ListRowMenu<Content: View, Subtitle: View>: View {
@@ -25,36 +33,53 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
 
     var body: some View {
         Menu(content: content) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(isFocused ? Color.white : Color.clear)
-
-                HStack {
-                    title
-                        .foregroundStyle(isFocused ? Color.black : Color.white)
-                        .padding(.leading, 4)
-
-                    Spacer()
-
-                    if let subtitle {
-                        subtitle
-                            .foregroundStyle(isFocused ? Color.black : Color.secondary)
-                            .brightness(isFocused ? 0.4 : 0)
-                    }
-
-                    Image(systemName: "chevron.up.chevron.down")
-                        .font(.body.weight(.regular))
-                        .foregroundStyle(isFocused ? Color.black : Color.secondary)
-                        .brightness(isFocused ? 0.4 : 0)
-                }
-                .padding(.horizontal)
-            }
-            .scaleEffect(isFocused ? 1.05 : 1.0)
-            .animation(.spring(response: 0.15, dampingFraction: 0.75), value: isFocused)
+            labelView
         }
         .menuStyle(.borderlessButton)
         .listRowInsets(.zero)
         .focused($isFocused)
+    }
+
+    // MARK: - Label View
+
+    private var labelView: some View {
+        HStack {
+            ZStack {
+                title.foregroundColor(.black)
+                title.foregroundColor(.white)
+                    .opacity(isFocused ? 0 : 1)
+            }
+            .padding(.leading, 4)
+
+            Spacer()
+
+            if let subtitle {
+                ZStack {
+                    subtitle.foregroundColor(.black)
+                    subtitle.foregroundColor(.secondary)
+                        .opacity(isFocused ? 0 : 1)
+                }
+            }
+
+            ZStack {
+                Image(systemName: "chevron.up.chevron.down")
+                    .font(.body.weight(.regular))
+                    .foregroundColor(.black)
+                Image(systemName: "chevron.up.chevron.down")
+                    .font(.body.weight(.regular))
+                    .foregroundColor(.secondary)
+                    .opacity(isFocused ? 0 : 1)
+            }
+            .brightness(isFocused ? 0.4 : 0)
+        }
+        .padding(.horizontal)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(isFocused ? Color.white : Color.clear)
+        )
+        .scaleEffect(isFocused ? 1.04 : 1.0)
+        .animation(.easeInOut(duration: 0.125), value: isFocused)
     }
 }
 
