@@ -1969,6 +1969,9 @@
 /// Unable to find host
 "unableToFindHost" = "Unable to find host";
 
+/// Unable to open trailer
+"unableToOpenTrailer" = "Unable to open trailer";
+
 /// Unable to perform device authentication
 "unableToPerformDeviceAuth" = "Unable to perform device authentication";
 

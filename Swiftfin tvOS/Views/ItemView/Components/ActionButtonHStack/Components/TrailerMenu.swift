@@ -6,12 +6,16 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
 
     struct TrailerMenu: View {
+
+        @Injected(\.logService)
+        private var logger
 
         // MARK: - Stored Value
 
@@ -124,7 +128,8 @@ extension ItemView {
                     OnlineVideoPlayerManager(item: trailer, mediaSource: selectedMediaSource)
                 )
             } else {
-                error = JellyfinAPIError("No media sources found")
+                logger.log(level: .error, "No media sources found")
+                error = JellyfinAPIError(L10n.unknownError)
             }
         }
 
@@ -135,10 +140,10 @@ extension ItemView {
                 UIApplication.shared.open(url) { success in
                     guard !success else { return }
 
-                    error = JellyfinAPIError("Unable to open trailer")
+                    error = JellyfinAPIError(L10n.unableToOpenTrailer)
                 }
             } else {
-                error = JellyfinAPIError("Unable to open trailer")
+                error = JellyfinAPIError(L10n.unableToOpenTrailer)
             }
         }
     }
