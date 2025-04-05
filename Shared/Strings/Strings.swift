@@ -538,6 +538,8 @@ internal enum L10n {
   internal static let enableAllLibraries = L10n.tr("Localizable", "enableAllLibraries", fallback: "Enable all libraries")
   /// Enabled
   internal static let enabled = L10n.tr("Localizable", "enabled", fallback: "Enabled")
+  /// Enabled trailers
+  internal static let enabledTrailers = L10n.tr("Localizable", "enabledTrailers", fallback: "Enabled trailers")
   /// End Date
   internal static let endDate = L10n.tr("Localizable", "endDate", fallback: "End Date")
   /// Ended
@@ -594,6 +596,8 @@ internal enum L10n {
   internal static let existsOnServer = L10n.tr("Localizable", "existsOnServer", fallback: "This item exists on your Jellyfin Server.")
   /// Experimental
   internal static let experimental = L10n.tr("Localizable", "experimental", fallback: "Experimental")
+  /// External
+  internal static let external = L10n.tr("Localizable", "external", fallback: "External")
   /// Failed logins
   internal static let failedLogins = L10n.tr("Localizable", "failedLogins", fallback: "Failed logins")
   /// Favorited
@@ -748,6 +752,8 @@ internal enum L10n {
   internal static let liveTvRecordingManagement = L10n.tr("Localizable", "liveTvRecordingManagement", fallback: "Live TV recording management")
   /// Loading user failed
   internal static let loadingUserFailed = L10n.tr("Localizable", "loadingUserFailed", fallback: "Loading user failed")
+  /// Local
+  internal static let local = L10n.tr("Localizable", "local", fallback: "Local")
   /// Local Servers
   internal static let localServers = L10n.tr("Localizable", "localServers", fallback: "Local Servers")
   /// Lock All Fields
@@ -1338,6 +1344,8 @@ internal enum L10n {
   internal static let timestampType = L10n.tr("Localizable", "timestampType", fallback: "Timestamp Type")
   /// Title
   internal static let title = L10n.tr("Localizable", "title", fallback: "Title")
+  /// Trailer
+  internal static let trailer = L10n.tr("Localizable", "trailer", fallback: "Trailer")
   /// Trailers
   internal static let trailers = L10n.tr("Localizable", "trailers", fallback: "Trailers")
   /// Trailing Value
@@ -1364,6 +1372,8 @@ internal enum L10n {
   internal static let type = L10n.tr("Localizable", "type", fallback: "Type")
   /// Unable to find host
   internal static let unableToFindHost = L10n.tr("Localizable", "unableToFindHost", fallback: "Unable to find host")
+  /// Unable to open trailer
+  internal static let unableToOpenTrailer = L10n.tr("Localizable", "unableToOpenTrailer", fallback: "Unable to open trailer")
   /// Unable to perform device authentication
   internal static let unableToPerformDeviceAuth = L10n.tr("Localizable", "unableToPerformDeviceAuth", fallback: "Unable to perform device authentication")
   /// Unable to perform device authentication. You may need to enable Face ID in the Settings app for Swiftfin.
