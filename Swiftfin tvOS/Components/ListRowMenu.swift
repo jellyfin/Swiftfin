@@ -36,33 +36,21 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
 
     private var labelView: some View {
         HStack {
-            ZStack {
-                title.foregroundColor(.black)
-                title.foregroundColor(.white)
-                    .opacity(isFocused ? 0 : 1)
-            }
-            .padding(.leading, 4)
+            title
+                .foregroundColor(isFocused ? .black : .white)
+                .padding(.leading, 4)
 
             Spacer()
 
             if let subtitle {
-                ZStack {
-                    subtitle.foregroundColor(.black)
-                    subtitle.foregroundColor(.secondary)
-                        .opacity(isFocused ? 0 : 1)
-                }
+                subtitle
+                    .foregroundColor(isFocused ? .black : .secondary)
             }
 
-            ZStack {
-                Image(systemName: "chevron.up.chevron.down")
-                    .font(.body.weight(.regular))
-                    .foregroundColor(.black)
-                Image(systemName: "chevron.up.chevron.down")
-                    .font(.body.weight(.regular))
-                    .foregroundColor(.secondary)
-                    .opacity(isFocused ? 0 : 1)
-            }
-            .brightness(isFocused ? 0.4 : 0)
+            Image(systemName: "chevron.up.chevron.down")
+                .font(.body.weight(.regular))
+                .foregroundColor(isFocused ? .black : .secondary)
+                .brightness(isFocused ? 0.4 : 0)
         }
         .padding(.horizontal)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
