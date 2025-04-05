@@ -16,24 +16,14 @@ extension SelectUserView {
         // MARK: Properties
 
         private let action: (ServerState) -> Void
+        private let selectedServer: ServerState?
         private let servers: OrderedSet<ServerState>
-        private let serverSelection: SelectUserServerSelection
-
-        private var selectedServer: ServerState? {
-            if case let SelectUserServerSelection.server(id: id) = serverSelection,
-               let server = servers.first(where: { server in server.id == id })
-            {
-                return server
-            }
-
-            return nil
-        }
 
         // MARK: View Builders
 
         @ViewBuilder
-        private var buttonLabel: some View {
-            Label(L10n.addUser, systemImage: "person.crop.circle.badge.plus")
+        private var label: some View {
+            Label(L10n.addUser, systemImage: "plus")
                 .foregroundStyle(Color.primary)
                 .font(.body.weight(.semibold))
                 .labelStyle(.iconOnly)
@@ -43,42 +33,34 @@ extension SelectUserView {
         // MARK: - Initializer
 
         init(
-            serverSelection: SelectUserServerSelection,
+            selectedServer: ServerState?,
             servers: OrderedSet<ServerState>,
             action: @escaping (ServerState) -> Void
         ) {
             self.action = action
+            self.selectedServer = selectedServer
             self.servers = servers
-            self.serverSelection = serverSelection
         }
 
         // MARK: Body
 
         var body: some View {
-            if serverSelection == .all {
-                Menu {
-                    Text(L10n.selectServer)
+            ConditionalMenu(
+                tracking: selectedServer,
+                action: action
+            ) {
+                Text(L10n.selectServer)
 
-                    ForEach(servers) { server in
-                        Button {
-                            action(server)
-                        } label: {
-                            Text(server.name)
-                            Text(server.currentURL.absoluteString)
-                        }
+                ForEach(servers) { server in
+                    Button {
+                        action(server)
+                    } label: {
+                        Text(server.name)
+                        Text(server.currentURL.absoluteString)
                     }
-                } label: {
-                    buttonLabel
                 }
-
-            } else {
-                Button {
-                    if let selectedServer {
-                        action(selectedServer)
-                    }
-                } label: {
-                    buttonLabel
-                }
+            } label: {
+                label
             }
         }
     }

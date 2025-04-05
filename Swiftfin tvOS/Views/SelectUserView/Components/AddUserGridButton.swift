@@ -11,7 +11,7 @@ import SwiftUI
 
 extension SelectUserView {
 
-    struct AddUserButton: View {
+    struct AddUserGridButton: View {
 
         @Environment(\.isEnabled)
         private var isEnabled
@@ -21,7 +21,7 @@ extension SelectUserView {
         let action: (ServerState) -> Void
 
         @ViewBuilder
-        private var content: some View {
+        private var label: some View {
             ZStack {
                 Color.secondarySystemFill
 
@@ -46,32 +46,26 @@ extension SelectUserView {
         }
 
         var body: some View {
-            if let selectedServer {
-                Button {
-                    action(selectedServer)
-                } label: {
-                    content
-                }
-                .buttonStyle(.borderless)
-                .buttonBorderShape(.circle)
-            } else {
-                Menu {
-                    Text(L10n.selectServer)
+            ConditionalMenu(
+                tracking: selectedServer,
+                action: action
+            ) {
+                Text(L10n.selectServer)
 
-                    ForEach(servers) { server in
-                        Button {
-                            action(server)
-                        } label: {
-                            Text(server.name)
-                            Text(server.currentURL.absoluteString)
-                        }
+                ForEach(servers) { server in
+                    Button {
+                        action(server)
+                    } label: {
+                        Text(server.name)
+                        Text(server.currentURL.absoluteString)
                     }
-                } label: {
-                    content
                 }
-                .buttonStyle(.borderless)
-                .buttonBorderShape(.circle)
+            } label: {
+                label
             }
+            .buttonStyle(.borderless)
+            .buttonBorderShape(.circle)
+            .debugBackground()
         }
     }
 }

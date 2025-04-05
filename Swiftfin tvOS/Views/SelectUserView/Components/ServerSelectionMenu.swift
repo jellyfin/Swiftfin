@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import OrderedCollections
 import SwiftUI
 
 extension SelectUserView {
@@ -17,32 +18,46 @@ extension SelectUserView {
         @EnvironmentObject
         private var router: SelectUserCoordinator.Router
 
-        @ObservedObject
-        private var viewModel: SelectUserViewModel
-
         // MARK: - Server Selection
 
         @Binding
         private var serverSelection: SelectUserServerSelection
 
-        private var selectedServer: ServerState? {
-            if case let SelectUserServerSelection.server(id: id) = serverSelection,
-               let server = viewModel.servers.keys.first(where: { server in server.id == id })
-            {
-                return server
-            }
-
-            return nil
-        }
+        private let selectedServer: ServerState?
+        private let servers: OrderedSet<ServerState>
 
         // MARK: - Initializer
 
         init(
             selection: Binding<SelectUserServerSelection>,
-            viewModel: SelectUserViewModel
+            selectedServer: ServerState?,
+            servers: OrderedSet<ServerState>
         ) {
             self._serverSelection = selection
-            self.viewModel = viewModel
+            self.selectedServer = selectedServer
+            self.servers = servers
+        }
+
+        @ViewBuilder
+        private var label: some View {
+            HStack(spacing: 16) {
+                if let selectedServer {
+                    Image(systemName: "server.rack")
+
+                    Text(selectedServer.name)
+                } else {
+                    Image(systemName: "person.2.fill")
+
+                    Text(L10n.allServers)
+                }
+
+                Image(systemName: "chevron.up.chevron.down")
+                    .foregroundStyle(.secondary)
+                    .font(.subheadline.weight(.semibold))
+            }
+            .font(.body.weight(.semibold))
+            .foregroundStyle(Color.primary)
+            .frame(width: 400, height: 50)
         }
 
         // MARK: - Body
@@ -50,14 +65,15 @@ extension SelectUserView {
         var body: some View {
             Menu {
                 Picker(L10n.servers, selection: _serverSelection) {
-                    ForEach(viewModel.servers.keys) { server in
+                    ForEach(servers) { server in
                         Button {
                             Text(server.name)
                             Text(server.currentURL.absoluteString)
                         }
                         .tag(SelectUserServerSelection.server(id: server.id))
                     }
-                    if viewModel.servers.keys.count > 1 {
+
+                    if servers.count > 1 {
                         Label(L10n.allServers, systemImage: "person.2.fill")
                             .tag(SelectUserServerSelection.all)
                     }
@@ -68,29 +84,13 @@ extension SelectUserView {
                             router.route(to: \.editServer, selectedServer)
                         }
                     }
+
                     Button(L10n.addServer, systemImage: "plus") {
                         router.route(to: \.connectToServer)
                     }
                 }
             } label: {
-                HStack(spacing: 16) {
-                    switch serverSelection {
-                    case .all:
-                        Image(systemName: "person.2.fill")
-                        Text(L10n.allServers)
-                    case let .server(id):
-                        if let server = viewModel.servers.keys.first(where: { $0.id == id }) {
-                            Image(systemName: "server.rack")
-                            Text(server.name)
-                        }
-                    }
-                    Image(systemName: "chevron.up.chevron.down")
-                        .foregroundStyle(.secondary)
-                        .font(.subheadline.weight(.semibold))
-                }
-                .font(.body.weight(.semibold))
-                .foregroundStyle(Color.primary)
-                .frame(width: 400, height: 50)
+                label
             }
             .menuOrder(.fixed)
         }

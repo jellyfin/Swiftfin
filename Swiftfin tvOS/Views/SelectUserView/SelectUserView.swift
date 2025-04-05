@@ -30,11 +30,6 @@ struct SelectUserView: View {
     @Default(.selectUserServerSelection)
     private var serverSelection
 
-    // MARK: - Environment Variable
-
-    @Environment(\.colorScheme)
-    private var colorScheme
-
     // MARK: - State & Environment Objects
 
     @EnvironmentObject
@@ -56,8 +51,6 @@ struct SelectUserView: View {
     @State
     private var isPresentingConfirmDeleteUsers = false
     @State
-    private var isPresentingServers: Bool = false
-    @State
     private var isPresentingLocalPin: Bool = false
 
     // MARK: - Error State
@@ -67,6 +60,10 @@ struct SelectUserView: View {
 
     @StateObject
     private var viewModel = SelectUserViewModel()
+
+    private var selectedServer: ServerState? {
+        serverSelection.server(from: viewModel.servers.keys)
+    }
 
     private var splashScreenImageSources: [ImageSource] {
         switch (serverSelection, selectUserAllServersSplashscreen) {
@@ -111,44 +108,30 @@ struct SelectUserView: View {
         }
     }
 
-    // MARK: - Selected Server
-
-    private var selectedServer: ServerState? {
-        if case let SelectUserServerSelection.server(id: id) = serverSelection,
-           let server = viewModel.servers.keys.first(where: { server in server.id == id })
-        {
-            return server
-        }
-
-        return nil
-    }
-
     // MARK: - Select User(s)
 
     private func select(user: UserState, needsPin: Bool = true) {
-        Task { @MainActor in
-            selectedUsers.insert(user)
+        selectedUsers.insert(user)
 
-            switch user.accessPolicy {
-            case .requireDeviceAuthentication:
-                // Do nothing, no device authentication on tvOS
-                break
-            case .requirePin:
-                if needsPin {
-                    isPresentingLocalPin = true
-                    return
-                }
-            case .none: ()
+        switch user.accessPolicy {
+        case .requireDeviceAuthentication:
+            // Do nothing, no device authentication on tvOS
+            break
+        case .requirePin:
+            if needsPin {
+                isPresentingLocalPin = true
+                return
             }
-
-            viewModel.send(.signIn(user, pin: pin))
+        case .none: ()
         }
+
+        viewModel.send(.signIn(user, pin: pin))
     }
 
     // MARK: - Grid Content View
 
     @ViewBuilder
-    private var gridContentView: some View {
+    private var userGrid: some View {
         CenteredLazyVGrid(
             data: userGridItems,
             id: \.user.id,
@@ -182,7 +165,7 @@ struct SelectUserView: View {
             id: \.self,
             columns: 5
         ) { _ in
-            AddUserButton(
+            AddUserGridButton(
                 selectedServer: selectedServer,
                 servers: viewModel.servers.keys
             ) { server in
@@ -194,7 +177,7 @@ struct SelectUserView: View {
     // MARK: - User View
 
     @ViewBuilder
-    private var userView: some View {
+    private var contentView: some View {
         VStack {
             ZStack {
                 Color.clear
@@ -204,8 +187,14 @@ struct SelectUserView: View {
                     Color.clear
                         .frame(height: 100)
 
-                    gridContentView
-                        .focusSection()
+                    Group {
+                        if userGridItems.isEmpty {
+                            addUserButtonGrid
+                        } else {
+                            userGrid
+                        }
+                    }
+                    .focusSection()
                 }
                 .scrollIfLargerThanContainer(padding: 100)
                 .scrollViewOffset($scrollViewOffset)
@@ -214,10 +203,10 @@ struct SelectUserView: View {
             SelectUserBottomBar(
                 isEditing: $isEditingUsers,
                 serverSelection: $serverSelection,
+                selectedServer: selectedServer,
+                servers: viewModel.servers.keys,
                 areUsersSelected: selectedUsers.isNotEmpty,
-                viewModel: viewModel,
-                userCount: userGridItems.count,
-                server: selectedServer
+                hasUsers: userGridItems.isNotEmpty
             ) {
                 isPresentingConfirmDeleteUsers = true
             } toggleAllUsersSelected: {
@@ -292,11 +281,7 @@ struct SelectUserView: View {
             if viewModel.servers.isEmpty {
                 emptyView
             } else {
-                if userGridItems.isEmpty {
-                    addUserButtonGrid
-                } else {
-                    userView
-                }
+                contentView
             }
         }
         .ignoresSafeArea()
