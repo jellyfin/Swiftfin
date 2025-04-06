@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import OrderedCollections
 import SwiftUI
 
 extension SelectUserView {
@@ -23,16 +24,37 @@ extension SelectUserView {
         @Binding
         private var serverSelection: SelectUserServerSelection
 
-        @ObservedObject
-        private var viewModel: SelectUserViewModel
-
         // MARK: - Variables
 
         private let areUsersSelected: Bool
-        private let userCount: Int
+        private let hasUsers: Bool
+        private let selectedServer: ServerState?
+        private let servers: OrderedSet<ServerState>
 
         private let onDelete: () -> Void
         private let toggleAllUsersSelected: () -> Void
+
+        // MARK: - Initializer
+
+        init(
+            isEditing: Binding<Bool>,
+            serverSelection: Binding<SelectUserServerSelection>,
+            selectedServer: ServerState?,
+            servers: OrderedSet<ServerState>,
+            areUsersSelected: Bool,
+            hasUsers: Bool,
+            onDelete: @escaping () -> Void,
+            toggleAllUsersSelected: @escaping () -> Void
+        ) {
+            self._isEditing = isEditing
+            self._serverSelection = serverSelection
+            self.areUsersSelected = areUsersSelected
+            self.hasUsers = hasUsers
+            self.selectedServer = selectedServer
+            self.servers = servers
+            self.onDelete = onDelete
+            self.toggleAllUsersSelected = toggleAllUsersSelected
+        }
 
         // MARK: - Advanced Menu
 
@@ -74,39 +96,22 @@ extension SelectUserView {
 
         // MARK: - Delete User Button
 
+        @ViewBuilder
         private var deleteUsersButton: some View {
-            ListRowButton(L10n.delete, role: .destructive) {
-                onDelete()
-            }
+            ListRowButton(
+                L10n.delete,
+                role: .destructive,
+                action: onDelete
+            )
             .frame(width: 400, height: 75)
             .disabled(!areUsersSelected)
-        }
-
-        // MARK: - Initializer
-
-        init(
-            isEditing: Binding<Bool>,
-            serverSelection: Binding<SelectUserServerSelection>,
-            areUsersSelected: Bool,
-            viewModel: SelectUserViewModel,
-            userCount: Int,
-            onDelete: @escaping () -> Void,
-            toggleAllUsersSelected: @escaping () -> Void
-        ) {
-            self._isEditing = isEditing
-            self._serverSelection = serverSelection
-            self.viewModel = viewModel
-            self.areUsersSelected = areUsersSelected
-            self.userCount = userCount
-            self.onDelete = onDelete
-            self.toggleAllUsersSelected = toggleAllUsersSelected
         }
 
         // MARK: - Content View
 
         @ViewBuilder
         private var contentView: some View {
-            HStack(alignment: .center) {
+            HStack(alignment: .top, spacing: 20) {
                 if isEditing {
                     deleteUsersButton
 
@@ -130,9 +135,18 @@ extension SelectUserView {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 } else {
+                    AddUserBottomButton(
+                        selectedServer: selectedServer,
+                        servers: servers
+                    ) { server in
+                        router.route(to: \.userSignIn, server)
+                    }
+                    .hidden(!hasUsers)
+
                     ServerSelectionMenu(
                         selection: $serverSelection,
-                        viewModel: viewModel
+                        selectedServer: selectedServer,
+                        servers: servers
                     )
 
                     advancedMenu

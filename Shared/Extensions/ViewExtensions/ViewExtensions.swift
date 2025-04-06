@@ -251,6 +251,16 @@ extension View {
         opacity(isVisible ? 1 : 0)
     }
 
+    @inlinable
+    @ViewBuilder
+    func hidden(_ isHidden: Bool) -> some View {
+        if isHidden {
+            hidden()
+        } else {
+            self
+        }
+    }
+
     func blurred(style: UIBlurEffect.Style = .regular) -> some View {
         overlay {
             BlurView(style: style)
