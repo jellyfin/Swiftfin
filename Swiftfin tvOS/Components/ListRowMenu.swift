@@ -25,32 +25,32 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
 
     var body: some View {
         Menu(content: content) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(isFocused ? Color.white : Color.clear)
+            HStack {
+                title
+                    .foregroundStyle(isFocused ? .black : .white)
+                    .padding(.leading, 4)
 
-                HStack {
-                    title
-                        .foregroundStyle(isFocused ? Color.black : Color.white)
-                        .padding(.leading, 4)
+                Spacer()
 
-                    Spacer()
-
-                    if let subtitle {
-                        subtitle
-                            .foregroundStyle(isFocused ? Color.black : Color.secondary)
-                            .brightness(isFocused ? 0.4 : 0)
-                    }
-
-                    Image(systemName: "chevron.up.chevron.down")
-                        .font(.body.weight(.regular))
-                        .foregroundStyle(isFocused ? Color.black : Color.secondary)
+                if let subtitle {
+                    subtitle
+                        .foregroundStyle(isFocused ? .black : .secondary)
                         .brightness(isFocused ? 0.4 : 0)
                 }
-                .padding(.horizontal)
+
+                Image(systemName: "chevron.up.chevron.down")
+                    .font(.body.weight(.regular))
+                    .foregroundStyle(isFocused ? .black : .secondary)
+                    .brightness(isFocused ? 0.4 : 0)
             }
-            .scaleEffect(isFocused ? 1.05 : 1.0)
-            .animation(.spring(response: 0.15, dampingFraction: 0.75), value: isFocused)
+            .padding(.horizontal)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(isFocused ? Color.white : Color.clear)
+            )
+            .scaleEffect(isFocused ? 1.04 : 1.0)
+            .animation(.easeInOut(duration: 0.125), value: isFocused)
         }
         .menuStyle(.borderlessButton)
         .listRowInsets(.zero)

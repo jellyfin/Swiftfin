@@ -102,12 +102,13 @@ struct UserSignInView: View {
                 }
                 viewModel.send(.signIn(username: username, password: password, policy: .none))
             }
+            .padding(.bottom)
 
         if case .signingIn = viewModel.state {
             ListRowButton(L10n.cancel, role: .cancel) {
                 viewModel.send(.cancel)
             }
-            .padding(.vertical)
+            .padding(.bottom)
         } else {
             ListRowButton(L10n.signIn) {
                 viewModel.send(.signIn(username: username, password: password, policy: .none))
@@ -118,7 +119,7 @@ struct UserSignInView: View {
                 username.isEmpty ? Color.white.opacity(0.5) : accentColor
             )
             .opacity(username.isEmpty ? 0.5 : 1)
-            .padding(.vertical)
+            .padding(.bottom)
         }
 
         if viewModel.isQuickConnectEnabled {

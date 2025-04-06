@@ -78,7 +78,6 @@ struct EditServerView: View {
                     }
                 }
             }
-            .withDescriptionTopPadding()
             .navigationTitle(L10n.server)
             .alert(L10n.deleteServer, isPresented: $isPresentingConfirmDeletion) {
                 Button(L10n.delete, role: .destructive) {

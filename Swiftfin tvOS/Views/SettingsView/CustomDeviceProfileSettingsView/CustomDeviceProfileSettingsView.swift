@@ -58,14 +58,14 @@ struct CustomDeviceProfileSettingsView: View {
                         }
 
                         if !isValid {
-                            Label("No profiles defined. Playback issues may occur.", systemImage: "exclamationmark.circle.fill")
+                            Label(L10n.noDeviceProfileWarning, systemImage: "exclamationmark.circle.fill")
                         }
                     }
                 }
 
                 Section {
                     if customProfiles.isEmpty {
-                        Button("Add profile") {
+                        Button(L10n.add) {
                             router.route(to: \.createCustomDeviceProfile)
                         }
                     }

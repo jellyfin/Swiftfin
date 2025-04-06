@@ -8,11 +8,7 @@
 
 import SwiftUI
 
-// TODO: See if `descriptionTopPadding` is really necessary to fix the navigation bar padding, or just add all the time
-
 struct SplitFormWindowView: View {
-
-    private var descriptionTopPadding: Bool = false
 
     private var contentView: () -> any View
     private var descriptionView: () -> any View
@@ -28,9 +24,7 @@ struct SplitFormWindowView: View {
                 contentView()
                     .eraseToAnyView()
             }
-            .if(descriptionTopPadding) { view in
-                view.padding(.top)
-            }
+            .padding(.top)
             .scrollClipDisabled()
         }
     }
@@ -51,9 +45,5 @@ extension SplitFormWindowView {
 
     func descriptionView(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.descriptionView, with: content)
-    }
-
-    func withDescriptionTopPadding() -> Self {
-        copy(modifying: \.descriptionTopPadding, with: true)
     }
 }
