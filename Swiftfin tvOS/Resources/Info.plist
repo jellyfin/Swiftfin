@@ -21,6 +21,20 @@
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>youtube</string>
+		<string>vimeo</string>
+		<string>com.apple.tv</string>
+		<string>itms-apps</string>
+		<string>netflix</string>
+		<string>disneyplus</string>
+		<string>primevideo</string>
+		<string>hbomax</string>
+		<string>hulu</string>
+		<string>peacocktv</string>
+		<string>paramountplus</string>
+		<string>dailymotion</string>
+		<string>twitch</string>
+		<string>imdb</string>
+		<string>tmdb</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

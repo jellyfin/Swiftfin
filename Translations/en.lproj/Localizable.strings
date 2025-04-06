@@ -1972,6 +1972,9 @@
 /// Unable to open trailer
 "unableToOpenTrailer" = "Unable to open trailer";
 
+/// Unable to open trailer in %1$@
+"unableToOpenTrailerApp" = "Unable to open trailer in %1$@";
+
 /// Unable to perform device authentication
 "unableToPerformDeviceAuth" = "Unable to perform device authentication";
 
