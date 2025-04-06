@@ -136,11 +136,22 @@ extension ItemView {
         // MARK: - Play: External Trailer
 
         private func playExternalTrailer(_ trailer: MediaURL) {
-            if let url = URL(string: trailer.url), UIApplication.shared.canOpenURL(url) {
+            if let trailerUrlString = trailer.url {
+                let youtubeDeepLink = "youtube://\(trailerUrlString)"
+                if let youtubeURL = URL(string: youtubeDeepLink), UIApplication.shared.canOpenURL(youtubeURL) {
+                    UIApplication.shared.open(youtubeURL) { success in
+                        if !success {
+                            error = JellyfinAPIError(L10n.unableToOpenTrailer)
+                        }
+                    }
+                    return
+                }
+            }
+            if let urlString = trailer.url, let url = URL(string: urlString), UIApplication.shared.canOpenURL(url) {
                 UIApplication.shared.open(url) { success in
-                    guard !success else { return }
-
-                    error = JellyfinAPIError(L10n.unableToOpenTrailer)
+                    if !success {
+                        error = JellyfinAPIError(L10n.unableToOpenTrailer)
+                    }
                 }
             } else {
                 error = JellyfinAPIError(L10n.unableToOpenTrailer)
