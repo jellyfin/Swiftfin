@@ -68,6 +68,7 @@ struct UserSignInView: View {
 
     // MARK: - Handle Sign In
 
+    @MainActor
     private func handleSignIn(_ event: UserSignInViewModel.Event) {
         switch event {
         case let .duplicateUser(duplicateUser):
@@ -78,11 +79,9 @@ struct UserSignInView: View {
         case let .signedIn(user):
             router.dismissCoordinator()
 
-            DispatchQueue.main.async {
-                Defaults[.lastSignedInUserID] = .signedIn(userID: user.id)
-                Container.shared.currentUserSession.reset()
-                Notifications[.didSignIn].post()
-            }
+            Defaults[.lastSignedInUserID] = .signedIn(userID: user.id)
+            Container.shared.currentUserSession.reset()
+            Notifications[.didSignIn].post()
         }
     }
 
@@ -192,9 +191,10 @@ struct UserSignInView: View {
         } trailingContentView: {
             publicUsersSection
         }
-        .onReceive(viewModel.events) { event in
-            handleSignIn(event)
-        }
+        .onReceive(
+            viewModel.events,
+            perform: handleSignIn
+        )
         .onFirstAppear {
             focusedField = .username
             viewModel.send(.getPublicData)
