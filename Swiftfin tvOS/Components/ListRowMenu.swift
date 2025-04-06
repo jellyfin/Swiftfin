@@ -35,6 +35,7 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
                 if let subtitle {
                     subtitle
                         .foregroundStyle(isFocused ? .black : .secondary)
+                        .brightness(isFocused ? 0.4 : 0)
                 }
 
                 Image(systemName: "chevron.up.chevron.down")
