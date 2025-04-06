@@ -19,69 +19,37 @@ struct SelectUserView: View {
 
     // MARK: - User Grid Item Enum
 
-    private enum UserGridItem: Hashable {
-        case user(UserState, server: ServerState)
-        case addUser
-    }
+    typealias UserGridItem = (user: UserState, server: ServerState)
 
     // MARK: - Defaults
 
-    @Default(.selectUserServerSelection)
-    private var serverSelection
     @Default(.selectUserUseSplashscreen)
     private var selectUserUseSplashscreen
-
-    // MARK: - Environment Variable
-
-    @Environment(\.colorScheme)
-    private var colorScheme
+    @Default(.selectUserAllServersSplashscreen)
+    private var selectUserAllServersSplashscreen
+    @Default(.selectUserServerSelection)
+    private var serverSelection
 
     // MARK: - State & Environment Objects
 
     @EnvironmentObject
     private var router: SelectUserCoordinator.Router
 
-    @StateObject
-    private var viewModel = SelectUserViewModel()
-
     // MARK: - Select User Variables
 
     @State
-    private var contentSize: CGSize = .zero
-    @State
-    private var gridItems: OrderedSet<UserGridItem> = []
-    @State
-    private var gridItemSize: CGSize = .zero
-    @State
     private var isEditingUsers: Bool = false
-    @State
-    private var padGridItemColumnCount: Int = 1
     @State
     private var pin: String = ""
     @State
     private var scrollViewOffset: CGFloat = 0
     @State
     private var selectedUsers: Set<UserState> = []
-    @State
-    private var splashScreenImageSource: ImageSource? = nil
-
-    private var users: [UserState] {
-        gridItems.compactMap { item in
-            switch item {
-            case let .user(user, _):
-                return user
-            default:
-                return nil
-            }
-        }
-    }
 
     // MARK: - Dialog States
 
     @State
     private var isPresentingConfirmDeleteUsers = false
-    @State
-    private var isPresentingServers: Bool = false
     @State
     private var isPresentingLocalPin: Bool = false
 
@@ -90,136 +58,89 @@ struct SelectUserView: View {
     @State
     private var error: Error? = nil
 
-    // MARK: - Selected Server
+    @StateObject
+    private var viewModel = SelectUserViewModel()
 
     private var selectedServer: ServerState? {
-        if case let SelectUserServerSelection.server(id: id) = serverSelection,
-           let server = viewModel.servers.keys.first(where: { server in server.id == id })
-        {
-            return server
-        }
-
-        return nil
+        serverSelection.server(from: viewModel.servers.keys)
     }
 
-    // MARK: - Make Grid Items
+    private var splashScreenImageSources: [ImageSource] {
+        switch (serverSelection, selectUserAllServersSplashscreen) {
+        case (.all, .all):
+            return viewModel
+                .servers
+                .keys
+                .shuffled()
+                .map { $0.splashScreenImageSource() }
 
-    private func makeGridItems(for serverSelection: SelectUserServerSelection) -> OrderedSet<UserGridItem> {
+        // need to evaluate server with id selection first
+        case let (.server(id), _), let (.all, .server(id)):
+            guard let imageSource = viewModel
+                .servers
+                .keys
+                .first(where: { $0.id == id }) else { return [] }
+
+            return [imageSource.splashScreenImageSource()]
+        }
+    }
+
+    private var userGridItems: [UserGridItem] {
         switch serverSelection {
         case .all:
-            let items = viewModel.servers
+            return viewModel.servers
                 .map { server, users in
                     users.map { (server: server, user: $0) }
                 }
                 .flatMap { $0 }
                 .sorted(using: \.user.username)
                 .reversed()
-                .map { UserGridItem.user($0.user, server: $0.server) }
-                .appending(.addUser)
-
-            return OrderedSet(items)
+                .map { UserGridItem(user: $0.user, server: $0.server) }
         case let .server(id: id):
             guard let server = viewModel.servers.keys.first(where: { server in server.id == id }) else {
                 assertionFailure("server with ID not found?")
-                return [.addUser]
+                return []
             }
 
-            let items = viewModel.servers[server]!
+            return viewModel.servers[server]!
                 .sorted(using: \.username)
-                .map { UserGridItem.user($0, server: server) }
-                .appending(.addUser)
-
-            return OrderedSet(items)
+                .map { UserGridItem(user: $0, server: server) }
         }
-    }
-
-    // MARK: - Make Splash Screen Image Source
-
-    // For all server selection, .all is random
-    private func makeSplashScreenImageSource(
-        serverSelection: SelectUserServerSelection,
-        allServersSelection: SelectUserServerSelection
-    ) -> ImageSource? {
-        switch (serverSelection, allServersSelection) {
-        case (.all, .all):
-            return viewModel
-                .servers
-                .keys
-                .randomElement()?
-                .splashScreenImageSource()
-
-        // need to evaluate server with id selection first
-        case let (.server(id), _), let (.all, .server(id)):
-            return viewModel
-                .servers
-                .keys
-                .first { $0.id == id }?
-                .splashScreenImageSource()
-        }
-    }
-
-    // MARK: - Grid Item Offset
-
-    private func gridItemOffset(index: Int) -> CGFloat {
-        let lastRowIndices = (gridItems.count - gridItems.count % padGridItemColumnCount ..< gridItems.count)
-
-        guard lastRowIndices.contains(index) else { return 0 }
-
-        let lastRowMissing = padGridItemColumnCount - gridItems.count % padGridItemColumnCount
-        return CGFloat(lastRowMissing) * (gridItemSize.width + EdgeInsets.edgePadding) / 2
     }
 
     // MARK: - Select User(s)
 
     private func select(user: UserState, needsPin: Bool = true) {
-        Task { @MainActor in
-            selectedUsers.insert(user)
+        selectedUsers.insert(user)
 
-            switch user.accessPolicy {
-            case .requireDeviceAuthentication:
-                // Do nothing, no device authentication on tvOS
-                break
-            case .requirePin:
-                if needsPin {
-                    isPresentingLocalPin = true
-                    return
-                }
-            case .none: ()
+        switch user.accessPolicy {
+        case .requireDeviceAuthentication:
+            // Do nothing, no device authentication on tvOS
+            break
+        case .requirePin:
+            if needsPin {
+                isPresentingLocalPin = true
+                return
             }
-
-            viewModel.send(.signIn(user, pin: pin))
+        case .none: ()
         }
+
+        viewModel.send(.signIn(user, pin: pin))
     }
 
     // MARK: - Grid Content View
 
     @ViewBuilder
-    private var gridContentView: some View {
-        let columns = Array(repeating: GridItem(.flexible(), spacing: EdgeInsets.edgePadding), count: 5)
+    private var userGrid: some View {
+        CenteredLazyVGrid(
+            data: userGridItems,
+            id: \.user.id,
+            columns: 5,
+            spacing: EdgeInsets.edgePadding
+        ) { gridItem in
+            let user = gridItem.user
+            let server = gridItem.server
 
-        LazyVGrid(columns: columns, spacing: EdgeInsets.edgePadding) {
-            ForEach(Array(gridItems.enumerated().map(\.offset)), id: \.hashValue) { index in
-                let item = gridItems[index]
-
-                gridItemView(for: item)
-                    .trackingSize($gridItemSize)
-                    .offset(x: gridItemOffset(index: index))
-            }
-        }
-        .padding(EdgeInsets.edgePadding * 2.5)
-        .onChange(of: gridItemSize) { _, newValue in
-            let columns = Int(contentSize.width / (newValue.width + EdgeInsets.edgePadding))
-
-            padGridItemColumnCount = columns
-        }
-    }
-
-    // MARK: - Grid Content View
-
-    @ViewBuilder
-    private func gridItemView(for item: UserGridItem) -> some View {
-        switch item {
-        case let .user(user, server):
             UserGridButton(
                 user: user,
                 server: server,
@@ -234,35 +155,46 @@ struct SelectUserView: View {
                 selectedUsers.insert(user)
                 isPresentingConfirmDeleteUsers = true
             }
-            .environment(\.isEditing, isEditingUsers)
-            .environment(\.isSelected, selectedUsers.contains(user))
-        case .addUser:
-            AddUserButton(
-                serverSelection: $serverSelection,
+        }
+    }
+
+    @ViewBuilder
+    private var addUserButtonGrid: some View {
+        CenteredLazyVGrid(
+            data: [0],
+            id: \.self,
+            columns: 5
+        ) { _ in
+            AddUserGridButton(
+                selectedServer: selectedServer,
                 servers: viewModel.servers.keys
             ) { server in
                 router.route(to: \.userSignIn, server)
             }
-            .environment(\.isEnabled, !isEditingUsers)
         }
     }
 
     // MARK: - User View
 
     @ViewBuilder
-    private var userView: some View {
+    private var contentView: some View {
         VStack {
             ZStack {
                 Color.clear
-                    .trackingSize($contentSize)
 
                 VStack(spacing: 0) {
 
                     Color.clear
                         .frame(height: 100)
 
-                    gridContentView
-                        .focusSection()
+                    Group {
+                        if userGridItems.isEmpty {
+                            addUserButtonGrid
+                        } else {
+                            userGrid
+                        }
+                    }
+                    .focusSection()
                 }
                 .scrollIfLargerThanContainer(padding: 100)
                 .scrollViewOffset($scrollViewOffset)
@@ -271,30 +203,31 @@ struct SelectUserView: View {
             SelectUserBottomBar(
                 isEditing: $isEditingUsers,
                 serverSelection: $serverSelection,
+                selectedServer: selectedServer,
+                servers: viewModel.servers.keys,
                 areUsersSelected: selectedUsers.isNotEmpty,
-                viewModel: viewModel,
-                userCount: gridItems.count,
-                onDelete: {
-                    isPresentingConfirmDeleteUsers = true
-                }
+                hasUsers: userGridItems.isNotEmpty
             ) {
-                if selectedUsers.count == users.count {
+                isPresentingConfirmDeleteUsers = true
+            } toggleAllUsersSelected: {
+                if selectedUsers.isNotEmpty {
                     selectedUsers.removeAll()
                 } else {
-                    selectedUsers.insert(contentsOf: users)
+                    selectedUsers.insert(contentsOf: userGridItems.map(\.user))
                 }
             }
             .focusSection()
         }
         .animation(.linear(duration: 0.1), value: scrollViewOffset)
         .background {
-            if let splashScreenImageSource, selectUserUseSplashscreen {
+            if selectUserUseSplashscreen, splashScreenImageSources.isNotEmpty {
                 ZStack {
-                    ImageView(splashScreenImageSource)
+                    ImageView(splashScreenImageSources)
+                        .pipeline(.Swiftfin.local)
                         .aspectRatio(contentMode: .fill)
-                        .id(splashScreenImageSource)
+                        .id(splashScreenImageSources)
                         .transition(.opacity)
-                        .animation(.linear, value: splashScreenImageSource)
+                        .animation(.linear, value: splashScreenImageSources)
 
                     Color.black
                         .opacity(0.9)
@@ -339,25 +272,6 @@ struct SelectUserView: View {
                 serverSelection = .all
             }
         }
-
-        setSplashScreenImageSource()
-    }
-
-    // MARK: - Did Appear
-
-    private func didAppear() {
-        viewModel.send(.getServers)
-
-        setSplashScreenImageSource()
-    }
-
-    // MARK: - Set Splash Screen Image Source
-
-    private func setSplashScreenImageSource() {
-        splashScreenImageSource = makeSplashScreenImageSource(
-            serverSelection: serverSelection,
-            allServersSelection: .all
-        )
     }
 
     // MARK: - Body
@@ -367,37 +281,24 @@ struct SelectUserView: View {
             if viewModel.servers.isEmpty {
                 emptyView
             } else {
-                userView
+                contentView
             }
         }
         .ignoresSafeArea()
         .navigationBarBranding()
         .onAppear {
-            didAppear()
+            viewModel.send(.getServers)
         }
-        .onChange(of: isEditingUsers) { _, newValue in
-            guard !newValue else { return }
+        .onChange(of: isEditingUsers) {
+            guard !isEditingUsers else { return }
             selectedUsers.removeAll()
         }
-        .onChange(of: serverSelection) { _, newValue in
-            gridItems = makeGridItems(for: newValue)
-
-            setSplashScreenImageSource()
-        }
-        .onChange(of: isPresentingLocalPin) { _, newValue in
-            if newValue {
+        .onChange(of: isPresentingLocalPin) {
+            if isPresentingLocalPin {
                 pin = ""
             } else {
                 selectedUsers.removeAll()
             }
-        }
-        .onChange(of: viewModel.servers) { _, _ in
-            gridItems = makeGridItems(for: serverSelection)
-
-            splashScreenImageSource = makeSplashScreenImageSource(
-                serverSelection: serverSelection,
-                allServersSelection: .all
-            )
         }
         .onReceive(viewModel.events) { event in
             switch event {

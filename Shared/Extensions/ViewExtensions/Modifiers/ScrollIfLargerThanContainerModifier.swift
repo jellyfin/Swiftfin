@@ -9,6 +9,7 @@
 import SwiftUI
 
 // TODO: both axes
+// TODO: add scrollClipDisabled() to iOS when iOS 15 dropped
 
 struct ScrollIfLargerThanContainerModifier: ViewModifier {
 
@@ -28,6 +29,9 @@ struct ScrollIfLargerThanContainerModifier: ViewModifier {
                 content
                     .trackingSize($contentSize)
             }
+            #if os(tvOS)
+            .scrollClipDisabled()
+            #endif
             .frame(maxHeight: contentSize.height >= layoutSize.height ? .infinity : contentSize.height)
             .backport
             .scrollDisabled(contentSize.height < layoutSize.height)

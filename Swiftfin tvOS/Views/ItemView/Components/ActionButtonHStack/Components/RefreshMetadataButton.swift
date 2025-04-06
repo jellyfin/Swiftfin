@@ -33,7 +33,7 @@ extension ItemView {
 
         var body: some View {
             Menu {
-                Group {
+                Section(L10n.metadata) {
                     Button(L10n.findMissing, systemImage: "magnifyingglass") {
                         viewModel.send(
                             .refreshMetadata(

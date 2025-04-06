@@ -66,6 +66,25 @@ struct UserSignInView: View {
         self._viewModel = StateObject(wrappedValue: UserSignInViewModel(server: server))
     }
 
+    // MARK: - Handle Sign In
+
+    @MainActor
+    private func handleSignIn(_ event: UserSignInViewModel.Event) {
+        switch event {
+        case let .duplicateUser(duplicateUser):
+            self.duplicateUser = duplicateUser
+            isPresentingDuplicateUser = true
+        case let .error(eventError):
+            error = eventError
+        case let .signedIn(user):
+            router.dismissCoordinator()
+
+            Defaults[.lastSignedInUserID] = .signedIn(userID: user.id)
+            Container.shared.currentUserSession.reset()
+            Notifications[.didSignIn].post()
+        }
+    }
+
     // MARK: - Sign In Section
 
     @ViewBuilder
@@ -83,12 +102,13 @@ struct UserSignInView: View {
                 }
                 viewModel.send(.signIn(username: username, password: password, policy: .none))
             }
+            .padding(.bottom)
 
         if case .signingIn = viewModel.state {
             ListRowButton(L10n.cancel, role: .cancel) {
                 viewModel.send(.cancel)
             }
-            .padding(.vertical)
+            .padding(.bottom)
         } else {
             ListRowButton(L10n.signIn) {
                 viewModel.send(.signIn(username: username, password: password, policy: .none))
@@ -99,7 +119,7 @@ struct UserSignInView: View {
                 username.isEmpty ? Color.white.opacity(0.5) : accentColor
             )
             .opacity(username.isEmpty ? 0.5 : 1)
-            .padding(.vertical)
+            .padding(.bottom)
         }
 
         if viewModel.isQuickConnectEnabled {
@@ -172,21 +192,10 @@ struct UserSignInView: View {
         } trailingContentView: {
             publicUsersSection
         }
-        .onReceive(viewModel.events) { event in
-            switch event {
-            case let .duplicateUser(duplicateUser):
-                self.duplicateUser = duplicateUser
-                isPresentingDuplicateUser = true
-            case let .error(eventError):
-                error = eventError
-            case let .signedIn(user):
-                router.dismissCoordinator()
-
-                Defaults[.lastSignedInUserID] = .signedIn(userID: user.id)
-                Container.shared.currentUserSession.reset()
-                Notifications[.didSignIn].post()
-            }
-        }
+        .onReceive(
+            viewModel.events,
+            perform: handleSignIn
+        )
         .onFirstAppear {
             focusedField = .username
             viewModel.send(.getPublicData)
