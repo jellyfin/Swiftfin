@@ -133,7 +133,6 @@ extension CustomDeviceProfileSettingsView {
                         Label(L10n.replaceDeviceProfileWarning, systemImage: "exclamationmark.circle.fill")
                     }
                 }
-                .withDescriptionTopPadding()
                 .navigationTitle(L10n.customProfile)
                 .alert(L10n.profileNotSaved, isPresented: $isPresentingNotSaved) {
                     Button(L10n.close, role: .destructive) {

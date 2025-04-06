@@ -23,7 +23,6 @@ struct ExperimentalSettingsView: View {
                     .frame(maxWidth: 400)
             }
             .contentView {}
-            .withDescriptionTopPadding()
             .navigationTitle(L10n.experimental)
     }
 }

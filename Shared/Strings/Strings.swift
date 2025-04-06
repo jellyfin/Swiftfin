@@ -52,8 +52,6 @@ internal enum L10n {
   internal static let addAPIKey = L10n.tr("Localizable", "addAPIKey", fallback: "Add API key")
   /// Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.
   internal static let additionalSecurityAccessDescription = L10n.tr("Localizable", "additionalSecurityAccessDescription", fallback: "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.")
-  /// Add profile
-  internal static let addProfile = L10n.tr("Localizable", "addProfile", fallback: "Add profile")
   /// Add Server
   internal static let addServer = L10n.tr("Localizable", "addServer", fallback: "Add Server")
   /// Add trigger

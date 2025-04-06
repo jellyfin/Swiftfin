@@ -27,19 +27,19 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
         Menu(content: content) {
             HStack {
                 title
-                    .foregroundColor(isFocused ? .black : .white)
+                    .foregroundStyle(isFocused ? .black : .white)
                     .padding(.leading, 4)
 
                 Spacer()
 
                 if let subtitle {
                     subtitle
-                        .foregroundColor(isFocused ? .black : .secondary)
+                        .foregroundStyle(isFocused ? .black : .secondary)
                 }
 
                 Image(systemName: "chevron.up.chevron.down")
                     .font(.body.weight(.regular))
-                    .foregroundColor(isFocused ? .black : .secondary)
+                    .foregroundStyle(isFocused ? .black : .secondary)
                     .brightness(isFocused ? 0.4 : 0)
             }
             .padding(.horizontal)

@@ -65,7 +65,7 @@ struct CustomDeviceProfileSettingsView: View {
 
                 Section {
                     if customProfiles.isEmpty {
-                        Button(L10n.addProfile) {
+                        Button(L10n.add) {
                             router.route(to: \.createCustomDeviceProfile)
                         }
                     }
@@ -97,7 +97,6 @@ struct CustomDeviceProfileSettingsView: View {
                     }
                 }
             }
-            .withDescriptionTopPadding()
             .navigationTitle(L10n.profiles)
     }
 }

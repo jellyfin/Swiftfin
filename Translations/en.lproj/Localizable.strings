@@ -61,9 +61,6 @@
 /// Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.
 "additionalSecurityAccessDescription" = "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.";
 
-/// Add profile
-"addProfile" = "Add profile";
-
 /// Add Server
 "addServer" = "Add Server";
 

@@ -89,7 +89,6 @@ struct VideoPlayerSettingsView: View {
                     }
                 }
             }
-            .withDescriptionTopPadding()
             .navigationTitle(L10n.videoPlayer)
     }
 }
