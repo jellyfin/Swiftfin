@@ -28,8 +28,9 @@ struct AlternateLayoutView<Content: View, Layout: View>: View {
     var body: some View {
         layout()
             .hidden()
-            .overlay(alignment: alignment) {
-                content()
-            }
+            .overlay(
+                alignment: alignment,
+                content: content
+            )
     }
 }

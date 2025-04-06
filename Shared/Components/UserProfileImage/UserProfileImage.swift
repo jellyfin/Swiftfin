@@ -6,18 +6,19 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Factory
-import JellyfinAPI
 import Nuke
 import SwiftUI
 
 struct UserProfileImage<Placeholder: View>: View {
 
-    // MARK: - Inject Logger
+    // MARK: - Environment Variables
 
-    @Injected(\.logService)
-    private var logger
+    @Environment(\.isEnabled)
+    private var isEnabled
+    @Environment(\.isEditing)
+    private var isEditing
+    @Environment(\.isSelected)
+    private var isSelected
 
     // MARK: - User Variables
 
@@ -25,6 +26,17 @@ struct UserProfileImage<Placeholder: View>: View {
     private let source: ImageSource
     private let pipeline: ImagePipeline
     private let placeholder: Placeholder
+
+    // MARK: - Overlay Opacity
+
+    private var overlayOpacity: Double {
+        /// Dim the Profile Image if Editing & Unselected or if Disabled
+        if (isEditing && !isSelected) || !isEnabled {
+            return 0.5
+        } else {
+            return 0.0
+        }
+    }
 
     // MARK: - Body
 
@@ -46,9 +58,12 @@ struct UserProfileImage<Placeholder: View>: View {
                 .failure {
                     placeholder
                 }
-                .posterShadow()
+                .overlay {
+                    Color.black
+                        .opacity(overlayOpacity)
+                }
                 .aspectRatio(1, contentMode: .fill)
-                .clipShape(Circle())
+                .clipShape(.circle)
                 .shadow(radius: 5)
         }
     }

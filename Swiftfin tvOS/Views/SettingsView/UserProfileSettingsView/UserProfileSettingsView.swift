@@ -71,7 +71,6 @@ struct UserProfileSettingsView: View {
 //                Text(L10n.resetSettingsDescription)
 //            }
             }
-            .withDescriptionTopPadding()
             .navigationTitle(L10n.user)
             .confirmationDialog(
                 L10n.resetSettings,

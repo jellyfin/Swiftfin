@@ -742,6 +742,9 @@
 /// Done
 "done" = "Done";
 
+/// Double touch
+"doubleTouch" = "Double touch";
+
 /// Downloads
 "downloads" = "Downloads";
 
@@ -940,6 +943,12 @@
 /// Home
 "home" = "Home";
 
+/// Horizontal pan
+"horizontalPan" = "Horizontal pan";
+
+/// Horizontal swipe
+"horizontalSwipe" = "Horizontal swipe";
+
 /// Hours
 "hours" = "Hours";
 
@@ -1054,6 +1063,9 @@
 /// Left
 "left" = "Left";
 
+/// Left vertical pan
+"leftVerticalPan" = "Left vertical pan";
+
 /// Letter
 "letter" = "Letter";
 
@@ -1119,6 +1131,9 @@
 
 /// Access the Jellyfin server logs for troubleshooting and monitoring purposes.
 "logsDescription" = "Access the Jellyfin server logs for troubleshooting and monitoring purposes.";
+
+/// Long press
+"longPress" = "Long press";
 
 /// Lyricist
 "lyricist" = "Lyricist";
@@ -1198,6 +1213,9 @@
 /// Missing
 "missing" = "Missing";
 
+/// Missing codec values
+"missingCodecValues" = "Missing codec values";
+
 /// Missing Items
 "missingItems" = "Missing Items";
 
@@ -1206,6 +1224,9 @@
 
 /// Movies
 "movies" = "Movies";
+
+/// Multi tap
+"multiTap" = "Multi tap";
 
 /// Music
 "music" = "Music";
@@ -1257,6 +1278,9 @@
 
 /// No
 "no" = "No";
+
+/// No profiles defined. Playback issues may occur.
+"noDeviceProfileWarning" = "No profiles defined. Playback issues may occur.";
 
 /// No episodes available
 "noEpisodesAvailable" = "No episodes available";
@@ -1372,6 +1396,9 @@
 /// Pin
 "pin" = "Pin";
 
+/// Pinch
+"pinch" = "Pinch";
+
 /// Play
 "play" = "Play";
 
@@ -1440,6 +1467,9 @@
 
 /// Profile Image
 "profileImage" = "Profile Image";
+
+/// Profile not saved
+"profileNotSaved" = "Profile not saved";
 
 /// Profiles
 "profiles" = "Profiles";
@@ -1555,6 +1585,9 @@
 /// Replace all unlocked metadata and images with new information.
 "replaceAllDescription" = "Replace all unlocked metadata and images with new information.";
 
+/// Current profile values may cause playback issues
+"replaceDeviceProfileWarning" = "Current profile values may cause playback issues";
+
 /// Replace Images
 "replaceImages" = "Replace Images";
 
@@ -1629,6 +1662,9 @@
 
 /// Right
 "right" = "Right";
+
+/// Right vertical pan
+"rightVerticalPan" = "Right vertical pan";
 
 /// Role
 "role" = "Role";
