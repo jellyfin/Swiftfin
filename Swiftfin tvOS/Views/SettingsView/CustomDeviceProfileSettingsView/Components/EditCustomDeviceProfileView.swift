@@ -130,11 +130,11 @@ extension CustomDeviceProfileSettingsView {
                     .padding(.vertical)
 
                     if !isValid {
-                        Label("Current profile values may cause playback issues", systemImage: "exclamationmark.circle.fill")
+                        Label(L10n.replaceDeviceProfileWarning, systemImage: "exclamationmark.circle.fill")
                     }
                 }
                 .navigationTitle(L10n.customProfile)
-                .alert("Profile not saved", isPresented: $isPresentingNotSaved) {
+                .alert(L10n.profileNotSaved, isPresented: $isPresentingNotSaved) {
                     Button(L10n.close, role: .destructive) {
                         router.dismissCoordinator()
                     }

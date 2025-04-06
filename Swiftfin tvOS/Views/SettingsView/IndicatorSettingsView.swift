@@ -43,7 +43,6 @@ struct IndicatorSettingsView: View {
                     Toggle(L10n.showWatched, isOn: $showWatched)
                 }
             }
-            .withDescriptionTopPadding()
             .navigationTitle(L10n.indicators)
     }
 }

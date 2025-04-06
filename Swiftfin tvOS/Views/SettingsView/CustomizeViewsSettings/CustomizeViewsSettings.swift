@@ -77,7 +77,6 @@ struct CustomizeViewsSettings: View {
 
                 HomeSection()
             }
-            .withDescriptionTopPadding()
             .navigationTitle(L10n.customize)
     }
 }
