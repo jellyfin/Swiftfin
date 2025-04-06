@@ -8,8 +8,6 @@
 
 import SwiftUI
 
-// TODO: See if `descriptionTopPadding` is really necessary to fix the navigation bar padding, or just add all the time
-
 struct SplitFormWindowView: View {
 
     private var contentView: () -> any View
