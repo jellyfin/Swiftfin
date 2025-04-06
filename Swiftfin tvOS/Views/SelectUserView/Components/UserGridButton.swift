@@ -52,64 +52,51 @@ extension SelectUserView {
             return isSelected ? .primary : .secondary
         }
 
-        // MARK: - User Portrait
+        // MARK: - Body
 
-        private var userPortrait: some View {
-            UserProfileImage(
-                userID: user.id,
-                source: user.profileImageSource(
-                    client: server.client,
-                    maxWidth: 120
-                ),
-                pipeline: .Swiftfin.local
-            )
-            .environment(\.isEditing, isEditing)
-            .environment(\.isSelected, isSelected)
-            .aspectRatio(1, contentMode: .fill)
-            .clipShape(.circle)
-            .overlay {
-                ZStack(alignment: .bottom) {
-                    Color.clear
+        var body: some View {
+            Button(action: action) {
+                UserProfileImage(
+                    userID: user.id,
+                    source: user.profileImageSource(
+                        client: server.client,
+                        maxWidth: 120
+                    ),
+                    pipeline: .Swiftfin.local
+                )
+                .overlay(alignment: .bottom) {
                     if isEditing && isSelected {
                         Image(systemName: "checkmark.circle.fill")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: 75, height: 75, alignment: .bottomTrailing)
+                            .frame(width: 75, height: 75)
                             .symbolRenderingMode(.palette)
                             .foregroundStyle(accentColor.overlayColor, accentColor)
                     }
                 }
-            }
-        }
+                .hoverEffect(.highlight)
 
-        // MARK: - Body
+                Text(user.username)
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(labelForegroundStyle)
+                    .lineLimit(1)
 
-        var body: some View {
-            VStack {
-                Button {
-                    action()
-                } label: {
-                    userPortrait
-                        .hoverEffect(.highlight)
-
-                    Text(user.username)
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(labelForegroundStyle)
-                        .lineLimit(1)
-
-                    if showServer {
-                        Text(server.name)
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
+                if showServer {
+                    Text(server.name)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
                 }
-                .buttonStyle(.borderless)
-                .buttonBorderShape(.circle)
-                .contextMenu {
-                    Button(L10n.delete, role: .destructive) {
-                        onDelete()
-                    }
+            }
+            .buttonStyle(.borderless)
+            .buttonBorderShape(.circle)
+            .contextMenu {
+                if !isEditing {
+                    Button(
+                        L10n.delete,
+                        role: .destructive,
+                        action: onDelete
+                    )
                 }
             }
         }

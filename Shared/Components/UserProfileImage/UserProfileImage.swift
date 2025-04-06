@@ -6,18 +6,10 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Factory
-import JellyfinAPI
 import Nuke
 import SwiftUI
 
 struct UserProfileImage<Placeholder: View>: View {
-
-    // MARK: - Inject Logger
-
-    @Injected(\.logService)
-    private var logger
 
     // MARK: - Environment Variables
 
@@ -67,11 +59,11 @@ struct UserProfileImage<Placeholder: View>: View {
                     placeholder
                 }
                 .overlay {
-                    Color.black.opacity(overlayOpacity)
+                    Color.black
+                        .opacity(overlayOpacity)
                 }
-                .posterShadow()
                 .aspectRatio(1, contentMode: .fill)
-                .clipShape(Circle())
+                .clipShape(.circle)
                 .shadow(radius: 5)
         }
     }

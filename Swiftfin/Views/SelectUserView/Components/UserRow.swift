@@ -70,26 +70,6 @@ extension SelectUserView {
         }
 
         @ViewBuilder
-        private var userImage: some View {
-            ZStack {
-                Color.clear
-
-                UserProfileImage(
-                    userID: user.id,
-                    source: user.profileImageSource(
-                        client: server.client,
-                        maxWidth: 120
-                    ),
-                    pipeline: .Swiftfin.local
-                )
-                .environment(\.isEditing, isEditing)
-                .environment(\.isSelected, isSelected)
-            }
-            .aspectRatio(contentMode: .fill)
-            .clipShape(.circle)
-        }
-
-        @ViewBuilder
         private var rowContent: some View {
             HStack {
 
@@ -116,9 +96,16 @@ extension SelectUserView {
 
         var body: some View {
             ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
-                userImage
-                    .frame(width: 80)
-                    .padding(.vertical, 8)
+                UserProfileImage(
+                    userID: user.id,
+                    source: user.profileImageSource(
+                        client: server.client,
+                        maxWidth: 120
+                    ),
+                    pipeline: .Swiftfin.local
+                )
+                .frame(width: 80)
+                .padding(.vertical, 8)
             } content: {
                 rowContent
             }
