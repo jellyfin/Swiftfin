@@ -36,9 +36,6 @@ struct UserSignInView: View {
     private var router: UserSignInCoordinator.Router
 
     @StateObject
-    private var focusGuide: FocusGuide = .init()
-
-    @StateObject
     private var viewModel: UserSignInViewModel
 
     // MARK: - User Sign In Variables
@@ -64,6 +61,26 @@ struct UserSignInView: View {
 
     init(server: ServerState) {
         self._viewModel = StateObject(wrappedValue: UserSignInViewModel(server: server))
+    }
+
+    // MARK: - Handle Sign In
+
+    private func handleSignIn(_ event: UserSignInViewModel.Event) {
+        switch event {
+        case let .duplicateUser(duplicateUser):
+            self.duplicateUser = duplicateUser
+            isPresentingDuplicateUser = true
+        case let .error(eventError):
+            error = eventError
+        case let .signedIn(user):
+            router.dismissCoordinator()
+
+            DispatchQueue.main.async {
+                Defaults[.lastSignedInUserID] = .signedIn(userID: user.id)
+                Container.shared.currentUserSession.reset()
+                Notifications[.didSignIn].post()
+            }
+        }
     }
 
     // MARK: - Sign In Section
@@ -173,19 +190,7 @@ struct UserSignInView: View {
             publicUsersSection
         }
         .onReceive(viewModel.events) { event in
-            switch event {
-            case let .duplicateUser(duplicateUser):
-                self.duplicateUser = duplicateUser
-                isPresentingDuplicateUser = true
-            case let .error(eventError):
-                error = eventError
-            case let .signedIn(user):
-                router.dismissCoordinator()
-
-                Defaults[.lastSignedInUserID] = .signedIn(userID: user.id)
-                Container.shared.currentUserSession.reset()
-                Notifications[.didSignIn].post()
-            }
+            handleSignIn(event)
         }
         .onFirstAppear {
             focusedField = .username
@@ -196,16 +201,6 @@ struct UserSignInView: View {
             isPresented: $isPresentingDuplicateUser,
             presenting: duplicateUser
         ) { _ in
-
-            // TODO: uncomment when duplicate user fixed
-//            Button(L10n.signIn) {
-//                signInDuplicate(user: user, replace: false)
-//            }
-
-//            Button("Replace") {
-//                signInDuplicate(user: user, replace: true)
-//            }
-
             Button(L10n.dismiss, role: .cancel)
         } message: { duplicateUser in
             Text(L10n.duplicateUserSaved(duplicateUser.username))
