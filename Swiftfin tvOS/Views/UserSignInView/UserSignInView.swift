@@ -204,7 +204,8 @@ struct UserSignInView: View {
             isPresented: $isPresentingDuplicateUser,
             presenting: duplicateUser
         ) { _ in
-//            TODO: uncomment when duplicate user fixed
+
+            // TODO: uncomment when duplicate user fixed
 //            Button(L10n.signIn) {
 //                signInDuplicate(user: user, replace: false)
 //            }
@@ -212,6 +213,7 @@ struct UserSignInView: View {
 //            Button("Replace") {
 //                signInDuplicate(user: user, replace: true)
 //            }
+
             Button(L10n.dismiss, role: .cancel)
         } message: { duplicateUser in
             Text(L10n.duplicateUserSaved(duplicateUser.username))
