@@ -338,7 +338,7 @@ class ItemViewModel: ViewModel, Stateful {
 
         guard let itemID = item.id else { return [] }
 
-        let request = Paths.getLocalTrailers(userID: userSession.user.id, itemID: itemID)
+        let request = Paths.getLocalTrailers(itemID: itemID, userID: userSession.user.id)
         let response = try? await userSession.client.send(request)
 
         return response?.value ?? []
