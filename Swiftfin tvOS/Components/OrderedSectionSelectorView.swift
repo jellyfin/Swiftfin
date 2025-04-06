@@ -90,7 +90,6 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
                     }
                     .environment(\.editMode, editMode)
                 }
-                .withDescriptionTopPadding()
                 .animation(.linear(duration: 0.2), value: selection.value)
         }
     }
