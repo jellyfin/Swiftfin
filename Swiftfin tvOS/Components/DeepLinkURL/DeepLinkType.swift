@@ -114,56 +114,55 @@ enum DeepLinkType: String, CaseIterable {
         }
     }
 
+    // MARK: - Get DeepLink from a Prefix String
+
     static func fromPrefix(_ prefix: String) -> DeepLinkType {
         DeepLinkType.allCases.first { $0.prefix == prefix } ?? .unknown
     }
 
-    /// Parse a URL string to identify the deep link type
-    /// - Parameter urlString: The URL to parse
-    /// - Returns: The identified DeepLinkType
+    // MARK: - Get DeepLink from a URL String
+
     static func fromURL(_ urlString: String) -> DeepLinkType {
-        /// Check if it's already a deep link format
         for type in DeepLinkType.allCases where type != .unknown {
             if urlString.hasPrefix(type.prefix) {
                 return type
             }
         }
 
-        /// Not a direct deep link, try to parse from web URL
         guard let url = URL(string: urlString) else {
             return .unknown
         }
 
-        // Match based on host name
-        if url.host?.contains("youtube") == true || url.host?.contains("youtu.be") == true {
+        let hostString = url.host ?? ""
+
+        if hostString.contains("youtube") || hostString.contains("youtu.be") {
             return .youtube
-        } else if url.host?.contains("vimeo") == true {
+        } else if hostString.contains("vimeo") {
             return .vimeo
-        } else if url.host?.contains("netflix") == true {
+        } else if hostString.contains("netflix") {
             return .netflix
-        } else if url.host?.contains("disneyplus") == true {
+        } else if hostString.contains("disneyplus") {
             return .disneyPlus
-        } else if url.host?.contains("amazon") == true && url.path.contains("/video") {
+        } else if hostString.contains("amazon") && url.path.contains("/video") {
             return .amazonPrime
-        } else if url.host?.contains("hbomax") == true || url.host?.contains("max.com") == true {
+        } else if hostString.contains("hbomax") || hostString.contains("max.com") {
             return .hboMax
-        } else if url.host?.contains("hulu") == true {
+        } else if hostString.contains("hulu") {
             return .hulu
-        } else if url.host?.contains("peacocktv") == true {
+        } else if hostString.contains("peacocktv") {
             return .peacock
-        } else if url.host?.contains("paramountplus") == true {
+        } else if hostString.contains("paramountplus") {
             return .paramountPlus
-        } else if url.host?.contains("dailymotion") == true {
+        } else if hostString.contains("dailymotion") {
             return .dailymotion
-        } else if url.host?.contains("twitch") == true {
+        } else if hostString.contains("twitch") {
             return .twitch
-        } else if url.host?.contains("imdb") == true {
+        } else if hostString.contains("imdb") {
             return .imdb
-        } else if url.host?.contains("themoviedb") == true {
+        } else if hostString.contains("themoviedb") {
             return .tmdb
         }
 
-        /// If we can't identify a specific platform, return unknown
         return .unknown
     }
 }

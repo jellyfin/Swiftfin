@@ -13,24 +13,27 @@ struct DeepLinkURL {
     let type: DeepLinkType
     let path: String
 
+    // MARK: - Completed DeepLink URL with Prefix
+
     var url: URL? {
-        URL(string: type.rawValue + path)
+        URL(string: type.prefix + path)
     }
+
+    // MARK: - Verify this URL can be Opened
 
     var valid: Bool {
         guard let url else { return false }
         return UIApplication.shared.canOpenURL(url)
     }
 
+    // MARK: - Initialize from a URL String
+
     init(_ urlString: String) {
-
-        let matchedType = DeepLinkType.allCases.first { type in
-            urlString.hasPrefix(type.rawValue) && type != .unknown
-        } ?? .unknown
-
-        self.type = matchedType
+        self.type = DeepLinkType.fromURL(urlString)
         self.path = urlString
     }
+
+    // MARK: - Initialize from Valid Components
 
     init(type: DeepLinkType, path: String) {
         self.type = type
