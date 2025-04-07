@@ -7,16 +7,9 @@
 //
 
 import Foundation
+import JellyfinAPI
 
-// TODO: move to SDK as patch file
-
-enum TaskTriggerType: String, Codable, CaseIterable, Displayable, SystemImageable {
-
-    case daily = "DailyTrigger"
-    case weekly = "WeeklyTrigger"
-    case interval = "IntervalTrigger"
-    case startup = "StartupTrigger"
-
+extension TaskTriggerType: Displayable, SystemImageable {
     var displayTitle: String {
         switch self {
         case .daily:

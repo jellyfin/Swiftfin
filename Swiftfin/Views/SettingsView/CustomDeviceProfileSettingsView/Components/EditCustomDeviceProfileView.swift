@@ -110,7 +110,7 @@ extension CustomDeviceProfileSettingsView {
                     }
                 } footer: {
                     if !isValid {
-                        Label("Missing codec values", systemImage: "exclamationmark.circle.fill")
+                        Label(L10n.missingCodecValues, systemImage: "exclamationmark.circle.fill")
                             .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                     }
                 }
@@ -136,7 +136,7 @@ extension CustomDeviceProfileSettingsView {
                 .buttonStyle(.toolbarPill)
                 .disabled(!isValid)
             }
-            .alert("Profile not saved", isPresented: $isPresentingNotSaved) {
+            .alert(L10n.profileNotSaved, isPresented: $isPresentingNotSaved) {
                 Button(L10n.close, role: .destructive) {
                     router.dismissCoordinator()
                 }

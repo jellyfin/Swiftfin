@@ -41,7 +41,12 @@ struct ServerUserDeviceAccessView: View {
 
     init(viewModel: ServerUserAdminViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self.tempPolicy = viewModel.user.policy ?? UserPolicy()
+
+        guard let policy = viewModel.user.policy else {
+            preconditionFailure("User policy cannot be empty.")
+        }
+
+        self.tempPolicy = policy
     }
 
     // MARK: - Body

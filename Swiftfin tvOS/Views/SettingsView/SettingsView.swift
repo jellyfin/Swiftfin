@@ -40,8 +40,7 @@ struct SettingsView: View {
                     ChevronButton(
                         L10n.server,
                         subtitle: viewModel.userSession.server.name
-                    )
-                    .onSelect {
+                    ) {
                         router.route(to: \.serverDetail, viewModel.userSession.server)
                     }
                 }
@@ -58,23 +57,20 @@ struct SettingsView: View {
 
                     ListRowMenu(L10n.videoPlayerType, selection: $videoPlayerType)
 
-                    ChevronButton(L10n.videoPlayer)
-                        .onSelect {
-                            router.route(to: \.videoPlayerSettings)
-                        }
+                    ChevronButton(L10n.videoPlayer) {
+                        router.route(to: \.videoPlayerSettings)
+                    }
 
-                    ChevronButton(L10n.playbackQuality)
-                        .onSelect {
-                            router.route(to: \.playbackQualitySettings)
-                        }
+                    ChevronButton(L10n.playbackQuality) {
+                        router.route(to: \.playbackQualitySettings)
+                    }
                 }
 
                 Section(L10n.accessibility) {
 
-                    ChevronButton(L10n.customize)
-                        .onSelect {
-                            router.route(to: \.customizeViewsSettings)
-                        }
+                    ChevronButton(L10n.customize) {
+                        router.route(to: \.customizeViewsSettings)
+                    }
 //
 //                    ChevronButton(L10n.experimental)
 //                        .onSelect {
@@ -84,10 +80,9 @@ struct SettingsView: View {
 
                 Section {
 
-                    ChevronButton(L10n.logs)
-                        .onSelect {
-                            router.route(to: \.log)
-                        }
+                    ChevronButton(L10n.logs) {
+                        router.route(to: \.log)
+                    }
                 }
             }
     }

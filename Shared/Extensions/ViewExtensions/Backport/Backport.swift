@@ -49,6 +49,17 @@ extension Backport where Content: View {
     }
 
     @ViewBuilder
+    func scrollClipDisabled(_ disabled: Bool = true) -> some View {
+        if #available(iOS 17, *) {
+            content.scrollClipDisabled(disabled)
+        } else {
+            content.introspect(.scrollView, on: .iOS(.v15), .tvOS(.v15)) { scrollView in
+                scrollView.clipsToBounds = !disabled
+            }
+        }
+    }
+
+    @ViewBuilder
     func scrollDisabled(_ disabled: Bool) -> some View {
         if #available(iOS 16, tvOS 16, *) {
             content.scrollDisabled(disabled)

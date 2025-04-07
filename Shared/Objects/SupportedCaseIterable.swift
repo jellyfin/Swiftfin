@@ -18,3 +18,10 @@ protocol SupportedCaseIterable: CaseIterable {
 
     static var supportedCases: Self.SupportedCases { get }
 }
+
+extension SupportedCaseIterable where SupportedCases.Element: Equatable {
+
+    var isSupported: Bool {
+        Self.supportedCases.contains(self)
+    }
+}

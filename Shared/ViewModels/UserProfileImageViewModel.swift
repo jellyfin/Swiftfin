@@ -146,7 +146,6 @@ final class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
 
         var request = Paths.postUserImage(
             userID: userID,
-            imageType: "Primary",
             imageData
         )
         request.headers = ["Content-Type": contentType]
@@ -172,10 +171,7 @@ final class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
 
         guard let userID = user.id else { return }
 
-        let request = Paths.deleteUserImage(
-            userID: userID,
-            imageType: "Primary"
-        )
+        let request = Paths.deleteUserImage(userID: userID)
         let _ = try await userSession.client.send(request)
 
         sweepProfileImageCache()

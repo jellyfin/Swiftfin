@@ -72,6 +72,8 @@ class ItemViewModel: ViewModel, Stateful {
     private(set) var similarItems: [BaseItemDto] = []
     @Published
     private(set) var specialFeatures: [BaseItemDto] = []
+    @Published
+    private(set) var localTrailers: [BaseItemDto] = []
 
     @Published
     var backgroundStates: Set<BackgroundState> = []
@@ -127,11 +129,13 @@ class ItemViewModel: ViewModel, Stateful {
                     async let fullItem = getFullItem()
                     async let similarItems = getSimilarItems()
                     async let specialFeatures = getSpecialFeatures()
+                    async let localTrailers = getLocalTrailers()
 
                     let results = try await (
                         fullItem: fullItem,
                         similarItems: similarItems,
-                        specialFeatures: specialFeatures
+                        specialFeatures: specialFeatures,
+                        localTrailers: localTrailers
                     )
 
                     guard !Task.isCancelled else { return }
@@ -150,6 +154,7 @@ class ItemViewModel: ViewModel, Stateful {
 
                         self.similarItems = results.similarItems
                         self.specialFeatures = results.specialFeatures
+                        self.localTrailers = results.localTrailers
 
                         Notifications[.itemMetadataDidChange].post(results.fullItem)
                     }
@@ -177,11 +182,13 @@ class ItemViewModel: ViewModel, Stateful {
                     async let fullItem = getFullItem()
                     async let similarItems = getSimilarItems()
                     async let specialFeatures = getSpecialFeatures()
+                    async let localTrailers = getLocalTrailers()
 
                     let results = try await (
                         fullItem: fullItem,
                         similarItems: similarItems,
-                        specialFeatures: specialFeatures
+                        specialFeatures: specialFeatures,
+                        localTrailers: localTrailers
                     )
 
                     guard !Task.isCancelled else { return }
@@ -194,6 +201,7 @@ class ItemViewModel: ViewModel, Stateful {
                         self.item = results.fullItem
                         self.similarItems = results.similarItems
                         self.specialFeatures = results.specialFeatures
+                        self.localTrailers = results.localTrailers
 
                         self.state = .content
                     }
@@ -317,13 +325,23 @@ class ItemViewModel: ViewModel, Stateful {
     private func getSpecialFeatures() async -> [BaseItemDto] {
 
         let request = Paths.getSpecialFeatures(
-            userID: userSession.user.id,
-            itemID: item.id!
+            itemID: item.id!,
+            userID: userSession.user.id
         )
         let response = try? await userSession.client.send(request)
 
         return (response?.value ?? [])
             .filter { $0.extraType?.isVideo ?? false }
+    }
+
+    private func getLocalTrailers() async throws -> [BaseItemDto] {
+
+        guard let itemID = item.id else { return [] }
+
+        let request = Paths.getLocalTrailers(itemID: itemID, userID: userSession.user.id)
+        let response = try? await userSession.client.send(request)
+
+        return response?.value ?? []
     }
 
     private func setIsPlayed(_ isPlayed: Bool) async throws {
@@ -334,13 +352,13 @@ class ItemViewModel: ViewModel, Stateful {
 
         if isPlayed {
             request = Paths.markPlayedItem(
-                userID: userSession.user.id,
-                itemID: item.id!
+                itemID: item.id!,
+                userID: userSession.user.id
             )
         } else {
             request = Paths.markUnplayedItem(
-                userID: userSession.user.id,
-                itemID: item.id!
+                itemID: item.id!,
+                userID: userSession.user.id
             )
         }
 
@@ -354,13 +372,13 @@ class ItemViewModel: ViewModel, Stateful {
 
         if isFavorite {
             request = Paths.markFavoriteItem(
-                userID: userSession.user.id,
-                itemID: item.id!
+                itemID: item.id!,
+                userID: userSession.user.id
             )
         } else {
             request = Paths.unmarkFavoriteItem(
-                userID: userSession.user.id,
-                itemID: item.id!
+                itemID: item.id!,
+                userID: userSession.user.id
             )
         }
 

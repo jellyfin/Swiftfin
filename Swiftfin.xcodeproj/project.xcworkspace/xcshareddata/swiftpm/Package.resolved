@@ -87,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Get",
       "state" : {
-        "revision" : "74dba201ebe42e9c15c1db6ee1cc893025bbef94",
-        "version" : "2.2.0"
+        "revision" : "31249885da1052872e0ac91a2943f62567c0d96d",
+        "version" : "2.2.1"
       }
     },
     {
@@ -96,8 +96,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jellyfin/jellyfin-sdk-swift.git",
       "state" : {
-        "revision" : "eae2ab5ed7caf770d79afbcdae08aab48df27a6e",
-        "version" : "0.3.4"
+        "revision" : "10624671970ee1ad49ce817ee7b8ee3074f89a32",
+        "version" : "0.5.1"
       }
     },
     {
@@ -259,7 +259,7 @@
       "location" : "https://github.com/LePips/VLCUI",
       "state" : {
         "branch" : "main",
-        "revision" : "50d4f6ec05a2d8333952def0d8e45019a4207132"
+        "revision" : "9e0285b13c666aace61835e8a512512edee822a6"
       }
     }
   ],

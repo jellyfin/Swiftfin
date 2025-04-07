@@ -16,23 +16,13 @@ extension EditServerTaskView {
 
         let taskTriggerInfo: TaskTriggerInfo
 
-        // TODO: remove after `TaskTriggerType` is provided by SDK
-
-        private var taskTriggerType: TaskTriggerType {
-            if let t = taskTriggerInfo.type, let type = TaskTriggerType(rawValue: t) {
-                return type
-            } else {
-                return .startup
-            }
-        }
-
         // MARK: - Body
 
         var body: some View {
             HStack {
                 VStack(alignment: .leading) {
 
-                    Text(triggerDisplayText)
+                    Text(triggerDisplayText(for: taskTriggerInfo.type))
                         .fontWeight(.semibold)
 
                     Group {
@@ -52,7 +42,7 @@ extension EditServerTaskView {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                Image(systemName: taskTriggerType.systemImage)
+                Image(systemName: (taskTriggerInfo.type ?? .startup).systemImage)
                     .backport
                     .fontWeight(.bold)
                     .foregroundStyle(.secondary)
@@ -61,12 +51,15 @@ extension EditServerTaskView {
 
         // MARK: - Trigger Display Text
 
-        private var triggerDisplayText: String {
-            switch taskTriggerType {
+        private func triggerDisplayText(for triggerType: TaskTriggerType?) -> String {
+
+            guard let triggerType else { return L10n.unknown }
+
+            switch triggerType {
             case .daily:
                 if let timeOfDayTicks = taskTriggerInfo.timeOfDayTicks {
                     return L10n.itemAtItem(
-                        taskTriggerType.displayTitle,
+                        triggerType.displayTitle,
                         ServerTicks(timeOfDayTicks)
                             .date.formatted(date: .omitted, time: .shortened)
                     )
@@ -89,7 +82,7 @@ extension EditServerTaskView {
                     )
                 }
             case .startup:
-                return taskTriggerType.displayTitle
+                return triggerType.displayTitle
             }
 
             return L10n.unknown

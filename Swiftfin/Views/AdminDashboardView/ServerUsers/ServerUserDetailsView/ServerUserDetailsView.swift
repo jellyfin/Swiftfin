@@ -65,7 +65,7 @@ struct ServerUserDetailsView: View {
             }
 
             Section {
-                ChevronAlertButton(
+                ChevronButton(
                     L10n.username,
                     subtitle: viewModel.user.name
                 ) {
@@ -82,45 +82,37 @@ struct ServerUserDetailsView: View {
                     }
                 }
                 if let userId = viewModel.user.id {
-                    ChevronButton(L10n.password)
-                        .onSelect {
-                            router.route(to: \.resetUserPassword, userId)
-                        }
-                }
-                ChevronButton(L10n.permissions)
-                    .onSelect {
-                        router.route(to: \.userPermissions, viewModel)
+                    ChevronButton(L10n.password) {
+                        router.route(to: \.resetUserPassword, userId)
                     }
+                }
+                ChevronButton(L10n.permissions) {
+                    router.route(to: \.userPermissions, viewModel)
+                }
             }
 
             Section(L10n.access) {
-                ChevronButton(L10n.devices)
-                    .onSelect {
-                        router.route(to: \.userDeviceAccess, viewModel)
-                    }
-                ChevronButton(L10n.liveTV)
-                    .onSelect {
-                        router.route(to: \.userLiveTVAccess, viewModel)
-                    }
-                ChevronButton(L10n.media)
-                    .onSelect {
-                        router.route(to: \.userMediaAccess, viewModel)
-                    }
+                ChevronButton(L10n.devices) {
+                    router.route(to: \.userDeviceAccess, viewModel)
+                }
+                ChevronButton(L10n.liveTV) {
+                    router.route(to: \.userLiveTVAccess, viewModel)
+                }
+                ChevronButton(L10n.media) {
+                    router.route(to: \.userMediaAccess, viewModel)
+                }
             }
 
             Section(L10n.parentalControls) {
-                ChevronButton(L10n.ratings)
-                    .onSelect {
-                        router.route(to: \.userParentalRatings, viewModel)
-                    }
-                ChevronButton(L10n.accessSchedules)
-                    .onSelect {
-                        router.route(to: \.userEditAccessSchedules, viewModel)
-                    }
-                ChevronButton(L10n.accessTags)
-                    .onSelect {
-                        router.route(to: \.userEditAccessTags, viewModel)
-                    }
+                ChevronButton(L10n.ratings) {
+                    router.route(to: \.userParentalRatings, viewModel)
+                }
+                ChevronButton(L10n.accessSchedules) {
+                    router.route(to: \.userEditAccessSchedules, viewModel)
+                }
+                ChevronButton(L10n.accessTags) {
+                    router.route(to: \.userEditAccessTags, viewModel)
+                }
             }
         }
         .navigationTitle(L10n.user)

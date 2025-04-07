@@ -31,7 +31,7 @@ final class DownloadVideoPlayerManager: VideoPlayerManager {
             selectedAudioStreamIndex: 1,
             selectedSubtitleStreamIndex: 1,
             chapters: downloadTask.item.fullChapterInfo,
-            streamType: .direct
+            playMethod: .directPlay
         )
     }
 

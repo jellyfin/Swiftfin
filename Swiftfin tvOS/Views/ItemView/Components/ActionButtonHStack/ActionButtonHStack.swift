@@ -12,6 +12,15 @@ extension ItemView {
 
     struct ActionButtonHStack: View {
 
+        @StoredValue(.User.enableItemDeletion)
+        private var enableItemDeletion: Bool
+        @StoredValue(.User.enableItemEditing)
+        private var enableItemEditing: Bool
+        @StoredValue(.User.enableCollectionManagement)
+        private var enableCollectionManagement: Bool
+        @StoredValue(.User.enabledTrailers)
+        private var enabledTrailers: TrailerSelection
+
         // MARK: - Observed, State, & Environment Objects
 
         @EnvironmentObject
@@ -22,15 +31,6 @@ extension ItemView {
 
         @StateObject
         private var deleteViewModel: DeleteItemViewModel
-
-        // MARK: - Defaults
-
-        @StoredValue(.User.enableItemDeletion)
-        private var enableItemDeletion: Bool
-        @StoredValue(.User.enableItemEditing)
-        private var enableItemEditing: Bool
-        @StoredValue(.User.enableCollectionManagement)
-        private var enableCollectionManagement: Bool
 
         // MARK: - Dialog States
 
@@ -64,6 +64,20 @@ extension ItemView {
             }
         }
 
+        // MARK: - Has Trailers
+
+        private var hasTrailers: Bool {
+            if enabledTrailers.contains(.local), viewModel.localTrailers.isNotEmpty {
+                return true
+            }
+
+            if enabledTrailers.contains(.external), viewModel.item.remoteTrailers?.isNotEmpty == true {
+                return true
+            }
+
+            return false
+        }
+
         // MARK: - Initializer
 
         init(viewModel: ItemViewModel) {
@@ -74,60 +88,67 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            HStack(alignment: .center, spacing: 24) {
+            HStack(alignment: .center, spacing: 20) {
 
-                // MARK: - Toggle Played
+                // MARK: Toggle Played
+
+                let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
 
                 ActionButton(
-                    title: L10n.played,
+                    L10n.played,
                     icon: "checkmark.circle",
                     selectedIcon: "checkmark.circle.fill"
                 ) {
                     viewModel.send(.toggleIsPlayed)
                 }
                 .foregroundStyle(.purple)
-                .environment(\.isSelected, viewModel.item.userData?.isPlayed ?? false)
-                .frame(minWidth: 80, maxWidth: .infinity)
+                .environment(\.isSelected, isCheckmarkSelected)
+                .frame(minWidth: 100, maxWidth: .infinity)
 
-                // MARK: - Toggle Favorite
+                // MARK: Toggle Favorite
+
+                let isHeartSelected = viewModel.item.userData?.isFavorite == true
 
                 ActionButton(
-                    title: L10n.favorited,
+                    L10n.favorited,
                     icon: "heart.circle",
                     selectedIcon: "heart.circle.fill"
                 ) {
                     viewModel.send(.toggleIsFavorite)
                 }
                 .foregroundStyle(.pink)
-                .environment(\.isSelected, viewModel.item.userData?.isFavorite ?? false)
-                .frame(minWidth: 80, maxWidth: .infinity)
+                .environment(\.isSelected, isHeartSelected)
+                .frame(minWidth: 100, maxWidth: .infinity)
 
-                // MARK: - Select Merged Version
+                // MARK: Watch a Trailer
 
-                if let mediaSources = viewModel.playButtonItem?.mediaSources, mediaSources.count > 1 {
-                    VersionMenu(viewModel: viewModel, mediaSources: mediaSources)
-                        .frame(minWidth: 80, maxWidth: .infinity)
+                if hasTrailers {
+                    TrailerMenu(
+                        localTrailers: viewModel.localTrailers,
+                        externalTrailers: viewModel.item.remoteTrailers ?? []
+                    )
                 }
 
-                // MARK: - Additional Menu Options
+                // MARK: Advanced Options
 
                 if canRefresh || canDelete {
-                    ActionMenu {
+                    ActionButton(L10n.advanced, icon: "ellipsis", isCompact: true) {
                         if canRefresh {
                             RefreshMetadataButton(item: viewModel.item)
                         }
 
                         if canDelete {
-                            Divider()
                             Button(L10n.delete, systemImage: "trash", role: .destructive) {
                                 showConfirmationDialog = true
                             }
                         }
                     }
-                    .frame(minWidth: 30, maxWidth: 50)
+                    .frame(width: 60)
                 }
             }
             .frame(height: 100)
+            .padding(.top, 1)
+            .padding(.bottom, 10)
             .confirmationDialog(
                 L10n.deleteItemConfirmationMessage,
                 isPresented: $showConfirmationDialog,

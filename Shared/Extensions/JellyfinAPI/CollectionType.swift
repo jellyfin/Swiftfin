@@ -9,12 +9,15 @@
 import Foundation
 import JellyfinAPI
 
-extension DeviceInfo {
+extension CollectionType: SupportedCaseIterable {
 
-    var type: DeviceType {
-        DeviceType(
-            client: appName,
-            deviceName: name
-        )
+    static var supportedCases: [CollectionType] {
+        [
+            .boxsets,
+            .folders,
+            .movies,
+            .tvshows,
+            .livetv,
+        ]
     }
 }

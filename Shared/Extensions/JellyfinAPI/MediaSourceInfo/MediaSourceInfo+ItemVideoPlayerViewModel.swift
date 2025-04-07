@@ -20,13 +20,13 @@ extension MediaSourceInfo {
 
         let userSession: UserSession! = Container.shared.currentUserSession()
         let playbackURL: URL
-        let streamType: StreamType
+        let playMethod: PlayMethod
 
         if let transcodingURL {
             guard let fullTranscodeURL = userSession.client.fullURL(with: transcodingURL)
             else { throw JellyfinAPIError("Unable to make transcode URL") }
             playbackURL = fullTranscodeURL
-            streamType = .transcode
+            playMethod = .transcode
         } else {
             let videoStreamParameters = Paths.GetVideoStreamParameters(
                 isStatic: true,
@@ -44,7 +44,7 @@ extension MediaSourceInfo {
             else { throw JellyfinAPIError("Unable to make stream URL") }
 
             playbackURL = streamURL
-            streamType = .direct
+            playMethod = .directPlay
         }
 
         let videoStreams = mediaStreams?.filter { $0.type == .video } ?? []
@@ -62,7 +62,7 @@ extension MediaSourceInfo {
             selectedAudioStreamIndex: defaultAudioStreamIndex ?? -1,
             selectedSubtitleStreamIndex: defaultSubtitleStreamIndex ?? -1,
             chapters: item.fullChapterInfo,
-            streamType: streamType
+            playMethod: playMethod
         )
     }
 
@@ -70,16 +70,16 @@ extension MediaSourceInfo {
 
         let userSession: UserSession! = Container.shared.currentUserSession()
         let playbackURL: URL
-        let streamType: StreamType
+        let playMethod: PlayMethod
 
         if let transcodingURL {
             guard let fullTranscodeURL = URL(string: transcodingURL, relativeTo: userSession.server.currentURL)
             else { throw JellyfinAPIError("Unable to construct transcoded url") }
             playbackURL = fullTranscodeURL
-            streamType = .transcode
+            playMethod = .transcode
         } else if self.isSupportsDirectPlay ?? false, let path = self.path, let playbackUrl = URL(string: path) {
             playbackURL = playbackUrl
-            streamType = .direct
+            playMethod = .directPlay
         } else {
             let videoStreamParameters = Paths.GetVideoStreamParameters(
                 isStatic: true,
@@ -97,7 +97,7 @@ extension MediaSourceInfo {
                 throw JellyfinAPIError("Unable to construct transcoded url")
             }
             playbackURL = fullURL
-            streamType = .direct
+            playMethod = .directPlay
         }
 
         let videoStreams = mediaStreams?.filter { $0.type == .video } ?? []
@@ -115,7 +115,7 @@ extension MediaSourceInfo {
             selectedAudioStreamIndex: defaultAudioStreamIndex ?? -1,
             selectedSubtitleStreamIndex: defaultSubtitleStreamIndex ?? -1,
             chapters: item.fullChapterInfo,
-            streamType: streamType
+            playMethod: playMethod
         )
     }
 }

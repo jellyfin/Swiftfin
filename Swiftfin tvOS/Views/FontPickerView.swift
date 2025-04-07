@@ -49,6 +49,5 @@ struct FontPickerView: View {
                     }
                 }
             }
-            .withDescriptionTopPadding()
     }
 }
