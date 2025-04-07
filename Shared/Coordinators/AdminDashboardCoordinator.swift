@@ -20,6 +20,11 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     // MARK: - Route: Active Sessions
 
     @Route(.push)
+    var activity = makeActivityLogs
+
+    // MARK: - Route: Active Sessions
+
+    @Route(.push)
     var activeSessions = makeActiveSessions
     @Route(.push)
     var activeDeviceDetails = makeActiveDeviceDetails
@@ -83,6 +88,13 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
 
     @Route(.push)
     var apiKeys = makeAPIKeys
+
+    // MARK: - Views: Active Sessions
+
+    @ViewBuilder
+    func makeActivityLogs() -> some View {
+        ServerActivityView()
+    }
 
     // MARK: - Views: Active Sessions
 
