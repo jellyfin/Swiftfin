@@ -37,6 +37,7 @@
 		4E182C9F2C94A1E000FBEFD5 /* ServerTaskRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E182C9E2C94A1E000FBEFD5 /* ServerTaskRow.swift */; };
 		4E1A39332D56C84200BAC1C7 /* ItemViewAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A39322D56C83E00BAC1C7 /* ItemViewAttributes.swift */; };
 		4E1A39342D56C84200BAC1C7 /* ItemViewAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A39322D56C83E00BAC1C7 /* ItemViewAttributes.swift */; };
+		4E1A9C172DA41C970052107F /* AttributesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A9C162DA41C970052107F /* AttributesView.swift */; };
 		4E1AA0042D0640AA00524970 /* RemoteImageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1AA0032D0640A400524970 /* RemoteImageInfo.swift */; };
 		4E1AA0052D0640AA00524970 /* RemoteImageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1AA0032D0640A400524970 /* RemoteImageInfo.swift */; };
 		4E204E592C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E204E582C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift */; };
@@ -956,7 +957,6 @@
 		E18E01EA288747230022598C /* MovieItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E01CF288747230022598C /* MovieItemView.swift */; };
 		E18E01EB288747230022598C /* MovieItemContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E01D0288747230022598C /* MovieItemContentView.swift */; };
 		E18E01EE288747230022598C /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E01D5288747230022598C /* AboutView.swift */; };
-		E18E01F0288747230022598C /* AttributesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E01D7288747230022598C /* AttributesView.swift */; };
 		E18E01F1288747230022598C /* PlayButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E01D8288747230022598C /* PlayButton.swift */; };
 		E18E01F2288747230022598C /* ActionButtonHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E01D9288747230022598C /* ActionButtonHStack.swift */; };
 		E18E01FA288747580022598C /* AboutAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E01F3288747580022598C /* AboutAppView.swift */; };
@@ -1304,6 +1304,7 @@
 		4E182C9B2C94993200FBEFD5 /* ServerTasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerTasksView.swift; sourceTree = "<group>"; };
 		4E182C9E2C94A1E000FBEFD5 /* ServerTaskRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerTaskRow.swift; sourceTree = "<group>"; };
 		4E1A39322D56C83E00BAC1C7 /* ItemViewAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemViewAttributes.swift; sourceTree = "<group>"; };
+		4E1A9C162DA41C970052107F /* AttributesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributesView.swift; sourceTree = "<group>"; };
 		4E1AA0032D0640A400524970 /* RemoteImageInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageInfo.swift; sourceTree = "<group>"; };
 		4E204E582C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeSettingsCoordinator.swift; sourceTree = "<group>"; };
 		4E2182E42CAF67EF0094806B /* PlayMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayMethod.swift; sourceTree = "<group>"; };
@@ -1943,7 +1944,6 @@
 		E18E01CF288747230022598C /* MovieItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieItemView.swift; sourceTree = "<group>"; };
 		E18E01D0288747230022598C /* MovieItemContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieItemContentView.swift; sourceTree = "<group>"; };
 		E18E01D5288747230022598C /* AboutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
-		E18E01D7288747230022598C /* AttributesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributesView.swift; sourceTree = "<group>"; };
 		E18E01D8288747230022598C /* PlayButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayButton.swift; sourceTree = "<group>"; };
 		E18E01D9288747230022598C /* ActionButtonHStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionButtonHStack.swift; sourceTree = "<group>"; };
 		E18E01F3288747580022598C /* AboutAppView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutAppView.swift; sourceTree = "<group>"; };
@@ -2535,15 +2535,6 @@
 			path = ServerUserLiveTVAccessView;
 			sourceTree = "<group>";
 		};
-		4E6163B32D99DF9500B877BD /* AttributeView */ = {
-			isa = PBXGroup;
-			children = (
-				4E6163B62D99E06B00B877BD /* AttributeLayout.swift */,
-				E18E01D7288747230022598C /* AttributesView.swift */,
-			);
-			path = AttributeView;
-      sourceTree = "<group>";
-		};
 		4E5D3ECB2D893F0B003E2772 /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -2551,6 +2542,15 @@
 				4E5D3EC72D8920AF003E2772 /* TrailerMenu.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		4E6163B32D99DF9500B877BD /* AttributeView */ = {
+			isa = PBXGroup;
+			children = (
+				4E6163B62D99E06B00B877BD /* AttributeLayout.swift */,
+				4E1A9C162DA41C970052107F /* AttributesView.swift */,
+			);
+			path = AttributeView;
 			sourceTree = "<group>";
 		};
 		4E63B9F52C8A5BEF00C25378 /* AdminDashboardView */ = {
@@ -4996,7 +4996,6 @@
 				4E6163B32D99DF9500B877BD /* AttributeView */,
 				4EB3F0352D8CD32900EBEDAA /* ActionButton */,
 				4EB3F0302D8CCD3500EBEDAA /* ActionButtonHStack */,
-				E18E01D7288747230022598C /* AttributeHStack.swift */,
 				E17FB55628C1256400311DFE /* CastAndCrewHStack.swift */,
 				E17AC9722955007A003D2BC2 /* DownloadTaskButton.swift */,
 				E172D3AF2BACA54A007B4647 /* EpisodeSelector */,
@@ -6557,6 +6556,7 @@
 				E172D3AD2BAC9DF8007B4647 /* SeasonItemViewModel.swift in Sources */,
 				4E1AA0042D0640AA00524970 /* RemoteImageInfo.swift in Sources */,
 				4E762AAE2C3A1A95004D1579 /* PlaybackBitrate.swift in Sources */,
+				4E1A9C172DA41C970052107F /* AttributesView.swift in Sources */,
 				536D3D78267BD5C30004248C /* ViewModel.swift in Sources */,
 				E1FCD08826C35A0D007C8DCF /* NetworkError.swift in Sources */,
 				E175AFF3299AC117004DCF52 /* DebugSettingsView.swift in Sources */,
@@ -6674,7 +6674,6 @@
 				E1E306CD28EF6E8000537998 /* TimerProxy.swift in Sources */,
 				BD0BA22E2AD6508C00306A8D /* DownloadVideoPlayerManager.swift in Sources */,
 				E18CE0B228A229E70092E7F1 /* UserDto.swift in Sources */,
-				E18E01F0288747230022598C /* AttributesView.swift in Sources */,
 				6334175B287DDFB9000603CE /* QuickConnectAuthorizeView.swift in Sources */,
 				4E0A8FFB2CAF74D20014B047 /* TaskCompletionStatus.swift in Sources */,
 				E13F05F128BC9016003499D2 /* LibraryRow.swift in Sources */,

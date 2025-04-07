@@ -164,9 +164,14 @@ extension ItemView {
             /// Calculate how many go in top row (the rest)
             let topRowCount = itemCount - bottomRowCount
 
+            /// Ensure at least 2 items are moved to top row if any are moved
+            if topRowCount == 1 && itemCount >= 3 {
+                bottomRowCount -= 1
+            }
+
             /// Create the row arrays in original order
-            let topRowIndices = Array(0 ..< topRowCount)
-            let bottomRowIndices = Array(topRowCount ..< itemCount)
+            let topRowIndices = Array(0 ..< (itemCount - bottomRowCount))
+            let bottomRowIndices = Array((itemCount - bottomRowCount) ..< itemCount)
 
             return (topRowIndices, bottomRowIndices)
         }
