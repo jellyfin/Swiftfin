@@ -128,7 +128,8 @@ extension EpisodeItemView.ContentView {
                 .foregroundColor(.secondary)
                 .padding(.horizontal)
 
-                ItemView.AttributesHStack(viewModel: viewModel)
+                ItemView.AttributesView(viewModel: viewModel, alignment: .center)
+                    .frame(maxWidth: 300)
 
                 ItemView.PlayButton(viewModel: viewModel)
                     .frame(maxWidth: 300)

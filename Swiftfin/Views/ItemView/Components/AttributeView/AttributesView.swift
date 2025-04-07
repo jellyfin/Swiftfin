@@ -7,32 +7,40 @@
 //
 
 import SwiftUI
-import WrappingHStack
 
 extension ItemView {
-    struct AttributesHStack: View {
+    struct AttributesView: View {
         @ObservedObject
         var viewModel: ItemViewModel
 
+        let alignment: Alignment
+
         @StoredValue(.User.itemViewAttributes)
         private var itemViewAttributes
+
+        // MARK: - Initializer
+
+        init(viewModel: ItemViewModel, alignment: Alignment) {
+            self._viewModel = ObservedObject(wrappedValue: viewModel)
+            self.alignment = alignment
+            self.itemViewAttributes = itemViewAttributes
+        }
 
         // MARK: - Body
 
         var body: some View {
             let badges = computeBadges()
-            if !badges.isEmpty {
-                WrappingHStack(badges, id: \.self, alignment: .center, spacing: .constant(8), lineSpacing: 8) { badgeItem in
-                    badgeItem
+
+            AttributeLayout(alignment: alignment, spacing: 8, lineSpacing: 8) {
+                ForEach(badges.indices, id: \.self) { index in
+                    badges[index]
                         .fixedSize(horizontal: true, vertical: false)
                 }
-                .foregroundStyle(Color(UIColor.darkGray))
-                .lineLimit(1)
-                .frame(maxWidth: 300)
             }
+            .frame(maxWidth: .infinity, alignment: alignment)
+            .foregroundStyle(Color(UIColor.darkGray))
+            .lineLimit(1)
         }
-
-        // MARK: - Compute Badges
 
         private func computeBadges() -> [AnyView] {
             var badges: [AnyView] = []
