@@ -311,6 +311,7 @@ struct SelectUserView: View {
                 spacing: EdgeInsets.edgePadding,
                 content: userGridItemView
             )
+            .edgePadding()
         }
     }
 

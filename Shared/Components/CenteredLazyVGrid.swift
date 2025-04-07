@@ -111,12 +111,17 @@ extension CenteredLazyVGrid {
         let minimum: CGFloat
         let spacing: CGFloat
 
-        private var columnCount: Int {
-            Int(contentSize.width / (elementSize.width + spacing))
+        private var columnCount: Int? {
+            let elementSizeAndWidth = elementSize.width + spacing
+            guard elementSizeAndWidth > 0 else { return nil }
+
+            let additionalPadding = data.count >= 1 ? spacing : 0
+
+            return Int((contentSize.width + additionalPadding) / elementSizeAndWidth)
         }
 
         private func elementXOffset(for offset: Int) -> CGFloat {
-            let columnCount = self.columnCount
+            guard let columnCount, columnCount > 0 else { return 0 }
             let dataCount = data.count
             let lastRowCount = dataCount % columnCount
 
@@ -127,7 +132,7 @@ extension CenteredLazyVGrid {
             guard lastRowIndices.contains(offset) else { return 0 }
 
             let lastRowMissingCount = columnCount - lastRowCount
-            return CGFloat(lastRowMissingCount) * (contentSize.width + spacing) / 2
+            return CGFloat(lastRowMissingCount) * (elementSize.width + spacing) / 2
         }
 
         var body: some View {
