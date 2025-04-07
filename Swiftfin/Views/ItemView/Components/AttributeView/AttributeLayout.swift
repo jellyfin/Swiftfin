@@ -9,7 +9,7 @@
 import SwiftUI
 
 extension ItemView {
-    @available(iOS 16.0, *)
+
     struct AttributeLayout: Layout {
         var alignment: Alignment = .center
         var spacing: CGFloat = 8
