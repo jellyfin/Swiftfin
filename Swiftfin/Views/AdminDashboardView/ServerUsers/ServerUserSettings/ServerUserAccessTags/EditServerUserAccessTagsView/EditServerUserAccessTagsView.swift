@@ -220,8 +220,11 @@ struct EditServerUserAccessTagsView: View {
         Button(L10n.cancel, role: .cancel) {}
 
         Button(L10n.delete, role: .destructive) {
-            // TODO: 10.10 - What should authenticationProviderID & passwordResetProviderID be?
-            var tempPolicy = viewModel.user.policy ?? UserPolicy(authenticationProviderID: "", passwordResetProviderID: "")
+            guard let policy = viewModel.user.policy else {
+                preconditionFailure("User policy cannot be empty.")
+            }
+
+            var tempPolicy = policy
 
             for tag in selectedTags {
                 if tag.access {

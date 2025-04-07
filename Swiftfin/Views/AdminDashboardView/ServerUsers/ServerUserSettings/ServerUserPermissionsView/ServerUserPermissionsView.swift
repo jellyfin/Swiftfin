@@ -35,8 +35,12 @@ struct ServerUserPermissionsView: View {
 
     init(viewModel: ServerUserAdminViewModel) {
         self._viewModel = ObservedObject(wrappedValue: viewModel)
-        // TODO: 10.10 - What should authenticationProviderID & passwordResetProviderID be?
-        self.tempPolicy = viewModel.user.policy ?? UserPolicy(authenticationProviderID: "", passwordResetProviderID: "")
+
+        guard let policy = viewModel.user.policy else {
+            preconditionFailure("User policy cannot be empty.")
+        }
+
+        self.tempPolicy = policy
     }
 
     // MARK: - Body

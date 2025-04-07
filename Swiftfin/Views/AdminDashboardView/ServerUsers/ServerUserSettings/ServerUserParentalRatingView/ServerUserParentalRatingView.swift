@@ -36,8 +36,12 @@ struct ServerUserParentalRatingView: View {
 
     init(viewModel: ServerUserAdminViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        // TODO: 10.10 - What should authenticationProviderID & passwordResetProviderID be?
-        self.tempPolicy = viewModel.user.policy ?? UserPolicy(authenticationProviderID: "", passwordResetProviderID: "")
+
+        guard let policy = viewModel.user.policy else {
+            preconditionFailure("User policy cannot be empty.")
+        }
+
+        self.tempPolicy = policy
     }
 
     // MARK: - Body
