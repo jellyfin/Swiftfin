@@ -13,75 +13,83 @@ import SwiftUI
 
 struct ServerActivityDetailsView: View {
 
-    // MARK: - Dismiss
+    // MARK: - Environment Objects
 
-    @Environment(\.dismiss)
-    private var dismiss
-
-    // MARK: - View Model
-
-    @StateObject
-    private var usersViewModel = ServerUsersViewModel()
+    @EnvironmentObject
+    private var router: AdminDashboardCoordinator.Router
 
     // MARK: - Activity Log Entry Variable
 
-    private let logEntry: ActivityLogEntry
+    @ObservedObject
+    var viewModel: ServerActivityDetailViewModel
 
     // MARK: - Initializer
 
-    init(_ logEntry: ActivityLogEntry) {
-        self.logEntry = logEntry
-    }
-
-    // MARK: - Formatted Date
-
-    private var eventDate: String {
-        guard let date = logEntry.date else { return L10n.unknown }
-        let formatter = DateFormatter()
-        formatter.dateStyle = .long
-        formatter.timeStyle = .medium
-        return formatter.string(from: date)
+    init(viewModel: ServerActivityDetailViewModel) {
+        self.viewModel = viewModel
     }
 
     // MARK: - Body
 
     var body: some View {
         List {
-            Section(L10n.overview) {
-                if let name = logEntry.name, !name.isEmpty {
-                    Text(name)
+            /// Item (If Available)
+            if let item = viewModel.item {
+                AdminDashboardView.MediaItemSection(item: item)
+            }
+
+            /// User (If Available)
+            if let user = viewModel.user {
+                AdminDashboardView.UserSection(
+                    user: user,
+                    lastActivityDate: viewModel.log.date
+                ) {
+                    router.route(to: \.userDetails, user)
                 }
             }
 
+            /// Event Name & Overview
+            Section(L10n.overview) {
+                if let name = viewModel.log.name, !name.isEmpty {
+                    Text(name)
+                }
+                if let overview = viewModel.log.overview, !overview.isEmpty {
+                    Text(overview)
+                } else if let shortOverview = viewModel.log.shortOverview, !shortOverview.isEmpty {
+                    Text(shortOverview)
+                }
+            }
+
+            /// Event Details
             Section(L10n.details) {
-                TextPairView(
-                    leading: "Date",
-                    trailing: eventDate
-                )
-                if let type = logEntry.type {
+                if let severity = viewModel.log.severity {
+                    TextPairView(
+                        leading: L10n.level,
+                        trailing: severity.displayTitle
+                    )
+                }
+                if let type = viewModel.log.type {
                     TextPairView(
                         leading: L10n.type,
                         trailing: type
                     )
                 }
-            }
-
-            Section {
-                if let overview = logEntry.overview, !overview.isEmpty {
-                    Text(overview)
-                } else if let shortOverview = logEntry.shortOverview, !shortOverview.isEmpty {
-                    Text(shortOverview)
+                if let date = viewModel.log.date {
+                    TextPairView(
+                        leading: L10n.date,
+                        trailing: date.formatted(date: .long, time: .shortened)
+                    )
                 }
             }
         }
         .listStyle(.insetGrouped)
-        .navigationTitle(logEntry.severity?.displayTitle ?? L10n.details)
+        .navigationTitle(
+            L10n.activityLog
+                .localizedCapitalized
+        )
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarCloseButton {
-            dismiss()
-        }
         .onFirstAppear {
-            usersViewModel.send(.getUsers())
+            viewModel.send(.refresh)
         }
     }
 }

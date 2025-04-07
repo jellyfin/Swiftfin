@@ -20,7 +20,7 @@ struct ServerActivityView: View {
     // MARK: - State Objects
 
     @StateObject
-    private var viewModel = ServerActivityViewModel()
+    private var viewModel = ServerActivitiesViewModel()
     @StateObject
     private var userViewModel = ServerUsersViewModel()
 
@@ -70,8 +70,14 @@ struct ServerActivityView: View {
                 id: \.unwrappedIDHashOrZero,
                 layout: .columns(1)
             ) { entry in
-                LogEntry(entry, users: userViewModel.users) {
-                    router.route(to: \.activityDetails, entry)
+
+                let logViewModel = ServerActivityDetailViewModel(
+                    activityLogEntry: entry,
+                    users: userViewModel.users
+                )
+
+                LogEntry(logViewModel) {
+                    router.route(to: \.activityDetails, logViewModel)
                 }
                 .foregroundStyle(.primary, .secondary)
             }

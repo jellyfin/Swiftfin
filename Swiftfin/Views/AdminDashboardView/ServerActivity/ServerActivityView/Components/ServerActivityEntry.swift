@@ -22,11 +22,8 @@ extension ServerActivityView {
 
         // MARK: - Activity Log Entry Variable
 
-        private let logEntry: ActivityLogEntry
-
-        // MARK: - All Server Users
-
-        private let users: IdentifiedArrayOf<UserDto>
+        @ObservedObject
+        private var viewModel: ServerActivityDetailViewModel
 
         // MARK: - Action Variable
 
@@ -34,29 +31,21 @@ extension ServerActivityView {
 
         // MARK: - Initializer
 
-        init(_ logEntry: ActivityLogEntry, users: IdentifiedArrayOf<UserDto>, onSelect: @escaping () -> Void) {
-            self.logEntry = logEntry
-            self.users = users
+        init(_ viewModel: ServerActivityDetailViewModel, onSelect: @escaping () -> Void) {
+            self.viewModel = viewModel
             self.onSelect = onSelect
         }
 
         // MARK: - Matching UserDto
 
         private var eventDate: String {
-            guard let date = logEntry.date else { return L10n.unknown }
+            guard let date = viewModel.log.date else { return L10n.unknown }
 
             let formatter = DateFormatter()
             formatter.dateStyle = .medium
             formatter.timeStyle = .medium
 
             return formatter.string(from: date)
-        }
-
-        // MARK: - Matching UserDto
-
-        private var eventUser: UserDto? {
-            guard let userID = logEntry.userID else { return nil }
-            return users.first(where: { $0.id == userID })
         }
 
         // MARK: - Body
@@ -77,8 +66,8 @@ extension ServerActivityView {
         private var userImage: some View {
             if let client = currentUserSession?.client {
                 UserProfileImage(
-                    userID: logEntry.userID ?? currentUserSession?.user.id,
-                    source: eventUser?.profileImageSource(client: client, maxWidth: 60) ?? ImageSource()
+                    userID: viewModel.log.userID ?? currentUserSession?.user.id,
+                    source: viewModel.user?.profileImageSource(client: client, maxWidth: 60) ?? ImageSource()
                 ) {
                     SystemImageContentView(systemName: "gearshape.fill", ratio: 0.5)
                         .foregroundStyle(Color.accentColor)
@@ -94,16 +83,16 @@ extension ServerActivityView {
                 VStack(alignment: .leading) {
                     /// Event Severity & Username / System
                     HStack(spacing: 8) {
-                        Image(systemName: logEntry.severity?.systemImage ?? "questionmark.circle")
-                            .foregroundStyle(logEntry.severity?.color ?? .gray)
+                        Image(systemName: viewModel.log.severity?.systemImage ?? "questionmark.circle")
+                            .foregroundStyle(viewModel.log.severity?.color ?? .gray)
 
-                        Text(eventUser?.name ?? L10n.system)
+                        Text(viewModel.user?.name ?? L10n.system)
                             .foregroundStyle(.primary)
                     }
                     .font(.headline)
 
                     /// Event Name
-                    Text(logEntry.name ?? .emptyDash)
+                    Text(viewModel.log.name ?? .emptyDash)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .lineLimit(2)

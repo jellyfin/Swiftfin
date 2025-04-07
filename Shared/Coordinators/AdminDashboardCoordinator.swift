@@ -21,7 +21,7 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
 
     @Route(.push)
     var activity = makeActivityLogs
-    @Route(.modal)
+    @Route(.push)
     var activityDetails = makeActivityDetails
 
     // MARK: - Route: Active Sessions
@@ -98,10 +98,9 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
         ServerActivityView()
     }
 
-    func makeActivityDetails(activityLogEntry: ActivityLogEntry) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator {
-            ServerActivityDetailsView(activityLogEntry)
-        }
+    @ViewBuilder
+    func makeActivityDetails(viewModel: ServerActivityDetailViewModel) -> some View {
+        ServerActivityDetailsView(viewModel: viewModel)
     }
 
     // MARK: - Views: Active Sessions

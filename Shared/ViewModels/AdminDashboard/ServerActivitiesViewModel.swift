@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-final class ServerActivityViewModel: PagingLibraryViewModel<ActivityLogEntry> {
+final class ServerActivitiesViewModel: PagingLibraryViewModel<ActivityLogEntry> {
 
     @Published
     var hasUserId: Bool = false {

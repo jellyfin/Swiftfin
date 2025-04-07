@@ -43,6 +43,9 @@
 /// Activity
 "activity" = "Activity";
 
+/// Activity log
+"activityLog" = "Activity log";
+
 /// Actor
 "actor" = "Actor";
 
@@ -555,6 +558,9 @@
 
 /// Perform administrative tasks for your Jellyfin server.
 "dashboardDescription" = "Perform administrative tasks for your Jellyfin server.";
+
+/// Date
+"date" = "Date";
 
 /// Date Added
 "dateAdded" = "Date Added";
@@ -1074,6 +1080,9 @@
 
 /// Letter Picker
 "letterPicker" = "Letter Picker";
+
+/// Level
+"level" = "Level";
 
 /// Library
 "library" = "Library";
