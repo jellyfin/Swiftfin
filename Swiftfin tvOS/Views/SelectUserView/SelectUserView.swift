@@ -6,20 +6,15 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionVGrid
 import Defaults
 import Factory
 import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-// TODO: user deletion
-
 struct SelectUserView: View {
 
-    // MARK: - User Grid Item Enum
-
-    typealias UserGridItem = (user: UserState, server: ServerState)
+    typealias UserItem = (user: UserState, server: ServerState)
 
     // MARK: - Defaults
 
@@ -72,20 +67,20 @@ struct SelectUserView: View {
                 .servers
                 .keys
                 .shuffled()
-                .map { $0.splashScreenImageSource() }
+                .map(\.splashScreenImageSource)
 
         // need to evaluate server with id selection first
         case let (.server(id), _), let (.all, .server(id)):
-            guard let imageSource = viewModel
+            guard let server = viewModel
                 .servers
                 .keys
                 .first(where: { $0.id == id }) else { return [] }
 
-            return [imageSource.splashScreenImageSource()]
+            return [server.splashScreenImageSource]
         }
     }
 
-    private var userGridItems: [UserGridItem] {
+    private var userItems: [UserItem] {
         switch serverSelection {
         case .all:
             return viewModel.servers
@@ -95,17 +90,25 @@ struct SelectUserView: View {
                 .flatMap { $0 }
                 .sorted(using: \.user.username)
                 .reversed()
-                .map { UserGridItem(user: $0.user, server: $0.server) }
+                .map { UserItem(user: $0.user, server: $0.server) }
         case let .server(id: id):
             guard let server = viewModel.servers.keys.first(where: { server in server.id == id }) else {
-                assertionFailure("server with ID not found?")
                 return []
             }
 
             return viewModel.servers[server]!
                 .sorted(using: \.username)
-                .map { UserGridItem(user: $0, server: server) }
+                .map { UserItem(user: $0, server: server) }
         }
+    }
+
+    private func addUserSelected(server: ServerState) {
+        router.route(to: \.userSignIn, server)
+    }
+
+    private func delete(user: UserState) {
+        selectedUsers.insert(user)
+        isPresentingConfirmDeleteUsers = true
     }
 
     // MARK: - Select User(s)
@@ -133,7 +136,7 @@ struct SelectUserView: View {
     @ViewBuilder
     private var userGrid: some View {
         CenteredLazyVGrid(
-            data: userGridItems,
+            data: userItems,
             id: \.user.id,
             columns: 5,
             spacing: EdgeInsets.edgePadding
@@ -155,6 +158,7 @@ struct SelectUserView: View {
                 selectedUsers.insert(user)
                 isPresentingConfirmDeleteUsers = true
             }
+            .environment(\.isSelected, selectedUsers.contains(user))
         }
     }
 
@@ -188,7 +192,7 @@ struct SelectUserView: View {
                         .frame(height: 100)
 
                     Group {
-                        if userGridItems.isEmpty {
+                        if userItems.isEmpty {
                             addUserButtonGrid
                         } else {
                             userGrid
@@ -199,6 +203,7 @@ struct SelectUserView: View {
                 .scrollIfLargerThanContainer(padding: 100)
                 .scrollViewOffset($scrollViewOffset)
             }
+            .environment(\.isEditing, isEditingUsers)
 
             SelectUserBottomBar(
                 isEditing: $isEditingUsers,
@@ -206,14 +211,14 @@ struct SelectUserView: View {
                 selectedServer: selectedServer,
                 servers: viewModel.servers.keys,
                 areUsersSelected: selectedUsers.isNotEmpty,
-                hasUsers: userGridItems.isNotEmpty
+                hasUsers: userItems.isNotEmpty
             ) {
                 isPresentingConfirmDeleteUsers = true
             } toggleAllUsersSelected: {
                 if selectedUsers.isNotEmpty {
                     selectedUsers.removeAll()
                 } else {
-                    selectedUsers.insert(contentsOf: userGridItems.map(\.user))
+                    selectedUsers.insert(contentsOf: userItems.map(\.user))
                 }
             }
             .focusSection()
@@ -237,10 +242,10 @@ struct SelectUserView: View {
         }
     }
 
-    // MARK: - Empty View
+    // MARK: - Connect to Server View
 
     @ViewBuilder
-    private var emptyView: some View {
+    private var connectToServerView: some View {
         VStack(spacing: 50) {
             L10n.connectToJellyfinServerStart.text
                 .font(.body)
@@ -279,7 +284,7 @@ struct SelectUserView: View {
     var body: some View {
         ZStack {
             if viewModel.servers.isEmpty {
-                emptyView
+                connectToServerView
             } else {
                 contentView
             }
@@ -298,6 +303,22 @@ struct SelectUserView: View {
                 pin = ""
             } else {
                 selectedUsers.removeAll()
+            }
+        }
+        .onChange(of: viewModel.servers.keys) {
+            let newValue = viewModel.servers.keys
+
+            if case let SelectUserServerSelection.server(id: id) = serverSelection,
+               !newValue.contains(where: { $0.id == id })
+            {
+                if newValue.count == 1, let firstServer = newValue.first {
+                    let newSelection = SelectUserServerSelection.server(id: firstServer.id)
+                    serverSelection = newSelection
+                    selectUserAllServersSplashscreen = newSelection
+                } else {
+                    serverSelection = .all
+                    selectUserAllServersSplashscreen = .all
+                }
             }
         }
         .onReceive(viewModel.events) { event in
@@ -323,14 +344,12 @@ struct SelectUserView: View {
         }
         .confirmationDialog(
             Text(L10n.deleteUser),
-            isPresented: $isPresentingConfirmDeleteUsers,
-            presenting: selectedUsers
-        ) { selectedUsers in
+            isPresented: $isPresentingConfirmDeleteUsers
+        ) {
             Button(L10n.delete, role: .destructive) {
-                viewModel.send(.deleteUsers(Array(selectedUsers)))
-                isEditingUsers = false
+                viewModel.send(.deleteUsers(selectedUsers))
             }
-        } message: { selectedUsers in
+        } message: {
             if selectedUsers.count == 1, let first = selectedUsers.first {
                 Text(L10n.deleteUserSingleConfirmation(first.username))
             } else {
