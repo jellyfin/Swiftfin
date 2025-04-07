@@ -57,8 +57,7 @@ extension CustomizeViewsSettings {
                     ChevronButton(
                         L10n.columns,
                         subtitle: listColumnCount.description
-                    )
-                    .onSelect {
+                    ) {
                         router.route(to: \.listColumnSettings, $listColumnCount)
                     }
                 }

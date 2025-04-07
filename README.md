@@ -4,7 +4,7 @@
   <h1>Swiftfin</h1>
   <img src="https://img.shields.io/badge/iOS-15+-red"/>
   <img src="https://img.shields.io/badge/tvOS-17+-red"/>
-  <img src="https://img.shields.io/badge/Jellyfin-10.10.6-9962be"/>
+  <img src="https://img.shields.io/badge/Jellyfin-10.10-9962be"/>
   
   <a href="https://translate.jellyfin.org/engage/swiftfin/">
     <img src="https://translate.jellyfin.org/widgets/swiftfin/-/svg-badge.svg"/>

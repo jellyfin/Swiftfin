@@ -30,7 +30,7 @@ extension AddTaskTriggerView {
 
         var body: some View {
             Section {
-                ChevronAlertButton(
+                ChevronButton(
                     L10n.timeLimit,
                     subtitle: subtitleString,
                     description: L10n.taskTriggerTimeLimit

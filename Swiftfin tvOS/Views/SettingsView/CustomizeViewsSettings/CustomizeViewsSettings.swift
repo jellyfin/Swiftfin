@@ -53,10 +53,9 @@ struct CustomizeViewsSettings: View {
 
                 Section(L10n.posters) {
 
-                    ChevronButton(L10n.indicators)
-                        .onSelect {
-                            router.route(to: \.indicatorSettings)
-                        }
+                    ChevronButton(L10n.indicators) {
+                        router.route(to: \.indicatorSettings)
+                    }
 
                     Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 

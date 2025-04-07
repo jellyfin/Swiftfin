@@ -99,38 +99,31 @@ struct ItemEditorView: View {
     private var editView: some View {
         Section(L10n.edit) {
             if [.boxSet, .movie, .person, .series].contains(viewModel.item.type) {
-                ChevronButton(L10n.identify)
-                    .onSelect {
-                        router.route(to: \.identifyItem, viewModel.item)
-                    }
+                ChevronButton(L10n.identify) {
+                    router.route(to: \.identifyItem, viewModel.item)
+                }
             }
-            ChevronButton(L10n.images)
-                .onSelect {
-                    router.route(to: \.editImages, ItemImagesViewModel(item: viewModel.item))
-                }
-            ChevronButton(L10n.metadata)
-                .onSelect {
-                    router.route(to: \.editMetadata, viewModel.item)
-                }
+            ChevronButton(L10n.images) {
+                router.route(to: \.editImages, ItemImagesViewModel(item: viewModel.item))
+            }
+            ChevronButton(L10n.metadata) {
+                router.route(to: \.editMetadata, viewModel.item)
+            }
         }
 
         Section {
-            ChevronButton(L10n.genres)
-                .onSelect {
-                    router.route(to: \.editGenres, viewModel.item)
-                }
-            ChevronButton(L10n.people)
-                .onSelect {
-                    router.route(to: \.editPeople, viewModel.item)
-                }
-            ChevronButton(L10n.tags)
-                .onSelect {
-                    router.route(to: \.editTags, viewModel.item)
-                }
-            ChevronButton(L10n.studios)
-                .onSelect {
-                    router.route(to: \.editStudios, viewModel.item)
-                }
+            ChevronButton(L10n.genres) {
+                router.route(to: \.editGenres, viewModel.item)
+            }
+            ChevronButton(L10n.people) {
+                router.route(to: \.editPeople, viewModel.item)
+            }
+            ChevronButton(L10n.tags) {
+                router.route(to: \.editTags, viewModel.item)
+            }
+            ChevronButton(L10n.studios) {
+                router.route(to: \.editStudios, viewModel.item)
+            }
         }
     }
 }

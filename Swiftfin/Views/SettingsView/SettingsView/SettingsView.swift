@@ -38,16 +38,14 @@ struct SettingsView: View {
                 ChevronButton(
                     L10n.server,
                     subtitle: viewModel.userSession.server.name
-                )
-                .onSelect {
+                ) {
                     router.route(to: \.serverConnection, viewModel.userSession.server)
                 }
 
                 if viewModel.userSession.user.permissions.isAdministrator {
-                    ChevronButton(L10n.dashboard)
-                        .onSelect {
-                            router.route(to: \.adminDashboard)
-                        }
+                    ChevronButton(L10n.dashboard) {
+                        router.route(to: \.adminDashboard)
+                    }
                 }
             }
 
@@ -66,29 +64,25 @@ struct SettingsView: View {
                     selection: $videoPlayerType
                 )
 
-                ChevronButton(L10n.nativePlayer)
-                    .onSelect {
-                        router.route(to: \.nativePlayerSettings)
-                    }
+                ChevronButton(L10n.nativePlayer) {
+                    router.route(to: \.nativePlayerSettings)
+                }
 
-                ChevronButton(L10n.videoPlayer)
-                    .onSelect {
-                        router.route(to: \.videoPlayerSettings)
-                    }
+                ChevronButton(L10n.videoPlayer) {
+                    router.route(to: \.videoPlayerSettings)
+                }
 
-                ChevronButton(L10n.playbackQuality)
-                    .onSelect {
-                        router.route(to: \.playbackQualitySettings)
-                    }
+                ChevronButton(L10n.playbackQuality) {
+                    router.route(to: \.playbackQualitySettings)
+                }
             }
 
             Section(L10n.accessibility) {
                 CaseIterablePicker(L10n.appearance, selection: $appearance)
 
-                ChevronButton(L10n.customize)
-                    .onSelect {
-                        router.route(to: \.customizeViewsSettings)
-                    }
+                ChevronButton(L10n.customize) {
+                    router.route(to: \.customizeViewsSettings)
+                }
 
                 // Note: uncomment if there are current
                 //       experimental settings
@@ -105,17 +99,15 @@ struct SettingsView: View {
                 Text(L10n.viewsMayRequireRestart)
             }
 
-            ChevronButton(L10n.logs)
-                .onSelect {
-                    router.route(to: \.log)
-                }
+            ChevronButton(L10n.logs) {
+                router.route(to: \.log)
+            }
 
             #if DEBUG
 
-            ChevronButton("Debug")
-                .onSelect {
-                    router.route(to: \.debugSettings)
-                }
+            ChevronButton("Debug") {
+                router.route(to: \.debugSettings)
+            }
 
             #endif
         }
