@@ -29,7 +29,7 @@ extension AddTaskTriggerView {
         // MARK: - Body
 
         var body: some View {
-            ChevronAlertButton(
+            ChevronButton(
                 L10n.every,
                 subtitle: ServerTicks(
                     taskTriggerInfo.intervalTicks

@@ -47,8 +47,7 @@ struct VideoPlayerSettingsView: View {
                     ChevronButton(
                         L10n.offset,
                         subtitle: resumeOffset.secondLabel
-                    )
-                    .onSelect {
+                    ) {
                         isPresentingResumeOffsetStepper = true
                     }
                 } header: {
@@ -59,10 +58,9 @@ struct VideoPlayerSettingsView: View {
 
                 Section {
 
-                    ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName)
-                        .onSelect {
-                            router.route(to: \.fontPicker, $subtitleFontName)
-                        }
+                    ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName) {
+                        router.route(to: \.fontPicker, $subtitleFontName)
+                    }
                 } header: {
                     L10n.subtitles.text
                 } footer: {

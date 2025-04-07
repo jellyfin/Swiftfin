@@ -93,7 +93,6 @@
 		4E49DEE32CE55FB900352DCD /* SyncPlayUserAccessType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E49DEE22CE55FB500352DCD /* SyncPlayUserAccessType.swift */; };
 		4E49DEE42CE55FB900352DCD /* SyncPlayUserAccessType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E49DEE22CE55FB500352DCD /* SyncPlayUserAccessType.swift */; };
 		4E49DEE62CE5616800352DCD /* UserProfileImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E49DEE52CE5616800352DCD /* UserProfileImagePickerView.swift */; };
-		4E4A53222CBE0A1C003BD24D /* ChevronAlertButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB7B33A2CBDE63F004A342E /* ChevronAlertButton.swift */; };
 		4E4DAC372D11EE5E00E13FF9 /* SplitLoginWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4DAC362D11EE4F00E13FF9 /* SplitLoginWindowView.swift */; };
 		4E4DAC3D2D11F94400E13FF9 /* LocalServerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4DAC3C2D11F94000E13FF9 /* LocalServerButton.swift */; };
 		4E4E9C672CFEBF2A00A6946F /* StudioEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4E9C662CFEBF2500A6946F /* StudioEditorViewModel.swift */; };
@@ -203,15 +202,12 @@
 		4EB3F0372D8CD33300EBEDAA /* ActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB3F0362D8CD33100EBEDAA /* ActionButton.swift */; };
 		4EB3F0392D8CD5CF00EBEDAA /* TrailerMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB3F0382D8CD5CC00EBEDAA /* TrailerMenu.swift */; };
 		4EB3F03B2D8CD6A900EBEDAA /* VersionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB3F03A2D8CD6A700EBEDAA /* VersionMenu.swift */; };
-		4EB4ECE32CBEFC4D002FF2FC /* SessionInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB4ECE22CBEFC49002FF2FC /* SessionInfo.swift */; };
-		4EB4ECE42CBEFC4D002FF2FC /* SessionInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB4ECE22CBEFC49002FF2FC /* SessionInfo.swift */; };
 		4EB538B52CE3C77200EB72D5 /* ServerUserPermissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB538B42CE3C76D00EB72D5 /* ServerUserPermissionsView.swift */; };
 		4EB538BD2CE3CCD100EB72D5 /* MediaPlaybackSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB538BC2CE3CCCF00EB72D5 /* MediaPlaybackSection.swift */; };
 		4EB538C12CE3CF0F00EB72D5 /* ManagementSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB538C02CE3CF0E00EB72D5 /* ManagementSection.swift */; };
 		4EB538C32CE3E21800EB72D5 /* SyncPlaySection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB538C22CE3E21500EB72D5 /* SyncPlaySection.swift */; };
 		4EB538C52CE3E25700EB72D5 /* ExternalAccessSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB538C42CE3E25500EB72D5 /* ExternalAccessSection.swift */; };
 		4EB538C82CE3E8A600EB72D5 /* RemoteControlSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB538C72CE3E8A100EB72D5 /* RemoteControlSection.swift */; };
-		4EB7B33B2CBDE645004A342E /* ChevronAlertButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB7B33A2CBDE63F004A342E /* ChevronAlertButton.swift */; };
 		4EB7C8D52CCED6E7000CC011 /* AddServerUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB7C8D42CCED6E1000CC011 /* AddServerUserView.swift */; };
 		4EBE06462C7E9509004A6C03 /* PlaybackCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */; };
 		4EBE06472C7E9509004A6C03 /* PlaybackCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */; };
@@ -1440,14 +1436,12 @@
 		4EB3F0362D8CD33100EBEDAA /* ActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButton.swift; sourceTree = "<group>"; };
 		4EB3F0382D8CD5CC00EBEDAA /* TrailerMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrailerMenu.swift; sourceTree = "<group>"; };
 		4EB3F03A2D8CD6A700EBEDAA /* VersionMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionMenu.swift; sourceTree = "<group>"; };
-		4EB4ECE22CBEFC49002FF2FC /* SessionInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionInfo.swift; sourceTree = "<group>"; };
 		4EB538B42CE3C76D00EB72D5 /* ServerUserPermissionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerUserPermissionsView.swift; sourceTree = "<group>"; };
 		4EB538BC2CE3CCCF00EB72D5 /* MediaPlaybackSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPlaybackSection.swift; sourceTree = "<group>"; };
 		4EB538C02CE3CF0E00EB72D5 /* ManagementSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagementSection.swift; sourceTree = "<group>"; };
 		4EB538C22CE3E21500EB72D5 /* SyncPlaySection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncPlaySection.swift; sourceTree = "<group>"; };
 		4EB538C42CE3E25500EB72D5 /* ExternalAccessSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalAccessSection.swift; sourceTree = "<group>"; };
 		4EB538C72CE3E8A100EB72D5 /* RemoteControlSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControlSection.swift; sourceTree = "<group>"; };
-		4EB7B33A2CBDE63F004A342E /* ChevronAlertButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChevronAlertButton.swift; sourceTree = "<group>"; };
 		4EB7C8D42CCED6E1000CC011 /* AddServerUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddServerUserView.swift; sourceTree = "<group>"; };
 		4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackCompatibility.swift; sourceTree = "<group>"; };
 		4EBE064C2C7EB6D3004A6C03 /* VideoPlayerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerType.swift; sourceTree = "<group>"; };
@@ -5136,7 +5130,6 @@
 				E18E0203288749200022598C /* BlurView.swift */,
 				E145EB212BDCCA43003BF6F3 /* BulletedList.swift */,
 				E11982B92DA04F9B0008FC3F /* CenteredLazyVGrid.swift */,
-				4EB7B33A2CBDE63F004A342E /* ChevronAlertButton.swift */,
 				E1A1528728FD229500600579 /* ChevronButton.swift */,
 				E11982D62DA0E8240008FC3F /* ConditionalMenu.swift */,
 				E1153DCB2BBB633B00424D36 /* FastSVGView.swift */,
@@ -6195,7 +6188,6 @@
 				E1763A722BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift in Sources */,
 				E1937A3C288E54AD00CB80AA /* BaseItemDto+Images.swift in Sources */,
 				E18A17F0298C68B700C22F62 /* Overlay.swift in Sources */,
-				4E4A53222CBE0A1C003BD24D /* ChevronAlertButton.swift in Sources */,
 				4E7315752D1485C900EA2A95 /* UserProfileImage.swift in Sources */,
 				E1A42E4A28CA6CCD00A14DCB /* CinematicItemSelector.swift in Sources */,
 				4E2AC4CF2C6C4A0600DD600D /* PlaybackQualitySettingsCoordinator.swift in Sources */,
@@ -6918,7 +6910,6 @@
 				BD3957792C113EC40078CEF8 /* SubtitleSection.swift in Sources */,
 				091B5A8A2683142E00D78B61 /* ServerDiscovery.swift in Sources */,
 				E1721FAE28FB801C00762992 /* SmallPlaybackButtons.swift in Sources */,
-				4EB7B33B2CBDE645004A342E /* ChevronAlertButton.swift in Sources */,
 				E1E750682A33E9B400B2C1EE /* OverviewCard.swift in Sources */,
 				E1CCF13128AC07EC006CAC9E /* PosterHStack.swift in Sources */,
 				4E2AC4C22C6C491200DD600D /* AudoCodec.swift in Sources */,

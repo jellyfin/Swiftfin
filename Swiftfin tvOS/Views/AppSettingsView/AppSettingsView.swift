@@ -87,10 +87,9 @@ struct AppSettingsView: View {
 
                 SignOutIntervalSection()
 
-                ChevronButton(L10n.logs)
-                    .onSelect {
-                        router.route(to: \.log)
-                    }
+                ChevronButton(L10n.logs) {
+                    router.route(to: \.log)
+                }
             }
             .navigationTitle(L10n.advanced)
     }

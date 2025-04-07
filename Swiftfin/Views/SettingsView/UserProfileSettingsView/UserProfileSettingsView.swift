@@ -44,22 +44,19 @@ struct UserProfileSettingsView: View {
             }
 
             Section {
-                ChevronButton(L10n.quickConnect)
-                    .onSelect {
-                        router.route(to: \.quickConnect)
-                    }
+                ChevronButton(L10n.quickConnect) {
+                    router.route(to: \.quickConnect)
+                }
 
-                ChevronButton(L10n.password)
-                    .onSelect {
-                        router.route(to: \.resetUserPassword, viewModel.userSession.user.id)
-                    }
+                ChevronButton(L10n.password) {
+                    router.route(to: \.resetUserPassword, viewModel.userSession.user.id)
+                }
             }
 
             Section {
-                ChevronButton(L10n.security)
-                    .onSelect {
-                        router.route(to: \.localSecurity)
-                    }
+                ChevronButton(L10n.security) {
+                    router.route(to: \.localSecurity)
+                }
             }
 
             Section {

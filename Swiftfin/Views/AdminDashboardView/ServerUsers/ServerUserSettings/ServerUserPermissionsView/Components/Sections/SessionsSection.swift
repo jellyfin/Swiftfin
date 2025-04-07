@@ -74,7 +74,7 @@ extension ServerUserPermissionsView {
 
         @ViewBuilder
         private func MaxFailedLoginsButton() -> some View {
-            ChevronAlertButton(
+            ChevronButton(
                 L10n.customFailedLogins,
                 subtitle: Text(policy.loginAttemptsBeforeLockout ?? 1, format: .number),
                 description: L10n.enterCustomFailedLogins
@@ -127,7 +127,7 @@ extension ServerUserPermissionsView {
 
         @ViewBuilder
         private func MaxSessionsButton() -> some View {
-            ChevronAlertButton(
+            ChevronButton(
                 L10n.customSessions,
                 subtitle: Text(policy.maxActiveSessions ?? 1, format: .number),
                 description: L10n.enterCustomMaxSessions

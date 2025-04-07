@@ -24,10 +24,9 @@ struct VideoPlayerSettingsView: View {
     var body: some View {
         Form {
 
-            ChevronButton(L10n.gestures)
-                .onSelect {
-                    router.route(to: \.gestureSettings)
-                }
+            ChevronButton(L10n.gestures) {
+                router.route(to: \.gestureSettings)
+            }
 
             CaseIterablePicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
 
