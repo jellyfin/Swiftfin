@@ -12,7 +12,7 @@ import SwiftUI
 
 extension SelectUserView {
 
-    struct UserRow: View {
+    struct UserListRow: View {
 
         @Default(.accentColor)
         private var accentColor

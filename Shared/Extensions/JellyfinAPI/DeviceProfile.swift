@@ -22,7 +22,6 @@ extension DeviceProfile {
         // MARK: - Video Player Specific Logic
 
         deviceProfile.codecProfiles = videoPlayer.codecProfiles
-        deviceProfile.responseProfiles = videoPlayer.responseProfiles
         deviceProfile.subtitleProfiles = videoPlayer.subtitleProfiles
 
         // MARK: - DirectPlay & Transcoding Profiles

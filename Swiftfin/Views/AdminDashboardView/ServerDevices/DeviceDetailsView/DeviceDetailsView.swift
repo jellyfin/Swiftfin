@@ -10,8 +10,6 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: Enable for CustomNames for Devices with SDK Changes
-
 struct DeviceDetailsView: View {
 
     // MARK: - Current Date
@@ -44,11 +42,9 @@ struct DeviceDetailsView: View {
 
     // MARK: - Initializer
 
-    init(device: DeviceInfo) {
+    init(device: DeviceInfoDto) {
         _viewModel = StateObject(wrappedValue: DeviceDetailViewModel(device: device))
-
-        // TODO: Enable with SDK Change
-        self.temporaryCustomName = device.name ?? "" // device.customName ?? device.name
+        self.temporaryCustomName = device.customName ?? device.name ?? ""
     }
 
     // MARK: - Body
@@ -69,8 +65,7 @@ struct DeviceDetailsView: View {
                 }
             }
 
-            // TODO: Enable with SDK Change
-            // CustomDeviceNameSection(customName: $temporaryCustomName)
+            CustomDeviceNameSection(customName: $temporaryCustomName)
 
             AdminDashboardView.DeviceSection(
                 client: viewModel.device.appName,
@@ -94,22 +89,15 @@ struct DeviceDetailsView: View {
         .topBarTrailing {
             if viewModel.backgroundStates.contains(.updating) {
                 ProgressView()
-
-                // TODO: Enable with SDK Change
-                /*
-                 Button(L10n.save) {
-                     UIDevice.impact(.light)
-                     if device.id != nil {
-                         viewModel.send(.setCustomName(
-                             id: device.id ?? "",
-                             newName: temporaryCustomName
-                         ))
-                     }
-                 }
-                 .buttonStyle(.toolbarPill)
-                 .disabled(temporaryCustomName == device.customName)
-                  */
             }
+            Button(L10n.save) {
+                UIDevice.impact(.light)
+                if viewModel.device.id != nil {
+                    viewModel.send(.setCustomName(temporaryCustomName))
+                }
+            }
+            .buttonStyle(.toolbarPill)
+            .disabled(temporaryCustomName == viewModel.device.customName)
         }
         .alert(
             L10n.success.text,

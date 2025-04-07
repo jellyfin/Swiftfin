@@ -250,7 +250,10 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
             _ = self.backgroundStates.insert(.refreshing)
         }
 
-        let request = Paths.getItem(userID: userSession.user.id, itemID: itemId)
+        let request = Paths.getItem(
+            itemID: itemId,
+            userID: userSession.user.id
+        )
         let response = try await userSession.client.send(request)
 
         await MainActor.run {

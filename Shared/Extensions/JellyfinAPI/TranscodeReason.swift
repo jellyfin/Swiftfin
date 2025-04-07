@@ -64,6 +64,8 @@ extension TranscodeReason: Displayable, SystemImageable {
             return L10n.directPlayError
         case .videoRangeTypeNotSupported:
             return L10n.videoRangeTypeNotSupported
+        case .videoCodecTagNotSupported:
+            return L10n.videoCodecTagNotSupported
         }
     }
 
@@ -93,6 +95,7 @@ extension TranscodeReason: Displayable, SystemImageable {
              .interlacedVideoNotSupported,
              .videoBitrateNotSupported,
              .unknownVideoStreamInfo,
+             .videoCodecTagNotSupported,
              .videoRangeTypeNotSupported:
             return "photo.tv"
         case .subtitleCodecNotSupported:

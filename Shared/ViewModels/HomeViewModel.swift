@@ -174,12 +174,13 @@ final class HomeViewModel: ViewModel, Stateful {
 
     private func getResumeItems() async throws -> [BaseItemDto] {
         var parameters = Paths.GetResumeItemsParameters()
+        parameters.userID = userSession.user.id
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
         parameters.includeItemTypes = [.movie, .episode]
         parameters.limit = 20
 
-        let request = Paths.getResumeItems(userID: userSession.user.id, parameters: parameters)
+        let request = Paths.getResumeItems(parameters: parameters)
         let response = try await userSession.client.send(request)
 
         return response.value.items ?? []
@@ -187,13 +188,14 @@ final class HomeViewModel: ViewModel, Stateful {
 
     private func getLibraries() async throws -> [LatestInLibraryViewModel] {
 
-        let userViewsPath = Paths.getUserViews(userID: userSession.user.id)
+        let parameters = Paths.GetUserViewsParameters(userID: userSession.user.id)
+        let userViewsPath = Paths.getUserViews(parameters: parameters)
         async let userViews = userSession.client.send(userViewsPath)
 
         async let excludedLibraryIDs = getExcludedLibraries()
 
         return try await (userViews.value.items ?? [])
-            .intersection(["movies", "tvshows"], using: \.collectionType)
+            .intersection([.movies, .tvshows], using: \.collectionType)
             .subtracting(excludedLibraryIDs, using: \.id)
             .map { LatestInLibraryViewModel(parent: $0) }
     }
@@ -211,13 +213,13 @@ final class HomeViewModel: ViewModel, Stateful {
 
         if isPlayed {
             request = Paths.markPlayedItem(
-                userID: userSession.user.id,
-                itemID: item.id!
+                itemID: item.id!,
+                userID: userSession.user.id
             )
         } else {
             request = Paths.markUnplayedItem(
-                userID: userSession.user.id,
-                itemID: item.id!
+                itemID: item.id!,
+                userID: userSession.user.id
             )
         }
 

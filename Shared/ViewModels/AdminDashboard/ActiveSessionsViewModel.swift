@@ -38,7 +38,7 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
     @Published
     var backgroundStates: Set<BackgroundState> = []
     @Published
-    var sessions: OrderedDictionary<String, BindingBox<SessionInfo?>> = [:]
+    var sessions: OrderedDictionary<String, BindingBox<SessionInfoDto?>> = [:]
     @Published
     var state: State = .initial
 
@@ -119,7 +119,7 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
                 return !sessions.keys.contains(id)
             }
             .map { s in
-                BindingBox<SessionInfo?>(
+                BindingBox<SessionInfoDto?>(
                     source: .init(
                         get: { s },
                         set: { _ in }

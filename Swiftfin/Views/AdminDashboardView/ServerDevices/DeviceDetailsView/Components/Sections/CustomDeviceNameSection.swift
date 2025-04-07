@@ -17,7 +17,7 @@ extension DeviceDetailsView {
         // MARK: - Body
 
         var body: some View {
-            Section(L10n.customDeviceName) {
+            Section(L10n.name) {
                 TextField(
                     L10n.name,
                     text: $customName

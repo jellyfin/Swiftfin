@@ -32,14 +32,14 @@ extension DevicesView {
 
         // MARK: - Properties
 
-        let device: DeviceInfo
+        let device: DeviceInfoDto
         let onSelect: () -> Void
         let onDelete: (() -> Void)?
 
         // MARK: - Initializer
 
         init(
-            device: DeviceInfo,
+            device: DeviceInfoDto,
             onSelect: @escaping () -> Void,
             onDelete: (() -> Void)? = nil
         ) {
@@ -83,7 +83,7 @@ extension DevicesView {
         private var rowContent: some View {
             HStack {
                 VStack(alignment: .leading) {
-                    Text(device.name ?? L10n.unknown)
+                    Text(device.customName ?? device.name ?? L10n.unknown)
                         .font(.headline)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
