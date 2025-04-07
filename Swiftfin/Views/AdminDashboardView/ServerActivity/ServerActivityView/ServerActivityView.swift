@@ -12,8 +12,12 @@ import SwiftUI
 
 struct ServerActivityView: View {
 
+    // MARK: - Environment Objects
+
     @EnvironmentObject
     private var router: AdminDashboardCoordinator.Router
+
+    // MARK: - State Objects
 
     @StateObject
     private var viewModel = ServerActivityViewModel()
@@ -42,16 +46,8 @@ struct ServerActivityView: View {
         .navigationBarMenuButton(
             isLoading: viewModel.backgroundStates.contains(.gettingNextPage)
         ) {
-            DatePicker(
-                L10n.startDate,
-                selection: Binding(
-                    get: { viewModel.minDate ?? Date() },
-                    set: { viewModel.minDate = $0 }
-                ),
-                displayedComponents: .date
-            )
-
-            Toggle(L10n.users, isOn: $viewModel.hasUserId)
+            startDateButton
+            userFilterButton
         }
         .onFirstAppear {
             viewModel.send(.refresh)
@@ -59,7 +55,7 @@ struct ServerActivityView: View {
         }
     }
 
-    // MARK: - Device List View
+    // MARK: - Content View
 
     @ViewBuilder
     private var contentView: some View {
@@ -75,13 +71,47 @@ struct ServerActivityView: View {
                 layout: .columns(1)
             ) { entry in
                 LogEntry(entry, users: userViewModel.users) {
-                    router.route(to: \.activeSessions)
+                    router.route(to: \.activityDetails, entry)
                 }
+                .foregroundStyle(.primary, .secondary)
             }
             .onReachedBottomEdge(offset: .offset(300)) {
                 viewModel.send(.getNextPage)
             }
             .frame(maxWidth: .infinity)
         }
+    }
+
+    // MARK: - User Filter Button
+
+    private var userFilterButton: some View {
+        Menu(L10n.type, systemImage: viewModel.hasUserId ? "person.fill" : "gearshape.fill") {
+            Picker(selection: $viewModel.hasUserId, label: Text(L10n.type)) {
+                Label(
+                    L10n.user,
+                    systemImage: "person"
+                )
+                .tag(true)
+
+                Label(
+                    L10n.system,
+                    systemImage: "gearshape"
+                )
+                .tag(false)
+            }
+        }
+    }
+
+    // MARK: - Start Date Button
+
+    private var startDateButton: some View {
+        DatePicker(
+            L10n.startDate,
+            selection: Binding(
+                get: { viewModel.minDate ?? Date() },
+                set: { viewModel.minDate = $0 }
+            ),
+            displayedComponents: .date
+        )
     }
 }

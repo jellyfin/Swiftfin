@@ -21,7 +21,7 @@ final class ServerActivityViewModel: PagingLibraryViewModel<ActivityLogEntry> {
     }
 
     @Published
-    var minDate: Date? = nil {
+    var minDate: Date? {
         didSet {
             DispatchQueue.main.async {
                 self.send(.refresh)

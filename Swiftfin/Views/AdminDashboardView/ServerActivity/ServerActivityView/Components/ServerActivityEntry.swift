@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import Factory
 import IdentifiedCollections
 import JellyfinAPI
@@ -16,118 +15,113 @@ extension ServerActivityView {
 
     struct LogEntry: View {
 
+        // MARK: - Current User Session
+
         @Injected(\.currentUserSession)
         private var currentUserSession
 
-        private let activityLogEntry: ActivityLogEntry
+        // MARK: - Activity Log Entry Variable
+
+        private let logEntry: ActivityLogEntry
+
+        // MARK: - All Server Users
+
         private let users: IdentifiedArrayOf<UserDto>
+
+        // MARK: - Action Variable
+
         private let onSelect: () -> Void
 
-        @Environment(\.colorScheme)
-        private var colorScheme
+        // MARK: - Initializer
 
-        @State
-        private var isExpanded = false
-
-        init(_ activityLogEntry: ActivityLogEntry, users: IdentifiedArrayOf<UserDto>, onSelect: @escaping () -> Void) {
-            self.activityLogEntry = activityLogEntry
+        init(_ logEntry: ActivityLogEntry, users: IdentifiedArrayOf<UserDto>, onSelect: @escaping () -> Void) {
+            self.logEntry = logEntry
             self.users = users
             self.onSelect = onSelect
         }
 
-        private var dateFormatter: DateFormatter {
+        // MARK: - Matching UserDto
+
+        private var eventDate: String {
+            guard let date = logEntry.date else { return L10n.unknown }
+
             let formatter = DateFormatter()
             formatter.dateStyle = .medium
             formatter.timeStyle = .medium
-            return formatter
+
+            return formatter.string(from: date)
         }
 
-        private var formattedDate: String {
-            guard let date = activityLogEntry.date else { return L10n.unknown }
-            return dateFormatter.string(from: date)
-        }
+        // MARK: - Matching UserDto
 
-        private var matchingUser: UserDto? {
-            guard let userID = activityLogEntry.userID else { return nil }
+        private var eventUser: UserDto? {
+            guard let userID = logEntry.userID else { return nil }
             return users.first(where: { $0.id == userID })
         }
 
-        private var userDisplayName: String {
-            if let userName = matchingUser?.name {
-                return userName
-            } else if let userID = activityLogEntry.userID {
-                return userID
-            } else {
-                return L10n.unknown
+        // MARK: - Body
+
+        var body: some View {
+            ListRow {
+                userImage
+            } content: {
+                rowContent
+                    .padding(.bottom, 8)
+            }
+            .onSelect(perform: onSelect)
+        }
+
+        // MARK: - User Image
+
+        @ViewBuilder
+        private var userImage: some View {
+            if let client = currentUserSession?.client {
+                UserProfileImage(
+                    userID: logEntry.userID ?? currentUserSession?.user.id,
+                    source: eventUser?.profileImageSource(client: client, maxWidth: 60) ?? ImageSource()
+                ) {
+                    SystemImageContentView(systemName: "gearshape.fill", ratio: 0.5)
+                        .foregroundStyle(Color.accentColor)
+                }
+                .frame(width: 60, height: 60)
             }
         }
 
-        var body: some View {
-            Button(action: onSelect) {
-                HStack {
-                    if let client = currentUserSession?.client {
-                        UserProfileImage(
-                            userID: activityLogEntry.userID ?? currentUserSession?.user.id,
-                            source: matchingUser?.profileImageSource(client: client, maxWidth: 60) ?? ImageSource()
-                        ) {
-                            SystemImageContentView(systemName: "gearshape.fill", ratio: 0.5)
-                                .foregroundStyle(Color.accentColor)
-                        }
-                        .frame(width: 60, height: 60)
+        // MARK: - User Image
+
+        private var rowContent: some View {
+            HStack {
+                VStack(alignment: .leading) {
+                    /// Event Severity & Username / System
+                    HStack(spacing: 8) {
+                        Image(systemName: logEntry.severity?.systemImage ?? "questionmark.circle")
+                            .foregroundStyle(logEntry.severity?.color ?? .gray)
+
+                        Text(eventUser?.name ?? L10n.system)
+                            .foregroundStyle(.primary)
                     }
+                    .font(.headline)
 
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            Label {
-                                Text(activityLogEntry.severity?.displayTitle ?? L10n.unknown)
-                                    .font(.system(.subheadline, design: .monospaced))
-                            } icon: {
-                                Image(systemName: activityLogEntry.severity?.systemImage ?? "questionmark.circle")
-                                    .foregroundColor(activityLogEntry.severity?.color ?? .gray)
-                            }
+                    /// Event Name
+                    Text(logEntry.name ?? .emptyDash)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
 
-                            Spacer()
-
-                            if let type = activityLogEntry.type, !type.isEmpty {
-                                Text(type)
-                                    .font(.caption2)
-                                    .foregroundStyle(.primary)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(Color.secondary.opacity(0.2))
-                                    .cornerRadius(4)
-                            }
-                        }
-
-                        // Main content
-                        if let name = activityLogEntry.name {
-                            Text(name)
-                                .font(.headline)
-                                .lineLimit(1)
-                        }
-
-                        if let shortOverview = activityLogEntry.shortOverview, !shortOverview.isEmpty {
-                            Text(shortOverview)
-                                .font(.body)
-                                .lineLimit(2)
-                        }
-
-                        // User and metadata row
-                        HStack(spacing: 12) {
-                            Text(matchingUser?.name ?? L10n.system)
-                                .font(.caption)
-                                .foregroundStyle(.primary)
-
-                            Spacer()
-
-                            Text(formattedDate)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                    .padding(12)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    /// Event Date
+                    Text(eventDate)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
                 }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .padding()
+                    .font(.body.weight(.regular))
+                    .foregroundStyle(.secondary)
             }
         }
     }
