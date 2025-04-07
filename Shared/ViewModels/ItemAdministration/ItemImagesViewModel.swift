@@ -388,8 +388,8 @@ final class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         }
 
         let request = Paths.getItem(
-            userID: userSession.user.id,
-            itemID: itemID
+            itemID: itemID,
+            userID: userSession.user.id
         )
 
         let response = try await userSession.client.send(request)

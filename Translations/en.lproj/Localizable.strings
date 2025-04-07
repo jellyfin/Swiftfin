@@ -85,11 +85,17 @@
 /// Aired
 "aired" = "Aired";
 
+/// Aired episode order
+"airedEpisodeOrder" = "Aired episode order";
+
 /// Air Time
 "airTime" = "Air Time";
 
 /// Airs %s
 "airWithDate" = "Airs %s";
+
+/// Album
+"album" = "Album";
 
 /// Album Artist
 "albumArtist" = "Album Artist";
@@ -231,6 +237,9 @@
 
 /// Behavior
 "behavior" = "Behavior";
+
+/// Behind the Scenes
+"behindTheScenes" = "Behind the Scenes";
 
 /// Tests your server connection to assess internet speed and adjust bandwidth automatically.
 "birateAutoDescription" = "Tests your server connection to assess internet speed and adjust bandwidth automatically.";
@@ -376,6 +385,9 @@
 /// Client
 "client" = "Client";
 
+/// Clip
+"clip" = "Clip";
+
 /// Close
 "close" = "Close";
 
@@ -505,9 +517,6 @@
 /// Allows advanced customization of device profiles for native playback. Incorrect settings may affect playback.
 "customDescription" = "Allows advanced customization of device profiles for native playback. Incorrect settings may affect playback.";
 
-/// Custom Device Name
-"customDeviceName" = "Custom Device Name";
-
 /// Your custom device name '%1$@' has been saved.
 "customDeviceNameSaved" = "Your custom device name '%1$@' has been saved.";
 
@@ -553,11 +562,17 @@
 /// Date created
 "dateCreated" = "Date created";
 
+/// Date added
+"dateLastContentAdded" = "Date added";
+
 /// Date modified
 "dateModified" = "Date modified";
 
 /// Date of death
 "dateOfDeath" = "Date of death";
+
+/// Date played
+"datePlayed" = "Date played";
 
 /// Dates
 "dates" = "Dates";
@@ -591,6 +606,9 @@
 
 /// Are you sure you wish to delete this device? This session will be logged out.
 "deleteDeviceWarning" = "Are you sure you wish to delete this device? This session will be logged out.";
+
+/// Deleted Scene
+"deletedScene" = "Deleted Scene";
 
 /// Delete image
 "deleteImage" = "Delete image";
@@ -847,11 +865,17 @@
 /// Failed logins
 "failedLogins" = "Failed logins";
 
+/// Favorite
+"favorite" = "Favorite";
+
 /// Favorited
 "favorited" = "Favorited";
 
 /// Favorites
 "favorites" = "Favorites";
+
+/// Featurette
+"featurette" = "Featurette";
 
 /// Filters
 "filters" = "Filters";
@@ -861,6 +885,9 @@
 
 /// Find missing metadata and images.
 "findMissingDescription" = "Find missing metadata and images.";
+
+/// Folder
+"folder" = "Folder";
 
 /// Force remote media transcoding
 "forceRemoteTranscoding" = "Force remote media transcoding";
@@ -949,6 +976,9 @@
 /// Index
 "index" = "Index";
 
+/// Index number
+"indexNumber" = "Index number";
+
 /// Indicators
 "indicators" = "Indicators";
 
@@ -960,6 +990,9 @@
 
 /// Interval
 "interval" = "Interval";
+
+/// Interview
+"interview" = "Interview";
 
 /// Inverted Dark
 "invertedDark" = "Inverted Dark";
@@ -1330,6 +1363,9 @@
 /// Parental rating
 "parentalRating" = "Parental rating";
 
+/// Parent index
+"parentIndexNumber" = "Parent index";
+
 /// Password
 "password" = "Password";
 
@@ -1380,6 +1416,9 @@
 
 /// Playback Speed
 "playbackSpeed" = "Playback Speed";
+
+/// Play count
+"playCount" = "Play count";
 
 /// Played
 "played" = "Played";
@@ -1642,11 +1681,17 @@
 /// Runtime
 "runtime" = "Runtime";
 
+/// Sample
+"sample" = "Sample";
+
 /// Save
 "save" = "Save";
 
 /// Save the user to this device without any local authentication.
 "saveUserWithoutAuthDescription" = "Save the user to this device without any local authentication.";
+
+/// Scene
+"scene" = "Scene";
 
 /// Schedule already exists
 "scheduleAlreadyExists" = "Schedule already exists";
@@ -1662,6 +1707,9 @@
 
 /// Search
 "search" = "Search";
+
+/// Search score
+"searchScore" = "Search score";
 
 /// Season
 "season" = "Season";
@@ -1695,6 +1743,12 @@
 
 /// Series Backdrop
 "seriesBackdrop" = "Series Backdrop";
+
+/// Series date played
+"seriesDatePlayed" = "Series date played";
+
+/// Series name
+"seriesName" = "Series name";
 
 /// Server
 "server" = "Server";
@@ -1734,6 +1788,9 @@
 
 /// Settings
 "settings" = "Settings";
+
+/// Short
+"short" = "Short";
 
 /// Show Favorited
 "showFavorited" = "Show Favorited";
@@ -1786,6 +1843,9 @@
 /// Signs out the last user when Swiftfin has been force closed
 "signoutCloseFooter" = "Signs out the last user when Swiftfin has been force closed";
 
+/// Similarity score
+"similarityScore" = "Similarity score";
+
 /// Slider
 "slider" = "Slider";
 
@@ -1825,6 +1885,9 @@
 /// Sports
 "sports" = "Sports";
 
+/// Start date
+"startDate" = "Start date";
+
 /// Start Time
 "startTime" = "Start Time";
 
@@ -1839,6 +1902,9 @@
 
 /// Streams
 "streams" = "Streams";
+
+/// Studio
+"studio" = "Studio";
 
 /// Studios
 "studios" = "Studios";
@@ -1873,17 +1939,11 @@
 /// Success
 "success" = "Success";
 
-/// Content Uploading
-"supportsContentUploading" = "Content Uploading";
-
 /// Media Control
 "supportsMediaControl" = "Media Control";
 
 /// Persistent Identifier
 "supportsPersistentIdentifier" = "Persistent Identifier";
-
-/// Sync
-"supportsSync" = "Sync";
 
 /// Switch User
 "switchUser" = "Switch User";
@@ -1941,6 +2001,12 @@
 
 /// Test Size
 "testSize" = "Test Size";
+
+/// Theme Song
+"themeSong" = "Theme Song";
+
+/// Theme Video
+"themeVideo" = "Theme Video";
 
 /// Thumb
 "thumb" = "Thumb";
@@ -2104,11 +2170,17 @@
 /// The video bit depth is not supported
 "videoBitDepthNotSupported" = "The video bit depth is not supported";
 
+/// Video bitrate
+"videoBitRate" = "Video bitrate";
+
 /// The video bitrate is not supported
 "videoBitrateNotSupported" = "The video bitrate is not supported";
 
 /// The video codec is not supported
 "videoCodecNotSupported" = "The video codec is not supported";
+
+/// Video codec tag is not supported
+"videoCodecTagNotSupported" = "Video codec tag is not supported";
 
 /// The video framerate is not supported
 "videoFramerateNotSupported" = "The video framerate is not supported";

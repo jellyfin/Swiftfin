@@ -87,7 +87,7 @@ struct AddItemElementView<Element: Hashable>: View {
                     name: name,
                     id: id,
                     personRole: personRole.isEmpty ? (personKind == .unknown ? nil : personKind.rawValue) : personRole,
-                    personKind: personKind.rawValue
+                    personKind: personKind
                 )]))
             }
             .buttonStyle(.toolbarPill)

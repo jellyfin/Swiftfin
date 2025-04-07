@@ -52,7 +52,7 @@ enum ItemArrayElements: Displayable {
         name: String,
         id: String?,
         personRole: String?,
-        personKind: String?
+        personKind: PersonKind?
     ) -> T {
         switch self {
         case .genres, .tags:

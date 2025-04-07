@@ -34,7 +34,12 @@ struct ServerUserMediaAccessView: View {
 
     init(viewModel: ServerUserAdminViewModel) {
         self.viewModel = viewModel
-        self.tempPolicy = viewModel.user.policy ?? UserPolicy()
+
+        guard let policy = viewModel.user.policy else {
+            preconditionFailure("User policy cannot be empty.")
+        }
+
+        self.tempPolicy = policy
     }
 
     // MARK: - Body
@@ -123,7 +128,7 @@ struct ServerUserMediaAccessView: View {
         if tempPolicy.enableContentDeletion == false {
             Section {
                 ForEach(
-                    viewModel.libraries.filter { $0.collectionType != "boxsets" },
+                    viewModel.libraries.filter { $0.collectionType != .boxsets },
                     id: \.id
                 ) { library in
                     Toggle(
