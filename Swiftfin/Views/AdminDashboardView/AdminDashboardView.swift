@@ -28,6 +28,9 @@ struct AdminDashboardView: View {
             }
 
             Section(L10n.activity) {
+                ChevronButton(L10n.activity) {
+                    router.route(to: \.activity)
+                }
                 ChevronButton(L10n.devices) {
                     router.route(to: \.devices)
                 }

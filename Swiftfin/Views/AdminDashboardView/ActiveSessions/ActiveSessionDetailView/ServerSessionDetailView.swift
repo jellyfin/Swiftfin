@@ -53,7 +53,7 @@ struct ActiveSessionDetailView: View {
     ) -> some View {
         List {
 
-            nowPlayingSection(item: nowPlayingItem)
+            AdminDashboardView.MediaItemSection(item: nowPlayingItem)
 
             Section(L10n.progress) {
                 ActiveSessionsView.ProgressSection(
@@ -99,67 +99,6 @@ struct ActiveSessionDetailView: View {
                 }
             }
         }
-    }
-
-    // MARK: Now Playing Section
-
-    @ViewBuilder
-    private func nowPlayingSection(item: BaseItemDto) -> some View {
-        Section {
-            HStack(alignment: .bottom, spacing: 12) {
-                Group {
-                    if item.type == .audio {
-                        ZStack {
-                            Color.clear
-
-                            ImageView(item.squareImageSources(maxWidth: 60))
-                                .failure {
-                                    SystemImageContentView(systemName: item.systemImage)
-                                }
-                        }
-                        .squarePosterStyle()
-                    } else {
-                        ZStack {
-                            Color.clear
-
-                            ImageView(item.portraitImageSources(maxWidth: 60))
-                                .failure {
-                                    SystemImageContentView(systemName: item.systemImage)
-                                }
-                        }
-                        .posterStyle(.portrait)
-                    }
-                }
-                .frame(width: 100)
-                .accessibilityIgnoresInvertColors()
-
-                VStack(alignment: .leading) {
-
-                    if let parent = item.parentTitle {
-                        Text(parent)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(2)
-                    }
-
-                    Text(item.displayTitle)
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.primary)
-                        .lineLimit(2)
-
-                    if let subtitle = item.subtitle {
-                        Text(subtitle)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                .padding(.bottom)
-            }
-        }
-        .listRowBackground(Color.clear)
-        .listRowCornerRadius(0)
-        .listRowInsets(.zero)
     }
 
     var body: some View {

@@ -40,6 +40,8 @@ internal enum L10n {
   internal static let active = L10n.tr("Localizable", "active", fallback: "Active")
   /// Activity
   internal static let activity = L10n.tr("Localizable", "activity", fallback: "Activity")
+  /// Activity log
+  internal static let activityLog = L10n.tr("Localizable", "activityLog", fallback: "Activity log")
   /// Actor
   internal static let actor = L10n.tr("Localizable", "actor", fallback: "Actor")
   /// Add
@@ -392,6 +394,8 @@ internal enum L10n {
   internal static let dashboard = L10n.tr("Localizable", "dashboard", fallback: "Dashboard")
   /// Perform administrative tasks for your Jellyfin server.
   internal static let dashboardDescription = L10n.tr("Localizable", "dashboardDescription", fallback: "Perform administrative tasks for your Jellyfin server.")
+  /// Date
+  internal static let date = L10n.tr("Localizable", "date", fallback: "Date")
   /// Date Added
   internal static let dateAdded = L10n.tr("Localizable", "dateAdded", fallback: "Date Added")
   /// Date created
@@ -760,6 +764,8 @@ internal enum L10n {
   internal static let letterer = L10n.tr("Localizable", "letterer", fallback: "Letterer")
   /// Letter Picker
   internal static let letterPicker = L10n.tr("Localizable", "letterPicker", fallback: "Letter Picker")
+  /// Level
+  internal static let level = L10n.tr("Localizable", "level", fallback: "Level")
   /// Library
   internal static let library = L10n.tr("Localizable", "library", fallback: "Library")
   /// Light
@@ -1130,6 +1136,8 @@ internal enum L10n {
   internal static let reset = L10n.tr("Localizable", "reset", fallback: "Reset")
   /// Reset all settings back to defaults.
   internal static let resetAllSettings = L10n.tr("Localizable", "resetAllSettings", fallback: "Reset all settings back to defaults.")
+  /// Reset the filter values to none.
+  internal static let resetFilterFooter = L10n.tr("Localizable", "resetFilterFooter", fallback: "Reset the filter values to none.")
   /// Reset Settings
   internal static let resetSettings = L10n.tr("Localizable", "resetSettings", fallback: "Reset Settings")
   /// Reset Swiftfin user settings
