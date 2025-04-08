@@ -22,7 +22,7 @@ final class QuickConnectAuthorizeViewModel: ViewModel, Eventful, Stateful {
     // MARK: Action
 
     enum Action: Equatable {
-        case authorize(String)
+        case authorize(code: String, userID: String? = nil)
         case cancel
     }
 
@@ -47,13 +47,13 @@ final class QuickConnectAuthorizeViewModel: ViewModel, Eventful, Stateful {
 
     func respond(to action: Action) -> State {
         switch action {
-        case let .authorize(code):
+        case let .authorize(code, userID):
             authorizeTask = Task {
 
                 try? await Task.sleep(nanoseconds: 10_000_000_000)
 
                 do {
-                    try await authorize(code: code)
+                    try await authorize(code: code, userID: userID)
 
                     await MainActor.run {
                         self.eventSubject.send(.authorized)
@@ -76,8 +76,8 @@ final class QuickConnectAuthorizeViewModel: ViewModel, Eventful, Stateful {
         }
     }
 
-    private func authorize(code: String) async throws {
-        let request = Paths.authorize(code: code)
+    private func authorize(code: String, userID: String? = nil) async throws {
+        let request = Paths.authorizeQuickConnect(code: code, userID: userID)
         let response = try await userSession.client.send(request)
 
         let decoder = JSONDecoder()
