@@ -214,6 +214,9 @@
 /// Authorize
 "authorize" = "Authorize";
 
+/// Authorize user
+"authorizeUser" = "Authorize user";
+
 /// Auto
 "auto" = "Auto";
 
@@ -1506,6 +1509,9 @@
 
 /// Authorizing Quick Connect successful. Please continue on your other device.
 "quickConnectSuccessMessage" = "Authorizing Quick Connect successful. Please continue on your other device.";
+
+/// This is the user account that will be logged in using Quick Connect.
+"quickConnectUserDisclaimer" = "This is the user account that will be logged in using Quick Connect.";
 
 /// Random
 "random" = "Random";

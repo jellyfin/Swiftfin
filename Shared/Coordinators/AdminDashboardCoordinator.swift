@@ -218,8 +218,8 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeQuickConnectAuthorize(userID: String) -> some View {
-        QuickConnectAuthorizeView(userID)
+    func makeQuickConnectAuthorize(user: UserDto) -> some View {
+        QuickConnectAuthorizeView(user)
     }
 
     // MARK: - Views: API Keys

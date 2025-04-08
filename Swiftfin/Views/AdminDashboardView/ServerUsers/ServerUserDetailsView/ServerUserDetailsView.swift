@@ -89,7 +89,7 @@ struct ServerUserDetailsView: View {
                         router.route(to: \.resetUserPassword, userId)
                     }
                     ChevronButton(L10n.quickConnect) {
-                        router.route(to: \.quickConnectAuthorize, userId)
+                        router.route(to: \.quickConnectAuthorize, viewModel.user)
                     }
                 }
             }
