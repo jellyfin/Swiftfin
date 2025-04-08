@@ -1136,6 +1136,8 @@ internal enum L10n {
   internal static let reset = L10n.tr("Localizable", "reset", fallback: "Reset")
   /// Reset all settings back to defaults.
   internal static let resetAllSettings = L10n.tr("Localizable", "resetAllSettings", fallback: "Reset all settings back to defaults.")
+  /// Reset the filter values to none.
+  internal static let resetFilterFooter = L10n.tr("Localizable", "resetFilterFooter", fallback: "Reset the filter values to none.")
   /// Reset Settings
   internal static let resetSettings = L10n.tr("Localizable", "resetSettings", fallback: "Reset Settings")
   /// Reset Swiftfin user settings

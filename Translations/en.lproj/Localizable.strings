@@ -1630,6 +1630,9 @@
 /// Reset all settings back to defaults.
 "resetAllSettings" = "Reset all settings back to defaults.";
 
+/// Reset the filter values to none.
+"resetFilterFooter" = "Reset the filter values to none.";
+
 /// Reset Settings
 "resetSettings" = "Reset Settings";
 

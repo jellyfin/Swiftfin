@@ -24,6 +24,13 @@ struct ServerActivityView: View {
     @StateObject
     private var userViewModel = ServerUsersViewModel()
 
+    // MARK: - Dialog States
+
+    @State
+    private var isDatePickerShowing: Bool = false
+    @State
+    private var tempDate: Date?
+
     // MARK: - Body
 
     var body: some View {
@@ -46,12 +53,17 @@ struct ServerActivityView: View {
         .navigationBarMenuButton(
             isLoading: viewModel.backgroundStates.contains(.gettingNextPage)
         ) {
-            startDateButton
-            userFilterButton
+            Section(L10n.filters) {
+                startDateButton
+                userFilterButton
+            }
         }
         .onFirstAppear {
             viewModel.send(.refresh)
             userViewModel.send(.getUsers())
+        }
+        .sheet(isPresented: $isDatePickerShowing, onDismiss: { isDatePickerShowing = false }) {
+            startDatePickerSheet
         }
     }
 
@@ -91,19 +103,31 @@ struct ServerActivityView: View {
     // MARK: - User Filter Button
 
     private var userFilterButton: some View {
-        Menu(L10n.type, systemImage: viewModel.hasUserId ? "person.fill" : "gearshape.fill") {
-            Picker(selection: $viewModel.hasUserId, label: Text(L10n.type)) {
+        Menu(
+            L10n.type,
+            systemImage: viewModel.hasUserId == true ? "person.fill" :
+                viewModel.hasUserId == false ? "gearshape.fill" : "line.3.horizontal"
+        ) {
+            Picker(L10n.type, selection: $viewModel.hasUserId) {
+                Section {
+                    Label(
+                        L10n.all,
+                        systemImage: "line.3.horizontal"
+                    )
+                    .tag(nil as Bool?)
+                }
+
                 Label(
-                    L10n.user,
+                    L10n.users,
                     systemImage: "person"
                 )
-                .tag(true)
+                .tag(true as Bool?)
 
                 Label(
                     L10n.system,
                     systemImage: "gearshape"
                 )
-                .tag(false)
+                .tag(false as Bool?)
             }
         }
     }
@@ -111,13 +135,65 @@ struct ServerActivityView: View {
     // MARK: - Start Date Button
 
     private var startDateButton: some View {
-        DatePicker(
-            L10n.startDate,
-            selection: Binding(
-                get: { viewModel.minDate ?? Date() },
-                set: { viewModel.minDate = $0 }
-            ),
-            displayedComponents: .date
-        )
+        Button {
+            if let minDate = viewModel.minDate {
+                tempDate = minDate
+            } else {
+                tempDate = Date()
+            }
+            isDatePickerShowing = true
+        } label: {
+            Label(
+                L10n.startDate,
+                systemImage: "calendar"
+            )
+        }
+    }
+
+    // MARK: - Start Date Picker Sheet
+
+    private var startDatePickerSheet: some View {
+        NavigationView {
+            List {
+                Section {
+                    DatePicker(
+                        L10n.date,
+                        selection: Binding(
+                            get: { tempDate ?? Date() },
+                            set: { tempDate = $0 }
+                        ),
+                        in: ...Date(),
+                        displayedComponents: .date
+                    )
+                    .datePickerStyle(.graphical)
+                    .labelsHidden()
+                }
+
+                /// Reset button to remove the filter
+                if viewModel.minDate != nil {
+                    Section {
+                        ListRowButton(L10n.reset, role: .destructive) {
+                            viewModel.minDate = nil
+                            isDatePickerShowing = false
+                        }
+                    } footer: {
+                        Text(L10n.resetFilterFooter)
+                    }
+                }
+            }
+            .navigationTitle(L10n.startDate.localizedCapitalized)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarCloseButton {
+                isDatePickerShowing = false
+            }
+            .topBarTrailing {
+                Button(L10n.save) {
+                    viewModel.minDate = tempDate?.dateOnly
+                    isDatePickerShowing = false
+                }
+                .buttonStyle(.toolbarPill)
+                .disabled(viewModel.minDate != nil && tempDate?.dateOnly == viewModel.minDate)
+            }
+        }
     }
 }

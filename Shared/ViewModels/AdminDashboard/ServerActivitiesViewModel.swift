@@ -12,7 +12,7 @@ import JellyfinAPI
 final class ServerActivitiesViewModel: PagingLibraryViewModel<ActivityLogEntry> {
 
     @Published
-    var hasUserId: Bool = false {
+    var hasUserId: Bool? {
         didSet {
             DispatchQueue.main.async {
                 self.send(.refresh)
