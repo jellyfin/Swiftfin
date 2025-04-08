@@ -158,6 +158,8 @@ internal enum L10n {
   internal static let author = L10n.tr("Localizable", "author", fallback: "Author")
   /// Authorize
   internal static let authorize = L10n.tr("Localizable", "authorize", fallback: "Authorize")
+  /// Authorize user
+  internal static let authorizeUser = L10n.tr("Localizable", "authorizeUser", fallback: "Authorize user")
   /// Auto
   internal static let auto = L10n.tr("Localizable", "auto", fallback: "Auto")
   /// Optimizes playback using default settings for most devices. Some formats may require server transcoding for non-compatible media types.
@@ -1050,6 +1052,8 @@ internal enum L10n {
   internal static let quickConnectStep3 = L10n.tr("Localizable", "quickConnectStep3", fallback: "Enter the following code:")
   /// Authorizing Quick Connect successful. Please continue on your other device.
   internal static let quickConnectSuccessMessage = L10n.tr("Localizable", "quickConnectSuccessMessage", fallback: "Authorizing Quick Connect successful. Please continue on your other device.")
+  /// This is the user account that will be logged in using Quick Connect.
+  internal static let quickConnectUserDisclaimer = L10n.tr("Localizable", "quickConnectUserDisclaimer", fallback: "This is the user account that will be logged in using Quick Connect.")
   /// Random
   internal static let random = L10n.tr("Localizable", "random", fallback: "Random")
   /// Random image

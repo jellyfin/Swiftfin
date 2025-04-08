@@ -64,6 +64,8 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     var userLiveTVAccess = makeUserLiveTVAccess
     @Route(.modal)
     var userPermissions = makeUserPermissions
+    @Route(.push)
+    var quickConnectAuthorize = makeQuickConnectAuthorize
     @Route(.modal)
     var userParentalRatings = makeUserParentalRatings
     @Route(.modal)
@@ -213,6 +215,11 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
         NavigationViewCoordinator {
             ResetUserPasswordView(userID: userID, requiresCurrentPassword: false)
         }
+    }
+
+    @ViewBuilder
+    func makeQuickConnectAuthorize(user: UserDto) -> some View {
+        QuickConnectAuthorizeView(user)
     }
 
     // MARK: - Views: API Keys

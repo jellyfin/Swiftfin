@@ -8,9 +8,15 @@
 
 import Defaults
 import Foundation
+import JellyfinAPI
 import SwiftUI
 
 struct QuickConnectAuthorizeView: View {
+
+    // MARK: - Dismiss Environment
+
+    @Environment(\.dismiss)
+    private var dismiss
 
     // MARK: - Defaults
 
@@ -24,16 +30,14 @@ struct QuickConnectAuthorizeView: View {
 
     // MARK: - State & Environment Objects
 
-    @EnvironmentObject
-    private var router: SettingsCoordinator.Router
-
     @StateObject
-    private var viewModel = QuickConnectAuthorizeViewModel()
+    private var viewModel: QuickConnectAuthorizeViewModel
 
     // MARK: - Quick Connect Variables
 
     @State
     private var code: String = ""
+    private var user: UserDto
 
     // MARK: - Dialog State
 
@@ -45,10 +49,60 @@ struct QuickConnectAuthorizeView: View {
     @State
     private var error: Error? = nil
 
+    // MARK: - Initialize
+
+    init(_ user: UserDto? = nil) {
+        let tempViewModel = QuickConnectAuthorizeViewModel()
+        self._viewModel = StateObject(wrappedValue: tempViewModel)
+
+        if let user {
+            self.user = user
+        } else {
+            self.user = UserDto(
+                id: tempViewModel.userSession.user.id,
+                name: tempViewModel.userSession.user.username
+            )
+        }
+    }
+
+    // MARK: Display the User Being Authenticated
+
+    @ViewBuilder
+    private var loginUserRow: some View {
+        HStack {
+            ZStack {
+                if let userID = user.id {
+                    UserProfileImage(
+                        userID: userID,
+                        source: user.profileImageSource(
+                            client: viewModel.userSession.client,
+                            maxWidth: 120
+                        )
+                    )
+                }
+            }
+            .frame(width: 50, height: 50)
+
+            Text(user.name ?? L10n.unknown)
+                .fontWeight(.semibold)
+                .foregroundStyle(.primary)
+
+            Spacer()
+        }
+    }
+
     // MARK: - Body
 
     var body: some View {
         Form {
+            Section {
+                loginUserRow
+            } header: {
+                Text(L10n.authorizeUser)
+            } footer: {
+                Text(L10n.quickConnectUserDisclaimer)
+            }
+
             Section {
                 TextField(L10n.quickConnectCode, text: $code)
                     .keyboardType(.numberPad)
@@ -66,7 +120,7 @@ struct QuickConnectAuthorizeView: View {
                 .foregroundStyle(.red, .red.opacity(0.2))
             } else {
                 ListRowButton(L10n.authorize) {
-                    viewModel.send(.authorize(code))
+                    viewModel.send(.authorize(code: code, userID: user.id))
                 }
                 .disabled(code.count != 6 || viewModel.state == .authorizing)
                 .foregroundStyle(
@@ -107,7 +161,7 @@ struct QuickConnectAuthorizeView: View {
             isPresented: $isPresentingSuccess
         ) {
             Button(L10n.dismiss, role: .cancel) {
-                router.pop()
+                dismiss()
             }
         } message: {
             L10n.quickConnectSuccessMessage.text

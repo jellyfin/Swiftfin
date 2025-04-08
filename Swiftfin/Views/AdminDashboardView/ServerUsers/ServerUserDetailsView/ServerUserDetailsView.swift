@@ -81,13 +81,16 @@ struct ServerUserDetailsView: View {
                         }
                     }
                 }
+                ChevronButton(L10n.permissions) {
+                    router.route(to: \.userPermissions, viewModel)
+                }
                 if let userId = viewModel.user.id {
                     ChevronButton(L10n.password) {
                         router.route(to: \.resetUserPassword, userId)
                     }
-                }
-                ChevronButton(L10n.permissions) {
-                    router.route(to: \.userPermissions, viewModel)
+                    ChevronButton(L10n.quickConnect) {
+                        router.route(to: \.quickConnectAuthorize, viewModel.user)
+                    }
                 }
             }
 
