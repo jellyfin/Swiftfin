@@ -104,7 +104,8 @@ struct EditServerUserAccessTagsView: View {
         .navigationBarMenuButton(
             isLoading: viewModel.backgroundStates.contains(.refreshing),
             isHidden: isEditing || (
-                viewModel.user.policy?.blockedTags?.isEmpty == true
+                viewModel.user.policy?.blockedTags?.isEmpty == true &&
+                    viewModel.user.policy?.allowedTags?.isEmpty == true
             )
         ) {
             Button(L10n.add, systemImage: "plus") {
