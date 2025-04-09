@@ -104,14 +104,17 @@ struct EditServerUserAccessTagsView: View {
         .navigationBarMenuButton(
             isLoading: viewModel.backgroundStates.contains(.refreshing),
             isHidden: isEditing || (
-                viewModel.user.policy?.blockedTags?.isEmpty == true
+                viewModel.user.policy?.blockedTags?.isEmpty == true &&
+                    viewModel.user.policy?.allowedTags?.isEmpty == true
             )
         ) {
             Button(L10n.add, systemImage: "plus") {
                 router.route(to: \.userAddAccessTag, viewModel)
             }
 
-            if viewModel.user.policy?.blockedTags?.isNotEmpty == true {
+            if viewModel.user.policy?.blockedTags?.isNotEmpty == true ||
+                viewModel.user.policy?.allowedTags?.isNotEmpty == true
+            {
                 Button(L10n.edit, systemImage: "checkmark.circle") {
                     isEditing = true
                 }
@@ -179,21 +182,25 @@ struct EditServerUserAccessTagsView: View {
                 }
             } else {
                 if allowedTags.isNotEmpty {
-                    DisclosureGroup(L10n.allowed) {
-                        ForEach(
-                            allowedTags,
-                            id: \.self,
-                            content: makeRow
-                        )
+                    Section {
+                        DisclosureGroup(L10n.allowed) {
+                            ForEach(
+                                allowedTags,
+                                id: \.self,
+                                content: makeRow
+                            )
+                        }
                     }
                 }
                 if blockedTags.isNotEmpty {
-                    DisclosureGroup(L10n.blocked) {
-                        ForEach(
-                            blockedTags,
-                            id: \.self,
-                            content: makeRow
-                        )
+                    Section {
+                        DisclosureGroup(L10n.blocked) {
+                            ForEach(
+                                blockedTags,
+                                id: \.self,
+                                content: makeRow
+                            )
+                        }
                     }
                 }
             }
@@ -204,10 +211,10 @@ struct EditServerUserAccessTagsView: View {
 
     @ViewBuilder
     private var navigationBarSelectView: some View {
-        let isAllSelected = selectedTags.count == blockedTags.count
+        let isAllSelected = selectedTags.count == blockedTags.count + allowedTags.count
 
         Button(isAllSelected ? L10n.removeAll : L10n.selectAll) {
-            selectedTags = isAllSelected ? [] : Set(blockedTags)
+            selectedTags = isAllSelected ? [] : Set(blockedTags + allowedTags)
         }
         .buttonStyle(.toolbarPill)
         .disabled(!isEditing)
