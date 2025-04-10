@@ -10,7 +10,7 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-final class ParentalRatingsViewModel: ViewModel, Stateful {
+final class CultureViewModel: ViewModel, Stateful {
 
     // MARK: Action
 
@@ -28,16 +28,12 @@ final class ParentalRatingsViewModel: ViewModel, Stateful {
     }
 
     @Published
-    private(set) var parentalRatings: [ParentalRating] = []
+    private(set) var cultures: Set<CultureDto> = []
 
     @Published
     var state: State = .initial
 
     private var currentRefreshTask: AnyCancellable?
-
-    var hasNoResults: Bool {
-        parentalRatings.isEmpty
-    }
 
     func respond(to action: Action) -> State {
         switch action {
@@ -48,12 +44,14 @@ final class ParentalRatingsViewModel: ViewModel, Stateful {
                 guard let self else { return }
 
                 do {
-                    let parentalRatings = try await getParentalRatings()
+                    self.cultures = []
+
+                    let serverCultures = try await getCultures()
 
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run {
-                        self.parentalRatings = parentalRatings
+                        self.cultures.insert(contentsOf: serverCultures)
                         self.state = .content
                     }
                 } catch {
@@ -70,10 +68,10 @@ final class ParentalRatingsViewModel: ViewModel, Stateful {
         }
     }
 
-    // MARK: - Fetch Parental Ratings
+    // MARK: - Fetch Cultures
 
-    private func getParentalRatings() async throws -> [ParentalRating] {
-        let request = Paths.getParentalRatings
+    private func getCultures() async throws -> [CultureDto] {
+        let request = Paths.getCultures
         let response = try await userSession.client.send(request)
 
         return response.value

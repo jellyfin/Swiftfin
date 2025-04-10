@@ -19,14 +19,14 @@ extension EditMetadataView {
 
         var body: some View {
             Section(L10n.metadataPreferences) {
-                LanguagePicker(
-                    title: L10n.language,
-                    selectedLanguageCode: $item.preferredMetadataLanguage
+                CultureISOPicker(
+                    L10n.language,
+                    threeLetterISOLanguage: $item.preferredMetadataLanguage
                 )
 
-                CountryPicker(
-                    title: L10n.country,
-                    selectedCountryCode: $item.preferredMetadataCountryCode
+                CountryISOPicker(
+                    L10n.country,
+                    threeLetterISORegionName: $item.preferredMetadataCountryCode
                 )
             }
         }
