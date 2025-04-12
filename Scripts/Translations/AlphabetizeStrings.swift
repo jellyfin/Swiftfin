@@ -16,7 +16,7 @@ let fileURL = URL(fileURLWithPath: "./Translations/en.lproj/Localizable.strings"
 let regex = #/^\"(?<key>[^\"]+)\"\s*=\s*\"(?<value>[^\"]+)\";/#
 
 // Attempt to read the file content.
-guard let content = try? String(contentsOf: fileURL, encoding: .utf8) else {
+guard let content = try? String(contentsOf: fileURL, encoding: .utf16) else {
     print("Unable to read file: \(fileURL.path)")
     exit(1)
 }
@@ -43,10 +43,10 @@ let newContent = sortedKeys.map { "/// \(entries[$0]!)\n\"\($0)\" = \"\(entries[
 
 // Write the updated, sorted, and commented localizations back to the file.
 do {
-    try newContent.write(to: fileURL, atomically: true, encoding: .utf8)
+    try newContent.write(to: fileURL, atomically: true, encoding: .utf16)
 
     if let derivedFileDirectory = ProcessInfo.processInfo.environment["DERIVED_FILE_DIR"] {
-        try? "".write(toFile: derivedFileDirectory + "/alphabetizeStrings.txt", atomically: true, encoding: .utf8)
+        try? "".write(toFile: derivedFileDirectory + "/alphabetizeStrings.txt", atomically: true, encoding: .utf16)
     }
 } catch {
     print("Error: Failed to write to \(fileURL.path)")

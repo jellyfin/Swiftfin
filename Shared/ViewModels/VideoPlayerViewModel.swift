@@ -26,14 +26,14 @@ final class VideoPlayerViewModel: ViewModel {
     let selectedAudioStreamIndex: Int
     let selectedSubtitleStreamIndex: Int
     let chapters: [ChapterInfo.FullInfo]
-    let streamType: StreamType
+    let playMethod: PlayMethod
 
     var hlsPlaybackURL: URL {
         let parameters = Paths.GetMasterHlsVideoPlaylistParameters(
             isStatic: true,
             tag: mediaSource.eTag,
             playSessionID: playSessionID,
-            segmentContainer: "mp4",
+            segmentContainer: MediaContainer.mp4.rawValue,
             minSegments: 2,
             mediaSourceID: mediaSource.id!,
             deviceID: UIDevice.vendorUUIDString,
@@ -97,7 +97,7 @@ final class VideoPlayerViewModel: ViewModel {
         selectedAudioStreamIndex: Int,
         selectedSubtitleStreamIndex: Int,
         chapters: [ChapterInfo.FullInfo],
-        streamType: StreamType
+        playMethod: PlayMethod
     ) {
         self.item = item
         self.mediaSource = mediaSource
@@ -108,16 +108,16 @@ final class VideoPlayerViewModel: ViewModel {
             fatalError("Media source does not have any streams")
         }
 
-        let adjustedStreams = mediaStreams.adjustedTrackIndexes(for: streamType, selectedAudioStreamIndex: selectedAudioStreamIndex)
+        let adjustedStreams = mediaStreams.adjustedTrackIndexes(for: playMethod, selectedAudioStreamIndex: selectedAudioStreamIndex)
 
-        self.videoStreams = adjustedStreams.filter { $0.type == .video }
-        self.audioStreams = adjustedStreams.filter { $0.type == .audio }
-        self.subtitleStreams = adjustedStreams.filter { $0.type == .subtitle }
+        self.videoStreams = adjustedStreams.filter { $0.type == MediaStreamType.video }
+        self.audioStreams = adjustedStreams.filter { $0.type == MediaStreamType.audio }
+        self.subtitleStreams = adjustedStreams.filter { $0.type == MediaStreamType.subtitle }
 
         self.selectedAudioStreamIndex = selectedAudioStreamIndex
         self.selectedSubtitleStreamIndex = selectedSubtitleStreamIndex
         self.chapters = chapters
-        self.streamType = streamType
+        self.playMethod = playMethod
         super.init()
     }
 

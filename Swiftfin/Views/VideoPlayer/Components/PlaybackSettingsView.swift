@@ -34,10 +34,9 @@ struct PlaybackSettingsView: View {
         Form {
             Section {
 
-                ChevronButton(L10n.videoPlayer)
-                    .onSelect {
-                        router.route(to: \.videoPlayerSettings)
-                    }
+                ChevronButton(L10n.videoPlayer) {
+                    router.route(to: \.videoPlayerSettings)
+                }
 
                 // TODO: playback information
             } header: {
@@ -67,10 +66,9 @@ struct PlaybackSettingsView: View {
             if viewModel.videoStreams.isNotEmpty {
                 Section(L10n.video) {
                     ForEach(viewModel.videoStreams, id: \.displayTitle) { mediaStream in
-                        ChevronButton(mediaStream.displayTitle ?? .emptyDash)
-                            .onSelect {
-                                router.route(to: \.mediaStreamInfo, mediaStream)
-                            }
+                        ChevronButton(mediaStream.displayTitle ?? .emptyDash) {
+                            router.route(to: \.mediaStreamInfo, mediaStream)
+                        }
                     }
                 }
             }
@@ -78,10 +76,9 @@ struct PlaybackSettingsView: View {
             if viewModel.audioStreams.isNotEmpty {
                 Section(L10n.audio) {
                     ForEach(viewModel.audioStreams, id: \.displayTitle) { mediaStream in
-                        ChevronButton(mediaStream.displayTitle ?? .emptyDash)
-                            .onSelect {
-                                router.route(to: \.mediaStreamInfo, mediaStream)
-                            }
+                        ChevronButton(mediaStream.displayTitle ?? .emptyDash) {
+                            router.route(to: \.mediaStreamInfo, mediaStream)
+                        }
                     }
                 }
             }
@@ -89,10 +86,9 @@ struct PlaybackSettingsView: View {
             if viewModel.subtitleStreams.isNotEmpty {
                 Section(L10n.subtitle) {
                     ForEach(viewModel.subtitleStreams, id: \.displayTitle) { mediaStream in
-                        ChevronButton(mediaStream.displayTitle ?? .emptyDash)
-                            .onSelect {
-                                router.route(to: \.mediaStreamInfo, mediaStream)
-                            }
+                        ChevronButton(mediaStream.displayTitle ?? .emptyDash) {
+                            router.route(to: \.mediaStreamInfo, mediaStream)
+                        }
                     }
                 }
             }

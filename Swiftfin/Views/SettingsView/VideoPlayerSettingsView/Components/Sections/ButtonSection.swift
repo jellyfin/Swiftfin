@@ -42,15 +42,13 @@ extension VideoPlayerSettingsView {
                     }
                 }
 
-                ChevronButton(L10n.barButtons)
-                    .onSelect {
-                        router.route(to: \.actionButtonSelector, $barActionButtons)
-                    }
+                ChevronButton(L10n.barButtons) {
+                    router.route(to: \.actionButtonSelector, $barActionButtons)
+                }
 
-                ChevronButton(L10n.menuButtons)
-                    .onSelect {
-                        router.route(to: \.actionButtonSelector, $menuActionButtons)
-                    }
+                ChevronButton(L10n.menuButtons) {
+                    router.route(to: \.actionButtonSelector, $menuActionButtons)
+                }
             }
             .onChange(of: barActionButtons) { newValue in
                 autoPlayEnabled = newValue.contains(.autoPlay) || menuActionButtons.contains(.autoPlay)

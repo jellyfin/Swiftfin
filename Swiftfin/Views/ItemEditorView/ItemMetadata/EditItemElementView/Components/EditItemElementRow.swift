@@ -66,7 +66,7 @@ extension EditItemElementView {
                         let person = (item as! BaseItemPerson)
 
                         TextPairView(
-                            leading: person.type ?? .emptyDash,
+                            leading: person.type?.displayTitle ?? .emptyDash,
                             trailing: person.role ?? .emptyDash
                         )
                         .foregroundStyle(

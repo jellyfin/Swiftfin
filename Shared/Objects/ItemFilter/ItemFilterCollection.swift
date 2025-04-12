@@ -16,7 +16,7 @@ struct ItemFilterCollection: Codable, Defaults.Serializable, Hashable {
     var genres: [ItemGenre] = []
     var itemTypes: [BaseItemKind] = []
     var letter: [ItemLetter] = []
-    var sortBy: [ItemSortBy] = [ItemSortBy.name]
+    var sortBy: [ItemSortBy] = [ItemSortBy.sortName]
     var sortOrder: [ItemSortOrder] = [ItemSortOrder.ascending]
     var tags: [ItemTag] = []
     var traits: [ItemTrait] = []
@@ -29,7 +29,7 @@ struct ItemFilterCollection: Codable, Defaults.Serializable, Hashable {
         traits: [ItemTrait.isFavorite]
     )
     static let recent: ItemFilterCollection = .init(
-        sortBy: [ItemSortBy.dateAdded],
+        sortBy: [ItemSortBy.dateLastContentAdded],
         sortOrder: [ItemSortOrder.descending]
     )
 
@@ -39,7 +39,7 @@ struct ItemFilterCollection: Codable, Defaults.Serializable, Hashable {
     /// available values within the current context.
     static let all: ItemFilterCollection = .init(
         letter: ItemLetter.allCases,
-        sortBy: ItemSortBy.allCases,
+        sortBy: ItemSortBy.supportedCases,
         sortOrder: ItemSortOrder.allCases,
         traits: ItemTrait.supportedCases
     )

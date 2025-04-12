@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-extension SessionInfo {
+extension SessionInfoDto {
 
     var device: DeviceType {
         DeviceType(

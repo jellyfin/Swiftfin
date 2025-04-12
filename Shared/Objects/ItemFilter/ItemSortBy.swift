@@ -9,27 +9,84 @@
 import Foundation
 import JellyfinAPI
 
-// TODO: Remove when JellyfinAPI generates 10.9.0 schema
-
-enum ItemSortBy: String, CaseIterable, Displayable, Codable {
-
-    case premiereDate = "PremiereDate"
-    case name = "SortName"
-    case dateAdded = "DateCreated"
-    case random = "Random"
-
-    // TODO: Localize
+extension ItemSortBy: Displayable, SupportedCaseIterable {
     var displayTitle: String {
         switch self {
+        case .default:
+            return L10n.default
+        case .airedEpisodeOrder:
+            return L10n.airedEpisodeOrder
+        case .album:
+            return L10n.album
+        case .albumArtist:
+            return L10n.albumArtist
+        case .artist:
+            return L10n.artist
+        case .dateCreated:
+            return L10n.dateCreated
+        case .officialRating:
+            return L10n.officialRating
+        case .datePlayed:
+            return L10n.datePlayed
         case .premiereDate:
             return L10n.premiereDate
+        case .startDate:
+            return L10n.startDate
+        case .sortName:
+            return L10n.sortName
         case .name:
             return L10n.name
-        case .dateAdded:
-            return L10n.dateAdded
         case .random:
             return L10n.random
+        case .runtime:
+            return L10n.runtime
+        case .communityRating:
+            return L10n.communityRating
+        case .productionYear:
+            return L10n.year
+        case .playCount:
+            return L10n.playCount
+        case .criticRating:
+            return L10n.criticRating
+        case .isFolder:
+            return L10n.folder
+        case .isUnplayed:
+            return L10n.unplayed
+        case .isPlayed:
+            return L10n.played
+        case .seriesSortName:
+            return L10n.seriesName
+        case .videoBitRate:
+            return L10n.videoBitRate
+        case .airTime:
+            return L10n.airTime
+        case .studio:
+            return L10n.studio
+        case .isFavoriteOrLiked:
+            return L10n.favorite
+        case .dateLastContentAdded:
+            return L10n.dateAdded
+        case .seriesDatePlayed:
+            return L10n.seriesDatePlayed
+        case .parentIndexNumber:
+            return L10n.parentIndexNumber
+        case .indexNumber:
+            return L10n.indexNumber
+        case .similarityScore:
+            return L10n.similarityScore
+        case .searchScore:
+            return L10n.searchScore
         }
+    }
+
+    static var supportedCases: [ItemSortBy] {
+        [
+            .premiereDate,
+            .name,
+            .sortName,
+            .dateLastContentAdded,
+            .random,
+        ]
     }
 }
 

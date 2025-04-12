@@ -92,8 +92,7 @@ extension ItemImageDetailsView {
                     ChevronButton(
                         L10n.imageSource,
                         external: true
-                    )
-                    .onSelect {
+                    ) {
                         UIApplication.shared.open(url)
                     }
                 }

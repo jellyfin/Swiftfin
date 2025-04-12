@@ -186,7 +186,7 @@ struct UserSignInView: View {
             isLoading: viewModel.state == .signingIn,
             leadingTitle: L10n.signInToServer(viewModel.server.name),
             trailingTitle: L10n.publicUsers,
-            backgroundImageSource: viewModel.server.splashScreenImageSource()
+            backgroundImageSource: viewModel.server.splashScreenImageSource
         ) {
             signInSection
         } trailingContentView: {

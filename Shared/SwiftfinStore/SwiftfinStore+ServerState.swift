@@ -74,7 +74,7 @@ extension ServerState {
         return response.value
     }
 
-    func splashScreenImageSource() -> ImageSource {
+    var splashScreenImageSource: ImageSource {
         let request = Paths.getSplashscreen()
         return ImageSource(url: client.fullURL(with: request))
     }

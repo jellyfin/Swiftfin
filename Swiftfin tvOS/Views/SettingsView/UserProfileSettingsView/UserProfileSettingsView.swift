@@ -53,10 +53,9 @@ struct UserProfileSettingsView: View {
 //            }
 
                 Section {
-                    ChevronButton(L10n.security)
-                        .onSelect {
-                            router.route(to: \.localSecurity)
-                        }
+                    ChevronButton(L10n.security) {
+                        router.route(to: \.localSecurity)
+                    }
                 }
 
                 // TODO: Do we want this option on tvOS?

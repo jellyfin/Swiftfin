@@ -325,8 +325,8 @@ class ItemViewModel: ViewModel, Stateful {
     private func getSpecialFeatures() async -> [BaseItemDto] {
 
         let request = Paths.getSpecialFeatures(
-            userID: userSession.user.id,
-            itemID: item.id!
+            itemID: item.id!,
+            userID: userSession.user.id
         )
         let response = try? await userSession.client.send(request)
 
@@ -338,7 +338,7 @@ class ItemViewModel: ViewModel, Stateful {
 
         guard let itemID = item.id else { return [] }
 
-        let request = Paths.getLocalTrailers(userID: userSession.user.id, itemID: itemID)
+        let request = Paths.getLocalTrailers(itemID: itemID, userID: userSession.user.id)
         let response = try? await userSession.client.send(request)
 
         return response?.value ?? []
@@ -352,13 +352,13 @@ class ItemViewModel: ViewModel, Stateful {
 
         if isPlayed {
             request = Paths.markPlayedItem(
-                userID: userSession.user.id,
-                itemID: item.id!
+                itemID: item.id!,
+                userID: userSession.user.id
             )
         } else {
             request = Paths.markUnplayedItem(
-                userID: userSession.user.id,
-                itemID: item.id!
+                itemID: item.id!,
+                userID: userSession.user.id
             )
         }
 
@@ -372,13 +372,13 @@ class ItemViewModel: ViewModel, Stateful {
 
         if isFavorite {
             request = Paths.markFavoriteItem(
-                userID: userSession.user.id,
-                itemID: item.id!
+                itemID: item.id!,
+                userID: userSession.user.id
             )
         } else {
             request = Paths.unmarkFavoriteItem(
-                userID: userSession.user.id,
-                itemID: item.id!
+                itemID: item.id!,
+                userID: userSession.user.id
             )
         }
 

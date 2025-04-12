@@ -6,12 +6,10 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionVGrid
 import Defaults
 import Factory
 import JellyfinAPI
 import LocalAuthentication
-import OrderedCollections
 import SwiftUI
 
 // TODO: authentication view during device authentication
@@ -23,8 +21,12 @@ import SwiftUI
 // TODO: between the server selection menu and delete toolbar,
 //       figure out a way to make the grid/list and splash screen
 //       not jump when size is changed
+// TODO: fix splash screen pulsing
+//       - should have used successful image source binding on ImageView?
 
 struct SelectUserView: View {
+
+    typealias UserItem = (user: UserState, server: ServerState)
 
     // MARK: - Defaults
 
@@ -37,44 +39,17 @@ struct SelectUserView: View {
     @Default(.selectUserDisplayType)
     private var userListDisplayType
 
-    // MARK: - Environment Variable
-
-    @Environment(\.colorScheme)
-    private var colorScheme
-
-    // MARK: - Focus Fields
-
-    private enum UserGridItem: Hashable {
-        case user(UserState, server: ServerState)
-        case addUser
-    }
-
     // MARK: - State & Environment Objects
 
     @EnvironmentObject
     private var router: SelectUserCoordinator.Router
 
-    @StateObject
-    private var viewModel = SelectUserViewModel()
-
-    // MARK: - Select Users Variables
-
-    @State
-    private var contentSize: CGSize = .zero
-    @State
-    private var gridItems: OrderedSet<UserGridItem> = []
-    @State
-    private var gridItemSize: CGSize = .zero
     @State
     private var isEditingUsers: Bool = false
-    @State
-    private var padGridItemColumnCount: Int = 1
     @State
     private var pin: String = ""
     @State
     private var selectedUsers: Set<UserState> = []
-    @State
-    private var splashScreenImageSources: [ImageSource] = []
 
     // MARK: - Dialog States
 
@@ -88,85 +63,63 @@ struct SelectUserView: View {
     @State
     private var error: Error? = nil
 
-    private var users: [UserState] {
-        gridItems.compactMap { item in
-            switch item {
-            case let .user(user, _):
-                return user
-            default:
-                return nil
-            }
-        }
-    }
-
-    // MARK: - Select Server
+    @StateObject
+    private var viewModel = SelectUserViewModel()
 
     private var selectedServer: ServerState? {
-        if case let SelectUserServerSelection.server(id: id) = serverSelection,
-           let server = viewModel.servers.keys.first(where: { server in server.id == id })
-        {
-            return server
-        }
-
-        return nil
+        serverSelection.server(from: viewModel.servers.keys)
     }
 
-    // MARK: - Make Grid Items
+    private var splashScreenImageSources: [ImageSource] {
+        switch (serverSelection, selectUserAllServersSplashscreen) {
+        case (.all, .all):
+            return viewModel
+                .servers
+                .keys
+                .shuffled()
+                .map(\.splashScreenImageSource)
 
-    private func makeGridItems(for serverSelection: SelectUserServerSelection) -> OrderedSet<UserGridItem> {
+        // need to evaluate server with id selection first
+        case let (.server(id), _), let (.all, .server(id)):
+            guard let server = viewModel
+                .servers
+                .keys
+                .first(where: { $0.id == id }) else { return [] }
+
+            return [server.splashScreenImageSource]
+        }
+    }
+
+    private var userItems: [UserItem] {
         switch serverSelection {
         case .all:
-            let items = viewModel.servers
+            return viewModel.servers
                 .map { server, users in
                     users.map { (server: server, user: $0) }
                 }
                 .flatMap { $0 }
                 .sorted(using: \.user.username)
                 .reversed()
-                .map { UserGridItem.user($0.user, server: $0.server) }
-                .appending(.addUser)
-
-            return OrderedSet(items)
+                .map { UserItem(user: $0.user, server: $0.server) }
         case let .server(id: id):
             guard let server = viewModel.servers.keys.first(where: { server in server.id == id }) else {
-                assertionFailure("server with ID not found?")
-                return [.addUser]
+                return []
             }
 
-            let items = viewModel.servers[server]!
+            return viewModel.servers[server]!
                 .sorted(using: \.username)
-                .map { UserGridItem.user($0, server: server) }
-                .appending(.addUser)
-
-            return OrderedSet(items)
+                .map { UserItem(user: $0, server: server) }
         }
     }
 
-    // MARK: - Make Splash Screen Image Source
+    private func addUserSelected(server: ServerState) {
+        UIDevice.impact(.light)
+        router.route(to: \.userSignIn, server)
+    }
 
-    // For all server selection, .all is random
-    private func makeSplashScreenImageSources(
-        serverSelection: SelectUserServerSelection,
-        allServersSelection: SelectUserServerSelection
-    ) -> [ImageSource] {
-        switch (serverSelection, allServersSelection) {
-        case (.all, .all):
-            return viewModel
-                .servers
-                .keys
-                .shuffled()
-                .map { $0.splashScreenImageSource() }
-
-        // need to evaluate server with id selection first
-        case let (.server(id), _), let (.all, .server(id)):
-            return [
-                viewModel
-                    .servers
-                    .keys
-                    .first { $0.id == id }?
-                    .splashScreenImageSource() ?? .init(),
-            ]
-        }
+    private func delete(user: UserState) {
+        selectedUsers.insert(user)
+        isPresentingConfirmDeleteUsers = true
     }
 
     // MARK: - Select User(s)
@@ -230,14 +183,37 @@ struct SelectUserView: View {
         Menu(L10n.advanced, systemImage: "gearshape.fill") {
 
             Section {
-                if gridItems.count > 1 {
-                    Button(L10n.editUsers, systemImage: "person.crop.circle") {
-                        isEditingUsers.toggle()
+
+                if userItems.isNotEmpty {
+                    ConditionalMenu(
+                        tracking: selectedServer,
+                        action: addUserSelected
+                    ) {
+                        Section(L10n.servers) {
+                            let servers = viewModel.servers.keys
+
+                            ForEach(servers) { server in
+                                Button {
+                                    addUserSelected(server: server)
+                                } label: {
+                                    Text(server.name)
+                                    Text(server.currentURL.absoluteString)
+                                }
+                            }
+                        }
+                    } label: {
+                        Label(L10n.addUser, systemImage: "plus")
                     }
+
+                    Toggle(
+                        L10n.editUsers,
+                        systemImage: "person.crop.circle",
+                        isOn: $isEditingUsers
+                    )
                 }
             }
 
-            if !viewModel.servers.isEmpty {
+            if viewModel.servers.isNotEmpty {
                 Picker(selection: $userListDisplayType) {
                     ForEach(LibraryDisplayType.allCases, id: \.hashValue) {
                         Label($0.displayTitle, systemImage: $0.systemImage)
@@ -259,38 +235,59 @@ struct SelectUserView: View {
         }
     }
 
-    // MARK: - iPad Grid Item Offset
+    @ViewBuilder
+    private var addUserGridButtonView: some View {
+        AddUserGridButton(
+            selectedServer: selectedServer,
+            servers: viewModel.servers.keys,
+            action: addUserSelected
+        )
+    }
 
-    private func padGridItemOffset(index: Int) -> CGFloat {
-        let lastRowIndices = (gridItems.count - gridItems.count % padGridItemColumnCount ..< gridItems.count)
+    @ViewBuilder
+    private func userGridItemView(for item: UserItem) -> some View {
+        let user = item.user
+        let server = item.server
 
-        guard lastRowIndices.contains(index) else { return 0 }
-
-        let lastRowMissing = padGridItemColumnCount - gridItems.count % padGridItemColumnCount
-        return CGFloat(lastRowMissing) * (gridItemSize.width + EdgeInsets.edgePadding) / 2
+        UserGridButton(
+            user: user,
+            server: server,
+            showServer: serverSelection == .all
+        ) {
+            if isEditingUsers {
+                selectedUsers.toggle(value: user)
+            } else {
+                select(user: user)
+            }
+        } onDelete: {
+            delete(user: user)
+        }
+        .environment(\.isSelected, selectedUsers.contains(user))
     }
 
     // MARK: - iPad Grid Content View
 
     @ViewBuilder
     private var padGridContentView: some View {
-        let columns = [GridItem(.adaptive(minimum: 150, maximum: 300), spacing: EdgeInsets.edgePadding)]
-
-        LazyVGrid(columns: columns, spacing: EdgeInsets.edgePadding) {
-            ForEach(Array(gridItems.enumerated().map(\.offset)), id: \.hashValue) { index in
-                let item = gridItems[index]
-
-                gridItemView(for: item)
-                    .trackingSize($gridItemSize)
-                    .offset(x: padGridItemOffset(index: index))
+        if userItems.isEmpty {
+            CenteredLazyVGrid(
+                data: [0],
+                id: \.self,
+                minimum: 150,
+                maximum: 300,
+                spacing: EdgeInsets.edgePadding
+            ) { _ in
+                addUserGridButtonView
             }
-        }
-        .edgePadding()
-        .scrollIfLargerThanContainer(padding: 100)
-        .onChange(of: gridItemSize) { newValue in
-            let columns = Int(contentSize.width / (newValue.width + EdgeInsets.edgePadding))
-
-            padGridItemColumnCount = columns
+        } else {
+            CenteredLazyVGrid(
+                data: userItems,
+                id: \.user.id,
+                minimum: 150,
+                maximum: 300,
+                spacing: EdgeInsets.edgePadding,
+                content: userGridItemView
+            )
         }
     }
 
@@ -298,52 +295,23 @@ struct SelectUserView: View {
 
     @ViewBuilder
     private var phoneGridContentView: some View {
-        let columns = [GridItem(.flexible(), spacing: EdgeInsets.edgePadding), GridItem(.flexible())]
-
-        LazyVGrid(columns: columns, spacing: EdgeInsets.edgePadding) {
-            ForEach(gridItems, id: \.hashValue) { item in
-                gridItemView(for: item)
-                    .if(gridItems.count % 2 == 1 && item == gridItems.last) { view in
-                        view.trackingSize($gridItemSize)
-                            .offset(x: (gridItemSize.width + EdgeInsets.edgePadding) / 2)
-                    }
+        if userItems.isEmpty {
+            CenteredLazyVGrid(
+                data: [0],
+                id: \.self,
+                columns: 2
+            ) { _ in
+                addUserGridButtonView
             }
-        }
-        .edgePadding()
-        .scrollIfLargerThanContainer(padding: 100)
-    }
-
-    // MARK: - Grid Item View
-
-    @ViewBuilder
-    private func gridItemView(for item: UserGridItem) -> some View {
-        switch item {
-        case let .user(user, server):
-            UserGridButton(
-                user: user,
-                server: server,
-                showServer: serverSelection == .all
-            ) {
-                if isEditingUsers {
-                    selectedUsers.toggle(value: user)
-                } else {
-                    select(user: user)
-                }
-            } onDelete: {
-                selectedUsers.insert(user)
-                isPresentingConfirmDeleteUsers = true
-            }
-            .environment(\.isEditing, isEditingUsers)
-            .environment(\.isSelected, selectedUsers.contains(user))
-        case .addUser:
-            AddUserButton(
-                serverSelection: $serverSelection,
-                servers: viewModel.servers.keys
-            ) { server in
-                UIDevice.impact(.light)
-                router.route(to: \.userSignIn, server)
-            }
-            .environment(\.isEnabled, !isEditingUsers)
+        } else {
+            CenteredLazyVGrid(
+                data: userItems,
+                id: \.user.id,
+                columns: 2,
+                spacing: EdgeInsets.edgePadding,
+                content: userGridItemView
+            )
+            .edgePadding()
         }
     }
 
@@ -351,71 +319,79 @@ struct SelectUserView: View {
 
     @ViewBuilder
     private var listContentView: some View {
-        ScrollView {
-            LazyVStack {
-                ForEach(gridItems, id: \.hashValue) { item in
-                    listItemView(for: item)
+        List {
+            let userItems = self.userItems
+
+            if userItems.isEmpty {
+                AddUserListRow(
+                    selectedServer: selectedServer,
+                    servers: viewModel.servers.keys,
+                    action: addUserSelected
+                )
+                .listRowBackground(EmptyView())
+                .listRowInsets(.zero)
+                .listRowSeparator(.hidden)
+            }
+
+            ForEach(userItems, id: \.user.id) { item in
+                let user = item.user
+                let server = item.server
+
+                UserListRow(
+                    user: user,
+                    server: server,
+                    showServer: serverSelection == .all
+                ) {
+                    if isEditingUsers {
+                        selectedUsers.toggle(value: user)
+                    } else {
+                        select(user: user)
+                    }
+                } onDelete: {
+                    delete(user: user)
+                }
+                .environment(\.isSelected, selectedUsers.contains(user))
+                .swipeActions {
+                    if !isEditingUsers {
+                        Button(
+                            L10n.delete,
+                            systemImage: "trash"
+                        ) {
+                            delete(user: user)
+                        }
+                        .tint(.red)
+                    }
                 }
             }
+            .listRowBackground(EmptyView())
+            .listRowInsets(.zero)
+            .listRowSeparator(.hidden)
         }
-    }
-
-    // MARK: - List Item View
-
-    @ViewBuilder
-    private func listItemView(for item: UserGridItem) -> some View {
-        switch item {
-        case let .user(user, server):
-            UserRow(
-                user: user,
-                server: server,
-                showServer: serverSelection == .all
-            ) {
-                if isEditingUsers {
-                    selectedUsers.toggle(value: user)
-                } else {
-                    select(user: user)
-                }
-            } onDelete: {
-                selectedUsers.insert(user)
-                isPresentingConfirmDeleteUsers = true
-            }
-            .environment(\.isEditing, isEditingUsers)
-            .environment(\.isSelected, selectedUsers.contains(user))
-        case .addUser:
-            AddUserRow(
-                serverSelection: $serverSelection,
-                servers: viewModel.servers.keys
-            ) { server in
-                UIDevice.impact(.light)
-                router.route(to: \.userSignIn, server)
-            }
-            .environment(\.isEnabled, !isEditingUsers)
-        }
+        .listStyle(.plain)
     }
 
     // MARK: - User View
 
     @ViewBuilder
-    private var userView: some View {
+    private var contentView: some View {
         VStack(spacing: 0) {
             ZStack {
-                Color.clear
-                    .onSizeChanged { size, _ in
-                        contentSize = size
-                    }
-
                 switch userListDisplayType {
                 case .grid:
-                    if UIDevice.isPhone {
-                        phoneGridContentView
-                    } else {
-                        padGridContentView
+                    Group {
+                        if UIDevice.isPhone {
+                            phoneGridContentView
+                        } else {
+                            padGridContentView
+                        }
                     }
+                    .scrollIfLargerThanContainer(padding: 100)
                 case .list:
                     listContentView
                 }
             }
+            .animation(.linear(duration: 0.1), value: userListDisplayType)
+            .environment(\.isEditing, isEditingUsers)
             .frame(maxHeight: .infinity)
             .mask {
                 VStack(spacing: 0) {
@@ -436,7 +412,8 @@ struct SelectUserView: View {
             if !isEditingUsers {
                 ServerSelectionMenu(
                     selection: $serverSelection,
-                    viewModel: viewModel
+                    selectedServer: selectedServer,
+                    servers: viewModel.servers.keys
                 )
                 .edgePadding([.bottom, .horizontal])
             }
@@ -449,9 +426,8 @@ struct SelectUserView: View {
                     ImageView(splashScreenImageSources)
                         .pipeline(.Swiftfin.local)
                         .aspectRatio(contentMode: .fill)
+                        .transition(.opacity.animation(.linear(duration: 0.1)))
                         .id(splashScreenImageSources)
-                        .transition(.opacity)
-                        .animation(.linear, value: splashScreenImageSources)
 
                     Color.black
                         .opacity(0.9)
@@ -461,10 +437,10 @@ struct SelectUserView: View {
         }
     }
 
-    // MARK: - Empty View
+    // MARK: - Connect to Server View
 
     @ViewBuilder
-    private var emptyView: some View {
+    private var connectToServerView: some View {
         VStack(spacing: 10) {
             L10n.connectToJellyfinServerStart.text
                 .frame(minWidth: 50, maxWidth: 240)
@@ -481,11 +457,11 @@ struct SelectUserView: View {
     // MARK: - Body
 
     var body: some View {
-        WrappedView {
+        ZStack {
             if viewModel.servers.isEmpty {
-                emptyView
+                connectToServerView
             } else {
-                userView
+                contentView
             }
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
@@ -501,14 +477,14 @@ struct SelectUserView: View {
 
             ToolbarItem(placement: .topBarLeading) {
                 if isEditingUsers {
-                    if selectedUsers.count == users.count {
+                    if selectedUsers.count == userItems.count {
                         Button(L10n.removeAll) {
                             selectedUsers.removeAll()
                         }
                         .buttonStyle(.toolbarPill)
                     } else {
                         Button(L10n.selectAll) {
-                            selectedUsers.insert(contentsOf: users)
+                            selectedUsers.insert(contentsOf: userItems.map(\.user))
                         }
                         .buttonStyle(.toolbarPill)
                     }
@@ -545,11 +521,6 @@ struct SelectUserView: View {
         }
         .onAppear {
             viewModel.send(.getServers)
-
-            splashScreenImageSources = makeSplashScreenImageSources(
-                serverSelection: serverSelection,
-                allServersSelection: selectUserAllServersSplashscreen
-            )
         }
         .onChange(of: isEditingUsers) { newValue in
             guard !newValue else { return }
@@ -561,28 +532,22 @@ struct SelectUserView: View {
             selectedUsers.removeAll()
         }
         .onChange(of: isPresentingLocalPin) { newValue in
-            if newValue {
-                pin = ""
-            } else {
-                selectedUsers.removeAll()
+            guard newValue else { return }
+            pin = ""
+        }
+        .onChange(of: viewModel.servers.keys) { newValue in
+            if case let SelectUserServerSelection.server(id: id) = serverSelection,
+               !newValue.contains(where: { $0.id == id })
+            {
+                if newValue.count == 1, let firstServer = newValue.first {
+                    let newSelection = SelectUserServerSelection.server(id: firstServer.id)
+                    serverSelection = newSelection
+                    selectUserAllServersSplashscreen = newSelection
+                } else {
+                    serverSelection = .all
+                    selectUserAllServersSplashscreen = .all
+                }
             }
-        }
-        .onChange(of: selectUserAllServersSplashscreen) { newValue in
-            splashScreenImageSources = makeSplashScreenImageSources(
-                serverSelection: serverSelection,
-                allServersSelection: newValue
-            )
-        }
-        .onChange(of: serverSelection) { newValue in
-            gridItems = makeGridItems(for: newValue)
-
-            splashScreenImageSources = makeSplashScreenImageSources(
-                serverSelection: newValue,
-                allServersSelection: selectUserAllServersSplashscreen
-            )
-        }
-        .onChange(of: viewModel.servers) { _ in
-            gridItems = makeGridItems(for: serverSelection)
         }
         .onReceive(viewModel.events) { event in
             switch event {
@@ -601,33 +566,20 @@ struct SelectUserView: View {
             viewModel.send(.getServers)
             serverSelection = .server(id: server.id)
         }
-        .onNotification(.didChangeCurrentServerURL) { server in
+        .onNotification(.didChangeCurrentServerURL) { _ in
             viewModel.send(.getServers)
-            serverSelection = .server(id: server.id)
         }
-        .onNotification(.didDeleteServer) { server in
+        .onNotification(.didDeleteServer) { _ in
             viewModel.send(.getServers)
-
-            if case let SelectUserServerSelection.server(id: id) = serverSelection, server.id == id {
-                if viewModel.servers.keys.count == 1, let first = viewModel.servers.keys.first {
-                    serverSelection = .server(id: first.id)
-                } else {
-                    serverSelection = .all
-                }
-            }
-
-            // change splash screen selection if necessary
-            selectUserAllServersSplashscreen = serverSelection
         }
         .alert(
-            Text(L10n.deleteUser),
-            isPresented: $isPresentingConfirmDeleteUsers,
-            presenting: selectedUsers
-        ) { selectedUsers in
+            L10n.deleteUser,
+            isPresented: $isPresentingConfirmDeleteUsers
+        ) {
             Button(L10n.delete, role: .destructive) {
-                viewModel.send(.deleteUsers(Array(selectedUsers)))
+                viewModel.send(.deleteUsers(selectedUsers))
             }
-        } message: { selectedUsers in
+        } message: {
             if selectedUsers.count == 1, let first = selectedUsers.first {
                 Text(L10n.deleteUserSingleConfirmation(first.username))
             } else {
