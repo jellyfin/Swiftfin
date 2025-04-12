@@ -57,7 +57,11 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
         // Default values, expected to be overridden
         // by parent or filters
-        parameters.isRecursive = isParentTypeTVShowsCollection() ? false : true
+        let collectionType = (parent as? BaseItemDto)?.collectionType
+        parameters.isRecursive = true
+        if let collectionType = collectionType, CollectionType.baseItemTypes.contains(collectionType) {
+            parameters.isRecursive = false
+        }
         parameters.includeItemTypes = BaseItemKind.supportedCases
         parameters.sortOrder = [.ascending]
         parameters.sortBy = [ItemSortBy.name.rawValue]
@@ -122,12 +126,5 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         let response = try? await userSession.client.send(request)
 
         return response?.value.items?.first
-    }
-
-    func isParentTypeTVShowsCollection() -> Bool {
-        if let parent = parent as? BaseItemDto, let collectionType = parent.collectionType {
-            return collectionType == .tvshows || collectionType == .boxsets
-        }
-        return false
     }
 }

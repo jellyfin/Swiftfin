@@ -20,4 +20,8 @@ extension CollectionType: SupportedCaseIterable {
             .livetv,
         ]
     }
+
+    static var baseItemTypes: [CollectionType] {
+        [.tvshows, .boxsets]
+    }
 }
