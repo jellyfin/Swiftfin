@@ -20,8 +20,10 @@ struct CultureISOPicker: View {
 
     private let title: String
 
-    // MARK: - ISO Language Code
+    // MARK: - ISO Language Codes
 
+    @Binding
+    private var twoLetterISOLanguage: String?
     @Binding
     private var threeLetterISOLanguage: String?
 
@@ -63,7 +65,7 @@ struct CultureISOPicker: View {
             /// Create a binding to the INDEX in the array
             let indexBinding = Binding<Int>(
                 get: {
-                    /// Primarily - Try to find by selected culture
+                    /// Primary - Try to find by selected culture
                     if let selectedCulture = selectedCulture {
                         for (index, culture) in culturesArray.enumerated() {
                             if getThreeLetterCode(from: culture) == getThreeLetterCode(from: selectedCulture) {
@@ -72,7 +74,18 @@ struct CultureISOPicker: View {
                         }
                     }
 
-                    /// Secondary - Try by language code
+                    /// Secondary - Try by 2 letter language code
+                    if let languageCode = twoLetterISOLanguage {
+                        for (index, culture) in culturesArray.enumerated() {
+                            if let code = getTwoLetterCode(from: culture),
+                               code == languageCode
+                            {
+                                return index
+                            }
+                        }
+                    }
+
+                    /// Tertiary - Try by 3 letter language code
                     if let languageCode = threeLetterISOLanguage {
                         for (index, culture) in culturesArray.enumerated() {
                             if let code = getThreeLetterCode(from: culture),
@@ -87,6 +100,7 @@ struct CultureISOPicker: View {
                 set: { newIndex in
                     if newIndex >= 0 && newIndex < culturesArray.count {
                         let culture = culturesArray[newIndex]
+                        twoLetterISOLanguage = getTwoLetterCode(from: culture)
                         threeLetterISOLanguage = getThreeLetterCode(from: culture)
                         selectedCulture = culture
                     }
@@ -101,6 +115,12 @@ struct CultureISOPicker: View {
                 }
             }
         }
+    }
+
+    // MARK: - Get 2 Letter ISO with Fallbacks
+
+    private func getTwoLetterCode(from culture: CultureDto) -> String? {
+        culture.twoLetterISOLanguageName
     }
 
     // MARK: - Get 3 Letter ISO with Fallbacks
@@ -130,19 +150,30 @@ struct CultureISOPicker: View {
 
 extension CultureISOPicker {
 
-    // MARK: - Initialize with three letter ISO code
-
-    init(_ title: String, threeLetterISOLanguage: Binding<String?>) {
-        self.title = title
-        self._threeLetterISOLanguage = threeLetterISOLanguage
-        self._selectedCulture = .constant(nil)
-    }
-
     // MARK: - Initialize with CultureDto
 
     init(_ title: String, selectedCulture: Binding<CultureDto?>) {
         self.title = title
-        self._selectedCulture = selectedCulture
+        self._twoLetterISOLanguage = .constant(selectedCulture.wrappedValue?.twoLetterISOLanguageName)
         self._threeLetterISOLanguage = .constant(selectedCulture.wrappedValue?.threeLetterISOLanguageName)
+        self._selectedCulture = selectedCulture
+    }
+
+    // MARK: - Initialize with 2 letter ISO code
+
+    init(_ title: String, twoLetterISOLanguage: Binding<String?>) {
+        self.title = title
+        self._twoLetterISOLanguage = twoLetterISOLanguage
+        self._threeLetterISOLanguage = .constant(nil)
+        self._selectedCulture = .constant(nil)
+    }
+
+    // MARK: - Initialize with 3 letter ISO code
+
+    init(_ title: String, threeLetterISOLanguage: Binding<String?>) {
+        self.title = title
+        self._twoLetterISOLanguage = .constant(nil)
+        self._threeLetterISOLanguage = threeLetterISOLanguage
+        self._selectedCulture = .constant(nil)
     }
 }

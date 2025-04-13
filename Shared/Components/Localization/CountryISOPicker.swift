@@ -20,8 +20,10 @@ struct CountryISOPicker: View {
 
     private let title: String
 
-    // MARK: - ISO Language Code
+    // MARK: - ISO Language Codes
 
+    @Binding
+    private var twoLetterISORegion: String?
     @Binding
     private var threeLetterISORegion: String?
 
@@ -63,16 +65,29 @@ struct CountryISOPicker: View {
             /// Create a binding to the INDEX in the array
             let indexBinding = Binding<Int>(
                 get: {
-                    /// Primarily - Try to find by selected country
+                    /// Primary - Try to find by selected country
                     if let selectedCountry = selectedCountry {
                         for (index, country) in countriesArray.enumerated() {
-                            if getThreeLetterCode(from: country) == getThreeLetterCode(from: selectedCountry) {
+                            if getThreeLetterCode(from: country) == getThreeLetterCode(from: selectedCountry) &&
+                                getTwoLetterCode(from: country) == getTwoLetterCode(from: selectedCountry)
+                            {
                                 return index
                             }
                         }
                     }
 
-                    /// Secondary - Try by country code
+                    /// Secondary - Try by 2 letter country code
+                    if let countryCode = twoLetterISORegion {
+                        for (index, country) in countriesArray.enumerated() {
+                            if let code = getTwoLetterCode(from: country),
+                               code == countryCode
+                            {
+                                return index
+                            }
+                        }
+                    }
+
+                    /// Tertiary - Try by 3 letter country code
                     if let countryCode = threeLetterISORegion {
                         for (index, country) in countriesArray.enumerated() {
                             if let code = getThreeLetterCode(from: country),
@@ -87,6 +102,7 @@ struct CountryISOPicker: View {
                 set: { newIndex in
                     if newIndex >= 0 && newIndex < countriesArray.count {
                         let country = countriesArray[newIndex]
+                        twoLetterISORegion = getTwoLetterCode(from: country)
                         threeLetterISORegion = getThreeLetterCode(from: country)
                         selectedCountry = country
                     }
@@ -101,6 +117,12 @@ struct CountryISOPicker: View {
                 }
             }
         }
+    }
+
+    // MARK: - Get 2 Letter ISO with Fallbacks
+
+    private func getTwoLetterCode(from country: CountryInfo) -> String? {
+        country.twoLetterISORegionName
     }
 
     // MARK: - Get 3 Letter ISO with Fallbacks
@@ -129,19 +151,30 @@ struct CountryISOPicker: View {
 
 extension CountryISOPicker {
 
-    // MARK: - Initialize with three letter ISO code
-
-    init(_ title: String, threeLetterISORegion: Binding<String?>) {
-        self.title = title
-        self._threeLetterISORegion = threeLetterISORegion
-        self._selectedCountry = .constant(nil)
-    }
-
     // MARK: - Initialize with CultureDto
 
     init(_ title: String, selectedCountry: Binding<CountryInfo?>) {
         self.title = title
-        self._selectedCountry = selectedCountry
+        self._twoLetterISORegion = .constant(selectedCountry.wrappedValue?.twoLetterISORegionName)
         self._threeLetterISORegion = .constant(selectedCountry.wrappedValue?.threeLetterISORegionName)
+        self._selectedCountry = selectedCountry
+    }
+
+    // MARK: - Initialize with 2 letter ISO code
+
+    init(_ title: String, twoLetterISORegion: Binding<String?>) {
+        self.title = title
+        self._twoLetterISORegion = twoLetterISORegion
+        self._threeLetterISORegion = .constant(nil)
+        self._selectedCountry = .constant(nil)
+    }
+
+    // MARK: - Initialize with 3 letter ISO code
+
+    init(_ title: String, threeLetterISORegion: Binding<String?>) {
+        self.title = title
+        self._twoLetterISORegion = .constant(nil)
+        self._threeLetterISORegion = threeLetterISORegion
+        self._selectedCountry = .constant(nil)
     }
 }

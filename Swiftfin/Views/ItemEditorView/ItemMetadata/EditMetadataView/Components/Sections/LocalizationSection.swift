@@ -21,12 +21,12 @@ extension EditMetadataView {
             Section(L10n.metadataPreferences) {
                 CultureISOPicker(
                     L10n.language,
-                    threeLetterISOLanguage: $item.preferredMetadataLanguage
+                    twoLetterISOLanguage: $item.preferredMetadataLanguage
                 )
 
                 CountryISOPicker(
                     L10n.country,
-                    threeLetterISORegion: $item.preferredMetadataCountryCode
+                    twoLetterISORegion: $item.preferredMetadataCountryCode
                 )
             }
         }
