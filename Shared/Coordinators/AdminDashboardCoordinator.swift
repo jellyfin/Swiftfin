@@ -17,6 +17,13 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
 
+    // MARK: - Route: User Activity
+
+    @Route(.push)
+    var activity = makeActivityLogs
+    @Route(.push)
+    var activityDetails = makeActivityDetails
+
     // MARK: - Route: Active Sessions
 
     @Route(.push)
@@ -83,6 +90,18 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
 
     @Route(.push)
     var apiKeys = makeAPIKeys
+
+    // MARK: - Views: User Activity
+
+    @ViewBuilder
+    func makeActivityLogs() -> some View {
+        ServerActivityView()
+    }
+
+    @ViewBuilder
+    func makeActivityDetails(viewModel: ServerActivityDetailViewModel) -> some View {
+        ServerActivityDetailsView(viewModel: viewModel)
+    }
 
     // MARK: - Views: Active Sessions
 
