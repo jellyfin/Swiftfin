@@ -26,7 +26,7 @@ extension EditMetadataView {
 
                 CountryISOPicker(
                     L10n.country,
-                    threeLetterISORegionName: $item.preferredMetadataCountryCode
+                    threeLetterISORegion: $item.preferredMetadataCountryCode
                 )
             }
         }

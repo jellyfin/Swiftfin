@@ -18,17 +18,17 @@ struct CountryISOPicker: View {
 
     // MARK: - Picker Title
 
-    let title: String
+    private let title: String
 
     // MARK: - ISO Language Code
 
     @Binding
-    var threeLetterISORegionName: String?
+    private var threeLetterISORegion: String?
 
     // MARK: - Selected Culture
 
     @Binding
-    var selectedCountry: CountryInfo?
+    private var selectedCountry: CountryInfo?
 
     // MARK: - Body
 
@@ -73,7 +73,7 @@ struct CountryISOPicker: View {
                     }
 
                     /// Secondary - Try by country code
-                    if let countryCode = threeLetterISORegionName {
+                    if let countryCode = threeLetterISORegion {
                         for (index, country) in countriesArray.enumerated() {
                             if let code = getThreeLetterCode(from: country),
                                code == countryCode
@@ -87,7 +87,7 @@ struct CountryISOPicker: View {
                 set: { newIndex in
                     if newIndex >= 0 && newIndex < countriesArray.count {
                         let country = countriesArray[newIndex]
-                        threeLetterISORegionName = getThreeLetterCode(from: country)
+                        threeLetterISORegion = getThreeLetterCode(from: country)
                         selectedCountry = country
                     }
                 }
@@ -131,9 +131,9 @@ extension CountryISOPicker {
 
     // MARK: - Initialize with three letter ISO code
 
-    init(_ title: String, threeLetterISORegionName: Binding<String?>) {
+    init(_ title: String, threeLetterISORegion: Binding<String?>) {
         self.title = title
-        self._threeLetterISORegionName = threeLetterISORegionName
+        self._threeLetterISORegion = threeLetterISORegion
         self._selectedCountry = .constant(nil)
     }
 
@@ -142,6 +142,6 @@ extension CountryISOPicker {
     init(_ title: String, selectedCountry: Binding<CountryInfo?>) {
         self.title = title
         self._selectedCountry = selectedCountry
-        self._threeLetterISORegionName = .constant(selectedCountry.wrappedValue?.threeLetterISORegionName)
+        self._threeLetterISORegion = .constant(selectedCountry.wrappedValue?.threeLetterISORegionName)
     }
 }
