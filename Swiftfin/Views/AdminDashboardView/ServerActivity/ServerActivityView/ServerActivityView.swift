@@ -20,9 +20,7 @@ struct ServerActivityView: View {
     // MARK: - State Objects
 
     @StateObject
-    private var viewModel = ServerActivitiesViewModel()
-    @StateObject
-    private var userViewModel = ServerUsersViewModel()
+    private var viewModel = ServerActivityViewModel()
 
     // MARK: - Dialog States
 
@@ -60,7 +58,6 @@ struct ServerActivityView: View {
         }
         .onFirstAppear {
             viewModel.send(.refresh)
-            userViewModel.send(.getUsers())
         }
         .sheet(isPresented: $isDatePickerShowing, onDismiss: { isDatePickerShowing = false }) {
             startDatePickerSheet
@@ -81,17 +78,21 @@ struct ServerActivityView: View {
                 uniqueElements: viewModel.elements,
                 id: \.unwrappedIDHashOrZero,
                 layout: .columns(1)
-            ) { entry in
+            ) { log in
 
-                let logViewModel = ServerActivityDetailViewModel(
-                    activityLogEntry: entry,
-                    users: userViewModel.users
+                let user = viewModel.users.first(
+                    property: \.id,
+                    equalTo: log.userID
                 )
 
-                LogEntry(logViewModel) {
+                let logViewModel = ServerActivityDetailViewModel(
+                    log: log,
+                    user: user
+                )
+
+                LogEntry(viewModel: logViewModel) {
                     router.route(to: \.activityDetails, logViewModel)
                 }
-                .foregroundStyle(.primary, .secondary)
             }
             .onReachedBottomEdge(offset: .offset(300)) {
                 viewModel.send(.getNextPage)
@@ -102,6 +103,7 @@ struct ServerActivityView: View {
 
     // MARK: - User Filter Button
 
+    @ViewBuilder
     private var userFilterButton: some View {
         Menu(
             L10n.type,
@@ -134,35 +136,29 @@ struct ServerActivityView: View {
 
     // MARK: - Start Date Button
 
+    @ViewBuilder
     private var startDateButton: some View {
-        Button {
+        Button(L10n.startDate, systemImage: "calendar") {
             if let minDate = viewModel.minDate {
                 tempDate = minDate
             } else {
-                tempDate = Date()
+                tempDate = .now
             }
             isDatePickerShowing = true
-        } label: {
-            Label(
-                L10n.startDate,
-                systemImage: "calendar"
-            )
         }
     }
 
     // MARK: - Start Date Picker Sheet
 
+    @ViewBuilder
     private var startDatePickerSheet: some View {
         NavigationView {
             List {
                 Section {
                     DatePicker(
                         L10n.date,
-                        selection: Binding(
-                            get: { tempDate ?? Date() },
-                            set: { tempDate = $0 }
-                        ),
-                        in: ...Date(),
+                        selection: $tempDate.coalesce(.now),
+                        in: ...Date.now,
                         displayedComponents: .date
                     )
                     .datePickerStyle(.graphical)
@@ -187,12 +183,15 @@ struct ServerActivityView: View {
                 isDatePickerShowing = false
             }
             .topBarTrailing {
+                let startOfDay = Calendar.current
+                    .startOfDay(for: tempDate ?? .now)
+
                 Button(L10n.save) {
-                    viewModel.minDate = tempDate?.dateOnly
+                    viewModel.minDate = startOfDay
                     isDatePickerShowing = false
                 }
                 .buttonStyle(.toolbarPill)
-                .disabled(viewModel.minDate != nil && tempDate?.dateOnly == viewModel.minDate)
+                .disabled(viewModel.minDate != nil && startOfDay == viewModel.minDate)
             }
         }
     }

@@ -6,8 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Factory
-import IdentifiedCollections
 import JellyfinAPI
 import SwiftUI
 
@@ -20,14 +18,8 @@ struct ServerActivityDetailsView: View {
 
     // MARK: - Activity Log Entry Variable
 
-    @ObservedObject
+    @StateObject
     var viewModel: ServerActivityDetailViewModel
-
-    // MARK: - Initializer
-
-    init(viewModel: ServerActivityDetailViewModel) {
-        self.viewModel = viewModel
-    }
 
     // MARK: - Body
 
@@ -50,12 +42,12 @@ struct ServerActivityDetailsView: View {
 
             /// Event Name & Overview
             Section(L10n.overview) {
-                if let name = viewModel.log.name, !name.isEmpty {
+                if let name = viewModel.log.name, name.isNotEmpty {
                     Text(name)
                 }
-                if let overview = viewModel.log.overview, !overview.isEmpty {
+                if let overview = viewModel.log.overview, overview.isNotEmpty {
                     Text(overview)
-                } else if let shortOverview = viewModel.log.shortOverview, !shortOverview.isEmpty {
+                } else if let shortOverview = viewModel.log.shortOverview, shortOverview.isNotEmpty {
                     Text(shortOverview)
                 }
             }

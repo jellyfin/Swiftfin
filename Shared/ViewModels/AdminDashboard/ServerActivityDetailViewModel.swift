@@ -7,11 +7,7 @@
 //
 
 import Combine
-import Foundation
-import IdentifiedCollections
 import JellyfinAPI
-import OrderedCollections
-import SwiftUI
 
 final class ServerActivityDetailViewModel: ViewModel, Stateful {
 
@@ -50,20 +46,9 @@ final class ServerActivityDetailViewModel: ViewModel, Stateful {
 
     // MARK: - Initialize
 
-    init(activityLogEntry: ActivityLogEntry) {
-        self.log = activityLogEntry
-    }
-
-    // MARK: - Initialize with Full User List
-
-    init(activityLogEntry: ActivityLogEntry, users: IdentifiedArrayOf<UserDto>) {
-        self.log = activityLogEntry
-
-        if let userID = activityLogEntry.userID {
-            self.user = users.first(where: { $0.id == userID })
-        } else {
-            self.user = nil
-        }
+    init(log: ActivityLogEntry, user: UserDto?) {
+        self.log = log
+        self.user = user
     }
 
     // MARK: - Respond
@@ -74,9 +59,6 @@ final class ServerActivityDetailViewModel: ViewModel, Stateful {
             getActivityCancellable?.cancel()
             getActivityCancellable = Task {
                 do {
-                    await MainActor.run {
-                        self.state = .initial
-                    }
 
                     if let itemID = log.itemID {
                         self.item = try await getItem(for: itemID)

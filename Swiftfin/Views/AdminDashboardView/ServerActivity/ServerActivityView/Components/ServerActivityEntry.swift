@@ -6,8 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Factory
-import IdentifiedCollections
 import JellyfinAPI
 import SwiftUI
 
@@ -15,38 +13,14 @@ extension ServerActivityView {
 
     struct LogEntry: View {
 
-        // MARK: - Current User Session
-
-        @Injected(\.currentUserSession)
-        private var currentUserSession
-
         // MARK: - Activity Log Entry Variable
 
-        @ObservedObject
-        private var viewModel: ServerActivityDetailViewModel
+        @StateObject
+        var viewModel: ServerActivityDetailViewModel
 
         // MARK: - Action Variable
 
-        private let onSelect: () -> Void
-
-        // MARK: - Initializer
-
-        init(_ viewModel: ServerActivityDetailViewModel, onSelect: @escaping () -> Void) {
-            self.viewModel = viewModel
-            self.onSelect = onSelect
-        }
-
-        // MARK: - Matching UserDto
-
-        private var eventDate: String {
-            guard let date = viewModel.log.date else { return L10n.unknown }
-
-            let formatter = DateFormatter()
-            formatter.dateStyle = .medium
-            formatter.timeStyle = .medium
-
-            return formatter.string(from: date)
-        }
+        let action: () -> Void
 
         // MARK: - Body
 
@@ -57,27 +31,30 @@ extension ServerActivityView {
                 rowContent
                     .padding(.bottom, 8)
             }
-            .onSelect(perform: onSelect)
+            .onSelect(perform: action)
         }
 
         // MARK: - User Image
 
         @ViewBuilder
         private var userImage: some View {
-            if let client = currentUserSession?.client {
-                UserProfileImage(
-                    userID: viewModel.log.userID ?? currentUserSession?.user.id,
-                    source: viewModel.user?.profileImageSource(client: client, maxWidth: 60) ?? ImageSource()
-                ) {
-                    SystemImageContentView(systemName: "gearshape.fill", ratio: 0.5)
-                        .foregroundStyle(Color.accentColor)
-                }
-                .frame(width: 60, height: 60)
+            let imageSource = viewModel.user?.profileImageSource(client: viewModel.userSession.client, maxWidth: 60) ?? .init()
+
+            UserProfileImage(
+                userID: viewModel.log.userID ?? viewModel.userSession?.user.id,
+                source: imageSource
+            ) {
+                SystemImageContentView(
+                    systemName: viewModel.user != nil ? "person.fill" : "gearshape.fill",
+                    ratio: 0.5
+                )
             }
+            .frame(width: 60, height: 60)
         }
 
         // MARK: - User Image
 
+        @ViewBuilder
         private var rowContent: some View {
             HStack {
                 VStack(alignment: .leading) {
@@ -86,8 +63,11 @@ extension ServerActivityView {
                         Image(systemName: viewModel.log.severity?.systemImage ?? "questionmark.circle")
                             .foregroundStyle(viewModel.log.severity?.color ?? .gray)
 
-                        Text(viewModel.user?.name ?? L10n.system)
-                            .foregroundStyle(.primary)
+                        if viewModel.user != nil {
+                            Text(viewModel.user?.name ?? L10n.unknown)
+                        } else {
+                            Text(L10n.system)
+                        }
                     }
                     .font(.headline)
 
@@ -98,11 +78,16 @@ extension ServerActivityView {
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
 
-                    /// Event Date
-                    Text(eventDate)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
+                    Group {
+                        if let eventDate = viewModel.log.date {
+                            Text(eventDate.formatted(date: .abbreviated, time: .standard))
+                        } else {
+                            Text(String.emptyTime)
+                        }
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
                 }
 
                 Spacer()
