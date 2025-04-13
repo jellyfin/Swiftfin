@@ -9,13 +9,7 @@
 import Factory
 import SwiftUI
 
-// Want the default navigation bar `Image(systemName:)` styling
-// but using within `ImageView.placeholder/failure` ruins it.
-// Need to do manual checking of image loading.
 struct SettingsBarButton: View {
-
-    @State
-    private var isUserImage = false
 
     let server: ServerState
     let user: UserState
@@ -25,23 +19,18 @@ struct SettingsBarButton: View {
         Button {
             action()
         } label: {
+            /// Used to retain the default navigation bar `Image(systemName:)` styling
             Image(systemName: "gearshape.fill")
-                .visible(!isUserImage)
+                .opacity(0)
                 .overlay {
-                    ZStack {
-                        Color.clear
-
-                        UserProfileImage(
-                            userID: user.id,
-                            source: user.profileImageSource(
-                                client: server.client,
-                                maxWidth: 120
-                            ),
-                            pipeline: .Swiftfin.local
-                        ) {
-                            Color.clear
-                        }
-                    }
+                    UserProfileImage(
+                        userID: user.id,
+                        source: user.profileImageSource(
+                            client: server.client,
+                            maxWidth: 120
+                        ),
+                        pipeline: .Swiftfin.local
+                    )
                 }
         }
         .accessibilityLabel(L10n.settings)
