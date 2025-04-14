@@ -94,14 +94,8 @@ internal enum L10n {
   internal static let allLanguages = L10n.tr("Localizable", "allLanguages", fallback: "All languages")
   /// All Media
   internal static let allMedia = L10n.tr("Localizable", "allMedia", fallback: "All Media")
-  /// Allow collection management
-  internal static let allowCollectionManagement = L10n.tr("Localizable", "allowCollectionManagement", fallback: "Allow collection management")
   /// Allowed
   internal static let allowed = L10n.tr("Localizable", "allowed", fallback: "Allowed")
-  /// Allow media item deletion
-  internal static let allowItemDeletion = L10n.tr("Localizable", "allowItemDeletion", fallback: "Allow media item deletion")
-  /// Allow media item editing
-  internal static let allowItemEditing = L10n.tr("Localizable", "allowItemEditing", fallback: "Allow media item editing")
   /// All Servers
   internal static let allServers = L10n.tr("Localizable", "allServers", fallback: "All Servers")
   /// View and manage all registered users on the server, including their permissions and activity status.
@@ -440,6 +434,8 @@ internal enum L10n {
   internal static let deleteItemConfirmation = L10n.tr("Localizable", "deleteItemConfirmation", fallback: "Are you sure you want to delete this item?")
   /// Are you sure you want to delete this item? This action cannot be undone.
   internal static let deleteItemConfirmationMessage = L10n.tr("Localizable", "deleteItemConfirmationMessage", fallback: "Are you sure you want to delete this item? This action cannot be undone.")
+  /// Delete media
+  internal static let deleteMedia = L10n.tr("Localizable", "deleteMedia", fallback: "Delete media")
   /// Delete Schedule
   internal static let deleteSchedule = L10n.tr("Localizable", "deleteSchedule", fallback: "Delete Schedule")
   /// Are you sure you wish to delete this schedule?
@@ -544,6 +540,10 @@ internal enum L10n {
   internal static let dvd = L10n.tr("Localizable", "dvd", fallback: "DVD")
   /// Edit
   internal static let edit = L10n.tr("Localizable", "edit", fallback: "Edit")
+  /// Edit Collections
+  internal static let editCollections = L10n.tr("Localizable", "editCollections", fallback: "Edit Collections")
+  /// Edit media
+  internal static let editMedia = L10n.tr("Localizable", "editMedia", fallback: "Edit media")
   /// Editor
   internal static let editor = L10n.tr("Localizable", "editor", fallback: "Editor")
   /// Edit Server
@@ -1056,6 +1056,8 @@ internal enum L10n {
   internal static let quickConnectStep3 = L10n.tr("Localizable", "quickConnectStep3", fallback: "Enter the following code:")
   /// Authorizing Quick Connect successful. Please continue on your other device.
   internal static let quickConnectSuccessMessage = L10n.tr("Localizable", "quickConnectSuccessMessage", fallback: "Authorizing Quick Connect successful. Please continue on your other device.")
+  /// This user will be authenticated to the other device.
+  internal static let quickConnectUserDisclaimer = L10n.tr("Localizable", "quickConnectUserDisclaimer", fallback: "This user will be authenticated to the other device.")
   /// Random
   internal static let random = L10n.tr("Localizable", "random", fallback: "Random")
   /// Random image
