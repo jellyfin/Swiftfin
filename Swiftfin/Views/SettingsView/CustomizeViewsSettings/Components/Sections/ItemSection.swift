@@ -46,19 +46,19 @@ extension CustomizeViewsSettings {
 
                 /// Enable Editing Items from All Visible LIbraries
                 if userSession?.user.permissions.items.canEditMetadata ?? false {
-                    Toggle(L10n.allowItemEditing, isOn: $enableItemEditing)
+                    Toggle(L10n.editMedia, isOn: $enableItemEditing)
                 }
                 /// Enable Deleting Items from Approved Libraries
                 if userSession?.user.permissions.items.canDelete ?? false {
-                    Toggle(L10n.allowItemDeletion, isOn: $enableItemDeletion)
+                    Toggle(L10n.deleteMedia, isOn: $enableItemDeletion)
                 }
                 /// Enable Downloading All Items
                 /* if userSession?.user.permissions.items.canDownload ?? false {
-                 Toggle(L10n.allowItemDownloading, isOn: $enableItemDownloads)
+                 Toggle(L10n.itemDownloading, isOn: $enableItemDownloads)
                  } */
                 /// Enable Deleting or Editing Collections
                 if userSession?.user.permissions.items.canManageCollections ?? false {
-                    Toggle(L10n.allowCollectionManagement, isOn: $enableCollectionManagement)
+                    Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
                 }
                 /// Manage Item Lyrics
                 /* if userSession?.user.permissions.items.canManageLyrics ?? false {
