@@ -44,7 +44,7 @@ private struct ListRowButtonStyle: ButtonStyle {
     }
 
     private func secondaryStyle(configuration: Configuration) -> some ShapeStyle {
-        if configuration.role == .destructive {
+        if configuration.role == .destructive || configuration.role == .cancel {
             return AnyShapeStyle(Color.red.opacity(0.2))
         } else {
             return isEnabled ? AnyShapeStyle(HierarchicalShapeStyle.secondary) : AnyShapeStyle(Color.gray)
