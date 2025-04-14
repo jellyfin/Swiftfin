@@ -42,6 +42,11 @@ struct EditServerUserAccessTagsView: View {
     @State
     private var error: Error?
 
+    private var hasTags: Bool {
+        viewModel.user.policy?.blockedTags?.isEmpty == true &&
+            viewModel.user.policy?.allowedTags?.isEmpty == true
+    }
+
     private var allowedTags: [TagWithAccess] {
         viewModel.user.policy?.allowedTags?
             .sorted()
@@ -103,21 +108,14 @@ struct EditServerUserAccessTagsView: View {
         }
         .navigationBarMenuButton(
             isLoading: viewModel.backgroundStates.contains(.refreshing),
-            isHidden: isEditing || (
-                viewModel.user.policy?.blockedTags?.isEmpty == true &&
-                    viewModel.user.policy?.allowedTags?.isEmpty == true
-            )
+            isHidden: isEditing || hasTags
         ) {
             Button(L10n.add, systemImage: "plus") {
                 router.route(to: \.userAddAccessTag, viewModel)
             }
 
-            if viewModel.user.policy?.blockedTags?.isNotEmpty == true ||
-                viewModel.user.policy?.allowedTags?.isNotEmpty == true
-            {
-                Button(L10n.edit, systemImage: "checkmark.circle") {
-                    isEditing = true
-                }
+            Button(L10n.edit, systemImage: "checkmark.circle") {
+                isEditing = true
             }
         }
         .onReceive(viewModel.events) { event in
