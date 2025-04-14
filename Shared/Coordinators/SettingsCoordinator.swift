@@ -112,8 +112,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeQuickConnectAuthorize() -> some View {
-        QuickConnectAuthorizeView()
+    func makeQuickConnectAuthorize(user: UserDto) -> some View {
+        QuickConnectAuthorizeView(user: user)
     }
 
     func makeResetUserPassword(userID: String) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {

@@ -43,15 +43,15 @@ extension CustomizeViewsSettings {
 
                 /// Enable Refreshing Items from All Visible LIbraries
                 if userSession?.user.permissions.items.canEditMetadata ?? false {
-                    Toggle(L10n.allowItemEditing, isOn: $enableItemEditing)
+                    Toggle(L10n.editMedia, isOn: $enableItemEditing)
                 }
                 /// Enable Deleting Items from Approved Libraries
                 if userSession?.user.permissions.items.canDelete ?? false {
-                    Toggle(L10n.allowItemDeletion, isOn: $enableItemDeletion)
+                    Toggle(L10n.deleteMedia, isOn: $enableItemDeletion)
                 }
                 /// Enable Refreshing & Deleting Collections
                 if userSession?.user.permissions.items.canManageCollections ?? false {
-                    Toggle(L10n.allowCollectionManagement, isOn: $enableCollectionManagement)
+                    Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
                 }
             }
         }
