@@ -1452,9 +1452,9 @@ internal enum L10n {
   internal static let unableToFindHost = L10n.tr("Localizable", "unableToFindHost", fallback: "Unable to find host")
   /// Unable to open trailer
   internal static let unableToOpenTrailer = L10n.tr("Localizable", "unableToOpenTrailer", fallback: "Unable to open trailer")
-  /// Unable to open trailer in %1$@
+  /// Unable to open this trailer in %@
   internal static func unableToOpenTrailerApp(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "unableToOpenTrailerApp", String(describing: p1), fallback: "Unable to open trailer in %1$@")
+    return L10n.tr("Localizable", "unableToOpenTrailerApp", String(describing: p1), fallback: "Unable to open this trailer in %@")
   }
   /// Unable to perform device authentication
   internal static let unableToPerformDeviceAuth = L10n.tr("Localizable", "unableToPerformDeviceAuth", fallback: "Unable to perform device authentication")
