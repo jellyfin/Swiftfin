@@ -152,8 +152,6 @@ internal enum L10n {
   internal static let author = L10n.tr("Localizable", "author", fallback: "Author")
   /// Authorize
   internal static let authorize = L10n.tr("Localizable", "authorize", fallback: "Authorize")
-  /// Authorize user
-  internal static let authorizeUser = L10n.tr("Localizable", "authorizeUser", fallback: "Authorize user")
   /// Auto
   internal static let auto = L10n.tr("Localizable", "auto", fallback: "Auto")
   /// Optimizes playback using default settings for most devices. Some formats may require server transcoding for non-compatible media types.
@@ -438,8 +436,8 @@ internal enum L10n {
   internal static let deleteSchedule = L10n.tr("Localizable", "deleteSchedule", fallback: "Delete Schedule")
   /// Are you sure you wish to delete this schedule?
   internal static let deleteScheduleWarning = L10n.tr("Localizable", "deleteScheduleWarning", fallback: "Are you sure you wish to delete this schedule?")
-  /// Are you sure you want to delete the selected item(s)?
-  internal static let deleteSelectedConfirmation = L10n.tr("Localizable", "deleteSelectedConfirmation", fallback: "Are you sure you want to delete the selected item(s)?")
+  /// Are you sure you want to delete the selected items?
+  internal static let deleteSelectedConfirmation = L10n.tr("Localizable", "deleteSelectedConfirmation", fallback: "Are you sure you want to delete the selected items?")
   /// Delete Selected Devices
   internal static let deleteSelectedDevices = L10n.tr("Localizable", "deleteSelectedDevices", fallback: "Delete Selected Devices")
   /// Delete Selected Schedules

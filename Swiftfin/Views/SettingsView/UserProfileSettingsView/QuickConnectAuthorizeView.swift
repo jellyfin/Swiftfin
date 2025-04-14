@@ -37,7 +37,6 @@ struct QuickConnectAuthorizeView: View {
 
     @State
     private var code: String = ""
-    private var user: UserDto
 
     // MARK: - Dialog State
 
@@ -51,18 +50,8 @@ struct QuickConnectAuthorizeView: View {
 
     // MARK: - Initialize
 
-    init(_ user: UserDto? = nil) {
-        let tempViewModel = QuickConnectAuthorizeViewModel()
-        self._viewModel = StateObject(wrappedValue: tempViewModel)
-
-        if let user {
-            self.user = user
-        } else {
-            self.user = UserDto(
-                id: tempViewModel.userSession.user.id,
-                name: tempViewModel.userSession.user.username
-            )
-        }
+    init(user: UserDto) {
+        self._viewModel = StateObject(wrappedValue: QuickConnectAuthorizeViewModel(user: user))
     }
 
     // MARK: Display the User Being Authenticated
@@ -70,20 +59,16 @@ struct QuickConnectAuthorizeView: View {
     @ViewBuilder
     private var loginUserRow: some View {
         HStack {
-            ZStack {
-                if let userID = user.id {
-                    UserProfileImage(
-                        userID: userID,
-                        source: user.profileImageSource(
-                            client: viewModel.userSession.client,
-                            maxWidth: 120
-                        )
-                    )
-                }
-            }
-            .frame(width: 50, height: 50)
+            UserProfileImage(
+                userID: viewModel.user.id,
+                source: viewModel.user.profileImageSource(
+                    client: viewModel.userSession.client,
+                    maxWidth: 60
+                )
+            )
+            .frame(width: 60, height: 60)
 
-            Text(user.name ?? L10n.unknown)
+            Text(viewModel.user.name ?? L10n.unknown)
                 .fontWeight(.semibold)
                 .foregroundStyle(.primary)
 
@@ -98,7 +83,7 @@ struct QuickConnectAuthorizeView: View {
             Section {
                 loginUserRow
             } header: {
-                Text(L10n.authorizeUser)
+                Text(L10n.user)
             } footer: {
                 Text(L10n.quickConnectUserDisclaimer)
             }
@@ -113,14 +98,13 @@ struct QuickConnectAuthorizeView: View {
             }
 
             if viewModel.state == .authorizing {
-                ListRowButton(L10n.cancel) {
+                ListRowButton(L10n.cancel, role: .cancel) {
                     viewModel.send(.cancel)
                     isCodeFocused = true
                 }
-                .foregroundStyle(.red, .red.opacity(0.2))
             } else {
                 ListRowButton(L10n.authorize) {
-                    viewModel.send(.authorize(code: code, userID: user.id))
+                    viewModel.send(.authorize(code: code))
                 }
                 .disabled(code.count != 6 || viewModel.state == .authorizing)
                 .foregroundStyle(
