@@ -45,7 +45,7 @@ struct UserProfileSettingsView: View {
 
             Section {
                 ChevronButton(L10n.quickConnect) {
-                    router.route(to: \.quickConnect)
+                    router.route(to: \.quickConnect, viewModel.userSession.user.data)
                 }
 
                 ChevronButton(L10n.password) {
