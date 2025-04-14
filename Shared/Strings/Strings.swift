@@ -274,8 +274,6 @@ internal enum L10n {
   internal static let clip = L10n.tr("Localizable", "clip", fallback: "Clip")
   /// Close
   internal static let close = L10n.tr("Localizable", "close", fallback: "Close")
-  /// Collection management
-  internal static let collectionManagement = L10n.tr("Localizable", "collectionManagement", fallback: "Collection management")
   /// Collections
   internal static let collections = L10n.tr("Localizable", "collections", fallback: "Collections")
   /// Color
@@ -436,6 +434,8 @@ internal enum L10n {
   internal static let deleteItemConfirmation = L10n.tr("Localizable", "deleteItemConfirmation", fallback: "Are you sure you want to delete this item?")
   /// Are you sure you want to delete this item? This action cannot be undone.
   internal static let deleteItemConfirmationMessage = L10n.tr("Localizable", "deleteItemConfirmationMessage", fallback: "Are you sure you want to delete this item? This action cannot be undone.")
+  /// Delete media
+  internal static let deleteMedia = L10n.tr("Localizable", "deleteMedia", fallback: "Delete media")
   /// Delete Schedule
   internal static let deleteSchedule = L10n.tr("Localizable", "deleteSchedule", fallback: "Delete Schedule")
   /// Are you sure you wish to delete this schedule?
@@ -540,6 +540,10 @@ internal enum L10n {
   internal static let dvd = L10n.tr("Localizable", "dvd", fallback: "DVD")
   /// Edit
   internal static let edit = L10n.tr("Localizable", "edit", fallback: "Edit")
+  /// Edit Collections
+  internal static let editCollections = L10n.tr("Localizable", "editCollections", fallback: "Edit Collections")
+  /// Edit media
+  internal static let editMedia = L10n.tr("Localizable", "editMedia", fallback: "Edit media")
   /// Editor
   internal static let editor = L10n.tr("Localizable", "editor", fallback: "Editor")
   /// Edit Server
@@ -708,10 +712,6 @@ internal enum L10n {
   internal static func itemAtItem(_ p1: Any, _ p2: Any) -> String {
     return L10n.tr("Localizable", "itemAtItem", String(describing: p1), String(describing: p2), fallback: "%1$@ at %2$@")
   }
-  /// Media deletion
-  internal static let itemDeletion = L10n.tr("Localizable", "itemDeletion", fallback: "Media deletion")
-  /// Media management
-  internal static let itemManagement = L10n.tr("Localizable", "itemManagement", fallback: "Media management")
   /// Items
   internal static let items = L10n.tr("Localizable", "items", fallback: "Items")
   /// Jellyfin
@@ -1350,8 +1350,6 @@ internal enum L10n {
   internal static let subtitleColor = L10n.tr("Localizable", "subtitleColor", fallback: "Subtitle Color")
   /// Subtitle Font
   internal static let subtitleFont = L10n.tr("Localizable", "subtitleFont", fallback: "Subtitle Font")
-  /// Subtitle management
-  internal static let subtitleManagement = L10n.tr("Localizable", "subtitleManagement", fallback: "Subtitle management")
   /// Subtitle Offset
   internal static let subtitleOffset = L10n.tr("Localizable", "subtitleOffset", fallback: "Subtitle Offset")
   /// Subtitles
