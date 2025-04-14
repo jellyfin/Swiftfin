@@ -63,10 +63,10 @@ struct QuickConnectAuthorizeView: View {
                 userID: viewModel.user.id,
                 source: viewModel.user.profileImageSource(
                     client: viewModel.userSession.client,
-                    maxWidth: 60
+                    maxWidth: 120
                 )
             )
-            .frame(width: 60, height: 60)
+            .frame(width: 50, height: 50)
 
             Text(viewModel.user.name ?? L10n.unknown)
                 .fontWeight(.semibold)
