@@ -59,7 +59,7 @@ extension ItemView {
         // MARK: - Deletion or Refreshing is Enabled
 
         private var enableMenu: Bool {
-            viewModel.userSession.user.permissions.items.showEditMenu(item: viewModel.item)
+            canDelete || canRefresh
         }
 
         // MARK: - Has Trailers

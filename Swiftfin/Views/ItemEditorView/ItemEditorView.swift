@@ -75,13 +75,13 @@ struct ItemEditorView: View {
 
                 editComponentsView
 
-            } else if canManageSubtitles || canManageLyrics {
+            }/*  else if canManageSubtitles || canManageLyrics {
 
                 // TODO: Enable when Subtitle / Lyric Editing is added
                 Section(L10n.edit) {
                     editTextView
                 }
-            }
+            }*/
         }
     }
 

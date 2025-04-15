@@ -51,27 +51,6 @@ struct UserPermissions {
 
         // MARK: - Item Specific Validation
 
-        /// Does this user have any management permissions to this item?
-        func showEditMenu(item: BaseItemDto) -> Bool {
-
-            #if tvOS
-            if enableItemEditing || enableItemDeletion {
-                canDelete(item: item) || canEditMetadata(item: item)
-            } else {
-                false
-            }
-            #else
-            if enableItemEditing || enableItemDeletion {
-                canDelete(item: item)
-                    || canEditMetadata(item: item)
-                    || canManageLyrics(item: item)
-                    || canManageSubtitles(item: item)
-            } else {
-                false
-            }
-            #endif
-        }
-
         /// Does this user have permission to delete this item?
         func canDelete(item: BaseItemDto) -> Bool {
             switch item.type {
@@ -81,7 +60,7 @@ struct UserPermissions {
             case .boxSet:
                 return canManageCollections && enableCollectionManagement && item.canDelete == true
             default:
-                return enableItemDeletion && canDelete && item.canDelete == true
+                return canDelete && enableItemDeletion && item.canDelete == true
             }
         }
 

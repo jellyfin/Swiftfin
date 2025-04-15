@@ -40,12 +40,15 @@ struct ItemView: View {
 
     private var canEdit: Bool {
         viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item)
+            // TODO: Enable when Subtitle / Lyric Editing is added
+            // || viewModel.userSession.user.permissions.items.canManageLyrics(item: viewModel.item)
+            // || viewModel.userSession.user.permissions.items.canManageSubtitles(item: viewModel.item)
     }
 
     // MARK: - Deletion or Editing is Enabled
 
     private var enableMenu: Bool {
-        viewModel.userSession.user.permissions.items.showEditMenu(item: viewModel.item)
+        canEdit || canDelete
     }
 
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {

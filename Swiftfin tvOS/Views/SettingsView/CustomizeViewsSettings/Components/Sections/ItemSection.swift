@@ -41,6 +41,10 @@ extension CustomizeViewsSettings {
 
                 ListRowMenu(L10n.enabledTrailers, selection: $enabledTrailers)
 
+                /// Enable Refreshing & Deleting Collections
+                if userSession?.user.permissions.items.canManageCollections ?? false {
+                    Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
+                }
                 /// Enable Refreshing Items from All Visible LIbraries
                 if userSession?.user.permissions.items.canEditMetadata ?? false {
                     Toggle(L10n.editMedia, isOn: $enableItemEditing)
@@ -48,10 +52,6 @@ extension CustomizeViewsSettings {
                 /// Enable Deleting Items from Approved Libraries
                 if userSession?.user.permissions.items.canDelete ?? false {
                     Toggle(L10n.deleteMedia, isOn: $enableItemDeletion)
-                }
-                /// Enable Refreshing & Deleting Collections
-                if userSession?.user.permissions.items.canManageCollections ?? false {
-                    Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
                 }
             }
         }
