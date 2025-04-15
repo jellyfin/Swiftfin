@@ -59,7 +59,7 @@ extension ItemView {
         // MARK: - Deletion or Refreshing is Enabled
 
         private var enableMenu: Bool {
-            canDelete || canRefresh
+            viewModel.userSession.user.permissions.items.showEditMenu(item: viewModel.item)
         }
 
         // MARK: - Has Trailers
@@ -136,8 +136,10 @@ extension ItemView {
                         }
 
                         if canDelete {
-                            Button(L10n.delete, systemImage: "trash", role: .destructive) {
-                                showConfirmationDialog = true
+                            Section {
+                                Button(L10n.delete, systemImage: "trash", role: .destructive) {
+                                    showConfirmationDialog = true
+                                }
                             }
                         }
                     }

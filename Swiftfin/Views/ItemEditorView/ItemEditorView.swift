@@ -129,7 +129,7 @@ struct ItemEditorView: View {
     private var editMetadataView: some View {
 
         if let itemKind = viewModel.item.type,
-            BaseItemKind.identifiableTypes.contains(itemKind)
+           BaseItemKind.identifiableTypes.contains(itemKind)
         {
             ChevronButton(L10n.identify) {
                 router.route(to: \.identifyItem, viewModel.item)

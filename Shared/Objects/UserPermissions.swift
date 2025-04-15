@@ -19,7 +19,14 @@ struct UserPermissions {
     }
 
     struct UserItemPermissions {
-        
+
+        @StoredValue(.User.enableItemDeletion)
+        private var enableItemDeletion: Bool
+        @StoredValue(.User.enableItemEditing)
+        private var enableItemEditing: Bool
+        @StoredValue(.User.enableCollectionManagement)
+        private var enableCollectionManagement: Bool
+
         /// This user has server permissions to delete items
         let canDelete: Bool
         /// This user has server permissions to download items
@@ -32,7 +39,7 @@ struct UserPermissions {
         let canManageCollections: Bool
         /// This user has server permissions to edit items' lyrics
         let canManageLyrics: Bool
-        
+
         init(_ policy: UserPolicy?, isAdministrator: Bool) {
             self.canDelete = policy?.enableContentDeletion ?? false || policy?.enableContentDeletionFromFolders != []
             self.canDownload = policy?.enableContentDownloading ?? false
@@ -41,20 +48,41 @@ struct UserPermissions {
             self.canManageCollections = isAdministrator || policy?.enableCollectionManagement ?? false
             self.canManageLyrics = isAdministrator || policy?.enableSubtitleManagement ?? false
         }
-        
+
         // MARK: - Item Specific Validation
-        
-        /// Does this user have permission to edit this item's lyrics?
+
+        /// Does this user have any management permissions to this item?
         func showEditMenu(item: BaseItemDto) -> Bool {
-            canDelete(item: item) ||
-            canEditMetadata(item: item) ||
-            canManageLyrics(item: item) ||
-            canManageSubtitles(item: item)
+
+            #if tvOS
+            if enableItemEditing || enableItemDeletion {
+                canDelete(item: item) || canEditMetadata(item: item)
+            } else {
+                false
+            }
+            #else
+            if enableItemEditing || enableItemDeletion {
+                canDelete(item: item)
+                    || canEditMetadata(item: item)
+                    || canManageLyrics(item: item)
+                    || canManageSubtitles(item: item)
+            } else {
+                false
+            }
+            #endif
         }
 
         /// Does this user have permission to delete this item?
         func canDelete(item: BaseItemDto) -> Bool {
-            canDelete && item.canDelete == true
+            switch item.type {
+            case .playlist:
+                /// Playlists can only be edited by owners who can also delete
+                return item.canDelete == true
+            case .boxSet:
+                return canManageCollections && enableCollectionManagement && item.canDelete == true
+            default:
+                return enableItemDeletion && canDelete && item.canDelete == true
+            }
         }
 
         /// Does this user have permission to download this item?
@@ -69,9 +97,9 @@ struct UserPermissions {
                 /// Playlists can only be edited by owners who can also delete
                 return item.canDelete == true
             case .boxSet:
-                return canManageCollections
+                return (canManageCollections || canEditMetadata) && enableCollectionManagement
             default:
-                return canEditMetadata
+                return canEditMetadata && enableItemEditing
             }
         }
 
@@ -79,7 +107,7 @@ struct UserPermissions {
         func canManageSubtitles(item: BaseItemDto) -> Bool {
             switch item.type {
             case .episode, .movie, .musicVideo, .trailer, .video:
-                return canManageSubtitles
+                return (canManageSubtitles || canEditMetadata) && enableItemEditing
             default:
                 return false
             }
@@ -89,7 +117,7 @@ struct UserPermissions {
         func canManageLyrics(item: BaseItemDto) -> Bool {
             switch item.type {
             case .audio:
-                return canManageLyrics
+                return (canManageLyrics || canEditMetadata) && enableItemEditing
             default:
                 return false
             }

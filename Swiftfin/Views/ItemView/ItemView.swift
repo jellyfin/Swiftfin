@@ -30,17 +30,16 @@ struct ItemView: View {
     @State
     private var error: JellyfinAPIError?
 
-    @StoredValue(.User.enableItemDeletion)
-    private var enableItemDeletion: Bool
-    @StoredValue(.User.enableItemEditing)
-    private var enableItemEditing: Bool
-    @StoredValue(.User.enableCollectionManagement)
-    private var enableCollectionManagement: Bool
-
     // MARK: - Can Delete Item
 
     private var canDelete: Bool {
         viewModel.userSession.user.permissions.items.canDelete(item: viewModel.item)
+    }
+
+    // MARK: - Can Edit Item
+
+    private var canEdit: Bool {
+        viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item)
     }
 
     // MARK: - Deletion or Editing is Enabled
@@ -132,7 +131,7 @@ struct ItemView: View {
             isLoading: viewModel.backgroundStates.contains(.refresh),
             isHidden: !enableMenu
         ) {
-            Section {
+            if canEdit {
                 Button(L10n.edit, systemImage: "pencil") {
                     router.route(to: \.itemEditor, viewModel)
                 }
