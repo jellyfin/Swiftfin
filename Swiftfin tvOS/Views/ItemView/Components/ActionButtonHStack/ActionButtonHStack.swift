@@ -129,7 +129,7 @@ extension ItemView {
 
                 // MARK: Advanced Options
 
-                if canRefresh || canDelete {
+                if enableMenu {
                     ActionButton(L10n.advanced, icon: "ellipsis", isCompact: true) {
                         if canRefresh {
                             RefreshMetadataButton(item: viewModel.item)

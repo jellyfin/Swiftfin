@@ -43,16 +43,10 @@ struct ItemView: View {
         viewModel.userSession.user.permissions.items.canDelete(item: viewModel.item)
     }
 
-    // MARK: - Can Edit Item
-
-    private var canEdit: Bool {
-        viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item)
-    }
-
     // MARK: - Deletion or Editing is Enabled
 
     private var enableMenu: Bool {
-        canDelete || canEdit
+        viewModel.userSession.user.permissions.items.showEditMenu(item: viewModel.item)
     }
 
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
@@ -138,11 +132,9 @@ struct ItemView: View {
             isLoading: viewModel.backgroundStates.contains(.refresh),
             isHidden: !enableMenu
         ) {
-            if canEdit {
-                Section {
-                    Button(L10n.edit, systemImage: "pencil") {
-                        router.route(to: \.itemEditor, viewModel)
-                    }
+            Section {
+                Button(L10n.edit, systemImage: "pencil") {
+                    router.route(to: \.itemEditor, viewModel)
                 }
             }
 

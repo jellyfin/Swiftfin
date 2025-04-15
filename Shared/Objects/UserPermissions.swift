@@ -19,7 +19,7 @@ struct UserPermissions {
     }
 
     struct UserItemPermissions {
-
+        
         /// This user has server permissions to delete items
         let canDelete: Bool
         /// This user has server permissions to download items
@@ -32,7 +32,7 @@ struct UserPermissions {
         let canManageCollections: Bool
         /// This user has server permissions to edit items' lyrics
         let canManageLyrics: Bool
-
+        
         init(_ policy: UserPolicy?, isAdministrator: Bool) {
             self.canDelete = policy?.enableContentDeletion ?? false || policy?.enableContentDeletionFromFolders != []
             self.canDownload = policy?.enableContentDownloading ?? false
@@ -41,8 +41,16 @@ struct UserPermissions {
             self.canManageCollections = isAdministrator || policy?.enableCollectionManagement ?? false
             self.canManageLyrics = isAdministrator || policy?.enableSubtitleManagement ?? false
         }
-
+        
         // MARK: - Item Specific Validation
+        
+        /// Does this user have permission to edit this item's lyrics?
+        func showEditMenu(item: BaseItemDto) -> Bool {
+            canDelete(item: item) ||
+            canEditMetadata(item: item) ||
+            canManageLyrics(item: item) ||
+            canManageSubtitles(item: item)
+        }
 
         /// Does this user have permission to delete this item?
         func canDelete(item: BaseItemDto) -> Bool {

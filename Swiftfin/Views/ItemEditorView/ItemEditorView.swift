@@ -18,12 +18,6 @@ struct ItemEditorView: View {
     @ObservedObject
     var viewModel: ItemViewModel
 
-    // MARK: - User is an Administrator
-
-    private var isAdmin: Bool {
-        viewModel.userSession?.user.permissions.isAdministrator == true
-    }
-
     // MARK: - Can Edit Metadata
 
     private var canEditMetadata: Bool {
@@ -69,17 +63,24 @@ struct ItemEditorView: View {
                 description: viewModel.item.path
             )
 
-            if isAdmin {
-                refreshButtonView
-            }
-
-            // TODO: Enable when Subtitle / Lyric Editing is added
-            if canEditMetadata { // || canManageSubtitles || canManageLyrics {
-                editView
-            }
-
+            /// Hide metadata options to Lyric/Subtitle only users
             if canEditMetadata {
-                metadataView
+
+                refreshButtonView
+
+                Section(L10n.edit) {
+                    editMetadataView
+                    editTextView
+                }
+
+                editComponentsView
+
+            } else if canManageSubtitles || canManageLyrics {
+
+                // TODO: Enable when Subtitle / Lyric Editing is added
+                Section(L10n.edit) {
+                    editTextView
+                }
             }
         }
     }
@@ -122,50 +123,46 @@ struct ItemEditorView: View {
         }
     }
 
-    // MARK: - Editable Routing Buttons
+    // MARK: - Editable Metadata Routing Buttons
 
     @ViewBuilder
-    private var editView: some View {
-        Section(L10n.edit) {
+    private var editMetadataView: some View {
 
-            // MARK: Metadata
-
-            if canEditMetadata {
-                if [.boxSet, .movie, .person, .series].contains(viewModel.item.type) {
-                    ChevronButton(L10n.identify) {
-                        router.route(to: \.identifyItem, viewModel.item)
-                    }
-                }
-                ChevronButton(L10n.images) {
-                    router.route(to: \.editImages, ItemImagesViewModel(item: viewModel.item))
-                }
-                ChevronButton(L10n.metadata) {
-                    router.route(to: \.editMetadata, viewModel.item)
-                }
+        if let itemKind = viewModel.item.type,
+            BaseItemKind.identifiableTypes.contains(itemKind)
+        {
+            ChevronButton(L10n.identify) {
+                router.route(to: \.identifyItem, viewModel.item)
             }
-
-            // MARK: Lyrics
-
-            if canManageLyrics {
-//              ChevronButton(L10n.lyrics) {
-//                  router.route(to: \.editImages, ItemImagesViewModel(item: viewModel.item))
-//              }
-            }
-
-            // MARK: Subtitles
-
-            if canManageSubtitles {
-//              ChevronButton(L10n.subtitles) {
-//                  router.route(to: \.editImages, ItemImagesViewModel(item: viewModel.item))
-//              }
-            }
+        }
+        ChevronButton(L10n.images) {
+            router.route(to: \.editImages, ItemImagesViewModel(item: viewModel.item))
+        }
+        ChevronButton(L10n.metadata) {
+            router.route(to: \.editMetadata, viewModel.item)
         }
     }
 
-    // MARK: - Metadata Components Routing Buttons
+    // MARK: - Editable Text Routing Buttons
 
     @ViewBuilder
-    private var metadataView: some View {
+    private var editTextView: some View {
+        if canManageLyrics {
+//          ChevronButton(L10n.lyrics) {
+//              router.route(to: \.editImages, ItemImagesViewModel(item: viewModel.item))
+//          }
+        }
+        if canManageSubtitles {
+//          ChevronButton(L10n.subtitles) {
+//              router.route(to: \.editImages, ItemImagesViewModel(item: viewModel.item))
+//          }
+        }
+    }
+
+    // MARK: - Editable Metadata Components Routing Buttons
+
+    @ViewBuilder
+    private var editComponentsView: some View {
         Section {
             ChevronButton(L10n.genres) {
                 router.route(to: \.editGenres, viewModel.item)
