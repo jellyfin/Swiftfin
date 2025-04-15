@@ -22,6 +22,39 @@ extension iPadOSCollectionItemView {
         var body: some View {
             VStack(alignment: .leading, spacing: 20) {
 
+                // MARK: Items
+
+                if viewModel.collectionItems.isNotEmpty {
+
+                    ForEach(BaseItemKind.allCases, id: \.self) { sectionType in
+                        let sectionItems = viewModel.collectionItems.filter { $0.type == sectionType }
+
+                        if sectionItems.isNotEmpty {
+                            PosterHStack(
+                                title: sectionType.pluralDisplayTitle,
+                                type: .portrait,
+                                items: sectionItems
+                            )
+                            .trailing {
+                                SeeAllButton()
+                                    .onSelect {
+                                        let viewModel = ItemLibraryViewModel(
+                                            title: viewModel.item.displayTitle,
+                                            id: viewModel.item.id,
+                                            sectionItems
+                                        )
+                                        router.route(to: \.library, viewModel)
+                                    }
+                            }
+                            .onSelect { item in
+                                router.route(to: \.item, item)
+                            }
+
+                            RowDivider()
+                        }
+                    }
+                }
+
                 // MARK: Genres
 
                 if let genres = viewModel.item.itemGenres, genres.isNotEmpty {
@@ -38,17 +71,12 @@ extension iPadOSCollectionItemView {
                     RowDivider()
                 }
 
-                // MARK: Items
+                // MARK: Similar
 
-                if viewModel.collectionItems.isNotEmpty {
-                    PosterHStack(
-                        title: L10n.items,
-                        type: .portrait,
-                        items: viewModel.collectionItems
-                    )
-                    .onSelect { item in
-                        router.route(to: \.item, item)
-                    }
+                if viewModel.similarItems.isNotEmpty {
+                    ItemView.SimilarItemsHStack(items: viewModel.similarItems)
+
+                    RowDivider()
                 }
 
                 ItemView.AboutView(viewModel: viewModel)
