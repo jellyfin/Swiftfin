@@ -47,21 +47,19 @@ extension ItemView {
         // MARK: - Can Delete Item
 
         private var canDelete: Bool {
-            if viewModel.item.type == .boxSet {
-                return enableCollectionManagement && viewModel.item.canDelete ?? false
-            } else {
-                return enableItemDeletion && viewModel.item.canDelete ?? false
-            }
+            viewModel.userSession.user.permissions.items.canDelete(item: viewModel.item)
         }
 
-        // MARK: - Refresh Item
+        // MARK: - Can Refresh Item
 
         private var canRefresh: Bool {
-            if viewModel.item.type == .boxSet {
-                return enableCollectionManagement
-            } else {
-                return enableItemEditing
-            }
+            viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item)
+        }
+
+        // MARK: - Deletion or Refreshing is Enabled
+
+        private var enableMenu: Bool {
+            canDelete || canRefresh
         }
 
         // MARK: - Has Trailers

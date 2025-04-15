@@ -37,24 +37,20 @@ struct ItemView: View {
     @StoredValue(.User.enableCollectionManagement)
     private var enableCollectionManagement: Bool
 
+    // MARK: - Can Delete Item
+
     private var canDelete: Bool {
-        if viewModel.item.type == .boxSet {
-            return enableCollectionManagement && viewModel.item.canDelete ?? false
-        } else {
-            return enableItemDeletion && viewModel.item.canDelete ?? false
-        }
+        viewModel.userSession.user.permissions.items.canDelete(item: viewModel.item)
     }
+
+    // MARK: - Can Edit Item
 
     private var canEdit: Bool {
-        if viewModel.item.type == .boxSet {
-            return enableCollectionManagement
-        } else {
-            return enableItemEditing
-        }
+        viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item)
     }
 
-    // Use to hide the menu button when not needed.
-    // Add more checks as needed. For example, canDownload.
+    // MARK: - Deletion or Editing is Enabled
+
     private var enableMenu: Bool {
         canDelete || canEdit
     }
@@ -143,15 +139,18 @@ struct ItemView: View {
             isHidden: !enableMenu
         ) {
             if canEdit {
-                Button(L10n.edit, systemImage: "pencil") {
-                    router.route(to: \.itemEditor, viewModel)
+                Section {
+                    Button(L10n.edit, systemImage: "pencil") {
+                        router.route(to: \.itemEditor, viewModel)
+                    }
                 }
             }
 
             if canDelete {
-                Divider()
-                Button(L10n.delete, systemImage: "trash", role: .destructive) {
-                    showConfirmationDialog = true
+                Section {
+                    Button(L10n.delete, systemImage: "trash", role: .destructive) {
+                        showConfirmationDialog = true
+                    }
                 }
             }
         }
