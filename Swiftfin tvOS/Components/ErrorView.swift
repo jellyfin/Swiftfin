@@ -17,6 +17,7 @@ struct ErrorView<ErrorType: Error>: View {
 
     private let error: ErrorType
     private var onRetry: (() -> Void)?
+    private var onSwitchUser: (() -> Void)?
 
     var body: some View {
         VStack(spacing: 20) {
@@ -33,6 +34,11 @@ struct ErrorView<ErrorType: Error>: View {
                     .foregroundStyle(accentColor.overlayColor, accentColor)
                     .frame(maxWidth: 750)
             }
+
+            if let onSwitchUser {
+                ListRowButton(L10n.switchUser, role: .destructive, action: onSwitchUser)
+                    .frame(maxWidth: 750)
+            }
         }
     }
 }
@@ -42,11 +48,16 @@ extension ErrorView {
     init(error: ErrorType) {
         self.init(
             error: error,
-            onRetry: nil
+            onRetry: nil,
+            onSwitchUser: nil
         )
     }
 
     func onRetry(_ action: @escaping () -> Void) -> Self {
         copy(modifying: \.onRetry, with: action)
+    }
+
+    func onSwitchUser(_ action: @escaping () -> Void) -> Self {
+        copy(modifying: \.onSwitchUser, with: action)
     }
 }

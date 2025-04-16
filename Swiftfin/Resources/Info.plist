@@ -96,5 +96,7 @@ network.</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>MinimumJellyfinVersion</key>
+	<string>10.10.0</string>
 </dict>
 </plist>

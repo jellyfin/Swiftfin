@@ -29,6 +29,8 @@ final class MainCoordinator: NavigationCoordinatable {
     var mainTab = makeMainTab
     @Root
     var selectUser = makeSelectUser
+    @Root
+    var serverCheck = makeServerCheck
 
     init() {
 
@@ -41,7 +43,7 @@ final class MainCoordinator: NavigationCoordinatable {
                 if Container.shared.currentUserSession() != nil {
                     await MainActor.run {
                         withAnimation(.linear(duration: 0.1)) {
-                            let _ = root(\.mainTab)
+                            let _ = root(\.serverCheck)
                         }
                     }
                 } else {
@@ -94,6 +96,14 @@ final class MainCoordinator: NavigationCoordinatable {
     }
 
     func makeSelectUser() -> NavigationViewCoordinator<SelectUserCoordinator> {
-        NavigationViewCoordinator(SelectUserCoordinator())
+        NavigationViewCoordinator(
+            SelectUserCoordinator()
+        )
+    }
+
+    func makeServerCheck() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            ServerCheckView()
+        }
     }
 }

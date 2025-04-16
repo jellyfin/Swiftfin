@@ -10,6 +10,10 @@ import UIKit
 
 extension UIApplication {
 
+    static var apiVersion: String? {
+        Bundle.main.object(forInfoDictionaryKey: "MinimumJellyfinVersion") as? String
+    }
+
     static var appVersion: String? {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
     }
