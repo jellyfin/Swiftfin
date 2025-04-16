@@ -50,8 +50,6 @@ extension CollectionItemView {
                             .onSelect { item in
                                 router.route(to: \.item, item)
                             }
-
-                            RowDivider()
                         }
                     }
                 }

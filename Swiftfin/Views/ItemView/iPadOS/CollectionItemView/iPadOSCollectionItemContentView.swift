@@ -49,8 +49,6 @@ extension iPadOSCollectionItemView {
                             .onSelect { item in
                                 router.route(to: \.item, item)
                             }
-
-                            RowDivider()
                         }
                     }
                 }

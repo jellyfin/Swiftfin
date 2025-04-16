@@ -40,9 +40,7 @@ extension CollectionItemView {
                             .onSelect { item in
                                 router.route(to: \.item, item)
                             }
-
-                            RowDivider()
-                                .padding(24)
+                            .padding(.bottom, 24)
                         }
                     }
                 }
