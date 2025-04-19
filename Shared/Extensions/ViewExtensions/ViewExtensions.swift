@@ -327,9 +327,10 @@ extension View {
 
     func topBarTrailing(@ViewBuilder content: @escaping () -> some View) -> some View {
         toolbar {
-            ToolbarItemGroup(placement: .topBarTrailing) {
-                content()
-            }
+            ToolbarItemGroup(
+                placement: .topBarTrailing,
+                content: content
+            )
         }
     }
 
