@@ -16,22 +16,20 @@ struct SettingsBarButton: View {
     let action: () -> Void
 
     var body: some View {
-        Button {
-            action()
-        } label: {
-            /// Used to retain the default navigation bar `Image(systemName:)` styling
-            Image(systemName: "gearshape.fill")
-                .opacity(0)
-                .overlay {
-                    UserProfileImage(
-                        userID: user.id,
-                        source: user.profileImageSource(
-                            client: server.client,
-                            maxWidth: 120
-                        ),
-                        pipeline: .Swiftfin.local
-                    )
-                }
+        Button(action: action) {
+            AlternateLayoutView {
+                // Seems necessary for button layout
+                Image(systemName: "gearshape.fill")
+            } content: {
+                UserProfileImage(
+                    userID: user.id,
+                    source: user.profileImageSource(
+                        client: server.client,
+                        maxWidth: 120
+                    ),
+                    pipeline: .Swiftfin.local
+                )
+            }
         }
         .accessibilityLabel(L10n.settings)
     }
