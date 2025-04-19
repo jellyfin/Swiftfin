@@ -18,6 +18,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
 
     @Default(.Customization.Library.cinematicBackground)
     private var cinematicBackground
+    @Default(.Customization.Library.letterPickerEnabled)
+    private var letterPickerEnabled
     @Default(.Customization.Library.enabledDrawerFilters)
     private var enabledDrawerFilters
     @Default(.Customization.Library.rememberLayout)
@@ -39,8 +41,6 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     private var presentBackground = false
     @State
     private var layout: CollectionVGridLayout
-    @State
-    private var safeArea: EdgeInsets = .zero
 
     @StoredValue
     private var displayType: LibraryDisplayType
@@ -300,49 +300,57 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         }
     }
 
-    // MARK: Content View
-
     @ViewBuilder
     private var contentView: some View {
+        ZStack {
+            HStack(spacing: 0) {
+                innerContent
+                    .padding(.leading, viewModel.filterViewModel == nil ? 0 : 115)
+                    .padding(.trailing, 0)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .onChange(of: posterType) {
+                        setCustomLayout()
+                    }
+                    .onChange(of: displayType) {
+                        setCustomLayout()
+                    }
+                    .onChange(of: listColumnCount) {
+                        setCustomLayout()
+                    }
 
-        innerContent
-            // These exist here to alleviate type-checker issues
-                .onChange(of: posterType) {
-                    setCustomLayout()
+                if let filterViewModel = viewModel.filterViewModel, letterPickerEnabled {
+                    LetterPickerBar(viewModel: filterViewModel)
+                        .frame(alignment: .leading)
+                        .padding(.trailing, 20)
+                        .focusSection()
                 }
-                .onChange(of: displayType) {
-                    setCustomLayout()
+            }
+
+            HStack {
+                if let filterViewModel = viewModel.filterViewModel {
+                    LibraryFilterBar(
+                        viewModel: filterViewModel,
+                        types: enabledDrawerFilters
+                    )
+                    .onSelect {
+                        router.route(to: \.filter, $0)
+                    }
+                    .frame(alignment: .leading)
+                    .focusSection()
                 }
-                .onChange(of: listColumnCount) {
-                    setCustomLayout()
-                }
-
-        // Logic for LetterPicker. Enable when ready
-
-        /* if letterPickerEnabled, let filterViewModel = viewModel.filterViewModel {
-             ZStack(alignment: letterPickerOrientation.alignment) {
-                 innerContent
-                     .padding(letterPickerOrientation.edge, LetterPickerBar.size + 10)
-                     .frame(maxWidth: .infinity)
-
-                 LetterPickerBar(viewModel: filterViewModel)
-                     .padding(.top, safeArea.top)
-                     .padding(.bottom, safeArea.bottom)
-                     .padding(letterPickerOrientation.edge, 10)
-             }
-         } else {
-            innerContent
-         }
-         // These exist here to alleviate type-checker issues
-         .onChange(of: posterType) {
-             setCustomLayout()
-         }
-         .onChange(of: displayType) {
-             setCustomLayout()
-         }
-         .onChange(of: listColumnCount) {
-             setCustomLayout()
-         }*/
+                Spacer()
+            }
+        }
+        /// These exist here to alleviate type-checker issues
+        .onChange(of: posterType) {
+            setCustomLayout()
+        }
+        .onChange(of: displayType) {
+            setCustomLayout()
+        }
+        .onChange(of: listColumnCount) {
+            setCustomLayout()
+        }
     }
 
     // MARK: Body
