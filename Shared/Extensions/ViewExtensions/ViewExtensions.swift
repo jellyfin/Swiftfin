@@ -161,8 +161,13 @@ extension View {
         shadow(radius: 4, y: 2)
     }
 
+    @ViewBuilder
     func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
-        clipShape(RoundedCorner(radius: radius, corners: corners))
+        if corners == .allCorners {
+            clipShape(RoundedRectangle(cornerRadius: radius))
+        } else {
+            clipShape(RoundedCorner(radius: radius, corners: corners))
+        }
     }
 
     /// Apply a corner radius as a ratio of a view's side
