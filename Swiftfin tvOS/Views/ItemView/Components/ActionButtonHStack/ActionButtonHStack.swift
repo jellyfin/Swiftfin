@@ -47,21 +47,19 @@ extension ItemView {
         // MARK: - Can Delete Item
 
         private var canDelete: Bool {
-            if viewModel.item.type == .boxSet {
-                return enableCollectionManagement && viewModel.item.canDelete ?? false
-            } else {
-                return enableItemDeletion && viewModel.item.canDelete ?? false
-            }
+            viewModel.userSession.user.permissions.items.canDelete(item: viewModel.item)
         }
 
-        // MARK: - Refresh Item
+        // MARK: - Can Refresh Item
 
         private var canRefresh: Bool {
-            if viewModel.item.type == .boxSet {
-                return enableCollectionManagement
-            } else {
-                return enableItemEditing
-            }
+            viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item)
+        }
+
+        // MARK: - Deletion or Refreshing is Enabled
+
+        private var enableMenu: Bool {
+            canDelete || canRefresh
         }
 
         // MARK: - Has Trailers
@@ -131,15 +129,17 @@ extension ItemView {
 
                 // MARK: Advanced Options
 
-                if canRefresh || canDelete {
+                if enableMenu {
                     ActionButton(L10n.advanced, icon: "ellipsis", isCompact: true) {
                         if canRefresh {
                             RefreshMetadataButton(item: viewModel.item)
                         }
 
                         if canDelete {
-                            Button(L10n.delete, systemImage: "trash", role: .destructive) {
-                                showConfirmationDialog = true
+                            Section {
+                                Button(L10n.delete, systemImage: "trash", role: .destructive) {
+                                    showConfirmationDialog = true
+                                }
                             }
                         }
                     }
