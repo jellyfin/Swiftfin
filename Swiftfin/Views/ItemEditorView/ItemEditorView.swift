@@ -21,19 +21,19 @@ struct ItemEditorView: View {
     // MARK: - Can Edit Metadata
 
     private var canEditMetadata: Bool {
-        viewModel.userSession?.user.permissions.items.canEditMetadata(item: viewModel.item) == true
+        viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item) == true
     }
 
     // MARK: - Can Manage Subtitles
 
     private var canManageSubtitles: Bool {
-        viewModel.userSession?.user.permissions.items.canManageSubtitles(item: viewModel.item) == true
+        viewModel.userSession.user.permissions.items.canManageSubtitles(item: viewModel.item) == true
     }
 
     // MARK: - Can Manage Lyrics
 
     private var canManageLyrics: Bool {
-        viewModel.userSession?.user.permissions.items.canManageLyrics(item: viewModel.item) == true
+        viewModel.userSession.user.permissions.items.canManageLyrics(item: viewModel.item) == true
     }
 
     // MARK: - Body
@@ -74,14 +74,13 @@ struct ItemEditorView: View {
                 }
 
                 editComponentsView
+            } /*  else if canManageSubtitles || canManageLyrics {
 
-            }/*  else if canManageSubtitles || canManageLyrics {
-
-                // TODO: Enable when Subtitle / Lyric Editing is added
-                Section(L10n.edit) {
-                    editTextView
-                }
-            }*/
+                 // TODO: Enable when Subtitle / Lyric Editing is added
+                 Section(L10n.edit) {
+                     editTextView
+                 }
+             }*/
         }
     }
 
@@ -129,7 +128,7 @@ struct ItemEditorView: View {
     private var editMetadataView: some View {
 
         if let itemKind = viewModel.item.type,
-           BaseItemKind.identifiableTypes.contains(itemKind)
+           BaseItemKind.itemIdentifiableCases.contains(itemKind)
         {
             ChevronButton(L10n.identify) {
                 router.route(to: \.identifyItem, viewModel.item)
