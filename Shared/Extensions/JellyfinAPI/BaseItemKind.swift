@@ -32,7 +32,7 @@ extension BaseItemKind: ItemFilter {
 
 extension BaseItemKind {
 
-    static var identifiableTypes: [BaseItemKind] {
+    static var itemIdentifiableCases: [BaseItemKind] {
         [.boxSet, .movie, .person, .series]
     }
 }
