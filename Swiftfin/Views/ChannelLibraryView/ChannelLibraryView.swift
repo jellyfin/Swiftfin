@@ -168,7 +168,7 @@ struct ChannelLibraryView: View {
                     Label(L10n.compact, systemImage: LibraryDisplayType.grid.systemImage)
                         .tag(LibraryDisplayType.grid)
 
-                    Label("Detailed", systemImage: LibraryDisplayType.list.systemImage)
+                    Label(L10n.detailed, systemImage: LibraryDisplayType.list.systemImage)
                         .tag(LibraryDisplayType.list)
                 }
             } label: {

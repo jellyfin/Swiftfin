@@ -37,14 +37,14 @@ extension PagingLibraryView {
         var body: some View {
             Menu {
 
-                Section("Poster") {
+                Section(L10n.posters) {
                     Button {
                         posterType = .landscape
                     } label: {
                         if posterType == .landscape {
-                            Label("Landscape", systemImage: "checkmark")
+                            Label(L10n.landscape, systemImage: "checkmark")
                         } else {
-                            Label("Landscape", systemImage: "rectangle")
+                            Label(L10n.landscape, systemImage: "rectangle")
                         }
                     }
 
@@ -52,9 +52,9 @@ extension PagingLibraryView {
                         posterType = .portrait
                     } label: {
                         if posterType == .portrait {
-                            Label("Portrait", systemImage: "checkmark")
+                            Label(L10n.portrait, systemImage: "checkmark")
                         } else {
-                            Label("Portrait", systemImage: "rectangle.portrait")
+                            Label(L10n.portrait, systemImage: "rectangle.portrait")
                         }
                     }
                 }
