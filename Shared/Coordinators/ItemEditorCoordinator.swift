@@ -31,6 +31,15 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
     @Route(.modal)
     var editImages = makeEditImages
 
+    // MARK: - Route to Subtitles
+
+    @Route(.push)
+    var editSubtitles = makeItemSubtitles
+    @Route(.modal)
+    var uploadSubtitle = makeUploadItemSubtitles
+    @Route(.modal)
+    var searchSubtitle = makeSearchItemSubtitles
+
     // MARK: - Route to Genres
 
     @Route(.push)
@@ -82,6 +91,25 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
 
     func makeEditImages(viewModel: ItemImagesViewModel) -> NavigationViewCoordinator<ItemImagesCoordinator> {
         NavigationViewCoordinator(ItemImagesCoordinator(viewModel: viewModel))
+    }
+
+    // MARK: - Item Subtitles
+
+    @ViewBuilder
+    func makeItemSubtitles(item: BaseItemDto) -> some View {
+        ItemSubtitlesView(item: item)
+    }
+
+    func makeUploadItemSubtitles(viewModel: ItemSubtitlesViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            ItemSubtitleUploadView(viewModel: viewModel)
+        }
+    }
+
+    func makeSearchItemSubtitles(viewModel: ItemSubtitlesViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            ItemSubtitleSearchView(viewModel: viewModel)
+        }
     }
 
     // MARK: - Item Genres

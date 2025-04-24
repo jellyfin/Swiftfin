@@ -6,7 +6,10 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Storable {
+import JellyfinAPI
+import UniformTypeIdentifiers
+
+enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Defaults.Serializable {
 
     case ass
     case cc_dec
@@ -75,5 +78,111 @@ enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Storable {
         case .xsub:
             return "XSUB"
         }
+    }
+
+    /// Gets the file extension for this subtitle format
+    var fileExtension: String {
+        switch self {
+        case .ass:
+            return "ass"
+        case .cc_dec:
+            return "608"
+        case .dvdsub:
+            return "sub"
+        case .dvbsub:
+            return "dvbsub"
+        case .jacosub:
+            return "jss"
+        case .libzvbi_teletextdec:
+            return "txt"
+        case .mov_text:
+            return "tx3g"
+        case .mpl2:
+            return "mpl"
+        case .pjs:
+            return "pjs"
+        case .pgssub:
+            return "sup"
+        case .realtext:
+            return "rt"
+        case .sami:
+            return "smi"
+        case .ssa:
+            return "ssa"
+        case .subrip:
+            return "srt"
+        case .subviewer:
+            return "sub"
+        case .subviewer1:
+            return "sub"
+        case .text:
+            return "txt"
+        case .ttml:
+            return "ttml"
+        case .vplayer:
+            return "txt"
+        case .vtt:
+            return "vtt"
+        case .xsub:
+            return "xsub"
+        }
+    }
+
+    /// Gets the appropriate UTType for this subtitle format
+    var utType: UTType? {
+        switch self {
+        case .ass:
+            return UTType(filenameExtension: "ass")
+        case .cc_dec:
+            return UTType(filenameExtension: "608")
+        case .dvdsub, .subviewer, .subviewer1:
+            return UTType(filenameExtension: "sub")
+        case .dvbsub:
+            return UTType(filenameExtension: "dvbsub")
+        case .jacosub:
+            return UTType(filenameExtension: "jss")
+        case .libzvbi_teletextdec, .text, .vplayer:
+            return UTType.plainText
+        case .mov_text:
+            return UTType(filenameExtension: "tx3g")
+        case .mpl2:
+            return UTType(filenameExtension: "mpl")
+        case .pjs:
+            return UTType(filenameExtension: "pjs")
+        case .pgssub:
+            return UTType(filenameExtension: "sup")
+        case .realtext:
+            return UTType(filenameExtension: "rt")
+        case .sami:
+            return UTType(filenameExtension: "smi")
+        case .ssa:
+            return UTType(filenameExtension: "ssa")
+        case .subrip:
+            return UTType(filenameExtension: "srt")
+        case .ttml:
+            return UTType(filenameExtension: "ttml")
+        case .vtt:
+            return UTType(filenameExtension: "vtt")
+        case .xsub:
+            return UTType(filenameExtension: "xsub")
+        }
+    }
+
+    /// Whether this format is a text-based subtitle
+    var isText: Bool {
+        switch self {
+        case .ass, .cc_dec, .jacosub, .libzvbi_teletextdec, .mov_text,
+             .mpl2, .pjs, .realtext, .sami, .ssa, .subrip, .subviewer,
+             .subviewer1, .text, .ttml, .vplayer, .vtt:
+            return true
+        case .dvdsub, .dvbsub, .pgssub, .xsub:
+            return false
+        }
+    }
+
+    /// Try to determine the subtitle format from a file URL
+    static func fromFile(_ url: URL) -> SubtitleFormat? {
+        let fileExtension = url.pathExtension.lowercased()
+        return SubtitleFormat.allCases.first { $0.fileExtension == fileExtension }
     }
 }
