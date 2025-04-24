@@ -132,6 +132,8 @@ internal enum L10n {
   internal static let art = L10n.tr("Localizable", "art", fallback: "Art")
   /// Artist
   internal static let artist = L10n.tr("Localizable", "artist", fallback: "Artist")
+  /// Ascending
+  internal static let ascending = L10n.tr("Localizable", "ascending", fallback: "Ascending")
   /// Aspect Fill
   internal static let aspectFill = L10n.tr("Localizable", "aspectFill", fallback: "Aspect Fill")
   /// Audio
@@ -264,6 +266,8 @@ internal enum L10n {
   internal static let category = L10n.tr("Localizable", "category", fallback: "Category")
   /// Change Pin
   internal static let changePin = L10n.tr("Localizable", "changePin", fallback: "Change Pin")
+  /// Channel display
+  internal static let channelDisplay = L10n.tr("Localizable", "channelDisplay", fallback: "Channel display")
   /// Channels
   internal static let channels = L10n.tr("Localizable", "channels", fallback: "Channels")
   /// Chapter
@@ -416,6 +420,8 @@ internal enum L10n {
   internal static let dayOfWeek = L10n.tr("Localizable", "dayOfWeek", fallback: "Day of Week")
   /// Days
   internal static let days = L10n.tr("Localizable", "days", fallback: "Days")
+  /// Decrease playback speed
+  internal static let decreasePlaybackSpeed = L10n.tr("Localizable", "decreasePlaybackSpeed", fallback: "Decrease playback speed")
   /// Default
   internal static let `default` = L10n.tr("Localizable", "default", fallback: "Default")
   /// Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts.
@@ -490,6 +496,8 @@ internal enum L10n {
   internal static let deletion = L10n.tr("Localizable", "deletion", fallback: "Deletion")
   /// Delivery
   internal static let delivery = L10n.tr("Localizable", "delivery", fallback: "Delivery")
+  /// Descending
+  internal static let descending = L10n.tr("Localizable", "descending", fallback: "Descending")
   /// Detailed
   internal static let detailed = L10n.tr("Localizable", "detailed", fallback: "Detailed")
   /// Details
@@ -664,6 +672,10 @@ internal enum L10n {
   internal static let gestureLock = L10n.tr("Localizable", "gestureLock", fallback: "Gesture lock")
   /// Gestures
   internal static let gestures = L10n.tr("Localizable", "gestures", fallback: "Gestures")
+  /// Gestures locked
+  internal static let gesturesLocked = L10n.tr("Localizable", "gesturesLocked", fallback: "Gestures locked")
+  /// Gestures unlocked
+  internal static let gesturesUnlocked = L10n.tr("Localizable", "gesturesUnlocked", fallback: "Gestures unlocked")
   /// Gbps
   internal static let gigabitsPerSecond = L10n.tr("Localizable", "gigabitsPerSecond", fallback: "Gbps")
   /// Green
@@ -708,6 +720,8 @@ internal enum L10n {
   internal static func incorrectPinForUser(_ p1: Any) -> String {
     return L10n.tr("Localizable", "incorrectPinForUser", String(describing: p1), fallback: "Incorrect pin for %@")
   }
+  /// Increase playback speed
+  internal static let increasePlaybackSpeed = L10n.tr("Localizable", "increasePlaybackSpeed", fallback: "Increase playback speed")
   /// Index
   internal static let index = L10n.tr("Localizable", "index", fallback: "Index")
   /// Index number
@@ -996,6 +1010,8 @@ internal enum L10n {
   internal static let passwordChangeWarning = L10n.tr("Localizable", "passwordChangeWarning", fallback: "Changes the Jellyfin server user password. This does not change any Swiftfin settings.")
   /// New passwords do not match.
   internal static let passwordsDoNotMatch = L10n.tr("Localizable", "passwordsDoNotMatch", fallback: "New passwords do not match.")
+  /// Pause
+  internal static let pause = L10n.tr("Localizable", "pause", fallback: "Pause")
   /// Pause on background
   internal static let pauseOnBackground = L10n.tr("Localizable", "pauseOnBackground", fallback: "Pause on background")
   /// Penciller
@@ -1168,6 +1184,8 @@ internal enum L10n {
   internal static let reset = L10n.tr("Localizable", "reset", fallback: "Reset")
   /// Reset all settings back to defaults.
   internal static let resetAllSettings = L10n.tr("Localizable", "resetAllSettings", fallback: "Reset all settings back to defaults.")
+  /// Reset playback speed
+  internal static let resetPlaybackSpeed = L10n.tr("Localizable", "resetPlaybackSpeed", fallback: "Reset playback speed")
   /// Reset the filter values to none.
   internal static let resetFilterFooter = L10n.tr("Localizable", "resetFilterFooter", fallback: "Reset the filter values to none.")
   /// Reset Settings
