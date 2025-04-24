@@ -10,8 +10,6 @@ import JellyfinAPI
 import SwiftUI
 import UniformTypeIdentifiers
 
-// TODO: Localize
-
 struct ItemSubtitleUploadView: View {
 
     // MARK: - Properties
@@ -66,16 +64,33 @@ struct ItemSubtitleUploadView: View {
         contentView
             .navigationBarTitle(L10n.subtitle)
             .navigationBarTitleDisplayMode(.inline)
+            .onReceive(viewModel.events) { event in
+                switch event {
+                case .deleted:
+                    return
+                case .uploaded:
+                    router.dismissCoordinator()
+                case let .error(eventError):
+                    error = eventError
+                }
+            }
             .errorMessage($error)
             .navigationBarCloseButton {
                 router.dismissCoordinator()
             }
             .topBarTrailing {
-                Button(L10n.save) {
-                    uploadSubtitle()
+                if viewModel.backgroundStates.contains(.updating) {
+                    Button(L10n.cancel, role: .cancel) {
+                        viewModel.send(.cancel)
+                    }
+                    .buttonStyle(.toolbarPill)
+                } else {
+                    Button(L10n.save) {
+                        uploadSubtitle()
+                    }
+                    .buttonStyle(.toolbarPill)
+                    .disabled(subtitleData == nil)
                 }
-                .buttonStyle(.toolbarPill)
-                .disabled(subtitleData == nil)
             }
             .fileImporter(
                 isPresented: $isPresentingFileUpload,
@@ -91,17 +106,17 @@ struct ItemSubtitleUploadView: View {
             Section(L10n.options) {
                 LanguagePicker(title: L10n.language, selectedLanguageCode: $language)
 
-                Toggle("Forced", isOn: $isForced)
-                Toggle("Hearing Impaired", isOn: $isHearingImpaired)
+                Toggle(L10n.forced, isOn: $isForced)
+                Toggle(L10n.hearingImpaired, isOn: $isHearingImpaired)
             }
 
-            Section("Path") {
-                Text(subtitleFile?.lastPathComponent ?? "No file selected")
+            Section(L10n.file) {
+                Text(subtitleFile?.lastPathComponent ?? L10n.noItemSelected)
                     .foregroundColor(.secondary)
             }
 
             Section {
-                ListRowButton(subtitleData == nil ? L10n.uploadFile : "Replace file") {
+                ListRowButton(subtitleData == nil ? L10n.uploadFile : L10n.replaceSubtitle) {
                     isPresentingFileUpload = true
                 }
                 .foregroundStyle(Color.accentColor.overlayColor, Color.accentColor)
@@ -120,7 +135,7 @@ struct ItemSubtitleUploadView: View {
                 self.subtitleFormat = format
                 self.subtitleData = try Data(contentsOf: fileURL)
             } else {
-                error = JellyfinAPIError("Invalid file format")
+                error = JellyfinAPIError(L10n.invalidFormat)
             }
         } catch {
             self.error = error
@@ -133,7 +148,7 @@ struct ItemSubtitleUploadView: View {
         guard let subtitleData = subtitleData,
               let subtitleFormat = subtitleFormat
         else {
-            error = JellyfinAPIError("No subtitles selected")
+            error = JellyfinAPIError(L10n.noItemSelected)
             return
         }
 
@@ -149,9 +164,8 @@ struct ItemSubtitleUploadView: View {
             )
 
             viewModel.send(.upload(subtitle))
-            router.dismissCoordinator()
         } else {
-            error = JellyfinAPIError("No language selected")
+            error = JellyfinAPIError(L10n.noItemSelected)
         }
     }
 }

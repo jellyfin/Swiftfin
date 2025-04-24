@@ -23,6 +23,7 @@ final class ItemSubtitlesViewModel: ViewModel, Stateful, Eventful {
     // MARK: - Action
 
     enum Action: Equatable {
+        case cancel
         case search(language: String, isPerfectMatch: Bool? = nil)
         case set(Set<String>)
         case upload(UploadSubtitleDto)
@@ -105,6 +106,13 @@ final class ItemSubtitlesViewModel: ViewModel, Stateful, Eventful {
 
     func respond(to action: Action) -> State {
         switch action {
+        case .cancel:
+            subtitleTask?.cancel()
+            backgroundStates.remove(.updating)
+            eventSubject.send(.error(JellyfinAPIError(L10n.taskCancelled)))
+
+            return state
+
         case let .delete(mediaStreams):
             subtitleTask?.cancel()
 
@@ -261,7 +269,10 @@ final class ItemSubtitlesViewModel: ViewModel, Stateful, Eventful {
                 _ = try await userSession.client.send(request)
                 deletedIndexes.insert(index)
             } catch {
-                throw JellyfinAPIError("Failed to delete subtitle at index \(index): \(error)")
+                throw JellyfinAPIError(L10n.failedDeletionAtIndexError(
+                    index,
+                    error
+                ))
             }
         }
     }
