@@ -82,9 +82,6 @@ struct ItemSubtitlesView: View {
             }
         }
         .errorMessage($error)
-        .onFirstAppear {
-            viewModel.send(.search(language: "English"))
-        }
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 if isEditing {
@@ -119,17 +116,21 @@ struct ItemSubtitlesView: View {
             isLoading: viewModel.backgroundStates.contains(.updating),
             isHidden: isEditing || !hasSubtitles
         ) {
-            Button(L10n.uploadFile, systemImage: "plus") {
-                router.route(to: \.uploadSubtitle, viewModel)
-            }
+            Section(L10n.add) {
+                Button(L10n.uploadFile, systemImage: "plus") {
+                    router.route(to: \.uploadSubtitle, viewModel)
+                }
 
-            Button(L10n.search, systemImage: "magnifyingglass") {
-                router.route(to: \.searchSubtitle, viewModel)
+                Button(L10n.search, systemImage: "magnifyingglass") {
+                    router.route(to: \.searchSubtitle, viewModel)
+                }
             }
 
             if viewModel.externalSubtitles.isNotEmpty {
-                Button(L10n.edit, systemImage: "checkmark.circle") {
-                    isEditing = true
+                Section(L10n.manage) {
+                    Button(L10n.edit, systemImage: "checkmark.circle") {
+                        isEditing = true
+                    }
                 }
             }
         }
@@ -155,7 +156,7 @@ struct ItemSubtitlesView: View {
         List {
             ListTitleSection(
                 L10n.subtitles,
-                description: "Delete, upload, or search for external subtitles"
+                description: L10n.manageSubtitlesDescription
             )
 
             if !hasSubtitles {
@@ -166,7 +167,7 @@ struct ItemSubtitlesView: View {
             } else {
                 if viewModel.internalSubtitles.isNotEmpty {
                     Section {
-                        DisclosureGroup("Embedded") {
+                        DisclosureGroup(L10n.embedded) {
                             ForEach(viewModel.internalSubtitles, id: \.index) { subtitle in
                                 SubtitleButton(subtitle) {
                                     expandedSubtitle = subtitle
@@ -175,7 +176,7 @@ struct ItemSubtitlesView: View {
                             }
                         }
                     } footer: {
-                        Text("Embedded subtitles cannot be edited.")
+                        Text(L10n.embeddedSubtitleFooter)
                     }
                 }
                 if viewModel.externalSubtitles.isNotEmpty {

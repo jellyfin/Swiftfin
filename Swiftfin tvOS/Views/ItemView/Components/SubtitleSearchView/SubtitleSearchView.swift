@@ -6,10 +6,14 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct ItemSubtitleSearchView: View {
+struct SubtitleSearchView: View {
+
+    @Default(.accentColor)
+    private var accentColor
 
     // MARK: - Environment & Observed Objects
 
@@ -46,18 +50,19 @@ struct ItemSubtitleSearchView: View {
 
     var body: some View {
         ZStack {
-            switch viewModel.state {
-            case .initial, .content:
-                contentView
-            case let .error(error):
-                ErrorView(error: error)
-            }
+            BlurView()
+                .ignoresSafeArea()
+            contentView
         }
         .navigationBarTitle(L10n.search)
-        .navigationBarTitleDisplayMode(.inline)
         .onFirstAppear {
             viewModel.send(.search(language: ""))
             language = nil
+        }
+        .topBarTrailing {
+            if viewModel.backgroundStates.isNotEmpty {
+                ProgressView()
+            }
         }
         .onReceive(viewModel.events) { event in
             switch event {
@@ -70,54 +75,75 @@ struct ItemSubtitleSearchView: View {
             }
         }
         .errorMessage($error)
-        .navigationBarCloseButton {
-            router.dismissCoordinator()
-        }
-        .topBarTrailing {
-            if viewModel.backgroundStates.isNotEmpty {
-                ProgressView()
-            }
-            if viewModel.backgroundStates.contains(.updating) {
-                Button(L10n.cancel, role: .cancel) {
-                    viewModel.send(.cancel)
-                }
-                .buttonStyle(.toolbarPill)
-            } else {
-                Button(L10n.save) {
-                    setSubtitles()
-                }
-                .buttonStyle(.toolbarPill)
-                .disabled(selectedSubtitles.isEmpty)
-            }
-        }
     }
 
     // MARK: - Content View
 
+    @ViewBuilder
     private var contentView: some View {
-        Form {
-            searchSection
-            resultsSection
+        switch viewModel.state {
+        case .initial, .content:
+            searchView
+        case let .error(error):
+            ErrorView(error: error)
         }
+    }
+
+    // MARK: - Search View
+
+    private var searchView: some View {
+        SplitFormWindowView()
+            .descriptionView {
+                Image(systemName: "textformat")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: 400)
+            }
+            .contentView {
+                searchSection
+                resultsSection
+            }
     }
 
     // MARK: - Search Section
 
+    @ViewBuilder
     private var searchSection: some View {
         Section(L10n.options) {
             LanguagePicker(title: L10n.language, selectedLanguageCode: $language)
-                .onChange(of: language) { _ in
+                .onChange(of: language) {
                     if let language {
                         viewModel.send(.search(language: language, isPerfectMatch: isPerfectMatch))
                     }
                 }
 
             Toggle(L10n.perfectMatch, isOn: $isPerfectMatch)
-                .onChange(of: isPerfectMatch) { _ in
+                .onChange(of: isPerfectMatch) {
                     if let language {
                         viewModel.send(.search(language: language, isPerfectMatch: isPerfectMatch))
                     }
                 }
+        }
+
+        Section {
+            if viewModel.backgroundStates.contains(.updating) {
+                ListRowButton(L10n.cancel) {
+                    viewModel.send(.cancel)
+                }
+                .listRowInsets(.zero)
+                .foregroundStyle(.red, .red.opacity(0.2))
+            } else {
+                ListRowButton(L10n.save) {
+                    setSubtitles()
+                }
+                .foregroundStyle(
+                    accentColor.overlayColor,
+                    accentColor
+                )
+                .listRowInsets(.zero)
+                .disabled(selectedSubtitles.isEmpty)
+                .opacity(selectedSubtitles.isEmpty ? 0.5 : 1)
+            }
         }
     }
 
