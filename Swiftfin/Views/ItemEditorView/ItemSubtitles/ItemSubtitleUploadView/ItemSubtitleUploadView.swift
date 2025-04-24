@@ -1,0 +1,157 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+//
+
+import JellyfinAPI
+import SwiftUI
+import UniformTypeIdentifiers
+
+// TODO: Localize
+
+struct ItemSubtitleUploadView: View {
+
+    // MARK: - Properties
+
+    @EnvironmentObject
+    private var router: BasicNavigationViewCoordinator.Router
+
+    @ObservedObject
+    private var viewModel: ItemSubtitlesViewModel
+
+    // MARK: - Supported Subtitles for Upload
+
+    private let validSubtitleFormats = SubtitleFormat.allCases.filter(\.isText).compactMap(\.utType)
+
+    // MARK: - File Picker States
+
+    @State
+    private var isPresentingFileUpload = false
+
+    // MARK: - Subtitle Data
+
+    @State
+    private var subtitleFile: URL?
+    @State
+    private var subtitleData: Data?
+    @State
+    private var subtitleFormat: SubtitleFormat?
+
+    // MARK: - Subtitle Properties
+
+    @State
+    private var language: String?
+    @State
+    private var isForced = false
+    @State
+    private var isHearingImpaired = false
+
+    // MARK: - Error State
+
+    @State
+    private var error: Error?
+
+    // MARK: - Initializer
+
+    init(viewModel: ItemSubtitlesViewModel) {
+        self.viewModel = viewModel
+    }
+
+    // MARK: - Body
+
+    var body: some View {
+        contentView
+            .navigationBarTitle(L10n.subtitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .errorMessage($error)
+            .navigationBarCloseButton {
+                router.dismissCoordinator()
+            }
+            .topBarTrailing {
+                Button(L10n.save) {
+                    uploadSubtitle()
+                }
+                .buttonStyle(.toolbarPill)
+                .disabled(subtitleData == nil)
+            }
+            .fileImporter(
+                isPresented: $isPresentingFileUpload,
+                allowedContentTypes: validSubtitleFormats,
+                onCompletion: selectSubtitleFile
+            )
+    }
+
+    // MARK: - Content View
+
+    private var contentView: some View {
+        Form {
+            Section(L10n.options) {
+                LanguagePicker(title: L10n.language, selectedLanguageCode: $language)
+
+                Toggle("Forced", isOn: $isForced)
+                Toggle("Hearing Impaired", isOn: $isHearingImpaired)
+            }
+
+            Section("Path") {
+                Text(subtitleFile?.lastPathComponent ?? "No file selected")
+                    .foregroundColor(.secondary)
+            }
+
+            Section {
+                ListRowButton(subtitleData == nil ? L10n.uploadFile : "Replace file") {
+                    isPresentingFileUpload = true
+                }
+                .foregroundStyle(Color.accentColor.overlayColor, Color.accentColor)
+            }
+        }
+    }
+
+    // MARK: - Select Subtitle File
+
+    private func selectSubtitleFile(_ result: Result<URL, Error>) {
+        do {
+            let fileURL = try result.get()
+            self.subtitleFile = fileURL
+
+            if let format = SubtitleFormat.fromFile(fileURL) {
+                self.subtitleFormat = format
+                self.subtitleData = try Data(contentsOf: fileURL)
+            } else {
+                error = JellyfinAPIError("Invalid file format")
+            }
+        } catch {
+            self.error = error
+        }
+    }
+
+    // MARK: - Upload Subtitle
+
+    private func uploadSubtitle() {
+        guard let subtitleData = subtitleData,
+              let subtitleFormat = subtitleFormat
+        else {
+            error = JellyfinAPIError("No subtitles selected")
+            return
+        }
+
+        let encodedData = subtitleData.base64EncodedString()
+
+        if let language {
+            let subtitle = UploadSubtitleDto(
+                data: encodedData,
+                format: subtitleFormat.fileExtension,
+                isForced: isForced,
+                isHearingImpaired: isHearingImpaired,
+                language: language
+            )
+
+            viewModel.send(.upload(subtitle))
+            router.dismissCoordinator()
+        } else {
+            error = JellyfinAPIError("No language selected")
+        }
+    }
+}
