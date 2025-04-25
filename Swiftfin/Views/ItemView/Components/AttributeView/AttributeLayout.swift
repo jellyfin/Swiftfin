@@ -72,7 +72,7 @@ extension ItemView {
         // MARK: - Calculate Row Width
 
         private func calculateRowWidth(indices: [Int], sizes: [CGSize]) -> CGFloat {
-            guard !indices.isEmpty else { return 0 }
+            guard indices.isNotEmpty else { return 0 }
 
             let itemsWidth = indices.reduce(0) { $0 + sizes[$1].width }
             return itemsWidth + spacing * CGFloat(indices.count - 1)
