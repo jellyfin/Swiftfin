@@ -41,17 +41,17 @@ extension CustomizeViewsSettings {
 
                 ListRowMenu(L10n.enabledTrailers, selection: $enabledTrailers)
 
+                /// Enable Refreshing & Deleting Collections
+                if userSession?.user.permissions.items.canManageCollections == true {
+                    Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
+                }
                 /// Enable Refreshing Items from All Visible LIbraries
-                if userSession?.user.permissions.items.canEditMetadata ?? false {
+                if userSession?.user.permissions.items.canEditMetadata == true {
                     Toggle(L10n.editMedia, isOn: $enableItemEditing)
                 }
                 /// Enable Deleting Items from Approved Libraries
-                if userSession?.user.permissions.items.canDelete ?? false {
+                if userSession?.user.permissions.items.canDelete == true {
                     Toggle(L10n.deleteMedia, isOn: $enableItemDeletion)
-                }
-                /// Enable Refreshing & Deleting Collections
-                if userSession?.user.permissions.items.canManageCollections ?? false {
-                    Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
                 }
             }
         }
