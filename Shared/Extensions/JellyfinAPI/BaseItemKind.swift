@@ -185,3 +185,10 @@ extension BaseItemKind {
         }
     }
 }
+
+extension BaseItemKind {
+
+    static var itemIdentifiableCases: [BaseItemKind] {
+        [.boxSet, .movie, .person, .series]
+    }
+}
