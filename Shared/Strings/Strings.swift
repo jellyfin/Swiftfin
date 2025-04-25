@@ -1268,8 +1268,8 @@ internal enum L10n {
   internal static let seeAll = L10n.tr("Localizable", "seeAll", fallback: "See All")
   /// See More
   internal static let seeMore = L10n.tr("Localizable", "seeMore", fallback: "See More")
-  /// ...See more
-  internal static let ellipsisSeeMore = L10n.tr("Localizable", "ellipsisSeeMore", fallback: "...See more")
+  /// ... See more
+  internal static let ellipsisSeeMore = L10n.tr("Localizable", "ellipsisSeeMore", fallback: "... See more")
   /// Select All
   internal static let selectAll = L10n.tr("Localizable", "selectAll", fallback: "Select All")
   /// Select Image
