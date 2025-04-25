@@ -9,13 +9,14 @@
 import Combine
 import Foundation
 import JellyfinAPI
+import OrderedCollections
 
 final class CollectionItemViewModel: ItemViewModel {
 
     // MARK: - Published Collection Items
 
     @Published
-    private(set) var collectionItems: [BaseItemDto] = []
+    private(set) var collectionItems: OrderedDictionary<BaseItemKind, [BaseItemDto]> = [:]
 
     // MARK: - On Refresh
 
@@ -31,8 +32,7 @@ final class CollectionItemViewModel: ItemViewModel {
 
     // MARK: - Get Collection Items
 
-    private func getCollectionItems() async throws -> [BaseItemDto] {
-
+    private func getCollectionItems() async throws -> OrderedDictionary<BaseItemKind, [BaseItemDto]> {
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.fields = .MinimumFields
         parameters.parentID = item.id
@@ -43,18 +43,33 @@ final class CollectionItemViewModel: ItemViewModel {
         )
         let response = try await userSession.client.send(request)
 
-        return response.value.items ?? []
+        let items = response.value.items ?? []
+        var groupedItems = OrderedDictionary<BaseItemKind, [BaseItemDto]>()
+
+        /// Group items by their type
+        for item in items {
+            guard let type = item.type else { continue }
+
+            if groupedItems[type] == nil {
+                groupedItems[type] = []
+            }
+
+            groupedItems[type]?.append(item)
+        }
+
+        return groupedItems
     }
 
     // MARK: - Get Play Button Items
 
-    private func getPlayButtonItem(_ items: [BaseItemDto]) async throws -> BaseItemDto? {
+    private func getPlayButtonItem(_ items: OrderedDictionary<BaseItemKind, [BaseItemDto]>) async throws -> BaseItemDto? {
+        let allItems = items.values.flatMap { $0 }
         var selectedItem: BaseItemDto?
 
         /// Determine the item that we need to get the PlayButtonItem
-        if let firstUnplayed = items.first(where: { $0.userData?.isPlayed == false && $0.type != .boxSet }) {
+        if let firstUnplayed = allItems.first(where: { $0.userData?.isPlayed == false && $0.type != .boxSet }) {
             selectedItem = firstUnplayed
-        } else if let firstItem = items.first {
+        } else if let firstItem = allItems.first {
             selectedItem = firstItem
         } else {
             return selectedItem
