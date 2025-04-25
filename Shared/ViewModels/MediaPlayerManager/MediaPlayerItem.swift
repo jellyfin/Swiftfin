@@ -65,18 +65,27 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
         self.playSessionID = playSessionID
         self.url = url
         
-        let adjustedMediaStreams = mediaSource.mediaStreams?.adjustedTrackIndexes(
-            isTranscoded: mediaSource.transcodingURL != nil,
-            selectedAudioStreamIndex: mediaSource.defaultAudioStreamIndex ?? 0
-        )
+//        let adjustedMediaStreams = mediaSource.mediaStreams?.adjustedTrackIndexes(
+//            for: <#T##PlayMethod#>,
+//            selectedAudioStreamIndex: <#T##Int#>
+//        )
+//        
+//        let adjustedMediaStreams = mediaSource.mediaStreams?.adjustedTrackIndexes(
+//            isTranscoded: mediaSource.transcodingURL != nil,
+//            selectedAudioStreamIndex: mediaSource.defaultAudioStreamIndex ?? 0
+//        )
+//        
+//        let audioStreams = adjustedMediaStreams?.filter { $0.type == .audio } ?? []
+//        let subtitleStreams = adjustedMediaStreams?.filter { $0.type == .subtitle } ?? []
+//        let videoStreams = adjustedMediaStreams?.filter { $0.type == .video } ?? []
         
-        let audioStreams = adjustedMediaStreams?.filter { $0.type == .audio } ?? []
-        let subtitleStreams = adjustedMediaStreams?.filter { $0.type == .subtitle } ?? []
-        let videoStreams = adjustedMediaStreams?.filter { $0.type == .video } ?? []
+//        self.audioStreams = audioStreams
+//        self.subtitleStreams = subtitleStreams
+//        self.videoStreams = videoStreams
         
-        self.audioStreams = audioStreams
-        self.subtitleStreams = subtitleStreams
-        self.videoStreams = videoStreams
+        self.audioStreams = []
+        self.subtitleStreams = []
+        self.videoStreams = []
 
         let configuration = VLCVideoPlayer.Configuration(url: url)
         configuration.autoPlay = true
@@ -96,9 +105,9 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
             configuration.subtitleFont = .absolute(font)
         }
 
-        configuration.playbackChildren = subtitleStreams
-            .filter { $0.deliveryMethod == .external }
-            .compactMap(\.asPlaybackChild)
+//        configuration.playbackChildren = subtitleStreams
+//            .filter { $0.deliveryMethod == .external }
+//            .compactMap(\.asPlaybackChild)
 
         vlcConfiguration = configuration
 

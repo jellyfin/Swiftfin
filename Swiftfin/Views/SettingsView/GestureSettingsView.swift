@@ -17,7 +17,7 @@ import SwiftUI
 struct GestureSettingsView: View {
 
     @Default(.VideoPlayer.Gesture.horizontalPanAction)
-    private var horizontalPanGesture
+    private var horizontalPanAction
     @Default(.VideoPlayer.Gesture.horizontalSwipeAction)
     private var horizontalSwipeAction
     @Default(.VideoPlayer.Gesture.longPressAction)
@@ -38,11 +38,11 @@ struct GestureSettingsView: View {
 
             Section {
 
-                CaseIterablePicker(L10n.horizontalPan, selection: $horizontalPanGesture)
-                    .disabled(horizontalSwipeGesture != .none && horizontalPanGesture == .none)
+                CaseIterablePicker(L10n.horizontalPan, selection: $horizontalPanAction)
+//                    .disabled(horizontalSwipeAction != .none && horizontalPanAction == .none)
 
-                CaseIterablePicker(L10n.horizontalSwipe, selection: $horizontalSwipeGesture)
-                    .disabled(horizontalPanGesture != .none && horizontalSwipeGesture == .none)
+                CaseIterablePicker(L10n.horizontalSwipe, selection: $horizontalSwipeAction)
+//                    .disabled($horizontalPanAction != .none && horizontalSwipeAction == .none)
 
                 CaseIterablePicker(L10n.longPress, selection: $longPressGesture)
 
@@ -52,9 +52,9 @@ struct GestureSettingsView: View {
 
                 CaseIterablePicker(L10n.pinch, selection: $pinchGesture)
 
-                CaseIterablePicker(L10n.leftVerticalPan, selection: $verticalPanGestureLeft)
+                CaseIterablePicker(L10n.leftVerticalPan, selection: $verticalPanLeftAction)
 
-                CaseIterablePicker(L10n.rightVerticalPan, selection: $verticalPanGestureRight)
+                CaseIterablePicker(L10n.rightVerticalPan, selection: $verticalPanRightAction)
             }
         }
         .navigationTitle(L10n.gestures)
