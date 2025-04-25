@@ -161,8 +161,13 @@ extension View {
         shadow(radius: 4, y: 2)
     }
 
+    @ViewBuilder
     func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
-        clipShape(RoundedCorner(radius: radius, corners: corners))
+        if corners == .allCorners {
+            clipShape(RoundedRectangle(cornerRadius: radius))
+        } else {
+            clipShape(RoundedCorner(radius: radius, corners: corners))
+        }
     }
 
     /// Apply a corner radius as a ratio of a view's side
@@ -251,6 +256,16 @@ extension View {
         self.opacity(isVisible ? opacity : 0)
     }
 
+    @inlinable
+    @ViewBuilder
+    func hidden(_ isHidden: Bool) -> some View {
+        if isHidden {
+            hidden()
+        } else {
+            self
+        }
+    }
+
     func blurred(style: UIBlurEffect.Style = .regular) -> some View {
         overlay {
             BlurView(style: style)
@@ -312,9 +327,10 @@ extension View {
 
     func topBarTrailing(@ViewBuilder content: @escaping () -> some View) -> some View {
         toolbar {
-            ToolbarItemGroup(placement: .topBarTrailing) {
-                content()
-            }
+            ToolbarItemGroup(
+                placement: .topBarTrailing,
+                content: content
+            )
         }
     }
 

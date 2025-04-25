@@ -28,4 +28,13 @@ enum SelectUserServerSelection: RawRepresentable, Hashable, Storable {
             self = .server(id: rawValue)
         }
     }
+
+    func server<S: Sequence>(from servers: S) -> ServerState? where S.Element == ServerState {
+        switch self {
+        case .all:
+            return nil
+        case let .server(id):
+            return servers.first { $0.id == id }
+        }
+    }
 }

@@ -8,9 +8,15 @@
 
 import Defaults
 import Foundation
+import JellyfinAPI
 import SwiftUI
 
 struct QuickConnectAuthorizeView: View {
+
+    // MARK: - Dismiss Environment
+
+    @Environment(\.dismiss)
+    private var dismiss
 
     // MARK: - Defaults
 
@@ -24,11 +30,8 @@ struct QuickConnectAuthorizeView: View {
 
     // MARK: - State & Environment Objects
 
-    @EnvironmentObject
-    private var router: SettingsCoordinator.Router
-
     @StateObject
-    private var viewModel = QuickConnectAuthorizeViewModel()
+    private var viewModel: QuickConnectAuthorizeViewModel
 
     // MARK: - Quick Connect Variables
 
@@ -45,10 +48,46 @@ struct QuickConnectAuthorizeView: View {
     @State
     private var error: Error? = nil
 
+    // MARK: - Initialize
+
+    init(user: UserDto) {
+        self._viewModel = StateObject(wrappedValue: QuickConnectAuthorizeViewModel(user: user))
+    }
+
+    // MARK: Display the User Being Authenticated
+
+    @ViewBuilder
+    private var loginUserRow: some View {
+        HStack {
+            UserProfileImage(
+                userID: viewModel.user.id,
+                source: viewModel.user.profileImageSource(
+                    client: viewModel.userSession.client,
+                    maxWidth: 120
+                )
+            )
+            .frame(width: 50, height: 50)
+
+            Text(viewModel.user.name ?? L10n.unknown)
+                .fontWeight(.semibold)
+                .foregroundStyle(.primary)
+
+            Spacer()
+        }
+    }
+
     // MARK: - Body
 
     var body: some View {
         Form {
+            Section {
+                loginUserRow
+            } header: {
+                Text(L10n.user)
+            } footer: {
+                Text(L10n.quickConnectUserDisclaimer)
+            }
+
             Section {
                 TextField(L10n.quickConnectCode, text: $code)
                     .keyboardType(.numberPad)
@@ -59,14 +98,13 @@ struct QuickConnectAuthorizeView: View {
             }
 
             if viewModel.state == .authorizing {
-                ListRowButton(L10n.cancel) {
+                ListRowButton(L10n.cancel, role: .cancel) {
                     viewModel.send(.cancel)
                     isCodeFocused = true
                 }
-                .foregroundStyle(.red, .red.opacity(0.2))
             } else {
                 ListRowButton(L10n.authorize) {
-                    viewModel.send(.authorize(code))
+                    viewModel.send(.authorize(code: code))
                 }
                 .disabled(code.count != 6 || viewModel.state == .authorizing)
                 .foregroundStyle(
@@ -107,7 +145,7 @@ struct QuickConnectAuthorizeView: View {
             isPresented: $isPresentingSuccess
         ) {
             Button(L10n.dismiss, role: .cancel) {
-                router.pop()
+                dismiss()
             }
         } message: {
             L10n.quickConnectSuccessMessage.text

@@ -72,13 +72,13 @@ class ItemViewModel: ViewModel, Stateful {
     private(set) var similarItems: [BaseItemDto] = []
     @Published
     private(set) var specialFeatures: [BaseItemDto] = []
+    @Published
+    private(set) var localTrailers: [BaseItemDto] = []
 
     @Published
-    final var backgroundStates: OrderedSet<BackgroundState> = []
+    var backgroundStates: Set<BackgroundState> = []
     @Published
-    final var lastAction: Action? = nil
-    @Published
-    final var state: State = .initial
+    var state: State = .initial
 
     // tasks
 
@@ -126,7 +126,7 @@ class ItemViewModel: ViewModel, Stateful {
         switch action {
         case .backgroundRefresh:
 
-            backgroundStates.append(.refresh)
+            backgroundStates.insert(.refresh)
 
             Task { [weak self] in
                 guard let self else { return }
@@ -134,11 +134,13 @@ class ItemViewModel: ViewModel, Stateful {
                     async let fullItem = getFullItem()
                     async let similarItems = getSimilarItems()
                     async let specialFeatures = getSpecialFeatures()
+                    async let localTrailers = getLocalTrailers()
 
                     let results = try await (
                         fullItem: fullItem,
                         similarItems: similarItems,
-                        specialFeatures: specialFeatures
+                        specialFeatures: specialFeatures,
+                        localTrailers: localTrailers
                     )
 
                     guard !Task.isCancelled else { return }
@@ -157,6 +159,7 @@ class ItemViewModel: ViewModel, Stateful {
 
                         self.similarItems = results.similarItems
                         self.specialFeatures = results.specialFeatures
+                        self.localTrailers = results.localTrailers
 
                         Notifications[.itemMetadataDidChange].post(results.fullItem)
                     }
@@ -184,11 +187,13 @@ class ItemViewModel: ViewModel, Stateful {
                     async let fullItem = getFullItem()
                     async let similarItems = getSimilarItems()
                     async let specialFeatures = getSpecialFeatures()
+                    async let localTrailers = getLocalTrailers()
 
                     let results = try await (
                         fullItem: fullItem,
                         similarItems: similarItems,
-                        specialFeatures: specialFeatures
+                        specialFeatures: specialFeatures,
+                        localTrailers: localTrailers
                     )
 
                     guard !Task.isCancelled else { return }
@@ -201,6 +206,7 @@ class ItemViewModel: ViewModel, Stateful {
                         self.item = results.fullItem
                         self.similarItems = results.similarItems
                         self.specialFeatures = results.specialFeatures
+                        self.localTrailers = results.localTrailers
 
                         self.state = .content
                     }
@@ -217,7 +223,7 @@ class ItemViewModel: ViewModel, Stateful {
             return .refreshing
         case let .replace(newItem):
 
-            backgroundStates.append(.refresh)
+            backgroundStates.insert(.refresh)
 
             Task { [weak self] in
                 guard let self else { return }
@@ -330,13 +336,23 @@ class ItemViewModel: ViewModel, Stateful {
         guard let itemID = item.id else { return [] }
 
         let request = Paths.getSpecialFeatures(
-            userID: userSession.user.id,
-            itemID: itemID
+            itemID: item.id!,
+            userID: userSession.user.id
         )
         let response = try? await userSession.client.send(request)
 
         return (response?.value ?? [])
             .filter { $0.extraType?.isVideo ?? false }
+    }
+
+    private func getLocalTrailers() async throws -> [BaseItemDto] {
+
+        guard let itemID = item.id else { return [] }
+
+        let request = Paths.getLocalTrailers(itemID: itemID, userID: userSession.user.id)
+        let response = try? await userSession.client.send(request)
+
+        return response?.value ?? []
     }
 
     private func setIsPlayed(_ isPlayed: Bool) async throws {
@@ -347,13 +363,13 @@ class ItemViewModel: ViewModel, Stateful {
 
         if isPlayed {
             request = Paths.markPlayedItem(
-                userID: userSession.user.id,
-                itemID: item.id!
+                itemID: item.id!,
+                userID: userSession.user.id
             )
         } else {
             request = Paths.markUnplayedItem(
-                userID: userSession.user.id,
-                itemID: item.id!
+                itemID: item.id!,
+                userID: userSession.user.id
             )
         }
 
@@ -367,13 +383,13 @@ class ItemViewModel: ViewModel, Stateful {
 
         if isFavorite {
             request = Paths.markFavoriteItem(
-                userID: userSession.user.id,
-                itemID: item.id!
+                itemID: item.id!,
+                userID: userSession.user.id
             )
         } else {
             request = Paths.unmarkFavoriteItem(
-                userID: userSession.user.id,
-                itemID: item.id!
+                itemID: item.id!,
+                userID: userSession.user.id
             )
         }
 

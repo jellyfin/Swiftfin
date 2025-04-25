@@ -22,6 +22,8 @@ extension CustomizeViewsSettings {
 
         @StoredValue(.User.itemViewAttributes)
         private var itemViewAttributes
+        @StoredValue(.User.enabledTrailers)
+        private var enabledTrailers
 
         @StoredValue(.User.enableItemEditing)
         private var enableItemEditing
@@ -33,35 +35,30 @@ extension CustomizeViewsSettings {
         var body: some View {
             Section(L10n.items) {
 
-                ChevronButton(L10n.mediaAttributes)
-                    .onSelect {
-                        router.route(to: \.itemViewAttributes, $itemViewAttributes)
-                    }
+                ChevronButton(L10n.mediaAttributes) {
+                    router.route(to: \.itemViewAttributes, $itemViewAttributes)
+                }
 
-                /// Enable Editing Items from All Visible LIbraries
-                if userSession?.user.permissions.items.canEditMetadata ?? false {
-                    Toggle(L10n.allowItemEditing, isOn: $enableItemEditing)
+                CaseIterablePicker(
+                    L10n.enabledTrailers,
+                    selection: $enabledTrailers
+                )
+
+                /// Enabled Collection Management for collection managers
+                if userSession?.user.permissions.items.canManageCollections == true {
+                    Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
                 }
-                /// Enable Deleting Items from Approved Libraries
-                if userSession?.user.permissions.items.canDelete ?? false {
-                    Toggle(L10n.allowItemDeletion, isOn: $enableItemDeletion)
+                /// Enabled Media Management when there are media elements that can be managed
+                if userSession?.user.permissions.items.canEditMetadata == true ||
+                    userSession?.user.permissions.items.canManageLyrics == true ||
+                    userSession?.user.permissions.items.canManageSubtitles == true
+                {
+                    Toggle(L10n.editMedia, isOn: $enableItemEditing)
                 }
-                /// Enable Downloading All Items
-                /* if userSession?.user.permissions.items.canDownload ?? false {
-                 Toggle(L10n.allowItemDownloading, isOn: $enableItemDownloads)
-                 } */
-                /// Enable Deleting or Editing Collections
-                if userSession?.user.permissions.items.canManageCollections ?? false {
-                    Toggle(L10n.allowCollectionManagement, isOn: $enableCollectionManagement)
+                /// Enabled Media Deletion for valid deletion users
+                if userSession?.user.permissions.items.canDelete == true {
+                    Toggle(L10n.deleteMedia, isOn: $enableItemDeletion)
                 }
-                /// Manage Item Lyrics
-                /* if userSession?.user.permissions.items.canManageLyrics ?? false {
-                 Toggle(L10n.allowLyricsManagement isOn: $enableLyricsManagement)
-                 } */
-                /// Manage Item Subtitles
-                /* if userSession?.user.items.canManageSubtitles ?? false {
-                 Toggle(L10n.allowSubtitleManagement, isOn: $enableSubtitleManagement)
-                 } */
             }
         }
     }

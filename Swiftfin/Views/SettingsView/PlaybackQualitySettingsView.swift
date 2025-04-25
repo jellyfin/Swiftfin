@@ -70,10 +70,9 @@ struct PlaybackQualitySettingsView: View {
                 .animation(.none, value: compatibilityMode)
 
                 if compatibilityMode == .custom {
-                    ChevronButton(L10n.profiles)
-                        .onSelect {
-                            router.route(to: \.customDeviceProfileSettings)
-                        }
+                    ChevronButton(L10n.profiles) {
+                        router.route(to: \.customDeviceProfileSettings)
+                    }
                 }
             } header: {
                 Text(L10n.deviceProfile)

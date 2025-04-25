@@ -33,7 +33,7 @@ extension PlaybackCompatibility {
                 context: .streaming,
                 maxAudioChannels: "8",
                 minSegments: 2,
-                protocol: "hls",
+                protocol: MediaStreamProtocol.hls,
                 type: .video
             ) {
                 AudioCodec.aac

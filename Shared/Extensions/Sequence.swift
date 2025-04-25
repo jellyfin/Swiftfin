@@ -14,6 +14,10 @@ extension Sequence {
         filter { $0[keyPath: keyPath] != nil }
     }
 
+    func first<V: Equatable>(property: (Element) -> V, equalTo value: V) -> Element? {
+        first { property($0) == value }
+    }
+
     func intersection<Value: Equatable>(_ other: some Sequence<Value>, using keyPath: KeyPath<Element, Value>) -> [Element] {
         filter { other.contains($0[keyPath: keyPath]) }
     }
@@ -57,6 +61,10 @@ extension Sequence {
 }
 
 extension Sequence where Element: Equatable {
+
+    func first(equalTo other: Element) -> Element? {
+        first { $0 == other }
+    }
 
     /// Returns an array containing the elements of the sequence that
     /// are also within the given sequence.

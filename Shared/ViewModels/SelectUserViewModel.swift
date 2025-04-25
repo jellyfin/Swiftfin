@@ -8,13 +8,12 @@
 
 import Combine
 import CoreStore
-import Factory
 import Foundation
 import JellyfinAPI
 import KeychainSwift
 import OrderedCollections
 
-class SelectUserViewModel: ViewModel, Eventful, Stateful {
+final class SelectUserViewModel: ViewModel, Eventful, Stateful {
 
     // MARK: Event
 
@@ -26,7 +25,7 @@ class SelectUserViewModel: ViewModel, Eventful, Stateful {
     // MARK: Action
 
     enum Action: Equatable {
-        case deleteUsers([UserState])
+        case deleteUsers(Set<UserState>)
         case getServers
         case signIn(UserState, pin: String)
     }
@@ -38,7 +37,7 @@ class SelectUserViewModel: ViewModel, Eventful, Stateful {
     }
 
     @Published
-    var servers: OrderedDictionary<ServerState, [UserState]> = [:]
+    private(set) var servers: OrderedDictionary<ServerState, [UserState]> = [:]
     @Published
     var state: State = .content
 

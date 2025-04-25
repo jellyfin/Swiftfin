@@ -22,7 +22,9 @@ extension ItemView {
             PosterHStack(
                 title: L10n.castAndCrew,
                 type: .portrait,
-                items: people.filter(\.isDisplayed)
+                items: people.filter { person in
+                    person.type?.isSupported ?? false
+                }
             )
             .onSelect { person in
                 let viewModel = ItemLibraryViewModel(parent: person)

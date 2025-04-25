@@ -9,31 +9,34 @@
 import Foundation
 import JellyfinAPI
 
-extension SpecialFeatureType: Displayable {
+extension ExtraType: Displayable {
 
-    // TODO: localize
     var displayTitle: String {
         switch self {
         case .unknown:
             return L10n.unknown
         case .clip:
-            return "Clip"
+            return L10n.clip
         case .trailer:
-            return "Trailer"
+            return L10n.trailer
         case .behindTheScenes:
-            return "Behind the Scenes"
+            return L10n.behindTheScenes
         case .deletedScene:
-            return "Deleted Scene"
+            return L10n.deletedScene
         case .interview:
-            return "Interview"
+            return L10n.interview
         case .scene:
-            return "Scene"
+            return L10n.scene
         case .sample:
-            return "Sample"
+            return L10n.sample
         case .themeSong:
-            return "Theme Song"
+            return L10n.themeSong
         case .themeVideo:
-            return "Theme Video"
+            return L10n.themeVideo
+        case .featurette:
+            return L10n.featurette
+        case .short:
+            return L10n.short
         }
     }
 

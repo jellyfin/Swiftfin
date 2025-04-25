@@ -10,7 +10,7 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
+final class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: - Events
 
@@ -37,7 +37,7 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
     }
 
     @Published
-    final var state: State = .initial
+    var state: State = .initial
 
     // MARK: - Published Items
 
@@ -136,7 +136,10 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
 
         try await pollRefreshProgress()
 
-        let request = Paths.getItem(userID: userSession.user.id, itemID: itemId)
+        let request = Paths.getItem(
+            itemID: itemId,
+            userID: userSession.user.id
+        )
         let response = try await userSession.client.send(request)
 
         await MainActor.run {
@@ -149,7 +152,7 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: - Poll Progress
 
-    // TODO: Find a way to actually check refresh progress. Not currently possible on 10.10.
+    // TODO: Find a way to actually check refresh progress. Not currently possible on 10.10.6 (2025-03-27)
     private func pollRefreshProgress() async throws {
         let totalDuration: Double = 5.0
         let interval: Double = 0.05

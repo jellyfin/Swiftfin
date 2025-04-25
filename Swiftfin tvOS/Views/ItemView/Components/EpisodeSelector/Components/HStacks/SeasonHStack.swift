@@ -86,6 +86,7 @@ extension SeriesEpisodeSelector {
                     }
                 }
             }
+            .scrollClipDisabled()
         }
 
         // MARK: - Season Button

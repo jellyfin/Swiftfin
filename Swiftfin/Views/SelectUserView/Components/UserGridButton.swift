@@ -17,8 +17,6 @@ extension SelectUserView {
         @Default(.accentColor)
         private var accentColor
 
-        @Environment(\.colorScheme)
-        private var colorScheme
         @Environment(\.isEditing)
         private var isEditing
         @Environment(\.isSelected)
@@ -51,40 +49,24 @@ extension SelectUserView {
         }
 
         var body: some View {
-            Button {
-                action()
-            } label: {
-                VStack(alignment: .center) {
-                    ZStack {
-                        Color.clear
-
-                        UserProfileImage(
-                            userID: user.id,
-                            source: user.profileImageSource(
-                                client: server.client,
-                                maxWidth: 120
-                            ),
-                            pipeline: .Swiftfin.local
-                        )
-                    }
-                    .aspectRatio(1, contentMode: .fill)
-                    .clipShape(.circle)
-                    .overlay {
-                        if isEditing {
-                            ZStack(alignment: .bottomTrailing) {
-                                Color.black
-                                    .opacity(isSelected ? 0 : 0.5)
-                                    .clipShape(.circle)
-
-                                if isSelected {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 40, height: 40, alignment: .bottomTrailing)
-                                        .symbolRenderingMode(.palette)
-                                        .foregroundStyle(accentColor.overlayColor, accentColor)
-                                }
-                            }
+            Button(action: action) {
+                VStack {
+                    UserProfileImage(
+                        userID: user.id,
+                        source: user.profileImageSource(
+                            client: server.client,
+                            maxWidth: 120
+                        ),
+                        pipeline: .Swiftfin.local
+                    )
+                    .overlay(alignment: .bottomTrailing) {
+                        if isEditing, isSelected {
+                            Image(systemName: "checkmark.circle.fill")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 40, height: 40, alignment: .bottomTrailing)
+                                .symbolRenderingMode(.palette)
+                                .foregroundStyle(accentColor.overlayColor, accentColor)
                         }
                     }
 
@@ -103,8 +85,12 @@ extension SelectUserView {
             }
             .buttonStyle(.plain)
             .contextMenu {
-                Button(L10n.delete, role: .destructive) {
-                    onDelete()
+                if !isEditing {
+                    Button(
+                        L10n.delete,
+                        role: .destructive,
+                        action: onDelete
+                    )
                 }
             }
         }

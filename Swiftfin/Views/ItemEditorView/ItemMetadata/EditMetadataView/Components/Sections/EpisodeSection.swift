@@ -24,7 +24,7 @@ extension EditMetadataView {
 
                 // MARK: - Season Number
 
-                ChevronAlertButton(
+                ChevronButton(
                     L10n.season,
                     subtitle: item.parentIndexNumber?.description,
                     description: L10n.enterSeasonNumber
@@ -39,7 +39,7 @@ extension EditMetadataView {
 
                 // MARK: - Episode Number
 
-                ChevronAlertButton(
+                ChevronButton(
                     L10n.episode,
                     subtitle: item.indexNumber?.description,
                     description: L10n.enterEpisodeNumber

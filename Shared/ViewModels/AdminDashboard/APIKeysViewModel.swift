@@ -34,9 +34,9 @@ final class APIKeysViewModel: ViewModel, Stateful {
     // MARK: Published Variables
 
     @Published
-    final var apiKeys: [AuthenticationInfo] = []
+    var apiKeys: [AuthenticationInfo] = []
     @Published
-    final var state: State = .initial
+    var state: State = .initial
 
     // MARK: Action Responses
 

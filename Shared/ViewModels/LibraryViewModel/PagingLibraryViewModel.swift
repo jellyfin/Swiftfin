@@ -92,27 +92,25 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     }
 
     @Published
-    final var backgroundStates: OrderedSet<BackgroundState> = []
+    var backgroundStates: Set<BackgroundState> = []
     /// - Keys: the `hashValue` of the `Element.ID`
     @Published
-    final var elements: IdentifiedArray<Int, Element>
+    var elements: IdentifiedArray<Int, Element>
     @Published
-    final var state: State = .initial
-    @Published
-    final var lastAction: Action? = nil
+    var state: State = .initial
 
     final let filterViewModel: FilterViewModel?
     final let parent: (any LibraryParent)?
 
-    var events: AnyPublisher<Event, Never> {
+    final var events: AnyPublisher<Event, Never> {
         eventSubject
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
     }
 
     let pageSize: Int
-    private(set) final var currentPage = 0
-    private(set) final var hasNextPage = true
+    private(set) var currentPage = 0
+    private(set) var hasNextPage = true
 
     private let eventSubject: PassthroughSubject<Event, Never> = .init()
     private let isStatic: Bool
@@ -282,7 +280,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
             guard hasNextPage else { return state }
 
-            backgroundStates.append(.gettingNextPage)
+            backgroundStates.insert(.gettingNextPage)
 
             pagingTask = Task { [weak self] in
                 do {

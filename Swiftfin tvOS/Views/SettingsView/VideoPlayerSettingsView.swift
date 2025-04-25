@@ -47,8 +47,7 @@ struct VideoPlayerSettingsView: View {
                     ChevronButton(
                         L10n.offset,
                         subtitle: resumeOffset.secondLabel
-                    )
-                    .onSelect {
+                    ) {
                         isPresentingResumeOffsetStepper = true
                     }
                 } header: {
@@ -59,10 +58,9 @@ struct VideoPlayerSettingsView: View {
 
                 Section {
 
-                    ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName)
-                        .onSelect {
-                            router.route(to: \.fontPicker, $subtitleFontName)
-                        }
+                    ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName) {
+                        router.route(to: \.fontPicker, $subtitleFontName)
+                    }
                 } header: {
                     L10n.subtitles.text
                 } footer: {
@@ -73,7 +71,6 @@ struct VideoPlayerSettingsView: View {
                     Toggle(L10n.pauseOnBackground, isOn: $pauseOnBackground)
                     Toggle(L10n.playOnActive, isOn: $playOnActive)
                 }
-                .navigationTitle(L10n.videoPlayer.text)
                 .blurredFullScreenCover(isPresented: $isPresentingResumeOffsetStepper) {
                     StepperView(
                         title: L10n.resumeOffsetTitle,
@@ -90,5 +87,6 @@ struct VideoPlayerSettingsView: View {
                     }
                 }
             }
+            .navigationTitle(L10n.videoPlayer)
     }
 }

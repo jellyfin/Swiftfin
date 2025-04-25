@@ -42,17 +42,22 @@ struct EditServerUserAccessTagsView: View {
     @State
     private var error: Error?
 
+    private var hasTags: Bool {
+        viewModel.user.policy?.blockedTags?.isEmpty == true &&
+            viewModel.user.policy?.allowedTags?.isEmpty == true
+    }
+
+    private var allowedTags: [TagWithAccess] {
+        viewModel.user.policy?.allowedTags?
+            .sorted()
+            .map { TagWithAccess(tag: $0, access: true) } ?? []
+    }
+
     private var blockedTags: [TagWithAccess] {
         viewModel.user.policy?.blockedTags?
             .sorted()
             .map { TagWithAccess(tag: $0, access: false) } ?? []
     }
-
-//    private var allowedTags: [TagWithAccess] {
-//        viewModel.user.policy?.allowedTags?
-//            .sorted()
-//            .map { TagWithAccess(tag: $0, access: true) } ?? []
-//    }
 
     // MARK: - Initializera
 
@@ -103,18 +108,14 @@ struct EditServerUserAccessTagsView: View {
         }
         .navigationBarMenuButton(
             isLoading: viewModel.backgroundStates.contains(.refreshing),
-            isHidden: isEditing || (
-                viewModel.user.policy?.blockedTags?.isEmpty == true
-            )
+            isHidden: isEditing || hasTags
         ) {
             Button(L10n.add, systemImage: "plus") {
                 router.route(to: \.userAddAccessTag, viewModel)
             }
 
-            if viewModel.user.policy?.blockedTags?.isNotEmpty == true {
-                Button(L10n.edit, systemImage: "checkmark.circle") {
-                    isEditing = true
-                }
+            Button(L10n.edit, systemImage: "checkmark.circle") {
+                isEditing = true
             }
         }
         .onReceive(viewModel.events) { event in
@@ -173,22 +174,33 @@ struct EditServerUserAccessTagsView: View {
                 UIApplication.shared.open(.jellyfinDocsManagingUsers)
             }
 
-            if blockedTags.isEmpty {
+            if blockedTags.isEmpty, allowedTags.isEmpty {
                 Button(L10n.add) {
                     router.route(to: \.userAddAccessTag, viewModel)
                 }
             } else {
-
-                // TODO: with allowed, use `DisclosureGroup` instead
-                Section(L10n.blocked) {
-                    ForEach(
-                        blockedTags,
-                        id: \.self,
-                        content: makeRow
-                    )
+                if allowedTags.isNotEmpty {
+                    Section {
+                        DisclosureGroup(L10n.allowed) {
+                            ForEach(
+                                allowedTags,
+                                id: \.self,
+                                content: makeRow
+                            )
+                        }
+                    }
                 }
-
-                // TODO: allowed with 10.10
+                if blockedTags.isNotEmpty {
+                    Section {
+                        DisclosureGroup(L10n.blocked) {
+                            ForEach(
+                                blockedTags,
+                                id: \.self,
+                                content: makeRow
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -197,10 +209,10 @@ struct EditServerUserAccessTagsView: View {
 
     @ViewBuilder
     private var navigationBarSelectView: some View {
-        let isAllSelected = selectedTags.count == blockedTags.count
+        let isAllSelected = selectedTags.count == blockedTags.count + allowedTags.count
 
         Button(isAllSelected ? L10n.removeAll : L10n.selectAll) {
-            selectedTags = isAllSelected ? [] : Set(blockedTags)
+            selectedTags = isAllSelected ? [] : Set(blockedTags + allowedTags)
         }
         .buttonStyle(.toolbarPill)
         .disabled(!isEditing)
@@ -213,13 +225,17 @@ struct EditServerUserAccessTagsView: View {
         Button(L10n.cancel, role: .cancel) {}
 
         Button(L10n.delete, role: .destructive) {
-            var tempPolicy = viewModel.user.policy ?? UserPolicy()
+            guard let policy = viewModel.user.policy else {
+                preconditionFailure("User policy cannot be empty.")
+            }
+
+            var tempPolicy = policy
 
             for tag in selectedTags {
                 if tag.access {
-                    // tempPolicy.allowedTags?.removeAll { $0 == tag.tag }
+                    tempPolicy.allowedTags?.removeAll(equalTo: tag.tag)
                 } else {
-                    tempPolicy.blockedTags?.removeAll { $0 == tag.tag }
+                    tempPolicy.blockedTags?.removeAll(equalTo: tag.tag)
                 }
             }
 

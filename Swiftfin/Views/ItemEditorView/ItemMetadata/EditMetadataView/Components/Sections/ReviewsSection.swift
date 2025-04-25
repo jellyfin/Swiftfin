@@ -24,7 +24,7 @@ extension EditMetadataView {
 
                 // MARK: - Critics Rating
 
-                ChevronAlertButton(
+                ChevronButton(
                     L10n.critics,
                     subtitle: item.criticRating.map { "\($0)" } ?? .emptyDash,
                     description: L10n.ratingDescription(L10n.critics)
@@ -44,7 +44,7 @@ extension EditMetadataView {
 
                 // MARK: - Community Rating
 
-                ChevronAlertButton(
+                ChevronButton(
                     L10n.community,
                     subtitle: item.communityRating.map { "\($0)" } ?? .emptyDash,
                     description: L10n.ratingDescription(L10n.community)

@@ -58,3 +58,10 @@ extension Array {
         return removeFirst()
     }
 }
+
+extension Array where Element: Equatable {
+
+    mutating func removeAll(equalTo element: Element) {
+        removeAll { $0 == element }
+    }
+}

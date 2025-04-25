@@ -29,3 +29,10 @@ extension BaseItemKind: ItemFilter {
         rawValue
     }
 }
+
+extension BaseItemKind {
+
+    static var itemIdentifiableCases: [BaseItemKind] {
+        [.boxSet, .movie, .person, .series]
+    }
+}

@@ -38,23 +38,23 @@ struct GestureSettingsView: View {
 
             Section {
 
-                CaseIterablePicker("Horizontal Pan", selection: $horizontalPanGesture)
-                    .disabled(horizontalSwipeAction != .none && horizontalPanGesture == .none)
+                CaseIterablePicker(L10n.horizontalPan, selection: $horizontalPanGesture)
+                    .disabled(horizontalSwipeGesture != .none && horizontalPanGesture == .none)
 
-                CaseIterablePicker("Horizontal Swipe", selection: $horizontalSwipeAction)
-                    .disabled(horizontalPanGesture != .none && horizontalSwipeAction == .none)
+                CaseIterablePicker(L10n.horizontalSwipe, selection: $horizontalSwipeGesture)
+                    .disabled(horizontalPanGesture != .none && horizontalSwipeGesture == .none)
 
-                CaseIterablePicker("Long Press", selection: $longPressGesture)
+                CaseIterablePicker(L10n.longPress, selection: $longPressGesture)
 
-                CaseIterablePicker("Multi Tap", selection: $multiTapGesture)
+                CaseIterablePicker(L10n.multiTap, selection: $multiTapGesture)
 
-                CaseIterablePicker("Double Touch", selection: $doubleTouchGesture)
+                CaseIterablePicker(L10n.doubleTouch, selection: $doubleTouchGesture)
 
-                CaseIterablePicker("Pinch", selection: $pinchGesture)
+                CaseIterablePicker(L10n.pinch, selection: $pinchGesture)
 
-                CaseIterablePicker("Left Vertical Pan", selection: $verticalPanLeftAction)
+                CaseIterablePicker(L10n.leftVerticalPan, selection: $verticalPanGestureLeft)
 
-                CaseIterablePicker("Right Vertical Pan", selection: $verticalPanRightAction)
+                CaseIterablePicker(L10n.rightVerticalPan, selection: $verticalPanGestureRight)
             }
         }
         .navigationTitle(L10n.gestures)

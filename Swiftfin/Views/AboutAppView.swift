@@ -37,10 +37,9 @@ struct AboutAppView: View {
 
                 ChevronButton(
                     L10n.sourceCode,
-                    image: Image(.logoGithub),
+                    image: .logoGithub,
                     external: true
-                )
-                .onSelect {
+                ) {
                     UIApplication.shared.open(.swiftfinGithub)
                 }
 
@@ -48,8 +47,7 @@ struct AboutAppView: View {
                     L10n.bugsAndFeatures,
                     systemName: "plus.circle.fill",
                     external: true
-                )
-                .onSelect {
+                ) {
                     UIApplication.shared.open(.swiftfinGithubIssues)
                 }
                 .symbolRenderingMode(.monochrome)
@@ -58,8 +56,7 @@ struct AboutAppView: View {
                     L10n.settings,
                     systemName: "gearshape.fill",
                     external: true
-                )
-                .onSelect {
+                ) {
                     guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
                     UIApplication.shared.open(url)
                 }

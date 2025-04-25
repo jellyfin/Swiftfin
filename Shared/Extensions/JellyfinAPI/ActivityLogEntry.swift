@@ -6,15 +6,19 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
 import JellyfinAPI
+import SwiftUI
 
-extension DeviceInfo {
+extension ActivityLogEntry: Poster {
+    var displayTitle: String {
+        name ?? L10n.unknown
+    }
 
-    var type: DeviceType {
-        DeviceType(
-            client: appName,
-            deviceName: name
-        )
+    var unwrappedIDHashOrZero: Int {
+        id?.hashValue ?? 0
+    }
+
+    var systemImage: String {
+        "text.document"
     }
 }

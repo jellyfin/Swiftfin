@@ -11,7 +11,7 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-class DeviceDetailViewModel: ViewModel, Stateful, Eventful {
+final class DeviceDetailViewModel: ViewModel, Stateful, Eventful {
 
     enum Event {
         case error(JellyfinAPIError)
@@ -31,12 +31,12 @@ class DeviceDetailViewModel: ViewModel, Stateful, Eventful {
     }
 
     @Published
-    var backgroundStates: OrderedSet<BackgroundState> = []
+    var backgroundStates: Set<BackgroundState> = []
     @Published
     var state: State = .initial
 
     @Published
-    private(set) var device: DeviceInfo
+    private(set) var device: DeviceInfoDto
 
     var events: AnyPublisher<Event, Never> {
         eventSubject
@@ -46,7 +46,7 @@ class DeviceDetailViewModel: ViewModel, Stateful, Eventful {
 
     private var eventSubject: PassthroughSubject<Event, Never> = .init()
 
-    init(device: DeviceInfo) {
+    init(device: DeviceInfoDto) {
         self.device = device
     }
 
@@ -57,7 +57,7 @@ class DeviceDetailViewModel: ViewModel, Stateful, Eventful {
 
             Task {
                 await MainActor.run {
-                    _ = backgroundStates.append(.updating)
+                    _ = backgroundStates.insert(.updating)
                 }
 
                 do {
@@ -87,6 +87,10 @@ class DeviceDetailViewModel: ViewModel, Stateful, Eventful {
 
         let request = Paths.updateDeviceOptions(id: id, .init(customName: newName))
         try await userSession.client.send(request)
+
+        await MainActor.run {
+            self.device.customName = newName
+        }
     }
 
     private func getDeviceInfo() async throws {
