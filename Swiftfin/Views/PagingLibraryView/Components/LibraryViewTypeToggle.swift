@@ -82,7 +82,7 @@ extension PagingLibraryView {
                 }
 
                 if viewType == .list, UIDevice.isPad {
-                    Stepper(L10n.columns + ": \(listColumnCount)", value: $listColumnCount, in: 1 ... 3)
+                    Stepper(L10n.columnsWithCount(listColumnCount), value: $listColumnCount, in: 1 ... 3)
                 }
             } label: {
                 switch viewType {

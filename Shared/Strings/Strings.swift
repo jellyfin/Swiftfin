@@ -294,6 +294,10 @@ internal enum L10n {
   internal static let colorist = L10n.tr("Localizable", "colorist", fallback: "Colorist")
   /// Columns
   internal static let columns = L10n.tr("Localizable", "columns", fallback: "Columns")
+  /// Columns: %@
+  internal static func columnsWithCount(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "columnsWithCount", String(describing: p1), fallback: "Columns: %@")
+  }
   /// Community
   internal static let community = L10n.tr("Localizable", "community", fallback: "Community")
   /// Community rating
@@ -1264,6 +1268,8 @@ internal enum L10n {
   internal static let seeAll = L10n.tr("Localizable", "seeAll", fallback: "See All")
   /// See More
   internal static let seeMore = L10n.tr("Localizable", "seeMore", fallback: "See More")
+  /// ...See more
+  internal static let ellipsisSeeMore = L10n.tr("Localizable", "ellipsisSeeMore", fallback: "...See more")
   /// Select All
   internal static let selectAll = L10n.tr("Localizable", "selectAll", fallback: "Select All")
   /// Select Image
