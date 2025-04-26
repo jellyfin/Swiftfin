@@ -91,7 +91,21 @@ extension VideoPlayer {
                     PressCommandAction(title: L10n.pressDownForMenu, press: .downArrow, action: arrowPress)
                     PressCommandAction(title: L10n.pressDownForMenu, press: .leftArrow, action: arrowPress)
                     PressCommandAction(title: L10n.pressDownForMenu, press: .rightArrow, action: arrowPress)
-                    PressCommandAction(title: L10n.pressDownForMenu, press: .select, action: arrowPress)
+                    PressCommandAction(title: L10n.pressDownForMenu, press: .select) {
+                        if videoPlayerManager.state == .playing {
+                            videoPlayerManager.proxy.pause()
+                        } else if videoPlayerManager.state == .paused {
+                            videoPlayerManager.proxy.play()
+                        }
+
+                        if !isPresentingOverlay {
+                            currentOverlayType = .main
+                            overlayTimer.start(5)
+                            withAnimation {
+                                isPresentingOverlay = true
+                            }
+                        }
+                    }
                 }
         }
 
