@@ -759,8 +759,6 @@
 		E14EDECD2B8FB709000F00A4 /* ItemYear.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14EDECB2B8FB709000F00A4 /* ItemYear.swift */; };
 		E150C0BA2BFD44F500944FFA /* ImagePipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = E150C0B92BFD44F500944FFA /* ImagePipeline.swift */; };
 		E150C0BB2BFD44F500944FFA /* ImagePipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = E150C0B92BFD44F500944FFA /* ImagePipeline.swift */; };
-		E150C0BD2BFD45BD00944FFA /* RedrawOnNotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E150C0BC2BFD45BD00944FFA /* RedrawOnNotificationView.swift */; };
-		E150C0BE2BFD45BD00944FFA /* RedrawOnNotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E150C0BC2BFD45BD00944FFA /* RedrawOnNotificationView.swift */; };
 		E150C0C12BFD62FD00944FFA /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E150C0C02BFD62FD00944FFA /* JellyfinAPI */; };
 		E150C0C32BFD6DA200944FFA /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E150C0C22BFD6DA200944FFA /* JellyfinAPI */; };
 		E15210562946DF1B00375CC2 /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E15210552946DF1B00375CC2 /* PulseLogHandler */; };
@@ -1257,6 +1255,8 @@
 		E1FAD1C62A0375BA007F5521 /* UDPBroadcast in Frameworks */ = {isa = PBXBuildFile; productRef = E1FAD1C52A0375BA007F5521 /* UDPBroadcast */; };
 		E1FCD08826C35A0D007C8DCF /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD08726C35A0D007C8DCF /* NetworkError.swift */; };
 		E1FCD08926C35A0D007C8DCF /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD08726C35A0D007C8DCF /* NetworkError.swift */; };
+		E1FE28C92DC16B2B00E1A23E /* RedrawOnNotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FE28C82DC16B2B00E1A23E /* RedrawOnNotificationView.swift */; };
+		E1FE28CA2DC16B2B00E1A23E /* RedrawOnNotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FE28C82DC16B2B00E1A23E /* RedrawOnNotificationView.swift */; };
 		E1FE69A728C29B720021BC93 /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FE69A628C29B720021BC93 /* ProgressBar.swift */; };
 		E1FE69A828C29B720021BC93 /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FE69A628C29B720021BC93 /* ProgressBar.swift */; };
 		E1FE69AA28C29CC20021BC93 /* LandscapePosterProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FE69A928C29CC20021BC93 /* LandscapePosterProgressBar.swift */; };
@@ -1846,7 +1846,6 @@
 		E14EDEC72B8FB65F000F00A4 /* ItemFilterType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemFilterType.swift; sourceTree = "<group>"; };
 		E14EDECB2B8FB709000F00A4 /* ItemYear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemYear.swift; sourceTree = "<group>"; };
 		E150C0B92BFD44F500944FFA /* ImagePipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePipeline.swift; sourceTree = "<group>"; };
-		E150C0BC2BFD45BD00944FFA /* RedrawOnNotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedrawOnNotificationView.swift; sourceTree = SOURCE_ROOT; };
 		E152107B2947ACA000375CC2 /* InvertedLightAppIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedLightAppIcon.swift; sourceTree = "<group>"; };
 		E1546776289AF46E00087E35 /* CollectionItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionItemView.swift; sourceTree = "<group>"; };
 		E1546779289AF48200087E35 /* CollectionItemContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionItemContentView.swift; sourceTree = "<group>"; };
@@ -2156,6 +2155,7 @@
 		E1FA891A289A302300176FEB /* iPadOSCollectionItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPadOSCollectionItemView.swift; sourceTree = "<group>"; };
 		E1FA891D289A305D00176FEB /* iPadOSCollectionItemContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPadOSCollectionItemContentView.swift; sourceTree = "<group>"; };
 		E1FCD08726C35A0D007C8DCF /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
+		E1FE28C82DC16B2B00E1A23E /* RedrawOnNotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedrawOnNotificationView.swift; sourceTree = "<group>"; };
 		E1FE69A628C29B720021BC93 /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
 		E1FE69A928C29CC20021BC93 /* LandscapePosterProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandscapePosterProgressBar.swift; sourceTree = "<group>"; };
 		E43918652AD5C8310045A18C /* OnScenePhaseChangedModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnScenePhaseChangedModifier.swift; sourceTree = "<group>"; };
@@ -5184,7 +5184,7 @@
 				E1D37F472B9C648E00343D2B /* MaxHeightText.swift */,
 				E1DC983F296DEBA500982F06 /* PosterIndicators */,
 				E1FE69A628C29B720021BC93 /* ProgressBar.swift */,
-				E150C0BC2BFD45BD00944FFA /* RedrawOnNotificationView.swift */,
+				E1FE28C82DC16B2B00E1A23E /* RedrawOnNotificationView.swift */,
 				E187A60129AB28F0008387E6 /* RotateContentView.swift */,
 				E18E01FF288749200022598C /* RowDivider.swift */,
 				E1E1643D28BB074000323B0A /* SelectorView.swift */,
@@ -6032,6 +6032,7 @@
 				C46DD8EA2A8FB45C0046A504 /* LiveOverlay.swift in Sources */,
 				E11E376D293E9CC1009EF240 /* VideoPlayerCoordinator.swift in Sources */,
 				E1575E6F293E77B5001665B1 /* GestureAction.swift in Sources */,
+				E1FE28CA2DC16B2B00E1A23E /* RedrawOnNotificationView.swift in Sources */,
 				E10B1ED12BD9AFF200A92EAF /* V2UserModel.swift in Sources */,
 				4E7315762D1485CC00EA2A95 /* UserProfileHeroImage.swift in Sources */,
 				E18A8E7E28D606BE00333B9A /* BaseItemDto+VideoPlayerViewModel.swift in Sources */,
@@ -6232,7 +6233,6 @@
 				E12CC1C928D132B800678D5D /* RecentlyAddedView.swift in Sources */,
 				E19D41B32BF2BFEF0082B8B2 /* URLSessionConfiguration.swift in Sources */,
 				E10B1ECE2BD9AFD800A92EAF /* SwiftfinStore+V2.swift in Sources */,
-				E150C0BE2BFD45BD00944FFA /* RedrawOnNotificationView.swift in Sources */,
 				E1763A722BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift in Sources */,
 				E1937A3C288E54AD00CB80AA /* BaseItemDto+Images.swift in Sources */,
 				E18A17F0298C68B700C22F62 /* Overlay.swift in Sources */,
@@ -6817,6 +6817,7 @@
 				E1D8424F2932F7C400D1041A /* OverviewView.swift in Sources */,
 				E113133628BE98AA00930F75 /* FilterDrawerButton.swift in Sources */,
 				E1DE84142B9531C1008CCE21 /* OrderedSectionSelectorView.swift in Sources */,
+				E1FE28C92DC16B2B00E1A23E /* RedrawOnNotificationView.swift in Sources */,
 				E13DD3FC2717EAE8009D4DAF /* SelectUserView.swift in Sources */,
 				4EF36F642D962A430065BB79 /* ItemSortBy.swift in Sources */,
 				E18E01DE288747230022598C /* iPadOSSeriesItemView.swift in Sources */,
@@ -6929,7 +6930,6 @@
 				E17FB55728C1256400311DFE /* CastAndCrewHStack.swift in Sources */,
 				4EC50D612C934B3A00FC3D0E /* ServerTasksViewModel.swift in Sources */,
 				62E632E3267D3BA60063E547 /* MovieItemViewModel.swift in Sources */,
-				E150C0BD2BFD45BD00944FFA /* RedrawOnNotificationView.swift in Sources */,
 				E190704D2C858CEB0004600E /* VideoPlayerType+Shared.swift in Sources */,
 				E113133828BEADBA00930F75 /* LibraryParent.swift in Sources */,
 				E17DC74D2BE7601E00B42379 /* SettingsBarButton.swift in Sources */,
