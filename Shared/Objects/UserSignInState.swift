@@ -6,10 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Foundation
-
-enum UserSignInState: RawRepresentable, Codable, Defaults.Serializable, Equatable, Hashable {
+enum UserSignInState: RawRepresentable, Equatable, Hashable, Storable {
 
     case signedOut
     case signedIn(userID: String)

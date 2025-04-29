@@ -6,13 +6,15 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import SwiftUI
+
 // TODO: documentation
 // TODO: find a better way to handle backgroundStates on action/state transitions
 //       so that conformers don't have to manually insert/remove them
 // TODO: official way for a cleaner `respond` method so it doesn't have all Task
 //       construction and get bloated
 
-protocol Stateful: AnyObject {
+protocol Stateful: ObservableObject {
 
     associatedtype Action: Equatable
     associatedtype BackgroundState: Hashable = Never
@@ -25,7 +27,7 @@ protocol Stateful: AnyObject {
 
     var state: State { get set }
 
-    /// Respond to a sent action and return the new state
+    /// Respond to a sent action and return a new state.
     @MainActor
     func respond(to action: Action) -> State
 
@@ -39,7 +41,16 @@ extension Stateful {
 
     @MainActor
     func send(_ action: Action) {
-        state = respond(to: action)
+        let newState = respond(to: action)
+
+        if newState != state {
+            state = newState
+        }
+
+//        if action != lastAction {
+//            lastAction = action
+//        }
+        // state = respond(to: action)
     }
 }
 

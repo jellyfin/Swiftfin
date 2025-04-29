@@ -6,8 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-
 enum SelectUserServerSelection: RawRepresentable, Hashable, Storable {
 
     case all

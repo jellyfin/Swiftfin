@@ -79,17 +79,17 @@ struct SearchView: View {
         case .person:
             let viewModel = ItemLibraryViewModel(parent: item)
             router.route(to: \.library, viewModel)
-        case .program:
-            videoPlayerRouter.route(
-                to: \.liveVideoPlayer,
-                LiveVideoPlayerManager(program: item)
-            )
-        case .tvChannel:
-            guard let mediaSource = item.mediaSources?.first else { return }
-            videoPlayerRouter.route(
-                to: \.liveVideoPlayer,
-                LiveVideoPlayerManager(item: item, mediaSource: mediaSource)
-            )
+        case .program: ()
+//            videoPlayerRouter.route(
+//                to: \.liveVideoPlayer,
+//                LiveVideoPlayerManager(program: item)
+//            )
+        case .tvChannel: ()
+//            guard let mediaSource = item.mediaSources?.first else { return }
+//            videoPlayerRouter.route(
+//                to: \.liveVideoPlayer,
+//                LiveVideoPlayerManager(item: item, mediaSource: mediaSource)
+//            )
         default:
             router.route(to: \.item, item)
         }

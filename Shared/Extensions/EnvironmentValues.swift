@@ -11,16 +11,19 @@ import SwiftUI
 extension EnvironmentValues {
 
     @Entry
-    var audioOffset: Binding<Int> = .constant(0)
+    var audioOffset: Binding<TimeInterval> = .constant(0)
 
     @Entry
-    var aspectFilled: Binding<Bool> = .constant(false)
-
-    @Entry
-    var currentOverlayType: Binding<VideoPlayer.OverlayType> = .constant(.main)
+    var isAspectFilled: Binding<Bool> = .constant(false)
 
     @Entry
     var isEditing: Bool = false
+    
+    @Entry
+    var isGestureLocked: Binding<Bool> = .constant(false)
+    
+    @Entry
+    var isInMenu: Bool = false
 
     @Entry
     var isPresentingOverlay: Binding<Bool> = .constant(false)
@@ -36,7 +39,10 @@ extension EnvironmentValues {
 
     @Entry
     var safeAreaInsets: EdgeInsets = UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero
+    
+    @Entry
+    var selectedMediaPlayerSupplement: Binding<AnyMediaPlayerSupplement?> = .constant(nil)
 
     @Entry
-    var subtitleOffset: Binding<Int> = .constant(0)
+    var subtitleOffset: Binding<TimeInterval> = .constant(0)
 }

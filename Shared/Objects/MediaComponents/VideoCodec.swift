@@ -6,9 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-
-enum VideoCodec: String, CaseIterable, Codable, Displayable, Defaults.Serializable {
+enum VideoCodec: String, CaseIterable, Displayable, Storable {
 
     case av1
     case dv

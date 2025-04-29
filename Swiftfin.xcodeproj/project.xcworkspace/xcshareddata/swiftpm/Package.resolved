@@ -1,5 +1,5 @@
 {
-  "originHash" : "59e91adc6b66cec011d85f8b5356b72b51a6e772e85bad7fbeac490d39e91f45",
+  "originHash" : "ddfc5cbd8d388ce0939343b4ca7ebf92e9902b5aa9bd105f6c3fdbaa009309f8",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -89,6 +89,15 @@
       "state" : {
         "revision" : "31249885da1052872e0ac91a2943f62567c0d96d",
         "version" : "2.2.1"
+      }
+    },
+    {
+      "identity" : "inject",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/krzysztofzablocki/Inject",
+      "state" : {
+        "revision" : "728c56639ecb3df441d51d5bc6747329afabcfc9",
+        "version" : "1.5.2"
       }
     },
     {
@@ -251,15 +260,6 @@
       "state" : {
         "revision" : "4ce950479707ea109f229d7230ec074a133b15d7",
         "version" : "0.2.1"
-      }
-    },
-    {
-      "identity" : "vlcui",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/VLCUI",
-      "state" : {
-        "branch" : "main",
-        "revision" : "9e0285b13c666aace61835e8a512512edee822a6"
       }
     },
     {

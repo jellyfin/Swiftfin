@@ -16,6 +16,9 @@ import SwiftUI
 //       - indicated by snapping to the top
 struct HomeView: View {
 
+    @ObserveInjection
+    private var inject
+
     @Default(.Customization.nextUpPosterType)
     private var nextUpPosterType
     @Default(.Customization.Home.showRecentlyAdded)
@@ -93,6 +96,10 @@ struct HomeView: View {
             ) {
                 mainRouter.route(to: \.settings)
             }
+
+            #if DEBUG
+
+            #endif
         }
         .sinceLastDisappear { interval in
             if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {
@@ -100,5 +107,6 @@ struct HomeView: View {
                 viewModel.notificationsReceived.remove(.itemMetadataDidChange)
             }
         }
+        .enableInjection()
     }
 }

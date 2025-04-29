@@ -25,15 +25,32 @@ extension FormatStyle where Self == HourMinuteFormatStyle {
     static var hourMinute: HourMinuteFormatStyle { HourMinuteFormatStyle() }
 }
 
+struct MinuteSecondsFormatStyle: FormatStyle {
+
+    func format(_ value: TimeInterval) -> String {
+        let formatter = DateComponentsFormatter()
+        formatter.unitsStyle = .abbreviated
+        formatter.allowedUnits = [.minute, .second]
+        return formatter.string(from: value) ?? .emptyDash
+    }
+}
+
+extension FormatStyle where Self == MinuteSecondsFormatStyle {
+
+    static var minuteSeconds: MinuteSecondsFormatStyle { MinuteSecondsFormatStyle() }
+}
+
 struct RunTimeFormatStyle: FormatStyle {
 
-    private var negate: Bool = false
+    private var isNegated: Bool = false
 
     var negated: RunTimeFormatStyle {
-        mutating(\.negate, with: true)
+        copy(self, modifying: \.isNegated, to: true)
     }
 
-    func format(_ value: Int) -> String {
+    func format(_ value: TimeInterval) -> String {
+        let value = Int(value)
+
         let hours = value / 3600
         let minutes = (value % 3600) / 60
         let seconds = value % 3600 % 60
@@ -46,13 +63,47 @@ struct RunTimeFormatStyle: FormatStyle {
         return hourText
             .appending(minutesText)
             .appending(secondsText)
-            .prepending("-", if: negate)
+            .prepending("-", if: isNegated)
     }
 }
 
 extension FormatStyle where Self == RunTimeFormatStyle {
 
     static var runtime: RunTimeFormatStyle { RunTimeFormatStyle() }
+}
+
+struct VerbatimFormatStyle<Value: CustomStringConvertible>: FormatStyle {
+
+    func format(_ value: Value) -> String {
+        value.description
+    }
+}
+
+struct DisplayableFormatStyle<Value: Displayable>: FormatStyle {
+
+    func format(_ value: Value) -> String {
+        value.displayTitle
+    }
+}
+
+extension FormatStyle where Self == PlaybackRateStyle {
+
+    static var playbackRate: PlaybackRateStyle {
+        PlaybackRateStyle()
+    }
+}
+
+struct PlaybackRateStyle: FormatStyle {
+
+    // TODO: shouldn't use just an "x", should
+    // use some square unicode character
+    // that's small and centered, or an inline symbol
+    func format(_ value: Float) -> String {
+        FloatingPointFormatStyle<Float>()
+            .precision(.significantDigits(1 ... 3))
+            .format(value)
+            .appending("x")
+    }
 }
 
 /// Represent intervals as 24 hour, 60 minute, 60 second days
@@ -103,6 +154,9 @@ extension ParseableFormatStyle where Self == NilIfEmptyStringFormatStyle {
     }
 }
 
+// TODO: remove after iOS 15 support dropped and use `Duration`
+//       types and format styles instead
+
 extension FormatStyle where Self == TimeIntervalFormatStyle {
 
     static func interval(
@@ -122,6 +176,7 @@ struct TimeIntervalFormatStyle: FormatStyle {
         let value = abs(value)
         let t = Date.now
 
+        // issue: not a closed interval
         return Date.ComponentsFormatStyle(
             style: style,
             locale: .current,

@@ -243,21 +243,21 @@ extension PosterButton {
                 if let item = item as? BaseItemDto {
                     if item.userData?.isPlayed ?? false {
                         WatchedIndicator(size: 25)
-                            .visible(showPlayed)
+                            .isVisible(showPlayed)
                     } else {
                         if (item.userData?.playbackPositionTicks ?? 0) > 0 {
                             ProgressIndicator(progress: (item.userData?.playedPercentage ?? 0) / 100, height: 5)
-                                .visible(showProgress)
+                                .isVisible(showProgress)
                         } else {
                             UnwatchedIndicator(size: 25)
                                 .foregroundColor(accentColor)
-                                .visible(showUnplayed)
+                                .isVisible(showUnplayed)
                         }
                     }
 
                     if item.userData?.isFavorite ?? false {
                         FavoriteIndicator(size: 25)
-                            .visible(showFavorited)
+                            .isVisible(showFavorited)
                     }
                 }
             }

@@ -6,9 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import SwiftUI
-
 // TODO: think about what to do for square (music)
 enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImageable {
 

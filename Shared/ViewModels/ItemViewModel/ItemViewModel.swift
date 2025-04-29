@@ -115,6 +115,11 @@ class ItemViewModel: ViewModel, Stateful {
             .store(in: &cancellables)
     }
 
+    convenience init(episode: BaseItemDto) {
+        let shellSeriesItem = BaseItemDto(id: episode.seriesID, name: episode.seriesName)
+        self.init(item: shellSeriesItem)
+    }
+
     // MARK: respond
 
     func respond(to action: Action) -> State {
@@ -292,10 +297,12 @@ class ItemViewModel: ViewModel, Stateful {
 
     private func getFullItem() async throws -> BaseItemDto {
 
+        guard let itemID = item.id else { return item }
+
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.enableUserData = true
         parameters.fields = ItemFields.allCases
-        parameters.ids = [item.id!]
+        parameters.ids = [itemID]
 
         let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
         let response = try await userSession.client.send(request)
@@ -307,13 +314,15 @@ class ItemViewModel: ViewModel, Stateful {
 
     private func getSimilarItems() async -> [BaseItemDto] {
 
+        guard let itemID = item.id else { return [] }
+
         var parameters = Paths.GetSimilarItemsParameters()
         parameters.fields = .MinimumFields
         parameters.limit = 20
         parameters.userID = userSession.user.id
 
         let request = Paths.getSimilarItems(
-            itemID: item.id!,
+            itemID: itemID,
             parameters: parameters
         )
 
@@ -323,6 +332,8 @@ class ItemViewModel: ViewModel, Stateful {
     }
 
     private func getSpecialFeatures() async -> [BaseItemDto] {
+
+        guard let itemID = item.id else { return [] }
 
         let request = Paths.getSpecialFeatures(
             itemID: item.id!,

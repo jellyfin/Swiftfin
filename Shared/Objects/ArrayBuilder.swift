@@ -12,7 +12,7 @@ import Foundation
 public enum ArrayBuilder<Component> {
 
     public static func buildBlock(_ components: [Component]...) -> [Component] {
-        components.flatMap { $0 }
+        components.flattened()
     }
 
     public static func buildExpression(_ expression: Component) -> [Component] {
@@ -32,7 +32,7 @@ public enum ArrayBuilder<Component> {
     }
 
     public static func buildArray(_ components: [[Component]]) -> [Component] {
-        components.flatMap { $0 }
+        components.flattened()
     }
 
     public static func buildExpression(_ expression: [Component]) -> [Component] {
