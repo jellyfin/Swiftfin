@@ -44,27 +44,21 @@ final class CollectionItemViewModel: ItemViewModel {
         let response = try await userSession.client.send(request)
 
         let items = response.value.items ?? []
-        var groupedItems = OrderedDictionary<BaseItemKind, [BaseItemDto]>()
 
-        /// Group items by their type
-        for item in items {
-            guard let type = item.type else { continue }
-
-            if groupedItems[type] == nil {
-                groupedItems[type] = []
-            }
-
-            groupedItems[type]?.append(item)
-        }
+        let groupedItems: OrderedDictionary<BaseItemKind?, [BaseItemDto]> = .init(
+            grouping: items,
+            by: \.type
+        )
 
         return groupedItems
+            .compactKeys()
     }
 
     // MARK: - Get Play Button Items
 
     private func getPlayButtonItem(_ items: OrderedDictionary<BaseItemKind, [BaseItemDto]>) async throws -> BaseItemDto? {
         let allItems = items.values.flatMap { $0 }
-        var selectedItem: BaseItemDto?
+        let selectedItem: BaseItemDto
 
         /// Determine the item that we need to get the PlayButtonItem
         if let firstUnplayed = allItems.first(where: { $0.userData?.isPlayed == false && $0.type != .boxSet }) {
@@ -72,11 +66,6 @@ final class CollectionItemViewModel: ItemViewModel {
         } else if let firstItem = allItems.first {
             selectedItem = firstItem
         } else {
-            return selectedItem
-        }
-
-        /// Unwrap selectedItem safely
-        guard let selectedItem = selectedItem else {
             return nil
         }
 

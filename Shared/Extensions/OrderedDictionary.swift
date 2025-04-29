@@ -13,4 +13,12 @@ extension OrderedDictionary {
     var isNotEmpty: Bool {
         !isEmpty
     }
+
+    func compactKeys<WrappedKey: Hashable>() -> OrderedDictionary<WrappedKey, Value> where Key == WrappedKey? {
+        reduce(into: OrderedDictionary<WrappedKey, Value>()) { result, pair in
+            if let unwrappedKey = pair.key {
+                result[unwrappedKey] = pair.value
+            }
+        }
+    }
 }

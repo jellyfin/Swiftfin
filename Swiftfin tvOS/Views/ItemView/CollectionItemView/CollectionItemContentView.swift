@@ -29,7 +29,7 @@ extension CollectionItemView {
                 if viewModel.collectionItems.isNotEmpty {
 
                     ForEach(viewModel.collectionItems.keys, id: \.self) { itemType in
-                        if let sectionItems = viewModel.collectionItems[itemType], !sectionItems.isEmpty {
+                        if let sectionItems = viewModel.collectionItems[itemType], sectionItems.isNotEmpty {
                             PosterHStack(
                                 title: itemType.pluralDisplayTitle,
                                 type: .portrait,
