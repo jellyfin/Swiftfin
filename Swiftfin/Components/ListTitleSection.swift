@@ -33,7 +33,7 @@ struct ListTitleSection: View {
                 }
 
                 if let onLearnMore {
-                    Button(L10n.learnMoreEllipsis, action: onLearnMore)
+                    Button(L10n.learnMore + "\u{2026}", action: onLearnMore)
                 }
             }
             .font(.subheadline)
@@ -99,7 +99,7 @@ struct InsetGroupedListHeader<Content: View>: View {
                 }
 
                 if onLearnMore != nil {
-                    Text(L10n.learnMoreEllipsis)
+                    Text(L10n.learnMore + "\u{2026}")
                         .foregroundStyle(accentColor)
                 }
             }

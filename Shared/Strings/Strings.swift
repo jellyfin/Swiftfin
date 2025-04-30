@@ -574,8 +574,6 @@ internal enum L10n {
   internal static let editServer = L10n.tr("Localizable", "editServer", fallback: "Edit Server")
   /// Edit Users
   internal static let editUsers = L10n.tr("Localizable", "editUsers", fallback: "Edit Users")
-  /// ... See more
-  internal static let ellipsisSeeMore = L10n.tr("Localizable", "ellipsisSeeMore", fallback: "... See more")
   /// Enable all devices
   internal static let enableAllDevices = L10n.tr("Localizable", "enableAllDevices", fallback: "Enable all devices")
   /// Enable all libraries
@@ -794,8 +792,8 @@ internal enum L10n {
   }
   /// Layout
   internal static let layout = L10n.tr("Localizable", "layout", fallback: "Layout")
-  /// Learn more...
-  internal static let learnMoreEllipsis = L10n.tr("Localizable", "learnMoreEllipsis", fallback: "Learn more...")
+  /// Learn more
+  internal static let learnMore = L10n.tr("Localizable", "learnMore", fallback: "Learn more")
   /// Left
   internal static let `left` = L10n.tr("Localizable", "left", fallback: "Left")
   /// Left vertical pan
