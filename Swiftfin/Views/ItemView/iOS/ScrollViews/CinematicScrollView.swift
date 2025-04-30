@@ -150,7 +150,7 @@ extension ItemView.CinematicScrollView {
                     .taglineLineLimit(2)
                     .foregroundColor(.white)
 
-                ItemView.AttributesHStack(viewModel: viewModel)
+                ItemView.AttributesHStack(viewModel: viewModel, alignment: .leading)
             }
         }
     }
