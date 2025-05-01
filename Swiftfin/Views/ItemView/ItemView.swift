@@ -57,6 +57,8 @@ struct ItemView: View {
             return CollectionItemViewModel(item: item)
         case .episode:
             return EpisodeItemViewModel(item: item)
+        case .playlist:
+            return PlaylistItemViewModel(item: item)
         case .movie:
             return MovieItemViewModel(item: item)
         case .series:
@@ -81,6 +83,8 @@ struct ItemView: View {
             iPadOSEpisodeItemView(viewModel: viewModel as! EpisodeItemViewModel)
         case .movie:
             iPadOSMovieItemView(viewModel: viewModel as! MovieItemViewModel)
+        case .playlist:
+            iPadOSPlaylistItemView(viewModel: viewModel as! PlaylistItemViewModel)
         case .series:
             iPadOSSeriesItemView(viewModel: viewModel as! SeriesItemViewModel)
         default:
@@ -97,6 +101,8 @@ struct ItemView: View {
             EpisodeItemView(viewModel: viewModel as! EpisodeItemViewModel)
         case .movie:
             MovieItemView(viewModel: viewModel as! MovieItemViewModel)
+        case .playlist:
+            PlaylistItemView(viewModel: viewModel as! PlaylistItemViewModel)
         case .series:
             SeriesItemView(viewModel: viewModel as! SeriesItemViewModel)
         default:

@@ -28,7 +28,7 @@ extension BaseItemDto: Poster {
 
     var showTitle: Bool {
         switch type {
-        case .episode, .series, .movie, .boxSet, .collectionFolder:
+        case .episode, .series, .movie, .boxSet, .collectionFolder, .playlist:
             Defaults[.Customization.showPosterLabels]
         default:
             true
@@ -47,6 +47,8 @@ extension BaseItemDto: Poster {
             "film"
         case .folder:
             "folder.fill"
+        case .playlist:
+            "list.bullet"
         case .person:
             "person.fill"
         default:
@@ -58,7 +60,7 @@ extension BaseItemDto: Poster {
         switch type {
         case .episode:
             [seriesImageSource(.primary, maxWidth: maxWidth)]
-        case .boxSet, .channel, .tvChannel, .liveTvChannel, .movie, .series:
+        case .boxSet, .channel, .tvChannel, .liveTvChannel, .movie, .playlist, .series:
             [imageSource(.primary, maxWidth: maxWidth)]
         default:
             []
@@ -77,7 +79,7 @@ extension BaseItemDto: Poster {
             } else {
                 [imageSource(.primary, maxWidth: maxWidth)]
             }
-        case .folder, .program, .video:
+        case .folder, .program, .video, .playlistsFolder:
             [imageSource(.primary, maxWidth: maxWidth)]
         default:
             [

@@ -145,7 +145,7 @@ final class MediaViewModel: ViewModel, Stateful {
         parameters.limit = 3
         parameters.isRecursive = true
         parameters.parentID = parentID
-        parameters.includeItemTypes = [.movie, .series, .boxSet]
+        parameters.includeItemTypes = [.movie, .series, .boxSet, .playlist]
         parameters.filters = filters
         parameters.sortBy = [ItemSortBy.random.rawValue]
 
