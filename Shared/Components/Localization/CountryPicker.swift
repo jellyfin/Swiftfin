@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-struct CountryISOPicker: View {
+struct CountryPicker: View {
 
     // MARK: - State Object
 
@@ -218,7 +218,7 @@ struct CountryISOPicker: View {
     }
 }
 
-extension CountryISOPicker {
+extension CountryPicker {
 
     // MARK: - Initialize with CultureDto
 

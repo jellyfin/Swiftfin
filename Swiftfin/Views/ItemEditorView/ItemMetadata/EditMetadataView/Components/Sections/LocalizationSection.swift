@@ -19,12 +19,12 @@ extension EditMetadataView {
 
         var body: some View {
             Section(L10n.metadataPreferences) {
-                CultureISOPicker(
+                LanguagePicker(
                     L10n.language,
                     twoLetterISOLanguage: $item.preferredMetadataLanguage
                 )
 
-                CountryISOPicker(
+                CountryPicker(
                     L10n.country,
                     twoLetterISORegion: $item.preferredMetadataCountryCode
                 )
