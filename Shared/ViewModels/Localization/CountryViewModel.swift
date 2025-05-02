@@ -44,14 +44,12 @@ final class CountryViewModel: ViewModel, Stateful {
                 guard let self else { return }
 
                 do {
-                    self.countries = []
-
-                    let serverCountries = try await getCountries()
+                    let countries = try await getCountries()
 
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run {
-                        self.countries.insert(contentsOf: serverCountries)
+                        self.countries = countries
                         self.state = .content
                     }
                 } catch {
@@ -68,12 +66,70 @@ final class CountryViewModel: ViewModel, Stateful {
         }
     }
 
-    // MARK: - Fetch Countries
+    // MARK: - Get All Countries
 
-    private func getCountries() async throws -> [CountryInfo] {
+    private func getCountries() async throws -> Set<CountryInfo> {
+        let serverCountries = try await getServerCountries()
+
+        let displayNames = Set(serverCountries.compactMap(\.displayName))
+        let twoLetterCodes = Set(serverCountries.compactMap(\.twoLetterISORegionName))
+        let threeLetterCodes = Set(serverCountries.compactMap(\.threeLetterISORegionName))
+
+        let deviceCountries = getDeviceCountries(
+            excludingTwoCodes: twoLetterCodes,
+            excludingThreeCodes: threeLetterCodes,
+            excludingDisplayNames: displayNames
+        )
+
+        var uniqueCountriesDict: [String?: CountryInfo] = [:]
+
+        for country in serverCountries {
+            let key = country.twoLetterISORegionName
+            uniqueCountriesDict[key] = country
+        }
+
+        for country in deviceCountries {
+            let key = country.twoLetterISORegionName
+            if uniqueCountriesDict[key] == nil {
+                uniqueCountriesDict[key] = country
+            }
+        }
+
+        return Set(uniqueCountriesDict.values)
+    }
+
+    // MARK: - Fetch Server Countries
+
+    private func getServerCountries() async throws -> [CountryInfo] {
         let request = Paths.getCountries
         let response = try await userSession.client.send(request)
 
         return response.value
+    }
+
+    // MARK: - Get Device Countries
+
+    private func getDeviceCountries(
+        excludingTwoCodes: Set<String>,
+        excludingThreeCodes: Set<String>,
+        excludingDisplayNames: Set<String>
+    ) -> Set<CountryInfo> {
+        var deviceCountries: [CountryInfo] = []
+
+        for code in Locale.isoRegionCodes {
+            guard !excludingTwoCodes.contains(code),
+                  let displayName = Locale.current.localizedString(forRegionCode: code),
+                  !excludingDisplayNames.contains(displayName)
+            else { continue }
+
+            deviceCountries.append(CountryInfo(
+                displayName: displayName,
+                name: code,
+                threeLetterISORegionName: nil,
+                twoLetterISORegionName: code
+            ))
+        }
+
+        return Set(deviceCountries)
     }
 }
