@@ -49,7 +49,7 @@ extension UserSignInView {
 
                     VStack(alignment: .leading, spacing: 10) {
                         Text(
-                            "Additional security for users signed in to this device. This does not change any Jellyfin server user settings."
+                            L10n.additionalSecurityAccessDescription
                         )
 
                         // frame necessary with bug within BulletedList
