@@ -58,16 +58,15 @@ struct CultureISOPicker: View {
             Text(L10n.none)
                 .foregroundStyle(.secondary)
         } else {
-            /// Convert to array for indexed access
-            let culturesArray = [emptyCultureDto] + Array(viewModel.cultures)
-                .sorted { getDisplayName(for: $0) < getDisplayName(for: $1) }
 
-            /// Create a binding to the INDEX in the array
+            let cultures = availableCultures
+
+            /// Create a binding to the index in the array
             let indexBinding = Binding<Int>(
                 get: {
                     /// Primary - Try to find by selected culture
                     if let selectedCulture = selectedCulture {
-                        for (index, culture) in culturesArray.enumerated() {
+                        for (index, culture) in cultures.enumerated() {
                             if getThreeLetterCode(from: culture) == getThreeLetterCode(from: selectedCulture) {
                                 return index
                             }
@@ -76,7 +75,7 @@ struct CultureISOPicker: View {
 
                     /// Secondary - Try by 2 letter language code
                     if let languageCode = twoLetterISOLanguage {
-                        for (index, culture) in culturesArray.enumerated() {
+                        for (index, culture) in cultures.enumerated() {
                             if let code = getTwoLetterCode(from: culture),
                                code == languageCode
                             {
@@ -87,7 +86,7 @@ struct CultureISOPicker: View {
 
                     /// Tertiary - Try by 3 letter language code
                     if let languageCode = threeLetterISOLanguage {
-                        for (index, culture) in culturesArray.enumerated() {
+                        for (index, culture) in cultures.enumerated() {
                             if let code = getThreeLetterCode(from: culture),
                                code == languageCode
                             {
@@ -98,8 +97,8 @@ struct CultureISOPicker: View {
                     return 0
                 },
                 set: { newIndex in
-                    if newIndex >= 0 && newIndex < culturesArray.count {
-                        let culture = culturesArray[newIndex]
+                    if newIndex >= 0 && newIndex < cultures.count {
+                        let culture = cultures[newIndex]
                         twoLetterISOLanguage = getTwoLetterCode(from: culture)
                         threeLetterISOLanguage = getThreeLetterCode(from: culture)
                         selectedCulture = culture
@@ -107,14 +106,73 @@ struct CultureISOPicker: View {
                 }
             )
 
-            Picker(title, selection: indexBinding) {
-                ForEach(0 ..< culturesArray.count, id: \.self) { index in
-                    let culture = culturesArray[index]
-                    Text(getDisplayName(for: culture))
-                        .tag(index)
+            isoPicker(title, selection: indexBinding)
+        }
+    }
+
+    // MARK: - Picker by Platform
+
+    @ViewBuilder
+    private func isoPicker(_ title: String, selection: Binding<Int>) -> some View {
+        #if os(tvOS)
+        ListRowMenu(title, subtitle: {
+            Text(getDisplayName(for: availableCultures[selection.wrappedValue]))
+        }) {
+            ForEach(cultures.indices, id: \.self) { index in
+                let country = availableCultures[index]
+                Button(getDisplayName(for: country)) {
+                    selection.wrappedValue = index
                 }
             }
         }
+        .menuStyle(.borderlessButton)
+        .listRowInsets(.zero)
+        #else
+        Picker(title, selection: selection) {
+            ForEach(0 ..< availableCultures.count, id: \.self) { index in
+                Text(getDisplayName(for: availableCultures[index]))
+                    .tag(index)
+            }
+        }
+        #endif
+    }
+
+    // MARK: - Get Available Localizations
+
+    private var availableCultures: [CultureDto] {
+        // TODO: Remove after iOS15 dropped
+        /// Return only Jellyfin-provided cultures on pre-iOS 16
+        guard #available(iOS 16, *) else {
+            return [emptyCultureDto] + viewModel.cultures
+                .sorted { getDisplayName(for: $0) < getDisplayName(for: $1) }
+        }
+
+        let jellyfinCultures = viewModel.cultures
+        let existingTwoLetterCodes = Set(jellyfinCultures.compactMap(\.twoLetterISOLanguageName))
+        let existingThreeLetterCodes = Set(jellyfinCultures.compactMap(\.threeLetterISOLanguageName))
+
+        let systemCulturesDict = Locale.availableIdentifiers.reduce(into: [String: CultureDto]()) { dict, identifier in
+            let locale = Locale(identifier: identifier)
+
+            guard let code = locale.language.languageCode?.identifier,
+                  let threeLetterCode = locale.language.languageCode?.identifier(.alpha3),
+                  let twoLetterCode = locale.language.languageCode?.identifier(.alpha2),
+                  let displayName = Locale.current.localizedString(forIdentifier: code),
+                  !dict.keys.contains(twoLetterCode), /// Check if we've already processed this language
+                  !(existingTwoLetterCodes.contains(twoLetterCode) && existingThreeLetterCodes.contains(threeLetterCode))
+            else { return }
+
+            dict[twoLetterCode] = CultureDto(
+                displayName: displayName,
+                name: code,
+                threeLetterISOLanguageName: threeLetterCode,
+                threeLetterISOLanguageNames: [threeLetterCode],
+                twoLetterISOLanguageName: twoLetterCode
+            )
+        }
+
+        return [emptyCultureDto] + (jellyfinCultures + Array(systemCulturesDict.values))
+            .sorted { getDisplayName(for: $0) < getDisplayName(for: $1) }
     }
 
     // MARK: - Get 2 Letter ISO with Fallbacks

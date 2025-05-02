@@ -58,16 +58,15 @@ struct CountryISOPicker: View {
             Text(L10n.none)
                 .foregroundStyle(.secondary)
         } else {
-            /// Convert to array for indexed access
-            let countriesArray = [emptyCountryInfo] + Array(viewModel.countries)
-                .sorted { getDisplayName(for: $0) < getDisplayName(for: $1) }
 
-            /// Create a binding to the INDEX in the array
+            let countries = availableCountries
+
+            /// Create a binding to the index in the array
             let indexBinding = Binding<Int>(
                 get: {
                     /// Primary - Try to find by selected country
                     if let selectedCountry = selectedCountry {
-                        for (index, country) in countriesArray.enumerated() {
+                        for (index, country) in countries.enumerated() {
                             if getThreeLetterCode(from: country) == getThreeLetterCode(from: selectedCountry) &&
                                 getTwoLetterCode(from: country) == getTwoLetterCode(from: selectedCountry)
                             {
@@ -78,7 +77,7 @@ struct CountryISOPicker: View {
 
                     /// Secondary - Try by 2 letter country code
                     if let countryCode = twoLetterISORegion {
-                        for (index, country) in countriesArray.enumerated() {
+                        for (index, country) in countries.enumerated() {
                             if let code = getTwoLetterCode(from: country),
                                code == countryCode
                             {
@@ -89,7 +88,7 @@ struct CountryISOPicker: View {
 
                     /// Tertiary - Try by 3 letter country code
                     if let countryCode = threeLetterISORegion {
-                        for (index, country) in countriesArray.enumerated() {
+                        for (index, country) in countries.enumerated() {
                             if let code = getThreeLetterCode(from: country),
                                code == countryCode
                             {
@@ -100,8 +99,8 @@ struct CountryISOPicker: View {
                     return 0
                 },
                 set: { newIndex in
-                    if newIndex >= 0 && newIndex < countriesArray.count {
-                        let country = countriesArray[newIndex]
+                    if newIndex >= 0 && newIndex < countries.count {
+                        let country = countries[newIndex]
                         twoLetterISORegion = getTwoLetterCode(from: country)
                         threeLetterISORegion = getThreeLetterCode(from: country)
                         selectedCountry = country
@@ -109,14 +108,59 @@ struct CountryISOPicker: View {
                 }
             )
 
-            Picker(title, selection: indexBinding) {
-                ForEach(0 ..< countriesArray.count, id: \.self) { index in
-                    let country = countriesArray[index]
-                    Text(getDisplayName(for: country))
-                        .tag(index)
+            isoPicker(title, selection: indexBinding)
+        }
+    }
+
+    // MARK: - Picker by Platform
+
+    @ViewBuilder
+    private func isoPicker(_ title: String, selection: Binding<Int>) -> some View {
+        #if os(tvOS)
+        ListRowMenu(title, subtitle: {
+            Text(getDisplayName(for: availableCountries[selection.wrappedValue]))
+        }) {
+            ForEach(availableCountries.indices, id: \.self) { index in
+                let country = availableCountries[index]
+                Button(getDisplayName(for: country)) {
+                    selection.wrappedValue = index
                 }
             }
         }
+        .menuStyle(.borderlessButton)
+        .listRowInsets(.zero)
+        #else
+        Picker(title, selection: selection) {
+            ForEach(0 ..< availableCountries.count, id: \.self) { index in
+                Text(getDisplayName(for: availableCountries[index]))
+                    .tag(index)
+            }
+        }
+        #endif
+    }
+
+    // MARK: - Get Available Localizations
+
+    private var availableCountries: [CountryInfo] {
+        let jellyfinCountries = viewModel.countries
+        let existingTwoLetterCodes = Set(jellyfinCountries.compactMap(\.twoLetterISORegionName))
+
+        let systemCountriesDict = Locale.isoRegionCodes.reduce(into: [String: CountryInfo]()) { dict, code in
+            guard !dict.keys.contains(code),
+                  !existingTwoLetterCodes.contains(code),
+                  let displayName = Locale.current.localizedString(forRegionCode: code)
+            else { return }
+
+            dict[code] = CountryInfo(
+                displayName: displayName,
+                name: code,
+                threeLetterISORegionName: nil,
+                twoLetterISORegionName: code
+            )
+        }
+
+        return [emptyCountryInfo] + (jellyfinCountries + Array(systemCountriesDict.values))
+            .sorted { getDisplayName(for: $0) < getDisplayName(for: $1) }
     }
 
     // MARK: - Get 2 Letter ISO with Fallbacks
