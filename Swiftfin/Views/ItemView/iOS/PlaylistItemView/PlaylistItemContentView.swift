@@ -22,6 +22,8 @@ extension PlaylistItemView {
         var body: some View {
             VStack(alignment: .leading, spacing: 20) {
 
+                // MARK: Playlist Items by Type
+
                 if viewModel.playlistItems.isNotEmpty {
 
                     ForEach(viewModel.playlistItems.keys, id: \.self) { itemType in
@@ -46,8 +48,18 @@ extension PlaylistItemView {
                                         router.route(to: \.library, viewModel)
                                     }
                             }
+                            /* TODO: Enable when Playlist Editing is Available
+                             .contextMenu { _ in
+                                 Button(role: .destructive) {
+                                     // editorViewModel.send(removeFromPlaylist)
+                                 } label: {
+                                     Label("Remove from playlist", systemImage: "text.badge.minus")
+                                 }
+                             }*/
                         }
                     }
+
+                    RowDivider()
                 }
 
                 // MARK: Genres
@@ -58,23 +70,7 @@ extension PlaylistItemView {
                     RowDivider()
                 }
 
-                // MARK: Studios
-
-                if let studios = viewModel.item.studios, studios.isNotEmpty {
-                    ItemView.StudiosHStack(studios: studios)
-
-                    RowDivider()
-                }
-
-                // MARK: Cast and Crew
-
-                if let castAndCrew = viewModel.item.people,
-                   castAndCrew.isNotEmpty
-                {
-                    ItemView.CastAndCrewHStack(people: castAndCrew)
-
-                    RowDivider()
-                }
+                // MARK: About
 
                 ItemView.AboutView(viewModel: viewModel)
             }

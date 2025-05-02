@@ -38,9 +38,19 @@ extension PlaylistItemView {
                             .onSelect { item in
                                 router.route(to: \.item, item)
                             }
+                            /* TODO: Enable when Playlist Editing is Available
+                             .contextMenu { _ in
+                                 Button(role: .destructive) {
+                                     // editorViewModel.send(removeFromPlaylist)
+                                 } label: {
+                                     Label("Remove from playlist", systemImage: "text.badge.minus")
+                                 }
+                             }*/
                         }
                     }
                 }
+
+                // MARK: About
 
                 ItemView.AboutView(viewModel: viewModel)
             }
