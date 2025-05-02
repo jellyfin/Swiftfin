@@ -12,14 +12,29 @@ import SwiftUI
 
 struct ItemEditorView: View {
 
-    @Injected(\.currentUserSession)
-    private var userSession
-
     @EnvironmentObject
     private var router: ItemEditorCoordinator.Router
 
     @ObservedObject
     var viewModel: ItemViewModel
+
+    // MARK: - Can Edit Metadata
+
+    private var canEditMetadata: Bool {
+        viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item) == true
+    }
+
+    // MARK: - Can Manage Subtitles
+
+    private var canManageSubtitles: Bool {
+        viewModel.userSession.user.permissions.items.canManageSubtitles(item: viewModel.item) == true
+    }
+
+    // MARK: - Can Manage Lyrics
+
+    private var canManageLyrics: Bool {
+        viewModel.userSession.user.permissions.items.canManageLyrics(item: viewModel.item) == true
+    }
 
     // MARK: - Body
 
@@ -48,9 +63,24 @@ struct ItemEditorView: View {
                 description: viewModel.item.path
             )
 
-            refreshButtonView
+            /// Hide metadata options to Lyric/Subtitle only users
+            if canEditMetadata {
 
-            editView
+                refreshButtonView
+
+                Section(L10n.edit) {
+                    editMetadataView
+                    editTextView
+                }
+
+                editComponentsView
+            } /*  else if canManageSubtitles || canManageLyrics {
+
+                 // TODO: Enable when Subtitle / Lyric Editing is added
+                 Section(L10n.edit) {
+                     editTextView
+                 }
+             }*/
         }
     }
 
@@ -70,7 +100,6 @@ struct ItemEditorView: View {
     private var refreshButtonView: some View {
         Section {
             RefreshMetadataButton(item: viewModel.item)
-                .environment(\.isEnabled, userSession?.user.permissions.isAdministrator ?? false)
         } footer: {
             LearnMoreButton(L10n.metadata) {
                 TextPair(
@@ -93,24 +122,46 @@ struct ItemEditorView: View {
         }
     }
 
-    // MARK: - Editable Routing Buttons
+    // MARK: - Editable Metadata Routing Buttons
 
     @ViewBuilder
-    private var editView: some View {
-        Section(L10n.edit) {
-            if [.boxSet, .movie, .person, .series].contains(viewModel.item.type) {
-                ChevronButton(L10n.identify) {
-                    router.route(to: \.identifyItem, viewModel.item)
-                }
-            }
-            ChevronButton(L10n.images) {
-                router.route(to: \.editImages, ItemImagesViewModel(item: viewModel.item))
-            }
-            ChevronButton(L10n.metadata) {
-                router.route(to: \.editMetadata, viewModel.item)
+    private var editMetadataView: some View {
+
+        if let itemKind = viewModel.item.type,
+           BaseItemKind.itemIdentifiableCases.contains(itemKind)
+        {
+            ChevronButton(L10n.identify) {
+                router.route(to: \.identifyItem, viewModel.item)
             }
         }
+        ChevronButton(L10n.images) {
+            router.route(to: \.editImages, ItemImagesViewModel(item: viewModel.item))
+        }
+        ChevronButton(L10n.metadata) {
+            router.route(to: \.editMetadata, viewModel.item)
+        }
+    }
 
+    // MARK: - Editable Text Routing Buttons
+
+    @ViewBuilder
+    private var editTextView: some View {
+        if canManageLyrics {
+//          ChevronButton(L10n.lyrics) {
+//              router.route(to: \.editImages, ItemImagesViewModel(item: viewModel.item))
+//          }
+        }
+        if canManageSubtitles {
+//          ChevronButton(L10n.subtitles) {
+//              router.route(to: \.editImages, ItemImagesViewModel(item: viewModel.item))
+//          }
+        }
+    }
+
+    // MARK: - Editable Metadata Components Routing Buttons
+
+    @ViewBuilder
+    private var editComponentsView: some View {
         Section {
             ChevronButton(L10n.genres) {
                 router.route(to: \.editGenres, viewModel.item)
