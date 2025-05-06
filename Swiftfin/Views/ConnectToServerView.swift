@@ -139,12 +139,27 @@ struct ConnectToServerView: View {
     private var localServersSection: some View {
         Section(L10n.localServers) {
             if viewModel.localServers.isEmpty {
-                L10n.noLocalServersFound.text
-                    .font(.callout)
-                    .foregroundColor(.secondary)
+                switch viewModel.discoveryStatus {
+                case let .error(discoveryError):
+                    VStack {
+                        Text(L10n.error)
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.red)
+                        Text(discoveryError.localizedDescription)
+                            .font(.callout)
+                            .foregroundColor(.secondary)
+                    }
                     .frame(maxWidth: .infinity)
+
+                default:
+                    L10n.noLocalServersFound.text
+                        .font(.callout)
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity)
+                }
             } else {
-                ForEach(viewModel.localServers) { server in
+                ForEach(viewModel.localServers, id: \.self) { server in
                     localServerButton(for: server)
                 }
             }
@@ -178,7 +193,7 @@ struct ConnectToServerView: View {
             viewModel.send(.searchForServers)
         }
         .topBarTrailing {
-            if viewModel.state == .connecting {
+            if viewModel.state == .connecting || viewModel.backgroundStates.contains(.searching) {
                 ProgressView()
             }
         }

@@ -1,5 +1,5 @@
 {
-  "originHash" : "59e91adc6b66cec011d85f8b5356b72b51a6e772e85bad7fbeac490d39e91f45",
+  "originHash" : "3cab50c3618d61e2f34bb32e1583223f768a9c4f468155554008782c28dff656",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -173,12 +173,21 @@
       }
     },
     {
+      "identity" : "swift-atomics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-atomics.git",
+      "state" : {
+        "revision" : "cd142fd2f64be2100422d658e7411e39489da985",
+        "version" : "1.2.0"
+      }
+    },
+    {
       "identity" : "swift-collections",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections.git",
       "state" : {
-        "revision" : "a902f1823a7ff3c9ab2fba0f992396b948eda307",
-        "version" : "1.0.5"
+        "revision" : "671108c96644956dddcd89dd59c203dcdb36cec7",
+        "version" : "1.1.4"
       }
     },
     {
@@ -200,12 +209,30 @@
       }
     },
     {
+      "identity" : "swift-nio",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-nio.git",
+      "state" : {
+        "revision" : "0f54d58bb5db9e064f332e8524150de379d1e51c",
+        "version" : "2.82.1"
+      }
+    },
+    {
       "identity" : "swift-numerics",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-numerics",
       "state" : {
         "revision" : "0a5bc04095a675662cf24757cc0640aa2204253b",
         "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "swift-system",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-system.git",
+      "state" : {
+        "revision" : "a34201439c74b53f0fd71ef11741af7e7caf01e1",
+        "version" : "1.4.2"
       }
     },
     {
@@ -233,15 +260,6 @@
       "state" : {
         "revision" : "90806460f3b3e7564344647241c157aeb0b27a71",
         "version" : "0.3.0"
-      }
-    },
-    {
-      "identity" : "udpbroadcastconnection",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/gunterhager/UDPBroadcastConnection",
-      "state" : {
-        "revision" : "3680f532c00d18a168bb8da7b9f8f82fcd89180d",
-        "version" : "5.0.5"
       }
     },
     {

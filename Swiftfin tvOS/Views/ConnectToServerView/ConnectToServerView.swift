@@ -87,16 +87,31 @@ struct ConnectToServerView: View {
     @ViewBuilder
     private var localServersSection: some View {
         if viewModel.localServers.isEmpty {
-            L10n.noLocalServersFound.text
-                .font(.callout)
-                .foregroundColor(.secondary)
+            switch viewModel.discoveryStatus {
+            case let .error(discoveryError):
+                VStack {
+                    Text(L10n.error)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.red)
+                    Text(discoveryError.localizedDescription)
+                        .font(.callout)
+                        .foregroundColor(.secondary)
+                }
                 .frame(maxWidth: .infinity)
+
+            default:
+                L10n.noLocalServersFound.text
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity)
+            }
         } else {
             LazyVGrid(
                 columns: Array(repeating: GridItem(.flexible()), count: 1),
                 spacing: 30
             ) {
-                ForEach(viewModel.localServers, id: \.id) { server in
+                ForEach(viewModel.localServers, id: \.self) { server in
                     LocalServerButton(server: server) {
                         url = server.currentURL.absoluteString
                         viewModel.send(.connect(server.currentURL.absoluteString))
@@ -143,6 +158,11 @@ struct ConnectToServerView: View {
             guard viewModel.state != .connecting else { return }
 
             viewModel.send(.searchForServers)
+        }
+        .topBarTrailing {
+            if viewModel.state == .connecting || viewModel.backgroundStates.contains(.searching) {
+                ProgressView()
+            }
         }
         .alert(
             L10n.server.text,
