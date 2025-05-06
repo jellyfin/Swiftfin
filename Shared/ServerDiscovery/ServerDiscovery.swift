@@ -128,18 +128,24 @@ class ServerDiscovery {
     // MARK: - Channel Binding - IPv4
 
     private func bindIPv4() throws -> Channel {
+        let host = Self.getDeviceIPv4Address() ?? "0.0.0.0"
+
         let bootstrap = DatagramBootstrap(group: group)
             .channelOption(ChannelOptions.autoRead, value: true)
             .channelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
             .channelOption(ChannelOptions.socketOption(.so_broadcast), value: 1)
             .channelInitializer { $0.pipeline.addHandler(Handler(parent: self)) }
 
-        return try bootstrap.bind(host: "0.0.0.0", port: discoveryPort).wait()
+        return try bootstrap.bind(host: host, port: discoveryPort).wait()
     }
 
     // MARK: - Channel Binding - IPv6
 
     private func bindIPv6() throws -> Channel {
+        guard let (address, _) = Self.getDeviceIPv6Address() else {
+            throw JellyfinAPIError("No IPv6 interface")
+        }
+
         let bootstrap = DatagramBootstrap(group: group)
             .channelOption(ChannelOptions.autoRead, value: true)
             .channelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
@@ -149,7 +155,7 @@ class ServerDiscovery {
                 channel.pipeline.addHandler(Handler(parent: self))
             }
 
-        return try bootstrap.bind(host: "::", port: discoveryPort).wait()
+        return try bootstrap.bind(host: address, port: discoveryPort).wait()
     }
 
     // MARK: - Discovery Send - IPv4
@@ -308,5 +314,55 @@ class ServerDiscovery {
 
         freeifaddrs(ifaddrPtr)
         return results
+    }
+
+    // MARK: - Get Device IPv4
+
+    /// Returns first non-loopback IPv4 address (e.g. "192.168.1.42")
+    /// https://github.com/apple/swift-nio/issues/1494
+    private static func getDeviceIPv4Address() -> String? {
+        var ptr: UnsafeMutablePointer<ifaddrs>?
+        defer { ptr.flatMap(freeifaddrs) }
+        guard getifaddrs(&ptr) == 0, let first = ptr else { return nil }
+
+        for cur in sequence(first: first, next: { $0.pointee.ifa_next }) {
+            let flags = Int32(cur.pointee.ifa_flags)
+            guard flags & IFF_UP != 0, flags & IFF_LOOPBACK == 0 else { continue }
+            guard cur.pointee.ifa_addr.pointee.sa_family == sa_family_t(AF_INET) else { continue }
+
+            var addr = cur.pointee.ifa_addr.withMemoryRebound(
+                to: sockaddr_in.self, capacity: 1
+            ) { $0.pointee.sin_addr }
+            var buf = [CChar](repeating: 0, count: Int(INET_ADDRSTRLEN))
+            inet_ntop(AF_INET, &addr, &buf, socklen_t(INET_ADDRSTRLEN))
+            return String(cString: buf)
+        }
+        return nil
+    }
+
+    // MARK: - Get Device IPv6
+
+    /// Returns first non-loopback scoped IPv6 address and its interface index
+    /// https://github.com/apple/swift-nio/issues/1494
+    private static func getDeviceIPv6Address() -> (String, UInt32)? {
+        var ptr: UnsafeMutablePointer<ifaddrs>?
+        defer { ptr.flatMap(freeifaddrs) }
+        guard getifaddrs(&ptr) == 0, let first = ptr else { return nil }
+
+        for cur in sequence(first: first, next: { $0.pointee.ifa_next }) {
+            let flags = Int32(cur.pointee.ifa_flags)
+            guard flags & IFF_UP != 0, flags & IFF_LOOPBACK == 0 else { continue }
+            guard cur.pointee.ifa_addr.pointee.sa_family == sa_family_t(AF_INET6) else { continue }
+
+            var sin6 = cur.pointee.ifa_addr.withMemoryRebound(
+                to: sockaddr_in6.self, capacity: 1
+            ) { $0.pointee }
+            var buf = [CChar](repeating: 0, count: Int(INET6_ADDRSTRLEN))
+            inet_ntop(AF_INET6, &sin6.sin6_addr, &buf, socklen_t(INET6_ADDRSTRLEN))
+            let name = String(cString: cur.pointee.ifa_name)
+            let index = if_nametoindex(name)
+            return ("\(String(cString: buf))%\(name)", UInt32(index))
+        }
+        return nil
     }
 }
