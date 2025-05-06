@@ -119,10 +119,12 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
                         }
                     } else {
                         try await save(server: server)
+
                         await MainActor.run {
                             self.eventSubject.send(.connected(server))
                         }
                     }
+
                     await MainActor.run {
                         self.state = .initial
                     }
@@ -217,6 +219,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
 
         try dataStack.perform { transaction in
             let newServer = transaction.create(Into<ServerModel>())
+
             newServer.urls = server.urls
             newServer.currentURL = server.currentURL
             newServer.name = server.name
