@@ -179,28 +179,6 @@ class ServerDiscovery {
             logger.error("Failed to send global broadcast: \(error.localizedDescription)")
         }
 
-        // Fallback: try unicast to common local subnet addresses
-        let localNetworks = [
-            "192.168.0.", "192.168.1.", "10.0.0.", "10.0.1.",
-        ]
-
-        for network in localNetworks {
-
-            // Try first 10 IPs in each subnet
-            for host in 1 ... 10 {
-                let ip = "\(network)\(host)"
-                do {
-                    let addr = try SocketAddress(ipAddress: ip, port: discoveryPort)
-                    var buffer = ch.allocator.buffer(capacity: payload.utf8.count)
-                    buffer.writeString(payload)
-
-                    ch.writeAndFlush(AddressedEnvelope(remoteAddress: addr, data: buffer), promise: nil)
-                } catch {
-                    // Ignore errors for individual unicast attempts
-                }
-            }
-        }
-
         return true
     }
 
@@ -231,24 +209,6 @@ class ServerDiscovery {
             ch.writeAndFlush(AddressedEnvelope(remoteAddress: addr, data: buffer), promise: promise)
         } catch {
             logger.debug("IPv6 multicast setup error: \(error.localizedDescription)")
-        }
-
-        // Fallback: try common IPv6 addresses directly
-        let fallbackAddresses = [
-            "fe80::1",
-            "2001:db8::1",
-        ]
-
-        for address in fallbackAddresses {
-            do {
-                let addr = try SocketAddress(ipAddress: address, port: discoveryPort)
-                var buffer = ch.allocator.buffer(capacity: payload.utf8.count)
-                buffer.writeString(payload)
-
-                ch.writeAndFlush(AddressedEnvelope(remoteAddress: addr, data: buffer), promise: nil)
-            } catch {
-                // Ignore errors for individual unicast attempts
-            }
         }
 
         return true
