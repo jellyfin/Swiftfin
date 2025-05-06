@@ -50,9 +50,11 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
     @Published
     var backgroundStates: Set<BackgroundState> = []
     @Published
-    var localServers: OrderedSet<ServerState> = []
-    @Published
     var state: State = .initial
+
+    // no longer-found servers are not cleared, but not an issue
+    @Published
+    var localServers: OrderedSet<ServerState> = []
     @Published
     var discoveryStatus: ServerDiscovery.State = .inactive
 
@@ -63,7 +65,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
     }
 
     private var connectTask: AnyCancellable? = nil
-    private var searchTask: Task<Void, Never>?
+    private var discoveryTask: Task<Void, Never>?
     private let discovery = ServerDiscovery()
     private var eventSubject = PassthroughSubject<Event, Never>()
 
@@ -97,10 +99,12 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
         switch action {
         case let .addNewURL(server):
             addNewURL(server: server)
+
             return state
 
         case .cancel:
             connectTask?.cancel()
+
             return .initial
 
         case let .connect(url):
@@ -110,6 +114,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
                     let server = try await connectToServer(url: url)
                     if isDuplicate(server: server) {
                         await MainActor.run {
+                            // server has same id, but (possible) new URL
                             self.eventSubject.send(.duplicateServer(server))
                         }
                     } else {
@@ -131,14 +136,16 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
                 }
             }
             .asAnyCancellable()
+
             return .connecting
 
         case .searchForServers:
-            searchTask?.cancel()
-            searchTask = Task {
+            discoveryTask?.cancel()
+            discoveryTask = Task {
                 self.discovery.reset()
                 self.discovery.broadcast()
             }
+
             return state
         }
     }
@@ -182,13 +189,18 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
 
     // In the event of redirects, get the new host URL from response
     private func processConnectionURL(initial url: URL, response: URL?) -> URL {
+
         guard let response else { return url }
-        if url.scheme != response.scheme || url.host != response.host {
+
+        if url.scheme != response.scheme ||
+            url.host != response.host
+        {
             let newURL = response.absoluteString.trimmingSuffix(
                 Paths.getPublicSystemInfo.url?.absoluteString ?? ""
             )
             return URL(string: newURL) ?? url
         }
+
         return url
     }
 
@@ -200,7 +212,9 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
     }
 
     private func save(server: ServerState) async throws {
+
         let publicInfo = try await server.getPublicSystemInfo()
+
         try dataStack.perform { transaction in
             let newServer = transaction.create(Into<ServerModel>())
             newServer.urls = server.urls
@@ -209,6 +223,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
             newServer.id = server.id
             newServer.users = []
         }
+
         StoredValues[.Server.publicInfo(id: server.id)] = publicInfo
     }
 
@@ -223,10 +238,13 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
                     logger.critical("Could not find server to add new url")
                     throw JellyfinAPIError("An internal error has occurred")
                 }
+
                 editServer.urls.insert(server.currentURL)
                 editServer.currentURL = server.currentURL
+
                 return editServer.state
             }
+
             Notifications[.didChangeCurrentServerURL].post(newState)
         } catch {
             logger.critical("\(error.localizedDescription)")
