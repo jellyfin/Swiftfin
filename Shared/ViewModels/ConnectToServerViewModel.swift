@@ -63,6 +63,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
     }
 
     private var connectTask: AnyCancellable? = nil
+    private var searchTask: Task<Void, Never>?
     private let discovery = ServerDiscovery()
     private var eventSubject = PassthroughSubject<Event, Never>()
 
@@ -133,8 +134,11 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
             return .connecting
 
         case .searchForServers:
-            discovery.reset()
-            discovery.broadcast()
+            searchTask?.cancel()
+            searchTask = Task {
+                self.discovery.reset()
+                self.discovery.broadcast()
+            }
             return state
         }
     }
