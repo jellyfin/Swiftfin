@@ -361,7 +361,7 @@ class VideoPlayerManager: ViewModel {
 
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentProgressHandler.seconds
         nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = current.item.runTimeSeconds
-        //TODO get playback rate
+        // TODO: get playback rate
         nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 1
 
         getJellyfinImageForNowPlaying(itemId: current.item.id ?? "") { image in
