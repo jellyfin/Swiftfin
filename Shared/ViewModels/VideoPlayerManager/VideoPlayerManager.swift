@@ -9,6 +9,7 @@
 import AVFoundation
 import Combine
 import Defaults
+import Factory
 import Foundation
 import JellyfinAPI
 import MediaPlayer
@@ -208,6 +209,7 @@ class VideoPlayerManager: ViewModel {
             currentProgressWorkItem = progressTask
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: progressTask)
+            configureNowPlaying()
         }
     }
 
@@ -273,6 +275,7 @@ class VideoPlayerManager: ViewModel {
 
         let progressTask = DispatchWorkItem {
             self.sendProgressReport()
+            self.updatePlayingInfo()
         }
 
         currentProgressWorkItem = progressTask
@@ -298,7 +301,7 @@ class VideoPlayerManager: ViewModel {
         }
     }
 
-    func setupControlListeners() {
+    private func setupControlListeners() {
         commandCenter.pauseCommand.addTarget { [weak self] _ in
             self?.proxy.pause()
 
@@ -310,5 +313,122 @@ class VideoPlayerManager: ViewModel {
 
             return .success
         }
+
+        commandCenter.skipForwardCommand.preferredIntervals = [NSNumber(value: 15), NSNumber(value: 30)]
+        commandCenter.skipForwardCommand.isEnabled = true
+        commandCenter.skipForwardCommand.addTarget { [weak self] event in
+            if let skipEvent = event as? MPSkipIntervalCommandEvent {
+                self?.proxy.jumpForward(Int(skipEvent.interval))
+                self?.updatePlayingInfo()
+            }
+            return .success
+        }
+
+        commandCenter.skipBackwardCommand.preferredIntervals = [NSNumber(value: 30), NSNumber(value: 15)]
+        commandCenter.skipBackwardCommand.isEnabled = true
+        commandCenter.skipBackwardCommand.addTarget { [weak self] event in
+            if let skipEvent = event as? MPSkipIntervalCommandEvent {
+                self?.proxy.jumpBackward(Int(skipEvent.interval))
+                self?.updatePlayingInfo()
+            }
+            return .success
+        }
+
+        commandCenter.togglePlayPauseCommand.addTarget { [weak self] _ in
+            self?.proxy.play()
+
+            return .success
+        }
+    }
+
+    private func configureNowPlaying() {
+        var nowPlayingInfo = [String: Any]()
+
+        let current = currentViewModel!
+        nowPlayingInfo[MPMediaItemPropertyTitle] = current.item.name
+        switch current.item.mediaType {
+        case .video:
+            nowPlayingInfo[MPNowPlayingInfoPropertyMediaType] = 2
+            if current.item.isMovie ?? false {
+                nowPlayingInfo[MPMediaItemPropertyArtist] = current.item.name
+            } else {
+                nowPlayingInfo[MPMediaItemPropertyArtist] = current.item.seriesName
+            }
+        // TODO: handle other media sources and default case better
+        default:
+            break
+        }
+
+        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentProgressHandler.seconds
+        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = current.item.runTimeSeconds
+        //TODO get playback rate
+        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 1
+
+        getJellyfinImageForNowPlaying(itemId: current.item.id ?? "") { image in
+            if let image = image {
+                // Create artwork object from the downloaded image
+                let artwork = MPMediaItemArtwork(boundsSize: image.size) { _ in
+                    image
+                }
+
+                // Update now playing info with the artwork
+                nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
+            }
+
+            DispatchQueue.main.async {
+                MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+            }
+        }
+    }
+
+    private func updatePlayingInfo() {
+        var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [:]
+
+        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentProgressHandler.seconds
+
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+    }
+
+    private func getJellyfinImageForNowPlaying(itemId: String, completion: @escaping (UIImage?) -> Void) {
+        // Construct the image URL for the Primary image type
+        // This uses the BaseItemDto.imageURL method we saw in the codebase
+        guard let userSession = Container.shared.currentUserSession() else {
+            completion(nil)
+            return
+        }
+
+        // Use Primary image type for the thumbnail
+        let imageType = ImageType.primary
+
+        // Create parameters for the image request, using a reasonable size for MPNowPlayingInfoCenter
+        let parameters = Paths.GetItemImageParameters(
+            maxWidth: 600,
+            maxHeight: 600,
+            tag: nil,
+            format: nil
+        )
+
+        // Create the request for the item image
+        let request = Paths.getItemImage(
+            itemID: itemId,
+            imageType: imageType.rawValue,
+            parameters: parameters
+        )
+
+        // Get the full URL for the request
+        guard let url = userSession.client.fullURL(with: request) else {
+            completion(nil)
+            return
+        }
+
+        // Download the image
+        URLSession.shared.dataTask(with: url) { data, _, _ in
+            guard let data = data, let image = UIImage(data: data) else {
+                completion(nil)
+                return
+            }
+
+            completion(image)
+        }.resume()
     }
 }
