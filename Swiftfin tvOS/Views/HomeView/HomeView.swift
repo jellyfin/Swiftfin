@@ -39,7 +39,9 @@ struct HomeView: View {
                     if showRecentlyAdded {
                         CinematicRecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
                     }
+
                     NextUpView(viewModel: viewModel.nextUpViewModel)
+                        .safeAreaPadding(.top, 150)
                 }
 
                 ForEach(viewModel.libraries) { viewModel in
