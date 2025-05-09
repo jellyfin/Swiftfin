@@ -14,6 +14,14 @@ import NIO
 
 class ServerDiscovery {
 
+    // MARK: - Server Discovery States
+
+    enum State {
+        case inactive
+        case active
+        case error(JellyfinAPIError)
+    }
+
     // MARK: - Inject Logger
 
     @Injected(\.logService)
