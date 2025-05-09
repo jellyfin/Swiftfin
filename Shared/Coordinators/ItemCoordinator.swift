@@ -42,6 +42,8 @@ final class ItemCoordinator: NavigationCoordinatable {
     var mediaSourceInfo = makeMediaSourceInfo
     @Route(.fullScreen)
     var videoPlayer = makeVideoPlayer
+    @Route(.fullScreen)
+    var searchSubtitles = makeSearchSubtitles
     #endif
 
     private let itemDto: BaseItemDto
@@ -92,6 +94,12 @@ final class ItemCoordinator: NavigationCoordinatable {
     #if os(tvOS)
     func makeVideoPlayer(manager: VideoPlayerManager) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
         NavigationViewCoordinator(VideoPlayerCoordinator(manager: manager))
+    }
+
+    func makeSearchSubtitles(viewModel: ItemSubtitlesViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            SubtitleSearchView(viewModel: viewModel)
+        }
     }
     #endif
 
