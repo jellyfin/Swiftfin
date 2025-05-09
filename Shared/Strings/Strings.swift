@@ -564,8 +564,8 @@ internal enum L10n {
   internal static let dvd = L10n.tr("Localizable", "dvd", fallback: "DVD")
   /// Edit
   internal static let edit = L10n.tr("Localizable", "edit", fallback: "Edit")
-  /// Edit Collections
-  internal static let editCollections = L10n.tr("Localizable", "editCollections", fallback: "Edit Collections")
+  /// Edit collections
+  internal static let editCollections = L10n.tr("Localizable", "editCollections", fallback: "Edit collections")
   /// Edit media
   internal static let editMedia = L10n.tr("Localizable", "editMedia", fallback: "Edit media")
   /// Editor
@@ -810,6 +810,8 @@ internal enum L10n {
   internal static let layout = L10n.tr("Localizable", "layout", fallback: "Layout")
   /// Learn more
   internal static let learnMore = L10n.tr("Localizable", "learnMore", fallback: "Learn more")
+  /// Learn more...
+  internal static let learnMoreEllipsis = L10n.tr("Localizable", "learnMoreEllipsis", fallback: "Learn more...")
   /// Left
   internal static let `left` = L10n.tr("Localizable", "left", fallback: "Left")
   /// Left vertical pan
