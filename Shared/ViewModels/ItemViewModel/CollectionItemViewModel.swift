@@ -9,11 +9,16 @@
 import Combine
 import Foundation
 import JellyfinAPI
+import OrderedCollections
 
 final class CollectionItemViewModel: ItemViewModel {
 
+    // MARK: - Published Collection Items
+
     @Published
-    private(set) var collectionItems: [BaseItemDto] = []
+    private(set) var collectionItems: OrderedDictionary<BaseItemKind, [BaseItemDto]> = [:]
+
+    // MARK: - On Refresh
 
     override func onRefresh() async throws {
         let collectionItems = try await self.getCollectionItems()
@@ -23,8 +28,9 @@ final class CollectionItemViewModel: ItemViewModel {
         }
     }
 
-    private func getCollectionItems() async throws -> [BaseItemDto] {
+    // MARK: - Get Collection Items
 
+    private func getCollectionItems() async throws -> OrderedDictionary<BaseItemKind, [BaseItemDto]> {
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.fields = .MinimumFields
         parameters.parentID = item.id
@@ -35,6 +41,18 @@ final class CollectionItemViewModel: ItemViewModel {
         )
         let response = try await userSession.client.send(request)
 
-        return response.value.items ?? []
+        let items = response.value.items ?? []
+
+        let groupedItems: OrderedDictionary<BaseItemKind?, [BaseItemDto]> = .init(
+            grouping: items,
+            by: \.type
+        )
+
+        let result = groupedItems.compactKeys()
+
+        return OrderedDictionary(
+            uniqueKeysWithValues:
+            result.sorted { $0.key.displayTitle < $1.key.displayTitle }
+        )
     }
 }

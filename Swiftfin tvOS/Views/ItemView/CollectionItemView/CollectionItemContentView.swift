@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 extension CollectionItemView {
@@ -26,14 +27,24 @@ extension CollectionItemView {
                     .padding(.bottom, 50)
 
                 if viewModel.collectionItems.isNotEmpty {
-                    PosterHStack(
-                        title: L10n.items,
-                        type: .portrait,
-                        items: viewModel.collectionItems
-                    )
-                    .onSelect { item in
-                        router.route(to: \.item, item)
+
+                    ForEach(viewModel.collectionItems.keys, id: \.self) { itemType in
+                        if let sectionItems = viewModel.collectionItems[itemType], sectionItems.isNotEmpty {
+                            PosterHStack(
+                                title: itemType.pluralDisplayTitle,
+                                type: .portrait,
+                                items: sectionItems
+                            )
+                            .onSelect { item in
+                                router.route(to: \.item, item)
+                            }
+                            .padding(.bottom, 24)
+                        }
                     }
+                }
+
+                if viewModel.similarItems.isNotEmpty {
+                    ItemView.SimilarItemsHStack(items: viewModel.similarItems)
                 }
 
                 ItemView.AboutView(viewModel: viewModel)

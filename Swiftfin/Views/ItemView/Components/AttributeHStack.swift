@@ -10,9 +10,13 @@ import SwiftUI
 import WrappingHStack
 
 extension ItemView {
+
     struct AttributesHStack: View {
+
         @ObservedObject
         var viewModel: ItemViewModel
+
+        let alignment: HorizontalAlignment
 
         @StoredValue(.User.itemViewAttributes)
         private var itemViewAttributes
@@ -20,9 +24,35 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
+            if UIDevice.isPad {
+                padView
+            } else {
+                phoneView
+            }
+        }
+
+        // MARK: - Layout by Device
+
+        @ViewBuilder
+        private var padView: some View {
             let badges = computeBadges()
-            if !badges.isEmpty {
-                WrappingHStack(badges, id: \.self, alignment: .center, spacing: .constant(8), lineSpacing: 8) { badgeItem in
+            if badges.isNotEmpty {
+                HStack(spacing: 8) {
+                    ForEach(Array(badges.enumerated()), id: \.offset) { _, badgeItem in
+                        badgeItem
+                            .fixedSize(horizontal: true, vertical: false)
+                    }
+                }
+                .foregroundStyle(Color(UIColor.darkGray))
+                .lineLimit(1)
+            }
+        }
+
+        @ViewBuilder
+        private var phoneView: some View {
+            let badges = computeBadges()
+            if badges.isNotEmpty {
+                WrappingHStack(badges, id: \.self, alignment: alignment, spacing: .constant(8), lineSpacing: 8) { badgeItem in
                     badgeItem
                         .fixedSize(horizontal: true, vertical: false)
                 }
