@@ -284,14 +284,14 @@ internal enum L10n {
   internal static let changePin = L10n.tr("Localizable", "changePin", fallback: "Change Pin")
   /// Channel
   internal static let channel = L10n.tr("Localizable", "channel", fallback: "Channel")
+  /// Channel display
+  internal static let channelDisplay = L10n.tr("Localizable", "channelDisplay", fallback: "Channel display")
   /// Channel folder
   internal static let channelFolder = L10n.tr("Localizable", "channelFolder", fallback: "Channel folder")
   /// Channel folder item
   internal static let channelFolderItem = L10n.tr("Localizable", "channelFolderItem", fallback: "Channel folder item")
   /// Channel folder items
   internal static let channelFolderItems = L10n.tr("Localizable", "channelFolderItems", fallback: "Channel folder items")
-  /// Channel display
-  internal static let channelDisplay = L10n.tr("Localizable", "channelDisplay", fallback: "Channel display")
   /// Channels
   internal static let channels = L10n.tr("Localizable", "channels", fallback: "Channels")
   /// Chapter
@@ -832,6 +832,8 @@ internal enum L10n {
   internal static let layout = L10n.tr("Localizable", "layout", fallback: "Layout")
   /// Learn more
   internal static let learnMore = L10n.tr("Localizable", "learnMore", fallback: "Learn more")
+  /// Learn more...
+  internal static let learnMoreEllipsis = L10n.tr("Localizable", "learnMoreEllipsis", fallback: "Learn more...")
   /// Left
   internal static let `left` = L10n.tr("Localizable", "left", fallback: "Left")
   /// Left vertical pan
@@ -860,6 +862,8 @@ internal enum L10n {
   internal static let liveTV = L10n.tr("Localizable", "liveTV", fallback: "Live TV")
   /// Live TV access
   internal static let liveTVAccess = L10n.tr("Localizable", "liveTVAccess", fallback: "Live TV access")
+  /// Live TV access
+  internal static let liveTvAccess = L10n.tr("Localizable", "liveTvAccess", fallback: "Live TV access")
   /// Live TV channel
   internal static let liveTVChannel = L10n.tr("Localizable", "liveTVChannel", fallback: "Live TV channel")
   /// Live TV channels
@@ -868,6 +872,8 @@ internal enum L10n {
   internal static let liveTVProgram = L10n.tr("Localizable", "liveTVProgram", fallback: "Live TV program")
   /// Live TV programs
   internal static let liveTVPrograms = L10n.tr("Localizable", "liveTVPrograms", fallback: "Live TV programs")
+  /// Live TV recording management
+  internal static let liveTvRecordingManagement = L10n.tr("Localizable", "liveTvRecordingManagement", fallback: "Live TV recording management")
   /// Live TV recording management
   internal static let liveTVRecordingManagement = L10n.tr("Localizable", "liveTVRecordingManagement", fallback: "Live TV recording management")
   /// Loading user failed
