@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import AVFoundation
 import Combine
 import Factory
 import Foundation
@@ -74,6 +75,10 @@ enum Notifications {
 
         func subscribe(_ object: Any, selector: Selector) {
             notificationCenter.addObserver(object, selector: selector, name: name, object: nil)
+        }
+
+        func subscribe(_ object: Any, selector: Selector, observed: Any) {
+            notificationCenter.addObserver(object, selector: selector, name: name, object: observed)
         }
     }
 
@@ -166,6 +171,10 @@ extension Notifications.Key {
 
     static var didStartPlayback: Key<Void> {
         Key("didStartPlayback")
+    }
+
+    static var interruption: Key<Void> {
+        Key(AVAudioSession.interruptionNotification)
     }
 
     // MARK: - UIApplication
