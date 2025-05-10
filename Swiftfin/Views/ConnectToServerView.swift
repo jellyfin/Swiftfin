@@ -146,7 +146,7 @@ struct ConnectToServerView: View {
                             .font(.headline)
                             .fontWeight(.semibold)
                             .foregroundColor(.red)
-                        Text(discoveryError.localizedDescription)
+                        Text(discoveryError)
                             .font(.callout)
                             .foregroundColor(.secondary)
                     }

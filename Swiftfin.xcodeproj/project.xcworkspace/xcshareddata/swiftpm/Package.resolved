@@ -1,5 +1,5 @@
 {
-  "originHash" : "3cab50c3618d61e2f34bb32e1583223f768a9c4f468155554008782c28dff656",
+  "originHash" : "5784dc410593d956f8919217a99446fe3ddad293789532169355c748cdef0965",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -94,10 +94,10 @@
     {
       "identity" : "jellyfin-sdk-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/jellyfin/jellyfin-sdk-swift.git",
+      "location" : "https://github.com/JPKribs/jellyfin-sdk-swift.git",
       "state" : {
-        "revision" : "10624671970ee1ad49ce817ee7b8ee3074f89a32",
-        "version" : "0.5.1"
+        "branch" : "serverDiscovery",
+        "revision" : "c0cce4e382cef7770a3720377b27a88fd3a1598e"
       }
     },
     {
@@ -215,6 +215,15 @@
       "state" : {
         "revision" : "0f54d58bb5db9e064f332e8524150de379d1e51c",
         "version" : "2.82.1"
+      }
+    },
+    {
+      "identity" : "swift-nio-transport-services",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-nio-transport-services.git",
+      "state" : {
+        "revision" : "cd1e89816d345d2523b11c55654570acd5cd4c56",
+        "version" : "1.24.0"
       }
     },
     {

@@ -19,6 +19,7 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
     enum Action: Equatable {
         case getSessions
         case refreshSessions
+        case startWebSocket // New action
     }
 
     // MARK: - BackgroundState
@@ -41,9 +42,13 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
     var sessions: OrderedDictionary<String, BindingBox<SessionInfoDto?>> = [:]
     @Published
     var state: State = .initial
+    // @Published
+    // var socketState: JellyfinSocket.State = .idle // Added for WebSocket status monitoring
 
     private let activeWithinSeconds: Int = 960
     private var sessionTask: AnyCancellable?
+    private var socketCancellables = Set<AnyCancellable>() // Added for WebSocket
+    private var socketSubscribed = false // Added for WebSocket
 
     func respond(to action: Action) -> State {
         switch action {
@@ -57,6 +62,12 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
 
                 do {
                     try await self?.updateSessions()
+                    // await self?.startWebSocket() // Automatically start WebSocket
+
+                    guard let self else { return }
+                    await MainActor.run {
+                        self.state = .content
+                    }
                 } catch {
                     guard let self else { return }
                     await MainActor.run {
@@ -71,6 +82,13 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
             .asAnyCancellable()
 
             return state
+
+        case .startWebSocket:
+            Task { [weak self] in
+                // await self?.startWebSocket()
+            }
+            return state
+
         case .refreshSessions:
             sessionTask?.cancel()
 
@@ -99,6 +117,164 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
             return .initial
         }
     }
+
+    /*
+     // MARK: - WebSocket
+
+     /// Kick-off the socket exactly once, then hook up a Combine subscriber
+     /// that logs every inbound message to the console.
+     @MainActor
+     private func startWebSocket() async {
+         // Only subscribe once
+         guard !socketSubscribed else { return }
+         socketSubscribed = true
+
+         print("Starting WebSocket connection…")
+
+         let socket = userSession.client.socket
+
+         // 1️⃣ – state‐monitoring is exactly the same
+         socket.$state
+             .receive(on: RunLoop.main)
+             .sink { [weak self] newState in
+                 self?.socketState = newState
+                 print("🛜 WebSocket state: \(newState)")
+
+                 // Attempt to reconnect if connection fails
+                 if case .error = newState {
+                     Task { [weak self] in
+                         try? await Task.sleep(nanoseconds: 2_000_000_000)
+                         await self?.startWebSocket()
+                     }
+                 }
+
+                 // When connected, send our subscription messages
+                 if case .connected = newState {
+                     // Subscribe to sessions
+                     let sessionsStartMsg = SessionsStartMessage(data: "", messageType: .sessionsStart)
+                     socket.send(.sessionsStartMessage(sessionsStartMsg))
+
+                     // Subscribe to activity log
+                     let activityLogMsg = ActivityLogEntryStartMessage(data: "", messageType: .activityLogEntryStart)
+                     socket.send(.activityLogEntryStartMessage(activityLogMsg))
+
+                     // Subscribe to scheduled tasks
+                     let tasksMsg = ScheduledTasksInfoStartMessage(data: "", messageType: .scheduledTasksInfoStart)
+                     socket.send(.scheduledTasksInfoStartMessage(tasksMsg))
+
+                     print("🛜 WebSocket subscriptions sent")
+                 }
+             }
+             .store(in: &socketCancellables)
+
+         // 2️⃣ – Use the new start() method instead of subscribe()
+         socket.start()
+
+         // 3️⃣ – Monitor heartbeats if desired
+         socket.$heartbeatCount
+             .dropFirst() // Skip initial value
+             .sink { count in
+                 print("🛜 WebSocket heartbeat: \(count)")
+             }
+             .store(in: &socketCancellables)
+
+         // 4️⃣ – now just sink the messages the same way
+         socket.messages
+             .handleEvents(receiveSubscription: { _ in
+                 print("🛜 WebSocket subscribed successfully")
+             })
+             .sink { message in
+                 print("🛜 WebSocket IN → \(message)")
+
+                 switch message {
+                 case let .activityLogEntryMessage(msg):
+                     print("→ activityLogEntryMessage: \(msg)")
+
+                 case let .forceKeepAliveMessage(msg):
+                     print("→ forceKeepAliveMessage: \(msg)")
+
+                 case let .generalCommandMessage(msg):
+                     print("→ generalCommandMessage: \(msg)")
+
+                 case let .libraryChangedMessage(msg):
+                     print("→ libraryChangedMessage: \(msg)")
+
+                 case let .playMessage(msg):
+                     print("→ playMessage: \(msg)")
+
+                 case let .playstateMessage(msg):
+                     print("→ playstateMessage: \(msg)")
+
+                 case let .pluginInstallationCancelledMessage(msg):
+                     print("→ pluginInstallationCancelledMessage: \(msg)")
+
+                 case let .pluginInstallationCompletedMessage(msg):
+                     print("→ pluginInstallationCompletedMessage: \(msg)")
+
+                 case let .pluginInstallationFailedMessage(msg):
+                     print("→ pluginInstallationFailedMessage: \(msg)")
+
+                 case let .pluginInstallingMessage(msg):
+                     print("→ pluginInstallingMessage: \(msg)")
+
+                 case let .pluginUninstalledMessage(msg):
+                     print("→ pluginUninstalledMessage: \(msg)")
+
+                 case let .refreshProgressMessage(msg):
+                     print("→ refreshProgressMessage: \(msg)")
+
+                 case let .restartRequiredMessage(msg):
+                     print("→ restartRequiredMessage: \(msg)")
+
+                 case let .scheduledTaskEndedMessage(msg):
+                     print("→ scheduledTaskEndedMessage: \(msg)")
+
+                 case let .scheduledTasksInfoMessage(msg):
+                     print("→ scheduledTasksInfoMessage: \(msg)")
+
+                 case let .seriesTimerCancelledMessage(msg):
+                     print("→ seriesTimerCancelledMessage: \(msg)")
+
+                 case let .seriesTimerCreatedMessage(msg):
+                     print("→ seriesTimerCreatedMessage: \(msg)")
+
+                 case let .serverRestartingMessage(msg):
+                     print("→ serverRestartingMessage: \(msg)")
+
+                 case let .serverShuttingDownMessage(msg):
+                     print("→ serverShuttingDownMessage: \(msg)")
+
+                 case let .sessionsMessage(msg):
+                     print("→ sessionsMessage: \(msg)")
+
+                 case let .syncPlayCommandMessage(msg):
+                     print("→ syncPlayCommandMessage: \(msg)")
+
+                 case let .syncPlayGroupUpdateCommandMessage(msg):
+                     print("→ syncPlayGroupUpdateCommandMessage: \(msg)")
+
+                 case let .timerCancelledMessage(msg):
+                     print("→ timerCancelledMessage: \(msg)")
+
+                 case let .timerCreatedMessage(msg):
+                     print("→ timerCreatedMessage: \(msg)")
+
+                 case let .userDataChangedMessage(msg):
+                     print("→ userDataChangedMessage: \(msg)")
+
+                 case let .userDeletedMessage(msg):
+                     print("→ userDeletedMessage: \(msg)")
+
+                 case let .userUpdatedMessage(msg):
+                     print("→ userUpdatedMessage: \(msg)")
+
+                 default:
+                     break
+                     // print("→ Unknown outbound message: \(message)")
+                 }
+             }
+             .store(in: &socketCancellables)
+     }*/
 
     private func updateSessions() async throws {
         var parameters = Paths.GetSessionsParameters()
