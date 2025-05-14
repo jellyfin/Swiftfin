@@ -90,7 +90,7 @@ extension ItemView {
                                 .lineLimit(1)
                         }
 
-                        Text(viewModel.item.overview ?? L10n.noOverviewAvailable)
+                        Text(viewModel.item.cleanedOverview ?? L10n.noOverviewAvailable)
                             .font(.subheadline)
                             .lineLimit(3)
 

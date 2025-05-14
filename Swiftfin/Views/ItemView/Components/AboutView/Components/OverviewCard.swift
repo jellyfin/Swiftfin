@@ -21,8 +21,8 @@ extension ItemView.AboutView {
         var body: some View {
             Card(title: item.displayTitle, subtitle: item.alternateTitle)
                 .content {
-                    if let overview = item.overview {
-                        TruncatedText(overview)
+                    if let cleanedOverview = item.cleanedOverview {
+                        TruncatedText(cleanedOverview)
                             .lineLimit(4)
                             .font(.footnote)
                             .allowsHitTesting(false)

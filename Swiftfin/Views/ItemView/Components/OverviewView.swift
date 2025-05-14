@@ -31,8 +31,8 @@ extension ItemView {
                         .lineLimit(taglineLineLimit)
                 }
 
-                if let itemOverview = item.overview {
-                    TruncatedText(itemOverview)
+                if let cleanedOverview = item.cleanedOverview {
+                    TruncatedText(cleanedOverview)
                         .onSeeMore {
                             router.route(to: \.itemOverview, item)
                         }

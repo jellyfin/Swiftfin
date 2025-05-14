@@ -96,8 +96,8 @@ extension EpisodeItemView.ContentView {
                             .multilineTextAlignment(.leading)
                             .foregroundColor(.white)
 
-                        if let overview = viewModel.item.overview {
-                            Text(overview)
+                        if let cleanedOverview = viewModel.item.cleanedOverview {
+                            Text(cleanedOverview)
                                 .font(.subheadline)
                                 .lineLimit(3)
                         } else {

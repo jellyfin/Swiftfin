@@ -29,8 +29,12 @@ struct ItemOverviewView: View {
                             .multilineTextAlignment(.leading)
                     }
 
-                    if let overview = item.overview {
-                        Text(overview)
+                    if let itemOverview = item.overview {
+                        if let formattedOverview = item.formattedOverview {
+                            Text(formattedOverview)
+                        } else {
+                            Text(itemOverview)
+                        }
                     }
                 }
             }

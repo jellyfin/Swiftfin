@@ -28,9 +28,15 @@ struct ItemOverviewView: View {
                 }
 
                 if let itemOverview = item.overview {
-                    Text(itemOverview)
-                        .font(.body)
-                        .multilineTextAlignment(.leading)
+                    if let formattedOverview = item.formattedOverview {
+                        Text(formattedOverview)
+                            .font(.body)
+                            .multilineTextAlignment(.leading)
+                    } else {
+                        Text(itemOverview)
+                            .font(.body)
+                            .multilineTextAlignment(.leading)
+                    }
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
