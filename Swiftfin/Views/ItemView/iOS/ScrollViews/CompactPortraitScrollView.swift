@@ -133,7 +133,8 @@ extension ItemView.CompactPosterScrollView {
                 .font(.subheadline.weight(.medium))
                 .foregroundColor(Color(UIColor.lightGray))
 
-                ItemView.AttributesHStack(viewModel: viewModel)
+                ItemView.AttributesView(viewModel: viewModel, alignment: .leading)
+                    .frame(maxWidth: .infinity)
             }
         }
 
