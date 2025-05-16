@@ -116,6 +116,16 @@
 		4E5508732D13AFED002A5345 /* UserProfileImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5508722D13AFE3002A5345 /* UserProfileImage.swift */; };
 		4E556AB02D036F6900733377 /* UserPermissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E556AAF2D036F5E00733377 /* UserPermissions.swift */; };
 		4E556AB12D036F6900733377 /* UserPermissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E556AAF2D036F5E00733377 /* UserPermissions.swift */; };
+		4E5BEE522DBAC319009B04AF /* ItemSubtitlesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5BEE512DBAC317009B04AF /* ItemSubtitlesViewModel.swift */; };
+		4E5BEE562DBAC3D6009B04AF /* ItemSubtitleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5BEE552DBAC3D1009B04AF /* ItemSubtitleButton.swift */; };
+		4E5BEE582DBAC451009B04AF /* ItemSubtitlesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5BEE572DBAC450009B04AF /* ItemSubtitlesView.swift */; };
+		4E5BEE5C2DBAC486009B04AF /* ItemSubtitleUploadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5BEE5B2DBAC485009B04AF /* ItemSubtitleUploadView.swift */; };
+		4E5BEE5E2DBAC49D009B04AF /* ItemSubtitleSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5BEE5D2DBAC495009B04AF /* ItemSubtitleSearchView.swift */; };
+		4E5BEE612DBAC4C6009B04AF /* RemoteSubtitleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5BEE602DBAC4BD009B04AF /* RemoteSubtitleButton.swift */; };
+		4E5BEE642DBAD1B7009B04AF /* SubtitleSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5BEE632DBAD1B3009B04AF /* SubtitleSearchView.swift */; };
+		4E5BEE652DBAD1E0009B04AF /* ItemSubtitlesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5BEE512DBAC317009B04AF /* ItemSubtitlesViewModel.swift */; };
+		4E5BEE6A2DBAD8E6009B04AF /* SubtitleSearchRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5BEE692DBAD8E2009B04AF /* SubtitleSearchRow.swift */; };
+		4E5BEE6C2DBAD9C1009B04AF /* LanguagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5BEE6B2DBAD9BF009B04AF /* LanguagePicker.swift */; };
 		4E5D3EC82D8920AF003E2772 /* TrailerMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5D3EC72D8920AF003E2772 /* TrailerMenu.swift */; };
 		4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
 		4E5EE5512D67CE9500982290 /* ImageCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5EE5502D67CE9000982290 /* ImageCard.swift */; };
@@ -1373,6 +1383,15 @@
 		4E537A8B2D04410E00659A1A /* ServerUserLiveTVAccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerUserLiveTVAccessView.swift; sourceTree = "<group>"; };
 		4E5508722D13AFE3002A5345 /* UserProfileImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileImage.swift; sourceTree = "<group>"; };
 		4E556AAF2D036F5E00733377 /* UserPermissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPermissions.swift; sourceTree = "<group>"; };
+		4E5BEE512DBAC317009B04AF /* ItemSubtitlesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemSubtitlesViewModel.swift; sourceTree = "<group>"; };
+		4E5BEE552DBAC3D1009B04AF /* ItemSubtitleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemSubtitleButton.swift; sourceTree = "<group>"; };
+		4E5BEE572DBAC450009B04AF /* ItemSubtitlesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemSubtitlesView.swift; sourceTree = "<group>"; };
+		4E5BEE5B2DBAC485009B04AF /* ItemSubtitleUploadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemSubtitleUploadView.swift; sourceTree = "<group>"; };
+		4E5BEE5D2DBAC495009B04AF /* ItemSubtitleSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemSubtitleSearchView.swift; sourceTree = "<group>"; };
+		4E5BEE602DBAC4BD009B04AF /* RemoteSubtitleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteSubtitleButton.swift; sourceTree = "<group>"; };
+		4E5BEE632DBAD1B3009B04AF /* SubtitleSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleSearchView.swift; sourceTree = "<group>"; };
+		4E5BEE692DBAD8E2009B04AF /* SubtitleSearchRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleSearchRow.swift; sourceTree = "<group>"; };
+		4E5BEE6B2DBAD9BF009B04AF /* LanguagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagePicker.swift; sourceTree = "<group>"; };
 		4E5D3EC72D8920AF003E2772 /* TrailerMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrailerMenu.swift; sourceTree = "<group>"; };
 		4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		4E5EE5502D67CE9000982290 /* ImageCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCard.swift; sourceTree = "<group>"; };
@@ -2586,6 +2605,67 @@
 			path = ServerUserLiveTVAccessView;
 			sourceTree = "<group>";
 		};
+		4E5BEE532DBAC3C1009B04AF /* ItemSubtitles */ = {
+			isa = PBXGroup;
+			children = (
+				4E5BEE5A2DBAC472009B04AF /* ItemSubtitleUploadView */,
+				4E5BEE592DBAC469009B04AF /* ItemSubtitleSearchView */,
+				4E5BEE572DBAC450009B04AF /* ItemSubtitlesView.swift */,
+				4E5BEE542DBAC3C6009B04AF /* Components */,
+			);
+			path = ItemSubtitles;
+			sourceTree = "<group>";
+		};
+		4E5BEE542DBAC3C6009B04AF /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4E5BEE552DBAC3D1009B04AF /* ItemSubtitleButton.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4E5BEE592DBAC469009B04AF /* ItemSubtitleSearchView */ = {
+			isa = PBXGroup;
+			children = (
+				4E5BEE5F2DBAC4AB009B04AF /* Components */,
+				4E5BEE5D2DBAC495009B04AF /* ItemSubtitleSearchView.swift */,
+			);
+			path = ItemSubtitleSearchView;
+			sourceTree = "<group>";
+		};
+		4E5BEE5A2DBAC472009B04AF /* ItemSubtitleUploadView */ = {
+			isa = PBXGroup;
+			children = (
+				4E5BEE5B2DBAC485009B04AF /* ItemSubtitleUploadView.swift */,
+			);
+			path = ItemSubtitleUploadView;
+			sourceTree = "<group>";
+		};
+		4E5BEE5F2DBAC4AB009B04AF /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4E5BEE602DBAC4BD009B04AF /* RemoteSubtitleButton.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4E5BEE672DBAD8CC009B04AF /* SubtitleSearchView */ = {
+			isa = PBXGroup;
+			children = (
+				4E5BEE682DBAD8D5009B04AF /* Components */,
+				4E5BEE632DBAD1B3009B04AF /* SubtitleSearchView.swift */,
+			);
+			path = SubtitleSearchView;
+			sourceTree = "<group>";
+		};
+		4E5BEE682DBAD8D5009B04AF /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4E5BEE692DBAD8E2009B04AF /* SubtitleSearchRow.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		4E5D3ECB2D893F0B003E2772 /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -2739,6 +2819,7 @@
 		4E8F74A32CE03D3100CC8969 /* ItemEditorView */ = {
 			isa = PBXGroup;
 			children = (
+				4E5BEE532DBAC3C1009B04AF /* ItemSubtitles */,
 				4E8F74A62CE03D4C00CC8969 /* Components */,
 				4E37F6182D17EB220022AADD /* ItemImages */,
 				4E37F6192D17EB3C0022AADD /* ItemMetadata */,
@@ -2762,6 +2843,7 @@
 				4E8F74AA2CE03DC600CC8969 /* DeleteItemViewModel.swift */,
 				4E5071D52CFCEB03003FA2AD /* ItemEditorViewModel */,
 				4E45939D2D04E1E600E277E1 /* ItemImagesViewModel.swift */,
+				4E5BEE512DBAC317009B04AF /* ItemSubtitlesViewModel.swift */,
 				4EE766F62D132043009658F0 /* IdentifyItemViewModel.swift */,
 				4E8F74B02CE03EAF00CC8969 /* RefreshMetadataViewModel.swift */,
 				4E37F6152D17C1710022AADD /* RemoteImageInfoViewModel.swift */,
@@ -3496,6 +3578,7 @@
 				E12E30F4296392EC0022FAC9 /* EnumPickerView.swift */,
 				4EF0DCA82D49751B005A5194 /* ErrorView.swift */,
 				E1A42E5028CBE44500A14DCB /* LandscapePosterProgressBar.swift */,
+				4E5BEE6B2DBAD9BF009B04AF /* LanguagePicker.swift */,
 				E1763A632BF3C9AA004DF6AB /* ListRowButton.swift */,
 				4ECCF9FA2D8505860048B331 /* ListRowMenu.swift */,
 				E10E842B29A589860064EA49 /* NonePosterButton.swift */,
@@ -4521,10 +4604,10 @@
 				4E884C642CEBB2FF004CF6AD /* LearnMoreModal.swift */,
 				E158C8D02A31947500C527C5 /* MediaSourceInfoView.swift */,
 				E103DF932BCF31C5000229B2 /* MediaView */,
+				4EF18B232CB9932F00343666 /* PagingLibraryView */,
 				E10231572BCF8AF8009D71FC /* ProgramsView */,
 				E10B1E8C2BD7708900A92EAF /* QuickConnectView.swift */,
 				E1E1643928BAC2EF00323B0A /* SearchView.swift */,
-				4EF18B232CB9932F00343666 /* PagingLibraryView */,
 				E164A8122BE4995200A54B18 /* SelectUserView */,
 				E193D54F2719430400900D82 /* ServerDetailView.swift */,
 				E1E5D54D2783E66600692DFE /* SettingsView */,
@@ -5292,6 +5375,7 @@
 				4EFACFC22D8BCA4C00D09281 /* PlayButton */,
 				E185920728CDAAA200326F80 /* SimilarItemsHStack.swift */,
 				E169C7B7296D2E8200AE25F9 /* SpecialFeaturesHStack.swift */,
+				4E5BEE672DBAD8CC009B04AF /* SubtitleSearchView */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -6061,6 +6145,7 @@
 				E13D98EE2D0664C1005FE96D /* NotificationSet.swift in Sources */,
 				E1575E63293E77B5001665B1 /* CaseIterablePicker.swift in Sources */,
 				E1CB757F2C80F28F00217C76 /* SubtitleProfile.swift in Sources */,
+				4E5BEE652DBAD1E0009B04AF /* ItemSubtitlesViewModel.swift in Sources */,
 				E1E0BEB829EF450B0002E8D3 /* UIGestureRecognizer.swift in Sources */,
 				E193D53527193F8100900D82 /* ItemCoordinator.swift in Sources */,
 				E1C926162887565C002A7A66 /* SeriesItemView.swift in Sources */,
@@ -6139,6 +6224,7 @@
 				4E2AC4C92C6C493C00DD600D /* SubtitleFormat.swift in Sources */,
 				E12376B12A33DB33001F5B44 /* MediaSourceInfoCoordinator.swift in Sources */,
 				4E73E2A72C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift in Sources */,
+				4E5BEE6A2DBAD8E6009B04AF /* SubtitleSearchRow.swift in Sources */,
 				E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */,
 				E13DD3ED27178A54009D4DAF /* UserSignInViewModel.swift in Sources */,
 				E1763A272BF303C9004DF6AB /* ServerSelectionMenu.swift in Sources */,
@@ -6174,6 +6260,7 @@
 				53ABFDE6267974EF00886593 /* SettingsViewModel.swift in Sources */,
 				E10B1EC22BD9AD6100A92EAF /* V1UserModel.swift in Sources */,
 				E1E2F8432B757E0900B75998 /* OnFirstAppearModifier.swift in Sources */,
+				4E5BEE6C2DBAD9C1009B04AF /* LanguagePicker.swift in Sources */,
 				E111D8F628D03B7500400001 /* PagingLibraryViewModel.swift in Sources */,
 				E1575E87293E7A00001665B1 /* InvertedDarkAppIcon.swift in Sources */,
 				E10432F72BE4426F006FF9DD /* FormatStyle.swift in Sources */,
@@ -6224,6 +6311,7 @@
 				4E661A312CEFE7BC00025C99 /* SeriesStatus.swift in Sources */,
 				E12E30F1296383810022FAC9 /* SplitFormWindowView.swift in Sources */,
 				E1356E0429A731EB00382563 /* SeparatorHStack.swift in Sources */,
+				4E5BEE642DBAD1B7009B04AF /* SubtitleSearchView.swift in Sources */,
 				E1B490482967E2E500D3EDCE /* CoreStore.swift in Sources */,
 				4E656C312D0798AA00F993F3 /* ParentalRating.swift in Sources */,
 				E1DC9845296DECB600982F06 /* ProgressIndicator.swift in Sources */,
@@ -6563,6 +6651,7 @@
 				E1ED7FD92CA8AF7400ACB6E3 /* ServerTaskObserver.swift in Sources */,
 				E17AC96A2954D00E003D2BC2 /* URLResponse.swift in Sources */,
 				4EB538C52CE3E25700EB72D5 /* ExternalAccessSection.swift in Sources */,
+				4E5BEE522DBAC319009B04AF /* ItemSubtitlesViewModel.swift in Sources */,
 				625CB5772678C34300530A6E /* ConnectToServerViewModel.swift in Sources */,
 				E154966A296CA2EF00C4EF88 /* DownloadManager.swift in Sources */,
 				4E661A1C2CEFE54800025C99 /* BoxSetDisplayOrder.swift in Sources */,
@@ -6574,6 +6663,7 @@
 				BD39577E2C1140810078CEF8 /* TransitionSection.swift in Sources */,
 				4EC2B1A52CC96FA400D866BE /* ServerUserAdminViewModel.swift in Sources */,
 				E1092F4C29106F9F00163F57 /* GestureAction.swift in Sources */,
+				4E5BEE562DBAC3D6009B04AF /* ItemSubtitleButton.swift in Sources */,
 				E11BDF772B8513B40045C54A /* ItemGenre.swift in Sources */,
 				4E2CE3982DA446900004736A /* ServerActivityDetailsView.swift in Sources */,
 				E16DEAC228EFCF590058F196 /* EnvironmentValues.swift in Sources */,
@@ -6792,6 +6882,7 @@
 				E1401CA5293813F400E8B599 /* InvertedDarkAppIcon.swift in Sources */,
 				4EC2B19E2CC96EAB00D866BE /* ServerUsersRow.swift in Sources */,
 				E1C8CE7C28FF015000DF5D7B /* TrailingTimestampType.swift in Sources */,
+				4E5BEE612DBAC4C6009B04AF /* RemoteSubtitleButton.swift in Sources */,
 				C46DD8E22A8DC7FB0046A504 /* LiveMainOverlay.swift in Sources */,
 				4E17498E2CC00A3100DD07D1 /* DeviceInfoDto.swift in Sources */,
 				4EC1C86D2C80903A00E2879E /* CustomProfileButton.swift in Sources */,
@@ -6852,6 +6943,7 @@
 				4E661A202CEFE56E00025C99 /* SeriesDisplayOrder.swift in Sources */,
 				6220D0B126D5EC9900B8E046 /* SettingsCoordinator.swift in Sources */,
 				4E49DECD2CE54C7A00352DCD /* PermissionSection.swift in Sources */,
+				4E5BEE582DBAC451009B04AF /* ItemSubtitlesView.swift in Sources */,
 				E10B1ECA2BD9AF8200A92EAF /* SwiftfinStore+V1.swift in Sources */,
 				E1AA331D2782541500F6439C /* PrimaryButton.swift in Sources */,
 				4E2AC4D92C6C4D9400DD600D /* PlaybackQualitySettingsView.swift in Sources */,
@@ -6943,7 +7035,9 @@
 				E1CB75792C80ECF100217C76 /* VideoPlayerType+Native.swift in Sources */,
 				E1401CA72938140300E8B599 /* PrimaryAppIcon.swift in Sources */,
 				E1937A3E288F0D3D00CB80AA /* UIScreen.swift in Sources */,
+				4E5BEE5E2DBAC49D009B04AF /* ItemSubtitleSearchView.swift in Sources */,
 				E10B1EBE2BD9AD5C00A92EAF /* V1ServerModel.swift in Sources */,
+				4E5BEE5C2DBAC486009B04AF /* ItemSubtitleUploadView.swift in Sources */,
 				4EB1A8CC2C9B1BA200F43898 /* DestructiveServerTask.swift in Sources */,
 				E1EBCB46278BD595009FE6E9 /* ItemOverviewView.swift in Sources */,
 				E10B1EB62BD98C6600A92EAF /* AddUserListRow.swift in Sources */,

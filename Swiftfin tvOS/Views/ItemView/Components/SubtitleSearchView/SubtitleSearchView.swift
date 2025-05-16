@@ -1,0 +1,186 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+//
+
+import Defaults
+import JellyfinAPI
+import SwiftUI
+
+struct SubtitleSearchView: View {
+
+    @Default(.accentColor)
+    private var accentColor
+
+    // MARK: - Environment & Observed Objects
+
+    @EnvironmentObject
+    private var router: BasicNavigationViewCoordinator.Router
+
+    @ObservedObject
+    private var viewModel: ItemSubtitlesViewModel
+
+    // MARK: - Selected Subtitles
+
+    @State
+    private var selectedSubtitles: Set<String> = []
+
+    // MARK: - Search Properties
+
+    @State
+    private var language: String?
+    @State
+    private var isPerfectMatch = false
+
+    // MARK: - Error State
+
+    @State
+    private var error: Error?
+
+    // MARK: - Initializer
+
+    init(viewModel: ItemSubtitlesViewModel) {
+        self.viewModel = viewModel
+    }
+
+    // MARK: - Body
+
+    var body: some View {
+        ZStack {
+            BlurView()
+                .ignoresSafeArea()
+            contentView
+        }
+        .navigationBarTitle(L10n.search)
+        .onFirstAppear {
+            viewModel.send(.search(language: ""))
+            language = nil
+        }
+        .topBarTrailing {
+            if viewModel.backgroundStates.isNotEmpty {
+                ProgressView()
+            }
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .deleted:
+                return
+            case .uploaded:
+                router.dismissCoordinator()
+            case let .error(eventError):
+                error = eventError
+            }
+        }
+        .errorMessage($error)
+    }
+
+    // MARK: - Content View
+
+    @ViewBuilder
+    private var contentView: some View {
+        switch viewModel.state {
+        case .initial, .content:
+            searchView
+        case let .error(error):
+            ErrorView(error: error)
+        }
+    }
+
+    // MARK: - Search View
+
+    private var searchView: some View {
+        SplitFormWindowView()
+            .descriptionView {
+                Image(systemName: "textformat")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: 400)
+            }
+            .contentView {
+                searchSection
+                resultsSection
+            }
+    }
+
+    // MARK: - Search Section
+
+    @ViewBuilder
+    private var searchSection: some View {
+        Section(L10n.options) {
+            LanguagePicker(title: L10n.language, selectedLanguageCode: $language)
+                .onChange(of: language) {
+                    if let language {
+                        viewModel.send(.search(language: language, isPerfectMatch: isPerfectMatch))
+                    }
+                }
+
+            Toggle(L10n.perfectMatch, isOn: $isPerfectMatch)
+                .onChange(of: isPerfectMatch) {
+                    if let language {
+                        viewModel.send(.search(language: language, isPerfectMatch: isPerfectMatch))
+                    }
+                }
+        }
+
+        Section {
+            if viewModel.backgroundStates.contains(.updating) {
+                ListRowButton(L10n.cancel) {
+                    viewModel.send(.cancel)
+                }
+                .listRowInsets(.zero)
+                .foregroundStyle(.red, .red.opacity(0.2))
+            } else {
+                ListRowButton(L10n.save) {
+                    setSubtitles()
+                }
+                .foregroundStyle(
+                    accentColor.overlayColor,
+                    accentColor
+                )
+                .listRowInsets(.zero)
+                .disabled(selectedSubtitles.isEmpty)
+                .opacity(selectedSubtitles.isEmpty ? 0.5 : 1)
+            }
+        }
+    }
+
+    // MARK: - Results Section
+
+    private var resultsSection: some View {
+        Section(L10n.search) {
+            if viewModel.searchResults.isEmpty {
+                Text(L10n.none)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .center)
+            }
+            ForEach(viewModel.searchResults, id: \.id) { subtitle in
+                SubtitleResultRow(subtitle: subtitle) {
+                    if let subtitleID = subtitle.id {
+                        if selectedSubtitles.contains(subtitleID) {
+                            selectedSubtitles.remove(subtitleID)
+                        } else {
+                            selectedSubtitles.insert(subtitleID)
+                        }
+                    }
+                }
+                .foregroundStyle(selectedSubtitles.contains(subtitle.id ?? "") ? .primary : .secondary, .secondary)
+                .environment(\.isSelected, selectedSubtitles.contains(subtitle.id ?? ""))
+                .environment(\.isEditing, true)
+            }
+        }
+    }
+
+    // MARK: - Set Subtitles
+
+    private func setSubtitles() {
+        guard selectedSubtitles.isNotEmpty else {
+            error = JellyfinAPIError(L10n.noItemSelected)
+            return
+        }
+
+        viewModel.send(.set(selectedSubtitles))
+    }
+}
