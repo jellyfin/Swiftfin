@@ -56,7 +56,7 @@ protocol LibraryIdentifiable: Identifiable {
  Note: if `rememberSort == true`, then will override given filters with stored sorts
        for parent ID. This was just easy. See `PagingLibraryView` notes for lack of
        `rememberSort` observation and `StoredValues.User.libraryFilters` for TODO
-       on remembering other filters.
+       on remembering other filters
  */
 
 class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
@@ -92,25 +92,27 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     }
 
     @Published
-    var backgroundStates: Set<BackgroundState> = []
+    var backgroundStates: Set<BackgroundState>
     /// - Keys: the `hashValue` of the `Element.ID`
     @Published
-    var elements: IdentifiedArray<Int, Element>
+    final var elements: IdentifiedArray<Int, Element>
     @Published
-    var state: State = .initial
+    final var state: State = .initial
+    @Published
+    final var lastAction: Action? = nil
 
     final let filterViewModel: FilterViewModel?
     final let parent: (any LibraryParent)?
 
-    final var events: AnyPublisher<Event, Never> {
+    var events: AnyPublisher<Event, Never> {
         eventSubject
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
     }
 
     let pageSize: Int
-    private(set) var currentPage = 0
-    private(set) var hasNextPage = true
+    private(set) final var currentPage = 0
+    private(set) final var hasNextPage = true
 
     private let eventSubject: PassthroughSubject<Event, Never> = .init()
     private let isStatic: Bool
@@ -119,6 +121,12 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     private var pagingTask: AnyCancellable?
     private var randomItemTask: AnyCancellable?
+
+    // Page loading queue management
+    private var isLoadingPage = false
+    private var pendingPageLoadRequests = 0
+    private let pageLoadQueue = DispatchQueue(label: "com.jellyfin.swiftfin.pageLoadQueue")
+    private var isRefreshing = false
 
     // MARK: init
 
@@ -133,6 +141,8 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         self.hasNextPage = false
         self.pageSize = DefaultPageSize
         self.parent = parent
+
+        self.backgroundStates = []
 
         super.init()
 
@@ -189,6 +199,8 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             self.filterViewModel = nil
         }
 
+        self.backgroundStates = []
+
         super.init()
 
         Notifications[.didDeleteItem]
@@ -205,6 +217,12 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
                 .removeDuplicates()
                 .sink { [weak self] _ in
                     guard let self else { return }
+
+                    // Reset page loading queue state before refreshing
+                    self.pageLoadQueue.sync {
+                        self.isLoadingPage = false
+                        self.pendingPageLoadRequests = 0
+                    }
 
                     Task { @MainActor in
                         self.send(.refresh)
@@ -252,6 +270,12 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             pagingTask?.cancel()
             randomItemTask?.cancel()
 
+            // Reset page loading queue state
+            pageLoadQueue.sync {
+                isLoadingPage = false
+                pendingPageLoadRequests = 0
+            }
+
             filterViewModel?.send(.getQueryFilters)
 
             pagingTask = Task { [weak self] in
@@ -280,28 +304,8 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
             guard hasNextPage else { return state }
 
-            backgroundStates.insert(.gettingNextPage)
-
-            pagingTask = Task { [weak self] in
-                do {
-                    try await self?.getNextPage()
-
-                    guard !Task.isCancelled else { return }
-
-                    await MainActor.run {
-                        self?.backgroundStates.remove(.gettingNextPage)
-                        self?.state = .content
-                    }
-                } catch {
-                    guard !Task.isCancelled else { return }
-
-                    await MainActor.run {
-                        self?.backgroundStates.remove(.gettingNextPage)
-                        self?.state = .error(.init(error.localizedDescription))
-                    }
-                }
-            }
-            .asAnyCancellable()
+            // Queue the page loading request
+            queueNextPageLoad()
 
             return .content
         case .getRandomItem:
@@ -324,18 +328,88 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         }
     }
 
+    // MARK: Page loading queue management
+
+    private func queueNextPageLoad() {
+        pageLoadQueue.async { [weak self] in
+            guard let self = self else { return }
+
+            if self.isLoadingPage {
+                // A page is currently loading, increment the pending requests counter
+                self.pendingPageLoadRequests += 1
+                return
+            }
+
+            // No page currently loading, start loading immediately
+            self.isLoadingPage = true
+            self.loadNextPage()
+        }
+    }
+
+    private func loadNextPage() {
+        Task { @MainActor in
+            self.backgroundStates.insert(.gettingNextPage)
+        }
+
+        pagingTask = Task { [weak self] in
+            guard let self = self else { return }
+
+            do {
+                try await self.getNextPage()
+
+                guard !Task.isCancelled else { return }
+
+                await MainActor.run {
+                    self.backgroundStates.remove(.gettingNextPage)
+                    self.state = .content
+                }
+            } catch {
+                guard !Task.isCancelled else { return }
+
+                await MainActor.run {
+                    self.backgroundStates.remove(.gettingNextPage)
+                    self.state = .error(.init(error.localizedDescription))
+                }
+            }
+
+            // Check if there are pending requests in the queue
+            self.pageLoadQueue.async { [weak self] in
+                guard let self = self else { return }
+
+                if self.pendingPageLoadRequests > 0 {
+                    self.pendingPageLoadRequests -= 1
+                    // Process the next request in the queue
+                    self.loadNextPage()
+                } else {
+                    // No more pending requests
+                    self.isLoadingPage = false
+                }
+            }
+        }
+        .asAnyCancellable()
+    }
+
     // MARK: refresh
 
     final func refresh() async throws {
+        // Set refreshing flag to track state
+        isRefreshing = true
 
         currentPage = -1
         hasNextPage = true
 
         await MainActor.run {
             elements.removeAll()
+            // Ensure visibleIndices are reset to avoid Range error
+            // This helps prevent the "Range requires lowerBound <= upperBound" crash
+            // when elements are cleared but visibleIndices still have old values
+            backgroundStates = []
         }
 
         try await getNextPage()
+
+        // Reset refreshing flag
+        isRefreshing = false
     }
 
     /// Gets the next page of items or immediately returns if
