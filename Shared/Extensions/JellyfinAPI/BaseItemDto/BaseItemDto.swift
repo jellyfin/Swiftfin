@@ -273,4 +273,33 @@ extension BaseItemDto {
             nil
         }
     }
+
+    var formattedOverview: AttributedString? {
+        guard let overview else { return nil }
+        guard let data = overview.data(using: .utf8) else { return nil }
+
+        do {
+            let mutableAttributedString = try NSMutableAttributedString(
+                data: data,
+                options: [
+                    .documentType: NSAttributedString.DocumentType.html,
+                    .characterEncoding: String.Encoding.utf8.rawValue,
+                ],
+                documentAttributes: nil
+            )
+
+            // Remove font attributes from the entire range
+            let fullRange = NSRange(location: 0, length: mutableAttributedString.length)
+            mutableAttributedString.removeAttribute(.font, range: fullRange)
+
+            return AttributedString(mutableAttributedString)
+        } catch {
+            return nil
+        }
+    }
+
+    var cleanedOverview: String? {
+        guard let overview else { return nil }
+        return overview.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
+    }
 }
