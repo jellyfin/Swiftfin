@@ -110,8 +110,6 @@ extension ItemView.iPadOSCinematicScrollView {
                         .foregroundColor(.white)
 
                     HStack(spacing: 30) {
-                        ItemView.AttributesHStack(viewModel: viewModel)
-
                         DotHStack {
                             if let firstGenre = viewModel.item.genres?.first {
                                 Text(firstGenre)
@@ -127,28 +125,25 @@ extension ItemView.iPadOSCinematicScrollView {
                         }
                         .font(.footnote)
                         .foregroundColor(Color(UIColor.lightGray))
+
+                        ItemView.AttributesHStack(viewModel: viewModel, alignment: .leading)
                     }
                 }
                 .padding(.trailing, 200)
 
                 Spacer()
 
-                // TODO: remove when/if collections have a different view
-
-                if !(viewModel is CollectionItemViewModel) {
-                    VStack(spacing: 10) {
+                VStack(spacing: 10) {
+                    if viewModel.presentPlayButton {
                         ItemView.PlayButton(viewModel: viewModel)
                             .frame(height: 50)
-
-                        ItemView.ActionButtonHStack(viewModel: viewModel)
-                            .font(.title)
-                            .foregroundColor(.white)
                     }
-                    .frame(width: 250)
-                } else {
-                    Color.clear
-                        .frame(width: 250)
+
+                    ItemView.ActionButtonHStack(viewModel: viewModel)
+                        .font(.title)
+                        .foregroundColor(.white)
                 }
+                .frame(width: 250)
             }
         }
     }

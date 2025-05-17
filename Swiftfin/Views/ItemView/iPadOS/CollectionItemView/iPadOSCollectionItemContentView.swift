@@ -22,6 +22,34 @@ extension iPadOSCollectionItemView {
         var body: some View {
             VStack(alignment: .leading, spacing: 20) {
 
+                // MARK: Items
+
+                ForEach(viewModel.collectionItems.elements, id: \.key) { element in
+                    if element.value.isNotEmpty {
+                        PosterHStack(
+                            title: element.key.pluralDisplayTitle,
+                            type: .portrait,
+                            items: element.value
+                        )
+                        .trailing {
+                            SeeAllButton()
+                                .onSelect {
+                                    let viewModel = ItemLibraryViewModel(
+                                        title: viewModel.item.displayTitle,
+                                        id: viewModel.item.id,
+                                        element.value
+                                    )
+                                    router.route(to: \.library, viewModel)
+                                }
+                        }
+                        .onSelect { item in
+                            router.route(to: \.item, item)
+                        }
+
+                        RowDivider()
+                    }
+                }
+
                 // MARK: Genres
 
                 if let genres = viewModel.item.itemGenres, genres.isNotEmpty {
@@ -38,17 +66,12 @@ extension iPadOSCollectionItemView {
                     RowDivider()
                 }
 
-                // MARK: Items
+                // MARK: Similar
 
-                if viewModel.collectionItems.isNotEmpty {
-                    PosterHStack(
-                        title: L10n.items,
-                        type: .portrait,
-                        items: viewModel.collectionItems
-                    )
-                    .onSelect { item in
-                        router.route(to: \.item, item)
-                    }
+                if viewModel.similarItems.isNotEmpty {
+                    ItemView.SimilarItemsHStack(items: viewModel.similarItems)
+
+                    RowDivider()
                 }
 
                 ItemView.AboutView(viewModel: viewModel)

@@ -13,4 +13,21 @@ extension OrderedDictionary {
     var isNotEmpty: Bool {
         !isEmpty
     }
+
+    func compactKeys<WrappedKey: Hashable>() -> OrderedDictionary<WrappedKey, Value> where Key == WrappedKey? {
+        reduce(into: OrderedDictionary<WrappedKey, Value>()) { result, pair in
+            if let unwrappedKey = pair.key {
+                result[unwrappedKey] = pair.value
+            }
+        }
+    }
+
+    func sortedKeys(by areInIncreasingOrder: (Key, Key) -> Bool) -> OrderedDictionary<Key, Value> {
+        let sortedKeys = keys.sorted(by: areInIncreasingOrder)
+
+        return OrderedDictionary(uniqueKeysWithValues: sortedKeys.compactMap { key in
+            guard let value = self[key] else { return nil }
+            return (key, value)
+        })
+    }
 }
