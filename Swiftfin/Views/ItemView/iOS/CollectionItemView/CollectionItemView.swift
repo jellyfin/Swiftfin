@@ -12,13 +12,26 @@ import SwiftUI
 
 struct CollectionItemView: View {
 
+    @Default(.Customization.itemViewType)
+    private var itemViewType
+
     @ObservedObject
     var viewModel: CollectionItemViewModel
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            ContentView(viewModel: viewModel)
-                .edgePadding(.bottom)
+        switch itemViewType {
+        case .compactPoster:
+            ItemView.CompactPosterScrollView(viewModel: viewModel) {
+                ContentView(viewModel: viewModel)
+            }
+        case .compactLogo:
+            ItemView.CompactLogoScrollView(viewModel: viewModel) {
+                ContentView(viewModel: viewModel)
+            }
+        case .cinematic:
+            ItemView.CinematicScrollView(viewModel: viewModel) {
+                ContentView(viewModel: viewModel)
+            }
         }
     }
 }
