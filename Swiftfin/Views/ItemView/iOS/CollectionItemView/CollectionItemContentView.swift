@@ -23,45 +23,33 @@ extension CollectionItemView {
         var body: some View {
             VStack(alignment: .leading, spacing: 20) {
 
-                VStack(alignment: .center) {
-                    ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 600))
-                        .placeholder { source in
-                            if let blurHash = source.blurHash {
-                                BlurHashView(blurHash: blurHash, size: .Square(length: 8))
-                            } else {
-                                Color.secondarySystemFill
-                                    .opacity(0.75)
-                            }
-                        }
-                        .failure {
-                            SystemImageContentView(systemName: viewModel.item.systemImage)
-                        }
-                        .posterStyle(.landscape, contentMode: .fill)
-                        .frame(maxHeight: 300)
-                        .posterShadow()
-                        .edgePadding(.horizontal)
+                // MARK: Items
 
-                    Text(viewModel.item.displayTitle)
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .multilineTextAlignment(.center)
-                        .lineLimit(2)
-                        .padding(.horizontal)
+                ForEach(viewModel.collectionItems.elements, id: \.key) { element in
+                    if element.value.isNotEmpty {
+                        PosterHStack(
+                            title: element.key.pluralDisplayTitle,
+                            type: .portrait,
+                            items: element.value
+                        )
+                        .trailing {
+                            SeeAllButton()
+                                .onSelect {
+                                    let viewModel = ItemLibraryViewModel(
+                                        title: viewModel.item.displayTitle,
+                                        id: viewModel.item.id,
+                                        element.value
+                                    )
+                                    router.route(to: \.library, viewModel)
+                                }
+                        }
+                        .onSelect { item in
+                            router.route(to: \.item, item)
+                        }
 
-                    ItemView.ActionButtonHStack(viewModel: viewModel)
-                        .font(.title)
-                        .frame(maxWidth: 300)
-                        .foregroundStyle(.primary)
+                        RowDivider()
+                    }
                 }
-
-                // MARK: Overview
-
-                ItemView.OverviewView(item: viewModel.item)
-                    .overviewLineLimit(4)
-                    .taglineLineLimit(2)
-                    .padding(.horizontal)
-
-                RowDivider()
 
                 // MARK: Genres
 
@@ -79,29 +67,15 @@ extension CollectionItemView {
                     RowDivider()
                 }
 
-                // MARK: Items
+                // MARK: Similar
 
-                if viewModel.collectionItems.isNotEmpty {
-                    PosterHStack(
-                        title: L10n.items,
-                        type: .portrait,
-                        items: viewModel.collectionItems
-                    )
-                    .trailing {
-                        SeeAllButton()
-                            .onSelect {
-                                let viewModel = ItemLibraryViewModel(
-                                    title: viewModel.item.displayTitle,
-                                    id: viewModel.item.id,
-                                    viewModel.collectionItems
-                                )
-                                router.route(to: \.library, viewModel)
-                            }
-                    }
-                    .onSelect { item in
-                        router.route(to: \.item, item)
-                    }
+                if viewModel.similarItems.isNotEmpty {
+                    ItemView.SimilarItemsHStack(items: viewModel.similarItems)
+
+                    RowDivider()
                 }
+
+                ItemView.AboutView(viewModel: viewModel)
             }
         }
     }
