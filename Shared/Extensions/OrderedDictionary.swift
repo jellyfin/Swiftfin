@@ -21,4 +21,13 @@ extension OrderedDictionary {
             }
         }
     }
+
+    func sortedKeys(by areInIncreasingOrder: (Key, Key) -> Bool) -> OrderedDictionary<Key, Value> {
+        let sortedKeys = keys.sorted(by: areInIncreasingOrder)
+
+        return OrderedDictionary(uniqueKeysWithValues: sortedKeys.compactMap { key in
+            guard let value = self[key] else { return nil }
+            return (key, value)
+        })
+    }
 }

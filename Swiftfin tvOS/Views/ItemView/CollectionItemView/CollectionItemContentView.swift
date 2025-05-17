@@ -26,19 +26,15 @@ extension CollectionItemView {
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
-                if viewModel.collectionItems.isNotEmpty {
-
-                    ForEach(viewModel.collectionItems.keys, id: \.self) { itemType in
-                        if let sectionItems = viewModel.collectionItems[itemType], sectionItems.isNotEmpty {
-                            PosterHStack(
-                                title: itemType.pluralDisplayTitle,
-                                type: .portrait,
-                                items: sectionItems
-                            )
-                            .onSelect { item in
-                                router.route(to: \.item, item)
-                            }
-                            .padding(.bottom, 24)
+                ForEach(viewModel.collectionItems.elements, id: \.key) { element in
+                    if element.value.isNotEmpty {
+                        PosterHStack(
+                            title: element.key.pluralDisplayTitle,
+                            type: .portrait,
+                            items: element.value
+                        )
+                        .onSelect { item in
+                            router.route(to: \.item, item)
                         }
                     }
                 }

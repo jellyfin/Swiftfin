@@ -134,7 +134,7 @@ extension ItemView.iPadOSCinematicScrollView {
                 Spacer()
 
                 VStack(spacing: 10) {
-                    if !(viewModel is CollectionItemViewModel) {
+                    if viewModel.presentPlayButton {
                         ItemView.PlayButton(viewModel: viewModel)
                             .frame(height: 50)
                     }

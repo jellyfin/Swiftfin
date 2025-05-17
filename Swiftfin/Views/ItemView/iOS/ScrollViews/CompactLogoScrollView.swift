@@ -7,7 +7,6 @@
 //
 
 import BlurHashKit
-import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
@@ -130,17 +129,15 @@ extension ItemView.CompactLogoScrollView {
                 .foregroundColor(Color(UIColor.lightGray))
                 .padding(.horizontal)
 
-                ItemView.AttributesHStack(viewModel: viewModel, alignment: .center)
+                ItemView.AttributesHStack(viewModel: viewModel)
 
-                if !(viewModel is CollectionItemViewModel) {
+                if viewModel.presentPlayButton {
                     ItemView.PlayButton(viewModel: viewModel)
-                        .frame(maxWidth: 300)
                         .frame(height: 50)
                 }
 
                 ItemView.ActionButtonHStack(viewModel: viewModel)
                     .font(.title)
-                    .frame(maxWidth: 300)
                     .foregroundColor(.white)
             }
             .frame(maxWidth: .infinity, alignment: .bottom)

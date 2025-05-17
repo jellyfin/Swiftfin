@@ -155,7 +155,7 @@ extension ItemView.CompactPosterScrollView {
 
                 HStack(alignment: .center) {
 
-                    if !(viewModel is CollectionItemViewModel) {
+                    if viewModel.presentPlayButton {
                         ItemView.PlayButton(viewModel: viewModel)
                             .frame(width: 130, height: 40)
                     }

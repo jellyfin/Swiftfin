@@ -119,7 +119,7 @@ extension ItemView {
                     Spacer()
 
                     VStack {
-                        if !(viewModel is CollectionItemViewModel) {
+                        if viewModel.presentPlayButton {
                             ItemView.PlayButton(viewModel: viewModel)
                                 .focused($focusedLayer, equals: .playButton)
                         }

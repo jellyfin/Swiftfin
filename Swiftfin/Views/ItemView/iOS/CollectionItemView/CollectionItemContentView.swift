@@ -25,30 +25,29 @@ extension CollectionItemView {
 
                 // MARK: Items
 
-                if viewModel.collectionItems.isNotEmpty {
-
-                    ForEach(viewModel.collectionItems.keys, id: \.self) { itemType in
-                        if let sectionItems = viewModel.collectionItems[itemType], sectionItems.isNotEmpty {
-                            PosterHStack(
-                                title: itemType.pluralDisplayTitle,
-                                type: .portrait,
-                                items: sectionItems
-                            )
-                            .trailing {
-                                SeeAllButton()
-                                    .onSelect {
-                                        let viewModel = ItemLibraryViewModel(
-                                            title: viewModel.item.displayTitle,
-                                            id: viewModel.item.id,
-                                            sectionItems
-                                        )
-                                        router.route(to: \.library, viewModel)
-                                    }
-                            }
-                            .onSelect { item in
-                                router.route(to: \.item, item)
-                            }
+                ForEach(viewModel.collectionItems.elements, id: \.key) { element in
+                    if element.value.isNotEmpty {
+                        PosterHStack(
+                            title: element.key.pluralDisplayTitle,
+                            type: .portrait,
+                            items: element.value
+                        )
+                        .trailing {
+                            SeeAllButton()
+                                .onSelect {
+                                    let viewModel = ItemLibraryViewModel(
+                                        title: viewModel.item.displayTitle,
+                                        id: viewModel.item.id,
+                                        element.value
+                                    )
+                                    router.route(to: \.library, viewModel)
+                                }
                         }
+                        .onSelect { item in
+                            router.route(to: \.item, item)
+                        }
+
+                        RowDivider()
                     }
                 }
 

@@ -80,6 +80,8 @@ class ItemViewModel: ViewModel, Stateful {
     @Published
     var state: State = .initial
 
+    var presentPlayButton: Bool { true }
+
     // tasks
 
     private var toggleIsFavoriteTask: AnyCancellable?

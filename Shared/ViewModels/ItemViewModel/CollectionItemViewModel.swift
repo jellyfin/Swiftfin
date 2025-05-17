@@ -18,6 +18,10 @@ final class CollectionItemViewModel: ItemViewModel {
     @Published
     private(set) var collectionItems: OrderedDictionary<BaseItemKind, [BaseItemDto]> = [:]
 
+    override var presentPlayButton: Bool {
+        false
+    }
+
     // MARK: - On Refresh
 
     override func onRefresh() async throws {
@@ -33,6 +37,8 @@ final class CollectionItemViewModel: ItemViewModel {
     private func getCollectionItems() async throws -> OrderedDictionary<BaseItemKind, [BaseItemDto]> {
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.fields = .MinimumFields
+        parameters.includeItemTypes = BaseItemKind.supportedCases
+            .appending(.episode)
         parameters.parentID = item.id
 
         let request = Paths.getItemsByUserID(
@@ -43,16 +49,13 @@ final class CollectionItemViewModel: ItemViewModel {
 
         let items = response.value.items ?? []
 
-        let groupedItems: OrderedDictionary<BaseItemKind?, [BaseItemDto]> = .init(
+        let result = OrderedDictionary<BaseItemKind?, [BaseItemDto]>(
             grouping: items,
             by: \.type
         )
+        .compactKeys()
+        .sortedKeys { $0.rawValue < $1.rawValue }
 
-        let result = groupedItems.compactKeys()
-
-        return OrderedDictionary(
-            uniqueKeysWithValues:
-            result.sorted { $0.key.displayTitle < $1.key.displayTitle }
-        )
+        return result
     }
 }
