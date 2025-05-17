@@ -862,8 +862,6 @@ internal enum L10n {
   internal static let liveTV = L10n.tr("Localizable", "liveTV", fallback: "Live TV")
   /// Live TV access
   internal static let liveTVAccess = L10n.tr("Localizable", "liveTVAccess", fallback: "Live TV access")
-  /// Live TV access
-  internal static let liveTvAccess = L10n.tr("Localizable", "liveTvAccess", fallback: "Live TV access")
   /// Live TV channel
   internal static let liveTVChannel = L10n.tr("Localizable", "liveTVChannel", fallback: "Live TV channel")
   /// Live TV channels
