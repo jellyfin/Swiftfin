@@ -133,7 +133,7 @@ extension ItemView.CompactPosterScrollView {
                 .font(.subheadline.weight(.medium))
                 .foregroundColor(Color(UIColor.lightGray))
 
-                ItemView.AttributesHStack(viewModel: viewModel)
+                ItemView.AttributesHStack(viewModel: viewModel, alignment: .leading)
             }
         }
 
@@ -155,8 +155,10 @@ extension ItemView.CompactPosterScrollView {
 
                 HStack(alignment: .center) {
 
-                    ItemView.PlayButton(viewModel: viewModel)
-                        .frame(width: 130, height: 40)
+                    if viewModel.presentPlayButton {
+                        ItemView.PlayButton(viewModel: viewModel)
+                            .frame(width: 130, height: 40)
+                    }
 
                     Spacer()
 

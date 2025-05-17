@@ -24,8 +24,6 @@ extension ItemView {
         var viewModel: ItemViewModel
 
         @State
-        private var scrollViewOffset: CGFloat = 0
-        @State
         private var blurHashBottomEdgeColor: Color = .secondarySystemFill
 
         let content: () -> Content
@@ -132,9 +130,11 @@ extension ItemView.CinematicScrollView {
                     .foregroundColor(Color(UIColor.lightGray))
                     .padding(.horizontal)
 
-                    ItemView.PlayButton(viewModel: viewModel)
-                        .frame(maxWidth: 300)
-                        .frame(height: 50)
+                    if viewModel.presentPlayButton {
+                        ItemView.PlayButton(viewModel: viewModel)
+                            .frame(maxWidth: 300)
+                            .frame(height: 50)
+                    }
 
                     ItemView.ActionButtonHStack(viewModel: viewModel)
                         .font(.title)
@@ -148,7 +148,7 @@ extension ItemView.CinematicScrollView {
                     .taglineLineLimit(2)
                     .foregroundColor(.white)
 
-                ItemView.AttributesHStack(viewModel: viewModel)
+                ItemView.AttributesHStack(viewModel: viewModel, alignment: .leading)
             }
         }
     }
