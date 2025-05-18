@@ -12,7 +12,7 @@ import SwiftUI
 
 extension ItemView {
 
-    struct CinematicScrollView<Content: View>: View {
+    struct CinematicScrollView<Content: View>: ScrollContainerView {
 
         @Default(.Customization.CinematicItemViewType.usePrimaryImage)
         private var usePrimaryImage
@@ -21,12 +21,26 @@ extension ItemView {
         private var router: ItemCoordinator.Router
 
         @ObservedObject
-        var viewModel: ItemViewModel
+        private var viewModel: ItemViewModel
 
-        @State
-        private var blurHashBottomEdgeColor: Color = .secondarySystemFill
+        private let blurHashBottomEdgeColor: Color
+        private let content: Content
 
-        let content: () -> Content
+        init(viewModel: ItemViewModel, content: @escaping () -> Content) {
+            if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
+                let bottomRGB = BlurHash(string: backdropBlurHash)!.averageLinearRGB
+                blurHashBottomEdgeColor = Color(
+                    red: Double(bottomRGB.0),
+                    green: Double(bottomRGB.1),
+                    blue: Double(bottomRGB.2)
+                )
+            } else {
+                blurHashBottomEdgeColor = Color.secondarySystemFill
+            }
+
+            self.content = content()
+            self.viewModel = viewModel
+        }
 
         @ViewBuilder
         private var headerView: some View {
@@ -37,16 +51,6 @@ extension ItemView {
             .aspectRatio(usePrimaryImage ? (2 / 3) : 1.77, contentMode: .fill)
             .frame(height: UIScreen.main.bounds.height * 0.6)
             .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
-            .onAppear {
-                if let headerBlurHash = viewModel.item.blurHash(.backdrop) {
-                    let bottomRGB = BlurHash(string: headerBlurHash)!.averageLinearRGB
-                    blurHashBottomEdgeColor = Color(
-                        red: Double(bottomRGB.0),
-                        green: Double(bottomRGB.1),
-                        blue: Double(bottomRGB.2)
-                    )
-                }
-            }
         }
 
         var body: some View {
@@ -75,7 +79,7 @@ extension ItemView {
                         }
                 }
             } content: {
-                content()
+                content
                     .edgePadding(.vertical)
             }
         }

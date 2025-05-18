@@ -6,12 +6,13 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import BlurHashKit
 import JellyfinAPI
 import SwiftUI
 
-extension iPadOSCollectionItemView {
+extension ItemView {
 
-    struct ContentView: View {
+    struct CollectionItemContentView: View {
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
@@ -20,9 +21,12 @@ extension iPadOSCollectionItemView {
         var viewModel: CollectionItemViewModel
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 20) {
+            SeparatorVStack(alignment: .leading) {
+                RowDivider()
+                    .padding(.vertical, 10)
+            } content: {
 
-                // MARK: Items
+                // MARK: - Items
 
                 ForEach(viewModel.collectionItems.elements, id: \.key) { element in
                     if element.value.isNotEmpty {
@@ -45,8 +49,6 @@ extension iPadOSCollectionItemView {
                         .onSelect { item in
                             router.route(to: \.item, item)
                         }
-
-                        RowDivider()
                     }
                 }
 
@@ -54,24 +56,18 @@ extension iPadOSCollectionItemView {
 
                 if let genres = viewModel.item.itemGenres, genres.isNotEmpty {
                     ItemView.GenresHStack(genres: genres)
-
-                    RowDivider()
                 }
 
                 // MARK: Studios
 
                 if let studios = viewModel.item.studios, studios.isNotEmpty {
                     ItemView.StudiosHStack(studios: studios)
-
-                    RowDivider()
                 }
 
                 // MARK: Similar
 
                 if viewModel.similarItems.isNotEmpty {
                     ItemView.SimilarItemsHStack(items: viewModel.similarItems)
-
-                    RowDivider()
                 }
 
                 ItemView.AboutView(viewModel: viewModel)

@@ -11,20 +11,32 @@ import SwiftUI
 
 extension ItemView {
 
-    struct CompactLogoScrollView<Content: View>: View {
+    struct CompactLogoScrollView<Content: View>: ScrollContainerView {
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
 
         @ObservedObject
-        var viewModel: ItemViewModel
+        private var viewModel: ItemViewModel
 
-        @State
-        private var scrollViewOffset: CGFloat = 0
-        @State
-        private var blurHashBottomEdgeColor: Color = .secondarySystemFill
+        private let blurHashBottomEdgeColor: Color
+        private let content: Content
 
-        let content: () -> Content
+        init(viewModel: ItemViewModel, content: @escaping () -> Content) {
+            if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
+                let bottomRGB = BlurHash(string: backdropBlurHash)!.averageLinearRGB
+                blurHashBottomEdgeColor = Color(
+                    red: Double(bottomRGB.0),
+                    green: Double(bottomRGB.1),
+                    blue: Double(bottomRGB.2)
+                )
+            } else {
+                blurHashBottomEdgeColor = Color.secondarySystemFill
+            }
+
+            self.content = content()
+            self.viewModel = viewModel
+        }
 
         @ViewBuilder
         private var headerView: some View {
@@ -32,16 +44,6 @@ extension ItemView {
                 .aspectRatio(1.77, contentMode: .fill)
                 .frame(height: UIScreen.main.bounds.height * 0.35)
                 .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
-                .onAppear {
-                    if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
-                        let bottomRGB = BlurHash(string: backdropBlurHash)!.averageLinearRGB
-                        blurHashBottomEdgeColor = Color(
-                            red: Double(bottomRGB.0),
-                            green: Double(bottomRGB.1),
-                            blue: Double(bottomRGB.2)
-                        )
-                    }
-                }
         }
 
         var body: some View {
@@ -78,7 +80,7 @@ extension ItemView {
 
                     RowDivider()
 
-                    content()
+                    content
                 }
                 .edgePadding(.vertical)
             }
@@ -138,7 +140,7 @@ extension ItemView.CompactLogoScrollView {
 
                 ItemView.ActionButtonHStack(viewModel: viewModel)
                     .font(.title)
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
             }
             .frame(maxWidth: .infinity, alignment: .bottom)
         }

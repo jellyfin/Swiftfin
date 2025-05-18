@@ -17,7 +17,7 @@ import SwiftUI
 
 extension ItemView {
 
-    struct iPadOSCinematicScrollView<Content: View>: View {
+    struct iPadOSCinematicScrollView<Content: View>: ScrollContainerView {
 
         @ObservedObject
         var viewModel: ItemViewModel
