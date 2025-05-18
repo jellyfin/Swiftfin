@@ -52,6 +52,8 @@ final class PlaylistItemViewModel: ItemViewModel {
     private func getPlaylistItems() async throws -> OrderedDictionary<BaseItemKind, [BaseItemDto]> {
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.fields = .MinimumFields
+        parameters.includeItemTypes = BaseItemKind.supportedCases
+            .appending(.episode)
         parameters.parentID = item.id
 
         let request = Paths.getItemsByUserID(
@@ -62,28 +64,12 @@ final class PlaylistItemViewModel: ItemViewModel {
 
         let items = response.value.items ?? []
 
-        // First filter out items with nil types
-        let validItems = items.compactMap { item -> (BaseItemKind, BaseItemDto)? in
-            guard let type = item.type else { return nil }
-            return (type, item)
-        }
-
-        // Create a dictionary grouping by type
-        var typeGroups: [BaseItemKind: [BaseItemDto]] = [:]
-        for (type, item) in validItems {
-            if typeGroups[type] == nil {
-                typeGroups[type] = []
-            }
-            typeGroups[type]?.append(item)
-        }
-
-        // Create the final OrderedDictionary with sorted keys
-        var result = OrderedDictionary<BaseItemKind, [BaseItemDto]>()
-        let sortedKeys = typeGroups.keys.sorted { $0.rawValue < $1.rawValue }
-
-        for key in sortedKeys {
-            result[key] = typeGroups[key]
-        }
+        let result = OrderedDictionary<BaseItemKind?, [BaseItemDto]>(
+            grouping: items,
+            by: \.type
+        )
+        .compactKeys()
+        .sortedKeys { $0.rawValue < $1.rawValue }
 
         return result
     }

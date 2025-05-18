@@ -25,28 +25,24 @@ extension PlaylistItemView {
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
-                if viewModel.playlistItems.isNotEmpty {
-
-                    ForEach(viewModel.playlistItems.keys, id: \.self) { itemType in
-                        if let sectionItems = viewModel.playlistItems[itemType], sectionItems.isNotEmpty {
-                            PosterHStack(
-                                // TODO: Use DisplayTitle or PluralDisplayTitle
-                                title: itemType.rawValue,
-                                type: .portrait,
-                                items: sectionItems
-                            )
-                            .onSelect { item in
-                                router.route(to: \.item, item)
-                            }
-                            /* TODO: Enable when Playlist Editing is Available
-                             .contextMenu { _ in
-                                 Button(role: .destructive) {
-                                     // editorViewModel.send(removeFromPlaylist)
-                                 } label: {
-                                     Label("Remove from playlist", systemImage: "text.badge.minus")
-                                 }
-                             }*/
+                ForEach(viewModel.playlistItems.elements, id: \.key) { element in
+                    if element.value.isNotEmpty {
+                        PosterHStack(
+                            title: element.key.pluralDisplayTitle,
+                            type: .portrait,
+                            items: element.value
+                        )
+                        .onSelect { item in
+                            router.route(to: \.item, item)
                         }
+                        /* TODO: Enable when Playlist Editing is Available
+                         .contextMenu { _ in
+                             Button(role: .destructive) {
+                                 editorViewModel.send(removeFromPlaylist)
+                             } label: {
+                                 Label("Remove from playlist", systemImage: "text.badge.minus")
+                             }
+                         }*/
                     }
                 }
 
