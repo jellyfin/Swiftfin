@@ -9,27 +9,25 @@
 import Combine
 import Foundation
 import JellyfinAPI
-import OrderedCollections
 
 final class PlaylistItemViewModel: ItemViewModel {
 
     // MARK: - Published Playlist Items
 
     @Published
-    private(set) var playlistItems: OrderedDictionary<BaseItemKind, [BaseItemDto]> = [:]
+    private(set) var playlistItems: [BaseItemDto] = []
 
     // MARK: - On Refresh
 
     override func onRefresh() async throws {
-        let playlistItems = try await self.getPlaylistItems()
+        let items = try await self.getPlaylistItems()
 
         await MainActor.run {
-            self.playlistItems = playlistItems
+            self.playlistItems = items
         }
 
-        // Try to find first unplayed item across all categories
-        let allItems = playlistItems.values.flatMap { $0 }
-        if let firstUnplayed = allItems.first(where: { $0.userData?.isPlayed == false }) {
+        // Try to find first unplayed item
+        if let firstUnplayed = items.first(where: { $0.userData?.isPlayed == false }) {
             await MainActor.run {
                 self.playButtonItem = firstUnplayed
             }
@@ -37,10 +35,7 @@ final class PlaylistItemViewModel: ItemViewModel {
         }
 
         // If no unplayed item, use the first item if available
-        if let firstKey = playlistItems.keys.first,
-           let firstItems = playlistItems[firstKey],
-           let firstItem = firstItems.first
-        {
+        if let firstItem = items.first {
             await MainActor.run {
                 self.playButtonItem = firstItem
             }
@@ -49,7 +44,7 @@ final class PlaylistItemViewModel: ItemViewModel {
 
     // MARK: - Get Playlist Items
 
-    private func getPlaylistItems() async throws -> OrderedDictionary<BaseItemKind, [BaseItemDto]> {
+    private func getPlaylistItems() async throws -> [BaseItemDto] {
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.fields = .MinimumFields
         parameters.includeItemTypes = BaseItemKind.supportedCases
@@ -62,15 +57,6 @@ final class PlaylistItemViewModel: ItemViewModel {
         )
         let response = try await userSession.client.send(request)
 
-        let items = response.value.items ?? []
-
-        let result = OrderedDictionary<BaseItemKind?, [BaseItemDto]>(
-            grouping: items,
-            by: \.type
-        )
-        .compactKeys()
-        .sortedKeys { $0.rawValue < $1.rawValue }
-
-        return result
+        return response.value.items ?? []
     }
 }

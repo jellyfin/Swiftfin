@@ -201,6 +201,10 @@
 		4EA78B232D2B5CFC0093BFCE /* ItemPhotoCropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA78B222D2B5CEF0093BFCE /* ItemPhotoCropView.swift */; };
 		4EA78B252D2B5DBD0093BFCE /* ItemImagePickerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA78B242D2B5DB20093BFCE /* ItemImagePickerCoordinator.swift */; };
 		4EAE340C2D42B857006FBAD3 /* LibrarySection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAE340B2D42B852006FBAD3 /* LibrarySection.swift */; };
+		4EB025622DDA6CD000AB8D3D /* PlaylistItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB025612DDA6CCB00AB8D3D /* PlaylistItemRow.swift */; };
+		4EB025642DDA78A600AB8D3D /* OrnamentButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB025632DDA78A200AB8D3D /* OrnamentButton.swift */; };
+		4EB025652DDA78A600AB8D3D /* OrnamentButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB025632DDA78A200AB8D3D /* OrnamentButton.swift */; };
+		4EB025692DDA855500AB8D3D /* PlaylistEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB025682DDA855000AB8D3D /* PlaylistEditorViewModel.swift */; };
 		4EB132EF2D2CF6D600B5A8E5 /* ImageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB132EE2D2CF6D300B5A8E5 /* ImageType.swift */; };
 		4EB132F02D2CF6D600B5A8E5 /* ImageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB132EE2D2CF6D300B5A8E5 /* ImageType.swift */; };
 		4EB1404C2C8E45B1008691F3 /* StreamSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1404B2C8E45B1008691F3 /* StreamSection.swift */; };
@@ -1451,6 +1455,9 @@
 		4EA78B222D2B5CEF0093BFCE /* ItemPhotoCropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemPhotoCropView.swift; sourceTree = "<group>"; };
 		4EA78B242D2B5DB20093BFCE /* ItemImagePickerCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemImagePickerCoordinator.swift; sourceTree = "<group>"; };
 		4EAE340B2D42B852006FBAD3 /* LibrarySection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySection.swift; sourceTree = "<group>"; };
+		4EB025612DDA6CCB00AB8D3D /* PlaylistItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistItemRow.swift; sourceTree = "<group>"; };
+		4EB025632DDA78A200AB8D3D /* OrnamentButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrnamentButton.swift; sourceTree = "<group>"; };
+		4EB025682DDA855000AB8D3D /* PlaylistEditorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistEditorViewModel.swift; sourceTree = "<group>"; };
 		4EB132EE2D2CF6D300B5A8E5 /* ImageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageType.swift; sourceTree = "<group>"; };
 		4EB1404B2C8E45B1008691F3 /* StreamSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamSection.swift; sourceTree = "<group>"; };
 		4EB1A8C92C9A765800F43898 /* ActiveSessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionsView.swift; sourceTree = "<group>"; };
@@ -2558,6 +2565,7 @@
 		4E5071D52CFCEB03003FA2AD /* ItemEditorViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				4EB025682DDA855000AB8D3D /* PlaylistEditorViewModel.swift */,
 				4E5071D92CFCEC0E003FA2AD /* GenreEditorViewModel.swift */,
 				4E6619FB2CEFE2B500025C99 /* ItemEditorViewModel.swift */,
 				4E4E9C692CFEDC9D00A6946F /* PeopleEditorViewModel.swift */,
@@ -5082,6 +5090,7 @@
 				E1B90C692BBE68D5007027C8 /* OffsetScrollView.swift */,
 				E1D8424E2932F7C400D1041A /* OverviewView.swift */,
 				E18E01D8288747230022598C /* PlayButton.swift */,
+				4EB025612DDA6CCB00AB8D3D /* PlaylistItemRow.swift */,
 				E17FB55428C1250B00311DFE /* SimilarItemsHStack.swift */,
 				E1921B7328E61914003A5238 /* SpecialFeatureHStack.swift */,
 				E17FB55828C125E900311DFE /* StudiosHStack.swift */,
@@ -5228,6 +5237,7 @@
 				4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */,
 				4E24ECFA2D076F2B00A473A9 /* ListRowCheckbox.swift */,
 				E1D37F472B9C648E00343D2B /* MaxHeightText.swift */,
+				4EB025632DDA78A200AB8D3D /* OrnamentButton.swift */,
 				E1DC983F296DEBA500982F06 /* PosterIndicators */,
 				E1FE69A628C29B720021BC93 /* ProgressBar.swift */,
 				E1FE28C82DC16B2B00E1A23E /* RedrawOnNotificationView.swift */,
@@ -6238,6 +6248,7 @@
 				4EECA4F62D2CAA380080A863 /* RatingType.swift in Sources */,
 				E193D53727193F8700900D82 /* MediaCoordinator.swift in Sources */,
 				E12CC1CB28D1333400678D5D /* CinematicResumeItemView.swift in Sources */,
+				4EB025652DDA78A600AB8D3D /* OrnamentButton.swift in Sources */,
 				4E2AC4D42C6C4C1200DD600D /* OrderedSectionSelectorView.swift in Sources */,
 				E1575E9C293E7B1E001665B1 /* Collection.swift in Sources */,
 				E1C9260F2887565C002A7A66 /* AttributeHStack.swift in Sources */,
@@ -6729,6 +6740,7 @@
 				62E632E6267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
 				E10B1E8F2BD7728400A92EAF /* QuickConnectView.swift in Sources */,
 				E1A8FDEC2C0574A800D0A51C /* ListRow.swift in Sources */,
+				4EB025622DDA6CD000AB8D3D /* PlaylistItemRow.swift in Sources */,
 				4E63B9FC2C8A5C3E00C25378 /* ActiveSessionsViewModel.swift in Sources */,
 				E1DD55372B6EE533007501C0 /* Task.swift in Sources */,
 				E1ED7FE02CAA685900ACB6E3 /* ServerLogsView.swift in Sources */,
@@ -6744,6 +6756,7 @@
 				E107BB9327880A8F00354E07 /* CollectionItemViewModel.swift in Sources */,
 				4ED25CA42D07E4990010333C /* EditAccessScheduleRow.swift in Sources */,
 				4E90F7642CC72B1F00417C31 /* LastRunSection.swift in Sources */,
+				4EB025642DDA78A600AB8D3D /* OrnamentButton.swift in Sources */,
 				4EB3F02C2D8C804200EBEDAA /* TrailerSelection.swift in Sources */,
 				4E90F7652CC72B1F00417C31 /* EditServerTaskView.swift in Sources */,
 				4E90F7662CC72B1F00417C31 /* LastErrorSection.swift in Sources */,
@@ -6985,6 +6998,7 @@
 				4EC50D612C934B3A00FC3D0E /* ServerTasksViewModel.swift in Sources */,
 				62E632E3267D3BA60063E547 /* MovieItemViewModel.swift in Sources */,
 				E190704D2C858CEB0004600E /* VideoPlayerType+Shared.swift in Sources */,
+				4EB025692DDA855500AB8D3D /* PlaylistEditorViewModel.swift in Sources */,
 				E113133828BEADBA00930F75 /* LibraryParent.swift in Sources */,
 				E17DC74D2BE7601E00B42379 /* SettingsBarButton.swift in Sources */,
 				E190704F2C8592B40004600E /* PlaybackCompatibility+Video.swift in Sources */,
