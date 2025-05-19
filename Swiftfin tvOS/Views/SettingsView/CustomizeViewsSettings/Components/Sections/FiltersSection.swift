@@ -13,21 +13,29 @@ extension CustomizeViewsSettings {
 
     struct FiltersSection: View {
 
+        @EnvironmentObject
+        private var router: CustomizeSettingsCoordinator.Router
+
         @Default(.Customization.Library.letterPickerEnabled)
-        var letterPickerEnabled
+        private var letterPickerEnabled
         @Default(.Customization.Library.letterPickerOrientation)
-        var letterPickerOrientation
+        private var letterPickerOrientation
+        @Default(.Customization.Library.enabledDrawerFilters)
+        private var libraryEnabledDrawerFilters
+        @Default(.Customization.Search.enabledDrawerFilters)
+        private var searchEnabledDrawerFilters
 
         var body: some View {
             Section(L10n.filters) {
 
                 Toggle(L10n.letterPicker, isOn: $letterPickerEnabled)
 
-                if letterPickerEnabled {
-                    ListRowMenu(
-                        L10n.orientation,
-                        selection: $letterPickerOrientation
-                    )
+                ChevronButton(L10n.library) {
+                    router.route(to: \.itemFilterDrawerSelector, $libraryEnabledDrawerFilters)
+                }
+
+                ChevronButton(L10n.search) {
+                    router.route(to: \.itemFilterDrawerSelector, $searchEnabledDrawerFilters)
                 }
             }
         }
