@@ -17,14 +17,31 @@ struct OrnamentButton: View {
     @Default(.accentColor)
     private var accentColor
 
+    // MARK: - Environment Objects
+
+    @Environment(\.isEnabled)
+    private var isEnabled
+    @Environment(\.isSelected)
+    private var isSelected
+
     // MARK: - Required Configuration
 
-    let systemName: String
+    private let systemName: String
 
     // MARK: - Optional Configuration
 
-    var size: CGFloat = UIFont.preferredFont(forTextStyle: .headline).pointSize * 1.5
-    var action: () -> Void = {}
+    private let size: CGFloat
+    private let action: () -> Void
+
+    init(
+        systemName: String,
+        size: CGFloat = UIFont.preferredFont(forTextStyle: .headline).pointSize * 1.5,
+        action: @escaping () -> Void = {}
+    ) {
+        self.systemName = systemName
+        self.size = size
+        self.action = action
+    }
 
     // MARK: - Body
 
@@ -34,15 +51,31 @@ struct OrnamentButton: View {
                 .backport
                 .fontWeight(.semibold)
                 .imageScale(.small)
-                .foregroundStyle(accentColor)
+                .foregroundStyle(
+                    isSelected ? Color.systemBackground : accentColor
+                )
                 .frame(width: size, height: size)
-                .background(
+                .background(backgroundView)
+                .overlay(
                     Circle()
-                        .fill(.regularMaterial)
+                        .fill(.black.opacity(isEnabled ? 0.0 : 0.5))
                 )
                 .contentShape(Circle())
                 .posterShadow()
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.borderless)
+    }
+
+    // MARK: - Background View
+
+    @ViewBuilder
+    private var backgroundView: some View {
+        if isSelected {
+            Circle()
+                .fill(accentColor)
+        } else {
+            Circle()
+                .fill(.regularMaterial)
+        }
     }
 }
