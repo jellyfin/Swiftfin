@@ -7922,8 +7922,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/LePips/CollectionVGrid";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = revision;
+				revision = 70db2318ce64d49aa8b536e0623b96cb323fbdf1;
 			};
 		};
 		E1A09F732D05935100835265 /* XCRemoteSwiftPackageReference "CollectionHStack" */ = {
