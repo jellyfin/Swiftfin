@@ -52,7 +52,7 @@ struct OrnamentButton: View {
                 .fontWeight(.semibold)
                 .imageScale(.small)
                 .foregroundStyle(
-                    isSelected ? Color.systemBackground : accentColor
+                    isSelected ? .primary : accentColor
                 )
                 .frame(width: size, height: size)
                 .background(backgroundView)
