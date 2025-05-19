@@ -19,7 +19,7 @@ extension ItemView {
         private var logger
 
         @EnvironmentObject
-        private var router: MainCoordinator.Router
+        private var router: ItemCoordinator.Router
 
         let item: BaseItemDto
         let onSelect: () -> Void

@@ -18,6 +18,8 @@ extension PlaylistItemView {
         @EnvironmentObject
         private var router: ItemCoordinator.Router
 
+        private let columns = [GridItem(.flexible()), GridItem(.flexible())]
+
         var body: some View {
             VStack(spacing: 0) {
 
@@ -25,30 +27,23 @@ extension PlaylistItemView {
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
-                ForEach(viewModel.playlistItems.elements, id: \.key) { element in
-                    if element.value.isNotEmpty {
-                        PosterHStack(
-                            title: element.key.pluralDisplayTitle,
-                            type: .portrait,
-                            items: element.value
-                        )
-                        .onSelect { item in
-                            router.route(to: \.item, item)
+                if viewModel.playlistItems.isEmpty {
+                    Text(L10n.none)
+                } else {
+                    LazyVGrid(columns: columns, spacing: 8) {
+                        ForEach(viewModel.playlistItems, id: \.id) { item in
+                            ItemView.PlaylistItemRow(item: item) {
+                                router.route(to: \.item, item)
+                            }
+                            .padding(.horizontal)
+                            // TODO: Add when Playlist Editing exists
+                            /* .contextMenu {
+
+                             } */
                         }
-                        /* TODO: Enable when Playlist Editing is Available
-                         .contextMenu { _ in
-                             Button(role: .destructive) {
-                                 editorViewModel.send(removeFromPlaylist)
-                             } label: {
-                                 Label("Remove from playlist", systemImage: "text.badge.minus")
-                             }
-                         }*/
                     }
+                    .padding(.horizontal, 20)
                 }
-
-                // MARK: About
-
-                ItemView.AboutView(viewModel: viewModel)
             }
             .background {
                 BlurView(style: .dark)

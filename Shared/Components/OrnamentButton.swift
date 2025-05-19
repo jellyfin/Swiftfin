@@ -6,12 +6,27 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
+/// https://developer.apple.com/design/human-interface-guidelines/ornaments
 struct OrnamentButton: View {
+
+    // MARK: - Accent Color
+
+    @Default(.accentColor)
+    private var accentColor
+
+    // MARK: - Required Configuration
+
     let systemName: String
+
+    // MARK: - Optional Configuration
+
     var size: CGFloat = UIFont.preferredFont(forTextStyle: .headline).pointSize * 1.5
     var action: () -> Void = {}
+
+    // MARK: - Body
 
     var body: some View {
         Button(action: action) {
@@ -19,7 +34,7 @@ struct OrnamentButton: View {
                 .backport
                 .fontWeight(.semibold)
                 .imageScale(.small)
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(accentColor)
                 .frame(width: size, height: size)
                 .background(
                     Circle()
@@ -28,8 +43,5 @@ struct OrnamentButton: View {
                 .contentShape(Circle())
         }
         .buttonStyle(.plain)
-        #if os(tvOS)
-            .focusSection()
-        #endif
     }
 }
