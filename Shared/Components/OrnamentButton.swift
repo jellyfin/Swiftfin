@@ -38,9 +38,10 @@ struct OrnamentButton: View {
                 .frame(width: size, height: size)
                 .background(
                     Circle()
-                        .fill(.ultraThinMaterial)
+                        .fill(.regularMaterial)
                 )
                 .contentShape(Circle())
+                .posterShadow()
         }
         .buttonStyle(.plain)
     }
