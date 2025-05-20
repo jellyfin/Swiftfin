@@ -17,7 +17,7 @@ import UIKit
 extension BaseItemDto: Displayable {
 
     var displayTitle: String {
-        name ?? .emptyDash
+        name ?? L10n.unknown
     }
 }
 

@@ -26,7 +26,10 @@ extension ItemView {
         private let blurHashBottomEdgeColor: Color
         private let content: Content
 
-        init(viewModel: ItemViewModel, content: @escaping () -> Content) {
+        init(
+            viewModel: ItemViewModel,
+            content: @escaping () -> Content
+        ) {
             if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
                 let bottomRGB = BlurHash(string: backdropBlurHash)!.averageLinearRGB
                 blurHashBottomEdgeColor = Color(

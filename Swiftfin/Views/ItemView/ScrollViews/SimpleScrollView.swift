@@ -7,6 +7,7 @@
 //
 
 import BlurHashKit
+import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
@@ -32,13 +33,15 @@ extension ItemView {
         @ViewBuilder
         private var shelfView: some View {
             VStack(alignment: .center, spacing: 10) {
-                Text(viewModel.item.parentTitle ?? .emptyDash)
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-                    .padding(.horizontal)
-                    .foregroundColor(.secondary)
+                if let parentTitle = viewModel.item.parentTitle {
+                    Text(parentTitle)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .padding(.horizontal)
+                        .foregroundColor(.secondary)
+                }
 
                 Text(viewModel.item.displayTitle)
                     .font(.title2)
@@ -66,23 +69,32 @@ extension ItemView {
 
                 ItemView.AttributesHStack(viewModel: viewModel, alignment: .center)
 
-                if viewModel.presentPlayButton {
-                    ItemView.PlayButton(viewModel: viewModel)
-                        .frame(maxWidth: 300)
-                        .frame(height: 50)
-                }
+                Group {
+                    if viewModel.presentPlayButton {
+                        ItemView.PlayButton(viewModel: viewModel)
+                            .frame(height: 50)
+                    }
 
-                ItemView.ActionButtonHStack(viewModel: viewModel)
-                    .font(.title)
-                    .frame(maxWidth: 300)
-                    .foregroundStyle(.primary)
+                    ItemView.ActionButtonHStack(viewModel: viewModel)
+                        .font(.title)
+                        .foregroundStyle(.primary)
+                }
+                .frame(maxWidth: 300)
+            }
+        }
+
+        private var imageType: ImageType {
+            if viewModel.item.type == .episode {
+                return .primary
+            } else {
+                return .backdrop
             }
         }
 
         @ViewBuilder
         private var header: some View {
             VStack(alignment: .center) {
-                ImageView(viewModel.item.imageSource(.primary, maxWidth: 600))
+                ImageView(viewModel.item.imageSource(imageType, maxWidth: 600))
                     .placeholder { source in
                         if let blurHash = source.blurHash {
                             BlurHashView(blurHash: blurHash, size: .Square(length: 8))
@@ -120,6 +132,7 @@ extension ItemView {
                     // MARK: Genres
 
                     content
+                        .edgePadding(.bottom)
                 }
             }
         }
