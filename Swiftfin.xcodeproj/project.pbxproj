@@ -7922,16 +7922,16 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/LePips/CollectionVGrid";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = revision;
+				revision = 70db2318ce64d49aa8b536e0623b96cb323fbdf1;
 			};
 		};
 		E1A09F732D05935100835265 /* XCRemoteSwiftPackageReference "CollectionHStack" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/LePips/CollectionHStack";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = revision;
+				revision = 03dc666e8b20ec216fda60f55ccc0eeaabbc5fad;
 			};
 		};
 		E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */ = {
