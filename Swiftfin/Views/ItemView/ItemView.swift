@@ -95,26 +95,28 @@ struct ItemView: View {
         }
     }
 
+    // TODO: break out into pad vs phone views based on item type
     private func scrollContainerView<Content: View>(
         viewModel: ItemViewModel,
         content: @escaping () -> Content
     ) -> any ScrollContainerView {
+
         if UIDevice.isPad {
             return iPadOSCinematicScrollView(viewModel: viewModel, content: content)
         }
 
-        if viewModel.item.type == .episode || viewModel.item.type == .boxSet {
-            return SimpleScrollView(viewModel: viewModel, content: content)
+        if viewModel.item.type == .movie || viewModel.item.type == .series {
+            switch itemViewType {
+            case .compactPoster:
+                return CompactPosterScrollView(viewModel: viewModel, content: content)
+            case .compactLogo:
+                return CompactLogoScrollView(viewModel: viewModel, content: content)
+            case .cinematic:
+                return CinematicScrollView(viewModel: viewModel, content: content)
+            }
         }
 
-        switch itemViewType {
-        case .compactPoster:
-            return CompactPosterScrollView(viewModel: viewModel, content: content)
-        case .compactLogo:
-            return CompactLogoScrollView(viewModel: viewModel, content: content)
-        case .cinematic:
-            return CinematicScrollView(viewModel: viewModel, content: content)
-        }
+        return SimpleScrollView(viewModel: viewModel, content: content)
     }
 
     @ViewBuilder
