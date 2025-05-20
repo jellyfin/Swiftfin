@@ -91,7 +91,7 @@ extension ItemView.CinematicScrollView {
     struct OverlayView: View {
 
         @Default(.Customization.CinematicItemViewType.usePrimaryImage)
-        private var cinematicItemViewTypeUsePrimaryImage
+        private var usePrimaryImage
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
@@ -101,7 +101,7 @@ extension ItemView.CinematicScrollView {
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
                 VStack(alignment: .center, spacing: 10) {
-                    if !cinematicItemViewTypeUsePrimaryImage {
+                    if !usePrimaryImage {
                         ImageView(viewModel.item.imageURL(.logo, maxHeight: 100))
                             .placeholder { _ in
                                 EmptyView()
@@ -134,16 +134,17 @@ extension ItemView.CinematicScrollView {
                     .foregroundColor(Color(UIColor.lightGray))
                     .padding(.horizontal)
 
-                    if viewModel.presentPlayButton {
-                        ItemView.PlayButton(viewModel: viewModel)
-                            .frame(maxWidth: 300)
-                            .frame(height: 50)
-                    }
+                    Group {
+                        if viewModel.presentPlayButton {
+                            ItemView.PlayButton(viewModel: viewModel)
+                                .frame(height: 50)
+                        }
 
-                    ItemView.ActionButtonHStack(viewModel: viewModel)
-                        .font(.title)
-                        .frame(maxWidth: 300)
-                        .foregroundColor(.white)
+                        ItemView.ActionButtonHStack(viewModel: viewModel)
+                            .font(.title)
+                            .foregroundColor(.white)
+                    }
+                    .frame(maxWidth: 300)
                 }
                 .frame(maxWidth: .infinity)
 

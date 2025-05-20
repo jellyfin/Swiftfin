@@ -268,7 +268,6 @@ extension BaseItemDto {
             album
         case .episode:
             seriesName
-        case .program: nil
         default:
             nil
         }
