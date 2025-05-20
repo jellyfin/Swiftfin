@@ -6,19 +6,17 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
 import JellyfinAPI
+import SwiftUI
 
-extension CollectionType: SupportedCaseIterable {
+struct iPadOSPlaylistItemView: View {
 
-    static var supportedCases: [CollectionType] {
-        [
-            .boxsets,
-            .folders,
-            .movies,
-            .tvshows,
-            .livetv,
-            .playlists,
-        ]
+    @ObservedObject
+    var viewModel: PlaylistItemViewModel
+
+    var body: some View {
+        ItemView.iPadOSCinematicScrollView(viewModel: viewModel) {
+            ContentView(viewModel: viewModel)
+        }
     }
 }

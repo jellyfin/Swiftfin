@@ -50,7 +50,9 @@ extension EpisodeItemView {
                     .overviewLineLimit(4)
                     .padding(.horizontal)
 
-                RowDivider()
+                if viewModel.item.overview != nil {
+                    RowDivider()
+                }
 
                 // MARK: Genres
 

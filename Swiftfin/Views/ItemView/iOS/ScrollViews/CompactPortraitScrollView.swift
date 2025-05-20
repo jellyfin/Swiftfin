@@ -85,7 +85,9 @@ extension ItemView {
                         .taglineLineLimit(2)
                         .padding(.horizontal)
 
-                    RowDivider()
+                    if viewModel.item.overview != nil {
+                        RowDivider()
+                    }
 
                     content()
                 }
