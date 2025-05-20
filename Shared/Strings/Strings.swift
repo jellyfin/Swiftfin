@@ -1582,8 +1582,8 @@ internal enum L10n {
   internal static let transition = L10n.tr("Localizable", "transition", fallback: "Transition")
   /// Translator
   internal static let translator = L10n.tr("Localizable", "translator", fallback: "Translator")
-  /// Trigger already exits
-  internal static let triggerAlreadyExists = L10n.tr("Localizable", "triggerAlreadyExists", fallback: "Trigger already exits")
+  /// Trigger already exists
+  internal static let triggerAlreadyExists = L10n.tr("Localizable", "triggerAlreadyExists", fallback: "Trigger already exists")
   /// Triggers
   internal static let triggers = L10n.tr("Localizable", "triggers", fallback: "Triggers")
   /// TV
