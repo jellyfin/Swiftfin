@@ -104,7 +104,7 @@ extension ItemView {
 
                 // MARK: Watch a Trailer
 
-                if !hasTrailers {
+                if hasTrailers {
                     TrailerMenu(
                         localTrailers: viewModel.localTrailers,
                         externalTrailers: viewModel.item.remoteTrailers ?? []
