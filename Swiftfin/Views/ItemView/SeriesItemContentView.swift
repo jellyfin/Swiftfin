@@ -10,30 +10,35 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-extension MovieItemView {
+extension ItemView {
 
-    struct ContentView: View {
+    struct SeriesItemContentView: View {
 
         @ObservedObject
-        var viewModel: MovieItemViewModel
+        var viewModel: SeriesItemViewModel
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 10) {
+            SeparatorVStack(alignment: .leading) {
+                RowDivider()
+                    .padding(.vertical, 10)
+            } content: {
+
+                // MARK: Episodes
+
+                if viewModel.seasons.isNotEmpty {
+                    SeriesEpisodeSelector(viewModel: viewModel)
+                }
 
                 // MARK: Genres
 
                 if let genres = viewModel.item.itemGenres, genres.isNotEmpty {
                     ItemView.GenresHStack(genres: genres)
-
-                    RowDivider()
                 }
 
                 // MARK: Studios
 
                 if let studios = viewModel.item.studios, studios.isNotEmpty {
                     ItemView.StudiosHStack(studios: studios)
-
-                    RowDivider()
                 }
 
                 // MARK: Cast and Crew
@@ -42,29 +47,22 @@ extension MovieItemView {
                    castAndCrew.isNotEmpty
                 {
                     ItemView.CastAndCrewHStack(people: castAndCrew)
-
-                    RowDivider()
                 }
 
                 // MARK: Special Features
 
                 if viewModel.specialFeatures.isNotEmpty {
                     ItemView.SpecialFeaturesHStack(items: viewModel.specialFeatures)
-
-                    RowDivider()
                 }
 
                 // MARK: Similar
 
                 if viewModel.similarItems.isNotEmpty {
                     ItemView.SimilarItemsHStack(items: viewModel.similarItems)
-
-                    RowDivider()
                 }
 
                 ItemView.AboutView(viewModel: viewModel)
             }
-            .animation(.linear(duration: 0.2), value: viewModel.item)
         }
     }
 }

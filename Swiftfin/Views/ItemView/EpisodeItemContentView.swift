@@ -6,40 +6,36 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
+import BlurHashKit
 import JellyfinAPI
 import SwiftUI
 
-extension SeriesItemView {
+extension ItemView {
 
-    struct ContentView: View {
+    struct EpisodeItemContentView: View {
+
+        @EnvironmentObject
+        private var router: ItemCoordinator.Router
 
         @ObservedObject
-        var viewModel: SeriesItemViewModel
+        var viewModel: EpisodeItemViewModel
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 20) {
-
-                // MARK: Episodes
-
-                if viewModel.seasons.isNotEmpty {
-                    SeriesEpisodeSelector(viewModel: viewModel)
-                }
+            SeparatorVStack(alignment: .leading) {
+                RowDivider()
+                    .padding(.vertical, 10)
+            } content: {
 
                 // MARK: Genres
 
                 if let genres = viewModel.item.itemGenres, genres.isNotEmpty {
                     ItemView.GenresHStack(genres: genres)
-
-                    RowDivider()
                 }
 
                 // MARK: Studios
 
                 if let studios = viewModel.item.studios, studios.isNotEmpty {
                     ItemView.StudiosHStack(studios: studios)
-
-                    RowDivider()
                 }
 
                 // MARK: Cast and Crew
@@ -48,24 +44,6 @@ extension SeriesItemView {
                    castAndCrew.isNotEmpty
                 {
                     ItemView.CastAndCrewHStack(people: castAndCrew)
-
-                    RowDivider()
-                }
-
-                // MARK: Special Features
-
-                if viewModel.specialFeatures.isNotEmpty {
-                    ItemView.SpecialFeaturesHStack(items: viewModel.specialFeatures)
-
-                    RowDivider()
-                }
-
-                // MARK: Similar
-
-                if viewModel.similarItems.isNotEmpty {
-                    ItemView.SimilarItemsHStack(items: viewModel.similarItems)
-
-                    RowDivider()
                 }
 
                 ItemView.AboutView(viewModel: viewModel)
