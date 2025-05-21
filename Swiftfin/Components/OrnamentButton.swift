@@ -57,24 +57,24 @@ struct OrnamentButton<Content: View>: View {
     // MARK: - Ornament Icon
 
     private var ornamentIcon: some View {
-        ZStack {
-            Circle()
-                .fill(backgroundFill)
-                .frame(width: size, height: size)
-
-            Image(systemName: systemName)
-                .font(.system(size: size * 0.5, weight: .semibold))
-                .foregroundStyle(foregroundStyle)
-        }
-        .brightness(!isEnabled ? -0.25 : 0)
-        .contentShape(Circle())
-        .shadow(radius: 4, y: 2)
+        Image(systemName: systemName)
+            .font(.system(size: size * 0.5, weight: .bold))
+            .foregroundStyle(foregroundStyle)
+            .frame(width: size, height: size)
+            .background(
+                Circle()
+                    .fill(backgroundFill)
+            )
+            .brightness(!isEnabled ? -0.25 : 0)
+            .contentShape(Circle())
     }
 
     // MARK: - Background Color Fill
 
     private var backgroundFill: some ShapeStyle {
-        if isSelected {
+        if !isEnabled {
+            AnyShapeStyle(Color.secondary)
+        } else if isSelected {
             AnyShapeStyle(accentColor)
         } else {
             AnyShapeStyle(.ultraThinMaterial)
@@ -84,7 +84,9 @@ struct OrnamentButton<Content: View>: View {
     // MARK: - Foreground Color
 
     private var foregroundStyle: some ShapeStyle {
-        if isSelected {
+        if !isEnabled {
+            AnyShapeStyle(Color.primary)
+        } else if isSelected {
             AnyShapeStyle(Color.systemBackground)
         } else {
             AnyShapeStyle(accentColor)

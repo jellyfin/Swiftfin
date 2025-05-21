@@ -23,8 +23,6 @@ struct NavigationBarCloseButtonModifier: ViewModifier {
                 OrnamentButton(L10n.close, systemName: "xmark") {
                     action()
                 }
-                .backport
-                .fontWeight(.bold)
                 .disabled(disabled)
             }
         }
