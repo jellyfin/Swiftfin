@@ -17,12 +17,17 @@ extension ItemView {
         @Environment(\.isSelected)
         private var isSelected
 
+        // MARK: - Focus State
+
+        @FocusState
+        private var isFocused: Bool
+
         private let content: () -> Content
         private let icon: String
-        private let onSelect: () -> Void
+        private let isCompact: Bool
         private let selectedIcon: String?
         private let title: String
-        private let buttonColor: Color?
+        private let onSelect: () -> Void
 
         private var labelIconName: String {
             isSelected ? selectedIcon ?? icon : icon
@@ -36,43 +41,50 @@ extension ItemView {
                     Button(action: onSelect) {
                         labelView
                     }
-                    .buttonStyle(.borderless)
+                    // .buttonStyle(.card)
                 } else {
                     Menu(content: content) {
                         labelView
                     }
+                    .scaleEffect(isFocused ? 1.2 : 1.0)
+                    .animation(
+                        .spring(response: 0.2, dampingFraction: 1), value: isFocused
+                    )
+                    .buttonStyle(.plain)
                     .menuStyle(.borderlessButton)
+                    .focused($isFocused)
                 }
             }
-            .animation(.easeInOut(duration: 0.1), value: isSelected)
+            .focused($isFocused)
         }
 
         // MARK: - Label Views
 
         private var labelView: some View {
             ZStack {
-                // Background shape
-                RoundedRectangle(cornerRadius: 10)
-                    .foregroundColor(backgroundFill)
+                let isButton = Content.self == EmptyView.self
 
-                // Icon
-                Image(systemName: labelIconName)
+                if isButton, isSelected {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(
+                            isFocused ? AnyShapeStyle(HierarchicalShapeStyle.primary) :
+                                AnyShapeStyle(HierarchicalShapeStyle.primary.opacity(0.5))
+                        )
+                } else {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(isFocused ? Color.white : Color.white.opacity(0.5))
+                }
+
+                Label(title, systemImage: labelIconName)
                     .backport
                     .fontWeight(.semibold)
-                    .font(.title2)
-                    .foregroundStyle(Color.accentColor.overlayColor)
+                    .font(.title3)
+                    .foregroundStyle(.black)
+                    .labelStyle(.iconOnly)
+                    .rotationEffect(isCompact ? .degrees(90) : .degrees(0))
+                // .focusEffectDisabled()
             }
             .accessibilityLabel(title)
-        }
-
-        // MARK: - Background Fill
-
-        private var backgroundFill: Color {
-            if isSelected, let buttonColor {
-                return buttonColor
-            } else {
-                return Color.secondary
-            }
         }
     }
 }
@@ -86,14 +98,13 @@ extension ItemView.ActionButton {
     init(
         _ title: String,
         icon: String,
-        selectedIcon: String? = nil,
-        buttonColor: Color? = nil,
+        selectedIcon: String,
         onSelect: @escaping () -> Void
     ) where Content == EmptyView {
         self.title = title
         self.icon = icon
+        self.isCompact = false
         self.selectedIcon = selectedIcon
-        self.buttonColor = buttonColor
         self.onSelect = onSelect
         self.content = { EmptyView() }
     }
@@ -103,13 +114,13 @@ extension ItemView.ActionButton {
     init(
         _ title: String,
         icon: String,
-        buttonColor: Color? = nil,
+        isCompact: Bool = false,
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.title = title
         self.icon = icon
+        self.isCompact = isCompact
         self.selectedIcon = nil
-        self.buttonColor = buttonColor
         self.onSelect = {}
         self.content = content
     }

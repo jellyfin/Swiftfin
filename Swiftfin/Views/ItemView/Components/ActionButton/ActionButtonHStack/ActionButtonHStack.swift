@@ -11,8 +11,6 @@ import Factory
 import JellyfinAPI
 import SwiftUI
 
-// TODO: replace `equalSpacing` handling with a `Layout`
-
 extension ItemView {
 
     struct ActionButtonHStack: View {
@@ -25,6 +23,9 @@ extension ItemView {
 
         @ObservedObject
         private var viewModel: ItemViewModel
+
+        @EnvironmentObject
+        private var router: MainCoordinator.Router
 
         private let equalSpacing: Bool
 
@@ -52,7 +53,7 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            HStack(alignment: .center, spacing: 15) {
+            HStack(alignment: .center, spacing: 10) {
 
                 // MARK: Toggle Played
 
@@ -61,19 +62,13 @@ extension ItemView {
                 ActionButton(
                     L10n.played,
                     icon: "checkmark.circle",
-                    selectedIcon: "checkmark.circle.fill"
+                    selectedIcon: "checkmark.circle.fill",
+                    buttonColor: accentColor
                 ) {
                     UIDevice.impact(.light)
                     viewModel.send(.toggleIsPlayed)
                 }
                 .environment(\.isSelected, isCheckmarkSelected)
-                .if(isCheckmarkSelected) { item in
-                    item
-                        .foregroundStyle(
-                            .primary,
-                            accentColor
-                        )
-                }
                 .if(equalSpacing) { view in
                     view.frame(maxWidth: .infinity)
                 }
@@ -85,16 +80,13 @@ extension ItemView {
                 ActionButton(
                     L10n.favorited,
                     icon: "heart",
-                    selectedIcon: "heart.fill"
+                    selectedIcon: "heart.fill",
+                    buttonColor: .pink
                 ) {
                     UIDevice.impact(.light)
                     viewModel.send(.toggleIsFavorite)
                 }
                 .environment(\.isSelected, isHeartSelected)
-                .if(isHeartSelected) { item in
-                    item
-                        .foregroundStyle(Color.red)
-                }
                 .if(equalSpacing) { view in
                     view.frame(maxWidth: .infinity)
                 }
@@ -112,7 +104,7 @@ extension ItemView {
 
                 // MARK: Watch a Trailer
 
-                if hasTrailers {
+                if !hasTrailers {
                     TrailerMenu(
                         localTrailers: viewModel.localTrailers,
                         externalTrailers: viewModel.item.remoteTrailers ?? []

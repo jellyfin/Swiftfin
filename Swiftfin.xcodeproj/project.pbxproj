@@ -2930,6 +2930,7 @@
 			isa = PBXGroup;
 			children = (
 				4EB3F0362D8CD33100EBEDAA /* ActionButton.swift */,
+				4EB3F0302D8CCD3500EBEDAA /* ActionButtonHStack */,
 			);
 			path = ActionButton;
 			sourceTree = "<group>";
@@ -3153,6 +3154,15 @@
 				4EF3D8092CF7D6670081AD20 /* ServerUserAccessView.swift */,
 			);
 			path = ServerUserAccessView;
+			sourceTree = "<group>";
+		};
+		4EF75EC72DDE75B3004DC080 /* ActionButton */ = {
+			isa = PBXGroup;
+			children = (
+				4E5334A12CD1A28400D59FA8 /* ActionButton.swift */,
+				4E5334A02CD1A27C00D59FA8 /* ActionButtonHStack */,
+			);
+			path = ActionButton;
 			sourceTree = "<group>";
 		};
 		4EFAC12A2D1E253300E40880 /* ServerUserAccessTags */ = {
@@ -4916,7 +4926,6 @@
 			children = (
 				E18ACA902A15A2D600BB4F35 /* AboutView */,
 				4EB3F0352D8CD32900EBEDAA /* ActionButton */,
-				4EB3F0302D8CCD3500EBEDAA /* ActionButtonHStack */,
 				E18E01D7288747230022598C /* AttributeHStack.swift */,
 				E17FB55628C1256400311DFE /* CastAndCrewHStack.swift */,
 				E17AC9722955007A003D2BC2 /* DownloadTaskButton.swift */,
@@ -5172,8 +5181,7 @@
 			isa = PBXGroup;
 			children = (
 				E1A16CA2288A7D0000EA4679 /* AboutView */,
-				4E5334A12CD1A28400D59FA8 /* ActionButton.swift */,
-				4E5334A02CD1A27C00D59FA8 /* ActionButtonHStack */,
+				4EF75EC72DDE75B3004DC080 /* ActionButton */,
 				E1C926012887565C002A7A66 /* AttributeHStack.swift */,
 				E185920528CDAA6400326F80 /* CastAndCrewHStack.swift */,
 				E1153D982BBA3E6100424D36 /* EpisodeSelector */,
