@@ -50,21 +50,24 @@ extension ItemView {
                     .menuStyle(.borderlessButton)
                 }
             }
-            .animation(.easeInOut(duration: 0.1), value: isSelected)
         }
 
         // MARK: - Label Views
 
         private var labelView: some View {
             ZStack {
+                // Tint Background shape
+                RoundedRectangle(cornerRadius: 10)
+                    .foregroundStyle(Color.primary.opacity(0.5))
+
                 // Background shape
                 RoundedRectangle(cornerRadius: 10)
-                    .foregroundColor(backgroundFill)
+                    .foregroundStyle(backgroundFill)
 
                 // Icon
                 Image(systemName: labelIconName)
                     .backport
-                    .fontWeight(.semibold)
+                    .fontWeight(.bold)
                     .foregroundStyle(accentColor.overlayColor)
             }
             .accessibilityLabel(title)
@@ -72,11 +75,11 @@ extension ItemView {
 
         // MARK: - Background Fill
 
-        private var backgroundFill: Color {
+        private var backgroundFill: AnyShapeStyle {
             if isSelected, let buttonColor {
-                return buttonColor
+                return AnyShapeStyle(buttonColor)
             } else {
-                return Color.secondary
+                return AnyShapeStyle(.ultraThinMaterial)
             }
         }
     }

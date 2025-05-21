@@ -72,6 +72,9 @@ extension ItemView {
                 .if(equalSpacing) { view in
                     view.frame(maxWidth: .infinity)
                 }
+                .if(!equalSpacing) { view in
+                    view.aspectRatio(1, contentMode: .fit)
+                }
 
                 // MARK: Toggle Favorite
 
@@ -90,6 +93,9 @@ extension ItemView {
                 .if(equalSpacing) { view in
                     view.frame(maxWidth: .infinity)
                 }
+                .if(!equalSpacing) { view in
+                    view.aspectRatio(1, contentMode: .fit)
+                }
 
                 // MARK: Select a Version
 
@@ -99,6 +105,9 @@ extension ItemView {
                     VersionMenu(viewModel: viewModel, mediaSources: mediaSources)
                         .if(equalSpacing) { view in
                             view.frame(maxWidth: .infinity)
+                        }
+                        .if(!equalSpacing) { view in
+                            view.aspectRatio(1, contentMode: .fit)
                         }
                 }
 
@@ -111,6 +120,9 @@ extension ItemView {
                     )
                     .if(equalSpacing) { view in
                         view.frame(maxWidth: .infinity)
+                    }
+                    .if(!equalSpacing) { view in
+                        view.aspectRatio(1, contentMode: .fit)
                     }
                 }
             }
