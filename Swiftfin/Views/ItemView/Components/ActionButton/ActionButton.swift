@@ -57,9 +57,6 @@ extension ItemView {
 
                 // Icon
                 Image(systemName: labelIconName)
-                    .backport
-                    .fontWeight(.semibold)
-                    .font(.title2)
                     .foregroundStyle(Color.accentColor.overlayColor)
             }
             .accessibilityLabel(title)
