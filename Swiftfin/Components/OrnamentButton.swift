@@ -40,18 +40,16 @@ struct OrnamentButton<Content: View>: View {
                     ornamentIcon
                 }
                 .buttonStyle(.borderless)
-                .accessibilityLabel(title)
             } else {
                 Menu(content: content) {
                     ornamentIcon
                 }
                 .menuStyle(.borderlessButton)
-                .accessibilityLabel(title)
             }
         }
         .labelStyle(.iconOnly)
+        .accessibilityLabel(title)
         .symbolRenderingMode(.palette)
-        .animation(.easeInOut(duration: 0.1), value: isSelected)
     }
 
     // MARK: - Ornament Icon
@@ -62,34 +60,38 @@ struct OrnamentButton<Content: View>: View {
             .foregroundStyle(foregroundStyle)
             .frame(width: size, height: size)
             .background(
-                Circle()
-                    .fill(backgroundFill)
+                ZStack {
+                    Circle()
+                        .fill(.ultraThinMaterial)
+                    Circle()
+                        .fill(backgroundFill)
+                }
             )
-            .brightness(!isEnabled ? -0.25 : 0)
             .contentShape(Circle())
     }
 
     // MARK: - Background Color Fill
 
-    private var backgroundFill: some ShapeStyle {
+    private var backgroundFill: Color {
         if !isEnabled {
-            AnyShapeStyle(Color.secondary)
+            Color.secondary
         } else if isSelected {
-            AnyShapeStyle(accentColor)
+            accentColor
         } else {
-            AnyShapeStyle(.ultraThinMaterial)
+            Color(UIColor.secondarySystemFill)
+                .opacity(0.5)
         }
     }
 
     // MARK: - Foreground Color
 
-    private var foregroundStyle: some ShapeStyle {
+    private var foregroundStyle: Color {
         if !isEnabled {
-            AnyShapeStyle(Color.primary)
+            Color.primary
         } else if isSelected {
-            AnyShapeStyle(Color.systemBackground)
+            Color.systemBackground
         } else {
-            AnyShapeStyle(accentColor)
+            accentColor
         }
     }
 }
