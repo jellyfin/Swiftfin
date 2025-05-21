@@ -9,7 +9,6 @@
 import Defaults
 import SwiftUI
 
-/// https://developer.apple.com/design/human-interface-guidelines/ornaments
 struct OrnamentButton: View {
 
     // MARK: - Accent Color
