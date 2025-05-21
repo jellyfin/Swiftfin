@@ -6,11 +6,17 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 extension ItemView {
 
     struct ActionButton<Content: View>: View {
+
+        // MARK: - Accent Color
+
+        @Default(.accentColor)
+        private var accentColor
 
         // MARK: - Environment Objects
 
@@ -57,7 +63,9 @@ extension ItemView {
 
                 // Icon
                 Image(systemName: labelIconName)
-                    .foregroundStyle(Color.accentColor.overlayColor)
+                    .backport
+                    .fontWeight(.semibold)
+                    .foregroundStyle(accentColor.overlayColor)
             }
             .accessibilityLabel(title)
         }
