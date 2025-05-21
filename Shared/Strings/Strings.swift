@@ -871,8 +871,6 @@ internal enum L10n {
   /// Live TV programs
   internal static let liveTVPrograms = L10n.tr("Localizable", "liveTVPrograms", fallback: "Live TV programs")
   /// Live TV recording management
-  internal static let liveTvRecordingManagement = L10n.tr("Localizable", "liveTvRecordingManagement", fallback: "Live TV recording management")
-  /// Live TV recording management
   internal static let liveTVRecordingManagement = L10n.tr("Localizable", "liveTVRecordingManagement", fallback: "Live TV recording management")
   /// Loading user failed
   internal static let loadingUserFailed = L10n.tr("Localizable", "loadingUserFailed", fallback: "Loading user failed")
@@ -1582,8 +1580,8 @@ internal enum L10n {
   internal static let transition = L10n.tr("Localizable", "transition", fallback: "Transition")
   /// Translator
   internal static let translator = L10n.tr("Localizable", "translator", fallback: "Translator")
-  /// Trigger already exits
-  internal static let triggerAlreadyExists = L10n.tr("Localizable", "triggerAlreadyExists", fallback: "Trigger already exits")
+  /// Trigger already exists
+  internal static let triggerAlreadyExists = L10n.tr("Localizable", "triggerAlreadyExists", fallback: "Trigger already exists")
   /// Triggers
   internal static let triggers = L10n.tr("Localizable", "triggers", fallback: "Triggers")
   /// TV

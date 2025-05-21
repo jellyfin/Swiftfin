@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 // TODO: remove rest occurrences of `UIDevice.main` sizings
@@ -17,33 +18,38 @@ import SwiftUI
 
 extension ItemView {
 
-    struct iPadOSCinematicScrollView<Content: View>: View {
+    struct iPadOSCinematicScrollView<Content: View>: ScrollContainerView {
 
         @ObservedObject
-        var viewModel: ItemViewModel
+        private var viewModel: ItemViewModel
 
         @State
         private var globalSize: CGSize = .zero
 
-        let content: () -> Content
+        private let content: Content
 
-        @ViewBuilder
-        private var headerView: some View {
-            Group {
-                if viewModel.item.type == .episode {
-                    ImageView(viewModel.item.imageSource(.primary, maxWidth: 1920))
-                } else {
-                    ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1920))
-                }
+        init(
+            viewModel: ItemViewModel,
+            @ViewBuilder content: () -> Content
+        ) {
+            self.content = content()
+            self.viewModel = viewModel
+        }
+
+        private var imageType: ImageType {
+            if viewModel.item.type == .episode {
+                return .primary
+            } else {
+                return .backdrop
             }
-            .aspectRatio(1.77, contentMode: .fill)
         }
 
         var body: some View {
             OffsetScrollView(
                 headerHeight: globalSize.isLandscape ? 0.75 : 0.6
             ) {
-                headerView
+                ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1920))
+                    .aspectRatio(1.77, contentMode: .fill)
             } overlay: {
                 VStack(spacing: 0) {
                     Spacer()
@@ -65,7 +71,7 @@ extension ItemView {
                         }
                 }
             } content: {
-                content()
+                content
                     .edgePadding(.vertical)
             }
             .trackingSize($globalSize)
