@@ -45,6 +45,7 @@
 		4E2470082D078DD7009139D8 /* ServerUserParentalRatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2470062D078DD7009139D8 /* ServerUserParentalRatingView.swift */; };
 		4E24ECFB2D076F6200A473A9 /* ListRowCheckbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E24ECFA2D076F2B00A473A9 /* ListRowCheckbox.swift */; };
 		4E24ECFC2D076F6200A473A9 /* ListRowCheckbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E24ECFA2D076F2B00A473A9 /* ListRowCheckbox.swift */; };
+		4E2A13B12DDD925A005E2661 /* OrnamentButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2A13B02DDD925A005E2661 /* OrnamentButton.swift */; };
 		4E2AC4BE2C6C48D200DD600D /* CustomDeviceProfileAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2AC4BD2C6C48D200DD600D /* CustomDeviceProfileAction.swift */; };
 		4E2AC4BF2C6C48D200DD600D /* CustomDeviceProfileAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2AC4BD2C6C48D200DD600D /* CustomDeviceProfileAction.swift */; };
 		4E2AC4C22C6C491200DD600D /* AudoCodec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2AC4C12C6C491200DD600D /* AudoCodec.swift */; };
@@ -1306,6 +1307,7 @@
 		4E2182E42CAF67EF0094806B /* PlayMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayMethod.swift; sourceTree = "<group>"; };
 		4E2470062D078DD7009139D8 /* ServerUserParentalRatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerUserParentalRatingView.swift; sourceTree = "<group>"; };
 		4E24ECFA2D076F2B00A473A9 /* ListRowCheckbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRowCheckbox.swift; sourceTree = "<group>"; };
+		4E2A13B02DDD925A005E2661 /* OrnamentButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrnamentButton.swift; sourceTree = "<group>"; };
 		4E2AC4BD2C6C48D200DD600D /* CustomDeviceProfileAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDeviceProfileAction.swift; sourceTree = "<group>"; };
 		4E2AC4C12C6C491200DD600D /* AudoCodec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudoCodec.swift; sourceTree = "<group>"; };
 		4E2AC4C42C6C492700DD600D /* MediaContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaContainer.swift; sourceTree = "<group>"; };
@@ -3721,6 +3723,7 @@
 				E1ED7FDD2CAA641F00ACB6E3 /* ListTitleSection.swift */,
 				E1FE69AF28C2DA4A0021BC93 /* NavigationBarFilterDrawer */,
 				E1DE84132B9531C1008CCE21 /* OrderedSectionSelectorView.swift */,
+				4E2A13B02DDD925A005E2661 /* OrnamentButton.swift */,
 				E18E01A5288746AF0022598C /* PillHStack.swift */,
 				E16AA60728A364A6009A983C /* PosterButton.swift */,
 				E1CCF13028AC07EC006CAC9E /* PosterHStack.swift */,
@@ -6675,6 +6678,7 @@
 				E13332912953B91000EE76AB /* DownloadTaskCoordinator.swift in Sources */,
 				E43918662AD5C8310045A18C /* OnScenePhaseChangedModifier.swift in Sources */,
 				E1579EA72B97DC1500A31CA1 /* Eventful.swift in Sources */,
+				4E2A13B12DDD925A005E2661 /* OrnamentButton.swift in Sources */,
 				E1B33ED128EB860A0073B0FD /* LargePlaybackButtons.swift in Sources */,
 				E1549664296CA2EF00C4EF88 /* SwiftfinStore.swift in Sources */,
 				E102313F2BCF8A3C009D71FC /* DetailedChannelView.swift in Sources */,

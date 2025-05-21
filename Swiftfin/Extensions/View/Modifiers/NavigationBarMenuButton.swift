@@ -27,13 +27,9 @@ struct NavigationBarMenuButtonModifier<Content: View>: ViewModifier {
                 }
 
                 if !isHidden {
-                    Menu(L10n.options, systemImage: "ellipsis.circle") {
+                    OrnamentButton(L10n.options, systemName: "ellipsis") {
                         items()
                     }
-                    .labelStyle(.iconOnly)
-                    .backport
-                    .fontWeight(.semibold)
-                    .foregroundStyle(accentColor)
                 }
             }
         }
