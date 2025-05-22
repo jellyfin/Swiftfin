@@ -60,10 +60,6 @@ extension ItemView {
 
         private var labelView: some View {
             ZStack {
-                // Tint Background shape
-                RoundedRectangle(cornerRadius: 10)
-                    .foregroundStyle(accentColor.overlayColor.overlayColor.opacity(0.1))
-
                 // Background shape
                 RoundedRectangle(cornerRadius: 10)
                     .foregroundStyle(backgroundFill)
