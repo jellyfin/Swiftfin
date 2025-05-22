@@ -56,6 +56,10 @@ extension ItemView {
                     Menu(content: content) {
                         labelView
                     }
+                    .scaleEffect(isFocused ? 1.2 : 1.0)
+                    .animation(
+                        .spring(response: 0.2, dampingFraction: 1), value: isFocused
+                    )
                     .menuStyle(.borderlessButton)
                 }
             }
@@ -80,8 +84,6 @@ extension ItemView {
                     .rotationEffect(isCompact ? .degrees(90) : .degrees(0))
             }
             .accessibilityLabel(title)
-            .scaleEffect(isFocused ? 1.1 : 1.0)
-            .animation(.easeInOut(duration: 0.125), value: isFocused)
         }
     }
 }
