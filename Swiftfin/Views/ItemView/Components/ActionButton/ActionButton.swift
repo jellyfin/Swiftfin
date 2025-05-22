@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 extension ItemView {
@@ -18,13 +17,19 @@ extension ItemView {
         @Environment(\.isSelected)
         private var isSelected
 
-        // MARK: - Configuration
+        // MARK: - Required Configuration
 
-        private let content: () -> Content
         private let icon: String
+        private let title: String
+
+        // MARK: - Button Configuration
+
         private let onSelect: () -> Void
         private let selectedIcon: String?
-        private let title: String
+
+        // MARK: - Menu Configuration
+
+        private let content: () -> Content
 
         // MARK: - Label Icon
 
@@ -37,11 +42,15 @@ extension ItemView {
         var body: some View {
             Group {
                 if Content.self == EmptyView.self {
-                    Button(action: onSelect) {
+                    Button {
+                        UIDevice.impact(.light)
+                        onSelect()
+                    } label: {
                         labelView
                     }
                     .buttonStyle(.borderless)
                 } else {
+                    // TODO: Use only this on iOS 16+
                     if #available(iOS 16.0, *) {
                         Menu(content: content) {
                             labelView
@@ -62,15 +71,14 @@ extension ItemView {
 
         private var labelView: some View {
             ZStack {
-                // Background shape
                 RoundedRectangle(cornerRadius: 10)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(isSelected ? .secondary : .tertiary)
 
-                // Icon
                 Image(systemName: labelIconName)
                     .backport
                     .fontWeight(.bold)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.primary)
+                    .symbolRenderingMode(.monochrome)
             }
             .accessibilityLabel(title)
         }

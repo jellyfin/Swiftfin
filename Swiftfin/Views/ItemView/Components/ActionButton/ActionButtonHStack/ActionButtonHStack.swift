@@ -64,14 +64,11 @@ extension ItemView {
                     icon: "checkmark.circle",
                     selectedIcon: "checkmark.circle.fill"
                 ) {
-                    UIDevice.impact(.light)
                     viewModel.send(.toggleIsPlayed)
                 }
+                .foregroundStyle(accentColor.overlayColor, accentColor, .gray)
                 .environment(\.isSelected, isCheckmarkSelected)
-                .foregroundStyle(isCheckmarkSelected ? accentColor : Color.gray, accentColor.overlayColor)
-                .if(equalSpacing) { view in
-                    view.frame(maxWidth: .infinity)
-                }
+                .frame(maxWidth: .infinity)
                 .if(!equalSpacing) { view in
                     view.aspectRatio(1, contentMode: .fit)
                 }
@@ -85,14 +82,11 @@ extension ItemView {
                     icon: "heart",
                     selectedIcon: "heart.fill"
                 ) {
-                    UIDevice.impact(.light)
                     viewModel.send(.toggleIsFavorite)
                 }
-                .foregroundStyle(isHeartSelected ? Color.red : Color.gray, accentColor.overlayColor)
+                .foregroundStyle(accentColor.overlayColor, .red, .gray)
                 .environment(\.isSelected, isHeartSelected)
-                .if(equalSpacing) { view in
-                    view.frame(maxWidth: .infinity)
-                }
+                .frame(maxWidth: .infinity)
                 .if(!equalSpacing) { view in
                     view.aspectRatio(1, contentMode: .fit)
                 }
@@ -103,10 +97,8 @@ extension ItemView {
                    mediaSources.count > 1
                 {
                     VersionMenu(viewModel: viewModel, mediaSources: mediaSources)
-                        .foregroundStyle(Color.gray, accentColor.overlayColor)
-                        .if(equalSpacing) { view in
-                            view.frame(maxWidth: .infinity)
-                        }
+                        .foregroundStyle(accentColor.overlayColor, .gray)
+                        .frame(maxWidth: .infinity)
                         .if(!equalSpacing) { view in
                             view.aspectRatio(1, contentMode: .fit)
                         }
@@ -119,10 +111,8 @@ extension ItemView {
                         localTrailers: viewModel.localTrailers,
                         externalTrailers: viewModel.item.remoteTrailers ?? []
                     )
-                    .foregroundStyle(Color.gray, accentColor.overlayColor)
-                    .if(equalSpacing) { view in
-                        view.frame(maxWidth: .infinity)
-                    }
+                    .foregroundStyle(accentColor.overlayColor, .gray)
+                    .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in
                         view.aspectRatio(1, contentMode: .fit)
                     }

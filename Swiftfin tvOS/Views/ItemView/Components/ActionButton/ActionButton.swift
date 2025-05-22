@@ -22,12 +22,22 @@ extension ItemView {
         @FocusState
         private var isFocused: Bool
 
-        private let content: () -> Content
+        // MARK: - Required Configuration
+
         private let icon: String
-        private let selectedIcon: String?
-        private let isCompact: Bool
         private let title: String
+
+        // MARK: - Button Configuration
+
         private let onSelect: () -> Void
+        private let selectedIcon: String?
+
+        // MARK: - Menu Configuration
+
+        private let content: () -> Content
+        private let isCompact: Bool
+
+        // MARK: - Label Icon
 
         private var labelIconName: String {
             isSelected ? selectedIcon ?? icon : icon
@@ -46,10 +56,6 @@ extension ItemView {
                     Menu(content: content) {
                         labelView
                     }
-                    .scaleEffect(isFocused ? 1.2 : 1.0)
-                    .animation(
-                        .spring(response: 0.2, dampingFraction: 1), value: isFocused
-                    )
                     .menuStyle(.borderlessButton)
                 }
             }
@@ -60,28 +66,22 @@ extension ItemView {
 
         private var labelView: some View {
             ZStack {
-                let isButton = Content.self == EmptyView.self
-
-                if isButton, isSelected {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(
-                            isFocused ? AnyShapeStyle(HierarchicalShapeStyle.primary) :
-                                AnyShapeStyle(HierarchicalShapeStyle.primary.opacity(0.5))
-                        )
-                } else {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(isFocused ? Color.white : Color.white.opacity(0.5))
-                }
+                RoundedRectangle(cornerRadius: 10)
+                    .foregroundStyle(isSelected ? .secondary : .tertiary)
+                    .opacity(isFocused ? 1.0 : 0.5)
 
                 Label(title, systemImage: labelIconName)
                     .focusEffectDisabled()
                     .font(.title3)
                     .fontWeight(.semibold)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(.primary)
+                    .symbolRenderingMode(.monochrome)
                     .labelStyle(.iconOnly)
                     .rotationEffect(isCompact ? .degrees(90) : .degrees(0))
             }
             .accessibilityLabel(title)
+            .scaleEffect(isFocused ? 1.1 : 1.0)
+            .animation(.easeInOut(duration: 0.125), value: isFocused)
         }
     }
 }
