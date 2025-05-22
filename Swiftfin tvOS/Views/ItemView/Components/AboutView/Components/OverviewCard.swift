@@ -21,7 +21,7 @@ extension ItemView.AboutView {
         var body: some View {
             Card(title: item.displayTitle)
                 .content {
-                    TruncatedText(item.overview ?? L10n.noOverviewAvailable)
+                    TruncatedText(item.cleanedOverview ?? L10n.noOverviewAvailable)
                         .font(.subheadline)
                         .lineLimit(4)
                 }
