@@ -62,13 +62,13 @@ extension ItemView {
                 ActionButton(
                     L10n.played,
                     icon: "checkmark.circle",
-                    selectedIcon: "checkmark.circle.fill",
-                    buttonColor: accentColor
+                    selectedIcon: "checkmark.circle.fill"
                 ) {
                     UIDevice.impact(.light)
                     viewModel.send(.toggleIsPlayed)
                 }
                 .environment(\.isSelected, isCheckmarkSelected)
+                .foregroundStyle(isCheckmarkSelected ? accentColor : Color.gray, accentColor.overlayColor)
                 .if(equalSpacing) { view in
                     view.frame(maxWidth: .infinity)
                 }
@@ -83,12 +83,12 @@ extension ItemView {
                 ActionButton(
                     L10n.favorited,
                     icon: "heart",
-                    selectedIcon: "heart.fill",
-                    buttonColor: .pink
+                    selectedIcon: "heart.fill"
                 ) {
                     UIDevice.impact(.light)
                     viewModel.send(.toggleIsFavorite)
                 }
+                .foregroundStyle(isHeartSelected ? Color.red : Color.gray, accentColor.overlayColor)
                 .environment(\.isSelected, isHeartSelected)
                 .if(equalSpacing) { view in
                     view.frame(maxWidth: .infinity)
@@ -103,6 +103,7 @@ extension ItemView {
                    mediaSources.count > 1
                 {
                     VersionMenu(viewModel: viewModel, mediaSources: mediaSources)
+                        .foregroundStyle(Color.gray, accentColor.overlayColor)
                         .if(equalSpacing) { view in
                             view.frame(maxWidth: .infinity)
                         }
@@ -118,6 +119,7 @@ extension ItemView {
                         localTrailers: viewModel.localTrailers,
                         externalTrailers: viewModel.item.remoteTrailers ?? []
                     )
+                    .foregroundStyle(Color.gray, accentColor.overlayColor)
                     .if(equalSpacing) { view in
                         view.frame(maxWidth: .infinity)
                     }

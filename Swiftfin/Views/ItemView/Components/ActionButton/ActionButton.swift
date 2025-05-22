@@ -13,11 +13,6 @@ extension ItemView {
 
     struct ActionButton<Content: View>: View {
 
-        // MARK: - Accent Color
-
-        @Default(.accentColor)
-        private var accentColor
-
         // MARK: - Environment Objects
 
         @Environment(\.isSelected)
@@ -30,7 +25,6 @@ extension ItemView {
         private let onSelect: () -> Void
         private let selectedIcon: String?
         private let title: String
-        private let buttonColor: Color?
 
         // MARK: - Label Icon
 
@@ -48,10 +42,18 @@ extension ItemView {
                     }
                     .buttonStyle(.borderless)
                 } else {
-                    Menu(content: content) {
-                        labelView
+                    if #available(iOS 16.0, *) {
+                        Menu(content: content) {
+                            labelView
+                        }
+                        .menuStyle(.button)
+                        .buttonStyle(.borderless)
+                    } else {
+                        Menu(content: content) {
+                            labelView
+                        }
+                        .menuStyle(.borderlessButton)
                     }
-                    .menuStyle(.borderlessButton)
                 }
             }
         }
@@ -62,25 +64,15 @@ extension ItemView {
             ZStack {
                 // Background shape
                 RoundedRectangle(cornerRadius: 10)
-                    .foregroundStyle(backgroundFill)
+                    .foregroundStyle(.primary)
 
                 // Icon
                 Image(systemName: labelIconName)
                     .backport
                     .fontWeight(.bold)
-                    .foregroundStyle(accentColor.overlayColor)
+                    .foregroundStyle(.secondary)
             }
             .accessibilityLabel(title)
-        }
-
-        // MARK: - Background Fill
-
-        private var backgroundFill: some ShapeStyle {
-            guard let buttonColor else {
-                return .gray
-            }
-
-            return isSelected ? buttonColor : .gray
         }
     }
 }
@@ -95,13 +87,11 @@ extension ItemView.ActionButton {
         _ title: String,
         icon: String,
         selectedIcon: String? = nil,
-        buttonColor: Color? = nil,
         onSelect: @escaping () -> Void
     ) where Content == EmptyView {
         self.title = title
         self.icon = icon
         self.selectedIcon = selectedIcon
-        self.buttonColor = buttonColor
         self.onSelect = onSelect
         self.content = { EmptyView() }
     }
@@ -111,13 +101,11 @@ extension ItemView.ActionButton {
     init(
         _ title: String,
         icon: String,
-        buttonColor: Color? = nil,
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.title = title
         self.icon = icon
         self.selectedIcon = nil
-        self.buttonColor = buttonColor
         self.onSelect = {}
         self.content = content
     }

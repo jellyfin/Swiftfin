@@ -24,8 +24,8 @@ extension ItemView {
 
         private let content: () -> Content
         private let icon: String
-        private let isCompact: Bool
         private let selectedIcon: String?
+        private let isCompact: Bool
         private let title: String
         private let onSelect: () -> Void
 
@@ -50,9 +50,7 @@ extension ItemView {
                     .animation(
                         .spring(response: 0.2, dampingFraction: 1), value: isFocused
                     )
-                    .buttonStyle(.plain)
                     .menuStyle(.borderlessButton)
-                    .focused($isFocused)
                 }
             }
             .focused($isFocused)
