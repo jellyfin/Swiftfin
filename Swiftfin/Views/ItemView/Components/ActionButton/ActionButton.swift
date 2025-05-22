@@ -23,12 +23,16 @@ extension ItemView {
         @Environment(\.isSelected)
         private var isSelected
 
+        // MARK: - Configuration
+
         private let content: () -> Content
         private let icon: String
         private let onSelect: () -> Void
         private let selectedIcon: String?
         private let title: String
         private let buttonColor: Color?
+
+        // MARK: - Label Icon
 
         private var labelIconName: String {
             isSelected ? selectedIcon ?? icon : icon
@@ -58,7 +62,7 @@ extension ItemView {
             ZStack {
                 // Tint Background shape
                 RoundedRectangle(cornerRadius: 10)
-                    .foregroundStyle(Color.primary.opacity(0.5))
+                    .foregroundStyle(accentColor.overlayColor.overlayColor.opacity(0.1))
 
                 // Background shape
                 RoundedRectangle(cornerRadius: 10)
@@ -75,12 +79,12 @@ extension ItemView {
 
         // MARK: - Background Fill
 
-        private var backgroundFill: AnyShapeStyle {
-            if isSelected, let buttonColor {
-                return AnyShapeStyle(buttonColor)
-            } else {
-                return AnyShapeStyle(.ultraThinMaterial)
+        private var backgroundFill: some ShapeStyle {
+            guard let buttonColor else {
+                return .gray
             }
+
+            return isSelected ? buttonColor : .gray
         }
     }
 }
