@@ -22,11 +22,18 @@ final class CustomizeSettingsCoordinator: NavigationCoordinatable {
     var itemViewAttributes = makeItemViewAttributes
     @Route(.push)
     var listColumnSettings = makeListColumnSettings
+    @Route(.push)
+    var itemFilterDrawerSelector = makeItemFilterDrawerSelector
 
     func makeIndicatorSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             IndicatorSettingsView()
         }
+    }
+
+    func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
+        OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
+            .navigationTitle(L10n.filters)
     }
 
     func makeItemViewAttributes(selection: Binding<[ItemViewAttribute]>) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {

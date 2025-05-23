@@ -42,56 +42,51 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
     }
 
     var body: some View {
-        NavigationView {
-            SplitFormWindowView()
-                .descriptionView {
-                    Image(systemName: systemImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(maxWidth: 400)
-                }
-                .contentView {
-                    List {
-                        EnabledSection(
-                            elements: $selection.value,
-                            label: label,
-                            isEditing: editMode?.wrappedValue.isEditing ?? false,
-                            select: select,
-                            move: move,
-                            header: {
-                                Group {
-                                    HStack {
-                                        Text(L10n.enabled)
-                                        Spacer()
-                                        if editMode?.wrappedValue.isEditing ?? false {
-                                            Button(L10n.done) {
-                                                withAnimation {
-                                                    editMode?.wrappedValue = .inactive
-                                                }
-                                            }
-                                        } else {
-                                            Button(L10n.edit) {
-                                                withAnimation {
-                                                    editMode?.wrappedValue = .active
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        )
+        SplitFormWindowView()
+            .descriptionView {
+                Image(systemName: systemImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: 400)
+            }
+            .contentView {
+                List {
+                    EnabledSection(
+                        elements: $selection.value,
+                        label: label,
+                        isEditing: editMode?.wrappedValue.isEditing ?? false,
+                        select: select,
+                        move: move,
+                        header: L10n.enabled
+                    )
 
-                        DisabledSection(
-                            elements: disabledSelection,
-                            label: label,
-                            isEditing: editMode?.wrappedValue.isEditing ?? false,
-                            select: select
-                        )
-                    }
-                    .environment(\.editMode, editMode)
+                    DisabledSection(
+                        elements: disabledSelection,
+                        label: label,
+                        isEditing: editMode?.wrappedValue.isEditing ?? false,
+                        select: select
+                    )
                 }
-                .animation(.linear(duration: 0.2), value: selection.value)
-        }
+                .environment(\.editMode, editMode)
+            }
+            .animation(.linear(duration: 0.2), value: selection.value)
+            .topBarTrailing {
+                if editMode?.wrappedValue.isEditing ?? false {
+                    Button(L10n.done) {
+                        withAnimation {
+                            editMode?.wrappedValue = .inactive
+                        }
+                    }
+                    .focusSection()
+                } else {
+                    Button(L10n.edit) {
+                        withAnimation {
+                            editMode?.wrappedValue = .active
+                        }
+                    }
+                    .focusSection()
+                }
+            }
     }
 }
 
@@ -104,10 +99,10 @@ private struct EnabledSection<Element: Displayable & Hashable>: View {
     let isEditing: Bool
     let select: (Element) -> Void
     let move: (IndexSet, Int) -> Void
-    let header: () -> any View
+    let header: String
 
     var body: some View {
-        Section {
+        Section(header) {
             if elements.isEmpty {
                 Text(L10n.none)
                     .foregroundStyle(.secondary)
@@ -134,9 +129,6 @@ private struct EnabledSection<Element: Displayable & Hashable>: View {
                 }
             }
             .onMove(perform: move)
-        } header: {
-            header()
-                .eraseToAnyView()
         }
     }
 }
