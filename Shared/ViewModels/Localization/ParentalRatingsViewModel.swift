@@ -35,10 +35,6 @@ final class ParentalRatingsViewModel: ViewModel, Stateful {
 
     private var currentRefreshTask: AnyCancellable?
 
-    var hasNoResults: Bool {
-        parentalRatings.isEmpty
-    }
-
     func respond(to action: Action) -> State {
         switch action {
         case .refresh:
