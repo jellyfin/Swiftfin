@@ -144,8 +144,8 @@ extension ItemView.CinematicScrollView {
                         }
 
                         ItemView.ActionButtonHStack(viewModel: viewModel)
-                            .font(.title)
-                            .foregroundColor(.white)
+                            .font(.system(size: 20))
+                            .frame(height: 50)
                     }
                     .frame(maxWidth: 300)
                 }
