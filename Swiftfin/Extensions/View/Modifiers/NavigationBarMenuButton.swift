@@ -27,13 +27,21 @@ struct NavigationBarMenuButtonModifier<Content: View>: ViewModifier {
                 }
 
                 if !isHidden {
-                    Menu(L10n.options, systemImage: "ellipsis.circle") {
-                        items()
+                    if #available(iOS 16.0, *) {
+                        Menu(L10n.options, systemImage: "ellipsis") {
+                            items()
+                        }
+                        .menuStyle(.button)
+                        .buttonStyle(.ornament)
+                    } else {
+                        Menu(L10n.options, systemImage: "ellipsis.circle") {
+                            items()
+                        }
+                        .labelStyle(.iconOnly)
+                        .backport
+                        .fontWeight(.semibold)
+                        .foregroundStyle(accentColor)
                     }
-                    .labelStyle(.iconOnly)
-                    .backport
-                    .fontWeight(.semibold)
-                    .foregroundStyle(accentColor)
                 }
             }
         }
