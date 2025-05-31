@@ -11,8 +11,6 @@ import Factory
 import JellyfinAPI
 import SwiftUI
 
-// TODO: replace `equalSpacing` handling with a `Layout`
-
 extension ItemView {
 
     struct ActionButtonHStack: View {
@@ -25,6 +23,9 @@ extension ItemView {
 
         @ObservedObject
         private var viewModel: ItemViewModel
+
+        @EnvironmentObject
+        private var router: MainCoordinator.Router
 
         private let equalSpacing: Bool
 
@@ -52,7 +53,7 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            HStack(alignment: .center, spacing: 15) {
+            HStack(alignment: .center, spacing: 10) {
 
                 // MARK: Toggle Played
 
@@ -63,19 +64,13 @@ extension ItemView {
                     icon: "checkmark.circle",
                     selectedIcon: "checkmark.circle.fill"
                 ) {
-                    UIDevice.impact(.light)
                     viewModel.send(.toggleIsPlayed)
                 }
+                .foregroundStyle(accentColor.overlayColor, accentColor, .gray)
                 .environment(\.isSelected, isCheckmarkSelected)
-                .if(isCheckmarkSelected) { item in
-                    item
-                        .foregroundStyle(
-                            .primary,
-                            accentColor
-                        )
-                }
-                .if(equalSpacing) { view in
-                    view.frame(maxWidth: .infinity)
+                .frame(maxWidth: .infinity)
+                .if(!equalSpacing) { view in
+                    view.aspectRatio(1, contentMode: .fit)
                 }
 
                 // MARK: Toggle Favorite
@@ -87,16 +82,13 @@ extension ItemView {
                     icon: "heart",
                     selectedIcon: "heart.fill"
                 ) {
-                    UIDevice.impact(.light)
                     viewModel.send(.toggleIsFavorite)
                 }
+                .foregroundStyle(accentColor.overlayColor, .red, .gray)
                 .environment(\.isSelected, isHeartSelected)
-                .if(isHeartSelected) { item in
-                    item
-                        .foregroundStyle(Color.red)
-                }
-                .if(equalSpacing) { view in
-                    view.frame(maxWidth: .infinity)
+                .frame(maxWidth: .infinity)
+                .if(!equalSpacing) { view in
+                    view.aspectRatio(1, contentMode: .fit)
                 }
 
                 // MARK: Select a Version
@@ -105,8 +97,10 @@ extension ItemView {
                    mediaSources.count > 1
                 {
                     VersionMenu(viewModel: viewModel, mediaSources: mediaSources)
-                        .if(equalSpacing) { view in
-                            view.frame(maxWidth: .infinity)
+                        .foregroundStyle(accentColor.overlayColor, .gray)
+                        .frame(maxWidth: .infinity)
+                        .if(!equalSpacing) { view in
+                            view.aspectRatio(1, contentMode: .fit)
                         }
                 }
 
@@ -117,8 +111,10 @@ extension ItemView {
                         localTrailers: viewModel.localTrailers,
                         externalTrailers: viewModel.item.remoteTrailers ?? []
                     )
-                    .if(equalSpacing) { view in
-                        view.frame(maxWidth: .infinity)
+                    .foregroundStyle(accentColor.overlayColor, .gray)
+                    .frame(maxWidth: .infinity)
+                    .if(!equalSpacing) { view in
+                        view.aspectRatio(1, contentMode: .fit)
                     }
                 }
             }
