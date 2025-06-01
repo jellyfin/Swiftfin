@@ -48,8 +48,14 @@ extension ItemView {
             OffsetScrollView(
                 headerHeight: globalSize.isLandscape ? 0.75 : 0.6
             ) {
-                ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1920))
-                    .aspectRatio(1.77, contentMode: .fill)
+                // Use the Image Backdrop if provided. Otherwise, use the Series Backdrop.
+                if viewModel.item.type == .episode && viewModel.item.backdropImageTags == [] {
+                    ImageView(viewModel.item.seriesImageSource(.backdrop, maxWidth: 1920))
+                        .aspectRatio(1.77, contentMode: .fill)
+                } else {
+                    ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1920))
+                        .aspectRatio(1.77, contentMode: .fill)
+                }
             } overlay: {
                 VStack(spacing: 0) {
                     Spacer()
