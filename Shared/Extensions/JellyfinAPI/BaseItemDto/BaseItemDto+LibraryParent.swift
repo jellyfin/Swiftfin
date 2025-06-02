@@ -23,12 +23,19 @@ extension BaseItemDto: LibraryParent {
         case (.tvshows, _):
             return [.series]
         case (.boxsets, _):
-            return [.boxSet]
+            return BaseItemKind.supportedCases
         case (_, .folder):
             return BaseItemKind.supportedCases
                 .appending([.folder, .collectionFolder])
         default:
             return BaseItemKind.supportedCases
         }
+    }
+
+    var recursiveCases: Bool {
+        if let collectionType = collectionType, [CollectionType.tvshows, CollectionType.boxsets].contains(collectionType) {
+            return false
+        }
+        return true
     }
 }
