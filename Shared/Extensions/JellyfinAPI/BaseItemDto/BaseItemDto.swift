@@ -17,7 +17,7 @@ import UIKit
 extension BaseItemDto: Displayable {
 
     var displayTitle: String {
-        name ?? .emptyDash
+        name ?? L10n.unknown
     }
 }
 
@@ -261,7 +261,6 @@ extension BaseItemDto {
             album
         case .episode:
             seriesName
-        case .program: nil
         default:
             nil
         }

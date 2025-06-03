@@ -10,7 +10,6 @@ import Combine
 import Foundation
 import IdentifiedCollections
 import JellyfinAPI
-import OrderedCollections
 import SwiftUI
 
 final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {

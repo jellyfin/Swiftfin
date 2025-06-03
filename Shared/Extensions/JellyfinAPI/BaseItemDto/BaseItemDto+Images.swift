@@ -101,7 +101,8 @@ extension BaseItemDto {
         let parameters = Paths.GetItemImageParameters(
             maxWidth: scaleWidth,
             maxHeight: scaleHeight,
-            tag: tag
+            tag: tag,
+            format: type == .logo ? .png : nil
         )
 
         let request = Paths.getItemImage(

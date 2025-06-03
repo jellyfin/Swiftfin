@@ -12,7 +12,7 @@ import SwiftUI
 
 extension ItemView {
 
-    struct CinematicScrollView<Content: View>: View {
+    struct CinematicScrollView<Content: View>: ScrollContainerView {
 
         @Default(.Customization.CinematicItemViewType.usePrimaryImage)
         private var usePrimaryImage
@@ -21,14 +21,29 @@ extension ItemView {
         private var router: ItemCoordinator.Router
 
         @ObservedObject
-        var viewModel: ItemViewModel
+        private var viewModel: ItemViewModel
 
-        @State
-        private var scrollViewOffset: CGFloat = 0
-        @State
-        private var blurHashBottomEdgeColor: Color = .secondarySystemFill
+        private let blurHashBottomEdgeColor: Color
+        private let content: Content
 
-        let content: () -> Content
+        init(
+            viewModel: ItemViewModel,
+            content: @escaping () -> Content
+        ) {
+            if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
+                let bottomRGB = BlurHash(string: backdropBlurHash)!.averageLinearRGB
+                blurHashBottomEdgeColor = Color(
+                    red: Double(bottomRGB.0),
+                    green: Double(bottomRGB.1),
+                    blue: Double(bottomRGB.2)
+                )
+            } else {
+                blurHashBottomEdgeColor = Color.secondarySystemFill
+            }
+
+            self.content = content()
+            self.viewModel = viewModel
+        }
 
         @ViewBuilder
         private var headerView: some View {
@@ -39,16 +54,6 @@ extension ItemView {
             .aspectRatio(usePrimaryImage ? (2 / 3) : 1.77, contentMode: .fill)
             .frame(height: UIScreen.main.bounds.height * 0.6)
             .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
-            .onAppear {
-                if let headerBlurHash = viewModel.item.blurHash(.backdrop) {
-                    let bottomRGB = BlurHash(string: headerBlurHash)!.averageLinearRGB
-                    blurHashBottomEdgeColor = Color(
-                        red: Double(bottomRGB.0),
-                        green: Double(bottomRGB.1),
-                        blue: Double(bottomRGB.2)
-                    )
-                }
-            }
         }
 
         var body: some View {
@@ -77,7 +82,7 @@ extension ItemView {
                         }
                 }
             } content: {
-                content()
+                content
                     .edgePadding(.vertical)
             }
         }
@@ -89,7 +94,7 @@ extension ItemView.CinematicScrollView {
     struct OverlayView: View {
 
         @Default(.Customization.CinematicItemViewType.usePrimaryImage)
-        private var cinematicItemViewTypeUsePrimaryImage
+        private var usePrimaryImage
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
@@ -99,7 +104,7 @@ extension ItemView.CinematicScrollView {
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
                 VStack(alignment: .center, spacing: 10) {
-                    if !cinematicItemViewTypeUsePrimaryImage {
+                    if !usePrimaryImage {
                         ImageView(viewModel.item.imageURL(.logo, maxHeight: 100))
                             .placeholder { _ in
                                 EmptyView()
@@ -132,14 +137,17 @@ extension ItemView.CinematicScrollView {
                     .foregroundColor(Color(UIColor.lightGray))
                     .padding(.horizontal)
 
-                    ItemView.PlayButton(viewModel: viewModel)
-                        .frame(maxWidth: 300)
-                        .frame(height: 50)
+                    Group {
+                        if viewModel.presentPlayButton {
+                            ItemView.PlayButton(viewModel: viewModel)
+                                .frame(height: 50)
+                        }
 
-                    ItemView.ActionButtonHStack(viewModel: viewModel)
-                        .font(.title)
-                        .frame(maxWidth: 300)
-                        .foregroundColor(.white)
+                        ItemView.ActionButtonHStack(viewModel: viewModel)
+                            .font(.title)
+                            .foregroundColor(.white)
+                    }
+                    .frame(maxWidth: 300)
                 }
                 .frame(maxWidth: .infinity)
 
@@ -148,7 +156,7 @@ extension ItemView.CinematicScrollView {
                     .taglineLineLimit(2)
                     .foregroundColor(.white)
 
-                ItemView.AttributesHStack(viewModel: viewModel)
+                ItemView.AttributesHStack(viewModel: viewModel, alignment: .leading)
             }
         }
     }

@@ -11,27 +11,34 @@ import SwiftUI
 
 extension ItemView {
 
-    struct CompactPosterScrollView<Content: View>: View {
+    struct CompactPosterScrollView<Content: View>: ScrollContainerView {
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
 
         @ObservedObject
-        var viewModel: ItemViewModel
+        private var viewModel: ItemViewModel
 
-        @State
-        private var scrollViewOffset: CGFloat = 0
-        @State
-        private var blurHashBottomEdgeColor: Color = .secondarySystemFill
+        private let blurHashBottomEdgeColor: Color
+        private let content: Content
 
-        let content: () -> Content
+        init(
+            viewModel: ItemViewModel,
+            content: @escaping () -> Content
+        ) {
+            if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
+                let bottomRGB = BlurHash(string: backdropBlurHash)!.averageLinearRGB
+                blurHashBottomEdgeColor = Color(
+                    red: Double(bottomRGB.0),
+                    green: Double(bottomRGB.1),
+                    blue: Double(bottomRGB.2)
+                )
+            } else {
+                blurHashBottomEdgeColor = Color.secondarySystemFill
+            }
 
-        private var topOpacity: CGFloat {
-            let start = UIScreen.main.bounds.height * 0.20
-            let end = UIScreen.main.bounds.height * 0.4
-            let diff = end - start
-            let opacity = clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
-            return opacity
+            self.content = content()
+            self.viewModel = viewModel
         }
 
         @ViewBuilder
@@ -40,16 +47,6 @@ extension ItemView {
                 .aspectRatio(1.77, contentMode: .fill)
                 .frame(height: UIScreen.main.bounds.height * 0.35)
                 .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
-                .onAppear {
-                    if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
-                        let bottomRGB = BlurHash(string: backdropBlurHash)!.averageLinearRGB
-                        blurHashBottomEdgeColor = Color(
-                            red: Double(bottomRGB.0),
-                            green: Double(bottomRGB.1),
-                            blue: Double(bottomRGB.2)
-                        )
-                    }
-                }
         }
 
         var body: some View {
@@ -87,7 +84,7 @@ extension ItemView {
 
                     RowDivider()
 
-                    content()
+                    content
                 }
                 .edgePadding(.vertical)
             }
@@ -133,7 +130,7 @@ extension ItemView.CompactPosterScrollView {
                 .font(.subheadline.weight(.medium))
                 .foregroundColor(Color(UIColor.lightGray))
 
-                ItemView.AttributesHStack(viewModel: viewModel)
+                ItemView.AttributesHStack(viewModel: viewModel, alignment: .leading)
             }
         }
 
@@ -155,8 +152,10 @@ extension ItemView.CompactPosterScrollView {
 
                 HStack(alignment: .center) {
 
-                    ItemView.PlayButton(viewModel: viewModel)
-                        .frame(width: 130, height: 40)
+                    if viewModel.presentPlayButton {
+                        ItemView.PlayButton(viewModel: viewModel)
+                            .frame(width: 130, height: 40)
+                    }
 
                     Spacer()
 

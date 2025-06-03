@@ -9,14 +9,16 @@
 import JellyfinAPI
 import SwiftUI
 
-struct iPadOSMovieItemView: View {
+extension ActivityLogEntry: Poster {
+    var displayTitle: String {
+        name ?? L10n.unknown
+    }
 
-    @ObservedObject
-    var viewModel: MovieItemViewModel
+    var unwrappedIDHashOrZero: Int {
+        id?.hashValue ?? 0
+    }
 
-    var body: some View {
-        ItemView.iPadOSCinematicScrollView(viewModel: viewModel) {
-            ContentView(viewModel: viewModel)
-        }
+    var systemImage: String {
+        "text.document"
     }
 }

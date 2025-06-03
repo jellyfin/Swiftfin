@@ -163,12 +163,12 @@ struct ChannelLibraryView: View {
 
             Menu {
                 // We repurposed `LibraryDisplayType` but want different labels
-                Picker("Channel Display", selection: $channelDisplayType) {
+                Picker(L10n.channelDisplay, selection: $channelDisplayType) {
 
                     Label(L10n.compact, systemImage: LibraryDisplayType.grid.systemImage)
                         .tag(LibraryDisplayType.grid)
 
-                    Label("Detailed", systemImage: LibraryDisplayType.list.systemImage)
+                    Label(L10n.detailed, systemImage: LibraryDisplayType.list.systemImage)
                         .tag(LibraryDisplayType.list)
                 }
             } label: {

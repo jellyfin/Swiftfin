@@ -55,10 +55,10 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
             ) {
                 if videoPlayerManager.state == .playing {
                     videoPlayerManager.proxy.pause()
-                    updateViewProxy.present(systemName: "pause.fill", title: "Pause")
+                    updateViewProxy.present(systemName: "pause.fill", title: L10n.pause)
                 } else {
                     videoPlayerManager.proxy.play()
-                    updateViewProxy.present(systemName: "play.fill", title: "Play")
+                    updateViewProxy.present(systemName: "play.fill", title: L10n.play)
                 }
             }
 
@@ -139,7 +139,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
             // MARK: aspect fill
 
             KeyCommandAction(
-                title: "Aspect Fill",
+                title: L10n.aspectFill,
                 input: "f",
                 modifierFlags: .command
             ) {
@@ -151,7 +151,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
             // MARK: decrease playback speed
 
             KeyCommandAction(
-                title: "Decrease Playback Speed",
+                title: L10n.decreasePlaybackSpeed,
                 input: "[",
                 modifierFlags: .command
             ) {
@@ -171,7 +171,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
             // MARK: increase playback speed
 
             KeyCommandAction(
-                title: "Increase Playback Speed",
+                title: L10n.increasePlaybackSpeed,
                 input: "]",
                 modifierFlags: .command
             ) {
@@ -191,7 +191,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
             // MARK: reset playback speed
 
             KeyCommandAction(
-                title: "Reset Playback Speed",
+                title: L10n.resetPlaybackSpeed,
                 input: "\\",
                 modifierFlags: .command
             ) {
