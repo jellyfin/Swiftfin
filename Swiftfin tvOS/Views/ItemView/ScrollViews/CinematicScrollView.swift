@@ -20,7 +20,11 @@ extension ItemView {
 
         var body: some View {
             ZStack {
-                ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1920))
+                if viewModel.item.type == .episode {
+                    ImageView(viewModel.item.imageSource(.primary, maxWidth: 1920))
+                } else {
+                    ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1920))
+                }
 
                 ScrollView(.vertical, showsIndicators: false) {
                     content()
