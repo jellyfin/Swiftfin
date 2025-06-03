@@ -20,12 +20,7 @@ extension ItemView {
 
         var body: some View {
             ZStack {
-                // Use the Image Backdrop if provided. Otherwise, use the Series Backdrop.
-                if viewModel.item.type == .episode && viewModel.item.backdropImageTags == [] {
-                    ImageView(viewModel.item.seriesImageSource(.backdrop, maxWidth: 1920))
-                } else {
-                    ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1920))
-                }
+                ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1920))
 
                 ScrollView(.vertical, showsIndicators: false) {
                     content()
