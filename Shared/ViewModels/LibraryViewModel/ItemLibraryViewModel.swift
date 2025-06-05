@@ -62,7 +62,7 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         parameters.sortBy = [ItemSortBy.name.rawValue]
 
         /// Recursive should only apply to parents/folders and not to baseItems
-        parameters.isRecursive = (parent as? BaseItemDto)?.isRecursiveCollection ?? false
+        parameters.isRecursive = (parent as? BaseItemDto)?.isRecursiveCollection ?? true
 
         // Parent
         if let parent {
