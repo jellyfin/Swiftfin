@@ -12,14 +12,26 @@ extension ItemView {
 
     struct ActionButton<Content: View>: View {
 
+        // MARK: - Environment Objects
+
         @Environment(\.isSelected)
         private var isSelected
 
-        private let content: () -> Content
+        // MARK: - Required Configuration
+
         private let icon: String
+        private let title: String
+
+        // MARK: - Button Configuration
+
         private let onSelect: () -> Void
         private let selectedIcon: String?
-        private let title: String
+
+        // MARK: - Menu Configuration
+
+        private let content: () -> Content
+
+        // MARK: - Label Icon
 
         private var labelIconName: String {
             isSelected ? selectedIcon ?? icon : icon
@@ -30,23 +42,45 @@ extension ItemView {
         var body: some View {
             Group {
                 if Content.self == EmptyView.self {
-                    Button(
-                        title,
-                        systemImage: labelIconName,
-                        action: onSelect
-                    )
-                    .buttonStyle(.plain)
+                    Button {
+                        UIDevice.impact(.light)
+                        onSelect()
+                    } label: {
+                        labelView
+                    }
+                    .buttonStyle(.borderless)
                 } else {
-                    Menu(
-                        title,
-                        systemImage: labelIconName,
-                        content: content
-                    )
+                    // TODO: Use only this on iOS 16+
+                    if #available(iOS 16.0, *) {
+                        Menu(content: content) {
+                            labelView
+                        }
+                        .menuStyle(.button)
+                        .buttonStyle(.borderless)
+                    } else {
+                        Menu(content: content) {
+                            labelView
+                        }
+                        .menuStyle(.borderlessButton)
+                    }
                 }
             }
-            .symbolRenderingMode(.palette)
-            .labelStyle(.iconOnly)
-            .animation(.easeInOut(duration: 0.1), value: isSelected)
+        }
+
+        // MARK: - Label Views
+
+        private var labelView: some View {
+            ZStack {
+                RoundedRectangle(cornerRadius: 10)
+                    .foregroundStyle(isSelected ? .secondary : .tertiary)
+
+                Image(systemName: labelIconName)
+                    .backport
+                    .fontWeight(.bold)
+                    .foregroundStyle(.primary)
+                    .symbolRenderingMode(.monochrome)
+            }
+            .accessibilityLabel(title)
         }
     }
 }
@@ -79,7 +113,7 @@ extension ItemView.ActionButton {
     ) {
         self.title = title
         self.icon = icon
-        self.selectedIcon = icon
+        self.selectedIcon = nil
         self.onSelect = {}
         self.content = content
     }
