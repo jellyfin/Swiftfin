@@ -20,16 +20,10 @@ struct NavigationBarCloseButtonModifier: ViewModifier {
     func body(content: Content) -> some View {
         content.toolbar {
             ToolbarItemGroup(placement: .topBarLeading) {
-                Button {
-                    action()
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .backport
-                        .fontWeight(.bold)
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(accentColor.overlayColor, accentColor)
-                        .opacity(disabled ? 0.75 : 1)
+                Button(action: action) {
+                    Label(L10n.close, systemImage: "xmark")
                 }
+                .buttonStyle(.ornament)
                 .disabled(disabled)
             }
         }
