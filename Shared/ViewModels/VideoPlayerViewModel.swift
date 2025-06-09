@@ -115,6 +115,12 @@ final class VideoPlayerViewModel: ViewModel {
         self.subtitleStreams = adjustedStreams.filter { $0.type == MediaStreamType.subtitle }
 
         self.selectedAudioStreamIndex = selectedAudioStreamIndex
+        print("[VideoPlayerViewModel] Initialized with audio stream index: \(selectedAudioStreamIndex)")
+        if let stream = self.audioStreams.first(where: { $0.index == selectedAudioStreamIndex }) {
+            print(
+                "[VideoPlayerViewModel] Playing with audio stream codec: \(stream.codec ?? "unknown"), profile: \(stream.profile ?? "unknown")"
+            )
+        }
         self.selectedSubtitleStreamIndex = selectedSubtitleStreamIndex
         self.chapters = chapters
         self.playMethod = playMethod

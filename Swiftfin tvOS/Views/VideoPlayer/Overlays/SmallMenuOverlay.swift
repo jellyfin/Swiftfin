@@ -66,8 +66,16 @@ extension VideoPlayer {
             HStack {
                 ForEach(viewModel.audioStreams, id: \.self) { mediaStream in
                     Button {
-                        videoPlayerManager.audioTrackIndex = mediaStream.index ?? -1
-                        videoPlayerManager.proxy.setAudioTrack(.absolute(mediaStream.index ?? -1))
+                        let newIndex = mediaStream.index ?? -1
+
+                        // For online playback, we need to re-request from server
+                        if let onlineManager = videoPlayerManager as? OnlineVideoPlayerManager {
+                            onlineManager.switchAudioTrack(to: newIndex)
+                        } else {
+                            // For offline/downloaded content, just switch locally
+                            videoPlayerManager.audioTrackIndex = newIndex
+                            videoPlayerManager.proxy.setAudioTrack(.absolute(newIndex))
+                        }
                     } label: {
                         Label(
                             mediaStream.displayTitle ?? L10n.noTitle,

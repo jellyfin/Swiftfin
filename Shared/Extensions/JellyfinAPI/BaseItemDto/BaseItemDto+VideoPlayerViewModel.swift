@@ -14,7 +14,7 @@ import Logging
 
 extension BaseItemDto {
 
-    func videoPlayerViewModel(with mediaSource: MediaSourceInfo) async throws -> VideoPlayerViewModel {
+    func videoPlayerViewModel(with mediaSource: MediaSourceInfo, audioStreamIndex: Int? = nil) async throws -> VideoPlayerViewModel {
 
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
         let currentVideoBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
@@ -29,10 +29,14 @@ extension BaseItemDto {
 
         let userSession = Container.shared.currentUserSession()!
 
-        let playbackInfo = PlaybackInfoDto(deviceProfile: profile)
+        let playbackInfo = PlaybackInfoDto(
+            audioStreamIndex: audioStreamIndex,
+            deviceProfile: profile
+        )
         let playbackInfoParameters = Paths.GetPostedPlaybackInfoParameters(
             userID: userSession.user.id,
             maxStreamingBitrate: maxBitrate,
+            audioStreamIndex: audioStreamIndex,
             mediaSourceID: mediaSource.id
         )
 
@@ -42,6 +46,17 @@ extension BaseItemDto {
             playbackInfo
         )
 
+        print("[BaseItemDto] Requesting playback info with audioStreamIndex: \(audioStreamIndex ?? -1)")
+        if let url = userSession.client.fullURL(with: request) {
+            print("[BaseItemDto] Sending playback info request to URL: \(url.absoluteString)")
+        }
+        if let httpBody = request.body {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .prettyPrinted
+            if let data = try? encoder.encode(httpBody), let jsonString = String(data: data, encoding: .utf8) {
+                print("[BaseItemDto] Request body: \(jsonString)")
+            }
+        }
         let response = try await userSession.client.send(request)
 
         guard let matchingMediaSource = response.value.mediaSources?
@@ -50,7 +65,11 @@ extension BaseItemDto {
             throw JellyfinAPIError("Matching media source not in playback info")
         }
 
-        return try matchingMediaSource.videoPlayerViewModel(with: self, playSessionID: response.value.playSessionID!)
+        return try matchingMediaSource.videoPlayerViewModel(
+            with: self,
+            playSessionID: response.value.playSessionID!,
+            audioStreamIndex: audioStreamIndex
+        )
     }
 
     func liveVideoPlayerViewModel(with mediaSource: MediaSourceInfo, logger: Logger) async throws -> VideoPlayerViewModel {
