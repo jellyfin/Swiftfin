@@ -45,6 +45,39 @@ extension MediaStream {
         (width ?? 0) > 1900 && type == .video
     }
 
+    /// Determines if the audio stream is lossless.
+    var isLossless: Bool {
+        guard type == .audio, let codec = codec?.lowercased() else { return false }
+
+        // List of known lossless audio codecs
+        let losslessCodecs: [String] = [
+            AudioCodec.flac.rawValue,
+            AudioCodec.alac.rawValue,
+            AudioCodec.truehd.rawValue,
+            AudioCodec.dts_hd.rawValue, // dts-hd ma, dts-hd hra
+        ]
+
+        // Check if the codec is in our lossless list or is a PCM format
+        return losslessCodecs.contains { codec == $0 } || codec.starts(with: "pcm")
+    }
+
+    /// Determines if the audio stream supports Dolby Atmos.
+    var isDolbyAtmos: Bool {
+        guard let codec = codec?.lowercased() else { return false }
+
+        let isEAC3 = codec == AudioCodec.eac3.rawValue
+        let isTrueHD = codec == AudioCodec.truehd.rawValue
+
+        // Check for explicit "atmos" mentions in metadata
+        let hasAtmosInProfile = profile?.lowercased().contains("atmos") == true
+        let hasAtmosInTitle = displayTitle?.lowercased().contains("atmos") == true
+
+        let hasAtmosIndicator = hasAtmosInProfile || hasAtmosInTitle
+
+        // Only detect Atmos for EAC-3 or TrueHD if explicitly indicated
+        return (isEAC3 || isTrueHD) && hasAtmosIndicator
+    }
+
     // MARK: Property groups
 
     var metadataProperties: [TextPair] {

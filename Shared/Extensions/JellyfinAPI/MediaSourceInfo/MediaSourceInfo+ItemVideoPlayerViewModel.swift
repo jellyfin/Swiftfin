@@ -15,30 +15,26 @@ import UIKit
 
 // TODO: strongly type errors
 
-private extension MediaStream {
-    /// Determines if the audio stream is lossless.
-    var isLossless: Bool {
-        guard type == .audio, let codec = codec?.lowercased() else { return false }
-        // List of known lossless audio codecs
-        let losslessCodecs: [String] = [
-            AudioCodec.flac.rawValue,
-            AudioCodec.alac.rawValue,
-            AudioCodec.truehd.rawValue,
-            AudioCodec.dts_hd.rawValue, // dts-hd ma, dts-hd hra
-        ]
-        // Check if the codec is in our lossless list or is a PCM format
-        return losslessCodecs.contains(where: codec.contains) || codec.starts(with: "pcm")
-    }
+// MARK: - Audio Stream Scoring Constants
 
-    var isDolbyAtmos: Bool {
-        guard let codec = codec?.lowercased() else { return false }
-        let isEAC3 = codec == AudioCodec.eac3.rawValue
-        let isTrueHD = codec == AudioCodec.truehd.rawValue
-        let hasAtmosProfile = profile?.lowercased().contains("atmos") ?? false
-        let hasAtmosTag = codecTag?.lowercased() == "ec-3"
+private enum AudioStreamScoring {
+    // Base quality scores for different codec types
+    static let highQualityLossyScore = 25 // EAC-3 without Atmos
+    static let standardLossyScore = 20 // AC-3
+    static let directPlayableLossyScore = 15 // AAC (direct-playable on iOS)
+    static let compressedLossyScore = 10 // DTS
+    static let losslessBaseScore = 8 // TrueHD without Atmos
+    static let dtsHDScore = 7 // DTS-HD
+    static let flacAlacScore = 6 // FLAC/ALAC
+    static let penalizedScore = 1 // TrueHD with Atmos (transcoding required)
 
-        return (isEAC3 && (hasAtmosProfile || hasAtmosTag)) || (isTrueHD && hasAtmosProfile)
-    }
+    // Preference bonuses
+    static let atmosBonus = 100 // Playable Atmos gets highest priority
+    static let losslessBonus = 50 // Lossless preference boost
+
+    // Tie-breaker bonuses
+    static let defaultStreamBonus = 5 // Default stream preference
+    static let firstStreamBonus = 2 // First stream tie-breaker
 }
 
 extension MediaSourceInfo {
@@ -62,30 +58,43 @@ extension MediaSourceInfo {
             // 1. Base Quality Score (Prioritizing high-quality, direct-playable lossy codecs by default)
             switch codec {
             // High-quality lossy
-            case AudioCodec.eac3.rawValue where !stream.isDolbyAtmos: score = 25
-            case AudioCodec.ac3.rawValue: score = 20
-            case AudioCodec.aac.rawValue: score = 15 // Higher than DTS because it's direct-playable
-            case AudioCodec.dts.rawValue: score = 10
+            case AudioCodec.eac3.rawValue where !stream.isDolbyAtmos:
+                score = AudioStreamScoring.highQualityLossyScore
+            case AudioCodec.ac3.rawValue:
+                score = AudioStreamScoring.standardLossyScore
+            case AudioCodec.aac.rawValue:
+                score = AudioStreamScoring.directPlayableLossyScore // Higher than DTS because it's direct-playable
+            case AudioCodec.dts.rawValue:
+                score = AudioStreamScoring.compressedLossyScore
             // Lossless (lower base score, will be boosted by preference)
-            case AudioCodec.truehd.rawValue where !stream.isDolbyAtmos: score = 8
-            case AudioCodec.dts_hd.rawValue: score = 7
-            case AudioCodec.flac.rawValue, AudioCodec.alac.rawValue: score = 6
+            case AudioCodec.truehd.rawValue where !stream.isDolbyAtmos:
+                score = AudioStreamScoring.losslessBaseScore
+            case AudioCodec.dts_hd.rawValue:
+                score = AudioStreamScoring.dtsHDScore
+            case AudioCodec.flac.rawValue, AudioCodec.alac.rawValue:
+                score = AudioStreamScoring.flacAlacScore
             // Penalized
-            case AudioCodec.truehd.rawValue where stream.isDolbyAtmos: score = 1
-            default: score = 0
+            case AudioCodec.truehd.rawValue where stream.isDolbyAtmos:
+                score = AudioStreamScoring.penalizedScore
+            default:
+                score = 0
             }
 
             // 2. Preference Bonuses
             if preferAtmos && stream.isDolbyAtmos && codec == AudioCodec.eac3.rawValue {
-                score += 100 // Playable Atmos is king
+                score += AudioStreamScoring.atmosBonus // Playable Atmos is king
             }
             if preferLossless && stream.isLossless {
-                score += 50 // Boost makes lossless codecs win
+                score += AudioStreamScoring.losslessBonus // Boost makes lossless codecs win
             }
 
             // 3. Tie-breaker Bonuses
-            if stream.isDefault ?? false { score += 5 }
-            if stream.index == firstAudioStreamIndex { score += 2 }
+            if stream.isDefault == true {
+                score += AudioStreamScoring.defaultStreamBonus
+            }
+            if stream.index == firstAudioStreamIndex {
+                score += AudioStreamScoring.firstStreamBonus
+            }
 
             return (stream, score)
         }

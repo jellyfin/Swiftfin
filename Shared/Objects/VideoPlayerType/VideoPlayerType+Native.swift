@@ -10,22 +10,6 @@ import Defaults
 import Foundation
 import JellyfinAPI
 
-private extension MediaStream {
-    /// Determines if the audio stream is lossless.
-    var isLossless: Bool {
-        guard type == .audio, let codec = codec?.lowercased() else { return false }
-        // List of known lossless audio codecs
-        let losslessCodecs: [String] = [
-            AudioCodec.flac.rawValue,
-            AudioCodec.alac.rawValue,
-            AudioCodec.truehd.rawValue,
-            AudioCodec.dts_hd.rawValue, // dts-hd ma, dts-hd hra
-        ]
-        // Check if the codec is in our lossless list or is a PCM format
-        return losslessCodecs.contains(where: codec.contains) || codec.starts(with: "pcm")
-    }
-}
-
 extension VideoPlayerType {
 
     // MARK: direct play
@@ -122,10 +106,7 @@ extension VideoPlayerType {
         // Check source streams for capabilities
         let audioStreams = item?.mediaStreams?.filter { $0.type == .audio } ?? []
         let hasLosslessAudio = audioStreams.contains { $0.isLossless }
-        let hasAtmosTrack = audioStreams.contains {
-            $0.codec?.lowercased() == AudioCodec.eac3.rawValue &&
-                ($0.profile?.lowercased().contains("atmos") == true || $0.codecTag?.lowercased() == "ec-3")
-        }
+        let hasAtmosTrack = audioStreams.contains { $0.isDolbyAtmos }
 
         // 1. Set base order based on lossless preference and source content
         if preferLossless && hasLosslessAudio {
