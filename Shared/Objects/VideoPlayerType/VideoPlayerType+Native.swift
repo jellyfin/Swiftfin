@@ -16,77 +16,76 @@ extension VideoPlayerType {
     @ArrayBuilder<DirectPlayProfile>
     static var _nativeDirectPlayProfiles: [DirectPlayProfile] {
         DirectPlayProfile(type: .video) {
-            AudioCodec.aac
-            AudioCodec.ac3
-            AudioCodec.alac
-            AudioCodec.eac3
-            AudioCodec.flac
+            AudioCodec.eac3 // Dolby Digital Plus (supports Atmos)
+            AudioCodec.flac // FLAC lossless (smaller size)
+            AudioCodec.alac // Apple Lossless
+            AudioCodec.aac // AAC-LC lossy
+            AudioCodec.ac3 // Dolby Digital lossy
         } videoCodecs: {
-            VideoCodec.hevc
-            VideoCodec.h264
-            VideoCodec.h261
-            VideoCodec.mpeg4
+            VideoCodec.hevc // H.265/HEVC (prioritized)
+            VideoCodec.h264 // H.264/AVC (HLS spec requirement)
+            VideoCodec.mpeg4 // MPEG-4
         } containers: {
             MediaContainer.mp4
         }
 
         DirectPlayProfile(type: .video) {
-            AudioCodec.aac
-            AudioCodec.ac3
-            AudioCodec.alac
+            AudioCodec.alac // Apple Lossless (prioritized)
+            AudioCodec.aac // AAC-LC
+            AudioCodec.ac3 // Dolby Digital
         } videoCodecs: {
-            VideoCodec.h264
-            VideoCodec.mpeg4
+            VideoCodec.h264 // H.264/AVC
+            VideoCodec.mpeg4 // MPEG-4
         } containers: {
             MediaContainer.m4v
         }
 
         DirectPlayProfile(type: .video) {
-            AudioCodec.aac
-            AudioCodec.ac3
-            AudioCodec.alac
-            AudioCodec.eac3
-            AudioCodec.mp3
-            AudioCodec.pcm_s16be
-            AudioCodec.pcm_s16le
-            AudioCodec.pcm_s24be
-            AudioCodec.pcm_s24le
+            AudioCodec.eac3 // Dolby Digital Plus (supports Atmos)
+            AudioCodec.alac // Apple Lossless
+            AudioCodec.pcm_s16le // PCM 16-bit LE (lossless)
+            AudioCodec.pcm_s16be // PCM 16-bit BE (lossless)
+            AudioCodec.pcm_s24le // PCM 24-bit LE (lossless)
+            AudioCodec.pcm_s24be // PCM 24-bit BE (lossless)
+            AudioCodec.aac // AAC-LC lossy
+            AudioCodec.ac3 // Dolby Digital lossy
+            AudioCodec.mp3 // MP3 lossy
         } videoCodecs: {
-            VideoCodec.hevc
-            VideoCodec.h264
-            VideoCodec.mjpeg
-            VideoCodec.mpeg4
+            VideoCodec.hevc // H.265/HEVC (prioritized)
+            VideoCodec.h264 // H.264/AVC
+            VideoCodec.mjpeg // Motion JPEG
+            VideoCodec.mpeg4 // MPEG-4
         } containers: {
             MediaContainer.mov
         }
 
         DirectPlayProfile(type: .video) {
-            AudioCodec.aac
-            AudioCodec.ac3
-            AudioCodec.eac3
-            AudioCodec.mp3
+            AudioCodec.eac3 // Dolby Digital Plus (supports Atmos)
+            AudioCodec.aac // AAC-LC
+            AudioCodec.ac3 // Dolby Digital
+            AudioCodec.mp3 // MP3
         } videoCodecs: {
-            VideoCodec.h264
+            VideoCodec.h264 // H.264/AVC (MPEGTS only supports H.264 per HLS spec)
         } containers: {
             MediaContainer.mpegts
         }
 
         DirectPlayProfile(type: .video) {
-            AudioCodec.aac
-            AudioCodec.amr_nb
+            AudioCodec.aac // AAC-LC
+            AudioCodec.amr_nb // AMR-NB
         } videoCodecs: {
-            VideoCodec.h264
-            VideoCodec.mpeg4
+            VideoCodec.h264 // H.264/AVC
+            VideoCodec.mpeg4 // MPEG-4
         } containers: {
             MediaContainer.threeG2
             MediaContainer.threeGP
         }
 
         DirectPlayProfile(type: .video) {
-            AudioCodec.pcm_mulaw
-            AudioCodec.pcm_s16le
+            AudioCodec.pcm_s16le // PCM 16-bit LE (lossless, prioritized)
+            AudioCodec.pcm_mulaw // PCM mu-law
         } videoCodecs: {
-            VideoCodec.mjpeg
+            VideoCodec.mjpeg // Motion JPEG
         } containers: {
             MediaContainer.avi
         }
@@ -105,16 +104,15 @@ extension VideoPlayerType {
             protocol: MediaStreamProtocol.hls,
             type: .video
         ) {
-            AudioCodec.aac
-            AudioCodec.ac3
-            AudioCodec.alac
-            AudioCodec.eac3
-            AudioCodec.flac
+            AudioCodec.flac // FLAC lossless (smaller)
+            AudioCodec.alac // Apple Lossless (prioritized for transcoding)
+            AudioCodec.eac3 // Dolby Digital Plus (supports up to 7.1, more efficient than AC3)
+            AudioCodec.aac // AAC-LC lossy
+            AudioCodec.ac3 // Dolby Digital lossy (5.1 max)
         } videoCodecs: {
-            // HEVC prioritized first for better quality, efficiency, and Atmos preservation
-            VideoCodec.hevc
-            VideoCodec.h264
-            VideoCodec.mpeg4
+            VideoCodec.hevc // H.265/HEVC (prioritized)
+            VideoCodec.h264 // H.264/AVC
+            VideoCodec.mpeg4 // MPEG-4
         } containers: {
             MediaContainer.mp4
         }

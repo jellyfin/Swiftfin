@@ -37,7 +37,7 @@ extension VideoPlayerType {
                     condition: .lessThanEqual,
                     isRequired: false,
                     property: .videoLevel,
-                    value: "80"
+                    value: "60" // iOS max
                 )
 
                 ProfileCondition(
@@ -71,7 +71,7 @@ extension VideoPlayerType {
                     condition: .lessThanEqual,
                     isRequired: false,
                     property: .videoLevel,
-                    value: "175"
+                    value: "51" // Apple max value
                 )
 
                 ProfileCondition(
