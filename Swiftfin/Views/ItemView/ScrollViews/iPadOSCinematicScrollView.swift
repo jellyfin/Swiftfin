@@ -48,7 +48,7 @@ extension ItemView {
             OffsetScrollView(
                 headerHeight: globalSize.isLandscape ? 0.75 : 0.6
             ) {
-                ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1920))
+                ImageView(viewModel.item.imageSource(imageType, maxWidth: 1920))
                     .aspectRatio(1.77, contentMode: .fill)
             } overlay: {
                 VStack(spacing: 0) {
