@@ -11,6 +11,7 @@ import Factory
 import Files
 import Foundation
 import JellyfinAPI
+import Logging
 import UIKit
 import VLCUI
 
@@ -29,8 +30,9 @@ final class VideoPlayerViewModel: ViewModel {
     let playMethod: PlayMethod
 
     var hlsPlaybackURL: URL {
-        print("[VideoPlayerViewModel] *** hlsPlaybackURL accessed - Creating HLS URL with stream copy enabled to preserve Atmos and HDR ***"
-        )
+        let logger = Container.shared.logService()
+        logger.debug("Creating HLS URL with stream copy enabled to preserve Atmos and HDR")
+
         let parameters = Paths.GetMasterHlsVideoPlaylistParameters(
             isStatic: true,
             tag: mediaSource.eTag,
@@ -58,28 +60,18 @@ final class VideoPlayerViewModel: ViewModel {
             videoStreamIndex: videoStreams.first?.index,
             enableAdaptiveBitrateStreaming: true
         )
-        print("[VideoPlayerViewModel] HLS Parameters:")
-        print(parameters)
+        logger.debug("HLS Parameters: \(parameters)")
 
         let request = Paths.getMasterHlsVideoPlaylist(
             itemID: item.id!,
             parameters: parameters
         )
 
-        guard let baseURL = userSession.client.fullURL(with: request) else {
-            fatalError("Failed to create base URL for HLS manifest")
-        }
-
-        print("[VideoPlayerViewModel] Base HLS manifest URL: \(baseURL.absoluteString)")
-
         // TODO: don't force unwrap
-        let hlsStreamComponents = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)!
+        let hlsStreamComponents = URLComponents(url: userSession.client.fullURL(with: request)!, resolvingAgainstBaseURL: false)!
             .addingQueryItem(key: "api_key", value: userSession.user.accessToken)
 
-        let finalURL = hlsStreamComponents.url!
-        print("[VideoPlayerViewModel] Final HLS manifest URL with API key: \(finalURL.absoluteString)")
-
-        return finalURL
+        return hlsStreamComponents.url!
     }
 
     // TODO: should start time be from the media source instead?
@@ -136,18 +128,19 @@ final class VideoPlayerViewModel: ViewModel {
         self.subtitleStreams = adjustedStreams.filter { $0.type == MediaStreamType.subtitle }
 
         self.selectedAudioStreamIndex = selectedAudioStreamIndex
-        print("[VideoPlayerViewModel] Initialized with audio stream index: \(selectedAudioStreamIndex)")
-        print("[VideoPlayerViewModel] Play method: \(playMethod)")
-        print("[VideoPlayerViewModel] Playback URL: \(playbackURL.absoluteString)")
-        if let stream = self.audioStreams.first(where: { $0.index == selectedAudioStreamIndex }) {
-            print(
-                "[VideoPlayerViewModel] Playing with audio stream codec: \(stream.codec ?? "unknown"), profile: \(stream.profile ?? "unknown")"
-            )
-        }
         self.selectedSubtitleStreamIndex = selectedSubtitleStreamIndex
         self.chapters = chapters
         self.playMethod = playMethod
         super.init()
+
+        logger.debug("Initialized with audio stream index: \(selectedAudioStreamIndex)")
+        logger.debug("Play method: \(playMethod)")
+        logger.debug("Playback URL configured")
+        if let stream = self.audioStreams.first(where: { $0.index == selectedAudioStreamIndex }) {
+            logger.debug(
+                "Playing with audio stream codec: \(stream.codec ?? "unknown"), profile: \(stream.profile ?? "unknown")"
+            )
+        }
     }
 
     func chapter(from seconds: Int) -> ChapterInfo.FullInfo? {

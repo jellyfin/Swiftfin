@@ -7,7 +7,9 @@
 //
 
 import Defaults
+import Factory
 import JellyfinAPI
+import Logging
 
 extension DeviceProfile {
 
@@ -25,7 +27,8 @@ extension DeviceProfile {
         deviceProfile.codecProfiles = videoPlayer.codecProfiles
         deviceProfile.subtitleProfiles = videoPlayer.subtitleProfiles
 
-        print("[DeviceProfile] Built profile for \(videoPlayer), compatibility: \(compatibilityMode)")
+        let logger = Container.shared.logService()
+        logger.debug("Built profile for \(videoPlayer), compatibility: \(compatibilityMode)")
 
         // MARK: - DirectPlay & Transcoding Profiles
 

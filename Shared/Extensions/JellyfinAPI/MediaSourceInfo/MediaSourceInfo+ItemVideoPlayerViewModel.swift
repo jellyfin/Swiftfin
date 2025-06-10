@@ -10,6 +10,7 @@ import Defaults
 import Factory
 import Foundation
 import JellyfinAPI
+import Logging
 import UIKit
 
 // TODO: strongly type errors
@@ -43,9 +44,10 @@ private extension MediaStream {
 extension MediaSourceInfo {
     /// Determines the best audio stream index based on user preferences and stream characteristics.
     func selectBestAudioStreamIndex() -> Int {
+        let logger = Container.shared.logService()
         let audioStreams = mediaStreams?.filter { $0.type == .audio } ?? []
         guard !audioStreams.isEmpty else {
-            print("[MediaSourceInfo] No audio streams found.")
+            logger.debug("No audio streams found.")
             return -1
         }
 
@@ -92,21 +94,21 @@ extension MediaSourceInfo {
         let bestStream = scoredStreams.max { $0.score < $1.score }?.stream
 
         if let bestStream = bestStream, let index = bestStream.index {
-            print(
-                "[MediaSourceInfo] Best audio stream selected: Index \(index), Codec: \(bestStream.codec ?? "N/A"), Score: \(scoredStreams.first { $0.stream.index == index }?.score ?? 0)"
+            logger.debug(
+                "Best audio stream selected: Index \(index), Codec: \(bestStream.codec ?? "N/A"), Score: \(scoredStreams.first { $0.stream.index == index }?.score ?? 0)"
             )
             return index
         }
 
         // Fallback logic
         if let defaultIndex = defaultAudioStreamIndex {
-            print("[MediaSourceInfo] Falling back to default audio stream with index \(defaultIndex).")
+            logger.debug("Falling back to default audio stream with index \(defaultIndex).")
             return defaultIndex
         } else if let firstAudio = audioStreams.first, let firstIndex = firstAudio.index {
-            print("[MediaSourceInfo] Falling back to first available audio stream with index \(firstIndex).")
+            logger.debug("Falling back to first available audio stream with index \(firstIndex).")
             return firstIndex
         } else {
-            print("[MediaSourceInfo] No suitable audio stream found.")
+            logger.debug("No suitable audio stream found.")
             return -1
         }
     }
@@ -142,13 +144,14 @@ extension MediaSourceInfo {
             playMethod = .directPlay
         }
 
+        let logger = Container.shared.logService()
         let videoStreams = mediaStreams?.filter { $0.type == .video } ?? []
         let audioStreams = mediaStreams?.filter { $0.type == .audio } ?? []
         let subtitleStreams = mediaStreams?.filter { $0.type == .subtitle } ?? []
 
-        print("[MediaSourceInfo] Available audio tracks:")
+        logger.debug("Available audio tracks:")
         for stream in audioStreams {
-            print("[MediaSourceInfo] - Index: \(stream.index ?? -1), Codec: \(stream.codec ?? "N/A"), Profile: \(stream.profile ?? "N/A")")
+            logger.debug("- Index: \(stream.index ?? -1), Codec: \(stream.codec ?? "N/A"), Profile: \(stream.profile ?? "N/A")")
         }
 
         // Use provided audio stream index or apply custom selection logic
@@ -156,7 +159,7 @@ extension MediaSourceInfo {
 
         if let audioStreamIndex = audioStreamIndex {
             selectedAudioStreamIndex = audioStreamIndex
-            print("[MediaSourceInfo] Using provided audio stream index: \(selectedAudioStreamIndex)")
+            logger.debug("Using provided audio stream index: \(selectedAudioStreamIndex)")
         } else {
             selectedAudioStreamIndex = selectBestAudioStreamIndex()
         }

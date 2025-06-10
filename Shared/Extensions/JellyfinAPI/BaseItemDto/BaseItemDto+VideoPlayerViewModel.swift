@@ -16,13 +16,14 @@ extension BaseItemDto {
 
     func videoPlayerViewModel(with mediaSource: MediaSourceInfo, audioStreamIndex: Int? = nil) async throws -> VideoPlayerViewModel {
 
+        let logger = Container.shared.logService()
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
         let currentVideoBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
         let compatibilityMode = Defaults[.VideoPlayer.Playback.compatibilityMode]
 
-        print("[BaseItemDto] Current video bitrate setting: \(currentVideoBitrate) (raw value: \(currentVideoBitrate.rawValue))")
+        logger.debug("Current video bitrate setting: \(currentVideoBitrate) (raw value: \(currentVideoBitrate.rawValue))")
         let maxBitrate = try await getMaxBitrate(for: currentVideoBitrate)
-        print("[BaseItemDto] Calculated max bitrate: \(maxBitrate)")
+        logger.debug("Calculated max bitrate: \(maxBitrate)")
         let profile = DeviceProfile.build(
             for: currentVideoPlayerType,
             with: self,
@@ -49,22 +50,20 @@ extension BaseItemDto {
             playbackInfo
         )
 
-        print("[BaseItemDto] Media source container: \(mediaSource.container ?? "unknown")")
-        print("[BaseItemDto] Media source bitrate: \(mediaSource.bitrate ?? -1)")
-        print("[BaseItemDto] Media source size: \(mediaSource.size ?? -1)")
+        logger.debug("Media source container: \(mediaSource.container ?? "unknown")")
+        logger.debug("Media source bitrate: \(mediaSource.bitrate ?? -1)")
+        logger.debug("Media source size: \(mediaSource.size ?? -1)")
         if let videoStream = mediaSource.mediaStreams?.first(where: { $0.type == .video }) {
-            print("[BaseItemDto] Video stream bitrate: \(videoStream.bitRate ?? -1)")
-            print("[BaseItemDto] Video stream codec: \(videoStream.codec ?? "unknown")")
+            logger.debug("Video stream bitrate: \(videoStream.bitRate ?? -1)")
+            logger.debug("Video stream codec: \(videoStream.codec ?? "unknown")")
         }
-        print("[BaseItemDto] Requesting playback info with audioStreamIndex: \(audioStreamIndex ?? -1)")
-        if let url = userSession.client.fullURL(with: request) {
-            print("[BaseItemDto] Sending playback info request to URL: \(url.absoluteString)")
-        }
+        logger.debug("Requesting playback info with audioStreamIndex: \(audioStreamIndex ?? -1)")
+        // Note: Not logging URL as it contains API key
         if let httpBody = request.body {
             let encoder = JSONEncoder()
             encoder.outputFormatting = .prettyPrinted
             if let data = try? encoder.encode(httpBody), let jsonString = String(data: data, encoding: .utf8) {
-                print("[BaseItemDto] Request body: \(jsonString)")
+                logger.debug("Request body: \(jsonString)")
             }
         }
         let response = try await userSession.client.send(request)
@@ -142,17 +141,18 @@ extension BaseItemDto {
     }
 
     private func getMaxBitrate(for bitrate: PlaybackBitrate) async throws -> Int {
+        let logger = Container.shared.logService()
         let settingBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrateTest]
-        print("[BaseItemDto] getMaxBitrate called with bitrate: \(bitrate)")
-        print("[BaseItemDto] settingBitrate for test: \(settingBitrate)")
+        logger.debug("getMaxBitrate called with bitrate: \(bitrate)")
+        logger.debug("settingBitrate for test: \(settingBitrate)")
 
         guard bitrate != .auto else {
-            print("[BaseItemDto] Bitrate is .auto, running bitrate test...")
+            logger.debug("Bitrate is .auto, running bitrate test...")
             let testedBitrate = try await testBitrate(with: settingBitrate.rawValue)
-            print("[BaseItemDto] Bitrate test result: \(testedBitrate)")
+            logger.debug("Bitrate test result: \(testedBitrate)")
             return testedBitrate
         }
-        print("[BaseItemDto] Using fixed bitrate: \(bitrate.rawValue)")
+        logger.debug("Using fixed bitrate: \(bitrate.rawValue)")
         return bitrate.rawValue
     }
 

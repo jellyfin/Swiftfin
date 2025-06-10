@@ -8,6 +8,7 @@
 
 import Foundation
 import JellyfinAPI
+import Logging
 
 final class OnlineVideoPlayerManager: VideoPlayerManager {
 
@@ -23,34 +24,28 @@ final class OnlineVideoPlayerManager: VideoPlayerManager {
             // Select the best audio stream based on the media source
             let bestAudioStreamIndex = mediaSource.selectBestAudioStreamIndex()
 
-            print("[OnlineVideoPlayerManager] Initial load - selecting audio stream index: \(bestAudioStreamIndex)")
+            logger.debug("Initial load - selecting audio stream index: \(bestAudioStreamIndex)")
 
-            let viewModel = try await item.videoPlayerViewModel(
-                with: mediaSource,
-                audioStreamIndex: bestAudioStreamIndex >= 0 ? bestAudioStreamIndex : nil
-            )
-
-            await MainActor.run {
-                self.currentViewModel = viewModel
-            }
+            await updateViewModel(for: bestAudioStreamIndex >= 0 ? bestAudioStreamIndex : nil)
         }
     }
 
     /// Switches to a different audio track by re-requesting playback info from the server
     func switchAudioTrack(to audioStreamIndex: Int) {
         Task {
-            do {
-                print("[OnlineVideoPlayerManager] Switching audio track to index: \(audioStreamIndex)")
+            logger.debug("Switching audio track to index: \(audioStreamIndex)")
+            await updateViewModel(for: audioStreamIndex)
+        }
+    }
 
-                // Request new playback info with the selected audio stream
-                let newViewModel = try await item.videoPlayerViewModel(with: mediaSource, audioStreamIndex: audioStreamIndex)
-
-                await MainActor.run {
-                    self.currentViewModel = newViewModel
-                }
-            } catch {
-                print("[OnlineVideoPlayerManager] Failed to switch audio track: \(error)")
+    private func updateViewModel(for audioStreamIndex: Int?) async {
+        do {
+            let viewModel = try await item.videoPlayerViewModel(with: mediaSource, audioStreamIndex: audioStreamIndex)
+            await MainActor.run {
+                self.currentViewModel = viewModel
             }
+        } catch {
+            logger.error("Failed to update video player view model: \(error)")
         }
     }
 }
