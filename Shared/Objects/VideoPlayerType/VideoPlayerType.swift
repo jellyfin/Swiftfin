@@ -34,10 +34,10 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
         }
     }
 
-    var transcodingProfiles: [TranscodingProfile] {
+    func transcodingProfiles(for item: BaseItemDto? = nil) -> [TranscodingProfile] {
         switch self {
         case .native:
-            Self._nativeTranscodingProfiles
+            Self._nativeTranscodingProfiles(for: item)
         case .swiftfin:
             Self._swiftfinTranscodingProfiles
         }

@@ -1130,6 +1130,10 @@ internal enum L10n {
   internal static let portrait = L10n.tr("Localizable", "portrait", fallback: "Portrait")
   /// Posters
   internal static let posters = L10n.tr("Localizable", "posters", fallback: "Posters")
+  /// Prefer Dolby Atmos
+  internal static let preferDolbyAtmos = L10n.tr("Localizable", "preferDolbyAtmos", fallback: "Prefer Dolby Atmos")
+  /// Prefer Lossless Audio
+  internal static let preferLosslessAudio = L10n.tr("Localizable", "preferLosslessAudio", fallback: "Prefer Lossless Audio")
   /// Premiere Date
   internal static let premiereDate = L10n.tr("Localizable", "premiereDate", fallback: "Premiere Date")
   /// Press Down for Menu

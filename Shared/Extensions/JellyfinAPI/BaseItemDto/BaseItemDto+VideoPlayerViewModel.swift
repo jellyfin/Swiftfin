@@ -25,6 +25,7 @@ extension BaseItemDto {
         print("[BaseItemDto] Calculated max bitrate: \(maxBitrate)")
         let profile = DeviceProfile.build(
             for: currentVideoPlayerType,
+            with: self,
             compatibilityMode: compatibilityMode,
             maxBitrate: maxBitrate
         )
@@ -90,6 +91,7 @@ extension BaseItemDto {
         let maxBitrate = try await getMaxBitrate(for: currentVideoBitrate)
         let profile = DeviceProfile.build(
             for: currentVideoPlayerType,
+            with: self,
             compatibilityMode: compatibilityMode,
             maxBitrate: maxBitrate
         )

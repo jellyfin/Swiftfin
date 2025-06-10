@@ -13,12 +13,15 @@ struct NativeVideoPlayerSettingsView: View {
 
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
+    @Default(.VideoPlayer.preferLosslessAudio)
+    private var preferLosslessAudio
+    @Default(.VideoPlayer.preferDolbyAtmos)
+    private var preferDolbyAtmos
 
     var body: some View {
         Form {
 
             Section {
-
                 BasicStepper(
                     title: L10n.resumeOffset,
                     value: $resumeOffset,
@@ -30,6 +33,11 @@ struct NativeVideoPlayerSettingsView: View {
                 }
             } footer: {
                 Text(L10n.resumeOffsetDescription)
+            }
+
+            Section {
+                Toggle(L10n.preferLosslessAudio, isOn: $preferLosslessAudio)
+                Toggle(L10n.preferDolbyAtmos, isOn: $preferDolbyAtmos)
             }
         }
         .navigationTitle(L10n.nativePlayer)

@@ -13,6 +13,7 @@ extension DeviceProfile {
 
     static func build(
         for videoPlayer: VideoPlayerType,
+        with item: BaseItemDto? = nil,
         compatibilityMode: PlaybackCompatibility,
         maxBitrate: Int? = nil
     ) -> DeviceProfile {
@@ -31,11 +32,11 @@ extension DeviceProfile {
         switch compatibilityMode {
         case .auto:
             deviceProfile.directPlayProfiles = videoPlayer.directPlayProfiles
-            deviceProfile.transcodingProfiles = videoPlayer.transcodingProfiles
+            deviceProfile.transcodingProfiles = videoPlayer.transcodingProfiles(for: item)
 
         case .mostCompatible:
             deviceProfile.directPlayProfiles = PlaybackCompatibility.Video.compatibilityDirectPlayProfile
-            deviceProfile.transcodingProfiles = PlaybackCompatibility.Video.compatibilityTranscodingProfile
+            deviceProfile.transcodingProfiles = videoPlayer.transcodingProfiles(for: item)
 
         case .directPlay:
             deviceProfile.directPlayProfiles = PlaybackCompatibility.Video.forcedDirectPlayProfile
@@ -46,7 +47,7 @@ extension DeviceProfile {
 
             if customProfileMode == .add {
                 deviceProfile.directPlayProfiles = videoPlayer.directPlayProfiles
-                deviceProfile.transcodingProfiles = videoPlayer.transcodingProfiles
+                deviceProfile.transcodingProfiles = videoPlayer.transcodingProfiles(for: item)
             } else {
                 deviceProfile.directPlayProfiles = []
 
@@ -54,7 +55,7 @@ extension DeviceProfile {
                 if playbackDeviceProfile.contains(where: { $0.useAsTranscodingProfile == true }) {
                     deviceProfile.transcodingProfiles = []
                 } else {
-                    deviceProfile.transcodingProfiles = videoPlayer.transcodingProfiles
+                    deviceProfile.transcodingProfiles = videoPlayer.transcodingProfiles(for: item)
                 }
             }
 

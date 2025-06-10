@@ -14,50 +14,92 @@ import UIKit
 
 // TODO: strongly type errors
 
-extension MediaSourceInfo {
+private extension MediaStream {
+    /// Determines if the audio stream is lossless.
+    var isLossless: Bool {
+        guard type == .audio, let codec = codec?.lowercased() else { return false }
+        // List of known lossless audio codecs
+        let losslessCodecs: [String] = [
+            AudioCodec.flac.rawValue,
+            AudioCodec.alac.rawValue,
+            AudioCodec.truehd.rawValue,
+            AudioCodec.dts_hd.rawValue, // dts-hd ma, dts-hd hra
+        ]
+        // Check if the codec is in our lossless list or is a PCM format
+        return losslessCodecs.contains(where: codec.contains) || codec.starts(with: "pcm")
+    }
 
-    /// Determines the best audio stream index based on codec priority
+    var isDolbyAtmos: Bool {
+        guard let codec = codec?.lowercased() else { return false }
+        let isEAC3 = codec == AudioCodec.eac3.rawValue
+        let isTrueHD = codec == AudioCodec.truehd.rawValue
+        let hasAtmosProfile = profile?.lowercased().contains("atmos") ?? false
+        let hasAtmosTag = codecTag?.lowercased() == "ec-3"
+
+        return (isEAC3 && (hasAtmosProfile || hasAtmosTag)) || (isTrueHD && hasAtmosProfile)
+    }
+}
+
+extension MediaSourceInfo {
+    /// Determines the best audio stream index based on user preferences and stream characteristics.
     func selectBestAudioStreamIndex() -> Int {
         let audioStreams = mediaStreams?.filter { $0.type == .audio } ?? []
-
         guard !audioStreams.isEmpty else {
             print("[MediaSourceInfo] No audio streams found.")
             return -1
         }
 
-        let hasAtmos: (MediaStream) -> Bool = { $0.profile?.lowercased().contains("atmos") ?? false }
-        let isDTSHD: (MediaStream)
-            -> Bool = { $0.profile?.lowercased().contains("dts-hd") ?? false || $0.profile?.lowercased().contains("dts:x") ?? false }
+        let preferAtmos = Defaults[Defaults.Keys.VideoPlayer.preferDolbyAtmos]
+        let preferLossless = Defaults[Defaults.Keys.VideoPlayer.preferLosslessAudio]
+        let firstAudioStreamIndex = audioStreams.first?.index
 
-        // Priority order:
-        // 1. E-AC3 Atmos
-        // 2. TrueHD (non-Atmos)
-        // 3. DTS-HD
-        // 4. TrueHD Atmos
-        // 5. Default audio stream
-        // 6. First available stream
+        let scoredStreams = audioStreams.map { stream -> (stream: MediaStream, score: Int) in
+            var score = 0
+            let codec = stream.codec?.lowercased() ?? ""
 
-        if let eac3AtmosStream = audioStreams.first(where: { $0.codec?.lowercased() == "eac3" && hasAtmos($0) }),
-           let index = eac3AtmosStream.index
-        {
-            print("[MediaSourceInfo] Prioritizing E-AC3 Atmos stream with index \(index).")
+            // 1. Base Quality Score (Prioritizing high-quality, direct-playable lossy codecs by default)
+            switch codec {
+            // High-quality lossy
+            case AudioCodec.eac3.rawValue where !stream.isDolbyAtmos: score = 25
+            case AudioCodec.ac3.rawValue: score = 20
+            case AudioCodec.aac.rawValue: score = 15 // Higher than DTS because it's direct-playable
+            case AudioCodec.dts.rawValue: score = 10
+            // Lossless (lower base score, will be boosted by preference)
+            case AudioCodec.truehd.rawValue where !stream.isDolbyAtmos: score = 8
+            case AudioCodec.dts_hd.rawValue: score = 7
+            case AudioCodec.flac.rawValue, AudioCodec.alac.rawValue: score = 6
+            // Penalized
+            case AudioCodec.truehd.rawValue where stream.isDolbyAtmos: score = 1
+            default: score = 0
+            }
+
+            // 2. Preference Bonuses
+            if preferAtmos && stream.isDolbyAtmos && codec == AudioCodec.eac3.rawValue {
+                score += 100 // Playable Atmos is king
+            }
+            if preferLossless && stream.isLossless {
+                score += 50 // Boost makes lossless codecs win
+            }
+
+            // 3. Tie-breaker Bonuses
+            if stream.isDefault ?? false { score += 5 }
+            if stream.index == firstAudioStreamIndex { score += 2 }
+
+            return (stream, score)
+        }
+
+        // Find the stream with the highest score
+        let bestStream = scoredStreams.max { $0.score < $1.score }?.stream
+
+        if let bestStream = bestStream, let index = bestStream.index {
+            print(
+                "[MediaSourceInfo] Best audio stream selected: Index \(index), Codec: \(bestStream.codec ?? "N/A"), Score: \(scoredStreams.first { $0.stream.index == index }?.score ?? 0)"
+            )
             return index
-        } else if let trueHDStream = audioStreams.first(where: { $0.codec?.lowercased() == "truehd" && !hasAtmos($0) }),
-                  let index = trueHDStream.index
-        {
-            print("[MediaSourceInfo] Prioritizing TrueHD stream with index \(index).")
-            return index
-        } else if let dtsHDStream = audioStreams.first(where: { isDTSHD($0) }),
-                  let index = dtsHDStream.index
-        {
-            print("[MediaSourceInfo] Prioritizing DTS-HD stream with index \(index).")
-            return index
-        } else if let trueHDAtmosStream = audioStreams.first(where: { $0.codec?.lowercased() == "truehd" && hasAtmos($0) }),
-                  let index = trueHDAtmosStream.index
-        {
-            print("[MediaSourceInfo] Prioritizing TrueHD Atmos stream with index \(index).")
-            return index
-        } else if let defaultIndex = defaultAudioStreamIndex {
+        }
+
+        // Fallback logic
+        if let defaultIndex = defaultAudioStreamIndex {
             print("[MediaSourceInfo] Falling back to default audio stream with index \(defaultIndex).")
             return defaultIndex
         } else if let firstAudio = audioStreams.first, let firstIndex = firstAudio.index {
