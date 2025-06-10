@@ -38,6 +38,8 @@ struct NativeVideoPlayerSettingsView: View {
             Section {
                 Toggle(L10n.preferLosslessAudio, isOn: $preferLosslessAudio)
                 Toggle(L10n.preferDolbyAtmos, isOn: $preferDolbyAtmos)
+            } footer: {
+                Text(L10n.atmosCompatibilityDescription)
             }
         }
         .navigationTitle(L10n.nativePlayer)
