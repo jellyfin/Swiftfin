@@ -11,6 +11,7 @@ import Factory
 import Files
 import Foundation
 import JellyfinAPI
+import Logging
 import UIKit
 import VLCUI
 
@@ -29,6 +30,9 @@ final class VideoPlayerViewModel: ViewModel {
     let playMethod: PlayMethod
 
     var hlsPlaybackURL: URL {
+        let logger = Container.shared.logService()
+        logger.debug("Creating HLS URL with stream copy enabled to preserve Atmos and HDR")
+
         let parameters = Paths.GetMasterHlsVideoPlaylistParameters(
             isStatic: true,
             tag: mediaSource.eTag,
@@ -40,15 +44,24 @@ final class VideoPlayerViewModel: ViewModel {
             audioCodec: mediaSource.audioStreams?
                 .compactMap(\.codec)
                 .joined(separator: ","),
+            enableAutoStreamCopy: true,
+            allowVideoStreamCopy: true,
+            allowAudioStreamCopy: true,
             isBreakOnNonKeyFrames: true,
             requireAvc: false,
+            isDeInterlace: false,
+            requireNonAnamorphic: false,
             transcodingMaxAudioChannels: 8,
+            enableMpegtsM2TsMode: false,
             videoCodec: videoStreams
                 .compactMap(\.codec)
                 .joined(separator: ","),
+            audioStreamIndex: selectedAudioStreamIndex,
             videoStreamIndex: videoStreams.first?.index,
             enableAdaptiveBitrateStreaming: true
         )
+        logger.debug("HLS Parameters: \(parameters)")
+
         let request = Paths.getMasterHlsVideoPlaylist(
             itemID: item.id!,
             parameters: parameters
@@ -119,6 +132,15 @@ final class VideoPlayerViewModel: ViewModel {
         self.chapters = chapters
         self.playMethod = playMethod
         super.init()
+
+        logger.debug("Initialized with audio stream index: \(selectedAudioStreamIndex)")
+        logger.debug("Play method: \(playMethod)")
+        logger.debug("Playback URL configured")
+        if let stream = self.audioStreams.first(where: { $0.index == selectedAudioStreamIndex }) {
+            logger.debug(
+                "Playing with audio stream codec: \(stream.codec ?? "unknown"), profile: \(stream.profile ?? "unknown")"
+            )
+        }
     }
 
     func chapter(from seconds: Int) -> ChapterInfo.FullInfo? {

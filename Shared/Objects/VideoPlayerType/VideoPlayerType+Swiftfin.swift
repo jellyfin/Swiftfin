@@ -72,10 +72,11 @@ extension VideoPlayerType {
             AudioCodec.opus
             AudioCodec.vorbis
         } videoCodecs: {
-            VideoCodec.av1
-            VideoCodec.h263
-            VideoCodec.h264
+            // HEVC prioritized first for better quality, efficiency, and Atmos preservation
             VideoCodec.hevc
+            VideoCodec.av1
+            VideoCodec.h264
+            VideoCodec.h263
             VideoCodec.mjpeg
             VideoCodec.mpeg1video
             VideoCodec.mpeg2video

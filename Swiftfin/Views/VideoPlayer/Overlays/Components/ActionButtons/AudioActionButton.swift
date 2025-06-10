@@ -27,8 +27,16 @@ extension VideoPlayer.Overlay.ActionButtons {
             Menu {
                 ForEach(viewModel.audioStreams.prepending(.none), id: \.index) { audioTrack in
                     Button {
-                        videoPlayerManager.audioTrackIndex = audioTrack.index ?? -1
-                        videoPlayerProxy.setAudioTrack(.absolute(audioTrack.index ?? -1))
+                        let newIndex = audioTrack.index ?? -1
+
+                        // For online playback, we need to re-request from server
+                        if let onlineManager = videoPlayerManager as? OnlineVideoPlayerManager {
+                            onlineManager.switchAudioTrack(to: newIndex)
+                        } else {
+                            // For offline/downloaded content, just switch locally
+                            videoPlayerManager.audioTrackIndex = newIndex
+                            videoPlayerProxy.setAudioTrack(.absolute(newIndex))
+                        }
                     } label: {
                         if videoPlayerManager.audioTrackIndex == audioTrack.index ?? -1 {
                             Label(audioTrack.displayTitle ?? .emptyDash, systemImage: "checkmark")
