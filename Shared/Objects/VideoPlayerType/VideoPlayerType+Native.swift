@@ -22,8 +22,9 @@ extension VideoPlayerType {
             AudioCodec.eac3
             AudioCodec.flac
         } videoCodecs: {
-            VideoCodec.h261
             VideoCodec.hevc
+            VideoCodec.h264
+            VideoCodec.h261
             VideoCodec.mpeg4
         } containers: {
             MediaContainer.mp4
@@ -51,8 +52,8 @@ extension VideoPlayerType {
             AudioCodec.pcm_s24be
             AudioCodec.pcm_s24le
         } videoCodecs: {
-            VideoCodec.h264
             VideoCodec.hevc
+            VideoCodec.h264
             VideoCodec.mjpeg
             VideoCodec.mpeg4
         } containers: {
@@ -110,8 +111,9 @@ extension VideoPlayerType {
             AudioCodec.eac3
             AudioCodec.flac
         } videoCodecs: {
-            VideoCodec.h264
+            // HEVC prioritized first for better quality, efficiency, and Atmos preservation
             VideoCodec.hevc
+            VideoCodec.h264
             VideoCodec.mpeg4
         } containers: {
             MediaContainer.mp4

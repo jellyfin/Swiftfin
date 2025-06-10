@@ -29,6 +29,8 @@ final class VideoPlayerViewModel: ViewModel {
     let playMethod: PlayMethod
 
     var hlsPlaybackURL: URL {
+        print("[VideoPlayerViewModel] *** hlsPlaybackURL accessed - Creating HLS URL with stream copy enabled to preserve Atmos and HDR ***"
+        )
         let parameters = Paths.GetMasterHlsVideoPlaylistParameters(
             isStatic: true,
             tag: mediaSource.eTag,
@@ -40,25 +42,44 @@ final class VideoPlayerViewModel: ViewModel {
             audioCodec: mediaSource.audioStreams?
                 .compactMap(\.codec)
                 .joined(separator: ","),
+            enableAutoStreamCopy: true,
+            allowVideoStreamCopy: true,
+            allowAudioStreamCopy: true,
             isBreakOnNonKeyFrames: true,
             requireAvc: false,
+            isDeInterlace: false,
+            requireNonAnamorphic: false,
             transcodingMaxAudioChannels: 8,
+            enableMpegtsM2TsMode: false,
             videoCodec: videoStreams
                 .compactMap(\.codec)
                 .joined(separator: ","),
+            audioStreamIndex: selectedAudioStreamIndex,
             videoStreamIndex: videoStreams.first?.index,
             enableAdaptiveBitrateStreaming: true
         )
+        print("[VideoPlayerViewModel] HLS Parameters:")
+        print(parameters)
+
         let request = Paths.getMasterHlsVideoPlaylist(
             itemID: item.id!,
             parameters: parameters
         )
 
+        guard let baseURL = userSession.client.fullURL(with: request) else {
+            fatalError("Failed to create base URL for HLS manifest")
+        }
+
+        print("[VideoPlayerViewModel] Base HLS manifest URL: \(baseURL.absoluteString)")
+
         // TODO: don't force unwrap
-        let hlsStreamComponents = URLComponents(url: userSession.client.fullURL(with: request)!, resolvingAgainstBaseURL: false)!
+        let hlsStreamComponents = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)!
             .addingQueryItem(key: "api_key", value: userSession.user.accessToken)
 
-        return hlsStreamComponents.url!
+        let finalURL = hlsStreamComponents.url!
+        print("[VideoPlayerViewModel] Final HLS manifest URL with API key: \(finalURL.absoluteString)")
+
+        return finalURL
     }
 
     // TODO: should start time be from the media source instead?
@@ -116,6 +137,8 @@ final class VideoPlayerViewModel: ViewModel {
 
         self.selectedAudioStreamIndex = selectedAudioStreamIndex
         print("[VideoPlayerViewModel] Initialized with audio stream index: \(selectedAudioStreamIndex)")
+        print("[VideoPlayerViewModel] Play method: \(playMethod)")
+        print("[VideoPlayerViewModel] Playback URL: \(playbackURL.absoluteString)")
         if let stream = self.audioStreams.first(where: { $0.index == selectedAudioStreamIndex }) {
             print(
                 "[VideoPlayerViewModel] Playing with audio stream codec: \(stream.codec ?? "unknown"), profile: \(stream.profile ?? "unknown")"

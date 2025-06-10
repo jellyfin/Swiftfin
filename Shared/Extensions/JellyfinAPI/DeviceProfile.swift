@@ -24,6 +24,8 @@ extension DeviceProfile {
         deviceProfile.codecProfiles = videoPlayer.codecProfiles
         deviceProfile.subtitleProfiles = videoPlayer.subtitleProfiles
 
+        print("[DeviceProfile] Built profile for \(videoPlayer), compatibility: \(compatibilityMode)")
+
         // MARK: - DirectPlay & Transcoding Profiles
 
         switch compatibilityMode {

@@ -20,7 +20,9 @@ extension BaseItemDto {
         let currentVideoBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
         let compatibilityMode = Defaults[.VideoPlayer.Playback.compatibilityMode]
 
+        print("[BaseItemDto] Current video bitrate setting: \(currentVideoBitrate) (raw value: \(currentVideoBitrate.rawValue))")
         let maxBitrate = try await getMaxBitrate(for: currentVideoBitrate)
+        print("[BaseItemDto] Calculated max bitrate: \(maxBitrate)")
         let profile = DeviceProfile.build(
             for: currentVideoPlayerType,
             compatibilityMode: compatibilityMode,
@@ -46,6 +48,13 @@ extension BaseItemDto {
             playbackInfo
         )
 
+        print("[BaseItemDto] Media source container: \(mediaSource.container ?? "unknown")")
+        print("[BaseItemDto] Media source bitrate: \(mediaSource.bitrate ?? -1)")
+        print("[BaseItemDto] Media source size: \(mediaSource.size ?? -1)")
+        if let videoStream = mediaSource.mediaStreams?.first(where: { $0.type == .video }) {
+            print("[BaseItemDto] Video stream bitrate: \(videoStream.bitRate ?? -1)")
+            print("[BaseItemDto] Video stream codec: \(videoStream.codec ?? "unknown")")
+        }
         print("[BaseItemDto] Requesting playback info with audioStreamIndex: \(audioStreamIndex ?? -1)")
         if let url = userSession.client.fullURL(with: request) {
             print("[BaseItemDto] Sending playback info request to URL: \(url.absoluteString)")
@@ -132,10 +141,16 @@ extension BaseItemDto {
 
     private func getMaxBitrate(for bitrate: PlaybackBitrate) async throws -> Int {
         let settingBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrateTest]
+        print("[BaseItemDto] getMaxBitrate called with bitrate: \(bitrate)")
+        print("[BaseItemDto] settingBitrate for test: \(settingBitrate)")
 
         guard bitrate != .auto else {
-            return try await testBitrate(with: settingBitrate.rawValue)
+            print("[BaseItemDto] Bitrate is .auto, running bitrate test...")
+            let testedBitrate = try await testBitrate(with: settingBitrate.rawValue)
+            print("[BaseItemDto] Bitrate test result: \(testedBitrate)")
+            return testedBitrate
         }
+        print("[BaseItemDto] Using fixed bitrate: \(bitrate.rawValue)")
         return bitrate.rawValue
     }
 
