@@ -225,9 +225,9 @@ struct VideoPlayer: View {
         }
         .onChange(of: isGestureLocked) { newValue in
             if newValue {
-                updateViewProxy.present(systemName: "lock.fill", title: "Gestures Locked")
+                updateViewProxy.present(systemName: "lock.fill", title: L10n.gesturesLocked)
             } else {
-                updateViewProxy.present(systemName: "lock.open.fill", title: "Gestures Unlocked")
+                updateViewProxy.present(systemName: "lock.open.fill", title: L10n.gesturesUnlocked)
             }
         }
         .onChange(of: isScrubbing) { newValue in
@@ -352,7 +352,7 @@ extension VideoPlayer {
 
     private func handleTapGesture(unitPoint: UnitPoint, taps: Int) {
         guard !isGestureLocked else {
-            updateViewProxy.present(systemName: "lock.fill", title: "Gestures Locked")
+            updateViewProxy.present(systemName: "lock.fill", title: L10n.gesturesLocked)
             return
         }
 
@@ -382,7 +382,7 @@ extension VideoPlayer {
         }
 
         guard !isGestureLocked else {
-            updateViewProxy.present(systemName: "lock.fill", title: "Gestures Locked")
+            updateViewProxy.present(systemName: "lock.fill", title: L10n.gesturesLocked)
             return
         }
 

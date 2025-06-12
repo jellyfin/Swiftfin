@@ -19,7 +19,7 @@ enum CustomDeviceProfileAction: String, CaseIterable, Displayable, Storable {
         case .add:
             return L10n.add
         case .replace:
-            return "Replace"
+            return L10n.replace
         }
     }
 }

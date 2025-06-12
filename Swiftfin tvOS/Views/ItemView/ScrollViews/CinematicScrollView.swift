@@ -119,8 +119,10 @@ extension ItemView {
                     Spacer()
 
                     VStack {
-                        ItemView.PlayButton(viewModel: viewModel)
-                            .focused($focusedLayer, equals: .playButton)
+                        if viewModel.presentPlayButton {
+                            ItemView.PlayButton(viewModel: viewModel)
+                                .focused($focusedLayer, equals: .playButton)
+                        }
 
                         ItemView.ActionButtonHStack(viewModel: viewModel)
                             .frame(width: 440)

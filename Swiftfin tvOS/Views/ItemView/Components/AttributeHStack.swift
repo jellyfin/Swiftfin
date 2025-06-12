@@ -24,6 +24,7 @@ extension ItemView {
                             .fixedSize(horizontal: true, vertical: false)
                     }
                 }
+                .frame(alignment: .leading)
                 .lineLimit(1)
                 .foregroundStyle(Color(UIColor.darkGray))
             }

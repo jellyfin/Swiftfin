@@ -26,7 +26,7 @@ enum LongPressAction: String, GestureAction {
         case .none:
             return L10n.none
         case .gestureLock:
-            return "Gesture Lock"
+            return L10n.gestureLock
         }
     }
 }
@@ -60,7 +60,7 @@ enum DoubleTouchAction: String, GestureAction {
         case .aspectFill:
             return L10n.aspectFill
         case .gestureLock:
-            return "Gesture Lock"
+            return L10n.gestureLock
         case .pausePlay:
             return L10n.playAndPause
         }
@@ -85,17 +85,17 @@ enum PanAction: String, GestureAction {
         case .audioffset:
             return L10n.audioOffset
         case .brightness:
-            return "Brightness"
+            return L10n.brightness
         case .playbackSpeed:
             return L10n.playbackSpeed
         case .scrub:
-            return "Scrub"
+            return L10n.scrub
         case .slowScrub:
-            return "Slow Scrub"
+            return L10n.slowScrub
         case .subtitleOffset:
             return L10n.subtitleOffset
         case .volume:
-            return "Volume"
+            return L10n.volume
         }
     }
 }

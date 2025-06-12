@@ -15,13 +15,12 @@ enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImage
     case landscape
     case portrait
 
-    // TODO: localize
     var displayTitle: String {
         switch self {
         case .landscape:
-            "Landscape"
+            L10n.landscape
         case .portrait:
-            "Portrait"
+            L10n.portrait
         }
     }
 

@@ -23,7 +23,7 @@ enum UserAccessPolicy: String, CaseIterable, Codable, Displayable {
         case .none:
             L10n.none
         case .requireDeviceAuthentication:
-            "Device Authentication"
+            L10n.deviceAuth
         case .requirePin:
             L10n.pin
         }
