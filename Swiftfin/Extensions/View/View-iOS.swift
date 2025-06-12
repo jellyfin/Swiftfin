@@ -12,17 +12,6 @@ import SwiftUIIntrospect
 
 extension View {
 
-    // TODO: remove after removing support for iOS 15
-
-    @ViewBuilder
-    func iOS15<Content: View>(@ViewBuilder _ content: (Self) -> Content) -> some View {
-        if #available(iOS 16, *) {
-            self
-        } else {
-            content(self)
-        }
-    }
-
     func detectOrientation(_ orientation: Binding<UIDeviceOrientation>) -> some View {
         modifier(DetectOrientation(orientation: orientation))
     }
@@ -103,19 +92,8 @@ extension View {
 
     @ViewBuilder
     func listRowCornerRadius(_ radius: CGFloat) -> some View {
-        if #unavailable(iOS 16) {
-            introspect(.listCell, on: .iOS(.v15)) { cell in
-                cell.layer.cornerRadius = radius
-            }
-        } else {
-            introspect(
-                .listCell,
-                on: .iOS(.v16),
-                .iOS(.v17),
-                .iOS(.v18)
-            ) { cell in
-                cell.layer.cornerRadius = radius
-            }
+        introspect(.listCell, on: .iOS(.v16), .iOS(.v17), .iOS(.v18)) { cell in
+            cell.layer.cornerRadius = radius
         }
     }
 }
