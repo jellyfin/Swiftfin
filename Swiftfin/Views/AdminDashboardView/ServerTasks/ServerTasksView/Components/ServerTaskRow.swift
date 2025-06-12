@@ -65,7 +65,6 @@ extension ServerTasksView {
                     )
                     .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                     .foregroundStyle(.orange)
-                    .backport
                     .fontWeight(.semibold)
                 }
             }

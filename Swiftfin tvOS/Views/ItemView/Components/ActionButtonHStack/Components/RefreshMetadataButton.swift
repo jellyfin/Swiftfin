@@ -87,7 +87,6 @@ extension ItemView {
 
                     Image(systemName: "arrow.clockwise")
                         .foregroundStyle(.secondary)
-                        .backport
                         .fontWeight(.semibold)
                 }
             }
