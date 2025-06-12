@@ -11,35 +11,26 @@ import SwiftUI
 
 struct LanguagePicker: View {
 
-    // MARK: - State Object
+    // MARK: - State Objects
 
     @StateObject
     private var viewModel = CultureViewModel()
 
-    // MARK: - Selection State
+    // MARK: - State Variables
 
     @State
     private var selectedIndex: Int = 0
 
-    // MARK: - Cultures List
+    // MARK: - Computed Properties
 
     private var cultures: [CultureDto] {
         [emptyCultureDto] + Array(viewModel.cultures)
             .sorted { getDisplayName(for: $0) < getDisplayName(for: $1) }
     }
 
-    // MARK: - Picker Title
+    // MARK: - Input Properties
 
     private let title: String
-
-    // MARK: - ISO Language Codes
-
-    @Binding
-    private var twoLetterISOLanguage: String?
-    @Binding
-    private var threeLetterISOLanguage: String?
-
-    // MARK: - Selected Culture
 
     @Binding
     private var selectedCulture: CultureDto?
@@ -61,15 +52,10 @@ struct LanguagePicker: View {
             viewModel.send(.refresh)
         }
         .onChange(of: viewModel.cultures) { _ in
+            upgradeSelectedCultureIfNeeded()
             updateSelectedIndex()
         }
         .onChange(of: selectedCulture) { _ in
-            updateSelectedIndex()
-        }
-        .onChange(of: twoLetterISOLanguage) { _ in
-            updateSelectedIndex()
-        }
-        .onChange(of: threeLetterISOLanguage) { _ in
             updateSelectedIndex()
         }
     }
@@ -85,16 +71,13 @@ struct LanguagePicker: View {
             isoPicker(title, cultures: cultures, selection: $selectedIndex)
                 .onChange(of: selectedIndex) { newIndex in
                     if newIndex >= 0 && newIndex < cultures.count {
-                        let culture = cultures[newIndex]
-                        twoLetterISOLanguage = getTwoLetterCode(from: culture)
-                        threeLetterISOLanguage = getThreeLetterCode(from: culture)
-                        selectedCulture = culture
+                        selectedCulture = cultures[newIndex]
                     }
                 }
         }
     }
 
-    // MARK: - Picker by Platform
+    // MARK: - ISO Picker
 
     @ViewBuilder
     private func isoPicker(_ title: String, cultures: [CultureDto], selection: Binding<Int>) -> some View {
@@ -121,91 +104,69 @@ struct LanguagePicker: View {
         #endif
     }
 
-    // MARK: - Update Selection
+    // MARK: Update the Selected Index
 
     private func updateSelectedIndex() {
         guard !cultures.isEmpty else { return }
 
-        var twoLetterMap: [String: Int] = [:]
-        var threeLetterMap: [String: Int] = [:]
-
-        for (index, culture) in cultures.enumerated() {
-            if let code = getTwoLetterCode(from: culture) {
-                twoLetterMap[code] = index
-            }
-            if let code = getThreeLetterCode(from: culture) {
-                threeLetterMap[code] = index
-            }
-        }
-
-        // Try to find by selected culture
         if let selectedCulture = selectedCulture {
-            if let twoLetter = getTwoLetterCode(from: selectedCulture),
-               let threeLetter = getThreeLetterCode(from: selectedCulture)
-            {
-                // Look for exact match with both codes
-                for (index, culture) in cultures.enumerated() {
-                    if getTwoLetterCode(from: culture) == twoLetter &&
-                        getThreeLetterCode(from: culture) == threeLetter
-                    {
-                        selectedIndex = index
-                        return
-                    }
-                }
-            }
-
-            // Try just two letter code
-            if let twoLetter = getTwoLetterCode(from: selectedCulture),
-               let index = twoLetterMap[twoLetter]
-            {
-                selectedIndex = index
-                return
-            }
-
-            // Try just three letter code
-            if let threeLetter = getThreeLetterCode(from: selectedCulture),
-               let index = threeLetterMap[threeLetter]
-            {
-                selectedIndex = index
-                return
-            }
+            let matchingCulture = findMatchingCulture(for: selectedCulture)
+            selectedIndex = cultures.firstIndex(where: { areEqual($0, matchingCulture) }) ?? 0
+        } else {
+            selectedIndex = 0
         }
-
-        // Try by two letter language code
-        if let code = twoLetterISOLanguage, let index = twoLetterMap[code] {
-            selectedIndex = index
-            return
-        }
-
-        // Try by three letter language code
-        if let code = threeLetterISOLanguage, let index = threeLetterMap[code] {
-            selectedIndex = index
-            return
-        }
-
-        // Default to first item
-        selectedIndex = 0
     }
 
-    // MARK: - Get 2 Letter ISO with Fallbacks
+    // MARK: Turn Incomplete CultureDto into Full Matching CultureDto
 
-    private func getTwoLetterCode(from culture: CultureDto) -> String? {
-        culture.twoLetterISOLanguageName
+    private func upgradeSelectedCultureIfNeeded() {
+        guard let currentSelected = selectedCulture else { return }
+
+        if let upgradeCandidate = findMatchingCulture(for: currentSelected),
+           !areEqual(upgradeCandidate, currentSelected)
+        {
+            selectedCulture = upgradeCandidate
+        }
     }
 
-    // MARK: - Get 3 Letter ISO with Fallbacks
+    // MARK: - Find a Matching CultureDto from Potentially Incomplete CultureDto
 
-    private func getThreeLetterCode(from culture: CultureDto) -> String? {
-        culture.threeLetterISOLanguageName ?? culture.threeLetterISOLanguageNames?.first
+    private func findMatchingCulture(for culture: CultureDto) -> CultureDto? {
+        cultures.first { candidate in
+            if let selectedTwo = culture.twoLetterISOLanguageName,
+               let candidateTwo = candidate.twoLetterISOLanguageName,
+               selectedTwo == candidateTwo
+            {
+                return true
+            }
+            if let selectedThree = culture.threeLetterISOLanguageName,
+               let candidateThree = candidate.threeLetterISOLanguageName,
+               selectedThree == candidateThree
+            {
+                return true
+            }
+            return false
+        }
     }
 
-    // MARK: - Get DisplayName with Fallbacks
+    // MARK: - Determine if Two Cultures are Equal from Potentially Incomplete CultureDto
+
+    private func areEqual(_ culture1: CultureDto?, _ culture2: CultureDto?) -> Bool {
+        guard let culture1 = culture1, let culture2 = culture2 else {
+            return culture1 == nil && culture2 == nil
+        }
+
+        return culture1.twoLetterISOLanguageName == culture2.twoLetterISOLanguageName &&
+            culture1.threeLetterISOLanguageName == culture2.threeLetterISOLanguageName
+    }
+
+    // MARK: - Get Culture Display Name
 
     private func getDisplayName(for culture: CultureDto) -> String {
         culture.displayName ?? culture.name ?? L10n.unknown
     }
 
-    // MARK: - Get Empty Culture DTO
+    // MARK: - Empty Culture DTO
 
     private var emptyCultureDto: CultureDto {
         .init(
@@ -220,30 +181,52 @@ struct LanguagePicker: View {
 
 extension LanguagePicker {
 
-    // MARK: - Initialize with CultureDto
+    // MARK: - Standard Initializer
 
     init(_ title: String, selectedCulture: Binding<CultureDto?>) {
         self.title = title
-        self._twoLetterISOLanguage = .constant(selectedCulture.wrappedValue?.twoLetterISOLanguageName)
-        self._threeLetterISOLanguage = .constant(selectedCulture.wrappedValue?.threeLetterISOLanguageName)
         self._selectedCulture = selectedCulture
     }
 
-    // MARK: - Initialize with 2 letter ISO code
+    // MARK: - Two Letter Initializer
 
     init(_ title: String, twoLetterISOLanguage: Binding<String?>) {
         self.title = title
-        self._twoLetterISOLanguage = twoLetterISOLanguage
-        self._threeLetterISOLanguage = .constant(nil)
-        self._selectedCulture = .constant(nil)
+        self._selectedCulture = Binding(
+            get: {
+                guard let code = twoLetterISOLanguage.wrappedValue else { return nil }
+                return CultureDto(
+                    displayName: nil,
+                    name: nil,
+                    threeLetterISOLanguageName: nil,
+                    threeLetterISOLanguageNames: [],
+                    twoLetterISOLanguageName: code
+                )
+            },
+            set: { newCulture in
+                twoLetterISOLanguage.wrappedValue = newCulture?.twoLetterISOLanguageName
+            }
+        )
     }
 
-    // MARK: - Initialize with 3 letter ISO code
+    // MARK: - Three Letter Initializer
 
     init(_ title: String, threeLetterISOLanguage: Binding<String?>) {
         self.title = title
-        self._twoLetterISOLanguage = .constant(nil)
-        self._threeLetterISOLanguage = threeLetterISOLanguage
-        self._selectedCulture = .constant(nil)
+        self._selectedCulture = Binding(
+            get: {
+                guard let code = threeLetterISOLanguage.wrappedValue else { return nil }
+                return CultureDto(
+                    displayName: nil,
+                    name: nil,
+                    threeLetterISOLanguageName: code,
+                    threeLetterISOLanguageNames: [],
+                    twoLetterISOLanguageName: nil
+                )
+            },
+            set: { newCulture in
+                threeLetterISOLanguage.wrappedValue = newCulture?.threeLetterISOLanguageName
+            }
+        )
     }
 }
