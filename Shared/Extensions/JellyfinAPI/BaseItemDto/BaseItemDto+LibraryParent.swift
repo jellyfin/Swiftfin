@@ -33,7 +33,7 @@ extension BaseItemDto: LibraryParent {
     }
 
     var isRecursiveCollection: Bool {
-        if let collectionType, [CollectionType.tvshows, CollectionType.boxsets].contains(collectionType) {
+        if let collectionType, [.tvshows, .boxsets].contains(collectionType) {
             return false
         }
         return true
