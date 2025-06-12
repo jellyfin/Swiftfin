@@ -116,7 +116,8 @@ final class CountryViewModel: ViewModel, Stateful {
     ) -> Set<CountryInfo> {
         var deviceCountries: [CountryInfo] = []
 
-        for code in Locale.isoRegionCodes {
+        for region in Locale.Region.isoRegions {
+            let code = region.identifier
             guard !excludingTwoCodes.contains(code),
                   let displayName = Locale.current.localizedString(forRegionCode: code),
                   !excludingDisplayNames.contains(displayName)
