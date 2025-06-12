@@ -32,7 +32,7 @@ extension ServerTasksView {
         private var taskView: some View {
             VStack(alignment: .leading, spacing: 4) {
 
-                Text(observer.task.name ?? L10n.unknown)
+                Text(observer.task.name?.localizedCapitalized ?? L10n.unknown)
                     .fontWeight(.semibold)
 
                 taskResultView
@@ -95,7 +95,7 @@ extension ServerTasksView {
             .animation(.linear(duration: 0.1), value: observer.state)
             .foregroundStyle(.primary, .secondary)
             .confirmationDialog(
-                observer.task.name ?? .emptyDash,
+                observer.task.name?.localizedCapitalized ?? .emptyDash,
                 isPresented: $isPresentingConfirmation,
                 titleVisibility: .visible
             ) {

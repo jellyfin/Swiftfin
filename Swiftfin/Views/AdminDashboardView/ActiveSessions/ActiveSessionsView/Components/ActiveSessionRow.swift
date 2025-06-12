@@ -81,9 +81,11 @@ extension ActiveSessionsView {
         private func activeSessionDetails(_ nowPlayingItem: BaseItemDto, playState: PlayerStateInfo) -> some View {
             VStack(alignment: .leading) {
                 Text(session.userName ?? L10n.unknown)
+                    .multilineTextAlignment(.leading)
                     .font(.headline)
 
                 Text(nowPlayingItem.name ?? L10n.unknown)
+                    .multilineTextAlignment(.leading)
 
                 ProgressSection(
                     item: nowPlayingItem,

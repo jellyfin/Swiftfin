@@ -76,7 +76,7 @@ struct APIKeysView: View {
             }
             Button(L10n.cancel, role: .cancel) {}
         } message: {
-            Text(L10n.deleteAPIKeyMessage)
+            Text(L10n.deleteItemConfirmation)
         }
         .alert(L10n.createAPIKey, isPresented: $showCreateAPIAlert) {
             TextField(L10n.applicationName, text: $newAPIName)
@@ -110,7 +110,7 @@ struct APIKeysView: View {
                     }
                 }
             } else {
-                Button(L10n.addAPIKey) {
+                Button(L10n.add) {
                     showCreateAPIAlert = true
                 }
                 .foregroundStyle(Color.accentColor)
