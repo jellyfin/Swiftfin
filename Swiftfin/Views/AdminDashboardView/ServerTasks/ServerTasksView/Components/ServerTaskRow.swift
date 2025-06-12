@@ -81,10 +81,14 @@ extension ServerTasksView {
                     Spacer()
 
                     if observer.state == .running {
-                        ProgressView(value: (observer.task.currentProgressPercentage ?? 0) / 100)
-                            .progressViewStyle(.gauge)
-                            .transition(.opacity.combined(with: .scale).animation(.bouncy))
-                            .frame(width: 25, height: 25)
+                        Gauge(value: (observer.task.currentProgressPercentage ?? 0) / 100, in: 0 ... 1) {
+                            EmptyView()
+                        }
+                        .gaugeStyle(.accessoryCircularCapacity)
+                        .tint(Color.accentColor)
+                        .scaleEffect(0.5)
+                        .transition(.opacity.combined(with: .scale).animation(.bouncy))
+                        .frame(width: 25, height: 25)
                     }
 
                     Image(systemName: "chevron.right")

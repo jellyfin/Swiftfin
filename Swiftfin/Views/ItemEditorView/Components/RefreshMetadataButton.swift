@@ -92,10 +92,14 @@ extension ItemEditorView {
                     Spacer()
 
                     if viewModel.state == .refreshing {
-                        ProgressView(value: viewModel.progress)
-                            .progressViewStyle(.gauge)
-                            .transition(.opacity.combined(with: .scale).animation(.bouncy))
-                            .frame(width: 25, height: 25)
+                        Gauge(value: viewModel.progress, in: 0 ... 1) {
+                            EmptyView()
+                        }
+                        .gaugeStyle(.accessoryCircularCapacity)
+                        .tint(Color.accentColor)
+                        .scaleEffect(0.5)
+                        .transition(.opacity.combined(with: .scale).animation(.bouncy))
+                        .frame(width: 25, height: 25)
                     } else {
                         Image(systemName: "arrow.clockwise")
                             .foregroundStyle(.secondary)
