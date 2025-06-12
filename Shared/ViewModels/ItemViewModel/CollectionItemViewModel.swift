@@ -9,11 +9,20 @@
 import Combine
 import Foundation
 import JellyfinAPI
+import OrderedCollections
 
 final class CollectionItemViewModel: ItemViewModel {
 
+    // MARK: - Published Collection Items
+
     @Published
-    private(set) var collectionItems: [BaseItemDto] = []
+    private(set) var collectionItems: OrderedDictionary<BaseItemKind, [BaseItemDto]> = [:]
+
+    override var presentPlayButton: Bool {
+        false
+    }
+
+    // MARK: - On Refresh
 
     override func onRefresh() async throws {
         let collectionItems = try await self.getCollectionItems()
@@ -23,10 +32,13 @@ final class CollectionItemViewModel: ItemViewModel {
         }
     }
 
-    private func getCollectionItems() async throws -> [BaseItemDto] {
+    // MARK: - Get Collection Items
 
+    private func getCollectionItems() async throws -> OrderedDictionary<BaseItemKind, [BaseItemDto]> {
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.fields = .MinimumFields
+        parameters.includeItemTypes = BaseItemKind.supportedCases
+            .appending(.episode)
         parameters.parentID = item.id
 
         let request = Paths.getItemsByUserID(
@@ -35,6 +47,15 @@ final class CollectionItemViewModel: ItemViewModel {
         )
         let response = try await userSession.client.send(request)
 
-        return response.value.items ?? []
+        let items = response.value.items ?? []
+
+        let result = OrderedDictionary<BaseItemKind?, [BaseItemDto]>(
+            grouping: items,
+            by: \.type
+        )
+        .compactKeys()
+        .sortedKeys { $0.rawValue < $1.rawValue }
+
+        return result
     }
 }

@@ -32,7 +32,8 @@ extension BaseItemDto {
         let playbackInfo = PlaybackInfoDto(deviceProfile: profile)
         let playbackInfoParameters = Paths.GetPostedPlaybackInfoParameters(
             userID: userSession.user.id,
-            maxStreamingBitrate: maxBitrate
+            maxStreamingBitrate: maxBitrate,
+            mediaSourceID: mediaSource.id
         )
 
         let request = Paths.getPostedPlaybackInfo(
