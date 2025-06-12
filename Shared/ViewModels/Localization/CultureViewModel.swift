@@ -71,37 +71,31 @@ final class CultureViewModel: ViewModel, Stateful {
     private func getCultures() async throws -> Set<CultureDto> {
         let serverCultures = try await getServerCultures()
 
-        // TODO: Remove after iOS 15 drop
-        /// Only attempt to get device cultures on iOS 16+
-        if #available(iOS 16, *) {
-            let displayNames = Set(serverCultures.compactMap(\.displayName))
-            let twoLetterCodes = Set(serverCultures.compactMap(\.twoLetterISOLanguageName))
-            let threeLetterCodes = Set(serverCultures.compactMap(\.threeLetterISOLanguageName))
+        let displayNames = Set(serverCultures.compactMap(\.displayName))
+        let twoLetterCodes = Set(serverCultures.compactMap(\.twoLetterISOLanguageName))
+        let threeLetterCodes = Set(serverCultures.compactMap(\.threeLetterISOLanguageName))
 
-            let deviceCultures = getDeviceCultures(
-                excludingTwoCodes: twoLetterCodes,
-                excludingThreeCodes: threeLetterCodes,
-                excludingDisplayNames: displayNames
-            )
+        let deviceCultures = getDeviceCultures(
+            excludingTwoCodes: twoLetterCodes,
+            excludingThreeCodes: threeLetterCodes,
+            excludingDisplayNames: displayNames
+        )
 
-            var uniqueCulturesDict: [String?: CultureDto] = [:]
+        var uniqueCulturesDict: [String?: CultureDto] = [:]
 
-            for culture in serverCultures {
-                let key = culture.twoLetterISOLanguageName
+        for culture in serverCultures {
+            let key = culture.twoLetterISOLanguageName
+            uniqueCulturesDict[key] = culture
+        }
+
+        for culture in deviceCultures {
+            let key = culture.twoLetterISOLanguageName
+            if uniqueCulturesDict[key] == nil {
                 uniqueCulturesDict[key] = culture
             }
-
-            for culture in deviceCultures {
-                let key = culture.twoLetterISOLanguageName
-                if uniqueCulturesDict[key] == nil {
-                    uniqueCulturesDict[key] = culture
-                }
-            }
-
-            return Set(uniqueCulturesDict.values)
-        } else {
-            return Set(serverCultures)
         }
+
+        return Set(uniqueCulturesDict.values)
     }
 
     // MARK: - Fetch Server Cultures
