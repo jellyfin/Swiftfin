@@ -598,8 +598,8 @@ internal enum L10n {
   internal static let dvd = L10n.tr("Localizable", "dvd", fallback: "DVD")
   /// Edit
   internal static let edit = L10n.tr("Localizable", "edit", fallback: "Edit")
-  /// Edit collections
-  internal static let editCollections = L10n.tr("Localizable", "editCollections", fallback: "Edit collections")
+  /// Edit Collections
+  internal static let editCollections = L10n.tr("Localizable", "editCollections", fallback: "Edit Collections")
   /// Edit media
   internal static let editMedia = L10n.tr("Localizable", "editMedia", fallback: "Edit media")
   /// Editor
@@ -702,10 +702,10 @@ internal enum L10n {
   internal static let findMissingDescription = L10n.tr("Localizable", "findMissingDescription", fallback: "Find missing metadata and images.")
   /// Folder
   internal static let folder = L10n.tr("Localizable", "folder", fallback: "Folder")
-  /// Forced
-  internal static let forced = L10n.tr("Localizable", "forced", fallback: "Forced")
   /// Folders
   internal static let folders = L10n.tr("Localizable", "folders", fallback: "Folders")
+  /// Forced
+  internal static let forced = L10n.tr("Localizable", "forced", fallback: "Forced")
   /// Force remote media transcoding
   internal static let forceRemoteTranscoding = L10n.tr("Localizable", "forceRemoteTranscoding", fallback: "Force remote media transcoding")
   /// Format
@@ -877,6 +877,8 @@ internal enum L10n {
   /// Live TV
   internal static let liveTV = L10n.tr("Localizable", "liveTV", fallback: "Live TV")
   /// Live TV access
+  internal static let liveTvAccess = L10n.tr("Localizable", "liveTvAccess", fallback: "Live TV access")
+  /// Live TV access
   internal static let liveTVAccess = L10n.tr("Localizable", "liveTVAccess", fallback: "Live TV access")
   /// Live TV channel
   internal static let liveTVChannel = L10n.tr("Localizable", "liveTVChannel", fallback: "Live TV channel")
@@ -888,6 +890,8 @@ internal enum L10n {
   internal static let liveTVPrograms = L10n.tr("Localizable", "liveTVPrograms", fallback: "Live TV programs")
   /// Live TV recording management
   internal static let liveTVRecordingManagement = L10n.tr("Localizable", "liveTVRecordingManagement", fallback: "Live TV recording management")
+  /// Live TV recording management
+  internal static let liveTvRecordingManagement = L10n.tr("Localizable", "liveTvRecordingManagement", fallback: "Live TV recording management")
   /// Loading user failed
   internal static let loadingUserFailed = L10n.tr("Localizable", "loadingUserFailed", fallback: "Loading user failed")
   /// Local
