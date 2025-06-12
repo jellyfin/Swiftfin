@@ -156,6 +156,21 @@ extension String {
 
         return ceil(boundingBox.height)
     }
+
+    /// Calculates the width of the string with specified font size and weight
+    /// - Parameters:
+    ///   - font: UIFont.TextStyle to use (default is .body)
+    ///   - weight: Font weight to use (default is .regular)
+    /// - Returns: Width of string when rendered with specified parameters
+    func width(font textStyle: UIFont.TextStyle = .body, weight: UIFont.Weight = .regular) -> CGFloat {
+        let font = UIFont.systemFont(
+            ofSize: UIFont.preferredFont(forTextStyle: textStyle).pointSize,
+            weight: weight
+        )
+        let attributes = [NSAttributedString.Key.font: font]
+        let size = (self as NSString).size(withAttributes: attributes)
+        return size.width
+    }
 }
 
 extension CharacterSet {

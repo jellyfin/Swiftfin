@@ -14,6 +14,8 @@ struct SearchView: View {
 
     @Default(.Customization.searchPosterType)
     private var searchPosterType
+    @Default(.Customization.Search.enabledDrawerFilters)
+    private var enabledDrawerFilters
 
     @EnvironmentObject
     private var videoPlayerRouter: VideoPlayerWrapperCoordinator.Router
@@ -43,6 +45,16 @@ struct SearchView: View {
     private var resultsView: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {
+                SearchFilterBar(
+                    viewModel: viewModel.filterViewModel,
+                    types: enabledDrawerFilters
+                )
+                .onSelect {
+                    router.route(to: \.filter, $0)
+                }
+                .edgePadding(.horizontal)
+                .padding(.vertical, 10)
+
                 if viewModel.movies.isNotEmpty {
                     itemsSection(title: L10n.movies, keyPath: \.movies, posterType: searchPosterType)
                 }
