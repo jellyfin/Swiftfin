@@ -63,7 +63,6 @@ final class LiveVideoPlayerCoordinator: NavigationCoordinatable {
 
         versionedView
             .ignoresSafeArea()
-            .backport
             .persistentSystemOverlays(.hidden)
 
         #else

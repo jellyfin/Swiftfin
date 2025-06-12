@@ -186,11 +186,9 @@ struct PagingLibraryView<Element: Poster>: View {
             .content {
                 if item.showTitle {
                     PosterButton.TitleContentView(item: item)
-                        .backport
                         .lineLimit(1, reservesSpace: true)
                 } else if viewModel.parent?.libraryType == .folder {
                     PosterButton.TitleContentView(item: item)
-                        .backport
                         .lineLimit(1, reservesSpace: true)
                         .hidden()
                 }
@@ -206,11 +204,9 @@ struct PagingLibraryView<Element: Poster>: View {
             .content {
                 if item.showTitle {
                     PosterButton.TitleContentView(item: item)
-                        .backport
                         .lineLimit(1, reservesSpace: true)
                 } else if viewModel.parent?.libraryType == .folder {
                     PosterButton.TitleContentView(item: item)
-                        .backport
                         .lineLimit(1, reservesSpace: true)
                         .hidden()
                 }

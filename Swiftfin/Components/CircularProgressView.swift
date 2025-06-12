@@ -9,6 +9,7 @@
 import Defaults
 import SwiftUI
 
+// TODO: Can we remove this in iOS 16?
 // SwiftUI gauge style not available on iOS 15
 
 struct GaugeProgressStyle: ProgressViewStyle {
