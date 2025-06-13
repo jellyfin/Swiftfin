@@ -19,13 +19,13 @@ extension ItemView {
         @ObservedObject
         private var viewModel: ItemViewModel
 
-        private let alignment: Alignment
+        private let alignment: HorizontalAlignment
 
         private let fillDirection: FlowLayout.FillDirection
 
         init(
             viewModel: ItemViewModel,
-            alignment: Alignment = .center,
+            alignment: HorizontalAlignment = .center,
             fillDirection: FlowLayout.FillDirection = .bottomUp
         ) {
             self.viewModel = viewModel

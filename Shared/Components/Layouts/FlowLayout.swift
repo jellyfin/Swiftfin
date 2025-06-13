@@ -26,7 +26,7 @@ struct FlowLayout: Layout {
     // MARK: - Properties
 
     /// The alignment of content within each row (leading, center, or trailing)
-    var alignment: Alignment = .center
+    var alignment: HorizontalAlignment = .center
 
     /// The horizontal spacing between items within the same row
     var spacing: CGFloat = 8
@@ -215,7 +215,7 @@ struct FlowLayout: Layout {
     ///   - bounds: The available bounds for layout
     /// - Returns: The X coordinate where the row should start
     private func computeXOffset(rowWidth: CGFloat, bounds: CGRect) -> CGFloat {
-        switch alignment.horizontal {
+        switch alignment {
         case .trailing:
             return bounds.maxX - rowWidth
         case .center:
