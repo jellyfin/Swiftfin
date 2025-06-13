@@ -857,8 +857,6 @@ internal enum L10n {
   /// Live TV
   internal static let liveTV = L10n.tr("Localizable", "liveTV", fallback: "Live TV")
   /// Live TV access
-  internal static let liveTvAccess = L10n.tr("Localizable", "liveTvAccess", fallback: "Live TV access")
-  /// Live TV access
   internal static let liveTVAccess = L10n.tr("Localizable", "liveTVAccess", fallback: "Live TV access")
   /// Live TV channel
   internal static let liveTVChannel = L10n.tr("Localizable", "liveTVChannel", fallback: "Live TV channel")
@@ -870,8 +868,6 @@ internal enum L10n {
   internal static let liveTVPrograms = L10n.tr("Localizable", "liveTVPrograms", fallback: "Live TV programs")
   /// Live TV recording management
   internal static let liveTVRecordingManagement = L10n.tr("Localizable", "liveTVRecordingManagement", fallback: "Live TV recording management")
-  /// Live TV recording management
-  internal static let liveTvRecordingManagement = L10n.tr("Localizable", "liveTvRecordingManagement", fallback: "Live TV recording management")
   /// Loading user failed
   internal static let loadingUserFailed = L10n.tr("Localizable", "loadingUserFailed", fallback: "Loading user failed")
   /// Local
@@ -1008,6 +1004,8 @@ internal enum L10n {
   internal static let noDeviceProfileWarning = L10n.tr("Localizable", "noDeviceProfileWarning", fallback: "No profiles defined. Playback issues may occur.")
   /// No episodes available
   internal static let noEpisodesAvailable = L10n.tr("Localizable", "noEpisodesAvailable", fallback: "No episodes available")
+  /// No file selected
+  internal static let noFileSelected = L10n.tr("Localizable", "noFileSelected", fallback: "No file selected")
   /// No file selected
   internal static let noItemSelected = L10n.tr("Localizable", "noItemSelected", fallback: "No file selected")
   /// No local servers found
