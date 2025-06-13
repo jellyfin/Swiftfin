@@ -29,14 +29,23 @@ struct CulturePicker: View {
     var body: some View {
         Group {
             #if os(tvOS)
-            ListRowMenu(title, subtitle: {
-                Text(getDisplayName(for: selection.wrappedValue))
-            }) {
-                ForEach(countries, id: \.self) { country in
-                    Button(getDisplayName(for: country)) {
-                        selection.wrappedValue = country.isEmptyCountry ? nil : country
+            ListRowMenu(title, subtitle: $selection.wrappedValue?.displayTitle) {
+                Picker(title, selection: $selection) {
+                    Text(CultureDto.none.displayTitle)
+                        .tag(CultureDto.none as CultureDto?)
+
+                    ForEach(viewModel.value, id: \.self) { value in
+                        Text(value.displayTitle)
+                            .tag(value as CultureDto?)
                     }
                 }
+            }
+            // TODO: iOS 17+ move this to the Group
+            .onChange(of: viewModel.value) {
+                updateSelection()
+            }
+            .onChange(of: selection) { _, newValue in
+                selectionBinding.wrappedValue = newValue
             }
             .menuStyle(.borderlessButton)
             .listRowInsets(.zero)
@@ -51,16 +60,17 @@ struct CulturePicker: View {
                         .tag(value as CultureDto?)
                 }
             }
+            // TODO: iOS 17+ delete this and use the tvOS onChange at the Group level
+            .onChange(of: viewModel.value) { _ in
+                updateSelection()
+            }
+            .onChange(of: selection) { newValue in
+                selectionBinding.wrappedValue = newValue
+            }
             #endif
         }
         .onFirstAppear {
             viewModel.send(.refresh)
-        }
-        .onChange(of: viewModel.value) { _ in
-            updateSelection()
-        }
-        .onChange(of: selection) { newValue in
-            selectionBinding.wrappedValue = newValue
         }
     }
 

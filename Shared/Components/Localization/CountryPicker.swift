@@ -27,16 +27,25 @@ struct CountryPicker: View {
     // MARK: - Body
 
     var body: some View {
-        ZStack {
+        Group {
             #if os(tvOS)
-            ListRowMenu(title, subtitle: {
-                Text(getDisplayName(for: selection.wrappedValue))
-            }) {
-                ForEach(countries, id: \.self) { country in
-                    Button(getDisplayName(for: country)) {
-                        selection.wrappedValue = country.isEmptyCountry ? nil : country
+            ListRowMenu(title, subtitle: $selection.wrappedValue?.displayTitle) {
+                Picker(title, selection: $selection) {
+                    Text(CountryInfo.none.displayTitle)
+                        .tag(CountryInfo.none as CountryInfo?)
+
+                    ForEach(viewModel.value, id: \.self) { country in
+                        Text(country.displayTitle)
+                            .tag(country as CountryInfo?)
                     }
                 }
+            }
+            // TODO: iOS 17+ move this to the Group
+            .onChange(of: viewModel.value) {
+                updateSelection()
+            }
+            .onChange(of: selection) { _, newValue in
+                selectionBinding.wrappedValue = newValue
             }
             .menuStyle(.borderlessButton)
             .listRowInsets(.zero)
@@ -51,16 +60,17 @@ struct CountryPicker: View {
                         .tag(country as CountryInfo?)
                 }
             }
+            // TODO: iOS 17+ delete this and use the tvOS onChange at the Group level
+            .onChange(of: viewModel.value) { _ in
+                updateSelection()
+            }
+            .onChange(of: selection) { newValue in
+                selectionBinding.wrappedValue = newValue
+            }
             #endif
         }
         .onFirstAppear {
             viewModel.send(.refresh)
-        }
-        .onChange(of: viewModel.value) { _ in
-            updateSelection()
-        }
-        .onChange(of: selection) { newValue in
-            selectionBinding.wrappedValue = newValue
         }
     }
 
