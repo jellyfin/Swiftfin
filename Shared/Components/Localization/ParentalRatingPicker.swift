@@ -29,13 +29,13 @@ struct ParentalRatingPicker: View {
     var body: some View {
         Group {
             #if os(tvOS)
-            ListRowMenu(title, subtitle: selection?.name ?? L10n.none) {
+            ListRowMenu(title, subtitle: $selection.wrappedValue?.displayTitle) {
                 Picker(title, selection: $selection) {
-                    Text(L10n.none)
-                        .tag(nil as ParentalRating?)
+                    Text(ParentalRating.none.displayTitle)
+                        .tag(ParentalRating.none as ParentalRating?)
 
                     ForEach(viewModel.value, id: \.self) { value in
-                        Text(value.name ?? L10n.unknown)
+                        Text(value.displayTitle)
                             .tag(value as ParentalRating?)
                     }
                 }
@@ -51,11 +51,11 @@ struct ParentalRatingPicker: View {
             #else
             Picker(title, selection: $selection) {
 
-                Text(L10n.none)
-                    .tag(nil as ParentalRating?)
+                Text(ParentalRating.none.displayTitle)
+                    .tag(ParentalRating.none as ParentalRating?)
 
                 ForEach(viewModel.value, id: \.self) { value in
-                    Text(value.name ?? L10n.unknown)
+                    Text(value.displayTitle)
                         .tag(value as ParentalRating?)
                 }
             }
@@ -69,9 +69,6 @@ struct ParentalRatingPicker: View {
         }
         .onFirstAppear {
             viewModel.send(.refresh)
-        }
-        .onAppear {
-            updateSelection()
         }
     }
 
@@ -88,37 +85,36 @@ struct ParentalRatingPicker: View {
             return false
         }
 
-        selection = newValue
+        selection = newValue ?? ParentalRating.none
     }
 }
 
-// MARK: - Initializers
-
 extension ParentalRatingPicker {
 
-    init(_ title: String, selection: Binding<ParentalRating?>) {
-        self.title = title
-        self._selection = State(initialValue: selection.wrappedValue)
-        self.selectionBinding = selection
-        self._viewModel = StateObject(wrappedValue: ParentalRatingsViewModel(initialValue: []))
-    }
-
-    init(_ title: String, selection: Binding<String?>) {
+    init(_ title: String, name: Binding<String?>) {
         self.title = title
         self._selection = State(
-            initialValue: selection.wrappedValue.flatMap { ParentalRating(name: $0) }
+            initialValue: name.wrappedValue.flatMap {
+                ParentalRating(name: $0)
+            } ?? ParentalRating.none
         )
 
         self.selectionBinding = Binding<ParentalRating?>(
             get: {
-                guard let ratingName = selection.wrappedValue else { return nil }
+                guard let ratingName = name.wrappedValue else {
+                    return ParentalRating.none
+                }
                 return ParentalRating(name: ratingName)
             },
             set: { newRating in
-                selection.wrappedValue = newRating?.name
+                name.wrappedValue = newRating?.name
             }
         )
 
-        self._viewModel = StateObject(wrappedValue: ParentalRatingsViewModel(initialValue: []))
+        self._viewModel = StateObject(
+            wrappedValue: ParentalRatingsViewModel(
+                initialValue: [.none]
+            )
+        )
     }
 }

@@ -22,8 +22,8 @@ extension EditMetadataView {
 
         var body: some View {
             Section(L10n.parentalRating) {
-                ParentalRatingPicker(L10n.officialRating, selection: $item.officialRating)
-                ParentalRatingPicker(L10n.customRating, selection: $item.customRating)
+                ParentalRatingPicker(L10n.officialRating, name: $item.officialRating)
+                ParentalRatingPicker(L10n.customRating, name: $item.customRating)
             }
         }
     }
