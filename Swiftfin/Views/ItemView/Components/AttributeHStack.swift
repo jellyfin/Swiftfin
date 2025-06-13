@@ -19,29 +19,34 @@ extension ItemView {
         @ObservedObject
         private var viewModel: ItemViewModel
 
-        private let alignment: HorizontalAlignment
+        private let alignment: Alignment
+
+        private let fillDirection: FlowLayout.FillDirection
 
         init(
             viewModel: ItemViewModel,
-            alignment: HorizontalAlignment = .center
+            alignment: Alignment = .center,
+            fillDirection: FlowLayout.FillDirection = .bottomUp
         ) {
             self.viewModel = viewModel
             self.alignment = alignment
+            self.fillDirection = fillDirection
         }
 
         var body: some View {
             let badges = computeBadges()
 
             if badges.isNotEmpty {
-                WrappingHStack(
-                    badges,
-                    id: \.self,
+                FlowLayout(
                     alignment: alignment,
-                    spacing: .constant(8),
-                    lineSpacing: 8
-                ) { badgeItem in
-                    badgeItem
-                        .fixedSize(horizontal: true, vertical: false)
+                    spacing: 8,
+                    lineSpacing: 8,
+                    fillDirection: fillDirection
+                ) {
+                    ForEach(badges) { badge in
+                        badge
+                            .fixedSize(horizontal: true, vertical: false)
+                    }
                 }
                 .foregroundStyle(Color(UIColor.darkGray))
                 .lineLimit(1)

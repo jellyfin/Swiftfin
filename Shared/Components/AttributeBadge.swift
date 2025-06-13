@@ -8,7 +8,9 @@
 
 import SwiftUI
 
-struct AttributeBadge: View {
+struct AttributeBadge: View, Identifiable {
+
+    let id = UUID()
 
     @Environment(\.font)
     private var font
