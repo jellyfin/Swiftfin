@@ -59,6 +59,9 @@ struct CountryPicker: View {
         .onChange(of: viewModel.value) { _ in
             updateSelection()
         }
+        .onChange(of: selection) { newValue in
+            selectionBinding.wrappedValue = newValue
+        }
     }
 
     private func updateSelection() {
