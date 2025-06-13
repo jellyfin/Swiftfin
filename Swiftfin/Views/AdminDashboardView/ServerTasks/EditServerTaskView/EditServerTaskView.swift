@@ -35,7 +35,7 @@ struct EditServerTaskView: View {
     var body: some View {
         List {
             ListTitleSection(
-                observer.task.name?.localizedCapitalized ?? L10n.unknown,
+                observer.task.name ?? L10n.unknown,
                 description: observer.task.description
             )
 
