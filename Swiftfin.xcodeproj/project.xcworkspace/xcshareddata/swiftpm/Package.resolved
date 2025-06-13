@@ -1,5 +1,5 @@
 {
-  "originHash" : "10a36cae800726e78f007d4647964a4016231e25305c2077df22139cdc11f9bf",
+  "originHash" : "3cc5817bf6ef8bd4945cfbea94dd9e444c152ef9ab65b87bc2bae5eee06fe949",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -94,8 +94,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jellyfin/jellyfin-sdk-swift.git",
       "state" : {
-        "revision" : "6039de827d9f768fe7218f3960426aca3325423a",
-        "version" : "0.5.2"
+        "revision" : "10624671970ee1ad49ce817ee7b8ee3074f89a32",
+        "version" : "0.5.1"
       }
     },
     {
@@ -130,8 +130,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Pulse",
       "state" : {
-        "revision" : "3ac5ee35ab233e900aa484919803d51791d1e351",
-        "version" : "4.2.7"
+        "revision" : "d1e39ffaaa8b8becff80cb193c93a78e32077af8",
+        "version" : "4.2.0"
       }
     },
     {

@@ -41,7 +41,8 @@ struct ItemSubtitleUploadView: View {
     // MARK: - Subtitle Properties
 
     @State
-    private var language: String?
+    /// Default to user's language
+    private var language: String? = Locale.current.language.languageCode?.identifier(.alpha3)
     @State
     private var isForced = false
     @State
@@ -104,14 +105,14 @@ struct ItemSubtitleUploadView: View {
     private var contentView: some View {
         Form {
             Section(L10n.options) {
-                LanguagePicker(title: L10n.language, selectedLanguageCode: $language)
+                CulturePicker(L10n.language, threeLetterISOLanguageName: $language)
 
                 Toggle(L10n.forced, isOn: $isForced)
                 Toggle(L10n.hearingImpaired, isOn: $isHearingImpaired)
             }
 
             Section(L10n.file) {
-                Text(subtitleFile?.lastPathComponent ?? L10n.noItemSelected)
+                Text(subtitleFile?.lastPathComponent ?? L10n.noFileSelected)
                     .foregroundColor(.secondary)
             }
 

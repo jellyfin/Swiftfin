@@ -27,7 +27,9 @@ struct ItemSubtitleSearchView: View {
     // MARK: - Search Properties
 
     @State
-    private var language: String?
+    /// Default to user's language
+    private var language: String? = Locale.current.language.languageCode?.identifier(.alpha3)
+
     @State
     private var isPerfectMatch = false
 
@@ -105,7 +107,7 @@ struct ItemSubtitleSearchView: View {
 
     private var searchSection: some View {
         Section(L10n.options) {
-            LanguagePicker(title: L10n.language, selectedLanguageCode: $language)
+            CulturePicker(L10n.language, threeLetterISOLanguageName: $language)
                 .onChange(of: language) { _ in
                     if let language {
                         viewModel.send(.search(language: language, isPerfectMatch: isPerfectMatch))
@@ -151,7 +153,7 @@ struct ItemSubtitleSearchView: View {
 
     private func setSubtitles() {
         guard selectedSubtitles.isNotEmpty else {
-            error = JellyfinAPIError(L10n.noItemSelected)
+            error = JellyfinAPIError(L10n.noFileSelected)
             return
         }
 
