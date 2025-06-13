@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+/// A custom layout that arranges views in a flow pattern, automatically wrapping items to a second row
 struct FlowLayout: Layout {
 
     // MARK: - Fill Direction
@@ -39,6 +40,8 @@ struct FlowLayout: Layout {
     var lineSpacing: CGFloat = 8
     /// Controls whether items fill from the top row down or bottom row up when wrapping
     var fillDirection: FillDirection = .bottomUp
+    /// The minimum number of items that must be in the smaller row when wrapping occurs
+    var minRowLength: Int = 2
 
     // MARK: - Make Cache
 
@@ -179,8 +182,8 @@ struct FlowLayout: Layout {
                 }
             }
 
-            if topRowCount == 1 {
-                topRowCount = 2
+            if topRowCount < minRowLength && topRowCount > 0 {
+                topRowCount = minRowLength
             }
 
             return topRowCount
@@ -199,8 +202,9 @@ struct FlowLayout: Layout {
                 }
             }
 
-            if topRowCount == sizes.count - 1 && sizes.count >= 3 {
-                topRowCount = sizes.count - 2
+            let bottomRowCount = sizes.count - topRowCount
+            if bottomRowCount < minRowLength && bottomRowCount > 0 {
+                topRowCount = sizes.count - minRowLength
             }
 
             return topRowCount
