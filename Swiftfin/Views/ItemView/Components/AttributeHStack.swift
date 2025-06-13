@@ -35,9 +35,7 @@ extension ItemView {
             if attributes.isNotEmpty {
                 FlowLayout(
                     alignment: alignment,
-                    direction: flowDirection,
-                    spacing: 8,
-                    lineSpacing: 8
+                    direction: flowDirection
                 ) {
                     ForEach(attributes, id: \.self) { attribute in
                         switch attribute {
