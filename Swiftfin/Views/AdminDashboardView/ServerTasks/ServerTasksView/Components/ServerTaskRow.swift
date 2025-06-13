@@ -95,7 +95,7 @@ extension ServerTasksView {
             .animation(.linear(duration: 0.1), value: observer.state)
             .foregroundStyle(.primary, .secondary)
             .confirmationDialog(
-                observer.task.name ?? .emptyDash,
+                observer.task.name ?? L10n.unknown,
                 isPresented: $isPresentingConfirmation,
                 titleVisibility: .visible
             ) {

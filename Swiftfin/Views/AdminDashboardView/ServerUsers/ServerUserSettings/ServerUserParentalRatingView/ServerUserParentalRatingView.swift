@@ -48,7 +48,7 @@ struct ServerUserParentalRatingView: View {
 
     var body: some View {
         contentView
-            .navigationTitle(L10n.parentalRating)
+            .navigationTitle(L10n.parentalRating.localizedCapitalized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.dismissCoordinator()
