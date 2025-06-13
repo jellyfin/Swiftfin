@@ -8,68 +8,105 @@
 
 import SwiftUI
 
-/// A custom layout that arranges views in a flow pattern, automatically wrapping items to a second row
-/// when they exceed the available width. When wrapping occurs, items maintain their order with
-/// configurable fill direction - either filling the bottom row first (bottomUp) or the top row first (topDown).
 struct FlowLayout: Layout {
 
     // MARK: - Fill Direction
 
     /// Controls the priority order when distributing items across rows
     enum FillDirection {
-        /// Fill the top row first, overflow goes to bottom row
         case topDown
-        /// Fill the bottom row first, overflow goes to top row (default)
         case bottomUp
+    }
+
+    // MARK: - Cache Structure
+
+    /// Stores computed layout values to avoid redundant calculations between layout passes
+    struct CacheData {
+        let subviewSizes: [CGSize]
+        let rows: [[Int]]
+        let totalSize: CGSize
+        let lastProposal: ProposedViewSize?
+        let lastBounds: CGRect?
     }
 
     // MARK: - Properties
 
     /// The alignment of content within each row (leading, center, or trailing)
     var alignment: HorizontalAlignment = .center
-
     /// The horizontal spacing between items within the same row
     var spacing: CGFloat = 8
-
     /// The vertical spacing between the top and bottom rows when content wraps
     var lineSpacing: CGFloat = 8
-
-    /// Controls whether items fill from the top row down or bottom row up when wrapping.
-    /// - bottomUp (default): Maximize items in bottom row, overflow to top
-    /// - topDown: Maximize items in top row, overflow to bottom
-
-    // TODO: iOS 18 use VerticalDirection for fill
-    // var fillDirection: VerticalDirection = .up
+    /// Controls whether items fill from the top row down or bottom row up when wrapping
     var fillDirection: FillDirection = .bottomUp
 
-    // MARK: - Determine the Maximum Size that Fits
+    // MARK: - Make Cache
 
-    /// Calculates the minimum size needed to display all subviews according to the flow layout rules.
-    /// - Parameters:
-    ///   - proposal: The proposed size from the parent view
-    ///   - subviews: The collection of child views to layout
-    ///   - cache: Storage for any computed values (unused in this implementation)
-    /// - Returns: The total size needed to display all subviews
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        let maxWidth = proposal.width ?? .infinity
-        let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
-        let rows = computeRows(sizes: sizes, maxWidth: maxWidth)
-
-        return computeTotalSize(rows: rows, sizes: sizes)
+    /// Creates initial cache storage for layout computations
+    func makeCache(subviews: Subviews) -> CacheData {
+        CacheData(
+            subviewSizes: [],
+            rows: [],
+            totalSize: .zero,
+            lastProposal: nil,
+            lastBounds: nil
+        )
     }
 
-    // MARK: - Place Items in Sub-Views
+    // MARK: - Update Cache
 
-    /// Positions each subview within the given bounds according to the flow layout rules.
-    /// Items are placed left-to-right, wrapping to a second row when necessary.
-    /// - Parameters:
-    ///   - bounds: The rectangle in which to place all subviews
-    ///   - proposal: The proposed size from the parent view
-    ///   - subviews: The collection of child views to position
-    ///   - cache: Storage for any computed values (unused in this implementation)
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
-        let rows = computeRows(sizes: sizes, maxWidth: bounds.width)
+    /// Resets cache when subviews change
+    func updateCache(_ cache: inout CacheData, subviews: Subviews) {
+        cache = CacheData(
+            subviewSizes: [],
+            rows: [],
+            totalSize: .zero,
+            lastProposal: nil,
+            lastBounds: nil
+        )
+    }
+
+    // MARK: - Size That Fits
+
+    /// Calculates the minimum size needed to display all subviews according to the flow layout rules
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout CacheData) -> CGSize {
+        if cache.lastProposal != proposal || cache.subviewSizes.isEmpty {
+            let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
+            let maxWidth = proposal.width ?? .infinity
+            let rows = computeRows(sizes: sizes, maxWidth: maxWidth)
+            let totalSize = computeTotalSize(rows: rows, sizes: sizes)
+
+            cache = CacheData(
+                subviewSizes: sizes,
+                rows: rows,
+                totalSize: totalSize,
+                lastProposal: proposal,
+                lastBounds: cache.lastBounds
+            )
+        }
+
+        return cache.totalSize
+    }
+
+    // MARK: - Place Subviews
+
+    /// Positions each subview within the given bounds according to the flow layout rules
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout CacheData) {
+        if cache.lastBounds != bounds || cache.lastProposal != proposal || cache.subviewSizes.isEmpty {
+            let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
+            let rows = computeRows(sizes: sizes, maxWidth: bounds.width)
+
+            cache = CacheData(
+                subviewSizes: sizes,
+                rows: rows,
+                totalSize: cache.totalSize,
+                lastProposal: proposal,
+                lastBounds: bounds
+            )
+        }
+
+        let sizes = cache.subviewSizes
+        let rows = cache.rows
 
         var yOffset: CGFloat = bounds.minY
 
@@ -98,15 +135,7 @@ struct FlowLayout: Layout {
 
     // MARK: - Compute Rows
 
-    /// Determines how to distribute items across rows based on the available width.
-    /// Items prefer to stay on a single row, but wrap to two rows when necessary.
-    /// The fill behavior depends on fillDirection:
-    /// - bottomUp: Bottom row is filled first before items move to the top row
-    /// - topDown: Top row is filled first before items overflow to the bottom row
-    /// - Parameters:
-    ///   - sizes: Array of sizes for each subview
-    ///   - maxWidth: The maximum width available for layout
-    /// - Returns: Array of row arrays, where each row contains the indices of items in that row
+    /// Determines how to distribute items across rows based on the available width
     private func computeRows(sizes: [CGSize], maxWidth: CGFloat) -> [[Int]] {
         guard sizes.count > 1 else {
             return sizes.isEmpty ? [] : [[0]]
@@ -133,20 +162,10 @@ struct FlowLayout: Layout {
 
     // MARK: - Find Split Index
 
-    /// Calculates where to split items between top and bottom rows.
-    /// For bottomUp: Ensures the bottom row is as full as possible while fitting within maxWidth.
-    /// For topDown: Ensures the top row is as full as possible while fitting within maxWidth.
-    /// Enforces a minimum of 2 items in the smaller row to avoid lonely single items.
-    /// - Parameters:
-    ///   - sizes: Array of sizes for each subview
-    ///   - maxWidth: The maximum width available for layout
-    /// - Returns: The index at which to split (items before this index go to top row)
+    /// Determine the index where the items should be moved to a second row
     private func findSplitIndex(sizes: [CGSize], maxWidth: CGFloat) -> Int {
         switch fillDirection {
 
-        /// Fill Pattern:
-        /// 1 2
-        /// 3 4 5 6 7
         case .bottomUp:
             var topRowCount = 0
 
@@ -166,9 +185,6 @@ struct FlowLayout: Layout {
 
             return topRowCount
 
-        /// Fill Pattern:
-        /// 1 2 3 4 5
-        /// 6 7
         case .topDown:
             var topRowCount = sizes.count - 1
 
@@ -193,11 +209,7 @@ struct FlowLayout: Layout {
 
     // MARK: - Compute Row Width
 
-    /// Calculates the total width needed for a row of items including spacing.
-    /// - Parameters:
-    ///   - indices: Array of indices representing items in the row
-    ///   - sizes: Array of all item sizes
-    /// - Returns: Total width including item widths and spacing between them
+    /// Calculates the total width needed for a row of items including spacing
     private func computeRowWidth(indices: [Int], sizes: [CGSize]) -> CGFloat {
         guard !indices.isEmpty else { return 0 }
 
@@ -209,11 +221,7 @@ struct FlowLayout: Layout {
 
     // MARK: - Compute X Offset
 
-    /// Calculates the starting X position for a row based on the alignment setting.
-    /// - Parameters:
-    ///   - rowWidth: The total width of the row
-    ///   - bounds: The available bounds for layout
-    /// - Returns: The X coordinate where the row should start
+    /// Calculates the starting X position for a row based on the alignment setting
     private func computeXOffset(rowWidth: CGFloat, bounds: CGRect) -> CGFloat {
         switch alignment {
         case .trailing:
@@ -227,11 +235,7 @@ struct FlowLayout: Layout {
 
     // MARK: - Compute Total Size
 
-    /// Calculates the total size needed to display all rows with proper spacing.
-    /// - Parameters:
-    ///   - rows: Array of row arrays containing item indices
-    ///   - sizes: Array of all item sizes
-    /// - Returns: The total size encompassing all rows
+    /// Calculates the total size needed to display all rows with proper spacing
     private func computeTotalSize(rows: [[Int]], sizes: [CGSize]) -> CGSize {
         guard !rows.isEmpty else { return .zero }
 
