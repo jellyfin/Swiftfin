@@ -93,14 +93,11 @@ extension FormatStyle where Self == PlaybackRateStyle {
 
 struct PlaybackRateStyle: FormatStyle {
 
-    // TODO: shouldn't use just an "x", should
-    // use some square unicode character
-    // that's small and centered, or an inline symbol
     func format(_ value: Float) -> String {
         FloatingPointFormatStyle<Float>()
             .precision(.significantDigits(1 ... 3))
             .format(value)
-            .appending("x")
+            .appending("\u{00D7}")
     }
 }
 
