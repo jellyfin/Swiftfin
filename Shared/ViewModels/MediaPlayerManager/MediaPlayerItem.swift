@@ -93,7 +93,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
         let startSeconds = max(0, baseItem.startTimeSeconds - TimeInterval(Defaults[.VideoPlayer.resumeOffset]))
 
         if !baseItem.isLiveStream {
-            configuration.startTime = .seconds(startSeconds)
+            configuration.startTime = .seconds(Int(startSeconds))
             configuration.audioIndex = .absolute(mediaSource.defaultAudioStreamIndex ?? -1)
             configuration.subtitleIndex = .absolute(mediaSource.defaultSubtitleStreamIndex ?? -1)
         }

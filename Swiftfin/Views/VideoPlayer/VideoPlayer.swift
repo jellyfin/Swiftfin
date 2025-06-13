@@ -88,14 +88,14 @@ struct VideoPlayer: View {
             if let playbackitem = manager.playbackItem {
                 VLCVideoPlayer(configuration: playbackitem.vlcConfiguration)
                     .proxy(vlcUIProxy)
-                    .onSecondsUpdated { newSeconds, _ in
-
-                        if !isScrubbing {
-                            scrubbedSeconds = newSeconds
-                        }
-
-//                        manager.set(seconds: newSeconds)
-                    }
+//                    .onSecondsUpdated { newSeconds, _ in
+//
+//                        if !isScrubbing {
+//                            scrubbedSeconds = newSeconds
+//                        }
+//
+////                        manager.set(seconds: newSeconds)
+//                    }
                     .onStateUpdated { state, _ in
 
                         switch state {
@@ -134,11 +134,11 @@ struct VideoPlayer: View {
     var body: some View {
         playerView
             .ignoresSafeArea()
-            .navigationBarHidden()
+            .toolbar(.hidden, for: .navigationBar)
             .statusBarHidden()
             .trackingSize(.constant(.zero), $safeAreaInsets)
             .onChange(of: audioOffset) { newValue in
-                vlcUIProxy.setAudioDelay(.seconds(newValue))
+//                vlcUIProxy.setAudioDelay(.seconds(newValue))
             }
             .onChange(of: isAspectFilled) { newValue in
                 UIView.animate(withDuration: 0.2) {
@@ -158,7 +158,7 @@ struct VideoPlayer: View {
                 vlcUIProxy.setSubtitleFont(newValue)
             }
             .onChange(of: subtitleOffset) { newValue in
-                vlcUIProxy.setSubtitleDelay(.seconds(newValue))
+//                vlcUIProxy.setSubtitleDelay(.seconds(newValue))
             }
             .onChange(of: subtitleSize) { newValue in
                 vlcUIProxy.setSubtitleSize(.absolute(24 - newValue))
@@ -175,10 +175,10 @@ struct VideoPlayer: View {
 
                     let seconds = item.vlcConfiguration
                         .startTime
-                        .asSeconds
+//                        .asSeconds
 
-                    scrubbedSeconds = seconds
-                    vlcUIProxy.playNewMedia(item.vlcConfiguration)
+//                    scrubbedSeconds = seconds
+//                    vlcUIProxy.playNewMedia(item.vlcConfiguration)
                 }
             }
     }

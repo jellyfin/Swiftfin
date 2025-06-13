@@ -1,5 +1,5 @@
 {
-  "originHash" : "ddfc5cbd8d388ce0939343b4ca7ebf92e9902b5aa9bd105f6c3fdbaa009309f8",
+  "originHash" : "455d8396ec309370a4d8c6441092e32881afdc1a7f074605ede3e4c3a7773db5",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -24,8 +24,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/CollectionHStack",
       "state" : {
-        "branch" : "main",
-        "revision" : "00beb78cc570ee1014a92eb1cd7a60c099bce5ec"
+        "revision" : "03dc666e8b20ec216fda60f55ccc0eeaabbc5fad"
       }
     },
     {
@@ -33,8 +32,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/CollectionVGrid",
       "state" : {
-        "branch" : "main",
-        "revision" : "4b1591321339481756af6157c9205051d7fe3040"
+        "revision" : "70db2318ce64d49aa8b536e0623b96cb323fbdf1"
       }
     },
     {
@@ -89,15 +87,6 @@
       "state" : {
         "revision" : "31249885da1052872e0ac91a2943f62567c0d96d",
         "version" : "2.2.1"
-      }
-    },
-    {
-      "identity" : "inject",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/krzysztofzablocki/Inject",
-      "state" : {
-        "revision" : "728c56639ecb3df441d51d5bc6747329afabcfc9",
-        "version" : "1.5.2"
       }
     },
     {
@@ -260,15 +249,6 @@
       "state" : {
         "revision" : "4ce950479707ea109f229d7230ec074a133b15d7",
         "version" : "0.2.1"
-      }
-    },
-    {
-      "identity" : "wrappinghstack",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/dkk/WrappingHStack",
-      "state" : {
-        "revision" : "425d9488ba55f58f0b34498c64c054c77fc2a44b",
-        "version" : "2.2.11"
       }
     }
   ],

@@ -23,11 +23,11 @@ class VLCVideoPlayerProxy: MediaPlayerProxy {
     }
 
     func jumpForward(_ seconds: TimeInterval) {
-        vlcUIProxy?.jumpForward(seconds)
+        vlcUIProxy?.jumpForward(Int(seconds))
     }
 
     func jumpBackward(_ seconds: TimeInterval) {
-        vlcUIProxy?.jumpBackward(seconds)
+        vlcUIProxy?.jumpBackward(Int(seconds))
     }
 
     func setRate(_ rate: Float) {
@@ -35,7 +35,7 @@ class VLCVideoPlayerProxy: MediaPlayerProxy {
     }
 
     func setTime(_ time: TimeInterval) {
-        vlcUIProxy?.setTime(.seconds(time))
+        vlcUIProxy?.setTime(.seconds(Int(time)))
     }
 
     func stop() {

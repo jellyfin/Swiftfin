@@ -25,7 +25,7 @@ struct NativeVideoPlayer: View {
 
     var body: some View {
         NativeVideoPlayerView(manager: manager)
-            .navigationBarHidden()
+            .toolbar(.hidden)
             .statusBarHidden()
             .ignoresSafeArea()
     }

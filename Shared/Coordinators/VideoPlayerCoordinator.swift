@@ -29,33 +29,18 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     private var versionedView: some View {
-        if #available(iOS 16, *) {
-            PreferencesView {
-                ZStack {
-                    if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                        VideoPlayer(manager: self.manager)
-                    } else {
-                        NativeVideoPlayer(manager: self.manager)
-                    }
-                }
-                .preferredColorScheme(.dark)
-                .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
-            }
-        } else {
-            Group {
+        PreferencesView {
+            ZStack {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-//                    VideoPlayer(manager: self.videoPlayerManager)
-                    Color.red
+                    VideoPlayer(manager: self.manager)
                 } else {
-                    Color.red
-//                    NativeVideoPlayer(manager: self.videoPlayerManager)
+                    NativeVideoPlayer(manager: self.manager)
                 }
             }
             .preferredColorScheme(.dark)
-//            .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
+            .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
         }
     }
-    #endif
 
     @ViewBuilder
     func makeStart() -> some View {
@@ -69,7 +54,6 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
         versionedView
             .preferredColorScheme(.dark)
             .ignoresSafeArea()
-            .backport
             .persistentSystemOverlays(.hidden)
 
         #else

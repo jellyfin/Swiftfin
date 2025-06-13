@@ -16,9 +16,6 @@ import SwiftUI
 //       - indicated by snapping to the top
 struct HomeView: View {
 
-    @ObserveInjection
-    private var inject
-
     @Default(.Customization.nextUpPosterType)
     private var nextUpPosterType
     @Default(.Customization.Home.showRecentlyAdded)
@@ -107,6 +104,5 @@ struct HomeView: View {
                 viewModel.notificationsReceived.remove(.itemMetadataDidChange)
             }
         }
-        .enableInjection()
     }
 }

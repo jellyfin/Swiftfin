@@ -22,8 +22,8 @@ struct DebugPlaygroundView: View {
 #if DEBUG
 struct TestPlaybackProgressView: View {
 
-    @ObserveInjection
-    private var inject
+//    @ObserveInjection
+//    private var inject
 
     @State
     private var isScrubbing: Bool = false
@@ -55,7 +55,7 @@ struct TestPlaybackProgressView: View {
 //            .environment(\.playbackSpeed, .constant(1.0))
             .environment(\.selectedMediaPlayerSupplement, .mock(nil))
 //            .environment(\.scrubbedSeconds, $scrubbedSeconds)
-            .enableInjection()
+//            .enableInjection()
     }
 }
 #endif
