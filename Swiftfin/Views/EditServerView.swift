@@ -70,7 +70,7 @@ struct EditServerView: View {
                 router.popLast()
             }
         } message: {
-            Text("Are you sure you want to delete \(viewModel.server.name) and all of its connected users?")
+            Text(L10n.confirmDeleteServerAndUsers(viewModel.server.name))
         }
     }
 }

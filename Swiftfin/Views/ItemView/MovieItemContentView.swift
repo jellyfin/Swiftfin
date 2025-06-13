@@ -6,36 +6,33 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
-extension iPadOSEpisodeItemView {
+extension ItemView {
 
-    struct ContentView: View {
-
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+    struct MovieItemContentView: View {
 
         @ObservedObject
-        var viewModel: EpisodeItemViewModel
+        var viewModel: MovieItemViewModel
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 10) {
+            SeparatorVStack(alignment: .leading) {
+                RowDivider()
+                    .padding(.vertical, 10)
+            } content: {
 
                 // MARK: Genres
 
                 if let genres = viewModel.item.itemGenres, genres.isNotEmpty {
                     ItemView.GenresHStack(genres: genres)
-
-                    RowDivider()
                 }
 
                 // MARK: Studios
 
                 if let studios = viewModel.item.studios, studios.isNotEmpty {
                     ItemView.StudiosHStack(studios: studios)
-
-                    RowDivider()
                 }
 
                 // MARK: Cast and Crew
@@ -44,8 +41,18 @@ extension iPadOSEpisodeItemView {
                    castAndCrew.isNotEmpty
                 {
                     ItemView.CastAndCrewHStack(people: castAndCrew)
+                }
 
-                    RowDivider()
+                // MARK: Special Features
+
+                if viewModel.specialFeatures.isNotEmpty {
+                    ItemView.SpecialFeaturesHStack(items: viewModel.specialFeatures)
+                }
+
+                // MARK: Similar
+
+                if viewModel.similarItems.isNotEmpty {
+                    ItemView.SimilarItemsHStack(items: viewModel.similarItems)
                 }
 
                 ItemView.AboutView(viewModel: viewModel)

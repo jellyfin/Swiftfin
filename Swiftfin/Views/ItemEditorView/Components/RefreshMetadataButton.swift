@@ -99,7 +99,6 @@ extension ItemEditorView {
                     } else {
                         Image(systemName: "arrow.clockwise")
                             .foregroundStyle(.secondary)
-                            .backport
                             .fontWeight(.semibold)
                     }
                 }

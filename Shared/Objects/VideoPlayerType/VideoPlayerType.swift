@@ -17,7 +17,7 @@ enum VideoPlayerType: String, CaseIterable, Displayable, Storable {
     var displayTitle: String {
         switch self {
         case .native:
-            "Native"
+            L10n.native
         case .swiftfin:
             "Swiftfin"
         }

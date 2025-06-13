@@ -12,9 +12,6 @@ import JellyfinAPI
 import LocalAuthentication
 import SwiftUI
 
-// TODO: authentication view during device authentication
-//       - could use provided UI, but is iOS 16+
-//       - could just ignore for iOS 15, or basic view
 // TODO: user ordering
 //       - name
 //       - last signed in date

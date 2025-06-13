@@ -59,7 +59,6 @@ struct SectionFooterWithImageLabelStyle<ImageStyle: ShapeStyle>: LabelStyle {
         HStack {
             configuration.icon
                 .foregroundStyle(imageStyle)
-                .backport
                 .fontWeight(.bold)
 
             configuration.title

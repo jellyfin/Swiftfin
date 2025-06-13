@@ -10,15 +10,18 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-extension SeriesItemView {
+extension ItemView {
 
-    struct ContentView: View {
+    struct SeriesItemContentView: View {
 
         @ObservedObject
         var viewModel: SeriesItemViewModel
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 20) {
+            SeparatorVStack(alignment: .leading) {
+                RowDivider()
+                    .padding(.vertical, 10)
+            } content: {
 
                 // MARK: Episodes
 
@@ -30,16 +33,12 @@ extension SeriesItemView {
 
                 if let genres = viewModel.item.itemGenres, genres.isNotEmpty {
                     ItemView.GenresHStack(genres: genres)
-
-                    RowDivider()
                 }
 
                 // MARK: Studios
 
                 if let studios = viewModel.item.studios, studios.isNotEmpty {
                     ItemView.StudiosHStack(studios: studios)
-
-                    RowDivider()
                 }
 
                 // MARK: Cast and Crew
@@ -48,24 +47,18 @@ extension SeriesItemView {
                    castAndCrew.isNotEmpty
                 {
                     ItemView.CastAndCrewHStack(people: castAndCrew)
-
-                    RowDivider()
                 }
 
                 // MARK: Special Features
 
                 if viewModel.specialFeatures.isNotEmpty {
                     ItemView.SpecialFeaturesHStack(items: viewModel.specialFeatures)
-
-                    RowDivider()
                 }
 
                 // MARK: Similar
 
                 if viewModel.similarItems.isNotEmpty {
                     ItemView.SimilarItemsHStack(items: viewModel.similarItems)
-
-                    RowDivider()
                 }
 
                 ItemView.AboutView(viewModel: viewModel)

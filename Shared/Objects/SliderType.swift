@@ -14,9 +14,9 @@ enum SliderType: String, CaseIterable, Displayable, Storable {
     var displayTitle: String {
         switch self {
         case .thumb:
-            return "Thumb"
+            return L10n.thumbSlider
         case .capsule:
-            return "Capsule"
+            return L10n.capsule
         }
     }
 }

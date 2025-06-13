@@ -6,12 +6,16 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
 extension HomeView {
 
     struct LatestInLibraryView: View {
+
+        @Default(.Customization.latestInLibraryPosterType)
+        private var latestInLibraryPosterType
 
         @EnvironmentObject
         private var router: HomeCoordinator.Router
@@ -23,7 +27,7 @@ extension HomeView {
             if viewModel.elements.isNotEmpty {
                 PosterHStack(
                     title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
-                    type: .portrait,
+                    type: latestInLibraryPosterType,
                     items: viewModel.elements
                 )
                 .onSelect { item in

@@ -14,7 +14,7 @@ enum PlaybackButtonType: String, CaseIterable, Displayable, Storable {
     var displayTitle: String {
         switch self {
         case .large:
-            return "Large"
+            return L10n.large
         case .compact:
             return L10n.compact
         }

@@ -6,49 +6,44 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import BlurHashKit
 import JellyfinAPI
 import SwiftUI
 
-extension iPadOSCollectionItemView {
+extension ItemView {
 
-    struct ContentView: View {
+    struct EpisodeItemContentView: View {
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
 
         @ObservedObject
-        var viewModel: CollectionItemViewModel
+        var viewModel: EpisodeItemViewModel
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 20) {
+            SeparatorVStack(alignment: .leading) {
+                RowDivider()
+                    .padding(.vertical, 10)
+            } content: {
 
                 // MARK: Genres
 
                 if let genres = viewModel.item.itemGenres, genres.isNotEmpty {
                     ItemView.GenresHStack(genres: genres)
-
-                    RowDivider()
                 }
 
                 // MARK: Studios
 
                 if let studios = viewModel.item.studios, studios.isNotEmpty {
                     ItemView.StudiosHStack(studios: studios)
-
-                    RowDivider()
                 }
 
-                // MARK: Items
+                // MARK: Cast and Crew
 
-                if viewModel.collectionItems.isNotEmpty {
-                    PosterHStack(
-                        title: L10n.items,
-                        type: .portrait,
-                        items: viewModel.collectionItems
-                    )
-                    .onSelect { item in
-                        router.route(to: \.item, item)
-                    }
+                if let castAndCrew = viewModel.item.people,
+                   castAndCrew.isNotEmpty
+                {
+                    ItemView.CastAndCrewHStack(people: castAndCrew)
                 }
 
                 ItemView.AboutView(viewModel: viewModel)

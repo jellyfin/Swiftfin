@@ -27,9 +27,6 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
         self.manager = manager
     }
 
-    // TODO: removed after iOS 15 support removed
-
-    #if os(iOS)
     @ViewBuilder
     private var versionedView: some View {
         if #available(iOS 16, *) {
