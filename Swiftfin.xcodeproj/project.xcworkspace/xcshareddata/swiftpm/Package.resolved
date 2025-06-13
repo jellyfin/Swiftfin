@@ -1,5 +1,5 @@
 {
-  "originHash" : "fab84d1aa7312abfbd732cc450dc585f8de81c473ea08a896c7f5718f0325ec9",
+  "originHash" : "e52495011569fd5942dbcff22059e6d051d38336a2f3fbfcbc4b62070364e176",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -24,6 +24,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/CollectionHStack",
       "state" : {
+        "branch" : "main",
         "revision" : "03dc666e8b20ec216fda60f55ccc0eeaabbc5fad"
       }
     },
@@ -32,6 +33,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/CollectionVGrid",
       "state" : {
+        "branch" : "main",
         "revision" : "70db2318ce64d49aa8b536e0623b96cb323fbdf1"
       }
     },
@@ -258,15 +260,6 @@
       "state" : {
         "branch" : "main",
         "revision" : "9e0285b13c666aace61835e8a512512edee822a6"
-      }
-    },
-    {
-      "identity" : "wrappinghstack",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/dkk/WrappingHStack",
-      "state" : {
-        "revision" : "425d9488ba55f58f0b34498c64c054c77fc2a44b",
-        "version" : "2.2.11"
       }
     }
   ],
