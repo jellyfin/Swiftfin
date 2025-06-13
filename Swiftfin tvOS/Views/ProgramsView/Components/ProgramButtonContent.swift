@@ -21,13 +21,11 @@ extension ProgramsView {
                 Text(program.channelName ?? .emptyDash)
                     .font(.footnote.weight(.semibold))
                     .foregroundColor(.primary)
-                    .backport
                     .lineLimit(1, reservesSpace: true)
 
                 Text(program.displayTitle)
                     .font(.footnote.weight(.regular))
                     .foregroundColor(.primary)
-                    .backport
                     .lineLimit(1, reservesSpace: true)
 
                 HStack(spacing: 2) {

@@ -96,6 +96,9 @@ extension ItemView.CinematicScrollView {
         @Default(.Customization.CinematicItemViewType.usePrimaryImage)
         private var usePrimaryImage
 
+        @StoredValue(.User.itemViewAttributes)
+        private var attributes
+
         @EnvironmentObject
         private var router: ItemCoordinator.Router
         @ObservedObject
@@ -156,7 +159,11 @@ extension ItemView.CinematicScrollView {
                     .taglineLineLimit(2)
                     .foregroundColor(.white)
 
-                ItemView.AttributesHStack(viewModel: viewModel, alignment: .leading)
+                ItemView.AttributesHStack(
+                    attributes: attributes,
+                    viewModel: viewModel,
+                    alignment: .leading
+                )
             }
         }
     }

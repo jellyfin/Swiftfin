@@ -24,7 +24,6 @@ struct NavigationBarCloseButtonModifier: ViewModifier {
                     action()
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .backport
                         .fontWeight(.bold)
                         .symbolRenderingMode(.palette)
                         .foregroundStyle(accentColor.overlayColor, accentColor)

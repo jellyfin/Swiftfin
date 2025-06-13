@@ -39,11 +39,6 @@ struct LetterPickerBar: View {
     // MARK: - Letter Button Size
 
     static var size: CGFloat {
-        String().height(
-            withConstrainedWidth: CGFloat.greatestFiniteMagnitude,
-            font: UIFont.preferredFont(
-                forTextStyle: .headline
-            )
-        )
+        UIFont.preferredFont(forTextStyle: .headline).lineHeight
     }
 }

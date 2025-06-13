@@ -57,7 +57,7 @@ struct EditAccessScheduleView: View {
 
     var body: some View {
         contentView
-            .navigationTitle(L10n.accessSchedules)
+            .navigationTitle(L10n.accessSchedules.localizedCapitalized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(isEditing)
             .toolbar {
@@ -110,22 +110,22 @@ struct EditAccessScheduleView: View {
                 }
             }
             .confirmationDialog(
-                L10n.deleteSelectedSchedules,
+                L10n.delete,
                 isPresented: $isPresentingDeleteSelectionConfirmation,
                 titleVisibility: .visible
             ) {
                 deleteSelectedSchedulesConfirmationActions
             } message: {
-                Text(L10n.deleteSelectionSchedulesWarning)
+                Text(L10n.deleteSelectedConfirmation)
             }
             .confirmationDialog(
-                L10n.deleteSchedule,
+                L10n.delete,
                 isPresented: $isPresentingDeleteConfirmation,
                 titleVisibility: .visible
             ) {
                 deleteScheduleConfirmationActions
             } message: {
-                Text(L10n.deleteScheduleWarning)
+                Text(L10n.deleteItemConfirmation)
             }
             .errorMessage($error)
     }

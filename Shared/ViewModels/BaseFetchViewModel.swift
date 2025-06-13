@@ -8,11 +8,8 @@
 
 import Combine
 import Foundation
-import JellyfinAPI
 
-final class ParentalRatingsViewModel: ViewModel, Stateful {
-
-    // MARK: Action
+class BaseFetchViewModel<Value: Codable>: ViewModel, Stateful {
 
     enum Action: Equatable {
         case refresh
@@ -28,16 +25,15 @@ final class ParentalRatingsViewModel: ViewModel, Stateful {
     }
 
     @Published
-    private(set) var parentalRatings: [ParentalRating] = []
-
-    @Published
     var state: State = .initial
+    @Published
+    var value: Value
+
+    init(initialValue: Value) {
+        self.value = initialValue
+    }
 
     private var currentRefreshTask: AnyCancellable?
-
-    var hasNoResults: Bool {
-        parentalRatings.isEmpty
-    }
 
     func respond(to action: Action) -> State {
         switch action {
@@ -48,12 +44,12 @@ final class ParentalRatingsViewModel: ViewModel, Stateful {
                 guard let self else { return }
 
                 do {
-                    let parentalRatings = try await getParentalRatings()
+                    let newValue = try await getValue()
 
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run {
-                        self.parentalRatings = parentalRatings
+                        self.value = newValue
                         self.state = .content
                     }
                 } catch {
@@ -70,12 +66,7 @@ final class ParentalRatingsViewModel: ViewModel, Stateful {
         }
     }
 
-    // MARK: - Fetch Parental Ratings
-
-    private func getParentalRatings() async throws -> [ParentalRating] {
-        let request = Paths.getParentalRatings
-        let response = try await userSession.client.send(request)
-
-        return response.value
+    func getValue() async throws -> Value {
+        fatalError("This method should be overridden in subclasses")
     }
 }

@@ -180,7 +180,6 @@ struct ItemImagesView: View {
             }
             .font(.body)
             .labelStyle(.iconOnly)
-            .backport
             .fontWeight(.semibold)
             .foregroundStyle(accentColor)
         }

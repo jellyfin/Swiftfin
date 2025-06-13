@@ -29,11 +29,9 @@ struct ScrollIfLargerThanContainerModifier: ViewModifier {
                     .trackingSize($contentSize)
             }
             .frame(maxHeight: contentSize.height >= layoutSize.height ? .infinity : contentSize.height)
-            .backport
+            .backport // iOS 17
             .scrollClipDisabled()
-            .backport
             .scrollDisabled(contentSize.height < layoutSize.height)
-            .backport
             .scrollIndicators(.never)
         }
     }

@@ -35,7 +35,6 @@ extension ServerTasksView {
                     Spacer()
 
                     Image(systemName: systemName)
-                        .backport
                         .fontWeight(.bold)
                 }
             }

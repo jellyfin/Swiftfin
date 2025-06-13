@@ -47,7 +47,6 @@ extension SeriesEpisodeSelector {
                 .font(.caption.weight(.light))
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.leading)
-                .backport
                 .lineLimit(3, reservesSpace: true)
                 .font(.caption.weight(.light))
         }
@@ -62,14 +61,6 @@ extension SeriesEpisodeSelector {
                     headerView
 
                     contentView
-                        .iOS15 { v in
-                            v.frame(
-                                height: "A\nA\nA".height(
-                                    withConstrainedWidth: 10,
-                                    font: Font.caption.uiFont ?? UIFont.preferredFont(forTextStyle: .body)
-                                )
-                            )
-                        }
 
                     L10n.seeMore.text
                         .font(.caption.weight(.light))

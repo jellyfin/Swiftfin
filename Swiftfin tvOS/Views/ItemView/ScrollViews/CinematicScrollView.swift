@@ -44,6 +44,9 @@ extension ItemView {
             case playButton
         }
 
+        @StoredValue(.User.itemViewAttributes)
+        private var attributes
+
         @EnvironmentObject
         private var router: ItemCoordinator.Router
         @ObservedObject
@@ -112,7 +115,10 @@ extension ItemView {
                             .font(.caption)
                             .foregroundColor(Color(UIColor.lightGray))
 
-                            ItemView.AttributesHStack(viewModel: viewModel)
+                            ItemView.AttributesHStack(
+                                attributes: attributes,
+                                viewModel: viewModel
+                            )
                         }
                     }
 

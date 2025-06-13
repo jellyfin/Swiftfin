@@ -31,7 +31,6 @@ struct NavigationBarMenuButtonModifier<Content: View>: ViewModifier {
                         items()
                     }
                     .labelStyle(.iconOnly)
-                    .backport
                     .fontWeight(.semibold)
                     .foregroundStyle(accentColor)
                 }

@@ -36,7 +36,6 @@ struct ListRowCheckbox: View {
         if isEditing, isSelected {
             Image(systemName: "checkmark.circle.fill")
                 .resizable()
-                .backport
                 .fontWeight(.bold)
                 .aspectRatio(1, contentMode: .fit)
                 .frame(width: size, height: size)
@@ -46,7 +45,6 @@ struct ListRowCheckbox: View {
         } else if isEditing {
             Image(systemName: "circle")
                 .resizable()
-                .backport
                 .fontWeight(.bold)
                 .aspectRatio(1, contentMode: .fit)
                 .frame(width: size, height: size)

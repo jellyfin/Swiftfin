@@ -272,15 +272,6 @@ extension View {
         }
     }
 
-    @ViewBuilder
-    func navigationBarHidden() -> some View {
-        if #available(iOS 16, tvOS 16, *) {
-            toolbar(.hidden, for: .navigationBar)
-        } else {
-            navigationBarHidden(true)
-        }
-    }
-
     func blurredFullScreenCover(
         isPresented: Binding<Bool>,
         onDismiss: (() -> Void)? = nil,

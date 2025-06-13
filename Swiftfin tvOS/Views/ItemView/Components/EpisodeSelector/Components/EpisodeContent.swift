@@ -47,7 +47,6 @@ extension SeriesEpisodeSelector {
                 .font(.caption.weight(.light))
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.leading)
-                .backport
                 .lineLimit(3, reservesSpace: true)
                 .font(.caption.weight(.light))
         }

@@ -37,7 +37,7 @@ struct LiveNativeVideoPlayer: View {
                 VideoPlayer.LoadingView()
             }
         }
-        .navigationBarHidden()
+        .navigationBarHidden(true)
         .statusBarHidden()
         .ignoresSafeArea()
     }

@@ -167,12 +167,10 @@ extension PosterButton {
             VStack(alignment: .leading) {
                 if item.showTitle {
                     TitleContentView(item: item)
-                        .backport
                         .lineLimit(1, reservesSpace: true)
                 }
 
                 SubtitleContentView(item: item)
-                    .backport
                     .lineLimit(1, reservesSpace: true)
             }
         }
@@ -194,7 +192,6 @@ extension PosterButton {
                         Text(seriesName)
                             .font(.footnote.weight(.regular))
                             .foregroundColor(.primary)
-                            .backport
                             .lineLimit(1, reservesSpace: true)
                     }
 

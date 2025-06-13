@@ -26,22 +26,16 @@ final class LiveVideoPlayerCoordinator: NavigationCoordinatable {
         self.videoPlayerManager = manager
     }
 
-    #if os(iOS)
     @ViewBuilder
-    private var versionedView: some View {
-        if #available(iOS 16, *) {
-            PreferencesView {
-                Group {
-                    if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                        LiveVideoPlayer(manager: self.videoPlayerManager)
-                    } else {
-                        LiveNativeVideoPlayer(manager: self.videoPlayerManager)
-                    }
-                }
-                .preferredColorScheme(.dark)
-                .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
-            }
-        } else {
+    func makeStart() -> some View {
+        #if os(iOS)
+
+        // Some settings have to apply to the root PreferencesView and this
+        // one - separately.
+        // It is assumed that because Stinsen adds a lot of views that the
+        // PreferencesView isn't in the right place in the VC chain so that
+        // it can apply the settings, even SwiftUI settings.
+        PreferencesView {
             Group {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
                     LiveVideoPlayer(manager: self.videoPlayerManager)
@@ -51,20 +45,9 @@ final class LiveVideoPlayerCoordinator: NavigationCoordinatable {
             }
             .preferredColorScheme(.dark)
             .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
-            .preferredColorScheme(.dark)
-            .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
         }
-    }
-    #endif
-
-    @ViewBuilder
-    func makeStart() -> some View {
-        #if os(iOS)
-
-        versionedView
-            .ignoresSafeArea()
-            .backport
-            .persistentSystemOverlays(.hidden)
+        .ignoresSafeArea()
+        .persistentSystemOverlays(.hidden)
 
         #else
 

@@ -40,13 +40,13 @@ extension EditServerTaskView {
                             }
                     }
                 } else {
-                    Button(L10n.addTrigger) {
+                    Button(L10n.add) {
                         router.route(to: \.addServerTaskTrigger, observer)
                     }
                 }
             }
             .confirmationDialog(
-                L10n.deleteTrigger,
+                L10n.delete,
                 isPresented: $isPresentingDeleteConfirmation,
                 titleVisibility: .visible
             ) {
@@ -58,7 +58,7 @@ extension EditServerTaskView {
                     }
                 }
             } message: {
-                Text(L10n.deleteTriggerConfirmationMessage)
+                Text(L10n.deleteSelectedConfirmation)
             }
         }
     }

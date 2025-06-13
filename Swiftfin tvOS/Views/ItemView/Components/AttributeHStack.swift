@@ -9,79 +9,145 @@
 import SwiftUI
 
 extension ItemView {
-    struct AttributesHStack: View {
-        @ObservedObject
-        var viewModel: ItemViewModel
 
-        @StoredValue(.User.itemViewAttributes)
-        private var itemViewAttributes
+    struct AttributesHStack: View {
+
+        @ObservedObject
+        private var viewModel: ItemViewModel
+
+        private let alignment: HorizontalAlignment
+        private let attributes: [ItemViewAttribute]
+        private let flowDirection: FlowLayout.Direction
+
+        init(
+            attributes: [ItemViewAttribute],
+            viewModel: ItemViewModel,
+            alignment: HorizontalAlignment = .center,
+            flowDirection: FlowLayout.Direction = .up
+        ) {
+            self.viewModel = viewModel
+            self.alignment = alignment
+            self.attributes = attributes
+            self.flowDirection = flowDirection
+        }
 
         var body: some View {
-            if itemViewAttributes.isNotEmpty {
-                HStack(spacing: 25) {
-                    ForEach(itemViewAttributes, id: \.self) { attribute in
-                        getAttribute(attribute)
-                            .fixedSize(horizontal: true, vertical: false)
+            if attributes.isNotEmpty {
+                FlowLayout(
+                    alignment: alignment,
+                    direction: flowDirection,
+                    spacing: 20
+                ) {
+                    ForEach(attributes, id: \.self) { attribute in
+                        switch attribute {
+                        case .ratingCritics: CriticRating()
+                        case .ratingCommunity: CommunityRating()
+                        case .ratingOfficial: OfficialRating()
+                        case .videoQuality: VideoQuality()
+                        case .audioChannels: AudioChannels()
+                        case .subtitles: Subtitles()
+                        }
                     }
                 }
-                .frame(alignment: .leading)
-                .lineLimit(1)
                 .foregroundStyle(Color(UIColor.darkGray))
+                .lineLimit(1)
             }
         }
 
         @ViewBuilder
-        func getAttribute(_ attribute: ItemViewAttribute) -> some View {
-            switch attribute {
-            case .ratingCritics:
-                if let criticRating = viewModel.item.criticRating {
-                    AttributeBadge(
-                        style: .outline,
-                        title: Text("\(criticRating, specifier: "%.0f")")
-                    ) {
-                        if criticRating >= 60 {
-                            Image(.tomatoFresh)
-                                .symbolRenderingMode(.hierarchical)
-                        } else {
-                            Image(.tomatoRotten)
-                        }
+        private func CriticRating() -> some View {
+            if let criticRating = viewModel.item.criticRating {
+                AttributeBadge(
+                    style: .outline,
+                    title: Text("\(criticRating, specifier: "%.0f")")
+                ) {
+                    if criticRating >= 60 {
+                        Image(.tomatoFresh)
+                            .symbolRenderingMode(.hierarchical)
+                    } else {
+                        Image(.tomatoRotten)
                     }
                 }
-            case .ratingCommunity:
-                if let communityRating = viewModel.item.communityRating {
+            }
+        }
+
+        @ViewBuilder
+        private func CommunityRating() -> some View {
+            if let communityRating = viewModel.item.communityRating {
+                AttributeBadge(
+                    style: .outline,
+                    title: Text("\(communityRating, specifier: "%.01f")"),
+                    systemName: "star.fill"
+                )
+            }
+        }
+
+        @ViewBuilder
+        private func OfficialRating() -> some View {
+            if let officialRating = viewModel.item.officialRating {
+                AttributeBadge(
+                    style: .outline,
+                    title: officialRating
+                )
+            }
+        }
+
+        @ViewBuilder
+        private func VideoQuality() -> some View {
+            if let mediaStreams = viewModel.selectedMediaSource?.mediaStreams {
+                if mediaStreams.has4KVideo {
                     AttributeBadge(
-                        style: .outline,
-                        title: Text("\(communityRating, specifier: "%.01f")"),
-                        systemName: "star.fill"
+                        style: .fill,
+                        title: "4K"
+                    )
+                } else if mediaStreams.hasHDVideo {
+                    AttributeBadge(
+                        style: .fill,
+                        title: "HD"
                     )
                 }
-            case .ratingOfficial:
-                if let officialRating = viewModel.item.officialRating {
-                    AttributeBadge(style: .outline, title: officialRating)
+                if mediaStreams.hasDolbyVision {
+                    AttributeBadge(
+                        style: .fill,
+                        title: "DV"
+                    )
                 }
-            case .videoQuality:
-                if viewModel.selectedMediaSource?.mediaStreams?.has4KVideo == true {
-                    AttributeBadge(style: .fill, title: "4K")
-                } else if viewModel.selectedMediaSource?.mediaStreams?.hasHDVideo == true {
-                    AttributeBadge(style: .fill, title: "HD")
+                if mediaStreams.hasHDRVideo {
+                    AttributeBadge(
+                        style: .fill,
+                        title: "HDR"
+                    )
                 }
-                if viewModel.selectedMediaSource?.mediaStreams?.hasDolbyVision == true {
-                    AttributeBadge(style: .fill, title: "DV")
+            }
+        }
+
+        @ViewBuilder
+        private func AudioChannels() -> some View {
+            if let mediaStreams = viewModel.selectedMediaSource?.mediaStreams {
+                if mediaStreams.has51AudioChannelLayout {
+                    AttributeBadge(
+                        style: .fill,
+                        title: "5.1"
+                    )
                 }
-                if viewModel.selectedMediaSource?.mediaStreams?.hasHDRVideo == true {
-                    AttributeBadge(style: .fill, title: "HDR")
+                if mediaStreams.has71AudioChannelLayout {
+                    AttributeBadge(
+                        style: .fill,
+                        title: "7.1"
+                    )
                 }
-            case .audioChannels:
-                if viewModel.selectedMediaSource?.mediaStreams?.has51AudioChannelLayout == true {
-                    AttributeBadge(style: .fill, title: "5.1")
-                }
-                if viewModel.selectedMediaSource?.mediaStreams?.has71AudioChannelLayout == true {
-                    AttributeBadge(style: .fill, title: "7.1")
-                }
-            case .subtitles:
-                if viewModel.selectedMediaSource?.mediaStreams?.hasSubtitles == true {
-                    AttributeBadge(style: .outline, title: "CC")
-                }
+            }
+        }
+
+        @ViewBuilder
+        private func Subtitles() -> some View {
+            if let mediaStreams = viewModel.selectedMediaSource?.mediaStreams,
+               mediaStreams.hasSubtitles
+            {
+                AttributeBadge(
+                    style: .outline,
+                    title: "CC"
+                )
             }
         }
     }
