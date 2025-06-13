@@ -8,19 +8,17 @@
 
 import SwiftUI
 
-struct AttributeBadge: View, Identifiable {
-
-    let id = UUID()
+struct AttributeBadge: View {
 
     @Environment(\.font)
     private var font
 
-    enum AttributeStyle {
+    enum Style {
         case fill
         case outline
     }
 
-    private let style: AttributeStyle
+    private let style: Style
     private let content: () -> any View
 
     private var usedFont: Font {
@@ -65,7 +63,7 @@ struct AttributeBadge: View, Identifiable {
 extension AttributeBadge {
 
     init(
-        style: AttributeStyle,
+        style: Style,
         title: @autoclosure @escaping () -> Text
     ) {
         self.init(style: style) {
@@ -74,7 +72,7 @@ extension AttributeBadge {
     }
 
     init(
-        style: AttributeStyle,
+        style: Style,
         title: String
     ) {
         self.init(style: style) {
@@ -83,7 +81,7 @@ extension AttributeBadge {
     }
 
     init(
-        style: AttributeStyle,
+        style: Style,
         title: String,
         image: Image
     ) {
@@ -94,7 +92,7 @@ extension AttributeBadge {
     }
 
     init(
-        style: AttributeStyle,
+        style: Style,
         title: String,
         image: @escaping () -> Image
     ) {
@@ -105,7 +103,7 @@ extension AttributeBadge {
     }
 
     init(
-        style: AttributeStyle,
+        style: Style,
         title: String,
         systemName: String
     ) {
@@ -116,7 +114,7 @@ extension AttributeBadge {
     }
 
     init(
-        style: AttributeStyle,
+        style: Style,
         title: Text,
         image: Image
     ) {
@@ -127,7 +125,7 @@ extension AttributeBadge {
     }
 
     init(
-        style: AttributeStyle,
+        style: Style,
         title: Text,
         image: @escaping () -> Image
     ) {
@@ -138,7 +136,7 @@ extension AttributeBadge {
     }
 
     init(
-        style: AttributeStyle,
+        style: Style,
         title: Text,
         systemName: String
     ) {

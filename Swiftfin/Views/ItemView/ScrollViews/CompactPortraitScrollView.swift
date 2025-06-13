@@ -96,6 +96,9 @@ extension ItemView.CompactPosterScrollView {
 
     struct OverlayView: View {
 
+        @StoredValue(.User.itemViewAttributes)
+        private var attributes
+
         @EnvironmentObject
         private var router: ItemCoordinator.Router
 
@@ -130,7 +133,11 @@ extension ItemView.CompactPosterScrollView {
                 .font(.subheadline.weight(.medium))
                 .foregroundColor(Color(UIColor.lightGray))
 
-                ItemView.AttributesHStack(viewModel: viewModel, alignment: .leading)
+                ItemView.AttributesHStack(
+                    attributes: attributes,
+                    viewModel: viewModel,
+                    alignment: .leading
+                )
             }
         }
 

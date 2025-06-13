@@ -8,20 +8,18 @@
 
 import SwiftUI
 
-/// A custom layout that arranges views in a flow pattern, automatically wrapping items to a second row
+/// A custom layout that arranges views in a flow pattern, automatically wrapping items to new rows
 struct FlowLayout: Layout {
 
     // MARK: - Fill Direction
 
-    /// Controls the priority order when distributing items across rows
-    enum FillDirection {
-        case topDown
-        case bottomUp
+    enum Direction {
+        case up
+        case down
     }
 
     // MARK: - Cache Structure
 
-    /// Stores computed layout values to avoid redundant calculations between layout passes
     struct CacheData {
         let subviewSizes: [CGSize]
         let rows: [[Int]]
@@ -33,19 +31,32 @@ struct FlowLayout: Layout {
     // MARK: - Properties
 
     /// The alignment of content within each row (leading, center, or trailing)
-    var alignment: HorizontalAlignment = .center
-    /// The horizontal spacing between items within the same row
-    var spacing: CGFloat = 8
-    /// The vertical spacing between the top and bottom rows when content wraps
-    var lineSpacing: CGFloat = 8
+    private let alignment: HorizontalAlignment
     /// Controls whether items fill from the top row down or bottom row up when wrapping
-    var fillDirection: FillDirection = .bottomUp
+    private let direction: Direction
+    /// The horizontal spacing between items within the same row
+    private let spacing: CGFloat
+    /// The vertical spacing between the top and bottom rows when content wraps
+    private let lineSpacing: CGFloat
     /// The minimum number of items that must be in the smaller row when wrapping occurs
-    var minRowLength: Int = 2
+    private let minRowLength: Int
+
+    init(
+        alignment: HorizontalAlignment = .center,
+        direction: Direction = .up,
+        spacing: CGFloat = 8,
+        lineSpacing: CGFloat = 8,
+        minRowLength: Int = 2
+    ) {
+        self.alignment = alignment
+        self.direction = direction
+        self.spacing = spacing
+        self.lineSpacing = lineSpacing
+        self.minRowLength = minRowLength
+    }
 
     // MARK: - Make Cache
 
-    /// Creates initial cache storage for layout computations
     func makeCache(subviews: Subviews) -> CacheData {
         CacheData(
             subviewSizes: [],
@@ -58,7 +69,6 @@ struct FlowLayout: Layout {
 
     // MARK: - Update Cache
 
-    /// Resets cache when subviews change
     func updateCache(_ cache: inout CacheData, subviews: Subviews) {
         cache = CacheData(
             subviewSizes: [],
@@ -72,7 +82,11 @@ struct FlowLayout: Layout {
     // MARK: - Size That Fits
 
     /// Calculates the minimum size needed to display all subviews according to the flow layout rules
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout CacheData) -> CGSize {
+    func sizeThatFits(
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout CacheData
+    ) -> CGSize {
         if cache.lastProposal != proposal || cache.subviewSizes.isEmpty {
             let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
             let maxWidth = proposal.width ?? .infinity
@@ -94,7 +108,12 @@ struct FlowLayout: Layout {
     // MARK: - Place Subviews
 
     /// Positions each subview within the given bounds according to the flow layout rules
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout CacheData) {
+    func placeSubviews(
+        in bounds: CGRect,
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout CacheData
+    ) {
         if cache.lastBounds != bounds || cache.lastProposal != proposal || cache.subviewSizes.isEmpty {
             let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
             let rows = computeRows(sizes: sizes, maxWidth: bounds.width)
@@ -139,83 +158,132 @@ struct FlowLayout: Layout {
     // MARK: - Compute Rows
 
     /// Determines how to distribute items across rows based on the available width
-    private func computeRows(sizes: [CGSize], maxWidth: CGFloat) -> [[Int]] {
+    private func computeRows(
+        sizes: [CGSize],
+        maxWidth: CGFloat
+    ) -> [[Int]] {
         guard sizes.count > 1 else {
             return sizes.isEmpty ? [] : [[0]]
         }
 
-        let allIndices = Array(0 ..< sizes.count)
-        let totalWidth = computeRowWidth(indices: allIndices, sizes: sizes)
+        // First create rows by fitting items naturally
+        let rows = createInitialRows(sizes: sizes, maxWidth: maxWidth)
 
-        if totalWidth <= maxWidth {
-            return [allIndices]
-        }
-
-        let splitIndex = findSplitIndex(sizes: sizes, maxWidth: maxWidth)
-
-        if splitIndex == 0 {
-            return [allIndices]
-        }
-
-        return [
-            Array(0 ..< splitIndex),
-            Array(splitIndex ..< sizes.count),
-        ]
+        // Then optimize distribution based on flow direction
+        return optimizeRowDistribution(rows: rows, sizes: sizes, maxWidth: maxWidth)
     }
 
-    // MARK: - Find Split Index
+    /// Create initial rows by fitting items sequentially
+    private func createInitialRows(
+        sizes: [CGSize],
+        maxWidth: CGFloat
+    ) -> [[Int]] {
+        var rows: [[Int]] = []
+        var currentRow: [Int] = []
+        var currentWidth: CGFloat = 0
 
-    /// Determine the index where the items should be moved to a second row
-    private func findSplitIndex(sizes: [CGSize], maxWidth: CGFloat) -> Int {
-        switch fillDirection {
+        for (index, size) in sizes.enumerated() {
+            let itemWidth = size.width + (currentRow.isEmpty ? 0 : spacing)
 
-        case .bottomUp:
-            var topRowCount = 0
-
-            for i in 0 ..< sizes.count {
-                let bottomIndices = Array(i ..< sizes.count)
-                let bottomWidth = computeRowWidth(indices: bottomIndices, sizes: sizes)
-
-                if bottomWidth <= maxWidth {
-                    topRowCount = i
-                    break
-                }
+            if currentWidth + itemWidth <= maxWidth || currentRow.isEmpty {
+                currentRow.append(index)
+                currentWidth += itemWidth
+            } else {
+                rows.append(currentRow)
+                currentRow = [index]
+                currentWidth = size.width
             }
-
-            if topRowCount < minRowLength && topRowCount > 0 {
-                topRowCount = minRowLength
-            }
-
-            return topRowCount
-
-        case .topDown:
-            var topRowCount = sizes.count - 1
-
-            for i in 1 ..< sizes.count {
-                let topIndices = Array(0 ..< i)
-                let topWidth = computeRowWidth(indices: topIndices, sizes: sizes)
-
-                if topWidth <= maxWidth {
-                    topRowCount = i
-                } else {
-                    break
-                }
-            }
-
-            let bottomRowCount = sizes.count - topRowCount
-            if bottomRowCount < minRowLength && bottomRowCount > 0 {
-                topRowCount = sizes.count - minRowLength
-            }
-
-            return topRowCount
         }
+
+        if !currentRow.isEmpty {
+            rows.append(currentRow)
+        }
+
+        return rows
+    }
+
+    /// Optimize row distribution based on flow direction
+    private func optimizeRowDistribution(
+        rows: [[Int]],
+        sizes: [CGSize],
+        maxWidth: CGFloat
+    ) -> [[Int]] {
+        guard rows.count > 1 else { return rows }
+
+        var optimizedRows = rows
+
+        switch direction {
+        case .up:
+            // Move items from earlier rows to later rows to create upward flow
+            optimizedRows = balanceRowsForUpwardFlow(rows: optimizedRows, sizes: sizes, maxWidth: maxWidth)
+        case .down:
+            // Move items from later rows to earlier rows to create downward flow
+            optimizedRows = balanceRowsForDownwardFlow(rows: optimizedRows, sizes: sizes, maxWidth: maxWidth)
+        }
+
+        return optimizedRows
+    }
+
+    /// Balance rows for upward flow - fill bottom rows more than top rows
+    private func balanceRowsForUpwardFlow(
+        rows: [[Int]],
+        sizes: [CGSize],
+        maxWidth: CGFloat
+    ) -> [[Int]] {
+        var optimizedRows = rows
+
+        for i in 0 ..< optimizedRows.count - 1 {
+            while optimizedRows[i].count > minRowLength {
+                let lastItem = optimizedRows[i].removeLast()
+                let newNextRow = optimizedRows[i + 1] + [lastItem]
+                let newWidth = computeRowWidth(indices: newNextRow, sizes: sizes)
+
+                if newWidth <= maxWidth {
+                    optimizedRows[i + 1] = newNextRow
+                } else {
+                    optimizedRows[i].append(lastItem)
+                    break
+                }
+            }
+        }
+
+        return optimizedRows
+    }
+
+    /// Balance rows for downward flow - fill top rows more than bottom rows
+    private func balanceRowsForDownwardFlow(
+        rows: [[Int]],
+        sizes: [CGSize],
+        maxWidth: CGFloat
+    ) -> [[Int]] {
+        var optimizedRows = rows
+
+        for i in (0 ..< optimizedRows.count - 1).reversed() {
+            while optimizedRows[i + 1].count > minRowLength {
+                let firstItem = optimizedRows[i + 1].removeFirst()
+                let newPrevRow = optimizedRows[i] + [firstItem]
+                let newWidth = computeRowWidth(indices: newPrevRow, sizes: sizes)
+
+                if newWidth <= maxWidth {
+                    optimizedRows[i] = newPrevRow
+                } else {
+                    optimizedRows[i + 1].insert(firstItem, at: 0)
+                    break
+                }
+            }
+        }
+
+        return optimizedRows
     }
 
     // MARK: - Compute Row Width
 
     /// Calculates the total width needed for a row of items including spacing
-    private func computeRowWidth(indices: [Int], sizes: [CGSize]) -> CGFloat {
-        guard !indices.isEmpty else { return 0 }
+    private func computeRowWidth(
+        indices: [Int],
+        sizes: [CGSize]
+    ) -> CGFloat {
+        guard indices.isNotEmpty else { return 0 }
 
         let itemsWidth = indices.reduce(0) { $0 + sizes[$1].width }
         let spacingWidth = spacing * CGFloat(indices.count - 1)
@@ -226,7 +294,10 @@ struct FlowLayout: Layout {
     // MARK: - Compute X Offset
 
     /// Calculates the starting X position for a row based on the alignment setting
-    private func computeXOffset(rowWidth: CGFloat, bounds: CGRect) -> CGFloat {
+    private func computeXOffset(
+        rowWidth: CGFloat,
+        bounds: CGRect
+    ) -> CGFloat {
         switch alignment {
         case .trailing:
             return bounds.maxX - rowWidth
@@ -240,8 +311,11 @@ struct FlowLayout: Layout {
     // MARK: - Compute Total Size
 
     /// Calculates the total size needed to display all rows with proper spacing
-    private func computeTotalSize(rows: [[Int]], sizes: [CGSize]) -> CGSize {
-        guard !rows.isEmpty else { return .zero }
+    private func computeTotalSize(
+        rows: [[Int]],
+        sizes: [CGSize]
+    ) -> CGSize {
+        guard rows.isNotEmpty else { return .zero }
 
         let rowHeights = rows.map { row in
             row.map { sizes[$0].height }.max() ?? 0
