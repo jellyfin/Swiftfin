@@ -40,8 +40,8 @@ struct ItemSubtitleUploadView: View {
 
     // MARK: - Subtitle Properties
 
-    @State
     /// Default to user's language
+    @State
     private var language: String? = Locale.current.language.languageCode?.identifier(.alpha3)
     @State
     private var isForced = false

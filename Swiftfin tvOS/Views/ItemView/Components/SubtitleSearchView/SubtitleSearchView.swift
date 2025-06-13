@@ -30,8 +30,8 @@ struct SubtitleSearchView: View {
 
     // MARK: - Search Properties
 
-    @State
     /// Default to user's language
+    @State
     private var language: String? = Locale.current.language.languageCode?.identifier(.alpha3)
     @State
     private var isPerfectMatch = false
