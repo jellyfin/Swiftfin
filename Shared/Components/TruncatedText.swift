@@ -59,7 +59,7 @@ struct TruncatedText: View {
                                 }
                         }
                     }
-                    .visible(isTruncated)
+                    .isVisible(isTruncated)
                 }
 
             if isTruncated {

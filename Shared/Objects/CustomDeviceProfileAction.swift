@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import Foundation
 
 enum CustomDeviceProfileAction: String, CaseIterable, Displayable, Storable {

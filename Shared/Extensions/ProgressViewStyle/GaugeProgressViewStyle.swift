@@ -9,10 +9,7 @@
 import Defaults
 import SwiftUI
 
-// TODO: Discussion Required - Potentially use Gauge over ProgressViewStyle.
-// SwiftUI gauge style not available on iOS 15
-
-struct GaugeProgressStyle: ProgressViewStyle {
+struct GaugeProgressViewStyle: ProgressViewStyle {
 
     @Default(.accentColor)
     private var accentColor
@@ -20,8 +17,13 @@ struct GaugeProgressStyle: ProgressViewStyle {
     @State
     private var contentSize: CGSize = .zero
 
-    private var lineWidthRatio: CGFloat
-    private var systemImage: String?
+    private let lineWidthRatio: CGFloat
+    private let systemImage: String?
+
+    init(systemImage: String? = nil) {
+        self.lineWidthRatio = systemImage == nil ? 0.2 : 0.125
+        self.systemImage = systemImage
+    }
 
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
@@ -38,7 +40,7 @@ struct GaugeProgressStyle: ProgressViewStyle {
             Circle()
                 .stroke(
                     Color.gray.opacity(0.2),
-                    lineWidth: contentSize.width / lineWidthRatio
+                    lineWidth: contentSize.width * lineWidthRatio
                 )
 
             Circle()
@@ -46,7 +48,7 @@ struct GaugeProgressStyle: ProgressViewStyle {
                 .stroke(
                     accentColor,
                     style: StrokeStyle(
-                        lineWidth: contentSize.width / lineWidthRatio,
+                        lineWidth: contentSize.width * lineWidthRatio,
                         lineCap: .round
                     )
                 )
@@ -54,33 +56,5 @@ struct GaugeProgressStyle: ProgressViewStyle {
         }
         .animation(.linear(duration: 0.1), value: configuration.fractionCompleted)
         .trackingSize($contentSize)
-    }
-}
-
-extension GaugeProgressStyle {
-
-    init() {
-        self.init(
-            lineWidthRatio: 5,
-            systemImage: nil
-        )
-    }
-
-    init(systemImage: String) {
-        self.init(
-            lineWidthRatio: 8,
-            systemImage: systemImage
-        )
-    }
-}
-
-extension ProgressViewStyle where Self == GaugeProgressStyle {
-
-    static var gauge: GaugeProgressStyle {
-        GaugeProgressStyle()
-    }
-
-    static func gauge(systemImage: String) -> GaugeProgressStyle {
-        GaugeProgressStyle(systemImage: systemImage)
     }
 }
