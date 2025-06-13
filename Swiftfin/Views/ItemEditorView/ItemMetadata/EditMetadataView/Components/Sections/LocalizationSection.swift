@@ -19,9 +19,9 @@ extension EditMetadataView {
 
         var body: some View {
             Section(L10n.metadataPreferences) {
-                LanguagePicker(
+                CulturePicker(
                     L10n.language,
-                    twoLetterISOLanguage: $item.preferredMetadataLanguage
+                    twoLetterISOLanguageName: $item.preferredMetadataLanguage
                 )
 
                 CountryPicker(
