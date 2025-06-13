@@ -570,7 +570,7 @@ struct SelectUserView: View {
             viewModel.send(.getServers)
         }
         .alert(
-            L10n.deleteUser,
+            L10n.delete,
             isPresented: $isPresentingConfirmDeleteUsers
         ) {
             Button(L10n.delete, role: .destructive) {

@@ -125,7 +125,7 @@ struct ServerUsersView: View {
             viewModel.send(.getUsers())
         }
         .confirmationDialog(
-            L10n.deleteSelectedUsers,
+            L10n.delete,
             isPresented: $isPresentingDeleteSelectionConfirmation,
             titleVisibility: .visible
         ) {
@@ -134,7 +134,7 @@ struct ServerUsersView: View {
             Text(L10n.deleteSelectionUsersWarning)
         }
         .confirmationDialog(
-            L10n.deleteUser,
+            L10n.delete,
             isPresented: $isPresentingDeleteConfirmation,
             titleVisibility: .visible
         ) {

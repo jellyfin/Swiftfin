@@ -22,8 +22,8 @@ internal enum L10n {
   internal static let accessibility = L10n.tr("Localizable", "accessibility", fallback: "Accessibility")
   /// The End Time must come after the Start Time.
   internal static let accessScheduleInvalidTime = L10n.tr("Localizable", "accessScheduleInvalidTime", fallback: "The End Time must come after the Start Time.")
-  /// Access Schedules
-  internal static let accessSchedules = L10n.tr("Localizable", "accessSchedules", fallback: "Access Schedules")
+  /// Access schedules
+  internal static let accessSchedules = L10n.tr("Localizable", "accessSchedules", fallback: "Access schedules")
   /// Define the allowed hours for usage and restrict access outside those times.
   internal static let accessSchedulesDescription = L10n.tr("Localizable", "accessSchedulesDescription", fallback: "Define the allowed hours for usage and restrict access outside those times.")
   /// User will have access to no media unless it contains at least one allowed tag.
@@ -50,8 +50,6 @@ internal enum L10n {
   internal static let addAccessSchedule = L10n.tr("Localizable", "addAccessSchedule", fallback: "Add access schedule")
   /// Add access tag
   internal static let addAccessTag = L10n.tr("Localizable", "addAccessTag", fallback: "Add access tag")
-  /// Add API key
-  internal static let addAPIKey = L10n.tr("Localizable", "addAPIKey", fallback: "Add API key")
   /// Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.
   internal static let additionalSecurityAccessDescription = L10n.tr("Localizable", "additionalSecurityAccessDescription", fallback: "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.")
   /// Add Server
@@ -468,8 +466,6 @@ internal enum L10n {
   internal static let delete = L10n.tr("Localizable", "delete", fallback: "Delete")
   /// Are you sure you want to permanently delete this key?
   internal static let deleteAPIKeyMessage = L10n.tr("Localizable", "deleteAPIKeyMessage", fallback: "Are you sure you want to permanently delete this key?")
-  /// Delete Device
-  internal static let deleteDevice = L10n.tr("Localizable", "deleteDevice", fallback: "Delete Device")
   /// Failed to Delete Device
   internal static let deleteDeviceFailed = L10n.tr("Localizable", "deleteDeviceFailed", fallback: "Failed to Delete Device")
   /// Cannot delete a session from the same device (%1$@).
@@ -488,32 +484,16 @@ internal enum L10n {
   internal static let deleteItemConfirmationMessage = L10n.tr("Localizable", "deleteItemConfirmationMessage", fallback: "Are you sure you want to delete this item? This action cannot be undone.")
   /// Delete media
   internal static let deleteMedia = L10n.tr("Localizable", "deleteMedia", fallback: "Delete media")
-  /// Delete Schedule
-  internal static let deleteSchedule = L10n.tr("Localizable", "deleteSchedule", fallback: "Delete Schedule")
-  /// Are you sure you wish to delete this schedule?
-  internal static let deleteScheduleWarning = L10n.tr("Localizable", "deleteScheduleWarning", fallback: "Are you sure you wish to delete this schedule?")
   /// Are you sure you want to delete the selected items?
   internal static let deleteSelectedConfirmation = L10n.tr("Localizable", "deleteSelectedConfirmation", fallback: "Are you sure you want to delete the selected items?")
-  /// Delete Selected Devices
-  internal static let deleteSelectedDevices = L10n.tr("Localizable", "deleteSelectedDevices", fallback: "Delete Selected Devices")
-  /// Delete Selected Schedules
-  internal static let deleteSelectedSchedules = L10n.tr("Localizable", "deleteSelectedSchedules", fallback: "Delete Selected Schedules")
-  /// Delete Selected Users
-  internal static let deleteSelectedUsers = L10n.tr("Localizable", "deleteSelectedUsers", fallback: "Delete Selected Users")
   /// Are you sure you wish to delete all selected devices? All selected sessions will be logged out.
   internal static let deleteSelectionDevicesWarning = L10n.tr("Localizable", "deleteSelectionDevicesWarning", fallback: "Are you sure you wish to delete all selected devices? All selected sessions will be logged out.")
-  /// Are you sure you wish to delete all selected schedules?
-  internal static let deleteSelectionSchedulesWarning = L10n.tr("Localizable", "deleteSelectionSchedulesWarning", fallback: "Are you sure you wish to delete all selected schedules?")
   /// Are you sure you wish to delete all selected users?
   internal static let deleteSelectionUsersWarning = L10n.tr("Localizable", "deleteSelectionUsersWarning", fallback: "Are you sure you wish to delete all selected users?")
   /// Delete Server
   internal static let deleteServer = L10n.tr("Localizable", "deleteServer", fallback: "Delete Server")
-  /// Delete Trigger
-  internal static let deleteTrigger = L10n.tr("Localizable", "deleteTrigger", fallback: "Delete Trigger")
-  /// Are you sure you want to delete this trigger? This action cannot be undone.
-  internal static let deleteTriggerConfirmationMessage = L10n.tr("Localizable", "deleteTriggerConfirmationMessage", fallback: "Are you sure you want to delete this trigger? This action cannot be undone.")
-  /// Delete User
-  internal static let deleteUser = L10n.tr("Localizable", "deleteUser", fallback: "Delete User")
+  /// Delete user
+  internal static let deleteUser = L10n.tr("Localizable", "deleteUser", fallback: "Delete user")
   /// Failed to Delete User
   internal static let deleteUserFailed = L10n.tr("Localizable", "deleteUserFailed", fallback: "Failed to Delete User")
   /// Are you sure you want to delete %d users?
@@ -1586,8 +1566,6 @@ internal enum L10n {
   internal static let triggers = L10n.tr("Localizable", "triggers", fallback: "Triggers")
   /// TV
   internal static let tv = L10n.tr("Localizable", "tv", fallback: "TV")
-  /// TV Access
-  internal static let tvAccess = L10n.tr("Localizable", "tvAccess", fallback: "TV Access")
   /// TV channel
   internal static let tvChannel = L10n.tr("Localizable", "tvChannel", fallback: "TV channel")
   /// TV channels

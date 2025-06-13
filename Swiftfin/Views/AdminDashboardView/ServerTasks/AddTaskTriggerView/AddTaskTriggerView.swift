@@ -102,7 +102,7 @@ struct AddTaskTriggerView: View {
         .animation(.linear(duration: 0.2), value: isDuplicate)
         .animation(.linear(duration: 0.2), value: taskTriggerInfo.type)
         .interactiveDismissDisabled(true)
-        .navigationTitle(L10n.addTrigger)
+        .navigationTitle(L10n.addTrigger.localizedCapitalized)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             if hasUnsavedChanges {

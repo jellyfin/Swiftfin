@@ -83,6 +83,9 @@ extension ItemView.iPadOSCinematicScrollView {
 
     struct OverlayView: View {
 
+        @StoredValue(.User.itemViewAttributes)
+        private var attributes
+
         @ObservedObject
         var viewModel: ItemViewModel
 
@@ -132,7 +135,11 @@ extension ItemView.iPadOSCinematicScrollView {
                         .font(.footnote)
                         .foregroundColor(Color(UIColor.lightGray))
 
-                        ItemView.AttributesHStack(viewModel: viewModel, alignment: .leading)
+                        ItemView.AttributesHStack(
+                            attributes: attributes,
+                            viewModel: viewModel,
+                            alignment: .leading
+                        )
                     }
                 }
                 .padding(.trailing, 200)
