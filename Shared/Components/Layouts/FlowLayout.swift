@@ -37,6 +37,9 @@ struct FlowLayout: Layout {
     /// Controls whether items fill from the top row down or bottom row up when wrapping.
     /// - bottomUp (default): Maximize items in bottom row, overflow to top
     /// - topDown: Maximize items in top row, overflow to bottom
+
+    // TODO: iOS 18 use VerticalDirection for fill
+    // var fillDirection: VerticalDirection = .up
     var fillDirection: FillDirection = .bottomUp
 
     // MARK: - Determine the Maximum Size that Fits
@@ -213,7 +216,7 @@ struct FlowLayout: Layout {
     /// - Returns: The X coordinate where the row should start
     private func computeXOffset(rowWidth: CGFloat, bounds: CGRect) -> CGFloat {
         switch alignment.horizontal {
-        case .trailing, .listRowSeparatorTrailing:
+        case .trailing:
             return bounds.maxX - rowWidth
         case .center:
             return bounds.minX + (bounds.width - rowWidth) / 2
