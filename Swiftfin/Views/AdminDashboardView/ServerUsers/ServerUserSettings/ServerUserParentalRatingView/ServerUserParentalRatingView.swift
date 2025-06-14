@@ -19,8 +19,8 @@ struct ServerUserParentalRatingView: View {
 
     @StateObject
     private var viewModel: ServerUserAdminViewModel
-    @ObservedObject
-    private var parentalRatingsViewModel = ParentalRatingsViewModel()
+    @StateObject
+    private var parentalRatingsViewModel: ParentalRatingsViewModel
 
     // MARK: - Policy Variable
 
@@ -36,6 +36,7 @@ struct ServerUserParentalRatingView: View {
 
     init(viewModel: ServerUserAdminViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self._parentalRatingsViewModel = StateObject(wrappedValue: ParentalRatingsViewModel(initialValue: []))
 
         guard let policy = viewModel.user.policy else {
             preconditionFailure("User policy cannot be empty.")
@@ -139,7 +140,7 @@ struct ServerUserParentalRatingView: View {
 
     private var parentalRatingGroups: [ParentalRating] {
         let groups = Dictionary(
-            grouping: parentalRatingsViewModel.parentalRatings
+            grouping: parentalRatingsViewModel.value
         ) {
             $0.value ?? 0
         }
@@ -152,7 +153,6 @@ struct ServerUserParentalRatingView: View {
                     return ParentalRating(name: L10n.agesGroup(key), value: key)
                 }
             } else {
-                // Concatenate all 100+ ratings at the same value with '/' but as of 10.10 there should be none.
                 let name = group
                     .compactMap(\.name)
                     .sorted()
@@ -173,7 +173,7 @@ struct ServerUserParentalRatingView: View {
 
     private var parentalRatingLearnMore: [TextPair] {
         let groups = Dictionary(
-            grouping: parentalRatingsViewModel.parentalRatings
+            grouping: parentalRatingsViewModel.value
         ) {
             $0.value ?? 0
         }
