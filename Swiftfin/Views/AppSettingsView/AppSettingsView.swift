@@ -38,7 +38,7 @@ struct AppSettingsView: View {
         Form {
 
             ChevronButton(L10n.about) {
-                router.route(to: \.about, viewModel)
+                router.route(to: \.about)
             }
 
             Section(L10n.accessibility) {

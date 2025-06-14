@@ -54,9 +54,9 @@ extension LiveVideoPlayer {
                                 startPoint: .top,
                                 endPoint: .bottom
                             )
-                            .visible(playbackButtonType == .compact)
+                            .isVisible(playbackButtonType == .compact)
                         }
-                        .visible(!isScrubbing && isPresentingOverlay)
+                        .isVisible(!isScrubbing && isPresentingOverlay)
 
                     Spacer()
                         .allowsHitTesting(false)
@@ -79,7 +79,7 @@ extension LiveVideoPlayer {
                                 startPoint: .top,
                                 endPoint: .bottom
                             )
-                            .visible(isScrubbing || playbackButtonType == .compact)
+                            .isVisible(isScrubbing || playbackButtonType == .compact)
                         }
                         .background {
                             Color.clear
@@ -87,12 +87,12 @@ extension LiveVideoPlayer {
                                 .contentShape(Rectangle())
                                 .allowsHitTesting(true)
                         }
-                        .visible(isScrubbing || isPresentingOverlay)
+                        .isVisible(isScrubbing || isPresentingOverlay)
                 }
 
                 if playbackButtonType == .large {
                     LiveVideoPlayer.Overlay.LiveLargePlaybackButtons()
-                        .visible(!isScrubbing && isPresentingOverlay)
+                        .isVisible(!isScrubbing && isPresentingOverlay)
                 }
             }
             .environmentObject(overlayTimer)

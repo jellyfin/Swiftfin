@@ -349,7 +349,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
 
             if cinematicBackground {
                 CinematicBackgroundView(viewModel: cinematicBackgroundViewModel)
-                    .visible(presentBackground)
+                    .isVisible(presentBackground)
                     .blurred()
             }
 

@@ -334,7 +334,7 @@ extension ChevronButton where Icon == EmptyView, Subtitle == Text {
     init<Content: View>(
         _ title: String,
         subtitle: String? = nil,
-        description: String? = nil,
+        description: String?,
         @ViewBuilder content: @escaping () -> Content,
         onSave: (() -> Void)? = nil,
         onCancel: (() -> Void)? = nil
@@ -358,7 +358,7 @@ extension ChevronButton where Icon == EmptyView, Subtitle == Text {
     init<Content: View>(
         _ title: String,
         subtitle: Text? = nil,
-        description: String? = nil,
+        description: String?,
         @ViewBuilder content: @escaping () -> Content,
         onSave: (() -> Void)? = nil,
         onCancel: (() -> Void)? = nil

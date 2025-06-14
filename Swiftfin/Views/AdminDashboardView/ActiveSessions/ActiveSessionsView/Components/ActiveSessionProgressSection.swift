@@ -62,7 +62,7 @@ extension ActiveSessionsView {
         var body: some View {
             VStack {
                 ProgressView(value: playbackPercentage)
-                    .progressViewStyle(.playback(secondaryProgress: transcodingPercentage))
+                    .progressViewStyle(.playback.secondaryProgress(transcodingPercentage))
                     .frame(height: 5)
                     .foregroundStyle(.primary, .secondary, .orange)
 
