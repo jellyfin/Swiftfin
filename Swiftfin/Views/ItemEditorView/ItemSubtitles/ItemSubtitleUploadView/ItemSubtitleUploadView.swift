@@ -132,7 +132,7 @@ struct ItemSubtitleUploadView: View {
             let fileURL = try result.get()
             self.subtitleFile = fileURL
 
-            if let format = SubtitleFormat.fromFile(fileURL) {
+            if let format = SubtitleFormat(url: fileURL) {
                 self.subtitleFormat = format
                 self.subtitleData = try Data(contentsOf: fileURL)
             } else {

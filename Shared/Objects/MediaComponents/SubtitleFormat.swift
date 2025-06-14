@@ -33,6 +33,16 @@ enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Defaults.Serial
     case vtt
     case xsub
 
+    init?(url: URL) {
+        let fileExtension = url.pathExtension.lowercased()
+
+        if let value = SubtitleFormat.allCases.first(where: { $0.fileExtension == fileExtension }) {
+            self = value
+        }
+
+        return nil
+    }
+
     var displayTitle: String {
         switch self {
         case .ass:
@@ -131,40 +141,10 @@ enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Defaults.Serial
     /// Gets the appropriate UTType for this subtitle format
     var utType: UTType? {
         switch self {
-        case .ass:
-            return UTType(filenameExtension: "ass")
-        case .cc_dec:
-            return UTType(filenameExtension: "608")
-        case .dvdsub, .subviewer, .subviewer1:
-            return UTType(filenameExtension: "sub")
-        case .dvbsub:
-            return UTType(filenameExtension: "dvbsub")
-        case .jacosub:
-            return UTType(filenameExtension: "jss")
         case .libzvbi_teletextdec, .text, .vplayer:
-            return UTType.plainText
-        case .mov_text:
-            return UTType(filenameExtension: "tx3g")
-        case .mpl2:
-            return UTType(filenameExtension: "mpl")
-        case .pjs:
-            return UTType(filenameExtension: "pjs")
-        case .pgssub:
-            return UTType(filenameExtension: "sup")
-        case .realtext:
-            return UTType(filenameExtension: "rt")
-        case .sami:
-            return UTType(filenameExtension: "smi")
-        case .ssa:
-            return UTType(filenameExtension: "ssa")
-        case .subrip:
-            return UTType(filenameExtension: "srt")
-        case .ttml:
-            return UTType(filenameExtension: "ttml")
-        case .vtt:
-            return UTType(filenameExtension: "vtt")
-        case .xsub:
-            return UTType(filenameExtension: "xsub")
+            UTType.plainText
+        default:
+            UTType(filenameExtension: fileExtension)
         }
     }
 
@@ -178,11 +158,5 @@ enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Defaults.Serial
         case .dvdsub, .dvbsub, .pgssub, .xsub:
             return false
         }
-    }
-
-    /// Try to determine the subtitle format from a file URL
-    static func fromFile(_ url: URL) -> SubtitleFormat? {
-        let fileExtension = url.pathExtension.lowercased()
-        return SubtitleFormat.allCases.first { $0.fileExtension == fileExtension }
     }
 }
