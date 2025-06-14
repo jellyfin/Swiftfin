@@ -20,6 +20,7 @@ extension SwiftfinStore.State {
         let currentURL: URL
         let name: String
         let id: String
+        let version: JellyfinClient.Version?
         let userIDs: [String]
 
         init(
@@ -27,6 +28,7 @@ extension SwiftfinStore.State {
             currentURL: URL,
             name: String,
             id: String,
+            version: String? = nil,
             usersIDs: [String]
         ) {
             self.urls = urls
@@ -34,6 +36,12 @@ extension SwiftfinStore.State {
             self.name = name
             self.id = id
             self.userIDs = usersIDs
+
+            if let version {
+                self.version = JellyfinClient.Version(stringLiteral: version)
+            } else {
+                self.version = nil
+            }
         }
 
         /// - Note: Since this is created from a server, it does not
@@ -91,8 +99,17 @@ extension ServerState {
 
             newServer.name = publicInfo.serverName ?? newServer.name
             newServer.id = publicInfo.id ?? newServer.id
+            newServer.version = publicInfo.version ?? newServer.version
         }
 
         StoredValues[.Server.publicInfo(id: server.id)] = publicInfo
+    }
+
+    func isVersionCompatible() -> Bool {
+        if let majorMinor = self.version?.majorMinor {
+            return majorMinor >= JellyfinClient.sdkVersion.majorMinor
+        } else {
+            return false
+        }
     }
 }

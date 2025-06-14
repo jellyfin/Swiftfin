@@ -32,6 +32,9 @@ enum SwiftfinStore {
     /// Namespace for V2 objects
     enum V2 {}
 
+    /// Namespace for V3 objects
+    enum V3 {}
+
     /// Namespace for state objects
     enum State {}
 }

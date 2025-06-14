@@ -26,6 +26,10 @@ struct SettingsView: View {
     @StateObject
     private var viewModel = SettingsViewModel()
 
+    private var isVersionCompatible: Bool {
+        viewModel.userSession.server.isVersionCompatible()
+    }
+
     var body: some View {
         Form {
 
@@ -37,10 +41,17 @@ struct SettingsView: View {
 
                 ChevronButton(
                     L10n.server,
-                    subtitle: viewModel.userSession.server.name
-                ) {
-                    router.route(to: \.serverConnection, viewModel.userSession.server)
-                }
+                    action: {
+                        router.route(to: \.serverConnection, viewModel.userSession.server)
+                    },
+                    icon: {
+                        Image(systemName: isVersionCompatible ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
+                            .foregroundStyle(isVersionCompatible ? .green : .orange)
+                    },
+                    subtitle: {
+                        Text(viewModel.userSession.server.name)
+                    }
+                )
 
                 if viewModel.userSession.user.permissions.isAdministrator {
                     ChevronButton(L10n.dashboard) {
