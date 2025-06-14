@@ -7,6 +7,7 @@
 //
 
 import Factory
+import JellyfinAPI
 import SwiftUI
 
 // TODO: change URL picker from menu to list with network-url mapping
@@ -29,6 +30,10 @@ struct EditServerView: View {
     @StateObject
     private var viewModel: ServerConnectionViewModel
 
+    // TODO: Figure out CoreStore and just hold onto the server version
+    @State
+    private var isVersionCompatible: Bool = false
+
     init(server: ServerState) {
         self._viewModel = StateObject(wrappedValue: ServerConnectionViewModel(server: server))
         self._currentServerURL = State(initialValue: server.currentURL)
@@ -49,6 +54,15 @@ struct EditServerView: View {
                             .tag(url)
                             .foregroundColor(.secondary)
                     }
+                }
+            } footer: {
+                if isVersionCompatible {
+                // if viewModel.userSession.server.isVersionCompatible() {
+                    Label(
+                        "Server version does not meet the minimum requirement (\(JellyfinClient.sdkVersion.majorMinor.description)) for Swiftfin",
+                        systemImage: "exclamationmark.circle.fill"
+                    )
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                 }
             }
 
@@ -71,6 +85,16 @@ struct EditServerView: View {
             }
         } message: {
             Text(L10n.confirmDeleteServerAndUsers(viewModel.server.name))
+        }
+        // TODO: Remove when CoreStore has a ServerVersion
+        .onFirstAppear {
+            Task {
+                do {
+                    isVersionCompatible = try await viewModel.userSession.server.isVersionCompatible()
+                } catch {
+                    isVersionCompatible = false
+                }
+            }
         }
     }
 }

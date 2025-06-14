@@ -26,9 +26,13 @@ struct SettingsView: View {
     @StateObject
     private var viewModel = SettingsViewModel()
 
-    private var isVersionCompatible: Bool {
-        viewModel.userSession.server.isVersionCompatible()
-    }
+    // TODO: Figure out CoreStore and just hold onto the server version
+    @State
+    private var isVersionCompatible: Bool = false
+
+    /* private var isVersionCompatible: Bool = false {
+         viewModel.userSession.server.isVersionCompatible()
+     } */
 
     var body: some View {
         Form {
@@ -44,12 +48,14 @@ struct SettingsView: View {
                     action: {
                         router.route(to: \.serverConnection, viewModel.userSession.server)
                     },
-                    icon: {
-                        Image(systemName: isVersionCompatible ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
-                            .foregroundStyle(isVersionCompatible ? .green : .orange)
-                    },
+                    icon: { EmptyView() },
                     subtitle: {
-                        Text(viewModel.userSession.server.name)
+                        Label {
+                            Text(viewModel.userSession.server.name)
+                        } icon: {
+                            Image(systemName: isVersionCompatible ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
+                        }
+                        .labelStyle(.sectionFooterWithImage(imageStyle: isVersionCompatible ? .green : .orange))
                     }
                 )
 
@@ -126,6 +132,16 @@ struct SettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismissCoordinator()
+        }
+        // TODO: Remove when CoreStore has a ServerVersion
+        .onFirstAppear {
+            Task {
+                do {
+                    isVersionCompatible = try await viewModel.userSession.server.isVersionCompatible()
+                } catch {
+                    isVersionCompatible = false
+                }
+            }
         }
     }
 }

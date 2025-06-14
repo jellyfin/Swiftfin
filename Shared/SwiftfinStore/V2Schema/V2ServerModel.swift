@@ -27,8 +27,8 @@ extension SwiftfinStore.V2 {
         @Field.Stored("id")
         var id: String = ""
 
-        @Field.Stored("version")
-        var version: String? = nil
+        // @Field.Stored("version")
+        // var version: String? = nil
 
         @Field.Relationship("users", inverse: \StoredUser.$server)
         var users: Set<StoredUser>
