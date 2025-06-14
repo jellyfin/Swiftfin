@@ -72,13 +72,13 @@ extension VideoPlayer {
                 bottomContent
                     .edgePadding()
                     .background(alignment: .bottom) {
-//                        OpacityLinearGradient {
-//                            (0, 0)
-//                            (1, 0.5)
-//                        }
-//                        .foregroundStyle(.black)
-//                        .isVisible(isScrubbing || isPresentingOverlay)
-//                        .animation(.linear(duration: 0.25), value: isPresentingOverlay)
+                        Color.black
+                            .maskLinearGradient {
+                                (location: 0, opacity: 0)
+                                (location: 1, opacity: 0.5)
+                            }
+                            .isVisible(isScrubbing || isPresentingOverlay)
+                            .animation(.linear(duration: 0.25), value: isPresentingOverlay)
                     }
             }
             .animation(.linear(duration: 0.1), value: isScrubbing)

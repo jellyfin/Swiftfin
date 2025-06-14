@@ -93,14 +93,13 @@ extension VideoPlayer {
                         .isVisible(opacity: 0.5, !isScrubbing && isPresentingOverlay)
                         .allowsHitTesting(false)
 
-//                    Color.black
-//                    OpacityLinearGradient {
-//                        (0, 0)
-//                        (1, 0.5)
-//                    }
-//                    .foregroundStyle(.black)
-//                    .isVisible(isScrubbing)
-//                    .frame(height: progressViewFrame.height)
+                    Color.black
+                        .maskLinearGradient {
+                            (location: 0, opacity: 0)
+                            (location: 1, opacity: 0.5)
+                        }
+                        .isVisible(isScrubbing)
+                        .frame(height: progressViewFrame.height)
                 }
                 .animation(.linear(duration: 0.25), value: isPresentingOverlay)
 
