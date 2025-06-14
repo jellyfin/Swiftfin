@@ -68,16 +68,10 @@ extension ItemView {
                         .padding(.bottom)
                         .background {
                             BlurView(style: .systemThinMaterialDark)
-                                .mask {
-                                    LinearGradient(
-                                        stops: [
-                                            .init(color: .white.opacity(0), location: 0),
-                                            .init(color: .white, location: 0.3),
-                                            .init(color: .white, location: 1),
-                                        ],
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    )
+                                .maskLinearGradient {
+                                    (location: 0, opacity: 0)
+                                    (location: 0.3, opacity: 1)
+                                    (location: 1, opacity: 1)
                                 }
                         }
                 }

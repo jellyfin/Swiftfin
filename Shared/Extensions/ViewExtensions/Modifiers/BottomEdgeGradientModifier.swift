@@ -17,15 +17,9 @@ struct BottomEdgeGradientModifier: ViewModifier {
             content
                 .overlay {
                     bottomColor
-                        .mask {
-                            LinearGradient(
-                                stops: [
-                                    .init(color: .clear, location: 0.8),
-                                    .init(color: .white, location: 0.95),
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
+                        .maskLinearGradient {
+                            (location: 0.8, opacity: 0)
+                            (location: 0.95, opacity: 1)
                         }
                 }
 

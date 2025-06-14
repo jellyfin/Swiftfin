@@ -8,18 +8,14 @@
 
 import SwiftUI
 
-struct OpacityLinearGradient: View {
+struct OpacityLinearGradientModifier: ViewModifier {
 
     typealias Stop = (location: CGFloat, opacity: CGFloat)
 
-    private let stops: [Stop]
+    let stops: [Stop]
 
-    init(@ArrayBuilder<Stop> stops: () -> [Stop]) {
-        self.stops = stops()
-    }
-
-    var body: some View {
-        Rectangle()
+    func body(content: Content) -> some View {
+        content
             .mask {
                 LinearGradient(
                     stops: stops.map {

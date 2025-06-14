@@ -338,6 +338,12 @@ extension View {
         modifier(ScrollIfLargerThanContainerModifier(padding: padding))
     }
 
+    func maskLinearGradient(
+        @ArrayBuilder<OpacityLinearGradientModifier.Stop> stops: () -> [OpacityLinearGradientModifier.Stop]
+    ) -> some View {
+        modifier(OpacityLinearGradientModifier(stops: stops()))
+    }
+
     // MARK: debug
 
     // Useful modifiers during development for layout without RocketSim
