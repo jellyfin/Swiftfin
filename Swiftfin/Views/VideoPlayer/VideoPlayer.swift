@@ -44,7 +44,7 @@ struct VideoPlayer: View {
 
     /// The current scrubbed seconds for UI presentation and editing.
     ///
-    /// - Note: This is value is boxed to avoid unnecessary `View` updates
+    /// - Note: This value is boxed to avoid unnecessary updates
     ///         for views that do not implement the current value.
     @StateObject
     private var scrubbedSecondsBox: PublishedBox<TimeInterval> = .init(initialValue: 0)
