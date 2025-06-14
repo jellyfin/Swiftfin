@@ -28,7 +28,14 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    private var versionedView: some View {
+    func makeStart() -> some View {
+        #if os(iOS)
+
+        // Some settings have to apply to the root PreferencesView and this
+        // one - separately.
+        // It is assumed that because Stinsen adds a lot of views that the
+        // PreferencesView isn't in the right place in the VC chain so that
+        // it can apply the settings, even SwiftUI settings.
         PreferencesView {
             ZStack {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
@@ -40,21 +47,9 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
             .preferredColorScheme(.dark)
             .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
         }
-    }
-
-    @ViewBuilder
-    func makeStart() -> some View {
-        #if os(iOS)
-
-        // Some settings have to apply to the root PreferencesView and this
-        // one - separately.
-        // It is assumed that because Stinsen adds a lot of views that the
-        // PreferencesView isn't in the right place in the VC chain so that
-        // it can apply the settings, even SwiftUI settings.
-        versionedView
-            .preferredColorScheme(.dark)
-            .ignoresSafeArea()
-            .persistentSystemOverlays(.hidden)
+        .preferredColorScheme(.dark)
+        .ignoresSafeArea()
+        .persistentSystemOverlays(.hidden)
 
         #else
 
