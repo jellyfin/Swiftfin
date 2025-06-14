@@ -55,7 +55,7 @@ struct SubtitleSearchView: View {
                 .ignoresSafeArea()
             contentView
         }
-        .navigationBarTitle(L10n.search)
+        .navigationTitle(L10n.search)
         .onFirstAppear {
             viewModel.send(.search(language: ""))
             language = nil

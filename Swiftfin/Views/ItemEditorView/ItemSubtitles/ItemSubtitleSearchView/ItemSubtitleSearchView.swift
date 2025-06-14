@@ -55,7 +55,7 @@ struct ItemSubtitleSearchView: View {
                 ErrorView(error: error)
             }
         }
-        .navigationBarTitle(L10n.search)
+        .navigationTitle(L10n.search)
         .navigationBarTitleDisplayMode(.inline)
         .onFirstAppear {
             viewModel.send(.search(language: ""))
