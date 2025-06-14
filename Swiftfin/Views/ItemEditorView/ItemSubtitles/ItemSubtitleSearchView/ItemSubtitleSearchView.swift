@@ -58,8 +58,7 @@ struct ItemSubtitleSearchView: View {
         .navigationTitle(L10n.search)
         .navigationBarTitleDisplayMode(.inline)
         .onFirstAppear {
-            viewModel.send(.search(language: ""))
-            language = nil
+            viewModel.send(.search(language: language))
         }
         .onReceive(viewModel.events) { event in
             switch event {
@@ -86,7 +85,12 @@ struct ItemSubtitleSearchView: View {
                 .buttonStyle(.toolbarPill)
             } else {
                 Button(L10n.save) {
-                    setSubtitles()
+                    guard selectedSubtitles.isNotEmpty else {
+                        error = JellyfinAPIError(L10n.noFileSelected)
+                        return
+                    }
+
+                    viewModel.send(.set(selectedSubtitles))
                 }
                 .buttonStyle(.toolbarPill)
                 .disabled(selectedSubtitles.isEmpty)
@@ -133,30 +137,19 @@ struct ItemSubtitleSearchView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
             }
             ForEach(viewModel.searchResults, id: \.id) { subtitle in
+                let isSelected = subtitle.id.map { selectedSubtitles.contains($0) } ?? false
+
                 SubtitleResultRow(subtitle: subtitle) {
-                    if let subtitleID = subtitle.id {
-                        if selectedSubtitles.contains(subtitleID) {
-                            selectedSubtitles.remove(subtitleID)
-                        } else {
-                            selectedSubtitles.insert(subtitleID)
-                        }
+                    guard let subtitleID = subtitle.id else {
+                        return
                     }
+
+                    selectedSubtitles.toggle(value: subtitleID)
                 }
-                .foregroundStyle(selectedSubtitles.contains(subtitle.id ?? "") ? .primary : .secondary, .secondary)
-                .environment(\.isSelected, selectedSubtitles.contains(subtitle.id ?? ""))
+                .foregroundStyle(isSelected ? .primary : .secondary, .secondary)
+                .environment(\.isSelected, isSelected)
                 .environment(\.isEditing, true)
             }
         }
-    }
-
-    // MARK: - Set Subtitles
-
-    private func setSubtitles() {
-        guard selectedSubtitles.isNotEmpty else {
-            error = JellyfinAPIError(L10n.noFileSelected)
-            return
-        }
-
-        viewModel.send(.set(selectedSubtitles))
     }
 }

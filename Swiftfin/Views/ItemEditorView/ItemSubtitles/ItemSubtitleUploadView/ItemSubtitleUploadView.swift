@@ -6,11 +6,17 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 import UniformTypeIdentifiers
 
 struct ItemSubtitleUploadView: View {
+
+    // MARK: - Accent Color
+
+    @Default(.accentColor)
+    private var accentColor
 
     // MARK: - Properties
 
@@ -120,7 +126,7 @@ struct ItemSubtitleUploadView: View {
                 ListRowButton(subtitleData == nil ? L10n.uploadFile : L10n.replaceSubtitle) {
                     isPresentingFileUpload = true
                 }
-                .foregroundStyle(Color.accentColor.overlayColor, Color.accentColor)
+                .foregroundStyle(accentColor.overlayColor, accentColor)
             }
         }
     }

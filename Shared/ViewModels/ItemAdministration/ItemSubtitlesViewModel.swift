@@ -24,7 +24,7 @@ final class ItemSubtitlesViewModel: ViewModel, Stateful, Eventful {
 
     enum Action: Equatable {
         case cancel
-        case search(language: String, isPerfectMatch: Bool? = nil)
+        case search(language: String? = nil, isPerfectMatch: Bool? = nil)
         case set(Set<String>)
         case upload(UploadSubtitleDto)
         case delete(Set<MediaStream>)
@@ -172,15 +172,9 @@ final class ItemSubtitlesViewModel: ViewModel, Stateful, Eventful {
             return .initial
 
         case let .search(language, isPerfectMatch):
-            if language.isEmpty {
-                searchTask?.cancel()
-                searchTask = nil
-                searchQuery.send((language: language, isPerfectMatch: isPerfectMatch))
-                return .initial
-            } else {
-                searchQuery.send((language: language, isPerfectMatch: isPerfectMatch))
-                return .initial
-            }
+            let searchLanguage = language ?? ""
+            searchQuery.send((language: searchLanguage, isPerfectMatch: isPerfectMatch))
+            return .initial
 
         case let .set(subtitles):
             subtitleTask?.cancel()

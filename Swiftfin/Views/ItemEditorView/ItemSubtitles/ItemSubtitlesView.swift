@@ -84,7 +84,7 @@ struct ItemSubtitlesView: View {
             ToolbarItem(placement: .topBarLeading) {
                 if isEditing {
                     Button(isAllSelected ? L10n.removeAll : L10n.selectAll) {
-                        selectedSubtitles = isAllSelected ? [] : Set(viewModel.externalSubtitles)
+                        toggleAllSelection()
                     }
                     .buttonStyle(.toolbarPill)
                 }
@@ -92,9 +92,7 @@ struct ItemSubtitlesView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 if isEditing {
                     Button(L10n.cancel) {
-                        isEditing = false
-                        UIDevice.impact(.light)
-                        selectedSubtitles.removeAll()
+                        cancelEditing()
                     }
                     .buttonStyle(.toolbarPill)
                 }
@@ -183,7 +181,7 @@ struct ItemSubtitlesView: View {
                             ForEach(viewModel.externalSubtitles, id: \.index) { subtitle in
                                 SubtitleButton(subtitle) {
                                     if isEditing {
-                                        toggleSelection(for: subtitle)
+                                        selectedSubtitles.toggle(value: subtitle)
                                     } else {
                                         expandedSubtitle = subtitle
                                     }
@@ -216,14 +214,18 @@ struct ItemSubtitlesView: View {
         }
     }
 
-    // MARK: - Add/Remove Selected Subtitle
+    // MARK: - Toggle All Selection
 
-    private func toggleSelection(for subtitle: MediaStream) {
-        if selectedSubtitles.contains(subtitle) {
-            selectedSubtitles.remove(subtitle)
-        } else {
-            selectedSubtitles.insert(subtitle)
-        }
+    private func toggleAllSelection() {
+        selectedSubtitles = isAllSelected ? [] : Set(viewModel.externalSubtitles)
+    }
+
+    // MARK: - Cancel Editing
+
+    private func cancelEditing() {
+        isEditing = false
+        UIDevice.impact(.light)
+        selectedSubtitles.removeAll()
     }
 
     // MARK: - Delete Confirmation Actions
@@ -233,7 +235,6 @@ struct ItemSubtitlesView: View {
         Button(L10n.cancel, role: .cancel) {}
 
         Button(L10n.delete, role: .destructive) {
-
             viewModel.send(.delete(selectedSubtitles))
             selectedSubtitles.removeAll()
             isEditing = false
