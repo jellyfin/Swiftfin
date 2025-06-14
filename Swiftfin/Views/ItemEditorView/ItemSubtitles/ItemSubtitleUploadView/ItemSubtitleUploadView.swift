@@ -63,7 +63,7 @@ struct ItemSubtitleUploadView: View {
 
     var body: some View {
         contentView
-            .navigationBarTitle(L10n.subtitle)
+            .navigationTitle(L10n.subtitle)
             .navigationBarTitleDisplayMode(.inline)
             .onReceive(viewModel.events) { event in
                 switch event {
@@ -113,7 +113,7 @@ struct ItemSubtitleUploadView: View {
 
             Section(L10n.file) {
                 Text(subtitleFile?.lastPathComponent ?? L10n.noFileSelected)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
             }
 
             Section {

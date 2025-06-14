@@ -10,7 +10,6 @@ import JellyfinAPI
 import SwiftUI
 import UniformTypeIdentifiers
 
-// TODO: Localize
 
 struct ItemSubtitlesView: View {
 
@@ -73,7 +72,7 @@ struct ItemSubtitlesView: View {
                 contentView
             }
         }
-        .navigationBarTitle(L10n.subtitles)
+        .navigationTitle(L10n.subtitles)
         .navigationBarBackButtonHidden(isEditing)
         .navigationBarTitleDisplayMode(.inline)
         .onReceive(viewModel.events) { event in
@@ -207,7 +206,7 @@ struct ItemSubtitlesView: View {
 
     @ViewBuilder
     private var expandedSubtitleSheet: some View {
-        NavigationView {
+        NavigationStack {
             if let mediaStream = expandedSubtitle {
                 MediaStreamInfoView(mediaStream: mediaStream)
                     .navigationBarTitleDisplayMode(.inline)
