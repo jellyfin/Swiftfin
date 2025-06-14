@@ -177,59 +177,37 @@ extension View {
         })
     }
 
-    func onFrameChanged(_ onChange: @escaping (CGRect) -> Void) -> some View {
-        background {
-            GeometryReader { reader in
-                Color.clear
-                    .preference(key: FramePreferenceKey.self, value: reader.frame(in: .global))
-            }
+    func onFrameChanged(perform action: @escaping (CGRect, EdgeInsets) -> Void) -> some View {
+        onGeometryChange(for: OnFrameChangedValue.self) { proxy in
+            let frame = proxy.frame(in: .global)
+            let safeAreaInsets = proxy.safeAreaInsets
+
+            return .init(
+                frame: frame,
+                safeAreaInsets: safeAreaInsets
+            )
+        } action: { newValue in
+            action(newValue.frame, newValue.safeAreaInsets)
         }
-        .onPreferenceChange(FramePreferenceKey.self, perform: onChange)
     }
 
     func trackingFrame(_ binding: Binding<CGRect>) -> some View {
-        onFrameChanged { newFrame in
+        onFrameChanged { newFrame, _ in
             binding.wrappedValue = newFrame
         }
     }
 
-    func onLocationChanged(_ onChange: @escaping (CGPoint) -> Void) -> some View {
-        background {
-            GeometryReader { reader in
-                Color.clear
-                    .preference(
-                        key: LocationPreferenceKey.self,
-                        value: CGPoint(x: reader.frame(in: .global).midX, y: reader.frame(in: .global).midY)
-                    )
-            }
-        }
-        .onPreferenceChange(LocationPreferenceKey.self, perform: onChange)
-    }
-
-    func trackingLocation(_ binding: Binding<CGPoint>) -> some View {
-        onLocationChanged { newLocation in
-            binding.wrappedValue = newLocation
-        }
-    }
-
-    func onSizeChanged(perform action: @escaping (CGSize) -> Void) -> some View {
-        onSizeChanged { size, _ in
-            action(size)
-        }
-    }
-
     func onSizeChanged(perform action: @escaping (CGSize, EdgeInsets) -> Void) -> some View {
-        background {
-            GeometryReader { reader in
-                Color.clear
-                    .preference(
-                        key: GeometryPrefenceKey.self,
-                        value: GeometryPrefenceKey.Value(size: reader.size, safeAreaInsets: reader.safeAreaInsets)
-                    )
-            }
-        }
-        .onPreferenceChange(GeometryPrefenceKey.self) { value in
-            action(value.size, value.safeAreaInsets)
+        onGeometryChange(for: OnFrameChangedValue.self) { proxy in
+            let size = proxy.size
+            let safeAreaInsets = proxy.safeAreaInsets
+
+            return .init(
+                frame: CGRect(origin: .zero, size: size),
+                safeAreaInsets: safeAreaInsets
+            )
+        } action: { newValue in
+            action(newValue.frame.size, newValue.safeAreaInsets)
         }
     }
 
@@ -385,4 +363,9 @@ extension View {
             .debugHLine(fill)
     }
     #endif
+}
+
+private struct OnFrameChangedValue: Equatable {
+    let frame: CGRect
+    let safeAreaInsets: EdgeInsets
 }

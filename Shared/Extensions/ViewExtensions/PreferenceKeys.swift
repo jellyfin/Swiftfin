@@ -10,23 +10,15 @@ import SwiftUI
 
 struct FramePreferenceKey: PreferenceKey {
 
-    static var defaultValue: CGRect = .zero
-    static func reduce(value: inout CGRect, nextValue: () -> CGRect) {}
-}
-
-struct GeometryPrefenceKey: PreferenceKey {
-
     struct Value: Equatable {
-        let size: CGSize
+        let frame: CGRect
         let safeAreaInsets: EdgeInsets
     }
 
-    static var defaultValue: Value = Value(size: .zero, safeAreaInsets: .zero)
+    static var defaultValue: Value = Value(
+        frame: .zero,
+        safeAreaInsets: .zero
+    )
+
     static func reduce(value: inout Value, nextValue: () -> Value) {}
-}
-
-struct LocationPreferenceKey: PreferenceKey {
-
-    static var defaultValue: CGPoint = .zero
-    static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {}
 }
