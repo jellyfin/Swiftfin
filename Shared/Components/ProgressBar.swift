@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-// TODO: remove and replace with below
+// TODO: remove and replace with `PlaybackProgressViewStyle`
 struct ProgressBar: View {
 
     @State
@@ -31,57 +31,3 @@ struct ProgressBar: View {
             .trackingSize($contentSize)
     }
 }
-
-// TODO: fix capsule with low progress
-
-extension ProgressViewStyle where Self == PlaybackProgressViewStyle {
-
-    static var playback: Self { .init(secondaryProgress: nil) }
-
-    static func playback(secondaryProgress: Double?) -> Self {
-        .init(secondaryProgress: secondaryProgress)
-    }
-}
-
-struct PlaybackProgressViewStyle: ProgressViewStyle {
-
-    @State
-    private var contentSize: CGSize = .zero
-
-    let secondaryProgress: Double?
-
-    func makeBody(configuration: Configuration) -> some View {
-        Capsule()
-            .foregroundStyle(.secondary)
-            .opacity(0.2)
-            .overlay(alignment: .leading) {
-                ZStack(alignment: .leading) {
-
-                    if let secondaryProgress {
-                        Capsule()
-                            .mask(alignment: .leading) {
-                                Rectangle()
-                            }
-                            .frame(width: contentSize.width * clamp(secondaryProgress, min: 0, max: 1))
-                            .foregroundStyle(.tertiary)
-                    }
-
-                    Capsule()
-                        .mask(alignment: .leading) {
-                            Rectangle()
-                        }
-                        .frame(width: contentSize.width * (configuration.fractionCompleted ?? 0))
-                        .foregroundStyle(.primary)
-                }
-            }
-            .trackingSize($contentSize)
-    }
-}
-
-// #Preview {
-//    ProgressView(value: 0.3)
-//        .progressViewStyle(.SwiftfinLinear(secondaryProgress: 0.3))
-//        .frame(height: 8)
-//        .padding(.horizontal, 10)
-//        .foregroundStyle(.primary, .secondary, .orange)
-// }

@@ -20,14 +20,12 @@ struct NativeVideoPlayerSettingsView: View {
             Section {
 
                 BasicStepper(
-                    title: L10n.resumeOffset,
+                    L10n.resumeOffset,
                     value: $resumeOffset,
                     range: 0 ... 30,
-                    step: 1
+                    step: 1,
+                    formatter: SecondFormatter()
                 )
-                .valueFormatter {
-                    $0.secondLabel
-                }
             } footer: {
                 Text(L10n.resumeOffsetDescription)
             }

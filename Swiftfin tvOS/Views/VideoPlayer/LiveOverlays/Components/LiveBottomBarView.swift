@@ -88,7 +88,7 @@ extension LiveVideoPlayer.Overlay {
                     }
                     .focused($isBarFocused)
                     .frame(height: 60)
-                //                    .visible(isScrubbing || isPresentingOverlay)
+                //                    .isVisible(isScrubbing || isPresentingOverlay)
 
                 HStack(spacing: 15) {
 
