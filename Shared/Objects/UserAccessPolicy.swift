@@ -6,8 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-
 // TODO: require remote sign in every time
 //       - actually found to be a bit difficult?
 // TODO: rename to not confuse with server access/UserDto
