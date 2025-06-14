@@ -10,7 +10,6 @@ import JellyfinAPI
 import SwiftUI
 import UniformTypeIdentifiers
 
-
 struct ItemSubtitlesView: View {
 
     // MARK: - Properties
