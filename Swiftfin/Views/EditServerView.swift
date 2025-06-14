@@ -48,6 +48,12 @@ struct EditServerView: View {
                     trailing: viewModel.server.name
                 )
 
+                // TODO: Figure out CoreStore and just hold onto the server version
+                /*TextPairView(
+                    leading: L10n.version,
+                    trailing: viewModel.server.version
+                )*/
+
                 Picker(L10n.url, selection: $currentServerURL) {
                     ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
                         Text(url.absoluteString)
