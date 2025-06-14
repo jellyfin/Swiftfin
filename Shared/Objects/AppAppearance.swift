@@ -6,10 +6,9 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
-enum AppAppearance: String, CaseIterable, Defaults.Serializable, Displayable {
+enum AppAppearance: String, CaseIterable, Displayable, Storable {
 
     case system
     case dark

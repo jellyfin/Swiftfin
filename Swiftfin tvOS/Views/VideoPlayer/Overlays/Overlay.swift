@@ -49,7 +49,7 @@ extension VideoPlayer {
 
         var body: some View {
             currentOverlay
-                .visible(isPresentingOverlay)
+                .isVisible(isPresentingOverlay)
                 .animation(.linear(duration: 0.1), value: currentOverlayType)
                 .environment(\.currentOverlayType, $currentOverlayType)
                 .environmentObject(overlayTimer)

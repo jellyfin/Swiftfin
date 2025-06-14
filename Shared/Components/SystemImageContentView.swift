@@ -10,6 +10,7 @@ import SwiftUI
 
 // TODO: bottom view can probably just be cleaned up and change
 //       usages to use local background views
+// TODO: use heirarchical styles instead of explicit color
 
 struct RelativeSystemImageView: View {
 

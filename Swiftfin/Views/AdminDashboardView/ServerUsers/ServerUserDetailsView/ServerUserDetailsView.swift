@@ -67,23 +67,22 @@ struct ServerUserDetailsView: View {
             Section {
                 ChevronButton(
                     L10n.username,
-                    subtitle: viewModel.user.name
+                    subtitle: viewModel.user.name,
+                    description: nil
                 ) {
                     TextField(L10n.username, text: $username)
-                    HStack {
-                        Button(L10n.cancel) {
-                            username = viewModel.user.name ?? ""
-                            isPresentingUsername = false
-                        }
-                        Button(L10n.save) {
-                            viewModel.send(.updateUsername(username))
-                            isPresentingUsername = false
-                        }
-                    }
+                } onSave: {
+                    viewModel.send(.updateUsername(username))
+                    isPresentingUsername = false
+                } onCancel: {
+                    username = viewModel.user.name ?? ""
+                    isPresentingUsername = false
                 }
+
                 ChevronButton(L10n.permissions) {
                     router.route(to: \.userPermissions, viewModel)
                 }
+
                 if let userId = viewModel.user.id {
                     ChevronButton(L10n.password) {
                         router.route(to: \.resetUserPassword, userId)

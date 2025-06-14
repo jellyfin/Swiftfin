@@ -59,7 +59,7 @@ struct TruncatedText: View {
                                 }
                         }
                     }
-                    .visible(isTruncated)
+                    .isVisible(isTruncated)
                 }
 
             if isTruncated {
@@ -86,7 +86,7 @@ struct TruncatedText: View {
                 if !isTruncated {
                     if fullheight != 0 {
                         Text(text)
-                            .onSizeChanged { newSize in
+                            .onSizeChanged { newSize, _ in
                                 if fullheight > newSize.height {
                                     isTruncated = true
                                 }
@@ -96,7 +96,7 @@ struct TruncatedText: View {
                     Text(text)
                         .lineLimit(10)
                         .fixedSize(horizontal: false, vertical: true)
-                        .onSizeChanged { newSize in
+                        .onSizeChanged { newSize, _ in
                             fullheight = newSize.height
                         }
                 }

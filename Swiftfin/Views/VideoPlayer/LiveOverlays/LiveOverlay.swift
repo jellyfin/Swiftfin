@@ -23,7 +23,7 @@ extension LiveVideoPlayer {
             ZStack {
 
                 LiveMainOverlay()
-                    .visible(currentOverlayType == .main)
+                    .isVisible(currentOverlayType == .main)
             }
             .animation(.linear(duration: 0.1), value: currentOverlayType)
             .environment(\.currentOverlayType, $currentOverlayType)

@@ -8,6 +8,8 @@
 
 import Foundation
 
+// TODO: replace all with formatters or use Duration
+
 extension FixedWidthInteger {
 
     var timeLabel: String {
@@ -59,5 +61,34 @@ extension Int {
         } else {
             return nil
         }
+    }
+}
+
+struct MilliseondFormatter: FormatStyle {
+
+    func format(_ value: Int) -> String {
+        let isNegative = value < 0
+        let value = abs(value)
+        let seconds = "\(value / 1000)"
+        let milliseconds = "\(value % 1000)".first ?? "0"
+
+        return seconds
+            .appending(".")
+            .appending(milliseconds)
+            .appending("s")
+            .prepending("-", if: isNegative)
+    }
+}
+
+struct SecondFormatter: FormatStyle {
+
+    func format(_ value: Int) -> String {
+        let isNegative = value < 0
+        let value = abs(value)
+        let seconds = "\(value)"
+
+        return seconds
+            .appending("s")
+            .prepending("-", if: isNegative)
     }
 }

@@ -8,7 +8,8 @@
 
 import SwiftUI
 
-struct BasicStepper<Value: CustomStringConvertible & Strideable>: View {
+struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: FormatStyle>: View where Formatter.FormatInput == Value,
+Formatter.FormatOutput == String {
 
     @Binding
     private var value: Value
@@ -16,7 +17,7 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable>: View {
     private let title: String
     private let range: ClosedRange<Value>
     private let step: Value.Stride
-    private var formatter: (Value) -> String
+    private let formatter: Formatter
 
     var body: some View {
         Stepper(value: $value, in: range, step: step) {
@@ -25,7 +26,7 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable>: View {
 
                 Spacer()
 
-                formatter(value).text
+                Text(value, format: formatter)
                     .foregroundColor(.secondary)
             }
         }
@@ -35,21 +36,35 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable>: View {
 extension BasicStepper {
 
     init(
-        title: String,
+        _ title: String,
         value: Binding<Value>,
         range: ClosedRange<Value>,
-        step: Value.Stride
+        step: Value.Stride = 1,
+        formatter: Formatter
     ) {
         self.init(
             value: value,
             title: title,
             range: range,
             step: step,
-            formatter: { $0.description }
+            formatter: formatter
         )
     }
+}
 
-    func valueFormatter(_ formatter: @escaping (Value) -> String) -> Self {
-        copy(modifying: \.formatter, with: formatter)
+extension BasicStepper where Formatter == VerbatimFormatStyle<Value> {
+    init(
+        _ title: String,
+        value: Binding<Value>,
+        range: ClosedRange<Value>,
+        step: Value.Stride = 1
+    ) {
+        self.init(
+            value: value,
+            title: title,
+            range: range,
+            step: step,
+            formatter: VerbatimFormatStyle()
+        )
     }
 }

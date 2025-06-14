@@ -6,10 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Foundation
-import UIKit
-
 enum LibraryDisplayType: String, CaseIterable, Displayable, Storable, SystemImageable {
 
     case grid

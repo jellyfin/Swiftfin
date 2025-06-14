@@ -6,8 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-
 /// A container for `Notifications.Key`.
 struct NotificationSet {
 

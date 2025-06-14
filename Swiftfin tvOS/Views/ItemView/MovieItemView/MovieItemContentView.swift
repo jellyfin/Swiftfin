@@ -41,22 +41,11 @@ extension MovieItemView {
             }
             .background {
                 BlurView(style: .dark)
-                    .mask {
-                        VStack(spacing: 0) {
-                            LinearGradient(
-                                stops: [
-                                    .init(color: .clear, location: 0.5),
-                                    .init(color: .white.opacity(0.8), location: 0.7),
-                                    .init(color: .white.opacity(0.8), location: 0.95),
-                                    .init(color: .white, location: 1),
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                            .frame(height: UIScreen.main.bounds.height - 150)
-
-                            Color.white
-                        }
+                    .maskLinearGradient {
+                        (location: 0.5, opacity: 0)
+                        (location: 0.7, opacity: 0.8)
+                        (location: 0.95, opacity: 0.8)
+                        (location: 1, opacity: 1)
                     }
             }
         }

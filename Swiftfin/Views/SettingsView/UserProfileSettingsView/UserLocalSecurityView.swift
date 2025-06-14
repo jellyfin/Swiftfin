@@ -16,6 +16,7 @@ import SwiftUI
 // TODO: pop is just a workaround to get change published from usersession.
 //       find fix and don't pop when successfully changed
 // TODO: could cleanup/refactor greatly
+// TODO: change footer list descriptions into a `Learn More...` modal popup
 
 struct UserLocalSecurityView: View {
 

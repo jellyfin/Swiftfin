@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import UniformTypeIdentifiers
 
-enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Defaults.Serializable {
+enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Storable {
 
     case ass
     case cc_dec
