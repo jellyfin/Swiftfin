@@ -64,20 +64,12 @@ extension VideoPlayer {
                     .trackingFrame($progressViewFrame)
             }
 
-            // TODO: only here for current chapters implementation,
-            //       replace with below
-            if let selectedSupplement {
-                SupplementTitleButton(supplement: selectedSupplement)
+            HStack(spacing: 10) {
+                ForEach(manager.supplements.map(\.asAny)) { supplement in
+                    SupplementTitleButton(supplement: supplement)
+                }
             }
-
-//            HStack(spacing: 10) {
-//                ForEach(manager.supplements.map(\.asAny)) { supplement in
-//                    DrawerSectionButton(
-//                        supplement: supplement
-//                    )
-//                }
-//            }
-//            .isVisible(!isScrubbing && isPresentingOverlay)
+            .isVisible(!isScrubbing && isPresentingOverlay)
         }
 
         // MARK: body

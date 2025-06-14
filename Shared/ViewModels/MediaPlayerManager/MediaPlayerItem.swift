@@ -117,6 +117,18 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
         selectedSubtitleStreamIndex = mediaSource.defaultSubtitleStreamIndex ?? -1
 
         listeners.append(MediaProgressListener(item: self))
+
+        supplements.append(MediaInfoSupplement(item: baseItem))
+
+        let chapters = baseItem.fullChapterInfo
+
+        if chapters.isNotEmpty {
+            supplements.append(
+                MediaChaptersSupplement(
+                    chapters: baseItem.fullChapterInfo
+                )
+            )
+        }
     }
 
     // MARK: build

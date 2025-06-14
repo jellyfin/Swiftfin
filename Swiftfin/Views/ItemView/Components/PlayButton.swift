@@ -40,6 +40,13 @@ extension ItemView {
             Button {
                 if let playButtonItem = viewModel.playButtonItem, let selectedMediaSource = viewModel.selectedMediaSource {
 //                    mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: playButtonItem, mediaSource: selectedMediaSource))
+                    let manager = MediaPlayerManager(
+                        item: playButtonItem
+                    ) { item in
+                        try await MediaPlayerItem.build(for: item, mediaSource: selectedMediaSource)
+                    }
+
+                    mainRouter.route(to: \.videoPlayer, manager)
                 } else {
                     logger.error("No media source available")
                 }
