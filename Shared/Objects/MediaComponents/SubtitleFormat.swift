@@ -38,9 +38,9 @@ enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Defaults.Serial
 
         if let value = SubtitleFormat.allCases.first(where: { $0.fileExtension == fileExtension }) {
             self = value
+        } else {
+            return nil
         }
-
-        return nil
     }
 
     var displayTitle: String {

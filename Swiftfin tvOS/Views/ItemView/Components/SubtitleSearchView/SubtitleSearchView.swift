@@ -58,7 +58,6 @@ struct SubtitleSearchView: View {
         .navigationTitle(L10n.search)
         .onFirstAppear {
             viewModel.send(.search(language: ""))
-            language = nil
         }
         .topBarTrailing {
             if viewModel.backgroundStates.isNotEmpty {
@@ -113,16 +112,14 @@ struct SubtitleSearchView: View {
         Section(L10n.options) {
             LanguagePicker(title: L10n.language, selectedLanguageCode: $language)
                 .onChange(of: language) {
-                    if let language {
-                        viewModel.send(.search(language: language, isPerfectMatch: isPerfectMatch))
-                    }
+                    guard let language else { return }
+                    viewModel.send(.search(language: language, isPerfectMatch: isPerfectMatch))
                 }
 
             Toggle(L10n.perfectMatch, isOn: $isPerfectMatch)
                 .onChange(of: isPerfectMatch) {
-                    if let language {
-                        viewModel.send(.search(language: language, isPerfectMatch: isPerfectMatch))
-                    }
+                    guard let language else { return }
+                    viewModel.send(.search(language: language, isPerfectMatch: isPerfectMatch))
                 }
         }
 
@@ -158,17 +155,14 @@ struct SubtitleSearchView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
             }
             ForEach(viewModel.searchResults, id: \.id) { subtitle in
+                let isSelected = subtitle.id.map { selectedSubtitles.contains($0) } ?? false
+
                 SubtitleResultRow(subtitle: subtitle) {
-                    if let subtitleID = subtitle.id {
-                        if selectedSubtitles.contains(subtitleID) {
-                            selectedSubtitles.remove(subtitleID)
-                        } else {
-                            selectedSubtitles.insert(subtitleID)
-                        }
-                    }
+                    guard let subtitleID = subtitle.id else { return }
+                    selectedSubtitles.toggle(value: subtitleID)
                 }
-                .foregroundStyle(selectedSubtitles.contains(subtitle.id ?? "") ? .primary : .secondary, .secondary)
-                .environment(\.isSelected, selectedSubtitles.contains(subtitle.id ?? ""))
+                .foregroundStyle(isSelected ? .primary : .secondary, .secondary)
+                .environment(\.isSelected, isSelected)
                 .environment(\.isEditing, true)
             }
         }
