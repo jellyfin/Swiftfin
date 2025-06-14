@@ -10,10 +10,8 @@ import Defaults
 import SwiftUI
 
 extension VideoPlayerSettingsView {
-    struct ButtonSection: View {
 
-        @Default(.VideoPlayer.Overlay.playbackButtonType)
-        private var playbackButtonType
+    struct ButtonSection: View {
 
         @Default(.VideoPlayer.showJumpButtons)
         private var showJumpButtons
@@ -33,7 +31,7 @@ extension VideoPlayerSettingsView {
         var body: some View {
             Section(L10n.buttons) {
 
-                CaseIterablePicker(L10n.playbackButtons, selection: $playbackButtonType)
+//                CaseIterablePicker(L10n.playbackButtons, selection: $playbackButtonType)
 
                 Toggle(isOn: $showJumpButtons) {
                     HStack {

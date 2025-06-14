@@ -112,15 +112,15 @@ extension ItemView {
         // MARK: - Play: Local Trailer
 
         private func playLocalTrailer(_ trailer: BaseItemDto) {
-            if let selectedMediaSource = trailer.mediaSources?.first {
-                router.route(
-                    to: \.videoPlayer,
-                    OnlineVideoPlayerManager(item: trailer, mediaSource: selectedMediaSource)
-                )
-            } else {
-                logger.log(level: .error, "No media sources found")
-                error = JellyfinAPIError(L10n.unknownError)
-            }
+//            if let selectedMediaSource = trailer.mediaSources?.first {
+//                router.route(
+//                    to: \.videoPlayer,
+//                    OnlineVideoPlayerManager(item: trailer, mediaSource: selectedMediaSource)
+//                )
+//            } else {
+//                logger.log(level: .error, "No media sources found")
+//                error = JellyfinAPIError(L10n.unknownError)
+//            }
         }
 
         // MARK: - Play: External Trailer

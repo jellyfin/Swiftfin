@@ -13,12 +13,13 @@ import SwiftUI
 // TODO: change swipe to directional
 // TODO: figure out way for multitap near the middle be distinguished as different sides
 
+typealias LongPressGestureHandler = (UnitPoint) -> Void
 // state, point, velocity, translation
 typealias PanGestureHandler = (UIGestureRecognizer.State, UnitPoint, CGFloat, CGFloat) -> Void
 // state, point, scale
 typealias PinchGestureHandler = (UIGestureRecognizer.State, UnitPoint, CGFloat) -> Void
 // point, direction, amount
-typealias SwipeGestureHandler = (UnitPoint, Bool, Int) -> Void
+typealias SwipeGestureHandler = (UnitPoint, Direction) -> Void
 // point, amount
 typealias TapGestureHandler = (UnitPoint, Int) -> Void
 
@@ -26,7 +27,7 @@ struct GestureView: UIViewRepresentable {
 
     private var onHorizontalPan: PanGestureHandler?
     private var onHorizontalSwipe: SwipeGestureHandler?
-    private var onLongPress: ((UnitPoint) -> Void)?
+    private var onLongPress: LongPressGestureHandler?
     private var onPinch: PinchGestureHandler?
     private var onTap: TapGestureHandler?
     private var onDoubleTouch: TapGestureHandler?
@@ -96,11 +97,11 @@ extension GestureView {
     func onTap(
         samePointPadding: CGFloat,
         samePointTimeout: TimeInterval,
-        _ action: @escaping TapGestureHandler
+        perform action: @escaping TapGestureHandler
     ) -> Self {
-        copy(modifying: \.samePointPadding, with: samePointPadding)
-            .copy(modifying: \.samePointTimeout, with: samePointTimeout)
-            .copy(modifying: \.onTap, with: action)
+//        copy(modifying: \.samePointPadding, with: samePointPadding)
+//            .copy(modifying: \.samePointTimeout, with: samePointTimeout)
+        copy(modifying: \.onTap, with: action)
     }
 
     func onDoubleTouch(_ action: @escaping TapGestureHandler) -> Self {
@@ -121,7 +122,7 @@ class UIGestureView: UIView {
 
     private let onHorizontalPan: PanGestureHandler?
     private let onHorizontalSwipe: SwipeGestureHandler?
-    private let onLongPress: ((UnitPoint) -> Void)?
+    private let onLongPress: LongPressGestureHandler?
     private let onPinch: PinchGestureHandler?
     private let onTap: TapGestureHandler?
     private let onDoubleTouch: TapGestureHandler?
@@ -135,17 +136,16 @@ class UIGestureView: UIView {
     private var sameSwipeDirectionTimeout: TimeInterval
 
     private var hasSwiped: Bool = false
-    private var lastSwipeDirection: Bool?
+    private var lastSwipeDirection: Direction?
     private var lastTouchLocation: CGPoint?
     private var multiTapWorkItem: DispatchWorkItem?
     private var sameSwipeWorkItem: DispatchWorkItem?
     private var multiTapAmount: Int = 0
-    private var sameSwipeAmount: Int = 0
 
     init(
         onHorizontalPan: PanGestureHandler?,
         onHorizontalSwipe: SwipeGestureHandler?,
-        onLongPress: ((UnitPoint) -> Void)?,
+        onLongPress: LongPressGestureHandler?,
         onPinch: PinchGestureHandler?,
         onTap: TapGestureHandler?,
         onDoubleTouch: TapGestureHandler?,
@@ -178,20 +178,23 @@ class UIGestureView: UIView {
         doubleTouchGesture.numberOfTouchesRequired = 2
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(didPerformLongPress))
         longPressGesture.minimumPressDuration = longPressMinimumDuration
-        let verticalPanGesture = PanDirectionGestureRecognizer(
+
+        let verticalPanGesture = DirectionalPanGestureRecognizer(
             direction: .vertical,
             target: self,
             action: #selector(didPerformVerticalPan)
         )
-        let horizontalPanGesture = PanDirectionGestureRecognizer(
+        let horizontalPanGesture = DirectionalPanGestureRecognizer(
             direction: .horizontal,
             target: self,
             action: #selector(didPerformHorizontalPan)
         )
 
+        // TODO: handle conflicts
+
         addGestureRecognizer(pinchGesture)
         addGestureRecognizer(tapGesture)
-        addGestureRecognizer(doubleTouchGesture)
+//        addGestureRecognizer(doubleTouchGesture)
         addGestureRecognizer(longPressGesture)
         addGestureRecognizer(verticalPanGesture)
         addGestureRecognizer(horizontalPanGesture)
@@ -203,7 +206,7 @@ class UIGestureView: UIView {
     }
 
     @objc
-    private func didPerformHorizontalPan(_ gestureRecognizer: PanDirectionGestureRecognizer) {
+    private func didPerformHorizontalPan(_ gestureRecognizer: DirectionalPanGestureRecognizer) {
         let translation = gestureRecognizer.translation(in: self).x
         let unitPoint = gestureRecognizer.unitPoint(in: self)
         let velocity = gestureRecognizer.velocity(in: self).x
@@ -214,42 +217,13 @@ class UIGestureView: UIView {
            abs(translation) >= swipeTranslation,
            abs(velocity) >= swipeVelocity
         {
-            didPerformSwipe(unitPoint: unitPoint, direction: translation > 0)
-
+            onHorizontalSwipe?(unitPoint, translation > 0 ? .right : .left)
             hasSwiped = true
         }
 
         if gestureRecognizer.state == .ended {
             hasSwiped = false
         }
-    }
-
-    private func didPerformSwipe(unitPoint: UnitPoint, direction: Bool) {
-
-        if lastSwipeDirection == direction {
-            sameSwipeOccurred(unitPoint: unitPoint, direction: direction)
-            onHorizontalSwipe?(unitPoint, direction, sameSwipeAmount)
-        } else {
-            sameSwipeOccurred(unitPoint: unitPoint, direction: direction)
-            onHorizontalSwipe?(unitPoint, direction, 1)
-        }
-    }
-
-    private func sameSwipeOccurred(unitPoint: UnitPoint, direction: Bool) {
-        guard sameSwipeDirectionTimeout > 0 else { return }
-        lastSwipeDirection = direction
-
-        sameSwipeAmount += 1
-
-        sameSwipeWorkItem?.cancel()
-        let task = DispatchWorkItem {
-            self.sameSwipeAmount = 0
-            self.lastSwipeDirection = nil
-        }
-
-        sameSwipeWorkItem = task
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + sameSwipeDirectionTimeout, execute: task)
     }
 
     @objc
@@ -292,7 +266,7 @@ class UIGestureView: UIView {
     }
 
     @objc
-    private func didPerformVerticalPan(_ gestureRecognizer: PanDirectionGestureRecognizer) {
+    private func didPerformVerticalPan(_ gestureRecognizer: DirectionalPanGestureRecognizer) {
         guard let onVerticalPan else { return }
         let translation = gestureRecognizer.translation(in: self).y
         let unitPoint = gestureRecognizer.unitPoint(in: self)

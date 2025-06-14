@@ -48,7 +48,7 @@ extension ActiveSessionsView {
                 Spacer()
 
                 HStack(spacing: 2) {
-                    Text(playState.positionSeconds ?? 0, format: .runtime)
+//                    Text(playState.positionSeconds ?? 0, format: .runtime)
 
                     Text("/")
 
