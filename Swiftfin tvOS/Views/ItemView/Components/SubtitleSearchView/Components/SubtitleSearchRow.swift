@@ -43,11 +43,13 @@ extension SubtitleSearchView {
                         )
                         .font(.caption)
 
-                        TextPairView(
-                            leading: L10n.downloads,
-                            trailing: subtitle.downloadCount?.description ?? .emptyDash
-                        )
-                        .font(.caption)
+                        if let downloadCount = subtitle.downloadCount {
+                            TextPairView(
+                                leading: L10n.downloads,
+                                trailing: downloadCount.description
+                            )
+                            .font(.caption)
+                        }
 
                         if let rating = subtitle.communityRating {
                             TextPairView(
@@ -57,17 +59,21 @@ extension SubtitleSearchView {
                             .font(.caption)
                         }
 
-                        TextPairView(
-                            leading: L10n.author,
-                            trailing: subtitle.author ?? L10n.unknown
-                        )
-                        .font(.caption)
+                        if let author = subtitle.author {
+                            TextPairView(
+                                leading: L10n.author,
+                                trailing: author
+                            )
+                            .font(.caption)
+                        }
 
-                        TextPairView(
-                            leading: L10n.format,
-                            trailing: subtitle.format ?? L10n.unknown
-                        )
-                        .font(.caption)
+                        if let format = subtitle.format {
+                            TextPairView(
+                                leading: L10n.format,
+                                trailing: format
+                            )
+                            .font(.caption)
+                        }
                     }
                     .foregroundStyle(isSelected ? .primary : .secondary, .secondary)
 
