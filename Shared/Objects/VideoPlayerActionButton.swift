@@ -6,13 +6,11 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-// TODO: remove Chapters. Will be replaced as a media player supplement
 enum VideoPlayerActionButton: String, CaseIterable, Displayable, Identifiable, Storable, SystemImageable {
 
     case aspectFill
     case audio
     case autoPlay
-    case chapters
     case playbackSpeed
     case playNextItem
     case playPreviousItem
@@ -28,8 +26,6 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Identifiable, S
             return L10n.audio
         case .autoPlay:
             return L10n.autoPlay
-        case .chapters:
-            return L10n.chapters
         case .playbackSpeed:
             return L10n.playbackSpeed
         case .playNextItem:
@@ -50,7 +46,6 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Identifiable, S
         case .aspectFill: "arrow.up.left.and.arrow.down.right"
         case .audio: "speaker.wave.2"
         case .autoPlay: "play.circle.fill"
-        case .chapters: "list.bullet"
         case .playbackSpeed: "speedometer"
         case .playNextItem: "chevron.right.circle"
         case .playPreviousItem: "chevron.left.circle"
