@@ -30,10 +30,6 @@ struct EditServerView: View {
     @StateObject
     private var viewModel: ServerConnectionViewModel
 
-    // TODO: Figure out CoreStore and just hold onto the server version
-    @State
-    private var isVersionCompatible: Bool = false
-
     init(server: ServerState) {
         self._viewModel = StateObject(wrappedValue: ServerConnectionViewModel(server: server))
         self._currentServerURL = State(initialValue: server.currentURL)
@@ -48,11 +44,12 @@ struct EditServerView: View {
                     trailing: viewModel.server.name
                 )
 
-                // TODO: Figure out CoreStore and just hold onto the server version
-                /*TextPairView(
-                    leading: L10n.version,
-                    trailing: viewModel.server.version
-                )*/
+                if let serverVerion = StoredValues[.Server.publicInfo(id: viewModel.server.id)].version {
+                    TextPairView(
+                        leading: L10n.version,
+                        trailing: serverVerion
+                    )
+                }
 
                 Picker(L10n.url, selection: $currentServerURL) {
                     ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
@@ -62,10 +59,9 @@ struct EditServerView: View {
                     }
                 }
             } footer: {
-                if isVersionCompatible {
-                // if viewModel.userSession.server.isVersionCompatible() {
+                if viewModel.userSession.server.isVersionCompatible {
                     Label(
-                        "Server version does not meet the minimum requirement (\(JellyfinClient.sdkVersion.majorMinor.description)) for Swiftfin",
+                        L10n.serverVersionWarning(JellyfinClient.sdkVersion.majorMinor.description),
                         systemImage: "exclamationmark.circle.fill"
                     )
                     .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
@@ -91,16 +87,6 @@ struct EditServerView: View {
             }
         } message: {
             Text(L10n.confirmDeleteServerAndUsers(viewModel.server.name))
-        }
-        // TODO: Remove when CoreStore has a ServerVersion
-        .onFirstAppear {
-            Task {
-                do {
-                    isVersionCompatible = try await viewModel.userSession.server.isVersionCompatible()
-                } catch {
-                    isVersionCompatible = false
-                }
-            }
         }
     }
 }

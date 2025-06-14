@@ -1358,6 +1358,10 @@ internal enum L10n {
   internal static let servers = L10n.tr("Localizable", "servers", fallback: "Servers")
   /// Server URL
   internal static let serverURL = L10n.tr("Localizable", "serverURL", fallback: "Server URL")
+  /// Swiftfin requires Jellyfin version %@ or higher.
+  internal static func serverVersionWarning(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "serverVersionWarning", String(describing: p1), fallback: "Swiftfin requires Jellyfin version %@ or higher.")
+  }
   /// Session
   internal static let session = L10n.tr("Localizable", "session", fallback: "Session")
   /// Sessions

@@ -26,14 +26,6 @@ struct SettingsView: View {
     @StateObject
     private var viewModel = SettingsViewModel()
 
-    // TODO: Figure out CoreStore and just hold onto the server version
-    @State
-    private var isVersionCompatible: Bool = false
-
-    /* private var isVersionCompatible: Bool = false {
-         viewModel.userSession.server.isVersionCompatible()
-     } */
-
     var body: some View {
         Form {
 
@@ -53,9 +45,11 @@ struct SettingsView: View {
                         Label {
                             Text(viewModel.userSession.server.name)
                         } icon: {
-                            Image(systemName: isVersionCompatible ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
+                            if !viewModel.userSession.server.isVersionCompatible {
+                                Image(systemName: "exclamationmark.circle.fill")
+                            }
                         }
-                        .labelStyle(.sectionFooterWithImage(imageStyle: isVersionCompatible ? .green : .orange))
+                        .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                     }
                 )
 
@@ -132,16 +126,6 @@ struct SettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismissCoordinator()
-        }
-        // TODO: Remove when CoreStore has a ServerVersion
-        .onFirstAppear {
-            Task {
-                do {
-                    isVersionCompatible = try await viewModel.userSession.server.isVersionCompatible()
-                } catch {
-                    isVersionCompatible = false
-                }
-            }
         }
     }
 }
