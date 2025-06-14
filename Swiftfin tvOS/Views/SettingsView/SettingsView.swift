@@ -49,6 +49,7 @@ struct SettingsView: View {
                             } icon: {
                                 if !viewModel.userSession.server.isVersionCompatible {
                                     Image(systemName: "exclamationmark.circle.fill")
+                                        .foregroundStyle(.orange)
                                 }
                             }
                         }
