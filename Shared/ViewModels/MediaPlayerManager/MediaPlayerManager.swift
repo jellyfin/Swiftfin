@@ -145,6 +145,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
             self.state = .playback
             self.playbackItem = newItem
             self.eventSubject.send(.itemChanged(playbackItem: newItem))
+            self.supplements = newItem.supplements
         }
     }
 
@@ -163,6 +164,8 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         state = .playback
         self.playbackItem = playbackItem
         eventSubject.send(.itemChanged(playbackItem: playbackItem))
+
+        self.supplements = playbackItem.supplements
     }
 
     // MARK: respond
