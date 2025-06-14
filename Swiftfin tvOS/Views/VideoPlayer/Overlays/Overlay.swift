@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import PreferencesView
 import SwiftUI
 import VLCUI
@@ -14,122 +15,155 @@ extension VideoPlayer {
 
     struct Overlay: View {
 
-        @Environment(\.isPresentingOverlay)
+        @Environment(\.isScrubbing)
         @Binding
-        private var isPresentingOverlay
+        private var isScrubbing: Bool
+
+        // since this view ignores safe area, it must
+        // get safe area insets from parent views
+        @Environment(\.safeAreaInsets)
+        private var safeAreaInsets
 
         @EnvironmentObject
-        private var proxy: VLCVideoPlayer.Proxy
-        @EnvironmentObject
-        private var router: VideoPlayerCoordinator.Router
-        @EnvironmentObject
-        private var videoPlayerManager: VideoPlayerManager
+        private var manager: MediaPlayerManager
 
         @State
-        private var confirmCloseWorkItem: DispatchWorkItem?
+        private var contentSize: CGSize = .zero
         @State
-        private var currentOverlayType: VideoPlayer.OverlayType = .main
+        private var effectiveSafeArea: EdgeInsets = .zero
+        @State
+        private var isPresentingOverlay: Bool = true
+        @State
+        private var selectedSupplement: AnyMediaPlayerSupplement?
 
         @StateObject
-        private var overlayTimer: TimerProxy = .init()
+        private var overlayTimer: PokeIntervalTimer = .init()
+
+        private var isPresentingSupplement: Bool {
+            selectedSupplement != nil
+        }
 
         @ViewBuilder
-        private var currentOverlay: some View {
-            switch currentOverlayType {
-            case .chapters:
-                ChapterOverlay()
-            case .confirmClose:
-                ConfirmCloseOverlay()
-            case .main:
-                MainOverlay()
-            case .smallMenu:
-                SmallMenuOverlay()
+        private var bottomContent: some View {
+            if !isPresentingSupplement {
+
+                NavigationBar()
+                    .focusSection()
+
+                PlaybackProgress()
+                    .isVisible(isScrubbing || isPresentingOverlay)
+                    .transition(.move(edge: .top).combined(with: .opacity))
             }
+
+//            HStack(spacing: 10) {
+//                ForEach(manager.supplements.map(\.asAny)) { supplement in
+//                    DrawerSectionButton(
+//                        supplement: supplement
+//                    )
+//                }
+//            }
+//            .isVisible(!isScrubbing && isPresentingOverlay)
         }
 
         var body: some View {
-            currentOverlay
-                .isVisible(isPresentingOverlay)
-                .animation(.linear(duration: 0.1), value: currentOverlayType)
-                .environment(\.currentOverlayType, $currentOverlayType)
-                .environmentObject(overlayTimer)
-                .onChange(of: isPresentingOverlay) {
-                    if !isPresentingOverlay {
-                        currentOverlayType = .main
-                    }
-                }
-                .onChange(of: currentOverlayType) { _, newValue in
-                    if [.smallMenu, .chapters].contains(newValue) {
-                        overlayTimer.pause()
-                    } else if isPresentingOverlay {
-                        overlayTimer.start(5)
-                    }
-                }
-                .onChange(of: overlayTimer.isActive) { _, isActive in
-                    guard !isActive else { return }
+            VStack {
+                Spacer()
 
-                    withAnimation(.linear(duration: 0.3)) {
-                        isPresentingOverlay = false
+                bottomContent
+                    .edgePadding()
+                    .background(alignment: .bottom) {
+//                        OpacityLinearGradient {
+//                            (0, 0)
+//                            (1, 0.5)
+//                        }
+//                        .foregroundStyle(.black)
+//                        .isVisible(isScrubbing || isPresentingOverlay)
+//                        .animation(.linear(duration: 0.25), value: isPresentingOverlay)
                     }
+            }
+            .animation(.linear(duration: 0.1), value: isScrubbing)
+            .animation(.bouncy(duration: 0.4), value: isPresentingSupplement)
+            .animation(.bouncy(duration: 0.25), value: isPresentingOverlay)
+            .environment(\.isPresentingOverlay, $isPresentingOverlay)
+            .environment(\.selectedMediaPlayerSupplement, $selectedSupplement)
+//            .environmentObject(jumpProgressObserver)
+            .environmentObject(overlayTimer)
+            .onChange(of: isPresentingOverlay) {
+                guard isPresentingOverlay, !isScrubbing else { return }
+                overlayTimer.poke()
+            }
+            .onChange(of: isScrubbing) {
+                if isScrubbing {
+                    overlayTimer.stop()
+                } else {
+                    overlayTimer.poke()
                 }
-                .pressCommands {
-                    PressCommandAction(title: L10n.back, press: .menu, action: menuPress)
-                    PressCommandAction(title: L10n.playAndPause, press: .playPause) {
-                        if videoPlayerManager.state == .playing {
-                            videoPlayerManager.proxy.pause()
-                            withAnimation(.linear(duration: 0.3)) {
-                                isPresentingOverlay = true
-                            }
-                        } else if videoPlayerManager.state == .paused {
-                            videoPlayerManager.proxy.play()
-                            withAnimation(.linear(duration: 0.3)) {
-                                isPresentingOverlay = false
-                            }
-                        }
-                    }
-                    PressCommandAction(title: L10n.pressDownForMenu, press: .upArrow, action: arrowPress)
-                    PressCommandAction(title: L10n.pressDownForMenu, press: .downArrow, action: arrowPress)
-                    PressCommandAction(title: L10n.pressDownForMenu, press: .leftArrow, action: arrowPress)
-                    PressCommandAction(title: L10n.pressDownForMenu, press: .rightArrow, action: arrowPress)
-                    PressCommandAction(title: L10n.pressDownForMenu, press: .select, action: arrowPress)
-                }
-        }
+            }
+            .onReceive(overlayTimer.hasFired) {
+                guard !isScrubbing else { return }
 
-        func arrowPress() {
-            if isPresentingOverlay { return }
-            currentOverlayType = .main
-            overlayTimer.start(5)
-            withAnimation {
-                isPresentingOverlay = true
+                withAnimation(.linear(duration: 0.25)) {
+                    isPresentingOverlay = false
+                }
+            }
+            .onChange(of: selectedSupplement) {
+                if selectedSupplement == nil {
+                    overlayTimer.poke()
+                } else {
+                    overlayTimer.stop()
+                }
             }
         }
+    }
+}
 
-        func menuPress() {
-            overlayTimer.start(5)
-            confirmCloseWorkItem?.cancel()
+import VLCUI
 
-            if isPresentingOverlay && currentOverlayType == .confirmClose {
-                proxy.stop()
-                router.dismissCoordinator()
-            } else if isPresentingOverlay && currentOverlayType == .smallMenu {
-                currentOverlayType = .main
-            } else {
-                withAnimation {
-                    currentOverlayType = .confirmClose
-                    isPresentingOverlay = true
-                }
+struct VideoPlayer_Overlay_Previews: PreviewProvider {
 
-                let task = DispatchWorkItem {
-                    withAnimation {
-                        isPresentingOverlay = false
-                        overlayTimer.stop()
-                    }
-                }
+    static var previews: some View {
+        ZStack {
 
-                confirmCloseWorkItem = task
+            Color.red
 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-            }
+            VideoPlayer.Overlay()
+                .environmentObject(
+                    MediaPlayerManager(
+                        playbackItem: .init(
+                            baseItem: .init(
+                                //                            channelType: .tv,
+                                indexNumber: 1,
+                                name: "The Bear",
+                                parentIndexNumber: 1,
+                                runTimeTicks: 10_000_000_000,
+                                type: .episode
+                            ),
+                            mediaSource: .init(),
+                            playSessionID: "",
+                            url: URL(string: "/")!
+                        )
+                    )
+                )
+                .environmentObject(VLCVideoPlayer.Proxy())
+                .environment(\.isScrubbing, .mock(false))
+                .environment(\.isAspectFilled, .mock(false))
+                .environment(\.isPresentingOverlay, .constant(true))
+                //            .environment(\.playbackSpeed, .constant(1.0))
+                .environment(\.selectedMediaPlayerSupplement, .mock(nil))
+                .previewInterfaceOrientation(.landscapeLeft)
+                .preferredColorScheme(.dark)
         }
+        .ignoresSafeArea()
+    }
+}
+
+extension Binding {
+
+    static func mock(_ value: Value) -> Self {
+        var value = value
+        return Binding(
+            get: { value },
+            set: { value = $0 }
+        )
     }
 }
