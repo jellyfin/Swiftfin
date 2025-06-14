@@ -90,7 +90,7 @@ extension DownloadTaskView {
                             .onSelect {
                                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
                                     router.dismissCoordinator {
-                                        mainCoordinator.route(to: \.videoPlayer, DownloadVideoPlayerManager(downloadTask: downloadTask))
+//                                        mainCoordinator.route(to: \.videoPlayer, DownloadVideoPlayerManager(downloadTask: downloadTask))
                                     }
                                 } else {
                                     isPresentingVideoPlayerTypeError = true
