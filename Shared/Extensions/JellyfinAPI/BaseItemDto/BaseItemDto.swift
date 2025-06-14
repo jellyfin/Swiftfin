@@ -40,19 +40,25 @@ extension BaseItemDto {
         return genres.map(ItemGenre.init)
     }
 
-    var runTimeSeconds: Int {
-        let playbackPositionTicks = runTimeTicks ?? 0
-        return Int(playbackPositionTicks / 10_000_000)
+    /// Differs from `isLive` to indicate an item
+    /// would be streaming from a live source.
+    var isLiveStream: Bool {
+        channelType == .tv
+    }
+
+    // TODO: Change to Duration
+    var runTimeSeconds: TimeInterval {
+        TimeInterval(runTimeTicks ?? 0) / 10_000_000
+    }
+
+    // TODO: Change to Duration
+    var startTimeSeconds: TimeInterval {
+        TimeInterval(userData?.playbackPositionTicks ?? 0) / 10_000_000
     }
 
     var seasonEpisodeLabel: String? {
         guard let seasonNo = parentIndexNumber, let episodeNo = indexNumber else { return nil }
         return L10n.seasonAndEpisode(String(seasonNo), String(episodeNo))
-    }
-
-    var startTimeSeconds: Int {
-        let playbackPositionTicks = userData?.playbackPositionTicks ?? 0
-        return Int(playbackPositionTicks / 10_000_000)
     }
 
     // MARK: Calculations
@@ -169,10 +175,11 @@ extension BaseItemDto {
 
     // MARK: Chapter Images
 
+    // TODO: move to whatever listener for chapters
     var fullChapterInfo: [ChapterInfo.FullInfo] {
         guard let chapters else { return [] }
 
-        let ranges: [Range<Int>] = chapters
+        let ranges: [Range<TimeInterval>] = chapters
             .map(\.startTimeSeconds)
             .appending(runTimeSeconds + 1)
             .adjacentPairs()
@@ -201,7 +208,8 @@ extension BaseItemDto {
                 return .init(
                     chapterInfo: zip.0,
                     imageSource: .init(url: imageURL),
-                    secondsRange: zip.1
+                    secondsRange: zip.1,
+                    runtimeSeconds: runTimeSeconds
                 )
             }
     }

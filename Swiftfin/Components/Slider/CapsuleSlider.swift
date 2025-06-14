@@ -6,86 +6,125 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
-struct CapsuleSlider: View {
-
-    @Default(.VideoPlayer.Overlay.sliderColor)
-    private var sliderColor
+struct CapsuleSlider<V: BinaryFloatingPoint>: View {
 
     @Binding
-    private var isEditing: Bool
-    @Binding
-    private var progress: CGFloat
+    private var value: V
 
-    private var trackMask: () -> any View
-    private var topContent: () -> any View
-    private var bottomContent: () -> any View
-    private var leadingContent: () -> any View
-    private var trailingContent: () -> any View
+    @State
+    private var contentSize: CGSize = .zero
+    @State
+    private var isEditing: Bool = false
+    @State
+    private var translationStartLocation: CGPoint = .zero
+    @State
+    private var translationStartValue: V = 0
+    @State
+    private var currentTranslation: CGFloat = 0
+
+    private var gesturePadding: CGFloat = 0
+    private var onEditingChanged: (Bool) -> Void
+    private let total: V
+
+    private var trackDrag: some Gesture {
+        DragGesture(coordinateSpace: .global)
+            .onChanged { newValue in
+                if !isEditing {
+                    isEditing = true
+                    onEditingChanged(true)
+                    translationStartValue = value
+                    translationStartLocation = newValue.location
+                    currentTranslation = 0
+                }
+
+                currentTranslation = translationStartLocation.x - newValue.location.x
+
+                let newProgress = translationStartValue - V(currentTranslation / contentSize.width) * total
+                value = clamp(newProgress, min: 0, max: total)
+            }
+            .onEnded { _ in
+                isEditing = false
+                onEditingChanged(false)
+            }
+    }
 
     var body: some View {
-        Slider(progress: $progress)
-            .gestureBehavior(.track)
-            .trackGesturePadding(.init(top: 10, leading: 0, bottom: 30, trailing: 0))
-            .onEditingChanged { isEditing in
-                self.isEditing = isEditing
+        ProgressView(value: value, total: total)
+            .progressViewStyle(.playback)
+            .overlay {
+                Color.clear
+                    .frame(height: contentSize.height + gesturePadding)
+                    .contentShape(Rectangle())
+                    .highPriorityGesture(trackDrag)
             }
-            .track {
-                Capsule()
-                    .frame(height: isEditing ? 20 : 10)
-                    .foregroundColor(isEditing ? sliderColor : sliderColor.opacity(0.8))
+            .trackingSize($contentSize)
+            .onChange(of: value) { newValue in
+                guard isEditing else { return }
+
+                if newValue == 0 || newValue == total {
+                    UIDevice.impact(.light)
+                }
             }
-            .trackBackground {
-                Capsule()
-                    .frame(height: isEditing ? 20 : 10)
-                    .foregroundColor(Color.gray)
-                    .opacity(0.5)
-            }
-            .trackMask(trackMask)
-            .topContent(topContent)
-            .bottomContent(bottomContent)
-            .leadingContent(leadingContent)
-            .trailingContent(trailingContent)
     }
 }
 
 extension CapsuleSlider {
 
-    init(progress: Binding<CGFloat>) {
+    init(value: Binding<V>, total: V = 1.0) {
         self.init(
-            isEditing: .constant(false),
-            progress: progress,
-            trackMask: { Color.white },
-            topContent: { EmptyView() },
-            bottomContent: { EmptyView() },
-            leadingContent: { EmptyView() },
-            trailingContent: { EmptyView() }
+            value: value,
+            onEditingChanged: { _ in },
+            total: total
         )
     }
 
-    func isEditing(_ isEditing: Binding<Bool>) -> Self {
-        copy(modifying: \._isEditing, with: isEditing)
+    func onEditingChanged(perform action: @escaping (Bool) -> Void) -> Self {
+        copy(modifying: \.onEditingChanged, with: action)
     }
 
-    func trackMask(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.trackMask, with: content)
+    func gesturePadding(_ padding: CGFloat) -> Self {
+        copy(modifying: \.gesturePadding, with: padding)
     }
+}
 
-    func topContent(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.topContent, with: content)
+struct Test: View {
+
+    @State
+    private var value: Double = 50
+
+    @State
+    private var isEditing = false
+
+    var body: some View {
+        AlternateLayoutView {
+            Color.clear
+                .frame(height: 10)
+        } content: {
+            CapsuleSlider(value: $value, total: 100)
+                .onEditingChanged { newValue in
+                    isEditing = newValue
+                }
+                .gesturePadding(30)
+                .frame(height: isEditing ? 20 : 10)
+                .animation(.bouncy(duration: 0.3), value: isEditing)
+                .onChange(of: value) { newValue in
+                    print(newValue)
+                }
+        }
+        .animation(.linear(duration: 0.05), value: value)
     }
+}
 
-    func bottomContent(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.bottomContent, with: content)
-    }
+struct CapsuleSlider_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack {
 
-    func leadingContent(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.leadingContent, with: content)
-    }
-
-    func trailingContent(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.trailingContent, with: content)
+            Test()
+                .frame(height: 10)
+        }
+        .padding(.horizontal, 10)
+        .previewInterfaceOrientation(.landscapeRight)
     }
 }

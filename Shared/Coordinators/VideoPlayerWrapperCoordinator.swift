@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import Stinsen
 import SwiftUI
 
@@ -21,7 +22,10 @@ final class VideoPlayerWrapperCoordinator: NavigationCoordinatable {
     var start = makeStart
 
     @Route(.fullScreen)
-    var liveVideoPlayer = makeLiveVideoPlayer
+    var videoPlayer = makeVideoPlayer
+
+//    @Route(.fullScreen)
+//    var liveVideoPlayer = makeLiveVideoPlayer/
 
     private let content: () -> any View
 
@@ -29,9 +33,18 @@ final class VideoPlayerWrapperCoordinator: NavigationCoordinatable {
         self.content = content
     }
 
-    func makeLiveVideoPlayer(manager: LiveVideoPlayerManager) -> NavigationViewCoordinator<LiveVideoPlayerCoordinator> {
-        NavigationViewCoordinator(LiveVideoPlayerCoordinator(manager: manager))
+    func makeVideoPlayer(parameters: (BaseItemDto, MediaSourceInfo)) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            Text("")
+
+//            VideoPlayer(manager: VideoPlayerManager(item: parameters.0, mediaSource: parameters.1))
+//            VideoPlayer(item: parameters.0, mediaSource: parameters.1)
+        }
     }
+
+//    func makeLiveVideoPlayer(manager: LiveVideoPlayerManager) -> NavigationViewCoordinator<LiveVideoPlayerCoordinator> {
+//        NavigationViewCoordinator(LiveVideoPlayerCoordinator(manager: manager))
+//    }
 
     @ViewBuilder
     private func makeStart() -> some View {
