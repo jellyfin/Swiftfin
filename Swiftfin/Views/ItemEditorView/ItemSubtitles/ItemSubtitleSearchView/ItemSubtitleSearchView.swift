@@ -86,7 +86,7 @@ struct ItemSubtitleSearchView: View {
             } else {
                 Button(L10n.save) {
                     guard selectedSubtitles.isNotEmpty else {
-                        error = JellyfinAPIError(L10n.noFileSelected)
+                        error = JellyfinAPIError(L10n.noItemSelected)
                         return
                     }
 

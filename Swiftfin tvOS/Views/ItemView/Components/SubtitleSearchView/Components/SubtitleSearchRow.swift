@@ -37,42 +37,27 @@ extension SubtitleSearchView {
                             .font(.headline)
                             .fontWeight(.semibold)
 
-                        TextPairView(
-                            leading: L10n.language,
-                            trailing: subtitle.threeLetterISOLanguageName ?? L10n.unknown
-                        )
-                        .font(.caption)
+                        LabeledContent(L10n.language, value: subtitle.threeLetterISOLanguageName ?? L10n.unknown)
+                            .font(.caption)
 
                         if let downloadCount = subtitle.downloadCount {
-                            TextPairView(
-                                leading: L10n.downloads,
-                                trailing: downloadCount.description
-                            )
-                            .font(.caption)
+                            LabeledContent(L10n.downloads, value: downloadCount.description)
+                                .font(.caption)
                         }
 
                         if let rating = subtitle.communityRating {
-                            TextPairView(
-                                leading: L10n.communityRating,
-                                trailing: String(format: "%.1f", rating)
-                            )
-                            .font(.caption)
+                            LabeledContent(L10n.communityRating, value: String(format: "%.1f", rating))
+                                .font(.caption)
                         }
 
                         if let author = subtitle.author {
-                            TextPairView(
-                                leading: L10n.author,
-                                trailing: author
-                            )
-                            .font(.caption)
+                            LabeledContent(L10n.author, value: author)
+                                .font(.caption)
                         }
 
                         if let format = subtitle.format {
-                            TextPairView(
-                                leading: L10n.format,
-                                trailing: format
-                            )
-                            .font(.caption)
+                            LabeledContent(L10n.format, value: format)
+                                .font(.caption)
                         }
                     }
                     .foregroundStyle(isSelected ? .primary : .secondary, .secondary)

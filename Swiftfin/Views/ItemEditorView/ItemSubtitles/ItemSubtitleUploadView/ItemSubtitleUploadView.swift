@@ -118,7 +118,7 @@ struct ItemSubtitleUploadView: View {
             }
 
             Section(L10n.file) {
-                Text(subtitleFile?.lastPathComponent ?? L10n.noFileSelected)
+                Text(subtitleFile?.lastPathComponent ?? L10n.noItemSelected)
                     .foregroundStyle(.secondary)
             }
 
