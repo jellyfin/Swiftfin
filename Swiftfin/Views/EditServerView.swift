@@ -45,9 +45,9 @@ struct EditServerView: View {
                 )
 
                 if let serverVerion = StoredValues[.Server.publicInfo(id: viewModel.server.id)].version {
-                    TextPairView(
-                        leading: L10n.version,
-                        trailing: serverVerion
+                    LabeledContent(
+                        L10n.version,
+                        value: serverVerion
                     )
                 }
 
