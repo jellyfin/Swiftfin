@@ -9,7 +9,6 @@
 import Factory
 import Foundation
 import JellyfinAPI
-import SwiftUI
 import VLCUI
 
 extension MediaStream {
