@@ -22,17 +22,14 @@ extension EditServerTaskView {
         var body: some View {
             Section(L10n.lastRun) {
 
-                TextPairView(
-                    leading: L10n.status,
-                    trailing: status.displayTitle
+                LabeledContent(
+                    L10n.status,
+                    value: status.displayTitle
                 )
 
-                TextPairView(
-                    L10n.executed,
-                    value: Text(endTime, format: .lastSeen)
-                )
-                .id(currentDate)
-                .monospacedDigit()
+                LabeledContent(L10n.executed, value: endTime, format: .lastSeen)
+                    .id(currentDate)
+                    .monospacedDigit()
             }
         }
     }

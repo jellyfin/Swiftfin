@@ -53,28 +53,13 @@ struct LearnMoreButton: View {
                         .labeledContentStyle(LearnMoreLabeledContentStyle())
                         .foregroundStyle(Color.primary, Color.secondary)
                 }
-                .edgePadding(.horizontal)
+                .edgePadding()
             }
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 isPresented = false
             }
-        }
-    }
-}
-
-private struct LearnMoreLabeledContentStyle: LabeledContentStyle {
-
-    func makeBody(configuration: Configuration) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            configuration.label
-                .font(.headline)
-                .foregroundStyle(.primary)
-
-            configuration.content
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
         }
     }
 }

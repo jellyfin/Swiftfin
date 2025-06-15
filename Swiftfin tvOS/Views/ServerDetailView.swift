@@ -38,9 +38,9 @@ struct EditServerView: View {
             .contentView {
 
                 Section(L10n.server) {
-                    TextPairView(
-                        leading: L10n.name,
-                        trailing: viewModel.server.name
+                    LabeledContent(
+                        L10n.name,
+                        value: viewModel.server.name
                     )
                     .focusable(false)
 
