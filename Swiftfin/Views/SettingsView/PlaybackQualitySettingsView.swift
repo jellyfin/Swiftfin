@@ -34,13 +34,13 @@ struct PlaybackQualitySettingsView: View {
                 VStack(alignment: .leading) {
                     Text(L10n.bitrateDefaultDescription)
                     LearnMoreButton(L10n.bitrateDefault) {
-                        TextPair(
-                            title: L10n.auto,
-                            subtitle: L10n.birateAutoDescription
+                        LabeledContent(
+                            L10n.auto,
+                            value: L10n.birateAutoDescription
                         )
-                        TextPair(
-                            title: L10n.bitrateMax,
-                            subtitle: L10n.bitrateMaxDescription(PlaybackBitrate.max.rawValue.formatted(.bitRate))
+                        LabeledContent(
+                            L10n.bitrateMax,
+                            value: L10n.bitrateMaxDescription(PlaybackBitrate.max.rawValue.formatted(.bitRate))
                         )
                     }
                 }
@@ -80,21 +80,21 @@ struct PlaybackQualitySettingsView: View {
                 VStack(alignment: .leading) {
                     Text(L10n.deviceProfileDescription)
                     LearnMoreButton(L10n.deviceProfile) {
-                        TextPair(
-                            title: L10n.auto,
-                            subtitle: L10n.autoDescription
+                        LabeledContent(
+                            L10n.auto,
+                            value: L10n.autoDescription
                         )
-                        TextPair(
-                            title: L10n.compatible,
-                            subtitle: L10n.compatibleDescription
+                        LabeledContent(
+                            L10n.compatible,
+                            value: L10n.compatibleDescription
                         )
-                        TextPair(
-                            title: L10n.direct,
-                            subtitle: L10n.directDescription
+                        LabeledContent(
+                            L10n.direct,
+                            value: L10n.directDescription
                         )
-                        TextPair(
-                            title: L10n.custom,
-                            subtitle: L10n.customDescription
+                        LabeledContent(
+                            L10n.custom,
+                            value: L10n.customDescription
                         )
                     }
                 }

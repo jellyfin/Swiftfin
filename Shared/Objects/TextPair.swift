@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+@available(*, deprecated, message: "Use LabeledContent instead")
 struct TextPair: Displayable, Identifiable {
 
     let title: String

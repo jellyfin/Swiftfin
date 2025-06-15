@@ -30,9 +30,9 @@ struct AboutAppView: View {
 
             Section {
 
-                TextPairView(
-                    leading: L10n.version,
-                    trailing: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
+                LabeledContent(
+                    L10n.version,
+                    value: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
                 )
 
                 ChevronButton(
