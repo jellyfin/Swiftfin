@@ -7,6 +7,7 @@
 //
 
 import Factory
+import JellyfinAPI
 import SwiftUI
 
 // TODO: change URL picker from menu to list with network-url mapping
@@ -43,12 +44,27 @@ struct EditServerView: View {
                     trailing: viewModel.server.name
                 )
 
+                if let serverVerion = StoredValues[.Server.publicInfo(id: viewModel.server.id)].version {
+                    TextPairView(
+                        leading: L10n.version,
+                        trailing: serverVerion
+                    )
+                }
+
                 Picker(L10n.url, selection: $currentServerURL) {
                     ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
                         Text(url.absoluteString)
                             .tag(url)
                             .foregroundColor(.secondary)
                     }
+                }
+            } footer: {
+                if !viewModel.userSession.server.isVersionCompatible {
+                    Label(
+                        L10n.serverVersionWarning(JellyfinClient.sdkVersion.majorMinor.description),
+                        systemImage: "exclamationmark.circle.fill"
+                    )
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                 }
             }
 

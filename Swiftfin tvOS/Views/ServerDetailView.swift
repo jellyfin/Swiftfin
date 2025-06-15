@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 struct EditServerView: View {
@@ -42,9 +43,17 @@ struct EditServerView: View {
                         trailing: viewModel.server.name
                     )
                     .focusable(false)
+
+                    if let serverVerion = StoredValues[.Server.publicInfo(id: viewModel.server.id)].version {
+                        TextPairView(
+                            leading: L10n.version,
+                            trailing: serverVerion
+                        )
+                        .focusable(false)
+                    }
                 }
 
-                Section(L10n.url) {
+                Section {
                     ListRowMenu(L10n.serverURL, subtitle: viewModel.server.currentURL.absoluteString) {
                         ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
                             Button {
@@ -65,6 +74,15 @@ struct EditServerView: View {
                                 }
                             }
                         }
+                    }
+                } header: {
+                    L10n.url.text
+                } footer: {
+                    if !viewModel.userSession.server.isVersionCompatible {
+                        Label(
+                            L10n.serverVersionWarning(JellyfinClient.sdkVersion.majorMinor.description),
+                            systemImage: "exclamationmark.circle.fill"
+                        )
                     }
                 }
 
