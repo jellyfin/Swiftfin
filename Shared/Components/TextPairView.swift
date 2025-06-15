@@ -8,9 +8,7 @@
 
 import SwiftUI
 
-// TODO: steal from SwiftUI, rename to something like
-//       `LabeledContentView` with `label` and `value`
-
+@available(*, deprecated, message: "Use LabeledContent instead")
 struct TextPairView: View {
 
     private let leading: Text

@@ -110,7 +110,7 @@ struct ServerUserParentalRatingView: View {
                 Text(L10n.maxParentalRatingDescription)
 
                 LearnMoreButton(L10n.parentalRating) {
-                    parentalRatingLearnMore
+//                    parentalRatingLearnMore
                 }
             }
         }
