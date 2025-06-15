@@ -130,6 +130,7 @@ struct ItemSubtitlesView: View {
                 }
             }
         }
+        // TODO: Fix after Stinsen is replaced.
         .sheet(isPresented: .constant(expandedSubtitle != nil), onDismiss: { expandedSubtitle = nil }) {
             expandedSubtitleSheet
         }
