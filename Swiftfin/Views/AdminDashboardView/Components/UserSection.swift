@@ -33,12 +33,9 @@ extension AdminDashboardView {
         var body: some View {
             Section(L10n.user) {
                 profileView
-                TextPairView(
-                    L10n.lastSeen,
-                    value: Text(lastActivityDate, format: .lastSeen)
-                )
-                .id(currentDate)
-                .monospacedDigit()
+                LabeledContent(L10n.lastSeen, value: lastActivityDate, format: .lastSeen)
+                    .id(currentDate)
+                    .monospacedDigit()
             }
         }
 

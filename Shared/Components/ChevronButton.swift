@@ -10,36 +10,22 @@ import SwiftUI
 
 struct ChevronButton<Icon: View, Subtitle: View>: View {
 
-    private let icon: Icon
     private let isExternal: Bool
-    private let title: Text
     private let subtitle: Subtitle
+    private let label: Label<Text, Icon>
 
-    private let innerContent: (AnyView) -> any View
-
-    @ViewBuilder
-    private var label: some View {
-        HStack {
-
-            icon
-                .font(.body.weight(.bold))
-
-            title
-
-            Spacer()
-
-            subtitle
-                .foregroundStyle(.secondary)
-
-            Image(systemName: isExternal ? "arrow.up.forward" : "chevron.right")
-                .font(.body.weight(.regular))
-                .foregroundStyle(.secondary)
-        }
-    }
+    private let innerContent: (LabeledContent<Label<Text, Icon>, Subtitle>) -> any View
 
     var body: some View {
-        innerContent(label.eraseToAnyView())
-            .eraseToAnyView()
+        innerContent(
+            LabeledContent {
+                subtitle
+            } label: {
+                label
+            }
+        )
+        .labeledContentStyle(ChevronButtonLabeledContentStyle(isExternal: isExternal))
+        .eraseToAnyView()
     }
 }
 
@@ -112,9 +98,8 @@ extension ChevronButton {
         @ViewBuilder icon: @escaping () -> Icon,
         @ViewBuilder subtitle: @escaping () -> Subtitle
     ) {
-        self.icon = icon()
         self.isExternal = external
-        self.title = Text(title)
+        self.label = Label(title: { Text(title) }, icon: icon)
         self.subtitle = subtitle()
         self.innerContent = { label in
             ButtonContentView(
@@ -131,9 +116,8 @@ extension ChevronButton {
         @ViewBuilder icon: @escaping () -> Icon,
         @ViewBuilder subtitle: @escaping () -> Subtitle
     ) {
-        self.icon = icon()
         self.isExternal = external
-        self.title = title
+        self.label = Label(title: { title }, icon: icon)
         self.subtitle = subtitle()
         self.innerContent = { label in
             ButtonContentView(
@@ -152,9 +136,8 @@ extension ChevronButton where Icon == EmptyView, Subtitle == Text {
         external: Bool = false,
         action: @escaping () -> Void
     ) {
-        self.icon = EmptyView()
         self.isExternal = external
-        self.title = Text(title)
+        self.label = Label(title: { Text(title) }, icon: { EmptyView() })
         self.subtitle = Text(subtitle)
         self.innerContent = { label in
             ButtonContentView(
@@ -170,9 +153,8 @@ extension ChevronButton where Icon == EmptyView, Subtitle == Text {
         external: Bool = false,
         action: @escaping () -> Void
     ) {
-        self.icon = EmptyView()
         self.isExternal = external
-        self.title = Text(title)
+        self.label = Label(title: { Text(title) }, icon: { EmptyView() })
         self.subtitle = subtitle
         self.innerContent = { label in
             ButtonContentView(
@@ -190,9 +172,8 @@ extension ChevronButton where Icon == EmptyView, Subtitle == EmptyView {
         external: Bool = false,
         action: @escaping () -> Void
     ) {
-        self.icon = EmptyView()
         self.isExternal = external
-        self.title = Text(title)
+        self.label = Label(title: { Text(title) }, icon: { EmptyView() })
         self.subtitle = EmptyView()
         self.innerContent = { label in
             ButtonContentView(
@@ -214,9 +195,8 @@ extension ChevronButton where Icon == Image, Subtitle == Text {
         external: Bool = false,
         action: @escaping () -> Void
     ) {
-        self.icon = Image(systemName: systemName)
         self.isExternal = external
-        self.title = Text(title)
+        self.label = Label(title, systemImage: systemName)
         self.subtitle = Text(subtitle)
         self.innerContent = { label in
             ButtonContentView(
@@ -233,9 +213,8 @@ extension ChevronButton where Icon == Image, Subtitle == Text {
         external: Bool = false,
         action: @escaping () -> Void
     ) {
-        self.icon = Image(systemName: systemName)
         self.isExternal = external
-        self.title = Text(title)
+        self.label = Label(title, systemImage: systemName)
         self.subtitle = subtitle
         self.innerContent = { label in
             ButtonContentView(
@@ -254,9 +233,8 @@ extension ChevronButton where Icon == Image, Subtitle == Text {
         external: Bool = false,
         action: @escaping () -> Void
     ) {
-        self.icon = Image(image)
         self.isExternal = external
-        self.title = Text(title)
+        self.label = Label(title: { Text(title) }, icon: { Image(image) })
         self.subtitle = Text(subtitle)
         self.innerContent = { label in
             ButtonContentView(
@@ -273,9 +251,8 @@ extension ChevronButton where Icon == Image, Subtitle == Text {
         external: Bool = false,
         action: @escaping () -> Void
     ) {
-        self.icon = Image(image)
         self.isExternal = external
-        self.title = Text(title)
+        self.label = Label(title: { Text(title) }, icon: { Image(image) })
         self.subtitle = subtitle
         self.innerContent = { label in
             ButtonContentView(
@@ -296,9 +273,8 @@ extension ChevronButton where Icon == Image, Subtitle == EmptyView {
         external: Bool = false,
         action: @escaping () -> Void
     ) {
-        self.icon = Image(systemName: systemName)
         self.isExternal = external
-        self.title = Text(title)
+        self.label = Label(title, systemImage: systemName)
         self.subtitle = EmptyView()
         self.innerContent = { label in
             ButtonContentView(
@@ -316,9 +292,8 @@ extension ChevronButton where Icon == Image, Subtitle == EmptyView {
         external: Bool = false,
         action: @escaping () -> Void
     ) {
-        self.icon = Image(image)
         self.isExternal = external
-        self.title = Text(title)
+        self.label = Label(title: { Text(title) }, icon: { Image(image) })
         self.subtitle = EmptyView()
         self.innerContent = { label in
             ButtonContentView(
@@ -339,9 +314,8 @@ extension ChevronButton where Icon == EmptyView, Subtitle == Text {
         onSave: (() -> Void)? = nil,
         onCancel: (() -> Void)? = nil
     ) {
-        self.icon = EmptyView()
         self.isExternal = false
-        self.title = Text(title)
+        self.label = Label(title: { Text(title) }, icon: { EmptyView() })
         self.subtitle = Text(subtitle ?? "")
         self.innerContent = { label in
             AlertContentView(
@@ -363,9 +337,8 @@ extension ChevronButton where Icon == EmptyView, Subtitle == Text {
         onSave: (() -> Void)? = nil,
         onCancel: (() -> Void)? = nil
     ) {
-        self.icon = EmptyView()
         self.isExternal = false
-        self.title = Text(title)
+        self.label = Label(title: { Text(title) }, icon: { EmptyView() })
         self.subtitle = subtitle ?? Text("")
         self.innerContent = { label in
             AlertContentView(
@@ -376,6 +349,40 @@ extension ChevronButton where Icon == EmptyView, Subtitle == Text {
                 onCancel: onCancel,
                 onSave: onSave
             )
+        }
+    }
+}
+
+private struct ChevronButtonLabeledContentStyle: LabeledContentStyle {
+
+    let isExternal: Bool
+
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+
+            configuration.label
+                .labelStyle(BoldIconLabelStyle())
+
+            Spacer()
+
+            configuration.content
+                .foregroundStyle(.secondary)
+
+            Image(systemName: isExternal ? "arrow.up.forward" : "chevron.right")
+                .font(.body)
+                .fontWeight(.regular)
+                .foregroundStyle(.secondary)
+        }
+    }
+}
+
+private struct BoldIconLabelStyle: LabelStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        Label {
+            configuration.title
+        } icon: {
+            configuration.icon
+                .fontWeight(.bold)
         }
     }
 }

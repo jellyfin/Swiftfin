@@ -104,17 +104,24 @@ extension ActiveSessionsView {
                     .font(.headline)
 
                 if let client = session.client {
-                    TextPairView(leading: L10n.client, trailing: client)
+                    LabeledContent(
+                        L10n.client,
+                        value: client
+                    )
                 }
 
                 if let device = session.deviceName {
-                    TextPairView(leading: L10n.device, trailing: device)
+                    LabeledContent(
+                        L10n.device,
+                        value: device
+                    )
                 }
 
                 if let lastActivityDate = session.lastActivityDate {
-                    TextPairView(
+                    LabeledContent(
                         L10n.lastSeen,
-                        value: Text(lastActivityDate, format: .lastSeen)
+                        value: lastActivityDate,
+                        format: .lastSeen
                     )
                     .id(currentDate)
                     .monospacedDigit()

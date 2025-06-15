@@ -102,21 +102,21 @@ struct ItemEditorView: View {
             RefreshMetadataButton(item: viewModel.item)
         } footer: {
             LearnMoreButton(L10n.metadata) {
-                TextPair(
-                    title: L10n.findMissing,
-                    subtitle: L10n.findMissingDescription
+                LabeledContent(
+                    L10n.findMissing,
+                    value: L10n.findMissingDescription
                 )
-                TextPair(
-                    title: L10n.replaceMetadata,
-                    subtitle: L10n.replaceMetadataDescription
+                LabeledContent(
+                    L10n.replaceMetadata,
+                    value: L10n.replaceMetadataDescription
                 )
-                TextPair(
-                    title: L10n.replaceImages,
-                    subtitle: L10n.replaceImagesDescription
+                LabeledContent(
+                    L10n.replaceImages,
+                    value: L10n.replaceImagesDescription
                 )
-                TextPair(
-                    title: L10n.replaceAll,
-                    subtitle: L10n.replaceAllDescription
+                LabeledContent(
+                    L10n.replaceAll,
+                    value: L10n.replaceAllDescription
                 )
             }
         }

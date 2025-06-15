@@ -39,15 +39,15 @@ struct EditServerView: View {
         List {
             Section {
 
-                TextPairView(
-                    leading: L10n.name,
-                    trailing: viewModel.server.name
+                LabeledContent(
+                    L10n.name,
+                    value: viewModel.server.name
                 )
 
                 if let serverVerion = StoredValues[.Server.publicInfo(id: viewModel.server.id)].version {
-                    TextPairView(
-                        leading: L10n.version,
-                        trailing: serverVerion
+                    LabeledContent(
+                        L10n.version,
+                        value: serverVerion
                     )
                 }
 

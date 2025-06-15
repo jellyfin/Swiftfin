@@ -36,16 +36,13 @@ extension APIKeysView {
                 Text(apiKey.accessToken ?? L10n.unknown)
                     .lineLimit(2)
 
-                TextPairView(
-                    L10n.dateCreated,
-                    value: {
-                        if let creationDate = apiKey.dateCreated {
-                            Text(creationDate, format: .dateTime)
-                        } else {
-                            Text(L10n.unknown)
-                        }
-                    }()
-                )
+                LabeledContent(L10n.dateCreated) {
+                    if let creationDate = apiKey.dateCreated {
+                        Text(creationDate, format: .dateTime)
+                    } else {
+                        Text(L10n.unknown)
+                    }
+                }
                 .monospacedDigit()
             }
             .font(.subheadline)

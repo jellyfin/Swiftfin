@@ -38,16 +38,16 @@ struct EditServerView: View {
             .contentView {
 
                 Section(L10n.server) {
-                    TextPairView(
-                        leading: L10n.name,
-                        trailing: viewModel.server.name
+                    LabeledContent(
+                        L10n.name,
+                        value: viewModel.server.name
                     )
                     .focusable(false)
 
                     if let serverVerion = StoredValues[.Server.publicInfo(id: viewModel.server.id)].version {
-                        TextPairView(
-                            leading: L10n.version,
-                            trailing: serverVerion
+                        LabeledContent(
+                            L10n.version,
+                            value: serverVerion
                         )
                         .focusable(false)
                     }
