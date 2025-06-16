@@ -140,6 +140,8 @@ internal enum L10n {
   internal static let ascending = L10n.tr("Localizable", "ascending", fallback: "Ascending")
   /// Aspect Fill
   internal static let aspectFill = L10n.tr("Localizable", "aspectFill", fallback: "Aspect Fill")
+  /// Only EAC-3/DD+ Atmos tracks will play back with spatial audio. TrueHD Atmos will be transcoded to multichannel audio. Requires Jellyfin ffmpeg 7.1.1-5+
+  internal static let atmosCompatibilityDescription = L10n.tr("Localizable", "atmosCompatibilityDescription", fallback: "Only EAC-3/DD+ Atmos tracks will play back with spatial audio. TrueHD Atmos will be transcoded to multichannel audio. Requires Jellyfin ffmpeg 7.1.1-5+")
   /// Audio
   internal static let audio = L10n.tr("Localizable", "audio", fallback: "Audio")
   /// The audio bit depth is not supported
@@ -1110,6 +1112,8 @@ internal enum L10n {
   internal static let portrait = L10n.tr("Localizable", "portrait", fallback: "Portrait")
   /// Posters
   internal static let posters = L10n.tr("Localizable", "posters", fallback: "Posters")
+  /// Prefer Dolby Atmos
+  internal static let preferDolbyAtmos = L10n.tr("Localizable", "preferDolbyAtmos", fallback: "Prefer Dolby Atmos")
   /// Premiere Date
   internal static let premiereDate = L10n.tr("Localizable", "premiereDate", fallback: "Premiere Date")
   /// Press Down for Menu

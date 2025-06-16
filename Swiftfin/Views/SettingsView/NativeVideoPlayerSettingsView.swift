@@ -13,6 +13,8 @@ struct NativeVideoPlayerSettingsView: View {
 
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
+    @Default(.VideoPlayer.preferDolbyAtmos)
+    private var preferDolbyAtmos
 
     var body: some View {
         Form {
@@ -28,6 +30,12 @@ struct NativeVideoPlayerSettingsView: View {
                 )
             } footer: {
                 Text(L10n.resumeOffsetDescription)
+            }
+
+            Section {
+                Toggle(L10n.preferDolbyAtmos, isOn: $preferDolbyAtmos)
+            } footer: {
+                Text(L10n.atmosCompatibilityDescription)
             }
         }
         .navigationTitle(L10n.nativePlayer)
