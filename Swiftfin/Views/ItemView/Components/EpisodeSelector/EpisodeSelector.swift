@@ -28,24 +28,34 @@ struct SeriesEpisodeSelector: View {
 
     @ViewBuilder
     private var seasonSelectorMenu: some View {
-        Menu {
-            ForEach(viewModel.seasons, id: \.season.id) { seasonViewModel in
-                Button {
-                    selection = seasonViewModel.id
-                } label: {
-                    if seasonViewModel.id == selection {
-                        Label(seasonViewModel.season.displayTitle, systemImage: "checkmark")
-                    } else {
-                        Text(seasonViewModel.season.displayTitle)
+        if let seasonDisplayName = selectionViewModel?.season.displayTitle,
+           viewModel.seasons.count <= 1
+        {
+            Text(seasonDisplayName)
+                .font(.headline)
+                .foregroundStyle(Color.accentColor)
+                .padding(.vertical, 5)
+                .padding(.horizontal, 10)
+        } else {
+            Menu {
+                ForEach(viewModel.seasons, id: \.season.id) { seasonViewModel in
+                    Button {
+                        selection = seasonViewModel.id
+                    } label: {
+                        if seasonViewModel.id == selection {
+                            Label(seasonViewModel.season.displayTitle, systemImage: "checkmark")
+                        } else {
+                            Text(seasonViewModel.season.displayTitle)
+                        }
                     }
                 }
+            } label: {
+                Label(
+                    selectionViewModel?.season.displayTitle ?? .emptyDash,
+                    systemImage: "chevron.down"
+                )
+                .labelStyle(.episodeSelector)
             }
-        } label: {
-            Label(
-                selectionViewModel?.season.displayTitle ?? .emptyDash,
-                systemImage: "chevron.down"
-            )
-            .labelStyle(.episodeSelector)
         }
     }
 
