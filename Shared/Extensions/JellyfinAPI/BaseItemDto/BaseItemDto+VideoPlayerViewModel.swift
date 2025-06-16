@@ -20,6 +20,12 @@ extension BaseItemDto {
         let currentVideoBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
         let compatibilityMode = Defaults[.VideoPlayer.Playback.compatibilityMode]
 
+        // Select best audio stream index BEFORE sending playback info request
+        let selectedAudioIndex = mediaSource.selectBestAudioStreamIndex()
+
+        let logger = Logger(label: "BaseItemDto.videoPlayerViewModel")
+        logger.debug("Selected audio index before playback info request: \(selectedAudioIndex)")
+
         let maxBitrate = try await getMaxBitrate(for: currentVideoBitrate)
         let profile = DeviceProfile.build(
             for: currentVideoPlayerType,
@@ -33,6 +39,7 @@ extension BaseItemDto {
         let playbackInfoParameters = Paths.GetPostedPlaybackInfoParameters(
             userID: userSession.user.id,
             maxStreamingBitrate: maxBitrate,
+            audioStreamIndex: selectedAudioIndex >= 0 ? selectedAudioIndex : nil,
             mediaSourceID: mediaSource.id
         )
 
@@ -50,7 +57,11 @@ extension BaseItemDto {
             throw JellyfinAPIError("Matching media source not in playback info")
         }
 
-        return try matchingMediaSource.videoPlayerViewModel(with: self, playSessionID: response.value.playSessionID!)
+        return try matchingMediaSource.videoPlayerViewModel(
+            with: self,
+            playSessionID: response.value.playSessionID!,
+            selectedAudioStreamIndex: selectedAudioIndex
+        )
     }
 
     func liveVideoPlayerViewModel(with mediaSource: MediaSourceInfo, logger: Logger) async throws -> VideoPlayerViewModel {
