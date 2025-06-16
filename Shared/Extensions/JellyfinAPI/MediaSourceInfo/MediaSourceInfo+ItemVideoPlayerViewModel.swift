@@ -40,9 +40,10 @@ extension MediaSourceInfo {
         logger.debug("Current player type: \(currentVideoPlayerType), Prefer Atmos setting: \(preferAtmos)")
 
         // Only apply Atmos preference for Native player (AVKit), not VLC/Swiftfin player
-        if currentVideoPlayerType == .native && preferAtmos, 
-           let atmosStream = audioStreams.first(where: { $0.isEAC3Atmos }), 
-           let index = atmosStream.index {
+        if currentVideoPlayerType == .native && preferAtmos,
+           let atmosStream = audioStreams.first(where: { $0.isEAC3Atmos }),
+           let index = atmosStream.index
+        {
             logger.info("Native player with Atmos preference - using Atmos stream at index \(index)")
             return index
         }
