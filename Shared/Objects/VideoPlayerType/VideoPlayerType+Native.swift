@@ -110,8 +110,8 @@ extension VideoPlayerType {
             AudioCodec.eac3
             AudioCodec.flac
         } videoCodecs: {
-            VideoCodec.h264
             VideoCodec.hevc
+            VideoCodec.h264
             VideoCodec.mpeg4
         } containers: {
             MediaContainer.mp4
