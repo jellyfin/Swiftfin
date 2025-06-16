@@ -40,15 +40,17 @@ extension FormatStyle where Self == MinuteSecondsFormatStyle {
     static var minuteSeconds: MinuteSecondsFormatStyle { MinuteSecondsFormatStyle() }
 }
 
-struct IntRunTimeFormatStyle: FormatStyle {
+// TODO: Change to Duration input
+struct RunTimeFormatStyle: FormatStyle {
 
     private var isNegated: Bool = false
 
-    var negated: IntRunTimeFormatStyle {
+    var negated: RunTimeFormatStyle {
         copy(self, modifying: \.isNegated, to: true)
     }
 
-    func format(_ value: Int) -> String {
+    func format(_ value: TimeInterval) -> String {
+        let value = Int(value)
         let hours = value / 3600
         let minutes = (value % 3600) / 60
         let seconds = value % 3600 % 60
@@ -65,9 +67,9 @@ struct IntRunTimeFormatStyle: FormatStyle {
     }
 }
 
-extension FormatStyle where Self == IntRunTimeFormatStyle {
+extension FormatStyle where Self == RunTimeFormatStyle {
 
-    static var runtime: IntRunTimeFormatStyle { IntRunTimeFormatStyle() }
+    static var runtime: RunTimeFormatStyle { RunTimeFormatStyle() }
 }
 
 struct VerbatimFormatStyle<Value: CustomStringConvertible>: FormatStyle {

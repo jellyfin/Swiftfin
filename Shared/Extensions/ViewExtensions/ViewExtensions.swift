@@ -322,6 +322,10 @@ extension View {
         modifier(OpacityLinearGradientModifier(stops: stops()))
     }
 
+    func videoPlayerActionButtonTransition() -> some View {
+        transition(.opacity.combined(with: .scale).animation(.snappy))
+    }
+
     // MARK: debug
 
     // Useful modifiers during development for layout without RocketSim

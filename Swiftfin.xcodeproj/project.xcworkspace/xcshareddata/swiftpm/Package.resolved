@@ -1,5 +1,5 @@
 {
-  "originHash" : "10a36cae800726e78f007d4647964a4016231e25305c2077df22139cdc11f9bf",
+  "originHash" : "db4de589a690bcb3e4d4ccca050bdc8c7e38a6b821030d2e7ad09aecd0808f3c",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -130,8 +130,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Pulse",
       "state" : {
-        "revision" : "3ac5ee35ab233e900aa484919803d51791d1e351",
-        "version" : "4.2.7"
+        "revision" : "d1e39ffaaa8b8becff80cb193c93a78e32077af8",
+        "version" : "4.2.0"
       }
     },
     {
@@ -257,7 +257,7 @@
       "location" : "https://github.com/LePips/VLCUI",
       "state" : {
         "branch" : "main",
-        "revision" : "9e0285b13c666aace61835e8a512512edee822a6"
+        "revision" : "de80da668872d1b39fa502dab5c438fd04e29f87"
       }
     }
   ],
