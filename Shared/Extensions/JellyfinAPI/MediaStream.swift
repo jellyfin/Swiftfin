@@ -47,6 +47,14 @@ extension MediaStream {
         (width ?? 0) > 1900 && type == .video
     }
 
+    /// Determines if the audio stream is EAC-3 with Atmos.
+    var isEAC3Atmos: Bool {
+        guard let codec = codec?.lowercased() else { return false }
+        let isEAC3 = codec == AudioCodec.eac3.rawValue
+        let hasAtmos = profile?.lowercased().contains("atmos") == true || displayTitle?.lowercased().contains("atmos") == true
+        return isEAC3 && hasAtmos
+    }
+
     // MARK: Property groups
 
     @ArrayBuilder<Property>
