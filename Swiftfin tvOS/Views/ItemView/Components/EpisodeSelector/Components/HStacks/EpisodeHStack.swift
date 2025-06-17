@@ -38,7 +38,7 @@ extension SeriesEpisodeSelector {
 
         private func contentView(viewModel: SeasonItemViewModel) -> some View {
             CollectionHStack(
-                uniqueElements: viewModel.elements,
+                uniqueElements: viewModel.episodes,
                 id: \.unwrappedIDHashOrZero,
                 columns: 3.5
             ) { episode in
@@ -68,18 +68,18 @@ extension SeriesEpisodeSelector {
         private func getContentFocus() {
             switch viewModel.state {
             case .content:
-                if viewModel.elements.isEmpty {
+                if viewModel.episodes.isEmpty {
                     /// Focus the EmptyCard if the Season has no elements
                     focusedEpisodeID = "emptyCard"
                 } else {
                     if let lastFocusedEpisodeID,
-                       viewModel.elements.contains(where: { $0.id == lastFocusedEpisodeID })
+                       viewModel.episodes.contains(where: { $0.id == lastFocusedEpisodeID })
                     {
                         /// Return focus to the Last Focused Episode if it exists in the current Season
                         focusedEpisodeID = lastFocusedEpisodeID
                     } else {
                         /// Focus the First Episode in the season as a last resort
-                        focusedEpisodeID = viewModel.elements.first?.id
+                        focusedEpisodeID = viewModel.episodes.first?.id
                     }
                 }
             case .error:
@@ -97,7 +97,7 @@ extension SeriesEpisodeSelector {
             ZStack {
                 switch viewModel.state {
                 case .content:
-                    if viewModel.elements.isEmpty {
+                    if viewModel.episodes.isEmpty {
                         EmptyHStack(focusedEpisodeID: $focusedEpisodeID)
                     } else {
                         contentView(viewModel: viewModel)
@@ -119,7 +119,7 @@ extension SeriesEpisodeSelector {
                 top: "seasons"
             )
             .onChange(of: viewModel.id) {
-                lastFocusedEpisodeID = viewModel.elements.first?.id
+                lastFocusedEpisodeID = viewModel.episodes.first?.id
             }
             .onChange(of: focusedEpisodeID) { _, newValue in
                 guard let newValue else { return }
@@ -127,7 +127,7 @@ extension SeriesEpisodeSelector {
             }
             .onChange(of: viewModel.state) { _, newValue in
                 if newValue == .content {
-                    lastFocusedEpisodeID = viewModel.elements.first?.id
+                    lastFocusedEpisodeID = viewModel.episodes.first?.id
                 }
             }
         }
