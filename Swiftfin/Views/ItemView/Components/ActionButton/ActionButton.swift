@@ -50,19 +50,11 @@ extension ItemView {
                     }
                     .buttonStyle(.borderless)
                 } else {
-                    // TODO: Use only this on iOS 16+
-                    if #available(iOS 16.0, *) {
-                        Menu(content: content) {
-                            labelView
-                        }
-                        .menuStyle(.button)
-                        .buttonStyle(.borderless)
-                    } else {
-                        Menu(content: content) {
-                            labelView
-                        }
-                        .menuStyle(.borderlessButton)
+                    Menu(content: content) {
+                        labelView
                     }
+                    .menuStyle(.button)
+                    .buttonStyle(.borderless)
                 }
             }
         }
@@ -72,10 +64,16 @@ extension ItemView {
         private var labelView: some View {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
-                    .foregroundStyle(isSelected ? .secondary : .tertiary)
+                    .if(isSelected) { background in
+                        background
+                            .foregroundStyle(.secondary)
+                    }
+                    .if(!isSelected) { background in
+                        background
+                            .foregroundStyle(.gray)
+                    }
 
                 Image(systemName: labelIconName)
-                    .backport
                     .fontWeight(.bold)
                     .foregroundStyle(.primary)
                     .symbolRenderingMode(.monochrome)
