@@ -29,7 +29,7 @@ struct MaxHeightText: View {
                 Text(text)
                     .scaleEffect(CGSize(width: scale, height: scale), anchor: .bottom)
             }
-            .onSizeChanged { newSize in
+            .onSizeChanged { newSize, _ in
                 if newSize.height > maxHeight {
                     scale = maxHeight / newSize.height
                 }

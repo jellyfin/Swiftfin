@@ -58,31 +58,31 @@ extension ItemImageDetailsView {
         var body: some View {
             Section(L10n.details) {
                 if let provider {
-                    TextPairView(leading: L10n.provider, trailing: provider)
+                    LabeledContent(L10n.provider, value: provider)
                 }
 
                 if let language {
-                    TextPairView(leading: L10n.language, trailing: language)
+                    LabeledContent(L10n.language, value: language)
                 }
 
                 if let width, let height {
-                    TextPairView(
-                        leading: L10n.dimensions,
-                        trailing: "\(width) x \(height)"
+                    LabeledContent(
+                        L10n.dimensions,
+                        value: "\(width) x \(height)"
                     )
                 }
 
                 if let index {
-                    TextPairView(leading: L10n.index, trailing: index.description)
+                    LabeledContent(L10n.index, value: index.description)
                 }
             }
 
             if let rating {
                 Section(L10n.ratings) {
-                    TextPairView(leading: L10n.rating, trailing: rating.formatted(.number.precision(.fractionLength(2))))
+                    LabeledContent(L10n.rating, value: rating.formatted(.number.precision(.fractionLength(2))))
 
                     if let ratingVotes {
-                        TextPairView(L10n.votes, value: Text(ratingVotes, format: .number))
+                        LabeledContent(L10n.votes, value: ratingVotes, format: .number)
                     }
                 }
             }

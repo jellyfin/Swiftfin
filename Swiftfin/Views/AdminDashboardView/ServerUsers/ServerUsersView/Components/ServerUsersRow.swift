@@ -101,22 +101,20 @@ extension ServerUsersView {
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
 
-                    TextPairView(
-                        L10n.role,
-                        value: {
-                            if let isAdministrator = user.policy?.isAdministrator,
-                               isAdministrator
-                            {
-                                Text(L10n.administrator)
-                            } else {
-                                Text(L10n.user)
-                            }
-                        }()
-                    )
+                    LabeledContent(L10n.role) {
+                        if let isAdministrator = user.policy?.isAdministrator,
+                           isAdministrator
+                        {
+                            Text(L10n.administrator)
+                        } else {
+                            Text(L10n.user)
+                        }
+                    }
 
-                    TextPairView(
+                    LabeledContent(
                         L10n.lastSeen,
-                        value: Text(user.lastActivityDate, format: .lastSeen)
+                        value: user.lastActivityDate,
+                        format: .lastSeen
                     )
                     .id(currentDate)
                     .monospacedDigit()

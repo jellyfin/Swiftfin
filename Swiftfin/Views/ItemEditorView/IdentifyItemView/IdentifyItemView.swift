@@ -109,6 +109,11 @@ struct IdentifyItemView: View {
     @ViewBuilder
     private var contentView: some View {
         Form {
+            ListTitleSection(
+                viewModel.item.name ?? L10n.unknown,
+                description: viewModel.item.path
+            )
+
             searchView
 
             resultsView

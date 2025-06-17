@@ -52,7 +52,7 @@ struct LandscapePosterProgressBar<Content: View>: View {
             .padding(.horizontal, 5 * paddingScale)
             .padding(.bottom, 7 * paddingScale)
         }
-        .onSizeChanged { newSize in
+        .onSizeChanged { newSize, _ in
             width = newSize.width
         }
     }

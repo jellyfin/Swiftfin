@@ -99,16 +99,15 @@ extension String {
             .replacingOccurrences(of: ".swift", with: "")
     }
 
-    // TODO: fix if count > 62
     static func random(count: Int) -> String {
-        let characters = Self.alphanumeric.randomSample(count: count)
-        return String(characters)
+        (0 ..< count)
+            .compactMap { _ in Self.alphanumeric.randomElement() }
+            .map(String.init)
+            .joined()
     }
 
-    // TODO: fix if upper bound > 62
     static func random(count range: Range<Int>) -> String {
-        let characters = Self.alphanumeric.randomSample(count: Int.random(in: range))
-        return String(characters)
+        random(count: Int.random(in: range))
     }
 
     func trimmingSuffix(_ suffix: String) -> String {
@@ -141,20 +140,6 @@ extension String {
 
     var url: URL? {
         URL(string: self)
-    }
-
-    // TODO: remove after iOS 15 support removed
-
-    func height(withConstrainedWidth width: CGFloat, font: UIFont) -> CGFloat {
-        let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
-        let boundingBox = self.boundingRect(
-            with: constraintRect,
-            options: .usesLineFragmentOrigin,
-            attributes: [.font: font],
-            context: nil
-        )
-
-        return ceil(boundingBox.height)
     }
 }
 

@@ -61,15 +61,9 @@ extension ItemView {
                         .padding(.bottom)
                         .background {
                             BlurView(style: .systemThinMaterialDark)
-                                .mask {
-                                    LinearGradient(
-                                        stops: [
-                                            .init(color: .clear, location: 0),
-                                            .init(color: .black, location: 0.3),
-                                        ],
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    )
+                                .maskLinearGradient {
+                                    (location: 0, opacity: 0)
+                                    (location: 0.3, opacity: 1)
                                 }
                         }
                 }
@@ -94,6 +88,9 @@ extension ItemView {
 extension ItemView.CompactLogoScrollView {
 
     struct OverlayView: View {
+
+        @StoredValue(.User.itemViewAttributes)
+        private var attributes
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
@@ -134,7 +131,10 @@ extension ItemView.CompactLogoScrollView {
                 .foregroundColor(Color(UIColor.lightGray))
                 .padding(.horizontal)
 
-                ItemView.AttributesHStack(viewModel: viewModel)
+                ItemView.AttributesHStack(
+                    attributes: attributes,
+                    viewModel: viewModel
+                )
 
                 Group {
                     if viewModel.presentPlayButton {

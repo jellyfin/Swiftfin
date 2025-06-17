@@ -13,8 +13,12 @@ import SwiftUI
 //       - for sort order and sort by combined
 struct FilterView: View {
 
+    // MARK: - Binded Variable
+
     @Binding
     private var selection: [AnyItemFilter]
+
+    // MARK: - Environment & Observed Objects
 
     @EnvironmentObject
     private var router: FilterCoordinator.Router
@@ -22,26 +26,48 @@ struct FilterView: View {
     @ObservedObject
     private var viewModel: FilterViewModel
 
+    // MARK: - Filter Type
+
     private let type: ItemFilterType
 
+    // MARK: - Filter Sources
+
+    private var filterSource: [AnyItemFilter] {
+        viewModel.allFilters[keyPath: type.collectionAnyKeyPath]
+    }
+
+    // MARK: - Body
+
     var body: some View {
-        SelectorView(
-            selection: $selection,
-            sources: viewModel.allFilters[keyPath: type.collectionAnyKeyPath],
-            type: type.selectorType
-        )
-        .navigationTitle(type.displayTitle)
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarCloseButton {
-            router.dismissCoordinator()
-        }
-        .topBarTrailing {
-            Button(L10n.reset) {
-                viewModel.send(.reset(type))
+        contentView
+            .navigationTitle(type.displayTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarCloseButton {
+                router.dismissCoordinator()
             }
-            .environment(
-                \.isEnabled,
-                viewModel.isFilterSelected(type: type)
+            .topBarTrailing {
+                Button(L10n.reset) {
+                    viewModel.send(.reset(type))
+                }
+                .environment(
+                    \.isEnabled,
+                    viewModel.isFilterSelected(type: type)
+                )
+            }
+    }
+
+    // MARK: - Filter Content
+
+    @ViewBuilder
+    private var contentView: some View {
+        if filterSource.isEmpty {
+            Text(L10n.none)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        } else {
+            SelectorView(
+                selection: $selection,
+                sources: filterSource,
+                type: type.selectorType
             )
         }
     }

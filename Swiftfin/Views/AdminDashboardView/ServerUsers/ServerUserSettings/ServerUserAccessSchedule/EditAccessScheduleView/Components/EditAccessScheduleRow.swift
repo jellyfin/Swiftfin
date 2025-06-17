@@ -56,16 +56,16 @@ extension EditAccessScheduleView {
 
                     Group {
                         if let startHour = schedule.startHour {
-                            TextPairView(
-                                leading: L10n.startTime,
-                                trailing: doubleToTimeString(startHour)
+                            LabeledContent(
+                                L10n.startTime,
+                                value: doubleToTimeString(startHour)
                             )
                         }
 
                         if let endHour = schedule.endHour {
-                            TextPairView(
-                                leading: L10n.endTime,
-                                trailing: doubleToTimeString(endHour)
+                            LabeledContent(
+                                L10n.endTime,
+                                value: doubleToTimeString(endHour)
                             )
                         }
                     }

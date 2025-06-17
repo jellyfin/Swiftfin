@@ -6,9 +6,10 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
+// TODO: move to SDK
 
 enum SeriesStatus: String, CaseIterable {
+
     case continuing = "Continuing"
     case ended = "Ended"
     case unreleased = "Unreleased"
