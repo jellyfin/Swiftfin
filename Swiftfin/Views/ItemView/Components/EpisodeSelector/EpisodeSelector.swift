@@ -32,10 +32,8 @@ struct SeriesEpisodeSelector: View {
            viewModel.seasons.count <= 1
         {
             Text(seasonDisplayName)
-                .font(.headline)
-                .foregroundStyle(Color.accentColor)
-                .padding(.vertical, 5)
-                .padding(.horizontal, 10)
+                .font(.title2)
+                .fontWeight(.semibold)
         } else {
             Menu {
                 ForEach(viewModel.seasons, id: \.season.id) { seasonViewModel in
