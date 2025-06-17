@@ -6,40 +6,65 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Defaults
 import Foundation
 import JellyfinAPI
 
-// Since we don't view care to view seasons directly, this doesn't subclass from `ItemViewModel`.
-// If we ever care for viewing seasons directly, subclass from that and have the library view model
-// as a property.
-final class SeasonItemViewModel: PagingLibraryViewModel<BaseItemDto>, Identifiable {
+final class SeasonItemViewModel: ItemViewModel, Identifiable {
 
-    let season: BaseItemDto
+    // MARK: - Published Episode Items
+
+    @Published
+    private(set) var episodes: [BaseItemDto] = []
+
+    var season: BaseItemDto {
+        item
+    }
 
     var id: String? {
         season.id
     }
 
-    init(season: BaseItemDto) {
-        self.season = season
-        super.init(parent: season)
+    // MARK: - Task
+
+    private var episodesTask: AnyCancellable?
+
+    // MARK: - Override Response
+
+    override func respond(to action: ItemViewModel.Action) -> ItemViewModel.State {
+
+        switch action {
+        case .refresh, .backgroundRefresh:
+            episodesTask?.cancel()
+
+            episodesTask = Task {
+                let episodes = try await self.getEpisodes()
+
+                await MainActor.run {
+                    self.episodes = episodes
+                }
+            }
+            .asAnyCancellable()
+        default: break
+        }
+
+        return super.respond(to: action)
     }
 
-    override func get(page: Int) async throws -> [BaseItemDto] {
+    // MARK: - Get Episodes
+
+    private func getEpisodes() async throws -> [BaseItemDto] {
 
         var parameters = Paths.GetEpisodesParameters()
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
         parameters.isMissing = Defaults[.Customization.shouldShowMissingEpisodes] ? nil : false
-        parameters.seasonID = parent!.id
+        parameters.seasonID = season.id
         parameters.userID = userSession.user.id
 
-//        parameters.startIndex = page * pageSize
-//        parameters.limit = pageSize
-
         let request = Paths.getEpisodes(
-            seriesID: parent!.id!,
+            seriesID: season.seriesID!,
             parameters: parameters
         )
         let response = try await userSession.client.send(request)
