@@ -47,9 +47,9 @@ struct AppSettingsView: View {
             }
             .contentView {
 
-                TextPairView(
-                    leading: L10n.version,
-                    trailing: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
+                LabeledContent(
+                    L10n.version,
+                    value: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
                 )
 
                 Section {

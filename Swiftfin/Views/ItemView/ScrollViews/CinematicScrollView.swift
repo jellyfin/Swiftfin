@@ -68,16 +68,10 @@ extension ItemView {
                         .padding(.bottom)
                         .background {
                             BlurView(style: .systemThinMaterialDark)
-                                .mask {
-                                    LinearGradient(
-                                        stops: [
-                                            .init(color: .white.opacity(0), location: 0),
-                                            .init(color: .white, location: 0.3),
-                                            .init(color: .white, location: 1),
-                                        ],
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    )
+                                .maskLinearGradient {
+                                    (location: 0, opacity: 0)
+                                    (location: 0.3, opacity: 1)
+                                    (location: 1, opacity: 1)
                                 }
                         }
                 }
@@ -95,6 +89,9 @@ extension ItemView.CinematicScrollView {
 
         @Default(.Customization.CinematicItemViewType.usePrimaryImage)
         private var usePrimaryImage
+
+        @StoredValue(.User.itemViewAttributes)
+        private var attributes
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
@@ -156,7 +153,11 @@ extension ItemView.CinematicScrollView {
                     .taglineLineLimit(2)
                     .foregroundColor(.white)
 
-                ItemView.AttributesHStack(viewModel: viewModel, alignment: .leading)
+                ItemView.AttributesHStack(
+                    attributes: attributes,
+                    viewModel: viewModel,
+                    alignment: .leading
+                )
             }
         }
     }

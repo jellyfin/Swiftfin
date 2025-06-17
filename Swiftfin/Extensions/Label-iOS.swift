@@ -59,10 +59,27 @@ struct SectionFooterWithImageLabelStyle<ImageStyle: ShapeStyle>: LabelStyle {
         HStack {
             configuration.icon
                 .foregroundStyle(imageStyle)
-                .backport
                 .fontWeight(.bold)
 
             configuration.title
+        }
+    }
+}
+
+extension TitleAndIconLabelStyle {
+
+    var trailingIcon: TrailingIconReversedButtonStyle {
+        TrailingIconReversedButtonStyle()
+    }
+}
+
+struct TrailingIconReversedButtonStyle: LabelStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            configuration.title
+
+            configuration.icon
         }
     }
 }

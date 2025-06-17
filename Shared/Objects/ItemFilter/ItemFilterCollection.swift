@@ -6,12 +6,10 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Foundation
 import JellyfinAPI
 
 /// A structure representing a collection of item filters
-struct ItemFilterCollection: Codable, Defaults.Serializable, Hashable {
+struct ItemFilterCollection: Hashable, Storable {
 
     var genres: [ItemGenre] = []
     var itemTypes: [BaseItemKind] = []

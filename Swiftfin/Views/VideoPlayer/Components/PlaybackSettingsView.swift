@@ -44,24 +44,20 @@ struct PlaybackSettingsView: View {
             }
 
             BasicStepper(
-                title: L10n.audioOffset,
+                L10n.audioOffset,
                 value: _audioOffset.wrappedValue,
                 range: -30000 ... 30000,
-                step: 100
+                step: 100,
+                formatter: MilliseondFormatter()
             )
-            .valueFormatter {
-                $0.millisecondLabel
-            }
 
             BasicStepper(
-                title: L10n.subtitleOffset,
+                L10n.subtitleOffset,
                 value: _subtitleOffset.wrappedValue,
                 range: -30000 ... 30000,
-                step: 100
+                step: 100,
+                formatter: MilliseondFormatter()
             )
-            .valueFormatter {
-                $0.millisecondLabel
-            }
 
             if viewModel.videoStreams.isNotEmpty {
                 Section(L10n.video) {

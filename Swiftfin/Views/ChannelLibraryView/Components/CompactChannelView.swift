@@ -50,7 +50,6 @@ extension ChannelLibraryView {
                     Text(channel.displayTitle)
                         .font(.footnote.weight(.regular))
                         .foregroundColor(.primary)
-                        .backport
                         .lineLimit(1, reservesSpace: true)
                         .font(.footnote.weight(.regular))
                 }
