@@ -35,10 +35,9 @@ struct LibraryFilterBar: View {
         let longestFilterString = filterTypes.map(\.displayTitle)
             .max(by: { $0.count < $1.count }) ?? ""
 
-        return longestFilterString.width(
-            font: .footnote,
-            weight: .semibold
-        )
+        let width = UIFont.preferredFont(forTextStyle: .footnote).pointSize
+
+        return CGFloat(longestFilterString.count) * width
     }
 
     // MARK: - Body
@@ -56,7 +55,7 @@ struct LibraryFilterBar: View {
                     FilterButton(
                         systemName: "line.3.horizontal.decrease.circle.fill",
                         title: L10n.reset,
-                        maxWidth: filterWidth + 120,
+                        maxWidth: filterWidth,
                         role: .destructive
                     )
                     .onSelect {
@@ -71,7 +70,7 @@ struct LibraryFilterBar: View {
                     FilterButton(
                         systemName: type.systemImage,
                         title: type.displayTitle,
-                        maxWidth: filterWidth + 120
+                        maxWidth: filterWidth
                     )
                     .onSelect {
                         onSelect(.init(type: type, viewModel: viewModel))
@@ -88,7 +87,7 @@ struct LibraryFilterBar: View {
             .padding(.vertical, 1)
             .animation(.easeInOut(duration: 0.3), value: viewModel.currentFilters.hasFilters)
         }
-        .frame(width: filterWidth + 170)
+        .frame(width: filterWidth + 50)
     }
 
     // MARK: - Selected Button Background
@@ -97,7 +96,7 @@ struct LibraryFilterBar: View {
         Rectangle()
             .fill(.regularMaterial)
             .brightness(-0.05)
-            .frame(width: filterWidth + 170)
+            .frame(width: filterWidth + 50)
             .edgesIgnoringSafeArea(.leading)
             .edgesIgnoringSafeArea(.vertical)
             .overlay(alignment: .trailing) {

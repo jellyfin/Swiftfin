@@ -34,10 +34,9 @@ struct SearchFilterBar: View {
         let longestFilterString = filterTypes.map(\.displayTitle)
             .max(by: { $0.count < $1.count }) ?? ""
 
-        return longestFilterString.width(
-            font: .footnote,
-            weight: .semibold
-        )
+        let width = UIFont.preferredFont(forTextStyle: .footnote).lineHeight
+
+        return CGFloat(longestFilterString.count) * width
     }
 
     // MARK: - Body
@@ -49,7 +48,7 @@ struct SearchFilterBar: View {
                     FilterButton(
                         systemName: "line.3.horizontal.decrease.circle.fill",
                         title: L10n.reset,
-                        maxWidth: filterWidth + 120,
+                        maxWidth: filterWidth,
                         role: .destructive
                     )
                     .onSelect {
@@ -62,7 +61,7 @@ struct SearchFilterBar: View {
                     FilterButton(
                         systemName: type.systemImage,
                         title: type.displayTitle,
-                        maxWidth: filterWidth + 120
+                        maxWidth: filterWidth
                     )
                     .onSelect {
                         onSelect(.init(type: type, viewModel: viewModel))
