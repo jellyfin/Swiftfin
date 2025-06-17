@@ -64,16 +64,10 @@ extension ItemView {
         private var labelView: some View {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
-                    .if(isSelected) { background in
-                        background
-                            .foregroundStyle(.secondary)
-                    }
-                    .if(!isSelected) { background in
-                        background
-                            .foregroundStyle(.gray)
-                    }
+                    .foregroundStyle(isSelected ? .secondary : .tertiary)
 
                 Image(systemName: labelIconName)
+                    .font(.system(size: 20))
                     .fontWeight(.bold)
                     .foregroundStyle(.primary)
                     .symbolRenderingMode(.monochrome)

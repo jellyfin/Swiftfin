@@ -66,7 +66,7 @@ extension ItemView {
                 ) {
                     viewModel.send(.toggleIsPlayed)
                 }
-                .foregroundStyle(accentColor.overlayColor, accentColor)
+                .foregroundStyle(accentColor.overlayColor, accentColor, .gray)
                 .environment(\.isSelected, isCheckmarkSelected)
                 .frame(maxWidth: .infinity)
                 .if(!equalSpacing) { view in
@@ -84,7 +84,7 @@ extension ItemView {
                 ) {
                     viewModel.send(.toggleIsFavorite)
                 }
-                .foregroundStyle(accentColor.overlayColor, .red)
+                .foregroundStyle(accentColor.overlayColor, .red, .gray)
                 .environment(\.isSelected, isHeartSelected)
                 .frame(maxWidth: .infinity)
                 .if(!equalSpacing) { view in
@@ -111,7 +111,7 @@ extension ItemView {
                         localTrailers: viewModel.localTrailers,
                         externalTrailers: viewModel.item.remoteTrailers ?? []
                     )
-                    .foregroundStyle(accentColor.overlayColor)
+                    .foregroundStyle(accentColor.overlayColor, .gray)
                     .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in
                         view.aspectRatio(1, contentMode: .fit)
