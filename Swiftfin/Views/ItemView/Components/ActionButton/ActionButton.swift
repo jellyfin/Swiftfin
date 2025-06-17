@@ -67,7 +67,6 @@ extension ItemView {
                     .foregroundStyle(isSelected ? .secondary : .tertiary)
 
                 Image(systemName: labelIconName)
-                    .font(.system(size: 20))
                     .fontWeight(.bold)
                     .foregroundStyle(.primary)
                     .symbolRenderingMode(.monochrome)
