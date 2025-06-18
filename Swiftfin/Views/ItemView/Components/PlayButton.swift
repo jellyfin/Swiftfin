@@ -39,7 +39,7 @@ extension ItemView {
         var body: some View {
             Button {
                 if let playButtonItem = viewModel.playButtonItem,
-                    let selectedMediaSource = viewModel.selectedMediaSource
+                   let selectedMediaSource = viewModel.selectedMediaSource
                 {
                     mainRouter.route(
                         to: \.videoPlayer,

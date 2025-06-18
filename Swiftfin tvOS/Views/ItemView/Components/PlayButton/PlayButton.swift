@@ -104,7 +104,7 @@ extension ItemView {
             .buttonStyle(.card)
             .contextMenu {
                 if viewModel.playButtonItem != nil,
-                    viewModel.item.userData?.playbackPositionTicks ?? 0 > 0
+                   viewModel.item.userData?.playbackPositionTicks ?? 0 > 0
                 {
                     Button {
                         if var playButtonItem = viewModel.playButtonItem,
