@@ -6,8 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-
 // TODO: require remote sign in every time
 //       - actually found to be a bit difficult?
 // TODO: rename to not confuse with server access/UserDto
@@ -23,7 +21,7 @@ enum UserAccessPolicy: String, CaseIterable, Codable, Displayable {
         case .none:
             L10n.none
         case .requireDeviceAuthentication:
-            "Device Authentication"
+            L10n.deviceAuth
         case .requirePin:
             L10n.pin
         }

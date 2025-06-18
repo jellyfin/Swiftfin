@@ -6,10 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Foundation
-
-enum SliderType: String, CaseIterable, Displayable, Defaults.Serializable {
+enum SliderType: String, CaseIterable, Displayable, Storable {
 
     case thumb
     case capsule
@@ -17,9 +14,9 @@ enum SliderType: String, CaseIterable, Displayable, Defaults.Serializable {
     var displayTitle: String {
         switch self {
         case .thumb:
-            return "Thumb"
+            return L10n.thumbSlider
         case .capsule:
-            return "Capsule"
+            return L10n.capsule
         }
     }
 }

@@ -144,36 +144,16 @@ extension PosterButton {
         let item: Item
 
         var body: some View {
-            iOS15View {
-                VStack(alignment: .leading, spacing: 0) {
-                    if item.showTitle {
-                        TitleContentView(item: item)
-                            .backport
-                            .lineLimit(1, reservesSpace: true)
-                            .iOS15 { v in
-                                v.font(.footnote.weight(.regular))
-                            }
-                    }
-
-                    SubtitleContentView(item: item)
-                        .backport
+            VStack(alignment: .leading, spacing: 0) {
+                if item.showTitle {
+                    TitleContentView(item: item)
                         .lineLimit(1, reservesSpace: true)
-                        .iOS15 { v in
-                            v.font(.caption.weight(.medium))
-                        }
+                        .font(.footnote.weight(.regular))
                 }
-            } content: {
-                VStack(alignment: .leading) {
-                    if item.showTitle {
-                        TitleContentView(item: item)
-                            .backport
-                            .lineLimit(1, reservesSpace: true)
-                    }
 
-                    SubtitleContentView(item: item)
-                        .backport
-                        .lineLimit(1, reservesSpace: true)
-                }
+                SubtitleContentView(item: item)
+                    .lineLimit(1, reservesSpace: true)
+                    .font(.caption.weight(.medium))
             }
         }
     }
@@ -195,7 +175,6 @@ extension PosterButton {
                         Text(seriesName)
                             .font(.footnote.weight(.regular))
                             .foregroundColor(.primary)
-                            .backport
                             .lineLimit(1, reservesSpace: true)
                     }
 
@@ -243,21 +222,21 @@ extension PosterButton {
                 if let item = item as? BaseItemDto {
                     if item.userData?.isPlayed ?? false {
                         WatchedIndicator(size: 25)
-                            .visible(showPlayed)
+                            .isVisible(showPlayed)
                     } else {
                         if (item.userData?.playbackPositionTicks ?? 0) > 0 {
                             ProgressIndicator(progress: (item.userData?.playedPercentage ?? 0) / 100, height: 5)
-                                .visible(showProgress)
+                                .isVisible(showProgress)
                         } else {
                             UnwatchedIndicator(size: 25)
                                 .foregroundColor(accentColor)
-                                .visible(showUnplayed)
+                                .isVisible(showUnplayed)
                         }
                     }
 
                     if item.userData?.isFavorite ?? false {
                         FavoriteIndicator(size: 25)
-                            .visible(showFavorited)
+                            .isVisible(showFavorited)
                     }
                 }
             }

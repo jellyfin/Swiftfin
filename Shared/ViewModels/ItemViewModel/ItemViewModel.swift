@@ -80,6 +80,8 @@ class ItemViewModel: ViewModel, Stateful {
     @Published
     var state: State = .initial
 
+    var presentPlayButton: Bool { true }
+
     // tasks
 
     private var toggleIsFavoriteTask: AnyCancellable?
@@ -288,6 +290,7 @@ class ItemViewModel: ViewModel, Stateful {
         }
     }
 
+    @available(*, deprecated, message: "Override the `respond` method instead and return `super.respond(to:)`")
     func onRefresh() async throws {}
 
     private func getFullItem() async throws -> BaseItemDto {

@@ -6,10 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Foundation
-
-enum OverlayType: String, CaseIterable, Defaults.Serializable {
+enum OverlayType: String, CaseIterable, Storable {
 
     case normal
     case compact
@@ -24,7 +21,7 @@ enum OverlayType: String, CaseIterable, Defaults.Serializable {
     }
 }
 
-enum PlaybackButtonType: String, CaseIterable, Displayable, Defaults.Serializable {
+enum PlaybackButtonType: String, CaseIterable, Displayable, Storable {
 
     case large
     case compact
@@ -32,7 +29,7 @@ enum PlaybackButtonType: String, CaseIterable, Displayable, Defaults.Serializabl
     var displayTitle: String {
         switch self {
         case .large:
-            return "Large"
+            return L10n.large
         case .compact:
             return L10n.compact
         }

@@ -7,156 +7,147 @@
 //
 
 import SwiftUI
-import WrappingHStack
 
 extension ItemView {
+
     struct AttributesHStack: View {
+
         @ObservedObject
-        var viewModel: ItemViewModel
+        private var viewModel: ItemViewModel
 
-        @StoredValue(.User.itemViewAttributes)
-        private var itemViewAttributes
+        private let alignment: HorizontalAlignment
+        private let attributes: [ItemViewAttribute]
+        private let flowDirection: FlowLayout.Direction
 
-        // MARK: - Body
+        init(
+            attributes: [ItemViewAttribute],
+            viewModel: ItemViewModel,
+            alignment: HorizontalAlignment = .center,
+            flowDirection: FlowLayout.Direction = .up
+        ) {
+            self.viewModel = viewModel
+            self.alignment = alignment
+            self.attributes = attributes
+            self.flowDirection = flowDirection
+        }
 
         var body: some View {
-            let badges = computeBadges()
-            if !badges.isEmpty {
-                WrappingHStack(badges, id: \.self, alignment: .center, spacing: .constant(8), lineSpacing: 8) { badgeItem in
-                    badgeItem
-                        .fixedSize(horizontal: true, vertical: false)
+            if attributes.isNotEmpty {
+                FlowLayout(
+                    alignment: alignment,
+                    direction: flowDirection
+                ) {
+                    ForEach(attributes, id: \.self) { attribute in
+                        switch attribute {
+                        case .ratingCritics: CriticRating()
+                        case .ratingCommunity: CommunityRating()
+                        case .ratingOfficial: OfficialRating()
+                        case .videoQuality: VideoQuality()
+                        case .audioChannels: AudioChannels()
+                        case .subtitles: Subtitles()
+                        }
+                    }
                 }
                 .foregroundStyle(Color(UIColor.darkGray))
                 .lineLimit(1)
-                .frame(maxWidth: 300)
             }
         }
 
-        // MARK: - Compute Badges
-
-        private func computeBadges() -> [AnyView] {
-            var badges: [AnyView] = []
-            var processedGroups = Set<ItemViewAttribute>()
-
-            for attribute in itemViewAttributes {
-
-                if processedGroups.contains(attribute) { continue }
-                processedGroups.insert(attribute)
-
-                switch attribute {
-                case .ratingCritics:
-                    if let criticRating = viewModel.item.criticRating {
-                        let badge = AnyView(
-                            AttributeBadge(
-                                style: .outline,
-                                title: Text("\(criticRating, specifier: "%.0f")")
-                            ) {
-                                if criticRating >= 60 {
-                                    Image(.tomatoFresh)
-                                        .symbolRenderingMode(.hierarchical)
-                                } else {
-                                    Image(.tomatoRotten)
-                                }
-                            }
-                        )
-                        badges.append(badge)
-                    }
-                case .ratingCommunity:
-                    if let communityRating = viewModel.item.communityRating {
-                        let badge = AnyView(
-                            AttributeBadge(
-                                style: .outline,
-                                title: Text("\(communityRating, specifier: "%.01f")"),
-                                systemName: "star.fill"
-                            )
-                        )
-                        badges.append(badge)
-                    }
-                case .ratingOfficial:
-                    if let officialRating = viewModel.item.officialRating {
-                        let badge = AnyView(
-                            AttributeBadge(
-                                style: .outline,
-                                title: officialRating
-                            )
-                        )
-                        badges.append(badge)
-                    }
-                case .videoQuality:
-                    if let mediaStreams = viewModel.selectedMediaSource?.mediaStreams {
-                        // Resolution badge (if available). Only one of 4K or HD is shown.
-                        if mediaStreams.has4KVideo {
-                            let badge = AnyView(
-                                AttributeBadge(
-                                    style: .fill,
-                                    title: "4K"
-                                )
-                            )
-                            badges.append(badge)
-                        } else if mediaStreams.hasHDVideo {
-                            let badge = AnyView(
-                                AttributeBadge(
-                                    style: .fill,
-                                    title: "HD"
-                                )
-                            )
-                            badges.append(badge)
-                        }
-                        if mediaStreams.hasDolbyVision {
-                            let badge = AnyView(
-                                AttributeBadge(
-                                    style: .fill,
-                                    title: "DV"
-                                )
-                            )
-                            badges.append(badge)
-                        }
-                        if mediaStreams.hasHDRVideo {
-                            let badge = AnyView(
-                                AttributeBadge(
-                                    style: .fill,
-                                    title: "HDR"
-                                )
-                            )
-                            badges.append(badge)
-                        }
-                    }
-                case .audioChannels:
-                    if let mediaStreams = viewModel.selectedMediaSource?.mediaStreams {
-                        if mediaStreams.has51AudioChannelLayout {
-                            let badge = AnyView(
-                                AttributeBadge(
-                                    style: .fill,
-                                    title: "5.1"
-                                )
-                            )
-                            badges.append(badge)
-                        }
-                        if mediaStreams.has71AudioChannelLayout {
-                            let badge = AnyView(
-                                AttributeBadge(
-                                    style: .fill,
-                                    title: "7.1"
-                                )
-                            )
-                            badges.append(badge)
-                        }
-                    }
-                case .subtitles:
-                    if let mediaStreams = viewModel.selectedMediaSource?.mediaStreams,
-                       mediaStreams.hasSubtitles
-                    {
-                        let badge = AnyView(
-                            AttributeBadge(
-                                style: .outline,
-                                title: "CC"
-                            )
-                        )
-                        badges.append(badge)
+        @ViewBuilder
+        private func CriticRating() -> some View {
+            if let criticRating = viewModel.item.criticRating {
+                AttributeBadge(
+                    style: .outline,
+                    title: Text("\(criticRating, specifier: "%.0f")")
+                ) {
+                    if criticRating >= 60 {
+                        Image(.tomatoFresh)
+                            .symbolRenderingMode(.hierarchical)
+                    } else {
+                        Image(.tomatoRotten)
                     }
                 }
             }
-            return badges
+        }
+
+        @ViewBuilder
+        private func CommunityRating() -> some View {
+            if let communityRating = viewModel.item.communityRating {
+                AttributeBadge(
+                    style: .outline,
+                    title: Text("\(communityRating, specifier: "%.01f")"),
+                    systemName: "star.fill"
+                )
+            }
+        }
+
+        @ViewBuilder
+        private func OfficialRating() -> some View {
+            if let officialRating = viewModel.item.officialRating {
+                AttributeBadge(
+                    style: .outline,
+                    title: officialRating
+                )
+            }
+        }
+
+        @ViewBuilder
+        private func VideoQuality() -> some View {
+            if let mediaStreams = viewModel.selectedMediaSource?.mediaStreams {
+                if mediaStreams.has4KVideo {
+                    AttributeBadge(
+                        style: .fill,
+                        title: "4K"
+                    )
+                } else if mediaStreams.hasHDVideo {
+                    AttributeBadge(
+                        style: .fill,
+                        title: "HD"
+                    )
+                }
+                if mediaStreams.hasDolbyVision {
+                    AttributeBadge(
+                        style: .fill,
+                        title: "DV"
+                    )
+                }
+                if mediaStreams.hasHDRVideo {
+                    AttributeBadge(
+                        style: .fill,
+                        title: "HDR"
+                    )
+                }
+            }
+        }
+
+        @ViewBuilder
+        private func AudioChannels() -> some View {
+            if let mediaStreams = viewModel.selectedMediaSource?.mediaStreams {
+                if mediaStreams.has51AudioChannelLayout {
+                    AttributeBadge(
+                        style: .fill,
+                        title: "5.1"
+                    )
+                }
+                if mediaStreams.has71AudioChannelLayout {
+                    AttributeBadge(
+                        style: .fill,
+                        title: "7.1"
+                    )
+                }
+            }
+        }
+
+        @ViewBuilder
+        private func Subtitles() -> some View {
+            if let mediaStreams = viewModel.selectedMediaSource?.mediaStreams,
+               mediaStreams.hasSubtitles
+            {
+                AttributeBadge(
+                    style: .outline,
+                    title: "CC"
+                )
+            }
         }
     }
 }

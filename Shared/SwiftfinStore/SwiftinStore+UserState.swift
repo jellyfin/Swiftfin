@@ -134,7 +134,7 @@ extension UserState {
         let client = JellyfinClient(
             configuration: .swiftfinConfiguration(url: server.currentURL),
             sessionConfiguration: .swiftfin,
-            sessionDelegate: URLSessionProxyDelegate(logger: Container.shared.pulseNetworkLogger()),
+            sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin()),
             accessToken: accessToken
         )
 

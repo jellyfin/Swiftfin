@@ -16,23 +16,32 @@ struct MediaStreamInfoView: View {
     var body: some View {
         Form {
             Section {
-                ForEach(mediaStream.metadataProperties) { property in
-                    TextPairView(property)
+                ForEach(mediaStream.metadataProperties, id: \.label) { property in
+                    LabeledContent(
+                        property.label,
+                        value: property.value
+                    )
                 }
             }
 
             if mediaStream.colorProperties.isNotEmpty {
                 Section(L10n.color) {
-                    ForEach(mediaStream.colorProperties) { property in
-                        TextPairView(property)
+                    ForEach(mediaStream.colorProperties, id: \.label) { property in
+                        LabeledContent(
+                            property.label,
+                            value: property.value
+                        )
                     }
                 }
             }
 
             if mediaStream.deliveryProperties.isNotEmpty {
                 Section(L10n.delivery) {
-                    ForEach(mediaStream.deliveryProperties) { property in
-                        TextPairView(property)
+                    ForEach(mediaStream.deliveryProperties, id: \.label) { property in
+                        LabeledContent(
+                            property.label,
+                            value: property.value
+                        )
                     }
                 }
             }

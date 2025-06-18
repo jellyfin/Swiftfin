@@ -13,6 +13,8 @@ import VLCUI
 
 extension MediaStream {
 
+    typealias Property = (label: String, value: String)
+
     static var none: MediaStream = .init(displayTitle: L10n.none, index: -1)
 
     var asPlaybackChild: VLCVideoPlayer.PlaybackChild? {
@@ -47,170 +49,161 @@ extension MediaStream {
 
     // MARK: Property groups
 
-    var metadataProperties: [TextPair] {
-        var properties: [TextPair] = []
-
+    @ArrayBuilder<Property>
+    var metadataProperties: [Property] {
         if let value = type {
-            properties.append(.init(title: "Type", subtitle: value.rawValue))
+            (label: "Type", value: value.rawValue)
         }
 
         if let value = codec {
-            properties.append(.init(title: "Codec", subtitle: value))
+            (label: "Codec", value: value)
         }
 
         if let value = codecTag {
-            properties.append(.init(title: "Codec Tag", subtitle: value))
+            (label: "Codec Tag", value: value)
         }
 
         if let value = language {
-            properties.append(.init(title: "Language", subtitle: value))
+            (label: "Language", value: value)
         }
 
         if let value = timeBase {
-            properties.append(.init(title: "Time Base", subtitle: value))
+            (label: "Time Base", value: value)
         }
 
         if let value = codecTimeBase {
-            properties.append(.init(title: "Codec Time Base", subtitle: value))
+            (label: "Codec Time Base", value: value)
         }
 
         if let value = videoRange {
-            properties.append(.init(title: "Video Range", subtitle: value.rawValue))
+            (label: "Video Range", value: value.rawValue)
         }
 
         if let value = isInterlaced {
-            properties.append(.init(title: "Interlaced", subtitle: value.description))
+            (label: "Interlaced", value: value.description)
         }
 
         if let value = isAVC {
-            properties.append(.init(title: "AVC", subtitle: value.description))
+            (label: "AVC", value: value.description)
         }
 
         if let value = channelLayout {
-            properties.append(.init(title: "Channel Layout", subtitle: value))
+            (label: "Channel Layout", value: value)
         }
 
         if let value = bitRate {
-            properties.append(.init(title: "Bitrate", subtitle: value.description))
+            (label: "Bitrate", value: value.description)
         }
 
         if let value = bitDepth {
-            properties.append(.init(title: "Bit Depth", subtitle: value.description))
+            (label: "Bit Depth", value: value.description)
         }
 
         if let value = refFrames {
-            properties.append(.init(title: "Reference Frames", subtitle: value.description))
+            (label: "Reference Frames", value: value.description)
         }
 
         if let value = packetLength {
-            properties.append(.init(title: "Packet Length", subtitle: value.description))
+            (label: "Packet Length", value: value.description)
         }
 
         if let value = channels {
-            properties.append(.init(title: "Channels", subtitle: value.description))
+            (label: "Channels", value: value.description)
         }
 
         if let value = sampleRate {
-            properties.append(.init(title: "Sample Rate", subtitle: value.description))
+            (label: "Sample Rate", value: value.description)
         }
 
         if let value = isDefault {
-            properties.append(.init(title: "Default", subtitle: value.description))
+            (label: "Default", value: value.description)
         }
 
         if let value = isForced {
-            properties.append(.init(title: "Forced", subtitle: value.description))
+            (label: "Forced", value: value.description)
         }
 
         if let value = averageFrameRate {
-            properties.append(.init(title: "Average Frame Rate", subtitle: value.description))
+            (label: "Average Frame Rate", value: value.description)
         }
 
         if let value = realFrameRate {
-            properties.append(.init(title: "Real Frame Rate", subtitle: value.description))
+            (label: "Real Frame Rate", value: value.description)
         }
 
         if let value = profile {
-            properties.append(.init(title: "Profile", subtitle: value))
+            (label: "Profile", value: value)
         }
 
         if let value = aspectRatio {
-            properties.append(.init(title: "Aspect Ratio", subtitle: value))
+            (label: "Aspect Ratio", value: value)
         }
 
         if let value = index {
-            properties.append(.init(title: "Index", subtitle: value.description))
+            (label: "Index", value: value.description)
         }
 
         if let value = score {
-            properties.append(.init(title: "Score", subtitle: value.description))
+            (label: "Score", value: value.description)
         }
 
         if let value = pixelFormat {
-            properties.append(.init(title: "Pixel Format", subtitle: value))
+            (label: "Pixel Format", value: value)
         }
 
         if let value = level {
-            properties.append(.init(title: "Level", subtitle: value.description))
+            (label: "Level", value: value.description)
         }
 
         if let value = isAnamorphic {
-            properties.append(.init(title: "Anamorphic", subtitle: value.description))
+            (label: "Anamorphic", value: value.description)
         }
-
-        return properties
     }
 
-    var colorProperties: [TextPair] {
-        var properties: [TextPair] = []
-
+    @ArrayBuilder<Property>
+    var colorProperties: [Property] {
         if let value = colorRange {
-            properties.append(.init(title: "Range", subtitle: value))
+            (label: "Range", value: value)
         }
 
         if let value = colorSpace {
-            properties.append(.init(title: "Space", subtitle: value))
+            (label: "Space", value: value)
         }
 
         if let value = colorTransfer {
-            properties.append(.init(title: "Transfer", subtitle: value))
+            (label: "Transfer", value: value)
         }
 
         if let value = colorPrimaries {
-            properties.append(.init(title: "Primaries", subtitle: value))
+            (label: "Primaries", value: value)
         }
-
-        return properties
     }
 
-    var deliveryProperties: [TextPair] {
-        var properties: [TextPair] = []
-
+    @ArrayBuilder<Property>
+    var deliveryProperties: [Property] {
         if let value = isExternal {
-            properties.append(.init(title: "External", subtitle: value.description))
+            (label: "External", value: value.description)
         }
 
         if let value = deliveryMethod {
-            properties.append(.init(title: "Delivery Method", subtitle: value.rawValue))
+            (label: "Delivery Method", value: value.rawValue)
         }
 
         if let value = deliveryURL {
-            properties.append(.init(title: "URL", subtitle: value))
+            (label: "URL", value: value)
         }
 
         if let value = deliveryURL {
-            properties.append(.init(title: "External URL", subtitle: value.description))
+            (label: "External URL", value: value.description)
         }
 
         if let value = isTextSubtitleStream {
-            properties.append(.init(title: "Text Subtitle", subtitle: value.description))
+            (label: "Text Subtitle", value: value.description)
         }
 
         if let value = path {
-            properties.append(.init(title: "Path", subtitle: value))
+            (label: "Path", value: value)
         }
-
-        return properties
     }
 }
 

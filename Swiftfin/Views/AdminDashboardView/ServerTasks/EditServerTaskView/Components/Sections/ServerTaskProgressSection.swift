@@ -28,16 +28,19 @@ extension EditServerTaskView {
             if observer.task.state == .running || observer.task.state == .cancelling {
                 Section(L10n.progress) {
                     if let status = observer.task.state {
-                        TextPairView(
-                            leading: L10n.status,
-                            trailing: status.displayTitle
+                        LabeledContent(
+                            L10n.status,
+                            value: status.displayTitle
                         )
                     }
 
                     if let currentProgressPercentage = observer.task.currentProgressPercentage {
-                        TextPairView(
+                        LabeledContent(
                             L10n.progress,
-                            value: Text("\(currentProgressPercentage / 100, format: .percent.precision(.fractionLength(1)))")
+                            value: currentProgressPercentage / 100,
+                            format: .percent.precision(
+                                .fractionLength(1)
+                            )
                         )
                         .monospacedDigit()
                     }

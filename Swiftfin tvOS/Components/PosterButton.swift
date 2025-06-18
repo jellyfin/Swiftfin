@@ -167,12 +167,10 @@ extension PosterButton {
             VStack(alignment: .leading) {
                 if item.showTitle {
                     TitleContentView(item: item)
-                        .backport
                         .lineLimit(1, reservesSpace: true)
                 }
 
                 SubtitleContentView(item: item)
-                    .backport
                     .lineLimit(1, reservesSpace: true)
             }
         }
@@ -194,7 +192,6 @@ extension PosterButton {
                         Text(seriesName)
                             .font(.footnote.weight(.regular))
                             .foregroundColor(.primary)
-                            .backport
                             .lineLimit(1, reservesSpace: true)
                     }
 
@@ -249,21 +246,21 @@ extension PosterButton {
                 if let item = item as? BaseItemDto {
                     if item.userData?.isPlayed ?? false {
                         WatchedIndicator(size: 45)
-                            .visible(showPlayed)
+                            .isVisible(showPlayed)
                     } else {
                         if (item.userData?.playbackPositionTicks ?? 0) > 0 {
                             ProgressIndicator(progress: (item.userData?.playedPercentage ?? 0) / 100, height: 10)
-                                .visible(showProgress)
+                                .isVisible(showProgress)
                         } else {
                             UnwatchedIndicator(size: 45)
                                 .foregroundColor(.jellyfinPurple)
-                                .visible(showUnplayed)
+                                .isVisible(showUnplayed)
                         }
                     }
 
                     if item.userData?.isFavorite ?? false {
                         FavoriteIndicator(size: 45)
-                            .visible(showFavorited)
+                            .isVisible(showFavorited)
                     }
                 }
             }

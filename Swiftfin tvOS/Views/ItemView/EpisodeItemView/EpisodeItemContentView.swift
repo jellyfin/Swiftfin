@@ -33,22 +33,11 @@ extension EpisodeItemView {
             }
             .background {
                 BlurView(style: .dark)
-                    .mask {
-                        VStack(spacing: 0) {
-                            LinearGradient(
-                                stops: [
-                                    .init(color: .clear, location: 0.5),
-                                    .init(color: .white.opacity(0.8), location: 0.7),
-                                    .init(color: .white.opacity(0.8), location: 0.95),
-                                    .init(color: .white, location: 1),
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                            .frame(height: UIScreen.main.bounds.height - 150)
-
-                            Color.white
-                        }
+                    .maskLinearGradient {
+                        (location: 0.5, opacity: 0)
+                        (location: 0.7, opacity: 0.8)
+                        (location: 0.95, opacity: 0.8)
+                        (location: 1, opacity: 1)
                     }
             }
         }
@@ -63,6 +52,9 @@ extension EpisodeItemView.ContentView {
             case top
             case playButton
         }
+
+        @StoredValue(.User.itemViewAttributes)
+        private var attributes
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
@@ -117,7 +109,10 @@ extension EpisodeItemView.ContentView {
                             .font(.caption)
                             .foregroundColor(Color(UIColor.lightGray))
 
-                            ItemView.AttributesHStack(viewModel: viewModel)
+                            ItemView.AttributesHStack(
+                                attributes: attributes,
+                                viewModel: viewModel
+                            )
                         }
                     }
 

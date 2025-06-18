@@ -6,22 +6,18 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import SwiftUI
-
 // TODO: think about what to do for square (music)
 enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImageable {
 
     case landscape
     case portrait
 
-    // TODO: localize
     var displayTitle: String {
         switch self {
         case .landscape:
-            "Landscape"
+            L10n.landscape
         case .portrait:
-            "Portrait"
+            L10n.portrait
         }
     }
 

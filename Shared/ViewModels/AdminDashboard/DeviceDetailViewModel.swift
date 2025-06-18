@@ -68,7 +68,7 @@ final class DeviceDetailViewModel: ViewModel, Stateful, Eventful {
                     }
                 } catch {
                     await MainActor.run {
-                        self.eventSubject.send(.error(.init("Unable to update custom name")))
+                        self.eventSubject.send(.error(.init(L10n.unableToUpdateCustomName)))
                     }
                 }
 

@@ -50,30 +50,32 @@ extension IdentifyItemView {
             Section(L10n.details) {
 
                 if let premiereDate = result.premiereDate {
-                    TextPairView(
+                    LabeledContent(
                         L10n.premiereDate,
-                        value: Text(premiereDate.formatted(.dateTime.year().month().day()))
+                        value: premiereDate,
+                        format: .dateTime.year().month().day()
                     )
                 }
 
                 if let productionYear = result.productionYear {
-                    TextPairView(
+                    LabeledContent(
                         L10n.productionYear,
-                        value: Text(productionYear, format: .number.grouping(.never))
+                        value: productionYear,
+                        format: .number.grouping(.never)
                     )
                 }
 
                 if let provider = result.searchProviderName {
-                    TextPairView(
-                        leading: L10n.provider,
-                        trailing: provider
+                    LabeledContent(
+                        L10n.provider,
+                        value: provider
                     )
                 }
 
                 if let providerID = result.providerIDs?.values.first {
-                    TextPairView(
-                        leading: L10n.id,
-                        trailing: providerID
+                    LabeledContent(
+                        L10n.id,
+                        value: providerID
                     )
                 }
             }

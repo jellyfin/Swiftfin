@@ -27,22 +27,23 @@ struct SwiftfinApp: App {
 
     init() {
 
+        // Logging
+        LoggingSystem.bootstrap { label in
+
+            let handlers: [any LogHandler] = [PersistentLogHandler(label: label)]
+            #if DEBUG
+                .appending(SwiftfinConsoleHandler())
+            #endif
+
+            var multiplexHandler = MultiplexLogHandler(handlers)
+            multiplexHandler.logLevel = .trace
+            return multiplexHandler
+        }
+
         // CoreStore
 
         CoreStoreDefaults.dataStack = SwiftfinStore.dataStack
         CoreStoreDefaults.logger = SwiftfinCorestoreLogger()
-
-        // Logging
-        LoggingSystem.bootstrap { label in
-
-            var loggers: [LogHandler] = [PersistentLogHandler(label: label).withLogLevel(.trace)]
-
-            #if DEBUG
-            loggers.append(SwiftfinConsoleLogger())
-            #endif
-
-            return MultiplexLogHandler(loggers)
-        }
 
         // Nuke
 
@@ -71,47 +72,29 @@ struct SwiftfinApp: App {
         }
     }
 
-    // TODO: removed after iOS 15 support removed
-
-    @ViewBuilder
-    private var versionedView: some View {
-        if #available(iOS 16, *) {
+    var body: some Scene {
+        WindowGroup {
             PreferencesView {
                 MainCoordinator()
                     .view()
                     .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
             }
-        } else {
-            PreferencesView {
-                PreferencesView {
-                    MainCoordinator()
-                        .view()
-                        .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
-                }
-                .ignoresSafeArea()
+            .ignoresSafeArea()
+            .onNotification(.applicationDidEnterBackground) {
+                Defaults[.backgroundTimeStamp] = Date.now
             }
-        }
-    }
+            .onNotification(.applicationWillEnterForeground) {
 
-    var body: some Scene {
-        WindowGroup {
-            versionedView
-                .ignoresSafeArea()
-                .onNotification(.applicationDidEnterBackground) {
-                    Defaults[.backgroundTimeStamp] = Date.now
+                // TODO: needs to check if any background playback is happening
+                //       - atow, background video playback isn't officially supported
+                let backgroundedInterval = Date.now.timeIntervalSince(Defaults[.backgroundTimeStamp])
+
+                if Defaults[.signOutOnBackground], backgroundedInterval > Defaults[.backgroundSignOutInterval] {
+                    Defaults[.lastSignedInUserID] = .signedOut
+                    Container.shared.currentUserSession.reset()
+                    Notifications[.didSignOut].post()
                 }
-                .onNotification(.applicationWillEnterForeground) {
-
-                    // TODO: needs to check if any background playback is happening
-                    //       - atow, background video playback isn't officially supported
-                    let backgroundedInterval = Date.now.timeIntervalSince(Defaults[.backgroundTimeStamp])
-
-                    if Defaults[.signOutOnBackground], backgroundedInterval > Defaults[.backgroundSignOutInterval] {
-                        Defaults[.lastSignedInUserID] = .signedOut
-                        Container.shared.currentUserSession.reset()
-                        Notifications[.didSignOut].post()
-                    }
-                }
+            }
         }
     }
 }

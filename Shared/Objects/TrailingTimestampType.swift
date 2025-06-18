@@ -6,10 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Foundation
-
-enum TrailingTimestampType: String, CaseIterable, Displayable, Defaults.Serializable {
+enum TrailingTimestampType: String, CaseIterable, Displayable, Storable {
 
     case timeLeft
     case totalTime
@@ -17,9 +14,9 @@ enum TrailingTimestampType: String, CaseIterable, Displayable, Defaults.Serializ
     var displayTitle: String {
         switch self {
         case .timeLeft:
-            return "Time left"
+            return L10n.timeLeft
         case .totalTime:
-            return "Total time"
+            return L10n.totalTime
         }
     }
 }

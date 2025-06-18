@@ -10,30 +10,21 @@ import SwiftUI
 
 struct LearnMoreModal: View {
 
-    private let items: [TextPair]
+    private let content: AnyView
 
     // MARK: - Initializer
 
-    init(@ArrayBuilder<TextPair> items: () -> [TextPair]) {
-        self.items = items()
+    init(@LabeledContentBuilder content: () -> AnyView) {
+        self.content = content()
     }
 
     // MARK: - Body
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            ForEach(items) { content in
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(content.title)
-                        .font(.headline)
-                        .foregroundStyle(.primary)
-
-                    Text(content.subtitle)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-                .padding(8)
-            }
+            content
+                .labeledContentStyle(LearnMoreLabeledContentStyle())
+                .foregroundStyle(Color.primary, Color.secondary)
         }
         .padding(24)
         .background {

@@ -6,8 +6,10 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import Foundation
 import Nuke
+import Pulse
 
 extension ImagePipeline {
 
@@ -46,14 +48,32 @@ extension ImagePipeline.Swiftfin {
 
     /// The default `ImagePipeline` to use for images that are typically posters
     /// or server user images that should be presentable with an active connection.
-    static let posters: ImagePipeline = ImagePipeline(delegate: SwiftfinImagePipelineDelegate()) {
-        $0.dataCache = DataCache.Swiftfin.posters
+    static let posters: ImagePipeline = ImagePipeline(delegate: SwiftfinImagePipelineDelegate()) { config in
+        config.dataCache = DataCache.Swiftfin.posters
+
+        let dataLoader = DataLoader(
+            configuration: .swiftfin
+        )
+        dataLoader.delegate = URLSessionProxyDelegate(
+            logger: NetworkLogger.swiftfin(),
+            delegate: nil
+        )
+        config.dataLoader = dataLoader
     }
 
     /// The `ImagePipeline` used for images that should have longer lifetimes and usable
     /// without a connection, likes local user profile images and server splashscreens.
-    static let local: ImagePipeline = ImagePipeline(delegate: SwiftfinImagePipelineDelegate()) {
-        $0.dataCache = DataCache.Swiftfin.local
+    static let local: ImagePipeline = ImagePipeline(delegate: SwiftfinImagePipelineDelegate()) { config in
+        config.dataCache = DataCache.Swiftfin.local
+
+        let dataLoader = DataLoader(
+            configuration: .swiftfin
+        )
+        dataLoader.delegate = URLSessionProxyDelegate(
+            logger: NetworkLogger.swiftfin(),
+            delegate: nil
+        )
+        config.dataLoader = dataLoader
     }
 
     /// An `ImagePipeline` for images to prevent more important images from losing their cache.

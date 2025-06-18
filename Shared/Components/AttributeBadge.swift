@@ -8,18 +8,18 @@
 
 import SwiftUI
 
-struct AttributeBadge<Content: View>: View {
+struct AttributeBadge: View {
 
     @Environment(\.font)
     private var font
 
-    enum AttributeStyle {
+    enum Style {
         case fill
         case outline
     }
 
-    private let style: AttributeStyle
-    private let content: () -> Content
+    private let style: Style
+    private let content: () -> any View
 
     private var usedFont: Font {
         font ?? .caption.weight(.semibold)
@@ -29,6 +29,7 @@ struct AttributeBadge<Content: View>: View {
     private var innerBody: some View {
         if style == .fill {
             content()
+                .eraseToAnyView()
                 .padding(.init(vertical: 1, horizontal: 4))
                 .hidden()
                 .background {
@@ -36,11 +37,13 @@ struct AttributeBadge<Content: View>: View {
                         .cornerRadius(2)
                         .inverseMask {
                             content()
+                                .eraseToAnyView()
                                 .padding(.init(vertical: 1, horizontal: 4))
                         }
                 }
         } else {
             content()
+                .eraseToAnyView()
                 .foregroundStyle(Color(UIColor.lightGray))
                 .padding(.init(vertical: 1, horizontal: 4))
                 .overlay(
@@ -57,10 +60,10 @@ struct AttributeBadge<Content: View>: View {
     }
 }
 
-extension AttributeBadge where Content == Text {
+extension AttributeBadge {
 
     init(
-        style: AttributeStyle,
+        style: Style,
         title: @autoclosure @escaping () -> Text
     ) {
         self.init(style: style) {
@@ -69,19 +72,16 @@ extension AttributeBadge where Content == Text {
     }
 
     init(
-        style: AttributeStyle,
+        style: Style,
         title: String
     ) {
         self.init(style: style) {
             Text(title)
         }
     }
-}
-
-extension AttributeBadge where Content == Label<Text, Image> {
 
     init(
-        style: AttributeStyle,
+        style: Style,
         title: String,
         image: Image
     ) {
@@ -92,7 +92,7 @@ extension AttributeBadge where Content == Label<Text, Image> {
     }
 
     init(
-        style: AttributeStyle,
+        style: Style,
         title: String,
         image: @escaping () -> Image
     ) {
@@ -103,7 +103,7 @@ extension AttributeBadge where Content == Label<Text, Image> {
     }
 
     init(
-        style: AttributeStyle,
+        style: Style,
         title: String,
         systemName: String
     ) {
@@ -114,7 +114,7 @@ extension AttributeBadge where Content == Label<Text, Image> {
     }
 
     init(
-        style: AttributeStyle,
+        style: Style,
         title: Text,
         image: Image
     ) {
@@ -125,7 +125,7 @@ extension AttributeBadge where Content == Label<Text, Image> {
     }
 
     init(
-        style: AttributeStyle,
+        style: Style,
         title: Text,
         image: @escaping () -> Image
     ) {
@@ -136,7 +136,7 @@ extension AttributeBadge where Content == Label<Text, Image> {
     }
 
     init(
-        style: AttributeStyle,
+        style: Style,
         title: Text,
         systemName: String
     ) {

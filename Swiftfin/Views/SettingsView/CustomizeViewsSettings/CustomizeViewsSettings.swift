@@ -140,14 +140,14 @@ struct CustomizeViewsSettings: View {
                 CaseIterablePicker(L10n.search, selection: $searchPosterType)
             }
 
-            Section("Libraries") {
+            Section(L10n.libraries) {
                 CaseIterablePicker(L10n.library, selection: $libraryDisplayType)
 
                 CaseIterablePicker(L10n.posters, selection: $libraryPosterType)
 
                 if libraryDisplayType == .list, UIDevice.isPad {
                     BasicStepper(
-                        title: L10n.columns,
+                        L10n.columns,
                         value: $listColumnCount,
                         range: 1 ... 4,
                         step: 1

@@ -1,5 +1,5 @@
 {
-  "originHash" : "59e91adc6b66cec011d85f8b5356b72b51a6e772e85bad7fbeac490d39e91f45",
+  "originHash" : "dafdd4344c3edcdf3da9ec756625fb6eb48a6bbb288b86d81d40d75843e8a9b3",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -24,8 +24,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/CollectionHStack",
       "state" : {
-        "branch" : "main",
-        "revision" : "00beb78cc570ee1014a92eb1cd7a60c099bce5ec"
+        "revision" : "03dc666e8b20ec216fda60f55ccc0eeaabbc5fad"
       }
     },
     {
@@ -33,8 +32,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/CollectionVGrid",
       "state" : {
-        "branch" : "main",
-        "revision" : "4b1591321339481756af6157c9205051d7fe3040"
+        "revision" : "70db2318ce64d49aa8b536e0623b96cb323fbdf1"
       }
     },
     {
@@ -42,8 +40,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JohnEstropia/CoreStore.git",
       "state" : {
-        "revision" : "4b6d9a54e75d2c9fd2c3c768f7d4aa3175c09133",
-        "version" : "9.2.0"
+        "revision" : "5a0d27cf343c6e341b0ef3c8d36104770b27a839",
+        "version" : "9.3.0"
       }
     },
     {
@@ -69,8 +67,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/hmlongco/Factory",
       "state" : {
-        "revision" : "587995f7d5cc667951d635fbf6b4252324ba0439",
-        "version" : "2.3.2"
+        "revision" : "ccc898f21992ebc130bc04cc197460a5ae230bcf",
+        "version" : "2.5.3"
       }
     },
     {
@@ -96,8 +94,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jellyfin/jellyfin-sdk-swift.git",
       "state" : {
-        "revision" : "10624671970ee1ad49ce817ee7b8ee3074f89a32",
-        "version" : "0.5.1"
+        "revision" : "6039de827d9f768fe7218f3960426aca3325423a",
+        "version" : "0.5.2"
       }
     },
     {
@@ -132,8 +130,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Pulse",
       "state" : {
-        "revision" : "d1e39ffaaa8b8becff80cb193c93a78e32077af8",
-        "version" : "4.2.0"
+        "revision" : "6125ce7fb51b114ba71b761d18cfd5557923bd4d",
+        "version" : "5.1.4"
       }
     },
     {
@@ -141,8 +139,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/PulseLogHandler",
       "state" : {
-        "revision" : "7280e980b71a1267099e7751a900fd1e67b7f4bb",
-        "version" : "4.0.1"
+        "revision" : "477e9ef76615f0b76b43bb502af432fe6750b704",
+        "version" : "5.1.0"
       }
     },
     {
@@ -260,15 +258,6 @@
       "state" : {
         "branch" : "main",
         "revision" : "9e0285b13c666aace61835e8a512512edee822a6"
-      }
-    },
-    {
-      "identity" : "wrappinghstack",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/dkk/WrappingHStack",
-      "state" : {
-        "revision" : "425d9488ba55f58f0b34498c64c054c77fc2a44b",
-        "version" : "2.2.11"
       }
     }
   ],
