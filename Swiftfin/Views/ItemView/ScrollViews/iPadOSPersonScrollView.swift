@@ -118,7 +118,7 @@ extension ItemView.iPadOSPersonScrollView {
                         }
                         Spacer()
                     }
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color(UIColor.lightGray))
                 }
                 .padding(.trailing)
 
