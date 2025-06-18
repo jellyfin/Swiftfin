@@ -1270,7 +1270,7 @@
 			repositoryURL = "https://github.com/kean/Pulse";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 4.0.0;
+				minimumVersion = 5.0.0;
 			};
 		};
 		E1575E3A293C6B15001665B1 /* XCRemoteSwiftPackageReference "Files" */ = {
@@ -1350,7 +1350,7 @@
 			repositoryURL = "https://github.com/kean/PulseLogHandler";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 4.0.0;
+				minimumVersion = 5.0.0;
 			};
 		};
 		E1FAD1C42A0375BA007F5521 /* XCRemoteSwiftPackageReference "UDPBroadcastConnection" */ = {
