@@ -75,8 +75,7 @@ extension ItemView {
                         if var playButtonItem = viewModel.playButtonItem,
                            let selectedMediaSource = viewModel.selectedMediaSource
                         {
-
-                            // Reset playback to the beginning
+                            /// Reset playback to the beginning
                             playButtonItem.userData?.playbackPositionTicks = 0
 
                             mainRouter.route(

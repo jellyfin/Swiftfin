@@ -66,7 +66,7 @@ extension ItemView {
         private var playButton: some View {
             Button {
                 if let playButtonItem = viewModel.playButtonItem,
-                    let selectedMediaSource = viewModel.selectedMediaSource
+                   let selectedMediaSource = viewModel.selectedMediaSource
                 {
                     router.route(
                         to: \.videoPlayer,
@@ -103,12 +103,13 @@ extension ItemView {
             .focused($isFocused)
             .buttonStyle(.card)
             .contextMenu {
-                if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
+                if viewModel.playButtonItem != nil,
+                    viewModel.item.userData?.playbackPositionTicks ?? 0 > 0
+                {
                     Button {
                         if var playButtonItem = viewModel.playButtonItem,
                            let selectedMediaSource = viewModel.selectedMediaSource
                         {
-
                             /// Reset playback to the beginning
                             playButtonItem.userData?.playbackPositionTicks = 0
 
