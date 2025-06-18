@@ -102,8 +102,8 @@ extension ItemView.iPadOSPersonScrollView {
                     HStack(spacing: 8) {
                         let items = [
                             viewModel.item.premiereDate?.formatted(date: .long, time: .omitted),
-                            viewModel.item.premiereDate?.formatted(.age.death(viewModel.item.endDate)),
                             viewModel.item.endDate?.formatted(date: .long, time: .omitted),
+                            viewModel.item.premiereDate?.formatted(.age.death(viewModel.item.endDate)),
                             viewModel.item.productionLocations?.first,
                         ].compactMap { $0 }
 
