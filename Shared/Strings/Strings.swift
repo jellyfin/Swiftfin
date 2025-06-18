@@ -1710,6 +1710,10 @@ internal enum L10n {
   internal static let year = L10n.tr("Localizable", "year", fallback: "Year")
   /// Years
   internal static let years = L10n.tr("Localizable", "years", fallback: "Years")
+  /// %@ years old
+  internal static func yearsOld(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "yearsOld", String(describing: p1), fallback: "%@ years old")
+  }
   /// Yellow
   internal static let yellow = L10n.tr("Localizable", "yellow", fallback: "Yellow")
   /// Yes

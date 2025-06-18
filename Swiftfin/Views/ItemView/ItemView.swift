@@ -68,6 +68,8 @@ struct ItemView: View {
             return MovieItemViewModel(item: item)
         case .series:
             return SeriesItemViewModel(item: item)
+        case .person:
+            return PersonItemViewModel(item: item)
         default:
             assertionFailure("Unsupported item")
             return ItemViewModel(item: item)
@@ -90,6 +92,8 @@ struct ItemView: View {
             MovieItemContentView(viewModel: viewModel as! MovieItemViewModel)
         case .series:
             SeriesItemContentView(viewModel: viewModel as! SeriesItemViewModel)
+        case .person:
+            PersonItemContentView(viewModel: viewModel as! PersonItemViewModel)
         default:
             Text(L10n.notImplementedYetWithType(viewModel.item.type ?? "--"))
         }
@@ -102,10 +106,16 @@ struct ItemView: View {
     ) -> any ScrollContainerView {
 
         if UIDevice.isPad {
-            return iPadOSCinematicScrollView(viewModel: viewModel, content: content)
+            switch viewModel.item.type {
+            case .person:
+                return iPadOSPersonScrollView(viewModel: viewModel, content: content)
+            default:
+                return iPadOSCinematicScrollView(viewModel: viewModel, content: content)
+            }
         }
 
-        if viewModel.item.type == .movie || viewModel.item.type == .series {
+        switch viewModel.item.type {
+        case .movie, .series:
             switch itemViewType {
             case .compactPoster:
                 return CompactPosterScrollView(viewModel: viewModel, content: content)
@@ -114,9 +124,11 @@ struct ItemView: View {
             case .cinematic:
                 return CinematicScrollView(viewModel: viewModel, content: content)
             }
+        case .person:
+            return PersonScrollView(viewModel: viewModel, content: content)
+        default:
+            return SimpleScrollView(viewModel: viewModel, content: content)
         }
-
-        return SimpleScrollView(viewModel: viewModel, content: content)
     }
 
     @ViewBuilder
