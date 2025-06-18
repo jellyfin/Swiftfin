@@ -26,12 +26,14 @@ struct SeriesEpisodeSelector: View {
         viewModel.seasons.first(where: { $0.id == selection })
     }
 
+    private var selectedSeasonTitle: String {
+        selectionViewModel?.season.displayTitle ?? .emptyDash
+    }
+
     @ViewBuilder
     private var seasonSelectorMenu: some View {
-        if let seasonDisplayName = selectionViewModel?.season.displayTitle,
-           viewModel.seasons.count <= 1
-        {
-            Text(seasonDisplayName)
+        if viewModel.seasons.count <= 1 {
+            Text(selectedSeasonTitle)
                 .font(.title2)
                 .fontWeight(.semibold)
         } else {
@@ -49,7 +51,7 @@ struct SeriesEpisodeSelector: View {
                 }
             } label: {
                 Label(
-                    selectionViewModel?.season.displayTitle ?? .emptyDash,
+                    selectedSeasonTitle,
                     systemImage: "chevron.down"
                 )
                 .labelStyle(.episodeSelector)
