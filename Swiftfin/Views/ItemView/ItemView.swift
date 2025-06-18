@@ -107,7 +107,7 @@ struct ItemView: View {
 
         if UIDevice.isPad {
             switch viewModel.item.type {
-            case .person:
+            case .person, .musicArtist:
                 return iPadOSPersonScrollView(viewModel: viewModel, content: content)
             default:
                 return iPadOSCinematicScrollView(viewModel: viewModel, content: content)
@@ -124,7 +124,7 @@ struct ItemView: View {
             case .cinematic:
                 return CinematicScrollView(viewModel: viewModel, content: content)
             }
-        case .person:
+        case .person, .musicArtist:
             return PersonScrollView(viewModel: viewModel, content: content)
         default:
             return SimpleScrollView(viewModel: viewModel, content: content)
