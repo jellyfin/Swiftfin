@@ -99,11 +99,11 @@ struct OrnamentButtonStyle: ButtonStyle {
         if !isEnabled {
             return Color.secondary.opacity(0.3)
         } else if isPressed {
-            return Color.secondarySystemFill.opacity(0.7)
+            return Color.systemFill.opacity(0.7)
         } else if isSelected {
             return primary
         } else {
-            return Color.secondarySystemFill.opacity(0.5)
+            return Color.systemFill.opacity(0.3)
         }
     }
 
