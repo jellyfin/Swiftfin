@@ -125,7 +125,7 @@ struct ItemView: View {
                 return CinematicScrollView(viewModel: viewModel, content: content)
             }
         case .person, .musicArtist:
-            return PersonScrollView(viewModel: viewModel, content: content)
+            return CompactPosterScrollView(viewModel: viewModel, content: content)
         default:
             return SimpleScrollView(viewModel: viewModel, content: content)
         }

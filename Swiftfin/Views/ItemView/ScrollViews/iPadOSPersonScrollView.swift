@@ -99,25 +99,22 @@ extension ItemView.iPadOSPersonScrollView {
                         .taglineLineLimit(2)
                         .foregroundColor(.white)
 
-                    HStack(spacing: 8) {
-                        let items = [
-                            viewModel.item.premiereDate?.formatted(date: .long, time: .omitted),
-                            viewModel.item.endDate?.formatted(date: .long, time: .omitted),
-                            viewModel.item.premiereDate?.formatted(.age.death(viewModel.item.endDate)),
-                            viewModel.item.productionLocations?.first,
-                        ].compactMap { $0 }
-
-                        ForEach(Array(items.enumerated()), id: \.offset) { index, item in
-                            Text(item)
-                                .font(.subheadline.weight(.medium))
-
-                            if index < items.count - 1 {
-                                Text("•")
-                                    .font(.subheadline.weight(.medium))
-                            }
+                    DotHStack {
+                        if let birthday = viewModel.item.premiereDate?.formatted(date: .numeric, time: .omitted) {
+                            Text(birthday)
                         }
-                        Spacer()
+                        if let deathday = viewModel.item.endDate?.formatted(date: .numeric, time: .omitted) {
+                            Text(deathday)
+                        }
+                        if let age = viewModel.item.premiereDate?.formatted(.age.death(viewModel.item.endDate)) {
+                            Text(age)
+                        }
+                        if let birthPlace = viewModel.item.productionLocations?.first {
+                            Text(birthPlace)
+                        }
                     }
+                    .lineLimit(1)
+                    .font(.subheadline.weight(.medium))
                     .foregroundColor(Color(UIColor.lightGray))
                 }
                 .padding(.trailing)

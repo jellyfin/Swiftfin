@@ -11,6 +11,7 @@ import SwiftUI
 
 extension ItemView {
 
+    /// Compact Poster Type & Person View
     struct CompactPosterScrollView<Content: View>: ScrollContainerView {
 
         @EnvironmentObject
@@ -43,10 +44,26 @@ extension ItemView {
 
         @ViewBuilder
         private var headerView: some View {
-            ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
-                .aspectRatio(1.77, contentMode: .fill)
-                .frame(height: UIScreen.main.bounds.height * 0.35)
-                .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
+            switch viewModel.item.type {
+            case .musicArtist, .person:
+                let personViewModel = viewModel as! PersonItemViewModel
+                if let randomElement = personViewModel.personItems.elements.randomElement(),
+                   let randomValue = randomElement.value.randomElement()
+                {
+                    ImageView(randomValue.imageSource(
+                        randomValue.type == .episode ? .primary : .backdrop,
+                        maxWidth: UIScreen.main.bounds.width
+                    ))
+                    .aspectRatio(1.77, contentMode: .fill)
+                    .frame(height: UIScreen.main.bounds.height * 0.35)
+                    .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
+                }
+            default:
+                ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
+                    .aspectRatio(1.77, contentMode: .fill)
+                    .frame(height: UIScreen.main.bounds.height * 0.35)
+                    .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
+            }
         }
 
         var body: some View {
@@ -101,37 +118,71 @@ extension ItemView.CompactPosterScrollView {
 
         @ViewBuilder
         private var rightShelfView: some View {
-            VStack(alignment: .leading) {
+            switch viewModel.item.type {
+            case .musicArtist, .person:
+                VStack(alignment: .leading) {
+                    Text(viewModel.item.displayTitle)
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
 
-                Text(viewModel.item.displayTitle)
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
-
-                DotHStack {
-                    if viewModel.item.isUnaired {
-                        if let premiereDateLabel = viewModel.item.airDateLabel {
-                            Text(premiereDateLabel)
+                    DotHStack {
+                        if let birthday = viewModel.item.premiereDate?.formatted(date: .numeric, time: .omitted) {
+                            Text(birthday)
                         }
-                    } else {
-                        if let productionYear = viewModel.item.productionYear {
-                            Text(String(productionYear))
+                        if let deathday = viewModel.item.endDate?.formatted(date: .numeric, time: .omitted) {
+                            Text(deathday)
                         }
                     }
+                    .lineLimit(1)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundColor(Color(UIColor.lightGray))
 
-                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
-                        Text(runtime)
+                    if let age = viewModel.item.premiereDate?.formatted(.age.death(viewModel.item.endDate)) {
+                        Text(age)
+                            .font(.subheadline.weight(.medium))
+                            .foregroundColor(Color(UIColor.lightGray))
+                    }
+
+                    if let birthPlace = viewModel.item.productionLocations?.first {
+                        Text(birthPlace)
+                            .font(.subheadline.weight(.medium))
+                            .multilineTextAlignment(.leading)
+                            .foregroundColor(Color(UIColor.lightGray))
                     }
                 }
-                .lineLimit(1)
-                .font(.subheadline.weight(.medium))
-                .foregroundColor(Color(UIColor.lightGray))
+            default:
+                VStack(alignment: .leading) {
+                    Text(viewModel.item.displayTitle)
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
 
-                ItemView.AttributesHStack(
-                    attributes: attributes,
-                    viewModel: viewModel,
-                    alignment: .leading
-                )
+                    DotHStack {
+                        if viewModel.item.isUnaired {
+                            if let premiereDateLabel = viewModel.item.airDateLabel {
+                                Text(premiereDateLabel)
+                            }
+                        } else {
+                            if let productionYear = viewModel.item.productionYear {
+                                Text(String(productionYear))
+                            }
+                        }
+
+                        if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
+                            Text(runtime)
+                        }
+                    }
+                    .lineLimit(1)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundColor(Color(UIColor.lightGray))
+
+                    ItemView.AttributesHStack(
+                        attributes: attributes,
+                        viewModel: viewModel,
+                        alignment: .leading
+                    )
+                }
             }
         }
 
@@ -160,9 +211,12 @@ extension ItemView.CompactPosterScrollView {
 
                     Spacer()
 
-                    ItemView.ActionButtonHStack(viewModel: viewModel, equalSpacing: false)
-                        .font(.title2)
-                        .foregroundColor(.white)
+                    ItemView.ActionButtonHStack(
+                        viewModel: viewModel,
+                        equalSpacing: false
+                    )
+                    .font(.title2)
+                    .foregroundColor(.white)
                 }
             }
         }

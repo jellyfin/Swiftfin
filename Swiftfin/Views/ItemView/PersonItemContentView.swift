@@ -51,6 +51,8 @@ extension ItemView {
                         }
                     }
                 }
+
+                ItemView.AboutView(viewModel: viewModel)
             }
         }
     }
