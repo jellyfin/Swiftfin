@@ -1,5 +1,5 @@
 {
-  "originHash" : "10a36cae800726e78f007d4647964a4016231e25305c2077df22139cdc11f9bf",
+  "originHash" : "dafdd4344c3edcdf3da9ec756625fb6eb48a6bbb288b86d81d40d75843e8a9b3",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -40,8 +40,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JohnEstropia/CoreStore.git",
       "state" : {
-        "revision" : "4b6d9a54e75d2c9fd2c3c768f7d4aa3175c09133",
-        "version" : "9.2.0"
+        "revision" : "5a0d27cf343c6e341b0ef3c8d36104770b27a839",
+        "version" : "9.3.0"
       }
     },
     {
@@ -67,8 +67,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/hmlongco/Factory",
       "state" : {
-        "revision" : "587995f7d5cc667951d635fbf6b4252324ba0439",
-        "version" : "2.3.2"
+        "revision" : "ccc898f21992ebc130bc04cc197460a5ae230bcf",
+        "version" : "2.5.3"
       }
     },
     {
@@ -130,8 +130,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Pulse",
       "state" : {
-        "revision" : "3ac5ee35ab233e900aa484919803d51791d1e351",
-        "version" : "4.2.7"
+        "revision" : "6125ce7fb51b114ba71b761d18cfd5557923bd4d",
+        "version" : "5.1.4"
       }
     },
     {
@@ -139,8 +139,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/PulseLogHandler",
       "state" : {
-        "revision" : "7280e980b71a1267099e7751a900fd1e67b7f4bb",
-        "version" : "4.0.1"
+        "revision" : "477e9ef76615f0b76b43bb502af432fe6750b704",
+        "version" : "5.1.0"
       }
     },
     {
