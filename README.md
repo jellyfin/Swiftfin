@@ -2,7 +2,7 @@
   <img alt="Swiftfin" src="./Resources/primary-wide.svg">
 
   <h1>Swiftfin</h1>
-  <img src="https://img.shields.io/badge/iOS-15+-red"/>
+  <img src="https://img.shields.io/badge/iOS-16+-red"/>
   <img src="https://img.shields.io/badge/tvOS-17+-red"/>
   <img src="https://img.shields.io/badge/Jellyfin-10.10-9962be"/>
   

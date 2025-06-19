@@ -48,7 +48,7 @@ extension ItemView {
             OffsetScrollView(
                 headerHeight: globalSize.isLandscape ? 0.75 : 0.6
             ) {
-                ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1920))
+                ImageView(viewModel.item.imageSource(imageType, maxWidth: 1920))
                     .aspectRatio(1.77, contentMode: .fill)
             } overlay: {
                 VStack(spacing: 0) {
@@ -59,15 +59,9 @@ extension ItemView {
                 }
                 .background {
                     BlurView(style: .systemThinMaterialDark)
-                        .mask {
-                            LinearGradient(
-                                stops: [
-                                    .init(color: .clear, location: 0.4),
-                                    .init(color: .white, location: 0.8),
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
+                        .maskLinearGradient {
+                            (location: 0.4, opacity: 0)
+                            (location: 0.8, opacity: 1)
                         }
                 }
             } content: {
@@ -82,6 +76,9 @@ extension ItemView {
 extension ItemView.iPadOSCinematicScrollView {
 
     struct OverlayView: View {
+
+        @StoredValue(.User.itemViewAttributes)
+        private var attributes
 
         @ObservedObject
         var viewModel: ItemViewModel
@@ -132,7 +129,11 @@ extension ItemView.iPadOSCinematicScrollView {
                         .font(.footnote)
                         .foregroundColor(Color(UIColor.lightGray))
 
-                        ItemView.AttributesHStack(viewModel: viewModel, alignment: .leading)
+                        ItemView.AttributesHStack(
+                            attributes: attributes,
+                            viewModel: viewModel,
+                            alignment: .leading
+                        )
                     }
                 }
                 .padding(.trailing, 200)

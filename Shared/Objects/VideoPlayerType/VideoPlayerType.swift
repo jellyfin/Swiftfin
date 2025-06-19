@@ -6,12 +6,9 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Foundation
 import JellyfinAPI
-import SwiftUI
 
-enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
+enum VideoPlayerType: String, CaseIterable, Displayable, Storable {
 
     case native
     case swiftfin

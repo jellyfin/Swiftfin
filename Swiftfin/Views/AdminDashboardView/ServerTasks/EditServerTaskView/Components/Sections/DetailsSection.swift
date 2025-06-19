@@ -16,7 +16,7 @@ extension EditServerTaskView {
 
         var body: some View {
             Section(L10n.details) {
-                TextPairView(leading: L10n.category, trailing: category)
+                LabeledContent(L10n.category, value: category)
             }
         }
     }

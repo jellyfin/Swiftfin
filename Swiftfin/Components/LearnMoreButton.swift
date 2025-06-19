@@ -14,13 +14,16 @@ struct LearnMoreButton: View {
     private var isPresented: Bool = false
 
     private let title: String
-    private let items: [TextPair]
+    private let content: AnyView
 
     // MARK: - Initializer
 
-    init(_ title: String, @ArrayBuilder<TextPair> items: () -> [TextPair]) {
+    init(
+        _ title: String,
+        @LabeledContentBuilder content: () -> AnyView
+    ) {
         self.title = title
-        self.items = items()
+        self.content = content()
     }
 
     // MARK: - Body
@@ -40,25 +43,17 @@ struct LearnMoreButton: View {
     // MARK: - Learn More View
 
     private var learnMoreView: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 SeparatorVStack(alignment: .leading) {
                     Divider()
+                        .padding(.vertical, 8)
                 } content: {
-                    ForEach(items) { content in
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(content.title)
-                                .font(.headline)
-                                .foregroundStyle(.primary)
-
-                            Text(content.subtitle)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-                        .padding(.vertical, 16)
-                    }
+                    content
+                        .labeledContentStyle(LearnMoreLabeledContentStyle())
+                        .foregroundStyle(Color.primary, Color.secondary)
                 }
-                .edgePadding(.horizontal)
+                .edgePadding()
             }
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
@@ -66,6 +61,5 @@ struct LearnMoreButton: View {
                 isPresented = false
             }
         }
-        .foregroundStyle(Color.primary, Color.secondary)
     }
 }

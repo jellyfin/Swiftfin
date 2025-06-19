@@ -74,6 +74,8 @@ class VideoPlayerManager: ViewModel {
         super.init()
 
         setupControlListeners()
+
+        setupNotifications()
     }
 
     func selectNextViewModel() {
@@ -309,6 +311,36 @@ class VideoPlayerManager: ViewModel {
             self?.proxy.play()
 
             return .success
+        }
+    }
+
+    func setupNotifications() {
+        Notifications[.interruption].subscribe(
+            self,
+            selector: #selector(onInterrupt(_:)),
+            observed: AVAudioSession.sharedInstance()
+        )
+    }
+
+    @objc
+    func onInterrupt(_ notification: Notification) {
+        guard let rawType = notification.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt,
+              let type = AVAudioSession.InterruptionType(rawValue: rawType)
+        else {
+            return
+        }
+
+        switch type {
+        case .began:
+            self.proxy.pause()
+        case .ended:
+            if let rawOption = notification.userInfo?[AVAudioSessionInterruptionOptionKey] as? UInt,
+               AVAudioSession.InterruptionOptions(rawValue: rawOption).contains(.shouldResume)
+            {
+                self.proxy.play()
+            }
+        @unknown default:
+            break
         }
     }
 }

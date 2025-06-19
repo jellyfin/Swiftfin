@@ -38,7 +38,7 @@ extension VideoPlayer.Overlay {
                 }
             }
             .frame(maxWidth: .infinity)
-            .onSizeChanged { newSize in
+            .onSizeChanged { newSize, _ in
                 width = newSize.width
             }
         }

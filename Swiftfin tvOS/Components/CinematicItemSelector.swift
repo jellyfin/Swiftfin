@@ -73,15 +73,9 @@ struct CinematicItemSelector<Item: Poster>: View {
                 )
             }
             .frame(height: UIScreen.main.bounds.height)
-            .mask {
-                LinearGradient(
-                    stops: [
-                        .init(color: .white, location: 0.9),
-                        .init(color: .clear, location: 1),
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+            .maskLinearGradient {
+                (location: 0.9, opacity: 1)
+                (location: 1, opacity: 0)
             }
         }
         .frame(height: UIScreen.main.bounds.height - 75)

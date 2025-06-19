@@ -257,17 +257,17 @@ struct UserLocalSecurityView: View {
         switch focusedItem {
         case .security:
             LearnMoreModal {
-                TextPair(
-                    title: L10n.security,
-                    subtitle: L10n.additionalSecurityAccessDescription
+                LabeledContent(
+                    L10n.security,
+                    value: L10n.additionalSecurityAccessDescription
                 )
-                TextPair(
-                    title: UserAccessPolicy.requirePin.displayTitle,
-                    subtitle: L10n.requirePinDescription
+                LabeledContent(
+                    UserAccessPolicy.requirePin.displayTitle,
+                    value: L10n.requirePinDescription
                 )
-                TextPair(
-                    title: UserAccessPolicy.none.displayTitle,
-                    subtitle: L10n.saveUserWithoutAuthDescription
+                LabeledContent(
+                    UserAccessPolicy.none.displayTitle,
+                    value: L10n.saveUserWithoutAuthDescription
                 )
             }
 

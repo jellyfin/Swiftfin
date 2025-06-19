@@ -38,13 +38,14 @@ extension AddServerUserAccessTagsView {
                 Text(L10n.access)
             } footer: {
                 LearnMoreButton(L10n.accessTags) {
-                    TextPair(
-                        title: L10n.allowed,
-                        subtitle: L10n.accessTagAllowDescription
+                    LabeledContent(
+                        L10n.allowed,
+                        value: L10n.accessTagAllowDescription
                     )
-                    TextPair(
-                        title: L10n.blocked,
-                        subtitle: L10n.accessTagBlockDescription
+
+                    LabeledContent(
+                        L10n.blocked,
+                        value: L10n.accessTagBlockDescription
                     )
                 }
             }

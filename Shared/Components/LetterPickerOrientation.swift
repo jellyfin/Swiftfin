@@ -6,10 +6,9 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
-enum LetterPickerOrientation: String, CaseIterable, Defaults.Serializable, Displayable {
+enum LetterPickerOrientation: String, CaseIterable, Displayable, Storable {
 
     case leading
     case trailing

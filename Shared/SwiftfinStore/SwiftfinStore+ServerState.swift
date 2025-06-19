@@ -42,7 +42,7 @@ extension SwiftfinStore.State {
             JellyfinClient(
                 configuration: .swiftfinConfiguration(url: currentURL),
                 sessionConfiguration: .swiftfin,
-                sessionDelegate: URLSessionProxyDelegate(logger: Container.shared.pulseNetworkLogger())
+                sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin())
             )
         }
     }
@@ -94,5 +94,15 @@ extension ServerState {
         }
 
         StoredValues[.Server.publicInfo(id: server.id)] = publicInfo
+    }
+
+    var isVersionCompatible: Bool {
+        let publicInfo = StoredValues[.Server.publicInfo(id: self.id)]
+
+        if let version = publicInfo.version {
+            return JellyfinClient.Version(stringLiteral: version).majorMinor >= JellyfinClient.sdkVersion.majorMinor
+        } else {
+            return false
+        }
     }
 }

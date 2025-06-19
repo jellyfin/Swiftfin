@@ -39,10 +39,21 @@ struct SettingsView: View {
 
                     ChevronButton(
                         L10n.server,
-                        subtitle: viewModel.userSession.server.name
-                    ) {
-                        router.route(to: \.serverDetail, viewModel.userSession.server)
-                    }
+                        action: {
+                            router.route(to: \.serverDetail, viewModel.userSession.server)
+                        },
+                        icon: { EmptyView() },
+                        subtitle: {
+                            Label {
+                                Text(viewModel.userSession.server.name)
+                            } icon: {
+                                if !viewModel.userSession.server.isVersionCompatible {
+                                    Image(systemName: "exclamationmark.circle.fill")
+                                        .foregroundStyle(.orange)
+                                }
+                            }
+                        }
+                    )
                 }
 
                 Section {

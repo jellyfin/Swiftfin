@@ -76,7 +76,7 @@ struct DevicesView: View {
             viewModel.send(.refresh)
         }
         .confirmationDialog(
-            L10n.deleteSelectedDevices,
+            L10n.delete,
             isPresented: $isPresentingDeleteSelectionConfirmation,
             titleVisibility: .visible
         ) {
@@ -85,7 +85,7 @@ struct DevicesView: View {
             Text(L10n.deleteSelectionDevicesWarning)
         }
         .confirmationDialog(
-            L10n.deleteDevice,
+            L10n.delete,
             isPresented: $isPresentingDeleteConfirmation,
             titleVisibility: .visible
         ) {

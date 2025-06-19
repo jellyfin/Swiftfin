@@ -37,10 +37,21 @@ struct SettingsView: View {
 
                 ChevronButton(
                     L10n.server,
-                    subtitle: viewModel.userSession.server.name
-                ) {
-                    router.route(to: \.serverConnection, viewModel.userSession.server)
-                }
+                    action: {
+                        router.route(to: \.serverConnection, viewModel.userSession.server)
+                    },
+                    icon: { EmptyView() },
+                    subtitle: {
+                        Label {
+                            Text(viewModel.userSession.server.name)
+                        } icon: {
+                            if !viewModel.userSession.server.isVersionCompatible {
+                                Image(systemName: "exclamationmark.circle.fill")
+                            }
+                        }
+                        .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                    }
+                )
 
                 if viewModel.userSession.user.permissions.isAdministrator {
                     ChevronButton(L10n.dashboard) {
