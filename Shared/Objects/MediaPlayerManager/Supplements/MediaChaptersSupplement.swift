@@ -23,7 +23,7 @@ struct MediaChaptersSupplement: MediaPlayerSupplement {
     let title: String = "Chapters"
     let chapters: [ChapterInfo.FullInfo]
 
-    func chapter(for second: TimeInterval) -> ChapterInfo.FullInfo? {
+    func chapter(for second: Duration) -> ChapterInfo.FullInfo? {
         chapters.first { $0.secondsRange.contains(second) }
     }
 
@@ -71,16 +71,17 @@ extension MediaChaptersSupplement {
             Button {
 //                manager.set(seconds: chapter.secondsRange.lowerBound)
 
-                manager.proxy?.setTime(chapter.secondsRange.lowerBound)
+//                manager.proxy?.setTime(chapter.secondsRange.lowerBound)
             } label: {
                 VStack(alignment: .leading, spacing: 5) {
-                    ZStack {
+                    AlternateLayoutView {
                         Color.clear
-
+                    } content: {
                         ImageView(chapter.landscapeImageSources(maxWidth: 500))
                             .failure {
                                 ZStack {
-                                    BlurView()
+                                    Rectangle()
+                                        .fill(Material.ultraThinMaterial)
 
                                     SystemImageContentView(systemName: chapter.systemImage)
                                         .background(color: Color.clear)
@@ -88,7 +89,7 @@ extension MediaChaptersSupplement {
                             }
                     }
                     .overlay {
-                        if chapter.secondsRange.contains(manager.seconds.value) {
+                        if chapter.secondsRange.contains(manager.seconds) {
                             RoundedRectangle(cornerRadius: contentSize.width / 30)
                                 .stroke(accentColor, lineWidth: 8)
                         }
@@ -102,7 +103,7 @@ extension MediaChaptersSupplement {
                         .foregroundStyle(.white)
                         .frame(height: 15)
 
-                    Text(chapter.chapterInfo.startTimeSeconds, format: .runtime)
+                    Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
                         .frame(height: 20)
                         .foregroundStyle(Color(UIColor.systemBlue))
                         .padding(.horizontal, 4)

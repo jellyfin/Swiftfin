@@ -27,7 +27,7 @@ struct VideoPlayer: View {
     private var router: VideoPlayerCoordinator.Router
 
     @State
-    private var audioOffset: TimeInterval = 0
+    private var audioOffset: Duration = .zero
     @State
     private var isAspectFilled: Bool = false
     @State
@@ -37,7 +37,7 @@ struct VideoPlayer: View {
     @State
     private var safeAreaInsets: EdgeInsets = .zero
     @State
-    private var subtitleOffset: TimeInterval = 0
+    private var subtitleOffset: Duration = .zero
 
     @StateObject
     private var manager: MediaPlayerManager
@@ -47,12 +47,12 @@ struct VideoPlayer: View {
     /// - Note: This value is boxed to avoid unnecessary updates
     ///         for views that do not implement the current value.
     @StateObject
-    private var scrubbedSecondsBox: PublishedBox<TimeInterval> = .init(initialValue: 0)
+    private var scrubbedSecondsBox: PublishedBox<Duration> = .init(initialValue: .zero)
 
     @StateObject
     private var vlcUIProxy: VLCVideoPlayer.Proxy
 
-    private var scrubbedSeconds: TimeInterval {
+    private var scrubbedSeconds: Duration {
         get {
             scrubbedSecondsBox.value
         }
@@ -88,13 +88,22 @@ struct VideoPlayer: View {
             if let playbackitem = manager.playbackItem {
                 VLCVideoPlayer(configuration: playbackitem.vlcConfiguration)
                     .proxy(vlcUIProxy)
-//                    .onSecondsUpdated { newSeconds, _ in
+                    .onDurationUpdated { newSeconds, _ in
+                        if !isScrubbing {
+                            scrubbedSeconds = newSeconds
+                        }
+
+                        manager.seconds = newSeconds
+                    }
+//                    .onTicksUpdated { newTicks, _ in
+//
+//                        let newSeconds = TimeInterval(newTicks) / 1000
 //
 //                        if !isScrubbing {
 //                            scrubbedSeconds = newSeconds
 //                        }
 //
-                    ////                        manager.set(seconds: newSeconds)
+//                        manager.seconds.value = newSeconds
 //                    }
                     .onStateUpdated { state, _ in
 
@@ -148,8 +157,8 @@ struct VideoPlayer: View {
             .onChange(of: isScrubbing) { isScrubbing in
                 guard !isScrubbing else { return }
 
-                manager.proxy?.setTime(scrubbedSeconds)
-//                manager.set(seconds: scrubbedSeconds)
+                manager.seconds = scrubbedSeconds
+                manager.proxy?.setSeconds(scrubbedSeconds)
             }
             .onChange(of: subtitleColor) { newValue in
                 vlcUIProxy.setSubtitleColor(.absolute(newValue.uiColor))
@@ -170,14 +179,11 @@ struct VideoPlayer: View {
                     router.dismissCoordinator()
                 case let .itemChanged(playbackItem: item):
                     isAspectFilled = false
-                    audioOffset = 0
-                    subtitleOffset = 0
+                    audioOffset = .zero
+                    subtitleOffset = .zero
 
-                    let seconds = item.vlcConfiguration
-                        .startTime
-//                        .asSeconds
-//                    scrubbedSeconds = seconds
-//                    vlcUIProxy.playNewMedia(item.vlcConfiguration)
+                    scrubbedSeconds = item.baseItem.startSeconds ?? .zero
+                    vlcUIProxy.playNewMedia(item.vlcConfiguration)
                 }
             }
     }

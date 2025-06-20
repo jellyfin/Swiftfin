@@ -31,7 +31,7 @@ extension VideoPlayer.Overlay {
         @EnvironmentObject
         private var manager: MediaPlayerManager
         @EnvironmentObject
-        private var scrubbedSecondsBox: PublishedBox<TimeInterval>
+        private var scrubbedSecondsBox: PublishedBox<Duration>
 
         @State
         private var capsuleSliderSize = CGSize.zero
@@ -39,10 +39,10 @@ extension VideoPlayer.Overlay {
         private var sliderSize: CGSize = .zero
 
         private var progress: Double {
-            scrubbedSeconds / manager.item.runTimeSeconds
+            scrubbedSeconds / (manager.item.runtime ?? .seconds(1))
         }
 
-        private var scrubbedSeconds: TimeInterval {
+        private var scrubbedSeconds: Duration {
             scrubbedSecondsBox.value
         }
 
@@ -74,8 +74,11 @@ extension VideoPlayer.Overlay {
                     .trackingSize($capsuleSliderSize)
             } content: {
                 CapsuleSlider(
-                    value: $scrubbedSecondsBox.value,
-                    total: manager.item.runTimeSeconds
+                    value: $scrubbedSecondsBox.value.map(
+                        getter: { $0.seconds },
+                        setter: { .seconds($0) }
+                    ),
+                    total: (manager.item.runtime ?? .zero).seconds
                 )
                 .gesturePadding(30)
                 .onEditingChanged { newValue in
@@ -92,8 +95,11 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private var thumbSlider: some View {
             ThumbSlider(
-                value: $scrubbedSecondsBox.value,
-                total: manager.item.runTimeSeconds
+                value: $scrubbedSecondsBox.value.map(
+                    getter: { $0.seconds },
+                    setter: { .seconds($0) }
+                ),
+                total: (manager.item.runtime ?? .zero).seconds
             )
             .onEditingChanged { newValue in
                 isScrubbing = newValue

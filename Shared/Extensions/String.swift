@@ -92,7 +92,7 @@ extension String {
 
     static let emptyDash = "--"
 
-    static let emptyTime = "--:--"
+    static let emptyRuntime = "--:--"
 
     var shortFileName: String {
         (split(separator: "/").last?.description ?? self)

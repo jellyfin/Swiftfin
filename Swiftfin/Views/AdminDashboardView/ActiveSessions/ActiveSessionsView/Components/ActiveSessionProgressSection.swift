@@ -48,11 +48,11 @@ extension ActiveSessionsView {
                 Spacer()
 
                 HStack(spacing: 2) {
-//                    Text(playState.positionSeconds ?? 0, format: .runtime)
+                    Text(playState.position ?? .zero, format: .runtime)
 
                     Text("/")
 
-                    Text(item.runTimeSeconds, format: .runtime)
+                    Text(item.runtime ?? .zero, format: .runtime)
                 }
                 .monospacedDigit()
             }

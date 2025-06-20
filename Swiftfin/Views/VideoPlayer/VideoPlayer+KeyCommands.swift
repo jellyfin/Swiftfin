@@ -140,12 +140,12 @@ extension VideoPlayer {
                         input: UIKeyCommand.inputLeftArrow
                     ) {
                         jumpProgressObserver.jumpBackward()
-                        manager.proxy?.jumpBackward(jumpBackwardInterval.interval)
+                        manager.proxy?.jumpBackward(jumpBackwardInterval.rawValue)
 
-                        toastProxy.present(
-                            Text(Double(jumpProgressObserver.jumps) * jumpBackwardInterval.interval, format: .minuteSeconds),
-                            systemName: "gobackward"
-                        )
+//                        toastProxy.present(
+//                            Text(Double(jumpProgressObserver.jumps) * jumpBackwardInterval.duration, format: .minuteSeconds),
+//                            systemName: "gobackward"
+//                        )
                     }
 
                     // MARK: - Jump Forward
@@ -155,12 +155,12 @@ extension VideoPlayer {
                         input: UIKeyCommand.inputRightArrow
                     ) {
                         jumpProgressObserver.jumpForward()
-                        manager.proxy?.jumpForward(jumpForwardInterval.interval)
+                        manager.proxy?.jumpForward(jumpForwardInterval.rawValue)
 
-                        toastProxy.present(
-                            Text(Double(jumpProgressObserver.jumps) * jumpForwardInterval.interval, format: .minuteSeconds),
-                            systemName: "goforward"
-                        )
+//                        toastProxy.present(
+//                            Text(Double(jumpProgressObserver.jumps) * jumpForwardInterval.interval, format: .minuteSeconds),
+//                            systemName: "goforward"
+//                        )
                     }
                 }
         }

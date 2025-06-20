@@ -40,3 +40,24 @@ struct ToolbarPillButtonStyle: ButtonStyle {
             .opacity(isEnabled && !configuration.isPressed ? 1 : 0.5)
     }
 }
+
+struct VideoPlayerDrawerContentButton: ButtonStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 7)
+                .fill(Material.ultraThinMaterial)
+
+            configuration.label
+                .font(.subheadline)
+                .fontWeight(.semibold)
+        }
+    }
+}
+
+extension ButtonStyle where Self == VideoPlayerDrawerContentButton {
+
+    static var videoPlayerDrawerContent: VideoPlayerDrawerContentButton {
+        VideoPlayerDrawerContentButton()
+    }
+}

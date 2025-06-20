@@ -63,8 +63,9 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         case ended
         case stop
 
-//        case playNew(item: MediaPlayerItem)
         case playNewBaseItem(item: BaseItemDto)
+        // TODO: - Equatable
+//        case playNewMdiaItem(item: MediaPlayerItem)
     }
 
     // MARK: State
@@ -80,7 +81,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     var playbackItem: MediaPlayerItem? = nil {
         didSet {
             if let playbackItem {
-                seconds.value = playbackItem.baseItem.startTimeSeconds
+//                seconds.value = playbackItem.baseItem.startTimeSeconds
 //                seconds = playbackItem.baseItem.startTimeSeconds
                 playbackItem.manager = self
             }
@@ -101,7 +102,17 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     ///
     /// - Note: This is boxed to avoid unnecessary `View` updates for
     ///         views that do not implement the current value.
-    private(set) var seconds: PublishedBox<TimeInterval> = .init(initialValue: 0)
+
+    // TODO: change to `Duration`
+    // TODO: change the box to private, with new `seconds` property w/ get/set
+    let secondsBox: PublishedBox<TimeInterval> = .init(initialValue: .zero)
+
+    var seconds: Duration {
+        get { Duration.seconds(secondsBox.value) }
+        set {
+            secondsBox.value = newValue.seconds
+        }
+    }
 
     var proxy: MediaPlayerProxy?
     var queue: (any MediaPlayerQueue)?
@@ -201,11 +212,6 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
             return .loadingItem
         }
     }
-
-//    @MainActor
-//    func set(seconds: TimeInterval) {
-//        self.seconds.value = seconds
-//    }
 
     @MainActor
     func set(playbackRequestStatus: PlaybackRequestStatus) {

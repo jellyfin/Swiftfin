@@ -64,11 +64,11 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
         @ViewBuilder
         private var fromBeginningButton: some View {
             Button("From Beginning", systemImage: "play.fill") {
-                manager.proxy?.setTime(0)
+//                manager.proxy?.setTime(0)
 //                manager.set(seconds: 0)
                 selectedMediaPlayerSupplement = nil
             }
-//            .buttonStyle(.videoPlayerDrawerContent)
+            .buttonStyle(.videoPlayerDrawerContent)
             .frame(width: 275, height: 50)
         }
 

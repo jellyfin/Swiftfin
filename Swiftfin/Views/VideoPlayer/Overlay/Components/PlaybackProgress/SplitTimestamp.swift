@@ -19,16 +19,13 @@ extension VideoPlayer.Overlay {
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
-//        @Environment(\.scrubbedSeconds)
-//        @Binding
-//        private var scrubbedSeconds: TimeInterval
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
         @EnvironmentObject
-        private var scrubbedSecondsBox: PublishedBox<TimeInterval>
+        private var scrubbedSecondsBox: PublishedBox<Duration>
 
-        private var scrubbedSeconds: TimeInterval {
+        private var scrubbedSeconds: Duration {
             scrubbedSecondsBox.value
         }
 
@@ -41,7 +38,7 @@ extension VideoPlayer.Overlay {
                 Group {
                     Text("/")
 
-                    Text(manager.seconds.value, format: .runtime)
+                    Text(manager.seconds, format: .runtime)
                 }
                 .foregroundStyle(.secondary)
                 .isVisible(isScrubbing)
@@ -52,18 +49,26 @@ extension VideoPlayer.Overlay {
         private var trailingTimestamp: some View {
             HStack(spacing: 2) {
                 Group {
-                    Text(manager.item.runTimeSeconds - manager.seconds.value, format: .runtime.negated)
+                    if let runtime = manager.item.runtime {
+                        Text(runtime - manager.seconds, format: .runtime)
+                    } else {
+                        Text(verbatim: .emptyRuntime)
+                    }
 
                     Text("/")
                 }
                 .foregroundStyle(.secondary)
                 .isVisible(isScrubbing)
 
-                switch trailingTimestampType {
-                case .timeLeft:
-                    Text(manager.item.runTimeSeconds - scrubbedSeconds, format: .runtime.negated)
-                case .totalTime:
-                    Text(manager.item.runTimeSeconds, format: .runtime)
+                if let runtime = manager.item.runtime {
+                    switch trailingTimestampType {
+                    case .timeLeft:
+                        Text(.zero - (runtime - scrubbedSeconds), format: .runtime)
+                    case .totalTime:
+                        Text(runtime, format: .runtime)
+                    }
+                } else {
+                    Text(verbatim: .emptyRuntime)
                 }
             }
         }

@@ -11,7 +11,7 @@ import SwiftUI
 extension EnvironmentValues {
 
     @Entry
-    var audioOffset: Binding<TimeInterval> = .constant(0)
+    var audioOffset: Binding<Duration> = .constant(.zero)
 
     @Entry
     var isAspectFilled: Binding<Bool> = .constant(false)
@@ -44,5 +44,5 @@ extension EnvironmentValues {
     var selectedMediaPlayerSupplement: Binding<AnyMediaPlayerSupplement?> = .constant(nil)
 
     @Entry
-    var subtitleOffset: Binding<TimeInterval> = .constant(0)
+    var subtitleOffset: Binding<Duration> = .constant(.zero)
 }

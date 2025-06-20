@@ -72,10 +72,10 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private var jumpForwardButton: some View {
             Button {
-                manager.proxy?.jumpForward(jumpForwardInterval.interval)
+                manager.proxy?.jumpForward(jumpForwardInterval.rawValue)
             } label: {
                 Label(
-                    "\(jumpForwardInterval.interval, format: .interval(style: .narrow, fields: [.second]))",
+                    "\(jumpForwardInterval.rawValue, format: Duration.UnitsFormatStyle(allowedUnits: [.seconds], width: .narrow))",
                     systemImage: jumpForwardInterval.forwardSystemImage
                 )
                 .labelStyle(.iconOnly)
@@ -88,10 +88,10 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private var jumpBackwardButton: some View {
             Button {
-                manager.proxy?.jumpBackward(jumpBackwardInterval.interval)
+                manager.proxy?.jumpBackward(jumpBackwardInterval.rawValue)
             } label: {
                 Label(
-                    "\(jumpBackwardInterval.interval, format: .interval(style: .narrow, fields: [.second]))",
+                    "\(jumpBackwardInterval.rawValue, format: Duration.UnitsFormatStyle(allowedUnits: [.seconds], width: .narrow))",
                     systemImage: jumpBackwardInterval.backwardSystemImage
                 )
                 .labelStyle(.iconOnly)
