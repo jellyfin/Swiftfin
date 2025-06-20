@@ -18,9 +18,6 @@ extension ButtonStyle where Self == ToolbarPillButtonStyle {
     static func toolbarPill(_ primary: Color, _ secondary: Color = Color.secondary) -> ToolbarPillButtonStyle {
         ToolbarPillButtonStyle(primary: primary, secondary: secondary)
     }
-}
-
-extension ButtonStyle where Self == ActionButtonStyle {
 
     static var action: ActionButtonStyle {
         ActionButtonStyle()
@@ -55,6 +52,11 @@ struct ActionButtonStyle: ButtonStyle {
     @Environment(\.isSelected)
     private var isSelected
 
+    // MARK: - Focus State
+
+    @FocusState
+    private var isFocused: Bool
+
     // MARK: - Body
 
     func makeBody(configuration: Configuration) -> some View {
@@ -69,5 +71,10 @@ struct ActionButtonStyle: ButtonStyle {
                 .symbolRenderingMode(.monochrome)
                 .labelStyle(.iconOnly)
         }
+        .focused($isFocused)
+        .scaleEffect(isFocused ? 1.2 : 1.0)
+        .animation(
+            .spring(response: 0.2, dampingFraction: 1), value: isFocused
+        )
     }
 }

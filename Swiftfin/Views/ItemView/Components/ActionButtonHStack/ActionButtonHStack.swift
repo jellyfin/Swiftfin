@@ -59,10 +59,8 @@ extension ItemView {
 
                 let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
 
-                Button {
+                Button(L10n.played, systemImage: isCheckmarkSelected ? "checkmark.circle.fill" : "checkmark.circle") {
                     viewModel.send(.toggleIsPlayed)
-                } label: {
-                    Label(L10n.played, systemImage: isCheckmarkSelected ? "checkmark.circle.fill" : "checkmark.circle")
                 }
                 .buttonStyle(.action)
                 .foregroundStyle(accentColor.overlayColor, accentColor, Color(UIColor.lightGray))
@@ -76,10 +74,8 @@ extension ItemView {
 
                 let isHeartSelected = viewModel.item.userData?.isFavorite == true
 
-                Button {
+                Button(L10n.favorite, systemImage: isHeartSelected ? "heart.fill" : "heart") {
                     viewModel.send(.toggleIsFavorite)
-                } label: {
-                    Label(L10n.favorite, systemImage: isHeartSelected ? "heart.fill" : "heart")
                 }
                 .buttonStyle(.action)
                 .foregroundStyle(accentColor.overlayColor, .red, Color(UIColor.lightGray))
