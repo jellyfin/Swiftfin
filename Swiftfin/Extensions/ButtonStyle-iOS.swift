@@ -18,6 +18,10 @@ extension ButtonStyle where Self == ToolbarPillButtonStyle {
     static func toolbarPill(_ primary: Color, _ secondary: Color = Color.secondary) -> ToolbarPillButtonStyle {
         ToolbarPillButtonStyle(primary: primary, secondary: secondary)
     }
+
+    static var action: ActionButtonStyle {
+        ActionButtonStyle()
+    }
 }
 
 // TODO: don't take `Color`, take generic `ShapeStyle`
@@ -38,5 +42,39 @@ struct ToolbarPillButtonStyle: ButtonStyle {
             .background(isEnabled ? primary : secondary)
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .opacity(isEnabled && !configuration.isPressed ? 1 : 0.5)
+    }
+}
+
+struct ActionButtonStyle: ButtonStyle {
+
+    // MARK: - Environment Objects
+
+    @Environment(\.isSelected)
+    private var isSelected
+
+    // MARK: - Focus State
+
+    @FocusState
+    private var isFocused: Bool
+
+    // MARK: - Body
+
+    func makeBody(configuration: Configuration) -> some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10)
+                .foregroundStyle(isSelected ? .secondary : .tertiary)
+
+            configuration.label
+                .font(.title3)
+                .fontWeight(.semibold)
+                .foregroundStyle(.primary)
+                .symbolRenderingMode(.monochrome)
+                .labelStyle(.iconOnly)
+        }
+        .focused($isFocused)
+        .scaleEffect(isFocused ? 1.2 : 1.0)
+        .animation(
+            .spring(response: 0.2, dampingFraction: 1), value: isFocused
+        )
     }
 }

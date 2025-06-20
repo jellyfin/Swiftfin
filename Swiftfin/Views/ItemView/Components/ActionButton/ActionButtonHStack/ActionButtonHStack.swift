@@ -55,43 +55,41 @@ extension ItemView {
         var body: some View {
             HStack(alignment: .center, spacing: 10) {
 
-                // MARK: Toggle Played
+                // MARK: - Toggle Played
 
                 let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
 
-                ActionButton(
-                    L10n.played,
-                    icon: "checkmark.circle",
-                    selectedIcon: "checkmark.circle.fill"
-                ) {
+                Button {
                     viewModel.send(.toggleIsPlayed)
+                } label: {
+                    Label(L10n.played, systemImage: isCheckmarkSelected ? "checkmark.circle.fill" : "checkmark.circle")
                 }
-                .foregroundStyle(accentColor.overlayColor, accentColor, .gray)
+                .buttonStyle(.action)
+                .foregroundStyle(accentColor.overlayColor, accentColor, Color(UIColor.lightGray))
                 .environment(\.isSelected, isCheckmarkSelected)
                 .frame(maxWidth: .infinity)
                 .if(!equalSpacing) { view in
                     view.aspectRatio(1, contentMode: .fit)
                 }
 
-                // MARK: Toggle Favorite
+                // MARK: - Toggle Favorite
 
                 let isHeartSelected = viewModel.item.userData?.isFavorite == true
 
-                ActionButton(
-                    L10n.favorited,
-                    icon: "heart",
-                    selectedIcon: "heart.fill"
-                ) {
+                Button {
                     viewModel.send(.toggleIsFavorite)
+                } label: {
+                    Label(L10n.favorite, systemImage: isHeartSelected ? "heart.fill" : "heart")
                 }
-                .foregroundStyle(accentColor.overlayColor, .red, .gray)
+                .buttonStyle(.action)
+                .foregroundStyle(accentColor.overlayColor, .red, Color(UIColor.lightGray))
                 .environment(\.isSelected, isHeartSelected)
                 .frame(maxWidth: .infinity)
                 .if(!equalSpacing) { view in
                     view.aspectRatio(1, contentMode: .fit)
                 }
 
-                // MARK: Select a Version
+                // MARK: - Select a Version
 
                 if let mediaSources = viewModel.playButtonItem?.mediaSources,
                    mediaSources.count > 1
@@ -104,14 +102,17 @@ extension ItemView {
                         }
                 }
 
-                // MARK: Watch a Trailer
+                // MARK: - Watch a Trailer
 
                 if hasTrailers {
                     TrailerMenu(
                         localTrailers: viewModel.localTrailers,
                         externalTrailers: viewModel.item.remoteTrailers ?? []
                     )
-                    .foregroundStyle(accentColor.overlayColor, .gray)
+                    .menuStyle(.button)
+                    .buttonStyle(.action)
+                    .foregroundStyle(accentColor.overlayColor, Color(UIColor.lightGray))
+                    .environment(\.isSelected, false)
                     .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in
                         view.aspectRatio(1, contentMode: .fit)
