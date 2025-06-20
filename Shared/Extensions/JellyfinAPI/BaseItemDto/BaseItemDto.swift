@@ -47,13 +47,24 @@ extension BaseItemDto {
     }
 
     // TODO: Change to Duration
+    @available(*, deprecated, message: "Use `runtime` instead")
     var runTimeSeconds: TimeInterval {
         TimeInterval(runTimeTicks ?? 0) / 10_000_000
     }
 
-    // TODO: Change to Duration
+    @available(*, deprecated, message: "Use `startDuration` instead")
     var startTimeSeconds: TimeInterval {
         TimeInterval(userData?.playbackPositionTicks ?? 0) / 10_000_000
+    }
+
+    var runtime: Duration? {
+        guard let ticks = runTimeTicks else { return nil }
+        return Duration.microseconds(ticks / 10)
+    }
+
+    var startSeconds: Duration? {
+        guard let ticks = userData?.playbackPositionTicks else { return nil }
+        return Duration.microseconds(ticks / 10)
     }
 
     var seasonEpisodeLabel: String? {
@@ -179,9 +190,11 @@ extension BaseItemDto {
     var fullChapterInfo: [ChapterInfo.FullInfo] {
         guard let chapters else { return [] }
 
-        let ranges: [Range<TimeInterval>] = chapters
-            .map(\.startTimeSeconds)
-            .appending(runTimeSeconds + 1)
+        let afterRuntime = (runtime ?? .zero) + .seconds(1)
+
+        let ranges: [Range<Duration>] = chapters
+            .map { $0.startSeconds ?? .zero }
+            .appending(afterRuntime)
             .adjacentPairs()
             .map { $0 ..< $1 }
 
@@ -209,7 +222,7 @@ extension BaseItemDto {
                     chapterInfo: zip.0,
                     imageSource: .init(url: imageURL),
                     secondsRange: zip.1,
-                    runtimeSeconds: runTimeSeconds
+                    runtime: runtime ?? .zero
                 )
             }
     }

@@ -19,8 +19,14 @@ extension ChapterInfo: Displayable {
 extension ChapterInfo {
 
     // TODO: Change to Duration
+    @available(*, deprecated, message: "Use `startSeconds` instead")
     var startTimeSeconds: TimeInterval {
         TimeInterval(startPositionTicks ?? 0) / 10_000_000
+    }
+
+    var startSeconds: Duration? {
+        guard let startPositionTicks else { return nil }
+        return Duration.microseconds(startPositionTicks / 10)
     }
 }
 
@@ -30,7 +36,7 @@ extension ChapterInfo {
 
         let chapterInfo: ChapterInfo
         let imageSource: ImageSource
-        let secondsRange: Range<TimeInterval>
+        let secondsRange: Range<Duration>
         let systemImage: String = "film"
         let unitRange: Range<Double>
 
@@ -52,13 +58,13 @@ extension ChapterInfo {
         init(
             chapterInfo: ChapterInfo,
             imageSource: ImageSource,
-            secondsRange: Range<TimeInterval>,
-            runtimeSeconds: TimeInterval
+            secondsRange: Range<Duration>,
+            runtime: Duration
         ) {
             self.chapterInfo = chapterInfo
             self.imageSource = imageSource
             self.secondsRange = secondsRange
-            self.unitRange = secondsRange.lowerBound / runtimeSeconds ..< secondsRange.upperBound / runtimeSeconds
+            self.unitRange = secondsRange.lowerBound / runtime ..< secondsRange.upperBound / runtime
         }
 
         func landscapeImageSources(maxWidth: CGFloat?) -> [ImageSource] {

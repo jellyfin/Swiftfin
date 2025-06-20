@@ -90,10 +90,11 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
         let configuration = VLCVideoPlayer.Configuration(url: url)
         configuration.autoPlay = true
 
-        let startSeconds = max(0, baseItem.startTimeSeconds - TimeInterval(Defaults[.VideoPlayer.resumeOffset]))
+//        let startSeconds = max(0, baseItem.startTimeSeconds - TimeInterval(Defaults[.VideoPlayer.resumeOffset]))
 
         if !baseItem.isLiveStream {
-            configuration.startTime = .seconds(Int(startSeconds))
+//            configuration.startDuration = .seconds(startSeconds)
+            configuration.startDuration = baseItem.startSeconds ?? .zero
             configuration.audioIndex = .absolute(mediaSource.defaultAudioStreamIndex ?? -1)
             configuration.subtitleIndex = .absolute(mediaSource.defaultSubtitleStreamIndex ?? -1)
         }

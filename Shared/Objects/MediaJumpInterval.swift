@@ -9,21 +9,43 @@
 import Defaults
 import Foundation
 
-enum MediaJumpInterval: Storable {
+enum MediaJumpInterval: Storable, RawRepresentable {
+
+    typealias RawValue = Duration
 
     case five
     case ten
     case fifteen
     case thirty
-    case custom(interval: TimeInterval)
+    case custom(interval: Duration)
 
-    var interval: TimeInterval {
+    init?(rawValue: Duration) {
+        switch rawValue {
+        case .seconds(5):
+            self = .five
+        case .seconds(10):
+            self = .ten
+        case .seconds(15):
+            self = .fifteen
+        case .seconds(30):
+            self = .thirty
+        default:
+            self = .custom(interval: rawValue)
+        }
+    }
+
+    var rawValue: Duration {
         switch self {
-        case .five: 5
-        case .ten: 10
-        case .fifteen: 15
-        case .thirty: 30
-        case let .custom(interval): interval
+        case .five:
+            .seconds(5)
+        case .ten:
+            .seconds(10)
+        case .fifteen:
+            .seconds(15)
+        case .thirty:
+            .seconds(30)
+        case let .custom(interval):
+            interval
         }
     }
 

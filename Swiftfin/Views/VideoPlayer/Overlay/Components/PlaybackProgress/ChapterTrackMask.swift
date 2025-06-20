@@ -25,7 +25,7 @@ extension VideoPlayer.Overlay.PlaybackProgress {
                 ForEach(chapters) { chapter in
                     HStack(spacing: 0) {
 
-                        if chapter.secondsRange.lowerBound != 0 {
+                        if chapter.secondsRange.lowerBound != .zero {
                             Color.clear
                                 .frame(width: 1.5)
                         }

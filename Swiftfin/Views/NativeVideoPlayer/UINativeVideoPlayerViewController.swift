@@ -94,7 +94,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         player?.replaceCurrentItem(with: newAVPlayerItem)
         player?.currentItem?.externalMetadata = createAVMetadata(for: playbackItem.baseItem)
 
-        seek(to: playbackItem.baseItem.startTimeSeconds)
+//        seek(to: playbackItem.baseItem.startTimeSeconds)
     }
 
     // TODO: get metadata from playback item

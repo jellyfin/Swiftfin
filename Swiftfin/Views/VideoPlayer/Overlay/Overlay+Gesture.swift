@@ -12,10 +12,10 @@ import SwiftUI
 
 extension VideoPlayer.Overlay.GestureLayer {
 
-    struct PanGestureState<Value: BinaryFloatingPoint> {
+    struct PanGestureState<Value: Comparable & AdditiveArithmetic> {
 
         var didStartWithOverlay: Bool = false
-        var startValue: Value = 0
+        var startValue: Value = .zero
         var startPoint: UnitPoint = .zero
         var startTranslation: CGFloat = 0
 
@@ -36,7 +36,7 @@ extension VideoPlayer.Overlay {
 
         @Environment(\.audioOffset)
         @Binding
-        private var audioOffset: TimeInterval
+        private var audioOffset: Duration
 
         @Environment(\.isAspectFilled)
         @Binding
@@ -60,14 +60,14 @@ extension VideoPlayer.Overlay {
 
         @Environment(\.subtitleOffset)
         @Binding
-        private var subtitleOffset: TimeInterval
+        private var subtitleOffset: Duration
 
         @EnvironmentObject
         private var jumpProgressObserver: JumpProgressObserver
         @EnvironmentObject
         private var manager: MediaPlayerManager
         @EnvironmentObject
-        private var scrubbedSecondsBox: PublishedBox<TimeInterval>
+        private var scrubbedSecondsBox: PublishedBox<Duration>
         @EnvironmentObject
         private var toastProxy: ToastProxy
 
@@ -76,7 +76,7 @@ extension VideoPlayer.Overlay {
         @State
         private var brightnessPanGestureState: PanGestureState<CGFloat> = .zero
         @State
-        private var mediaOffsetPanGestureState: PanGestureState<TimeInterval> = .zero
+        private var mediaOffsetPanGestureState: PanGestureState<Duration> = .zero
         @State
         private var playbackRatePanGestureState: PanGestureState<Float> = .zero
         @State
@@ -89,7 +89,7 @@ extension VideoPlayer.Overlay {
         }
 
         private var scrubbedSeconds: TimeInterval {
-            scrubbedSecondsBox.value
+            scrubbedSecondsBox.value.seconds
         }
 
         // MARK: - body
@@ -284,7 +284,7 @@ extension VideoPlayer.Overlay.GestureLayer {
     private func mediaOffsetAction(
         state: UIGestureRecognizer.State,
         translation: CGFloat,
-        source: Binding<TimeInterval>
+        source: Binding<Duration>
     ) {
         if state == .began {
             mediaOffsetPanGestureState = .zero
@@ -299,17 +299,18 @@ extension VideoPlayer.Overlay.GestureLayer {
             toNearest: 0.1
         )
 
-        source.wrappedValue = clamp(newOffset, min: -30, max: 30)
+        let newSeconds = Duration.seconds(clamp(newOffset, min: -30, max: 30))
+        source.wrappedValue = newSeconds
 
         print(source.wrappedValue)
 
-//        toastProxy.present(
-//            Text(
-//                source.wrappedValue,
-//                format: .interval(style: .abbreviated, fields: [.second])
-//            ),
-//            systemName: "heart.fill"
-//        )
+        toastProxy.present(
+            Text(
+                source.wrappedValue,
+                format: Duration.UnitsFormatStyle(allowedUnits: [.seconds], width: .abbreviated)
+            ),
+            systemName: "heart.fill"
+        )
     }
 
     // MARK: - Brightness
@@ -388,10 +389,13 @@ extension VideoPlayer.Overlay.GestureLayer {
             return
         }
 
-        let newSeconds = scrubPanGestureState
-            .startValue - (scrubPanGestureState.startPoint[keyPath: pointComponent] - point[keyPath: pointComponent]) * rate * manager.item
-            .runTimeSeconds
-        scrubbedSecondsBox.value = clamp(newSeconds, min: 0, max: manager.item.runTimeSeconds)
+        let scrubOffset = scrubPanGestureState
+            .startValue - (scrubPanGestureState.startPoint[keyPath: pointComponent] - point[keyPath: pointComponent])
+        let newSeconds = Duration.seconds(scrubOffset * rate * (manager.item.runtime?.seconds ?? 0))
+
+        print(scrubOffset, newSeconds)
+
+//        scrubbedSecondsBox.value = clamp(newSeconds, min: .zero, max: manager.item.runtime ?? .zero)
     }
 
     // MARK: - Volume
@@ -450,18 +454,24 @@ extension VideoPlayer.Overlay.GestureLayer {
         switch direction {
         case .left:
             jumpProgressObserver.jumpBackward()
-            manager.proxy?.jumpBackward(jumpBackwardInterval.interval)
+            manager.proxy?.jumpBackward(jumpBackwardInterval.rawValue)
 
             toastProxy.present(
-                Text(Double(jumpProgressObserver.jumps) * jumpBackwardInterval.interval, format: .minuteSeconds),
+                Text(
+                    jumpBackwardInterval.rawValue * jumpProgressObserver.jumps,
+                    format: .minuteSecondsNarrow
+                ),
                 systemName: "gobackward"
             )
         case .right:
             jumpProgressObserver.jumpForward()
-            manager.proxy?.jumpForward(jumpForwardInterval.interval)
+            manager.proxy?.jumpForward(jumpForwardInterval.rawValue)
 
             toastProxy.present(
-                Text(Double(jumpProgressObserver.jumps) * jumpForwardInterval.interval, format: .minuteSeconds),
+                Text(
+                    jumpForwardInterval.rawValue * jumpProgressObserver.jumps,
+                    format: .minuteSecondsNarrow
+                ),
                 systemName: "goforward"
             )
         default: ()

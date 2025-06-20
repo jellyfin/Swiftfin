@@ -40,36 +40,37 @@ extension FormatStyle where Self == MinuteSecondsFormatStyle {
     static var minuteSeconds: MinuteSecondsFormatStyle { MinuteSecondsFormatStyle() }
 }
 
-// TODO: Change to Duration input
-struct RunTimeFormatStyle: FormatStyle {
+extension FormatStyle where Self == Duration.UnitsFormatStyle {
 
-    private var isNegated: Bool = false
-
-    var negated: RunTimeFormatStyle {
-        copy(self, modifying: \.isNegated, to: true)
-    }
-
-    func format(_ value: TimeInterval) -> String {
-        let value = Int(value)
-        let hours = value / 3600
-        let minutes = (value % 3600) / 60
-        let seconds = value % 3600 % 60
-
-        let hourText = hours > 0 ? String(hours).appending(":") : ""
-        let minutesText = hours > 0 ? String(minutes).leftPad(maxWidth: 2, with: "0").appending(":") : String(minutes)
-            .appending(":")
-        let secondsText = String(seconds).leftPad(maxWidth: 2, with: "0")
-
-        return hourText
-            .appending(minutesText)
-            .appending(secondsText)
-            .prepending("-", if: isNegated)
+    static var minuteSecondsNarrow: Duration.UnitsFormatStyle {
+        Duration.UnitsFormatStyle(
+            allowedUnits: [.minutes, .seconds],
+            width: .narrow
+        )
     }
 }
 
-extension FormatStyle where Self == RunTimeFormatStyle {
+struct RuntimeFormatStyle: FormatStyle {
 
-    static var runtime: RunTimeFormatStyle { RunTimeFormatStyle() }
+    func format(_ value: Duration) -> String {
+
+        let formatStyle: Duration.TimeFormatStyle
+
+        if value.components.seconds.magnitude >= 3600 {
+            formatStyle = Duration.TimeFormatStyle(pattern: .hourMinuteSecond)
+        } else {
+            formatStyle = Duration.TimeFormatStyle(pattern: .minuteSecond)
+        }
+
+        return formatStyle.format(value)
+    }
+}
+
+extension FormatStyle where Self == RuntimeFormatStyle {
+
+    static var runtime: RuntimeFormatStyle {
+        RuntimeFormatStyle()
+    }
 }
 
 struct VerbatimFormatStyle<Value: CustomStringConvertible>: FormatStyle {
