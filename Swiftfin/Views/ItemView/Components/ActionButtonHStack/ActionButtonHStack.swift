@@ -24,9 +24,6 @@ extension ItemView {
         @ObservedObject
         private var viewModel: ItemViewModel
 
-        @EnvironmentObject
-        private var router: MainCoordinator.Router
-
         private let equalSpacing: Bool
 
         // MARK: - Has Trailers
