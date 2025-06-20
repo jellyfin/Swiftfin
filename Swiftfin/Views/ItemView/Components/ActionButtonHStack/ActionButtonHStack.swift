@@ -56,7 +56,8 @@ extension ItemView {
 
                 // MARK: Toggle Played
 
-                if viewModel.item.type != .person {
+                /// Marking Persons and Artists as played doesn't do anything.
+                if viewModel.item.type != .person && viewModel.item.type != .musicArtist {
 
                     let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
 

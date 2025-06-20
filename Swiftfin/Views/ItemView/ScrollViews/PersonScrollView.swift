@@ -11,7 +11,7 @@ import SwiftUI
 
 extension ItemView {
 
-    struct CompactPosterScrollView<Content: View>: ScrollContainerView {
+    struct PersonScrollView<Content: View>: ScrollContainerView {
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
@@ -43,10 +43,18 @@ extension ItemView {
 
         @ViewBuilder
         private var headerView: some View {
-            ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
+            let personViewModel = viewModel as! PersonItemViewModel
+            if let randomElement = personViewModel.personItems.elements.randomElement(),
+               let randomValue = randomElement.value.randomElement()
+            {
+                ImageView(randomValue.imageSource(
+                    randomValue.type == .episode ? .primary : .backdrop,
+                    maxWidth: UIScreen.main.bounds.width
+                ))
                 .aspectRatio(1.77, contentMode: .fill)
                 .frame(height: UIScreen.main.bounds.height * 0.35)
                 .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
+            }
         }
 
         var body: some View {
@@ -86,7 +94,7 @@ extension ItemView {
     }
 }
 
-extension ItemView.CompactPosterScrollView {
+extension ItemView.PersonScrollView {
 
     struct OverlayView: View {
 
@@ -102,36 +110,35 @@ extension ItemView.CompactPosterScrollView {
         @ViewBuilder
         private var rightShelfView: some View {
             VStack(alignment: .leading) {
-
                 Text(viewModel.item.displayTitle)
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
 
                 DotHStack {
-                    if viewModel.item.isUnaired {
-                        if let premiereDateLabel = viewModel.item.airDateLabel {
-                            Text(premiereDateLabel)
-                        }
-                    } else {
-                        if let productionYear = viewModel.item.productionYear {
-                            Text(String(productionYear))
-                        }
+                    if let birthday = viewModel.item.premiereDate?.formatted(date: .numeric, time: .omitted) {
+                        Text(birthday)
                     }
-
-                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
-                        Text(runtime)
+                    if let deathday = viewModel.item.endDate?.formatted(date: .numeric, time: .omitted) {
+                        Text(deathday)
                     }
                 }
                 .lineLimit(1)
                 .font(.subheadline.weight(.medium))
                 .foregroundColor(Color(UIColor.lightGray))
 
-                ItemView.AttributesHStack(
-                    attributes: attributes,
-                    viewModel: viewModel,
-                    alignment: .leading
-                )
+                if let age = viewModel.item.premiereDate?.formatted(.age.death(viewModel.item.endDate)) {
+                    Text(age)
+                        .font(.subheadline.weight(.medium))
+                        .foregroundColor(Color(UIColor.lightGray))
+                }
+
+                if let birthPlace = viewModel.item.productionLocations?.first {
+                    Text(birthPlace)
+                        .font(.subheadline.weight(.medium))
+                        .multilineTextAlignment(.leading)
+                        .foregroundColor(Color(UIColor.lightGray))
+                }
             }
         }
 
