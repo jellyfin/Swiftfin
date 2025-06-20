@@ -54,20 +54,37 @@ struct ActionButtonStyle: ButtonStyle {
 
     @Environment(\.isSelected)
     private var isSelected
+    @Environment(\.isEnabled)
+    private var isEnabled
 
     // MARK: - Body
 
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
-                .foregroundStyle(isSelected ? .secondary : .tertiary)
+                .foregroundStyle(backgroundStyle)
 
             configuration.label
                 .font(.title3)
                 .fontWeight(.semibold)
-                .foregroundStyle(.primary)
+                .foregroundStyle(textStyle)
                 .symbolRenderingMode(.monochrome)
-                .labelStyle(.iconOnly)
+        }
+    }
+
+    // MARK: - Text Style
+
+    private var textStyle: AnyShapeStyle {
+        isEnabled ? AnyShapeStyle(.primary) : AnyShapeStyle(Color.secondarySystemFill)
+    }
+
+    // MARK: - Background Style
+
+    private var backgroundStyle: AnyShapeStyle {
+        if isEnabled {
+            return AnyShapeStyle(isSelected ? .secondary : .tertiary)
+        } else {
+            return AnyShapeStyle(Color.secondarySystemFill)
         }
     }
 }

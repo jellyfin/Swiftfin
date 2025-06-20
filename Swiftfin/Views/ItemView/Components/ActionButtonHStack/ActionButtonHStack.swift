@@ -63,6 +63,7 @@ extension ItemView {
                     viewModel.send(.toggleIsPlayed)
                 }
                 .buttonStyle(.action)
+                .labelStyle(.iconOnly)
                 .foregroundStyle(accentColor.overlayColor, accentColor, Color(UIColor.lightGray))
                 .environment(\.isSelected, isCheckmarkSelected)
                 .frame(maxWidth: .infinity)
@@ -78,6 +79,7 @@ extension ItemView {
                     viewModel.send(.toggleIsFavorite)
                 }
                 .buttonStyle(.action)
+                .labelStyle(.iconOnly)
                 .foregroundStyle(accentColor.overlayColor, .red, Color(UIColor.lightGray))
                 .environment(\.isSelected, isHeartSelected)
                 .frame(maxWidth: .infinity)
@@ -90,12 +92,19 @@ extension ItemView {
                 if let mediaSources = viewModel.playButtonItem?.mediaSources,
                    mediaSources.count > 1
                 {
-                    VersionMenu(viewModel: viewModel, mediaSources: mediaSources)
-                        .foregroundStyle(accentColor.overlayColor)
-                        .frame(maxWidth: .infinity)
-                        .if(!equalSpacing) { view in
-                            view.aspectRatio(1, contentMode: .fit)
-                        }
+                    VersionMenu(
+                        viewModel: viewModel,
+                        mediaSources: mediaSources
+                    )
+                    .menuStyle(.button)
+                    .buttonStyle(.action)
+                    .labelStyle(.iconOnly)
+                    .foregroundStyle(accentColor.overlayColor, Color(UIColor.lightGray))
+                    .environment(\.isSelected, false)
+                    .frame(maxWidth: .infinity)
+                    .if(!equalSpacing) { view in
+                        view.aspectRatio(1, contentMode: .fit)
+                    }
                 }
 
                 // MARK: - Watch a Trailer
@@ -107,6 +116,7 @@ extension ItemView {
                     )
                     .menuStyle(.button)
                     .buttonStyle(.action)
+                    .labelStyle(.iconOnly)
                     .foregroundStyle(accentColor.overlayColor, Color(UIColor.lightGray))
                     .environment(\.isSelected, false)
                     .frame(maxWidth: .infinity)
