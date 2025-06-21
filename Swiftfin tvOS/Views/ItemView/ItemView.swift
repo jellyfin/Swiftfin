@@ -12,8 +12,17 @@ import SwiftUI
 
 struct ItemView: View {
 
+    protocol ScrollContainerView: View {
+
+        associatedtype Content: View
+
+        init(viewModel: ItemViewModel, content: @escaping () -> Content)
+    }
+
     @StateObject
     private var viewModel: ItemViewModel
+
+    // MARK: typeViewModel
 
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
         switch item.type {
@@ -36,26 +45,43 @@ struct ItemView: View {
     }
 
     @ViewBuilder
-    private var contentView: some View {
+    private var scrollContentView: some View {
         switch viewModel.item.type {
         case .boxSet:
-            CollectionItemView(viewModel: viewModel as! CollectionItemViewModel)
+            CollectionItemContentView(viewModel: viewModel as! CollectionItemViewModel)
         case .episode:
-            EpisodeItemView(viewModel: viewModel as! EpisodeItemViewModel)
+            EpisodeItemContentView(viewModel: viewModel as! EpisodeItemViewModel)
         case .movie:
-            MovieItemView(viewModel: viewModel as! MovieItemViewModel)
+            MovieItemContentView(viewModel: viewModel as! MovieItemViewModel)
         case .series:
-            SeriesItemView(viewModel: viewModel as! SeriesItemViewModel)
+            SeriesItemContentView(viewModel: viewModel as! SeriesItemViewModel)
         default:
             Text(L10n.notImplementedYetWithType(viewModel.item.type ?? "--"))
         }
+    }
+
+    // MARK: scrollContainerView
+
+    private func scrollContainerView<Content: View>(
+        viewModel: ItemViewModel,
+        content: @escaping () -> Content
+    ) -> any ScrollContainerView {
+        CinematicScrollView(viewModel: viewModel, content: content)
+    }
+
+    @ViewBuilder
+    private var innerBody: some View {
+        scrollContainerView(viewModel: viewModel) {
+            scrollContentView
+        }
+        .eraseToAnyView()
     }
 
     var body: some View {
         ZStack {
             switch viewModel.state {
             case .content:
-                contentView
+                innerBody
             case let .error(error):
                 ErrorView(error: error)
                     .onRetry {

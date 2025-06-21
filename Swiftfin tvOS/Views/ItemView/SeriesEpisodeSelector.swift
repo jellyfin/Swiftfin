@@ -10,9 +10,9 @@ import Defaults
 import Foundation
 import SwiftUI
 
-extension SeriesItemView {
+extension ItemView {
 
-    struct ContentView: View {
+    struct SeriesItemContentView: View {
 
         @StateObject
         private var focusGuide = FocusGuide()
@@ -46,21 +46,6 @@ extension SeriesItemView {
                 }
 
                 ItemView.AboutView(viewModel: viewModel)
-            }
-            .background {
-                BlurView(style: .dark)
-                    .mask {
-                        VStack(spacing: 0) {
-                            LinearGradient(gradient: Gradient(stops: [
-                                .init(color: .white, location: 0),
-                                .init(color: .white.opacity(0.7), location: 0.4),
-                                .init(color: .white.opacity(0), location: 1),
-                            ]), startPoint: .bottom, endPoint: .top)
-                                .frame(height: UIScreen.main.bounds.height - 150)
-
-                            Color.white
-                        }
-                    }
             }
         }
     }
