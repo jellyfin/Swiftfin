@@ -238,6 +238,18 @@ class VideoPlayerManager: ViewModel {
 
             let request = Paths.reportPlaybackStopped(stopInfo)
             let _ = try await userSession.client.send(request)
+
+            if let itemID = currentViewModel.item.id {
+                Notifications[.itemShouldRefreshMetadata].post(itemID)
+            }
+
+            if let seasonID = currentViewModel.item.seasonID {
+                Notifications[.itemShouldRefreshMetadata].post(seasonID)
+            }
+
+            if let seriesID = currentViewModel.item.seriesID {
+                Notifications[.itemShouldRefreshMetadata].post(seriesID)
+            }
         }
     }
 
