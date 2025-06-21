@@ -34,7 +34,7 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            ActionButton(L10n.version, icon: "list.dash") {
+            Menu(L10n.played, systemImage: "list.dash") {
                 Picker(L10n.version, selection: selectedMediaSource) {
                     ForEach(mediaSources, id: \.hashValue) { mediaSource in
                         Button {
