@@ -11,12 +11,20 @@ import SwiftUI
 
 extension ItemView {
 
-    struct CinematicScrollView<Content: View>: View {
+    struct CinematicScrollView<Content: View>: ScrollContainerView {
 
         @ObservedObject
-        var viewModel: ItemViewModel
+        private var viewModel: ItemViewModel
 
-        let content: () -> Content
+        private let content: Content
+
+        init(
+            viewModel: ItemViewModel,
+            content: @escaping () -> Content
+        ) {
+            self.viewModel = viewModel
+            self.content = content()
+        }
 
         var body: some View {
             ZStack {
@@ -27,7 +35,7 @@ extension ItemView {
                 }
 
                 ScrollView(.vertical, showsIndicators: false) {
-                    content()
+                    content
                 }
             }
             .ignoresSafeArea()
@@ -42,6 +50,7 @@ extension ItemView {
         enum CinematicHeaderFocusLayer: Hashable {
             case top
             case playButton
+            case actionButtons
         }
 
         @StoredValue(.User.itemViewAttributes)
@@ -131,6 +140,7 @@ extension ItemView {
                         }
 
                         ItemView.ActionButtonHStack(viewModel: viewModel)
+                            .focused($focusedLayer, equals: .actionButtons)
                             .frame(width: 440)
                     }
                     .frame(width: 450)
@@ -140,7 +150,11 @@ extension ItemView {
             .padding(.horizontal, 50)
             .onChange(of: focusedLayer) { _, layer in
                 if layer == .top {
-                    focusedLayer = .playButton
+                    if viewModel.presentPlayButton {
+                        focusedLayer = .playButton
+                    } else {
+                        focusedLayer = .actionButtons
+                    }
                 }
             }
         }

@@ -9,9 +9,9 @@
 import JellyfinAPI
 import SwiftUI
 
-extension CollectionItemView {
+extension ItemView {
 
-    struct ContentView: View {
+    struct CollectionItemContentView: View {
 
         @ObservedObject
         var viewModel: CollectionItemViewModel
@@ -46,13 +46,7 @@ extension CollectionItemView {
                 ItemView.AboutView(viewModel: viewModel)
             }
             .background {
-                BlurView(style: .dark)
-                    .maskLinearGradient {
-                        (location: 0.5, opacity: 0)
-                        (location: 0.7, opacity: 0.8)
-                        (location: 0.95, opacity: 0.8)
-                        (location: 1, opacity: 1)
-                    }
+                BackgroundBlurView()
             }
         }
     }

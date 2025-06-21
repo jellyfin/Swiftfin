@@ -8,9 +8,9 @@
 
 import SwiftUI
 
-extension MovieItemView {
+extension ItemView {
 
-    struct ContentView: View {
+    struct MovieItemContentView: View {
 
         @ObservedObject
         var viewModel: MovieItemViewModel
@@ -40,13 +40,7 @@ extension MovieItemView {
                 ItemView.AboutView(viewModel: viewModel)
             }
             .background {
-                BlurView(style: .dark)
-                    .maskLinearGradient {
-                        (location: 0.5, opacity: 0)
-                        (location: 0.7, opacity: 0.8)
-                        (location: 0.95, opacity: 0.8)
-                        (location: 1, opacity: 1)
-                    }
+                BackgroundBlurView()
             }
         }
     }
