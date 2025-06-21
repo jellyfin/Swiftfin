@@ -39,9 +39,6 @@ extension ItemView {
 
                 ItemView.AboutView(viewModel: viewModel)
             }
-            .background {
-                BackgroundBlurView()
-            }
         }
     }
 }
