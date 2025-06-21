@@ -13,8 +13,8 @@ import SwiftUI
 
 struct UserProfileSettingsView: View {
 
-    @EnvironmentObject
-    private var router: UserProfileSettingsCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     private var viewModel: SettingsViewModel
@@ -54,7 +54,8 @@ struct UserProfileSettingsView: View {
 
                 Section {
                     ChevronButton(L10n.security) {
-                        router.route(to: \.localSecurity)
+                        // TODO: Implement localSecurity route in new Router system
+                        router.route(to: .localSecurity)
                     }
                 }
 

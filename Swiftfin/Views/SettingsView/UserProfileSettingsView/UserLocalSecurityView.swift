@@ -27,8 +27,8 @@ struct UserLocalSecurityView: View {
 
     // MARK: - State & Environment Objects
 
-    @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = UserLocalSecurityViewModel()
@@ -203,12 +203,14 @@ struct UserLocalSecurityView: View {
                     )
 
                     viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: "")
-                    router.popLast()
+                    // TODO: Implement pop functionality in new router system
+//                    router.popLast()
                 }
             case .promptForNewPin:
                 onPinCompletion = {
                     viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: pinHint)
-                    router.popLast()
+                    // TODO: Implement pop functionality in new router system
+//                    router.popLast()
                 }
 
                 pin = ""

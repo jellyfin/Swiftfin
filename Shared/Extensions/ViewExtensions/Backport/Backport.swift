@@ -25,6 +25,18 @@ extension Backport where Content: View {
             }
         }
     }
+
+    @available(tvOS, unavailable)
+    @ViewBuilder
+    func searchFocused(
+        _ isSearchFocused: FocusState<Bool>.Binding
+    ) -> some View {
+        if #available(iOS 18.0, *) {
+            content.searchFocused(isSearchFocused)
+        } else {
+            content
+        }
+    }
 }
 
 // MARK: ButtonBorderShape

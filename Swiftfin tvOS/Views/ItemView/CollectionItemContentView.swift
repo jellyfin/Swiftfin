@@ -16,8 +16,8 @@ extension ItemView {
         @ObservedObject
         var viewModel: CollectionItemViewModel
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         var body: some View {
             VStack(spacing: 0) {
@@ -34,7 +34,8 @@ extension ItemView {
                             items: element.value
                         )
                         .onSelect { item in
-                            router.route(to: \.item, item)
+                            // TODO: Implement router.route(to: .item(parameter: item)) when ItemRouter is available
+                            router.route(to: .item(item: item))
                         }
                     }
                 }

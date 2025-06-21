@@ -22,8 +22,8 @@ struct VideoPlayer: View {
     @Environment(\.scenePhase)
     private var scenePhase
 
-    @EnvironmentObject
-    private var router: VideoPlayerCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler

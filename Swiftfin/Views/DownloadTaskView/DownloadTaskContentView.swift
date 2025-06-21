@@ -21,10 +21,8 @@ extension DownloadTaskView {
         @Injected(\.downloadManager)
         private var downloadManager
 
-        @EnvironmentObject
-        private var mainCoordinator: MainCoordinator.Router
-        @EnvironmentObject
-        private var router: DownloadTaskCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var downloadTask: DownloadTask
@@ -89,9 +87,9 @@ extension DownloadTaskView {
                         PrimaryButton(title: L10n.play)
                             .onSelect {
                                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                                    router.dismissCoordinator {
-                                        mainCoordinator.route(to: \.videoPlayer, DownloadVideoPlayerManager(downloadTask: downloadTask))
-                                    }
+                                    // TODO: Implement dismiss functionality in new router system
+                                    router.dismissCoordinator()
+                                    router.route(to: .videoPlayer(manager: DownloadVideoPlayerManager(downloadTask: downloadTask)))
                                 } else {
                                     isPresentingVideoPlayerTypeError = true
                                 }

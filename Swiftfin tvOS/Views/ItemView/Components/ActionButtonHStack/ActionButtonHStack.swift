@@ -23,8 +23,8 @@ extension ItemView {
 
         // MARK: - Observed, State, & Environment Objects
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: ItemViewModel
@@ -164,6 +164,7 @@ extension ItemView {
                 case let .error(eventError):
                     error = eventError
                 case .deleted:
+                    // TODO: Implement router.dismissCoordinator() equivalent with new Router system
                     router.dismissCoordinator()
                 }
             }

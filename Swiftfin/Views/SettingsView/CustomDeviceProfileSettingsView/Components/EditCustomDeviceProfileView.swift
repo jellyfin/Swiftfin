@@ -19,8 +19,8 @@ extension CustomDeviceProfileSettingsView {
         @StoredValue(.User.customDeviceProfiles)
         private var customDeviceProfiles
 
-        @EnvironmentObject
-        private var router: EditCustomDeviceProfileCoordinator.Router
+        @Router
+        private var router
 
         @State
         private var isPresentingNotSaved = false
@@ -92,21 +92,24 @@ extension CustomDeviceProfileSettingsView {
                         title: L10n.audio,
                         content: profile.audio.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        router.route(to: \.customDeviceAudioEditor, $profile.audio)
+                        // TODO: implement customDeviceAudioEditor route
+                        // router.route(to: .customDeviceAudioEditor(profile: $profile.audio))
                     }
 
                     codecSection(
                         title: L10n.video,
                         content: profile.video.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        router.route(to: \.customDeviceVideoEditor, $profile.video)
+                        // TODO: implement customDeviceVideoEditor route
+                        // router.route(to: .customDeviceVideoEditor(profile: $profile.video))
                     }
 
                     codecSection(
                         title: L10n.containers,
                         content: profile.container.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        router.route(to: \.customDeviceContainerEditor, $profile.container)
+                        // TODO: implement customDeviceContainerEditor route
+                        // router.route(to: .customDeviceContainerEditor(profile: $profile.container))
                     }
                 } footer: {
                     if !isValid {
@@ -131,14 +134,14 @@ extension CustomDeviceProfileSettingsView {
                     }
 
                     UIDevice.impact(.light)
-                    router.dismissCoordinator()
+                    router.dismissSheet()
                 }
                 .buttonStyle(.toolbarPill)
                 .disabled(!isValid)
             }
             .alert(L10n.profileNotSaved, isPresented: $isPresentingNotSaved) {
                 Button(L10n.close, role: .destructive) {
-                    router.dismissCoordinator()
+                    router.dismissSheet()
                 }
             }
         }

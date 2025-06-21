@@ -16,8 +16,8 @@ extension SelectUserView {
         @Environment(\.colorScheme)
         private var colorScheme
 
-        @EnvironmentObject
-        private var router: SelectUserCoordinator.Router
+        @Router
+        private var router
 
         @Binding
         private var serverSelection: SelectUserServerSelection
@@ -39,12 +39,12 @@ extension SelectUserView {
             Menu {
                 Section {
                     Button(L10n.addServer, systemImage: "plus") {
-                        router.route(to: \.connectToServer)
+                        router.route(to: .connectToServer)
                     }
 
                     if let selectedServer {
                         Button(L10n.editServer, systemImage: "server.rack") {
-                            router.route(to: \.editServer, selectedServer)
+                            router.route(to: .editServer(server: selectedServer))
                         }
                     }
                 }

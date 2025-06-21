@@ -19,8 +19,8 @@ extension LiveVideoPlayer {
 
         @EnvironmentObject
         private var proxy: VLCVideoPlayer.Proxy
-        @EnvironmentObject
-        private var router: LiveVideoPlayerCoordinator.Router
+        @Router
+        private var router
 
         @State
         private var confirmCloseWorkItem: DispatchWorkItem?

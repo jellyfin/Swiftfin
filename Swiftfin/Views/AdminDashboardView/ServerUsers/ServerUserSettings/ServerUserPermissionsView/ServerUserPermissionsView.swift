@@ -15,8 +15,8 @@ struct ServerUserPermissionsView: View {
 
     // MARK: - Observed & Environment Objects
 
-    @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     var viewModel: ServerUserAdminViewModel
@@ -50,7 +50,7 @@ struct ServerUserPermissionsView: View {
             .navigationTitle(L10n.permissions)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
-                router.dismissCoordinator()
+                router.dismissSheet()
             }
             .topBarTrailing {
                 if viewModel.backgroundStates.contains(.updating) {
@@ -71,7 +71,7 @@ struct ServerUserPermissionsView: View {
                     error = eventError
                 case .updated:
                     UIDevice.feedback(.success)
-                    router.dismissCoordinator()
+                    router.dismissSheet()
                 }
             }
             .errorMessage($error)

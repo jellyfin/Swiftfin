@@ -11,8 +11,8 @@ import SwiftUI
 
 struct QuickConnectView: View {
 
-    @EnvironmentObject
-    private var router: UserSignInCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     private var viewModel: QuickConnect
@@ -67,7 +67,8 @@ struct QuickConnectView: View {
             viewModel.stop()
         }
         .navigationBarCloseButton {
-            router.popLast()
+            // TODO: Implement popLast functionality in new router system
+            router.dismissCoordinator()
         }
     }
 }

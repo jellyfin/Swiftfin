@@ -15,8 +15,8 @@ extension CustomDeviceProfileSettingsView {
         @StoredValue(.User.customDeviceProfiles)
         private var customDeviceProfiles
 
-        @EnvironmentObject
-        private var router: EditCustomDeviceProfileCoordinator.Router
+        @Router
+        private var router
 
         @State
         private var isPresentingNotSaved = false
@@ -99,6 +99,7 @@ extension CustomDeviceProfileSettingsView {
                                 if createProfile {
                                     customDeviceProfiles.append(profile.value)
                                 }
+                                // TODO: Implement dismissCoordinator functionality in new Router system
                                 router.dismissCoordinator()
                             }
                             .disabled(!isValid)
@@ -109,7 +110,8 @@ extension CustomDeviceProfileSettingsView {
                         title: L10n.audio,
                         content: profile.value.audio.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        router.route(to: \.customDeviceAudioEditor, $profile.value.audio)
+                        // TODO: Implement customDeviceAudioEditor route in new Router system
+//                        router.route(to: .customDeviceAudioEditor(audio: $profile.value.audio))
                     }
                     .padding(.vertical)
 
@@ -117,7 +119,8 @@ extension CustomDeviceProfileSettingsView {
                         title: L10n.video,
                         content: profile.value.video.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        router.route(to: \.customDeviceVideoEditor, $profile.value.video)
+                        // TODO: Implement customDeviceVideoEditor route in new Router system
+//                        router.route(to: .customDeviceVideoEditor(video: $profile.value.video))
                     }
                     .padding(.vertical)
 
@@ -125,7 +128,8 @@ extension CustomDeviceProfileSettingsView {
                         title: L10n.containers,
                         content: profile.value.container.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        router.route(to: \.customDeviceContainerEditor, $profile.value.container)
+                        // TODO: Implement customDeviceContainerEditor route in new Router system
+//                        router.route(to: .customDeviceContainerEditor(container: $profile.value.container))
                     }
                     .padding(.vertical)
 
@@ -136,6 +140,7 @@ extension CustomDeviceProfileSettingsView {
                 .navigationTitle(L10n.customProfile)
                 .alert(L10n.profileNotSaved, isPresented: $isPresentingNotSaved) {
                     Button(L10n.close, role: .destructive) {
+                        // TODO: Implement dismissCoordinator functionality in new Router system
                         router.dismissCoordinator()
                     }
                 }

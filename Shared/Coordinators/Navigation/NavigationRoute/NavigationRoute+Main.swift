@@ -1,0 +1,47 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+//
+
+import JellyfinAPI
+import SwiftUI
+
+extension NavigationRoute {
+
+    #if !os(tvOS)
+    static var aboutApp: NavigationRoute {
+        NavigationRoute(
+            id: "about-app"
+        ) {
+            AboutAppView()
+        }
+    }
+
+    static func appIconSelector(viewModel: SettingsViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "app-icon-selector"
+        ) {
+            AppIconSelectorView(viewModel: viewModel)
+        }
+    }
+    #endif
+
+    static var appSettings: NavigationRoute {
+        NavigationRoute(
+            id: "app-settings"
+        ) {
+            AppSettingsView()
+        }
+    }
+
+    static func library(_ viewModel: PagingLibraryViewModel<BaseItemDto>) -> NavigationRoute {
+        NavigationRoute(
+            id: "library-\(viewModel.parent?.id ?? "Unknown")",
+        ) {
+            PagingLibraryView(viewModel: viewModel)
+        }
+    }
+}

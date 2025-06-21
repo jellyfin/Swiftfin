@@ -20,8 +20,8 @@ extension VideoPlayer {
 
         @EnvironmentObject
         private var proxy: VLCVideoPlayer.Proxy
-        @EnvironmentObject
-        private var router: VideoPlayerCoordinator.Router
+        @Router
+        private var router
         @EnvironmentObject
         private var videoPlayerManager: VideoPlayerManager
 

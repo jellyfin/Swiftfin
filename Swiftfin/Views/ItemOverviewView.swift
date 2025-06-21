@@ -11,8 +11,8 @@ import SwiftUI
 
 struct ItemOverviewView: View {
 
-    @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
+    @Router
+    private var router
 
     let item: BaseItemDto
 
@@ -39,6 +39,7 @@ struct ItemOverviewView: View {
         .navigationTitle(item.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
+            // TODO: Implement dismiss functionality in new router system
             router.dismissCoordinator()
         }
     }

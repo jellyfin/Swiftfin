@@ -9,13 +9,13 @@
 import CollectionVGrid
 import Defaults
 import JellyfinAPI
-import Stinsen
+
 import SwiftUI
 
 struct MediaView: View {
 
-    @EnvironmentObject
-    private var router: MediaCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = MediaViewModel()
@@ -34,7 +34,7 @@ struct MediaView: View {
                             parent: item,
                             filters: .default
                         )
-                        router.route(to: \.library, viewModel)
+                        router.route(to: .library(viewModel))
                     case .downloads:
                         assertionFailure("Downloads unavailable on tvOS")
                     case .favorites:
@@ -43,9 +43,9 @@ struct MediaView: View {
                             id: "favorites",
                             filters: .favorites
                         )
-                        router.route(to: \.library, viewModel)
+                        router.route(to: .library(viewModel))
                     case .liveTV:
-                        router.route(to: \.liveTV)
+                        router.route(to: .liveTV)
                     }
                 }
         }

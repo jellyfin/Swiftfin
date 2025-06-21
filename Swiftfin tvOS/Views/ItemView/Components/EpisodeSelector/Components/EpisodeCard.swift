@@ -13,8 +13,8 @@ extension SeriesEpisodeSelector {
 
     struct EpisodeCard: View {
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         let episode: BaseItemDto
 
@@ -63,7 +63,7 @@ extension SeriesEpisodeSelector {
             VStack(alignment: .leading) {
                 Button {
                     guard let mediaSource = episode.mediaSources?.first else { return }
-                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: episode, mediaSource: mediaSource))
+                    router.route(to: .videoPlayer(manager: OnlineVideoPlayerManager(item: episode, mediaSource: mediaSource)))
                 } label: {
                     ZStack {
                         Color.clear
@@ -87,7 +87,7 @@ extension SeriesEpisodeSelector {
                     content: episodeContent
                 )
                 .onSelect {
-                    router.route(to: \.item, episode)
+                    router.route(to: .item(item: episode))
                 }
             }
         }

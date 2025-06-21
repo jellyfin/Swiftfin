@@ -15,8 +15,8 @@ extension SelectUserView {
 
         // MARK: - Observed & Environment Objects
 
-        @EnvironmentObject
-        private var router: SelectUserCoordinator.Router
+        @Router
+        private var router
 
         // MARK: - Server Selection
 
@@ -81,12 +81,14 @@ extension SelectUserView {
                 Section {
                     if let selectedServer {
                         Button(L10n.editServer, systemImage: "server.rack") {
-                            router.route(to: \.editServer, selectedServer)
+                            // TODO: Implement editServer route in new Router system
+                            router.route(to: .editServer(server: selectedServer))
                         }
                     }
 
                     Button(L10n.addServer, systemImage: "plus") {
-                        router.route(to: \.connectToServer)
+                        // TODO: Implement connectToServer route in new Router system
+                        router.route(to: .connectToServer)
                     }
                 }
             } label: {

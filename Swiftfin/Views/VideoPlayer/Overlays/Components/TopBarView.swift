@@ -7,7 +7,7 @@
 //
 
 import Defaults
-import Stinsen
+
 import SwiftUI
 import VLCUI
 
@@ -15,8 +15,8 @@ extension VideoPlayer.Overlay {
 
     struct TopBarView: View {
 
-        @EnvironmentObject
-        private var router: VideoPlayerCoordinator.Router
+        @Router
+        private var router
         @EnvironmentObject
         private var splitContentViewProxy: SplitContentViewProxy
         @EnvironmentObject

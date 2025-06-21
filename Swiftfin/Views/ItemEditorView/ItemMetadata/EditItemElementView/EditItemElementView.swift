@@ -20,8 +20,8 @@ struct EditItemElementView<Element: Hashable>: View {
 
     // MARK: - Observed & Environment Objects
 
-    @EnvironmentObject
-    private var router: ItemEditorCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     var viewModel: ItemEditorViewModel<Element>
@@ -34,7 +34,7 @@ struct EditItemElementView<Element: Hashable>: View {
     // MARK: - Type & Route
 
     private let type: ItemArrayElements
-    private let route: (ItemEditorCoordinator.Router, ItemEditorViewModel<Element>) -> Void
+//    private let route: (ItemEditorCoordinator.Router, ItemEditorViewModel<Element>) -> Void
 
     // MARK: - Dialog States
 
@@ -61,12 +61,12 @@ struct EditItemElementView<Element: Hashable>: View {
 
     init(
         viewModel: ItemEditorViewModel<Element>,
-        type: ItemArrayElements,
-        route: @escaping (ItemEditorCoordinator.Router, ItemEditorViewModel<Element>) -> Void
+        type: ItemArrayElements
+//        route: @escaping (ItemEditorCoordinator.Router, ItemEditorViewModel<Element>) -> Void
     ) {
         self.viewModel = viewModel
         self.type = type
-        self.route = route
+//        self.route = route
         self.elements = type.getElement(for: viewModel.item)
     }
 
@@ -132,7 +132,7 @@ struct EditItemElementView<Element: Hashable>: View {
             isHidden: isEditing || isReordering
         ) {
             Button(L10n.add, systemImage: "plus") {
-                route(router, viewModel)
+//                route(router, viewModel)
             }
 
             if elements.isNotEmpty == true {

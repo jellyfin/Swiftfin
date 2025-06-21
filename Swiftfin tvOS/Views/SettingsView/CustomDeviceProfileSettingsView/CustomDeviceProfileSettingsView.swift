@@ -18,8 +18,8 @@ struct CustomDeviceProfileSettingsView: View {
     @StoredValue(.User.customDeviceProfiles)
     private var customProfiles: [CustomDeviceProfile]
 
-    @EnvironmentObject
-    private var router: CustomDeviceProfileCoordinator.Router
+    @Router
+    private var router
 
     private var isValid: Bool {
         customDeviceProfileAction == .add || customProfiles.isNotEmpty
@@ -66,14 +66,16 @@ struct CustomDeviceProfileSettingsView: View {
                 Section {
                     if customProfiles.isEmpty {
                         Button(L10n.add) {
-                            router.route(to: \.createCustomDeviceProfile)
+                            // TODO: Implement createCustomDeviceProfile route in new Router system
+//                            router.route(to: .createCustomDeviceProfile)
                         }
                     }
 
                     List {
                         ForEach($customProfiles, id: \.self) { $profile in
                             CustomProfileButton(profile: profile) {
-                                router.route(to: \.editCustomDeviceProfile, $profile)
+                                // TODO: Implement editCustomDeviceProfile route in new Router system
+                                router.route(to: .editCustomDeviceProfile(profile: $profile))
                             }
                             .contextMenu {
                                 Button(role: .destructive) {
@@ -91,7 +93,8 @@ struct CustomDeviceProfileSettingsView: View {
                         Spacer()
                         if customProfiles.isNotEmpty {
                             Button(L10n.add) {
-                                router.route(to: \.createCustomDeviceProfile)
+                                // TODO: Implement createCustomDeviceProfile route in new Router system
+//                                router.route(to: .createCustomDeviceProfile)
                             }
                         }
                     }

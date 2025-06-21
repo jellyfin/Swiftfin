@@ -55,8 +55,11 @@ struct PagingLibraryView<Element: Poster>: View {
     @Default(.Customization.Library.letterPickerOrientation)
     private var letterPickerOrientation
 
-    @EnvironmentObject
-    private var router: LibraryCoordinator<Element>.Router
+    @Router
+    private var router
+
+    @Namespace
+    private var namespace: Namespace.ID
 
     @State
     private var layout: CollectionVGridLayout
@@ -128,18 +131,18 @@ struct PagingLibraryView<Element: Poster>: View {
         switch item.type {
         case .collectionFolder, .folder:
             let viewModel = ItemLibraryViewModel(parent: item, filters: .default)
-            router.route(to: \.library, viewModel)
+            router.route(to: .library(viewModel: viewModel))
         case .person:
             let viewModel = ItemLibraryViewModel(parent: item)
-            router.route(to: \.library, viewModel)
+            router.route(to: .library(viewModel: viewModel))
         default:
-            router.route(to: \.item, item)
+            router.route(to: .item(item: item), in: namespace)
         }
     }
 
     private func select(person: BaseItemPerson) {
         let viewModel = ItemLibraryViewModel(parent: person)
-        router.route(to: \.library, viewModel)
+        router.route(to: .library(viewModel: viewModel))
     }
 
     // MARK: layout
@@ -239,18 +242,23 @@ struct PagingLibraryView<Element: Poster>: View {
             id: \.unwrappedIDHashOrZero,
             layout: layout
         ) { item in
+            TransitionSourceView(
+                id: "item-\(item.unwrappedIDHashOrZero)",
+                in: namespace
+            ) {
+                let displayType = Defaults[.Customization.Library.rememberLayout] ? _displayType.wrappedValue : _defaultDisplayType
+                    .wrappedValue
+                let posterType = Defaults[.Customization.Library.rememberLayout] ? _posterType.wrappedValue : _defaultPosterType
+                    .wrappedValue
 
-            let displayType = Defaults[.Customization.Library.rememberLayout] ? _displayType.wrappedValue : _defaultDisplayType
-                .wrappedValue
-            let posterType = Defaults[.Customization.Library.rememberLayout] ? _posterType.wrappedValue : _defaultPosterType.wrappedValue
-
-            switch (posterType, displayType) {
-            case (.landscape, .grid):
-                landscapeGridItemView(item: item)
-            case (.portrait, .grid):
-                portraitGridItemView(item: item)
-            case (_, .list):
-                listItemView(item: item, posterType: posterType)
+                switch (posterType, displayType) {
+                case (.landscape, .grid):
+                    landscapeGridItemView(item: item)
+                case (.portrait, .grid):
+                    portraitGridItemView(item: item)
+                case (_, .list):
+                    listItemView(item: item, posterType: posterType)
+                }
             }
         }
         .onReachedBottomEdge(offset: .offset(300)) {
@@ -321,7 +329,7 @@ struct PagingLibraryView<Element: Poster>: View {
                 viewModel: filterViewModel,
                 types: enabledDrawerFilters
             ) {
-                router.route(to: \.filter, $0)
+                router.route(to: .filter(type: $0.type, viewModel: $0.viewModel))
             }
         }
         .onChange(of: defaultDisplayType) { newValue in
@@ -454,10 +462,10 @@ struct PagingLibraryView<Element: Poster>: View {
             case let .gotRandomItem(item):
                 switch item {
                 case let item as BaseItemDto:
-                    router.route(to: \.item, item)
+                    router.route(to: .item(item: item))
                 case let item as BaseItemPerson:
                     let viewModel = ItemLibraryViewModel(parent: item, filters: .default)
-                    router.route(to: \.library, viewModel)
+                    router.route(to: .library(viewModel: viewModel))
                 default:
                     assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
                 }

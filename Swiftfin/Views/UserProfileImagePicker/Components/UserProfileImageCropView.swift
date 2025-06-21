@@ -15,8 +15,8 @@ struct UserProfileImageCropView: View {
 
     // MARK: - State, Observed, & Environment Objects
 
-    @EnvironmentObject
-    private var router: UserProfileImageCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     var viewModel: UserProfileImageViewModel
@@ -41,6 +41,7 @@ struct UserProfileImageCropView: View {
         ) {
             viewModel.send(.upload($0))
         } onCancel: {
+            // TODO: Implement dismiss functionality in new router system
             router.dismissCoordinator()
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
@@ -53,6 +54,7 @@ struct UserProfileImageCropView: View {
             case .deleted:
                 break
             case .uploaded:
+                // TODO: Implement dismiss functionality in new router system
                 router.dismissCoordinator()
             }
         }

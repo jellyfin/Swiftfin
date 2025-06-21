@@ -11,8 +11,8 @@ import SwiftUI
 
 struct APIKeysView: View {
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     @State
     private var showCopiedAlert = false

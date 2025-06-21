@@ -18,8 +18,8 @@ struct CustomDeviceProfileSettingsView: View {
     @StoredValue(.User.customDeviceProfiles)
     private var customProfiles: [CustomDeviceProfile]
 
-    @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    @Router
+    private var router
 
     private var isValid: Bool {
         customDeviceProfileAction == .add ||
@@ -57,13 +57,15 @@ struct CustomDeviceProfileSettingsView: View {
 
                 if customProfiles.isEmpty {
                     Button(L10n.add) {
-                        router.route(to: \.createCustomDeviceProfile)
+                        // TODO: implement createCustomDeviceProfile route
+                        // router.route(to: .createCustomDeviceProfile())
                     }
                 }
 
                 ForEach($customProfiles, id: \.self) { $profile in
                     CustomProfileButton(profile: profile) {
-                        router.route(to: \.editCustomDeviceProfile, $profile)
+                        // TODO: implement editCustomDeviceProfile route
+                        // router.route(to: .editCustomDeviceProfile(profile: $profile))
                     }
                 }
                 .onDelete(perform: removeProfile)
@@ -74,7 +76,8 @@ struct CustomDeviceProfileSettingsView: View {
             if customProfiles.isNotEmpty {
                 Button(L10n.add) {
                     UIDevice.impact(.light)
-                    router.route(to: \.createCustomDeviceProfile)
+                    // TODO: implement createCustomDeviceProfile route
+                    // router.route(to: .createCustomDeviceProfile())
                 }
                 .buttonStyle(.toolbarPill)
             }

@@ -16,8 +16,8 @@ extension ItemView.AboutView {
 
         // MARK: - Environment & Observed Objects
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: ItemViewModel
@@ -41,7 +41,8 @@ extension ItemView.AboutView {
                 if let episodeViewModel = viewModel as? EpisodeItemViewModel,
                    let seriesItem = episodeViewModel.seriesItem
                 {
-                    router.route(to: \.item, seriesItem)
+                    // TODO: Implement router.route(to: .item(parameter: seriesItem)) when ItemRouter is available
+                    router.route(to: .item(item: seriesItem))
                 }
             default:
                 break

@@ -20,8 +20,8 @@ struct FilterView: View {
 
     // MARK: - Environment & Observed Objects
 
-    @EnvironmentObject
-    private var router: FilterCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     private var viewModel: FilterViewModel
@@ -43,6 +43,7 @@ struct FilterView: View {
             .navigationTitle(type.displayTitle)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
+                // TODO: Implement dismiss functionality in new router system
                 router.dismissCoordinator()
             }
             .topBarTrailing {
