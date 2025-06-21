@@ -177,57 +177,54 @@ struct SelectUserView: View {
 
     @ViewBuilder
     private var advancedMenu: some View {
-        Menu(L10n.advanced, systemImage: "gearshape.fill") {
+        Section {
 
-            Section {
+            if userItems.isNotEmpty {
+                ConditionalMenu(
+                    tracking: selectedServer,
+                    action: addUserSelected
+                ) {
+                    Section(L10n.servers) {
+                        let servers = viewModel.servers.keys
 
-                if userItems.isNotEmpty {
-                    ConditionalMenu(
-                        tracking: selectedServer,
-                        action: addUserSelected
-                    ) {
-                        Section(L10n.servers) {
-                            let servers = viewModel.servers.keys
-
-                            ForEach(servers) { server in
-                                Button {
-                                    addUserSelected(server: server)
-                                } label: {
-                                    Text(server.name)
-                                    Text(server.currentURL.absoluteString)
-                                }
+                        ForEach(servers) { server in
+                            Button {
+                                addUserSelected(server: server)
+                            } label: {
+                                Text(server.name)
+                                Text(server.currentURL.absoluteString)
                             }
                         }
-                    } label: {
-                        Label(L10n.addUser, systemImage: "plus")
-                    }
-
-                    Toggle(
-                        L10n.editUsers,
-                        systemImage: "person.crop.circle",
-                        isOn: $isEditingUsers
-                    )
-                }
-            }
-
-            if viewModel.servers.isNotEmpty {
-                Picker(selection: $userListDisplayType) {
-                    ForEach(LibraryDisplayType.allCases, id: \.hashValue) {
-                        Label($0.displayTitle, systemImage: $0.systemImage)
-                            .tag($0)
                     }
                 } label: {
-                    Text(L10n.layout)
-                    Text(userListDisplayType.displayTitle)
-                    Image(systemName: userListDisplayType.systemImage)
+                    Label(L10n.addUser, systemImage: "plus")
                 }
-                .pickerStyle(.menu)
-            }
 
-            Section {
-                Button(L10n.advanced, systemImage: "gearshape.fill") {
-                    router.route(to: \.advancedSettings)
+                Toggle(
+                    L10n.editUsers,
+                    systemImage: "person.crop.circle",
+                    isOn: $isEditingUsers
+                )
+            }
+        }
+
+        if viewModel.servers.isNotEmpty {
+            Picker(selection: $userListDisplayType) {
+                ForEach(LibraryDisplayType.allCases, id: \.hashValue) {
+                    Label($0.displayTitle, systemImage: $0.systemImage)
+                        .tag($0)
                 }
+            } label: {
+                Text(L10n.layout)
+                Text(userListDisplayType.displayTitle)
+                Image(systemName: userListDisplayType.systemImage)
+            }
+            .pickerStyle(.menu)
+        }
+
+        Section {
+            Button(L10n.advanced, systemImage: "gearshape.fill") {
+                router.route(to: \.advancedSettings)
             }
         }
     }
@@ -464,6 +461,9 @@ struct SelectUserView: View {
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .navigationTitle(L10n.users)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarMenuButton(isLoading: false, isHidden: isEditingUsers) {
+            advancedMenu
+        }
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Image(uiImage: .jellyfinBlobBlue)
@@ -500,8 +500,6 @@ struct SelectUserView: View {
                         }
                     }
                     .buttonStyle(.toolbarPill)
-                } else {
-                    advancedMenu
                 }
             }
 
