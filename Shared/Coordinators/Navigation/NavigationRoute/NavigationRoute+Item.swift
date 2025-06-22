@@ -11,56 +11,6 @@ import SwiftUI
 
 extension NavigationRoute {
 
-    static func castAndCrew(people: [BaseItemPerson], itemID: String?) -> NavigationRoute {
-        let id: String? = itemID == nil ? nil : "castAndCrew-\(itemID!)"
-        let viewModel = PagingLibraryViewModel(
-            title: L10n.castAndCrew,
-            id: id,
-            people
-        )
-
-        return NavigationRoute(id: "castAndCrew") {
-            PagingLibraryView(viewModel: viewModel)
-        }
-    }
-
-    static func item(item: BaseItemDto) -> NavigationRoute {
-        NavigationRoute(
-            id: "item-\(item.unwrappedIDHashOrZero)"
-        ) {
-            ItemView(item: item)
-        }
-    }
-
-    #if os(iOS)
-    static func itemEditor(viewModel: ItemViewModel) -> NavigationRoute {
-        NavigationRoute(
-            id: "itemEditor",
-            style: .sheet
-        ) {
-            ItemEditorView(viewModel: viewModel)
-        }
-    }
-
-    static func itemImages(viewModel: ItemImagesViewModel) -> NavigationRoute {
-        NavigationRoute(
-            id: "itemImages",
-            style: .sheet
-        ) {
-            ItemImagesView(viewModel: viewModel)
-        }
-    }
-    #endif
-
-    static func itemOverview(item: BaseItemDto) -> NavigationRoute {
-        NavigationRoute(
-            id: "itemOverview",
-            style: .sheet
-        ) {
-            ItemOverviewView(item: item)
-        }
-    }
-
     // MARK: - Item Editing
 
     #if os(iOS)
@@ -97,6 +47,33 @@ extension NavigationRoute {
             style: .sheet
         ) {
             AddItemElementView(viewModel: viewModel, type: .tags)
+        }
+    }
+    #endif
+
+    static func castAndCrew(people: [BaseItemPerson], itemID: String?) -> NavigationRoute {
+        let id: String? = itemID == nil ? nil : "castAndCrew-\(itemID!)"
+        let viewModel = PagingLibraryViewModel(
+            title: L10n.castAndCrew,
+            id: id,
+            people
+        )
+
+        return NavigationRoute(id: "castAndCrew") {
+            PagingLibraryView(viewModel: viewModel)
+        }
+    }
+
+    #if os(iOS)
+    static func cropItemImage(viewModel: ItemImagesViewModel, image: UIImage, type: ImageType) -> NavigationRoute {
+        NavigationRoute(
+            id: "crop-Image"
+        ) {
+            ItemPhotoCropView(
+                viewModel: viewModel,
+                image: image,
+                type: type
+            )
         }
     }
 
@@ -163,4 +140,41 @@ extension NavigationRoute {
         }
     }
     #endif
+
+    static func item(item: BaseItemDto) -> NavigationRoute {
+        NavigationRoute(
+            id: "item-\(item.unwrappedIDHashOrZero)"
+        ) {
+            ItemView(item: item)
+        }
+    }
+
+    #if os(iOS)
+    static func itemEditor(viewModel: ItemViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemEditor",
+            style: .sheet
+        ) {
+            ItemEditorView(viewModel: viewModel)
+        }
+    }
+
+    static func itemImages(viewModel: ItemImagesViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemImages",
+            style: .sheet
+        ) {
+            ItemImagesView(viewModel: viewModel)
+        }
+    }
+    #endif
+
+    static func itemOverview(item: BaseItemDto) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemOverview",
+            style: .sheet
+        ) {
+            ItemOverviewView(item: item)
+        }
+    }
 }

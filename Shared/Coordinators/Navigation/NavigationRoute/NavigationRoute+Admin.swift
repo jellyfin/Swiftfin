@@ -12,6 +12,20 @@ import SwiftUI
 #if os(iOS)
 extension NavigationRoute {
 
+    // MARK: - Active Sessions
+
+    static func activeDeviceDetails(box: BindingBox<SessionInfoDto?>) -> NavigationRoute {
+        NavigationRoute(id: "activeDeviceDetails") {
+            ActiveSessionDetailView(box: box)
+        }
+    }
+
+    static let activeSessions = NavigationRoute(
+        id: "activeSessions"
+    ) {
+        ActiveSessionsView()
+    }
+
     // MARK: - User Activity
 
     static let activity = NavigationRoute(
@@ -26,17 +40,25 @@ extension NavigationRoute {
         }
     }
 
-    // MARK: - Active Sessions
+    // MARK: - Server Tasks
 
-    static let activeSessions = NavigationRoute(
-        id: "activeSessions"
-    ) {
-        ActiveSessionsView()
+    static func addServerTaskTrigger(observer: ServerTaskObserver) -> NavigationRoute {
+        NavigationRoute(
+            id: "addServerTaskTrigger",
+            style: .sheet
+        ) {
+            AddTaskTriggerView(observer: observer)
+        }
     }
 
-    static func activeDeviceDetails(box: BindingBox<SessionInfoDto?>) -> NavigationRoute {
-        NavigationRoute(id: "activeDeviceDetails") {
-            ActiveSessionDetailView(box: box)
+    // MARK: - Users
+
+    static func addServerUser() -> NavigationRoute {
+        NavigationRoute(
+            id: "addServerUser",
+            style: .sheet
+        ) {
+            AddServerUserView()
         }
     }
 
@@ -50,36 +72,19 @@ extension NavigationRoute {
 
     // MARK: - Devices
 
-    static let devices = NavigationRoute(
-        id: "devices"
-    ) {
-        DevicesView()
-    }
-
     static func deviceDetails(device: DeviceInfoDto) -> NavigationRoute {
         NavigationRoute(id: "deviceDetails") {
             DeviceDetailsView(device: device)
         }
     }
 
-    // MARK: - Server Logs
-
-    static let serverLogs = NavigationRoute(
-        id: "serverLogs"
+    static let devices = NavigationRoute(
+        id: "devices"
     ) {
-        ServerLogsView()
+        DevicesView()
     }
 
     // MARK: - Server Tasks
-
-    static func addServerTaskTrigger(observer: ServerTaskObserver) -> NavigationRoute {
-        NavigationRoute(
-            id: "addServerTaskTrigger",
-            style: .sheet
-        ) {
-            AddTaskTriggerView(observer: observer)
-        }
-    }
 
     static func editServerTask(observer: ServerTaskObserver) -> NavigationRoute {
         NavigationRoute(id: "editServerTask") {
@@ -87,22 +92,7 @@ extension NavigationRoute {
         }
     }
 
-    static let tasks = NavigationRoute(
-        id: "tasks"
-    ) {
-        ServerTasksView()
-    }
-
     // MARK: - Users
-
-    static func addServerUser() -> NavigationRoute {
-        NavigationRoute(
-            id: "addServerUser",
-            style: .sheet
-        ) {
-            AddServerUserView()
-        }
-    }
 
     static func quickConnectAuthorize(user: UserDto) -> NavigationRoute {
         NavigationRoute(id: "quickConnectAuthorize") {
@@ -118,6 +108,24 @@ extension NavigationRoute {
             ResetUserPasswordView(userID: userID, requiresCurrentPassword: false)
         }
     }
+
+    // MARK: - Server Logs
+
+    static let serverLogs = NavigationRoute(
+        id: "serverLogs"
+    ) {
+        ServerLogsView()
+    }
+
+    // MARK: - Server Tasks
+
+    static let tasks = NavigationRoute(
+        id: "tasks"
+    ) {
+        ServerTasksView()
+    }
+
+    // MARK: - Users
 
     static func userAddAccessSchedule(viewModel: ServerUserAdminViewModel) -> NavigationRoute {
         NavigationRoute(

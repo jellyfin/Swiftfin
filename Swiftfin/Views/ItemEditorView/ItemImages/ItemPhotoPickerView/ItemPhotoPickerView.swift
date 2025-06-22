@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 struct ItemImagePicker: View {
@@ -15,12 +16,22 @@ struct ItemImagePicker: View {
     @Router
     private var router
 
+    @StateObject
+    var viewModel: ItemImagesViewModel
+
+    let type: ImageType
+
     // MARK: - Body
 
     var body: some View {
-        PhotoPickerView { _ in
-            // TODO: Convert to NavigationRoute pattern - router.route(to: .cropImage(image: $0))
-//            router.route(to: \.cropImage, $0)
+        PhotoPickerView {
+            router.route(
+                to: .cropItemImage(
+                    viewModel: viewModel,
+                    image: $0,
+                    type: type
+                )
+            )
         } onCancel: {
             router.dismiss()
         }
