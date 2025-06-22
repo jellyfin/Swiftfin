@@ -28,6 +28,9 @@ struct AppSettingsView: View {
     @Default(.signOutOnClose)
     private var signOutOnClose
 
+    @Environment(\.dismiss)
+    private var dismiss
+
     @Router
     private var router
 
@@ -92,7 +95,8 @@ struct AppSettingsView: View {
         .navigationTitle(L10n.advanced)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
-            router.dismissCoordinator()
+            dismiss()
+//            router.dismissCoordinator()
         }
     }
 }

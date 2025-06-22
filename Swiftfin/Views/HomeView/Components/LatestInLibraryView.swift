@@ -22,9 +22,6 @@ extension HomeView {
         @Router
         private var router
 
-        @Namespace
-        private var namespace: Namespace.ID
-
         @ObservedObject
         var viewModel: LatestInLibraryViewModel
 
@@ -42,7 +39,7 @@ extension HomeView {
                         }
                 }
                 .onSelect { item in
-                    router.route(to: .item(item: item), in: namespace)
+                    router.route(to: .item(item: item))
                 }
             }
         }

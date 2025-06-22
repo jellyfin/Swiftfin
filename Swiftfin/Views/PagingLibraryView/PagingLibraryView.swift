@@ -58,9 +58,6 @@ struct PagingLibraryView<Element: Poster>: View {
     @Router
     private var router
 
-    @Namespace
-    private var namespace: Namespace.ID
-
     @State
     private var layout: CollectionVGridLayout
     @State
@@ -136,7 +133,7 @@ struct PagingLibraryView<Element: Poster>: View {
             let viewModel = ItemLibraryViewModel(parent: item)
             router.route(to: .library(viewModel: viewModel))
         default:
-            router.route(to: .item(item: item), in: namespace)
+            router.route(to: .item(item: item))
         }
     }
 
@@ -242,23 +239,18 @@ struct PagingLibraryView<Element: Poster>: View {
             id: \.unwrappedIDHashOrZero,
             layout: layout
         ) { item in
-            TransitionSourceView(
-                id: "item-\(item.unwrappedIDHashOrZero)",
-                in: namespace
-            ) {
-                let displayType = Defaults[.Customization.Library.rememberLayout] ? _displayType.wrappedValue : _defaultDisplayType
-                    .wrappedValue
-                let posterType = Defaults[.Customization.Library.rememberLayout] ? _posterType.wrappedValue : _defaultPosterType
-                    .wrappedValue
+            let displayType = Defaults[.Customization.Library.rememberLayout] ? _displayType.wrappedValue : _defaultDisplayType
+                .wrappedValue
+            let posterType = Defaults[.Customization.Library.rememberLayout] ? _posterType.wrappedValue : _defaultPosterType
+                .wrappedValue
 
-                switch (posterType, displayType) {
-                case (.landscape, .grid):
-                    landscapeGridItemView(item: item)
-                case (.portrait, .grid):
-                    portraitGridItemView(item: item)
-                case (_, .list):
-                    listItemView(item: item, posterType: posterType)
-                }
+            switch (posterType, displayType) {
+            case (.landscape, .grid):
+                landscapeGridItemView(item: item)
+            case (.portrait, .grid):
+                portraitGridItemView(item: item)
+            case (_, .list):
+                listItemView(item: item, posterType: posterType)
             }
         }
         .onReachedBottomEdge(offset: .offset(300)) {

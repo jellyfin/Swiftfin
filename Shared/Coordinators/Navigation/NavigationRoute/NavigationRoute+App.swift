@@ -11,7 +11,7 @@ import SwiftUI
 
 extension NavigationRoute {
 
-    #if !os(tvOS)
+    #if os(iOS)
     static var aboutApp: NavigationRoute {
         NavigationRoute(
             id: "about-app"
@@ -31,17 +31,10 @@ extension NavigationRoute {
 
     static var appSettings: NavigationRoute {
         NavigationRoute(
-            id: "app-settings"
+            id: "app-settings",
+            style: .sheet
         ) {
             AppSettingsView()
-        }
-    }
-
-    static func library(_ viewModel: PagingLibraryViewModel<BaseItemDto>) -> NavigationRoute {
-        NavigationRoute(
-            id: "library-\(viewModel.parent?.id ?? "Unknown")",
-        ) {
-            PagingLibraryView(viewModel: viewModel)
         }
     }
 }

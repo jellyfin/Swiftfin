@@ -15,12 +15,14 @@ struct UserProfileImagePickerView: View {
     @Router
     private var router
 
+    @StateObject
+    var viewModel: UserProfileImageViewModel
+
     // MARK: - Body
 
     var body: some View {
-        PhotoPickerView { _ in
-            // TODO: Convert to NavigationRoute pattern - router.route(to: .cropImage(image: $0))
-//            router.route(to: \.cropImage, $0)
+        PhotoPickerView {
+            router.route(to: .userProfileImageCrop(viewModel: viewModel, image: $0))
         } onCancel: {
             // TODO: Implement dismiss functionality in new router system
             router.dismissCoordinator()

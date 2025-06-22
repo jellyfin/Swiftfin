@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-#if !os(tvOS)
+#if os(iOS)
 extension NavigationRoute {
 
     // MARK: - User Activity
@@ -75,7 +75,7 @@ extension NavigationRoute {
     static func addServerTaskTrigger(observer: ServerTaskObserver) -> NavigationRoute {
         NavigationRoute(
             id: "addServerTaskTrigger",
-            routeType: .sheet
+            style: .sheet
         ) {
             AddTaskTriggerView(observer: observer)
         }
@@ -98,7 +98,7 @@ extension NavigationRoute {
     static func addServerUser() -> NavigationRoute {
         NavigationRoute(
             id: "addServerUser",
-            routeType: .sheet
+            style: .sheet
         ) {
             AddServerUserView()
         }
@@ -113,7 +113,7 @@ extension NavigationRoute {
     static func resetUserPasswordAdmin(userID: String) -> NavigationRoute {
         NavigationRoute(
             id: "resetUserPasswordAdmin",
-            routeType: .sheet
+            style: .sheet
         ) {
             ResetUserPasswordView(userID: userID, requiresCurrentPassword: false)
         }
@@ -122,7 +122,7 @@ extension NavigationRoute {
     static func userAddAccessSchedule(viewModel: ServerUserAdminViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "userAddAccessSchedule",
-            routeType: .sheet
+            style: .sheet
         ) {
             AddAccessScheduleView(viewModel: viewModel)
         }
@@ -131,7 +131,7 @@ extension NavigationRoute {
     static func userAddAccessTag(viewModel: ServerUserAdminViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "userAddAccessTag",
-            routeType: .sheet
+            style: .sheet
         ) {
             AddServerUserAccessTagsView(viewModel: viewModel)
         }
@@ -146,7 +146,7 @@ extension NavigationRoute {
     static func userDeviceAccess(viewModel: ServerUserAdminViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "userDeviceAccess",
-            routeType: .sheet
+            style: .sheet
         ) {
             ServerUserDeviceAccessView(viewModel: viewModel)
         }
@@ -167,7 +167,7 @@ extension NavigationRoute {
     static func userLiveTVAccess(viewModel: ServerUserAdminViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "userLiveTVAccess",
-            routeType: .sheet
+            style: .sheet
         ) {
             ServerUserLiveTVAccessView(viewModel: viewModel)
         }
@@ -176,7 +176,7 @@ extension NavigationRoute {
     static func userMediaAccess(viewModel: ServerUserAdminViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "userMediaAccess",
-            routeType: .sheet
+            style: .sheet
         ) {
             ServerUserMediaAccessView(viewModel: viewModel)
         }
@@ -185,7 +185,7 @@ extension NavigationRoute {
     static func userParentalRatings(viewModel: ServerUserAdminViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "userParentalRatings",
-            routeType: .sheet
+            style: .sheet
         ) {
             ServerUserParentalRatingView(viewModel: viewModel)
         }
@@ -194,18 +194,9 @@ extension NavigationRoute {
     static func userPermissions(viewModel: ServerUserAdminViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "userPermissions",
-            routeType: .sheet
+            style: .sheet
         ) {
             ServerUserPermissionsView(viewModel: viewModel)
-        }
-    }
-
-    static func userPhotoPickerAdmin(viewModel: UserProfileImageViewModel) -> NavigationRoute {
-        NavigationRoute(
-            id: "userPhotoPickerAdmin",
-            routeType: .sheet
-        ) {
-            UserProfileImagePickerView()
         }
     }
 

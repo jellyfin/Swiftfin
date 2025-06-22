@@ -10,6 +10,8 @@ import JellyfinAPI
 import Mantis
 import SwiftUI
 
+// TODO: cleanup alongside `UserProfileImageCropView`
+
 struct ItemPhotoCropView: View {
 
     // MARK: - State, Observed, & Environment Objects

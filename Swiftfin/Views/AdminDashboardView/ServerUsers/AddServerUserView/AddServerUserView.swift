@@ -121,6 +121,7 @@ struct AddServerUserView: View {
                 error = eventError
             case let .createdNewUser(newUser):
                 UIDevice.feedback(.success)
+                // TODO: Implement dismiss functionality in new router system
 //                router.dismissCoordinator {
 //                    Notifications[.didAddServerUser].post(newUser)
 //                }

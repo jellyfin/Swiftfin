@@ -26,18 +26,17 @@ extension NavigationRoute {
 
     static func item(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(
-            id: "item-\(item.unwrappedIDHashOrZero)",
-            routeType: .push(.zoom)
+            id: "item-\(item.unwrappedIDHashOrZero)"
         ) {
             ItemView(item: item)
         }
     }
 
-    #if !os(tvOS)
+    #if os(iOS)
     static func itemEditor(viewModel: ItemViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "itemEditor",
-            routeType: .sheet
+            style: .sheet
         ) {
             ItemEditorView(viewModel: viewModel)
         }
@@ -46,7 +45,7 @@ extension NavigationRoute {
     static func itemImages(viewModel: ItemImagesViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "itemImages",
-            routeType: .sheet
+            style: .sheet
         ) {
             ItemImagesView(viewModel: viewModel)
         }
@@ -56,7 +55,7 @@ extension NavigationRoute {
     static func itemOverview(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(
             id: "itemOverview",
-            routeType: .sheet
+            style: .sheet
         ) {
             ItemOverviewView(item: item)
         }
@@ -64,11 +63,11 @@ extension NavigationRoute {
 
     // MARK: - Item Editing
 
-    #if !os(tvOS)
+    #if os(iOS)
     static func addGenre(viewModel: GenreEditorViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "addGenre",
-            routeType: .sheet
+            style: .sheet
         ) {
             AddItemElementView(viewModel: viewModel, type: .genres)
         }
@@ -77,7 +76,7 @@ extension NavigationRoute {
     static func addPeople(viewModel: PeopleEditorViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "addPeople",
-            routeType: .sheet
+            style: .sheet
         ) {
             AddItemElementView(viewModel: viewModel, type: .people)
         }
@@ -86,7 +85,7 @@ extension NavigationRoute {
     static func addStudio(viewModel: StudioEditorViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "addStudio",
-            routeType: .sheet
+            style: .sheet
         ) {
             AddItemElementView(viewModel: viewModel, type: .studios)
         }
@@ -95,61 +94,69 @@ extension NavigationRoute {
     static func addTag(viewModel: TagEditorViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "addTag",
-            routeType: .sheet
+            style: .sheet
         ) {
             AddItemElementView(viewModel: viewModel, type: .tags)
         }
     }
-    #endif
 
     static func editGenres(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editGenres") {
-            // TODO: Update EditItemElementView to use new Router system
-            // For now, this will need to be handled by ItemEditorCoordinator
-            Text("Edit Genres - Migration needed")
-                .navigationTitle(L10n.genres)
+            EditItemElementView<String>(
+                viewModel: GenreEditorViewModel(item: item),
+                type: .genres,
+                route: { router, viewModel in
+                    router.route(to: .addGenre(viewModel: viewModel as! GenreEditorViewModel))
+                }
+            )
         }
     }
 
-    #if !os(tvOS)
     static func editMetadata(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(
             id: "editMetadata",
-            routeType: .sheet
+            style: .sheet
         ) {
             EditMetadataView(viewModel: ItemEditorViewModel(item: item))
         }
     }
-    #endif
 
     static func editPeople(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editPeople") {
-            // TODO: Update EditItemElementView to use new Router system
-            // For now, this will need to be handled by ItemEditorCoordinator
-            Text("Edit People - Migration needed")
-                .navigationTitle(L10n.people)
+            EditItemElementView<BaseItemPerson>(
+                viewModel: PeopleEditorViewModel(item: item),
+                type: .people,
+                route: { router, viewModel in
+                    router.route(to: .addPeople(viewModel: viewModel as! PeopleEditorViewModel))
+                }
+            )
         }
     }
 
     static func editStudios(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editStudios") {
-            // TODO: Update EditItemElementView to use new Router system
-            // For now, this will need to be handled by ItemEditorCoordinator
-            Text("Edit Studios - Migration needed")
-                .navigationTitle(L10n.studios)
+            EditItemElementView<NameGuidPair>(
+                viewModel: StudioEditorViewModel(item: item),
+                type: .studios,
+                route: { router, viewModel in
+                    router.route(to: .addStudio(viewModel: viewModel as! StudioEditorViewModel))
+                }
+            )
         }
     }
 
     static func editTags(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editTags") {
-            // TODO: Update EditItemElementView to use new Router system
-            // For now, this will need to be handled by ItemEditorCoordinator
-            Text("Edit Tags - Migration needed")
-                .navigationTitle(L10n.tags)
+            EditItemElementView<String>(
+                viewModel: TagEditorViewModel(item: item),
+                type: .tags,
+                route: { router, viewModel in
+                    router.route(to: .addTag(viewModel: viewModel as! TagEditorViewModel))
+                }
+            )
         }
     }
 
-    #if !os(tvOS)
     static func identifyItem(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "identifyItem") {
             IdentifyItemView(item: item)

@@ -18,9 +18,6 @@ extension HomeView {
         @Router
         private var router
 
-        @Namespace
-        private var namespace: Namespace.ID
-
         @ObservedObject
         var viewModel: HomeViewModel
 
@@ -40,41 +37,36 @@ extension HomeView {
                 uniqueElements: viewModel.resumeItems,
                 columns: columnCount
             ) { item in
-                TransitionSourceView(
-                    id: "item-\(item.id ?? "Unknown")",
-                    in: namespace
-                ) {
-                    PosterButton(item: item, type: .landscape)
-                        .content {
-                            if item.type == .episode {
-                                PosterButton.EpisodeContentSubtitleContent(item: item)
-                            } else {
-                                PosterButton.TitleSubtitleContentView(item: item)
-                            }
+                PosterButton(item: item, type: .landscape)
+                    .content {
+                        if item.type == .episode {
+                            PosterButton.EpisodeContentSubtitleContent(item: item)
+                        } else {
+                            PosterButton.TitleSubtitleContentView(item: item)
                         }
-                        .contextMenu {
-                            Button {
-                                viewModel.send(.setIsPlayed(true, item))
-                            } label: {
-                                Label(L10n.played, systemImage: "checkmark.circle")
-                            }
+                    }
+                    .contextMenu {
+                        Button {
+                            viewModel.send(.setIsPlayed(true, item))
+                        } label: {
+                            Label(L10n.played, systemImage: "checkmark.circle")
+                        }
 
-                            Button(role: .destructive) {
-                                viewModel.send(.setIsPlayed(false, item))
-                            } label: {
-                                Label(L10n.unplayed, systemImage: "minus.circle")
-                            }
+                        Button(role: .destructive) {
+                            viewModel.send(.setIsPlayed(false, item))
+                        } label: {
+                            Label(L10n.unplayed, systemImage: "minus.circle")
                         }
-                        .imageOverlay {
-                            LandscapePosterProgressBar(
-                                title: item.progressLabel ?? L10n.continue,
-                                progress: (item.userData?.playedPercentage ?? 0) / 100
-                            )
-                        }
-                        .onSelect {
-                            router.route(to: .item(item: item), in: namespace)
-                        }
-                }
+                    }
+                    .imageOverlay {
+                        LandscapePosterProgressBar(
+                            title: item.progressLabel ?? L10n.continue,
+                            progress: (item.userData?.playedPercentage ?? 0) / 100
+                        )
+                    }
+                    .onSelect {
+                        router.route(to: .item(item: item))
+                    }
             }
             .scrollBehavior(.continuousLeadingEdge)
         }

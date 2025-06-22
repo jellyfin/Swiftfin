@@ -28,7 +28,7 @@ extension NavigationRoute {
     static func liveVideoPlayer(manager: LiveVideoPlayerManager) -> NavigationRoute {
         NavigationRoute(
             id: "liveVideoPlayer",
-            routeType: .fullscreen
+            style: .fullscreen
         ) {
             LiveVideoPlayerViewShim(videoPlayerManager: manager)
         }
@@ -37,13 +37,13 @@ extension NavigationRoute {
     static func mediaSourceInfo(source: MediaSourceInfo) -> NavigationRoute {
         NavigationRoute(
             id: "mediaSourceInfo",
-            routeType: .sheet
+            style: .sheet
         ) {
             MediaSourceInfoView(source: source)
         }
     }
 
-    #if !os(tvOS)
+    #if os(iOS)
     static func mediaStreamInfo(mediaStream: MediaStream) -> NavigationRoute {
         NavigationRoute(id: "mediaStreamInfo") {
             MediaStreamInfoView(mediaStream: mediaStream)
@@ -54,7 +54,7 @@ extension NavigationRoute {
     static func videoPlayer(manager: VideoPlayerManager) -> NavigationRoute {
         NavigationRoute(
             id: "videoPlayer",
-            routeType: .fullscreen
+            style: .fullscreen
         ) {
             VideoPlayerViewShim(videoPlayerManager: manager)
         }

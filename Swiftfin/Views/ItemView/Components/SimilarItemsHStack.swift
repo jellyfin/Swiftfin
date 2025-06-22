@@ -37,7 +37,7 @@ extension ItemView {
             .trailing {
                 SeeAllButton()
                     .onSelect {
-                        router.route(to: .library(viewModel))
+                        router.route(to: .library(viewModel: viewModel))
                     }
             }
             .onSelect { item in

@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-#if !os(tvOS)
+#if os(iOS)
 extension NavigationRoute {
 
     static let downloadList = NavigationRoute(
@@ -21,7 +21,7 @@ extension NavigationRoute {
     static func downloadTask(downloadTask: DownloadTask) -> NavigationRoute {
         NavigationRoute(
             id: "downloadTask",
-            routeType: .sheet
+            style: .sheet
         ) {
             DownloadTaskView(downloadTask: downloadTask)
         }

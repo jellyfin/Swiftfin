@@ -22,9 +22,6 @@ struct SearchView: View {
     @Default(.Customization.searchPosterType)
     private var searchPosterType
 
-    @Environment(\.tabItemSelectedEvent)
-    private var tabItemSelectedEvent
-
     @FocusState
     private var isSearchFocused: Bool
 
@@ -33,6 +30,9 @@ struct SearchView: View {
 
     @State
     private var searchQuery = ""
+
+    @TabItemSelected
+    private var tabItemSelected
 
     @StateObject
     private var viewModel = SearchViewModel()
@@ -181,7 +181,7 @@ struct SearchView: View {
         )
         .backport
         .searchFocused($isSearchFocused)
-        .onReceive(tabItemSelectedEvent.events) { event in
+        .onReceive(tabItemSelected) { event in
             if event.isRepeat, event.isRoot {
                 isSearchFocused = true
             }

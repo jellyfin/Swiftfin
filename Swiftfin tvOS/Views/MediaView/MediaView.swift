@@ -34,7 +34,7 @@ struct MediaView: View {
                             parent: item,
                             filters: .default
                         )
-                        router.route(to: .library(viewModel))
+                        router.route(to: .library(viewModel: viewModel))
                     case .downloads:
                         assertionFailure("Downloads unavailable on tvOS")
                     case .favorites:
@@ -43,7 +43,7 @@ struct MediaView: View {
                             id: "favorites",
                             filters: .favorites
                         )
-                        router.route(to: .library(viewModel))
+                        router.route(to: .library(viewModel: viewModel))
                     case .liveTV:
                         router.route(to: .liveTV)
                     }

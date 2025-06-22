@@ -59,7 +59,7 @@ struct ServerUserDetailsView: View {
                     maxWidth: 150
                 )
             ) {
-                router.route(to: .userPhotoPickerAdmin(viewModel: profileViewModel))
+                router.route(to: .userProfileImage(viewModel: profileViewModel))
             } onDelete: {
                 profileViewModel.send(.delete)
             }

@@ -11,30 +11,25 @@ import SwiftUI
 
 struct NavigationRoute: Identifiable, Hashable {
 
-    enum Transition: Hashable {
+    enum TransitionStyle: Hashable {
 
-        case push(Push)
+        case push(NavigationTransition)
         case sheet
         case fullscreen
-
-        enum Push: Hashable {
-            case automatic
-            case zoom
-        }
     }
 
     let id: String
 
     private let content: AnyView
-    var transition: Transition
+    var transitionStyle: TransitionStyle
 
     init(
         id: String,
-        routeType: Transition = .push(.automatic),
+        style: TransitionStyle = .push(.automatic),
         @ViewBuilder content: () -> some View
     ) {
         self.id = id
-        self.transition = routeType
+        self.transitionStyle = style
         self.content = AnyView(content())
     }
 
@@ -48,41 +43,12 @@ struct NavigationRoute: Identifiable, Hashable {
 
     @ViewBuilder
     func destination(in namespace: Namespace.ID?) -> some View {
-        if case let .push(transition) = transition {
+        if case let .push(style) = transitionStyle {
             content
-                .withNavigationTransition(
-                    transition,
-                    id: id,
-                    in: namespace
-                )
+                .backport
+                .navigationTransition(style)
         } else {
             content
-        }
-    }
-}
-
-extension View {
-
-    @ViewBuilder
-    func withNavigationTransition(
-        _ transition: NavigationRoute.Transition.Push,
-        id: String,
-        in namespace: Namespace.ID?
-    ) -> some View {
-        switch transition {
-        case .automatic:
-            self
-        case .zoom:
-            self.withZoomIfAvailable(id: id, in: namespace)
-        }
-    }
-
-    @ViewBuilder
-    func withZoomIfAvailable(id: String, in namespace: Namespace.ID?) -> some View {
-        if #available(iOS 18, tvOS 18, *), let namespace {
-            self.navigationTransition(.zoom(sourceID: id, in: namespace))
-        } else {
-            self
         }
     }
 }

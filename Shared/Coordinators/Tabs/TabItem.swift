@@ -8,24 +8,26 @@
 
 import SwiftUI
 
-// TODO: tab item label style
 struct TabItem: Identifiable, Hashable {
 
     let content: AnyView
     let id: String
     let title: String
     let systemImage: String
+    let labelStyle: any LabelStyle
 
     init(
         id: String,
         title: String,
         systemImage: String,
+        labelStyle: some LabelStyle = .titleAndIcon,
         @ViewBuilder content: () -> some View
     ) {
         self.content = AnyView(content())
         self.id = id
         self.title = title
         self.systemImage = systemImage
+        self.labelStyle = labelStyle
     }
 
     func hash(into hasher: inout Hasher) {
@@ -76,7 +78,7 @@ extension TabItem {
     static let search = TabItem(
         id: "search",
         title: L10n.search,
-        systemImage: "magnifyingglass"
+        systemImage: "magnifyingglass",
     ) {
         SearchView()
     }
@@ -84,7 +86,8 @@ extension TabItem {
     static let settings = TabItem(
         id: "settings",
         title: L10n.settings,
-        systemImage: "gearshape"
+        systemImage: "gearshape",
+        labelStyle: .iconOnly
     ) {
         SettingsView()
     }

@@ -12,7 +12,7 @@ import SwiftUI
 
 extension NavigationRoute {
 
-    #if !os(tvOS)
+    #if os(iOS)
     static let adminDashboard = NavigationRoute(
         id: "adminDashboard"
     ) {
@@ -68,7 +68,7 @@ extension NavigationRoute {
     static func itemOverviewView(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(
             id: "itemOverviewView",
-            routeType: .sheet
+            style: .sheet
         ) {
             ItemOverviewView(item: item)
         }
@@ -93,7 +93,7 @@ extension NavigationRoute {
         ConsoleView()
     }
 
-    #if !os(tvOS)
+    #if os(iOS)
     static let nativePlayerSettings = NavigationRoute(
         id: "nativePlayerSettings"
     ) {
@@ -107,11 +107,11 @@ extension NavigationRoute {
         PlaybackQualitySettingsView()
     }
 
-    #if !os(tvOS)
+    #if os(iOS)
     static func resetUserPassword(userID: String) -> NavigationRoute {
         NavigationRoute(
             id: "resetUserPassword",
-            routeType: .sheet
+            style: .sheet
         ) {
             ResetUserPasswordView(userID: userID, requiresCurrentPassword: true)
         }
@@ -126,7 +126,7 @@ extension NavigationRoute {
 
     static let settings = NavigationRoute(
         id: "settings",
-        routeType: .sheet
+        style: .sheet
     ) {
         SettingsView()
     }
@@ -149,7 +149,7 @@ extension NavigationRoute {
         }
     }
 
-    #if !os(tvOS)
+    #if os(iOS)
     static let gestureSettings = NavigationRoute(
         id: "gestureSettings"
     ) {
@@ -168,7 +168,7 @@ extension NavigationRoute {
     static func createCustomDeviceProfile() -> NavigationRoute {
         NavigationRoute(
             id: "createCustomDeviceProfile",
-            routeType: .sheet
+            style: .sheet
         ) {
             CustomDeviceProfileSettingsView.EditCustomDeviceProfileView(profile: nil)
                 .navigationTitle(L10n.customProfile)
@@ -178,7 +178,7 @@ extension NavigationRoute {
     static func editCustomDeviceProfile(profile: Binding<CustomDeviceProfile>) -> NavigationRoute {
         NavigationRoute(
             id: "editCustomDeviceProfile",
-            routeType: .sheet
+            style: .sheet
         ) {
             CustomDeviceProfileSettingsView.EditCustomDeviceProfileView(profile: profile)
                 .navigationTitle(L10n.customProfile)

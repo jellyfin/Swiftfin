@@ -47,9 +47,14 @@ struct MainTabView: View {
                     tab.item.content
                 }
                 .environmentObject(tabCoordinator)
-                .environment(\.tabItemSelectedEvent, tab.tabItemSelected)
+                .environment(\.tabItemSelected, tab.publisher)
                 .tabItem {
-                    Label(tab.item.title, systemImage: tab.item.systemImage)
+                    Label(
+                        tab.item.title,
+                        systemImage: tab.item.systemImage
+                    )
+                    .labelStyle(tab.item.labelStyle)
+                    .eraseToAnyView()
                 }
                 .tag(tab.item.id)
             }

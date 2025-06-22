@@ -16,6 +16,29 @@ struct Backport<Content> {
 extension Backport where Content: View {
 
     @ViewBuilder
+    func matchedTransitionSource(id: String, in namespace: Namespace.ID) -> some View {
+        if #available(iOS 18.0, tvOS 18.0, *) {
+            content.matchedTransitionSource(
+                id: id,
+                in: namespace
+            )
+        } else {
+            content
+        }
+    }
+
+    @ViewBuilder
+    func navigationTransition(_ style: NavigationTransition) -> some View {
+        if #available(iOS 18.0, tvOS 18.0, *), case let .zoom(sourceID, namespace) = style {
+            content.navigationTransition(
+                .zoom(sourceID: sourceID, in: namespace)
+            )
+        } else {
+            content
+        }
+    }
+
+    @ViewBuilder
     func scrollClipDisabled(_ disabled: Bool = true) -> some View {
         if #available(iOS 17, *) {
             content.scrollClipDisabled(disabled)
@@ -50,4 +73,9 @@ extension ButtonBorderShape {
             return ButtonBorderShape.roundedRectangle
         }
     }()
+}
+
+enum NavigationTransition: Hashable {
+    case automatic
+    case zoom(sourceID: String, namespace: Namespace.ID)
 }

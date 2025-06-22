@@ -47,7 +47,7 @@ struct MediaView: View {
                             parent: item,
                             filters: .default
                         )
-                        router.route(to: .library(viewModel))
+                        router.route(to: .library(viewModel: viewModel))
                     case .downloads:
                         router.route(to: .downloadList)
                     case .favorites:
@@ -57,7 +57,7 @@ struct MediaView: View {
                             id: "favorites",
                             filters: .favorites
                         )
-                        router.route(to: .library(viewModel))
+                        router.route(to: .library(viewModel: viewModel))
                     case .liveTV:
                         router.route(to: .liveTV)
                     }

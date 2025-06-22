@@ -15,25 +15,23 @@ struct AppLoadingView: View {
     private var didFailMigration = false
 
     var body: some View {
-        NavigationInjectionView(coordinator: .init()) {
-            ZStack {
-                if !didFailMigration {
-                    DelayedProgressView()
-                }
+        ZStack {
+            if !didFailMigration {
+                DelayedProgressView()
+            }
 
-                if didFailMigration {
-                    ErrorView(error: JellyfinAPIError("An internal error occurred."))
-                }
+            if didFailMigration {
+                ErrorView(error: JellyfinAPIError("An internal error occurred."))
             }
-            .topBarTrailing {
-                Button(L10n.advanced, systemImage: "gearshape.fill") {}
-                    .foregroundStyle(.secondary)
-                    .disabled(true)
-                    .isVisible(!didFailMigration)
-            }
-            .onNotification(.didFailMigration) { _ in
-                didFailMigration = true
-            }
+        }
+        .topBarTrailing {
+            Button(L10n.advanced, systemImage: "gearshape.fill") {}
+                .foregroundStyle(.secondary)
+                .disabled(true)
+                .isVisible(!didFailMigration)
+        }
+        .onNotification(.didFailMigration) { _ in
+            didFailMigration = true
         }
     }
 }

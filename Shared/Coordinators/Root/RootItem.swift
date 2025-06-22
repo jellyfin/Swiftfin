@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+@MainActor
 struct RootItem: Identifiable {
 
     var id: String
@@ -22,7 +23,9 @@ struct RootItem: Identifiable {
     }
 
     static let appLoading = RootItem(id: "appLoading") {
-        AppLoadingView()
+        NavigationInjectionView(coordinator: .init()) {
+            AppLoadingView()
+        }
     }
 
     static let mainTab = RootItem(id: "mainTab") {
@@ -30,10 +33,14 @@ struct RootItem: Identifiable {
     }
 
     static let selectUser = RootItem(id: "selectUser") {
-        SelectUserView()
+        NavigationInjectionView(coordinator: .init()) {
+            SelectUserView()
+        }
     }
 
     static let serverCheck = RootItem(id: "serverCheck") {
-        ServerCheckView()
+        NavigationInjectionView(coordinator: .init()) {
+            ServerCheckView()
+        }
     }
 }

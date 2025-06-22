@@ -13,7 +13,7 @@ extension NavigationRoute {
 
     static let connectToServer = NavigationRoute(
         id: "connectToServer",
-        routeType: .sheet
+        style: .sheet
     ) {
         ConnectToServerView()
     }
@@ -21,7 +21,7 @@ extension NavigationRoute {
     static func editServerFromSelectUser(server: ServerState) -> NavigationRoute {
         NavigationRoute(
             id: "editServerFromSelectUser",
-            routeType: .sheet
+            style: .sheet
         ) {
             EditServerView(server: server)
                 .environment(\.isEditing, true)
@@ -31,33 +31,38 @@ extension NavigationRoute {
     static func quickConnect(quickConnect: QuickConnect) -> NavigationRoute {
         NavigationRoute(
             id: "quickConnectView",
-            routeType: .sheet
+            style: .sheet
         ) {
             QuickConnectView(quickConnect: quickConnect)
         }
     }
 
-    static let selectUser = NavigationRoute(
-        id: "selectUser"
-    ) {
-        SelectUserView()
-    }
-
-    #if !os(tvOS)
+    #if os(iOS)
     static func userProfileImage(viewModel: UserProfileImageViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "userProfileImage",
-            routeType: .sheet
+            style: .sheet
         ) {
-            UserProfileImagePickerView()
-//            UserProfileImageView(viewModel: viewModel)
+            UserProfileImagePickerView(viewModel: viewModel)
+        }
+    }
+
+    static func userProfileImageCrop(viewModel: UserProfileImageViewModel, image: UIImage) -> NavigationRoute {
+        NavigationRoute(
+            id: "cropImage",
+            style: .sheet
+        ) {
+            UserProfileImageCropView(
+                viewModel: viewModel,
+                image: image
+            )
         }
     }
 
     static func userSecurity(pinHint: Binding<String>, accessPolicy: Binding<UserAccessPolicy>) -> NavigationRoute {
         NavigationRoute(
             id: "userSecurity",
-            routeType: .sheet
+            style: .sheet
         ) {
             UserSignInView.SecurityView(
                 pinHint: pinHint,

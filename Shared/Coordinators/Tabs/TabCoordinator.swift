@@ -11,14 +11,23 @@ import SwiftUI
 @MainActor
 final class TabCoordinator: ObservableObject {
 
-    typealias TabData = (item: TabItem, coordinator: NavigationCoordinator, tabItemSelected: TabItemSelected)
+    struct SelectedEvent {
+        let isRoot: Bool
+        let isRepeat: Bool
+    }
+
+    typealias TabData = (
+        item: TabItem,
+        coordinator: NavigationCoordinator,
+        publisher: TabItemSelectedPublisher
+    )
 
     @Published
     var selectedTabID: String! = nil {
         didSet {
             guard let tab = tabs.first(property: \.item.id, equalTo: selectedTabID) else { return }
 
-            tab.tabItemSelected.eventSubject.send(
+            tab.publisher.send(
                 .init(
                     isRoot: tab.coordinator.path.isEmpty,
                     isRepeat: oldValue == selectedTabID
@@ -34,7 +43,7 @@ final class TabCoordinator: ObservableObject {
         let tabs = tabs()
         self.tabs = tabs.map { tab in
             let coordinator = NavigationCoordinator()
-            let event = TabItemSelected()
+            let event = TabItemSelectedPublisher()
             return (tab, coordinator, event)
         }
     }

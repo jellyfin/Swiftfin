@@ -26,12 +26,12 @@ final class NavigationCoordinator: ObservableObject {
 
     func push(
         _ route: NavigationRoute,
-        transition: NavigationRoute.Transition? = nil,
+        style: NavigationRoute.TransitionStyle? = nil,
         in namespace: Namespace.ID? = nil
     ) {
-        let transition = transition ?? route.transition
+        let style = style ?? route.transitionStyle
 
-        switch transition {
+        switch style {
         case .push:
             path.append(
                 PathItem(
