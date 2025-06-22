@@ -66,8 +66,7 @@ struct CustomDeviceProfileSettingsView: View {
                 Section {
                     if customProfiles.isEmpty {
                         Button(L10n.add) {
-                            // TODO: Implement createCustomDeviceProfile route in new Router system
-//                            router.route(to: .createCustomDeviceProfile)
+                            router.route(to: .createCustomDeviceProfile)
                         }
                     }
 
@@ -92,8 +91,7 @@ struct CustomDeviceProfileSettingsView: View {
                         Spacer()
                         if customProfiles.isNotEmpty {
                             Button(L10n.add) {
-                                // TODO: Implement createCustomDeviceProfile route in new Router system
-//                                router.route(to: .createCustomDeviceProfile)
+                                router.route(to: .createCustomDeviceProfile)
                             }
                         }
                     }

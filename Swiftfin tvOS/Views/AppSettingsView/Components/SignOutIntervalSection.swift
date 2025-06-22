@@ -41,8 +41,7 @@ extension AppSettingsView {
                         L10n.duration,
                         subtitle: Text(backgroundSignOutInterval, format: .hourMinute)
                     ) {
-                        // TODO: Implement hourPicker route in new Router system
-//                        router.route(to: .hourPicker)
+                        router.route(to: .hourPicker)
                     }
                 }
             } footer: {

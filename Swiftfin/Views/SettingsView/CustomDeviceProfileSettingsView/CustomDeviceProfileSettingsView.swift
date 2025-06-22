@@ -57,15 +57,13 @@ struct CustomDeviceProfileSettingsView: View {
 
                 if customProfiles.isEmpty {
                     Button(L10n.add) {
-                        // TODO: implement createCustomDeviceProfile route
-                        // router.route(to: .createCustomDeviceProfile())
+                        router.route(to: .createCustomDeviceProfile)
                     }
                 }
 
                 ForEach($customProfiles, id: \.self) { $profile in
                     CustomProfileButton(profile: profile) {
-                        // TODO: implement editCustomDeviceProfile route
-                        // router.route(to: .editCustomDeviceProfile(profile: $profile))
+                        router.route(to: .editCustomDeviceProfile(profile: $profile))
                     }
                 }
                 .onDelete(perform: removeProfile)
@@ -76,8 +74,7 @@ struct CustomDeviceProfileSettingsView: View {
             if customProfiles.isNotEmpty {
                 Button(L10n.add) {
                     UIDevice.impact(.light)
-                    // TODO: implement createCustomDeviceProfile route
-                    // router.route(to: .createCustomDeviceProfile())
+                    router.route(to: .createCustomDeviceProfile)
                 }
                 .buttonStyle(.toolbarPill)
             }

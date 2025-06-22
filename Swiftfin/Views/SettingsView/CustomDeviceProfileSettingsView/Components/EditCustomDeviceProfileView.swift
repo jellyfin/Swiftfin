@@ -92,24 +92,21 @@ extension CustomDeviceProfileSettingsView {
                         title: L10n.audio,
                         content: profile.audio.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        // TODO: implement customDeviceAudioEditor route
-                        // router.route(to: .customDeviceAudioEditor(profile: $profile.audio))
+                        router.route(to: .customDeviceAudioEditor(selection: $profile.audio))
                     }
 
                     codecSection(
                         title: L10n.video,
                         content: profile.video.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        // TODO: implement customDeviceVideoEditor route
-                        // router.route(to: .customDeviceVideoEditor(profile: $profile.video))
+                        router.route(to: .customDeviceVideoEditor(selection: $profile.video))
                     }
 
                     codecSection(
                         title: L10n.containers,
                         content: profile.container.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        // TODO: implement customDeviceContainerEditor route
-                        // router.route(to: .customDeviceContainerEditor(profile: $profile.container))
+                        router.route(to: .customDeviceContainerEditor(selection: $profile.container))
                     }
                 } footer: {
                     if !isValid {

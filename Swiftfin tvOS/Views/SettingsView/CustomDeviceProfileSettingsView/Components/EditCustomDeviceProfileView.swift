@@ -109,8 +109,7 @@ extension CustomDeviceProfileSettingsView {
                         title: L10n.audio,
                         content: profile.value.audio.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        // TODO: Implement customDeviceAudioEditor route in new Router system
-//                        router.route(to: .customDeviceAudioEditor(audio: $profile.value.audio))
+                        router.route(to: .customDeviceAudioEditor(selection: $profile.value.audio))
                     }
                     .padding(.vertical)
 
@@ -118,8 +117,7 @@ extension CustomDeviceProfileSettingsView {
                         title: L10n.video,
                         content: profile.value.video.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        // TODO: Implement customDeviceVideoEditor route in new Router system
-//                        router.route(to: .customDeviceVideoEditor(video: $profile.value.video))
+                        router.route(to: .customDeviceVideoEditor(selection: $profile.value.video))
                     }
                     .padding(.vertical)
 
@@ -127,8 +125,7 @@ extension CustomDeviceProfileSettingsView {
                         title: L10n.containers,
                         content: profile.value.container.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        // TODO: Implement customDeviceContainerEditor route in new Router system
-//                        router.route(to: .customDeviceContainerEditor(container: $profile.value.container))
+                        router.route(to: .customDeviceContainerEditor(selection: $profile.value.container))
                     }
                     .padding(.vertical)
 

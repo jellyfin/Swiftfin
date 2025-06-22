@@ -62,7 +62,6 @@ struct PlaybackQualitySettingsView: View {
 
                     if compatibilityMode == .custom {
                         ChevronButton(L10n.profiles) {
-                            // TODO: Implement customDeviceProfileSettings route in new Router system
                             router.route(to: .customDeviceProfileSettings)
                         }
                     }

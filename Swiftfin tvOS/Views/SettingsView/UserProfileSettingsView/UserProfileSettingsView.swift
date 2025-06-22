@@ -54,7 +54,6 @@ struct UserProfileSettingsView: View {
 
                 Section {
                     ChevronButton(L10n.security) {
-                        // TODO: Implement localSecurity route in new Router system
                         router.route(to: .localSecurity)
                     }
                 }

@@ -165,14 +165,12 @@ extension NavigationRoute {
 
     // MARK: - Custom Device Profile
 
-    static func createCustomDeviceProfile() -> NavigationRoute {
-        NavigationRoute(
-            id: "createCustomDeviceProfile",
-            style: .sheet
-        ) {
-            CustomDeviceProfileSettingsView.EditCustomDeviceProfileView(profile: nil)
-                .navigationTitle(L10n.customProfile)
-        }
+    static let createCustomDeviceProfile = NavigationRoute(
+        id: "createCustomDeviceProfile",
+        style: .sheet
+    ) {
+        CustomDeviceProfileSettingsView.EditCustomDeviceProfileView(profile: nil)
+            .navigationTitle(L10n.customProfile)
     }
 
     static func editCustomDeviceProfile(profile: Binding<CustomDeviceProfile>) -> NavigationRoute {
