@@ -32,6 +32,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/CollectionVGrid",
       "state" : {
+        "branch" : "main",
         "revision" : "70db2318ce64d49aa8b536e0623b96cb323fbdf1"
       }
     },
