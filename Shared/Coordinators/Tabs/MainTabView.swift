@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+// TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
 
     #if os(iOS)
