@@ -164,8 +164,7 @@ extension ItemView {
                 case let .error(eventError):
                     error = eventError
                 case .deleted:
-                    // TODO: Implement router.dismissCoordinator() equivalent with new Router system
-                    router.dismissCoordinator()
+                    router.dismiss()
                 }
             }
             .errorMessage($error)

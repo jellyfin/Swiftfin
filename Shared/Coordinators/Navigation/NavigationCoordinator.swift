@@ -31,6 +31,14 @@ final class NavigationCoordinator: ObservableObject {
     ) {
         let style = style ?? route.transitionStyle
 
+        #if os(tvOS)
+        switch style {
+        case .push, .sheet:
+            presentedSheet = route
+        case .fullscreen:
+            presentedFullScreen = route
+        }
+        #else
         switch style {
         case .push:
             path.append(
@@ -44,5 +52,6 @@ final class NavigationCoordinator: ObservableObject {
         case .fullscreen:
             presentedFullScreen = route
         }
+        #endif
     }
 }

@@ -77,7 +77,7 @@ struct UserSignInView: View {
         case let .error(eventError):
             error = eventError
         case let .signedIn(user):
-            router.dismissCoordinator()
+            router.dismiss()
 
             Defaults[.lastSignedInUserID] = .signedIn(userID: user.id)
             Container.shared.currentUserSession.reset()

@@ -87,6 +87,7 @@ struct UserSignInView: View {
         case let .signedIn(user):
             UIDevice.feedback(.success)
 
+            router.dismiss()
             Defaults[.lastSignedInUserID] = .signedIn(userID: user.id)
             Container.shared.currentUserSession.reset()
             Notifications[.didSignIn].post()
@@ -105,7 +106,7 @@ struct UserSignInView: View {
             case .requirePin:
                 if needsPin {
                     onPinCompletion = {
-//                        router.route(to: .quickConnectView(quickConnect: <#T##QuickConnect#>))
+                        router.route(to: .quickConnect(quickConnect: viewModel.quickConnect))
                     }
                     isPresentingLocalPin = true
                     return
@@ -315,7 +316,7 @@ struct UserSignInView: View {
         .navigationTitle(L10n.signIn)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton(disabled: viewModel.state == .signingIn) {
-            router.dismissCoordinator()
+            router.dismiss()
         }
         .onChange(of: isPresentingLocalPin) { newValue in
             if newValue {

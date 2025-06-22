@@ -109,8 +109,7 @@ struct UserLocalSecurityView: View {
         case .promptForNewPin:
             onPinCompletion = {
                 viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: pinHint)
-                // TODO: Implement popLast functionality in new Router system
-//                router.popLast()
+                router.dismiss()
             }
 
             pin = ""

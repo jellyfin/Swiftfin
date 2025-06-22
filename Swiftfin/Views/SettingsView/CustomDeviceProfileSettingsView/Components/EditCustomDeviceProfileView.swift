@@ -134,14 +134,14 @@ extension CustomDeviceProfileSettingsView {
                     }
 
                     UIDevice.impact(.light)
-                    router.dismissSheet()
+                    router.dismiss()
                 }
                 .buttonStyle(.toolbarPill)
                 .disabled(!isValid)
             }
             .alert(L10n.profileNotSaved, isPresented: $isPresentingNotSaved) {
                 Button(L10n.close, role: .destructive) {
-                    router.dismissSheet()
+                    router.dismiss()
                 }
             }
         }

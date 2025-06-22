@@ -24,8 +24,7 @@ struct UserProfileImagePickerView: View {
         PhotoPickerView {
             router.route(to: .userProfileImageCrop(viewModel: viewModel, image: $0))
         } onCancel: {
-            // TODO: Implement dismiss functionality in new router system
-            router.dismissCoordinator()
+            router.dismiss()
         }
     }
 }

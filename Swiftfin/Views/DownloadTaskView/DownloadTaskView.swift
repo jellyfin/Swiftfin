@@ -22,8 +22,7 @@ struct DownloadTaskView: View {
             ContentView(downloadTask: downloadTask)
         }
         .navigationBarCloseButton {
-            // TODO: Implement dismiss functionality in new router system
-            router.dismissCoordinator()
+            router.dismiss()
         }
     }
 }

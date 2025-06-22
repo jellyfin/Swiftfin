@@ -109,7 +109,7 @@ struct AddServerUserView: View {
         .navigationTitle(L10n.newUser)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
-            router.dismissSheet()
+            router.dismiss()
         }
         .onFirstAppear {
             focusedfield = .username
@@ -121,10 +121,8 @@ struct AddServerUserView: View {
                 error = eventError
             case let .createdNewUser(newUser):
                 UIDevice.feedback(.success)
-                // TODO: Implement dismiss functionality in new router system
-//                router.dismissCoordinator {
-//                    Notifications[.didAddServerUser].post(newUser)
-//                }
+                Notifications[.didAddServerUser].post(newUser)
+                router.dismiss()
             }
         }
         .topBarTrailing {

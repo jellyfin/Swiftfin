@@ -99,8 +99,7 @@ extension CustomDeviceProfileSettingsView {
                                 if createProfile {
                                     customDeviceProfiles.append(profile.value)
                                 }
-                                // TODO: Implement dismissCoordinator functionality in new Router system
-                                router.dismissCoordinator()
+                                router.dismiss()
                             }
                             .disabled(!isValid)
                         }
@@ -140,8 +139,7 @@ extension CustomDeviceProfileSettingsView {
                 .navigationTitle(L10n.customProfile)
                 .alert(L10n.profileNotSaved, isPresented: $isPresentingNotSaved) {
                     Button(L10n.close, role: .destructive) {
-                        // TODO: Implement dismissCoordinator functionality in new Router system
-                        router.dismissCoordinator()
+                        router.dismiss()
                     }
                 }
                 .interactiveDismissDisabled(true)

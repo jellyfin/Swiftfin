@@ -203,14 +203,12 @@ struct UserLocalSecurityView: View {
                     )
 
                     viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: "")
-                    // TODO: Implement pop functionality in new router system
-//                    router.popLast()
+                    router.dismiss()
                 }
             case .promptForNewPin:
                 onPinCompletion = {
                     viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: pinHint)
-                    // TODO: Implement pop functionality in new router system
-//                    router.popLast()
+                    router.dismiss()
                 }
 
                 pin = ""

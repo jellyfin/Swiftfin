@@ -178,7 +178,7 @@ struct ItemView: View {
                 error = eventError
                 isPresentingEventAlert = true
             case .deleted:
-                router.dismissSheet()
+                router.dismiss()
             }
         }
         .alert(

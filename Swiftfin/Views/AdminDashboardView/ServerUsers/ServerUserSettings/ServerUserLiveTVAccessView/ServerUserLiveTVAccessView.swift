@@ -54,7 +54,7 @@ struct ServerUserLiveTVAccessView: View {
             .navigationTitle(L10n.liveTVAccess.localizedCapitalized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
-                router.dismissSheet()
+                router.dismiss()
             }
             .topBarTrailing {
                 if viewModel.backgroundStates.contains(.updating) {
@@ -75,7 +75,7 @@ struct ServerUserLiveTVAccessView: View {
                     error = eventError
                 case .updated:
                     UIDevice.feedback(.success)
-                    router.dismissSheet()
+                    router.dismiss()
                 }
             }
             .errorMessage($error)

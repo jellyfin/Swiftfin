@@ -34,7 +34,6 @@ extension ItemView {
                             items: element.value
                         )
                         .onSelect { item in
-                            // TODO: Implement router.route(to: .item(parameter: item)) when ItemRouter is available
                             router.route(to: .item(item: item))
                         }
                     }

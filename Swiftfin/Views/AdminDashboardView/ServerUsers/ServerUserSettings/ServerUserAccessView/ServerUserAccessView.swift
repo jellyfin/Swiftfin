@@ -49,7 +49,7 @@ struct ServerUserMediaAccessView: View {
             .navigationTitle(L10n.mediaAccess)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
-                router.dismissSheet()
+                router.dismiss()
             }
             .topBarTrailing {
                 if viewModel.backgroundStates.contains(.updating) {
@@ -73,7 +73,7 @@ struct ServerUserMediaAccessView: View {
                     error = eventError
                 case .updated:
                     UIDevice.feedback(.success)
-                    router.dismissSheet()
+                    router.dismiss()
                 }
             }
             .errorMessage($error)

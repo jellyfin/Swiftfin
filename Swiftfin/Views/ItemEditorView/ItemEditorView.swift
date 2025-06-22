@@ -50,8 +50,7 @@ struct ItemEditorView: View {
         .navigationBarTitle(L10n.metadata)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
-            // TODO: Implement dismiss functionality in new router system
-            router.dismissCoordinator()
+            router.dismiss()
         }
     }
 

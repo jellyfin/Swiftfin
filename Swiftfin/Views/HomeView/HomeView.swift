@@ -23,11 +23,6 @@ struct HomeView: View {
     @Default(.Customization.recentlyAddedPosterType)
     private var recentlyAddedPosterType
 
-//    @EnvironmentObject
-//    private var mainRouter: MainCoordinator.Router
-//    @EnvironmentObject
-//    private var router: HomeCoordinator.Router
-
     @Router
     private var router
 

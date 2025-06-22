@@ -26,8 +26,9 @@ extension ItemView {
             )
             .onSelect { item in
                 guard let mediaSource = item.mediaSources?.first else { return }
-                // TODO: Implement router.route(to: .videoPlayer(parameter: manager)) when ItemRouter is available
-//                router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: item, mediaSource: mediaSource))
+                router.route(
+                    to: .videoPlayer(manager: OnlineVideoPlayerManager(item: item, mediaSource: mediaSource))
+                )
             }
             .imageOverlay { _ in
                 EmptyView()

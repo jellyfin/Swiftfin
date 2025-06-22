@@ -61,8 +61,7 @@ struct ItemImagesView: View {
             viewModel.send(.refresh)
         }
         .navigationBarCloseButton {
-            // TODO: Implement dismiss functionality in new router system
-            router.dismissCoordinator()
+            router.dismiss()
         }
         .sheet(item: $selectedImage) {
             selectedImage = nil

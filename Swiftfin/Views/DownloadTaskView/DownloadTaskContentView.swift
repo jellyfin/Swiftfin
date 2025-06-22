@@ -87,8 +87,7 @@ extension DownloadTaskView {
                         PrimaryButton(title: L10n.play)
                             .onSelect {
                                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                                    // TODO: Implement dismiss functionality in new router system
-                                    router.dismissCoordinator()
+                                    router.dismiss()
                                     router.route(to: .videoPlayer(manager: DownloadVideoPlayerManager(downloadTask: downloadTask)))
                                 } else {
                                     isPresentingVideoPlayerTypeError = true

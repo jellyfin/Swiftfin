@@ -57,7 +57,7 @@ struct LiveVideoPlayer: View {
                         {
                             videoPlayerManager.selectNextViewModel()
                         } else {
-                            router.dismissCoordinator()
+                            router.dismiss()
                         }
                     }
                 }

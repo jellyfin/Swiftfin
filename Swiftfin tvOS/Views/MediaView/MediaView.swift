@@ -9,7 +9,6 @@
 import CollectionVGrid
 import Defaults
 import JellyfinAPI
-
 import SwiftUI
 
 struct MediaView: View {

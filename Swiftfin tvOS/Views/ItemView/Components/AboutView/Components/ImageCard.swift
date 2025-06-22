@@ -41,7 +41,6 @@ extension ItemView.AboutView {
                 if let episodeViewModel = viewModel as? EpisodeItemViewModel,
                    let seriesItem = episodeViewModel.seriesItem
                 {
-                    // TODO: Implement router.route(to: .item(parameter: seriesItem)) when ItemRouter is available
                     router.route(to: .item(item: seriesItem))
                 }
             default:

@@ -50,7 +50,7 @@ struct ServerUserPermissionsView: View {
             .navigationTitle(L10n.permissions)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
-                router.dismissSheet()
+                router.dismiss()
             }
             .topBarTrailing {
                 if viewModel.backgroundStates.contains(.updating) {
@@ -71,7 +71,7 @@ struct ServerUserPermissionsView: View {
                     error = eventError
                 case .updated:
                     UIDevice.feedback(.success)
-                    router.dismissSheet()
+                    router.dismiss()
                 }
             }
             .errorMessage($error)

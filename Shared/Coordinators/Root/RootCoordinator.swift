@@ -8,6 +8,7 @@
 
 import Defaults
 import Factory
+import Logging
 import SwiftUI
 
 @MainActor
@@ -16,15 +17,23 @@ final class RootCoordinator: ObservableObject {
     @Published
     var root: RootItem = .appLoading
 
+    private let logger = Logger.swiftfin()
+
     init() {
         Task {
             do {
                 try await SwiftfinStore.setupDataStack()
 
                 if Container.shared.currentUserSession() != nil, !Defaults[.signOutOnClose] {
+                    #if os(tvOS)
+                    await MainActor.run {
+                        root(.mainTab)
+                    }
+                    #else
                     await MainActor.run {
                         root(.serverCheck)
                     }
+                    #endif
                 } else {
                     await MainActor.run {
                         root(.selectUser)
@@ -37,9 +46,41 @@ final class RootCoordinator: ObservableObject {
                 }
             }
         }
+
+        // Notification setup for state
+        Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))
+        Notifications[.didSignOut].subscribe(self, selector: #selector(didSignOut))
+        Notifications[.didChangeCurrentServerURL].subscribe(self, selector: #selector(didChangeCurrentServerURL(_:)))
     }
 
     func root(_ newRoot: RootItem) {
         root = newRoot
+    }
+
+    @objc
+    private func didSignIn() {
+        logger.info("Signed in")
+
+        #if os(tvOS)
+        root(.mainTab)
+        #else
+        root(.serverCheck)
+        #endif
+    }
+
+    @objc
+    private func didSignOut() {
+        logger.info("Signed out")
+
+        root(.selectUser)
+    }
+
+    @objc
+    func didChangeCurrentServerURL(_ notification: Notification) {
+
+        guard Container.shared.currentUserSession() != nil else { return }
+
+        Container.shared.currentUserSession.reset()
+        Notifications[.didSignIn].post()
     }
 }

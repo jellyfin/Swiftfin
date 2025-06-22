@@ -59,8 +59,7 @@ struct ConnectToServerView: View {
             UIDevice.feedback(.success)
 
             Notifications[.didConnectToServer].post(server)
-        // TODO: Implement pop functionality in new router system
-//            router.popLast()
+            router.dismiss()
         case let .duplicateServer(server):
             UIDevice.feedback(.warning)
 
@@ -164,8 +163,7 @@ struct ConnectToServerView: View {
         .navigationTitle(L10n.connect)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton(disabled: viewModel.state == .connecting) {
-            // TODO: Implement pop functionality in new router system
-//            router.popLast()
+            router.dismiss()
         }
         .onFirstAppear {
             isURLFocused = true
@@ -193,8 +191,7 @@ struct ConnectToServerView: View {
 
             Button(L10n.addURL) {
                 viewModel.send(.addNewURL(server))
-                // TODO: Implement pop functionality in new router system
-//                router.popLast()
+                router.dismiss()
             }
         } message: { server in
             L10n.serverAlreadyExistsPrompt(server.name).text

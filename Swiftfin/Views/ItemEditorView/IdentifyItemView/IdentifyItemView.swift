@@ -94,9 +94,8 @@ struct IdentifyItemView: View {
                 error = eventError
             case .cancelled:
                 selectedResult = nil
-            case .updated: ()
-                // TODO: Implement pop functionality in new router system
-//                router.pop()
+            case .updated:
+                router.dismiss()
             }
         }
         .errorMessage($error)

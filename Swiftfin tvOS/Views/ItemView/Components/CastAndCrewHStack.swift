@@ -28,7 +28,6 @@ extension ItemView {
             )
             .onSelect { person in
                 let viewModel = ItemLibraryViewModel(parent: person)
-                // TODO: Implement router.route(to: .library(parameter: viewModel)) when ItemRouter is available
                 router.route(to: .library(viewModel: viewModel))
             }
         }

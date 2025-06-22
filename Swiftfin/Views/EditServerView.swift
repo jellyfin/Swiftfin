@@ -83,8 +83,7 @@ struct EditServerView: View {
         .alert(L10n.deleteServer, isPresented: $isPresentingConfirmDeletion) {
             Button(L10n.delete, role: .destructive) {
                 viewModel.delete()
-                // TODO: Implement pop functionality in new router system
-//                router.popLast()
+                router.dismiss()
             }
         } message: {
             Text(L10n.confirmDeleteServerAndUsers(viewModel.server.name))

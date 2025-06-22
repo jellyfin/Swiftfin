@@ -138,8 +138,7 @@ struct ResetUserPasswordView: View {
         .navigationTitle(L10n.password)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
-            // TODO: Implement dismiss functionality in new router system
-            router.dismissCoordinator()
+            router.dismiss()
         }
         .onFirstAppear {
             if requiresCurrentPassword {
@@ -168,8 +167,7 @@ struct ResetUserPasswordView: View {
             isPresented: $isPresentingSuccess
         ) {
             Button(L10n.dismiss, role: .cancel) {
-                // TODO: Implement dismiss functionality in new router system
-                router.dismissCoordinator()
+                router.dismiss()
             }
         } message: {
             Text(L10n.passwordChangedMessage)

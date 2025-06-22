@@ -62,15 +62,13 @@ struct EditMetadataView: View {
             Button(L10n.save) {
                 item = tempItem
                 viewModel.send(.update(tempItem))
-                // TODO: Implement dismiss functionality in new router system
-                router.dismissCoordinator()
+                router.dismiss()
             }
             .buttonStyle(.toolbarPill)
             .disabled(viewModel.item == tempItem)
         }
         .navigationBarCloseButton {
-            // TODO: Implement dismiss functionality in new router system
-            router.dismissCoordinator()
+            router.dismiss()
         }
         .onReceive(viewModel.events) { events in
             switch events {

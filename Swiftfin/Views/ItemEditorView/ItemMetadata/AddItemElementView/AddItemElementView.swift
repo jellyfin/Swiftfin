@@ -75,8 +75,7 @@ struct AddItemElementView<Element: Hashable>: View {
         .navigationTitle(type.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
-            // TODO: Implement dismiss functionality in new router system
-            router.dismissCoordinator()
+            router.dismiss()
         }
         .topBarTrailing {
             if viewModel.backgroundStates.contains(.loading) {
@@ -106,8 +105,7 @@ struct AddItemElementView<Element: Hashable>: View {
             switch event {
             case .updated:
                 UIDevice.feedback(.success)
-                // TODO: Implement dismiss functionality in new router system
-                router.dismissCoordinator()
+                router.dismiss()
             case .loaded:
                 loaded = true
                 viewModel.send(.search(name))

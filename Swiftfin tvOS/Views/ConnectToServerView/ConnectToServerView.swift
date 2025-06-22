@@ -130,7 +130,7 @@ struct ConnectToServerView: View {
             switch event {
             case let .connected(server):
                 Notifications[.didConnectToServer].post(server)
-            // TODO: Implement router.dismiss() or router.pop() functionality
+                router.dismiss()
             case let .duplicateServer(server):
                 duplicateServer = server
                 isPresentingDuplicateServer = true
@@ -153,7 +153,7 @@ struct ConnectToServerView: View {
 
             Button(L10n.addURL) {
                 viewModel.send(.addNewURL(server))
-                // TODO: Implement router.dismiss() or router.pop() functionality
+                router.dismiss()
             }
         } message: { server in
             Text(L10n.serverAlreadyConnected(server.name))

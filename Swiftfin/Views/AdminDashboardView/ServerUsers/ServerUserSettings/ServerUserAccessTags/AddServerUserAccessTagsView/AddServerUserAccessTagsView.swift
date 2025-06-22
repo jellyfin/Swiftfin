@@ -69,7 +69,7 @@ struct AddServerUserAccessTagsView: View {
             .navigationTitle(L10n.addAccessTag.localizedCapitalized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
-                router.dismissSheet()
+                router.dismiss()
             }
             .topBarTrailing {
                 if viewModel.backgroundStates.contains(.refreshing) {
@@ -111,7 +111,7 @@ struct AddServerUserAccessTagsView: View {
                     error = eventError
                 case .updated:
                     UIDevice.feedback(.success)
-                    router.dismissSheet()
+                    router.dismiss()
                 }
             }
             .onReceive(tagViewModel.events) { event in

@@ -13,6 +13,9 @@ struct ServerCheckView: View {
     @EnvironmentObject
     private var rootCoordinator: RootCoordinator
 
+    @Router
+    private var router
+
     @StateObject
     private var viewModel = ServerCheckViewModel()
 
@@ -68,7 +71,7 @@ struct ServerCheckView: View {
                 server: viewModel.userSession.server,
                 user: viewModel.userSession.user
             ) {
-//                router.route(to: \.settings)
+                router.route(to: .settings)
             }
         }
     }

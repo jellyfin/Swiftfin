@@ -35,7 +35,6 @@ extension ItemView.AboutView {
                     }
                 }
                 .onSelect {
-                    // TODO: Implement router.route(to: .mediaSourceInfo(parameter: source)) when ItemRouter is available
                     router.route(to: .mediaSourceInfo(source: source))
                 }
         }

@@ -22,8 +22,7 @@ struct ItemImagePicker: View {
             // TODO: Convert to NavigationRoute pattern - router.route(to: .cropImage(image: $0))
 //            router.route(to: \.cropImage, $0)
         } onCancel: {
-            // TODO: Implement dismiss functionality in new router system
-            router.dismissCoordinator()
+            router.dismiss()
         }
     }
 }

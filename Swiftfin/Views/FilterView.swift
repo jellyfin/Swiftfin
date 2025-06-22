@@ -43,8 +43,7 @@ struct FilterView: View {
             .navigationTitle(type.displayTitle)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
-                // TODO: Implement dismiss functionality in new router system
-                router.dismissCoordinator()
+                router.dismiss()
             }
             .topBarTrailing {
                 Button(L10n.reset) {

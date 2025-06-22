@@ -140,8 +140,7 @@ struct AddItemImageView: View {
             switch event {
             case .updated:
                 UIDevice.feedback(.success)
-            // TODO: Implement pop functionality in new router system
-//                router.pop()
+                router.dismiss()
             case let .error(eventError):
                 UIDevice.feedback(.error)
                 error = eventError

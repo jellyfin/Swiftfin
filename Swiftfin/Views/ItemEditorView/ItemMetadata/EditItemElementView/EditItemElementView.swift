@@ -134,7 +134,7 @@ struct EditItemElementView<Element: Hashable>: View {
             isHidden: isEditing || isReordering
         ) {
             Button(L10n.add, systemImage: "plus") {
-                route(router, viewModel)
+                route(router.router, viewModel)
             }
 
             if elements.isNotEmpty == true {

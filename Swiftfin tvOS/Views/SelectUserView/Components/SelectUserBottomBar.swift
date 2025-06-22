@@ -68,7 +68,6 @@ extension SelectUserView {
                 Divider()
 
                 Button(L10n.advanced, systemImage: "gearshape.fill") {
-                    // TODO: Implement advancedSettings route in new Router system
                     router.route(to: .appSettings)
                 }
             } label: {
@@ -140,7 +139,6 @@ extension SelectUserView {
                         selectedServer: selectedServer,
                         servers: servers
                     ) { server in
-                        // TODO: Implement userSignIn route in new Router system
                         router.route(to: .userSignIn(server: server))
                     }
                     .hidden(!hasUsers)

@@ -95,7 +95,7 @@ struct AddAccessScheduleView: View {
             .navigationTitle(L10n.addAccessSchedule.localizedCapitalized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
-                router.dismissSheet()
+                router.dismiss()
             }
             .topBarTrailing {
                 if viewModel.backgroundStates.contains(.refreshing) {
@@ -121,7 +121,7 @@ struct AddAccessScheduleView: View {
                     error = eventError
                 case .updated:
                     UIDevice.feedback(.success)
-                    router.dismissSheet()
+                    router.dismiss()
                 }
             }
             .errorMessage($error)

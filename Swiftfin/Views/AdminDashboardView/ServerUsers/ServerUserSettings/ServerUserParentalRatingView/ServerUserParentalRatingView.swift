@@ -56,7 +56,7 @@ struct ServerUserParentalRatingView: View {
         .navigationTitle(L10n.parentalRating.localizedCapitalized)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
-            router.dismissSheet()
+            router.dismiss()
         }
         .topBarTrailing {
             if viewModel.backgroundStates.contains(.updating) {
@@ -81,7 +81,7 @@ struct ServerUserParentalRatingView: View {
                 error = eventError
             case .updated:
                 UIDevice.feedback(.success)
-                router.dismissSheet()
+                router.dismiss()
             }
         }
         .errorMessage($error)

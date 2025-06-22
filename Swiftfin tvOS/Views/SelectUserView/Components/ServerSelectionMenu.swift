@@ -81,13 +81,11 @@ extension SelectUserView {
                 Section {
                     if let selectedServer {
                         Button(L10n.editServer, systemImage: "server.rack") {
-                            // TODO: Implement editServer route in new Router system
                             router.route(to: .editServer(server: selectedServer))
                         }
                     }
 
                     Button(L10n.addServer, systemImage: "plus") {
-                        // TODO: Implement connectToServer route in new Router system
                         router.route(to: .connectToServer)
                     }
                 }

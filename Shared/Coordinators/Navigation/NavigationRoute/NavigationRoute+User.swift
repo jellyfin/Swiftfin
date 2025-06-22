@@ -73,7 +73,10 @@ extension NavigationRoute {
     #endif
 
     static func userSignIn(server: ServerState) -> NavigationRoute {
-        NavigationRoute(id: "userSignIn") {
+        NavigationRoute(
+            id: "userSignIn",
+            style: .sheet
+        ) {
             UserSignInView(server: server)
         }
     }

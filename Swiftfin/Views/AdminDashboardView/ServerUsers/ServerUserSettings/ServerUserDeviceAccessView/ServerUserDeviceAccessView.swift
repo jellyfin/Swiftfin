@@ -56,7 +56,7 @@ struct ServerUserDeviceAccessView: View {
             .navigationTitle(L10n.deviceAccess)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
-                router.dismissSheet()
+                router.dismiss()
             }
             .topBarTrailing {
                 if viewModel.backgroundStates.contains(.updating) {
@@ -77,7 +77,7 @@ struct ServerUserDeviceAccessView: View {
                     error = eventError
                 case .updated:
                     UIDevice.feedback(.success)
-                    router.dismissSheet()
+                    router.dismiss()
                 }
             }
             .onFirstAppear {

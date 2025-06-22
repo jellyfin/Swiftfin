@@ -103,14 +103,11 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         switch item.type {
         case .collectionFolder, .folder:
             let viewModel = ItemLibraryViewModel(parent: item, filters: .default)
-            // TODO: Implement library route in new Router system
             router.route(to: .library(viewModel: viewModel))
         case .person:
             let viewModel = ItemLibraryViewModel(parent: item)
-            // TODO: Implement library route in new Router system
             router.route(to: .library(viewModel: viewModel))
         default:
-            // TODO: Implement item route in new Router system
             router.route(to: .item(item: item))
         }
     }
@@ -119,7 +116,6 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
 
     private func select(person: BaseItemPerson) {
         let viewModel = ItemLibraryViewModel(parent: person)
-        // TODO: Implement library route in new Router system
         router.route(to: .library(viewModel: viewModel))
     }
 
@@ -405,11 +401,9 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             case let .gotRandomItem(item):
                 switch item {
                 case let item as BaseItemDto:
-                    // TODO: Implement item route in new Router system
                     router.route(to: .item(item: item))
                 case let item as BaseItemPerson:
                     let viewModel = ItemLibraryViewModel(parent: item, filters: .default)
-                    // TODO: Implement library route in new Router system
                     router.route(to: .library(viewModel: viewModel))
                 default:
                     assertionFailure("Used an unexpected type within a `PagingLibaryView`?")

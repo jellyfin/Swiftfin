@@ -74,7 +74,6 @@ struct CustomDeviceProfileSettingsView: View {
                     List {
                         ForEach($customProfiles, id: \.self) { $profile in
                             CustomProfileButton(profile: profile) {
-                                // TODO: Implement editCustomDeviceProfile route in new Router system
                                 router.route(to: .editCustomDeviceProfile(profile: $profile))
                             }
                             .contextMenu {

@@ -28,23 +28,32 @@ extension NavigationCoordinator {
         ) {
             rootCoordinator?.root(root)
         }
-
-        @available(*, deprecated, message: "Figure out what to do with this")
-        func dismissSheet() {}
-
-        @available(*, deprecated, message: "Figure out what to do with this")
-        func dismissCoordinator() {}
     }
 }
 
 @propertyWrapper
 struct Router: DynamicProperty {
 
+    @MainActor
+    struct RouterWrapper {
+        let router: NavigationCoordinator.Router
+        let dismiss: DismissAction
+
+        func route(
+            to route: NavigationRoute,
+            in namespace: Namespace.ID? = nil
+        ) {
+            router.route(to: route, in: namespace)
+        }
+    }
+
+    @Environment(\.dismiss)
+    private var dismiss
     @Environment(\.router)
     private var router
 
-    var wrappedValue: NavigationCoordinator.Router {
-        router
+    var wrappedValue: RouterWrapper {
+        .init(router: router, dismiss: dismiss)
     }
 }
 

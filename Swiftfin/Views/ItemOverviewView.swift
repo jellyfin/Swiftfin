@@ -39,8 +39,7 @@ struct ItemOverviewView: View {
         .navigationTitle(item.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
-            // TODO: Implement dismiss functionality in new router system
-            router.dismissCoordinator()
+            router.dismiss()
         }
     }
 }

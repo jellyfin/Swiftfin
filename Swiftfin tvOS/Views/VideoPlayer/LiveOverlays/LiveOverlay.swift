@@ -75,7 +75,7 @@ extension LiveVideoPlayer {
 //
 //                if isPresentingOverlay && currentOverlayType == .confirmClose {
 //                    proxy.stop()
-//                    router.dismissCoordinator()
+//                    router.dismiss()
 //                } else if isPresentingOverlay && currentOverlayType == .smallMenu {
 //                    currentOverlayType = .main
 //                } else {

@@ -14,13 +14,13 @@ extension UserSignInView {
 
     struct SecurityView: View {
 
-        @Router
-        private var router
-
         @Binding
         private var pinHint: String
         @Binding
         private var accessPolicy: UserAccessPolicy
+
+        @Router
+        private var router
 
         @State
         private var listSize: CGSize = .zero
@@ -96,7 +96,7 @@ extension UserSignInView {
             .navigationTitle(L10n.security)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
-                router.dismissCoordinator()
+                router.dismiss()
             }
             .onChange(of: updatePinHint) { newValue in
                 let truncated = String(newValue.prefix(120))

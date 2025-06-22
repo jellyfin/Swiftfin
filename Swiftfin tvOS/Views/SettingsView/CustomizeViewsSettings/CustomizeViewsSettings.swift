@@ -54,7 +54,6 @@ struct CustomizeViewsSettings: View {
                 Section(L10n.posters) {
 
                     ChevronButton(L10n.indicators) {
-                        // TODO: Implement indicatorSettings route in new Router system
                         router.route(to: .indicatorSettings)
                     }
 

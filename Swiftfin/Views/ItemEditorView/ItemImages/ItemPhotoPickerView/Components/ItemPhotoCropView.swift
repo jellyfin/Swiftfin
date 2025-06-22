@@ -43,8 +43,7 @@ struct ItemPhotoCropView: View {
         ) {
             viewModel.send(.uploadImage(image: $0, type: type))
         } onCancel: {
-            // TODO: Implement dismiss functionality in new router system
-            router.dismissCoordinator()
+            router.dismiss()
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .interactiveDismissDisabled(viewModel.backgroundStates.contains(.updating))
@@ -54,8 +53,7 @@ struct ItemPhotoCropView: View {
             case let .error(eventError):
                 error = eventError
             case .updated:
-                // TODO: Implement dismiss functionality in new router system
-                router.dismissCoordinator()
+                router.dismiss()
             }
         }
         .errorMessage($error)

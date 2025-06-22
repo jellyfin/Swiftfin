@@ -43,8 +43,7 @@ struct UserProfileImageCropView: View {
         ) {
             viewModel.send(.upload($0))
         } onCancel: {
-            // TODO: Implement dismiss functionality in new router system
-            router.dismissCoordinator()
+            router.dismiss()
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .interactiveDismissDisabled(viewModel.state == .uploading)
@@ -56,8 +55,7 @@ struct UserProfileImageCropView: View {
             case .deleted:
                 break
             case .uploaded:
-                // TODO: Implement dismiss functionality in new router system
-                router.dismissCoordinator()
+                router.dismiss()
             }
         }
         .errorMessage($error)

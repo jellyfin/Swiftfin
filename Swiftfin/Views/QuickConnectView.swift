@@ -67,8 +67,7 @@ struct QuickConnectView: View {
             viewModel.stop()
         }
         .navigationBarCloseButton {
-            // TODO: Implement popLast functionality in new router system
-            router.dismissCoordinator()
+            router.dismiss()
         }
     }
 }

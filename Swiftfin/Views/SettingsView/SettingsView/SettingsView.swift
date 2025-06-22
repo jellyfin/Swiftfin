@@ -20,8 +20,6 @@ struct SettingsView: View {
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
 
-    @Environment(\.dismiss)
-    private var dismiss
     @Router
     private var router
 
@@ -66,7 +64,7 @@ struct SettingsView: View {
                 UIDevice.impact(.medium)
 
                 viewModel.signOut()
-                dismiss()
+                router.dismiss()
             }
             .foregroundStyle(accentColor.overlayColor, accentColor)
 
@@ -101,7 +99,7 @@ struct SettingsView: View {
 
 //                ChevronButton(L10n.experimental)
 //                    .onSelect {
-//                        router.route(to: \.experimentalSettings)
+//                        router.route(to: .experimentalSettings)
 //                    }
             }
 
@@ -126,7 +124,7 @@ struct SettingsView: View {
         .navigationTitle(L10n.settings)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
-            dismiss()
+            router.dismiss()
         }
     }
 }
