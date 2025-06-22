@@ -6,14 +6,15 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
-extension MovieItemView {
+extension ItemView {
 
-    struct ContentView: View {
+    struct CollectionItemContentView: View {
 
         @ObservedObject
-        var viewModel: MovieItemViewModel
+        var viewModel: CollectionItemViewModel
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
@@ -25,12 +26,17 @@ extension MovieItemView {
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
-                if let castAndCrew = viewModel.item.people, castAndCrew.isNotEmpty {
-                    ItemView.CastAndCrewHStack(people: castAndCrew)
-                }
-
-                if viewModel.specialFeatures.isNotEmpty {
-                    ItemView.SpecialFeaturesHStack(items: viewModel.specialFeatures)
+                ForEach(viewModel.collectionItems.elements, id: \.key) { element in
+                    if element.value.isNotEmpty {
+                        PosterHStack(
+                            title: element.key.pluralDisplayTitle,
+                            type: .portrait,
+                            items: element.value
+                        )
+                        .onSelect { item in
+                            router.route(to: \.item, item)
+                        }
+                    }
                 }
 
                 if viewModel.similarItems.isNotEmpty {
@@ -38,15 +44,6 @@ extension MovieItemView {
                 }
 
                 ItemView.AboutView(viewModel: viewModel)
-            }
-            .background {
-                BlurView(style: .dark)
-                    .maskLinearGradient {
-                        (location: 0.5, opacity: 0)
-                        (location: 0.7, opacity: 0.8)
-                        (location: 0.95, opacity: 0.8)
-                        (location: 1, opacity: 1)
-                    }
             }
         }
     }
