@@ -13,8 +13,8 @@ extension ItemView {
 
     struct CompactPosterScrollView<Content: View>: ScrollContainerView {
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         private var viewModel: ItemViewModel
@@ -61,16 +61,10 @@ extension ItemView {
                         .edgePadding(.bottom)
                         .background {
                             BlurView(style: .systemThinMaterialDark)
-                                .mask {
-                                    LinearGradient(
-                                        stops: [
-                                            .init(color: .white.opacity(0), location: 0.2),
-                                            .init(color: .white.opacity(0.5), location: 0.3),
-                                            .init(color: .white, location: 0.55),
-                                        ],
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    )
+                                .maskLinearGradient {
+                                    (location: 0.2, opacity: 0)
+                                    (location: 0.3, opacity: 0.5)
+                                    (location: 0.55, opacity: 1)
                                 }
                         }
                 }
@@ -96,8 +90,11 @@ extension ItemView.CompactPosterScrollView {
 
     struct OverlayView: View {
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @StoredValue(.User.itemViewAttributes)
+        private var attributes
+
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: ItemViewModel
@@ -130,7 +127,11 @@ extension ItemView.CompactPosterScrollView {
                 .font(.subheadline.weight(.medium))
                 .foregroundColor(Color(UIColor.lightGray))
 
-                ItemView.AttributesHStack(viewModel: viewModel, alignment: .leading)
+                ItemView.AttributesHStack(
+                    attributes: attributes,
+                    viewModel: viewModel,
+                    alignment: .leading
+                )
             }
         }
 

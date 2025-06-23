@@ -23,10 +23,10 @@ extension VideoPlayer {
             ZStack {
 
                 MainOverlay()
-                    .visible(currentOverlayType == .main)
+                    .isVisible(currentOverlayType == .main)
 
                 ChapterOverlay()
-                    .visible(currentOverlayType == .chapters)
+                    .isVisible(currentOverlayType == .chapters)
             }
             .animation(.linear(duration: 0.1), value: currentOverlayType)
             .environment(\.currentOverlayType, $currentOverlayType)

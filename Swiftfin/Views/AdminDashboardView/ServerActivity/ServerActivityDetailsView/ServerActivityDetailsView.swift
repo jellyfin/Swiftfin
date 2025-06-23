@@ -13,8 +13,8 @@ struct ServerActivityDetailsView: View {
 
     // MARK: - Environment Objects
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     // MARK: - Activity Log Entry Variable
 
@@ -36,7 +36,7 @@ struct ServerActivityDetailsView: View {
                     user: user,
                     lastActivityDate: viewModel.log.date
                 ) {
-                    router.route(to: \.userDetails, user)
+                    router.route(to: .userDetails(user: user))
                 }
             }
 
@@ -55,21 +55,21 @@ struct ServerActivityDetailsView: View {
             /// Event Details
             Section(L10n.details) {
                 if let severity = viewModel.log.severity {
-                    TextPairView(
-                        leading: L10n.level,
-                        trailing: severity.displayTitle
+                    LabeledContent(
+                        L10n.level,
+                        value: severity.displayTitle
                     )
                 }
                 if let type = viewModel.log.type {
-                    TextPairView(
-                        leading: L10n.type,
-                        trailing: type
+                    LabeledContent(
+                        L10n.type,
+                        value: type
                     )
                 }
                 if let date = viewModel.log.date {
-                    TextPairView(
-                        leading: L10n.date,
-                        trailing: date.formatted(date: .long, time: .shortened)
+                    LabeledContent(
+                        L10n.date,
+                        value: date.formatted(date: .long, time: .shortened)
                     )
                 }
             }

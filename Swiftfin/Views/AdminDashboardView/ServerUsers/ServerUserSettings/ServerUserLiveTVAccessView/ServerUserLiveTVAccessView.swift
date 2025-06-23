@@ -19,8 +19,8 @@ struct ServerUserLiveTVAccessView: View {
 
     // MARK: - Observed & Environment Objects
 
-    @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     private var viewModel: ServerUserAdminViewModel
@@ -51,10 +51,10 @@ struct ServerUserLiveTVAccessView: View {
 
     var body: some View {
         contentView
-            .navigationTitle(L10n.tvAccess)
+            .navigationTitle(L10n.liveTVAccess.localizedCapitalized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
-                router.dismissCoordinator()
+                router.dismiss()
             }
             .topBarTrailing {
                 if viewModel.backgroundStates.contains(.updating) {
@@ -75,7 +75,7 @@ struct ServerUserLiveTVAccessView: View {
                     error = eventError
                 case .updated:
                     UIDevice.feedback(.success)
-                    router.dismissCoordinator()
+                    router.dismiss()
                 }
             }
             .errorMessage($error)

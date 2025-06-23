@@ -8,7 +8,7 @@
 
 import Defaults
 import JellyfinAPI
-import Stinsen
+
 import SwiftUI
 import VLCUI
 
@@ -16,8 +16,8 @@ import VLCUI
 
 struct PlaybackSettingsView: View {
 
-    @EnvironmentObject
-    private var router: PlaybackSettingsCoordinator.Router
+    @Router
+    private var router
     @EnvironmentObject
     private var splitContentViewProxy: SplitContentViewProxy
     @EnvironmentObject
@@ -35,7 +35,7 @@ struct PlaybackSettingsView: View {
             Section {
 
                 ChevronButton(L10n.videoPlayer) {
-                    router.route(to: \.videoPlayerSettings)
+                    router.route(to: .videoPlayerSettings)
                 }
 
                 // TODO: playback information
@@ -44,30 +44,26 @@ struct PlaybackSettingsView: View {
             }
 
             BasicStepper(
-                title: L10n.audioOffset,
+                L10n.audioOffset,
                 value: _audioOffset.wrappedValue,
                 range: -30000 ... 30000,
-                step: 100
+                step: 100,
+                formatter: MilliseondFormatter()
             )
-            .valueFormatter {
-                $0.millisecondLabel
-            }
 
             BasicStepper(
-                title: L10n.subtitleOffset,
+                L10n.subtitleOffset,
                 value: _subtitleOffset.wrappedValue,
                 range: -30000 ... 30000,
-                step: 100
+                step: 100,
+                formatter: MilliseondFormatter()
             )
-            .valueFormatter {
-                $0.millisecondLabel
-            }
 
             if viewModel.videoStreams.isNotEmpty {
                 Section(L10n.video) {
                     ForEach(viewModel.videoStreams, id: \.displayTitle) { mediaStream in
                         ChevronButton(mediaStream.displayTitle ?? .emptyDash) {
-                            router.route(to: \.mediaStreamInfo, mediaStream)
+                            router.route(to: .mediaStreamInfo(mediaStream: mediaStream))
                         }
                     }
                 }
@@ -77,7 +73,7 @@ struct PlaybackSettingsView: View {
                 Section(L10n.audio) {
                     ForEach(viewModel.audioStreams, id: \.displayTitle) { mediaStream in
                         ChevronButton(mediaStream.displayTitle ?? .emptyDash) {
-                            router.route(to: \.mediaStreamInfo, mediaStream)
+                            router.route(to: .mediaStreamInfo(mediaStream: mediaStream))
                         }
                     }
                 }
@@ -87,7 +83,7 @@ struct PlaybackSettingsView: View {
                 Section(L10n.subtitle) {
                     ForEach(viewModel.subtitleStreams, id: \.displayTitle) { mediaStream in
                         ChevronButton(mediaStream.displayTitle ?? .emptyDash) {
-                            router.route(to: \.mediaStreamInfo, mediaStream)
+                            router.route(to: .mediaStreamInfo(mediaStream: mediaStream))
                         }
                     }
                 }

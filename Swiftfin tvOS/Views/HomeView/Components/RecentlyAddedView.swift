@@ -16,8 +16,8 @@ extension HomeView {
         @Default(.Customization.recentlyAddedPosterType)
         private var recentlyAddedPosterType
 
-        @EnvironmentObject
-        private var router: HomeCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: RecentlyAddedLibraryViewModel
@@ -30,7 +30,7 @@ extension HomeView {
                     items: viewModel.elements
                 )
                 .onSelect { item in
-                    router.route(to: \.item, item)
+                    router.route(to: .item(item: item))
                 }
             }
         }

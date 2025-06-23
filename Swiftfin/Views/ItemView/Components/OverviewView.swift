@@ -13,8 +13,8 @@ extension ItemView {
 
     struct OverviewView: View {
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         let item: BaseItemDto
         private var overviewLineLimit: Int?
@@ -34,7 +34,7 @@ extension ItemView {
                 if let itemOverview = item.overview {
                     TruncatedText(itemOverview)
                         .onSeeMore {
-                            router.route(to: \.itemOverview, item)
+                            router.route(to: .itemOverview(item: item))
                         }
                         .seeMoreType(.view)
                         .font(.footnote)

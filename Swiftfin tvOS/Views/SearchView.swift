@@ -15,10 +15,8 @@ struct SearchView: View {
     @Default(.Customization.searchPosterType)
     private var searchPosterType
 
-    @EnvironmentObject
-    private var videoPlayerRouter: VideoPlayerWrapperCoordinator.Router
-    @EnvironmentObject
-    private var router: SearchCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = SearchViewModel()
@@ -78,20 +76,21 @@ struct SearchView: View {
         switch item.type {
         case .person:
             let viewModel = ItemLibraryViewModel(parent: item)
-            router.route(to: \.library, viewModel)
+            router.route(to: .library(viewModel: viewModel))
         case .program:
-            videoPlayerRouter.route(
-                to: \.liveVideoPlayer,
-                LiveVideoPlayerManager(program: item)
-            )
+            router.route(to: .liveVideoPlayer(manager: LiveVideoPlayerManager(program: item)))
         case .tvChannel:
             guard let mediaSource = item.mediaSources?.first else { return }
-            videoPlayerRouter.route(
-                to: \.liveVideoPlayer,
-                LiveVideoPlayerManager(item: item, mediaSource: mediaSource)
+            router.route(
+                to: .liveVideoPlayer(
+                    manager: LiveVideoPlayerManager(
+                        item: item,
+                        mediaSource: mediaSource
+                    )
+                )
             )
         default:
-            router.route(to: \.item, item)
+            router.route(to: .item(item: item))
         }
     }
 

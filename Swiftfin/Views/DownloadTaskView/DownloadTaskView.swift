@@ -11,8 +11,8 @@ import SwiftUI
 
 struct DownloadTaskView: View {
 
-    @EnvironmentObject
-    private var router: DownloadTaskCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     var downloadTask: DownloadTask
@@ -22,7 +22,7 @@ struct DownloadTaskView: View {
             ContentView(downloadTask: downloadTask)
         }
         .navigationBarCloseButton {
-            router.dismissCoordinator()
+            router.dismiss()
         }
     }
 }

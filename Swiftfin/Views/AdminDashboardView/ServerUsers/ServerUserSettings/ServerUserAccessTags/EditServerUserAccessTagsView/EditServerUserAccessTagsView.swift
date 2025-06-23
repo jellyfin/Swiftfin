@@ -19,8 +19,8 @@ struct EditServerUserAccessTagsView: View {
 
     // MARK: - Observed, State, & Environment Objects
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel: ServerUserAdminViewModel
@@ -111,7 +111,7 @@ struct EditServerUserAccessTagsView: View {
             isHidden: isEditing || hasTags
         ) {
             Button(L10n.add, systemImage: "plus") {
-                router.route(to: \.userAddAccessTag, viewModel)
+                router.route(to: .userAddAccessTag(viewModel: viewModel))
             }
 
             Button(L10n.edit, systemImage: "checkmark.circle") {
@@ -176,7 +176,7 @@ struct EditServerUserAccessTagsView: View {
 
             if blockedTags.isEmpty, allowedTags.isEmpty {
                 Button(L10n.add) {
-                    router.route(to: \.userAddAccessTag, viewModel)
+                    router.route(to: .userAddAccessTag(viewModel: viewModel))
                 }
             } else {
                 if allowedTags.isNotEmpty {

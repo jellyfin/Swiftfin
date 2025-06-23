@@ -163,7 +163,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
 
         let client = JellyfinClient(
             configuration: .swiftfinConfiguration(url: url),
-            sessionDelegate: URLSessionProxyDelegate(logger: Container.shared.pulseNetworkLogger())
+            sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin())
         )
 
         let response = try await client.send(Paths.getPublicSystemInfo)

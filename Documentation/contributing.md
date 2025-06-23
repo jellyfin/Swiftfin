@@ -18,6 +18,25 @@ $ carthage update --use-xcframeworks
 
 In the event that all of the Swift Packages cannot be installed, clean the Swift Packages cache or close and reopen Xcode to restart the process.
 
+### Xcode Config
+
+Use an `xcconfig` file to easily set and keep your development team and a custom bundle identifier for local development to your devices.
+
+Create the `XcodeConfig/DevelopmentTeam.xcconfig` file [through Xcode](https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project) or locally with the following values:
+
+```
+DEVELOPMENT_TEAM = ""
+PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin
+```
+
+Update the `DEVELOPMENT_TEAM` value with your Team ID. This can be found by:
+- Setting the `Development Team` value under the `Signing & Capabilities` tab in Xcode and get the value from source control. Make sure to discard this change.
+- Logging into your Apple Developer account and [view your membership details](https://developer.apple.com/account/#/membership). It will be listed next to `Team ID`.
+
+You can change the `PRODUCT_BUNDLE_IDENTIFIER` value to have multiple builds of Swiftfin on your devices or for provisioning purposes.
+
+`DevelopmentTeam.xcconfig` is already added to the `.gitignore`.
+
 ## Git Flow
 
 Swiftfin follows the same Pull Request Guidelines as outlined in the [Jellyfin Pull Request Guidelines](https://jellyfin.org/docs/general/contributing/development.html#pull-request-guidelines).

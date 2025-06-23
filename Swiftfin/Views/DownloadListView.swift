@@ -28,14 +28,14 @@ extension DownloadListView {
 
     struct DownloadTaskRow: View {
 
-        @EnvironmentObject
-        private var router: DownloadListCoordinator.Router
+        @Router
+        private var router
 
         let downloadTask: DownloadTask
 
         var body: some View {
             Button {
-                router.route(to: \.downloadTask, downloadTask)
+                router.route(to: .downloadTask(downloadTask: downloadTask))
             } label: {
                 HStack(alignment: .bottom) {
                     ImageView(downloadTask.getImageURL(name: "Primary"))

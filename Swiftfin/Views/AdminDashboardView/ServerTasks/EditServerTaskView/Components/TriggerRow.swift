@@ -7,7 +7,7 @@
 //
 
 import JellyfinAPI
-import Stinsen
+
 import SwiftUI
 
 extension EditServerTaskView {
@@ -43,7 +43,6 @@ extension EditServerTaskView {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
                 Image(systemName: (taskTriggerInfo.type ?? .startup).systemImage)
-                    .backport
                     .fontWeight(.bold)
                     .foregroundStyle(.secondary)
             }

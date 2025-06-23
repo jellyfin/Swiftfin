@@ -12,9 +12,6 @@ import JellyfinAPI
 import LocalAuthentication
 import SwiftUI
 
-// TODO: authentication view during device authentication
-//       - could use provided UI, but is iOS 16+
-//       - could just ignore for iOS 15, or basic view
 // TODO: user ordering
 //       - name
 //       - last signed in date
@@ -41,8 +38,8 @@ struct SelectUserView: View {
 
     // MARK: - State & Environment Objects
 
-    @EnvironmentObject
-    private var router: SelectUserCoordinator.Router
+    @Router
+    private var router
 
     @State
     private var isEditingUsers: Bool = false
@@ -97,7 +94,7 @@ struct SelectUserView: View {
                 .map { server, users in
                     users.map { (server: server, user: $0) }
                 }
-                .flatMap { $0 }
+                .flattened()
                 .sorted(using: \.user.username)
                 .reversed()
                 .map { UserItem(user: $0.user, server: $0.server) }
@@ -114,7 +111,7 @@ struct SelectUserView: View {
 
     private func addUserSelected(server: ServerState) {
         UIDevice.impact(.light)
-        router.route(to: \.userSignIn, server)
+        router.route(to: .userSignIn(server: server))
     }
 
     private func delete(user: UserState) {
@@ -229,7 +226,7 @@ struct SelectUserView: View {
 
             Section {
                 Button(L10n.advanced, systemImage: "gearshape.fill") {
-                    router.route(to: \.advancedSettings)
+                    router.route(to: .appSettings)
                 }
             }
         }
@@ -448,7 +445,7 @@ struct SelectUserView: View {
 
             PrimaryButton(title: L10n.connect)
                 .onSelect {
-                    router.route(to: \.connectToServer)
+                    router.route(to: .connectToServer)
                 }
                 .frame(maxWidth: 300)
         }
@@ -573,7 +570,7 @@ struct SelectUserView: View {
             viewModel.send(.getServers)
         }
         .alert(
-            L10n.deleteUser,
+            L10n.delete,
             isPresented: $isPresentingConfirmDeleteUsers
         ) {
             Button(L10n.delete, role: .destructive) {

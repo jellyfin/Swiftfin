@@ -34,9 +34,9 @@ extension LiveVideoPlayer {
 //            ZStack {
 //
 //                ConfirmCloseOverlay()
-//                    .visible(currentOverlayType == .confirmClose)
+//                    .isVisible(currentOverlayType == .confirmClose)
 //            }
-//            .visible(isPresentingOverlay)
+//            .isVisible(isPresentingOverlay)
 //            .animation(.linear(duration: 0.1), value: currentOverlayType)
 //            .environment(\.currentOverlayType, $currentOverlayType)
 //            .environmentObject(overlayTimer)
@@ -66,7 +66,7 @@ extension LiveVideoPlayer {
 //
 //                if isPresentingOverlay && currentOverlayType == .confirmClose {
 //                    proxy.stop()
-//                    router.dismissCoordinator()
+//                    router.dismiss()
 //                } else if isPresentingOverlay && currentOverlayType == .smallMenu {
 //                    currentOverlayType = .main
 //                } else {

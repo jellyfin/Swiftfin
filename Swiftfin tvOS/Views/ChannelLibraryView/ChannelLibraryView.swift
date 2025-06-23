@@ -13,8 +13,8 @@ import SwiftUI
 
 struct ChannelLibraryView: View {
 
-    @EnvironmentObject
-    private var router: VideoPlayerWrapperCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = ChannelLibraryViewModel()
@@ -29,8 +29,7 @@ struct ChannelLibraryView: View {
                 .onSelect {
                     guard let mediaSource = channel.channel.mediaSources?.first else { return }
                     router.route(
-                        to: \.liveVideoPlayer,
-                        LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource)
+                        to: .liveVideoPlayer(manager: LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource))
                     )
                 }
         }

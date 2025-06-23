@@ -73,18 +73,24 @@ struct MediaSourceInfoView: View {
                     Form {
                         if let lastSelectedMediaStream {
                             Section {
-                                ForEach(lastSelectedMediaStream.metadataProperties) { property in
+                                ForEach(lastSelectedMediaStream.metadataProperties, id: \.label) { property in
                                     Button {
-                                        TextPairView(property)
+                                        LabeledContent(
+                                            property.label,
+                                            value: property.value
+                                        )
                                     }
                                 }
                             }
 
                             if lastSelectedMediaStream.colorProperties.isNotEmpty {
                                 Section(L10n.color) {
-                                    ForEach(lastSelectedMediaStream.colorProperties) { property in
+                                    ForEach(lastSelectedMediaStream.colorProperties, id: \.label) { property in
                                         Button {
-                                            TextPairView(property)
+                                            LabeledContent(
+                                                property.label,
+                                                value: property.value
+                                            )
                                         }
                                     }
                                 }
@@ -92,9 +98,12 @@ struct MediaSourceInfoView: View {
 
                             if lastSelectedMediaStream.deliveryProperties.isNotEmpty {
                                 Section(L10n.delivery) {
-                                    ForEach(lastSelectedMediaStream.deliveryProperties) { property in
+                                    ForEach(lastSelectedMediaStream.deliveryProperties, id: \.label) { property in
                                         Button {
-                                            TextPairView(property)
+                                            LabeledContent(
+                                                property.label,
+                                                value: property.value
+                                            )
                                         }
                                     }
                                 }

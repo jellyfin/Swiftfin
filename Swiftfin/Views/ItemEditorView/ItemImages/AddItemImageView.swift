@@ -18,8 +18,8 @@ struct AddItemImageView: View {
 
     // MARK: - Observed, & Environment Objects
 
-    @EnvironmentObject
-    private var router: ItemImagesCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     private var viewModel: ItemImagesViewModel
@@ -140,7 +140,7 @@ struct AddItemImageView: View {
             switch event {
             case .updated:
                 UIDevice.feedback(.success)
-                router.pop()
+                router.dismiss()
             case let .error(eventError):
                 UIDevice.feedback(.error)
                 error = eventError

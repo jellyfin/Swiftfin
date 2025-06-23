@@ -13,8 +13,8 @@ import SwiftUIIntrospect
 
 struct ActiveSessionDetailView: View {
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     var box: BindingBox<SessionInfoDto?>
@@ -31,7 +31,7 @@ struct ActiveSessionDetailView: View {
                     user: user,
                     lastActivityDate: session.lastActivityDate
                 ) {
-                    router.route(to: \.userDetails, user)
+                    router.route(to: .userDetails(user: user))
                 }
             }
 
@@ -70,7 +70,7 @@ struct ActiveSessionDetailView: View {
                     user: user,
                     lastActivityDate: session.lastPlaybackCheckIn
                 ) {
-                    router.route(to: \.userDetails, user)
+                    router.route(to: .userDetails(user: user))
                 }
             }
 
@@ -84,7 +84,10 @@ struct ActiveSessionDetailView: View {
             // TODO: don't show codec changes on direct play?
             Section(L10n.streams) {
                 if let playMethodDisplayTitle = session.playMethodDisplayTitle {
-                    TextPairView(leading: L10n.method, trailing: playMethodDisplayTitle)
+                    LabeledContent(
+                        L10n.method,
+                        value: playMethodDisplayTitle
+                    )
                 }
 
                 StreamSection(

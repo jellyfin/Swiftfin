@@ -13,8 +13,8 @@ import SwiftUI
 
 struct DevicesView: View {
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     @State
     private var isPresentingDeleteSelectionConfirmation = false
@@ -76,7 +76,7 @@ struct DevicesView: View {
             viewModel.send(.refresh)
         }
         .confirmationDialog(
-            L10n.deleteSelectedDevices,
+            L10n.delete,
             isPresented: $isPresentingDeleteSelectionConfirmation,
             titleVisibility: .visible
         ) {
@@ -85,7 +85,7 @@ struct DevicesView: View {
             Text(L10n.deleteSelectionDevicesWarning)
         }
         .confirmationDialog(
-            L10n.deleteDevice,
+            L10n.delete,
             isPresented: $isPresentingDeleteConfirmation,
             titleVisibility: .visible
         ) {
@@ -132,7 +132,7 @@ struct DevicesView: View {
                                 selectedDevices.insert(id)
                             }
                         } else {
-                            router.route(to: \.deviceDetails, device)
+                            router.route(to: .deviceDetails(device: device))
                         }
                     } onDelete: {
                         guard let id = device.id else { return }

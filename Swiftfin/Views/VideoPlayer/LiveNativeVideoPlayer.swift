@@ -14,8 +14,8 @@ import SwiftUI
 
 struct LiveNativeVideoPlayer: View {
 
-    @EnvironmentObject
-    private var router: LiveVideoPlayerCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     private var videoPlayerManager: LiveVideoPlayerManager
@@ -37,7 +37,7 @@ struct LiveNativeVideoPlayer: View {
                 VideoPlayer.LoadingView()
             }
         }
-        .navigationBarHidden()
+        .navigationBarHidden(true)
         .statusBarHidden()
         .ignoresSafeArea()
     }

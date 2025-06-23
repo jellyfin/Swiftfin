@@ -101,13 +101,13 @@ struct Slider: View {
                         .if(sliderBehavior == .thumb) { view in
                             view.gesture(trackDrag)
                         }
-                        .onSizeChanged { newSize in
+                        .onSizeChanged { newSize, _ in
                             thumbSize = newSize
                         }
                         .offset(x: progress * totalWidth - thumbSize.width / 2)
                 }
-                .onSizeChanged { size in
-                    totalWidth = size.width
+                .onSizeChanged { newSize, _ in
+                    totalWidth = newSize.width
                 }
                 .if(sliderBehavior == .track) { view in
                     view.overlay {

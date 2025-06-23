@@ -19,8 +19,8 @@ struct LiveVideoPlayer: View {
         case smallMenu
     }
 
-    @EnvironmentObject
-    private var router: LiveVideoPlayerCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
@@ -57,7 +57,7 @@ struct LiveVideoPlayer: View {
                         {
                             videoPlayerManager.selectNextViewModel()
                         } else {
-                            router.dismissCoordinator()
+                            router.dismiss()
                         }
                     }
                 }

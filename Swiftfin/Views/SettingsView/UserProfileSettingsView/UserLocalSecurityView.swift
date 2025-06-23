@@ -16,6 +16,7 @@ import SwiftUI
 // TODO: pop is just a workaround to get change published from usersession.
 //       find fix and don't pop when successfully changed
 // TODO: could cleanup/refactor greatly
+// TODO: change footer list descriptions into a `Learn More...` modal popup
 
 struct UserLocalSecurityView: View {
 
@@ -26,8 +27,8 @@ struct UserLocalSecurityView: View {
 
     // MARK: - State & Environment Objects
 
-    @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = UserLocalSecurityViewModel()
@@ -202,12 +203,12 @@ struct UserLocalSecurityView: View {
                     )
 
                     viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: "")
-                    router.popLast()
+                    router.dismiss()
                 }
             case .promptForNewPin:
                 onPinCompletion = {
                     viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: pinHint)
-                    router.popLast()
+                    router.dismiss()
                 }
 
                 pin = ""

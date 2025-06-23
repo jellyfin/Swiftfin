@@ -36,17 +36,14 @@ struct ListRow<Leading: View, Content: View>: View {
                         .frame(maxHeight: .infinity)
                         .trackingSize($contentSize)
                 }
-                .padding(.top, insets.top)
-                .padding(.bottom, insets.bottom)
-                .padding(.leading, insets.leading)
-                .padding(.trailing, insets.trailing)
+                .padding(insets)
             }
             .foregroundStyle(.primary, .secondary)
 
             Color.secondarySystemFill
                 .frame(width: contentSize.width, height: 1)
                 .padding(.trailing, insets.trailing)
-                .visible(isSeparatorVisible)
+                .isVisible(isSeparatorVisible)
         }
     }
 }

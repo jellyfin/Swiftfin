@@ -19,19 +19,19 @@ extension AdminDashboardView {
 
         var body: some View {
             Section(L10n.device) {
-                TextPairView(
-                    leading: L10n.device,
-                    trailing: device ?? L10n.unknown
+                LabeledContent(
+                    L10n.device,
+                    value: device ?? L10n.unknown
                 )
 
-                TextPairView(
-                    leading: L10n.client,
-                    trailing: client ?? L10n.unknown
+                LabeledContent(
+                    L10n.client,
+                    value: client ?? L10n.unknown
                 )
 
-                TextPairView(
-                    leading: L10n.version,
-                    trailing: version ?? L10n.unknown
+                LabeledContent(
+                    L10n.version,
+                    value: version ?? L10n.unknown
                 )
             }
         }

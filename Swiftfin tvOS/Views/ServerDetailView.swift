@@ -6,12 +6,13 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 struct EditServerView: View {
 
-    @EnvironmentObject
-    private var router: SelectUserCoordinator.Router
+    @Router
+    private var router
 
     @Environment(\.isEditing)
     private var isEditing
@@ -37,14 +38,22 @@ struct EditServerView: View {
             .contentView {
 
                 Section(L10n.server) {
-                    TextPairView(
-                        leading: L10n.name,
-                        trailing: viewModel.server.name
+                    LabeledContent(
+                        L10n.name,
+                        value: viewModel.server.name
                     )
                     .focusable(false)
+
+                    if let serverVerion = StoredValues[.Server.publicInfo(id: viewModel.server.id)].version {
+                        LabeledContent(
+                            L10n.version,
+                            value: serverVerion
+                        )
+                        .focusable(false)
+                    }
                 }
 
-                Section(L10n.url) {
+                Section {
                     ListRowMenu(L10n.serverURL, subtitle: viewModel.server.currentURL.absoluteString) {
                         ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
                             Button {
@@ -66,6 +75,15 @@ struct EditServerView: View {
                             }
                         }
                     }
+                } header: {
+                    L10n.url.text
+                } footer: {
+                    if !viewModel.userSession.server.isVersionCompatible {
+                        Label(
+                            L10n.serverVersionWarning(JellyfinClient.sdkVersion.majorMinor.description),
+                            systemImage: "exclamationmark.circle.fill"
+                        )
+                    }
                 }
 
                 if isEditing {
@@ -82,7 +100,7 @@ struct EditServerView: View {
             .alert(L10n.deleteServer, isPresented: $isPresentingConfirmDeletion) {
                 Button(L10n.delete, role: .destructive) {
                     viewModel.delete()
-                    router.popLast()
+//                    router.popLast()
                 }
             } message: {
                 Text(L10n.confirmDeleteServerAndUsers(viewModel.server.name))

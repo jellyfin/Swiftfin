@@ -6,10 +6,15 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-
 /// A type that is displayed with a title
 protocol Displayable {
 
     var displayTitle: String { get }
+}
+
+extension Displayable where Self: CustomStringConvertible {
+
+    var description: String {
+        displayTitle
+    }
 }

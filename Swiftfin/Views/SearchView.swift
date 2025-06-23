@@ -22,13 +22,17 @@ struct SearchView: View {
     @Default(.Customization.searchPosterType)
     private var searchPosterType
 
-    @EnvironmentObject
-    private var mainRouter: MainCoordinator.Router
-    @EnvironmentObject
-    private var router: SearchCoordinator.Router
+    @FocusState
+    private var isSearchFocused: Bool
+
+    @Router
+    private var router
 
     @State
     private var searchQuery = ""
+
+    @TabItemSelected
+    private var tabItemSelected
 
     @StateObject
     private var viewModel = SearchViewModel()
@@ -91,20 +95,22 @@ struct SearchView: View {
         switch item.type {
         case .person:
             let viewModel = ItemLibraryViewModel(parent: item)
-            router.route(to: \.library, viewModel)
+            router.route(to: .library(viewModel: viewModel))
         case .program:
-            mainRouter.route(
-                to: \.liveVideoPlayer,
-                LiveVideoPlayerManager(program: item)
+            router.route(
+                to: .liveVideoPlayer(
+                    manager: LiveVideoPlayerManager(program: item)
+                )
             )
         case .tvChannel:
             guard let mediaSource = item.mediaSources?.first else { return }
-            mainRouter.route(
-                to: \.liveVideoPlayer,
-                LiveVideoPlayerManager(item: item, mediaSource: mediaSource)
+            router.route(
+                to: .liveVideoPlayer(
+                    manager: LiveVideoPlayerManager(item: item, mediaSource: mediaSource)
+                )
             )
         default:
-            router.route(to: \.item, item)
+            router.route(to: .item(item: item))
         }
     }
 
@@ -127,7 +133,7 @@ struct SearchView: View {
                         id: "search-\(keyPath.hashValue)",
                         viewModel[keyPath: keyPath]
                     )
-                    router.route(to: \.library, viewModel)
+                    router.route(to: .library(viewModel: viewModel))
                 }
         }
         .onSelect(select)
@@ -160,7 +166,7 @@ struct SearchView: View {
             viewModel: viewModel.filterViewModel,
             types: enabledDrawerFilters
         ) {
-            router.route(to: \.filter, $0)
+            router.route(to: .filter(type: $0.type, viewModel: $0.viewModel))
         }
         .onFirstAppear {
             viewModel.send(.getSuggestions)
@@ -173,5 +179,12 @@ struct SearchView: View {
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: L10n.search
         )
+        .backport
+        .searchFocused($isSearchFocused)
+        .onReceive(tabItemSelected) { event in
+            if event.isRepeat, event.isRoot {
+                isSearchFocused = true
+            }
+        }
     }
 }

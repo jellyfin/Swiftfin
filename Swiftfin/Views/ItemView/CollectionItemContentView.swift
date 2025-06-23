@@ -14,8 +14,8 @@ extension ItemView {
 
     struct CollectionItemContentView: View {
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: CollectionItemViewModel
@@ -43,11 +43,11 @@ extension ItemView {
                                         id: viewModel.item.id,
                                         element.value
                                     )
-                                    router.route(to: \.library, viewModel)
+                                    router.route(to: .library(viewModel: viewModel))
                                 }
                         }
                         .onSelect { item in
-                            router.route(to: \.item, item)
+                            router.route(to: .item(item: item))
                         }
                     }
                 }

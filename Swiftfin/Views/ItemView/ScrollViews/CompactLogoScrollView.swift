@@ -13,8 +13,8 @@ extension ItemView {
 
     struct CompactLogoScrollView<Content: View>: ScrollContainerView {
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         private var viewModel: ItemViewModel
@@ -61,15 +61,9 @@ extension ItemView {
                         .padding(.bottom)
                         .background {
                             BlurView(style: .systemThinMaterialDark)
-                                .mask {
-                                    LinearGradient(
-                                        stops: [
-                                            .init(color: .clear, location: 0),
-                                            .init(color: .black, location: 0.3),
-                                        ],
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    )
+                                .maskLinearGradient {
+                                    (location: 0, opacity: 0)
+                                    (location: 0.3, opacity: 1)
                                 }
                         }
                 }
@@ -95,8 +89,11 @@ extension ItemView.CompactLogoScrollView {
 
     struct OverlayView: View {
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @StoredValue(.User.itemViewAttributes)
+        private var attributes
+
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: ItemViewModel
@@ -134,7 +131,10 @@ extension ItemView.CompactLogoScrollView {
                 .foregroundColor(Color(UIColor.lightGray))
                 .padding(.horizontal)
 
-                ItemView.AttributesHStack(viewModel: viewModel)
+                ItemView.AttributesHStack(
+                    attributes: attributes,
+                    viewModel: viewModel
+                )
 
                 Group {
                     if viewModel.presentPlayButton {

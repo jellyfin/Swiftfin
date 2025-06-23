@@ -16,11 +16,11 @@ extension DeviceDetailsView {
         var body: some View {
             Section(L10n.capabilities) {
                 if let supportsMediaControl = device.capabilities?.isSupportsMediaControl {
-                    TextPairView(leading: L10n.supportsMediaControl, trailing: supportsMediaControl ? L10n.yes : L10n.no)
+                    LabeledContent(L10n.supportsMediaControl, value: supportsMediaControl ? L10n.yes : L10n.no)
                 }
 
                 if let supportsPersistentIdentifier = device.capabilities?.isSupportsPersistentIdentifier {
-                    TextPairView(leading: L10n.supportsPersistentIdentifier, trailing: supportsPersistentIdentifier ? L10n.yes : L10n.no)
+                    LabeledContent(L10n.supportsPersistentIdentifier, value: supportsPersistentIdentifier ? L10n.yes : L10n.no)
                 }
             }
         }

@@ -14,8 +14,11 @@ extension ItemView {
 
     struct SimpleScrollView<Content: View>: ScrollContainerView {
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @StoredValue(.User.itemViewAttributes)
+        private var attributes
+
+        @Router
+        private var router
 
         @ObservedObject
         private var viewModel: ItemViewModel
@@ -67,7 +70,11 @@ extension ItemView {
                 .foregroundColor(.secondary)
                 .padding(.horizontal)
 
-                ItemView.AttributesHStack(viewModel: viewModel, alignment: .center)
+                ItemView.AttributesHStack(
+                    attributes: attributes,
+                    viewModel: viewModel,
+                    alignment: .center
+                )
 
                 Group {
                     if viewModel.presentPlayButton {
