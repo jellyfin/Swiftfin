@@ -28,6 +28,7 @@ final class SeriesItemViewModel: ItemViewModel {
     // MARK: - Override Response
 
     override func respond(to action: ItemViewModel.Action) -> ItemViewModel.State {
+
         switch action {
         case .backgroundRefresh, .refresh:
             let parentState = super.respond(to: action)
@@ -67,12 +68,10 @@ final class SeriesItemViewModel: ItemViewModel {
                 }
             }
             .store(in: &cancellables)
-
-            return super.respond(to: action)
-
-        default:
-            return super.respond(to: action)
+        default: ()
         }
+
+        return super.respond(to: action)
     }
 
     // MARK: - Get Next Up Item

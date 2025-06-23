@@ -37,12 +37,10 @@ final class EpisodeItemViewModel: ItemViewModel {
                 }
             }
             .asAnyCancellable()
-
-            return super.respond(to: action)
-
-        default:
-            return super.respond(to: action)
+        default: ()
         }
+
+        return super.respond(to: action)
     }
 
     // MARK: - Get Series Items

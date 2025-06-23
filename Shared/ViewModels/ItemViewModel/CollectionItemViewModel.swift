@@ -44,11 +44,10 @@ final class CollectionItemViewModel: ItemViewModel {
                 }
             }
             .asAnyCancellable()
-            return super.respond(to: action)
-
-        default:
-            return super.respond(to: action)
+        default: ()
         }
+
+        return super.respond(to: action)
     }
 
     // MARK: - Get Collection Items
