@@ -27,11 +27,11 @@ extension ItemView {
                     .padding(.bottom, 50)
 
                 ForEach(viewModel.collectionItems.elements, id: \.key) { element in
-                    if element.value.isNotEmpty {
+                    if element.value.elements.isNotEmpty {
                         PosterHStack(
                             title: element.key.pluralDisplayTitle,
                             type: .portrait,
-                            items: element.value
+                            items: element.value.elements
                         )
                         .onSelect { item in
                             router.route(to: .item(item: item))
