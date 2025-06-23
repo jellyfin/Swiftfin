@@ -16,15 +16,22 @@ final class PersonItemViewModel: ItemViewModel {
     // MARK: - Published Collection Items
 
     @Published
-    private(set) var personItems: OrderedDictionary<BaseItemKind, [BaseItemDto]> = [:]
+    private(set) var personItems: OrderedDictionary<BaseItemKind, ItemLibraryViewModel> = [:]
 
     // MARK: - Task
 
     private var personItemTask: AnyCancellable?
+    private var initializationTask: AnyCancellable?
 
     // MARK: - Disable PlayButton
 
     override var presentPlayButton: Bool {
+        false
+    }
+
+    // MARK: - Disable Play Toggle
+
+    override var canBePlayed: Bool {
         false
     }
 
@@ -33,61 +40,71 @@ final class PersonItemViewModel: ItemViewModel {
     override func respond(to action: ItemViewModel.Action) -> ItemViewModel.State {
 
         switch action {
-        case .backgroundRefresh, .refresh:
-
+        case .refresh, .backgroundRefresh:
             personItemTask?.cancel()
 
-            Task { [weak self] in
-                guard let self else { return }
+            personItemTask = Task {
+                let personItems = await self.getPersonViewModels()
 
                 await MainActor.run {
-                    self.personItems.removeAll()
-                }
-
-                do {
-                    let personItems = try await self.getPersonItems()
-
-                    await MainActor.run {
-                        self.personItems = personItems
-                    }
+                    self.personItems = personItems
                 }
             }
-            .store(in: &cancellables)
+            .asAnyCancellable()
         default: ()
         }
 
         return super.respond(to: action)
     }
 
-    // MARK: - Get Person Items
+    // MARK: - Get Person ItemLibraryViewModels
 
-    private func getPersonItems() async throws -> OrderedDictionary<BaseItemKind, [BaseItemDto]> {
-        guard let itemID = item.id else {
-            throw JellyfinAPIError(L10n.unknownError)
+    private func getPersonViewModels() async -> OrderedDictionary<BaseItemKind, ItemLibraryViewModel> {
+        guard item.id != nil else {
+            return [:]
         }
 
-        var parameters = Paths.GetItemsByUserIDParameters()
-        parameters.fields = .MinimumFields
-        parameters.includeItemTypes = BaseItemKind.supportedCases
-            .appending(.episode)
-        parameters.personIDs = [itemID]
-        parameters.isRecursive = true
+        var allViewModels: [BaseItemKind: ItemLibraryViewModel] = [:]
+        var completedViewModels: [BaseItemKind: ItemLibraryViewModel] = [:]
 
-        let request = Paths.getItemsByUserID(
-            userID: userSession.user.id,
-            parameters: parameters
+        for itemKind in BaseItemKind.supportedCases {
+            let viewModel = ItemLibraryViewModel(
+                parent: item,
+                filters: .init(itemTypes: [itemKind])
+            )
+            allViewModels[itemKind] = viewModel
+        }
+
+        await withTaskGroup(of: (BaseItemKind, Bool).self) { group in
+            for (kind, viewModel) in allViewModels {
+                group.addTask {
+                    await withCheckedContinuation { continuation in
+                        var cancellable: AnyCancellable?
+
+                        cancellable = viewModel.$state
+                            .sink { state in
+                                if state != .initial && state != .refreshing {
+                                    cancellable?.cancel()
+                                    continuation.resume(returning: (kind, state == .content))
+                                }
+                            }
+
+                        Task { @MainActor in
+                            viewModel.send(.refresh)
+                        }
+                    }
+                }
+            }
+
+            for await (kind, isSuccess) in group {
+                if isSuccess, let viewModel = allViewModels[kind], !viewModel.elements.isEmpty {
+                    completedViewModels[kind] = viewModel
+                }
+            }
+        }
+
+        return OrderedDictionary(
+            uniqueKeysWithValues: completedViewModels.sorted { $0.key.rawValue < $1.key.rawValue }
         )
-        let response = try await userSession.client.send(request)
-
-        let items = response.value.items ?? []
-
-        let result = OrderedDictionary<BaseItemKind?, [BaseItemDto]>(
-            grouping: items,
-            by: \.type
-        )
-        .compactKeys()
-        .sortedKeys { $0.rawValue < $1.rawValue }
-
-        return result
     }
 }

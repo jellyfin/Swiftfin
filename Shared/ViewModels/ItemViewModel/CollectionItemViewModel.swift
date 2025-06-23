@@ -16,7 +16,7 @@ final class CollectionItemViewModel: ItemViewModel {
     // MARK: - Published Collection Items
 
     @Published
-    private(set) var collectionItems: OrderedDictionary<BaseItemKind, [BaseItemDto]> = [:]
+    private(set) var collectionItems: OrderedDictionary<BaseItemKind, ItemLibraryViewModel> = [:]
 
     // MARK: - Task
 
@@ -37,7 +37,7 @@ final class CollectionItemViewModel: ItemViewModel {
             collectionItemTask?.cancel()
 
             collectionItemTask = Task {
-                let collectionItems = try await self.getCollectionItems()
+                let collectionItems = await self.getCollectionViewModels()
 
                 await MainActor.run {
                     self.collectionItems = collectionItems
@@ -52,28 +52,52 @@ final class CollectionItemViewModel: ItemViewModel {
 
     // MARK: - Get Collection Items
 
-    private func getCollectionItems() async throws -> OrderedDictionary<BaseItemKind, [BaseItemDto]> {
-        var parameters = Paths.GetItemsByUserIDParameters()
-        parameters.fields = .MinimumFields
-        parameters.includeItemTypes = BaseItemKind.supportedCases
-            .appending(.episode)
-        parameters.parentID = item.id
+    private func getCollectionViewModels() async -> OrderedDictionary<BaseItemKind, ItemLibraryViewModel> {
+        guard item.id != nil else {
+            return [:]
+        }
 
-        let request = Paths.getItemsByUserID(
-            userID: userSession.user.id,
-            parameters: parameters
+        var allViewModels: [BaseItemKind: ItemLibraryViewModel] = [:]
+        var completedViewModels: [BaseItemKind: ItemLibraryViewModel] = [:]
+
+        for itemKind in BaseItemKind.supportedCases {
+            let viewModel = ItemLibraryViewModel(
+                parent: item,
+                filters: .init(itemTypes: [itemKind])
+            )
+            allViewModels[itemKind] = viewModel
+        }
+
+        await withTaskGroup(of: (BaseItemKind, Bool).self) { group in
+            for (kind, viewModel) in allViewModels {
+                group.addTask {
+                    await withCheckedContinuation { continuation in
+                        var cancellable: AnyCancellable?
+
+                        cancellable = viewModel.$state
+                            .sink { state in
+                                if state == .content {
+                                    cancellable?.cancel()
+                                    continuation.resume(returning: (kind, state == .content))
+                                }
+                            }
+
+                        Task { @MainActor in
+                            viewModel.send(.refresh)
+                        }
+                    }
+                }
+            }
+
+            for await (kind, isSuccess) in group {
+                if isSuccess, let viewModel = allViewModels[kind], !viewModel.elements.isEmpty {
+                    completedViewModels[kind] = viewModel
+                }
+            }
+        }
+
+        return OrderedDictionary(
+            uniqueKeysWithValues: completedViewModels.sorted { $0.key.rawValue < $1.key.rawValue }
         )
-        let response = try await userSession.client.send(request)
-
-        let items = response.value.items ?? []
-
-        let result = OrderedDictionary<BaseItemKind?, [BaseItemDto]>(
-            grouping: items,
-            by: \.type
-        )
-        .compactKeys()
-        .sortedKeys { $0.rawValue < $1.rawValue }
-
-        return result
     }
 }

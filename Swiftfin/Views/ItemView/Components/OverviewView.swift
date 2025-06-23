@@ -23,12 +23,30 @@ extension ItemView {
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
 
-                if let firstTagline = item.taglines?.first {
-                    Text(firstTagline)
-                        .font(.body)
-                        .fontWeight(.semibold)
-                        .multilineTextAlignment(.leading)
-                        .lineLimit(taglineLineLimit)
+                Group {
+                    if item.type == .person || item.type == .musicArtist {
+                        if let birthPlace = item.productionLocations?.first {
+                            Text(birthPlace)
+                        }
+                    } else if let firstTagline = item.taglines?.first {
+                        Text(firstTagline)
+                    }
+                }
+                .font(.body)
+                .fontWeight(.semibold)
+                .multilineTextAlignment(.leading)
+                .lineLimit(taglineLineLimit)
+
+                if item.type == .person || item.type == .musicArtist {
+                    DotHStack {
+                        if let birthday = item.premiereDate?.formatted(date: .numeric, time: .omitted) {
+                            Text(birthday)
+                        }
+
+                        if let deathday = item.endDate?.formatted(date: .numeric, time: .omitted) {
+                            Text(deathday)
+                        }
+                    }
                 }
 
                 if let itemOverview = item.overview {

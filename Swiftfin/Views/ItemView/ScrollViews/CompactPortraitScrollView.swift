@@ -43,10 +43,23 @@ extension ItemView {
 
         @ViewBuilder
         private var headerView: some View {
-            ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
+            if let personViewModel = viewModel as? PersonItemViewModel,
+               let randomElement = personViewModel.personItems.elements.randomElement(),
+               let randomValue = randomElement.value.elements.randomElement()
+            {
+                ImageView(randomValue.imageSource(
+                    randomValue.type == .episode ? .primary : .backdrop,
+                    maxWidth: UIScreen.main.bounds.width
+                ))
                 .aspectRatio(1.77, contentMode: .fill)
                 .frame(height: UIScreen.main.bounds.height * 0.35)
                 .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
+            } else {
+                ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
+                    .aspectRatio(1.77, contentMode: .fill)
+                    .frame(height: UIScreen.main.bounds.height * 0.35)
+                    .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
+            }
         }
 
         var body: some View {
@@ -109,13 +122,21 @@ extension ItemView.CompactPosterScrollView {
                     .foregroundColor(.white)
 
                 DotHStack {
-                    if viewModel.item.isUnaired {
-                        if let premiereDateLabel = viewModel.item.airDateLabel {
-                            Text(premiereDateLabel)
+                    if let personViewModel = viewModel as? PersonItemViewModel {
+                        if let age = personViewModel.item.premiereDate?.formatted(
+                            .age.death(personViewModel.item.endDate)
+                        ) {
+                            Text(age)
                         }
                     } else {
-                        if let productionYear = viewModel.item.productionYear {
-                            Text(String(productionYear))
+                        if viewModel.item.isUnaired {
+                            if let premiereDateLabel = viewModel.item.airDateLabel {
+                                Text(premiereDateLabel)
+                            }
+                        } else {
+                            if let productionYear = viewModel.item.productionYear {
+                                Text(String(productionYear))
+                            }
                         }
                     }
 

@@ -81,6 +81,7 @@ class ItemViewModel: ViewModel, Stateful {
     var state: State = .initial
 
     var presentPlayButton: Bool { true }
+    var canBePlayed: Bool { true }
 
     // tasks
 

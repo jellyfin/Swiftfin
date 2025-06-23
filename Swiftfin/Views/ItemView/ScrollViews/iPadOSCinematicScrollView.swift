@@ -48,8 +48,20 @@ extension ItemView {
             OffsetScrollView(
                 headerHeight: globalSize.isLandscape ? 0.75 : 0.6
             ) {
-                ImageView(viewModel.item.imageSource(imageType, maxWidth: 1920))
+                /// Set a random image from a person's content
+                if let personViewModel = viewModel as? PersonItemViewModel,
+                   let randomType = personViewModel.personItems.elements.randomElement(),
+                   let randomValue = randomType.value.elements.randomElement()
+                {
+                    ImageView(randomValue.imageSource(
+                        randomValue.type == .episode ? .primary : .backdrop,
+                        maxWidth: 1920
+                    ))
                     .aspectRatio(1.77, contentMode: .fill)
+                } else {
+                    ImageView(viewModel.item.imageSource(imageType, maxWidth: 1920))
+                        .aspectRatio(1.77, contentMode: .fill)
+                }
             } overlay: {
                 VStack(spacing: 0) {
                     Spacer()
@@ -114,16 +126,37 @@ extension ItemView.iPadOSCinematicScrollView {
 
                     HStack(spacing: 30) {
                         DotHStack {
-                            if let firstGenre = viewModel.item.genres?.first {
-                                Text(firstGenre)
-                            }
 
-                            if let premiereYear = viewModel.item.premiereDateYear {
-                                Text(premiereYear)
-                            }
+                            if let personViewModel = viewModel as? PersonItemViewModel {
 
-                            if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
-                                Text(runtime)
+                                if let birthday = personViewModel.item.premiereDate?.formatted(date: .numeric, time: .omitted) {
+                                    Text(birthday)
+                                }
+
+                                if let deathday = personViewModel.item.endDate?.formatted(date: .numeric, time: .omitted) {
+                                    Text(deathday)
+                                }
+
+                                if let age = personViewModel.item.premiereDate?.formatted(.age.death(viewModel.item.endDate)) {
+                                    Text(age)
+                                }
+
+                                if let birthPlace = personViewModel.item.productionLocations?.first {
+                                    Text(birthPlace)
+                                }
+                            } else {
+
+                                if let firstGenre = viewModel.item.genres?.first {
+                                    Text(firstGenre)
+                                }
+
+                                if let premiereYear = viewModel.item.premiereDateYear {
+                                    Text(premiereYear)
+                                }
+
+                                if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
+                                    Text(runtime)
+                                }
                             }
                         }
                         .font(.footnote)
@@ -141,7 +174,15 @@ extension ItemView.iPadOSCinematicScrollView {
                 Spacer()
 
                 VStack(spacing: 10) {
-                    if viewModel.presentPlayButton {
+                    if let personViewModel = viewModel as? PersonItemViewModel {
+                        ImageView(personViewModel.item.imageSource(.primary, maxWidth: 200))
+                            .failure {
+                                SystemImageContentView(systemName: viewModel.item.systemImage)
+                            }
+                            .posterStyle(.portrait, contentMode: .fit)
+                            .frame(width: 200)
+                            .accessibilityIgnoresInvertColors()
+                    } else if viewModel.presentPlayButton {
                         ItemView.PlayButton(viewModel: viewModel)
                             .frame(height: 50)
                     }
