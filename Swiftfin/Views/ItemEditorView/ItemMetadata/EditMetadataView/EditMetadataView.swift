@@ -14,8 +14,8 @@ struct EditMetadataView: View {
 
     // MARK: - Observed & Environment Objects
 
-    @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     private var viewModel: ItemEditorViewModel<BaseItemDto>
@@ -62,13 +62,13 @@ struct EditMetadataView: View {
             Button(L10n.save) {
                 item = tempItem
                 viewModel.send(.update(tempItem))
-                router.dismissCoordinator()
+                router.dismiss()
             }
             .buttonStyle(.toolbarPill)
             .disabled(viewModel.item == tempItem)
         }
         .navigationBarCloseButton {
-            router.dismissCoordinator()
+            router.dismiss()
         }
         .onReceive(viewModel.events) { events in
             switch events {

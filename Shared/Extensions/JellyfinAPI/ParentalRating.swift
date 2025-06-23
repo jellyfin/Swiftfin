@@ -9,6 +9,21 @@
 import Foundation
 import JellyfinAPI
 
+extension ParentalRating: Displayable {
+
+    var displayTitle: String {
+        self.name ?? L10n.unknown
+    }
+
+    static var none: ParentalRating {
+        ParentalRating(
+            name: L10n.none,
+            value: nil
+        )
+    }
+}
+
+// TODO: I don't think this is a ParentalRating?
 extension UnratedItem: Displayable {
 
     var displayTitle: String {

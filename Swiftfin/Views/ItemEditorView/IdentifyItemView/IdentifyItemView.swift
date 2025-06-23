@@ -33,8 +33,8 @@ struct IdentifyItemView: View {
 
     // MARK: - Observed & Environment Objects
 
-    @EnvironmentObject
-    private var router: ItemEditorCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel: IdentifyItemViewModel
@@ -95,7 +95,7 @@ struct IdentifyItemView: View {
             case .cancelled:
                 selectedResult = nil
             case .updated:
-                router.pop()
+                router.dismiss()
             }
         }
         .errorMessage($error)
@@ -109,6 +109,11 @@ struct IdentifyItemView: View {
     @ViewBuilder
     private var contentView: some View {
         Form {
+            ListTitleSection(
+                viewModel.item.name ?? L10n.unknown,
+                description: viewModel.item.path
+            )
+
             searchView
 
             resultsView

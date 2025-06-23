@@ -17,8 +17,8 @@ extension ItemView.AboutView {
         @Default(.accentColor)
         private var accentColor
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         let subtitle: String?
         let source: MediaSourceInfo
@@ -40,7 +40,7 @@ extension ItemView.AboutView {
                     }
                 }
                 .onSelect {
-                    router.route(to: \.mediaSourceInfo, source)
+                    router.route(to: .mediaSourceInfo(source: source))
                 }
         }
     }

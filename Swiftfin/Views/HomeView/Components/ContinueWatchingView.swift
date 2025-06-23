@@ -15,8 +15,8 @@ extension HomeView {
 
     struct ContinueWatchingView: View {
 
-        @EnvironmentObject
-        private var router: HomeCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: HomeViewModel
@@ -65,7 +65,7 @@ extension HomeView {
                         )
                     }
                     .onSelect {
-                        router.route(to: \.item, item)
+                        router.route(to: .item(item: item))
                     }
             }
             .scrollBehavior(.continuousLeadingEdge)

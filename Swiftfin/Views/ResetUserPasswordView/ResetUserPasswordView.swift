@@ -31,8 +31,8 @@ struct ResetUserPasswordView: View {
 
     // MARK: - State & Environment Objects
 
-    @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel: ResetUserPasswordViewModel
@@ -138,7 +138,7 @@ struct ResetUserPasswordView: View {
         .navigationTitle(L10n.password)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
-            router.dismissCoordinator()
+            router.dismiss()
         }
         .onFirstAppear {
             if requiresCurrentPassword {
@@ -167,7 +167,7 @@ struct ResetUserPasswordView: View {
             isPresented: $isPresentingSuccess
         ) {
             Button(L10n.dismiss, role: .cancel) {
-                router.dismissCoordinator()
+                router.dismiss()
             }
         } message: {
             Text(L10n.passwordChangedMessage)

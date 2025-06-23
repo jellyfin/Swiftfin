@@ -7,7 +7,7 @@
 //
 
 import JellyfinAPI
-import Stinsen
+
 import SwiftUI
 
 extension ServerTasksView {
@@ -17,8 +17,8 @@ extension ServerTasksView {
         @CurrentDate
         private var currentDate: Date
 
-        @EnvironmentObject
-        private var router: AdminDashboardCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var observer: ServerTaskObserver
@@ -65,7 +65,6 @@ extension ServerTasksView {
                     )
                     .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                     .foregroundStyle(.orange)
-                    .backport
                     .fontWeight(.semibold)
                 }
             }
@@ -96,7 +95,7 @@ extension ServerTasksView {
             .animation(.linear(duration: 0.1), value: observer.state)
             .foregroundStyle(.primary, .secondary)
             .confirmationDialog(
-                observer.task.name ?? .emptyDash,
+                observer.task.name ?? L10n.unknown,
                 isPresented: $isPresentingConfirmation,
                 titleVisibility: .visible
             ) {
@@ -114,7 +113,7 @@ extension ServerTasksView {
                 .disabled(observer.task.state == .cancelling)
 
                 Button(L10n.edit) {
-                    router.route(to: \.editServerTask, observer)
+                    router.route(to: .editServerTask(observer: observer))
                 }
             } message: {
                 if let description = observer.task.description {

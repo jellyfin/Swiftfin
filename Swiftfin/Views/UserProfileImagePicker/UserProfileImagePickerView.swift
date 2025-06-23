@@ -12,16 +12,19 @@ struct UserProfileImagePickerView: View {
 
     // MARK: - Observed, & Environment Objects
 
-    @EnvironmentObject
-    private var router: UserProfileImageCoordinator.Router
+    @Router
+    private var router
+
+    @StateObject
+    var viewModel: UserProfileImageViewModel
 
     // MARK: - Body
 
     var body: some View {
         PhotoPickerView {
-            router.route(to: \.cropImage, $0)
+            router.route(to: .userProfileImageCrop(viewModel: viewModel, image: $0))
         } onCancel: {
-            router.dismissCoordinator()
+            router.dismiss()
         }
     }
 }

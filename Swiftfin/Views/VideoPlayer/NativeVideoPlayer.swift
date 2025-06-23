@@ -17,8 +17,8 @@ struct NativeVideoPlayer: View {
     @Environment(\.scenePhase)
     var scenePhase
 
-    @EnvironmentObject
-    private var router: VideoPlayerCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     private var videoPlayerManager: VideoPlayerManager
@@ -40,7 +40,7 @@ struct NativeVideoPlayer: View {
                 VideoPlayer.LoadingView()
             }
         }
-        .navigationBarHidden()
+        .navigationBarHidden(true)
         .statusBarHidden()
         .ignoresSafeArea()
     }

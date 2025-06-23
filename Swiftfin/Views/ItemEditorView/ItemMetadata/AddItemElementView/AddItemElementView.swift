@@ -20,8 +20,8 @@ struct AddItemElementView<Element: Hashable>: View {
 
     // MARK: - Environment & Observed Objects
 
-    @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     var viewModel: ItemEditorViewModel<Element>
@@ -75,7 +75,7 @@ struct AddItemElementView<Element: Hashable>: View {
         .navigationTitle(type.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
-            router.dismissCoordinator()
+            router.dismiss()
         }
         .topBarTrailing {
             if viewModel.backgroundStates.contains(.loading) {
@@ -105,7 +105,7 @@ struct AddItemElementView<Element: Hashable>: View {
             switch event {
             case .updated:
                 UIDevice.feedback(.success)
-                router.dismissCoordinator()
+                router.dismiss()
             case .loaded:
                 loaded = true
                 viewModel.send(.search(name))

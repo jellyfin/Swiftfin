@@ -11,11 +11,11 @@ import SwiftUI
 
 struct AddTaskTriggerView: View {
 
-    @Environment(\.dismiss)
-    private var dismiss
-
     @ObservedObject
     var observer: ServerTaskObserver
+
+    @Router
+    private var router
 
     @State
     private var isPresentingNotSaved = false
@@ -102,13 +102,13 @@ struct AddTaskTriggerView: View {
         .animation(.linear(duration: 0.2), value: isDuplicate)
         .animation(.linear(duration: 0.2), value: taskTriggerInfo.type)
         .interactiveDismissDisabled(true)
-        .navigationTitle(L10n.addTrigger)
+        .navigationTitle(L10n.addTrigger.localizedCapitalized)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             if hasUnsavedChanges {
                 isPresentingNotSaved = true
             } else {
-                dismiss()
+                router.dismiss()
             }
         }
         .topBarTrailing {
@@ -117,14 +117,14 @@ struct AddTaskTriggerView: View {
                 UIDevice.impact(.light)
 
                 observer.send(.addTrigger(taskTriggerInfo))
-                dismiss()
+                router.dismiss()
             }
             .buttonStyle(.toolbarPill)
             .disabled(isDuplicate)
         }
         .alert(L10n.unsavedChangesMessage, isPresented: $isPresentingNotSaved) {
             Button(L10n.close, role: .destructive) {
-                dismiss()
+                router.dismiss()
             }
             Button(L10n.cancel, role: .cancel) {
                 isPresentingNotSaved = false

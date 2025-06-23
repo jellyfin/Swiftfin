@@ -11,12 +11,20 @@ import SwiftUI
 
 extension ItemView {
 
-    struct CinematicScrollView<Content: View>: View {
+    struct CinematicScrollView<Content: View>: ScrollContainerView {
 
         @ObservedObject
-        var viewModel: ItemViewModel
+        private var viewModel: ItemViewModel
 
-        let content: () -> Content
+        private let content: Content
+
+        init(
+            viewModel: ItemViewModel,
+            content: @escaping () -> Content
+        ) {
+            self.viewModel = viewModel
+            self.content = content()
+        }
 
         var body: some View {
             ZStack {
@@ -27,7 +35,22 @@ extension ItemView {
                 }
 
                 ScrollView(.vertical, showsIndicators: false) {
-                    content()
+                    content
+                        .background {
+                            BlurView(style: .dark)
+                                .mask {
+                                    VStack(spacing: 0) {
+                                        LinearGradient(gradient: Gradient(stops: [
+                                            .init(color: .white, location: 0),
+                                            .init(color: .white.opacity(0.7), location: 0.4),
+                                            .init(color: .white.opacity(0), location: 1),
+                                        ]), startPoint: .bottom, endPoint: .top)
+                                            .frame(height: UIScreen.main.bounds.height - 150)
+
+                                        Color.white
+                                    }
+                                }
+                        }
                 }
             }
             .ignoresSafeArea()
@@ -42,10 +65,14 @@ extension ItemView {
         enum CinematicHeaderFocusLayer: Hashable {
             case top
             case playButton
+            case actionButtons
         }
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @StoredValue(.User.itemViewAttributes)
+        private var attributes
+
+        @Router
+        private var router
         @ObservedObject
         var viewModel: ItemViewModel
         @FocusState
@@ -112,7 +139,10 @@ extension ItemView {
                             .font(.caption)
                             .foregroundColor(Color(UIColor.lightGray))
 
-                            ItemView.AttributesHStack(viewModel: viewModel)
+                            ItemView.AttributesHStack(
+                                attributes: attributes,
+                                viewModel: viewModel
+                            )
                         }
                     }
 
@@ -125,6 +155,7 @@ extension ItemView {
                         }
 
                         ItemView.ActionButtonHStack(viewModel: viewModel)
+                            .focused($focusedLayer, equals: .actionButtons)
                             .frame(width: 440)
                     }
                     .frame(width: 450)
@@ -134,7 +165,11 @@ extension ItemView {
             .padding(.horizontal, 50)
             .onChange(of: focusedLayer) { _, layer in
                 if layer == .top {
-                    focusedLayer = .playButton
+                    if viewModel.presentPlayButton {
+                        focusedLayer = .playButton
+                    } else {
+                        focusedLayer = .actionButtons
+                    }
                 }
             }
         }

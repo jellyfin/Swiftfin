@@ -97,6 +97,10 @@ iOSInjectionProject/
 .Trashes
 ehthumbs.db
 Thumbs.db
-Shared/Generated/Strings.swift
 
+# Swiftfin
+Shared/Generated/Strings.swift
+XcodeConfig/DevelopmentTeam.xcconfig
+
+# Other
 .idea

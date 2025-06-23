@@ -9,7 +9,6 @@
 import Combine
 import Foundation
 import JellyfinAPI
-import Stinsen
 
 final class AppURLHandler {
     static let deepLinkScheme = "jellyfin"

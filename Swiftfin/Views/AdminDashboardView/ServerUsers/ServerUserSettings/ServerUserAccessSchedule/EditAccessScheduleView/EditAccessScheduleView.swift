@@ -19,8 +19,8 @@ struct EditAccessScheduleView: View {
 
     // MARK: - Observed & Environment Objects
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     private var viewModel: ServerUserAdminViewModel
@@ -57,7 +57,7 @@ struct EditAccessScheduleView: View {
 
     var body: some View {
         contentView
-            .navigationTitle(L10n.accessSchedules)
+            .navigationTitle(L10n.accessSchedules.localizedCapitalized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(isEditing)
             .toolbar {
@@ -93,7 +93,7 @@ struct EditAccessScheduleView: View {
                 isHidden: isEditing || viewModel.user.policy?.accessSchedules == []
             ) {
                 Button(L10n.add, systemImage: "plus") {
-                    router.route(to: \.userAddAccessSchedule, viewModel)
+                    router.route(to: .userAddAccessSchedule(viewModel: viewModel))
                 }
 
                 Button(L10n.edit, systemImage: "checkmark.circle") {
@@ -110,22 +110,22 @@ struct EditAccessScheduleView: View {
                 }
             }
             .confirmationDialog(
-                L10n.deleteSelectedSchedules,
+                L10n.delete,
                 isPresented: $isPresentingDeleteSelectionConfirmation,
                 titleVisibility: .visible
             ) {
                 deleteSelectedSchedulesConfirmationActions
             } message: {
-                Text(L10n.deleteSelectionSchedulesWarning)
+                Text(L10n.deleteSelectedConfirmation)
             }
             .confirmationDialog(
-                L10n.deleteSchedule,
+                L10n.delete,
                 isPresented: $isPresentingDeleteConfirmation,
                 titleVisibility: .visible
             ) {
                 deleteScheduleConfirmationActions
             } message: {
-                Text(L10n.deleteScheduleWarning)
+                Text(L10n.deleteItemConfirmation)
             }
             .errorMessage($error)
     }
@@ -144,7 +144,7 @@ struct EditAccessScheduleView: View {
 
             if viewModel.user.policy?.accessSchedules == [] {
                 Button(L10n.add) {
-                    router.route(to: \.userAddAccessSchedule, viewModel)
+                    router.route(to: .userAddAccessSchedule(viewModel: viewModel))
                 }
             } else {
                 ForEach(viewModel.user.policy?.accessSchedules ?? [], id: \.self) { schedule in

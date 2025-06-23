@@ -7,7 +7,7 @@
 //
 
 import Defaults
-import Stinsen
+
 import SwiftUI
 
 struct AppSettingsView: View {
@@ -20,8 +20,8 @@ struct AppSettingsView: View {
     @Default(.appAppearance)
     private var appearance
 
-    @EnvironmentObject
-    private var router: AppSettingsCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = SettingsViewModel()
@@ -47,9 +47,9 @@ struct AppSettingsView: View {
             }
             .contentView {
 
-                TextPairView(
-                    leading: L10n.version,
-                    trailing: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
+                LabeledContent(
+                    L10n.version,
+                    value: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
                 )
 
                 Section {
@@ -88,7 +88,7 @@ struct AppSettingsView: View {
                 SignOutIntervalSection()
 
                 ChevronButton(L10n.logs) {
-                    router.route(to: \.log)
+                    router.route(to: .log)
                 }
             }
             .navigationTitle(L10n.advanced)

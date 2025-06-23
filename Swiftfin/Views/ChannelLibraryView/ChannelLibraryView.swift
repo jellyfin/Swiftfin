@@ -26,8 +26,8 @@ import SwiftUI
 
 struct ChannelLibraryView: View {
 
-    @EnvironmentObject
-    private var mainRouter: MainCoordinator.Router
+    @Router
+    private var router
 
     @State
     private var channelDisplayType: LibraryDisplayType = .list
@@ -77,9 +77,8 @@ struct ChannelLibraryView: View {
         CompactChannelView(channel: channel.channel)
             .onSelect {
                 guard let mediaSource = channel.channel.mediaSources?.first else { return }
-                mainRouter.route(
-                    to: \.liveVideoPlayer,
-                    LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource)
+                router.route(
+                    to: .liveVideoPlayer(manager: LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource))
                 )
             }
     }
@@ -88,9 +87,8 @@ struct ChannelLibraryView: View {
         DetailedChannelView(channel: channel)
             .onSelect {
                 guard let mediaSource = channel.channel.mediaSources?.first else { return }
-                mainRouter.route(
-                    to: \.liveVideoPlayer,
-                    LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource)
+                router.route(
+                    to: .liveVideoPlayer(manager: LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource))
                 )
             }
     }

@@ -1,5 +1,5 @@
 {
-  "originHash" : "44d87a45bd21720bc457afc9350e1268808e629c432ce75d0e6c4c26ce3b67ce",
+  "originHash" : "bb18dd153b4367270987329a5732eb6b5a7d2f0a700d012012a1c88f3b3f0b98",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -40,8 +40,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JohnEstropia/CoreStore.git",
       "state" : {
-        "revision" : "4b6d9a54e75d2c9fd2c3c768f7d4aa3175c09133",
-        "version" : "9.2.0"
+        "revision" : "5a0d27cf343c6e341b0ef3c8d36104770b27a839",
+        "version" : "9.3.0"
       }
     },
     {
@@ -67,8 +67,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/hmlongco/Factory",
       "state" : {
-        "revision" : "587995f7d5cc667951d635fbf6b4252324ba0439",
-        "version" : "2.3.2"
+        "revision" : "ccc898f21992ebc130bc04cc197460a5ae230bcf",
+        "version" : "2.5.3"
       }
     },
     {
@@ -94,8 +94,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jellyfin/jellyfin-sdk-swift.git",
       "state" : {
-        "revision" : "10624671970ee1ad49ce817ee7b8ee3074f89a32",
-        "version" : "0.5.1"
+        "revision" : "6039de827d9f768fe7218f3960426aca3325423a",
+        "version" : "0.5.2"
       }
     },
     {
@@ -130,8 +130,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Pulse",
       "state" : {
-        "revision" : "d1e39ffaaa8b8becff80cb193c93a78e32077af8",
-        "version" : "4.2.0"
+        "revision" : "6125ce7fb51b114ba71b761d18cfd5557923bd4d",
+        "version" : "5.1.4"
       }
     },
     {
@@ -139,17 +139,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/PulseLogHandler",
       "state" : {
-        "revision" : "7280e980b71a1267099e7751a900fd1e67b7f4bb",
-        "version" : "4.0.1"
-      }
-    },
-    {
-      "identity" : "stinsen",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/rundfunk47/stinsen",
-      "state" : {
-        "branch" : "master",
-        "revision" : "d6ad23f4c68212fed8ac64c739bef224628776e3"
+        "revision" : "477e9ef76615f0b76b43bb502af432fe6750b704",
+        "version" : "5.1.0"
       }
     },
     {
@@ -258,15 +249,6 @@
       "state" : {
         "branch" : "main",
         "revision" : "9e0285b13c666aace61835e8a512512edee822a6"
-      }
-    },
-    {
-      "identity" : "wrappinghstack",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/dkk/WrappingHStack",
-      "state" : {
-        "revision" : "425d9488ba55f58f0b34498c64c054c77fc2a44b",
-        "version" : "2.2.11"
       }
     }
   ],

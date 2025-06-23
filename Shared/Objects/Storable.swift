@@ -7,7 +7,6 @@
 //
 
 import Defaults
-import Foundation
 
 /// A type that is able to be stored within:
 ///

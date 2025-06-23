@@ -1,0 +1,170 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+//
+
+import BlurHashKit
+import SwiftUI
+
+extension ItemView {
+
+    struct CompactPosterScrollView<Content: View>: ScrollContainerView {
+
+        @Router
+        private var router
+
+        @ObservedObject
+        private var viewModel: ItemViewModel
+
+        private let blurHashBottomEdgeColor: Color
+        private let content: Content
+
+        init(
+            viewModel: ItemViewModel,
+            content: @escaping () -> Content
+        ) {
+            if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
+                let bottomRGB = BlurHash(string: backdropBlurHash)!.averageLinearRGB
+                blurHashBottomEdgeColor = Color(
+                    red: Double(bottomRGB.0),
+                    green: Double(bottomRGB.1),
+                    blue: Double(bottomRGB.2)
+                )
+            } else {
+                blurHashBottomEdgeColor = Color.secondarySystemFill
+            }
+
+            self.content = content()
+            self.viewModel = viewModel
+        }
+
+        @ViewBuilder
+        private var headerView: some View {
+            ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
+                .aspectRatio(1.77, contentMode: .fill)
+                .frame(height: UIScreen.main.bounds.height * 0.35)
+                .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
+        }
+
+        var body: some View {
+            OffsetScrollView(headerHeight: 0.45) {
+                headerView
+            } overlay: {
+                VStack {
+                    Spacer()
+
+                    OverlayView(viewModel: viewModel)
+                        .edgePadding(.horizontal)
+                        .edgePadding(.bottom)
+                        .background {
+                            BlurView(style: .systemThinMaterialDark)
+                                .maskLinearGradient {
+                                    (location: 0.2, opacity: 0)
+                                    (location: 0.3, opacity: 0.5)
+                                    (location: 0.55, opacity: 1)
+                                }
+                        }
+                }
+            } content: {
+                VStack(alignment: .leading, spacing: 10) {
+
+                    ItemView.OverviewView(item: viewModel.item)
+                        .overviewLineLimit(4)
+                        .taglineLineLimit(2)
+                        .padding(.horizontal)
+
+                    RowDivider()
+
+                    content
+                }
+                .edgePadding(.vertical)
+            }
+        }
+    }
+}
+
+extension ItemView.CompactPosterScrollView {
+
+    struct OverlayView: View {
+
+        @StoredValue(.User.itemViewAttributes)
+        private var attributes
+
+        @Router
+        private var router
+
+        @ObservedObject
+        var viewModel: ItemViewModel
+
+        @ViewBuilder
+        private var rightShelfView: some View {
+            VStack(alignment: .leading) {
+
+                Text(viewModel.item.displayTitle)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+
+                DotHStack {
+                    if viewModel.item.isUnaired {
+                        if let premiereDateLabel = viewModel.item.airDateLabel {
+                            Text(premiereDateLabel)
+                        }
+                    } else {
+                        if let productionYear = viewModel.item.productionYear {
+                            Text(String(productionYear))
+                        }
+                    }
+
+                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
+                        Text(runtime)
+                    }
+                }
+                .lineLimit(1)
+                .font(.subheadline.weight(.medium))
+                .foregroundColor(Color(UIColor.lightGray))
+
+                ItemView.AttributesHStack(
+                    attributes: attributes,
+                    viewModel: viewModel,
+                    alignment: .leading
+                )
+            }
+        }
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .bottom, spacing: 12) {
+
+                    ImageView(viewModel.item.imageSource(.primary, maxWidth: 130))
+                        .failure {
+                            SystemImageContentView(systemName: viewModel.item.systemImage)
+                        }
+                        .posterStyle(.portrait, contentMode: .fit)
+                        .frame(width: 130)
+                        .accessibilityIgnoresInvertColors()
+
+                    rightShelfView
+                        .padding(.bottom)
+                }
+
+                HStack(alignment: .center) {
+
+                    if viewModel.presentPlayButton {
+                        ItemView.PlayButton(viewModel: viewModel)
+                            .frame(width: 130, height: 40)
+                    }
+
+                    Spacer()
+
+                    ItemView.ActionButtonHStack(viewModel: viewModel, equalSpacing: false)
+                        .font(.title2)
+                        .foregroundColor(.white)
+                }
+            }
+        }
+    }
+}

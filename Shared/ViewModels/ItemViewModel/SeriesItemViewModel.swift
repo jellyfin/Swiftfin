@@ -51,22 +51,6 @@ final class SeriesItemViewModel: ItemViewModel {
         }
     }
 
-//    override func playButtonText() -> String {
-//
-//        if item.isUnaired {
-//            return L10n.unaired
-//        }
-//
-//        if item.isMissing {
-//            return L10n.missing
-//        }
-//
-//        guard let playButtonItem = playButtonItem,
-//              let episodeLocator = playButtonItem.seasonEpisodeLabel else { return L10n.play }
-//
-//        return episodeLocator
-//    }
-
     private func getNextUp() async throws -> BaseItemDto? {
 
         var parameters = Paths.GetNextUpParameters()
