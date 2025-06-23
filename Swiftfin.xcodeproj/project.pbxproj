@@ -226,7 +226,6 @@
 				Coordinators/AdminDashboardCoordinator.swift,
 				Coordinators/DownloadListCoordinator.swift,
 				Coordinators/DownloadTaskCoordinator.swift,
-				Coordinators/ItemEditorCoordinator.swift,
 				Coordinators/ItemImagePickerCoordinator.swift,
 				Coordinators/ItemImagesCoordinator.swift,
 				Coordinators/LiveTVCoordinator/iOSLiveTVCoordinator.swift,
