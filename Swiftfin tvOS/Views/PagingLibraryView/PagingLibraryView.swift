@@ -23,11 +23,11 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     @Default(.Customization.Library.rememberLayout)
     private var rememberLayout
 
-    @Default
+    @Default(.Customization.Library.displayType)
     private var defaultDisplayType: LibraryDisplayType
-    @Default
+    @Default(.Customization.Library.listColumnCount)
     private var defaultListColumnCount: Int
-    @Default
+    @Default(.Customization.Library.posterType)
     private var defaultPosterType: PosterDisplayType
 
     @Router
@@ -59,21 +59,23 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
 
     init(viewModel: PagingLibraryViewModel<Element>) {
 
-        self._defaultDisplayType = Default(.Customization.Library.displayType)
-        self._defaultListColumnCount = Default(.Customization.Library.listColumnCount)
-        self._defaultPosterType = Default(.Customization.Library.posterType)
-
         self._displayType = StoredValue(.User.libraryDisplayType(parentID: viewModel.parent?.id))
         self._listColumnCount = StoredValue(.User.libraryListColumnCount(parentID: viewModel.parent?.id))
         self._posterType = StoredValue(.User.libraryPosterType(parentID: viewModel.parent?.id))
 
         self._viewModel = StateObject(wrappedValue: viewModel)
 
-        let initialDisplayType = Defaults[.Customization.Library.rememberLayout] ? _displayType.wrappedValue : _defaultDisplayType
-            .wrappedValue
-        let initialListColumnCount = Defaults[.Customization.Library.rememberLayout] ? _listColumnCount
-            .wrappedValue : _defaultListColumnCount.wrappedValue
-        let initialPosterType = Defaults[.Customization.Library.rememberLayout] ? _posterType.wrappedValue : _defaultPosterType.wrappedValue
+        let defaultDisplayType = Defaults[.Customization.Library.displayType]
+        let defaultListColumnCount = Defaults[.Customization.Library.listColumnCount]
+        let defaultPosterType = Defaults[.Customization.Library.posterType]
+
+        let displayType = StoredValues[.User.libraryDisplayType(parentID: viewModel.parent?.id)]
+        let listColumnCount = StoredValues[.User.libraryListColumnCount(parentID: viewModel.parent?.id)]
+        let posterType = StoredValues[.User.libraryPosterType(parentID: viewModel.parent?.id)]
+
+        let initialDisplayType = Defaults[.Customization.Library.rememberLayout] ? displayType : defaultDisplayType
+        let initialListColumnCount = Defaults[.Customization.Library.rememberLayout] ? listColumnCount : defaultListColumnCount
+        let initialPosterType = Defaults[.Customization.Library.rememberLayout] ? posterType : defaultPosterType
 
         self._layout = State(
             initialValue: Self.makeLayout(
