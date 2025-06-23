@@ -68,7 +68,7 @@ final class SeriesItemViewModel: ItemViewModel {
             }
             .store(in: &cancellables)
 
-            return parentState
+            return super.respond(to: action)
 
         default:
             return super.respond(to: action)
