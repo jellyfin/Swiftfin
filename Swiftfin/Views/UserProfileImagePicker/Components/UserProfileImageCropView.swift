@@ -11,12 +11,14 @@ import JellyfinAPI
 import Mantis
 import SwiftUI
 
+// TODO: cleanup alongside `ItemPhotoCropView`
+
 struct UserProfileImageCropView: View {
 
     // MARK: - State, Observed, & Environment Objects
 
-    @EnvironmentObject
-    private var router: UserProfileImageCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     var viewModel: UserProfileImageViewModel
@@ -41,7 +43,7 @@ struct UserProfileImageCropView: View {
         ) {
             viewModel.send(.upload($0))
         } onCancel: {
-            router.dismissCoordinator()
+            router.dismiss()
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .interactiveDismissDisabled(viewModel.state == .uploading)
@@ -53,7 +55,7 @@ struct UserProfileImageCropView: View {
             case .deleted:
                 break
             case .uploaded:
-                router.dismissCoordinator()
+                router.dismiss()
             }
         }
         .errorMessage($error)

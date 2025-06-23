@@ -22,8 +22,8 @@ struct ItemView: View {
     @Default(.Customization.itemViewType)
     private var itemViewType
 
-    @EnvironmentObject
-    private var router: ItemCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel: ItemViewModel
@@ -150,7 +150,7 @@ struct ItemView: View {
         ) {
             if canEdit {
                 Button(L10n.edit, systemImage: "pencil") {
-                    router.route(to: \.itemEditor, viewModel)
+                    router.route(to: .itemEditor(viewModel: viewModel))
                 }
             }
 
@@ -178,7 +178,7 @@ struct ItemView: View {
                 error = eventError
                 isPresentingEventAlert = true
             case .deleted:
-                router.dismissCoordinator()
+                router.dismiss()
             }
         }
         .alert(

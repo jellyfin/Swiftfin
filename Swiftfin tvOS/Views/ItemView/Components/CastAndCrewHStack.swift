@@ -13,8 +13,8 @@ extension ItemView {
 
     struct CastAndCrewHStack: View {
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         let people: [BaseItemPerson]
 
@@ -28,7 +28,7 @@ extension ItemView {
             )
             .onSelect { person in
                 let viewModel = ItemLibraryViewModel(parent: person)
-                router.route(to: \.library, viewModel)
+                router.route(to: .library(viewModel: viewModel))
             }
         }
     }

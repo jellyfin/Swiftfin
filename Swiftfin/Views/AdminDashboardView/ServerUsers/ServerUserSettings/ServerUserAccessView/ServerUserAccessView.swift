@@ -14,8 +14,8 @@ struct ServerUserMediaAccessView: View {
 
     // MARK: - Observed & Environment Objects
 
-    @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     private var viewModel: ServerUserAdminViewModel
@@ -49,7 +49,7 @@ struct ServerUserMediaAccessView: View {
             .navigationTitle(L10n.mediaAccess)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
-                router.dismissCoordinator()
+                router.dismiss()
             }
             .topBarTrailing {
                 if viewModel.backgroundStates.contains(.updating) {
@@ -73,7 +73,7 @@ struct ServerUserMediaAccessView: View {
                     error = eventError
                 case .updated:
                     UIDevice.feedback(.success)
-                    router.dismissCoordinator()
+                    router.dismiss()
                 }
             }
             .errorMessage($error)

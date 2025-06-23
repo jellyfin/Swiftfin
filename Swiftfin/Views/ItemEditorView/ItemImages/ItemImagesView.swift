@@ -19,8 +19,8 @@ struct ItemImagesView: View {
 
     // MARK: - Observed & Environment Objects
 
-    @EnvironmentObject
-    private var router: ItemImagesCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     var viewModel: ItemImagesViewModel
@@ -61,7 +61,7 @@ struct ItemImagesView: View {
             viewModel.send(.refresh)
         }
         .navigationBarCloseButton {
-            router.dismissCoordinator()
+            router.dismiss()
         }
         .sheet(item: $selectedImage) {
             selectedImage = nil
@@ -161,10 +161,11 @@ struct ItemImagesView: View {
 
             Menu(L10n.options, systemImage: "plus") {
                 Button(L10n.search, systemImage: "magnifyingglass") {
-                    router.route(
-                        to: \.addImage,
-                        imageType
-                    )
+                    // TODO: Convert to NavigationRoute pattern - router.route(to: .addImage(imageType: imageType))
+//                    router.route(
+//                        to: \.addImage,
+//                        imageType
+//                    )
                 }
 
                 Divider()
@@ -175,7 +176,8 @@ struct ItemImagesView: View {
                 }
 
                 Button(L10n.uploadPhoto, systemImage: "photo.badge.plus") {
-                    router.route(to: \.photoPicker, imageType)
+                    // TODO: Convert to NavigationRoute pattern - router.route(to: .photoPicker(imageType: imageType))
+//                    router.route(to: \.photoPicker, imageType)
                 }
             }
             .font(.body)

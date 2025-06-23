@@ -15,8 +15,8 @@ extension ItemView {
         @ObservedObject
         var viewModel: MovieItemViewModel
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         var body: some View {
             VStack(spacing: 0) {

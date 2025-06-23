@@ -7,7 +7,7 @@
 //
 
 import Defaults
-import Stinsen
+
 import SwiftUI
 import VLCUI
 
@@ -15,8 +15,8 @@ extension LiveVideoPlayer.Overlay {
 
     struct LiveTopBarView: View {
 
-        @EnvironmentObject
-        private var router: LiveVideoPlayerCoordinator.Router
+        @Router
+        private var router
         @EnvironmentObject
         private var splitContentViewProxy: SplitContentViewProxy
         @EnvironmentObject
@@ -29,7 +29,7 @@ extension LiveVideoPlayer.Overlay {
                 HStack(alignment: .center) {
                     Button {
                         videoPlayerProxy.stop()
-                        router.dismissCoordinator {}
+                        router.dismiss()
                     } label: {
                         Image(systemName: "xmark")
                             .padding()

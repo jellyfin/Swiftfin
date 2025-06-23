@@ -20,8 +20,8 @@ extension VideoPlayer {
 
         @EnvironmentObject
         private var proxy: VLCVideoPlayer.Proxy
-        @EnvironmentObject
-        private var router: VideoPlayerCoordinator.Router
+        @Router
+        private var router
         @EnvironmentObject
         private var videoPlayerManager: VideoPlayerManager
 
@@ -110,7 +110,7 @@ extension VideoPlayer {
 
             if isPresentingOverlay && currentOverlayType == .confirmClose {
                 proxy.stop()
-                router.dismissCoordinator()
+                router.dismiss()
             } else if isPresentingOverlay && currentOverlayType == .smallMenu {
                 currentOverlayType = .main
             } else {
