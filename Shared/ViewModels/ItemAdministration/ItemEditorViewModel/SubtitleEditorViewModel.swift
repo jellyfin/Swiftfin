@@ -10,7 +10,7 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-final class ItemSubtitlesViewModel: ViewModel, Stateful, Eventful {
+final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: - Events
 

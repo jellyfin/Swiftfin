@@ -10,7 +10,7 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-extension SubtitleSearchView {
+extension ItemSubtitleSearchView {
 
     struct SubtitleResultRow: View {
 

@@ -145,7 +145,11 @@ extension ItemView {
 
                                 if canManageSubtitles {
                                     Button(L10n.subtitles, systemImage: "textformat") {
-                                        router.route(to: \.searchSubtitles, .init(item: viewModel.item))
+                                        router.route(
+                                            to: .searchSubtitle(
+                                                viewModel: .init(item: viewModel.item)
+                                            )
+                                        )
                                     }
                                 }
                             }

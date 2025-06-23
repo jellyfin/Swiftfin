@@ -12,13 +12,15 @@ import UniformTypeIdentifiers
 
 struct ItemSubtitlesView: View {
 
-    // MARK: - Properties
+    // MARK: - Router
 
-    @EnvironmentObject
-    private var router: ItemEditorCoordinator.Router
+    @Router
+    private var router
+
+    // MARK: - ViewModel
 
     @StateObject
-    private var viewModel: ItemSubtitlesViewModel
+    private var viewModel: SubtitleEditorViewModel
 
     // MARK: - Edit Mode
 
@@ -114,11 +116,11 @@ struct ItemSubtitlesView: View {
         ) {
             Section(L10n.add) {
                 Button(L10n.uploadFile, systemImage: "plus") {
-                    router.route(to: \.uploadSubtitle, viewModel)
+                    router.route(to: .uploadSubtitle(viewModel: viewModel))
                 }
 
                 Button(L10n.search, systemImage: "magnifyingglass") {
-                    router.route(to: \.searchSubtitle, viewModel)
+                    router.route(to: .searchSubtitle(viewModel: viewModel))
                 }
             }
 

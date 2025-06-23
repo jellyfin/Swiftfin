@@ -89,6 +89,21 @@ extension NavigationRoute {
         }
     }
 
+    static func editSubtitles(item: BaseItemDto) -> NavigationRoute {
+        NavigationRoute(id: "editSubtitles") {
+            ItemSubtitlesView(item: item)
+        }
+    }
+
+    static func uploadSubtitle(viewModel: SubtitleEditorViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "uploadSubtitle",
+            style: .sheet
+        ) {
+            ItemSubtitleUploadView(viewModel: viewModel)
+        }
+    }
+
     static func editMetadata(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(
             id: "editMetadata",
@@ -140,6 +155,15 @@ extension NavigationRoute {
         }
     }
     #endif
+
+    static func searchSubtitle(viewModel: SubtitleEditorViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "searchSubtitle",
+            style: .sheet
+        ) {
+            ItemSubtitleSearchView(viewModel: viewModel)
+        }
+    }
 
     static func item(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(

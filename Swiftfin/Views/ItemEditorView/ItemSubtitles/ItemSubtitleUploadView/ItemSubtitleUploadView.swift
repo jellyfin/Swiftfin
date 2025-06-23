@@ -13,18 +13,20 @@ import UniformTypeIdentifiers
 
 struct ItemSubtitleUploadView: View {
 
+    // MARK: - Router
+
+    @Router
+    private var router
+
     // MARK: - Accent Color
 
     @Default(.accentColor)
     private var accentColor
 
-    // MARK: - Properties
-
-    @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
+    // MARK: - ViewModel
 
     @ObservedObject
-    private var viewModel: ItemSubtitlesViewModel
+    private var viewModel: SubtitleEditorViewModel
 
     // MARK: - Supported Subtitles for Upload
 
@@ -61,7 +63,7 @@ struct ItemSubtitleUploadView: View {
 
     // MARK: - Initializer
 
-    init(viewModel: ItemSubtitlesViewModel) {
+    init(viewModel: SubtitleEditorViewModel) {
         self.viewModel = viewModel
     }
 
@@ -76,14 +78,14 @@ struct ItemSubtitleUploadView: View {
                 case .deleted:
                     return
                 case .uploaded:
-                    router.dismissCoordinator()
+                    router.dismiss()
                 case let .error(eventError):
                     error = eventError
                 }
             }
             .errorMessage($error)
             .navigationBarCloseButton {
-                router.dismissCoordinator()
+                router.dismiss()
             }
             .topBarTrailing {
                 if viewModel.backgroundStates.contains(.updating) {

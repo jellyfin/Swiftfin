@@ -11,13 +11,15 @@ import SwiftUI
 
 struct ItemSubtitleSearchView: View {
 
-    // MARK: - Environment & Observed Objects
+    // MARK: - Router
 
-    @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
+    @Router
+    private var router
+
+    // MARK: - ViewModel
 
     @ObservedObject
-    private var viewModel: ItemSubtitlesViewModel
+    private var viewModel: SubtitleEditorViewModel
 
     // MARK: - Selected Subtitles
 
@@ -40,7 +42,7 @@ struct ItemSubtitleSearchView: View {
 
     // MARK: - Initializer
 
-    init(viewModel: ItemSubtitlesViewModel) {
+    init(viewModel: SubtitleEditorViewModel) {
         self.viewModel = viewModel
     }
 
@@ -65,14 +67,14 @@ struct ItemSubtitleSearchView: View {
             case .deleted:
                 return
             case .uploaded:
-                router.dismissCoordinator()
+                router.dismiss()
             case let .error(eventError):
                 error = eventError
             }
         }
         .errorMessage($error)
         .navigationBarCloseButton {
-            router.dismissCoordinator()
+            router.dismiss()
         }
         .topBarTrailing {
             if viewModel.backgroundStates.isNotEmpty {

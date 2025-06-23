@@ -12,8 +12,12 @@ import SwiftUI
 
 struct ItemEditorView: View {
 
+    // MARK: - Router
+
     @Router
     private var router
+
+    // MARK: - ViewModel
 
     @ObservedObject
     var viewModel: ItemViewModel
@@ -148,7 +152,7 @@ struct ItemEditorView: View {
     private var editTextView: some View {
         if canManageSubtitles {
             ChevronButton(L10n.subtitles) {
-                router.route(to: \.editSubtitles, viewModel.item)
+                router.route(to: .editSubtitles(item: viewModel.item))
             }
         }
         if canManageLyrics {

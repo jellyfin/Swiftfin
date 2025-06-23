@@ -10,18 +10,22 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct SubtitleSearchView: View {
+struct ItemSubtitleSearchView: View {
+
+    // MARK: - Accent Color
 
     @Default(.accentColor)
     private var accentColor
 
-    // MARK: - Environment & Observed Objects
+    // MARK: - Router
 
-    @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
+    @Router
+    private var router
+
+    // MARK: - ViewModel
 
     @ObservedObject
-    private var viewModel: ItemSubtitlesViewModel
+    private var viewModel: SubtitleEditorViewModel
 
     // MARK: - Selected Subtitles
 
@@ -43,7 +47,7 @@ struct SubtitleSearchView: View {
 
     // MARK: - Initializer
 
-    init(viewModel: ItemSubtitlesViewModel) {
+    init(viewModel: SubtitleEditorViewModel) {
         self.viewModel = viewModel
     }
 
@@ -69,7 +73,7 @@ struct SubtitleSearchView: View {
             case .deleted:
                 return
             case .uploaded:
-                router.dismissCoordinator()
+                router.dismiss()
             case let .error(eventError):
                 error = eventError
             }
