@@ -24,8 +24,8 @@ extension ItemView {
 
         // MARK: - Observed & Envirnoment Objects
 
-        @EnvironmentObject
-        private var router: MainCoordinator.Router
+        @Router
+        private var router
 
         // MARK: - Error State
 
@@ -114,8 +114,7 @@ extension ItemView {
         private func playLocalTrailer(_ trailer: BaseItemDto) {
             if let selectedMediaSource = trailer.mediaSources?.first {
                 router.route(
-                    to: \.videoPlayer,
-                    OnlineVideoPlayerManager(item: trailer, mediaSource: selectedMediaSource)
+                    to: .videoPlayer(manager: OnlineVideoPlayerManager(item: trailer, mediaSource: selectedMediaSource))
                 )
             } else {
                 logger.log(level: .error, "No media sources found")

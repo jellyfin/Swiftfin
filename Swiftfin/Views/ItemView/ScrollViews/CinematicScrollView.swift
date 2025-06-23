@@ -17,8 +17,8 @@ extension ItemView {
         @Default(.Customization.CinematicItemViewType.usePrimaryImage)
         private var usePrimaryImage
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         private var viewModel: ItemViewModel
@@ -93,8 +93,8 @@ extension ItemView.CinematicScrollView {
         @StoredValue(.User.itemViewAttributes)
         private var attributes
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
         @ObservedObject
         var viewModel: ItemViewModel
 

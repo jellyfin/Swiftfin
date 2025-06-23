@@ -27,8 +27,8 @@ struct SelectUserView: View {
 
     // MARK: - State & Environment Objects
 
-    @EnvironmentObject
-    private var router: SelectUserCoordinator.Router
+    @Router
+    private var router
 
     // MARK: - Select User Variables
 
@@ -103,7 +103,7 @@ struct SelectUserView: View {
     }
 
     private func addUserSelected(server: ServerState) {
-        router.route(to: \.userSignIn, server)
+        router.route(to: .userSignIn(server: server))
     }
 
     private func delete(user: UserState) {
@@ -173,7 +173,7 @@ struct SelectUserView: View {
                 selectedServer: selectedServer,
                 servers: viewModel.servers.keys
             ) { server in
-                router.route(to: \.userSignIn, server)
+                router.route(to: .userSignIn(server: server))
             }
         }
     }
@@ -253,7 +253,7 @@ struct SelectUserView: View {
                 .multilineTextAlignment(.center)
 
             Button {
-                router.route(to: \.connectToServer)
+                router.route(to: .connectToServer)
             } label: {
                 L10n.connect.text
                     .font(.callout)

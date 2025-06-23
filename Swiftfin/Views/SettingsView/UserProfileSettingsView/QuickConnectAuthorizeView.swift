@@ -13,11 +13,6 @@ import SwiftUI
 
 struct QuickConnectAuthorizeView: View {
 
-    // MARK: - Dismiss Environment
-
-    @Environment(\.dismiss)
-    private var dismiss
-
     // MARK: - Defaults
 
     @Default(.accentColor)
@@ -27,6 +22,9 @@ struct QuickConnectAuthorizeView: View {
 
     @FocusState
     private var isCodeFocused: Bool
+
+    @Router
+    private var router
 
     // MARK: - State & Environment Objects
 
@@ -145,7 +143,7 @@ struct QuickConnectAuthorizeView: View {
             isPresented: $isPresentingSuccess
         ) {
             Button(L10n.dismiss, role: .cancel) {
-                dismiss()
+                router.dismiss()
             }
         } message: {
             L10n.quickConnectSuccessMessage.text

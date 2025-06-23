@@ -10,8 +10,8 @@ import SwiftUI
 
 struct AdminDashboardView: View {
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     // MARK: - Body
 
@@ -24,33 +24,33 @@ struct AdminDashboardView: View {
             )
 
             ChevronButton(L10n.sessions) {
-                router.route(to: \.activeSessions)
+                router.route(to: .activeSessions)
             }
 
             Section(L10n.activity) {
                 ChevronButton(L10n.activity) {
-                    router.route(to: \.activity)
+                    router.route(to: .activity)
                 }
                 ChevronButton(L10n.devices) {
-                    router.route(to: \.devices)
+                    router.route(to: .devices)
                 }
                 ChevronButton(L10n.users) {
-                    router.route(to: \.users)
+                    router.route(to: .users)
                 }
             }
 
             Section(L10n.advanced) {
 
                 ChevronButton(L10n.apiKeys) {
-                    router.route(to: \.apiKeys)
+                    router.route(to: .apiKeys)
                 }
 
                 ChevronButton(L10n.logs) {
-                    router.route(to: \.serverLogs)
+                    router.route(to: .serverLogs)
                 }
 
                 ChevronButton(L10n.tasks) {
-                    router.route(to: \.tasks)
+                    router.route(to: .tasks)
                 }
             }
         }

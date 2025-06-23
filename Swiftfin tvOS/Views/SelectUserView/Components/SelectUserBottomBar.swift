@@ -15,8 +15,8 @@ extension SelectUserView {
 
         // MARK: - State & Environment Objects
 
-        @EnvironmentObject
-        private var router: SelectUserCoordinator.Router
+        @Router
+        private var router
 
         @Binding
         private var isEditing: Bool
@@ -68,7 +68,7 @@ extension SelectUserView {
                 Divider()
 
                 Button(L10n.advanced, systemImage: "gearshape.fill") {
-                    router.route(to: \.advancedSettings)
+                    router.route(to: .appSettings)
                 }
             } label: {
                 Label(L10n.advanced, systemImage: "gearshape.fill")
@@ -139,7 +139,7 @@ extension SelectUserView {
                         selectedServer: selectedServer,
                         servers: servers
                     ) { server in
-                        router.route(to: \.userSignIn, server)
+                        router.route(to: .userSignIn(server: server))
                     }
                     .hidden(!hasUsers)
 

@@ -10,7 +10,7 @@ import CollectionVGrid
 import Defaults
 import Factory
 import JellyfinAPI
-import Stinsen
+
 import SwiftUI
 
 // TODO: seems to redraw view when popped to sometimes?
@@ -19,8 +19,8 @@ import SwiftUI
 // TODO: `afterLastDisappear` with `backgroundRefresh`
 struct MediaView: View {
 
-    @EnvironmentObject
-    private var router: MediaCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = MediaViewModel()
@@ -47,9 +47,9 @@ struct MediaView: View {
                             parent: item,
                             filters: .default
                         )
-                        router.route(to: \.library, viewModel)
+                        router.route(to: .library(viewModel: viewModel))
                     case .downloads:
-                        router.route(to: \.downloads)
+                        router.route(to: .downloadList)
                     case .favorites:
                         // TODO: favorites should have its own view instead of a library
                         let viewModel = ItemLibraryViewModel(
@@ -57,9 +57,9 @@ struct MediaView: View {
                             id: "favorites",
                             filters: .favorites
                         )
-                        router.route(to: \.library, viewModel)
+                        router.route(to: .library(viewModel: viewModel))
                     case .liveTV:
-                        router.route(to: \.liveTV)
+                        router.route(to: .liveTV)
                     }
                 }
         }

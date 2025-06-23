@@ -7,7 +7,7 @@
 //
 
 import JellyfinAPI
-import Stinsen
+
 import SwiftUI
 
 extension ServerTasksView {
@@ -17,8 +17,8 @@ extension ServerTasksView {
         @CurrentDate
         private var currentDate: Date
 
-        @EnvironmentObject
-        private var router: AdminDashboardCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var observer: ServerTaskObserver
@@ -113,7 +113,7 @@ extension ServerTasksView {
                 .disabled(observer.task.state == .cancelling)
 
                 Button(L10n.edit) {
-                    router.route(to: \.editServerTask, observer)
+                    router.route(to: .editServerTask(observer: observer))
                 }
             } message: {
                 if let description = observer.task.description {

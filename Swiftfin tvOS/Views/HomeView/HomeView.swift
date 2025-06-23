@@ -13,8 +13,8 @@ import SwiftUI
 
 struct HomeView: View {
 
-    @EnvironmentObject
-    private var router: HomeCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = HomeViewModel()

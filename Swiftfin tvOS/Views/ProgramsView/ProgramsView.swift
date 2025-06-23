@@ -15,8 +15,8 @@ import SwiftUI
 
 struct ProgramsView: View {
 
-    @EnvironmentObject
-    private var router: VideoPlayerWrapperCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var programsViewModel = ProgramsViewModel()
