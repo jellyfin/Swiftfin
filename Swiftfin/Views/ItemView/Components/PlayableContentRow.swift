@@ -13,13 +13,16 @@ import SwiftUI
 
 extension ItemView {
 
-    struct PlaylistItemRow: View {
+    struct PlayableContentRow: View {
+
+        @Default(.accentColor)
+        private var accentColor
 
         @Injected(\.logService)
         private var logger
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         let item: BaseItemDto
         let onSelect: () -> Void
@@ -81,19 +84,23 @@ extension ItemView {
 
                     Spacer()
 
-                    OrnamentButton(systemName: "play.fill") {
+                    // TODO: Make Ornament
+                    Button(L10n.play, systemImage: "play.fill") {
                         if let itemMediaSource = item.mediaSources?.first {
                             router.route(
-                                to: \.videoPlayer,
-                                OnlineVideoPlayerManager(
-                                    item: item,
-                                    mediaSource: itemMediaSource
+                                to: .videoPlayer(
+                                    manager: OnlineVideoPlayerManager(
+                                        item: item,
+                                        mediaSource: itemMediaSource
+                                    )
                                 )
                             )
                         } else {
                             logger.error("No media source available")
                         }
                     }
+                    .labelStyle(.iconOnly)
+                    .foregroundStyle(accentColor)
                 }
             }
             .onSelect(perform: onSelect)
