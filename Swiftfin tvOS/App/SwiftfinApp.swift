@@ -20,22 +20,23 @@ struct SwiftfinApp: App {
 
     init() {
 
+        // Logging
+        LoggingSystem.bootstrap { label in
+
+            let handlers: [any LogHandler] = [PersistentLogHandler(label: label)]
+            #if DEBUG
+                .appending(SwiftfinConsoleHandler())
+            #endif
+
+            var multiplexHandler = MultiplexLogHandler(handlers)
+            multiplexHandler.logLevel = .trace
+            return multiplexHandler
+        }
+
         // CoreStore
 
         CoreStoreDefaults.dataStack = SwiftfinStore.dataStack
         CoreStoreDefaults.logger = SwiftfinCorestoreLogger()
-
-        // Logging
-        LoggingSystem.bootstrap { label in
-
-            var loggers: [LogHandler] = [PersistentLogHandler(label: label).withLogLevel(.trace)]
-
-            #if DEBUG
-            loggers.append(SwiftfinConsoleLogger())
-            #endif
-
-            return MultiplexLogHandler(loggers)
-        }
 
         // Nuke
 

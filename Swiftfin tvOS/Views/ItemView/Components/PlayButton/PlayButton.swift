@@ -65,8 +65,16 @@ extension ItemView {
 
         private var playButton: some View {
             Button {
-                if let playButtonItem = viewModel.playButtonItem, let selectedMediaSource = viewModel.selectedMediaSource {
-                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: playButtonItem, mediaSource: selectedMediaSource))
+                if let playButtonItem = viewModel.playButtonItem,
+                   let selectedMediaSource = viewModel.selectedMediaSource
+                {
+                    router.route(
+                        to: \.videoPlayer,
+                        OnlineVideoPlayerManager(
+                            item: playButtonItem,
+                            mediaSource: selectedMediaSource
+                        )
+                    )
                 } else {
                     logger.error("No media source available")
                 }
@@ -94,24 +102,32 @@ extension ItemView {
             }
             .focused($isFocused)
             .buttonStyle(.card)
-//            .contextMenu {
-//                if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
-//                    Button {
-//                        if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-//                            selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
-//                            router.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
-//                        } else {
-//                            logger.error("Attempted to play item but no playback information available")
-//                        }
-//                    } label: {
-//                        Label(L10n.playFromBeginning, systemImage: "gobackward")
-//                    }
-//
-//                    Button(role: .cancel) {} label: {
-//                        L10n.cancel.text
-//                    }
-//                }
-//            }
+            .contextMenu {
+                if viewModel.playButtonItem != nil,
+                   viewModel.item.userData?.playbackPositionTicks ?? 0 > 0
+                {
+                    Button {
+                        if var playButtonItem = viewModel.playButtonItem,
+                           let selectedMediaSource = viewModel.selectedMediaSource
+                        {
+                            /// Reset playback to the beginning
+                            playButtonItem.userData?.playbackPositionTicks = 0
+
+                            router.route(
+                                to: \.videoPlayer,
+                                OnlineVideoPlayerManager(
+                                    item: playButtonItem,
+                                    mediaSource: selectedMediaSource
+                                )
+                            )
+                        } else {
+                            logger.error("No media source available")
+                        }
+                    } label: {
+                        Label(L10n.playFromBeginning, systemImage: "gobackward")
+                    }
+                }
+            }
         }
     }
 }
