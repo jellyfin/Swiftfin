@@ -215,11 +215,6 @@ class VideoPlayerManager: ViewModel {
 
     func sendStopReport() {
 
-        // TODO: This entire system is being redone in other PRs,
-        //       can ignore the fact this is commented out for now.
-        let ids = ["itemID": currentViewModel.item.id, "seriesID": currentViewModel.item.parentID]
-//        Notifications[.itemMetadataDidChange].post(ids)
-
         #if DEBUG
         guard Defaults[.sendProgressReports] else { return }
         #endif
@@ -238,6 +233,16 @@ class VideoPlayerManager: ViewModel {
 
             let request = Paths.reportPlaybackStopped(stopInfo)
             let _ = try await userSession.client.send(request)
+
+            // TODO: Revise as part of the PlayerManager Rework
+            if let itemID = currentViewModel.item.id {
+                Notifications[.itemShouldRefreshMetadata].post(itemID)
+            }
+
+            // TODO: Revise as part of the PlayerManager Rework
+            if let seriesID = currentViewModel.item.seriesID {
+                Notifications[.itemShouldRefreshMetadata].post(seriesID)
+            }
         }
     }
 
