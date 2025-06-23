@@ -214,16 +214,12 @@ struct AgeFormatStyle: FormatStyle {
 
     private var death: Date?
 
-    private var today: Date {
-        Date.now
-    }
-
     func death(_ date: Date?) -> AgeFormatStyle {
-        copy(self, modifying: \.death, to: date ?? today)
+        copy(self, modifying: \.death, to: date)
     }
 
     func format(_ value: Date) -> String {
-        let age = Calendar.current.dateComponents([.year], from: value, to: death ?? today).year ?? 0
+        let age = Calendar.current.dateComponents([.year], from: value, to: death ?? .now).year ?? 0
         return L10n.yearsOld(age)
     }
 }
