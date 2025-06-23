@@ -23,10 +23,8 @@ struct HomeView: View {
     @Default(.Customization.recentlyAddedPosterType)
     private var recentlyAddedPosterType
 
-    @EnvironmentObject
-    private var mainRouter: MainCoordinator.Router
-    @EnvironmentObject
-    private var router: HomeCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = HomeViewModel()
@@ -91,7 +89,7 @@ struct HomeView: View {
                 server: viewModel.userSession.server,
                 user: viewModel.userSession.user
             ) {
-                mainRouter.route(to: \.settings)
+                router.route(to: .settings)
             }
         }
         .sinceLastDisappear { interval in

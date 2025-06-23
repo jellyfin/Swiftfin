@@ -14,8 +14,8 @@ extension ItemView {
 
     struct EpisodeItemContentView: View {
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: EpisodeItemViewModel

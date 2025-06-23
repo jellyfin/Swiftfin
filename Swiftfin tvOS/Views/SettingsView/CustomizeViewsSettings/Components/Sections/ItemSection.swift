@@ -17,8 +17,8 @@ extension CustomizeViewsSettings {
         @Injected(\.currentUserSession)
         private var userSession
 
-        @EnvironmentObject
-        private var router: CustomizeSettingsCoordinator.Router
+        @Router
+        private var router
 
         @StoredValue(.User.itemViewAttributes)
         private var itemViewAttributes
@@ -36,7 +36,7 @@ extension CustomizeViewsSettings {
             Section(L10n.items) {
 
                 ChevronButton(L10n.mediaAttributes) {
-                    router.route(to: \.itemViewAttributes, $itemViewAttributes)
+                    router.route(to: .itemViewAttributes(selection: $itemViewAttributes))
                 }
 
                 ListRowMenu(L10n.enabledTrailers, selection: $enabledTrailers)

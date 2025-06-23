@@ -7,7 +7,7 @@
 //
 
 import Defaults
-import Stinsen
+
 import SwiftUI
 
 // TODO: move sign out-stuff into super user when implemented
@@ -28,8 +28,8 @@ struct AppSettingsView: View {
     @Default(.signOutOnClose)
     private var signOutOnClose
 
-    @EnvironmentObject
-    private var router: AppSettingsCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = SettingsViewModel()
@@ -38,13 +38,14 @@ struct AppSettingsView: View {
         Form {
 
             ChevronButton(L10n.about) {
-                router.route(to: \.about)
+                router.route(to: .aboutApp)
             }
 
             Section(L10n.accessibility) {
 
                 ChevronButton(L10n.appIcon) {
-                    router.route(to: \.appIconSelector, viewModel)
+                    // TODO: Create NavigationRoute.appIconSelector
+                    router.route(to: .appIconSelector(viewModel: viewModel))
                 }
 
                 if !selectUserUseSplashscreen {
@@ -84,14 +85,14 @@ struct AppSettingsView: View {
             SignOutIntervalSection()
 
             ChevronButton(L10n.logs) {
-                router.route(to: \.log)
+                router.route(to: .log)
             }
         }
         .animation(.linear, value: selectUserUseSplashscreen)
         .navigationTitle(L10n.advanced)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
-            router.dismissCoordinator()
+            router.dismiss()
         }
     }
 }

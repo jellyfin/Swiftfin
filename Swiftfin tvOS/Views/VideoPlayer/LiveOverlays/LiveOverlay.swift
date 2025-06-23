@@ -19,8 +19,8 @@ extension LiveVideoPlayer {
 
         @EnvironmentObject
         private var proxy: VLCVideoPlayer.Proxy
-        @EnvironmentObject
-        private var router: LiveVideoPlayerCoordinator.Router
+        @Router
+        private var router
 
         @State
         private var confirmCloseWorkItem: DispatchWorkItem?
@@ -75,7 +75,7 @@ extension LiveVideoPlayer {
 //
 //                if isPresentingOverlay && currentOverlayType == .confirmClose {
 //                    proxy.stop()
-//                    router.dismissCoordinator()
+//                    router.dismiss()
 //                } else if isPresentingOverlay && currentOverlayType == .smallMenu {
 //                    currentOverlayType = .main
 //                } else {

@@ -13,8 +13,8 @@ struct ServerActivityDetailsView: View {
 
     // MARK: - Environment Objects
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     // MARK: - Activity Log Entry Variable
 
@@ -36,7 +36,7 @@ struct ServerActivityDetailsView: View {
                     user: user,
                     lastActivityDate: viewModel.log.date
                 ) {
-                    router.route(to: \.userDetails, user)
+                    router.route(to: .userDetails(user: user))
                 }
             }
 

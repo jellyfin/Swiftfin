@@ -75,8 +75,7 @@ struct SwiftfinApp: App {
     var body: some Scene {
         WindowGroup {
             PreferencesView {
-                MainCoordinator()
-                    .view()
+                RootView()
                     .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
             }
             .ignoresSafeArea()

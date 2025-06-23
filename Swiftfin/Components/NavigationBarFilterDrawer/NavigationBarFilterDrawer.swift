@@ -12,11 +12,16 @@ import SwiftUI
 
 struct NavigationBarFilterDrawer: View {
 
+    struct Parameters {
+        let type: ItemFilterType
+        let viewModel: FilterViewModel
+    }
+
     @ObservedObject
     private var viewModel: FilterViewModel
 
     private var filterTypes: [ItemFilterType]
-    private var onSelect: (FilterCoordinator.Parameters) -> Void
+    private var onSelect: (Parameters) -> Void
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -61,7 +66,7 @@ extension NavigationBarFilterDrawer {
         )
     }
 
-    func onSelect(_ action: @escaping (FilterCoordinator.Parameters) -> Void) -> Self {
+    func onSelect(_ action: @escaping (Parameters) -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)
     }
 }

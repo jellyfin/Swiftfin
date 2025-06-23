@@ -62,8 +62,7 @@ struct SwiftfinApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainCoordinator()
-                .view()
+            RootView()
                 .onNotification(.applicationDidEnterBackground) {
                     Defaults[.backgroundTimeStamp] = Date.now
                 }

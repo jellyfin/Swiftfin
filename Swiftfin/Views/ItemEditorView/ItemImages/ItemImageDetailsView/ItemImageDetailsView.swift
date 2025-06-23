@@ -16,8 +16,8 @@ struct ItemImageDetailsView: View {
 
     // MARK: - State, Observed, & Environment Objects
 
-    @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     private var viewModel: ItemImagesViewModel

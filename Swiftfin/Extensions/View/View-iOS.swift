@@ -28,7 +28,7 @@ extension View {
     func navigationBarFilterDrawer(
         viewModel: FilterViewModel,
         types: [ItemFilterType],
-        onSelect: @escaping (FilterCoordinator.Parameters) -> Void
+        onSelect: @escaping (NavigationBarFilterDrawer.Parameters) -> Void
     ) -> some View {
         if types.isEmpty {
             self
