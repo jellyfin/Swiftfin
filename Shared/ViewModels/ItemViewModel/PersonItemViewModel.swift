@@ -18,18 +18,45 @@ final class PersonItemViewModel: ItemViewModel {
     @Published
     private(set) var personItems: OrderedDictionary<BaseItemKind, [BaseItemDto]> = [:]
 
+    // MARK: - Task
+
+    private var personItemTask: AnyCancellable?
+
+    // MARK: - Disable PlayButton
+
     override var presentPlayButton: Bool {
         false
     }
 
-    // MARK: - On Refresh
+    // MARK: - Override Response
 
-    override func onRefresh() async throws {
-        let personItems = try await self.getPersonItems()
+    override func respond(to action: ItemViewModel.Action) -> ItemViewModel.State {
 
-        await MainActor.run {
-            self.personItems = personItems
+        switch action {
+        case .backgroundRefresh, .refresh:
+
+            personItemTask?.cancel()
+
+            Task { [weak self] in
+                guard let self else { return }
+
+                await MainActor.run {
+                    self.personItems.removeAll()
+                }
+
+                do {
+                    let personItems = try await self.getPersonItems()
+
+                    await MainActor.run {
+                        self.personItems = personItems
+                    }
+                }
+            }
+            .store(in: &cancellables)
+        default: ()
         }
+
+        return super.respond(to: action)
     }
 
     // MARK: - Get Person Items
