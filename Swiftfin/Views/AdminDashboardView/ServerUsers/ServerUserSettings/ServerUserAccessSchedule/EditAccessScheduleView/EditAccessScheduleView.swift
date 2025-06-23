@@ -19,8 +19,8 @@ struct EditAccessScheduleView: View {
 
     // MARK: - Observed & Environment Objects
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     private var viewModel: ServerUserAdminViewModel
@@ -93,7 +93,7 @@ struct EditAccessScheduleView: View {
                 isHidden: isEditing || viewModel.user.policy?.accessSchedules == []
             ) {
                 Button(L10n.add, systemImage: "plus") {
-                    router.route(to: \.userAddAccessSchedule, viewModel)
+                    router.route(to: .userAddAccessSchedule(viewModel: viewModel))
                 }
 
                 Button(L10n.edit, systemImage: "checkmark.circle") {
@@ -144,7 +144,7 @@ struct EditAccessScheduleView: View {
 
             if viewModel.user.policy?.accessSchedules == [] {
                 Button(L10n.add) {
-                    router.route(to: \.userAddAccessSchedule, viewModel)
+                    router.route(to: .userAddAccessSchedule(viewModel: viewModel))
                 }
             } else {
                 ForEach(viewModel.user.policy?.accessSchedules ?? [], id: \.self) { schedule in

@@ -25,8 +25,8 @@ extension VideoPlayerSettingsView {
         @Default(.VideoPlayer.autoPlayEnabled)
         private var autoPlayEnabled
 
-        @EnvironmentObject
-        private var router: VideoPlayerSettingsCoordinator.Router
+        @Router
+        private var router
 
         var body: some View {
             Section(L10n.buttons) {
@@ -41,11 +41,11 @@ extension VideoPlayerSettingsView {
                 }
 
                 ChevronButton(L10n.barButtons) {
-                    router.route(to: \.actionButtonSelector, $barActionButtons)
+                    router.route(to: .actionButtonSelector(selectedButtonsBinding: $barActionButtons))
                 }
 
                 ChevronButton(L10n.menuButtons) {
-                    router.route(to: \.actionButtonSelector, $menuActionButtons)
+                    router.route(to: .actionButtonSelector(selectedButtonsBinding: $menuActionButtons))
                 }
             }
             .onChange(of: barActionButtons) { newValue in

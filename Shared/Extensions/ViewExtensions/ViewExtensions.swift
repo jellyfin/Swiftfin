@@ -95,13 +95,13 @@ extension View {
         switch type {
         case .landscape:
             aspectRatio(1.77, contentMode: contentMode)
-            #if !os(tvOS)
+            #if os(iOS)
                 .posterBorder(ratio: 1 / 30, of: \.width)
                 .cornerRadius(ratio: 1 / 30, of: \.width)
             #endif
         case .portrait:
             aspectRatio(2 / 3, contentMode: contentMode)
-            #if !os(tvOS)
+            #if os(iOS)
                 .posterBorder(ratio: 0.0375, of: \.width)
                 .cornerRadius(ratio: 0.0375, of: \.width)
             #endif
@@ -112,7 +112,7 @@ extension View {
     @ViewBuilder
     func squarePosterStyle(contentMode: ContentMode = .fill) -> some View {
         aspectRatio(1.0, contentMode: contentMode)
-        #if !os(tvOS)
+        #if os(iOS)
             .posterBorder(ratio: 0.0375, of: \.width)
             .cornerRadius(ratio: 0.0375, of: \.width)
         #endif

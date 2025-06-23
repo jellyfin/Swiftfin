@@ -13,8 +13,8 @@ import SwiftUI
 
 struct ChannelLibraryView: View {
 
-    @EnvironmentObject
-    private var router: VideoPlayerWrapperCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = ChannelLibraryViewModel()

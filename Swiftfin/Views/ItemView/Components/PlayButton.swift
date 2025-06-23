@@ -22,8 +22,8 @@ extension ItemView {
         @Injected(\.logService)
         private var logger
 
-        @EnvironmentObject
-        private var mainRouter: MainCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: ItemViewModel
@@ -38,15 +38,17 @@ extension ItemView {
 
         var body: some View {
             Button {
-                if let playButtonItem = viewModel.playButtonItem, let selectedMediaSource = viewModel.selectedMediaSource {
-//                    mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: playButtonItem, mediaSource: selectedMediaSource))
-                    let manager = MediaPlayerManager(
-                        item: playButtonItem
-                    ) { item in
-                        try await MediaPlayerItem.build(for: item, mediaSource: selectedMediaSource)
-                    }
-
-                    mainRouter.route(to: \.videoPlayer, manager)
+                if let playButtonItem = viewModel.playButtonItem,
+                   let selectedMediaSource = viewModel.selectedMediaSource
+                {
+                    router.route(
+                        to: .videoPlayer(
+                            manager: OnlineVideoPlayerManager(
+                                item: playButtonItem,
+                                mediaSource: selectedMediaSource
+                            )
+                        )
+                    )
                 } else {
                     logger.error("No media source available")
                 }
@@ -77,11 +79,12 @@ extension ItemView {
                             /// Reset playback to the beginning
                             playButtonItem.userData?.playbackPositionTicks = 0
 
-                            mainRouter.route(
-                                to: \.videoPlayer,
-                                OnlineVideoPlayerManager(
-                                    item: playButtonItem,
-                                    mediaSource: selectedMediaSource
+                            router.route(
+                                to: .videoPlayer(
+                                    manager: OnlineVideoPlayerManager(
+                                        item: playButtonItem,
+                                        mediaSource: selectedMediaSource
+                                    )
                                 )
                             )
                         } else {

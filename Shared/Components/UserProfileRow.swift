@@ -10,12 +10,14 @@ import Factory
 import JellyfinAPI
 import SwiftUI
 
+// TODO: take client instead of using user session
+
 extension SettingsView {
 
     struct UserProfileRow: View {
 
         @Injected(\.currentUserSession)
-        private var userSession: UserSession!
+        private var userSession: UserSession?
 
         private let user: UserDto
         private let action: (() -> Void)?
@@ -30,13 +32,15 @@ extension SettingsView {
                     // `.aspectRatio(contentMode: .fill)` on `imageView` alone
                     // causes a crash on some iOS versions
                     ZStack {
-                        UserProfileImage(
-                            userID: user.id,
-                            source: user.profileImageSource(
-                                client: userSession.client,
-                                maxWidth: 120
+                        if let client = userSession?.client {
+                            UserProfileImage(
+                                userID: user.id,
+                                source: user.profileImageSource(
+                                    client: client,
+                                    maxWidth: 120
+                                )
                             )
-                        )
+                        }
                     }
                     .frame(width: 50, height: 50)
 

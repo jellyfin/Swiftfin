@@ -30,8 +30,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     @Default
     private var defaultPosterType: PosterDisplayType
 
-    @EnvironmentObject
-    private var router: LibraryCoordinator<Element>.Router
+    @Router
+    private var router
 
     @State
     private var focusedItem: Element?
@@ -103,12 +103,12 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         switch item.type {
         case .collectionFolder, .folder:
             let viewModel = ItemLibraryViewModel(parent: item, filters: .default)
-            router.route(to: \.library, viewModel)
+            router.route(to: .library(viewModel: viewModel))
         case .person:
             let viewModel = ItemLibraryViewModel(parent: item)
-            router.route(to: \.library, viewModel)
+            router.route(to: .library(viewModel: viewModel))
         default:
-            router.route(to: \.item, item)
+            router.route(to: .item(item: item))
         }
     }
 
@@ -116,7 +116,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
 
     private func select(person: BaseItemPerson) {
         let viewModel = ItemLibraryViewModel(parent: person)
-        router.route(to: \.library, viewModel)
+        router.route(to: .library(viewModel: viewModel))
     }
 
     // MARK: Make Layout
@@ -401,10 +401,10 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             case let .gotRandomItem(item):
                 switch item {
                 case let item as BaseItemDto:
-                    router.route(to: \.item, item)
+                    router.route(to: .item(item: item))
                 case let item as BaseItemPerson:
                     let viewModel = ItemLibraryViewModel(parent: item, filters: .default)
-                    router.route(to: \.library, viewModel)
+                    router.route(to: .library(viewModel: viewModel))
                 default:
                     assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
                 }

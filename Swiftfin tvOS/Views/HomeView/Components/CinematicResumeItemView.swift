@@ -13,8 +13,8 @@ extension HomeView {
 
     struct CinematicResumeView: View {
 
-        @EnvironmentObject
-        private var router: HomeCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: HomeViewModel
@@ -66,7 +66,7 @@ extension HomeView {
                     )
                 }
                 .onSelect { item in
-                    router.route(to: \.item, item)
+                    router.route(to: .item(item: item))
                 }
         }
     }

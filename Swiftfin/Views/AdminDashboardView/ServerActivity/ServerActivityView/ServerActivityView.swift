@@ -14,8 +14,8 @@ struct ServerActivityView: View {
 
     // MARK: - Environment Objects
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     // MARK: - State Objects
 
@@ -91,7 +91,7 @@ struct ServerActivityView: View {
                 )
 
                 LogEntry(viewModel: logViewModel) {
-                    router.route(to: \.activityDetails, logViewModel)
+                    router.route(to: .activityDetails(viewModel: logViewModel))
                 }
             }
             .onReachedBottomEdge(offset: .offset(300)) {

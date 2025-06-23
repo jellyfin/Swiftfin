@@ -15,9 +15,6 @@ extension ItemView {
         @ObservedObject
         var viewModel: EpisodeItemViewModel
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
-
         var body: some View {
             VStack(spacing: 0) {
 

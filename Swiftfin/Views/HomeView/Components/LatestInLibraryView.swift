@@ -19,8 +19,8 @@ extension HomeView {
         @Default(.Customization.latestInLibraryPosterType)
         private var latestInLibraryPosterType
 
-        @EnvironmentObject
-        private var router: HomeCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: LatestInLibraryViewModel
@@ -35,11 +35,11 @@ extension HomeView {
                 .trailing {
                     SeeAllButton()
                         .onSelect {
-                            router.route(to: \.library, viewModel)
+                            router.route(to: .library(viewModel: viewModel))
                         }
                 }
                 .onSelect { item in
-                    router.route(to: \.item, item)
+                    router.route(to: .item(item: item))
                 }
             }
         }

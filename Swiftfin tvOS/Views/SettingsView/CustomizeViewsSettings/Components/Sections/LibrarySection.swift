@@ -32,8 +32,8 @@ extension CustomizeViewsSettings {
         @Default(.Customization.Library.rememberSort)
         private var rememberLibrarySort
 
-        @EnvironmentObject
-        private var router: CustomizeSettingsCoordinator.Router
+        @Router
+        private var router
 
         @State
         private var isPresentingNextUpDays = false
@@ -58,7 +58,8 @@ extension CustomizeViewsSettings {
                         L10n.columns,
                         subtitle: listColumnCount.description
                     ) {
-                        router.route(to: \.listColumnSettings, $listColumnCount)
+                        // TODO: Implement listColumnSettings route in new Router system
+//                        router.route(to: .listColumnSettings(columnCount: $listColumnCount))
                     }
                 }
             }

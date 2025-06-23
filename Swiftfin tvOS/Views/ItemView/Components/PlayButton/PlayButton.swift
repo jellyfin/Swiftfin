@@ -17,8 +17,8 @@ extension ItemView {
         @Injected(\.logService)
         private var logger
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: ItemViewModel
@@ -65,8 +65,15 @@ extension ItemView {
 
         private var playButton: some View {
             Button {
-                if let playButtonItem = viewModel.playButtonItem, let selectedMediaSource = viewModel.selectedMediaSource {
-//                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: playButtonItem, mediaSource: selectedMediaSource))
+                if let playButtonItem = viewModel.playButtonItem,
+                   let selectedMediaSource = viewModel.selectedMediaSource
+                {
+                    router.route(
+                        to: .videoPlayer(manager: OnlineVideoPlayerManager(
+                            item: playButtonItem,
+                            mediaSource: selectedMediaSource
+                        ))
+                    )
                 } else {
                     logger.error("No media source available")
                 }
@@ -106,11 +113,10 @@ extension ItemView {
                             playButtonItem.userData?.playbackPositionTicks = 0
 
                             router.route(
-                                to: \.videoPlayer,
-                                OnlineVideoPlayerManager(
+                                to: .videoPlayer(manager: OnlineVideoPlayerManager(
                                     item: playButtonItem,
                                     mediaSource: selectedMediaSource
-                                )
+                                ))
                             )
                         } else {
                             logger.error("No media source available")

@@ -6,22 +6,34 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 struct ItemImagePicker: View {
 
     // MARK: - Observed, & Environment Objects
 
-    @EnvironmentObject
-    private var router: ItemImagePickerCoordinator.Router
+    @Router
+    private var router
+
+    @StateObject
+    var viewModel: ItemImagesViewModel
+
+    let type: ImageType
 
     // MARK: - Body
 
     var body: some View {
         PhotoPickerView {
-            router.route(to: \.cropImage, $0)
+            router.route(
+                to: .cropItemImage(
+                    viewModel: viewModel,
+                    image: $0,
+                    type: type
+                )
+            )
         } onCancel: {
-            router.dismissCoordinator()
+            router.dismiss()
         }
     }
 }

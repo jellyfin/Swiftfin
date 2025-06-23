@@ -13,8 +13,8 @@ import SwiftUI
 
 struct DevicesView: View {
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     @State
     private var isPresentingDeleteSelectionConfirmation = false
@@ -132,7 +132,7 @@ struct DevicesView: View {
                                 selectedDevices.insert(id)
                             }
                         } else {
-                            router.route(to: \.deviceDetails, device)
+                            router.route(to: .deviceDetails(device: device))
                         }
                     } onDelete: {
                         guard let id = device.id else { return }

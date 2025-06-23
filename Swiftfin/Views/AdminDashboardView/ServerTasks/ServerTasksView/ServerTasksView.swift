@@ -14,8 +14,8 @@ import SwiftUI
 
 struct ServerTasksView: View {
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = ServerTasksViewModel()
