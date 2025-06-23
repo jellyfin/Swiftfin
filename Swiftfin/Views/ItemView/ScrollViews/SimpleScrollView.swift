@@ -17,8 +17,8 @@ extension ItemView {
         @StoredValue(.User.itemViewAttributes)
         private var attributes
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         private var viewModel: ItemViewModel

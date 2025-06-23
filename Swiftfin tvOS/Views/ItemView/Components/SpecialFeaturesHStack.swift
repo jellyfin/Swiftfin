@@ -13,8 +13,8 @@ extension ItemView {
 
     struct SpecialFeaturesHStack: View {
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         let items: [BaseItemDto]
 
@@ -26,7 +26,9 @@ extension ItemView {
             )
             .onSelect { item in
                 guard let mediaSource = item.mediaSources?.first else { return }
-                router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: item, mediaSource: mediaSource))
+                router.route(
+                    to: .videoPlayer(manager: OnlineVideoPlayerManager(item: item, mediaSource: mediaSource))
+                )
             }
             .imageOverlay { _ in
                 EmptyView()

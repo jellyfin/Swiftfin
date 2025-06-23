@@ -13,8 +13,8 @@ extension ItemView {
 
     struct CompactPosterScrollView<Content: View>: ScrollContainerView {
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         private var viewModel: ItemViewModel
@@ -93,8 +93,8 @@ extension ItemView.CompactPosterScrollView {
         @StoredValue(.User.itemViewAttributes)
         private var attributes
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: ItemViewModel

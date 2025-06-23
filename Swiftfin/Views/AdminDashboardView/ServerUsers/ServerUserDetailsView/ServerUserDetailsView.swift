@@ -19,8 +19,8 @@ struct ServerUserDetailsView: View {
 
     // MARK: - State, Observed, & Environment Objects
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel: ServerUserAdminViewModel
@@ -59,7 +59,7 @@ struct ServerUserDetailsView: View {
                     maxWidth: 150
                 )
             ) {
-                router.route(to: \.userPhotoPicker, profileViewModel)
+                router.route(to: .userProfileImage(viewModel: profileViewModel))
             } onDelete: {
                 profileViewModel.send(.delete)
             }
@@ -80,40 +80,40 @@ struct ServerUserDetailsView: View {
                 }
 
                 ChevronButton(L10n.permissions) {
-                    router.route(to: \.userPermissions, viewModel)
+                    router.route(to: .userPermissions(viewModel: viewModel))
                 }
 
                 if let userId = viewModel.user.id {
                     ChevronButton(L10n.password) {
-                        router.route(to: \.resetUserPassword, userId)
+                        router.route(to: .resetUserPasswordAdmin(userID: userId))
                     }
                     ChevronButton(L10n.quickConnect) {
-                        router.route(to: \.quickConnectAuthorize, viewModel.user)
+                        router.route(to: .quickConnectAuthorize(user: viewModel.user))
                     }
                 }
             }
 
             Section(L10n.access) {
                 ChevronButton(L10n.devices) {
-                    router.route(to: \.userDeviceAccess, viewModel)
+                    router.route(to: .userDeviceAccess(viewModel: viewModel))
                 }
                 ChevronButton(L10n.liveTV) {
-                    router.route(to: \.userLiveTVAccess, viewModel)
+                    router.route(to: .userLiveTVAccess(viewModel: viewModel))
                 }
                 ChevronButton(L10n.media) {
-                    router.route(to: \.userMediaAccess, viewModel)
+                    router.route(to: .userMediaAccess(viewModel: viewModel))
                 }
             }
 
             Section(L10n.parentalControls) {
                 ChevronButton(L10n.ratings) {
-                    router.route(to: \.userParentalRatings, viewModel)
+                    router.route(to: .userParentalRatings(viewModel: viewModel))
                 }
                 ChevronButton(L10n.accessSchedules) {
-                    router.route(to: \.userEditAccessSchedules, viewModel)
+                    router.route(to: .userEditAccessSchedules(viewModel: viewModel))
                 }
                 ChevronButton(L10n.accessTags) {
-                    router.route(to: \.userEditAccessTags, viewModel)
+                    router.route(to: .userEditAccessTags(viewModel: viewModel))
                 }
             }
         }

@@ -12,8 +12,8 @@ import SwiftUI
 
 struct ItemEditorView: View {
 
-    @EnvironmentObject
-    private var router: ItemEditorCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     var viewModel: ItemViewModel
@@ -50,7 +50,7 @@ struct ItemEditorView: View {
         .navigationBarTitle(L10n.metadata)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
-            router.dismissCoordinator()
+            router.dismiss()
         }
     }
 
@@ -131,14 +131,14 @@ struct ItemEditorView: View {
            BaseItemKind.itemIdentifiableCases.contains(itemKind)
         {
             ChevronButton(L10n.identify) {
-                router.route(to: \.identifyItem, viewModel.item)
+                router.route(to: .identifyItem(item: viewModel.item))
             }
         }
         ChevronButton(L10n.images) {
-            router.route(to: \.editImages, ItemImagesViewModel(item: viewModel.item))
+            router.route(to: .itemImages(viewModel: ItemImagesViewModel(item: viewModel.item)))
         }
         ChevronButton(L10n.metadata) {
-            router.route(to: \.editMetadata, viewModel.item)
+            router.route(to: .editMetadata(item: viewModel.item))
         }
     }
 
@@ -164,16 +164,16 @@ struct ItemEditorView: View {
     private var editComponentsView: some View {
         Section {
             ChevronButton(L10n.genres) {
-                router.route(to: \.editGenres, viewModel.item)
+                router.route(to: .editGenres(item: viewModel.item))
             }
             ChevronButton(L10n.people) {
-                router.route(to: \.editPeople, viewModel.item)
+                router.route(to: .editPeople(item: viewModel.item))
             }
             ChevronButton(L10n.tags) {
-                router.route(to: \.editTags, viewModel.item)
+                router.route(to: .editTags(item: viewModel.item))
             }
             ChevronButton(L10n.studios) {
-                router.route(to: \.editStudios, viewModel.item)
+                router.route(to: .editStudios(item: viewModel.item))
             }
         }
     }

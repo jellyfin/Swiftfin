@@ -24,8 +24,8 @@ struct ConnectToServerView: View {
 
     // MARK: - State & Environment Objects
 
-    @EnvironmentObject
-    private var router: SelectUserCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = ConnectToServerViewModel()
@@ -130,7 +130,7 @@ struct ConnectToServerView: View {
             switch event {
             case let .connected(server):
                 Notifications[.didConnectToServer].post(server)
-                router.popLast()
+                router.dismiss()
             case let .duplicateServer(server):
                 duplicateServer = server
                 isPresentingDuplicateServer = true
@@ -153,7 +153,7 @@ struct ConnectToServerView: View {
 
             Button(L10n.addURL) {
                 viewModel.send(.addNewURL(server))
-                router.popLast()
+                router.dismiss()
             }
         } message: { server in
             Text(L10n.serverAlreadyConnected(server.name))

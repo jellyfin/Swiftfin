@@ -11,7 +11,10 @@ import SwiftUI
 struct ServerCheckView: View {
 
     @EnvironmentObject
-    private var router: MainCoordinator.Router
+    private var rootCoordinator: RootCoordinator
+
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = ServerCheckViewModel()
@@ -59,9 +62,7 @@ struct ServerCheckView: View {
         }
         .onReceive(viewModel.$state) { newState in
             if newState == .connected {
-                withAnimation(.linear(duration: 0.1)) {
-                    let _ = router.root(\.mainTab)
-                }
+                rootCoordinator.root(.mainTab)
             }
         }
         .topBarTrailing {
@@ -70,7 +71,7 @@ struct ServerCheckView: View {
                 server: viewModel.userSession.server,
                 user: viewModel.userSession.user
             ) {
-                router.route(to: \.settings)
+                router.route(to: .settings)
             }
         }
     }

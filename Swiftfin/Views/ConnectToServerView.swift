@@ -24,8 +24,8 @@ struct ConnectToServerView: View {
 
     // MARK: - State & Environment Objects
 
-    @EnvironmentObject
-    private var router: SelectUserCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = ConnectToServerViewModel()
@@ -59,7 +59,7 @@ struct ConnectToServerView: View {
             UIDevice.feedback(.success)
 
             Notifications[.didConnectToServer].post(server)
-            router.popLast()
+            router.dismiss()
         case let .duplicateServer(server):
             UIDevice.feedback(.warning)
 
@@ -163,7 +163,7 @@ struct ConnectToServerView: View {
         .navigationTitle(L10n.connect)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton(disabled: viewModel.state == .connecting) {
-            router.popLast()
+            router.dismiss()
         }
         .onFirstAppear {
             isURLFocused = true
@@ -191,7 +191,7 @@ struct ConnectToServerView: View {
 
             Button(L10n.addURL) {
                 viewModel.send(.addNewURL(server))
-                router.popLast()
+                router.dismiss()
             }
         } message: { server in
             L10n.serverAlreadyExistsPrompt(server.name).text
