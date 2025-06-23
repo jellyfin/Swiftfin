@@ -25,7 +25,7 @@ extension ItemView {
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 500))], spacing: 20) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 750))], spacing: 20) {
                     ForEach(viewModel.playlistItems) { item in
                         ItemView.PlayableContentRow(item: item) {
                             router.route(to: .item(item: item))
