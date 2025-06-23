@@ -55,6 +55,7 @@ struct MainTabView: View {
                         systemImage: tab.item.systemImage
                     )
                     .labelStyle(tab.item.labelStyle)
+                    .symbolRenderingMode(.monochrome)
                     .eraseToAnyView()
                 }
                 .tag(tab.item.id)
