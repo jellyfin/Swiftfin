@@ -79,7 +79,7 @@ extension TabItem {
     static let search = TabItem(
         id: "search",
         title: L10n.search,
-        systemImage: "magnifyingglass",
+        systemImage: "magnifyingglass"
     ) {
         SearchView()
     }
