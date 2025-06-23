@@ -67,7 +67,10 @@ final class PersonItemViewModel: ItemViewModel {
         var allViewModels: [BaseItemKind: ItemLibraryViewModel] = [:]
         var completedViewModels: [BaseItemKind: ItemLibraryViewModel] = [:]
 
-        for itemKind in BaseItemKind.supportedCases {
+        let supportedItemTypes = BaseItemKind.supportedCases
+            .appending(.episode)
+
+        for itemKind in supportedItemTypes {
             let viewModel = ItemLibraryViewModel(
                 parent: item,
                 filters: .init(itemTypes: [itemKind])
@@ -97,7 +100,7 @@ final class PersonItemViewModel: ItemViewModel {
             }
 
             for await (kind, isSuccess) in group {
-                if isSuccess, let viewModel = allViewModels[kind], !viewModel.elements.isEmpty {
+                if isSuccess, let viewModel = allViewModels[kind], viewModel.elements.isNotEmpty {
                     completedViewModels[kind] = viewModel
                 }
             }
