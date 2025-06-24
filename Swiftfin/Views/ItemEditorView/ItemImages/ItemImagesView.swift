@@ -117,16 +117,9 @@ struct ItemImagesView: View {
                     ForEach(images, id: \.self) { imageInfo in
                         imageButton(imageInfo: imageInfo) {
                             router.route(
-                                to: .itemImageDetailsLocal(
+                                to: .itemImageDetails(
                                     viewModel: viewModel,
-                                    imageSource: imageInfo.itemImageSource(
-                                        itemID: viewModel.item.id!,
-                                        client: viewModel.userSession.client
-                                    ),
-                                    imageInfo: imageInfo,
-                                    onDelete: {
-                                        viewModel.send(.deleteImage(imageInfo))
-                                    }
+                                    imageInfo: imageInfo
                                 )
                             )
                         }

@@ -207,37 +207,34 @@ extension NavigationRoute {
         }
     }
 
-    static func itemImageDetailsLocal(
+    static func itemImageDetails(
         viewModel: ItemImagesViewModel,
-        imageSource: ImageSource,
-        imageInfo: ImageInfo,
-        onDelete: (() -> Void)?
+        imageInfo: ImageInfo
     ) -> NavigationRoute {
         NavigationRoute(
-            id: "itemImageDetailsLocal",
+            id: "itemImageDetails",
             style: .sheet
         ) {
             ItemImageDetailsView(
                 viewModel: viewModel,
-                imageSource: imageSource,
+                imageSource: imageInfo.itemImageSource(
+                    itemID: viewModel.item.id!,
+                    client: viewModel.userSession.client
+                ),
                 index: imageInfo.imageIndex,
                 width: imageInfo.width,
                 height: imageInfo.height,
                 onDelete: {
-                    onDelete?()
+                    viewModel.send(.deleteImage(imageInfo))
                 }
             )
             .environment(\.isEditing, true)
         }
     }
 
-    static func itemImageDetailsRemote(
-        viewModel: ItemImagesViewModel,
-        imageInfo: RemoteImageInfo,
-        onSave: (() -> Void)?
-    ) -> NavigationRoute {
+    static func itemSearchImageDetails(viewModel: ItemImagesViewModel, imageInfo: RemoteImageInfo) -> NavigationRoute {
         NavigationRoute(
-            id: "itemImageDetailsRemote",
+            id: "itemSearchImageDetails",
             style: .sheet
         ) {
             ItemImageDetailsView(
@@ -250,7 +247,7 @@ extension NavigationRoute {
                 rating: imageInfo.communityRating,
                 ratingVotes: imageInfo.voteCount,
                 onSave: {
-                    onSave?()
+                    viewModel.send(.setImage(imageInfo))
                 }
             )
             .environment(\.isEditing, false)

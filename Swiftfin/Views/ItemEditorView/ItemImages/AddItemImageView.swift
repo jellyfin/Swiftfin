@@ -151,12 +151,9 @@ struct AddItemImageView: View {
     private func imageButton(_ image: RemoteImageInfo) -> some View {
         Button {
             router.route(
-                to: .itemImageDetailsRemote(
+                to: .itemSearchImageDetails(
                     viewModel: viewModel,
-                    imageInfo: image,
-                    onSave: {
-                        viewModel.send(.setImage(image))
-                    }
+                    imageInfo: image
                 )
             )
         } label: {
