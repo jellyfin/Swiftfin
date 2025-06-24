@@ -159,12 +159,100 @@ extension NavigationRoute {
         }
     }
 
+    static func itemSearchIdentity(remoteSearchResult: RemoteSearchResult, onSave: (() -> Void)?) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemSearchIdentity",
+            style: .sheet
+        ) {
+            IdentifyItemView.RemoteSearchResultView(
+                result: remoteSearchResult,
+                onSave: {
+                    onSave?()
+                }
+            )
+        }
+    }
+
     static func itemImages(viewModel: ItemImagesViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "itemImages",
             style: .sheet
         ) {
             ItemImagesView(viewModel: viewModel)
+        }
+    }
+
+    static func selectItemImage(viewModel: ItemImagesViewModel, imageType: ImageType) -> NavigationRoute {
+        NavigationRoute(
+            id: "selectItemImage",
+            style: .sheet
+        ) {
+            ItemImagePicker(
+                viewModel: viewModel,
+                type: imageType
+            )
+        }
+    }
+
+    static func addItemImage(viewModel: ItemImagesViewModel, imageType: ImageType) -> NavigationRoute {
+        NavigationRoute(
+            id: "addItemImage",
+            style: .push(.automatic)
+        ) {
+            AddItemImageView(
+                viewModel: viewModel,
+                imageType: imageType
+            )
+        }
+    }
+
+    static func itemImageDetailsLocal(
+        viewModel: ItemImagesViewModel,
+        imageSource: ImageSource,
+        imageInfo: ImageInfo,
+        onDelete: (() -> Void)?
+    ) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemImageDetailsLocal",
+            style: .sheet
+        ) {
+            ItemImageDetailsView(
+                viewModel: viewModel,
+                imageSource: imageSource,
+                index: imageInfo.imageIndex,
+                width: imageInfo.width,
+                height: imageInfo.height,
+                onDelete: {
+                    onDelete?()
+                }
+            )
+            .environment(\.isEditing, true)
+        }
+    }
+
+    static func itemImageDetailsRemote(
+        viewModel: ItemImagesViewModel,
+        imageInfo: RemoteImageInfo,
+        onSave: (() -> Void)?
+    ) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemImageDetailsRemote",
+            style: .sheet
+        ) {
+            ItemImageDetailsView(
+                viewModel: viewModel,
+                imageSource: ImageSource(url: imageInfo.url?.url),
+                width: imageInfo.width,
+                height: imageInfo.height,
+                language: imageInfo.language,
+                provider: imageInfo.providerName,
+                rating: imageInfo.communityRating,
+                ratingVotes: imageInfo.voteCount,
+                onSave: {
+                    onSave?()
+                }
+            )
+            .environment(\.isEditing, false)
         }
     }
     #endif

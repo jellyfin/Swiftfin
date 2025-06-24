@@ -13,6 +13,11 @@ extension IdentifyItemView {
 
     struct RemoteSearchResultView: View {
 
+        // MARK: - Router
+
+        @Router
+        private var router
+
         // MARK: - Item Info Variables
 
         let result: RemoteSearchResult
@@ -20,7 +25,6 @@ extension IdentifyItemView {
         // MARK: - Item Info Actions
 
         let onSave: () -> Void
-        let onClose: () -> Void
 
         // MARK: - Body
 
@@ -97,11 +101,13 @@ extension IdentifyItemView {
                 .navigationTitle(L10n.identify)
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationBarCloseButton {
-                    onClose()
+                    router.dismiss()
                 }
                 .topBarTrailing {
-                    Button(L10n.save, action: onSave)
-                        .buttonStyle(.toolbarPill)
+                    Button(L10n.save) {
+                        onSave()
+                    }
+                    .buttonStyle(.toolbarPill)
                 }
             }
         }
