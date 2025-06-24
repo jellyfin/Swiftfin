@@ -34,6 +34,15 @@ extension NavigationRoute {
         ServerActivityView()
     }
 
+    static func activityFilters(viewModel: ServerActivityViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "activityFilters",
+            style: .sheet
+        ) {
+            ServerActivityFilterView(viewModel: viewModel)
+        }
+    }
+
     static func activityDetails(viewModel: ServerActivityDetailViewModel) -> NavigationRoute {
         NavigationRoute(id: "activityDetails") {
             ServerActivityDetailsView(viewModel: viewModel)
