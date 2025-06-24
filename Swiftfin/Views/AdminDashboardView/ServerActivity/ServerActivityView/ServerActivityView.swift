@@ -152,7 +152,7 @@ struct ServerActivityView: View {
 
     @ViewBuilder
     private var startDatePickerSheet: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 Section {
                     DatePicker(
