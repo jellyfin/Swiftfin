@@ -20,11 +20,15 @@ extension IdentifyItemView {
 
         // MARK: - Item Info Variables
 
+        @StateObject
+        var viewModel: IdentifyItemViewModel
+
         let result: RemoteSearchResult
 
-        // MARK: - Item Info Actions
+        // MARK: - Error State
 
-        let onSave: () -> Void
+        @State
+        private var error: Error?
 
         // MARK: - Body
 
@@ -92,24 +96,35 @@ extension IdentifyItemView {
         }
 
         var body: some View {
-            NavigationView {
-                List {
-                    header
+            List {
+                header
 
-                    resultDetails
+                resultDetails
+            }
+            .navigationTitle(L10n.identify)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarCloseButton {
+                router.dismiss()
+            }
+            .topBarTrailing {
+                Button(L10n.save) {
+                    viewModel.send(.update(result))
                 }
-                .navigationTitle(L10n.identify)
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationBarCloseButton {
+                .buttonStyle(.toolbarPill)
+            }
+            .onReceive(viewModel.events) { event in
+                switch event {
+                case let .error(eventError):
+                    UIDevice.feedback(.error)
+                    error = eventError
+                case .cancelled:
+                    break
+                case .updated:
+                    UIDevice.feedback(.success)
                     router.dismiss()
                 }
-                .topBarTrailing {
-                    Button(L10n.save) {
-                        onSave()
-                    }
-                    .buttonStyle(.toolbarPill)
-                }
             }
+            .errorMessage($error)
         }
     }
 }

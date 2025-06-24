@@ -159,16 +159,17 @@ extension NavigationRoute {
         }
     }
 
-    static func itemSearchIdentity(remoteSearchResult: RemoteSearchResult, onSave: (() -> Void)?) -> NavigationRoute {
+    static func itemIdentify(
+        viewModel: IdentifyItemViewModel,
+        result: RemoteSearchResult
+    ) -> NavigationRoute {
         NavigationRoute(
-            id: "itemSearchIdentity",
+            id: "itemIdentify",
             style: .sheet
         ) {
             IdentifyItemView.RemoteSearchResultView(
-                result: remoteSearchResult,
-                onSave: {
-                    onSave?()
-                }
+                viewModel: viewModel,
+                result: result,
             )
         }
     }
