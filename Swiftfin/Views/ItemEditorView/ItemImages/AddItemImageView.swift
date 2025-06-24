@@ -153,7 +153,7 @@ struct AddItemImageView: View {
             router.route(
                 to: .itemSearchImageDetails(
                     viewModel: viewModel,
-                    imageInfo: image
+                    remoteImageInfo: image
                 )
             )
         } label: {
