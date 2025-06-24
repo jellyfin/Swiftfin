@@ -62,6 +62,8 @@ final class CollectionItemViewModel: ItemViewModel {
 
         let supportedItemTypes = BaseItemKind.supportedCases
             .appending(.episode)
+            /// ParentId get's overriden when .boxSet. If .boxSet is included, all .boxset on the server are returned
+            .filter { $0 != .boxSet }
 
         for itemKind in supportedItemTypes {
             let viewModel = ItemLibraryViewModel(
