@@ -48,34 +48,6 @@ struct ItemImageDetailsView: View {
     @State
     private var error: Error?
 
-    // MARK: - Initializer
-
-    init(
-        viewModel: ItemImagesViewModel,
-        imageSource: ImageSource,
-        index: Int? = nil,
-        width: Int? = nil,
-        height: Int? = nil,
-        language: String? = nil,
-        provider: String? = nil,
-        rating: Double? = nil,
-        ratingVotes: Int? = nil,
-        onSave: (() -> Void)? = nil,
-        onDelete: (() -> Void)? = nil
-    ) {
-        self.viewModel = viewModel
-        self.imageSource = imageSource
-        self.index = index
-        self.width = width
-        self.height = height
-        self.language = language
-        self.provider = provider
-        self.rating = rating
-        self.ratingVotes = ratingVotes
-        self.onSave = onSave
-        self.onDelete = onDelete
-    }
-
     // MARK: - Body
 
     var body: some View {
@@ -137,5 +109,53 @@ struct ItemImageDetailsView: View {
                 }
             }
         }
+    }
+}
+
+extension ItemImageDetailsView {
+
+    // Initialize as a Local Server Image
+
+    init(
+        viewModel: ItemImagesViewModel,
+        imageInfo: ImageInfo
+    ) {
+        self.viewModel = viewModel
+        self.imageSource = imageInfo.itemImageSource(
+            itemID: viewModel.item.id!,
+            client: viewModel.userSession.client
+        )
+        self.index = imageInfo.imageIndex
+        self.width = imageInfo.width
+        self.height = imageInfo.height
+        self.language = nil
+        self.provider = nil
+        self.rating = nil
+        self.ratingVotes = nil
+        self.onSave = nil
+        self.onDelete = {
+            viewModel.send(.deleteImage(imageInfo))
+        }
+    }
+
+    // Initialize as a Remote Search Image
+
+    init(
+        viewModel: ItemImagesViewModel,
+        remoteImageInfo: RemoteImageInfo
+    ) {
+        self.viewModel = viewModel
+        self.imageSource = ImageSource(url: remoteImageInfo.url?.url)
+        self.index = nil
+        self.width = remoteImageInfo.width
+        self.height = remoteImageInfo.height
+        self.language = remoteImageInfo.language
+        self.provider = remoteImageInfo.providerName
+        self.rating = remoteImageInfo.communityRating
+        self.ratingVotes = remoteImageInfo.voteCount
+        self.onSave = {
+            viewModel.send(.setImage(remoteImageInfo))
+        }
+        self.onDelete = nil
     }
 }

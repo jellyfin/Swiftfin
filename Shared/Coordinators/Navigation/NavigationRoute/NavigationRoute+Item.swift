@@ -207,48 +207,27 @@ extension NavigationRoute {
         }
     }
 
-    static func itemImageDetails(
-        viewModel: ItemImagesViewModel,
-        imageInfo: ImageInfo
-    ) -> NavigationRoute {
+    static func itemImageDetails(viewModel: ItemImagesViewModel, imageInfo: ImageInfo) -> NavigationRoute {
         NavigationRoute(
             id: "itemImageDetails",
             style: .sheet
         ) {
             ItemImageDetailsView(
                 viewModel: viewModel,
-                imageSource: imageInfo.itemImageSource(
-                    itemID: viewModel.item.id!,
-                    client: viewModel.userSession.client
-                ),
-                index: imageInfo.imageIndex,
-                width: imageInfo.width,
-                height: imageInfo.height,
-                onDelete: {
-                    viewModel.send(.deleteImage(imageInfo))
-                }
+                imageInfo: imageInfo
             )
             .environment(\.isEditing, true)
         }
     }
 
-    static func itemSearchImageDetails(viewModel: ItemImagesViewModel, imageInfo: RemoteImageInfo) -> NavigationRoute {
+    static func itemSearchImageDetails(viewModel: ItemImagesViewModel, remoteImageInfo: RemoteImageInfo) -> NavigationRoute {
         NavigationRoute(
             id: "itemSearchImageDetails",
             style: .sheet
         ) {
             ItemImageDetailsView(
                 viewModel: viewModel,
-                imageSource: ImageSource(url: imageInfo.url?.url),
-                width: imageInfo.width,
-                height: imageInfo.height,
-                language: imageInfo.language,
-                provider: imageInfo.providerName,
-                rating: imageInfo.communityRating,
-                ratingVotes: imageInfo.voteCount,
-                onSave: {
-                    viewModel.send(.setImage(imageInfo))
-                }
+                remoteImageInfo: remoteImageInfo
             )
             .environment(\.isEditing, false)
         }
