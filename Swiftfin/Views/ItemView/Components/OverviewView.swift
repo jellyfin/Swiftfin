@@ -24,7 +24,7 @@ extension ItemView {
             VStack(alignment: .leading, spacing: 10) {
 
                 Group {
-                    if item.type == .person || item.type == .musicArtist {
+                    if UIDevice.isPhone && (item.type == .person || item.type == .musicArtist) {
                         if let birthPlace = item.productionLocations?.first {
                             Text(birthPlace)
                         }
@@ -37,7 +37,7 @@ extension ItemView {
                 .multilineTextAlignment(.leading)
                 .lineLimit(taglineLineLimit)
 
-                if item.type == .person || item.type == .musicArtist {
+                if UIDevice.isPhone && (item.type == .person || item.type == .musicArtist) {
                     DotHStack {
                         if let birthday = item.premiereDate?.formatted(date: .numeric, time: .omitted) {
                             Text(birthday)
