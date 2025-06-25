@@ -18,18 +18,36 @@ final class CollectionItemViewModel: ItemViewModel {
     @Published
     private(set) var collectionItems: OrderedDictionary<BaseItemKind, [BaseItemDto]> = [:]
 
+    // MARK: - Task
+
+    private var collectionItemTask: AnyCancellable?
+
+    // MARK: - Disable PlayButton
+
     override var presentPlayButton: Bool {
         false
     }
 
-    // MARK: - On Refresh
+    // MARK: - Override Response
 
-    override func onRefresh() async throws {
-        let collectionItems = try await self.getCollectionItems()
+    override func respond(to action: ItemViewModel.Action) -> ItemViewModel.State {
 
-        await MainActor.run {
-            self.collectionItems = collectionItems
+        switch action {
+        case .refresh, .backgroundRefresh:
+            collectionItemTask?.cancel()
+
+            collectionItemTask = Task {
+                let collectionItems = try await self.getCollectionItems()
+
+                await MainActor.run {
+                    self.collectionItems = collectionItems
+                }
+            }
+            .asAnyCancellable()
+        default: ()
         }
+
+        return super.respond(to: action)
     }
 
     // MARK: - Get Collection Items
