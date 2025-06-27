@@ -20,12 +20,25 @@ struct ServerActivityFilterView: View {
     // MARK: - State Objects
 
     @ObservedObject
-    var viewModel: ServerActivityViewModel
+    private var viewModel: ServerActivityViewModel
 
     // MARK: - Dialog States
 
     @State
     private var tempDate: Date?
+
+    // MARK: - Initializer
+
+    init(viewModel: ServerActivityViewModel) {
+
+        self.viewModel = viewModel
+
+        if let minDate = viewModel.minDate {
+            tempDate = minDate
+        } else {
+            tempDate = .now
+        }
+    }
 
     // MARK: - Body
 
@@ -69,13 +82,6 @@ struct ServerActivityFilterView: View {
             }
             .buttonStyle(.toolbarPill)
             .disabled(viewModel.minDate != nil && startOfDay == viewModel.minDate)
-        }
-        .onFirstAppear {
-            if let minDate = viewModel.minDate {
-                tempDate = minDate
-            } else {
-                tempDate = .now
-            }
         }
     }
 }

@@ -23,6 +23,18 @@ extension NavigationRoute {
         }
     }
 
+    static func addItemImage(viewModel: ItemImagesViewModel, imageType: ImageType) -> NavigationRoute {
+        NavigationRoute(
+            id: "addItemImage",
+            style: .push(.automatic)
+        ) {
+            AddItemImageView(
+                viewModel: viewModel,
+                imageType: imageType
+            )
+        }
+    }
+
     static func addPeople(viewModel: PeopleEditorViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "addPeople",
@@ -139,6 +151,21 @@ extension NavigationRoute {
             IdentifyItemView(item: item)
         }
     }
+
+    static func identifyItemResults(
+        viewModel: IdentifyItemViewModel,
+        result: RemoteSearchResult
+    ) -> NavigationRoute {
+        NavigationRoute(
+            id: "identifyItemResults",
+            style: .sheet
+        ) {
+            IdentifyItemView.RemoteSearchResultView(
+                viewModel: viewModel,
+                result: result,
+            )
+        }
+    }
     #endif
 
     static func item(item: BaseItemDto) -> NavigationRoute {
@@ -159,54 +186,6 @@ extension NavigationRoute {
         }
     }
 
-    static func itemIdentify(
-        viewModel: IdentifyItemViewModel,
-        result: RemoteSearchResult
-    ) -> NavigationRoute {
-        NavigationRoute(
-            id: "itemIdentify",
-            style: .sheet
-        ) {
-            IdentifyItemView.RemoteSearchResultView(
-                viewModel: viewModel,
-                result: result,
-            )
-        }
-    }
-
-    static func itemImages(viewModel: ItemImagesViewModel) -> NavigationRoute {
-        NavigationRoute(
-            id: "itemImages",
-            style: .sheet
-        ) {
-            ItemImagesView(viewModel: viewModel)
-        }
-    }
-
-    static func selectItemImage(viewModel: ItemImagesViewModel, imageType: ImageType) -> NavigationRoute {
-        NavigationRoute(
-            id: "selectItemImage",
-            style: .sheet
-        ) {
-            ItemImagePicker(
-                viewModel: viewModel,
-                type: imageType
-            )
-        }
-    }
-
-    static func addItemImage(viewModel: ItemImagesViewModel, imageType: ImageType) -> NavigationRoute {
-        NavigationRoute(
-            id: "addItemImage",
-            style: .push(.automatic)
-        ) {
-            AddItemImageView(
-                viewModel: viewModel,
-                imageType: imageType
-            )
-        }
-    }
-
     static func itemImageDetails(viewModel: ItemImagesViewModel, imageInfo: ImageInfo) -> NavigationRoute {
         NavigationRoute(
             id: "itemImageDetails",
@@ -220,6 +199,40 @@ extension NavigationRoute {
         }
     }
 
+    static func itemImages(viewModel: ItemImagesViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemImages",
+            style: .sheet
+        ) {
+            ItemImagesView(viewModel: viewModel)
+        }
+    }
+
+    static func itemImageSelector(viewModel: ItemImagesViewModel, imageType: ImageType) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemImageSelector",
+            style: .sheet
+        ) {
+            ItemImagePicker(
+                viewModel: viewModel,
+                type: imageType
+            )
+        }
+    }
+
+    #endif
+
+    static func itemOverview(item: BaseItemDto) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemOverview",
+            style: .sheet
+        ) {
+            ItemOverviewView(item: item)
+        }
+    }
+
+    #if os(iOS)
+
     static func itemSearchImageDetails(viewModel: ItemImagesViewModel, remoteImageInfo: RemoteImageInfo) -> NavigationRoute {
         NavigationRoute(
             id: "itemSearchImageDetails",
@@ -232,14 +245,6 @@ extension NavigationRoute {
             .environment(\.isEditing, false)
         }
     }
-    #endif
 
-    static func itemOverview(item: BaseItemDto) -> NavigationRoute {
-        NavigationRoute(
-            id: "itemOverview",
-            style: .sheet
-        ) {
-            ItemOverviewView(item: item)
-        }
-    }
+    #endif
 }

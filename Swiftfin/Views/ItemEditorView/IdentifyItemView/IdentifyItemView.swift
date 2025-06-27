@@ -158,7 +158,7 @@ struct IdentifyItemView: View {
                 ForEach(viewModel.searchResults) { result in
                     RemoteSearchResultRow(result: result) {
                         router.route(
-                            to: .itemIdentify(
+                            to: .identifyItemResults(
                                 viewModel: viewModel,
                                 result: result
                             )

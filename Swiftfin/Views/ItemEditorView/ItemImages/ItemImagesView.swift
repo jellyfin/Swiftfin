@@ -153,7 +153,7 @@ struct ItemImagesView: View {
                 }
 
                 Button(L10n.uploadPhoto, systemImage: "photo.badge.plus") {
-                    router.route(to: .selectItemImage(viewModel: viewModel, imageType: imageType))
+                    router.route(to: .itemImageSelector(viewModel: viewModel, imageType: imageType))
                 }
             }
             .font(.body)
