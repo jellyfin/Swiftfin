@@ -30,8 +30,6 @@ struct AddItemImageView: View {
     // MARK: - Dialog State
 
     @State
-    private var selectedImage: RemoteImageInfo?
-    @State
     private var error: Error?
 
     // MARK: - Collection Layout
@@ -112,27 +110,6 @@ struct AddItemImageView: View {
                 }
             }
         }
-        .sheet(item: $selectedImage) {
-            selectedImage = nil
-        } content: { remoteImageInfo in
-            ItemImageDetailsView(
-                viewModel: viewModel,
-                imageSource: ImageSource(url: remoteImageInfo.url?.url),
-                width: remoteImageInfo.width,
-                height: remoteImageInfo.height,
-                language: remoteImageInfo.language,
-                provider: remoteImageInfo.providerName,
-                rating: remoteImageInfo.communityRating,
-                ratingVotes: remoteImageInfo.voteCount,
-                onClose: {
-                    selectedImage = nil
-                },
-                onSave: {
-                    viewModel.send(.setImage(remoteImageInfo))
-                    selectedImage = nil
-                }
-            )
-        }
         .onFirstAppear {
             remoteImageInfoViewModel.send(.refresh)
         }
@@ -173,7 +150,12 @@ struct AddItemImageView: View {
     @ViewBuilder
     private func imageButton(_ image: RemoteImageInfo) -> some View {
         Button {
-            selectedImage = image
+            router.route(
+                to: .itemSearchImageDetails(
+                    viewModel: viewModel,
+                    remoteImageInfo: image
+                )
+            )
         } label: {
             posterImage(
                 image,

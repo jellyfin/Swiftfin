@@ -28,8 +28,6 @@ struct ItemImagesView: View {
     // MARK: - Dialog State
 
     @State
-    private var selectedImage: ImageInfo?
-    @State
     private var selectedType: ImageType?
     @State
     private var isFilePickerPresented = false
@@ -62,28 +60,6 @@ struct ItemImagesView: View {
         }
         .navigationBarCloseButton {
             router.dismiss()
-        }
-        .sheet(item: $selectedImage) {
-            selectedImage = nil
-        } content: { imageInfo in
-            ItemImageDetailsView(
-                viewModel: viewModel,
-                imageSource: imageInfo.itemImageSource(
-                    itemID: viewModel.item.id!,
-                    client: viewModel.userSession.client
-                ),
-                index: imageInfo.imageIndex,
-                width: imageInfo.width,
-                height: imageInfo.height,
-                onClose: {
-                    selectedImage = nil
-                },
-                onDelete: {
-                    viewModel.send(.deleteImage(imageInfo))
-                    selectedImage = nil
-                }
-            )
-            .environment(\.isEditing, true)
         }
         .fileImporter(
             isPresented: $isFilePickerPresented,
@@ -140,7 +116,12 @@ struct ItemImagesView: View {
                 HStack {
                     ForEach(images, id: \.self) { imageInfo in
                         imageButton(imageInfo: imageInfo) {
-                            selectedImage = imageInfo
+                            router.route(
+                                to: .itemImageDetails(
+                                    viewModel: viewModel,
+                                    imageInfo: imageInfo
+                                )
+                            )
                         }
                     }
                 }
@@ -161,11 +142,7 @@ struct ItemImagesView: View {
 
             Menu(L10n.options, systemImage: "plus") {
                 Button(L10n.search, systemImage: "magnifyingglass") {
-                    // TODO: Convert to NavigationRoute pattern - router.route(to: .addImage(imageType: imageType))
-//                    router.route(
-//                        to: \.addImage,
-//                        imageType
-//                    )
+                    router.route(to: .addItemImage(viewModel: viewModel, imageType: imageType))
                 }
 
                 Divider()
@@ -176,8 +153,7 @@ struct ItemImagesView: View {
                 }
 
                 Button(L10n.uploadPhoto, systemImage: "photo.badge.plus") {
-                    // TODO: Convert to NavigationRoute pattern - router.route(to: .photoPicker(imageType: imageType))
-//                    router.route(to: \.photoPicker, imageType)
+                    router.route(to: .itemImageSelector(viewModel: viewModel, imageType: imageType))
                 }
             }
             .font(.body)

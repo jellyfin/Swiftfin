@@ -44,7 +44,6 @@ struct AppSettingsView: View {
             Section(L10n.accessibility) {
 
                 ChevronButton(L10n.appIcon) {
-                    // TODO: Create NavigationRoute.appIconSelector
                     router.route(to: .appIconSelector(viewModel: viewModel))
                 }
 
