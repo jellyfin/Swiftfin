@@ -44,7 +44,7 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
     }
 
     @Published
-    var showInactiveSessions: ActiveSessionFilter = .all {
+    var showSessionType: ActiveSessionFilter = .all {
         didSet {
             send(.refresh)
         }
@@ -124,7 +124,7 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
         let response = try await userSession.client.send(request)
 
         let filteredSessions: [SessionInfoDto]
-        switch showInactiveSessions {
+        switch showSessionType {
         case .all:
             filteredSessions = response.value
         case .active:

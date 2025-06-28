@@ -135,9 +135,9 @@ struct ActiveSessionsView: View {
     private var showInactiveSessionsButton: some View {
         Menu(
             L10n.sessions,
-            systemImage: viewModel.showInactiveSessions.systemImage
+            systemImage: viewModel.showSessionType.systemImage
         ) {
-            Picker(L10n.sessions, selection: $viewModel.showInactiveSessions) {
+            Picker(L10n.sessions, selection: $viewModel.showSessionType) {
                 ForEach(ActiveSessionFilter.allCases, id: \.self) { filter in
                     Label(
                         filter.displayTitle,
