@@ -51,6 +51,7 @@ protocol LibraryIdentifiable: Identifiable {
 //       - source of data doesn't guarantee that all items in 0 ..< startIndex exist
 // TODO: have `filterViewModel` be private to the parent and the `get_` overrides recieve the
 //       current filters as a parameter
+// TODO: need an ID
 
 /*
  Note: if `rememberSort == true`, then will override given filters with stored sorts

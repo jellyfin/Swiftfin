@@ -15,8 +15,8 @@ import SwiftUI
 
 struct ActiveSessionsView: View {
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = ActiveSessionsViewModel()
@@ -38,8 +38,7 @@ struct ActiveSessionsView: View {
             ) { id in
                 ActiveSessionRow(box: viewModel.sessions[id]!) {
                     router.route(
-                        to: \.activeDeviceDetails,
-                        viewModel.sessions[id]!
+                        to: .activeDeviceDetails(box: viewModel.sessions[id]!)
                     )
                 }
             }

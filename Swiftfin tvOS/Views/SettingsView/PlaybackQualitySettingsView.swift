@@ -17,8 +17,8 @@ struct PlaybackQualitySettingsView: View {
     @Default(.VideoPlayer.Playback.compatibilityMode)
     private var compatibilityMode
 
-    @EnvironmentObject
-    private var router: PlaybackQualitySettingsCoordinator.Router
+    @Router
+    private var router
 
     // MARK: - Focus Management
 
@@ -62,7 +62,7 @@ struct PlaybackQualitySettingsView: View {
 
                     if compatibilityMode == .custom {
                         ChevronButton(L10n.profiles) {
-                            router.route(to: \.customDeviceProfileSettings)
+                            router.route(to: .customDeviceProfileSettings)
                         }
                     }
                 } header: {

@@ -11,8 +11,8 @@ import SwiftUI
 
 struct EditServerView: View {
 
-    @EnvironmentObject
-    private var router: SelectUserCoordinator.Router
+    @Router
+    private var router
 
     @Environment(\.isEditing)
     private var isEditing
@@ -100,7 +100,7 @@ struct EditServerView: View {
             .alert(L10n.deleteServer, isPresented: $isPresentingConfirmDeletion) {
                 Button(L10n.delete, role: .destructive) {
                     viewModel.delete()
-                    router.popLast()
+//                    router.popLast()
                 }
             } message: {
                 Text(L10n.confirmDeleteServerAndUsers(viewModel.server.name))

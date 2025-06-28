@@ -31,8 +31,8 @@ struct AddServerUserView: View {
 
     // MARK: - State & Environment Objects
 
-    @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = AddServerUserViewModel()
@@ -109,7 +109,7 @@ struct AddServerUserView: View {
         .navigationTitle(L10n.newUser)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
-            router.dismissCoordinator()
+            router.dismiss()
         }
         .onFirstAppear {
             focusedfield = .username
@@ -121,9 +121,8 @@ struct AddServerUserView: View {
                 error = eventError
             case let .createdNewUser(newUser):
                 UIDevice.feedback(.success)
-                router.dismissCoordinator {
-                    Notifications[.didAddServerUser].post(newUser)
-                }
+                Notifications[.didAddServerUser].post(newUser)
+                router.dismiss()
             }
         }
         .topBarTrailing {

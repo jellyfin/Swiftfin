@@ -13,8 +13,8 @@ extension ItemView.AboutView {
 
     struct OverviewCard: View {
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         let item: BaseItemDto
 
@@ -33,7 +33,7 @@ extension ItemView.AboutView {
                     }
                 }
                 .onSelect {
-                    router.route(to: \.itemOverview, item)
+                    router.route(to: .itemOverview(item: item))
                 }
         }
     }

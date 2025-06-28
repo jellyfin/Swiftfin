@@ -18,8 +18,8 @@ struct PlaybackQualitySettingsView: View {
     @Default(.VideoPlayer.Playback.compatibilityMode)
     private var compatibilityMode
 
-    @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    @Router
+    private var router
 
     var body: some View {
         Form {
@@ -71,7 +71,7 @@ struct PlaybackQualitySettingsView: View {
 
                 if compatibilityMode == .custom {
                     ChevronButton(L10n.profiles) {
-                        router.route(to: \.customDeviceProfileSettings)
+                        router.route(to: .customDeviceProfileSettings)
                     }
                 }
             } header: {

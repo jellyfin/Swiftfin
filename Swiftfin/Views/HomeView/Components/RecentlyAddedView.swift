@@ -17,8 +17,8 @@ extension HomeView {
         @Default(.Customization.recentlyAddedPosterType)
         private var recentlyAddedPosterType
 
-        @EnvironmentObject
-        private var router: HomeCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: RecentlyAddedLibraryViewModel
@@ -36,11 +36,11 @@ extension HomeView {
                             // Give a new view model becaues we don't want to
                             // keep paginated items on the home view model
                             let viewModel = RecentlyAddedLibraryViewModel()
-                            router.route(to: \.library, viewModel)
+                            router.route(to: .library(viewModel: viewModel))
                         }
                 }
                 .onSelect { item in
-                    router.route(to: \.item, item)
+                    router.route(to: .item(item: item))
                 }
             }
         }

@@ -18,8 +18,8 @@ extension HomeView {
         @Default(.Customization.nextUpPosterType)
         private var nextUpPosterType
 
-        @EnvironmentObject
-        private var router: HomeCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: NextUpLibraryViewModel
@@ -48,12 +48,12 @@ extension HomeView {
                     }
                 }
                 .onSelect { item in
-                    router.route(to: \.item, item)
+                    router.route(to: .item(item: item))
                 }
                 .trailing {
                     SeeAllButton()
                         .onSelect {
-                            router.route(to: \.library, viewModel)
+                            router.route(to: .library(viewModel: viewModel))
                         }
                 }
             }

@@ -38,8 +38,8 @@ struct SelectUserView: View {
 
     // MARK: - State & Environment Objects
 
-    @EnvironmentObject
-    private var router: SelectUserCoordinator.Router
+    @Router
+    private var router
 
     @State
     private var isEditingUsers: Bool = false
@@ -111,7 +111,7 @@ struct SelectUserView: View {
 
     private func addUserSelected(server: ServerState) {
         UIDevice.impact(.light)
-        router.route(to: \.userSignIn, server)
+        router.route(to: .userSignIn(server: server))
     }
 
     private func delete(user: UserState) {
@@ -222,9 +222,10 @@ struct SelectUserView: View {
             .pickerStyle(.menu)
         }
 
-        Section {
-            Button(L10n.advanced, systemImage: "gearshape.fill") {
-                router.route(to: \.advancedSettings)
+            Section {
+                Button(L10n.advanced, systemImage: "gearshape.fill") {
+                    router.route(to: .appSettings)
+                }
             }
         }
     }
@@ -442,7 +443,7 @@ struct SelectUserView: View {
 
             PrimaryButton(title: L10n.connect)
                 .onSelect {
-                    router.route(to: \.connectToServer)
+                    router.route(to: .connectToServer)
                 }
                 .frame(maxWidth: 300)
         }

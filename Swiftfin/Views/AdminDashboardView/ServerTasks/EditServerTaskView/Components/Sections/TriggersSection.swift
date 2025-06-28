@@ -13,8 +13,8 @@ extension EditServerTaskView {
 
     struct TriggersSection: View {
 
-        @EnvironmentObject
-        private var router: AdminDashboardCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var observer: ServerTaskObserver
@@ -41,7 +41,7 @@ extension EditServerTaskView {
                     }
                 } else {
                     Button(L10n.add) {
-                        router.route(to: \.addServerTaskTrigger, observer)
+                        router.route(to: .addServerTaskTrigger(observer: observer))
                     }
                 }
             }

@@ -9,7 +9,7 @@
 import Defaults
 import Factory
 import LocalAuthentication
-import Stinsen
+
 import SwiftUI
 
 // TODO: ignore device authentication `canceled by user` NSError
@@ -31,8 +31,8 @@ struct UserSignInView: View {
 
     // MARK: - State & Environment Objects
 
-    @EnvironmentObject
-    private var router: UserSignInCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel: UserSignInViewModel
@@ -87,6 +87,7 @@ struct UserSignInView: View {
         case let .signedIn(user):
             UIDevice.feedback(.success)
 
+            router.dismiss()
             Defaults[.lastSignedInUserID] = .signedIn(userID: user.id)
             Container.shared.currentUserSession.reset()
             Notifications[.didSignIn].post()
@@ -105,14 +106,14 @@ struct UserSignInView: View {
             case .requirePin:
                 if needsPin {
                     onPinCompletion = {
-                        router.route(to: \.quickConnect, viewModel.quickConnect)
+                        router.route(to: .quickConnect(quickConnect: viewModel.quickConnect))
                     }
                     isPresentingLocalPin = true
                     return
                 }
             }
 
-            router.route(to: \.quickConnect, viewModel.quickConnect)
+            router.route(to: .quickConnect(quickConnect: viewModel.quickConnect))
         }
     }
 
@@ -315,7 +316,7 @@ struct UserSignInView: View {
         .navigationTitle(L10n.signIn)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton(disabled: viewModel.state == .signingIn) {
-            router.dismissCoordinator()
+            router.dismiss()
         }
         .onChange(of: isPresentingLocalPin) { newValue in
             if newValue {
@@ -348,11 +349,12 @@ struct UserSignInView: View {
             }
 
             Button(L10n.security, systemImage: "gearshape.fill") {
-                let parameters = UserSignInCoordinator.SecurityParameters(
-                    pinHint: $pinHint,
-                    accessPolicy: $accessPolicy
+                router.route(
+                    to: .userSecurity(
+                        pinHint: $pinHint,
+                        accessPolicy: $accessPolicy
+                    )
                 )
-                router.route(to: \.security, parameters)
             }
         }
         .alert(

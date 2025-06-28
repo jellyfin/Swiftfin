@@ -18,14 +18,14 @@ struct VideoPlayerSettingsView: View {
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
 
-    @EnvironmentObject
-    private var router: VideoPlayerSettingsCoordinator.Router
+    @Router
+    private var router
 
     var body: some View {
         Form {
 
             ChevronButton(L10n.gestures) {
-                router.route(to: \.gestureSettings)
+                router.route(to: .gestureSettings)
             }
 
             CaseIterablePicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)

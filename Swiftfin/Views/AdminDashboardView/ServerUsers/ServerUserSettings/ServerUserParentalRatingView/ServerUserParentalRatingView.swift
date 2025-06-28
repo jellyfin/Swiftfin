@@ -14,8 +14,8 @@ struct ServerUserParentalRatingView: View {
 
     // MARK: - Observed, State, & Environment Objects
 
-    @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel: ServerUserAdminViewModel
@@ -56,7 +56,7 @@ struct ServerUserParentalRatingView: View {
         .navigationTitle(L10n.parentalRating.localizedCapitalized)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
-            router.dismissCoordinator()
+            router.dismiss()
         }
         .topBarTrailing {
             if viewModel.backgroundStates.contains(.updating) {
@@ -81,7 +81,7 @@ struct ServerUserParentalRatingView: View {
                 error = eventError
             case .updated:
                 UIDevice.feedback(.success)
-                router.dismissCoordinator()
+                router.dismiss()
             }
         }
         .errorMessage($error)

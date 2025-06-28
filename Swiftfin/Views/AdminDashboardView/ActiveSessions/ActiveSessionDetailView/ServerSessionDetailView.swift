@@ -13,8 +13,8 @@ import SwiftUIIntrospect
 
 struct ActiveSessionDetailView: View {
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     var box: BindingBox<SessionInfoDto?>
@@ -31,7 +31,7 @@ struct ActiveSessionDetailView: View {
                     user: user,
                     lastActivityDate: session.lastActivityDate
                 ) {
-                    router.route(to: \.userDetails, user)
+                    router.route(to: .userDetails(user: user))
                 }
             }
 
@@ -70,7 +70,7 @@ struct ActiveSessionDetailView: View {
                     user: user,
                     lastActivityDate: session.lastPlaybackCheckIn
                 ) {
-                    router.route(to: \.userDetails, user)
+                    router.route(to: .userDetails(user: user))
                 }
             }
 

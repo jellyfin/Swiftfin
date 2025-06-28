@@ -13,8 +13,8 @@ extension AppSettingsView {
 
     struct SignOutIntervalSection: View {
 
-        @EnvironmentObject
-        private var router: AppSettingsCoordinator.Router
+        @Router
+        private var router
 
         @Default(.backgroundSignOutInterval)
         private var backgroundSignOutInterval
@@ -41,7 +41,7 @@ extension AppSettingsView {
                         L10n.duration,
                         subtitle: Text(backgroundSignOutInterval, format: .hourMinute)
                     ) {
-                        router.route(to: \.hourPicker)
+                        router.route(to: .hourPicker)
                     }
                 }
             } footer: {
