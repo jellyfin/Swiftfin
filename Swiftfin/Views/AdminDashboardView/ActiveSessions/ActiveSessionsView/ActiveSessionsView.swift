@@ -11,8 +11,6 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: filter for streaming/inactive
-
 struct ActiveSessionsView: View {
 
     @Router
@@ -49,7 +47,7 @@ struct ActiveSessionsView: View {
     private func errorView(with error: some Error) -> some View {
         ErrorView(error: error)
             .onRetry {
-                viewModel.send(.refreshSessions)
+                viewModel.send(.refresh)
             }
     }
 
@@ -69,18 +67,84 @@ struct ActiveSessionsView: View {
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.sessions)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarMenuButton(
+            isLoading: viewModel.backgroundStates.contains(.backgroundRefreshing)
+        ) {
+            Section(L10n.filters) {
+                activeWithinFilterButton
+                showInactiveSessionsButton
+            }
+        }
         .onFirstAppear {
-            viewModel.send(.refreshSessions)
+            viewModel.send(.refresh)
         }
         .onReceive(timer) { _ in
-            viewModel.send(.getSessions)
+            viewModel.send(.backgroundRefresh)
         }
         .refreshable {
-            viewModel.send(.refreshSessions)
+            viewModel.send(.refresh)
         }
-        .topBarTrailing {
-            if viewModel.backgroundStates.contains(.gettingSessions) {
-                ProgressView()
+    }
+
+    // MARK: - Active Within Filter Button
+
+    @ViewBuilder
+    private var activeWithinFilterButton: some View {
+        Menu(
+            L10n.lastSeen,
+            systemImage: viewModel.activeWithinSeconds == nil ? "infinity" : "clock"
+        ) {
+            Picker(L10n.lastSeen, selection: $viewModel.activeWithinSeconds) {
+                Label(
+                    L10n.all,
+                    systemImage: "infinity"
+                )
+                .tag(nil as Int?)
+
+                Label(
+                    300.formatted(.hourMinute),
+                    systemImage: "clock"
+                )
+                .tag(300 as Int?)
+
+                Label(
+                    900.formatted(.hourMinute),
+                    systemImage: "clock"
+                )
+                .tag(900 as Int?)
+
+                Label(
+                    1800.formatted(.hourMinute),
+                    systemImage: "clock"
+                )
+                .tag(1800 as Int?)
+
+                Label(
+                    3600.formatted(.hourMinute),
+                    systemImage: "clock"
+                )
+                .tag(3600 as Int?)
+            }
+        }
+    }
+
+    // MARK: - Show Inactive Sessions Button
+
+    @ViewBuilder
+    private var showInactiveSessionsButton: some View {
+        Menu(
+            L10n.sessions,
+            systemImage: viewModel.showInactiveSessions.systemImage
+        ) {
+            Picker(L10n.sessions, selection: $viewModel.showInactiveSessions) {
+                ForEach(ActiveSessionFilter.allCases, id: \.self) { filter in
+                    Label(
+                        filter.displayTitle,
+                        systemImage: filter.systemImage
+                    )
+                    .tag(filter)
+                }
             }
         }
     }
