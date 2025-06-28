@@ -86,11 +86,13 @@ extension ActiveSessionsView {
 
                 Text(nowPlayingItem.name ?? L10n.unknown)
                     .multilineTextAlignment(.leading)
+                    .lineLimit(2)
 
                 ProgressSection(
                     item: nowPlayingItem,
                     playState: playState,
-                    transcodingInfo: session.transcodingInfo
+                    transcodingInfo: session.transcodingInfo,
+                    showTranscodeReason: true
                 )
             }
             .font(.subheadline)
