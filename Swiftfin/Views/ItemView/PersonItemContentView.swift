@@ -23,54 +23,6 @@ extension ItemView {
         @ObservedObject
         var viewModel: PersonItemViewModel
 
-        private func episodeHStack(element: Element) -> some View {
-            VStack(alignment: .leading) {
-
-                HStack {
-                    Text(L10n.episodes)
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .accessibility(addTraits: [.isHeader])
-
-                    Spacer()
-
-                    SeeAllButton()
-                        .onSelect {
-                            router.route(to: .library(viewModel: element.value))
-                        }
-                }
-                .edgePadding(.horizontal)
-
-                CollectionHStack(
-                    uniqueElements: element.value.elements,
-                    id: \.unwrappedIDHashOrZero,
-                    columns: UIDevice.isPhone ? 1.5 : 3.5
-                ) { episode in
-                    SeriesEpisodeSelector.EpisodeCard(episode: episode)
-                }
-                .scrollBehavior(.continuousLeadingEdge)
-                .insets(horizontal: EdgeInsets.edgePadding)
-                .itemSpacing(EdgeInsets.edgePadding / 2)
-            }
-        }
-
-        private func posterHStack(element: Element) -> some View {
-            PosterHStack(
-                title: element.key.pluralDisplayTitle,
-                type: .portrait,
-                items: element.value.elements
-            )
-            .trailing {
-                SeeAllButton()
-                    .onSelect {
-                        router.route(to: .library(viewModel: element.value))
-                    }
-            }
-            .onSelect { item in
-                router.route(to: .item(item: item))
-            }
-        }
-
         var body: some View {
             SeparatorVStack(alignment: .leading) {
                 RowDivider()
@@ -83,11 +35,7 @@ extension ItemView {
                     viewModel.sections.elements,
                     id: \.key
                 ) { element in
-                    if element.key == .episode {
-                        episodeHStack(element: element)
-                    } else {
-                        posterHStack(element: element)
-                    }
+                    ItemTypeCollectionHStack(element: element)
                 }
 
                 ItemView.AboutView(viewModel: viewModel)

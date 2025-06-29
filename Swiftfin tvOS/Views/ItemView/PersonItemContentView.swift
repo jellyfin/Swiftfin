@@ -15,58 +15,11 @@ extension ItemView {
 
     struct PersonItemContentView: View {
 
-        typealias Element = OrderedDictionary<BaseItemKind, ItemLibraryViewModel>.Elements.Element
-
         @Router
         private var router
 
         @ObservedObject
         var viewModel: PersonItemViewModel
-
-        private func episodeHStack(element: Element) -> some View {
-            VStack(alignment: .leading, spacing: 20) {
-
-                HStack {
-                    Text(L10n.episodes)
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .accessibility(addTraits: [.isHeader])
-                        .padding(.leading, 50)
-
-                    Spacer()
-                }
-
-                CollectionHStack(
-                    uniqueElements: element.value.elements,
-                    id: \.unwrappedIDHashOrZero,
-                    columns: 3.5
-                ) { episode in
-                    SeriesEpisodeSelector.EpisodeCard(episode: episode)
-                        .padding(.horizontal, 4)
-                }
-                .scrollBehavior(.continuousLeadingEdge)
-                .insets(horizontal: EdgeInsets.edgePadding)
-                .itemSpacing(EdgeInsets.edgePadding / 2)
-            }
-            .focusSection()
-        }
-
-        private func posterHStack(element: Element) -> some View {
-            PosterHStack(
-                title: element.key.pluralDisplayTitle,
-                type: .portrait,
-                items: element.value.elements
-            )
-            .trailing {
-                // TODO: Is this possible?
-                Button(L10n.seeMore) {
-                    router.route(to: .library(viewModel: element.value))
-                }
-            }
-            .onSelect { item in
-                router.route(to: .item(item: item))
-            }
-        }
 
         var body: some View {
             VStack(spacing: 0) {
@@ -81,13 +34,7 @@ extension ItemView {
                     viewModel.sections.elements,
                     id: \.key
                 ) { element in
-                    if element.key == .episode {
-                        episodeHStack(element: element)
-                            .padding(.bottom, 10)
-                    } else {
-                        posterHStack(element: element)
-                            .padding(.bottom, 10)
-                    }
+                    ItemTypeCollectionHStack(element: element)
                 }
 
                 ItemView.AboutView(viewModel: viewModel)

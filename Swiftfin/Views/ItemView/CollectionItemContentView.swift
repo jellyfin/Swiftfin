@@ -28,21 +28,11 @@ extension ItemView {
 
                 // MARK: - Items
 
-                ForEach(viewModel.sections.elements, id: \.key) { element in
-                    PosterHStack(
-                        title: element.key.pluralDisplayTitle,
-                        type: .portrait,
-                        items: element.value.elements
-                    )
-                    .trailing {
-                        SeeAllButton()
-                            .onSelect {
-                                router.route(to: .library(viewModel: element.value))
-                            }
-                    }
-                    .onSelect { item in
-                        router.route(to: .item(item: item))
-                    }
+                ForEach(
+                    viewModel.sections.elements,
+                    id: \.key
+                ) { element in
+                    ItemTypeCollectionHStack(element: element)
                 }
 
                 // MARK: Genres
