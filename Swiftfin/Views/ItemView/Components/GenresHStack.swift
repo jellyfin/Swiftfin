@@ -13,8 +13,8 @@ extension ItemView {
 
     struct GenresHStack: View {
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         let genres: [ItemGenre]
 
@@ -28,7 +28,7 @@ extension ItemView {
                     id: genre.value,
                     filters: .init(genres: [genre])
                 )
-                router.route(to: \.library, viewModel)
+                router.route(to: .library(viewModel: viewModel))
             }
         }
     }

@@ -8,7 +8,7 @@
 
 import Defaults
 import JellyfinAPI
-import Stinsen
+
 import SwiftUI
 
 struct SettingsView: View {
@@ -20,8 +20,8 @@ struct SettingsView: View {
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
 
-    @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = SettingsViewModel()
@@ -32,13 +32,13 @@ struct SettingsView: View {
             Section {
 
                 UserProfileRow(user: viewModel.userSession.user.data) {
-                    router.route(to: \.userProfile, viewModel)
+                    router.route(to: .userProfile(viewModel: viewModel))
                 }
 
                 ChevronButton(
                     L10n.server,
                     action: {
-                        router.route(to: \.serverConnection, viewModel.userSession.server)
+                        router.route(to: .editServer(server: viewModel.userSession.server))
                     },
                     icon: { EmptyView() },
                     subtitle: {
@@ -55,7 +55,7 @@ struct SettingsView: View {
 
                 if viewModel.userSession.user.permissions.isAdministrator {
                     ChevronButton(L10n.dashboard) {
-                        router.route(to: \.adminDashboard)
+                        router.route(to: .adminDashboard)
                     }
                 }
             }
@@ -63,9 +63,8 @@ struct SettingsView: View {
             ListRowButton(L10n.switchUser) {
                 UIDevice.impact(.medium)
 
-                router.dismissCoordinator {
-                    viewModel.signOut()
-                }
+                viewModel.signOut()
+                router.dismiss()
             }
             .foregroundStyle(accentColor.overlayColor, accentColor)
 
@@ -76,15 +75,15 @@ struct SettingsView: View {
                 )
 
                 ChevronButton(L10n.nativePlayer) {
-                    router.route(to: \.nativePlayerSettings)
+                    router.route(to: .nativePlayerSettings)
                 }
 
                 ChevronButton(L10n.videoPlayer) {
-                    router.route(to: \.videoPlayerSettings)
+                    router.route(to: .videoPlayerSettings)
                 }
 
                 ChevronButton(L10n.playbackQuality) {
-                    router.route(to: \.playbackQualitySettings)
+                    router.route(to: .playbackQualitySettings)
                 }
             }
 
@@ -92,7 +91,7 @@ struct SettingsView: View {
                 CaseIterablePicker(L10n.appearance, selection: $appearance)
 
                 ChevronButton(L10n.customize) {
-                    router.route(to: \.customizeViewsSettings)
+                    router.route(to: .customizeViewsSettings)
                 }
 
                 // Note: uncomment if there are current
@@ -100,7 +99,7 @@ struct SettingsView: View {
 
 //                ChevronButton(L10n.experimental)
 //                    .onSelect {
-//                        router.route(to: \.experimentalSettings)
+//                        router.route(to: .experimentalSettings)
 //                    }
             }
 
@@ -111,13 +110,13 @@ struct SettingsView: View {
             }
 
             ChevronButton(L10n.logs) {
-                router.route(to: \.log)
+                router.route(to: .log)
             }
 
             #if DEBUG
 
             ChevronButton("Debug") {
-                router.route(to: \.debugSettings)
+                router.route(to: .debugSettings)
             }
 
             #endif
@@ -125,7 +124,7 @@ struct SettingsView: View {
         .navigationTitle(L10n.settings)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
-            router.dismissCoordinator()
+            router.dismiss()
         }
     }
 }

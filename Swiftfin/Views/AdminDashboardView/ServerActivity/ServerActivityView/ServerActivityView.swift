@@ -14,20 +14,13 @@ struct ServerActivityView: View {
 
     // MARK: - Environment Objects
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     // MARK: - State Objects
 
     @StateObject
     private var viewModel = ServerActivityViewModel()
-
-    // MARK: - Dialog States
-
-    @State
-    private var isDatePickerShowing: Bool = false
-    @State
-    private var tempDate: Date?
 
     // MARK: - Body
 
@@ -59,9 +52,6 @@ struct ServerActivityView: View {
         .onFirstAppear {
             viewModel.send(.refresh)
         }
-        .sheet(isPresented: $isDatePickerShowing, onDismiss: { isDatePickerShowing = false }) {
-            startDatePickerSheet
-        }
     }
 
     // MARK: - Content View
@@ -91,7 +81,7 @@ struct ServerActivityView: View {
                 )
 
                 LogEntry(viewModel: logViewModel) {
-                    router.route(to: \.activityDetails, logViewModel)
+                    router.route(to: .activityDetails(viewModel: logViewModel))
                 }
             }
             .onReachedBottomEdge(offset: .offset(300)) {
@@ -139,60 +129,7 @@ struct ServerActivityView: View {
     @ViewBuilder
     private var startDateButton: some View {
         Button(L10n.startDate, systemImage: "calendar") {
-            if let minDate = viewModel.minDate {
-                tempDate = minDate
-            } else {
-                tempDate = .now
-            }
-            isDatePickerShowing = true
-        }
-    }
-
-    // MARK: - Start Date Picker Sheet
-
-    @ViewBuilder
-    private var startDatePickerSheet: some View {
-        NavigationView {
-            List {
-                Section {
-                    DatePicker(
-                        L10n.date,
-                        selection: $tempDate.coalesce(.now),
-                        in: ...Date.now,
-                        displayedComponents: .date
-                    )
-                    .datePickerStyle(.graphical)
-                    .labelsHidden()
-                }
-
-                /// Reset button to remove the filter
-                if viewModel.minDate != nil {
-                    Section {
-                        ListRowButton(L10n.reset, role: .destructive) {
-                            viewModel.minDate = nil
-                            isDatePickerShowing = false
-                        }
-                    } footer: {
-                        Text(L10n.resetFilterFooter)
-                    }
-                }
-            }
-            .navigationTitle(L10n.startDate.localizedCapitalized)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarCloseButton {
-                isDatePickerShowing = false
-            }
-            .topBarTrailing {
-                let startOfDay = Calendar.current
-                    .startOfDay(for: tempDate ?? .now)
-
-                Button(L10n.save) {
-                    viewModel.minDate = startOfDay
-                    isDatePickerShowing = false
-                }
-                .buttonStyle(.toolbarPill)
-                .disabled(viewModel.minDate != nil && startOfDay == viewModel.minDate)
-            }
+            router.route(to: .activityFilters(viewModel: viewModel))
         }
     }
 }

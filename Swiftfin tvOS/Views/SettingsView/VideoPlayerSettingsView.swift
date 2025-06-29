@@ -26,8 +26,8 @@ struct VideoPlayerSettingsView: View {
     @Default(.VideoPlayer.Transition.playOnActive)
     private var playOnActive
 
-    @EnvironmentObject
-    private var router: VideoPlayerSettingsCoordinator.Router
+    @Router
+    private var router
 
     @State
     private var isPresentingResumeOffsetStepper: Bool = false
@@ -59,7 +59,7 @@ struct VideoPlayerSettingsView: View {
                 Section {
 
                     ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName) {
-                        router.route(to: \.fontPicker, $subtitleFontName)
+                        router.route(to: .fontPicker(selection: $subtitleFontName))
                     }
                 } header: {
                     L10n.subtitles.text

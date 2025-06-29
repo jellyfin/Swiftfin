@@ -14,8 +14,8 @@ struct EditServerTaskView: View {
 
     // MARK: - Observed & Environment Objects
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     var observer: ServerTaskObserver
@@ -70,7 +70,7 @@ struct EditServerTaskView: View {
             if let triggers = observer.task.triggers, triggers.isNotEmpty {
                 Button(L10n.add) {
                     UIDevice.impact(.light)
-                    router.route(to: \.addServerTaskTrigger, observer)
+                    router.route(to: .addServerTaskTrigger(observer: observer))
                 }
                 .buttonStyle(.toolbarPill)
             }

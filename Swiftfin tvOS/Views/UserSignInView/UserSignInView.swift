@@ -10,7 +10,7 @@ import CollectionVGrid
 import Defaults
 import Factory
 import JellyfinAPI
-import Stinsen
+
 import SwiftUI
 
 struct UserSignInView: View {
@@ -32,8 +32,8 @@ struct UserSignInView: View {
 
     // MARK: - State & Environment Objects
 
-    @EnvironmentObject
-    private var router: UserSignInCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var focusGuide: FocusGuide = .init()
@@ -77,7 +77,7 @@ struct UserSignInView: View {
         case let .error(eventError):
             error = eventError
         case let .signedIn(user):
-            router.dismissCoordinator()
+            router.dismiss()
 
             Defaults[.lastSignedInUserID] = .signedIn(userID: user.id)
             Container.shared.currentUserSession.reset()
@@ -125,7 +125,7 @@ struct UserSignInView: View {
         if viewModel.isQuickConnectEnabled {
             Section {
                 ListRowButton(L10n.quickConnect) {
-                    router.route(to: \.quickConnect, viewModel.quickConnect)
+                    router.route(to: .quickConnect(quickConnect: viewModel.quickConnect))
                 }
                 .disabled(viewModel.state == .signingIn)
                 .foregroundStyle(

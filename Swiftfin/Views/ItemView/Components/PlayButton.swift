@@ -22,8 +22,8 @@ extension ItemView {
         @Injected(\.logService)
         private var logger
 
-        @EnvironmentObject
-        private var mainRouter: MainCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: ItemViewModel
@@ -41,11 +41,12 @@ extension ItemView {
                 if let playButtonItem = viewModel.playButtonItem,
                    let selectedMediaSource = viewModel.selectedMediaSource
                 {
-                    mainRouter.route(
-                        to: \.videoPlayer,
-                        OnlineVideoPlayerManager(
-                            item: playButtonItem,
-                            mediaSource: selectedMediaSource
+                    router.route(
+                        to: .videoPlayer(
+                            manager: OnlineVideoPlayerManager(
+                                item: playButtonItem,
+                                mediaSource: selectedMediaSource
+                            )
                         )
                     )
                 } else {
@@ -78,11 +79,12 @@ extension ItemView {
                             /// Reset playback to the beginning
                             playButtonItem.userData?.playbackPositionTicks = 0
 
-                            mainRouter.route(
-                                to: \.videoPlayer,
-                                OnlineVideoPlayerManager(
-                                    item: playButtonItem,
-                                    mediaSource: selectedMediaSource
+                            router.route(
+                                to: .videoPlayer(
+                                    manager: OnlineVideoPlayerManager(
+                                        item: playButtonItem,
+                                        mediaSource: selectedMediaSource
+                                    )
                                 )
                             )
                         } else {

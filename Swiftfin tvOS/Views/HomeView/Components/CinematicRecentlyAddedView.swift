@@ -13,8 +13,8 @@ extension HomeView {
 
     struct CinematicRecentlyAddedView: View {
 
-        @EnvironmentObject
-        private var router: HomeCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: RecentlyAddedLibraryViewModel
@@ -52,7 +52,7 @@ extension HomeView {
                         .frame(height: 200, alignment: .bottomLeading)
                 }
                 .onSelect { item in
-                    router.route(to: \.item, item)
+                    router.route(to: .item(item: item))
                 }
         }
     }
