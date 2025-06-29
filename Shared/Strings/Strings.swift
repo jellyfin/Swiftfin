@@ -194,6 +194,8 @@ internal enum L10n {
   internal static let birateAutoDescription = L10n.tr("Localizable", "birateAutoDescription", fallback: "Tests your server connection to assess internet speed and adjust bandwidth automatically.")
   /// Birthday
   internal static let birthday = L10n.tr("Localizable", "birthday", fallback: "Birthday")
+  /// Birthplace
+  internal static let birthplace = L10n.tr("Localizable", "birthplace", fallback: "Birthplace")
   /// Birth year
   internal static let birthYear = L10n.tr("Localizable", "birthYear", fallback: "Birth year")
   /// Auto
@@ -254,6 +256,8 @@ internal enum L10n {
   internal static let book = L10n.tr("Localizable", "book", fallback: "Book")
   /// Books
   internal static let books = L10n.tr("Localizable", "books", fallback: "Books")
+  /// Born
+  internal static let born = L10n.tr("Localizable", "born", fallback: "Born")
   /// Box
   internal static let box = L10n.tr("Localizable", "box", fallback: "Box")
   /// BoxRear
@@ -534,6 +538,8 @@ internal enum L10n {
   internal static let deviceProfileDescription = L10n.tr("Localizable", "deviceProfileDescription", fallback: "Decide which media plays natively or requires server transcoding for compatibility.")
   /// Devices
   internal static let devices = L10n.tr("Localizable", "devices", fallback: "Devices")
+  /// Died
+  internal static let died = L10n.tr("Localizable", "died", fallback: "Died")
   /// Digital
   internal static let digital = L10n.tr("Localizable", "digital", fallback: "Digital")
   /// Dimensions
@@ -1710,6 +1716,10 @@ internal enum L10n {
   internal static let year = L10n.tr("Localizable", "year", fallback: "Year")
   /// Years
   internal static let years = L10n.tr("Localizable", "years", fallback: "Years")
+  /// %@ years old
+  internal static func yearsOld(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "yearsOld", String(describing: p1), fallback: "%@ years old")
+  }
   /// Yellow
   internal static let yellow = L10n.tr("Localizable", "yellow", fallback: "Yellow")
   /// Yes

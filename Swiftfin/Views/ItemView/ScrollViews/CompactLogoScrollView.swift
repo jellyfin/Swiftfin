@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import BlurHashKit
 import SwiftUI
 
 extension ItemView {
@@ -19,63 +18,55 @@ extension ItemView {
         @ObservedObject
         private var viewModel: ItemViewModel
 
-        private let blurHashBottomEdgeColor: Color
         private let content: Content
 
         init(
             viewModel: ItemViewModel,
             content: @escaping () -> Content
         ) {
-            if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
-                let bottomRGB = BlurHash(string: backdropBlurHash)!.averageLinearRGB
-                blurHashBottomEdgeColor = Color(
-                    red: Double(bottomRGB.0),
-                    green: Double(bottomRGB.1),
-                    blue: Double(bottomRGB.2)
-                )
-            } else {
-                blurHashBottomEdgeColor = Color.secondarySystemFill
-            }
-
             self.content = content()
             self.viewModel = viewModel
         }
 
         @ViewBuilder
         private var headerView: some View {
+
+            let bottomColor = viewModel.item.blurHash(for: .backdrop)?.averageLinearColor ?? Color.secondarySystemFill
+
             ImageView(viewModel.item.imageSource(.backdrop, maxHeight: UIScreen.main.bounds.height * 0.35))
                 .aspectRatio(1.77, contentMode: .fill)
                 .frame(height: UIScreen.main.bounds.height * 0.35)
-                .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
+                .bottomEdgeGradient(bottomColor: bottomColor)
         }
 
         var body: some View {
             OffsetScrollView(headerHeight: 0.5) {
                 headerView
             } overlay: {
-                VStack {
-                    Spacer()
-
-                    OverlayView(viewModel: viewModel)
-                        .padding(.horizontal)
-                        .padding(.bottom)
-                        .background {
-                            BlurView(style: .systemThinMaterialDark)
-                                .maskLinearGradient {
-                                    (location: 0, opacity: 0)
-                                    (location: 0.3, opacity: 1)
-                                }
-                        }
-                }
+                OverlayView(viewModel: viewModel)
+                    .edgePadding(.horizontal)
+                    .edgePadding(.bottom)
+                    .frame(maxWidth: .infinity)
+                    .background {
+                        BlurView(style: .systemThinMaterialDark)
+                            .maskLinearGradient {
+                                (location: 0, opacity: 0)
+                                (location: 0.3, opacity: 1)
+                            }
+                    }
+                    .frame(
+                        maxHeight: .infinity,
+                        alignment: .bottom
+                    )
             } content: {
-                VStack(alignment: .leading, spacing: 10) {
-
+                SeparatorVStack {
+                    RowDivider()
+                        .padding(.vertical, 10)
+                } content: {
                     ItemView.OverviewView(item: viewModel.item)
                         .overviewLineLimit(4)
                         .taglineLineLimit(2)
-                        .padding(.horizontal)
-
-                    RowDivider()
+                        .edgePadding(.horizontal)
 
                     content
                 }
@@ -148,7 +139,6 @@ extension ItemView.CompactLogoScrollView {
                 }
                 .frame(maxWidth: 300)
             }
-            .frame(maxWidth: .infinity, alignment: .bottom)
         }
     }
 }
