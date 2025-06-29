@@ -89,8 +89,8 @@ struct SearchView: View {
                     )
                 )
             )
-        default:
-            router.route(to: .item(item: item))
+        default: ()
+//            router.route(to: .item(item: item))
         }
     }
 
@@ -104,8 +104,8 @@ struct SearchView: View {
             title: title,
             type: posterType,
             items: viewModel[keyPath: keyPath]
-        )
-        .onSelect(select)
+        ) { _ in }
+            .onSelect(select)
     }
 
     var body: some View {

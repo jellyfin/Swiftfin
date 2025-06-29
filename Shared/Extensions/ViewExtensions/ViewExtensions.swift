@@ -91,20 +91,36 @@ extension View {
 
     /// Applies the aspect ratio, corner radius, and border for the given `PosterType`
     @ViewBuilder
-    func posterStyle(_ type: PosterDisplayType, contentMode: ContentMode = .fill) -> some View {
+    func posterStyle(
+        _ type: PosterDisplayType,
+        contentMode: ContentMode = .fill
+    ) -> some View {
         switch type {
         case .landscape:
             aspectRatio(1.77, contentMode: contentMode)
-            #if os(iOS)
-                .posterBorder(ratio: 1 / 30, of: \.width)
+            #if !os(tvOS)
+                .posterBorder()
                 .cornerRadius(ratio: 1 / 30, of: \.width)
+                .posterShadow()
             #endif
         case .portrait:
             aspectRatio(2 / 3, contentMode: contentMode)
-            #if os(iOS)
-                .posterBorder(ratio: 0.0375, of: \.width)
+            #if !os(tvOS)
+                .posterBorder()
                 .cornerRadius(ratio: 0.0375, of: \.width)
+                .posterShadow()
             #endif
+        }
+    }
+
+    func posterBorder() -> some View {
+        overlay {
+            ContainerRelativeShape()
+                .stroke(
+                    .white.opacity(0.1),
+                    lineWidth: 1
+                )
+                .clipped()
         }
     }
 
@@ -113,22 +129,10 @@ extension View {
     func squarePosterStyle(contentMode: ContentMode = .fill) -> some View {
         aspectRatio(1.0, contentMode: contentMode)
         #if os(iOS)
-            .posterBorder(ratio: 0.0375, of: \.width)
+            .posterBorder()
             .cornerRadius(ratio: 0.0375, of: \.width)
+            .posterShadow()
         #endif
-    }
-
-    func posterBorder(ratio: CGFloat, of side: KeyPath<CGSize, CGFloat>) -> some View {
-        modifier(OnSizeChangedModifier { size in
-            overlay {
-                RoundedRectangle(cornerRadius: size[keyPath: side] * ratio)
-                    .stroke(
-                        .white.opacity(0.10),
-                        lineWidth: 2
-                    )
-                    .clipped()
-            }
-        })
     }
 
     func scrollViewOffset(_ scrollViewOffset: Binding<CGFloat>) -> some View {
@@ -156,25 +160,51 @@ extension View {
         modifier(ErrorMessageModifier(error: error, dismissActions: dismissActions))
     }
 
-    /// Apply a corner radius as a ratio of a view's side
     func posterShadow() -> some View {
         shadow(radius: 4, y: 2)
     }
 
     @ViewBuilder
-    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
-        if corners == .allCorners {
-            clipShape(RoundedRectangle(cornerRadius: radius))
-        } else {
-            clipShape(RoundedCorner(radius: radius, corners: corners))
-        }
+    func cornerRadius(
+        _ radius: CGFloat,
+        corners: RectangleCorner = .allCorners,
+        style: RoundedCornerStyle = .circular
+    ) -> some View {
+        let shape = UnevenRoundedRectangle(
+            topLeadingRadius: corners.contains(.topLeft) ? radius : 0,
+            bottomLeadingRadius: corners.contains(.bottomLeft) ? radius : 0,
+            bottomTrailingRadius: corners.contains(.bottomRight) ? radius : 0,
+            topTrailingRadius: corners.contains(.topRight) ? radius : 0,
+            style: style
+        )
+
+        clipShape(shape)
     }
 
     /// Apply a corner radius as a ratio of a view's side
-    func cornerRadius(ratio: CGFloat, of side: KeyPath<CGSize, CGFloat>, corners: UIRectCorner = .allCorners) -> some View {
-        modifier(OnSizeChangedModifier { size in
-            cornerRadius(size[keyPath: side] * ratio, corners: corners)
-        })
+    @ViewBuilder
+    func cornerRadius(
+        ratio: CGFloat,
+        of side: KeyPath<CGSize, CGFloat>,
+        corners: RectangleCorner = .allCorners,
+        style: RoundedCornerStyle = .circular
+    ) -> some View {
+        modifier(
+            OnSizeChangedModifier { size in
+                let radius = size[keyPath: side] * ratio
+
+                let shape = UnevenRoundedRectangle(
+                    topLeadingRadius: corners.contains(.topLeft) ? radius : 0,
+                    bottomLeadingRadius: corners.contains(.bottomLeft) ? radius : 0,
+                    bottomTrailingRadius: corners.contains(.bottomRight) ? radius : 0,
+                    topTrailingRadius: corners.contains(.topRight) ? radius : 0,
+                    style: style
+                )
+
+                self.clipShape(shape)
+                    .containerShape(shape)
+            }
+        )
     }
 
     func onFrameChanged(perform action: @escaping (CGRect, EdgeInsets) -> Void) -> some View {
@@ -368,4 +398,21 @@ extension View {
 private struct OnFrameChangedValue: Equatable {
     let frame: CGRect
     let safeAreaInsets: EdgeInsets
+}
+
+struct RectangleCorner: OptionSet {
+
+    let rawValue: UInt
+
+    static let topLeft = RectangleCorner(rawValue: 1 << 0)
+    static let topRight = RectangleCorner(rawValue: 1 << 1)
+    static let bottomLeft = RectangleCorner(rawValue: 1 << 2)
+    static let bottomRight = RectangleCorner(rawValue: 1 << 3)
+
+    static let allCorners: RectangleCorner = [
+        .topLeft,
+        .topRight,
+        .bottomLeft,
+        .bottomRight,
+    ]
 }

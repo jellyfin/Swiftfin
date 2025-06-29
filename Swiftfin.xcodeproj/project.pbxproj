@@ -1302,8 +1302,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/LePips/CollectionHStack";
 			requirement = {
-				kind = revision;
-				revision = 03dc666e8b20ec216fda60f55ccc0eeaabbc5fad;
+				branch = main;
+				kind = branch;
 			};
 		};
 		E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */ = {

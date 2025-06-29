@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionHStack
 import Defaults
 import JellyfinAPI
 import SwiftUI
@@ -32,7 +31,9 @@ extension HomeView {
                     title: L10n.nextUp,
                     type: nextUpPosterType,
                     items: viewModel.elements
-                )
+                ) { item, namespace in
+                    router.route(to: .item(item: item), in: namespace)
+                }
                 .content { item in
                     if item.type == .episode {
                         PosterButton.EpisodeContentSubtitleContent(item: item)
@@ -40,21 +41,18 @@ extension HomeView {
                         PosterButton.TitleSubtitleContentView(item: item)
                     }
                 }
-                .contextMenu { item in
-                    Button {
-                        onSetPlayed(item)
-                    } label: {
-                        Label(L10n.played, systemImage: "checkmark.circle")
-                    }
-                }
-                .onSelect { item in
-                    router.route(to: .item(item: item))
-                }
                 .trailing {
                     SeeAllButton()
                         .onSelect {
                             router.route(to: .library(viewModel: viewModel))
                         }
+                }
+                .contextMenu(for: BaseItemDto.self) { item in
+                    Button {
+                        onSetPlayed(item)
+                    } label: {
+                        Label(L10n.played, systemImage: "checkmark.circle")
+                    }
                 }
             }
         }

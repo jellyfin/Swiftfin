@@ -17,6 +17,8 @@ protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
     /// Show the title
     var showTitle: Bool { get }
 
+    var zoomID: String { get }
+
     func portraitImageSources(
         maxWidth: CGFloat?
     ) -> [ImageSource]
@@ -42,6 +44,10 @@ extension Poster {
 
     var showTitle: Bool {
         true
+    }
+
+    var zoomID: String {
+        "\(unwrappedIDHashOrZero)"
     }
 
     func portraitImageSources(

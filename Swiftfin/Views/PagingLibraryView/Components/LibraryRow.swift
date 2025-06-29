@@ -17,16 +17,32 @@ extension PagingLibraryView {
 
     struct LibraryRow: View {
 
+        @Namespace
+        private var namespace
+
+        @State
+        private var size: CGSize = .zero
+
         private let item: Element
-        private var action: () -> Void
+        private var action: (Namespace.ID) -> Void
         private let posterType: PosterDisplayType
 
-        private func imageView(from element: Element) -> ImageView {
+        init(
+            item: Element,
+            posterType: PosterDisplayType,
+            action: @escaping (Namespace.ID) -> Void
+        ) {
+            self.item = item
+            self.action = action
+            self.posterType = posterType
+        }
+
+        private func imageSources(from element: Element) -> [ImageSource] {
             switch posterType {
             case .landscape:
-                ImageView(element.landscapeImageSources(maxWidth: landscapeMaxWidth))
+                element.landscapeImageSources(maxWidth: landscapeMaxWidth)
             case .portrait:
-                ImageView(element.portraitImageSources(maxWidth: portraitMaxWidth))
+                element.portraitImageSources(maxWidth: portraitMaxWidth)
             }
         }
 
@@ -90,44 +106,63 @@ extension PagingLibraryView {
 
         @ViewBuilder
         private var rowLeading: some View {
-            ZStack {
+            AlternateLayoutView {
                 Color.clear
-
-                imageView(from: item)
+            } content: {
+                ImageView(imageSources(from: item))
                     .failure {
                         SystemImageContentView(systemName: item.systemImage)
                     }
             }
             .posterStyle(posterType)
             .frame(width: posterType == .landscape ? landscapeMaxWidth : portraitMaxWidth)
-            .posterShadow()
             .padding(.vertical, 8)
         }
 
-        // MARK: body
-
-        var body: some View {
+        @ViewBuilder
+        private var row: some View {
             ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
                 rowLeading
             } content: {
                 rowContent
             }
-            .onSelect(perform: action)
+            .onSelect {
+                action(namespace)
+            }
+            .backport
+            .matchedTransitionSource(id: "item", in: namespace)
+        }
+
+        // MARK: body
+
+        var body: some View {
+            row
+                .trackingSize($size)
+                .matchedContextMenu(for: item) {
+                    row.frame(width: size.width, height: size.height)
+                        .padding(20)
+                        .background {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color(uiColor: UIColor.secondarySystemGroupedBackground))
+                        }
+                }
         }
     }
 }
 
 extension PagingLibraryView.LibraryRow {
 
+    @available(*, deprecated, message: "Use init(item:posterType:action:)")
     init(item: Element, posterType: PosterDisplayType) {
         self.init(
             item: item,
-            action: {},
-            posterType: posterType
+            posterType: posterType,
+            action: { _ in }
         )
     }
 
+    @available(*, deprecated, message: "Use init(item:posterType:action:)")
     func onSelect(perform action: @escaping () -> Void) -> Self {
-        copy(modifying: \.action, with: action)
+        self
     }
 }

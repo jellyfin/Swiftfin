@@ -46,13 +46,17 @@ struct CinematicItemSelector<Item: Poster>: View {
                         .transition(.opacity)
                 }
 
-                PosterHStack(type: .landscape, items: items)
-                    .content(itemContent)
-                    .imageOverlay(itemImageOverlay)
-                    .contextMenu(itemContextMenu)
-                    .trailing(trailingContent)
-                    .onSelect(onSelect)
-                    .focusedItem($focusedItem)
+                PosterHStack(
+                    type: .landscape,
+                    items: items
+                ) { _ in
+                }
+                .content(itemContent)
+                .imageOverlay(itemImageOverlay)
+                .contextMenu(itemContextMenu)
+                .trailing(trailingContent)
+                .onSelect(onSelect)
+                .focusedItem($focusedItem)
             }
         }
         .background(alignment: .top) {
