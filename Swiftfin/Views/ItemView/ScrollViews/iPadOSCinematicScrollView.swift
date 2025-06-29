@@ -36,11 +36,35 @@ extension ItemView {
             self.viewModel = viewModel
         }
 
-        private var imageType: ImageType {
-            if viewModel.item.type == .episode {
-                return .primary
+        private func withHeaderImageItem(
+            @ViewBuilder content: @escaping (ImageSource, Color) -> some View
+        ) -> some View {
+
+            let item: BaseItemDto
+
+            if let personViewModel = viewModel as? PersonItemViewModel,
+               let randomItem = personViewModel.randomItem()
+            {
+                item = randomItem
             } else {
-                return .backdrop
+                item = viewModel.item
+            }
+
+            let imageType: ImageType = item.type == .episode ? .primary : .backdrop
+            let bottomColor = item.blurHash(for: imageType)?.averageLinearColor ?? Color.secondarySystemFill
+            let imageSource = item.imageSource(imageType, maxWidth: 1920)
+
+            return content(imageSource, bottomColor)
+                .id(imageSource.url?.hashValue)
+                .animation(.linear(duration: 0.1), value: imageSource.url?.hashValue)
+        }
+
+        @ViewBuilder
+        private var headerView: some View {
+            withHeaderImageItem { imageSource, bottomColor in
+                ImageView(imageSource)
+                    .aspectRatio(1.77, contentMode: .fill)
+                    .bottomEdgeGradient(bottomColor: bottomColor)
             }
         }
 
@@ -48,34 +72,22 @@ extension ItemView {
             OffsetScrollView(
                 headerHeight: globalSize.isLandscape ? 0.75 : 0.6
             ) {
-                /// Set a random image from a person's content
-                if let personViewModel = viewModel as? PersonItemViewModel,
-                   let randomType = personViewModel.personItems.elements.randomElement(),
-                   let randomValue = randomType.value.elements.randomElement()
-                {
-                    ImageView(randomValue.imageSource(
-                        randomValue.type == .episode ? .primary : .backdrop,
-                        maxWidth: 1920
-                    ))
-                    .aspectRatio(1.77, contentMode: .fill)
-                } else {
-                    ImageView(viewModel.item.imageSource(imageType, maxWidth: 1920))
-                        .aspectRatio(1.77, contentMode: .fill)
-                }
+                headerView
             } overlay: {
-                VStack(spacing: 0) {
-                    Spacer()
-
-                    OverlayView(viewModel: viewModel)
-                        .edgePadding()
-                }
-                .background {
-                    BlurView(style: .systemThinMaterialDark)
-                        .maskLinearGradient {
-                            (location: 0.4, opacity: 0)
-                            (location: 0.8, opacity: 1)
-                        }
-                }
+                OverlayView(viewModel: viewModel)
+                    .edgePadding()
+                    .frame(maxWidth: .infinity)
+                    .background {
+                        BlurView(style: .systemThinMaterialDark)
+                            .maskLinearGradient {
+                                (location: 0.4, opacity: 0)
+                                (location: 0.8, opacity: 1)
+                            }
+                    }
+                    .frame(
+                        maxHeight: .infinity,
+                        alignment: .bottom
+                    )
             } content: {
                 content
                     .edgePadding(.vertical)
@@ -124,28 +136,9 @@ extension ItemView.iPadOSCinematicScrollView {
                         .taglineLineLimit(2)
                         .foregroundColor(.white)
 
-                    HStack(spacing: 30) {
-                        DotHStack {
-
-                            if let personViewModel = viewModel as? PersonItemViewModel {
-
-                                if let birthday = personViewModel.item.premiereDate?.formatted(date: .numeric, time: .omitted) {
-                                    Text(birthday)
-                                }
-
-                                if let deathday = personViewModel.item.endDate?.formatted(date: .numeric, time: .omitted) {
-                                    Text(deathday)
-                                }
-
-                                if let age = personViewModel.item.premiereDate?.formatted(.age.death(viewModel.item.endDate)) {
-                                    Text(age)
-                                }
-
-                                if let birthPlace = personViewModel.item.productionLocations?.first {
-                                    Text(birthPlace)
-                                }
-                            } else {
-
+                    if viewModel.item.type != .person {
+                        HStack(spacing: 30) {
+                            DotHStack {
                                 if let firstGenre = viewModel.item.genres?.first {
                                     Text(firstGenre)
                                 }
@@ -158,15 +151,15 @@ extension ItemView.iPadOSCinematicScrollView {
                                     Text(runtime)
                                 }
                             }
-                        }
-                        .font(.footnote)
-                        .foregroundColor(Color(UIColor.lightGray))
+                            .font(.footnote)
+                            .foregroundColor(Color(UIColor.lightGray))
 
-                        ItemView.AttributesHStack(
-                            attributes: attributes,
-                            viewModel: viewModel,
-                            alignment: .leading
-                        )
+                            ItemView.AttributesHStack(
+                                attributes: attributes,
+                                viewModel: viewModel,
+                                alignment: .leading
+                            )
+                        }
                     }
                 }
                 .padding(.trailing, 200)

@@ -33,7 +33,7 @@ extension ItemView {
                     }
             }
             .onSelect { person in
-                router.route(to: .item(item: .init(id: person.id, type: .person)))
+                router.route(to: .item(item: .init(person: person)))
             }
         }
     }

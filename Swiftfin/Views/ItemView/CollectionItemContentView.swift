@@ -28,7 +28,7 @@ extension ItemView {
 
                 // MARK: - Items
 
-                ForEach(viewModel.collectionItems.elements, id: \.key) { element in
+                ForEach(viewModel.sections.elements, id: \.key) { element in
                     PosterHStack(
                         title: element.key.pluralDisplayTitle,
                         type: .portrait,

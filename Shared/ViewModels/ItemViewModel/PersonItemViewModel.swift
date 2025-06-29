@@ -13,15 +13,10 @@ import OrderedCollections
 
 final class PersonItemViewModel: ItemViewModel {
 
-    // MARK: - Published Collection Items
+    @ObservedPublisher
+    var sections: OrderedDictionary<BaseItemKind, ItemLibraryViewModel>
 
-    @Published
-    private(set) var personItems: OrderedDictionary<BaseItemKind, ItemLibraryViewModel> = [:]
-
-    // MARK: - Task
-
-    private var personItemTask: AnyCancellable?
-    private var initializationTask: AnyCancellable?
+    private let itemCollection: ItemTypeCollection
 
     // MARK: - Disable PlayButton
 
@@ -35,79 +30,47 @@ final class PersonItemViewModel: ItemViewModel {
         false
     }
 
+    override init(item: BaseItemDto) {
+        self.itemCollection = ItemTypeCollection(
+            parent: item,
+            itemTypes: BaseItemKind.supportedCases.appending(.episode)
+        )
+        self._sections = ObservedPublisher(
+            wrappedValue: [:],
+            observing: itemCollection.$elements
+        )
+
+        super.init(item: item)
+    }
+
     // MARK: - Override Response
 
     override func respond(to action: ItemViewModel.Action) -> ItemViewModel.State {
 
         switch action {
         case .refresh, .backgroundRefresh:
-            personItemTask?.cancel()
-
-            personItemTask = Task {
-                let personItems = await self.getPersonViewModels()
-
-                await MainActor.run {
-                    self.personItems = personItems
-                }
-            }
-            .asAnyCancellable()
+            itemCollection.send(.refresh)
         default: ()
         }
 
         return super.respond(to: action)
     }
 
-    // MARK: - Get Person ItemLibraryViewModels
+    // TODO: possibly multiple items, for image source fallbacks
+    func randomItem() -> BaseItemDto? {
+        // Try to exclude episodes if possible
 
-    private func getPersonViewModels() async -> OrderedDictionary<BaseItemKind, ItemLibraryViewModel> {
-        guard item.id != nil else {
-            return [:]
+        if itemCollection.elements.elements.count == 1 {
+            return itemCollection.elements.elements.first?.value.elements.first
         }
 
-        var allViewModels: [BaseItemKind: ItemLibraryViewModel] = [:]
-        var completedViewModels: [BaseItemKind: ItemLibraryViewModel] = [:]
-
-        let supportedItemTypes = BaseItemKind.supportedCases
-            .appending(.episode)
-
-        for itemKind in supportedItemTypes {
-            let viewModel = ItemLibraryViewModel(
-                parent: item,
-                filters: .init(itemTypes: [itemKind])
-            )
-            allViewModels[itemKind] = viewModel
-        }
-
-        await withTaskGroup(of: (BaseItemKind, Bool).self) { group in
-            for (kind, viewModel) in allViewModels {
-                group.addTask {
-                    await withCheckedContinuation { continuation in
-                        var cancellable: AnyCancellable?
-
-                        cancellable = viewModel.$state
-                            .sink { state in
-                                if state != .initial && state != .refreshing {
-                                    cancellable?.cancel()
-                                    continuation.resume(returning: (kind, state == .content))
-                                }
-                            }
-
-                        Task { @MainActor in
-                            viewModel.send(.refresh)
-                        }
-                    }
-                }
-            }
-
-            for await (kind, isSuccess) in group {
-                if isSuccess, let viewModel = allViewModels[kind], viewModel.elements.isNotEmpty {
-                    completedViewModels[kind] = viewModel
-                }
-            }
-        }
-
-        return OrderedDictionary(
-            uniqueKeysWithValues: completedViewModels.sorted { $0.key.rawValue < $1.key.rawValue }
-        )
+        return itemCollection.elements
+            .elements
+            .shuffled()
+            .filter { $0.key != .episode }
+            .randomElement()?
+            .value
+            .elements
+            .randomElement()
     }
 }

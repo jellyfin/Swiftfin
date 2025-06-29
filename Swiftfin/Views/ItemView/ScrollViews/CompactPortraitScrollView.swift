@@ -6,7 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import BlurHashKit
+import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
@@ -19,46 +19,46 @@ extension ItemView {
         @ObservedObject
         private var viewModel: ItemViewModel
 
-        private let blurHashBottomEdgeColor: Color
         private let content: Content
 
         init(
             viewModel: ItemViewModel,
-            content: @escaping () -> Content
+            @ViewBuilder content: @escaping () -> Content
         ) {
-            if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
-                let bottomRGB = BlurHash(string: backdropBlurHash)!.averageLinearRGB
-                blurHashBottomEdgeColor = Color(
-                    red: Double(bottomRGB.0),
-                    green: Double(bottomRGB.1),
-                    blue: Double(bottomRGB.2)
-                )
-            } else {
-                blurHashBottomEdgeColor = Color.secondarySystemFill
-            }
-
             self.content = content()
             self.viewModel = viewModel
         }
 
+        private func withHeaderImageItem(
+            @ViewBuilder content: @escaping (ImageSource, Color) -> some View
+        ) -> some View {
+
+            let item: BaseItemDto
+
+            if let personViewModel = viewModel as? PersonItemViewModel,
+               let randomItem = personViewModel.randomItem()
+            {
+                item = randomItem
+            } else {
+                item = viewModel.item
+            }
+
+            let imageType: ImageType = item.type == .episode ? .primary : .backdrop
+            let bottomColor = item.blurHash(for: imageType)?.averageLinearColor ?? Color.secondarySystemFill
+            let imageSource = item.imageSource(imageType, maxWidth: UIScreen.main.bounds.width)
+
+            return content(imageSource, bottomColor)
+                .id(imageSource.url?.hashValue)
+                .animation(.linear(duration: 0.1), value: imageSource.url?.hashValue)
+        }
+
         @ViewBuilder
         private var headerView: some View {
-            if let personViewModel = viewModel as? PersonItemViewModel,
-               let randomElement = personViewModel.personItems.elements.randomElement(),
-               let randomValue = randomElement.value.elements.randomElement()
-            {
-                ImageView(randomValue.imageSource(
-                    randomValue.type == .episode ? .primary : .backdrop,
-                    maxWidth: UIScreen.main.bounds.width
-                ))
-                .aspectRatio(1.77, contentMode: .fill)
-                .frame(height: UIScreen.main.bounds.height * 0.35)
-                .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
-            } else {
-                ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
+            withHeaderImageItem { imageSource, bottomColor in
+                ImageView(imageSource)
                     .aspectRatio(1.77, contentMode: .fill)
                     .frame(height: UIScreen.main.bounds.height * 0.35)
-                    .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
+                    .bottomEdgeGradient(bottomColor: bottomColor)
             }
         }
 
@@ -66,30 +66,31 @@ extension ItemView {
             OffsetScrollView(headerHeight: 0.45) {
                 headerView
             } overlay: {
-                VStack {
-                    Spacer()
-
-                    OverlayView(viewModel: viewModel)
-                        .edgePadding(.horizontal)
-                        .edgePadding(.bottom)
-                        .background {
-                            BlurView(style: .systemThinMaterialDark)
-                                .maskLinearGradient {
-                                    (location: 0.2, opacity: 0)
-                                    (location: 0.3, opacity: 0.5)
-                                    (location: 0.55, opacity: 1)
-                                }
-                        }
-                }
+                OverlayView(viewModel: viewModel)
+                    .edgePadding(.horizontal)
+                    .edgePadding(.bottom)
+                    .frame(maxWidth: .infinity)
+                    .background {
+                        BlurView(style: .systemThinMaterialDark)
+                            .maskLinearGradient {
+                                (location: 0.2, opacity: 0)
+                                (location: 0.3, opacity: 0.5)
+                                (location: 0.55, opacity: 1)
+                            }
+                    }
+                    .frame(
+                        maxHeight: .infinity,
+                        alignment: .bottom
+                    )
             } content: {
-                VStack(alignment: .leading, spacing: 10) {
-
+                SeparatorVStack {
+                    RowDivider()
+                        .padding(.vertical, 10)
+                } content: {
                     ItemView.OverviewView(item: viewModel.item)
                         .overviewLineLimit(4)
                         .taglineLineLimit(2)
-                        .padding(.horizontal)
-
-                    RowDivider()
+                        .edgePadding(.horizontal)
 
                     content
                 }
@@ -98,6 +99,9 @@ extension ItemView {
         }
     }
 }
+
+// TODO: have action buttons part of the right shelf view
+//       - possible on leading edge instead
 
 extension ItemView.CompactPosterScrollView {
 
@@ -122,11 +126,12 @@ extension ItemView.CompactPosterScrollView {
                     .foregroundColor(.white)
 
                 DotHStack {
-                    if let personViewModel = viewModel as? PersonItemViewModel {
-                        if let age = personViewModel.item.premiereDate?.formatted(
-                            .age.death(personViewModel.item.endDate)
-                        ) {
-                            Text(age)
+                    if viewModel.item.type == .person {
+                        if let birthday = viewModel.item.birthday {
+                            Text(
+                                birthday,
+                                format: .age.death(viewModel.item.deathday)
+                            )
                         }
                     } else {
                         if viewModel.item.isUnaired {
@@ -134,14 +139,14 @@ extension ItemView.CompactPosterScrollView {
                                 Text(premiereDateLabel)
                             }
                         } else {
-                            if let productionYear = viewModel.item.productionYear {
+                            if let productionYear = viewModel.item.premiereDateYear {
                                 Text(String(productionYear))
                             }
                         }
-                    }
 
-                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
-                        Text(runtime)
+                        if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
+                            Text(runtime)
+                        }
                     }
                 }
                 .lineLimit(1)

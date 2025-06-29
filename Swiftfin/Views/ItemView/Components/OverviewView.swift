@@ -9,6 +9,9 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: have items provide labeled attributes
+// TODO: don't layout `VStack` if no data
+
 extension ItemView {
 
     struct OverviewView: View {
@@ -23,30 +26,12 @@ extension ItemView {
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
 
-                Group {
-                    if UIDevice.isPhone && (item.type == .person || item.type == .musicArtist) {
-                        if let birthPlace = item.productionLocations?.first {
-                            Text(birthPlace)
-                        }
-                    } else if let firstTagline = item.taglines?.first {
-                        Text(firstTagline)
-                    }
-                }
-                .font(.body)
-                .fontWeight(.semibold)
-                .multilineTextAlignment(.leading)
-                .lineLimit(taglineLineLimit)
-
-                if UIDevice.isPhone && (item.type == .person || item.type == .musicArtist) {
-                    DotHStack {
-                        if let birthday = item.premiereDate?.formatted(date: .numeric, time: .omitted) {
-                            Text(birthday)
-                        }
-
-                        if let deathday = item.endDate?.formatted(date: .numeric, time: .omitted) {
-                            Text(deathday)
-                        }
-                    }
+                if let firstTagline = item.taglines?.first {
+                    Text(firstTagline)
+                        .font(.body)
+                        .fontWeight(.semibold)
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(taglineLineLimit)
                 }
 
                 if let itemOverview = item.overview {
@@ -55,10 +40,32 @@ extension ItemView {
                             router.route(to: .itemOverview(item: item))
                         }
                         .seeMoreType(.view)
-                        .font(.footnote)
                         .lineLimit(overviewLineLimit)
                 }
+
+                if let birthday = item.birthday?.formatted(date: .long, time: .omitted) {
+                    LabeledContent(
+                        "Born",
+                        value: birthday
+                    )
+                }
+
+                if let deathday = item.deathday?.formatted(date: .long, time: .omitted) {
+                    LabeledContent(
+                        "Died",
+                        value: deathday
+                    )
+                }
+
+                if let birthplace = item.birthplace {
+                    LabeledContent(
+                        "Birthplace",
+                        value: birthplace
+                    )
+                }
             }
+            .font(.footnote)
+            .labeledContentStyle(.itemAttribute)
         }
     }
 }

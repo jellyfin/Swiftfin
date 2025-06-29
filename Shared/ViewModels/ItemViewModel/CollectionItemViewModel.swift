@@ -13,19 +13,30 @@ import OrderedCollections
 
 final class CollectionItemViewModel: ItemViewModel {
 
-    // MARK: - Published Collection Items
+    @ObservedPublisher
+    var sections: OrderedDictionary<BaseItemKind, ItemLibraryViewModel>
 
-    @Published
-    private(set) var collectionItems: OrderedDictionary<BaseItemKind, ItemLibraryViewModel> = [:]
-
-    // MARK: - Task
-
-    private var collectionItemTask: AnyCancellable?
+    private let itemCollection: ItemTypeCollection
 
     // MARK: - Disable PlayButton
 
     override var presentPlayButton: Bool {
         false
+    }
+
+    override init(item: BaseItemDto) {
+        self.itemCollection = ItemTypeCollection(
+            parent: item,
+            itemTypes: BaseItemKind.supportedCases
+                .appending(.episode)
+                .removing(.boxSet)
+        )
+        self._sections = ObservedPublisher(
+            wrappedValue: [:],
+            observing: itemCollection.$elements
+        )
+
+        super.init(item: item)
     }
 
     // MARK: - Override Response
@@ -34,75 +45,10 @@ final class CollectionItemViewModel: ItemViewModel {
 
         switch action {
         case .refresh, .backgroundRefresh:
-            collectionItemTask?.cancel()
-
-            collectionItemTask = Task {
-                let collectionItems = await self.getCollectionViewModels()
-
-                await MainActor.run {
-                    self.collectionItems = collectionItems
-                }
-            }
-            .asAnyCancellable()
+            itemCollection.send(.refresh)
         default: ()
         }
 
         return super.respond(to: action)
-    }
-
-    // MARK: - Get Collection Items
-
-    private func getCollectionViewModels() async -> OrderedDictionary<BaseItemKind, ItemLibraryViewModel> {
-        guard item.id != nil else {
-            return [:]
-        }
-
-        var allViewModels: [BaseItemKind: ItemLibraryViewModel] = [:]
-        var completedViewModels: [BaseItemKind: ItemLibraryViewModel] = [:]
-
-        let supportedItemTypes = BaseItemKind.supportedCases
-            .appending(.episode)
-            /// ParentId get's overriden when .boxSet. If .boxSet is included, all .boxset on the server are returned
-            .filter { $0 != .boxSet }
-
-        for itemKind in supportedItemTypes {
-            let viewModel = ItemLibraryViewModel(
-                parent: item,
-                filters: .init(itemTypes: [itemKind])
-            )
-            allViewModels[itemKind] = viewModel
-        }
-
-        await withTaskGroup(of: (BaseItemKind, Bool).self) { group in
-            for (kind, viewModel) in allViewModels {
-                group.addTask {
-                    await withCheckedContinuation { continuation in
-                        var cancellable: AnyCancellable?
-
-                        cancellable = viewModel.$state
-                            .sink { state in
-                                if state == .content {
-                                    cancellable?.cancel()
-                                    continuation.resume(returning: (kind, state == .content))
-                                }
-                            }
-
-                        Task { @MainActor in
-                            viewModel.send(.refresh)
-                        }
-                    }
-                }
-            }
-
-            for await (kind, isSuccess) in group {
-                if isSuccess, let viewModel = allViewModels[kind], viewModel.elements.isNotEmpty {
-                    completedViewModels[kind] = viewModel
-                }
-            }
-        }
-
-        return OrderedDictionary(
-            uniqueKeysWithValues: completedViewModels.sorted { $0.key.rawValue < $1.key.rawValue }
-        )
     }
 }

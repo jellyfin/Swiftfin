@@ -73,6 +73,7 @@ struct ItemEditorView: View {
                     editTextView
                 }
 
+                // TODO: add `BaseItemDto.hasComponenets`
                 if viewModel.item.type != .person {
                     editComponentsView
                 }
