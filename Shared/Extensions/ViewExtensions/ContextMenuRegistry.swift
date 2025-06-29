@@ -18,7 +18,7 @@ extension EnvironmentValues {
 
 enum EnvironmentContextMenu<Value> {
 
-    struct Registerer: ViewModifier {
+    struct Registar: ViewModifier {
 
         @Environment(\.contextMenuRegistry)
         private var contextMenuRegistry
@@ -92,7 +92,7 @@ extension View {
         @ViewBuilder content: @escaping (V) -> some View
     ) -> some View {
         modifier(
-            EnvironmentContextMenu.Registerer(
+            EnvironmentContextMenu.Registar(
                 menuContent: {
                     let menuContent = content($0)
                     return (AnyView(menuContent), nil)
@@ -109,7 +109,7 @@ extension View {
         @ViewBuilder preview: @escaping (V) -> some View
     ) -> some View {
         modifier(
-            EnvironmentContextMenu.Registerer(
+            EnvironmentContextMenu.Registar(
                 menuContent: {
                     let menuContent = content($0)
                     let previewContent = preview($0)

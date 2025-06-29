@@ -399,20 +399,3 @@ private struct OnFrameChangedValue: Equatable {
     let frame: CGRect
     let safeAreaInsets: EdgeInsets
 }
-
-struct RectangleCorner: OptionSet {
-
-    let rawValue: UInt
-
-    static let topLeft = RectangleCorner(rawValue: 1 << 0)
-    static let topRight = RectangleCorner(rawValue: 1 << 1)
-    static let bottomLeft = RectangleCorner(rawValue: 1 << 2)
-    static let bottomRight = RectangleCorner(rawValue: 1 << 3)
-
-    static let allCorners: RectangleCorner = [
-        .topLeft,
-        .topRight,
-        .bottomLeft,
-        .bottomRight,
-    ]
-}
