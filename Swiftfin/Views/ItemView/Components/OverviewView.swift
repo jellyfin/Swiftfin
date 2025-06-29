@@ -45,21 +45,21 @@ extension ItemView {
 
                 if let birthday = item.birthday?.formatted(date: .long, time: .omitted) {
                     LabeledContent(
-                        "Born",
+                        L10n.born,
                         value: birthday
                     )
                 }
 
                 if let deathday = item.deathday?.formatted(date: .long, time: .omitted) {
                     LabeledContent(
-                        "Died",
+                        L10n.died,
                         value: deathday
                     )
                 }
 
                 if let birthplace = item.birthplace {
                     LabeledContent(
-                        "Birthplace",
+                        L10n.birthplace,
                         value: birthplace
                     )
                 }
