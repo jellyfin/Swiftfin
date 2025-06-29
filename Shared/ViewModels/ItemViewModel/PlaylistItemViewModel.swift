@@ -17,29 +17,46 @@ final class PlaylistItemViewModel: ItemViewModel {
     @Published
     private(set) var playlistItems: [BaseItemDto] = []
 
-    // MARK: - On Refresh
+    // MARK: - Task
 
-    override func onRefresh() async throws {
-        let items = try await self.getPlaylistItems()
+    private var playlistItemTask: AnyCancellable?
 
-        await MainActor.run {
-            self.playlistItems = items
-        }
+    // MARK: - Override Response
 
-        // Try to find first unplayed item
-        if let firstUnplayed = items.first(where: { $0.userData?.isPlayed == false }) {
-            await MainActor.run {
-                self.playButtonItem = firstUnplayed
+    override func respond(to action: ItemViewModel.Action) -> ItemViewModel.State {
+
+        switch action {
+        case .backgroundRefresh, .refresh:
+            let parentState = super.respond(to: action)
+
+            playlistItemTask?.cancel()
+
+            Task { [weak self] in
+                guard let self else { return }
+
+                await MainActor.run {
+                    self.playlistItems.removeAll()
+                }
+
+                do {
+                    let playlistItems = try await getPlaylistItems()
+
+                    await MainActor.run {
+                        self.playlistItems.append(contentsOf: playlistItems)
+                    }
+
+                    if let episodeItem = playlistItems.first {
+                        await MainActor.run {
+                            self.playButtonItem = episodeItem
+                        }
+                    }
+                }
             }
-            return
+            .store(in: &cancellables)
+        default: ()
         }
 
-        // If no unplayed item, use the first item if available
-        if let firstItem = items.first {
-            await MainActor.run {
-                self.playButtonItem = firstItem
-            }
-        }
+        return super.respond(to: action)
     }
 
     // MARK: - Get Playlist Items
