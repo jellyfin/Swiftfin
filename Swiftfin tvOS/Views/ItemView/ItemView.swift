@@ -32,6 +32,8 @@ struct ItemView: View {
             return EpisodeItemViewModel(item: item)
         case .movie:
             return MovieItemViewModel(item: item)
+        case .person, .musicArtist:
+            return PersonItemViewModel(item: item)
         case .series:
             return SeriesItemViewModel(item: item)
         default:
@@ -53,6 +55,8 @@ struct ItemView: View {
             EpisodeItemContentView(viewModel: viewModel as! EpisodeItemViewModel)
         case .movie:
             MovieItemContentView(viewModel: viewModel as! MovieItemViewModel)
+        case .person, .musicArtist:
+            PersonItemContentView(viewModel: viewModel as! PersonItemViewModel)
         case .series:
             SeriesItemContentView(viewModel: viewModel as! SeriesItemViewModel)
         default:
