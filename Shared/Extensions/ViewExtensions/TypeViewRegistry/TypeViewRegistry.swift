@@ -20,8 +20,8 @@ struct EnvironmentTypeValue<Value>: DynamicProperty {
         self._registry = Environment(keyPath)
     }
 
-    var wrappedValue: (Value) -> AnyView {
-        registry.getvalue(for: Value.self) ?? { _ in AnyView(EmptyView()) }
+    var wrappedValue: ((Value) -> AnyView)? {
+        registry.getvalue(for: Value.self)
     }
 }
 

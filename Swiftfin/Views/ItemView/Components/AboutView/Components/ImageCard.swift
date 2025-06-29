@@ -32,6 +32,9 @@ extension ItemView.AboutView {
             ) {
                 EmptyView()
             }
+            .posterOverlay(for: BaseItemDto.self) { _ in
+                EmptyView()
+            }
         }
 
         // Switch case to allow other funcitonality if we need to expand this beyond episode > series

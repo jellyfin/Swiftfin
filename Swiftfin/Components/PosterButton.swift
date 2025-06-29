@@ -73,7 +73,11 @@ struct PosterButton<Item: Poster>: View {
         Button {
             action(namespace)
         } label: {
-            posterView(overlay: posterOverlayRegistry(item))
+            let overlay = posterOverlayRegistry?(item) ??
+                PosterButton.DefaultOverlay(item: item)
+                .eraseToAnyView()
+
+            posterView(overlay: overlay)
                 .trackingSize($posterSize)
         }
         .foregroundStyle(.primary, .secondary)
