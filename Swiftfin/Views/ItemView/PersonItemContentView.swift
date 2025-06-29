@@ -26,11 +26,20 @@ extension ItemView {
         private func episodeHStack(element: Element) -> some View {
             VStack(alignment: .leading) {
 
-                Text(L10n.episodes)
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .accessibility(addTraits: [.isHeader])
-                    .edgePadding(.horizontal)
+                HStack {
+                    Text(L10n.episodes)
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .accessibility(addTraits: [.isHeader])
+
+                    Spacer()
+
+                    SeeAllButton()
+                        .onSelect {
+                            router.route(to: .library(viewModel: element.value))
+                        }
+                }
+                .edgePadding(.horizontal)
 
                 CollectionHStack(
                     uniqueElements: element.value.elements,
