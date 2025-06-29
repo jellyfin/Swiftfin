@@ -28,27 +28,20 @@ extension ItemView {
 
                 // MARK: - Items
 
-                ForEach(viewModel.collectionItems.elements, id: \.key) { element in
-                    if element.value.isNotEmpty {
-                        PosterHStack(
-                            title: element.key.pluralDisplayTitle,
-                            type: .portrait,
-                            items: element.value
-                        )
-                        .trailing {
-                            SeeAllButton()
-                                .onSelect {
-                                    let viewModel = ItemLibraryViewModel(
-                                        title: viewModel.item.displayTitle,
-                                        id: viewModel.item.id,
-                                        element.value
-                                    )
-                                    router.route(to: .library(viewModel: viewModel))
-                                }
-                        }
-                        .onSelect { item in
-                            router.route(to: .item(item: item))
-                        }
+                ForEach(viewModel.sections.elements, id: \.key) { element in
+                    PosterHStack(
+                        title: element.key.pluralDisplayTitle,
+                        type: .portrait,
+                        items: element.value.elements
+                    )
+                    .trailing {
+                        SeeAllButton()
+                            .onSelect {
+                                router.route(to: .library(viewModel: element.value))
+                            }
+                    }
+                    .onSelect { item in
+                        router.route(to: .item(item: item))
                     }
                 }
 

@@ -80,7 +80,10 @@ class ItemViewModel: ViewModel, Stateful {
     @Published
     var state: State = .initial
 
+    // TODO: move to `BaseItemDto`
     var presentPlayButton: Bool { true }
+    // TODO: move to `BaseItemDto`
+    var canBePlayed: Bool { true }
 
     // tasks
 
@@ -96,22 +99,22 @@ class ItemViewModel: ViewModel, Stateful {
 
         Notifications[.itemShouldRefreshMetadata]
             .publisher
-            .sink { itemID in
-                guard itemID == self.item.id else { return }
+            .sink { [weak self] itemID in
+                guard itemID == self?.item.id else { return }
 
                 Task {
-                    await self.send(.backgroundRefresh)
+                    await self?.send(.backgroundRefresh)
                 }
             }
             .store(in: &cancellables)
 
         Notifications[.itemMetadataDidChange]
             .publisher
-            .sink { newItem in
-                guard let newItemID = newItem.id, newItemID == self.item.id else { return }
+            .sink { [weak self] newItem in
+                guard let newItemID = newItem.id, newItemID == self?.item.id else { return }
 
                 Task {
-                    await self.send(.replace(newItem))
+                    await self?.send(.replace(newItem))
                 }
             }
             .store(in: &cancellables)

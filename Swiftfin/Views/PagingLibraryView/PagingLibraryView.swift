@@ -120,7 +120,7 @@ struct PagingLibraryView<Element: Poster>: View {
         case let element as BaseItemDto:
             select(item: element)
         case let element as BaseItemPerson:
-            select(person: element)
+            select(item: BaseItemDto(person: element))
         default:
             assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
         }
@@ -131,17 +131,9 @@ struct PagingLibraryView<Element: Poster>: View {
         case .collectionFolder, .folder:
             let viewModel = ItemLibraryViewModel(parent: item, filters: .default)
             router.route(to: .library(viewModel: viewModel))
-        case .person:
-            let viewModel = ItemLibraryViewModel(parent: item)
-            router.route(to: .library(viewModel: viewModel))
         default:
             router.route(to: .item(item: item))
         }
-    }
-
-    private func select(person: BaseItemPerson) {
-        let viewModel = ItemLibraryViewModel(parent: person)
-        router.route(to: .library(viewModel: viewModel))
     }
 
     // MARK: layout
