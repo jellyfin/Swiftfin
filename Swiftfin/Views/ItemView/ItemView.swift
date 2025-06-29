@@ -70,6 +70,8 @@ struct ItemView: View {
             return MovieItemViewModel(item: item)
         case .series:
             return SeriesItemViewModel(item: item)
+        case .person, .musicArtist:
+            return PersonItemViewModel(item: item)
         default:
             assertionFailure("Unsupported item")
             return ItemViewModel(item: item)
@@ -94,6 +96,8 @@ struct ItemView: View {
             PlaylistItemContentView(viewModel: viewModel as! PlaylistItemViewModel)
         case .series:
             SeriesItemContentView(viewModel: viewModel as! SeriesItemViewModel)
+        case .person, .musicArtist:
+            PersonItemContentView(viewModel: viewModel as! PersonItemViewModel)
         default:
             Text(L10n.notImplementedYetWithType(viewModel.item.type ?? "--"))
         }
@@ -109,7 +113,8 @@ struct ItemView: View {
             return iPadOSCinematicScrollView(viewModel: viewModel, content: content)
         }
 
-        if viewModel.item.type == .movie || viewModel.item.type == .series {
+        switch viewModel.item.type {
+        case .movie, .series:
             switch itemViewType {
             case .compactPoster:
                 return CompactPosterScrollView(viewModel: viewModel, content: content)
@@ -118,9 +123,11 @@ struct ItemView: View {
             case .cinematic:
                 return CinematicScrollView(viewModel: viewModel, content: content)
             }
+        case .person, .musicArtist:
+            return CompactPosterScrollView(viewModel: viewModel, content: content)
+        default:
+            return SimpleScrollView(viewModel: viewModel, content: content)
         }
-
-        return SimpleScrollView(viewModel: viewModel, content: content)
     }
 
     @ViewBuilder
@@ -143,7 +150,7 @@ struct ItemView: View {
                 DelayedProgressView()
             }
         }
-        .transition(.opacity.animation(.linear(duration: 0.2)))
+        .animation(.linear(duration: 0.1), value: viewModel.state)
         .navigationBarTitleDisplayMode(.inline)
         .onFirstAppear {
             viewModel.send(.refresh)

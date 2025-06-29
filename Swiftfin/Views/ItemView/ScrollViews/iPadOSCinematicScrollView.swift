@@ -36,11 +36,35 @@ extension ItemView {
             self.viewModel = viewModel
         }
 
-        private var imageType: ImageType {
-            if viewModel.item.type == .episode {
-                return .primary
+        private func withHeaderImageItem(
+            @ViewBuilder content: @escaping (ImageSource, Color) -> some View
+        ) -> some View {
+
+            let item: BaseItemDto
+
+            if let personViewModel = viewModel as? PersonItemViewModel,
+               let randomItem = personViewModel.randomItem()
+            {
+                item = randomItem
             } else {
-                return .backdrop
+                item = viewModel.item
+            }
+
+            let imageType: ImageType = item.type == .episode ? .primary : .backdrop
+            let bottomColor = item.blurHash(for: imageType)?.averageLinearColor ?? Color.secondarySystemFill
+            let imageSource = item.imageSource(imageType, maxWidth: 1920)
+
+            return content(imageSource, bottomColor)
+                .id(imageSource.url?.hashValue)
+                .animation(.linear(duration: 0.1), value: imageSource.url?.hashValue)
+        }
+
+        @ViewBuilder
+        private var headerView: some View {
+            withHeaderImageItem { imageSource, bottomColor in
+                ImageView(imageSource)
+                    .aspectRatio(1.77, contentMode: .fill)
+                    .bottomEdgeGradient(bottomColor: bottomColor)
             }
         }
 
@@ -48,22 +72,22 @@ extension ItemView {
             OffsetScrollView(
                 headerHeight: globalSize.isLandscape ? 0.75 : 0.6
             ) {
-                ImageView(viewModel.item.imageSource(imageType, maxWidth: 1920))
-                    .aspectRatio(1.77, contentMode: .fill)
+                headerView
             } overlay: {
-                VStack(spacing: 0) {
-                    Spacer()
-
-                    OverlayView(viewModel: viewModel)
-                        .edgePadding()
-                }
-                .background {
-                    BlurView(style: .systemThinMaterialDark)
-                        .maskLinearGradient {
-                            (location: 0.4, opacity: 0)
-                            (location: 0.8, opacity: 1)
-                        }
-                }
+                OverlayView(viewModel: viewModel)
+                    .edgePadding()
+                    .frame(maxWidth: .infinity)
+                    .background {
+                        BlurView(style: .systemThinMaterialDark)
+                            .maskLinearGradient {
+                                (location: 0.4, opacity: 0)
+                                (location: 0.8, opacity: 1)
+                            }
+                    }
+                    .frame(
+                        maxHeight: .infinity,
+                        alignment: .bottom
+                    )
             } content: {
                 content
                     .edgePadding(.vertical)
@@ -112,28 +136,30 @@ extension ItemView.iPadOSCinematicScrollView {
                         .taglineLineLimit(2)
                         .foregroundColor(.white)
 
-                    HStack(spacing: 30) {
-                        DotHStack {
-                            if let firstGenre = viewModel.item.genres?.first {
-                                Text(firstGenre)
-                            }
+                    if viewModel.item.type != .person {
+                        HStack(spacing: 30) {
+                            DotHStack {
+                                if let firstGenre = viewModel.item.genres?.first {
+                                    Text(firstGenre)
+                                }
 
-                            if let premiereYear = viewModel.item.premiereDateYear {
-                                Text(premiereYear)
-                            }
+                                if let premiereYear = viewModel.item.premiereDateYear {
+                                    Text(premiereYear)
+                                }
 
-                            if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
-                                Text(runtime)
+                                if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
+                                    Text(runtime)
+                                }
                             }
+                            .font(.footnote)
+                            .foregroundColor(Color(UIColor.lightGray))
+
+                            ItemView.AttributesHStack(
+                                attributes: attributes,
+                                viewModel: viewModel,
+                                alignment: .leading
+                            )
                         }
-                        .font(.footnote)
-                        .foregroundColor(Color(UIColor.lightGray))
-
-                        ItemView.AttributesHStack(
-                            attributes: attributes,
-                            viewModel: viewModel,
-                            alignment: .leading
-                        )
                     }
                 }
                 .padding(.trailing, 200)
@@ -141,7 +167,15 @@ extension ItemView.iPadOSCinematicScrollView {
                 Spacer()
 
                 VStack(spacing: 10) {
-                    if viewModel.presentPlayButton {
+                    if let personViewModel = viewModel as? PersonItemViewModel {
+                        ImageView(personViewModel.item.imageSource(.primary, maxWidth: 200))
+                            .failure {
+                                SystemImageContentView(systemName: viewModel.item.systemImage)
+                            }
+                            .posterStyle(.portrait, contentMode: .fit)
+                            .frame(width: 200)
+                            .accessibilityIgnoresInvertColors()
+                    } else if viewModel.presentPlayButton {
                         ItemView.PlayButton(viewModel: viewModel)
                             .frame(height: 50)
                     }

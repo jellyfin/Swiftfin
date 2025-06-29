@@ -47,13 +47,15 @@ struct Router: DynamicProperty {
         }
     }
 
-    @Environment(\.dismiss)
-    private var dismiss
-    @Environment(\.router)
-    private var router
+    // `.dismiss` causes changes on disappear
+    @Environment(\.self)
+    private var environment
 
     var wrappedValue: RouterWrapper {
-        .init(router: router, dismiss: dismiss)
+        .init(
+            router: environment.router,
+            dismiss: environment.dismiss
+        )
     }
 }
 

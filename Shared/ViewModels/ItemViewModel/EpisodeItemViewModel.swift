@@ -12,15 +12,21 @@ import JellyfinAPI
 
 final class EpisodeItemViewModel: ItemViewModel {
 
+    // MARK: - Published Episode Items
+
     @Published
     private(set) var seriesItem: BaseItemDto?
 
+    // MARK: - Task
+
     private var seriesItemTask: AnyCancellable?
+
+    // MARK: - Override Response
 
     override func respond(to action: ItemViewModel.Action) -> ItemViewModel.State {
 
         switch action {
-        case .refresh:
+        case .refresh, .backgroundRefresh:
             seriesItemTask?.cancel()
 
             seriesItemTask = Task {
@@ -31,11 +37,13 @@ final class EpisodeItemViewModel: ItemViewModel {
                 }
             }
             .asAnyCancellable()
-        default: break
+        default: ()
         }
 
         return super.respond(to: action)
     }
+
+    // MARK: - Get Series Items
 
     private func getSeriesItem() async throws -> BaseItemDto {
 

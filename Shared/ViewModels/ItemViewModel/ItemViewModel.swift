@@ -80,7 +80,10 @@ class ItemViewModel: ViewModel, Stateful {
     @Published
     var state: State = .initial
 
+    // TODO: move to `BaseItemDto`
     var presentPlayButton: Bool { true }
+    // TODO: move to `BaseItemDto`
+    var canBePlayed: Bool { true }
 
     // tasks
 
@@ -96,22 +99,22 @@ class ItemViewModel: ViewModel, Stateful {
 
         Notifications[.itemShouldRefreshMetadata]
             .publisher
-            .sink { itemID in
-                guard itemID == self.item.id else { return }
+            .sink { [weak self] itemID in
+                guard itemID == self?.item.id else { return }
 
                 Task {
-                    await self.send(.backgroundRefresh)
+                    await self?.send(.backgroundRefresh)
                 }
             }
             .store(in: &cancellables)
 
         Notifications[.itemMetadataDidChange]
             .publisher
-            .sink { newItem in
-                guard let newItemID = newItem.id, newItemID == self.item.id else { return }
+            .sink { [weak self] newItem in
+                guard let newItemID = newItem.id, newItemID == self?.item.id else { return }
 
                 Task {
-                    await self.send(.replace(newItem))
+                    await self?.send(.replace(newItem))
                 }
             }
             .store(in: &cancellables)
@@ -142,23 +145,23 @@ class ItemViewModel: ViewModel, Stateful {
 
                     guard !Task.isCancelled else { return }
 
-                    try await onRefresh()
-
-                    guard !Task.isCancelled else { return }
-
                     await MainActor.run {
                         self.backgroundStates.remove(.refresh)
+                        if results.fullItem.id != self.item.id || results.fullItem != self.item {
+                            self.item = results.fullItem
+                        }
 
-                        // see TODO, as the item will be set in
-                        // itemMetadataDidChange notification but
-                        // is a bit redundant
-//                        self.item = results.fullItem
+                        if !results.similarItems.elementsEqual(self.similarItems, by: { $0.id == $1.id }) {
+                            self.similarItems = results.similarItems
+                        }
 
-                        self.similarItems = results.similarItems
-                        self.specialFeatures = results.specialFeatures
-                        self.localTrailers = results.localTrailers
+                        if !results.specialFeatures.elementsEqual(self.specialFeatures, by: { $0.id == $1.id }) {
+                            self.specialFeatures = results.specialFeatures
+                        }
 
-                        Notifications[.itemMetadataDidChange].post(results.fullItem)
+                        if !results.localTrailers.elementsEqual(self.localTrailers, by: { $0.id == $1.id }) {
+                            self.localTrailers = results.localTrailers
+                        }
                     }
                 } catch {
                     guard !Task.isCancelled else { return }
@@ -192,10 +195,6 @@ class ItemViewModel: ViewModel, Stateful {
                         specialFeatures: specialFeatures,
                         localTrailers: localTrailers
                     )
-
-                    guard !Task.isCancelled else { return }
-
-                    try await onRefresh()
 
                     guard !Task.isCancelled else { return }
 
@@ -290,9 +289,6 @@ class ItemViewModel: ViewModel, Stateful {
         }
     }
 
-    @available(*, deprecated, message: "Override the `respond` method instead and return `super.respond(to:)`")
-    func onRefresh() async throws {}
-
     private func getFullItem() async throws -> BaseItemDto {
 
         var parameters = Paths.GetItemsByUserIDParameters()
@@ -371,6 +367,8 @@ class ItemViewModel: ViewModel, Stateful {
 
     private func setIsFavorite(_ isFavorite: Bool) async throws {
 
+        guard let itemID = item.id else { return }
+
         let request: Request<UserItemDataDto>
 
         if isFavorite {
@@ -386,5 +384,6 @@ class ItemViewModel: ViewModel, Stateful {
         }
 
         let _ = try await userSession.client.send(request)
+        Notifications[.itemShouldRefreshMetadata].post(itemID)
     }
 }

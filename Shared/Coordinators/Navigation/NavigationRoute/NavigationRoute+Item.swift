@@ -23,6 +23,18 @@ extension NavigationRoute {
         }
     }
 
+    static func addItemImage(viewModel: ItemImagesViewModel, imageType: ImageType) -> NavigationRoute {
+        NavigationRoute(
+            id: "addItemImage",
+            style: .push(.automatic)
+        ) {
+            AddItemImageView(
+                viewModel: viewModel,
+                imageType: imageType
+            )
+        }
+    }
+
     static func addPeople(viewModel: PeopleEditorViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "addPeople",
@@ -139,6 +151,21 @@ extension NavigationRoute {
             IdentifyItemView(item: item)
         }
     }
+
+    static func identifyItemResults(
+        viewModel: IdentifyItemViewModel,
+        result: RemoteSearchResult
+    ) -> NavigationRoute {
+        NavigationRoute(
+            id: "identifyItemResults",
+            style: .sheet
+        ) {
+            IdentifyItemView.RemoteSearchResultView(
+                viewModel: viewModel,
+                result: result,
+            )
+        }
+    }
     #endif
 
     static func item(item: BaseItemDto) -> NavigationRoute {
@@ -159,6 +186,19 @@ extension NavigationRoute {
         }
     }
 
+    static func itemImageDetails(viewModel: ItemImagesViewModel, imageInfo: ImageInfo) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemImageDetails",
+            style: .sheet
+        ) {
+            ItemImageDetailsView(
+                viewModel: viewModel,
+                imageInfo: imageInfo
+            )
+            .environment(\.isEditing, true)
+        }
+    }
+
     static func itemImages(viewModel: ItemImagesViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "itemImages",
@@ -167,6 +207,19 @@ extension NavigationRoute {
             ItemImagesView(viewModel: viewModel)
         }
     }
+
+    static func itemImageSelector(viewModel: ItemImagesViewModel, imageType: ImageType) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemImageSelector",
+            style: .sheet
+        ) {
+            ItemImagePicker(
+                viewModel: viewModel,
+                type: imageType
+            )
+        }
+    }
+
     #endif
 
     static func itemOverview(item: BaseItemDto) -> NavigationRoute {
@@ -177,4 +230,21 @@ extension NavigationRoute {
             ItemOverviewView(item: item)
         }
     }
+
+    #if os(iOS)
+
+    static func itemSearchImageDetails(viewModel: ItemImagesViewModel, remoteImageInfo: RemoteImageInfo) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemSearchImageDetails",
+            style: .sheet
+        ) {
+            ItemImageDetailsView(
+                viewModel: viewModel,
+                remoteImageInfo: remoteImageInfo
+            )
+            .environment(\.isEditing, false)
+        }
+    }
+
+    #endif
 }

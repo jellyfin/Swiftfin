@@ -21,35 +21,60 @@ final class SeriesItemViewModel: ItemViewModel {
     @Published
     var seasons: IdentifiedArrayOf<SeasonItemViewModel> = []
 
-    override func onRefresh() async throws {
+    // MARK: - Task
 
-        await MainActor.run {
-            self.seasons.removeAll()
-        }
+    private var seriesItemTask: AnyCancellable?
 
-        async let nextUp = getNextUp()
-        async let resume = getResumeItem()
-        async let firstAvailable = getFirstAvailableItem()
-        async let seasons = getSeasons()
+    // MARK: - Override Response
 
-        let newSeasons = try await seasons
-            .sorted { ($0.indexNumber ?? -1) < ($1.indexNumber ?? -1) } // sort just in case
-            .map(SeasonItemViewModel.init)
+    override func respond(to action: ItemViewModel.Action) -> ItemViewModel.State {
 
-        await MainActor.run {
-            self.seasons.append(contentsOf: newSeasons)
-        }
+        switch action {
+        case .backgroundRefresh, .refresh:
+            let parentState = super.respond(to: action)
 
-        if let episodeItem = try await [nextUp, resume].compacted().first {
-            await MainActor.run {
-                self.playButtonItem = episodeItem
+            seriesItemTask?.cancel()
+
+            Task { [weak self] in
+                guard let self else { return }
+
+                await MainActor.run {
+                    self.seasons.removeAll()
+                }
+
+                do {
+                    async let nextUp = getNextUp()
+                    async let resume = getResumeItem()
+                    async let firstAvailable = getFirstAvailableItem()
+                    async let seasons = getSeasons()
+
+                    let newSeasons = try await seasons
+                        .sorted { ($0.indexNumber ?? -1) < ($1.indexNumber ?? -1) }
+                        .map(SeasonItemViewModel.init)
+
+                    await MainActor.run {
+                        self.seasons.append(contentsOf: newSeasons)
+                    }
+
+                    if let episodeItem = try await [nextUp, resume].compacted().first {
+                        await MainActor.run {
+                            self.playButtonItem = episodeItem
+                        }
+                    } else if let firstAvailable = try await firstAvailable {
+                        await MainActor.run {
+                            self.playButtonItem = firstAvailable
+                        }
+                    }
+                }
             }
-        } else if let firstAvailable = try await firstAvailable {
-            await MainActor.run {
-                self.playButtonItem = firstAvailable
-            }
+            .store(in: &cancellables)
+        default: ()
         }
+
+        return super.respond(to: action)
     }
+
+    // MARK: - Get Next Up Item
 
     private func getNextUp() async throws -> BaseItemDto? {
 
@@ -68,6 +93,8 @@ final class SeriesItemViewModel: ItemViewModel {
         return item
     }
 
+    // MARK: - Get Resumable Item
+
     private func getResumeItem() async throws -> BaseItemDto? {
 
         var parameters = Paths.GetResumeItemsParameters()
@@ -81,6 +108,8 @@ final class SeriesItemViewModel: ItemViewModel {
 
         return response.value.items?.first
     }
+
+    // MARK: - Get First Available Item
 
     private func getFirstAvailableItem() async throws -> BaseItemDto? {
 
@@ -100,6 +129,8 @@ final class SeriesItemViewModel: ItemViewModel {
 
         return response.value.items?.first
     }
+
+    // MARK: - Get First Item Seasons
 
     private func getSeasons() async throws -> [BaseItemDto] {
 

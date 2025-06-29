@@ -21,6 +21,11 @@ struct ItemImagePicker: View {
 
     let type: ImageType
 
+    // MARK: - Error State
+
+    @State
+    private var error: Error?
+
     // MARK: - Body
 
     var body: some View {
@@ -35,5 +40,16 @@ struct ItemImagePicker: View {
         } onCancel: {
             router.dismiss()
         }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case let .error(eventError):
+                UIDevice.feedback(.error)
+                error = eventError
+            case .updated:
+                UIDevice.feedback(.success)
+                router.dismiss()
+            }
+        }
+        .errorMessage($error)
     }
 }

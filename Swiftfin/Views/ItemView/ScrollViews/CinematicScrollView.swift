@@ -6,8 +6,8 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import BlurHashKit
 import Defaults
+import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
@@ -23,58 +23,54 @@ extension ItemView {
         @ObservedObject
         private var viewModel: ItemViewModel
 
-        private let blurHashBottomEdgeColor: Color
         private let content: Content
 
         init(
             viewModel: ItemViewModel,
             content: @escaping () -> Content
         ) {
-            if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
-                let bottomRGB = BlurHash(string: backdropBlurHash)!.averageLinearRGB
-                blurHashBottomEdgeColor = Color(
-                    red: Double(bottomRGB.0),
-                    green: Double(bottomRGB.1),
-                    blue: Double(bottomRGB.2)
-                )
-            } else {
-                blurHashBottomEdgeColor = Color.secondarySystemFill
-            }
-
             self.content = content()
             self.viewModel = viewModel
         }
 
+        private var imageType: ImageType {
+            usePrimaryImage ? .primary : .backdrop
+        }
+
         @ViewBuilder
         private var headerView: some View {
+
+            let bottomColor = viewModel.item.blurHash(for: imageType)?.averageLinearColor ?? Color.secondarySystemFill
+
             ImageView(viewModel.item.imageSource(
-                usePrimaryImage ? .primary : .backdrop,
+                imageType,
                 maxWidth: UIScreen.main.bounds.width
             ))
             .aspectRatio(usePrimaryImage ? (2 / 3) : 1.77, contentMode: .fill)
             .frame(height: UIScreen.main.bounds.height * 0.6)
-            .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
+            .bottomEdgeGradient(bottomColor: bottomColor)
         }
 
         var body: some View {
             OffsetScrollView(headerHeight: 0.75) {
                 headerView
             } overlay: {
-                VStack {
-                    Spacer()
-
-                    OverlayView(viewModel: viewModel)
-                        .edgePadding(.horizontal)
-                        .padding(.bottom)
-                        .background {
-                            BlurView(style: .systemThinMaterialDark)
-                                .maskLinearGradient {
-                                    (location: 0, opacity: 0)
-                                    (location: 0.3, opacity: 1)
-                                    (location: 1, opacity: 1)
-                                }
-                        }
-                }
+                OverlayView(viewModel: viewModel)
+                    .edgePadding(.horizontal)
+                    .edgePadding(.bottom)
+                    .frame(maxWidth: .infinity)
+                    .background {
+                        BlurView(style: .systemThinMaterialDark)
+                            .maskLinearGradient {
+                                (location: 0, opacity: 0)
+                                (location: 0.3, opacity: 1)
+                                (location: 1, opacity: 1)
+                            }
+                    }
+                    .frame(
+                        maxHeight: .infinity,
+                        alignment: .bottom
+                    )
             } content: {
                 content
                     .edgePadding(.vertical)

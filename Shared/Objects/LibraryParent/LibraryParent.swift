@@ -45,7 +45,7 @@ extension LibraryParent {
         parameters.includeItemTypes = supportedItemTypes
 
         switch libraryType {
-        case .collectionFolder, .userView:
+        case .boxSet, .collectionFolder, .userView:
             parameters.parentID = id
         case .folder:
             parameters.parentID = id
