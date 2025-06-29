@@ -175,7 +175,7 @@ extension ItemView.iPadOSCinematicScrollView {
                             .posterStyle(.portrait, contentMode: .fit)
                             .frame(width: 200)
                             .accessibilityIgnoresInvertColors()
-                    } else if viewModel.presentPlayButton {
+                    } else if viewModel.item.presentPlayButton {
                         ItemView.PlayButton(viewModel: viewModel)
                             .frame(height: 50)
                     }

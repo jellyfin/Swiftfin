@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
@@ -26,13 +27,28 @@ extension ItemView {
             self.content = content()
         }
 
+        private func backgroundImageView() -> some View {
+            let item: BaseItemDto
+
+            if let personViewModel = viewModel as? PersonItemViewModel,
+               let randomItem = personViewModel.randomItem()
+            {
+                item = randomItem
+            } else {
+                item = viewModel.item
+            }
+
+            let imageType: ImageType = item.type == .episode ? .primary : .backdrop
+            let imageSource = item.imageSource(imageType, maxWidth: 1920)
+
+            return ImageView(imageSource)
+                .id(imageSource.url?.hashValue)
+                .animation(.linear(duration: 0.1), value: imageSource.url?.hashValue)
+        }
+
         var body: some View {
             ZStack {
-                if viewModel.item.type == .episode {
-                    ImageView(viewModel.item.imageSource(.primary, maxWidth: 1920))
-                } else {
-                    ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1920))
-                }
+                backgroundImageView()
 
                 ScrollView(.vertical, showsIndicators: false) {
                     content
@@ -109,47 +125,50 @@ extension ItemView {
                         .padding(.bottom)
                         .frame(maxHeight: 250, alignment: .bottomLeading)
 
-                        if let tagline = viewModel.item.taglines?.first {
-                            Text(tagline)
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                                .multilineTextAlignment(.leading)
-                                .lineLimit(1)
-                        }
+                        OverviewView(item: viewModel.item)
+                            .taglineLineLimit(1)
+                            .overviewLineLimit(3)
 
-                        Text(viewModel.item.overview ?? L10n.noOverviewAvailable)
-                            .font(.subheadline)
-                            .lineLimit(3)
+                        if viewModel.item.type != .person {
+                            HStack {
 
-                        HStack {
+                                DotHStack {
+                                    if let firstGenre = viewModel.item.genres?.first {
+                                        Text(firstGenre)
+                                    }
 
-                            DotHStack {
-                                if let firstGenre = viewModel.item.genres?.first {
-                                    Text(firstGenre)
+                                    if let premiereYear = viewModel.item.premiereDateYear {
+                                        Text(premiereYear)
+                                    }
+
+                                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
+                                        Text(runtime)
+                                    }
                                 }
+                                .font(.caption)
+                                .foregroundColor(Color(UIColor.lightGray))
 
-                                if let premiereYear = viewModel.item.premiereDateYear {
-                                    Text(premiereYear)
-                                }
-
-                                if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
-                                    Text(runtime)
-                                }
+                                ItemView.AttributesHStack(
+                                    attributes: attributes,
+                                    viewModel: viewModel
+                                )
                             }
-                            .font(.caption)
-                            .foregroundColor(Color(UIColor.lightGray))
-
-                            ItemView.AttributesHStack(
-                                attributes: attributes,
-                                viewModel: viewModel
-                            )
                         }
                     }
 
                     Spacer()
 
                     VStack {
-                        if viewModel.presentPlayButton {
+                        if let personViewModel = viewModel as? PersonItemViewModel {
+                            ImageView(personViewModel.item.imageSource(.primary, maxWidth: 440))
+                                .failure {
+                                    SystemImageContentView(systemName: viewModel.item.systemImage)
+                                }
+                                .posterStyle(.portrait, contentMode: .fill)
+                                .frame(width: 440)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .accessibilityIgnoresInvertColors()
+                        } else if viewModel.item.presentPlayButton {
                             ItemView.PlayButton(viewModel: viewModel)
                                 .focused($focusedLayer, equals: .playButton)
                         }
@@ -165,7 +184,7 @@ extension ItemView {
             .padding(.horizontal, 50)
             .onChange(of: focusedLayer) { _, layer in
                 if layer == .top {
-                    if viewModel.presentPlayButton {
+                    if viewModel.item.presentPlayButton {
                         focusedLayer = .playButton
                     } else {
                         focusedLayer = .actionButtons

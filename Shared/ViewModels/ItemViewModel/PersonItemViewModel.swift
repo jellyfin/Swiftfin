@@ -18,18 +18,6 @@ final class PersonItemViewModel: ItemViewModel {
 
     private let itemCollection: ItemTypeCollection
 
-    // MARK: - Disable PlayButton
-
-    override var presentPlayButton: Bool {
-        false
-    }
-
-    // MARK: - Disable Play Toggle
-
-    override var canBePlayed: Bool {
-        false
-    }
-
     override init(item: BaseItemDto) {
         self.itemCollection = ItemTypeCollection(
             parent: item,
