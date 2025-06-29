@@ -222,10 +222,9 @@ struct SelectUserView: View {
             .pickerStyle(.menu)
         }
 
-            Section {
-                Button(L10n.advanced, systemImage: "gearshape.fill") {
-                    router.route(to: .appSettings)
-                }
+        Section {
+            Button(L10n.advanced, systemImage: "gearshape.fill") {
+                router.route(to: .appSettings)
             }
         }
     }
