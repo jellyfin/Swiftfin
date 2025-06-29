@@ -100,12 +100,6 @@ extension PosterHStack {
         copy(modifying: \.content, with: content)
     }
 
-    @available(*, deprecated, message: "Use `posterOverlay(for:)` instead")
-    func imageOverlay(@ViewBuilder _ content: @escaping (Element) -> any View) -> Self {
-        self
-//        copy(modifying: \.imageOverlay, with: content)
-    }
-
     func trailing(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.trailingContent, with: content)
     }
