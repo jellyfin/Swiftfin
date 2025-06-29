@@ -23,8 +23,8 @@ extension ItemView {
 
         // MARK: - Observed, State, & Environment Objects
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: ItemViewModel
@@ -99,7 +99,7 @@ extension ItemView {
                 ) {
                     viewModel.send(.toggleIsPlayed)
                 }
-                .foregroundStyle(.black, Color.jellyfinPurple, .white)
+                .foregroundStyle(.purple)
                 .environment(\.isSelected, isCheckmarkSelected)
                 .frame(minWidth: 100, maxWidth: .infinity)
 
@@ -114,7 +114,7 @@ extension ItemView {
                 ) {
                     viewModel.send(.toggleIsFavorite)
                 }
-                .foregroundStyle(.black, .pink, .white)
+                .foregroundStyle(.pink)
                 .environment(\.isSelected, isHeartSelected)
                 .frame(minWidth: 100, maxWidth: .infinity)
 
@@ -125,7 +125,6 @@ extension ItemView {
                         localTrailers: viewModel.localTrailers,
                         externalTrailers: viewModel.item.remoteTrailers ?? []
                     )
-                    .foregroundStyle(.black, .white)
                 }
 
                 // MARK: Advanced Options
@@ -144,7 +143,6 @@ extension ItemView {
                             }
                         }
                     }
-                    .foregroundStyle(.black, .white)
                     .frame(width: 60)
                 }
             }
@@ -166,7 +164,7 @@ extension ItemView {
                 case let .error(eventError):
                     error = eventError
                 case .deleted:
-                    router.dismissCoordinator()
+                    router.dismiss()
                 }
             }
             .errorMessage($error)

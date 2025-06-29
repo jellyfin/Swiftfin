@@ -11,6 +11,8 @@ import Factory
 import JellyfinAPI
 import SwiftUI
 
+// TODO: replace `equalSpacing` handling with a `Layout`
+
 extension ItemView {
 
     struct ActionButtonHStack: View {
@@ -50,79 +52,77 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            HStack(alignment: .center, spacing: 10) {
-                
+            HStack(alignment: .center, spacing: 15) {
+
+                // MARK: Toggle Played
+
                 /// Marking Persons and Artists as played doesn't do anything.
                 if viewModel.item.type != .person && viewModel.item.type != .musicArtist {
-                    
-                    // MARK: - Toggle Played
-                    
+
                     let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
-                    
-                    Button(L10n.played, systemImage: isCheckmarkSelected ? "checkmark.circle.fill" : "checkmark.circle") {
+
+                    ActionButton(
+                        L10n.played,
+                        icon: "checkmark.circle",
+                        selectedIcon: "checkmark.circle.fill"
+                    ) {
+                        UIDevice.impact(.light)
                         viewModel.send(.toggleIsPlayed)
                     }
-                    .buttonStyle(.action)
-                    .labelStyle(.iconOnly)
-                    .foregroundStyle(accentColor.overlayColor, accentColor, Color(UIColor.lightGray))
                     .environment(\.isSelected, isCheckmarkSelected)
-                    .frame(maxWidth: .infinity)
-                    .if(!equalSpacing) { view in
-                        view.aspectRatio(1, contentMode: .fit)
+                    .if(isCheckmarkSelected) { item in
+                        item
+                            .foregroundStyle(
+                                .primary,
+                                accentColor
+                            )
+                    }
+                    .if(equalSpacing) { view in
+                        view.frame(maxWidth: .infinity)
                     }
                 }
 
-                // MARK: - Toggle Favorite
+                // MARK: Toggle Favorite
 
                 let isHeartSelected = viewModel.item.userData?.isFavorite == true
 
-                Button(L10n.favorite, systemImage: isHeartSelected ? "heart.fill" : "heart") {
+                ActionButton(
+                    L10n.favorited,
+                    icon: "heart",
+                    selectedIcon: "heart.fill"
+                ) {
+                    UIDevice.impact(.light)
                     viewModel.send(.toggleIsFavorite)
                 }
-                .buttonStyle(.action)
-                .labelStyle(.iconOnly)
-                .foregroundStyle(accentColor.overlayColor, .red, Color(UIColor.lightGray))
                 .environment(\.isSelected, isHeartSelected)
-                .frame(maxWidth: .infinity)
-                .if(!equalSpacing) { view in
-                    view.aspectRatio(1, contentMode: .fit)
+                .if(isHeartSelected) { item in
+                    item
+                        .foregroundStyle(Color.red)
+                }
+                .if(equalSpacing) { view in
+                    view.frame(maxWidth: .infinity)
                 }
 
-                // MARK: - Select a Version
+                // MARK: Select a Version
 
                 if let mediaSources = viewModel.playButtonItem?.mediaSources,
                    mediaSources.count > 1
                 {
-                    VersionMenu(
-                        viewModel: viewModel,
-                        mediaSources: mediaSources
-                    )
-                    .menuStyle(.button)
-                    .buttonStyle(.action)
-                    .labelStyle(.iconOnly)
-                    .foregroundStyle(accentColor.overlayColor, Color(UIColor.lightGray))
-                    .environment(\.isSelected, false)
-                    .frame(maxWidth: .infinity)
-                    .if(!equalSpacing) { view in
-                        view.aspectRatio(1, contentMode: .fit)
-                    }
+                    VersionMenu(viewModel: viewModel, mediaSources: mediaSources)
+                        .if(equalSpacing) { view in
+                            view.frame(maxWidth: .infinity)
+                        }
                 }
 
-                // MARK: - Watch a Trailer
+                // MARK: Watch a Trailer
 
                 if hasTrailers {
                     TrailerMenu(
                         localTrailers: viewModel.localTrailers,
                         externalTrailers: viewModel.item.remoteTrailers ?? []
                     )
-                    .menuStyle(.button)
-                    .buttonStyle(.action)
-                    .labelStyle(.iconOnly)
-                    .foregroundStyle(accentColor.overlayColor, Color(UIColor.lightGray))
-                    .environment(\.isSelected, false)
-                    .frame(maxWidth: .infinity)
-                    .if(!equalSpacing) { view in
-                        view.aspectRatio(1, contentMode: .fit)
+                    .if(equalSpacing) { view in
+                        view.frame(maxWidth: .infinity)
                     }
                 }
             }
