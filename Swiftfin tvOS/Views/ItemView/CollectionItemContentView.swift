@@ -32,8 +32,7 @@ extension ItemView {
                             title: element.key.pluralDisplayTitle,
                             type: .portrait,
                             items: element.value.elements
-                        )
-                        .onSelect { item in
+                        ) { item in
                             router.route(to: .item(item: item))
                         }
                     }

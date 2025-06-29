@@ -39,29 +39,28 @@ struct MediaView: View {
             uniqueElements: viewModel.mediaItems,
             layout: UIDevice.isPhone ? phoneLayout : padLayout
         ) { mediaType in
-            MediaItem(viewModel: viewModel, type: mediaType)
-                .onSelect {
-                    switch mediaType {
-                    case let .collectionFolder(item):
-                        let viewModel = ItemLibraryViewModel(
-                            parent: item,
-                            filters: .default
-                        )
-                        router.route(to: .library(viewModel: viewModel))
-                    case .downloads:
-                        router.route(to: .downloadList)
-                    case .favorites:
-                        // TODO: favorites should have its own view instead of a library
-                        let viewModel = ItemLibraryViewModel(
-                            title: L10n.favorites,
-                            id: "favorites",
-                            filters: .favorites
-                        )
-                        router.route(to: .library(viewModel: viewModel))
-                    case .liveTV:
-                        router.route(to: .liveTV)
-                    }
+            MediaItem(viewModel: viewModel, type: mediaType) { namespace in
+                switch mediaType {
+                case let .collectionFolder(item):
+                    let viewModel = ItemLibraryViewModel(
+                        parent: item,
+                        filters: .default
+                    )
+                    router.route(to: .library(viewModel: viewModel), in: namespace)
+                case .downloads:
+                    router.route(to: .downloadList)
+                case .favorites:
+                    // TODO: favorites should have its own view instead of a library
+                    let viewModel = ItemLibraryViewModel(
+                        title: L10n.favorites,
+                        id: "favorites",
+                        filters: .favorites
+                    )
+                    router.route(to: .library(viewModel: viewModel), in: namespace)
+                case .liveTV:
+                    router.route(to: .liveTV)
                 }
+            }
         }
     }
 

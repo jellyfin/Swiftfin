@@ -193,7 +193,6 @@ struct ItemImagesView: View {
             }
             .posterStyle(imageInfo.height ?? 0 > imageInfo.width ?? 0 ? .portrait : .landscape)
             .frame(maxHeight: 150)
-            .posterShadow()
         }
     }
 }

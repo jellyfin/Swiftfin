@@ -12,7 +12,7 @@ import SwiftUI
 
 // TODO: trailing content refactor?
 
-struct PosterHStack<Element: Poster & Identifiable, Data: Collection>: View where Data.Element == Element, Data.Index == Int {
+struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element == Element, Data.Index == Int {
 
     private var data: Data
     private var title: String?
@@ -21,7 +21,7 @@ struct PosterHStack<Element: Poster & Identifiable, Data: Collection>: View wher
     private var imageOverlay: (Element) -> any View
     private var contextMenu: (Element) -> any View
     private var trailingContent: () -> any View
-    private var onSelect: (Element) -> Void
+    private var action: (Element) -> Void
 
     // See PosterButton for implementation reason
     private var focusedItem: Binding<Element?>?
@@ -45,16 +45,14 @@ struct PosterHStack<Element: Poster & Identifiable, Data: Collection>: View wher
                 uniqueElements: data,
                 columns: type == .landscape ? 4 : 7
             ) { item in
-                PosterButton(item: item, type: type)
-                    .content { content(item).eraseToAnyView() }
-                    .imageOverlay { imageOverlay(item).eraseToAnyView() }
-                    .contextMenu { contextMenu(item).eraseToAnyView() }
-                    .onSelect { onSelect(item) }
-                    .ifLet(focusedItem) { view, focusedItem in
-                        view.onFocusChanged { isFocused in
-                            if isFocused { focusedItem.wrappedValue = item }
-                        }
-                    }
+                PosterButton(
+                    item: item,
+                    type: type
+                ) {
+                    action(item)
+                } label: {
+                    content(item).eraseToAnyView()
+                }
             }
             .clipsToBounds(false)
             .dataPrefix(20)
@@ -86,7 +84,8 @@ extension PosterHStack {
     init(
         title: String? = nil,
         type: PosterDisplayType,
-        items: Data
+        items: Data,
+        action: @escaping (Element) -> Void
     ) {
         self.init(
             data: items,
@@ -96,7 +95,7 @@ extension PosterHStack {
             imageOverlay: { PosterButton.DefaultOverlay(item: $0) },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
-            onSelect: { _ in }
+            action: action
         )
     }
 
@@ -104,10 +103,12 @@ extension PosterHStack {
         copy(modifying: \.content, with: content)
     }
 
+    @available(*, deprecated, message: "Use `posterOverlay(for:)` instead")
     func imageOverlay(@ViewBuilder _ content: @escaping (Element) -> any View) -> Self {
         copy(modifying: \.imageOverlay, with: content)
     }
 
+    @available(*, deprecated, message: "Use `contextMenu(for:)` instead")
     func contextMenu(@ViewBuilder _ content: @escaping (Element) -> any View) -> Self {
         copy(modifying: \.contextMenu, with: content)
     }
@@ -116,8 +117,10 @@ extension PosterHStack {
         copy(modifying: \.trailingContent, with: content)
     }
 
+    @available(*, deprecated, message: "Use init with action instead")
     func onSelect(_ action: @escaping (Element) -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
+        self
+//        copy(modifying: \.action, with: action)
     }
 
     func focusedItem(_ binding: Binding<Element?>) -> Self {

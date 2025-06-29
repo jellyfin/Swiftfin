@@ -21,9 +21,10 @@ extension SeriesEpisodeSelector {
                     .posterStyle(.landscape)
 
                 SeriesEpisodeSelector.EpisodeContent(
-                    subHeader: .emptyDash,
                     header: L10n.noResults,
-                    content: L10n.noEpisodesAvailable
+                    subHeader: .emptyDash,
+                    content: L10n.noEpisodesAvailable,
+                    action: {}
                 )
                 .disabled(true)
             }

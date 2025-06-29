@@ -41,7 +41,7 @@ extension ItemView.AboutView {
                 if let episodeViewModel = viewModel as? EpisodeItemViewModel,
                    let seriesItem = episodeViewModel.seriesItem
                 {
-                    router.route(to: .item(item: seriesItem))
+//                    router.route(to: .item(item: seriesItem))
                 }
             default:
                 break

@@ -170,7 +170,8 @@ extension NavigationRoute {
 
     static func item(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(
-            id: "item-\(item.unwrappedIDHashOrZero)"
+            id: "item-\(item.id ?? "Unknown")",
+            withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
             ItemView(item: item)
         }

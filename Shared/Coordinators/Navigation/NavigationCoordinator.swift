@@ -11,13 +11,8 @@ import SwiftUI
 @MainActor
 final class NavigationCoordinator: ObservableObject {
 
-    struct PathItem: Hashable {
-        let route: NavigationRoute
-        let namespace: Namespace.ID?
-    }
-
     @Published
-    var path: [PathItem] = []
+    var path: [NavigationRoute] = []
 
     @Published
     var presentedSheet: NavigationRoute?
@@ -25,11 +20,9 @@ final class NavigationCoordinator: ObservableObject {
     var presentedFullScreen: NavigationRoute?
 
     func push(
-        _ route: NavigationRoute,
-        style: NavigationRoute.TransitionStyle? = nil,
-        in namespace: Namespace.ID? = nil
+        _ route: NavigationRoute
     ) {
-        let style = style ?? route.transitionStyle
+        let style = route.transitionStyle
 
         #if os(tvOS)
         switch style {
@@ -41,12 +34,7 @@ final class NavigationCoordinator: ObservableObject {
         #else
         switch style {
         case .push:
-            path.append(
-                PathItem(
-                    route: route,
-                    namespace: namespace
-                )
-            )
+            path.append(route)
         case .sheet:
             presentedSheet = route
         case .fullscreen:

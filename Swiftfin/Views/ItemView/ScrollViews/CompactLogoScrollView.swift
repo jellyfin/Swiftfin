@@ -59,7 +59,7 @@ extension ItemView {
                         alignment: .bottom
                     )
             } content: {
-                SeparatorVStack {
+                SeparatorVStack(alignment: .leading) {
                     RowDivider()
                         .padding(.vertical, 10)
                 } content: {
@@ -67,6 +67,7 @@ extension ItemView {
                         .overviewLineLimit(4)
                         .taglineLineLimit(2)
                         .edgePadding(.horizontal)
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     content
                 }

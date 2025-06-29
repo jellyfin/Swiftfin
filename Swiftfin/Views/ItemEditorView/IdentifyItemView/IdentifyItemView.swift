@@ -183,6 +183,5 @@ struct IdentifyItemView: View {
                 }
         }
         .posterStyle(.portrait)
-        .posterShadow()
     }
 }

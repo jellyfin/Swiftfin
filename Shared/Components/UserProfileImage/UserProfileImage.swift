@@ -50,7 +50,8 @@ struct UserProfileImage<Placeholder: View>: View {
             ImageView(source)
                 .pipeline(pipeline)
                 .image {
-                    $0.posterBorder(ratio: 1 / 2, of: \.width)
+                    $0.posterBorder()
+                        .containerShape(.circle)
                 }
                 .placeholder { _ in
                     placeholder

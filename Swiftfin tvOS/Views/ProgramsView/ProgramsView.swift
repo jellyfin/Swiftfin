@@ -61,7 +61,9 @@ struct ProgramsView: View {
             title: title,
             type: .landscape,
             items: programsViewModel[keyPath: keyPath]
-        )
+        ) { item in
+            router.route(to: .item(item: item))
+        }
         .content {
             ProgramButtonContent(program: $0)
         }

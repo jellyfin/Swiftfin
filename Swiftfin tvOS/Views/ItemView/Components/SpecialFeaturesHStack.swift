@@ -23,7 +23,9 @@ extension ItemView {
                 title: L10n.specialFeatures,
                 type: .landscape,
                 items: items
-            )
+            ) { item in
+                router.route(to: .item(item: item))
+            }
             .onSelect { item in
                 guard let mediaSource = item.mediaSources?.first else { return }
                 router.route(

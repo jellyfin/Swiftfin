@@ -65,8 +65,8 @@ extension HomeView {
                         progress: (item.userData?.playedPercentage ?? 0) / 100
                     )
                 }
-                .onSelect { item in
-                    router.route(to: .item(item: item))
+                .onSelect { _ in
+//                    router.route(to: .item(item: item))
                 }
         }
     }

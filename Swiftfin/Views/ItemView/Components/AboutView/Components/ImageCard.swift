@@ -25,22 +25,26 @@ extension ItemView.AboutView {
         // MARK: - Body
 
         var body: some View {
-            PosterButton(item: viewModel.item, type: .portrait)
-                .content { EmptyView() }
-                .imageOverlay { EmptyView() }
-                .onSelect(onSelect)
+            PosterButton(
+                item: viewModel.item,
+                type: .portrait,
+                action: action
+            ) {
+                EmptyView()
+            }
+            .posterOverlay(for: BaseItemDto.self) { _ in
+                EmptyView()
+            }
         }
 
-        // MARK: - On Select
-
         // Switch case to allow other funcitonality if we need to expand this beyond episode > series
-        private func onSelect() {
+        private func action(namespace: Namespace.ID) {
             switch viewModel.item.type {
             case .episode:
                 if let episodeViewModel = viewModel as? EpisodeItemViewModel,
                    let seriesItem = episodeViewModel.seriesItem
                 {
-                    router.route(to: .item(item: seriesItem))
+                    router.route(to: .item(item: seriesItem), in: namespace)
                 }
             default:
                 break
