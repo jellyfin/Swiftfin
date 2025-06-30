@@ -86,7 +86,6 @@
 		E176EBE02D0502A6009F4CF1 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E176EBDF2D0502A6009F4CF1 /* CollectionHStack */; };
 		E176EBE32D0502C6009F4CF1 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E176EBE22D0502C6009F4CF1 /* CollectionHStack */; };
 		E176EBE92D050925009F4CF1 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E176EBE82D050925009F4CF1 /* CollectionVGrid */; };
-		E18443CB2A037773002DDDC8 /* UDPBroadcast in Frameworks */ = {isa = PBXBuildFile; productRef = E18443CA2A037773002DDDC8 /* UDPBroadcast */; };
 		E18A8E7A28D5FEDF00333B9A /* VLCUI in Frameworks */ = {isa = PBXBuildFile; productRef = E18A8E7928D5FEDF00333B9A /* VLCUI */; };
 		E18D6AA62BAA96F000A0D167 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E18D6AA52BAA96F000A0D167 /* CollectionHStack */; };
 		E192608328D2D0DB002314B4 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E192608228D2D0DB002314B4 /* Factory */; };
@@ -106,7 +105,6 @@
 		E1B5F7AB29577BCE004B26CF /* PulseUI in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7AA29577BCE004B26CF /* PulseUI */; };
 		E1B5F7AD29577BDD004B26CF /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7AC29577BDD004B26CF /* OrderedCollections */; };
 		E1DC9814296DC06200982F06 /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E1DC9813296DC06200982F06 /* PulseLogHandler */; };
-		E1FAD1C62A0375BA007F5521 /* UDPBroadcast in Frameworks */ = {isa = PBXBuildFile; productRef = E1FAD1C52A0375BA007F5521 /* UDPBroadcast */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -281,7 +279,6 @@
 				62666E2C27E5021000EC0ECD /* QuartzCore.framework in Frameworks */,
 				62666E1927E501D000EC0ECD /* CoreFoundation.framework in Frameworks */,
 				E19D41B22BF2BFA50082B8B2 /* KeychainSwift in Frameworks */,
-				E18443CB2A037773002DDDC8 /* UDPBroadcast in Frameworks */,
 				E1155ACB2D0584A90021557A /* IdentifiedCollections in Frameworks */,
 				62666E2E27E5021400EC0ECD /* Security.framework in Frameworks */,
 				E1B5F7AD29577BDD004B26CF /* OrderedCollections in Frameworks */,
@@ -335,7 +332,6 @@
 				62666E1027E501B400EC0ECD /* VideoToolbox.framework in Frameworks */,
 				62666E0C27E501A500EC0ECD /* OpenGLES.framework in Frameworks */,
 				E19E6E0A28A0BEFF005C10C8 /* BlurHashKit in Frameworks */,
-				E1FAD1C62A0375BA007F5521 /* UDPBroadcast in Frameworks */,
 				E1153DD02BBB634F00424D36 /* SVGKit in Frameworks */,
 				E18D6AA62BAA96F000A0D167 /* CollectionHStack in Frameworks */,
 				62666E0127E5016900EC0ECD /* CoreFoundation.framework in Frameworks */,
@@ -392,6 +388,388 @@
 			sourceTree = "<group>";
 		};
 		53D5E3DB264B47EE00BADDC8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4E90F7592CC72B1F00417C31 /* DetailsSection.swift */,
+				4E90F75A2CC72B1F00417C31 /* LastErrorSection.swift */,
+				4E90F75B2CC72B1F00417C31 /* LastRunSection.swift */,
+				E11969692CC99EA9001A58BE /* ServerTaskProgressSection.swift */,
+				4E90F75D2CC72B1F00417C31 /* TriggersSection.swift */,
+			);
+			path = Sections;
+			sourceTree = "<group>";
+		};
+		4E90F7602CC72B1F00417C31 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4E90F75E2CC72B1F00417C31 /* Sections */,
+				4E90F75F2CC72B1F00417C31 /* TriggerRow.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4E90F7622CC72B1F00417C31 /* EditServerTaskView */ = {
+			isa = PBXGroup;
+			children = (
+				4E90F7602CC72B1F00417C31 /* Components */,
+				4E90F7612CC72B1F00417C31 /* EditServerTaskView.swift */,
+			);
+			path = EditServerTaskView;
+			sourceTree = "<group>";
+		};
+		4E98F7C82D123AD4001E7518 /* Modifiers */ = {
+			isa = PBXGroup;
+			children = (
+				4E98F7C12D123AD4001E7518 /* NavigationBarMenuButton.swift */,
+			);
+			path = Modifiers;
+			sourceTree = "<group>";
+		};
+		4E98F7CA2D123AD4001E7518 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				4E98F7C82D123AD4001E7518 /* Modifiers */,
+				4E98F7C92D123AD4001E7518 /* View-tvOS.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		4E98F7CB2D123AD4001E7518 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				4E98F7CA2D123AD4001E7518 /* View */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		4E9A24E32C82B4700023DA83 /* CustomDeviceProfileSettingsView */ = {
+			isa = PBXGroup;
+			children = (
+				4E9A24E42C82B5440023DA83 /* Components */,
+				4E9A24E52C82B5A50023DA83 /* CustomDeviceProfileSettingsView.swift */,
+			);
+			path = CustomDeviceProfileSettingsView;
+			sourceTree = "<group>";
+		};
+		4E9A24E42C82B5440023DA83 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4E9A24E72C82B6190023DA83 /* CustomProfileButton.swift */,
+				4E9A24EC2C82BAFB0023DA83 /* EditCustomDeviceProfileView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4EA09DDF2CC4E4D000CB27E4 /* APIKeyView */ = {
+			isa = PBXGroup;
+			children = (
+				4EA09DE22CC4E7BE00CB27E4 /* Components */,
+				4EA09DE02CC4E4F000CB27E4 /* APIKeysView.swift */,
+			);
+			path = APIKeyView;
+			sourceTree = "<group>";
+		};
+		4EA09DE22CC4E7BE00CB27E4 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4EA09DE32CC4E85700CB27E4 /* APIKeysRow.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4EA78B152D2A0C4A0093BFCE /* ItemImageDetailsView */ = {
+			isa = PBXGroup;
+			children = (
+				4EA78B1B2D2A266A0093BFCE /* Components */,
+				4EA78B142D2A0C4A0093BFCE /* ItemImageDetailsView.swift */,
+			);
+			path = ItemImageDetailsView;
+			sourceTree = "<group>";
+		};
+		4EA78B1B2D2A266A0093BFCE /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4EECA4F22D2CA59B0080A863 /* ItemImageDetailsDeleteButton.swift */,
+				4EECA4F02D2C9E7B0080A863 /* ItemImageDetailsDetailsSection.swift */,
+				4EECA4EE2D2C9B260080A863 /* ItemImageDetailsHeaderSection.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4EA78B1E2D2B5A960093BFCE /* ItemPhotoPickerView */ = {
+			isa = PBXGroup;
+			children = (
+				4EA78B212D2B5CDD0093BFCE /* Components */,
+				4EA78B1F2D2B5A9E0093BFCE /* ItemPhotoPickerView.swift */,
+			);
+			path = ItemPhotoPickerView;
+			sourceTree = "<group>";
+		};
+		4EA78B212D2B5CDD0093BFCE /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4EA78B222D2B5CEF0093BFCE /* ItemPhotoCropView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4EB1A8CF2C9B2FA200F43898 /* ActiveSessionsView */ = {
+			isa = PBXGroup;
+			children = (
+				4EB1A8C92C9A765800F43898 /* ActiveSessionsView.swift */,
+				4EB1A8D02C9B2FB600F43898 /* Components */,
+			);
+			path = ActiveSessionsView;
+			sourceTree = "<group>";
+		};
+		4EB1A8D02C9B2FB600F43898 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4EE141682C8BABDF0045B661 /* ActiveSessionProgressSection.swift */,
+				4EB1A8CD2C9B2D0100F43898 /* ActiveSessionRow.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4EB1A8D32C9B91A200F43898 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4EB1404B2C8E45B1008691F3 /* StreamSection.swift */,
+				4EC6C16A2C92999800FC904B /* TranscodeSection.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4EB3F0302D8CCD3500EBEDAA /* ActionButtonHStack */ = {
+			isa = PBXGroup;
+			children = (
+				E18E01D9288747230022598C /* ActionButtonHStack.swift */,
+				4EB3F0312D8CD1EF00EBEDAA /* Components */,
+			);
+			path = ActionButtonHStack;
+			sourceTree = "<group>";
+		};
+		4EB3F0312D8CD1EF00EBEDAA /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4EB3F0382D8CD5CC00EBEDAA /* TrailerMenu.swift */,
+				4EB3F03A2D8CD6A700EBEDAA /* VersionMenu.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4EB3F0342D8CD2B500EBEDAA /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4EDDB49B2D596E0700DA16E8 /* VersionMenu.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4EB3F0352D8CD32900EBEDAA /* ActionButton */ = {
+			isa = PBXGroup;
+			children = (
+				4EB3F0362D8CD33100EBEDAA /* ActionButton.swift */,
+			);
+			path = ActionButton;
+			sourceTree = "<group>";
+		};
+		4EB538B32CE3C75900EB72D5 /* ServerUserPermissionsView */ = {
+			isa = PBXGroup;
+			children = (
+				4EB538B82CE3CB2400EB72D5 /* Components */,
+				4EB538B42CE3C76D00EB72D5 /* ServerUserPermissionsView.swift */,
+			);
+			path = ServerUserPermissionsView;
+			sourceTree = "<group>";
+		};
+		4EB538B82CE3CB2400EB72D5 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4EB538B92CE3CB2900EB72D5 /* Sections */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4EB538B92CE3CB2900EB72D5 /* Sections */ = {
+			isa = PBXGroup;
+			children = (
+				4EB538C42CE3E25500EB72D5 /* ExternalAccessSection.swift */,
+				4EB538C02CE3CF0E00EB72D5 /* ManagementSection.swift */,
+				4EB538BC2CE3CCCF00EB72D5 /* MediaPlaybackSection.swift */,
+				4E49DECC2CE54C7200352DCD /* PermissionSection.swift */,
+				4EB538C72CE3E8A100EB72D5 /* RemoteControlSection.swift */,
+				4E49DECA2CE54A9200352DCD /* SessionsSection.swift */,
+				4EB538C22CE3E21500EB72D5 /* SyncPlaySection.swift */,
+				4E49DED72CE5509000352DCD /* StatusSection.swift */,
+			);
+			path = Sections;
+			sourceTree = "<group>";
+		};
+		4EB7C8D32CCED318000CC011 /* AddServerUserView */ = {
+			isa = PBXGroup;
+			children = (
+				4EB7C8D42CCED6E1000CC011 /* AddServerUserView.swift */,
+			);
+			path = AddServerUserView;
+			sourceTree = "<group>";
+		};
+		4EC1C86A2C80900B00E2879E /* CustomDeviceProfileSettingsView */ = {
+			isa = PBXGroup;
+			children = (
+				4EC1C86B2C80902200E2879E /* Components */,
+				4EC1C8682C808FBB00E2879E /* CustomDeviceProfileSettingsView.swift */,
+			);
+			path = CustomDeviceProfileSettingsView;
+			sourceTree = "<group>";
+		};
+		4EC1C86B2C80902200E2879E /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4EC1C86C2C80903A00E2879E /* CustomProfileButton.swift */,
+				4E71D6882C80910900A0174D /* EditCustomDeviceProfileView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4EC2B1992CC96E5E00D866BE /* ServerUsersView */ = {
+			isa = PBXGroup;
+			children = (
+				4EC2B19C2CC96E9400D866BE /* Components */,
+				4EC2B19A2CC96E7000D866BE /* ServerUsersView.swift */,
+			);
+			path = ServerUsersView;
+			sourceTree = "<group>";
+		};
+		4EC2B19C2CC96E9400D866BE /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4EC2B19D2CC96EA300D866BE /* ServerUsersRow.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4EC2B1A72CC9725400D866BE /* ServerUserDetailsView */ = {
+			isa = PBXGroup;
+			children = (
+				4EC2B1A82CC97C0400D866BE /* ServerUserDetailsView.swift */,
+			);
+			path = ServerUserDetailsView;
+			sourceTree = "<group>";
+		};
+		4EC71FBA2D161FD800D0B3A8 /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				4E75B34D2D16583900D16531 /* Translations */,
+			);
+			path = Scripts;
+			sourceTree = "<group>";
+		};
+		4ECF5D822D0A3D0200F066B1 /* AddAccessScheduleView */ = {
+			isa = PBXGroup;
+			children = (
+				4ECF5D812D0A3D0200F066B1 /* AddAccessScheduleView.swift */,
+			);
+			path = AddAccessScheduleView;
+			sourceTree = "<group>";
+		};
+		4ECF5D8C2D0A780F00F066B1 /* ServerTasks */ = {
+			isa = PBXGroup;
+			children = (
+				4E35CE5B2CBED3F300DBD886 /* AddTaskTriggerView */,
+				4E90F7622CC72B1F00417C31 /* EditServerTaskView */,
+				4E182C9A2C94991800FBEFD5 /* ServerTasksView */,
+			);
+			path = ServerTasks;
+			sourceTree = "<group>";
+		};
+		4ED25C9F2D07E20C0010333C /* ServerUserAccessSchedule */ = {
+			isa = PBXGroup;
+			children = (
+				4ECF5D822D0A3D0200F066B1 /* AddAccessScheduleView */,
+				4ED25CA52D07E64F0010333C /* EditAccessScheduleView */,
+			);
+			path = ServerUserAccessSchedule;
+			sourceTree = "<group>";
+		};
+		4ED25CA32D07E4990010333C /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4ED25CA22D07E4990010333C /* EditAccessScheduleRow.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4ED25CA52D07E64F0010333C /* EditAccessScheduleView */ = {
+			isa = PBXGroup;
+			children = (
+				4ED25CA32D07E4990010333C /* Components */,
+				4ED25CA02D07E3520010333C /* EditAccessScheduleView.swift */,
+			);
+			path = EditAccessScheduleView;
+			sourceTree = "<group>";
+		};
+		4EE766F32D131F6E009658F0 /* IdentifyItemView */ = {
+			isa = PBXGroup;
+			children = (
+				4EE767062D13401C009658F0 /* Components */,
+				4EE766F42D131FB7009658F0 /* IdentifyItemView.swift */,
+			);
+			path = IdentifyItemView;
+			sourceTree = "<group>";
+		};
+		4EE767062D13401C009658F0 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4EE767092D135CAC009658F0 /* RemoteSearchResultView.swift */,
+				4EE767072D134020009658F0 /* RemoteSearchResultRow.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4EECA4E12D2C7D450080A863 /* PhotoPickerView */ = {
+			isa = PBXGroup;
+			children = (
+				4EECA4E42D2C7D570080A863 /* Components */,
+				4EECA4E22D2C7D530080A863 /* PhotoPickerView.swift */,
+			);
+			path = PhotoPickerView;
+			sourceTree = "<group>";
+		};
+		4EECA4E42D2C7D570080A863 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4EECA4E52D2C7D650080A863 /* PhotoCropView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4EED87472CBF824B002354D2 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4EED87462CBF824B002354D2 /* DeviceRow.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4EED87492CBF824B002354D2 /* DevicesView */ = {
+			isa = PBXGroup;
+			children = (
+				4EED87472CBF824B002354D2 /* Components */,
+				4EED87482CBF824B002354D2 /* DevicesView.swift */,
+			);
+			path = DevicesView;
+			sourceTree = "<group>";
+		};
+		4EF10D4C2CE2EC5A000ED5F5 /* ResetUserPasswordView */ = {
+			isa = PBXGroup;
+			children = (
+				4E026A8A2CE804E7005471B5 /* ResetUserPasswordView.swift */,
+			);
+			path = ResetUserPasswordView;
+			sourceTree = "<group>";
+		};
+		4EF18B232CB9932F00343666 /* PagingLibraryView */ = {
 			isa = PBXGroup;
 			children = (
 				E1B2AB9628808CDF0072B3B9 /* GoogleCast.xcframework */,
@@ -491,7 +869,6 @@
 				E1B5F7A829577BCE004B26CF /* PulseLogHandler */,
 				E1B5F7AA29577BCE004B26CF /* PulseUI */,
 				E1B5F7AC29577BDD004B26CF /* OrderedCollections */,
-				E18443CA2A037773002DDDC8 /* UDPBroadcast */,
 				E1A7B1642B9A9F7800152546 /* PreferencesView */,
 				E1392FEC2BA218A80034110D /* SwiftUIIntrospect */,
 				E1153DD12BBB649C00424D36 /* SVGKit */,
@@ -545,7 +922,6 @@
 				E15210572946DF1B00375CC2 /* PulseUI */,
 				E19DDEC62948EF9900954E10 /* OrderedCollections */,
 				E1DC9813296DC06200982F06 /* PulseLogHandler */,
-				E1FAD1C52A0375BA007F5521 /* UDPBroadcast */,
 				E1523F812B132C350062821A /* CollectionHStack */,
 				E114DB322B1944FA00B75FB3 /* CollectionVGrid */,
 				E15D4F042B1B0C3C00442DB8 /* PreferencesView */,
@@ -661,7 +1037,6 @@
 				E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */,
 				E19DDEC52948EF9900954E10 /* XCRemoteSwiftPackageReference "swift-collections" */,
 				E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */,
-				E1FAD1C42A0375BA007F5521 /* XCRemoteSwiftPackageReference "UDPBroadcastConnection" */,
 				E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */,
 				E1153DCE2BBB634F00424D36 /* XCRemoteSwiftPackageReference "SVGKit" */,
 				E145EB492BE16849003BF6F3 /* XCRemoteSwiftPackageReference "keychain-swift" */,
@@ -1220,10 +1595,10 @@
 		};
 		E150C0BF2BFD62FD00944FFA /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/jellyfin/jellyfin-sdk-swift.git";
+			repositoryURL = "https://github.com/JPKribs/jellyfin-sdk-swift.git";
 			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 0.5.2;
+				branch = serverDiscovery;
+				kind = branch;
 			};
 		};
 		E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */ = {
@@ -1309,14 +1684,6 @@
 		E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kean/PulseLogHandler";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.0;
-			};
-		};
-		E1FAD1C42A0375BA007F5521 /* XCRemoteSwiftPackageReference "UDPBroadcastConnection" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/gunterhager/UDPBroadcastConnection";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 5.0.0;
@@ -1534,11 +1901,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = CollectionVGrid;
 		};
-		E18443CA2A037773002DDDC8 /* UDPBroadcast */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1FAD1C42A0375BA007F5521 /* XCRemoteSwiftPackageReference "UDPBroadcastConnection" */;
-			productName = UDPBroadcast;
-		};
 		E18A8E7928D5FEDF00333B9A /* VLCUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E18A8E7828D5FEDF00333B9A /* XCRemoteSwiftPackageReference "VLCUI" */;
@@ -1632,11 +1994,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */;
 			productName = PulseLogHandler;
-		};
-		E1FAD1C52A0375BA007F5521 /* UDPBroadcast */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1FAD1C42A0375BA007F5521 /* XCRemoteSwiftPackageReference "UDPBroadcastConnection" */;
-			productName = UDPBroadcast;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
