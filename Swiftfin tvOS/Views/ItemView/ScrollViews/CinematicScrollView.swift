@@ -30,8 +30,9 @@ extension ItemView {
         private func backgroundImageView() -> some View {
             let item: BaseItemDto
 
-            if let personViewModel = viewModel as? PersonItemViewModel,
-               let randomItem = personViewModel.randomItem()
+            if viewModel.item.type == .person || viewModel.item.type == .musicArtist,
+               let typeViewModel = viewModel as? TypeItemViewModel,
+               let randomItem = typeViewModel.randomItem()
             {
                 item = randomItem
             } else {
@@ -159,8 +160,10 @@ extension ItemView {
                     Spacer()
 
                     VStack {
-                        if let personViewModel = viewModel as? PersonItemViewModel {
-                            ImageView(personViewModel.item.imageSource(.primary, maxWidth: 440))
+                        if viewModel.item.type == .person || viewModel.item.type == .musicArtist,
+                           let typeViewModel = viewModel as? TypeItemViewModel
+                        {
+                            ImageView(typeViewModel.item.imageSource(.primary, maxWidth: 440))
                                 .failure {
                                     SystemImageContentView(systemName: viewModel.item.systemImage)
                                 }
