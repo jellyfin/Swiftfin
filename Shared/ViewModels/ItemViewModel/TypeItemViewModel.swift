@@ -19,11 +19,19 @@ final class TypeItemViewModel: ItemViewModel {
     private let itemCollection: ItemTypeCollection
 
     override init(item: BaseItemDto) {
+
+        var itemTypes = BaseItemKind.supportedCases
+            .appending(.episode)
+            .appending(.person)
+
+        if let itemType = item.type {
+            itemTypes = itemTypes
+                .removing(itemType)
+        }
+
         self.itemCollection = ItemTypeCollection(
             parent: item,
-            itemTypes: BaseItemKind.supportedCases
-                .appending(.episode)
-                .removing(.boxSet)
+            itemTypes: itemTypes
         )
         self._sections = ObservedPublisher(
             wrappedValue: [:],
