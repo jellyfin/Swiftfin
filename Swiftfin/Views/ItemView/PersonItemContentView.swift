@@ -21,7 +21,7 @@ extension ItemView {
         private var router
 
         @ObservedObject
-        var viewModel: PersonItemViewModel
+        var viewModel: TypeItemViewModel
 
         var body: some View {
             SeparatorVStack(alignment: .leading) {

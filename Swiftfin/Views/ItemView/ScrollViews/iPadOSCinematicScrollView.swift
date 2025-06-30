@@ -42,8 +42,9 @@ extension ItemView {
 
             let item: BaseItemDto
 
-            if let personViewModel = viewModel as? PersonItemViewModel,
-               let randomItem = personViewModel.randomItem()
+            if viewModel.item.type == .person || viewModel.item.type == .musicArtist,
+               let typeViewModel = viewModel as? TypeItemViewModel,
+               let randomItem = typeViewModel.randomItem()
             {
                 item = randomItem
             } else {
@@ -167,8 +168,10 @@ extension ItemView.iPadOSCinematicScrollView {
                 Spacer()
 
                 VStack(spacing: 10) {
-                    if let personViewModel = viewModel as? PersonItemViewModel {
-                        ImageView(personViewModel.item.imageSource(.primary, maxWidth: 200))
+                    if viewModel.item.type == .person || viewModel.item.type == .musicArtist,
+                       let typeViewModel = viewModel as? TypeItemViewModel
+                    {
+                        ImageView(typeViewModel.item.imageSource(.primary, maxWidth: 200))
                             .failure {
                                 SystemImageContentView(systemName: viewModel.item.systemImage)
                             }

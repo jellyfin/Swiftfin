@@ -19,7 +19,7 @@ extension ItemView {
         private var router
 
         @ObservedObject
-        var viewModel: PersonItemViewModel
+        var viewModel: TypeItemViewModel
 
         var body: some View {
             VStack(spacing: 0) {

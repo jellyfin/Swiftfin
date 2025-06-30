@@ -11,7 +11,7 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-final class PersonItemViewModel: ItemViewModel {
+final class TypeItemViewModel: ItemViewModel {
 
     @ObservedPublisher
     var sections: OrderedDictionary<BaseItemKind, ItemLibraryViewModel>
@@ -21,7 +21,9 @@ final class PersonItemViewModel: ItemViewModel {
     override init(item: BaseItemDto) {
         self.itemCollection = ItemTypeCollection(
             parent: item,
-            itemTypes: BaseItemKind.supportedCases.appending(.episode)
+            itemTypes: BaseItemKind.supportedCases
+                .appending(.episode)
+                .removing(.boxSet)
         )
         self._sections = ObservedPublisher(
             wrappedValue: [:],

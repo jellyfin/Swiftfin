@@ -14,7 +14,7 @@ extension ItemView {
     struct CollectionItemContentView: View {
 
         @ObservedObject
-        var viewModel: CollectionItemViewModel
+        var viewModel: TypeItemViewModel
 
         @Router
         private var router
