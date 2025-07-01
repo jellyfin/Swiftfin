@@ -114,9 +114,9 @@ extension MediaView {
                     }
                     .id(imageSources.hashValue)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .posterStyle(.landscape)
                     .backport
                     .matchedTransitionSource(id: "item", in: namespace)
-                    .posterStyle(.landscape)
             }
             .onFirstAppear(perform: setImageSources)
             .onChange(of: useRandomImage) { _ in

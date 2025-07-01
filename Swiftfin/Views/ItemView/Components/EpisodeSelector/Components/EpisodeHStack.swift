@@ -78,9 +78,9 @@ extension SeriesEpisodeSelector {
             ) { _ in
                 SeriesEpisodeSelector.EmptyCard()
             }
-            .allowScrolling(false)
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
+            .scrollDisabled(true)
         }
     }
 
@@ -101,9 +101,9 @@ extension SeriesEpisodeSelector {
                     viewModel.send(.refresh)
                 }
             }
-            .allowScrolling(false)
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
+            .scrollDisabled(true)
         }
     }
 
@@ -116,9 +116,9 @@ extension SeriesEpisodeSelector {
             ) { _ in
                 SeriesEpisodeSelector.LoadingCard()
             }
-            .allowScrolling(false)
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
+            .scrollDisabled(true)
         }
     }
 }

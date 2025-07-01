@@ -90,6 +90,8 @@ extension View {
     }
 
     /// Applies the aspect ratio, corner radius, and border for the given `PosterType`
+    ///
+    /// Note: will not apply `posterShadow`
     @ViewBuilder
     func posterStyle(
         _ type: PosterDisplayType,
@@ -101,14 +103,12 @@ extension View {
             #if !os(tvOS)
                 .posterBorder()
                 .cornerRadius(ratio: 1 / 30, of: \.width)
-                .posterShadow()
             #endif
         case .portrait:
             aspectRatio(2 / 3, contentMode: contentMode)
             #if !os(tvOS)
                 .posterBorder()
                 .cornerRadius(ratio: 0.0375, of: \.width)
-                .posterShadow()
             #endif
         }
     }
@@ -135,6 +135,10 @@ extension View {
         #endif
     }
 
+    func posterShadow() -> some View {
+        shadow(radius: 4, y: 2)
+    }
+
     func scrollViewOffset(_ scrollViewOffset: Binding<CGFloat>) -> some View {
         modifier(ScrollViewOffsetModifier(scrollViewOffset: scrollViewOffset))
     }
@@ -158,10 +162,6 @@ extension View {
         dismissActions: (() -> Void)? = nil
     ) -> some View {
         modifier(ErrorMessageModifier(error: error, dismissActions: dismissActions))
-    }
-
-    func posterShadow() -> some View {
-        shadow(radius: 4, y: 2)
     }
 
     @ViewBuilder

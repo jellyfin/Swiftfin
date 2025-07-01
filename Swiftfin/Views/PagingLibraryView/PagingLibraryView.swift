@@ -235,7 +235,7 @@ struct PagingLibraryView<Element: Poster>: View {
             viewModel.send(.getNextPage)
         }
         .proxy(collectionVGridProxy)
-        .scrollIndicatorsVisible(false)
+        .scrollIndicators(.hidden)
     }
 
     @ViewBuilder

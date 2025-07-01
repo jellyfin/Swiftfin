@@ -61,7 +61,7 @@ struct SeriesEpisodeSelector: View {
         VStack(alignment: .leading) {
 
             seasonSelectorMenu
-                .edgePadding([.bottom, .horizontal])
+                .edgePadding(.horizontal)
 
             Group {
                 if let selectionViewModel {

@@ -63,10 +63,7 @@ extension ItemView {
                 }
             }
             .edgesIgnoringSafeArea(.top)
-            .onSizeChanged { newSize, insets in
-                self.size = newSize
-                self.safeAreaInsets = insets
-            }
+            .trackingSize($size, $safeAreaInsets)
             .scrollViewOffset($scrollViewOffset)
             .navigationBarOffset(
                 $scrollViewOffset,
