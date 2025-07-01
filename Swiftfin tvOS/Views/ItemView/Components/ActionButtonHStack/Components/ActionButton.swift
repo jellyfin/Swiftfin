@@ -67,12 +67,15 @@ extension ItemView {
                 if isButton, isSelected {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(
-                            isFocused ? AnyShapeStyle(HierarchicalShapeStyle.primary) :
-                                AnyShapeStyle(HierarchicalShapeStyle.primary.opacity(0.5))
+                            isFocused ? AnyShapeStyle(HierarchicalShapeStyle.secondary) :
+                                AnyShapeStyle(HierarchicalShapeStyle.secondary.opacity(0.5))
                         )
                 } else {
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(isFocused ? Color.white : Color.white.opacity(0.5))
+                        .fill(
+                            isFocused ? AnyShapeStyle(HierarchicalShapeStyle.tertiary) :
+                                AnyShapeStyle(HierarchicalShapeStyle.tertiary.opacity(0.5))
+                        )
                 }
 
                 Label(title, systemImage: labelIconName)
