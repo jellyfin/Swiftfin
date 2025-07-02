@@ -17,14 +17,9 @@ struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element 
     private var data: Data
     private var title: String?
     private var type: PosterDisplayType
-    private var content: (Element) -> any View
-    private var imageOverlay: (Element) -> any View
-    private var contextMenu: (Element) -> any View
+    private var label: (Element) -> any View
     private var trailingContent: () -> any View
     private var action: (Element) -> Void
-
-    // See PosterButton for implementation reason
-    private var focusedItem: Binding<Element?>?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -51,7 +46,7 @@ struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element 
                 ) {
                     action(item)
                 } label: {
-                    content(item).eraseToAnyView()
+                    label(item).eraseToAnyView()
                 }
             }
             .clipsToBounds(false)
@@ -61,21 +56,6 @@ struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element 
             .scrollBehavior(.continuousLeadingEdge)
         }
         .focusSection()
-        .mask {
-            VStack(spacing: 0) {
-                Color.white
-
-                LinearGradient(
-                    stops: [
-                        .init(color: .white, location: 0),
-                        .init(color: .clear, location: 1),
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 20)
-            }
-        }
     }
 }
 
@@ -85,45 +65,20 @@ extension PosterHStack {
         title: String? = nil,
         type: PosterDisplayType,
         items: Data,
-        action: @escaping (Element) -> Void
+        action: @escaping (Element) -> Void,
+        @ViewBuilder label: @escaping (Element) -> any View = { PosterButton<Element>.TitleSubtitleContentView(item: $0) }
     ) {
         self.init(
             data: items,
             title: title,
             type: type,
-            content: { PosterButton.TitleSubtitleContentView(item: $0) },
-            imageOverlay: { PosterButton.DefaultOverlay(item: $0) },
-            contextMenu: { _ in EmptyView() },
+            label: label,
             trailingContent: { EmptyView() },
             action: action
         )
     }
 
-    func content(@ViewBuilder _ content: @escaping (Element) -> any View) -> Self {
-        copy(modifying: \.content, with: content)
-    }
-
-    @available(*, deprecated, message: "Use `posterOverlay(for:)` instead")
-    func imageOverlay(@ViewBuilder _ content: @escaping (Element) -> any View) -> Self {
-        copy(modifying: \.imageOverlay, with: content)
-    }
-
-    @available(*, deprecated, message: "Use `contextMenu(for:)` instead")
-    func contextMenu(@ViewBuilder _ content: @escaping (Element) -> any View) -> Self {
-        copy(modifying: \.contextMenu, with: content)
-    }
-
     func trailing(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.trailingContent, with: content)
-    }
-
-    @available(*, deprecated, message: "Use init with action instead")
-    func onSelect(_ action: @escaping (Element) -> Void) -> Self {
-        self
-//        copy(modifying: \.action, with: action)
-    }
-
-    func focusedItem(_ binding: Binding<Element?>) -> Self {
-        copy(modifying: \.focusedItem, with: binding)
     }
 }

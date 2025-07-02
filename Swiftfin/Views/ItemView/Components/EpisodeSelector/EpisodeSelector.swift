@@ -6,10 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionHStack
-import Defaults
 import JellyfinAPI
-import OrderedCollections
 import SwiftUI
 
 struct SeriesEpisodeSelector: View {
@@ -58,7 +55,7 @@ struct SeriesEpisodeSelector: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 10) {
 
             seasonSelectorMenu
                 .edgePadding(.horizontal)

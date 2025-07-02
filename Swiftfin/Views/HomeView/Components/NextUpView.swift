@@ -33,8 +33,7 @@ extension HomeView {
                     items: viewModel.elements
                 ) { item, namespace in
                     router.route(to: .item(item: item), in: namespace)
-                }
-                .content { item in
+                } label: { item in
                     if item.type == .episode {
                         PosterButton.EpisodeContentSubtitleContent(item: item)
                     } else {

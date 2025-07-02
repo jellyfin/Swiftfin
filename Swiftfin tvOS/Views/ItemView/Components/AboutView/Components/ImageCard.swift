@@ -25,11 +25,15 @@ extension ItemView.AboutView {
         // MARK: - Body
 
         var body: some View {
-            PosterButton(item: viewModel.item, type: .portrait)
-                .content { EmptyView() }
-                .imageOverlay { EmptyView() }
-                .onSelect(onSelect)
-                .frame(height: 405)
+            PosterButton(
+                item: viewModel.item,
+                type: .portrait,
+                action: onSelect
+            ) {
+                EmptyView()
+            }
+            .posterOverlay(for: BaseItemDto.self) { _ in EmptyView() }
+            .frame(height: 405)
         }
 
         // MARK: - On Select
@@ -41,7 +45,7 @@ extension ItemView.AboutView {
                 if let episodeViewModel = viewModel as? EpisodeItemViewModel,
                    let seriesItem = episodeViewModel.seriesItem
                 {
-//                    router.route(to: .item(item: seriesItem))
+                    router.route(to: .item(item: seriesItem))
                 }
             default:
                 break

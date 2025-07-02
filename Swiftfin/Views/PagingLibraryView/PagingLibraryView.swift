@@ -9,6 +9,7 @@
 import CollectionVGrid
 import Defaults
 import JellyfinAPI
+import Nuke
 import SwiftUI
 
 // TODO: need to think about better design for views that may not support current library display type
@@ -432,10 +433,9 @@ struct PagingLibraryView<Element: Poster>: View {
             case let .gotRandomItem(item):
                 switch item {
                 case let item as BaseItemDto:
-                    router.route(to: .item(item: item), in: namespace)
+                    select(item: item, in: namespace)
                 case let item as BaseItemPerson:
-                    let viewModel = ItemLibraryViewModel(parent: item, filters: .default)
-                    router.route(to: .library(viewModel: viewModel), in: namespace)
+                    select(item: BaseItemDto(person: item), in: namespace)
                 default:
                     assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
                 }

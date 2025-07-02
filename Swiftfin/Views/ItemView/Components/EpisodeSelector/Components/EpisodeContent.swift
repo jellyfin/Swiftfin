@@ -7,7 +7,6 @@
 //
 
 import Defaults
-import JellyfinAPI
 import SwiftUI
 
 extension SeriesEpisodeSelector {

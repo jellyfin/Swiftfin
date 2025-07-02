@@ -87,7 +87,7 @@ extension SeriesEpisodeSelector {
                     content: episodeContent
                 )
                 .onSelect {
-//                    router.route(to: .item(item: episode))
+                    router.route(to: .item(item: episode))
                 }
             }
         }

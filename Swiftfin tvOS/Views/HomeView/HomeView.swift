@@ -30,11 +30,11 @@ struct HomeView: View {
                 if viewModel.resumeItems.isNotEmpty {
                     CinematicResumeView(viewModel: viewModel)
 
-                    NextUpView(viewModel: viewModel.nextUpViewModel)
-
-                    if showRecentlyAdded {
-                        RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
-                    }
+//                    NextUpView(viewModel: viewModel.nextUpViewModel)
+//
+//                    if showRecentlyAdded {
+//                        RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+//                    }
                 } else {
                     if showRecentlyAdded {
                         CinematicRecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
@@ -44,9 +44,9 @@ struct HomeView: View {
                         .safeAreaPadding(.top, 150)
                 }
 
-                ForEach(viewModel.libraries) { viewModel in
-                    LatestInLibraryView(viewModel: viewModel)
-                }
+//                ForEach(viewModel.libraries) { viewModel in
+//                    LatestInLibraryView(viewModel: viewModel)
+//                }
             }
         }
     }

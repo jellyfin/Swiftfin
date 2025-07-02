@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -115,12 +114,14 @@ extension PagingLibraryView {
                     }
             }
             .posterStyle(posterType)
+            .posterShadow()
             .frame(width: posterType == .landscape ? landscapeMaxWidth : portraitMaxWidth)
             .padding(.vertical, 8)
         }
 
-        @ViewBuilder
-        private var row: some View {
+        // MARK: body
+
+        var body: some View {
             ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
                 rowLeading
             } content: {
@@ -132,37 +133,5 @@ extension PagingLibraryView {
             .backport
             .matchedTransitionSource(id: "item", in: namespace)
         }
-
-        // MARK: body
-
-        var body: some View {
-            row
-                .trackingSize($size)
-                .matchedContextMenu(for: item) {
-                    row.frame(width: size.width, height: size.height)
-                        .padding(20)
-                        .background {
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color(uiColor: UIColor.secondarySystemGroupedBackground))
-                        }
-                }
-        }
-    }
-}
-
-extension PagingLibraryView.LibraryRow {
-
-    @available(*, deprecated, message: "Use init(item:posterType:action:)")
-    init(item: Element, posterType: PosterDisplayType) {
-        self.init(
-            item: item,
-            posterType: posterType,
-            action: { _ in }
-        )
-    }
-
-    @available(*, deprecated, message: "Use init(item:posterType:action:)")
-    func onSelect(perform action: @escaping () -> Void) -> Self {
-        self
     }
 }

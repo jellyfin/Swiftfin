@@ -30,10 +30,6 @@ struct PosterButton<Item: Poster>: View {
     private let label: any View
     private let action: () -> Void
 
-    // Setting the .focused() modifier causes significant performance issues.
-    // Only set if desiring focus changes
-    private var onFocusChanged: ((Bool) -> Void)?
-
     private func imageSources(from item: Item) -> [ImageSource] {
         switch type {
         case .landscape:
@@ -44,82 +40,49 @@ struct PosterButton<Item: Poster>: View {
     }
 
     @ViewBuilder
-    private func posterView(overlay: some View) -> some View {
-        VStack {
-            ImageView(imageSources(from: item))
-                .failure {
-                    if item.showTitle {
-                        SystemImageContentView(systemName: item.systemImage)
-                    } else {
-                        SystemImageContentView(
-                            title: item.displayTitle,
-                            systemName: item.systemImage
-                        )
-                    }
+    private func poster(overlay: some View) -> some View {
+        ImageView(imageSources(from: item))
+            .failure {
+                if item.showTitle {
+                    SystemImageContentView(systemName: item.systemImage)
+                } else {
+                    SystemImageContentView(
+                        title: item.displayTitle,
+                        systemName: item.systemImage
+                    )
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .overlay { overlay }
-                .posterStyle(type)
-                .posterShadow()
-//                .contentShape(.contextMenuPreview, Rectangle())
-                .hoverEffect(.highlight)
-
-            label
-                .eraseToAnyView()
-                .zIndex(-1)
-        }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .overlay { overlay }
+            .contentShape(.contextMenuPreview, Rectangle())
+            .posterStyle(type)
+            .posterShadow()
+            .hoverEffect(.highlight)
     }
 
     var body: some View {
         Button(action: action) {
-            posterView(overlay: posterOverlayRegistry(item))
+            let overlay = posterOverlayRegistry?(item) ??
+                PosterButton.DefaultOverlay(item: item)
+                .eraseToAnyView()
+
+            poster(overlay: overlay)
                 .trackingSize($posterSize)
+
+            label
+                .eraseToAnyView()
         }
         .buttonStyle(.borderless)
         .buttonBorderShape(.roundedRectangle)
-//            .contextMenu(menuItems: {
-//                contextMenu()
-//                    .eraseToAnyView()
-//            })
-//            .ifLet(onFocusChanged) { view, onFocusChanged in
-//                view
-//                    .focused($isFocused)
-//                    .onChange(of: isFocused) { _, newValue in
-//                        onFocusChanged(newValue)
-//                    }
-//            }
+        .focusedValue(\.focusedPoster, AnyPoster(item))
         .accessibilityLabel(item.displayTitle)
-
-//            content()
-//                .eraseToAnyView()
-//                .zIndex(-1)
+        .matchedContextMenu(for: item) {
+            EmptyView()
+        }
     }
 }
 
 extension PosterButton {
-
-    @available(*, renamed: "PosterButton.init(item:type:)")
-    init(item: Item, type: PosterDisplayType) {
-        self.init(
-            horizontalAlignment: .leading,
-            item: item,
-            type: type,
-            label: TitleSubtitleContentView(item: item),
-            action: {},
-            onFocusChanged: nil
-        )
-
-//        self.init(
-//            item: item,
-//            type: type,
-//            horizontalAlignment: .leading,
-//            content: { TitleSubtitleContentView(item: item) },
-//            imageOverlay: { DefaultOverlay(item: item) },
-//            contextMenu: { EmptyView() },
-//            onSelect: {},
-//            onFocusChanged: nil
-//        )
-    }
 
     init(
         item: Item,
@@ -133,32 +96,9 @@ extension PosterButton {
         self.label = label()
         self.horizontalAlignment = .leading
     }
-}
-
-extension PosterButton {
 
     func horizontalAlignment(_ alignment: HorizontalAlignment) -> Self {
         copy(modifying: \.horizontalAlignment, with: alignment)
-    }
-
-    func content(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        self
-    }
-
-    func imageOverlay(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        self
-    }
-
-    func contextMenu(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        self
-    }
-
-    func onSelect(_ action: @escaping () -> Void) -> Self {
-        self
-    }
-
-    func onFocusChanged(_ action: @escaping (Bool) -> Void) -> Self {
-        copy(modifying: \.onFocusChanged, with: action)
     }
 }
 

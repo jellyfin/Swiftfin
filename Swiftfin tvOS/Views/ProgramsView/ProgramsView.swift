@@ -63,13 +63,12 @@ struct ProgramsView: View {
             items: programsViewModel[keyPath: keyPath]
         ) { item in
             router.route(to: .item(item: item))
-        }
-        .content {
+        } label: {
             ProgramButtonContent(program: $0)
         }
-        .imageOverlay {
-            ProgramProgressOverlay(program: $0)
-        }
+//        .imageOverlay {
+//            ProgramProgressOverlay(program: $0)
+//        }
 //        .onSelect { channelProgram in
 //            guard let mediaSource = channelProgram.channel.mediaSources?.first else { return }
 //            router.route(

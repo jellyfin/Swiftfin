@@ -114,8 +114,7 @@ struct ProgramsView: View {
             router.route(
                 to: .liveVideoPlayer(manager: LiveVideoPlayerManager(program: item))
             )
-        }
-        .content {
+        } label: {
             ProgramButtonContent(program: $0)
         }
         .posterOverlay(for: BaseItemDto.self) {

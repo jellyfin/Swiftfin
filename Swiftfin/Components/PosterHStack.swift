@@ -17,7 +17,7 @@ struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element 
     private var header: () -> any View
     private var title: String?
     private var type: PosterDisplayType
-    private var content: (Element) -> any View
+    private var label: (Element) -> any View
     private var trailingContent: () -> any View
     private var action: (Element, Namespace.ID) -> Void
 
@@ -48,7 +48,7 @@ struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element 
             ) { namespace in
                 action(item, namespace)
             } label: {
-                content(item).eraseToAnyView()
+                label(item).eraseToAnyView()
             }
         }
         .clipsToBounds(false)
@@ -83,21 +83,18 @@ extension PosterHStack {
         title: String? = nil,
         type: PosterDisplayType,
         items: Data,
-        action: @escaping (Element, Namespace.ID) -> Void
+        action: @escaping (Element, Namespace.ID) -> Void,
+        @ViewBuilder label: @escaping (Element) -> any View = { PosterButton<Element>.TitleSubtitleContentView(item: $0) }
     ) {
         self.init(
             data: items,
             header: { DefaultHeader(title: title) },
             title: title,
             type: type,
-            content: { PosterButton.TitleSubtitleContentView(item: $0) },
+            label: label,
             trailingContent: { EmptyView() },
             action: action
         )
-    }
-
-    func content(@ViewBuilder _ content: @escaping (Element) -> any View) -> Self {
-        copy(modifying: \.content, with: content)
     }
 
     func trailing(@ViewBuilder _ content: @escaping () -> any View) -> Self {
