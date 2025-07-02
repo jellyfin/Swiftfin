@@ -122,6 +122,7 @@ extension PagingLibraryView {
                 rowContent
             }
             .onSelect(perform: action)
+            .focusedValue(\.focusedPoster, AnyPoster(item))
         }
     }
 }

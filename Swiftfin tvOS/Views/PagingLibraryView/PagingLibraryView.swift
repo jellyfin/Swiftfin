@@ -221,15 +221,9 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         LibraryRow(
             item: item,
             posterType: posterType
-        )
-//            .onFocusChanged { newValue in
-//                if newValue {
-//                    focusedItem = item
-//                }
-//            }
-        .onSelect {
-                onSelect(item)
-            }
+        ) {
+            onSelect(item)
+        }
     }
 
     // MARK: Error View

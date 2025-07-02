@@ -18,9 +18,6 @@ struct PosterButton<Item: Poster>: View {
     @EnvironmentTypeValue<Item>(\.posterOverlayRegistry)
     private var posterOverlayRegistry
 
-    @FocusState
-    private var isFocused: Bool
-
     @State
     private var posterSize: CGSize = .zero
 

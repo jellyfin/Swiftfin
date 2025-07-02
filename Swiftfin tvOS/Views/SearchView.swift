@@ -89,8 +89,8 @@ struct SearchView: View {
                     )
                 )
             )
-        default: ()
-//            router.route(to: .item(item: item))
+        default:
+            router.route(to: .item(item: item))
         }
     }
 
