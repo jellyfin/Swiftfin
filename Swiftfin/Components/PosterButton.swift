@@ -60,9 +60,9 @@ struct PosterButton<Item: Poster>: View {
                 .overlay { overlay }
                 .contentShape(.contextMenuPreview, Rectangle())
                 .posterStyle(type)
-                .posterShadow()
                 .backport
                 .matchedTransitionSource(id: "item", in: namespace)
+                .posterShadow()
 
             label
                 .eraseToAnyView()

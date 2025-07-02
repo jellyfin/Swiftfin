@@ -73,6 +73,7 @@ extension ActiveSessionsView {
                 }
             }
             .frame(width: 60, height: 90)
+            .posterShadow()
             .padding(.vertical, 8)
         }
 

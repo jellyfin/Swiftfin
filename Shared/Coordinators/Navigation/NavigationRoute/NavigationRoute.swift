@@ -13,6 +13,7 @@ struct NavigationRoute: Identifiable, Hashable {
 
     enum TransitionStyle: Hashable {
 
+        // TODO: sheet and fullscreen with `NavigationTransition`
         case push(NavigationTransition)
         case sheet
         case fullscreen
@@ -74,18 +75,13 @@ struct NavigationRoute: Identifiable, Hashable {
     }
 
     @ViewBuilder
-    private func content(for style: TransitionStyle) -> some View {
-        if case let .push(style) = style {
+    var destination: some View {
+        if case let .push(style) = transitionStyle {
             content
                 .backport
                 .navigationTransition(style)
         } else {
             content
         }
-    }
-
-    @ViewBuilder
-    var destination: some View {
-        content(for: transitionStyle)
     }
 }

@@ -106,6 +106,7 @@ extension EditItemElementView {
             }
             .posterStyle(.portrait)
             .frame(width: 30, height: 90)
+            .posterShadow()
             .padding(.horizontal)
         }
     }

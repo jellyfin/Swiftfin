@@ -61,21 +61,18 @@ struct ProgramsView: View {
             title: title,
             type: .landscape,
             items: programsViewModel[keyPath: keyPath]
-        ) { item in
-            router.route(to: .item(item: item))
-        } label: {
-            ProgramButtonContent(program: $0)
-        }
-//        .imageOverlay {
-//            ProgramProgressOverlay(program: $0)
-//        }
-//        .onSelect { channelProgram in
+        ) { _ in
 //            guard let mediaSource = channelProgram.channel.mediaSources?.first else { return }
 //            router.route(
 //                to: \.liveVideoPlayer,
 //                LiveVideoPlayerManager(item: channelProgram.channel, mediaSource: mediaSource)
 //            )
-//        }
+        } label: {
+            ProgramButtonContent(program: $0)
+        }
+        .posterOverlay(for: BaseItemDto.self) {
+            ProgramProgressOverlay(program: $0)
+        }
     }
 
     var body: some View {

@@ -73,6 +73,7 @@ extension DevicesView {
                 }
             }
             .squarePosterStyle()
+            .posterShadow()
             .frame(width: 60, height: 60)
         }
 

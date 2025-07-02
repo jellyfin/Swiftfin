@@ -51,8 +51,8 @@ extension HomeView {
                         .aspectRatio(contentMode: .fit)
                         .frame(height: 200, alignment: .bottomLeading)
                 }
-                .onSelect { _ in
-//                    router.route(to: .item(item: item))
+                .onSelect { item in
+                    router.route(to: .item(item: item))
                 }
         }
     }

@@ -19,9 +19,6 @@ extension PagingLibraryView {
         @Namespace
         private var namespace
 
-        @State
-        private var size: CGSize = .zero
-
         private let item: Element
         private var action: (Namespace.ID) -> Void
         private let posterType: PosterDisplayType
