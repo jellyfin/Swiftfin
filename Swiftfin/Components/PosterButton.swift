@@ -11,68 +11,91 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: expose `ImageView.image` modifier for image aspect fill/fit
-// TODO: allow `content` to trigger `onSelect`?
-//       - not in button label to avoid context menu visual oddities
-// TODO: why don't shadows work with failure image views?
-//       - due to `Color`?
 
 /// Retrieving images by exact pixel dimensions is a bit
 /// intense for normal usage and eases cache usage and modifications.
-private let landscapeMaxWidth: CGFloat = 200
+private let landscapeMaxWidth: CGFloat = 300
 private let portraitMaxWidth: CGFloat = 200
 
 struct PosterButton<Item: Poster>: View {
 
-    private var item: Item
-    private var type: PosterDisplayType
-    private var content: () -> any View
-    private var imageOverlay: () -> any View
-    private var contextMenu: () -> any View
-    private var onSelect: () -> Void
+    @EnvironmentTypeValue<Item>(\.posterOverlayRegistry)
+    private var posterOverlayRegistry
 
-    private func imageView(from item: Item) -> ImageView {
+    @Namespace
+    private var namespace
+
+    @State
+    private var posterSize: CGSize = .zero
+
+    private let item: Item
+    private let type: PosterDisplayType
+    private let label: any View
+    private let action: (Namespace.ID) -> Void
+
+    private func imageSources(from item: Item) -> [ImageSource] {
         switch type {
         case .landscape:
-            ImageView(item.landscapeImageSources(maxWidth: landscapeMaxWidth))
+            item.landscapeImageSources(maxWidth: landscapeMaxWidth)
         case .portrait:
-            ImageView(item.portraitImageSources(maxWidth: portraitMaxWidth))
+            item.portraitImageSources(maxWidth: portraitMaxWidth)
+        }
+    }
+
+    @ViewBuilder
+    private func posterView(overlay: some View = EmptyView()) -> some View {
+        VStack(alignment: .leading) {
+            ImageView(imageSources(from: item))
+                .failure {
+                    if item.showTitle {
+                        SystemImageContentView(systemName: item.systemImage)
+                    } else {
+                        SystemImageContentView(
+                            title: item.displayTitle,
+                            systemName: item.systemImage
+                        )
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .overlay { overlay }
+                .contentShape(.contextMenuPreview, Rectangle())
+                .posterStyle(type)
+                .backport
+                .matchedTransitionSource(id: "item", in: namespace)
+                .posterShadow()
+
+            label
+                .eraseToAnyView()
+                .allowsHitTesting(false)
         }
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
-            Button {
-                onSelect()
-            } label: {
-                ZStack {
-                    Color.clear
-
-                    imageView(from: item)
-                        .failure {
-                            if item.showTitle {
-                                SystemImageContentView(systemName: item.systemImage)
-                            } else {
-                                SystemImageContentView(
-                                    title: item.displayTitle,
-                                    systemName: item.systemImage
-                                )
-                            }
-                        }
-
-                    imageOverlay()
-                        .eraseToAnyView()
-                }
-                .posterStyle(type)
-            }
-            .buttonStyle(.plain)
-            .contextMenu(menuItems: {
-                contextMenu()
-                    .eraseToAnyView()
-            })
-            .posterShadow()
-
-            content()
+        Button {
+            action(namespace)
+        } label: {
+            let overlay = posterOverlayRegistry?(item) ??
+                PosterButton.DefaultOverlay(item: item)
                 .eraseToAnyView()
+
+            posterView(overlay: overlay)
+                .trackingSize($posterSize)
+        }
+        .foregroundStyle(.primary, .secondary)
+        .buttonStyle(.plain)
+        .matchedContextMenu(for: item) {
+            let frameScale = 1.3
+
+            posterView()
+                .frame(
+                    width: posterSize.width * frameScale,
+                    height: posterSize.height * frameScale
+                )
+                .padding(20)
+                .background {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color(uiColor: UIColor.secondarySystemGroupedBackground))
+                }
         }
     }
 }
@@ -81,37 +104,18 @@ extension PosterButton {
 
     init(
         item: Item,
-        type: PosterDisplayType
+        type: PosterDisplayType,
+        action: @escaping (Namespace.ID) -> Void,
+        @ViewBuilder label: @escaping () -> any View
     ) {
-        self.init(
-            item: item,
-            type: type,
-            content: { TitleSubtitleContentView(item: item) },
-            imageOverlay: { DefaultOverlay(item: item) },
-            contextMenu: { EmptyView() },
-            onSelect: {}
-        )
-    }
-
-    func content(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.content, with: content)
-    }
-
-    func imageOverlay(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.imageOverlay, with: content)
-    }
-
-    func contextMenu(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.contextMenu, with: content)
-    }
-
-    func onSelect(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
+        self.item = item
+        self.type = type
+        self.action = action
+        self.label = label()
     }
 }
 
-// TODO: Shared default content with tvOS?
-//       - check if content is generally same
+// TODO: remove these and replace with `TextStyle`
 
 extension PosterButton {
 
@@ -119,23 +123,25 @@ extension PosterButton {
 
     struct TitleContentView: View {
 
-        let item: Item
+        let title: String
 
         var body: some View {
-            Text(item.displayTitle)
-                .font(.footnote.weight(.regular))
-                .foregroundColor(.primary)
+            Text(title)
+                .font(.footnote)
+                .fontWeight(.regular)
+                .foregroundStyle(.primary)
         }
     }
 
     struct SubtitleContentView: View {
 
-        let item: Item
+        let subtitle: String?
 
         var body: some View {
-            Text(item.subtitle ?? " ")
-                .font(.caption.weight(.medium))
-                .foregroundColor(.secondary)
+            Text(subtitle ?? " ")
+                .font(.caption)
+                .fontWeight(.medium)
+                .foregroundStyle(.secondary)
         }
     }
 
@@ -146,14 +152,12 @@ extension PosterButton {
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
                 if item.showTitle {
-                    TitleContentView(item: item)
+                    TitleContentView(title: item.displayTitle)
                         .lineLimit(1, reservesSpace: true)
-                        .font(.footnote.weight(.regular))
                 }
 
-                SubtitleContentView(item: item)
+                SubtitleContentView(subtitle: item.subtitle)
                     .lineLimit(1, reservesSpace: true)
-                    .font(.caption.weight(.medium))
             }
         }
     }
@@ -173,7 +177,8 @@ extension PosterButton {
                 VStack(alignment: .leading, spacing: 0) {
                     if item.showTitle, let seriesName = item.seriesName {
                         Text(seriesName)
-                            .font(.footnote.weight(.regular))
+                            .font(.footnote)
+                            .fontWeight(.regular)
                             .foregroundColor(.primary)
                             .lineLimit(1, reservesSpace: true)
                     }

@@ -13,15 +13,36 @@ struct NavigationRoute: Identifiable, Hashable {
 
     enum TransitionStyle: Hashable {
 
+        // TODO: sheet and fullscreen with `NavigationTransition`
         case push(NavigationTransition)
         case sheet
         case fullscreen
     }
 
+    enum TransitionType {
+
+        case automatic(TransitionStyle)
+        case withNamespace((Namespace.ID) -> TransitionStyle)
+    }
+
     let id: String
 
     private let content: AnyView
-    var transitionStyle: TransitionStyle
+    var transitionType: TransitionType
+    var namespace: Namespace.ID?
+
+    var transitionStyle: TransitionStyle {
+        switch transitionType {
+        case let .automatic(style):
+            return style
+        case let .withNamespace(builder):
+            if let namespace {
+                return builder(namespace)
+            } else {
+                return .push(.automatic)
+            }
+        }
+    }
 
     init(
         id: String,
@@ -29,7 +50,19 @@ struct NavigationRoute: Identifiable, Hashable {
         @ViewBuilder content: () -> some View
     ) {
         self.id = id
-        self.transitionStyle = style
+        self.transitionType = .automatic(style)
+        self.namespace = nil
+        self.content = AnyView(content())
+    }
+
+    init(
+        id: String,
+        withNamespace: @escaping (Namespace.ID) -> TransitionStyle,
+        @ViewBuilder content: () -> some View
+    ) {
+        self.id = id
+        self.transitionType = .withNamespace(withNamespace)
+        self.namespace = nil
         self.content = AnyView(content())
     }
 
@@ -42,7 +75,7 @@ struct NavigationRoute: Identifiable, Hashable {
     }
 
     @ViewBuilder
-    func destination(in namespace: Namespace.ID?) -> some View {
+    var destination: some View {
         if case let .push(style) = transitionStyle {
             content
                 .backport

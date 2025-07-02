@@ -11,8 +11,6 @@ import SwiftUI
 
 // Note: the design reason to not have a local label always on top
 //       is to have the same failure/empty color for all views
-// TODO: why don't shadows work with failure image views?
-//       - due to `Color`?
 
 extension MediaView {
 
@@ -27,17 +25,24 @@ extension MediaView {
         private var useRandomImage
 
         @ObservedObject
-        var viewModel: MediaViewModel
+        private var viewModel: MediaViewModel
+
+        @Namespace
+        private var namespace
 
         @State
         private var imageSources: [ImageSource] = []
 
-        private var onSelect: () -> Void
+        private let action: (Namespace.ID) -> Void
         private let mediaType: MediaViewModel.MediaType
 
-        init(viewModel: MediaViewModel, type: MediaViewModel.MediaType) {
+        init(
+            viewModel: MediaViewModel,
+            type: MediaViewModel.MediaType,
+            action: @escaping (Namespace.ID) -> Void
+        ) {
             self.viewModel = viewModel
-            self.onSelect = {}
+            self.action = action
             self.mediaType = type
         }
 
@@ -69,7 +74,6 @@ extension MediaView {
                 .fontWeight(.semibold)
                 .lineLimit(1)
                 .multilineTextAlignment(.center)
-                .frame(alignment: .center)
         }
 
         // TODO: find a different way to do this local-label-wackiness if possible
@@ -87,46 +91,37 @@ extension MediaView {
 
         var body: some View {
             Button {
-                onSelect()
+                action(namespace)
             } label: {
-                ZStack {
-                    Color.clear
-
-                    ImageView(imageSources)
-                        .image { image in
-                            if useTitleLabel {
-                                titleLabelOverlay(with: image)
-                            } else {
-                                image
+                ImageView(imageSources)
+                    .image { image in
+                        if useTitleLabel {
+                            titleLabelOverlay(with: image)
+                        } else {
+                            image
+                        }
+                    }
+                    .placeholder { imageSource in
+                        titleLabelOverlay(with: ImageView.DefaultPlaceholderView(blurHash: imageSource.blurHash))
+                    }
+                    .failure {
+                        Color.secondarySystemFill
+                            .opacity(0.75)
+                            .overlay {
+                                titleLabel
+                                    .foregroundColor(.primary)
                             }
-                        }
-                        .placeholder { imageSource in
-                            titleLabelOverlay(with: ImageView.DefaultPlaceholderView(blurHash: imageSource.blurHash))
-                        }
-                        .failure {
-                            Color.secondarySystemFill
-                                .opacity(0.75)
-                                .overlay {
-                                    titleLabel
-                                        .foregroundColor(.primary)
-                                }
-                        }
-                        .id(imageSources.hashValue)
-                }
-                .posterStyle(.landscape)
-                .posterShadow()
+                    }
+                    .id(imageSources.hashValue)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .posterStyle(.landscape)
+                    .backport
+                    .matchedTransitionSource(id: "item", in: namespace)
             }
             .onFirstAppear(perform: setImageSources)
             .onChange(of: useRandomImage) { _ in
                 setImageSources()
             }
         }
-    }
-}
-
-extension MediaView.MediaItem {
-
-    func onSelect(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
     }
 }
