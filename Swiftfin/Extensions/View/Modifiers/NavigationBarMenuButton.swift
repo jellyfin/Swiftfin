@@ -31,7 +31,7 @@ struct NavigationBarMenuButtonModifier<Content: View>: ViewModifier {
                         items()
                     }
                     .menuStyle(.button)
-                    .buttonStyle(.ornament)
+                    .buttonStyle(.ornament(iconOnly: true))
                 }
             }
         }

@@ -23,7 +23,7 @@ struct NavigationBarCloseButtonModifier: ViewModifier {
                 Button(action: action) {
                     Label(L10n.close, systemImage: "xmark")
                 }
-                .buttonStyle(.ornament)
+                .buttonStyle(.ornament(iconOnly: true))
                 .disabled(disabled)
             }
         }

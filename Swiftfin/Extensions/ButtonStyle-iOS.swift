@@ -26,8 +26,8 @@ extension ButtonStyle where Self == OrnamentButtonStyle {
         OrnamentButtonStyle(Defaults[.accentColor])
     }
 
-    static func ornament(_ primary: Color) -> OrnamentButtonStyle {
-        OrnamentButtonStyle(primary)
+    static func ornament(_ primary: Color = .accentColor, iconOnly: Bool = false) -> OrnamentButtonStyle {
+        OrnamentButtonStyle(primary, iconOnly: iconOnly)
     }
 }
 
@@ -64,33 +64,38 @@ struct OrnamentButtonStyle: ButtonStyle {
     // MARK: - Configuration
 
     private let primary: Color
-    private let size: CGFloat
+    private let iconOnly: Bool
 
     // MARK: - Initializer
 
-    init(_ primary: Color, size: CGFloat = UIFont.preferredFont(forTextStyle: .headline).pointSize * 1.5) {
+    init(_ primary: Color, iconOnly: Bool = false) {
         self.primary = primary
-        self.size = size
+        self.iconOnly = iconOnly
     }
 
     // MARK: - Body
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(size: size * 0.5, weight: .bold))
+            .font(.caption)
+            .fontWeight(.semibold)
+            .padding(10)
             .foregroundStyle(foregroundStyle(isPressed: configuration.isPressed))
-            .frame(width: size, height: size)
             .background(
                 ZStack {
-                    Circle()
+                    backgroundShape
                         .fill(.ultraThinMaterial)
-                    Circle()
+                    backgroundShape
                         .fill(backgroundFill(isPressed: configuration.isPressed))
                 }
             )
-            .labelStyle(.iconOnly)
-            .contentShape(Circle())
+            .contentShape(backgroundShape)
             .symbolRenderingMode(.palette)
+            .aspectRatio(iconOnly ? 1 : nil, contentMode: .fit)
+    }
+
+    private var backgroundShape: AnyShape {
+        iconOnly ? AnyShape(Circle()) : AnyShape(Capsule())
     }
 
     // MARK: - Background Color Fill
