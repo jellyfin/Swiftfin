@@ -62,7 +62,7 @@ enum EnvironmentContextMenu<Value> {
         func body(content: Content) -> some View {
 
             if let contextMenu = contextMenuRegistry.getvalue(for: Value.self)?(value) {
-                if let previewOverride = previewOverride {
+                if let previewOverride {
                     content
                         .contextMenu(
                             menuItems: { contextMenu.0 },
