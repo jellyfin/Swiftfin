@@ -6,6 +6,8 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+// TODO: remove
+
 struct TypeValueRegistry<Value> {
 
     private var registry: [(key: Any.Type, value: Value)] = []

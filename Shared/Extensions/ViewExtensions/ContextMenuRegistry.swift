@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: removeContextMenu
+
 typealias ContextMenuRegistry = TypeValueRegistry<(Any) -> (items: AnyView, preview: AnyView?)>
 
 extension EnvironmentValues {
@@ -59,25 +61,27 @@ enum EnvironmentContextMenu<Value> {
 
         func body(content: Content) -> some View {
 
-            let contextMenu = contextMenuRegistry.getvalue(for: Value.self)?(value) ?? (AnyView(EmptyView()), nil)
-
-            if let previewOverride = previewOverride {
-                content
-                    .contextMenu(
-                        menuItems: { contextMenu.0 },
-                        preview: { previewOverride(value) }
-                    )
-            } else if let preview = contextMenu.1 {
-                content
-                    .contextMenu(
-                        menuItems: { contextMenu.0 },
-                        preview: { preview }
-                    )
+            if let contextMenu = contextMenuRegistry.getvalue(for: Value.self)?(value) {
+                if let previewOverride = previewOverride {
+                    content
+                        .contextMenu(
+                            menuItems: { contextMenu.0 },
+                            preview: { previewOverride(value) }
+                        )
+                } else if let preview = contextMenu.1 {
+                    content
+                        .contextMenu(
+                            menuItems: { contextMenu.0 },
+                            preview: { preview }
+                        )
+                } else {
+                    content
+                        .contextMenu(
+                            menuItems: { contextMenu.0 }
+                        )
+                }
             } else {
                 content
-                    .contextMenu(
-                        menuItems: { contextMenu.0 }
-                    )
             }
         }
     }
