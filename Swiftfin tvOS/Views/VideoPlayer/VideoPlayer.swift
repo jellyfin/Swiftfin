@@ -23,11 +23,11 @@ struct VideoPlayer: View {
     @Default(.VideoPlayer.Subtitle.subtitleSize)
     private var subtitleSize
 
-    @EnvironmentObject
-    private var router: VideoPlayerCoordinator.Router
+    @Router
+    private var router
 
     @State
-    private var audioOffset: TimeInterval = 0
+    private var audioOffset: Duration = .zero
     @State
     private var isAspectFilled: Bool = false
     @State
@@ -37,7 +37,7 @@ struct VideoPlayer: View {
     @State
     private var safeAreaInsets: EdgeInsets = .zero
     @State
-    private var subtitleOffset: TimeInterval = 0
+    private var subtitleOffset: Duration = .zero
 
     @StateObject
     private var manager: MediaPlayerManager
@@ -166,7 +166,7 @@ struct VideoPlayer: View {
                 switch event {
                 case .playbackStopped:
                     vlcUIProxy.stop()
-                    router.dismissCoordinator()
+                    router.dismiss()
                 case let .itemChanged(playbackItem: item):
                     isAspectFilled = false
                     audioOffset = 0

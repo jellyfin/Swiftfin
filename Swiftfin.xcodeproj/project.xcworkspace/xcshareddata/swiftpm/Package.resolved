@@ -1,5 +1,5 @@
 {
-  "originHash" : "4c9546908edba116eb1125087ec5cc9b6ed4d6a0577a1ec7c92058070ada6196",
+  "originHash" : "db4de589a690bcb3e4d4ccca050bdc8c7e38a6b821030d2e7ad09aecd0808f3c",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -249,6 +249,15 @@
       "state" : {
         "revision" : "4ce950479707ea109f229d7230ec074a133b15d7",
         "version" : "0.2.1"
+      }
+    },
+    {
+      "identity" : "vlcui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LePips/VLCUI",
+      "state" : {
+        "revision" : "e72985db8f1e837c1e3801a63e45b01b254bef94",
+        "version" : "0.7.2"
       }
     }
   ],

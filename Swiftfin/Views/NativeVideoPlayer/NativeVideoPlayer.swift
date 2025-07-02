@@ -13,9 +13,6 @@ import SwiftUI
 
 struct NativeVideoPlayer: View {
 
-    @EnvironmentObject
-    private var router: VideoPlayerCoordinator.Router
-
     @StateObject
     private var manager: MediaPlayerManager
 

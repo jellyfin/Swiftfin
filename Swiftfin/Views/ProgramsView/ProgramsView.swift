@@ -117,10 +117,10 @@ struct ProgramsView: View {
         .imageOverlay {
             ProgramProgressOverlay(program: $0)
         }
-        .onSelect {
-            router.route(
-                to: .liveVideoPlayer(manager: LiveVideoPlayerManager(program: $0))
-            )
+        .onSelect { _ in
+//            router.route(
+//                to: .liveVideoPlayer(manager: LiveVideoPlayerManager(program: $0))
+//            )
         }
     }
 

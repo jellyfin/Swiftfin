@@ -8,6 +8,7 @@
 
 import Defaults
 import JellyfinAPI
+import PreferencesView
 import Stinsen
 import SwiftUI
 import VLCUI
@@ -23,8 +24,8 @@ struct VideoPlayer: View {
     @Default(.VideoPlayer.Subtitle.subtitleSize)
     private var subtitleSize
 
-    @EnvironmentObject
-    private var router: VideoPlayerCoordinator.Router
+    @Router
+    private var router
 
     @State
     private var audioOffset: Duration = .zero
@@ -88,7 +89,7 @@ struct VideoPlayer: View {
             if let playbackitem = manager.playbackItem {
                 VLCVideoPlayer(configuration: playbackitem.vlcConfiguration)
                     .proxy(vlcUIProxy)
-                    .onDurationUpdated { newSeconds, _ in
+                    .onSecondsUpdated { newSeconds, _ in
                         if !isScrubbing {
                             scrubbedSeconds = newSeconds
                         }
@@ -140,6 +141,16 @@ struct VideoPlayer: View {
 
     // MARK: body
 
+    @ViewBuilder
+    private var contentView: some View {
+        PreferencesView {
+            playerView
+                .supportedOrientations(.allButUpsideDown)
+        }
+        .ignoresSafeArea()
+        .persistentSystemOverlays(.hidden)
+    }
+
     var body: some View {
         playerView
             .ignoresSafeArea()
@@ -176,7 +187,7 @@ struct VideoPlayer: View {
                 switch event {
                 case .playbackStopped:
                     vlcUIProxy.stop()
-                    router.dismissCoordinator()
+                    router.dismiss()
                 case let .itemChanged(playbackItem: item):
                     isAspectFilled = false
                     audioOffset = .zero

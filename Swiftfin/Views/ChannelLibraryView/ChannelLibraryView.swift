@@ -77,9 +77,9 @@ struct ChannelLibraryView: View {
         CompactChannelView(channel: channel.channel)
             .onSelect {
                 guard let mediaSource = channel.channel.mediaSources?.first else { return }
-                router.route(
-                    to: .liveVideoPlayer(manager: LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource))
-                )
+//                router.route(
+//                    to: .liveVideoPlayer(manager: LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource))
+//                )
             }
     }
 
@@ -87,9 +87,9 @@ struct ChannelLibraryView: View {
         DetailedChannelView(channel: channel)
             .onSelect {
                 guard let mediaSource = channel.channel.mediaSources?.first else { return }
-                router.route(
-                    to: .liveVideoPlayer(manager: LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource))
-                )
+//                router.route(
+//                    to: .liveVideoPlayer(manager: LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource))
+//                )
             }
     }
 

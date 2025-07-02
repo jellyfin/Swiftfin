@@ -95,6 +95,8 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
         _orientations
     }
 
+    override public var shouldAutorotate: Bool { true }
+
     // MARK: Defer Edges
 
     private var _preferredScreenEdgesDeferringSystemGestures: UIRectEdge = [.left, .right] {

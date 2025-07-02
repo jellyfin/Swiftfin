@@ -68,7 +68,7 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
 //                manager.set(seconds: 0)
                 selectedMediaPlayerSupplement = nil
             }
-            .buttonStyle(.videoPlayerDrawerContent)
+//            .buttonStyle(.videoPlayerDrawerContent)
             .frame(width: 275, height: 50)
         }
 

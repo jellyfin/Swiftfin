@@ -51,6 +51,8 @@
 		E10706102942F57D00646DAF /* Pulse in Frameworks */ = {isa = PBXBuildFile; productRef = E107060F2942F57D00646DAF /* Pulse */; };
 		E10706122942F57D00646DAF /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E10706112942F57D00646DAF /* PulseLogHandler */; };
 		E10706142942F57D00646DAF /* PulseUI in Frameworks */ = {isa = PBXBuildFile; productRef = E10706132942F57D00646DAF /* PulseUI */; };
+		E1137D2F2E090C1A0091EB60 /* VLCUI in Frameworks */ = {isa = PBXBuildFile; productRef = E1137D2E2E090C1A0091EB60 /* VLCUI */; };
+		E1137D312E090C230091EB60 /* VLCUI in Frameworks */ = {isa = PBXBuildFile; productRef = E1137D302E090C230091EB60 /* VLCUI */; };
 		E113A2A72B5A178D009CAAAA /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E113A2A62B5A178D009CAAAA /* CollectionHStack */; };
 		E113A2AA2B5A179A009CAAAA /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E113A2A92B5A179A009CAAAA /* CollectionVGrid */; };
 		E114DB332B1944FA00B75FB3 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E114DB322B1944FA00B75FB3 /* CollectionVGrid */; };
@@ -206,32 +208,9 @@
 			);
 			target = 5358705F2669D21600D05A09 /* Swiftfin tvOS */;
 		};
-		E14565D82DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Coordinators/CustomDeviceProfileCoordinator.swift,
-				Coordinators/CustomizeSettingsCoordinator.swift,
-				Coordinators/LiveTVCoordinator/tvOSLiveTVCoordinator.swift,
-				Coordinators/MainCoordinator/tvOSMainCoordinator.swift,
-				Coordinators/MainCoordinator/tvOSMainTabCoordinator.swift,
-				Coordinators/PlaybackQualitySettingsCoordinator.swift,
-				Coordinators/UserProfileSettingsCoordinator.swift,
-			);
-			target = 5377CBF0263B596A003A4E83 /* Swiftfin iOS */;
-		};
 		E14565D92DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Coordinators/AdminDashboardCoordinator.swift,
-				Coordinators/DownloadListCoordinator.swift,
-				Coordinators/DownloadTaskCoordinator.swift,
-				Coordinators/ItemEditorCoordinator.swift,
-				Coordinators/ItemImagePickerCoordinator.swift,
-				Coordinators/ItemImagesCoordinator.swift,
-				Coordinators/LiveTVCoordinator/iOSLiveTVCoordinator.swift,
-				Coordinators/MainCoordinator/iOSMainCoordinator.swift,
-				Coordinators/MainCoordinator/iOSMainTabCoordinator.swift,
-				Coordinators/UserProfileImageCoordinator.swift,
 				Extensions/JellyfinAPI/TaskTriggerType.swift,
 				Objects/ItemArrayElements.swift,
 				ViewModels/AdminDashboard/ActiveSessionsViewModel.swift,
@@ -270,7 +249,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		E14560852DFCAE51008FF700 /* Swiftfin */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14561A22DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E14561A32DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Swiftfin; sourceTree = "<group>"; };
-		E14563272DFCAE6E008FF700 /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14565D82DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E14565D92DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
+		E14563272DFCAE6E008FF700 /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14565D92DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
 		E14565DD2DFCAE78008FF700 /* Scripts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Scripts; sourceTree = "<group>"; };
 		E145669F2DFCAEFD008FF700 /* Swiftfin tvOS */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14567272DFCAEFD008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Swiftfin tvOS"; sourceTree = "<group>"; };
 		E1456FC82DFCB323008FF700 /* Translations */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Translations; sourceTree = "<group>"; };
@@ -282,6 +261,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1137D312E090C230091EB60 /* VLCUI in Frameworks */,
 				62666E1727E501CC00EC0ECD /* CFNetwork.framework in Frameworks */,
 				62666DFA27E5013700EC0ECD /* TVVLCKit.xcframework in Frameworks */,
 				62666E3227E5021E00EC0ECD /* UIKit.framework in Frameworks */,
@@ -356,6 +336,7 @@
 				62C29E9C26D0FE4200C1D2E7 /* Stinsen in Frameworks */,
 				62666E0227E5016D00EC0ECD /* CoreGraphics.framework in Frameworks */,
 				E1575E3C293C6B15001665B1 /* Files in Frameworks */,
+				E1137D2F2E090C1A0091EB60 /* VLCUI in Frameworks */,
 				E176EBE02D0502A6009F4CF1 /* CollectionHStack in Frameworks */,
 				E14EA1652BF70A8E00DE757A /* Mantis in Frameworks */,
 				E176EBDE2D050067009F4CF1 /* IdentifiedCollections in Frameworks */,
@@ -527,6 +508,7 @@
 				E1A09F762D05935A00835265 /* CollectionVGrid */,
 				E1A09F782D05935A00835265 /* CollectionHStack */,
 				BD88CB412D77E6A0006BB5E3 /* TVOSPicker */,
+				E1137D302E090C230091EB60 /* VLCUI */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -594,6 +576,7 @@
 				E1A09F712D05933D00835265 /* CollectionVGrid */,
 				E1A09F742D05935100835265 /* CollectionHStack */,
 				E17567992E0375F300B90F41 /* VLCUI */,
+				E1137D2E2E090C1A0091EB60 /* VLCUI */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -698,7 +681,7 @@
 				E1A09F702D05933D00835265 /* XCRemoteSwiftPackageReference "CollectionVGrid" */,
 				E1A09F732D05935100835265 /* XCRemoteSwiftPackageReference "CollectionHStack" */,
 				BD88CB402D77E6A0006BB5E3 /* XCRemoteSwiftPackageReference "TVOSPicker" */,
-				E17567982E0375F300B90F41 /* XCLocalSwiftPackageReference "../VLCUI" */,
+				E1137D2D2E090C1A0091EB60 /* XCRemoteSwiftPackageReference "VLCUI" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -1163,10 +1146,6 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PreferencesView;
 		};
-		E17567982E0375F300B90F41 /* XCLocalSwiftPackageReference "../VLCUI" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../VLCUI;
-		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -1216,6 +1195,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.0.0;
+			};
+		};
+		E1137D2D2E090C1A0091EB60 /* XCRemoteSwiftPackageReference "VLCUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LePips/VLCUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.7.2;
 			};
 		};
 		E1153DCE2BBB634F00424D36 /* XCRemoteSwiftPackageReference "SVGKit" */ = {
@@ -1401,6 +1388,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E107060E2942F57D00646DAF /* XCRemoteSwiftPackageReference "Pulse" */;
 			productName = PulseUI;
+		};
+		E1137D2E2E090C1A0091EB60 /* VLCUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1137D2D2E090C1A0091EB60 /* XCRemoteSwiftPackageReference "VLCUI" */;
+			productName = VLCUI;
+		};
+		E1137D302E090C230091EB60 /* VLCUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1137D2D2E090C1A0091EB60 /* XCRemoteSwiftPackageReference "VLCUI" */;
+			productName = VLCUI;
 		};
 		E113A2A62B5A178D009CAAAA /* CollectionHStack */ = {
 			isa = XCSwiftPackageProductDependency;
