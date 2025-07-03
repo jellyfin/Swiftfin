@@ -80,7 +80,7 @@ struct ActiveSessionsView: View {
                     ProgressView()
                 }
 
-                Menu("Filters", systemImage: "line.3.horizontal.decrease.circle") {
+                Menu(L10n.filters, systemImage: "line.3.horizontal.decrease.circle") {
                     activeWithinFilterButton
                     showInactiveSessionsButton
                 }
