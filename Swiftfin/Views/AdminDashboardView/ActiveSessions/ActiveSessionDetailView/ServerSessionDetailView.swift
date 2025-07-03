@@ -40,6 +40,8 @@ struct ActiveSessionDetailView: View {
                 device: session.deviceName,
                 version: session.applicationVersion
             )
+
+            CommandsSection(session: session)
         }
     }
 
@@ -79,6 +81,8 @@ struct ActiveSessionDetailView: View {
                 device: session.deviceName,
                 version: session.applicationVersion
             )
+
+            CommandsSection(session: session)
 
             // TODO: allow showing item stream details?
             // TODO: don't show codec changes on direct play?
@@ -122,5 +126,11 @@ struct ActiveSessionDetailView: View {
         }
         .animation(.linear(duration: 0.2), value: box.value)
         .navigationTitle(L10n.session)
+        .topBarTrailing {
+            Button("Remote", systemImage: "appletvremote.gen4.fill") {
+                router.route(to: .remoteControl(box: box))
+            }
+            .labelStyle(.iconOnly)
+        }
     }
 }
