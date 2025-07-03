@@ -64,7 +64,7 @@ extension ItemView {
         }
 
         var body: some View {
-            OffsetScrollView(headerHeight: 0.45) {
+            OffsetScrollView(heightRatio: 0.45) {
                 headerView
             } overlay: {
                 OverlayView(viewModel: viewModel)
@@ -79,12 +79,8 @@ extension ItemView {
                                 (location: 0.55, opacity: 1)
                             }
                     }
-                    .frame(
-                        maxHeight: .infinity,
-                        alignment: .bottom
-                    )
             } content: {
-                SeparatorVStack {
+                SeparatorVStack(alignment: .leading) {
                     RowDivider()
                         .padding(.vertical, 10)
                 } content: {
@@ -92,6 +88,7 @@ extension ItemView {
                         .overviewLineLimit(4)
                         .taglineLineLimit(2)
                         .edgePadding(.horizontal)
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     content
                 }

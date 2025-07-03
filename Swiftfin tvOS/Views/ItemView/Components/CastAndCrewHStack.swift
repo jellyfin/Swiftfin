@@ -25,8 +25,7 @@ extension ItemView {
                 items: people.filter { person in
                     person.type?.isSupported ?? false
                 }
-            )
-            .onSelect { person in
+            ) { person in
                 router.route(to: .item(item: .init(person: person)))
             }
         }

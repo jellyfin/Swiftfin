@@ -163,7 +163,7 @@ extension VideoPlayer.Overlay.ChapterOverlay {
                         })
                     }
                     .aspectRatio(1.77, contentMode: .fill)
-                    .posterBorder(ratio: 1 / 30, of: \.width)
+                    .posterBorder()
                     .cornerRadius(ratio: 1 / 30, of: \.width)
 
                     VStack(alignment: .leading, spacing: 5) {

@@ -11,6 +11,10 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
+// TODO: consolidate `ItemTypCollection` stacks
+//       - Show show name in episode subheader
+//       - CollectionItemContentView
+
 extension ItemView {
 
     struct PersonItemContentView: View {

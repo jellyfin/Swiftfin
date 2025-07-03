@@ -33,15 +33,14 @@ extension ItemView {
                 title: L10n.recommended,
                 type: similarPosterType,
                 items: viewModel.elements
-            )
+            ) { item, namespace in
+                router.route(to: .item(item: item), in: namespace)
+            }
             .trailing {
                 SeeAllButton()
                     .onSelect {
                         router.route(to: .library(viewModel: viewModel))
                     }
-            }
-            .onSelect { item in
-                router.route(to: .item(item: item))
             }
         }
     }

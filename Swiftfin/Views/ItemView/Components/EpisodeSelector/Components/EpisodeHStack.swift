@@ -7,7 +7,6 @@
 //
 
 import CollectionHStack
-import Foundation
 import JellyfinAPI
 import SwiftUI
 
@@ -36,6 +35,7 @@ extension SeriesEpisodeSelector {
             ) { episode in
                 SeriesEpisodeSelector.EpisodeCard(episode: episode)
             }
+            .clipsToBounds(false)
             .scrollBehavior(.continuousLeadingEdge)
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
@@ -77,9 +77,9 @@ extension SeriesEpisodeSelector {
             ) { _ in
                 SeriesEpisodeSelector.EmptyCard()
             }
-            .allowScrolling(false)
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
+            .scrollDisabled(true)
         }
     }
 
@@ -96,14 +96,13 @@ extension SeriesEpisodeSelector {
                 count: 1,
                 columns: UIDevice.isPhone ? 1.5 : 3.5
             ) { _ in
-                SeriesEpisodeSelector.ErrorCard(error: error)
-                    .onSelect {
-                        viewModel.send(.refresh)
-                    }
+                SeriesEpisodeSelector.ErrorCard(error: error) {
+                    viewModel.send(.refresh)
+                }
             }
-            .allowScrolling(false)
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
+            .scrollDisabled(true)
         }
     }
 
@@ -116,9 +115,9 @@ extension SeriesEpisodeSelector {
             ) { _ in
                 SeriesEpisodeSelector.LoadingCard()
             }
-            .allowScrolling(false)
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
+            .scrollDisabled(true)
         }
     }
 }
