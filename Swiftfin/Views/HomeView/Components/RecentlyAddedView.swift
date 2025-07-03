@@ -29,7 +29,9 @@ extension HomeView {
                     title: L10n.recentlyAdded,
                     type: recentlyAddedPosterType,
                     items: viewModel.elements
-                )
+                ) { item, namespace in
+                    router.route(to: .item(item: item), in: namespace)
+                }
                 .trailing {
                     SeeAllButton()
                         .onSelect {
@@ -38,9 +40,6 @@ extension HomeView {
                             let viewModel = RecentlyAddedLibraryViewModel()
                             router.route(to: .library(viewModel: viewModel))
                         }
-                }
-                .onSelect { item in
-                    router.route(to: .item(item: item))
                 }
             }
         }

@@ -13,19 +13,30 @@ import OrderedCollections
 
 final class CollectionItemViewModel: ItemViewModel {
 
-    // MARK: - Published Collection Items
+    @ObservedPublisher
+    var sections: OrderedDictionary<BaseItemKind, ItemLibraryViewModel>
 
-    @Published
-    private(set) var collectionItems: OrderedDictionary<BaseItemKind, [BaseItemDto]> = [:]
-
-    // MARK: - Task
-
-    private var collectionItemTask: AnyCancellable?
+    private let itemCollection: ItemTypeCollection
 
     // MARK: - Disable PlayButton
 
     override var presentPlayButton: Bool {
         false
+    }
+
+    override init(item: BaseItemDto) {
+        self.itemCollection = ItemTypeCollection(
+            parent: item,
+            itemTypes: BaseItemKind.supportedCases
+                .appending(.episode)
+                .removing(.boxSet)
+        )
+        self._sections = ObservedPublisher(
+            wrappedValue: [:],
+            observing: itemCollection.$elements
+        )
+
+        super.init(item: item)
     }
 
     // MARK: - Override Response
@@ -34,46 +45,10 @@ final class CollectionItemViewModel: ItemViewModel {
 
         switch action {
         case .refresh, .backgroundRefresh:
-            collectionItemTask?.cancel()
-
-            collectionItemTask = Task {
-                let collectionItems = try await self.getCollectionItems()
-
-                await MainActor.run {
-                    self.collectionItems = collectionItems
-                }
-            }
-            .asAnyCancellable()
+            itemCollection.send(.refresh)
         default: ()
         }
 
         return super.respond(to: action)
-    }
-
-    // MARK: - Get Collection Items
-
-    private func getCollectionItems() async throws -> OrderedDictionary<BaseItemKind, [BaseItemDto]> {
-        var parameters = Paths.GetItemsByUserIDParameters()
-        parameters.fields = .MinimumFields
-        parameters.includeItemTypes = BaseItemKind.supportedCases
-            .appending(.episode)
-        parameters.parentID = item.id
-
-        let request = Paths.getItemsByUserID(
-            userID: userSession.user.id,
-            parameters: parameters
-        )
-        let response = try await userSession.client.send(request)
-
-        let items = response.value.items ?? []
-
-        let result = OrderedDictionary<BaseItemKind?, [BaseItemDto]>(
-            grouping: items,
-            by: \.type
-        )
-        .compactKeys()
-        .sortedKeys { $0.rawValue < $1.rawValue }
-
-        return result
     }
 }

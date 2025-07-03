@@ -28,8 +28,7 @@ extension HomeView {
                     title: L10n.recentlyAdded,
                     type: recentlyAddedPosterType,
                     items: viewModel.elements
-                )
-                .onSelect { item in
+                ) { item in
                     router.route(to: .item(item: item))
                 }
             }

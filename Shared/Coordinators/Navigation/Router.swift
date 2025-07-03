@@ -18,9 +18,13 @@ extension NavigationCoordinator {
 
         func route(
             to route: NavigationRoute,
+            transition: NavigationRoute.TransitionType? = nil,
             in namespace: Namespace.ID? = nil
         ) {
-            navigationCoordinator?.push(route, in: namespace)
+            var route = route
+            route.namespace = namespace
+            route.transitionType = transition ?? route.transitionType
+            navigationCoordinator?.push(route)
         }
 
         func root(
@@ -35,7 +39,7 @@ extension NavigationCoordinator {
 struct Router: DynamicProperty {
 
     @MainActor
-    struct RouterWrapper {
+    struct Wrapper {
         let router: NavigationCoordinator.Router
         let dismiss: DismissAction
 
@@ -43,17 +47,47 @@ struct Router: DynamicProperty {
             to route: NavigationRoute,
             in namespace: Namespace.ID? = nil
         ) {
-            router.route(to: route, in: namespace)
+            router.route(
+                to: route,
+                transition: nil,
+                in: namespace
+            )
+        }
+
+        func route(
+            to route: NavigationRoute,
+            style: NavigationRoute.TransitionStyle,
+            in namespace: Namespace.ID? = nil
+        ) {
+            router.route(
+                to: route,
+                transition: .automatic(style),
+                in: namespace
+            )
+        }
+
+        func route(
+            to route: NavigationRoute,
+            withNamespace: @escaping (Namespace.ID) -> NavigationRoute.TransitionStyle,
+            in namespace: Namespace.ID? = nil
+        ) {
+            router.route(
+                to: route,
+                transition: .withNamespace(withNamespace),
+                in: namespace
+            )
         }
     }
 
-    @Environment(\.dismiss)
-    private var dismiss
-    @Environment(\.router)
-    private var router
+    // `.dismiss` causes changes on disappear
+    @Environment(\.self)
+    private var environment
 
-    var wrappedValue: RouterWrapper {
-        .init(router: router, dismiss: dismiss)
+    var wrappedValue: Wrapper {
+        .init(
+            router: environment.router,
+            dismiss: environment.dismiss
+        )
     }
 }
 

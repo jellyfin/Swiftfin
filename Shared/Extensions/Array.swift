@@ -49,6 +49,10 @@ extension Array {
         guard count > 0 else { return nil }
         return removeFirst()
     }
+
+    func removing(_ element: Element) -> [Element] where Element: Equatable {
+        filter { $0 != element }
+    }
 }
 
 extension Array where Element: Equatable {
