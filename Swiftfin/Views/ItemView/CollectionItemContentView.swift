@@ -19,6 +19,8 @@ extension ItemView {
 
     struct CollectionItemContentView: View {
 
+        typealias Element = OrderedDictionary<BaseItemKind, ItemLibraryViewModel>.Elements.Element
+
         @Router
         private var router
 

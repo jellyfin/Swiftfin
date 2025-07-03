@@ -8,16 +8,9 @@
 
 import SwiftUI
 
-<<<<<<<< HEAD:Shared/Extensions/UnitPoint.swift
 extension UnitPoint {
 
     var inverted: UnitPoint {
         UnitPoint(x: 1 - x, y: 1 - y)
     }
-========
-extension FocusedValues {
-
-    @Entry
-    var focusedPoster: AnyPoster?
->>>>>>>> origin/main:Shared/Extensions/FocusedValues.swift
 }

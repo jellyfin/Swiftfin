@@ -110,7 +110,7 @@ struct ProgramsView: View {
             title: title,
             type: .landscape,
             items: programsViewModel[keyPath: keyPath]
-        ) { item, _ in
+        ) { _, _ in
             // router.route(
             //     to: .liveVideoPlayer(manager: LiveVideoPlayerManager(program: item))
             // )

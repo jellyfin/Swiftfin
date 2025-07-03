@@ -78,7 +78,7 @@ struct SearchView: View {
             let viewModel = ItemLibraryViewModel(parent: item)
             router.route(to: .library(viewModel: viewModel))
         case .program: ()
-            // router.route(to: .liveVideoPlayer(manager: LiveVideoPlayerManager(program: item)))
+        // router.route(to: .liveVideoPlayer(manager: LiveVideoPlayerManager(program: item)))
         case .tvChannel:
             guard let mediaSource = item.mediaSources?.first else { return }
 //            router.route(
