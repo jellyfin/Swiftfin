@@ -13,8 +13,14 @@ import SwiftUI
 
 struct ActiveSessionsView: View {
 
+    @Default(.accentColor)
+    private var accentColor
+
     @Router
     private var router
+
+    @State
+    private var isFiltersPresented = false
 
     @StateObject
     private var viewModel = ActiveSessionsViewModel()
@@ -68,18 +74,28 @@ struct ActiveSessionsView: View {
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.sessions)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarMenuButton(
-            isLoading: viewModel.backgroundStates.contains(.backgroundRefreshing)
-        ) {
-            Section(L10n.filters) {
-                activeWithinFilterButton
-                showInactiveSessionsButton
+        .toolbar {
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                if viewModel.backgroundStates.contains(.backgroundRefreshing) {
+                    ProgressView()
+                }
+
+                Menu("Filters", systemImage: "line.3.horizontal.decrease.circle") {
+                    activeWithinFilterButton
+                    showInactiveSessionsButton
+                }
+                .menuStyle(.button)
+                .buttonStyle(.isPressed { isPressed in
+                    isFiltersPresented = isPressed
+                })
+                .foregroundStyle(accentColor)
             }
         }
         .onFirstAppear {
             viewModel.send(.refresh)
         }
         .onReceive(timer) { _ in
+            guard !isFiltersPresented else { return }
             viewModel.send(.backgroundRefresh)
         }
         .refreshable {
@@ -91,61 +107,67 @@ struct ActiveSessionsView: View {
 
     @ViewBuilder
     private var activeWithinFilterButton: some View {
-        Menu(
-            L10n.lastSeen,
-            systemImage: viewModel.activeWithinSeconds == nil ? "infinity" : "clock"
-        ) {
-            Picker(L10n.lastSeen, selection: $viewModel.activeWithinSeconds) {
-                Label(
-                    L10n.all,
-                    systemImage: "infinity"
-                )
-                .tag(nil as Int?)
+        Picker(selection: $viewModel.activeWithinSeconds) {
+            Label(
+                L10n.all,
+                systemImage: "infinity"
+            )
+            .tag(nil as Int?)
 
-                Label(
-                    300.formatted(.hourMinute),
-                    systemImage: "clock"
-                )
-                .tag(300 as Int?)
+            Label(
+                300.formatted(.hourMinute),
+                systemImage: "clock"
+            )
+            .tag(300 as Int?)
 
-                Label(
-                    900.formatted(.hourMinute),
-                    systemImage: "clock"
-                )
-                .tag(900 as Int?)
+            Label(
+                900.formatted(.hourMinute),
+                systemImage: "clock"
+            )
+            .tag(900 as Int?)
 
-                Label(
-                    1800.formatted(.hourMinute),
-                    systemImage: "clock"
-                )
-                .tag(1800 as Int?)
+            Label(
+                1800.formatted(.hourMinute),
+                systemImage: "clock"
+            )
+            .tag(1800 as Int?)
 
-                Label(
-                    3600.formatted(.hourMinute),
-                    systemImage: "clock"
-                )
-                .tag(3600 as Int?)
+            Label(
+                3600.formatted(.hourMinute),
+                systemImage: "clock"
+            )
+            .tag(3600 as Int?)
+        } label: {
+            Text(L10n.lastSeen)
+
+            if let activeWithinSeconds = viewModel.activeWithinSeconds {
+                Text(Double(activeWithinSeconds).formatted(.hourMinute))
+            } else {
+                Text(L10n.all)
             }
+
+            Image(systemName: viewModel.activeWithinSeconds == nil ? "infinity" : "clock")
         }
+        .pickerStyle(.menu)
     }
 
     // MARK: - Show Inactive Sessions Button
 
     @ViewBuilder
     private var showInactiveSessionsButton: some View {
-        Menu(
-            L10n.sessions,
-            systemImage: viewModel.showSessionType.systemImage
-        ) {
-            Picker(L10n.sessions, selection: $viewModel.showSessionType) {
-                ForEach(ActiveSessionFilter.allCases, id: \.self) { filter in
-                    Label(
-                        filter.displayTitle,
-                        systemImage: filter.systemImage
-                    )
-                    .tag(filter)
-                }
+        Picker(selection: $viewModel.showSessionType) {
+            ForEach(ActiveSessionFilter.allCases, id: \.self) { filter in
+                Label(
+                    filter.displayTitle,
+                    systemImage: filter.systemImage
+                )
+                .tag(filter)
             }
+        } label: {
+            Text(L10n.sessions)
+            Text(viewModel.showSessionType.displayTitle)
+            Image(systemName: viewModel.showSessionType.systemImage)
         }
+        .pickerStyle(.menu)
     }
 }
