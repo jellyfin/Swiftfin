@@ -72,17 +72,17 @@ extension ItemView {
                 title: element.key.pluralDisplayTitle,
                 type: .portrait,
                 items: element.value.elements
-            )
+            ) { item in
+                router.route(to: .item(item: item))
+            }
+            .focusSection()
+
             // TODO: Is this possible?
             /* .trailing {
                  SeeMoreButton() {
                      router.route(to: .library(viewModel: element.value))
                  }
              } */
-            .onSelect { item in
-                    router.route(to: .item(item: item))
-                }
-                .focusSection()
         }
     }
 }
