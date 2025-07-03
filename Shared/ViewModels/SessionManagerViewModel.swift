@@ -25,8 +25,7 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
     // MARK: Action
 
     enum Action: Equatable {
-        case command(GeneralCommandType)
-        case generalCommand(GeneralCommandType, GeneralCommandArgument)
+        case command(GeneralCommandType, GeneralCommandArgument? = nil)
         case playState(PlaystateCommand)
         case seek(positionTicks: Int64)
         case message(String)
@@ -61,7 +60,7 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
             .eraseToAnyPublisher()
     }
 
-    private var connectTask: AnyCancellable? = nil
+    private var currentTask: AnyCancellable?
     private var eventSubject: PassthroughSubject<Event, Never> = .init()
 
     init(_ session: SessionInfoDto) {
@@ -71,31 +70,32 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
     // MARK: - Response
 
     func respond(to action: Action) -> State {
+        currentTask?.cancel()
+
         switch action {
-        case let .command(type):
-            Task {
-                await sendCommand(type, arguments: nil)
-            }
-            return .connected
-        case let .generalCommand(type, argument):
-            Task {
-                await sendCommand(type, arguments: argument.arguments)
-            }
+        case let .command(type, arguments):
+            currentTask = Task {
+                if let arguments {
+                    await sendCommand(type, arguments: arguments.arguments)
+                } else {
+                    await sendCommand(type, arguments: nil)
+                }
+            }.asAnyCancellable()
             return .connected
         case let .playState(command):
-            Task {
+            currentTask = Task {
                 await sendPlayStateCommand(command)
-            }
+            }.asAnyCancellable()
             return .connected
         case let .seek(positionTicks):
-            Task {
+            currentTask = Task {
                 await sendSeekCommand(positionTicks)
-            }
+            }.asAnyCancellable()
             return .connected
         case let .message(message):
-            Task {
+            currentTask = Task {
                 await sendMessage(message)
-            }
+            }.asAnyCancellable()
             return state
         }
     }
@@ -106,22 +106,16 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
         guard let sessionID = session.id,
               session.supportedCommands?.contains(commandType) == true
         else {
-            await MainActor.run {
-                eventSubject.send(.error(JellyfinAPIError("Command not supported")))
-                state = .error("Command not supported")
-            }
+            await handleError(JellyfinAPIError("Command not supported"), errorMessage: "Command not supported")
             return
         }
 
-        await MainActor.run {
-            _ = backgroundStates.insert(.sending)
-        }
+        await setBackgroundState(.sending, active: true)
 
         do {
             let request: Request<Void>
 
             if let arguments = arguments {
-                /// Use full command endpoint for commands with arguments
                 let generalCommand = GeneralCommand(
                     arguments: arguments,
                     controllingUserID: userSession.user.id,
@@ -129,23 +123,13 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
                 )
                 request = Paths.sendFullGeneralCommand(sessionID: sessionID, generalCommand)
             } else {
-                /// Use simple command endpoint for commands without arguments
                 request = Paths.sendGeneralCommand(sessionID: sessionID, command: commandType.rawValue)
             }
 
             let _ = try await userSession.client.send(request)
-
-            await MainActor.run {
-                backgroundStates.remove(.sending)
-                eventSubject.send(.commandSent)
-                state = .connected
-            }
+            await handleSuccess(.commandSent)
         } catch {
-            await MainActor.run {
-                backgroundStates.remove(.sending)
-                eventSubject.send(.error(error))
-                state = .error(error.localizedDescription)
-            }
+            await handleError(error, errorMessage: error.localizedDescription)
         }
     }
 
@@ -155,16 +139,11 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
         guard let sessionID = session.id,
               session.isSupportsMediaControl == true
         else {
-            await MainActor.run {
-                eventSubject.send(.error(JellyfinAPIError("PlayState command not supported")))
-                state = .error("PlayState not supported")
-            }
+            await handleError(JellyfinAPIError("PlayState command not supported"), errorMessage: "PlayState not supported")
             return
         }
 
-        await MainActor.run {
-            _ = backgroundStates.insert(.sending)
-        }
+        await setBackgroundState(.sending, active: true)
 
         do {
             let request = Paths.sendPlaystateCommand(
@@ -174,18 +153,9 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
             )
 
             let _ = try await userSession.client.send(request)
-
-            await MainActor.run {
-                backgroundStates.remove(.sending)
-                eventSubject.send(.commandSent)
-                state = .connected
-            }
+            await handleSuccess(.commandSent)
         } catch {
-            await MainActor.run {
-                backgroundStates.remove(.sending)
-                eventSubject.send(.error(error))
-                state = .error(error.localizedDescription)
-            }
+            await handleError(error, errorMessage: error.localizedDescription)
         }
     }
 
@@ -195,16 +165,11 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
         guard let sessionID = session.id,
               session.isSupportsMediaControl == true
         else {
-            await MainActor.run {
-                eventSubject.send(.error(JellyfinAPIError("Seek command not supported")))
-                state = .error("Seek not supported")
-            }
+            await handleError(JellyfinAPIError("Seek command not supported"), errorMessage: "Seek not supported")
             return
         }
 
-        await MainActor.run {
-            _ = backgroundStates.insert(.sending)
-        }
+        await setBackgroundState(.sending, active: true)
 
         do {
             let request = Paths.sendPlaystateCommand(
@@ -215,18 +180,9 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
             )
 
             let _ = try await userSession.client.send(request)
-
-            await MainActor.run {
-                backgroundStates.remove(.sending)
-                eventSubject.send(.commandSent)
-                state = .connected
-            }
+            await handleSuccess(.commandSent)
         } catch {
-            await MainActor.run {
-                backgroundStates.remove(.sending)
-                eventSubject.send(.error(error))
-                state = .error(error.localizedDescription)
-            }
+            await handleError(error, errorMessage: error.localizedDescription)
         }
     }
 
@@ -236,16 +192,11 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
         guard let sessionID = session.id,
               session.supportedCommands?.contains(.displayMessage) == true
         else {
-            await MainActor.run {
-                eventSubject.send(.error(JellyfinAPIError("Display message not supported")))
-                state = .error("Message not supported")
-            }
+            await handleError(JellyfinAPIError("Display message not supported"), errorMessage: "Message not supported")
             return
         }
 
-        await MainActor.run {
-            _ = backgroundStates.insert(.sending)
-        }
+        await setBackgroundState(.sending, active: true)
 
         do {
             let messageCommand = MessageCommand(
@@ -255,19 +206,37 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
             )
 
             let request = Paths.sendMessageCommand(sessionID: sessionID, messageCommand)
-
             let _ = try await userSession.client.send(request)
-
-            await MainActor.run {
-                backgroundStates.remove(.sending)
-                eventSubject.send(.messageSent)
-                state = .connected
-            }
+            await handleSuccess(.messageSent)
         } catch {
-            await MainActor.run {
-                backgroundStates.remove(.sending)
-                eventSubject.send(.error(error))
-                state = .error(error.localizedDescription)
+            await handleError(error, errorMessage: error.localizedDescription)
+        }
+    }
+
+    // MARK: - State Management
+
+    private func handleSuccess(_ event: Event) async {
+        await MainActor.run {
+            backgroundStates.remove(.sending)
+            eventSubject.send(event)
+            state = .connected
+        }
+    }
+
+    private func handleError(_ error: Error, errorMessage: String) async {
+        await MainActor.run {
+            backgroundStates.remove(.sending)
+            eventSubject.send(.error(error))
+            state = .error(errorMessage)
+        }
+    }
+
+    private func setBackgroundState(_ backgroundState: BackgroundState, active: Bool) async {
+        await MainActor.run {
+            if active {
+                backgroundStates.insert(backgroundState)
+            } else {
+                backgroundStates.remove(backgroundState)
             }
         }
     }
@@ -275,7 +244,6 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
 
 // MARK: General Command Arguments
 
-/// Using this to strong type some of these commands
 extension SessionManagerViewModel {
 
     enum GeneralCommandArgument: Equatable {
