@@ -25,10 +25,8 @@ extension ItemView {
                 items: people.filter { person in
                     person.type?.isSupported ?? false
                 }
-            )
-            .onSelect { person in
-                let viewModel = ItemLibraryViewModel(parent: person)
-                router.route(to: .library(viewModel: viewModel))
+            ) { person in
+                router.route(to: .item(item: .init(person: person)))
             }
         }
     }

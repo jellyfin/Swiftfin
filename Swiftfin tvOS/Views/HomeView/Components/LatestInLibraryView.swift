@@ -19,6 +19,8 @@ extension HomeView {
 
         @Router
         private var router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: LatestInLibraryViewModel
@@ -29,8 +31,7 @@ extension HomeView {
                     title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
                     type: latestInLibraryPosterType,
                     items: viewModel.elements
-                )
-                .onSelect { item in
+                ) { item in
                     router.route(to: .item(item: item))
                 }
             }

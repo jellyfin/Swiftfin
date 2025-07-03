@@ -6,10 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionHStack
 import Defaults
-import JellyfinAPI
-import OrderedCollections
 import SwiftUI
 
 extension HomeView {
@@ -31,15 +28,14 @@ extension HomeView {
                     title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
                     type: latestInLibraryPosterType,
                     items: viewModel.elements
-                )
+                ) { item, namespace in
+                    router.route(to: .item(item: item), in: namespace)
+                }
                 .trailing {
                     SeeAllButton()
                         .onSelect {
                             router.route(to: .library(viewModel: viewModel))
                         }
-                }
-                .onSelect { item in
-                    router.route(to: .item(item: item))
                 }
             }
         }

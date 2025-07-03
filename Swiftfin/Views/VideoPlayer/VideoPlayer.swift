@@ -9,7 +9,6 @@
 import Defaults
 import JellyfinAPI
 import PreferencesView
-import Stinsen
 import SwiftUI
 import VLCUI
 

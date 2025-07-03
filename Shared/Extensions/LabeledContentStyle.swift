@@ -29,3 +29,25 @@ struct LearnMoreLabeledContentStyle: LabeledContentStyle {
         }
     }
 }
+
+extension LabeledContentStyle where Self == ItemAttributeLabeledContentStyle {
+
+    static var itemAttribute: ItemAttributeLabeledContentStyle {
+        ItemAttributeLabeledContentStyle()
+    }
+}
+
+struct ItemAttributeLabeledContentStyle: LabeledContentStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            configuration.label
+                .font(.headline)
+                .foregroundStyle(.primary)
+
+            configuration.content
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
+    }
+}

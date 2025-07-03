@@ -54,7 +54,7 @@ extension ChannelLibraryView {
                         .padding(5)
                 }
                 .aspectRatio(1.0, contentMode: .fill)
-                .posterBorder(ratio: 0.0375, of: \.width)
+                .posterBorder()
                 .cornerRadius(ratio: 0.0375, of: \.width)
 
                 Text(channel.channel.number ?? "")

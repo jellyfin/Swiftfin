@@ -25,6 +25,15 @@ extension NavigationRoute {
         ProgramsView()
     }
 
+    static func liveVideoPlayer(manager: LiveVideoPlayerManager) -> NavigationRoute {
+        NavigationRoute(
+            id: "liveVideoPlayer",
+            style: .fullscreen
+        ) {
+            LiveVideoPlayerViewShim(videoPlayerManager: manager)
+        }
+    }
+
     static func mediaSourceInfo(source: MediaSourceInfo) -> NavigationRoute {
         NavigationRoute(
             id: "mediaSourceInfo",
@@ -42,34 +51,86 @@ extension NavigationRoute {
     }
     #endif
 
-    static func videoPlayer(manager: MediaPlayerManager) -> NavigationRoute {
+    static func videoPlayer(manager: VideoPlayerManager) -> NavigationRoute {
         NavigationRoute(
             id: "videoPlayer",
             style: .fullscreen
         ) {
-            VideoPlayerShim(manager: manager)
+            VideoPlayerViewShim(videoPlayerManager: manager)
         }
     }
 }
 
-struct VideoPlayerShim: View {
+// TODO: temporary shims for navigation work until video player refactor
 
-    let manager: MediaPlayerManager
+struct VideoPlayerViewShim: View {
+
+    @StateObject
+    var videoPlayerManager: VideoPlayerManager
 
     var body: some View {
+        #if os(iOS)
+
         PreferencesView {
             Group {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                    VideoPlayer(manager: manager)
+                    VideoPlayer(manager: self.videoPlayerManager)
                 } else {
-                    NativeVideoPlayer(manager: manager)
+                    NativeVideoPlayer(manager: self.videoPlayerManager)
                 }
             }
             .preferredColorScheme(.dark)
-            .supportedOrientations(UIDevice.isPhone ? .allButUpsideDown : .allButUpsideDown)
+            .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
         }
         .ignoresSafeArea()
         .persistentSystemOverlays(.hidden)
-        .supportedOrientations(UIDevice.isPhone ? .allButUpsideDown : .allButUpsideDown)
+
+        #else
+        if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+            PreferencesView {
+                VideoPlayer(manager: self.videoPlayerManager)
+            }
+            .ignoresSafeArea()
+        } else {
+            NativeVideoPlayer(manager: self.videoPlayerManager)
+        }
+        #endif
+    }
+}
+
+struct LiveVideoPlayerViewShim: View {
+
+    @StateObject
+    var videoPlayerManager: LiveVideoPlayerManager
+
+    var body: some View {
+        #if os(iOS)
+
+        PreferencesView {
+            Group {
+                if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+                    LiveVideoPlayer(manager: self.videoPlayerManager)
+                } else {
+                    LiveNativeVideoPlayer(manager: self.videoPlayerManager)
+                }
+            }
+            .preferredColorScheme(.dark)
+            .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
+        }
+        .ignoresSafeArea()
+        .persistentSystemOverlays(.hidden)
+
+        #else
+
+        PreferencesView {
+            if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+                LiveVideoPlayer(manager: self.videoPlayerManager)
+            } else {
+                LiveNativeVideoPlayer(manager: self.videoPlayerManager)
+            }
+        }
+        .ignoresSafeArea()
+
+        #endif
     }
 }

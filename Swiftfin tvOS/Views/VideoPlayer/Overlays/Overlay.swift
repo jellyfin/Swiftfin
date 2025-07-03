@@ -27,6 +27,9 @@ extension VideoPlayer {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
+        @Router
+        private var router
+
         @State
         private var contentSize: CGSize = .zero
         @State
