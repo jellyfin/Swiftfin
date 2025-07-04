@@ -21,6 +21,14 @@ struct ListRowCheckbox: View {
     @Environment(\.isSelected)
     private var isSelected
 
+    // MARK: - Sizing Variable
+
+    #if os(tvOS)
+    private let size: CGFloat = 36
+    #else
+    private let size: CGFloat = 24
+    #endif
+
     // MARK: - Body
 
     @ViewBuilder
@@ -30,7 +38,7 @@ struct ListRowCheckbox: View {
                 .resizable()
                 .fontWeight(.bold)
                 .aspectRatio(1, contentMode: .fit)
-                .frame(width: 24, height: 24)
+                .frame(width: size, height: size)
                 .symbolRenderingMode(.palette)
                 .foregroundStyle(accentColor.overlayColor, accentColor)
 
@@ -39,7 +47,7 @@ struct ListRowCheckbox: View {
                 .resizable()
                 .fontWeight(.bold)
                 .aspectRatio(1, contentMode: .fit)
-                .frame(width: 24, height: 24)
+                .frame(width: size, height: size)
                 .foregroundStyle(.secondary)
         }
     }
