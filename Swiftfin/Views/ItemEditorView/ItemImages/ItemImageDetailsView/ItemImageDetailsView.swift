@@ -11,6 +11,8 @@ import SwiftUI
 
 struct ItemImageDetailsView: View {
 
+    // MARK: - Editing State
+
     @Environment(\.isEditing)
     private var isEditing
 
@@ -38,61 +40,46 @@ struct ItemImageDetailsView: View {
 
     // MARK: - Image Actions
 
-    private let onClose: () -> Void
     private let onSave: (() -> Void)?
     private let onDelete: (() -> Void)?
 
-    // MARK: - Initializer
+    // MARK: - Error State
 
-    init(
-        viewModel: ItemImagesViewModel,
-        imageSource: ImageSource,
-        index: Int? = nil,
-        width: Int? = nil,
-        height: Int? = nil,
-        language: String? = nil,
-        provider: String? = nil,
-        rating: Double? = nil,
-        ratingVotes: Int? = nil,
-        onClose: @escaping () -> Void,
-        onSave: (() -> Void)? = nil,
-        onDelete: (() -> Void)? = nil
-    ) {
-        self.viewModel = viewModel
-        self.imageSource = imageSource
-        self.index = index
-        self.width = width
-        self.height = height
-        self.language = language
-        self.provider = provider
-        self.rating = rating
-        self.ratingVotes = ratingVotes
-        self.onClose = onClose
-        self.onSave = onSave
-        self.onDelete = onDelete
-    }
+    @State
+    private var error: Error?
 
     // MARK: - Body
 
     var body: some View {
-        NavigationView {
-            contentView
-                .navigationTitle(L10n.image)
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationBarCloseButton {
-                    onClose()
+        contentView
+            .navigationTitle(L10n.image)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarCloseButton {
+                router.dismiss()
+            }
+            .topBarTrailing {
+                if viewModel.backgroundStates.contains(.updating) {
+                    ProgressView()
                 }
-                .topBarTrailing {
-                    if viewModel.backgroundStates.contains(.updating) {
-                        ProgressView()
-                    }
 
-                    if let onSave {
-                        Button(L10n.save, action: onSave)
-                            .buttonStyle(.toolbarPill)
+                if !isEditing, let onSave {
+                    Button(L10n.save) {
+                        onSave()
                     }
+                    .buttonStyle(.toolbarPill)
                 }
-        }
+            }
+            .errorMessage($error)
+            .onReceive(viewModel.events) { event in
+                switch event {
+                case let .error(eventError):
+                    UIDevice.feedback(.error)
+                    error = eventError
+                case .updated:
+                    UIDevice.feedback(.success)
+                    router.dismiss()
+                }
+            }
     }
 
     // MARK: - Content View
@@ -122,5 +109,53 @@ struct ItemImageDetailsView: View {
                 }
             }
         }
+    }
+}
+
+extension ItemImageDetailsView {
+
+    // Initialize as a Local Server Image
+
+    init(
+        viewModel: ItemImagesViewModel,
+        imageInfo: ImageInfo
+    ) {
+        self.viewModel = viewModel
+        self.imageSource = imageInfo.itemImageSource(
+            itemID: viewModel.item.id!,
+            client: viewModel.userSession.client
+        )
+        self.index = imageInfo.imageIndex
+        self.width = imageInfo.width
+        self.height = imageInfo.height
+        self.language = nil
+        self.provider = nil
+        self.rating = nil
+        self.ratingVotes = nil
+        self.onSave = nil
+        self.onDelete = {
+            viewModel.send(.deleteImage(imageInfo))
+        }
+    }
+
+    // Initialize as a Remote Search Image
+
+    init(
+        viewModel: ItemImagesViewModel,
+        remoteImageInfo: RemoteImageInfo
+    ) {
+        self.viewModel = viewModel
+        self.imageSource = ImageSource(url: remoteImageInfo.url?.url)
+        self.index = nil
+        self.width = remoteImageInfo.width
+        self.height = remoteImageInfo.height
+        self.language = remoteImageInfo.language
+        self.provider = remoteImageInfo.providerName
+        self.rating = remoteImageInfo.communityRating
+        self.ratingVotes = remoteImageInfo.voteCount
+        self.onSave = {
+            viewModel.send(.setImage(remoteImageInfo))
+        }
+        self.onDelete = nil
     }
 }

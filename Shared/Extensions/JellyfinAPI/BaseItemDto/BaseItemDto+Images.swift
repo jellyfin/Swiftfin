@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import BlurHashKit
 import Factory
 import Foundation
 import JellyfinAPI
@@ -28,7 +29,15 @@ extension BaseItemDto {
 
     // TODO: will server actually only have a single blurhash per type?
     //       - makes `firstBlurHash` redundant
-    func blurHash(_ type: ImageType) -> String? {
+    func blurHash(for type: ImageType) -> BlurHash? {
+        guard let blurHashString = blurHashString(for: type) else {
+            return nil
+        }
+
+        return BlurHash(string: blurHashString)
+    }
+
+    func blurHashString(for type: ImageType) -> String? {
         guard type != .logo else { return nil }
 
         if let tag = imageTags?[type.rawValue], let taggedBlurHash = imageBlurHashes?[type]?[tag] {
@@ -127,7 +136,7 @@ extension BaseItemDto {
 
     private func _imageSource(_ type: ImageType, maxWidth: CGFloat?, maxHeight: CGFloat?) -> ImageSource {
         let url = _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: id ?? "")
-        let blurHash = blurHash(type)
+        let blurHash = blurHashString(for: type)
 
         return ImageSource(
             url: url,

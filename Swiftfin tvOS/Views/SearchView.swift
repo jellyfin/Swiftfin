@@ -103,9 +103,9 @@ struct SearchView: View {
         PosterHStack(
             title: title,
             type: posterType,
-            items: viewModel[keyPath: keyPath]
+            items: viewModel[keyPath: keyPath],
+            action: select
         )
-        .onSelect(select)
     }
 
     var body: some View {

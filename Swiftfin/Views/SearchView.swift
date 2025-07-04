@@ -91,11 +91,8 @@ struct SearchView: View {
         }
     }
 
-    private func select(_ item: BaseItemDto) {
+    private func select(_ item: BaseItemDto, in namespace: Namespace.ID) {
         switch item.type {
-        case .person:
-            let viewModel = ItemLibraryViewModel(parent: item)
-            router.route(to: .library(viewModel: viewModel))
         case .program:
             router.route(
                 to: .liveVideoPlayer(
@@ -110,7 +107,7 @@ struct SearchView: View {
                 )
             )
         default:
-            router.route(to: .item(item: item))
+            router.route(to: .item(item: item), in: namespace)
         }
     }
 
@@ -123,7 +120,8 @@ struct SearchView: View {
         PosterHStack(
             title: title,
             type: posterType,
-            items: viewModel[keyPath: keyPath]
+            items: viewModel[keyPath: keyPath],
+            action: select
         )
         .trailing {
             SeeAllButton()
@@ -136,7 +134,6 @@ struct SearchView: View {
                     router.route(to: .library(viewModel: viewModel))
                 }
         }
-        .onSelect(select)
     }
 
     var body: some View {

@@ -56,26 +56,30 @@ extension ItemView {
 
                 // MARK: Toggle Played
 
-                let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
+                /// Marking Persons and Artists as played doesn't do anything.
+                if viewModel.item.type != .person && viewModel.item.type != .musicArtist {
 
-                ActionButton(
-                    L10n.played,
-                    icon: "checkmark.circle",
-                    selectedIcon: "checkmark.circle.fill"
-                ) {
-                    UIDevice.impact(.light)
-                    viewModel.send(.toggleIsPlayed)
-                }
-                .environment(\.isSelected, isCheckmarkSelected)
-                .if(isCheckmarkSelected) { item in
-                    item
-                        .foregroundStyle(
-                            .primary,
-                            accentColor
-                        )
-                }
-                .if(equalSpacing) { view in
-                    view.frame(maxWidth: .infinity)
+                    let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
+
+                    ActionButton(
+                        L10n.played,
+                        icon: "checkmark.circle",
+                        selectedIcon: "checkmark.circle.fill"
+                    ) {
+                        UIDevice.impact(.light)
+                        viewModel.send(.toggleIsPlayed)
+                    }
+                    .environment(\.isSelected, isCheckmarkSelected)
+                    .if(isCheckmarkSelected) { item in
+                        item
+                            .foregroundStyle(
+                                .primary,
+                                accentColor
+                            )
+                    }
+                    .if(equalSpacing) { view in
+                        view.frame(maxWidth: .infinity)
+                    }
                 }
 
                 // MARK: Toggle Favorite

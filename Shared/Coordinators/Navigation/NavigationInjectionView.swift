@@ -28,8 +28,8 @@ struct NavigationInjectionView: View {
     var body: some View {
         NavigationStack(path: $coordinator.path) {
             content
-                .navigationDestination(for: NavigationCoordinator.PathItem.self) { pathItem in
-                    pathItem.route.destination(in: pathItem.namespace)
+                .navigationDestination(for: NavigationRoute.self) { route in
+                    route.destination
                 }
         }
         .environment(
@@ -45,10 +45,9 @@ struct NavigationInjectionView: View {
             coordinator.presentedSheet = nil
         } content: { route in
             let newCoordinator = NavigationCoordinator()
-            let destination = route.destination(in: nil)
 
             NavigationInjectionView(coordinator: newCoordinator) {
-                destination
+                route.destination
             }
         }
         .fullScreenCover(
@@ -57,10 +56,9 @@ struct NavigationInjectionView: View {
             coordinator.presentedFullScreen = nil
         } content: { route in
             let newCoordinator = NavigationCoordinator()
-            let destination = route.destination(in: nil)
 
             NavigationInjectionView(coordinator: newCoordinator) {
-                destination
+                route.destination
             }
         }
     }
