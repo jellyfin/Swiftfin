@@ -14,7 +14,7 @@ import URLQueryEncoder
 
 final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
 
-    // MARK: Event
+    // MARK: - Event
 
     enum Event {
         case commandSent
@@ -22,7 +22,7 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
         case error(Error)
     }
 
-    // MARK: Action
+    // MARK: - Action
 
     enum Action: Equatable {
         case command(GeneralCommandType, GeneralCommandArgument? = nil)
@@ -31,13 +31,7 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
         case message(String)
     }
 
-    // MARK: BackgroundState
-
-    enum BackgroundState: Hashable {
-        case sending
-    }
-
-    // MARK: State
+    // MARK: - State
 
     enum State: Hashable {
         case initial
@@ -45,11 +39,10 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
         case error(String)
     }
 
-    @Published
-    var session: SessionInfoDto
+    // MARK: - Published Properties
 
     @Published
-    var backgroundStates: Set<BackgroundState> = []
+    var session: SessionInfoDto
 
     @Published
     var state: State = .initial
@@ -63,11 +56,13 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
     private var currentTask: AnyCancellable?
     private var eventSubject: PassthroughSubject<Event, Never> = .init()
 
+    // MARK: - Init
+
     init(_ session: SessionInfoDto) {
         self.session = session
     }
 
-    // MARK: - Response
+    // MARK: - Respond
 
     func respond(to action: Action) -> State {
         currentTask?.cancel()
@@ -75,232 +70,138 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
         switch action {
         case let .command(type, arguments):
             currentTask = Task {
-                if let arguments {
-                    await sendCommand(type, arguments: arguments.arguments)
-                } else {
-                    await sendCommand(type, arguments: nil)
+                do {
+                    try await sendGeneralCommand(type: type, arguments: arguments?.arguments)
+                    await MainActor.run {
+                        self.eventSubject.send(.commandSent)
+                        self.state = .connected
+                    }
+                } catch {
+                    await MainActor.run {
+                        self.eventSubject.send(.error(error))
+                        self.state = .error(error.localizedDescription)
+                    }
                 }
             }.asAnyCancellable()
+
             return .connected
+
         case let .playState(command):
             currentTask = Task {
-                await sendPlayStateCommand(command)
+                do {
+                    try await sendPlaystateCommand(command: command)
+                    await MainActor.run {
+                        self.eventSubject.send(.commandSent)
+                        self.state = .connected
+                    }
+                } catch {
+                    await MainActor.run {
+                        self.eventSubject.send(.error(error))
+                        self.state = .error(error.localizedDescription)
+                    }
+                }
             }.asAnyCancellable()
+
             return .connected
+
         case let .seek(positionTicks):
             currentTask = Task {
-                await sendSeekCommand(positionTicks)
+                do {
+                    try await sendPlaystateCommand(command: .seek, seekPositionTicks: Int(positionTicks))
+                    await MainActor.run {
+                        self.eventSubject.send(.commandSent)
+                        self.state = .connected
+                    }
+                } catch {
+                    await MainActor.run {
+                        self.eventSubject.send(.error(error))
+                        self.state = .error(error.localizedDescription)
+                    }
+                }
             }.asAnyCancellable()
+
             return .connected
+
         case let .message(message):
             currentTask = Task {
-                await sendMessage(message)
+                do {
+                    try await sendMessage(message)
+                    await MainActor.run {
+                        self.eventSubject.send(.messageSent)
+                        self.state = .connected
+                    }
+                } catch {
+                    await MainActor.run {
+                        self.eventSubject.send(.error(error))
+                        self.state = .error(error.localizedDescription)
+                    }
+                }
             }.asAnyCancellable()
+
             return state
         }
     }
 
-    // MARK: - Send Command
+    // MARK: - General Command
 
-    private func sendCommand(_ commandType: GeneralCommandType, arguments: [String: String]?) async {
+    private func sendGeneralCommand(type: GeneralCommandType, arguments: [String: String]?) async throws {
         guard let sessionID = session.id,
-              session.supportedCommands?.contains(commandType) == true
+              session.supportedCommands?.contains(type) == true
         else {
-            await handleError(JellyfinAPIError("Command not supported"), errorMessage: "Command not supported")
-            return
+            throw JellyfinAPIError("Command not supported")
         }
 
-        await setBackgroundState(.sending, active: true)
+        let request: Request<Void>
 
-        do {
-            let request: Request<Void>
-
-            if let arguments = arguments {
-                let generalCommand = GeneralCommand(
-                    arguments: arguments,
-                    controllingUserID: userSession.user.id,
-                    name: commandType
-                )
-                request = Paths.sendFullGeneralCommand(sessionID: sessionID, generalCommand)
-            } else {
-                request = Paths.sendGeneralCommand(sessionID: sessionID, command: commandType.rawValue)
-            }
-
-            let _ = try await userSession.client.send(request)
-            await handleSuccess(.commandSent)
-        } catch {
-            await handleError(error, errorMessage: error.localizedDescription)
+        if let arguments = arguments {
+            let generalCommand = GeneralCommand(
+                arguments: arguments,
+                controllingUserID: userSession.user.id,
+                name: type
+            )
+            request = Paths.sendFullGeneralCommand(sessionID: sessionID, generalCommand)
+        } else {
+            request = Paths.sendGeneralCommand(sessionID: sessionID, command: type.rawValue)
         }
+
+        _ = try await userSession.client.send(request)
     }
 
-    // MARK: - Send PlayState Command
+    // MARK: - PlayState Command
 
-    private func sendPlayStateCommand(_ command: PlaystateCommand) async {
+    private func sendPlaystateCommand(command: PlaystateCommand, seekPositionTicks: Int? = nil) async throws {
         guard let sessionID = session.id,
               session.isSupportsMediaControl == true
         else {
-            await handleError(JellyfinAPIError("PlayState command not supported"), errorMessage: "PlayState not supported")
-            return
+            throw JellyfinAPIError("PlayState command not supported")
         }
 
-        await setBackgroundState(.sending, active: true)
+        let request = Paths.sendPlaystateCommand(
+            sessionID: sessionID,
+            command: command.rawValue,
+            seekPositionTicks: seekPositionTicks,
+            controllingUserID: userSession.user.id
+        )
 
-        do {
-            let request = Paths.sendPlaystateCommand(
-                sessionID: sessionID,
-                command: command.rawValue,
-                controllingUserID: userSession.user.id
-            )
-
-            let _ = try await userSession.client.send(request)
-            await handleSuccess(.commandSent)
-        } catch {
-            await handleError(error, errorMessage: error.localizedDescription)
-        }
+        _ = try await userSession.client.send(request)
     }
 
-    // MARK: - Send Seek Command
+    // MARK: - Message Command
 
-    private func sendSeekCommand(_ positionTicks: Int64) async {
-        guard let sessionID = session.id,
-              session.isSupportsMediaControl == true
-        else {
-            await handleError(JellyfinAPIError("Seek command not supported"), errorMessage: "Seek not supported")
-            return
-        }
-
-        await setBackgroundState(.sending, active: true)
-
-        do {
-            let request = Paths.sendPlaystateCommand(
-                sessionID: sessionID,
-                command: PlaystateCommand.seek.rawValue,
-                seekPositionTicks: Int(positionTicks),
-                controllingUserID: userSession.user.id
-            )
-
-            let _ = try await userSession.client.send(request)
-            await handleSuccess(.commandSent)
-        } catch {
-            await handleError(error, errorMessage: error.localizedDescription)
-        }
-    }
-
-    // MARK: - Send Message
-
-    private func sendMessage(_ message: String) async {
+    private func sendMessage(_ message: String) async throws {
         guard let sessionID = session.id,
               session.supportedCommands?.contains(.displayMessage) == true
         else {
-            await handleError(JellyfinAPIError("Display message not supported"), errorMessage: "Message not supported")
-            return
+            throw JellyfinAPIError("Display message not supported")
         }
 
-        await setBackgroundState(.sending, active: true)
+        let messageCommand = MessageCommand(
+            header: "Message from \(userSession.user.username)",
+            text: message,
+            timeoutMs: 5000
+        )
 
-        do {
-            let messageCommand = MessageCommand(
-                header: "Message from \(userSession.user.username)",
-                text: message,
-                timeoutMs: 5000
-            )
-
-            let request = Paths.sendMessageCommand(sessionID: sessionID, messageCommand)
-            let _ = try await userSession.client.send(request)
-            await handleSuccess(.messageSent)
-        } catch {
-            await handleError(error, errorMessage: error.localizedDescription)
-        }
-    }
-
-    // MARK: - State Management
-
-    private func handleSuccess(_ event: Event) async {
-        await MainActor.run {
-            backgroundStates.remove(.sending)
-            eventSubject.send(event)
-            state = .connected
-        }
-    }
-
-    private func handleError(_ error: Error, errorMessage: String) async {
-        await MainActor.run {
-            backgroundStates.remove(.sending)
-            eventSubject.send(.error(error))
-            state = .error(errorMessage)
-        }
-    }
-
-    private func setBackgroundState(_ backgroundState: BackgroundState, active: Bool) async {
-        await MainActor.run {
-            if active {
-                backgroundStates.insert(backgroundState)
-            } else {
-                backgroundStates.remove(backgroundState)
-            }
-        }
-    }
-}
-
-// MARK: General Command Arguments
-
-extension SessionManagerViewModel {
-
-    enum GeneralCommandArgument: Equatable {
-        case volume(Int)
-        case audioStreamIndex(Int)
-        case subtitleStreamIndex(Int)
-        case key(String)
-        case string(String)
-        case repeatMode(RepeatMode)
-        case playMediaSource(itemId: String, mediaSourceId: String? = nil, audioStreamIndex: Int? = nil, subtitleStreamIndex: Int? = nil)
-        case playItems(itemIds: [String], startPositionTicks: Int64? = nil, playCommand: PlayCommand)
-        case shuffleMode(Bool)
-        case maxStreamingBitrate(Int64)
-        case playbackOrder(PlaybackOrder)
-        case displayContent(itemId: String, itemName: String, itemType: String)
-
-        var arguments: [String: String] {
-            switch self {
-            case let .volume(value):
-                return ["Volume": String(max(0, min(100, value)))]
-            case let .audioStreamIndex(index):
-                return ["Index": String(index)]
-            case let .subtitleStreamIndex(index):
-                return ["Index": String(index)]
-            case let .key(key):
-                return ["Key": key]
-            case let .string(string):
-                return ["String": string]
-            case let .repeatMode(mode):
-                return ["RepeatMode": mode.rawValue]
-            case let .playMediaSource(itemId, mediaSourceId, audioStreamIndex, subtitleStreamIndex):
-                var args = ["ItemId": itemId]
-                if let mediaSourceId = mediaSourceId {
-                    args["MediaSourceId"] = mediaSourceId
-                }
-                if let audioStreamIndex = audioStreamIndex {
-                    args["AudioStreamIndex"] = String(audioStreamIndex)
-                }
-                if let subtitleStreamIndex = subtitleStreamIndex {
-                    args["SubtitleStreamIndex"] = String(subtitleStreamIndex)
-                }
-                return args
-            case let .playItems(itemIds, startPositionTicks, playCommand):
-                var args = ["ItemIds": itemIds.joined(separator: ","), "PlayCommand": playCommand.rawValue]
-                if let startPositionTicks = startPositionTicks {
-                    args["StartPositionTicks"] = String(startPositionTicks)
-                }
-                return args
-            case let .shuffleMode(shuffle):
-                return ["ShuffleMode": shuffle ? "Shuffle" : "Sorted"]
-            case let .maxStreamingBitrate(bitrate):
-                return ["Bitrate": String(bitrate)]
-            case let .playbackOrder(order):
-                return ["PlaybackOrder": order.rawValue]
-            case let .displayContent(itemId, itemName, itemType):
-                return ["ItemId": itemId, "ItemName": itemName, "ItemType": itemType]
-            }
-        }
+        let request = Paths.sendMessageCommand(sessionID: sessionID, messageCommand)
+        _ = try await userSession.client.send(request)
     }
 }

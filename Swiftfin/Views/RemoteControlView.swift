@@ -48,7 +48,7 @@ struct RemoteControlView: View {
             // MARK: Progress Section
 
             if session.nowPlayingItem != nil {
-                // progressSection
+                progressSection
             }
 
             // MARK: Playback Controls
@@ -90,6 +90,7 @@ struct RemoteControlView: View {
                                     }
                             }
                             .squarePosterStyle()
+                            .frame(maxHeight: 500)
                         } else {
                             ZStack {
                                 Color.clear
@@ -100,6 +101,7 @@ struct RemoteControlView: View {
                                     }
                             }
                             .posterStyle(.portrait)
+                            .frame(maxHeight: 500)
                         }
                     }
                 )
@@ -170,6 +172,59 @@ struct RemoteControlView: View {
             }
         }
         .padding(.top, 20)
+    }
+
+    // MARK: Progress Section
+
+    private var progressSection: some View {
+        VStack(spacing: 8) {
+            HStack {
+                Text(ServerTicks(session.playState?.positionTicks).seconds.formatted(.hourMinute))
+                    .font(.caption)
+                    .foregroundColor(.white)
+
+                Spacer()
+
+                Text(ServerTicks(session.nowPlayingItem?.runTimeTicks).seconds.formatted(.hourMinute))
+                    .font(.caption)
+                    .foregroundColor(.white)
+            }
+
+            Slider(progress: Binding(
+                get: {
+                    guard let pos = session.playState?.positionTicks,
+                          let dur = session.nowPlayingItem?.runTimeTicks,
+                          dur > 0 else { return 0 }
+                    return CGFloat(Double(pos) / Double(dur))
+                },
+                set: { newValue in
+                    guard let dur = session.nowPlayingItem?.runTimeTicks else { return }
+                    let newTicks = Int64(CGFloat(dur) * newValue)
+                    viewModel.send(.seek(positionTicks: newTicks))
+                    box.value?.playState?.positionTicks = Int(newTicks)
+                }
+            ))
+            .gestureBehavior(.track)
+            .track {
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(Color.blue) // Active track color
+                    .frame(height: 4)
+            }
+            .trackBackground {
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(Color.red.opacity(0.5)) // << YOUR BACKGROUND COLOR HERE
+                    .frame(height: 4)
+            }
+            .thumb {
+                Circle()
+                    .fill(Color.white)
+                    .frame(width: 16, height: 16)
+                    .shadow(radius: 1)
+            }
+            .frame(height: 24)
+            .padding(.horizontal)
+        }
+        .padding(.bottom)
     }
 
     // MARK: Playback Controls Section
@@ -309,8 +364,13 @@ struct RemoteControlView: View {
                         isKeyboardPresented = true
                     } label: {
                         Image(systemName: "keyboard")
-                            .font(.title3)
+                            .font(.title2)
                             .foregroundColor(.white)
+                            .frame(width: 50, height: 50)
+                            .background(
+                                Circle()
+                                    .fill(Color.gray.opacity(0.3))
+                            )
                     }
 
                     Spacer()
@@ -423,14 +483,6 @@ struct RemoteControlView: View {
 
     // MARK: Helper Methods
 
-    private func formatTime(_ ticks: Int64?) -> String {
-        guard let ticks = ticks else { return "0:00" }
-        let seconds = Int(ticks / 10_000_000)
-        let minutes = seconds / 60
-        let remainingSeconds = seconds % 60
-        return String(format: "%d:%02d", minutes, remainingSeconds)
-    }
-
     private func seekRelative(_ deltaTicks: Int64) {
         guard let currentPosition = session.playState?.positionTicks,
               let duration = session.nowPlayingItem?.runTimeTicks,
@@ -439,11 +491,6 @@ struct RemoteControlView: View {
         let newPosition = max(Int64(0), Int64(currentPosition) + deltaTicks)
 
         viewModel.send(.seek(positionTicks: newPosition))
-    }
-
-    private func toggleFavorite() {
-        // This would need to be implemented based on your Jellyfin API
-        // viewModel.send(.command(.toggleFavorite))
     }
 
     private func cycleRepeatMode() {
@@ -455,8 +502,6 @@ struct RemoteControlView: View {
             .repeatOne
         case .repeatOne:
             .repeatNone
-        default:
-            .repeatAll
         }
         viewModel.send(.command(.setRepeatMode, .repeatMode(nextMode)))
     }
