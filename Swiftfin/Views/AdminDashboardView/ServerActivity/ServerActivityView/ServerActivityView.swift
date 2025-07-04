@@ -10,9 +10,10 @@ import CollectionVGrid
 import JellyfinAPI
 import SwiftUI
 
+// TODO: WebSocket
 struct ServerActivityView: View {
 
-    // MARK: - Environment Objects
+    // MARK: - Router
 
     @Router
     private var router
@@ -41,10 +42,12 @@ struct ServerActivityView: View {
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.activity)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarMenuButton(
-            isLoading: viewModel.backgroundStates.contains(.gettingNextPage)
-        ) {
-            Section(L10n.filters) {
+        .topBarTrailing {
+            if viewModel.backgroundStates.contains(.gettingNextPage) {
+                ProgressView()
+            }
+
+            Menu(L10n.filters, systemImage: "line.3.horizontal.decrease.circle") {
                 startDateButton
                 userFilterButton
             }
@@ -95,41 +98,55 @@ struct ServerActivityView: View {
 
     @ViewBuilder
     private var userFilterButton: some View {
-        Menu(
-            L10n.type,
-            systemImage: viewModel.hasUserId == true ? "person.fill" :
-                viewModel.hasUserId == false ? "gearshape.fill" : "line.3.horizontal"
-        ) {
-            Picker(L10n.type, selection: $viewModel.hasUserId) {
-                Section {
-                    Label(
-                        L10n.all,
-                        systemImage: "line.3.horizontal"
-                    )
-                    .tag(nil as Bool?)
-                }
+        Picker(selection: $viewModel.hasUserId) {
+            Label(
+                L10n.all,
+                systemImage: "line.3.horizontal"
+            )
+            .tag(nil as Bool?)
 
-                Label(
-                    L10n.users,
-                    systemImage: "person"
-                )
-                .tag(true as Bool?)
+            Label(
+                L10n.users,
+                systemImage: "person"
+            )
+            .tag(true as Bool?)
 
-                Label(
-                    L10n.system,
-                    systemImage: "gearshape"
-                )
-                .tag(false as Bool?)
+            Label(
+                L10n.system,
+                systemImage: "gearshape"
+            )
+            .tag(false as Bool?)
+        } label: {
+            Text(L10n.type)
+
+            if let hasUserID = viewModel.hasUserId {
+                Text(hasUserID ? L10n.users : L10n.system)
+                Image(systemName: hasUserID ? "person" : "gearshape")
+
+            } else {
+                Text(L10n.all)
+                Image(systemName: "line.3.horizontal")
             }
         }
+        .pickerStyle(.menu)
     }
 
     // MARK: - Start Date Button
 
     @ViewBuilder
     private var startDateButton: some View {
-        Button(L10n.startDate, systemImage: "calendar") {
+        Button {
             router.route(to: .activityFilters(viewModel: viewModel))
+        } label: {
+            Text(L10n.startDate)
+
+            if let startDate = viewModel.minDate {
+                Text(startDate.formatted(date: .numeric, time: .omitted))
+            } else {
+                Text(verbatim: .emptyDash)
+            }
+
+            Image(systemName: "calendar")
         }
     }
 }
