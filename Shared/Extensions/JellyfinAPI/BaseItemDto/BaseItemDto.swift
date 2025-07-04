@@ -264,6 +264,28 @@ extension BaseItemDto {
         originalTitle != displayTitle ? originalTitle : nil
     }
 
+    /// Can this `BaseItemDto` be played
+    var presentPlayButton: Bool {
+        switch type {
+        case .aggregateFolder, .basePluginFolder, .boxSet, .folder, .genre, .musicGenre, .person, .photo, .photoAlbum, .studio,
+             .userRootFolder, .userView, .year, .none:
+            return false
+        default:
+            return true
+        }
+    }
+
+    /// Can this `BaseItemDto` be mark as played
+    var canBePlayed: Bool {
+        switch type {
+        case .aggregateFolder, .basePluginFolder, .folder, .genre, .musicGenre, .person, .photo, .photoAlbum, .studio, .userRootFolder,
+             .userView, .year, .none:
+            return false
+        default:
+            return true
+        }
+    }
+
     var playButtonLabel: String {
 
         if isUnaired {
@@ -289,6 +311,17 @@ extension BaseItemDto {
             seriesName
         default:
             nil
+        }
+    }
+
+    /// Does this `BaseItemDto` have `Genres`, `People`, `Studios`, or `Tags`
+    var hasComponents: Bool {
+        switch type {
+        case .aggregateFolder, .basePluginFolder, .channel, .folder, .genre, .liveTvChannel, .musicGenre, .person, .photo, .photoAlbum,
+             .studio, .tvChannel, .userRootFolder, .userView, .year, .none:
+            return false
+        default:
+            return true
         }
     }
 }
