@@ -78,22 +78,20 @@ struct ActiveSessionsView: View {
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.sessions)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItemGroup(placement: .topBarTrailing) {
-                if viewModel.backgroundStates.contains(.backgroundRefreshing) {
-                    ProgressView()
-                }
-
-                Menu(L10n.filters, systemImage: "line.3.horizontal.decrease.circle") {
-                    activeWithinFilterButton
-                    showInactiveSessionsButton
-                }
-                .menuStyle(.button)
-                .buttonStyle(.isPressed { isPressed in
-                    isFiltersPresented = isPressed
-                })
-                .foregroundStyle(accentColor)
+        .topBarTrailing {
+            if viewModel.backgroundStates.contains(.backgroundRefreshing) {
+                ProgressView()
             }
+
+            Menu(L10n.filters, systemImage: "line.3.horizontal.decrease.circle") {
+                activeWithinFilterButton
+                showInactiveSessionsButton
+            }
+            .menuStyle(.button)
+            .buttonStyle(.isPressed { isPressed in
+                isFiltersPresented = isPressed
+            })
+            .foregroundStyle(accentColor)
         }
         .onFirstAppear {
             viewModel.send(.refresh)

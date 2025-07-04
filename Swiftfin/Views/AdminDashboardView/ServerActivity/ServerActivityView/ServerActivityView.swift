@@ -7,15 +7,11 @@
 //
 
 import CollectionVGrid
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
 // TODO: WebSocket
 struct ServerActivityView: View {
-
-    @Default(.accentColor)
-    private var accentColor
 
     // MARK: - Router
 
@@ -46,18 +42,14 @@ struct ServerActivityView: View {
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.activity)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItemGroup(placement: .topBarTrailing) {
-                if viewModel.backgroundStates.contains(.gettingNextPage) {
-                    ProgressView()
-                }
+        .topBarTrailing {
+            if viewModel.backgroundStates.contains(.gettingNextPage) {
+                ProgressView()
+            }
 
-                Menu(L10n.filters, systemImage: "line.3.horizontal.decrease.circle") {
-                    startDateButton
-                    userFilterButton
-                }
-                .menuStyle(.button)
-                .foregroundStyle(accentColor)
+            Menu(L10n.filters, systemImage: "line.3.horizontal.decrease.circle") {
+                startDateButton
+                userFilterButton
             }
         }
         .onFirstAppear {
