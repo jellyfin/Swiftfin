@@ -64,6 +64,8 @@ struct ItemView: View {
             return CollectionItemViewModel(item: item)
         case .episode:
             return EpisodeItemViewModel(item: item)
+        case .playlist:
+            return PlaylistItemViewModel(item: item)
         case .movie:
             return MovieItemViewModel(item: item)
         case .series:
@@ -90,6 +92,8 @@ struct ItemView: View {
             EpisodeItemContentView(viewModel: viewModel as! EpisodeItemViewModel)
         case .movie:
             MovieItemContentView(viewModel: viewModel as! MovieItemViewModel)
+        case .playlist:
+            PlaylistItemContentView(viewModel: viewModel as! PlaylistItemViewModel)
         case .series:
             SeriesItemContentView(viewModel: viewModel as! SeriesItemViewModel)
         case .person, .musicArtist:
