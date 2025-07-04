@@ -6,8 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-import JellyfinAPI
 import SwiftUI
 
 extension SeriesEpisodeSelector {
@@ -21,9 +19,10 @@ extension SeriesEpisodeSelector {
                     .posterStyle(.landscape)
 
                 SeriesEpisodeSelector.EpisodeContent(
-                    subHeader: String.random(count: 7 ..< 12),
                     header: String.random(count: 10 ..< 20),
-                    content: String.random(count: 20 ..< 80)
+                    subHeader: String.random(count: 7 ..< 12),
+                    content: String.random(count: 20 ..< 80),
+                    action: {}
                 )
                 .redacted(reason: .placeholder)
             }

@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -17,16 +16,29 @@ extension PagingLibraryView {
 
     struct LibraryRow: View {
 
+        @Namespace
+        private var namespace
+
         private let item: Element
-        private var action: () -> Void
+        private var action: (Namespace.ID) -> Void
         private let posterType: PosterDisplayType
 
-        private func imageView(from element: Element) -> ImageView {
+        init(
+            item: Element,
+            posterType: PosterDisplayType,
+            action: @escaping (Namespace.ID) -> Void
+        ) {
+            self.item = item
+            self.action = action
+            self.posterType = posterType
+        }
+
+        private func imageSources(from element: Element) -> [ImageSource] {
             switch posterType {
             case .landscape:
-                ImageView(element.landscapeImageSources(maxWidth: landscapeMaxWidth))
+                element.landscapeImageSources(maxWidth: landscapeMaxWidth)
             case .portrait:
-                ImageView(element.portraitImageSources(maxWidth: portraitMaxWidth))
+                element.portraitImageSources(maxWidth: portraitMaxWidth)
             }
         }
 
@@ -90,17 +102,17 @@ extension PagingLibraryView {
 
         @ViewBuilder
         private var rowLeading: some View {
-            ZStack {
+            AlternateLayoutView {
                 Color.clear
-
-                imageView(from: item)
+            } content: {
+                ImageView(imageSources(from: item))
                     .failure {
                         SystemImageContentView(systemName: item.systemImage)
                     }
             }
             .posterStyle(posterType)
-            .frame(width: posterType == .landscape ? landscapeMaxWidth : portraitMaxWidth)
             .posterShadow()
+            .frame(width: posterType == .landscape ? landscapeMaxWidth : portraitMaxWidth)
             .padding(.vertical, 8)
         }
 
@@ -112,22 +124,11 @@ extension PagingLibraryView {
             } content: {
                 rowContent
             }
-            .onSelect(perform: action)
+            .onSelect {
+                action(namespace)
+            }
+            .backport
+            .matchedTransitionSource(id: "item", in: namespace)
         }
-    }
-}
-
-extension PagingLibraryView.LibraryRow {
-
-    init(item: Element, posterType: PosterDisplayType) {
-        self.init(
-            item: item,
-            action: {},
-            posterType: posterType
-        )
-    }
-
-    func onSelect(perform action: @escaping () -> Void) -> Self {
-        copy(modifying: \.action, with: action)
     }
 }

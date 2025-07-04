@@ -30,7 +30,7 @@ extension ItemView {
         private let heightRatio: CGFloat
 
         init(
-            headerHeight: CGFloat = 0,
+            heightRatio: CGFloat = 0,
             @ViewBuilder header: @escaping () -> Header,
             @ViewBuilder overlay: @escaping () -> Overlay,
             @ViewBuilder content: @escaping () -> Content
@@ -38,22 +38,30 @@ extension ItemView {
             self.header = header()
             self.overlay = overlay()
             self.content = content()
-            self.heightRatio = headerHeight
+            self.heightRatio = clamp(heightRatio, min: 0, max: 1)
         }
 
         private var headerOpacity: CGFloat {
-            let start = (size.height + safeAreaInsets.vertical) * heightRatio - safeAreaInsets.top - 90
-            let end = (size.height + safeAreaInsets.vertical) * heightRatio - safeAreaInsets.top - 40
+            let headerHeight = headerHeight
+            let start = headerHeight - safeAreaInsets.top - 90
+            let end = headerHeight - safeAreaInsets.top - 40
             let diff = end - start
             let opacity = clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
             return opacity
+        }
+
+        private var headerHeight: CGFloat {
+            (size.height + safeAreaInsets.vertical) * heightRatio
         }
 
         var body: some View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     overlay
-                        .frame(height: (size.height + safeAreaInsets.vertical) * heightRatio)
+                        .frame(
+                            height: (size.height + safeAreaInsets.vertical) * heightRatio,
+                            alignment: .bottom
+                        )
                         .overlay {
                             Color.systemBackground
                                 .opacity(headerOpacity)
@@ -63,23 +71,20 @@ extension ItemView {
                 }
             }
             .edgesIgnoringSafeArea(.top)
-            .onSizeChanged { newSize, insets in
-                self.size = newSize
-                self.safeAreaInsets = insets
-            }
+            .trackingSize($size, $safeAreaInsets)
             .scrollViewOffset($scrollViewOffset)
             .navigationBarOffset(
                 $scrollViewOffset,
-                start: (size.height + safeAreaInsets.vertical) * heightRatio - safeAreaInsets.top - 45,
-                end: (size.height + safeAreaInsets.vertical) * heightRatio - safeAreaInsets.top - 5
+                start: headerHeight - safeAreaInsets.top - 45,
+                end: headerHeight - safeAreaInsets.top - 5
             )
             .backgroundParallaxHeader(
                 $scrollViewOffset,
-                height: (size.height + safeAreaInsets.vertical) * heightRatio,
+                height: headerHeight,
                 multiplier: 0.3
             ) {
                 header
-                    .frame(height: (size.height + safeAreaInsets.vertical) * heightRatio)
+                    .frame(height: headerHeight)
             }
         }
     }

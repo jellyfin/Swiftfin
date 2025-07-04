@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 import VLCUI
 
@@ -54,14 +55,14 @@ extension VideoPlayer {
                                 PosterButton(
                                     item: chapter,
                                     type: .landscape
-                                )
-                                .imageOverlay {
-                                    if chapter.secondsRange.contains(currentProgressHandler.seconds) {
-                                        RoundedRectangle(cornerRadius: 6)
-                                            .stroke(Color.jellyfinPurple, lineWidth: 8)
+                                ) {
+                                    let seconds = chapter.chapterInfo.startTimeSeconds
+                                    videoPlayerProxy.setTime(.seconds(seconds))
+
+                                    if videoPlayerManager.state != .playing {
+                                        videoPlayerProxy.play()
                                     }
-                                }
-                                .content {
+                                } label: {
                                     VStack(alignment: .leading, spacing: 5) {
                                         Text(chapter.chapterInfo.displayTitle)
                                             .font(.subheadline)
@@ -80,14 +81,6 @@ extension VideoPlayer {
                                             }
                                     }
                                 }
-                                .onSelect {
-                                    let seconds = chapter.chapterInfo.startTimeSeconds
-                                    videoPlayerProxy.setTime(.seconds(seconds))
-
-                                    if videoPlayerManager.state != .playing {
-                                        videoPlayerProxy.play()
-                                    }
-                                }
                             }
                         }
                         .padding()
@@ -101,6 +94,12 @@ extension VideoPlayer {
                     }
                     .onAppear {
                         scrollViewProxy = proxy
+                    }
+                    .posterOverlay(for: ChapterInfo.FullInfo.self) { chapter in
+                        if chapter.secondsRange.contains(currentProgressHandler.seconds) {
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(Color.jellyfinPurple, lineWidth: 8)
+                        }
                     }
                 }
             }

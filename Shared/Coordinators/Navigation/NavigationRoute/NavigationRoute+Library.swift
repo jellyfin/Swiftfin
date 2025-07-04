@@ -22,9 +22,12 @@ extension NavigationRoute {
     }
     #endif
 
-    static func library(viewModel: PagingLibraryViewModel<some Poster>) -> NavigationRoute {
+    static func library(
+        viewModel: PagingLibraryViewModel<some Poster>
+    ) -> NavigationRoute {
         NavigationRoute(
-            id: "library-(\(viewModel.parent?.id ?? "Unparented"))"
+            id: "library-(\(viewModel.parent?.id ?? "Unparented"))",
+            withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
             PagingLibraryView(viewModel: viewModel)
         }
