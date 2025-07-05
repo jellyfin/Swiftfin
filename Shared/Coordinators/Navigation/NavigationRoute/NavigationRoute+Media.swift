@@ -49,6 +49,12 @@ extension NavigationRoute {
             MediaStreamInfoView(mediaStream: mediaStream)
         }
     }
+
+    static func remoteControl(box: BindingBox<SessionInfoDto?>) -> NavigationRoute {
+        NavigationRoute(id: "remoteControl") {
+            RemoteControlView(box: box)
+        }
+    }
     #endif
 
     static func videoPlayer(manager: VideoPlayerManager) -> NavigationRoute {
