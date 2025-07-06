@@ -18,6 +18,8 @@ import Logging
 
 class DownloadTask: NSObject, ObservableObject {
 
+    // MARK: - Types
+
     enum DownloadError: Error {
 
         case notEnoughStorage
@@ -38,6 +40,8 @@ class DownloadTask: NSObject, ObservableObject {
         case error(Error)
         case ready
     }
+
+    // MARK: - Properties
 
     private let logger = Logger.swiftfin()
     @Injected(\.currentUserSession)
@@ -63,6 +67,8 @@ class DownloadTask: NSObject, ObservableObject {
         item.downloadFolder?.appendingPathComponent("Metadata")
     }
 
+    // MARK: - Initialization
+
     init(item: BaseItemDto) {
         let logger = Logger.swiftfin()
         logger.debug("Creating DownloadTask for item: \(item.displayTitle)")
@@ -72,6 +78,8 @@ class DownloadTask: NSObject, ObservableObject {
 
         self.item = item
     }
+
+    // MARK: - Public API
 
     func createFolder() throws {
         guard let downloadFolder = item.downloadFolder else { return }
@@ -205,6 +213,8 @@ class DownloadTask: NSObject, ObservableObject {
         logger.info("Download cancelled successfully for: \(item.displayTitle)")
     }
 
+    // MARK: - File Management
+
     func deleteRootFolder() {
         guard let downloadFolder = item.downloadFolder else {
             logger.debug("No download folder to delete")
@@ -224,6 +234,8 @@ class DownloadTask: NSObject, ObservableObject {
     func encodeMetadata() -> Data {
         try! JSONEncoder().encode(item)
     }
+
+    // MARK: - Download Implementation
 
     private func downloadMedia() async throws {
 
@@ -319,6 +331,8 @@ class DownloadTask: NSObject, ObservableObject {
         saveImage(from: response, filename: filename)
     }
 
+    // MARK: - Image Downloads
+
     private func downloadPrimaryImage() async {
 
         guard let type = item.type else { return }
@@ -386,6 +400,8 @@ class DownloadTask: NSObject, ObservableObject {
             logger.error("Error saving item metadata: \(error.localizedDescription)")
         }
     }
+
+    // MARK: - File Access
 
     func getImageURL(name: String) -> URL? {
         do {
@@ -504,47 +520,6 @@ class DownloadTask: NSObject, ObservableObject {
         // Notify on main thread to trigger UI updates
         DispatchQueue.main.async {
             Container.shared.downloadManager().objectWillChange.send()
-        }
-    }
-}
-
-// MARK: URLSessionDownloadDelegate
-
-extension DownloadTask: URLSessionDownloadDelegate {
-
-    func urlSession(
-        _ session: URLSession,
-        downloadTask: URLSessionDownloadTask,
-        didWriteData bytesWritten: Int64,
-        totalBytesWritten: Int64,
-        totalBytesExpectedToWrite: Int64
-    ) {
-        let progress = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite)
-
-        DispatchQueue.main.async {
-            self.state = .downloading(progress)
-        }
-    }
-
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {}
-
-    func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
-        guard let error else { return }
-
-        DispatchQueue.main.async {
-            self.state = .error(error)
-
-            Container.shared.downloadManager().remove(task: self)
-        }
-    }
-
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        guard let error else { return }
-
-        DispatchQueue.main.async {
-            self.state = .error(error)
-
-            Container.shared.downloadManager().remove(task: self)
         }
     }
 }

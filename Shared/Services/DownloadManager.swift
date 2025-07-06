@@ -18,6 +18,8 @@ extension Container {
 
 class DownloadManager: ObservableObject {
 
+    // MARK: - Properties
+
     private let logger = Logger.swiftfin()
     @Injected(\.downloadDiagnostics)
     private var downloadDiagnostics: DownloadDiagnostics
@@ -25,11 +27,15 @@ class DownloadManager: ObservableObject {
     @Published
     private(set) var downloads: [DownloadTask] = []
 
+    // MARK: - Initialization
+
     fileprivate init() {
         logger.info("Initializing DownloadManager")
         createDownloadDirectory()
         logger.debug("DownloadManager initialized with \(downloads.count) existing downloads")
     }
+
+    // MARK: - Directory Management
 
     private func createDownloadDirectory() {
         logger.debug("Creating download directory at: \(URL.downloads)")
@@ -151,6 +157,8 @@ class DownloadManager: ObservableObject {
         task.download()
     }
 
+    // MARK: - Download Management
+
     func task(for item: BaseItemDto) -> DownloadTask? {
         logger.debug("Looking for download task for item: \(item.displayTitle) (ID: \(item.id ?? "unknown"))")
 
@@ -222,6 +230,8 @@ class DownloadManager: ObservableObject {
             logger.warning("No task was removed - item not found in downloads array")
         }
     }
+
+    // MARK: - Downloaded Items Management
 
     func downloadedItems() -> [DownloadTask] {
         logger.info("Retrieving all downloaded items")
@@ -307,6 +317,8 @@ class DownloadManager: ObservableObject {
         return foundTasks
     }
 
+    // MARK: - Metadata Parsing
+
     private func parseDownloadItemFromPath(_ metadataPath: URL) -> DownloadTask? {
         logger.debug("Parsing download item from metadata path: \(metadataPath)")
 
@@ -343,6 +355,8 @@ class DownloadManager: ObservableObject {
 
         return parseDownloadItemFromPath(itemMetadataFile)
     }
+
+    // MARK: - Deletion
 
     func deleteDownload(task: DownloadTask) {
         logger.info("Deleting downloaded content for item: \(task.item.displayTitle) (ID: \(task.item.id ?? "unknown"))")
@@ -395,24 +409,5 @@ class DownloadManager: ObservableObject {
         }
 
         logger.info("Successfully deleted all downloads")
-    }
-
-    // MARK: - Debug Methods for Testing Download Indicator
-
-    /// Returns the count of active downloads for the floating indicator
-    var activeDownloadCount: Int {
-        downloads.filter { task in
-            switch task.state {
-            case .ready, .downloading:
-                return true
-            default:
-                return false
-            }
-        }.count
-    }
-
-    /// Returns whether there are any active downloads
-    var hasActiveDownloads: Bool {
-        activeDownloadCount > 0
     }
 }

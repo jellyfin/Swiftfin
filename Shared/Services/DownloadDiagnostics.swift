@@ -17,7 +17,11 @@ extension Container {
 
 class DownloadDiagnostics {
 
+    // MARK: - Properties
+
     private let logger = Logger.swiftfin()
+
+    // MARK: - Initialization
 
     fileprivate init() {
         logger.debug("Initializing DownloadDiagnostics")
@@ -66,6 +70,8 @@ class DownloadDiagnostics {
         logger.info("=== END DEBUGGING ===")
     }
 
+    // MARK: - Directory Analysis
+
     /// Recursively analyze directory structure and log findings
     private func analyzeDirectoryStructure(at url: URL, depth: Int) {
         let indent = String(repeating: "  ", count: depth)
@@ -108,6 +114,8 @@ class DownloadDiagnostics {
             logger.error("\(indent)❌ Error reading directory: \(error)")
         }
     }
+
+    // MARK: - State Logging
 
     /// Debug method to log current download states from DownloadManager
     func logCurrentDownloadStates() {
