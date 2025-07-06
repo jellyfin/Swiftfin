@@ -44,6 +44,7 @@ extension ItemView {
                 if let downloadTask = downloadManager.task(for: viewModel.item),
                    case .complete = downloadTask.state
                 {
+                    logger.info("Playing downloaded content for item: \(viewModel.item.displayTitle)")
                     router.route(
                         to: .videoPlayer(
                             manager: DownloadVideoPlayerManager(downloadTask: downloadTask)
@@ -52,6 +53,7 @@ extension ItemView {
                 } else if let playButtonItem = viewModel.playButtonItem,
                           let selectedMediaSource = viewModel.selectedMediaSource
                 {
+                    logger.info("Playing online content for item: \(viewModel.item.displayTitle)")
                     router.route(
                         to: .videoPlayer(
                             manager: OnlineVideoPlayerManager(
@@ -61,7 +63,7 @@ extension ItemView {
                         )
                     )
                 } else {
-                    logger.error("No media source available")
+                    logger.error("No media source available for item: \(viewModel.item.displayTitle)")
                 }
             } label: {
                 ZStack {
@@ -76,6 +78,15 @@ extension ItemView {
                         Text(title)
                             .font(.callout)
                             .fontWeight(.semibold)
+
+                        // Show offline indicator if downloaded
+                        if let downloadTask = downloadManager.task(for: viewModel.item),
+                           case .complete = downloadTask.state
+                        {
+                            Image(systemName: "arrow.down.circle.fill")
+                                .font(.system(size: 16))
+                                .foregroundColor(accentColor.overlayColor.opacity(0.8))
+                        }
                     }
                     .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : accentColor.overlayColor)
                 }

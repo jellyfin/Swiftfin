@@ -332,12 +332,33 @@ class DownloadTask: NSObject, ObservableObject {
                 mediaFilename = contents.first(where: { $0.starts(with: "Media") })
             }
 
+            // If still no media file found, look for common video extensions
+            if mediaFilename == nil {
+                let videoExtensions = ["mp4", "mkv", "mov", "avi", "m4v", "webm", "ogv", "wmv", "flv", "ts", "m2ts"]
+                mediaFilename = contents.first { filename in
+                    let lowercased = filename.lowercased()
+                    return videoExtensions.contains { lowercased.hasSuffix(".\($0)") }
+                }
+
+                if mediaFilename != nil {
+                    logger.debug("Found video file by extension: \(mediaFilename!)")
+                }
+            }
+
             guard let foundFilename = mediaFilename else {
                 logger.error("No media file found in download folder for item: \(item.id ?? "unknown")")
+                logger.error("Searched for: stored filename, files starting with 'Media', and common video extensions")
                 return nil
             }
 
             let mediaURL = downloadFolder.appendingPathComponent(foundFilename)
+
+            // Verify the file actually exists
+            guard FileManager.default.fileExists(atPath: mediaURL.path) else {
+                logger.error("Media file path exists in directory listing but file doesn't exist: \(mediaURL)")
+                return nil
+            }
+
             logger.debug("Found media file: \(mediaURL)")
             return mediaURL
         } catch {

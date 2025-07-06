@@ -84,17 +84,26 @@ extension DownloadTaskView {
                                 .padding(.horizontal)
                         }
                     case .complete:
-                        PrimaryButton(title: L10n.play)
-                            .onSelect {
-                                if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                                    router.dismiss()
-                                    router.route(to: .videoPlayer(manager: DownloadVideoPlayerManager(downloadTask: downloadTask)))
-                                } else {
-                                    isPresentingVideoPlayerTypeError = true
-                                }
+                        VStack(spacing: 10) {
+                            HStack {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.green)
+                                    .font(.title)
+
+                                Text("Download Complete")
+                                    .font(.headline)
+                                    .foregroundColor(.primary)
                             }
-                            .frame(maxWidth: 300)
-                            .frame(height: 50)
+                            .padding(.top)
+
+                            Text("Close this view and press the play button on the item page to watch your downloaded content.")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal)
+                                .padding(.bottom)
+                        }
+                        .frame(maxWidth: 300)
                     }
                 }
 
@@ -113,7 +122,9 @@ extension DownloadTaskView {
                     Text(L10n.dismiss)
                 }
             } message: {
-                Text("Downloaded items are only playable through the Swiftfin video player.")
+                Text(
+                    "Downloaded content requires the Swiftfin video player. Please change your video player setting to 'Swiftfin' in Settings > Video Player."
+                )
             }
         }
     }
