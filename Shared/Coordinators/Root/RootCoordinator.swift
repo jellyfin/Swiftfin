@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Defaults
 import Factory
 import Logging
@@ -17,7 +18,11 @@ final class RootCoordinator: ObservableObject {
     @Published
     var root: RootItem = .appLoading
 
+    @Injected(\.networkMonitor)
+    private var networkMonitor
+
     private let logger = Logger.swiftfin()
+    private var cancellables = Set<AnyCancellable>()
 
     init() {
         Task {
@@ -31,7 +36,12 @@ final class RootCoordinator: ObservableObject {
                     }
                     #else
                     await MainActor.run {
-                        root(.serverCheck)
+                        // Check network status before server check
+                        if networkMonitor.isConnected {
+                            root(.serverCheck)
+                        } else {
+                            root(.offline)
+                        }
                     }
                     #endif
                 } else {
@@ -46,6 +56,29 @@ final class RootCoordinator: ObservableObject {
                 }
             }
         }
+
+        // Monitor network state changes
+        networkMonitor.$isConnected
+            .dropFirst() // Skip initial value
+            .sink { [weak self] isConnected in
+                Task { @MainActor [weak self] in
+                    guard let self = self else { return }
+
+                    // Only handle network changes if user is signed in
+                    guard Container.shared.currentUserSession() != nil, !Defaults[.signOutOnClose] else { return }
+
+                    #if os(iOS)
+                    if isConnected && self.root.id == RootItem.offline.id {
+                        // Network restored, go back to server check
+                        self.root(.serverCheck)
+                    } else if !isConnected && (self.root.id == RootItem.serverCheck.id || self.root.id == RootItem.mainTab.id) {
+                        // Network lost, go to offline mode
+                        self.root(.offline)
+                    }
+                    #endif
+                }
+            }
+            .store(in: &cancellables)
 
         // Notification setup for state
         Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))
@@ -64,7 +97,12 @@ final class RootCoordinator: ObservableObject {
         #if os(tvOS)
         root(.mainTab)
         #else
-        root(.serverCheck)
+        // Check network status when signing in
+        if networkMonitor.isConnected {
+            root(.serverCheck)
+        } else {
+            root(.offline)
+        }
         #endif
     }
 

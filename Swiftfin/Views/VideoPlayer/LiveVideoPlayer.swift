@@ -205,7 +205,8 @@ struct LiveVideoPlayer: View {
         .onChange(of: subtitleFontName) { newValue in
             Task { @MainActor in
                 videoPlayerManager.proxy.setSubtitleFont(newValue)
-            } }
+            }
+        }
         .onChange(of: subtitleOffset) { newValue in
             Task { @MainActor in
                 videoPlayerManager.proxy.setSubtitleDelay(.ticks(newValue))

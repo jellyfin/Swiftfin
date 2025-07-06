@@ -80,7 +80,7 @@ final class VideoPlayerViewModel: ViewModel {
         configuration.playbackChildren = subtitleStreams
             .filter { $0.deliveryMethod == .external }
             .compactMap(\.asPlaybackChild)
-        
+
         // Add VLC options for better thread safety and audio handling
         configuration.options = [
             "--vout": "ios",
@@ -92,7 +92,7 @@ final class VideoPlayerViewModel: ViewModel {
             "--skip-frames": "",
             "--intf": "dummy",
             "--extraintf": "",
-            "--no-video-title-show": ""
+            "--no-video-title-show": "",
         ]
 
         return configuration

@@ -20,6 +20,10 @@ class DownloadListViewModel: ViewModel {
     override init() {
         super.init()
 
+        refresh()
+    }
+
+    func refresh() {
         items = downloadManager.downloadedItems()
     }
 }

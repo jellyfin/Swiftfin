@@ -31,6 +31,10 @@ struct RootView: View {
             if rootCoordinator.root.id == RootItem.serverCheck.id {
                 RootItem.serverCheck.content
             }
+
+            if rootCoordinator.root.id == RootItem.offline.id {
+                RootItem.offline.content
+            }
             #endif
         }
         .animation(.linear(duration: 0.1), value: rootCoordinator.root.id)

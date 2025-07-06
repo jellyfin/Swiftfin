@@ -10,6 +10,7 @@ import CoreStore
 import Factory
 import Foundation
 import JellyfinAPI
+import Logging
 
 typealias AnyStoredData = SwiftfinStore.V2.AnyData
 typealias ServerModel = SwiftfinStore.V2.StoredServer
@@ -68,7 +69,7 @@ extension SwiftfinStore {
                 case .success:
                     continuation.resume()
                 case let .failure(error):
-                    Container.shared.logService().error("Failed creating datastack with: \(error.localizedDescription)")
+                    Logger.swiftfin().error("Failed creating datastack with: \(error.localizedDescription)")
                     continuation.resume(throwing: JellyfinAPIError("Failed creating datastack with: \(error.localizedDescription)"))
                 }
             }

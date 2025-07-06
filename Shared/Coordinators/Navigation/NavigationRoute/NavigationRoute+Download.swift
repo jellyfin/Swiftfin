@@ -26,5 +26,11 @@ extension NavigationRoute {
             DownloadTaskView(downloadTask: downloadTask)
         }
     }
+
+    static let offline = NavigationRoute(
+        id: "offline"
+    ) {
+        OfflineView()
+    }
 }
 #endif

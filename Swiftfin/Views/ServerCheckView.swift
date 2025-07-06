@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import SwiftUI
 
 struct ServerCheckView: View {
@@ -18,6 +19,9 @@ struct ServerCheckView: View {
 
     @StateObject
     private var viewModel = ServerCheckViewModel()
+
+    @Injected(\.networkMonitor)
+    private var networkMonitor
 
     @ViewBuilder
     private func errorView<E: Error>(_ error: E) -> some View {
@@ -40,6 +44,16 @@ struct ServerCheckView: View {
                 }
                 .frame(maxWidth: 300)
                 .frame(height: 50)
+
+            if !networkMonitor.isConnected {
+                Button {
+                    rootCoordinator.root(.offline)
+                } label: {
+                    Label("View Downloads", systemImage: "arrow.down.circle")
+                }
+                .buttonStyle(.bordered)
+                .frame(maxWidth: 300)
+            }
         }
     }
 

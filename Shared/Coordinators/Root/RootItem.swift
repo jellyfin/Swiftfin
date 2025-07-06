@@ -44,5 +44,11 @@ struct RootItem: Identifiable {
             ServerCheckView()
         }
     }
+
+    static let offline = RootItem(id: "offline") {
+        NavigationInjectionView(coordinator: .init()) {
+            OfflineView()
+        }
+    }
     #endif
 }

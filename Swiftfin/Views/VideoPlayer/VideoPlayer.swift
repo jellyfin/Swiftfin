@@ -258,10 +258,10 @@ struct VideoPlayer: View {
         }
         .onChange(of: videoPlayerManager.currentViewModel) { newViewModel in
             guard let newViewModel else { return }
-            
+
             Task { @MainActor in
                 videoPlayerManager.proxy.playNewMedia(newViewModel.vlcVideoPlayerConfiguration)
-                
+
                 isAspectFilled = false
                 audioOffset = 0
                 subtitleOffset = 0
