@@ -107,21 +107,45 @@ struct OfflineView: View {
                     contentView
                 }
             }
+            .navigationTitle("Offline Downloads")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    if networkMonitor.isConnected {
+                    HStack {
+                        // Refresh button
                         Button {
-                            // Force refresh to go back online
-                            if let userSession = userSession {
-                                Notifications[.didChangeCurrentServerURL].post(userSession.server)
-                            } else {
-                                // If no user session, go to sign in
-                                Notifications[.didSignOut].post()
+                            logger.info("Manual refresh triggered")
+                            isLoading = true
+                            Task {
+                                loadDownloadedItems()
                             }
                         } label: {
-                            Label("Go Online", systemImage: "wifi")
-                                .foregroundColor(.accentColor)
+                            Image(systemName: "arrow.clockwise")
+                                .foregroundColor(.secondary)
+                        }
+
+                        // Debug button for troubleshooting
+                        Button {
+                            logger.info("Manual debug trigger requested")
+                            downloadManager.debugDownloadsDirectory()
+                        } label: {
+                            Image(systemName: "ladybug")
+                                .foregroundColor(.secondary)
+                        }
+
+                        if networkMonitor.isConnected {
+                            Button {
+                                // Force refresh to go back online
+                                if let userSession = userSession {
+                                    Notifications[.didChangeCurrentServerURL].post(userSession.server)
+                                } else {
+                                    // If no user session, go to sign in
+                                    Notifications[.didSignOut].post()
+                                }
+                            } label: {
+                                Label("Go Online", systemImage: "wifi")
+                                    .foregroundColor(.accentColor)
+                            }
                         }
                     }
                 }
@@ -152,13 +176,66 @@ struct OfflineView: View {
         logger.info("Loading downloaded items for offline mode")
         logger.debug("Network status: \(networkMonitor.isConnected)")
         logger.debug("User session available: \(userSession != nil)")
+        logger.debug("Downloads directory path: \(URL.downloads.path)")
+
+        // Run debugging analysis
+        downloadManager.debugDownloadsDirectory()
+
+        // Check if downloads directory exists
+        var isDirectory: ObjCBool = false
+        let downloadsExists = FileManager.default.fileExists(atPath: URL.downloads.path, isDirectory: &isDirectory)
+        logger.debug("Downloads directory exists: \(downloadsExists), isDirectory: \(isDirectory.boolValue)")
+
+        if downloadsExists {
+            do {
+                let contents = try FileManager.default.contentsOfDirectory(atPath: URL.downloads.path)
+                logger.debug("Downloads directory contents: \(contents)")
+
+                if contents.isEmpty {
+                    logger.info("Downloads directory is empty")
+                } else {
+                    logger.info("Downloads directory contains \(contents.count) items: \(contents)")
+                }
+            } catch {
+                logger.error("Failed to read downloads directory contents: \(error)")
+            }
+        } else {
+            logger.warning("Downloads directory does not exist or is not a directory")
+        }
 
         let items = downloadManager.downloadedItems()
-        logger.info("Found \(items.count) downloaded items")
+        logger.info("DownloadManager returned \(items.count) downloaded items")
+
+        for (index, item) in items.enumerated() {
+            logger
+                .debug(
+                    "Item \(index): \(item.item.displayTitle) (ID: \(item.item.id ?? "nil")) - Type: \(item.item.type?.rawValue ?? "nil")"
+                )
+
+            // Check if media file exists for this item
+            if let mediaURL = item.getMediaURL() {
+                let mediaExists = FileManager.default.fileExists(atPath: mediaURL.path)
+                logger.debug("  Media file exists: \(mediaExists) at \(mediaURL.path)")
+            } else {
+                logger.warning("  No media URL found for item")
+            }
+
+            // Check if images exist
+            if let primaryImageURL = item.getImageURL(name: "Primary") {
+                let imageExists = FileManager.default.fileExists(atPath: primaryImageURL.path)
+                logger.debug("  Primary image exists: \(imageExists)")
+            }
+
+            if let backdropImageURL = item.getImageURL(name: "Backdrop") {
+                let imageExists = FileManager.default.fileExists(atPath: backdropImageURL.path)
+                logger.debug("  Backdrop image exists: \(imageExists)")
+            }
+        }
 
         DispatchQueue.main.async {
             self.downloadedItems = items
             self.isLoading = false
+            self.logger.info("Updated UI with \(items.count) downloaded items")
         }
     }
 

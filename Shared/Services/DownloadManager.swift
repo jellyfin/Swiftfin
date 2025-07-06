@@ -219,16 +219,20 @@ class DownloadManager: ObservableObject {
     func downloadedItems() -> [DownloadTask] {
         logger.info("Retrieving all downloaded items")
 
+        // Ensure downloads directory exists
+        if !FileManager.default.fileExists(atPath: URL.downloads.path) {
+            logger.info("Downloads directory does not exist, creating it")
+            createDownloadDirectory()
+            return []
+        }
+
+        var downloadedTasks: [DownloadTask] = []
+
         do {
-            let downloadContents = try FileManager.default.contentsOfDirectory(atPath: URL.downloads.path)
-            logger.debug("Found \(downloadContents.count) items in download directory: \(downloadContents)")
+            // Recursively search for all Metadata/Item.json files in the Downloads directory
+            downloadedTasks = findDownloadedItems(in: URL.downloads)
 
-            let downloadedTasks = downloadContents.compactMap { itemId in
-                logger.debug("Parsing download item with ID: \(itemId)")
-                return parseDownloadItem(with: itemId)
-            }
-
-            logger.info("Successfully parsed \(downloadedTasks.count) downloaded items")
+            logger.info("Successfully found \(downloadedTasks.count) downloaded items")
             return downloadedTasks
         } catch {
             logger.error("Error retrieving all downloads: \(error.localizedDescription)")
@@ -237,18 +241,153 @@ class DownloadManager: ObservableObject {
         }
     }
 
-    private func parseDownloadItem(with id: String) -> DownloadTask? {
-        logger.debug("Parsing download item with ID: \(id)")
+    func debugDownloadsDirectory() {
+        logger.info("=== DEBUGGING DOWNLOADS DIRECTORY ===")
+        logger.info("Downloads path: \(URL.downloads.path)")
 
-        let itemMetadataFile = URL.downloads
-            .appendingPathComponent(id)
-            .appendingPathComponent("Metadata")
-            .appendingPathComponent("Item.json")
+        var isDirectory: ObjCBool = false
+        let exists = FileManager.default.fileExists(atPath: URL.downloads.path, isDirectory: &isDirectory)
+        logger.info("Directory exists: \(exists), isDirectory: \(isDirectory.boolValue)")
 
-        logger.debug("Metadata file path: \(itemMetadataFile)")
+        if !exists {
+            logger.warning("Downloads directory does not exist!")
+            return
+        }
 
-        guard let itemMetadataData = FileManager.default.contents(atPath: itemMetadataFile.path) else {
-            logger.debug("No metadata file found at: \(itemMetadataFile)")
+        do {
+            logger.info("--- Analyzing directory structure ---")
+            analyzeDirectoryStructure(at: URL.downloads, depth: 0)
+
+            logger.info("--- Testing downloadedItems() method ---")
+            let items = downloadedItems()
+            logger.info("Found \(items.count) downloadable items")
+
+            for (index, item) in items.enumerated() {
+                logger.info("Item \(index + 1): \(item.item.displayTitle)")
+                logger.info("  - ID: \(item.item.id ?? "nil")")
+                logger.info("  - Type: \(item.item.type?.rawValue ?? "nil")")
+                logger.info("  - Download folder: \(item.item.downloadFolder?.path ?? "nil")")
+
+                if let mediaURL = item.getMediaURL() {
+                    logger.info("  - Media file: \(mediaURL.lastPathComponent)")
+                } else {
+                    logger.warning("  - No media file found!")
+                }
+            }
+
+        } catch {
+            logger.error("Error analyzing downloads directory: \(error)")
+        }
+
+        logger.info("=== END DEBUGGING ===")
+    }
+
+    private func analyzeDirectoryStructure(at url: URL, depth: Int) {
+        let indent = String(repeating: "  ", count: depth)
+
+        do {
+            let contents = try FileManager.default.contentsOfDirectory(
+                at: url,
+                includingPropertiesForKeys: [.isDirectoryKey, .fileSizeKey],
+                options: []
+            )
+
+            for item in contents.sorted(by: { $0.lastPathComponent < $1.lastPathComponent }) {
+                let resourceValues = try item.resourceValues(forKeys: [.isDirectoryKey, .fileSizeKey])
+                let name = item.lastPathComponent
+
+                if resourceValues.isDirectory == true {
+                    logger.info("\(indent)📁 \(name)/")
+
+                    // Check for special files in this directory
+                    let metadataFile = item.appendingPathComponent("Metadata").appendingPathComponent("Item.json")
+                    if FileManager.default.fileExists(atPath: metadataFile.path) {
+                        logger.info("\(indent)  ✅ Contains Item.json metadata")
+                    }
+
+                    // Recursively analyze subdirectories (but limit depth to avoid infinite loops)
+                    if depth < 5 {
+                        analyzeDirectoryStructure(at: item, depth: depth + 1)
+                    }
+                } else {
+                    let sizeString: String
+                    if let fileSize = resourceValues.fileSize {
+                        sizeString = " (\(ByteCountFormatter.string(fromByteCount: Int64(fileSize), countStyle: .file)))"
+                    } else {
+                        sizeString = ""
+                    }
+                    logger.info("\(indent)📄 \(name)\(sizeString)")
+                }
+            }
+        } catch {
+            logger.error("\(indent)❌ Error reading directory: \(error)")
+        }
+    }
+
+    private func findDownloadedItems(in directory: URL) -> [DownloadTask] {
+        var foundTasks: [DownloadTask] = []
+
+        guard FileManager.default.fileExists(atPath: directory.path) else {
+            logger.debug("Directory does not exist: \(directory.path)")
+            return foundTasks
+        }
+
+        do {
+            let contents = try FileManager.default.contentsOfDirectory(
+                at: directory,
+                includingPropertiesForKeys: [.isDirectoryKey],
+                options: []
+            )
+
+            for item in contents {
+                do {
+                    let resourceValues = try item.resourceValues(forKeys: [.isDirectoryKey])
+
+                    if resourceValues.isDirectory == true {
+                        // Check if this directory contains a Metadata/Item.json file
+                        let metadataPath = item.appendingPathComponent("Metadata").appendingPathComponent("Item.json")
+
+                        if FileManager.default.fileExists(atPath: metadataPath.path) {
+                            logger.debug("Found metadata file at: \(metadataPath)")
+
+                            // Try to parse this as a downloaded item
+                            if let task = parseDownloadItemFromPath(metadataPath) {
+                                foundTasks.append(task)
+                                logger.debug("Successfully parsed download task for: \(task.item.displayTitle)")
+                            } else {
+                                logger.warning("Failed to parse download item from: \(metadataPath)")
+
+                                // Try to read the raw metadata for debugging
+                                if let rawData = FileManager.default.contents(atPath: metadataPath.path) {
+                                    logger.debug("Raw metadata file size: \(rawData.count) bytes")
+                                    if let jsonString = String(data: rawData, encoding: .utf8) {
+                                        let preview = String(jsonString.prefix(200))
+                                        logger.debug("Metadata preview: \(preview)...")
+                                    }
+                                }
+                            }
+                        } else {
+                            // Recursively search subdirectories
+                            let subTasks = findDownloadedItems(in: item)
+                            foundTasks.append(contentsOf: subTasks)
+                        }
+                    }
+                } catch {
+                    logger.error("Error processing item \(item.lastPathComponent): \(error)")
+                }
+            }
+        } catch {
+            logger.error("Error searching directory \(directory): \(error.localizedDescription)")
+        }
+
+        return foundTasks
+    }
+
+    private func parseDownloadItemFromPath(_ metadataPath: URL) -> DownloadTask? {
+        logger.debug("Parsing download item from metadata path: \(metadataPath)")
+
+        guard let itemMetadataData = FileManager.default.contents(atPath: metadataPath.path) else {
+            logger.debug("No metadata file found at: \(metadataPath)")
             return nil
         }
 
@@ -257,7 +396,7 @@ class DownloadManager: ObservableObject {
         let jsonDecoder = JSONDecoder()
 
         guard let offlineItem = try? jsonDecoder.decode(BaseItemDto.self, from: itemMetadataData) else {
-            logger.error("Failed to decode metadata JSON for item: \(id)")
+            logger.error("Failed to decode metadata JSON from: \(metadataPath)")
             return nil
         }
 
@@ -268,5 +407,16 @@ class DownloadManager: ObservableObject {
         logger.debug("Created download task with complete state")
 
         return task
+    }
+
+    private func parseDownloadItem(with id: String) -> DownloadTask? {
+        logger.debug("Parsing download item with ID: \(id)")
+
+        let itemMetadataFile = URL.downloads
+            .appendingPathComponent(id)
+            .appendingPathComponent("Metadata")
+            .appendingPathComponent("Item.json")
+
+        return parseDownloadItemFromPath(itemMetadataFile)
     }
 }
