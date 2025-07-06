@@ -43,6 +43,9 @@ struct DownloadsView: View {
     @State
     private var taskToDelete: DownloadTask?
 
+    @State
+    private var isServerUnreachable: Bool = false
+
     private let logger = Logger.swiftfin()
 
     private var emptyView: some View {
@@ -78,6 +81,25 @@ struct DownloadsView: View {
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
                 }
+            } else if isServerUnreachable {
+                VStack(spacing: 12) {
+                    HStack {
+                        Image(systemName: "server.rack")
+                            .foregroundColor(.orange)
+                        Text("Server Unreachable")
+                            .foregroundColor(.orange)
+                            .fontWeight(.medium)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color.orange.opacity(0.15))
+                    .cornerRadius(8)
+
+                    Text("Can't connect to your Jellyfin server. Downloaded content is available below.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                }
             }
         }
         .padding()
@@ -90,7 +112,20 @@ struct DownloadsView: View {
 
                     Spacer()
 
-                    if !networkMonitor.isConnected {
+                    if isServerUnreachable {
+                        HStack {
+                            Image(systemName: "server.rack")
+                                .foregroundColor(.orange)
+                            Text("Server Unreachable")
+                                .foregroundColor(.orange)
+                                .fontWeight(.medium)
+                        }
+                        .font(.caption)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.orange.opacity(0.15))
+                        .cornerRadius(6)
+                    } else if !networkMonitor.isConnected {
                         HStack {
                             Image(systemName: "wifi.slash")
                                 .foregroundColor(.orange)
@@ -108,7 +143,9 @@ struct DownloadsView: View {
                 .padding(.horizontal)
 
                 HStack {
-                    Text(networkMonitor.isConnected ?
+                    Text(isServerUnreachable ?
+                        "Your Jellyfin server is unreachable. Downloaded content is available for offline viewing." :
+                        networkMonitor.isConnected ?
                         "Downloaded content available for offline viewing" :
                         "Offline content"
                     )
@@ -252,6 +289,16 @@ struct DownloadsView: View {
             logger.info("DownloadsView appeared")
             Task {
                 loadDownloadedItems()
+            }
+        }
+        .onNotification(.didDetectServerUnreachable) {
+            logger.info("Server unreachable notification received in DownloadsView")
+            isServerUnreachable = true
+        }
+        .onReceive(networkMonitor.$isConnected) { isConnected in
+            // Reset server unreachable status when network status changes
+            if isConnected {
+                isServerUnreachable = false
             }
         }
     }

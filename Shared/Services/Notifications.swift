@@ -156,6 +156,10 @@ extension Notifications.Key {
         Key("didDeleteServer")
     }
 
+    static var didDetectServerUnreachable: Key<Void> {
+        Key("didDetectServerUnreachable")
+    }
+
     // MARK: - User
 
     /// - Payload: The ID of the user whose Profile Image changed.

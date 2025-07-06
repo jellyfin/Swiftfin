@@ -60,7 +60,7 @@ struct ServerCheckView: View {
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .initial, .connecting, .connected:
+            case .initial, .connecting, .connected, .serverUnreachable:
                 ZStack {
                     Color.clear
 

@@ -7,6 +7,7 @@
 //
 
 import CoreStore
+import Defaults
 import Factory
 import Foundation
 import JellyfinAPI
@@ -108,6 +109,11 @@ extension UserState {
 
         let keychain = Container.shared.keychainService()
         keychain.delete("\(id)-pin")
+
+        // Clear default user setting if this user was set as the default
+        if case let .signedIn(defaultUserID) = Defaults[.defaultUserID], defaultUserID == id {
+            Defaults[.defaultUserID] = .signedOut
+        }
     }
 
     /// Deletes user settings from `UserDefaults` and `StoredValues`

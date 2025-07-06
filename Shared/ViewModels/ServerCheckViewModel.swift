@@ -21,6 +21,7 @@ final class ServerCheckViewModel: ViewModel, Stateful {
         case connecting
         case connected
         case error(JellyfinAPIError)
+        case serverUnreachable
         case initial
     }
 
@@ -34,7 +35,6 @@ final class ServerCheckViewModel: ViewModel, Stateful {
         case .checkServer:
             connectCancellable?.cancel()
 
-            // TODO: also server stuff
             connectCancellable = Task {
                 do {
                     try await userSession.server.updateServerInfo()
@@ -49,7 +49,14 @@ final class ServerCheckViewModel: ViewModel, Stateful {
                     }
                 } catch {
                     await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
+                        // Check if this is a server connection failure
+                        if self.isServerConnectionFailure(error) {
+                            self.state = .serverUnreachable
+                            // Post notification to trigger navigation to downloads
+                            Notifications[.didDetectServerUnreachable].post()
+                        } else {
+                            self.state = .error(.init(error.localizedDescription))
+                        }
                     }
                 }
             }
@@ -57,5 +64,47 @@ final class ServerCheckViewModel: ViewModel, Stateful {
 
             return .connecting
         }
+    }
+
+    private func isServerConnectionFailure(_ error: Error) -> Bool {
+        // Check if the error indicates a server connection failure
+        // rather than a general network issue
+        let errorMessage = error.localizedDescription.lowercased()
+
+        // Check for specific error patterns that indicate server connection issues
+        let serverConnectionFailurePatterns = [
+            "request timed out",
+            "could not connect to the server",
+            "connection was refused",
+            "connection failed",
+            "cannot connect to host",
+            "unable to find host",
+            "host unreachable",
+            "network timeout",
+            "operation timed out",
+        ]
+
+        // Check if error matches any server connection failure pattern
+        for pattern in serverConnectionFailurePatterns {
+            if errorMessage.contains(pattern) {
+                return true
+            }
+        }
+
+        // Check NSURLError codes for server connection issues
+        if let nsError = error as NSError? {
+            switch nsError.code {
+            case NSURLErrorTimedOut,
+                 NSURLErrorCannotConnectToHost,
+                 NSURLErrorCannotFindHost,
+                 NSURLErrorNetworkConnectionLost,
+                 NSURLErrorNotConnectedToInternet:
+                return true
+            default:
+                break
+            }
+        }
+
+        return false
     }
 }

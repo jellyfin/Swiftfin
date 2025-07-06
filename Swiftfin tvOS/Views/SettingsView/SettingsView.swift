@@ -16,11 +16,26 @@ struct SettingsView: View {
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
 
+    @Default(.defaultUserID)
+    private var defaultUserID
+
     @Router
     private var router
 
     @StateObject
     private var viewModel = SettingsViewModel()
+
+    @Injected(\.currentUserSession)
+    private var currentUserSession
+
+    private var isCurrentUserDefault: Bool {
+        if let currentUser = currentUserSession?.user.id,
+           case let .signedIn(defaultUser) = defaultUserID
+        {
+            return currentUser == defaultUser
+        }
+        return false
+    }
 
     var body: some View {
         SplitFormWindowView()
@@ -62,6 +77,33 @@ struct SettingsView: View {
                     }
                     .foregroundStyle(Color.jellyfinPurple.overlayColor, Color.jellyfinPurple)
                     .listRowInsets(.zero)
+                }
+
+                Section {
+                    Toggle("Set as Default User", isOn: Binding(
+                        get: { isCurrentUserDefault },
+                        set: { isOn in
+                            if isOn, let currentUser = currentUserSession?.user.id {
+                                defaultUserID = .signedIn(userID: currentUser)
+                            } else {
+                                defaultUserID = .signedOut
+                            }
+                        }
+                    ))
+                } header: {
+                    Text("Default User")
+                } footer: {
+                    Text("When enabled, this user will be automatically signed in when the app starts, skipping the user selection screen.")
+                }
+
+                if case .signedIn = defaultUserID {
+                    Section {
+                        ChevronButton("Go to User Selection") {
+                            viewModel.signOut()
+                        }
+                    } footer: {
+                        Text("Switch to a different user or manage your accounts.")
+                    }
                 }
 
                 Section(L10n.videoPlayer) {
