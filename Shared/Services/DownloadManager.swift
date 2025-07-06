@@ -105,7 +105,7 @@ class DownloadManager: ObservableObject {
         downloads.append(task)
         logger.info("Added download task to queue. Total downloads: \(downloads.count)")
 
-        // Log download folder information
+        // Enhanced logging for download folder information
         if let downloadFolder = task.item.downloadFolder {
             logger.debug("Download folder for item: \(downloadFolder)")
 
@@ -113,8 +113,32 @@ class DownloadManager: ObservableObject {
             var isDirectory: ObjCBool = false
             let exists = FileManager.default.fileExists(atPath: downloadFolder.path, isDirectory: &isDirectory)
             logger.debug("Download folder exists: \(exists), isDirectory: \(isDirectory.boolValue)")
+
+            // Special handling for Series downloads
+            if task.item.type == .series {
+                logger.info("Series download detected. Series downloads require individual episode selection.")
+                logger.info("Folder will be created for organizing episodes: \(downloadFolder.path)")
+
+                // Check if the series has any media sources (like trailers)
+                if let mediaSources = task.item.mediaSources, !mediaSources.isEmpty {
+                    logger.info("Series has \(mediaSources.count) media source(s) - allowing download")
+                } else {
+                    logger
+                        .warning(
+                            "Series '\(task.item.displayTitle)' has no direct media sources. Individual episodes should be downloaded instead."
+                        )
+                    // Still allow the download to proceed as it will create the series folder structure
+                }
+            }
         } else {
             logger.error("No download folder available for item: \(task.item.displayTitle)")
+            logger.error("Item details - ID: \(task.item.id ?? "nil"), Type: \(task.item.type?.rawValue ?? "nil")")
+
+            // Set task to error state and remove from downloads
+            task.state = .error(JellyfinAPIError("No download folder available"))
+            downloads.removeAll { $0.item == task.item }
+            logger.error("Removed failed task from downloads queue")
+            return
         }
 
         task.download()

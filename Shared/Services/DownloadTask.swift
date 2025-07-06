@@ -59,6 +59,12 @@ class DownloadTask: NSObject, ObservableObject {
     }
 
     init(item: BaseItemDto) {
+        let logger = Logger.swiftfin()
+        logger.debug("Creating DownloadTask for item: \(item.displayTitle)")
+        logger.debug("Item ID: \(item.id ?? "nil")")
+        logger.debug("Item type: \(item.type?.rawValue ?? "nil")")
+        logger.debug("Item download folder: \(item.downloadFolder?.path ?? "nil")")
+
         self.item = item
     }
 
@@ -106,7 +112,35 @@ class DownloadTask: NSObject, ObservableObject {
             // TODO: Look at TaskGroup for parallel calls
             do {
                 logger.debug("Starting media download")
-                try await downloadMedia()
+
+                // Special handling for Series - they don't have media to download, just create folder structure
+                if item.type == .series {
+                    logger.info("Processing series download - creating folder structure for '\(item.displayTitle)'")
+
+                    if let mediaSources = item.mediaSources, !mediaSources.isEmpty {
+                        logger.info("Series has media sources, proceeding with download")
+                        try await downloadMedia()
+                    } else {
+                        logger.info("Series has no media sources, creating folder structure only")
+                        try createFolder()
+
+                        // Save series metadata
+                        saveMetadata()
+
+                        // Download series images
+                        await downloadPrimaryImage()
+                        await downloadBackdropImage()
+
+                        logger.info("Series folder structure created successfully")
+                        await MainActor.run {
+                            self.state = .complete
+                        }
+                        return
+                    }
+                } else {
+                    try await downloadMedia()
+                }
+
                 logger.debug("Media download completed successfully")
             } catch {
                 logger.error("Media download failed: \(error.localizedDescription)")

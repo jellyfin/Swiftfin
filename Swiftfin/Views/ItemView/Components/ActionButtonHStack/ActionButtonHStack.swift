@@ -34,6 +34,8 @@ extension ItemView {
 
         private let equalSpacing: Bool
 
+        private let enableDownload: Bool
+
         // MARK: - Has Trailers
 
         private var hasTrailers: Bool {
@@ -53,6 +55,7 @@ extension ItemView {
         init(viewModel: ItemViewModel, equalSpacing: Bool = true) {
             self.viewModel = viewModel
             self.equalSpacing = equalSpacing
+            self.enableDownload = viewModel.isDownloadable
         }
 
         // MARK: - Body
@@ -132,14 +135,16 @@ extension ItemView {
                     }
                 }
 
-                DownloadTaskButton(item: viewModel.item)
-                    .onSelect { _ in
-                        // Download functionality is now handled inline in the button
-                        // No need to open modal or route to download task view
-                    }
-                    .if(equalSpacing) { view in
-                        view.frame(maxWidth: .infinity)
-                    }
+                if enableDownload {
+                    DownloadTaskButton(item: viewModel.item)
+                        .onSelect { _ in
+                            // Download functionality is now handled inline in the button
+                            // No need to open modal or route to download task view
+                        }
+                        .if(equalSpacing) { view in
+                            view.frame(maxWidth: .infinity)
+                        }
+                }
             }
         }
     }

@@ -41,7 +41,7 @@ struct DownloadTaskButton: View {
                 ZStack {
                     // Background circle
                     Circle()
-                        .stroke(Color.white.opacity(0.4), lineWidth: 4)
+                        .stroke(Color.gray.opacity(0.4), lineWidth: 4)
 
                     // Progress circle
                     Circle()
@@ -52,7 +52,7 @@ struct DownloadTaskButton: View {
                 }
                 .frame(width: 24, height: 24)
             case .error:
-                Image(systemName: "arrow.down.circle")
+                Image(systemName: "exclamationmark.triangle")
                     .foregroundStyle(.red)
             case .ready:
                 Image(systemName: "arrow.down.circle")
