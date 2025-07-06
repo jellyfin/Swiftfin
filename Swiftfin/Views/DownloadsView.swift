@@ -29,6 +29,9 @@ struct DownloadsView: View {
     private var downloadedItems: [DownloadTask] = []
 
     @State
+    private var hierarchicalGroups: [DownloadGroup] = []
+
+    @State
     private var isLoading: Bool = true
 
     @State
@@ -114,8 +117,8 @@ struct DownloadsView: View {
 
                     Spacer()
 
-                    if !downloadedItems.isEmpty {
-                        Text("\(downloadedItems.count) items • \(totalStorageUsed)")
+                    if !hierarchicalGroups.isEmpty {
+                        Text("\(totalItemCount) items • \(totalStorageUsed)")
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .padding(.horizontal, 8)
@@ -126,20 +129,11 @@ struct DownloadsView: View {
                 }
                 .padding(.horizontal)
 
-                LazyVStack(spacing: 12) {
-                    ForEach(downloadedItems) { downloadTask in
-                        let folderSize = downloadTask.item.downloadFolder.flatMap { calculateFolderSize(at: $0) }
-                        DownloadedItemRow(
-                            downloadTask: downloadTask,
-                            folderSize: folderSize
-                        ) {
-                            playDownloadedItem(downloadTask)
-                        } onDelete: {
-                            deleteDownloadedItem(downloadTask)
-                        }
-                    }
-                }
-                .padding(.horizontal)
+                DownloadsHierarchicalView(
+                    downloadGroups: hierarchicalGroups,
+                    onPlayItem: playDownloadedItem,
+                    onDeleteItem: deleteDownloadedItem
+                )
             }
             .padding(.vertical)
         }
@@ -152,17 +146,12 @@ struct DownloadsView: View {
     }
 
     private var totalStorageUsed: String {
-        var totalBytes: Int64 = 0
-
-        for downloadTask in downloadedItems {
-            if let downloadFolder = downloadTask.item.downloadFolder,
-               let folderSize = calculateFolderSize(at: downloadFolder)
-            {
-                totalBytes += folderSize
-            }
-        }
-
+        let totalBytes = hierarchicalGroups.reduce(0) { $0 + $1.totalStorageSize }
         return ByteCountFormatter.string(fromByteCount: totalBytes, countStyle: .file)
+    }
+
+    private var totalItemCount: Int {
+        hierarchicalGroups.reduce(0) { $0 + $1.itemCount }
     }
 
     private func calculateFolderSize(at url: URL) -> Int64? {
@@ -200,7 +189,7 @@ struct DownloadsView: View {
                         Text("Loading downloads...")
                             .foregroundColor(.secondary)
                     }
-                } else if downloadedItems.isEmpty {
+                } else if hierarchicalGroups.isEmpty {
                     emptyView
                 } else {
                     contentView
@@ -228,13 +217,13 @@ struct DownloadsView: View {
                     confirmDeleteAll()
                 }
             } message: {
-                Text("Are you sure you want to delete all \(downloadedItems.count) downloaded items? This action cannot be undone.")
+                Text("Are you sure you want to delete all \(totalItemCount) downloaded items? This action cannot be undone.")
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack {
                         // Delete All button (only show if there are downloads)
-                        if !downloadedItems.isEmpty {
+                        if !hierarchicalGroups.isEmpty {
                             Button {
                                 logger.info("User requested to delete all downloads")
                                 showingDeleteAllAlert = true
@@ -329,8 +318,9 @@ struct DownloadsView: View {
 
         DispatchQueue.main.async {
             self.downloadedItems = items
+            self.hierarchicalGroups = transformDownloadsToHierarchy(items)
             self.isLoading = false
-            self.logger.info("Updated UI with \(items.count) downloaded items")
+            self.logger.info("Updated UI with \(items.count) downloaded items in \(self.hierarchicalGroups.count) groups")
         }
     }
 
@@ -357,6 +347,9 @@ struct DownloadsView: View {
         // Remove from UI list
         downloadedItems.removeAll { $0.item.id == taskToDelete.item.id }
 
+        // Refresh hierarchical groups
+        hierarchicalGroups = transformDownloadsToHierarchy(downloadedItems)
+
         // Clear the task reference
         self.taskToDelete = nil
 
@@ -367,93 +360,7 @@ struct DownloadsView: View {
         logger.info("Confirming deletion of all downloads")
         downloadManager.deleteAllDownloads()
         downloadedItems.removeAll()
+        hierarchicalGroups.removeAll()
         logger.info("Successfully deleted all downloads from UI")
-    }
-}
-
-struct DownloadedItemRow: View {
-    let downloadTask: DownloadTask
-    let folderSize: Int64?
-    let onTap: () -> Void
-    let onDelete: () -> Void
-
-    var body: some View {
-        HStack(spacing: 12) {
-            // Thumbnail
-            ImageView(downloadTask.getImageURL(name: "Primary") ?? downloadTask.getImageURL(name: "Backdrop"))
-                .failure {
-                    Rectangle()
-                        .foregroundColor(.secondary.opacity(0.3))
-                        .overlay {
-                            Image(systemName: "photo")
-                                .foregroundColor(.secondary)
-                        }
-                }
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 100, height: 60)
-                .cornerRadius(8)
-                .clipped()
-
-            // Info
-            VStack(alignment: .leading, spacing: 4) {
-                Text(downloadTask.item.displayTitle)
-                    .font(.headline)
-                    .lineLimit(1)
-
-                if let overview = downloadTask.item.overview {
-                    Text(overview)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .lineLimit(2)
-                }
-
-                HStack {
-                    if let runtime = downloadTask.item.runTimeLabel {
-                        Label(runtime, systemImage: "clock")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                    }
-
-                    // File size indicator
-                    if let folderSize = folderSize {
-                        Text(ByteCountFormatter.string(fromByteCount: folderSize, countStyle: .file))
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                            .padding(.horizontal, 4)
-                            .background(Color.secondary.opacity(0.2))
-                            .cornerRadius(4)
-                    }
-
-                    Spacer()
-
-                    Image(systemName: "play.circle.fill")
-                        .font(.title2)
-                        .foregroundColor(.accentColor)
-                }
-            }
-
-            Spacer()
-        }
-        .padding()
-        .background(Color.secondary.opacity(0.1))
-        .cornerRadius(10)
-        .contentShape(Rectangle())
-        .onTapGesture {
-            onTap()
-        }
-        .swipeActions(edge: .trailing) {
-            Button(role: .destructive) {
-                onDelete()
-            } label: {
-                Label(L10n.delete, systemImage: "trash")
-            }
-        }
-        .contextMenu {
-            Button(role: .destructive) {
-                onDelete()
-            } label: {
-                Label("Delete Download", systemImage: "trash")
-            }
-        }
     }
 }
