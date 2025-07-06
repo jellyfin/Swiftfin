@@ -31,7 +31,15 @@ struct RootView: View {
             if rootCoordinator.root.id == RootItem.serverCheck.id {
                 RootItem.serverCheck.content
             }
+
+            if rootCoordinator.root.id == RootItem.downloads.id {
+                RootItem.downloads.content
+            }
             #endif
+
+            // Floating download indicator overlay (now self-positioning and draggable)
+            FloatingDownloadIndicator()
+                .allowsHitTesting(true) // Allow interaction for dragging
         }
         .animation(.linear(duration: 0.1), value: rootCoordinator.root.id)
         .environmentObject(rootCoordinator)

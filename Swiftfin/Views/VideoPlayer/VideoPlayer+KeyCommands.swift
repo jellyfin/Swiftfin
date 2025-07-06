@@ -53,12 +53,14 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 title: L10n.playAndPause,
                 input: " "
             ) {
-                if videoPlayerManager.state == .playing {
-                    videoPlayerManager.proxy.pause()
-                    updateViewProxy.present(systemName: "pause.fill", title: L10n.pause)
-                } else {
-                    videoPlayerManager.proxy.play()
-                    updateViewProxy.present(systemName: "play.fill", title: L10n.play)
+                Task { @MainActor in
+                    if videoPlayerManager.state == .playing {
+                        videoPlayerManager.proxy.pause()
+                        updateViewProxy.present(systemName: "pause.fill", title: L10n.pause)
+                    } else {
+                        videoPlayerManager.proxy.play()
+                        updateViewProxy.present(systemName: "play.fill", title: L10n.play)
+                    }
                 }
             }
 
@@ -72,7 +74,9 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                     gestureStateHandler.jumpForwardKeyPressAmount += 1
                     gestureStateHandler.jumpForwardKeyPressWorkItem?.cancel()
 
-                    videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
+                    Task { @MainActor in
+                        videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
+                    }
 
                     let task = DispatchWorkItem {
                         gestureStateHandler.jumpForwardKeyPressActive = false

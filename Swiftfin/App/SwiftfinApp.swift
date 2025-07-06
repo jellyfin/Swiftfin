@@ -70,6 +70,9 @@ struct SwiftfinApp: App {
         if Defaults[.signOutOnClose] {
             Defaults[.lastSignedInUserID] = .signedOut
         }
+
+        // Initialize network monitor early
+        _ = Container.shared.networkMonitor()
     }
 
     var body: some Scene {

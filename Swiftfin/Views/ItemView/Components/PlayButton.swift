@@ -8,6 +8,7 @@
 
 import Defaults
 import Factory
+import Logging
 import SwiftUI
 
 // TODO: fix play from beginning
@@ -19,8 +20,10 @@ extension ItemView {
         @Default(.accentColor)
         private var accentColor
 
-        @Injected(\.logService)
-        private var logger
+        private let logger = Logger.swiftfin()
+
+        @Injected(\.downloadManager)
+        private var downloadManager
 
         @Router
         private var router
@@ -38,9 +41,19 @@ extension ItemView {
 
         var body: some View {
             Button {
-                if let playButtonItem = viewModel.playButtonItem,
-                   let selectedMediaSource = viewModel.selectedMediaSource
+                if let downloadTask = downloadManager.task(for: viewModel.item),
+                   case .complete = downloadTask.state
                 {
+                    logger.info("Playing downloaded content for item: \(viewModel.item.displayTitle)")
+                    router.route(
+                        to: .videoPlayer(
+                            manager: DownloadVideoPlayerManager(downloadTask: downloadTask)
+                        )
+                    )
+                } else if let playButtonItem = viewModel.playButtonItem,
+                          let selectedMediaSource = viewModel.selectedMediaSource
+                {
+                    logger.info("Playing online content for item: \(viewModel.item.displayTitle)")
                     router.route(
                         to: .videoPlayer(
                             manager: OnlineVideoPlayerManager(
@@ -50,7 +63,7 @@ extension ItemView {
                         )
                     )
                 } else {
-                    logger.error("No media source available")
+                    logger.error("No media source available for item: \(viewModel.item.displayTitle)")
                 }
             } label: {
                 ZStack {
@@ -65,6 +78,15 @@ extension ItemView {
                         Text(title)
                             .font(.callout)
                             .fontWeight(.semibold)
+
+                        // Show offline indicator if downloaded
+                        if let downloadTask = downloadManager.task(for: viewModel.item),
+                           case .complete = downloadTask.state
+                        {
+                            Image(systemName: "arrow.down.circle.fill")
+                                .font(.system(size: 16))
+                                .foregroundColor(accentColor.overlayColor.opacity(0.8))
+                        }
                     }
                     .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : accentColor.overlayColor)
                 }

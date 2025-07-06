@@ -81,6 +81,20 @@ final class VideoPlayerViewModel: ViewModel {
             .filter { $0.deliveryMethod == .external }
             .compactMap(\.asPlaybackChild)
 
+        // Add VLC options for better thread safety and audio handling
+        configuration.options = [
+            "--vout": "ios",
+            "--audio-time-stretch": "",
+            "--avcodec-threads": "0",
+            "--sout-avcodec-strict": "-2",
+            "--audio-desync": "0",
+            "--drop-late-frames": "",
+            "--skip-frames": "",
+            "--intf": "dummy",
+            "--extraintf": "",
+            "--no-video-title-show": "",
+        ]
+
         return configuration
     }
 

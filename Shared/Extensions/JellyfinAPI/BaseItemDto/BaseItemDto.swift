@@ -10,6 +10,7 @@ import Algorithms
 import Factory
 import Foundation
 import JellyfinAPI
+import Logging
 import UIKit
 
 // TODO: clean up
@@ -235,26 +236,97 @@ extension BaseItemDto {
     // TODO: series-season-episode hierarchy for episodes
     // TODO: user hierarchy for downloads
     var downloadFolder: URL? {
-        guard let type, let id else { return nil }
+        // Enhanced logging for debugging download folder issues
+        let logger = Logging.Logger.swiftfin()
+
+        logger.debug("Computing download folder for item: \(displayTitle)")
+        logger.debug("Item ID: \(id ?? "nil")")
+        logger.debug("Item type: \(type?.rawValue ?? "nil")")
+
+        guard let id = id else {
+            logger.error("Download folder calculation failed: Item ID is nil for '\(displayTitle)'")
+            return nil
+        }
+
+        guard let type = type else {
+            logger.error("Download folder calculation failed: Item type is nil for '\(displayTitle)' (ID: \(id))")
+
+            // Try to infer type from other properties if possible
+            if let mediaSources = mediaSources, !mediaSources.isEmpty {
+                logger.info("Attempting to infer type from media sources for item '\(displayTitle)'")
+                let folder = URL.downloads.appendingPathComponent(id)
+                logger.debug("Inferred download folder: \(folder.path)")
+                return folder
+            }
+
+            return nil
+        }
 
         let root = URL.downloads
 //            .appendingPathComponent(userSession.user.id)
 
         switch type {
-        case .movie, .episode:
-            return root
-                .appendingPathComponent(id)
-//        case .episode:
-//            guard let seasonID = seasonID,
-//                  let seriesID = seriesID
-//            else {
-//                return nil
-//            }
-//            return root
-//                .appendingPathComponent(seriesID)
-//                .appendingPathComponent(seasonID)
-//                .appendingPathComponent(id)
+        case .movie, .video, .musicVideo, .trailer:
+            let folder = root.appendingPathComponent(id)
+            logger.debug("Download folder calculated: \(folder.path)")
+            return folder
+        case .episode:
+            // Organize episodes within series folders: series_folder/episode_X/
+            if let seriesID = seriesID, let seasonID = seasonID {
+                // Full hierarchy: series/season/episode
+                let folder = root
+                    .appendingPathComponent(seriesID)
+                    .appendingPathComponent(seasonID)
+                    .appendingPathComponent(id)
+                logger.debug("Download folder calculated for episode (full hierarchy): \(folder.path)")
+                return folder
+            } else if let seriesID = seriesID {
+                // Series/episode hierarchy (no season)
+                let folder = root
+                    .appendingPathComponent(seriesID)
+                    .appendingPathComponent(id)
+                logger.debug("Download folder calculated for episode (series hierarchy): \(folder.path)")
+                return folder
+            } else {
+                // Fallback to episode ID only
+                let folder = root.appendingPathComponent(id)
+                logger.debug("Download folder calculated for episode (fallback): \(folder.path)")
+                return folder
+            }
+        case .series:
+            // Series get their own folder for organizing episodes
+            let folder = root.appendingPathComponent(id)
+            logger.debug("Download folder calculated for series: \(folder.path)")
+            return folder
+        case .season:
+            // Seasons are organized within series
+            if let seriesID = seriesID {
+                let folder = root
+                    .appendingPathComponent(seriesID)
+                    .appendingPathComponent(id)
+                logger.debug("Download folder calculated for season: \(folder.path)")
+                return folder
+            } else {
+                let folder = root.appendingPathComponent(id)
+                logger.debug("Download folder calculated for season (fallback): \(folder.path)")
+                return folder
+            }
+        case .audio:
+            // Add support for audio files
+            let folder = root.appendingPathComponent(id)
+            logger.debug("Download folder calculated for audio: \(folder.path)")
+            return folder
         default:
+            logger.warning("Download folder calculation failed: Unsupported item type '\(type.rawValue)' for '\(displayTitle)' (ID: \(id))")
+
+            // For unknown types, check if the item has downloadable media sources
+            if let mediaSources = mediaSources, !mediaSources.isEmpty {
+                logger.info("Item has media sources, allowing download despite unsupported type")
+                let folder = root.appendingPathComponent(id)
+                logger.debug("Fallback download folder: \(folder.path)")
+                return folder
+            }
+
             return nil
         }
     }

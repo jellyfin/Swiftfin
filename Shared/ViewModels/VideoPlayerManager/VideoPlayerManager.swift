@@ -307,13 +307,17 @@ class VideoPlayerManager: ViewModel {
 
     func setupControlListeners() {
         commandCenter.pauseCommand.addTarget { [weak self] _ in
-            self?.proxy.pause()
+            Task { @MainActor in
+                self?.proxy.pause()
+            }
 
             return .success
         }
 
         commandCenter.playCommand.addTarget { [weak self] _ in
-            self?.proxy.play()
+            Task { @MainActor in
+                self?.proxy.play()
+            }
 
             return .success
         }
@@ -337,12 +341,16 @@ class VideoPlayerManager: ViewModel {
 
         switch type {
         case .began:
-            self.proxy.pause()
+            Task { @MainActor in
+                self.proxy.pause()
+            }
         case .ended:
             if let rawOption = notification.userInfo?[AVAudioSessionInterruptionOptionKey] as? UInt,
                AVAudioSession.InterruptionOptions(rawValue: rawOption).contains(.shouldResume)
             {
-                self.proxy.play()
+                Task { @MainActor in
+                    self.proxy.play()
+                }
             }
         @unknown default:
             break

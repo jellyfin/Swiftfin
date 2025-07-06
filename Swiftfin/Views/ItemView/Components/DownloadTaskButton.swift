@@ -6,11 +6,15 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Factory
 import JellyfinAPI
 import SwiftUI
 
 struct DownloadTaskButton: View {
+
+    @Default(.accentColor)
+    private var accentColor
 
     @ObservedObject
     private var downloadManager: DownloadManager
@@ -19,27 +23,69 @@ struct DownloadTaskButton: View {
 
     private var onSelect: (DownloadTask) -> Void
 
+    @State
+    private var showingCancelConfirmation = false
+
     var body: some View {
         Button {
-            onSelect(downloadTask)
+            handleButtonTap()
         } label: {
             switch downloadTask.state {
             case .cancelled:
-                Image(systemName: "exclamationmark.circle.fill")
-                    .foregroundColor(.red)
+                Image(systemName: "arrow.down.circle")
+                    .foregroundStyle(.red)
             case .complete:
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(.green)
-            case .downloading:
-                EmptyView()
-//                CircularProgressView(progress: progress)
+                Image(systemName: "arrow.down.circle.fill")
+                    .foregroundStyle(.purple)
+            case let .downloading(progress):
+                ZStack {
+                    // Background circle
+                    Circle()
+                        .stroke(Color.gray.opacity(0.4), lineWidth: 4)
+
+                    // Progress circle
+                    Circle()
+                        .trim(from: 0, to: progress)
+                        .stroke(accentColor, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                        .rotationEffect(.degrees(-90))
+                        .animation(.linear(duration: 0.1), value: progress)
+                }
+                .frame(width: 24, height: 24)
             case .error:
-                Image(systemName: "exclamationmark.circle.fill")
-                    .foregroundColor(.red)
+                Image(systemName: "exclamationmark.triangle")
+                    .foregroundStyle(.red)
             case .ready:
                 Image(systemName: "arrow.down.circle")
+                    .foregroundStyle(.gray)
             }
         }
+        .alert("Cancel Download", isPresented: $showingCancelConfirmation) {
+            Button("Cancel Download", role: .destructive) {
+                downloadManager.cancel(task: downloadTask)
+            }
+            Button("Keep Downloading", role: .cancel) {
+                // Do nothing, just dismiss the alert
+            }
+        } message: {
+            Text("Are you sure you want to cancel this download? This action cannot be undone.")
+        }
+    }
+
+    private func handleButtonTap() {
+        switch downloadTask.state {
+        case .ready:
+            downloadManager.download(task: downloadTask)
+        case .downloading:
+            showingCancelConfirmation = true
+        case .complete, .cancelled, .error:
+            // For completed downloads, we could potentially open the download details
+            // or just do nothing as per requirements
+
+            // TODO: add options for managing download - dropdown - Info, Delete ...
+            break
+        }
+
+        onSelect(downloadTask)
     }
 }
 

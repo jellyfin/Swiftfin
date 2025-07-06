@@ -45,11 +45,18 @@ class ItemViewModel: ViewModel, Stateful {
         case refreshing
     }
 
+    var isDownloadableMediaEnabled: Bool = false
+
+    public var isDownloadable: Bool {
+        isDownloadableMediaEnabled
+    }
+
     @Published
     private(set) var item: BaseItemDto {
         willSet {
             switch item.type {
             case .episode, .movie:
+                self.isDownloadableMediaEnabled = true
                 guard !item.isMissing else { return }
                 playButtonItem = newValue
             default: ()

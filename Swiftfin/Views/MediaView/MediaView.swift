@@ -25,6 +25,12 @@ struct MediaView: View {
     @StateObject
     private var viewModel = MediaViewModel()
 
+    @Injected(\.networkMonitor)
+    private var networkMonitor
+
+    @EnvironmentObject
+    private var rootCoordinator: RootCoordinator
+
     private var padLayout: CollectionVGridLayout {
         .minWidth(200)
     }
@@ -48,7 +54,7 @@ struct MediaView: View {
                     )
                     router.route(to: .library(viewModel: viewModel), in: namespace)
                 case .downloads:
-                    router.route(to: .downloadList)
+                    router.route(to: .downloads)
                 case .favorites:
                     // TODO: favorites should have its own view instead of a library
                     let viewModel = ItemLibraryViewModel(
@@ -65,10 +71,22 @@ struct MediaView: View {
     }
 
     private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.send(.refresh)
+        VStack(spacing: 20) {
+            ErrorView(error: error)
+                .onRetry {
+                    viewModel.send(.refresh)
+                }
+
+            if !networkMonitor.isConnected {
+                Button {
+                    rootCoordinator.root(.downloads)
+                } label: {
+                    Label("View Downloads", systemImage: "arrow.down.circle")
+                }
+                .buttonStyle(.bordered)
+                .frame(maxWidth: 300)
             }
+        }
     }
 
     var body: some View {

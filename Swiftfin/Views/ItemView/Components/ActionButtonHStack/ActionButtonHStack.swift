@@ -26,7 +26,15 @@ extension ItemView {
         @ObservedObject
         private var viewModel: ItemViewModel
 
+        @Injected(\.downloadManager)
+        private var downloadManager
+
+        @Router
+        private var router
+
         private let equalSpacing: Bool
+
+        private let enableDownload: Bool
 
         // MARK: - Has Trailers
 
@@ -47,6 +55,7 @@ extension ItemView {
         init(viewModel: ItemViewModel, equalSpacing: Bool = true) {
             self.viewModel = viewModel
             self.equalSpacing = equalSpacing
+            self.enableDownload = viewModel.isDownloadable
         }
 
         // MARK: - Body
@@ -124,6 +133,17 @@ extension ItemView {
                     .if(equalSpacing) { view in
                         view.frame(maxWidth: .infinity)
                     }
+                }
+
+                if enableDownload {
+                    DownloadTaskButton(item: viewModel.item)
+                        .onSelect { _ in
+                            // Download functionality is now handled inline in the button
+                            // No need to open modal or route to download task view
+                        }
+                        .if(equalSpacing) { view in
+                            view.frame(maxWidth: .infinity)
+                        }
                 }
             }
         }

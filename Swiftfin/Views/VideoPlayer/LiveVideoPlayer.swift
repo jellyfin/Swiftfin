@@ -171,8 +171,18 @@ struct LiveVideoPlayer: View {
         .navigationBarHidden(true)
         .statusBar(hidden: true)
         .ignoresSafeArea()
+        .onAppear {
+            // Configure audio session to prevent overload
+            VLCVideoPlayer.configureAudioSession()
+        }
+        .onDisappear {
+            // Reset audio session when leaving
+            VLCVideoPlayer.resetAudioSession()
+        }
         .onChange(of: audioOffset) { newValue in
-            videoPlayerManager.proxy.setAudioDelay(.ticks(newValue))
+            Task { @MainActor in
+                videoPlayerManager.proxy.setAudioDelay(.ticks(newValue))
+            }
         }
         .onChange(of: isGestureLocked) { newValue in
             if newValue {
@@ -183,28 +193,40 @@ struct LiveVideoPlayer: View {
         }
         .onChange(of: isScrubbing) { newValue in
             guard !newValue else { return }
-            videoPlayerManager.proxy.setTime(.seconds(currentProgressHandler.scrubbedSeconds))
+            Task { @MainActor in
+                videoPlayerManager.proxy.setTime(.seconds(currentProgressHandler.scrubbedSeconds))
+            }
         }
         .onChange(of: subtitleColor) { newValue in
-            videoPlayerManager.proxy.setSubtitleColor(.absolute(newValue.uiColor))
+            Task { @MainActor in
+                videoPlayerManager.proxy.setSubtitleColor(.absolute(newValue.uiColor))
+            }
         }
         .onChange(of: subtitleFontName) { newValue in
-            videoPlayerManager.proxy.setSubtitleFont(newValue)
+            Task { @MainActor in
+                videoPlayerManager.proxy.setSubtitleFont(newValue)
+            }
         }
         .onChange(of: subtitleOffset) { newValue in
-            videoPlayerManager.proxy.setSubtitleDelay(.ticks(newValue))
+            Task { @MainActor in
+                videoPlayerManager.proxy.setSubtitleDelay(.ticks(newValue))
+            }
         }
         .onChange(of: subtitleSize) { newValue in
-            videoPlayerManager.proxy.setSubtitleSize(.absolute(24 - newValue))
+            Task { @MainActor in
+                videoPlayerManager.proxy.setSubtitleSize(.absolute(24 - newValue))
+            }
         }
         .onChange(of: videoPlayerManager.currentViewModel) { newViewModel in
             guard let newViewModel else { return }
 
-            videoPlayerManager.proxy.playNewMedia(newViewModel.vlcVideoPlayerConfiguration)
+            Task { @MainActor in
+                videoPlayerManager.proxy.playNewMedia(newViewModel.vlcVideoPlayerConfiguration)
 
-            isAspectFilled = false
-            audioOffset = 0
-            subtitleOffset = 0
+                isAspectFilled = false
+                audioOffset = 0
+                subtitleOffset = 0
+            }
         }
     }
 }

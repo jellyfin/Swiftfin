@@ -44,5 +44,11 @@ struct RootItem: Identifiable {
             ServerCheckView()
         }
     }
+
+    static let downloads = RootItem(id: "downloads") {
+        NavigationInjectionView(coordinator: .init()) {
+            DownloadsView()
+        }
+    }
     #endif
 }
