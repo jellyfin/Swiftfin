@@ -38,19 +38,7 @@ struct DownloadTaskButton: View {
                 Image(systemName: "arrow.down.circle.fill")
                     .foregroundStyle(.purple)
             case let .downloading(progress):
-                ZStack {
-                    // Background circle
-                    Circle()
-                        .stroke(Color.gray.opacity(0.4), lineWidth: 4)
-
-                    // Progress circle
-                    Circle()
-                        .trim(from: 0, to: progress)
-                        .stroke(accentColor, style: StrokeStyle(lineWidth: 4, lineCap: .round))
-                        .rotationEffect(.degrees(-90))
-                        .animation(.linear(duration: 0.1), value: progress)
-                }
-                .frame(width: 24, height: 24)
+                CircularProgressView(progress: progress, size: 24, strokeWidth: 4)
             case .error:
                 Image(systemName: "exclamationmark.triangle")
                     .foregroundStyle(.red)

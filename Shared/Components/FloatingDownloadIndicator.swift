@@ -110,18 +110,14 @@ struct FloatingDownloadIndicator: View {
                     HStack(spacing: 8) {
                         // Download icon with progress ring
                         ZStack {
-                            // Background circle
-                            Circle()
-                                .stroke(Color.primary.opacity(0.2), lineWidth: 2)
-                                .frame(width: 20, height: 20)
-
-                            // Progress circle
-                            Circle()
-                                .trim(from: 0, to: overallProgress)
-                                .stroke(accentColor, style: StrokeStyle(lineWidth: 2, lineCap: .round))
-                                .frame(width: 20, height: 20)
-                                .rotationEffect(.degrees(-90))
-                                .animation(.linear(duration: 0.2), value: overallProgress)
+                            CircularProgressView(
+                                progress: overallProgress,
+                                size: 20,
+                                strokeWidth: 2,
+                                backgroundColor: Color.primary.opacity(0.2),
+                                progressColor: accentColor,
+                                animation: .linear(duration: 0.2)
+                            )
 
                             // Add a subtle pulse animation for downloads that are preparing
                             if overallProgress == 0 {
