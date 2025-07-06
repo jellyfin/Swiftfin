@@ -22,6 +22,9 @@ extension ItemView {
         @Injected(\.logService)
         private var logger
 
+        @Injected(\.downloadManager)
+        private var downloadManager
+
         @Router
         private var router
 
@@ -38,8 +41,16 @@ extension ItemView {
 
         var body: some View {
             Button {
-                if let playButtonItem = viewModel.playButtonItem,
-                   let selectedMediaSource = viewModel.selectedMediaSource
+                if let downloadTask = downloadManager.task(for: viewModel.item),
+                   downloadTask.state == .complete
+                {
+                    router.route(
+                        to: .videoPlayer(
+                            manager: DownloadVideoPlayerManager(downloadTask: downloadTask)
+                        )
+                    )
+                } else if let playButtonItem = viewModel.playButtonItem,
+                          let selectedMediaSource = viewModel.selectedMediaSource
                 {
                     router.route(
                         to: .videoPlayer(

@@ -26,6 +26,12 @@ extension ItemView {
         @ObservedObject
         private var viewModel: ItemViewModel
 
+        @Injected(\.downloadManager)
+        private var downloadManager
+
+        @Router
+        private var router
+
         private let equalSpacing: Bool
 
         // MARK: - Has Trailers
@@ -125,6 +131,17 @@ extension ItemView {
                         view.frame(maxWidth: .infinity)
                     }
                 }
+
+                DownloadTaskButton(item: viewModel.item)
+                    .onSelect { task in
+                        if case .ready = task.state {
+                            downloadManager.download(task: task)
+                        }
+                        router.route(to: .downloadTask(downloadTask: task))
+                    }
+                    .if(equalSpacing) { view in
+                        view.frame(maxWidth: .infinity)
+                    }
             }
         }
     }

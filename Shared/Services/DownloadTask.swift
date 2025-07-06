@@ -117,21 +117,37 @@ class DownloadTask: NSObject, ObservableObject {
 
         guard let downloadFolder = item.downloadFolder else { return }
 
-        let request = Paths.getDownload(itemID: item.id!)
-        let response = try await userSession.client.download(for: request, delegate: self)
+        let client = APIClient(
+            baseURL: userSession.server.currentURL,
+            apiKey: userSession.user.accessToken,
+            userId: userSession.user.id
+        )
 
-        let subtype = response.response.mimeSubtype
-        let mediaExtension = subtype == nil ? "" : ".\(subtype!)"
+        let result = await withCheckedContinuation { continuation in
+            client.downloadItem(itemId: item.id!) { progress in
+                Task { @MainActor in
+                    self.state = .downloading(progress)
+                }
+            } completion: { res in
+                continuation.resume(with: res)
+            }
+        }
 
-        do {
-            try FileManager.default.createDirectory(at: downloadFolder, withIntermediateDirectories: true)
-
-            try FileManager.default.moveItem(
-                at: response.value,
-                to: downloadFolder.appendingPathComponent("Media\(mediaExtension)")
-            )
-        } catch {
+        switch result {
+        case let .success(tempURL):
+            let mediaExtension = tempURL.pathExtension.isEmpty ? "" : ".\(tempURL.pathExtension)"
+            do {
+                try FileManager.default.createDirectory(at: downloadFolder, withIntermediateDirectories: true)
+                try FileManager.default.moveItem(
+                    at: tempURL,
+                    to: downloadFolder.appendingPathComponent("Media\(mediaExtension)")
+                )
+            } catch {
+                logger.error("Error saving media for: \(item.displayTitle) with error: \(error.localizedDescription)")
+            }
+        case let .failure(error):
             logger.error("Error downloading media for: \(item.displayTitle) with error: \(error.localizedDescription)")
+            throw error
         }
     }
 
