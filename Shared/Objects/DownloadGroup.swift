@@ -42,11 +42,11 @@ enum DownloadGroup: Identifiable, Hashable {
     var totalStorageSize: Int64 {
         switch self {
         case let .movie(task):
-            return task.item.downloadFolder.flatMap { calculateFolderSize(at: $0) } ?? 0
+            return task.item.downloadFolder.flatMap { URL.folderSize(at: $0) } ?? 0
         case let .series(group):
             return group.totalStorageSize
         case let .standalone(task):
-            return task.item.downloadFolder.flatMap { calculateFolderSize(at: $0) } ?? 0
+            return task.item.downloadFolder.flatMap { URL.folderSize(at: $0) } ?? 0
         }
     }
 
@@ -84,7 +84,7 @@ struct SeriesGroup: Identifiable, Hashable {
         // Add series-level storage if it exists
         if let seriesTask = seriesTask,
            let downloadFolder = seriesTask.item.downloadFolder,
-           let folderSize = calculateFolderSize(at: downloadFolder)
+           let folderSize = URL.folderSize(at: downloadFolder)
         {
             total += folderSize
         }
@@ -151,38 +151,11 @@ struct EpisodeGroup: Identifiable, Hashable {
 
     var storageSize: Int64 {
         guard let downloadFolder = downloadTask.item.downloadFolder else { return 0 }
-        return calculateFolderSize(at: downloadFolder) ?? 0
+        return URL.folderSize(at: downloadFolder) ?? 0
     }
 }
 
 // MARK: - Helper Functions
-
-/// Calculates the total size of a folder and all its contents
-private func calculateFolderSize(at url: URL) -> Int64? {
-    guard let enumerator = FileManager.default.enumerator(
-        at: url,
-        includingPropertiesForKeys: [.fileSizeKey],
-        options: [.skipsHiddenFiles]
-    ) else {
-        return nil
-    }
-
-    var totalSize: Int64 = 0
-
-    for case let fileURL as URL in enumerator {
-        do {
-            let resourceValues = try fileURL.resourceValues(forKeys: [.fileSizeKey])
-            if let fileSize = resourceValues.fileSize {
-                totalSize += Int64(fileSize)
-            }
-        } catch {
-            // Skip files that can't be read
-            continue
-        }
-    }
-
-    return totalSize > 0 ? totalSize : nil
-}
 
 // MARK: - Data Transformation
 

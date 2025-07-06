@@ -135,32 +135,6 @@ struct DownloadsView: View {
         hierarchicalGroups.reduce(0) { $0 + $1.itemCount }
     }
 
-    private func calculateFolderSize(at url: URL) -> Int64? {
-        guard let enumerator = FileManager.default.enumerator(
-            at: url,
-            includingPropertiesForKeys: [.fileSizeKey],
-            options: [.skipsHiddenFiles]
-        ) else {
-            return nil
-        }
-
-        var totalSize: Int64 = 0
-
-        for case let fileURL as URL in enumerator {
-            do {
-                let resourceValues = try fileURL.resourceValues(forKeys: [.fileSizeKey])
-                if let fileSize = resourceValues.fileSize {
-                    totalSize += Int64(fileSize)
-                }
-            } catch {
-                // Skip files that can't be read
-                continue
-            }
-        }
-
-        return totalSize > 0 ? totalSize : nil
-    }
-
     var body: some View {
         NavigationView {
             ZStack {
