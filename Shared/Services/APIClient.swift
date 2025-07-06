@@ -26,8 +26,14 @@ class APIClient: NSObject {
     private var downloadTasks: [URLSessionDownloadTask: (
         progress: (Double) -> Void,
         completion: (Result<URL, Error>) -> Void,
-        destinationURL: URL
+        destinationURL: URL,
+        itemId: String,
+        retryCount: Int
     )] = [:]
+
+    // Store resume data for failed downloads
+    private var resumeData: [String: Data] = [:]
+    private let maxRetries = 3
 
     init(baseURL: URL, apiKey: String, userId: String) {
         self.baseURL = baseURL
@@ -40,15 +46,55 @@ class APIClient: NSObject {
         case invalidURL
         case httpError(Int)
         case noMediaSource
+        case timeoutAfterRetries(Int)
+        case networkConnectionLost
+        case insufficientStorage
+        case fileSystemError(String)
 
         var localizedDescription: String {
             switch self {
             case .invalidURL:
-                return "Invalid URL"
+                return "Invalid download URL"
             case let .httpError(code):
-                return "HTTP Error: \(code)"
+                return "Server error (\(code)). Please try again later."
             case .noMediaSource:
-                return "No media source available"
+                return "No media source available for download"
+            case let .timeoutAfterRetries(retries):
+                return "Download timed out after \(retries) attempts. Check your network connection and try again."
+            case .networkConnectionLost:
+                return "Network connection lost. Please check your internet connection and try again."
+            case .insufficientStorage:
+                return "Not enough storage space available to download this item."
+            case let .fileSystemError(details):
+                return "File system error: \(details)"
+            }
+        }
+
+        var userFriendlyMessage: String {
+            switch self {
+            case .invalidURL:
+                return "There was a problem with the download link. Please try refreshing and downloading again."
+            case let .httpError(code):
+                return "The server returned an error (\(code)). This usually resolves itself - please try again in a few minutes."
+            case .noMediaSource:
+                return "This content cannot be downloaded. It may not be available for offline viewing."
+            case let .timeoutAfterRetries(retries):
+                return "The download is taking too long, possibly due to a slow connection or large file size. The download was attempted \(retries) times. Try downloading during off-peak hours or check your network connection."
+            case .networkConnectionLost:
+                return "Your internet connection was interrupted. Please reconnect and try downloading again. Downloads can be resumed from where they left off."
+            case .insufficientStorage:
+                return "You don't have enough free space to download this content. Please delete some files or apps and try again."
+            case let .fileSystemError(details):
+                return "There was a problem accessing your device's storage: \(details). Please restart the app and try again."
+            }
+        }
+
+        var isRetryable: Bool {
+            switch self {
+            case .invalidURL, .httpError, .timeoutAfterRetries, .networkConnectionLost, .fileSystemError:
+                return true
+            case .noMediaSource, .insufficientStorage:
+                return false
             }
         }
     }
@@ -104,10 +150,13 @@ class APIClient: NSObject {
 
                 logger.info("Stream URL created: \(streamURL)")
 
-                // Create download task
+                // Create download task with extended timeouts for large media files
                 let sessionConfig = URLSessionConfiguration.default
-                sessionConfig.timeoutIntervalForRequest = 60.0
-                sessionConfig.timeoutIntervalForResource = 300.0
+                sessionConfig.timeoutIntervalForRequest = 120.0 // 2 minutes for initial response
+                sessionConfig.timeoutIntervalForResource = 7200.0 // 2 hours for complete download
+                sessionConfig.allowsCellularAccess = true
+                sessionConfig.waitsForConnectivity = true
+                sessionConfig.networkServiceType = .background // Optimize for large downloads
 
                 let session = URLSession(
                     configuration: sessionConfig,
@@ -115,8 +164,18 @@ class APIClient: NSObject {
                     delegateQueue: nil
                 )
 
-                let downloadTask = session.downloadTask(with: streamURL)
-                downloadTasks[downloadTask] = (onProgress, completion, destinationURL)
+                // Check if we have resume data for this item
+                let downloadTask: URLSessionDownloadTask
+                if let resumeDataForItem = resumeData[itemId] {
+                    logger.info("Resuming download for item: \(itemId)")
+                    downloadTask = session.downloadTask(withResumeData: resumeDataForItem)
+                    resumeData.removeValue(forKey: itemId) // Clear resume data after use
+                } else {
+                    logger.info("Starting new download for item: \(itemId)")
+                    downloadTask = session.downloadTask(with: streamURL)
+                }
+
+                downloadTasks[downloadTask] = (onProgress, completion, destinationURL, itemId, 0)
 
                 logger.info("Starting download task for item: \(itemId)")
                 downloadTask.resume()
@@ -141,7 +200,7 @@ extension APIClient: URLSessionDownloadDelegate {
         totalBytesExpectedToWrite: Int64
     ) {
 
-        guard let (onProgress, _, _) = downloadTasks[downloadTask] else { return }
+        guard let (onProgress, _, _, _, _) = downloadTasks[downloadTask] else { return }
 
         let progress = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite)
         DispatchQueue.main.async {
@@ -151,7 +210,7 @@ extension APIClient: URLSessionDownloadDelegate {
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
 
-        guard let (_, completion, destinationURL) = downloadTasks[downloadTask] else { return }
+        guard let (_, completion, destinationURL, itemId, _) = downloadTasks[downloadTask] else { return }
 
         // Check response status
         if let httpResponse = downloadTask.response as? HTTPURLResponse {
@@ -269,15 +328,145 @@ extension APIClient: URLSessionDownloadDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
 
         guard let downloadTask = task as? URLSessionDownloadTask,
-              let (_, completion, _) = downloadTasks[downloadTask] else { return }
+              let (onProgress, completion, destinationURL, itemId, retryCount) = downloadTasks[downloadTask] else { return }
 
         if let error = error {
             logger.error("Download failed with error: \(error)")
+
+            // Check if this is a timeout error and we have resume data
+            if let nsError = error as NSError?,
+               nsError.domain == NSURLErrorDomain,
+               nsError.code == NSURLErrorTimedOut || nsError.code == NSURLErrorNetworkConnectionLost,
+               let resumeDataForTask = nsError.userInfo[NSURLSessionDownloadTaskResumeData] as? Data,
+               retryCount < maxRetries
+            {
+
+                logger
+                    .info(
+                        "Timeout/connection error detected for item \(itemId), saving resume data and retrying (attempt \(retryCount + 1)/\(maxRetries))"
+                    )
+
+                // Store resume data for retry
+                resumeData[itemId] = resumeDataForTask
+
+                // Clean up current task
+                downloadTasks.removeValue(forKey: downloadTask)
+
+                // Retry after a short delay with exponential backoff
+                let retryDelay = pow(2.0, Double(retryCount)) // 1s, 2s, 4s delays
+                DispatchQueue.main.asyncAfter(deadline: .now() + retryDelay) {
+                    self.retryDownload(
+                        itemId: itemId,
+                        destinationURL: destinationURL,
+                        retryCount: retryCount + 1,
+                        onProgress: onProgress,
+                        completion: completion
+                    )
+                }
+                return
+            }
+
+            // If not retryable or max retries exceeded, fail the download
+            logger.error("Download failed permanently for item \(itemId) after \(retryCount) retries")
+
+            // Convert to more user-friendly error message
+            let userFriendlyError: DownloadError
+            if let nsError = error as NSError?,
+               nsError.domain == NSURLErrorDomain
+            {
+                switch nsError.code {
+                case NSURLErrorTimedOut:
+                    userFriendlyError = .timeoutAfterRetries(retryCount)
+                case NSURLErrorNetworkConnectionLost, NSURLErrorNotConnectedToInternet:
+                    userFriendlyError = .networkConnectionLost
+                default:
+                    userFriendlyError = .fileSystemError(error.localizedDescription)
+                }
+            } else {
+                userFriendlyError = .fileSystemError(error.localizedDescription)
+            }
+
             DispatchQueue.main.async {
-                completion(.failure(error))
+                completion(.failure(userFriendlyError))
             }
         }
 
         downloadTasks.removeValue(forKey: downloadTask)
+    }
+
+    private func retryDownload(
+        itemId: String,
+        destinationURL: URL,
+        retryCount: Int,
+        onProgress: @escaping (Double) -> Void,
+        completion: @escaping (Result<URL, Error>) -> Void
+    ) {
+        logger.info("Retrying download for item: \(itemId) (attempt \(retryCount + 1))")
+
+        Task {
+            do {
+                guard let userSession = Container.shared.currentUserSession() else {
+                    completion(.failure(DownloadError.invalidURL))
+                    return
+                }
+
+                let client = userSession.client
+                let itemRequest = Paths.getItem(itemID: itemId, userID: userId)
+                let itemResponse = try await client.send(itemRequest)
+                let item = itemResponse.value
+
+                guard let mediaSource = item.mediaSources?.first else {
+                    completion(.failure(DownloadError.noMediaSource))
+                    return
+                }
+
+                let videoStreamParameters = Paths.GetVideoStreamParameters(
+                    isStatic: true,
+                    tag: item.etag,
+                    mediaSourceID: mediaSource.id
+                )
+
+                let videoStreamRequest = Paths.getVideoStream(
+                    itemID: itemId,
+                    parameters: videoStreamParameters
+                )
+
+                guard let streamURL = client.fullURL(with: videoStreamRequest) else {
+                    completion(.failure(DownloadError.invalidURL))
+                    return
+                }
+
+                // Create session with same configuration
+                let sessionConfig = URLSessionConfiguration.default
+                sessionConfig.timeoutIntervalForRequest = 120.0
+                sessionConfig.timeoutIntervalForResource = 7200.0
+                sessionConfig.allowsCellularAccess = true
+                sessionConfig.waitsForConnectivity = true
+                sessionConfig.networkServiceType = .background
+
+                let session = URLSession(
+                    configuration: sessionConfig,
+                    delegate: self,
+                    delegateQueue: nil
+                )
+
+                // Create download task (will use resume data if available)
+                let downloadTask: URLSessionDownloadTask
+                if let resumeDataForItem = resumeData[itemId] {
+                    logger.info("Using resume data for retry of item: \(itemId)")
+                    downloadTask = session.downloadTask(withResumeData: resumeDataForItem)
+                    resumeData.removeValue(forKey: itemId)
+                } else {
+                    downloadTask = session.downloadTask(with: streamURL)
+                }
+
+                downloadTasks[downloadTask] = (onProgress, completion, destinationURL, itemId, retryCount)
+                downloadTask.resume()
+
+            } catch {
+                logger.error("Failed to retry download for item: \(itemId) - \(error)")
+                completion(.failure(error))
+            }
+        }
     }
 }
