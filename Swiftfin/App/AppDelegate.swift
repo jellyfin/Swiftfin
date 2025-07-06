@@ -31,4 +31,18 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
         return true
     }
+
+    // MARK: - Background URL Session Handling
+
+    func application(
+        _ application: UIApplication,
+        handleEventsForBackgroundURLSession identifier: String,
+        completionHandler: @escaping () -> Void
+    ) {
+        print("Background URL session events for identifier: \(identifier)")
+
+        // Store the completion handler to be called when background tasks finish
+        // This will be handled by the APIClient when it receives background session events
+        BackgroundSessionManager.shared.storeCompletionHandler(completionHandler, for: identifier)
+    }
 }

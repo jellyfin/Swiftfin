@@ -150,8 +150,9 @@ class APIClient: NSObject {
 
                 logger.info("Stream URL created: \(streamURL)")
 
-                // Create download task with extended timeouts for large media files
-                let sessionConfig = URLSessionConfiguration.default
+                // Create background download session with unique identifier
+                let sessionIdentifier = "bg-download-\(itemId)"
+                let sessionConfig = URLSessionConfiguration.background(withIdentifier: sessionIdentifier)
                 sessionConfig.timeoutIntervalForRequest = 120.0 // 2 minutes for initial response
                 sessionConfig.timeoutIntervalForResource = 7200.0 // 2 hours for complete download
                 sessionConfig.allowsCellularAccess = true
@@ -210,7 +211,7 @@ extension APIClient: URLSessionDownloadDelegate {
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
 
-        guard let (_, completion, destinationURL, itemId, _) = downloadTasks[downloadTask] else { return }
+        guard let (_, completion, destinationURL, _, _) = downloadTasks[downloadTask] else { return }
 
         // Check response status
         if let httpResponse = downloadTask.response as? HTTPURLResponse {
@@ -394,6 +395,30 @@ extension APIClient: URLSessionDownloadDelegate {
         downloadTasks.removeValue(forKey: downloadTask)
     }
 
+    // MARK: - Background Session Support
+
+    func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
+        logger.info("Background URL session finished events: \(session.configuration.identifier ?? "unknown")")
+
+        // Call the completion handler to let the system know we're done
+        if let identifier = session.configuration.identifier {
+            BackgroundSessionManager.shared.callCompletionHandler(for: identifier)
+        }
+    }
+
+    func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
+        if let error = error {
+            logger.error("URL session became invalid with error: \(error)")
+        } else {
+            logger.info("URL session became invalid")
+        }
+
+        // Clean up any remaining tasks for this session
+        // Note: We can't directly compare sessions, so we'll remove all tasks
+        // This is a limitation of URLSessionDownloadTask not exposing its session
+        downloadTasks.removeAll()
+    }
+
     private func retryDownload(
         itemId: String,
         destinationURL: URL,
@@ -436,8 +461,9 @@ extension APIClient: URLSessionDownloadDelegate {
                     return
                 }
 
-                // Create session with same configuration
-                let sessionConfig = URLSessionConfiguration.default
+                // Create background download session with unique identifier
+                let sessionIdentifier = "bg-download-\(itemId)"
+                let sessionConfig = URLSessionConfiguration.background(withIdentifier: sessionIdentifier)
                 sessionConfig.timeoutIntervalForRequest = 120.0
                 sessionConfig.timeoutIntervalForResource = 7200.0
                 sessionConfig.allowsCellularAccess = true
