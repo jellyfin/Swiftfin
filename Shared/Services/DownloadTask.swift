@@ -11,6 +11,7 @@ import Files
 import Foundation
 import Get
 import JellyfinAPI
+import Logging
 
 // TODO: Only move items if entire download successful
 // TODO: Better state for which stage of downloading
@@ -38,8 +39,7 @@ class DownloadTask: NSObject, ObservableObject {
         case ready
     }
 
-    @Injected(\.logService)
-    private var logger
+    private let logger = Logger.swiftfin()
     @Injected(\.currentUserSession)
     private var userSession: UserSession!
 
@@ -71,7 +71,26 @@ class DownloadTask: NSObject, ObservableObject {
 
         let task = Task {
 
-            deleteRootFolder()
+            // Check available storage before starting download
+            #if os(iOS)
+            if let fileSize = item.mediaSources?.first?.size,
+               fileSize > 0
+            {
+                let availableStorage = FileManager.default.availableStorage
+                let requiredSpace = Int(Double(fileSize) * 1.2) // Add 20% buffer for temporary files
+
+                if availableStorage < requiredSpace {
+                    await MainActor.run {
+                        self.state = .error(DownloadError.notEnoughStorage)
+                        Container.shared.downloadManager().remove(task: self)
+                    }
+                    return
+                }
+            }
+            #endif
+
+            // Don't delete the folder before download - we handle directory creation in downloadMedia()
+            // deleteRootFolder()
 
             // TODO: Look at TaskGroup for parallel calls
             do {
@@ -80,7 +99,7 @@ class DownloadTask: NSObject, ObservableObject {
                 await MainActor.run {
                     self.state = .error(error)
 
-                    Container.shared.downloadManager.reset()
+                    Container.shared.downloadManager().remove(task: self)
                 }
                 return
             }
@@ -115,39 +134,68 @@ class DownloadTask: NSObject, ObservableObject {
 
     private func downloadMedia() async throws {
 
-        guard let downloadFolder = item.downloadFolder else { return }
+        let logger = Logger.swiftfin()
+        logger.info("Starting media download for item: \(item.id ?? "unknown")")
 
         let client = APIClient(
-            baseURL: userSession.server.currentURL,
-            apiKey: userSession.user.accessToken,
-            userId: userSession.user.id
+            baseURL: Container.shared.currentUserSession()!.client.configuration.url,
+            apiKey: Container.shared.currentUserSession()!.client.accessToken ?? "",
+            userId: Container.shared.currentUserSession()!.user.id
         )
 
-        let result = await withCheckedContinuation { continuation in
-            client.downloadItem(itemId: item.id!) { progress in
-                Task { @MainActor in
-                    self.state = .downloading(progress)
-                }
-            } completion: { res in
-                continuation.resume(with: res)
-            }
+        // Ensure download directory exists
+        guard let downloadFolder = item.downloadFolder else {
+            logger.error("No download folder available for item")
+            throw JellyfinAPIError("No download folder available")
         }
 
-        switch result {
-        case let .success(tempURL):
-            let mediaExtension = tempURL.pathExtension.isEmpty ? "" : ".\(tempURL.pathExtension)"
-            do {
-                try FileManager.default.createDirectory(at: downloadFolder, withIntermediateDirectories: true)
-                try FileManager.default.moveItem(
-                    at: tempURL,
-                    to: downloadFolder.appendingPathComponent("Media\(mediaExtension)")
-                )
-            } catch {
-                logger.error("Error saving media for: \(item.displayTitle) with error: \(error.localizedDescription)")
-            }
-        case let .failure(error):
-            logger.error("Error downloading media for: \(item.displayTitle) with error: \(error.localizedDescription)")
+        // Create base Downloads directory if it doesn't exist
+        let downloadsRoot = URL.downloads
+        do {
+            try FileManager.default.createDirectory(at: downloadsRoot, withIntermediateDirectories: true, attributes: nil)
+            logger.debug("Created base downloads directory at: \(downloadsRoot)")
+        } catch {
+            logger.error("Failed to create base downloads directory: \(error)")
             throw error
+        }
+
+        // Create item-specific directory
+        do {
+            try FileManager.default.createDirectory(at: downloadFolder, withIntermediateDirectories: true, attributes: nil)
+            logger.debug("Created item download directory at: \(downloadFolder)")
+        } catch {
+            logger.error("Failed to create item download directory: \(error)")
+            throw error
+        }
+
+        return try await withCheckedThrowingContinuation { continuation in
+            client.downloadItem(
+                itemId: item.id ?? "",
+                destinationURL: downloadFolder.appendingPathComponent("Media"),
+                onProgress: { progress in
+                    Task { @MainActor in
+                        self.state = .downloading(progress)
+                    }
+                },
+                completion: { result in
+                    switch result {
+                    case let .success(finalURL):
+                        logger.info("Media download completed successfully for item: \(self.item.id ?? "unknown") at: \(finalURL)")
+
+                        // Save the actual filename for later retrieval
+                        let actualFilename = finalURL.lastPathComponent
+                        if actualFilename != "Media" {
+                            // Store the actual filename in metadata for later use
+                            UserDefaults.standard.set(actualFilename, forKey: "download_\(self.item.id ?? "")_filename")
+                        }
+
+                        continuation.resume()
+                    case let .failure(error):
+                        logger.error("Media download failed for item: \(self.item.id ?? "unknown") - \(error)")
+                        continuation.resume(throwing: error)
+                    }
+                }
+            )
         }
     }
 
@@ -261,13 +309,39 @@ class DownloadTask: NSObject, ObservableObject {
 
     func getMediaURL() -> URL? {
         do {
-            guard let downloadFolder = item.downloadFolder else { return nil }
+            guard let downloadFolder = item.downloadFolder else {
+                logger.error("No download folder available for item: \(item.id ?? "unknown")")
+                return nil
+            }
+
             let contents = try FileManager.default.contentsOfDirectory(atPath: downloadFolder.path)
+            logger.debug("Download folder contents: \(contents)")
 
-            guard let mediaFilename = contents.first(where: { $0.starts(with: "Media") }) else { return nil }
+            // First check if we have a stored filename from the download
+            var mediaFilename: String?
+            if let storedFilename = UserDefaults.standard.string(forKey: "download_\(item.id ?? "")_filename") {
+                // Verify the stored filename still exists
+                if contents.contains(storedFilename) {
+                    mediaFilename = storedFilename
+                    logger.debug("Using stored media filename: \(storedFilename)")
+                }
+            }
 
-            return downloadFolder.appendingPathComponent(mediaFilename)
+            // If no stored filename or it doesn't exist, look for files starting with "Media"
+            if mediaFilename == nil {
+                mediaFilename = contents.first(where: { $0.starts(with: "Media") })
+            }
+
+            guard let foundFilename = mediaFilename else {
+                logger.error("No media file found in download folder for item: \(item.id ?? "unknown")")
+                return nil
+            }
+
+            let mediaURL = downloadFolder.appendingPathComponent(foundFilename)
+            logger.debug("Found media file: \(mediaURL)")
+            return mediaURL
         } catch {
+            logger.error("Error reading download folder for item: \(item.id ?? "unknown") - \(error)")
             return nil
         }
     }
@@ -299,7 +373,7 @@ extension DownloadTask: URLSessionDownloadDelegate {
         DispatchQueue.main.async {
             self.state = .error(error)
 
-            Container.shared.downloadManager.reset()
+            Container.shared.downloadManager().remove(task: self)
         }
     }
 
@@ -309,7 +383,7 @@ extension DownloadTask: URLSessionDownloadDelegate {
         DispatchQueue.main.async {
             self.state = .error(error)
 
-            Container.shared.downloadManager.reset()
+            Container.shared.downloadManager().remove(task: self)
         }
     }
 }

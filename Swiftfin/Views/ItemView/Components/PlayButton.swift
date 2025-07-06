@@ -8,6 +8,7 @@
 
 import Defaults
 import Factory
+import Logging
 import SwiftUI
 
 // TODO: fix play from beginning
@@ -19,8 +20,7 @@ extension ItemView {
         @Default(.accentColor)
         private var accentColor
 
-        @Injected(\.logService)
-        private var logger
+        private let logger = Logger.swiftfin()
 
         @Injected(\.downloadManager)
         private var downloadManager
@@ -42,7 +42,7 @@ extension ItemView {
         var body: some View {
             Button {
                 if let downloadTask = downloadManager.task(for: viewModel.item),
-                   downloadTask.state == .complete
+                   case .complete = downloadTask.state
                 {
                     router.route(
                         to: .videoPlayer(

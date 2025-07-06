@@ -104,3 +104,6 @@ XcodeConfig/DevelopmentTeam.xcconfig
 
 # Other
 .idea
+
+vendor/
+.bundle/
