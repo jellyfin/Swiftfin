@@ -63,43 +63,9 @@ struct DownloadsView: View {
                 .multilineTextAlignment(.center)
 
             if !networkMonitor.isConnected {
-                VStack(spacing: 12) {
-                    HStack {
-                        Image(systemName: "wifi.slash")
-                            .foregroundColor(.orange)
-                        Text("You're Offline")
-                            .foregroundColor(.orange)
-                            .fontWeight(.medium)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.orange.opacity(0.15))
-                    .cornerRadius(8)
-
-                    Text("Downloaded content will appear here when available")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                }
+                OfflineBanner(type: .offline, showDescription: true)
             } else if isServerUnreachable {
-                VStack(spacing: 12) {
-                    HStack {
-                        Image(systemName: "server.rack")
-                            .foregroundColor(.orange)
-                        Text("Server Unreachable")
-                            .foregroundColor(.orange)
-                            .fontWeight(.medium)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.orange.opacity(0.15))
-                    .cornerRadius(8)
-
-                    Text("Can't connect to your Jellyfin server. Downloaded content is available below.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                }
+                OfflineBanner(type: .serverUnreachable, showDescription: true)
             }
         }
         .padding()
@@ -113,31 +79,9 @@ struct DownloadsView: View {
                     Spacer()
 
                     if isServerUnreachable {
-                        HStack {
-                            Image(systemName: "server.rack")
-                                .foregroundColor(.orange)
-                            Text("Server Unreachable")
-                                .foregroundColor(.orange)
-                                .fontWeight(.medium)
-                        }
-                        .font(.caption)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.orange.opacity(0.15))
-                        .cornerRadius(6)
+                        OfflineBanner(type: .serverUnreachable, compact: true)
                     } else if !networkMonitor.isConnected {
-                        HStack {
-                            Image(systemName: "wifi.slash")
-                                .foregroundColor(.orange)
-                            Text("Offline")
-                                .foregroundColor(.orange)
-                                .fontWeight(.medium)
-                        }
-                        .font(.caption)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.orange.opacity(0.15))
-                        .cornerRadius(6)
+                        OfflineBanner(type: .offline, compact: true)
                     }
                 }
                 .padding(.horizontal)
