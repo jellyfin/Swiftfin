@@ -419,4 +419,57 @@ class DownloadManager: ObservableObject {
 
         return parseDownloadItemFromPath(itemMetadataFile)
     }
+
+    func deleteDownload(task: DownloadTask) {
+        logger.info("Deleting downloaded content for item: \(task.item.displayTitle) (ID: \(task.item.id ?? "unknown"))")
+
+        // Remove from active downloads array if present
+        downloads.removeAll { $0.item == task.item }
+        logger.debug("Removed task from active downloads array")
+
+        // Delete the root folder and all contents
+        task.deleteRootFolder()
+
+        // Clean up stored filename from UserDefaults
+        if let itemId = task.item.id {
+            UserDefaults.standard.removeObject(forKey: "download_\(itemId)_filename")
+            logger.debug("Cleaned up UserDefaults entry for item: \(itemId)")
+        }
+
+        logger.info("Successfully deleted download for: \(task.item.displayTitle)")
+    }
+
+    func deleteAllDownloads() {
+        logger.info("Deleting all downloaded content")
+
+        let downloadedItems = downloadedItems()
+        logger.info("Found \(downloadedItems.count) items to delete")
+
+        for item in downloadedItems {
+            deleteDownload(task: item)
+        }
+
+        // Also clear any remaining downloads in progress
+        for activeDownload in downloads {
+            if case .downloading = activeDownload.state {
+                cancel(task: activeDownload)
+            }
+        }
+        downloads.removeAll()
+
+        // Clear the entire downloads directory as a final cleanup
+        do {
+            if FileManager.default.fileExists(atPath: URL.downloads.path) {
+                try FileManager.default.removeItem(at: URL.downloads)
+                logger.info("Removed entire downloads directory")
+
+                // Recreate the directory
+                createDownloadDirectory()
+            }
+        } catch {
+            logger.error("Failed to remove downloads directory: \(error)")
+        }
+
+        logger.info("Successfully deleted all downloads")
+    }
 }

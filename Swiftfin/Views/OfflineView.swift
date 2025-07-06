@@ -31,6 +31,15 @@ struct OfflineView: View {
     @State
     private var isLoading: Bool = true
 
+    @State
+    private var showingDeleteAlert = false
+
+    @State
+    private var showingDeleteAllAlert = false
+
+    @State
+    private var taskToDelete: DownloadTask?
+
     private let logger = Logger.swiftfin()
 
     private var emptyView: some View {
@@ -73,23 +82,88 @@ struct OfflineView: View {
                     .fontWeight(.bold)
                     .padding(.horizontal)
 
-                Text("You can watch these items while offline")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal)
+                HStack {
+                    Text("You can watch these items while offline")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+
+                    Spacer()
+
+                    if !downloadedItems.isEmpty {
+                        Text("\(downloadedItems.count) items • \(totalStorageUsed)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.15))
+                            .cornerRadius(8)
+                    }
+                }
+                .padding(.horizontal)
 
                 LazyVStack(spacing: 12) {
                     ForEach(downloadedItems) { downloadTask in
-                        DownloadedItemRow(downloadTask: downloadTask)
-                            .onTapGesture {
-                                playDownloadedItem(downloadTask)
-                            }
+                        let folderSize = downloadTask.item.downloadFolder.flatMap { calculateFolderSize(at: $0) }
+                        DownloadedItemRow(
+                            downloadTask: downloadTask,
+                            folderSize: folderSize
+                        ) {
+                            playDownloadedItem(downloadTask)
+                        } onDelete: {
+                            deleteDownloadedItem(downloadTask)
+                        }
                     }
                 }
                 .padding(.horizontal)
             }
             .padding(.vertical)
         }
+        .refreshable {
+            logger.info("Pull-to-refresh triggered")
+            await Task {
+                loadDownloadedItems()
+            }.value
+        }
+    }
+
+    private var totalStorageUsed: String {
+        var totalBytes: Int64 = 0
+
+        for downloadTask in downloadedItems {
+            if let downloadFolder = downloadTask.item.downloadFolder,
+               let folderSize = calculateFolderSize(at: downloadFolder)
+            {
+                totalBytes += folderSize
+            }
+        }
+
+        return ByteCountFormatter.string(fromByteCount: totalBytes, countStyle: .file)
+    }
+
+    private func calculateFolderSize(at url: URL) -> Int64? {
+        guard let enumerator = FileManager.default.enumerator(
+            at: url,
+            includingPropertiesForKeys: [.fileSizeKey],
+            options: [.skipsHiddenFiles]
+        ) else {
+            return nil
+        }
+
+        var totalSize: Int64 = 0
+
+        for case let fileURL as URL in enumerator {
+            do {
+                let resourceValues = try fileURL.resourceValues(forKeys: [.fileSizeKey])
+                if let fileSize = resourceValues.fileSize {
+                    totalSize += Int64(fileSize)
+                }
+            } catch {
+                // Skip files that can't be read
+                continue
+            }
+        }
+
+        return totalSize > 0 ? totalSize : nil
     }
 
     var body: some View {
@@ -109,9 +183,42 @@ struct OfflineView: View {
             }
             .navigationTitle("Offline Downloads")
             .navigationBarTitleDisplayMode(.large)
+            .alert("Delete Download", isPresented: $showingDeleteAlert) {
+                Button(L10n.cancel, role: .cancel) {
+                    taskToDelete = nil
+                }
+                Button(L10n.delete, role: .destructive) {
+                    confirmDelete()
+                }
+            } message: {
+                if let taskToDelete = taskToDelete {
+                    Text("Are you sure you want to delete '\(taskToDelete.item.displayTitle)'?")
+                } else {
+                    Text("Are you sure you want to delete this downloaded item?")
+                }
+            }
+            .alert("Delete All Downloads", isPresented: $showingDeleteAllAlert) {
+                Button(L10n.cancel, role: .cancel) {}
+                Button("Delete All", role: .destructive) {
+                    confirmDeleteAll()
+                }
+            } message: {
+                Text("Are you sure you want to delete all \(downloadedItems.count) downloaded items? This action cannot be undone.")
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack {
+                        // Delete All button (only show if there are downloads)
+                        if !downloadedItems.isEmpty {
+                            Button {
+                                logger.info("User requested to delete all downloads")
+                                showingDeleteAllAlert = true
+                            } label: {
+                                Image(systemName: "trash")
+                                    .foregroundColor(.red)
+                            }
+                        }
+
                         // Refresh button
                         Button {
                             logger.info("Manual refresh triggered")
@@ -244,10 +351,43 @@ struct OfflineView: View {
 
         router.route(to: .videoPlayer(manager: manager))
     }
+
+    private func deleteDownloadedItem(_ downloadTask: DownloadTask) {
+        logger.info("User requested to delete download: \(downloadTask.item.displayTitle)")
+        taskToDelete = downloadTask
+        showingDeleteAlert = true
+    }
+
+    private func confirmDelete() {
+        guard let taskToDelete = taskToDelete else { return }
+
+        logger.info("Confirming deletion of download: \(taskToDelete.item.displayTitle)")
+
+        // Delete the download
+        downloadManager.deleteDownload(task: taskToDelete)
+
+        // Remove from UI list
+        downloadedItems.removeAll { $0.item.id == taskToDelete.item.id }
+
+        // Clear the task reference
+        self.taskToDelete = nil
+
+        logger.info("Successfully deleted download from UI")
+    }
+
+    private func confirmDeleteAll() {
+        logger.info("Confirming deletion of all downloads")
+        downloadManager.deleteAllDownloads()
+        downloadedItems.removeAll()
+        logger.info("Successfully deleted all downloads from UI")
+    }
 }
 
 struct DownloadedItemRow: View {
     let downloadTask: DownloadTask
+    let folderSize: Int64?
+    let onTap: () -> Void
+    let onDelete: () -> Void
 
     var body: some View {
         HStack(spacing: 12) {
@@ -286,6 +426,16 @@ struct DownloadedItemRow: View {
                             .foregroundColor(.secondary)
                     }
 
+                    // File size indicator
+                    if let folderSize = folderSize {
+                        Text(ByteCountFormatter.string(fromByteCount: folderSize, countStyle: .file))
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal, 4)
+                            .background(Color.secondary.opacity(0.2))
+                            .cornerRadius(4)
+                    }
+
                     Spacer()
 
                     Image(systemName: "play.circle.fill")
@@ -299,5 +449,23 @@ struct DownloadedItemRow: View {
         .padding()
         .background(Color.secondary.opacity(0.1))
         .cornerRadius(10)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            onTap()
+        }
+        .swipeActions(edge: .trailing) {
+            Button(role: .destructive) {
+                onDelete()
+            } label: {
+                Label(L10n.delete, systemImage: "trash")
+            }
+        }
+        .contextMenu {
+            Button(role: .destructive) {
+                onDelete()
+            } label: {
+                Label("Delete Download", systemImage: "trash")
+            }
+        }
     }
 }
