@@ -16,6 +16,9 @@ struct DownloadsView: View {
     @Injected(\.downloadManager)
     private var downloadManager
 
+    @Injected(\.downloadDiagnostics)
+    private var downloadDiagnostics
+
     @Injected(\.networkMonitor)
     private var networkMonitor
 
@@ -228,7 +231,7 @@ struct DownloadsView: View {
         logger.debug("Downloads directory path: \(URL.downloads.path)")
 
         // Run debugging analysis
-        downloadManager.debugDownloadsDirectory()
+        downloadDiagnostics.debugDownloadsDirectory()
 
         // Check if downloads directory exists
         var isDirectory: ObjCBool = false
