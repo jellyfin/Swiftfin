@@ -44,7 +44,12 @@ class DownloadTask: NSObject, ObservableObject {
     private var userSession: UserSession!
 
     @Published
-    var state: State = .ready
+    var state: State = .ready {
+        didSet {
+            // Notify DownloadManager when state changes for UI updates
+            notifyDownloadManager()
+        }
+    }
 
     private var downloadTask: Task<Void, Never>?
 
@@ -490,6 +495,15 @@ class DownloadTask: NSObject, ObservableObject {
         } catch {
             logger.error("Error reading download folder for item: \(item.id ?? "unknown") - \(error)")
             return nil
+        }
+    }
+
+    // MARK: - DownloadManager Notification
+
+    private func notifyDownloadManager() {
+        // Notify on main thread to trigger UI updates
+        DispatchQueue.main.async {
+            Container.shared.downloadManager().objectWillChange.send()
         }
     }
 }

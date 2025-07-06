@@ -36,6 +36,10 @@ struct RootView: View {
                 RootItem.offline.content
             }
             #endif
+
+            // Floating download indicator overlay (now self-positioning and draggable)
+            FloatingDownloadIndicator()
+                .allowsHitTesting(true) // Allow interaction for dragging
         }
         .animation(.linear(duration: 0.1), value: rootCoordinator.root.id)
         .environmentObject(rootCoordinator)

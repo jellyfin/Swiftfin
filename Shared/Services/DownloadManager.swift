@@ -105,6 +105,11 @@ class DownloadManager: ObservableObject {
         downloads.append(task)
         logger.info("Added download task to queue. Total downloads: \(downloads.count)")
 
+        // Force immediate UI update on main thread for responsive feedback
+        DispatchQueue.main.async { [weak self] in
+            self?.objectWillChange.send()
+        }
+
         // Enhanced logging for download folder information
         if let downloadFolder = task.item.downloadFolder {
             logger.debug("Download folder for item: \(downloadFolder)")
@@ -471,5 +476,52 @@ class DownloadManager: ObservableObject {
         }
 
         logger.info("Successfully deleted all downloads")
+    }
+
+    // MARK: - Debug Methods for Testing Download Indicator
+
+    /// Returns the count of active downloads for the floating indicator
+    var activeDownloadCount: Int {
+        downloads.filter { task in
+            switch task.state {
+            case .ready, .downloading:
+                return true
+            default:
+                return false
+            }
+        }.count
+    }
+
+    /// Returns whether there are any active downloads
+    var hasActiveDownloads: Bool {
+        activeDownloadCount > 0
+    }
+
+    /// Debug method to log current download states
+    func logCurrentDownloadStates() {
+        logger.debug("=== CURRENT DOWNLOAD STATES ===")
+        logger.debug("Total downloads: \(downloads.count)")
+        logger.debug("Active downloads: \(activeDownloadCount)")
+
+        for (index, download) in downloads.enumerated() {
+            let stateDescription: String
+            switch download.state {
+            case .ready:
+                stateDescription = "ready"
+            case let .downloading(progress):
+                stateDescription = "downloading (\(Int(progress * 100))%)"
+            case .complete:
+                stateDescription = "complete"
+            case .cancelled:
+                stateDescription = "cancelled"
+            case let .error(error):
+                stateDescription = "error: \(error.localizedDescription)"
+            }
+
+            logger.debug("Download \(index + 1): \(download.item.displayTitle) - \(stateDescription)")
+        }
+
+        logger.debug("Floating indicator should be visible: \(hasActiveDownloads)")
+        logger.debug("=== END DOWNLOAD STATES ===")
     }
 }
