@@ -114,14 +114,49 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        // Configure audio session for optimal playback
+        configureAudioSession()
+    }
+
+    private func configureAudioSession() {
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+
+            // Set category for video playback with audio
+            try audioSession.setCategory(
+                .playback,
+                mode: .moviePlayback,
+                options: [.mixWithOthers, .allowAirPlay, .allowBluetooth, .allowBluetoothA2DP]
+            )
+
+            // Configure for optimal performance
+            try audioSession.setPreferredSampleRate(48000) // Standard video sample rate
+            try audioSession.setPreferredIOBufferDuration(0.005) // 5ms buffer
+
+            // Activate the session
+            try audioSession.setActive(true)
+
+        } catch {
+            print("Failed to configure audio session in NativeVideoPlayer: \(error)")
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         stop()
+        resetAudioSession()
         guard let timeObserverToken else { return }
         player?.removeTimeObserver(timeObserverToken)
+    }
+
+    private func resetAudioSession() {
+        do {
+            try AVAudioSession.sharedInstance().setActive(false)
+        } catch {
+            print("Failed to deactivate audio session in NativeVideoPlayer: \(error)")
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {

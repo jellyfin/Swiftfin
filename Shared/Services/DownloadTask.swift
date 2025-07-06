@@ -394,8 +394,22 @@ class DownloadTask: NSObject, ObservableObject {
                     return videoExtensions.contains { lowercased.hasSuffix(".\($0)") }
                 }
 
-                if mediaFilename != nil {
-                    logger.debug("Found video file by extension: \(mediaFilename!)")
+                if let foundFilename = mediaFilename {
+                    logger.debug("Found video file by extension: \(foundFilename)")
+                    let fileExtension = URL(fileURLWithPath: foundFilename).pathExtension.lowercased()
+                    logger.debug("Media file format: \(fileExtension)")
+
+                    // Log warnings for formats that may have compatibility issues
+                    switch fileExtension {
+                    case "avi":
+                        logger.warning("AVI format detected - may require VLC player for optimal compatibility")
+                    case "mkv":
+                        logger.info("MKV format detected - VLC player recommended for full feature support")
+                    case "wmv", "flv":
+                        logger.warning("Legacy format detected (\(fileExtension)) - compatibility may vary")
+                    default:
+                        logger.debug("Standard format detected (\(fileExtension))")
+                    }
                 }
             }
 
@@ -413,7 +427,31 @@ class DownloadTask: NSObject, ObservableObject {
                 return nil
             }
 
-            logger.debug("Found media file: \(mediaURL)")
+            // Validate media file properties
+            do {
+                let attributes = try FileManager.default.attributesOfItem(atPath: mediaURL.path)
+                if let fileSize = attributes[.size] as? Int64 {
+                    logger.debug("Media file size: \(fileSize) bytes")
+
+                    // Check for minimum file size (1MB threshold to catch corrupted downloads)
+                    if fileSize < 1024 * 1024 {
+                        logger.warning("Media file seems very small (\(fileSize) bytes) - may be corrupted")
+                    }
+                } else {
+                    logger.warning("Could not determine media file size")
+                }
+
+                // Check if file is readable
+                guard FileManager.default.isReadableFile(atPath: mediaURL.path) else {
+                    logger.error("Media file is not readable: \(mediaURL.path)")
+                    return nil
+                }
+            } catch {
+                logger.error("Error checking media file attributes: \(error)")
+                return nil
+            }
+
+            logger.debug("Found and validated media file: \(mediaURL)")
             return mediaURL
         } catch {
             logger.error("Error reading download folder for item: \(item.id ?? "unknown") - \(error)")

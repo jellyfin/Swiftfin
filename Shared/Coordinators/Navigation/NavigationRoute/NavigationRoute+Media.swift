@@ -68,12 +68,23 @@ struct VideoPlayerViewShim: View {
     @StateObject
     var videoPlayerManager: VideoPlayerManager
 
+    /// Determines if VLC/Swiftfin player should be used
+    /// For offline content, always use VLC due to better codec support
+    private var shouldUseVLCPlayer: Bool {
+        // Force VLC for downloaded content due to better codec support for .avi and other formats
+        if videoPlayerManager is DownloadVideoPlayerManager {
+            return true
+        }
+        // Use user preference for online content
+        return Defaults[.VideoPlayer.videoPlayerType] == .swiftfin
+    }
+
     var body: some View {
         #if os(iOS)
 
         PreferencesView {
             Group {
-                if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+                if shouldUseVLCPlayer {
                     VideoPlayer(manager: self.videoPlayerManager)
                 } else {
                     NativeVideoPlayer(manager: self.videoPlayerManager)
@@ -86,7 +97,7 @@ struct VideoPlayerViewShim: View {
         .persistentSystemOverlays(.hidden)
 
         #else
-        if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+        if shouldUseVLCPlayer {
             PreferencesView {
                 VideoPlayer(manager: self.videoPlayerManager)
             }

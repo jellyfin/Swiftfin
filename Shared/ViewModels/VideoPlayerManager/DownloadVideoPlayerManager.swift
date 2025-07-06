@@ -39,6 +39,13 @@ final class DownloadVideoPlayerManager: VideoPlayerManager {
         logger.info("Found playback URL: \(playbackURL)")
         logger.info("File exists: \(FileManager.default.fileExists(atPath: playbackURL.path))")
 
+        // Validate media file
+        if !validateMediaFile(at: playbackURL) {
+            logger.error("Media file validation failed for: \(playbackURL)")
+            self.createFallbackViewModel(for: downloadTask)
+            return
+        }
+
         // Get streams from the downloaded item
         let videoStreams = downloadTask.item.videoStreams
         let audioStreams = downloadTask.item.audioStreams
@@ -56,10 +63,30 @@ final class DownloadVideoPlayerManager: VideoPlayerManager {
         mediaSource.isRemote = false
         mediaSource.isSupportsDirectPlay = true
         mediaSource.isSupportsDirectStream = true
+        mediaSource.isSupportsTranscoding = false // Disable transcoding for offline content
 
         // Ensure media streams are populated
         if mediaSource.mediaStreams == nil || mediaSource.mediaStreams?.isEmpty == true {
             mediaSource.mediaStreams = videoStreams + audioStreams + subtitleStreams
+        }
+
+        // Validate stream configurations for offline playback
+        if audioStreams.isEmpty {
+            logger.warning("No audio streams found - this may cause playback issues")
+        }
+        if videoStreams.isEmpty {
+            logger.warning("No video streams found - this may cause playback issues")
+        }
+
+        // Log stream details for debugging
+        for stream in audioStreams {
+            logger
+                .debug(
+                    "Audio stream: codec=\(stream.codec ?? "unknown"), channels=\(stream.channels ?? 0), sampleRate=\(stream.sampleRate ?? 0)"
+                )
+        }
+        for stream in videoStreams {
+            logger.debug("Video stream: codec=\(stream.codec ?? "unknown"), width=\(stream.width ?? 0), height=\(stream.height ?? 0)")
         }
 
         logger.info("Creating VideoPlayerViewModel with URL: \(playbackURL)")
@@ -141,4 +168,40 @@ final class DownloadVideoPlayerManager: VideoPlayerManager {
     override func sendStopReport() {}
 
     override func sendProgressReport() {}
+
+    private func validateMediaFile(at url: URL) -> Bool {
+        // Check if file exists and is readable
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            logger.error("Media file does not exist at path: \(url.path)")
+            return false
+        }
+
+        // Check file size - ensure it's not empty or corrupted
+        do {
+            let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
+            if let fileSize = attributes[.size] as? Int64, fileSize == 0 {
+                logger.error("Media file is empty: \(url.path)")
+                return false
+            }
+        } catch {
+            logger.error("Could not read file attributes: \(error)")
+            return false
+        }
+
+        // Check if file is readable
+        guard FileManager.default.isReadableFile(atPath: url.path) else {
+            logger.error("Media file is not readable: \(url.path)")
+            return false
+        }
+
+        // Additional validation for known problematic formats
+        let fileExtension = url.pathExtension.lowercased()
+        if fileExtension == "avi" {
+            logger.warning("AVI file detected - using VLC player for better codec support")
+            // Still return true, but log warning that VLC is preferred
+        }
+
+        logger.debug("Media file validation passed for: \(url.path)")
+        return true
+    }
 }
