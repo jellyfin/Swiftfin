@@ -31,7 +31,9 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private var jumpBackwardButton: some View {
             Button {
-                videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
+                Task { @MainActor in
+                    videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
+                }
                 timerProxy.start(5)
             } label: {
                 Image(systemName: jumpBackwardLength.backwardImageLabel)
@@ -43,11 +45,13 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private var playButton: some View {
             Button {
-                switch videoPlayerManager.state {
-                case .playing:
-                    videoPlayerProxy.pause()
-                default:
-                    videoPlayerProxy.play()
+                Task { @MainActor in
+                    switch videoPlayerManager.state {
+                    case .playing:
+                        videoPlayerProxy.pause()
+                    default:
+                        videoPlayerProxy.play()
+                    }
                 }
                 timerProxy.start(5)
             } label: {
@@ -70,7 +74,9 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private var jumpForwardButton: some View {
             Button {
-                videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
+                Task { @MainActor in
+                    videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
+                }
                 timerProxy.start(5)
             } label: {
                 Image(systemName: jumpForwardLength.forwardImageLabel)
