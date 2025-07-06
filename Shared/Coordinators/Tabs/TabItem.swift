@@ -76,6 +76,16 @@ extension TabItem {
         MediaView()
     }
 
+    #if os(iOS)
+    static let downloads = TabItem(
+        id: "downloads",
+        title: L10n.downloads,
+        systemImage: "arrow.down.circle"
+    ) {
+        DownloadsView()
+    }
+    #endif
+
     static let search = TabItem(
         id: "search",
         title: L10n.search,

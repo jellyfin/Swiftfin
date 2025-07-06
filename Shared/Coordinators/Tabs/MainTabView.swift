@@ -17,6 +17,7 @@ struct MainTabView: View {
         TabItem.home
         TabItem.search
         TabItem.media
+        TabItem.downloads
     }
     #else
     @StateObject

@@ -84,9 +84,6 @@ struct DownloadsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 HStack {
-                    Text("Downloads")
-                        .font(.title2)
-                        .fontWeight(.bold)
 
                     Spacer()
 
@@ -258,17 +255,6 @@ struct DownloadsView: View {
                             Image(systemName: "arrow.clockwise")
                                 .foregroundColor(.secondary)
                         }
-
-                        // Debug button for troubleshooting (only in debug builds)
-                        #if DEBUG
-                        Button {
-                            logger.info("Manual debug trigger requested")
-                            downloadManager.debugDownloadsDirectory()
-                        } label: {
-                            Image(systemName: "ladybug")
-                                .foregroundColor(.secondary)
-                        }
-                        #endif
                     }
                 }
             }
