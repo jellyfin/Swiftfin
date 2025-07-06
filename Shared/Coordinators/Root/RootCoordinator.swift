@@ -40,7 +40,7 @@ final class RootCoordinator: ObservableObject {
                         if networkMonitor.isConnected {
                             root(.serverCheck)
                         } else {
-                            root(.offline)
+                            root(.downloads)
                         }
                     }
                     #endif
@@ -68,12 +68,12 @@ final class RootCoordinator: ObservableObject {
                     guard Container.shared.currentUserSession() != nil, !Defaults[.signOutOnClose] else { return }
 
                     #if os(iOS)
-                    if isConnected && self.root.id == RootItem.offline.id {
+                    if isConnected && self.root.id == RootItem.downloads.id {
                         // Network restored, go back to server check
                         self.root(.serverCheck)
                     } else if !isConnected && (self.root.id == RootItem.serverCheck.id || self.root.id == RootItem.mainTab.id) {
-                        // Network lost, go to offline mode
-                        self.root(.offline)
+                        // Network lost, show downloads only
+                        self.root(.downloads)
                     }
                     #endif
                 }
@@ -101,7 +101,7 @@ final class RootCoordinator: ObservableObject {
         if networkMonitor.isConnected {
             root(.serverCheck)
         } else {
-            root(.offline)
+            root(.downloads)
         }
         #endif
     }

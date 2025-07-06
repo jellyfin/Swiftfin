@@ -12,12 +12,6 @@ import SwiftUI
 #if os(iOS)
 extension NavigationRoute {
 
-    static let downloadList = NavigationRoute(
-        id: "downloadList"
-    ) {
-        DownloadListView(viewModel: .init())
-    }
-
     static func downloadTask(downloadTask: DownloadTask) -> NavigationRoute {
         NavigationRoute(
             id: "downloadTask",
@@ -27,10 +21,10 @@ extension NavigationRoute {
         }
     }
 
-    static let offline = NavigationRoute(
-        id: "offline"
+    static let downloads = NavigationRoute(
+        id: "downloads"
     ) {
-        OfflineView()
+        DownloadsView()
     }
 }
 #endif

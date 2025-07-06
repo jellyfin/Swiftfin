@@ -45,9 +45,9 @@ struct RootItem: Identifiable {
         }
     }
 
-    static let offline = RootItem(id: "offline") {
+    static let downloads = RootItem(id: "downloads") {
         NavigationInjectionView(coordinator: .init()) {
-            OfflineView()
+            DownloadsView()
         }
     }
     #endif

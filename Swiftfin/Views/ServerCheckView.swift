@@ -47,7 +47,7 @@ struct ServerCheckView: View {
 
             if !networkMonitor.isConnected {
                 Button {
-                    rootCoordinator.root(.offline)
+                    rootCoordinator.root(.downloads)
                 } label: {
                     Label("View Downloads", systemImage: "arrow.down.circle")
                 }

@@ -32,8 +32,8 @@ struct RootView: View {
                 RootItem.serverCheck.content
             }
 
-            if rootCoordinator.root.id == RootItem.offline.id {
-                RootItem.offline.content
+            if rootCoordinator.root.id == RootItem.downloads.id {
+                RootItem.downloads.content
             }
             #endif
 

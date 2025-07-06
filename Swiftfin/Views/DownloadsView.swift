@@ -11,7 +11,7 @@ import JellyfinAPI
 import Logging
 import SwiftUI
 
-struct OfflineView: View {
+struct DownloadsView: View {
 
     @Injected(\.downloadManager)
     private var downloadManager
@@ -44,31 +44,37 @@ struct OfflineView: View {
 
     private var emptyView: some View {
         VStack(spacing: 20) {
-            Image(systemName: "wifi.slash")
+            Image(systemName: "arrow.down.circle")
                 .font(.system(size: 72))
                 .foregroundColor(.secondary)
 
-            Text("You're Offline")
+            Text("No Downloads")
                 .font(.title2)
                 .fontWeight(.semibold)
 
-            Text("No downloaded content available")
+            Text("Download content to watch offline")
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
 
-            if networkMonitor.isConnected {
-                Button {
-                    // Force refresh when connection is restored
-                    if let userSession = userSession {
-                        Notifications[.didChangeCurrentServerURL].post(userSession.server)
-                    } else {
-                        // If no user session, go to sign in
-                        Notifications[.didSignOut].post()
+            if !networkMonitor.isConnected {
+                VStack(spacing: 12) {
+                    HStack {
+                        Image(systemName: "wifi.slash")
+                            .foregroundColor(.orange)
+                        Text("You're Offline")
+                            .foregroundColor(.orange)
+                            .fontWeight(.medium)
                     }
-                } label: {
-                    Label("Go Online", systemImage: "wifi")
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color.orange.opacity(0.15))
+                    .cornerRadius(8)
+
+                    Text("Downloaded content will appear here when available")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
                 }
-                .buttonStyle(.borderedProminent)
             }
         }
         .padding()
@@ -77,15 +83,37 @@ struct OfflineView: View {
     private var contentView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                Text("Downloaded Content")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .padding(.horizontal)
+                HStack {
+                    Text("Downloads")
+                        .font(.title2)
+                        .fontWeight(.bold)
+
+                    Spacer()
+
+                    if !networkMonitor.isConnected {
+                        HStack {
+                            Image(systemName: "wifi.slash")
+                                .foregroundColor(.orange)
+                            Text("Offline")
+                                .foregroundColor(.orange)
+                                .fontWeight(.medium)
+                        }
+                        .font(.caption)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.orange.opacity(0.15))
+                        .cornerRadius(6)
+                    }
+                }
+                .padding(.horizontal)
 
                 HStack {
-                    Text("You can watch these items while offline")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                    Text(networkMonitor.isConnected ?
+                        "Downloaded content available for offline viewing" :
+                        "Offline content"
+                    )
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
 
                     Spacer()
 
@@ -172,7 +200,7 @@ struct OfflineView: View {
                 if isLoading {
                     VStack(spacing: 20) {
                         ProgressView()
-                        Text("Loading offline content...")
+                        Text("Loading downloads...")
                             .foregroundColor(.secondary)
                     }
                 } else if downloadedItems.isEmpty {
@@ -181,7 +209,7 @@ struct OfflineView: View {
                     contentView
                 }
             }
-            .navigationTitle("Offline Downloads")
+            .navigationTitle("Downloads")
             .navigationBarTitleDisplayMode(.large)
             .alert("Delete Download", isPresented: $showingDeleteAlert) {
                 Button(L10n.cancel, role: .cancel) {
@@ -231,7 +259,8 @@ struct OfflineView: View {
                                 .foregroundColor(.secondary)
                         }
 
-                        // Debug button for troubleshooting
+                        // Debug button for troubleshooting (only in debug builds)
+                        #if DEBUG
                         Button {
                             logger.info("Manual debug trigger requested")
                             downloadManager.debugDownloadsDirectory()
@@ -239,48 +268,21 @@ struct OfflineView: View {
                             Image(systemName: "ladybug")
                                 .foregroundColor(.secondary)
                         }
-
-                        if networkMonitor.isConnected {
-                            Button {
-                                // Force refresh to go back online
-                                if let userSession = userSession {
-                                    Notifications[.didChangeCurrentServerURL].post(userSession.server)
-                                } else {
-                                    // If no user session, go to sign in
-                                    Notifications[.didSignOut].post()
-                                }
-                            } label: {
-                                Label("Go Online", systemImage: "wifi")
-                                    .foregroundColor(.accentColor)
-                            }
-                        }
+                        #endif
                     }
                 }
             }
         }
         .onAppear {
-            logger.info("OfflineView appeared")
+            logger.info("DownloadsView appeared")
             Task {
                 loadDownloadedItems()
-            }
-        }
-        .onReceive(networkMonitor.$isConnected) { isConnected in
-            if isConnected {
-                // Automatically try to go online when connection is restored
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    if let userSession = userSession {
-                        Notifications[.didChangeCurrentServerURL].post(userSession.server)
-                    } else {
-                        // If no user session, go to sign in
-                        Notifications[.didSignOut].post()
-                    }
-                }
             }
         }
     }
 
     private func loadDownloadedItems() {
-        logger.info("Loading downloaded items for offline mode")
+        logger.info("Loading downloaded items")
         logger.debug("Network status: \(networkMonitor.isConnected)")
         logger.debug("User session available: \(userSession != nil)")
         logger.debug("Downloads directory path: \(URL.downloads.path)")

@@ -54,7 +54,7 @@ struct MediaView: View {
                     )
                     router.route(to: .library(viewModel: viewModel), in: namespace)
                 case .downloads:
-                    router.route(to: .downloadList)
+                    router.route(to: .downloads)
                 case .favorites:
                     // TODO: favorites should have its own view instead of a library
                     let viewModel = ItemLibraryViewModel(
@@ -79,7 +79,7 @@ struct MediaView: View {
 
             if !networkMonitor.isConnected {
                 Button {
-                    rootCoordinator.root(.offline)
+                    rootCoordinator.root(.downloads)
                 } label: {
                     Label("View Downloads", systemImage: "arrow.down.circle")
                 }
