@@ -68,8 +68,12 @@ class DownloadTask: NSObject, ObservableObject {
     }
 
     func download() {
+        logger.info("Starting download process for item: \(item.displayTitle) (ID: \(item.id ?? "unknown"))")
+        logger.debug("Initial state: \(state)")
+        logger.debug("Download folder: \(item.downloadFolder?.path ?? "nil")")
 
         let task = Task {
+            logger.debug("Download task started on background thread")
 
             // Check available storage before starting download
             #if os(iOS)
@@ -79,13 +83,20 @@ class DownloadTask: NSObject, ObservableObject {
                 let availableStorage = FileManager.default.availableStorage
                 let requiredSpace = Int(Double(fileSize) * 1.2) // Add 20% buffer for temporary files
 
+                logger.debug("File size: \(fileSize), Available storage: \(availableStorage), Required space: \(requiredSpace)")
+
                 if availableStorage < requiredSpace {
+                    logger.error("Insufficient storage for download. Available: \(availableStorage), Required: \(requiredSpace)")
                     await MainActor.run {
                         self.state = .error(DownloadError.notEnoughStorage)
                         Container.shared.downloadManager().remove(task: self)
                     }
                     return
+                } else {
+                    logger.debug("Storage check passed")
                 }
+            } else {
+                logger.debug("No file size information available, skipping storage check")
             }
             #endif
 
@@ -94,38 +105,81 @@ class DownloadTask: NSObject, ObservableObject {
 
             // TODO: Look at TaskGroup for parallel calls
             do {
+                logger.debug("Starting media download")
                 try await downloadMedia()
+                logger.debug("Media download completed successfully")
             } catch {
+                logger.error("Media download failed: \(error.localizedDescription)")
                 await MainActor.run {
                     self.state = .error(error)
-
                     Container.shared.downloadManager().remove(task: self)
                 }
                 return
             }
-            await downloadBackdropImage()
-            await downloadPrimaryImage()
 
+            logger.debug("Starting backdrop image download")
+            await downloadBackdropImage()
+            logger.debug("Backdrop image download completed")
+
+            logger.debug("Starting primary image download")
+            await downloadPrimaryImage()
+            logger.debug("Primary image download completed")
+
+            logger.debug("Saving metadata")
             saveMetadata()
+            logger.debug("Metadata saved successfully")
 
             await MainActor.run {
+                logger.info("Download completed successfully for item: \(self.item.displayTitle)")
                 self.state = .complete
             }
         }
 
         self.downloadTask = task
+        logger.debug("Download task assigned to instance variable")
     }
 
     func cancel() {
-        self.downloadTask?.cancel()
-        self.state = .cancelled
+        logger.info("Cancelling download for item: \(item.displayTitle) (ID: \(item.id ?? "unknown"))")
+        logger.debug("Current state before cancellation: \(state)")
 
-        logger.trace("Cancelled download for: \(item.displayTitle)")
+        // Cancel the underlying download task
+        if let downloadTask = self.downloadTask {
+            logger.debug("Cancelling underlying download task")
+            downloadTask.cancel()
+        } else {
+            logger.debug("No underlying download task to cancel")
+        }
+
+        // Clean up any partial downloads
+        logger.debug("Cleaning up partial downloads")
+        deleteRootFolder()
+
+        // Update state to cancelled
+        self.state = .cancelled
+        logger.debug("State updated to cancelled")
+
+        // Remove from download manager
+        logger.debug("Removing task from download manager")
+        Container.shared.downloadManager().remove(task: self)
+
+        logger.info("Download cancelled successfully for: \(item.displayTitle)")
     }
 
     func deleteRootFolder() {
-        guard let downloadFolder = item.downloadFolder else { return }
-        try? FileManager.default.removeItem(at: downloadFolder)
+        guard let downloadFolder = item.downloadFolder else {
+            logger.debug("No download folder to delete")
+            return
+        }
+
+        logger.debug("Deleting root folder: \(downloadFolder)")
+
+        do {
+            try FileManager.default.removeItem(at: downloadFolder)
+            logger.debug("Successfully deleted download folder")
+        } catch {
+            logger.error("Failed to delete download folder: \(error.localizedDescription)")
+        }
     }
 
     func encodeMetadata() -> Data {

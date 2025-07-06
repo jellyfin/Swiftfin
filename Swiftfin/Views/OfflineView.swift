@@ -107,7 +107,6 @@ struct OfflineView: View {
                     contentView
                 }
             }
-            .navigationTitle("Offline Mode")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -154,20 +153,12 @@ struct OfflineView: View {
         logger.debug("Network status: \(networkMonitor.isConnected)")
         logger.debug("User session available: \(userSession != nil)")
 
-        do {
-            let items = downloadManager.downloadedItems()
-            logger.info("Found \(items.count) downloaded items")
+        let items = downloadManager.downloadedItems()
+        logger.info("Found \(items.count) downloaded items")
 
-            DispatchQueue.main.async {
-                self.downloadedItems = items
-                self.isLoading = false
-            }
-        } catch {
-            logger.error("Failed to load downloaded items: \(error)")
-            DispatchQueue.main.async {
-                self.downloadedItems = []
-                self.isLoading = false
-            }
+        DispatchQueue.main.async {
+            self.downloadedItems = items
+            self.isLoading = false
         }
     }
 

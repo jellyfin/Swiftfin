@@ -23,6 +23,9 @@ struct DownloadTaskButton: View {
 
     private var onSelect: (DownloadTask) -> Void
 
+    @State
+    private var showingCancelConfirmation = false
+
     var body: some View {
         Button {
             handleButtonTap()
@@ -30,36 +33,41 @@ struct DownloadTaskButton: View {
             switch downloadTask.state {
             case .cancelled:
                 Image(systemName: "arrow.down.circle")
-                    .foregroundColor(.white)
+                    .foregroundStyle(.red)
             case .complete:
-                Image(systemName: "arrow.down.circle")
-                    .foregroundColor(.green)
+                Image(systemName: "arrow.down.circle.fill")
+                    .foregroundStyle(.purple)
             case let .downloading(progress):
                 ZStack {
                     // Background circle
                     Circle()
-                        .stroke(Color.gray.opacity(0.2), lineWidth: 2)
+                        .stroke(Color.white.opacity(0.4), lineWidth: 4)
 
                     // Progress circle
                     Circle()
                         .trim(from: 0, to: progress)
-                        .stroke(accentColor, style: StrokeStyle(lineWidth: 2, lineCap: .round))
+                        .stroke(accentColor, style: StrokeStyle(lineWidth: 4, lineCap: .round))
                         .rotationEffect(.degrees(-90))
                         .animation(.linear(duration: 0.1), value: progress)
-
-                    // Download icon in center
-                    Image(systemName: "arrow.down.circle")
-                        .font(.system(size: 12))
-                        .foregroundColor(accentColor)
                 }
                 .frame(width: 24, height: 24)
             case .error:
                 Image(systemName: "arrow.down.circle")
-                    .foregroundColor(.white)
+                    .foregroundStyle(.red)
             case .ready:
                 Image(systemName: "arrow.down.circle")
-                    .foregroundColor(.white)
+                    .foregroundStyle(.gray)
             }
+        }
+        .alert("Cancel Download", isPresented: $showingCancelConfirmation) {
+            Button("Cancel Download", role: .destructive) {
+                downloadManager.cancel(task: downloadTask)
+            }
+            Button("Keep Downloading", role: .cancel) {
+                // Do nothing, just dismiss the alert
+            }
+        } message: {
+            Text("Are you sure you want to cancel this download? This action cannot be undone.")
         }
     }
 
@@ -68,10 +76,12 @@ struct DownloadTaskButton: View {
         case .ready:
             downloadManager.download(task: downloadTask)
         case .downloading:
-            downloadManager.cancel(task: downloadTask)
+            showingCancelConfirmation = true
         case .complete, .cancelled, .error:
             // For completed downloads, we could potentially open the download details
             // or just do nothing as per requirements
+
+            // TODO: add options for managing download - dropdown - Info, Delete ...
             break
         }
 
