@@ -133,11 +133,9 @@ extension ItemView {
                 }
 
                 DownloadTaskButton(item: viewModel.item)
-                    .onSelect { task in
-                        if case .ready = task.state {
-                            downloadManager.download(task: task)
-                        }
-                        router.route(to: .downloadTask(downloadTask: task))
+                    .onSelect { _ in
+                        // Download functionality is now handled inline in the button
+                        // No need to open modal or route to download task view
                     }
                     .if(equalSpacing) { view in
                         view.frame(maxWidth: .infinity)
