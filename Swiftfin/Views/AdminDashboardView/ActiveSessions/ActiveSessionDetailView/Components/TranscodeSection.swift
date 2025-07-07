@@ -26,6 +26,7 @@ extension ActiveSessionDetailView {
                     ForEach(transcodeIcons, id: \.self) { icon in
                         Image(systemName: icon)
                             .foregroundStyle(.primary)
+                            .symbolRenderingMode(.monochrome)
                     }
                 }
 
