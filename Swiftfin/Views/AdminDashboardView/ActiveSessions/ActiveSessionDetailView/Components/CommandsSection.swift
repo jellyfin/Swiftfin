@@ -23,7 +23,7 @@ extension ActiveSessionDetailView {
         @State
         private var isMessageAlertPresented = false
 
-        init(session: SessionInfoDto,) {
+        init(session: SessionInfoDto) {
             self.session = session
             self._viewModel = StateObject(wrappedValue: .init(session))
         }
@@ -35,7 +35,7 @@ extension ActiveSessionDetailView {
                session.isSupportsMediaControl == true ||
                supportedCommands.contains(.displayMessage)
             {
-                Section("Commands") {
+                Section(L10n.commands) {
                     if session.isSupportsMediaControl == true && session.nowPlayingItem != nil {
                         Button {
                             viewModel.send(.playState(FullPlaystateCommand(.playPause)))
@@ -63,21 +63,21 @@ extension ActiveSessionDetailView {
                     }
 
                     if supportedCommands.contains(.displayMessage) {
-                        ChevronButton("Message") {
+                        ChevronButton(L10n.message) {
                             isMessageAlertPresented = true
                         }
-                        .alert("Message", isPresented: $isMessageAlertPresented) {
-                            TextField("Message", text: $message)
+                        .alert(L10n.message, isPresented: $isMessageAlertPresented) {
+                            TextField(L10n.message, text: $message)
                             Button(L10n.cancel, role: .cancel) {
                                 message = ""
                             }
-                            Button("Send") {
+                            Button(L10n.send) {
                                 viewModel.send(.message(message))
                                 message = ""
                             }
                             .disabled(message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                         } message: {
-                            Text("Send a message to \(session.userName ?? session.deviceName ?? L10n.unknown)")
+                            Text(L10n.sendMessageToRecipient(session.userName ?? session.deviceName ?? L10n.unknown))
                         }
                     }
                 }
