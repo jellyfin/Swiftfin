@@ -10,7 +10,7 @@ import Foundation
 
 class Fastfile: LaneFile {
     
-    private let swiftfinBundleIdentifier = "com.jellyfin.swiftfin"
+    private let swiftfinBundleIdentifier = "org.jellyfin.swiftfin"
     private let swiftfinXcodeProject = "Swiftfin.xcodeproj"
     
     // MARK: TestFlight
