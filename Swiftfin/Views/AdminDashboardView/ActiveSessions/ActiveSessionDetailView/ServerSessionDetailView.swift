@@ -126,11 +126,5 @@ struct ActiveSessionDetailView: View {
         }
         .animation(.linear(duration: 0.2), value: box.value)
         .navigationTitle(L10n.session)
-        .topBarTrailing {
-            Button("Remote", systemImage: "appletvremote.gen4.fill") {
-                router.route(to: .remoteControl(box: box))
-            }
-            .labelStyle(.iconOnly)
-        }
     }
 }
