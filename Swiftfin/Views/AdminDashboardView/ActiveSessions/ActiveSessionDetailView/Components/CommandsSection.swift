@@ -20,8 +20,10 @@ extension ActiveSessionDetailView {
 
         @State
         private var message: String = ""
+        @State
+        private var isMessageAlertPresented = false
 
-        init(session: SessionInfoDto) {
+        init(session: SessionInfoDto,) {
             self.session = session
             self._viewModel = StateObject(wrappedValue: .init(session))
         }
@@ -36,7 +38,7 @@ extension ActiveSessionDetailView {
                 Section("Commands") {
                     if session.isSupportsMediaControl == true && session.nowPlayingItem != nil {
                         Button {
-                            viewModel.send(.playState(.playPause))
+                            viewModel.send(.playState(FullPlaystateCommand(.playPause)))
                         } label: {
                             HStack {
                                 Text(session.playState?.isPaused == true ? L10n.play : L10n.pause)
@@ -48,7 +50,7 @@ extension ActiveSessionDetailView {
                         }
 
                         Button {
-                            viewModel.send(.playState(.stop))
+                            viewModel.send(.playState(FullPlaystateCommand(.stop)))
                         } label: {
                             HStack {
                                 Text(L10n.stop)
@@ -61,19 +63,21 @@ extension ActiveSessionDetailView {
                     }
 
                     if supportedCommands.contains(.displayMessage) {
-                        ChevronButton(
-                            "Message",
-                            subtitle: session.userName ?? L10n.unknown,
-                            description: "Send Message"
-                        ) {
-                            TextField(
-                                "Message",
-                                text: $message
-                            )
-                        } onSave: {
-                            viewModel.send(.message(message))
-                        } onCancel: {
-                            message = ""
+                        ChevronButton("Message") {
+                            isMessageAlertPresented = true
+                        }
+                        .alert("Message", isPresented: $isMessageAlertPresented) {
+                            TextField("Message", text: $message)
+                            Button(L10n.cancel, role: .cancel) {
+                                message = ""
+                            }
+                            Button("Send") {
+                                viewModel.send(.message(message))
+                                message = ""
+                            }
+                            .disabled(message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        } message: {
+                            Text("Send a message to \(session.userName ?? session.deviceName ?? L10n.unknown)")
                         }
                     }
                 }

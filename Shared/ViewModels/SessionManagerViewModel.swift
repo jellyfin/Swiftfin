@@ -25,9 +25,8 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
     // MARK: - Action
 
     enum Action: Equatable {
-        case command(GeneralCommandType, GeneralCommandArgument? = nil)
-        case playState(PlaystateCommand)
-        case seek(positionTicks: Int64)
+        case command(FullGeneralCommand)
+        case playState(FullPlaystateCommand)
         case message(String)
     }
 
@@ -68,10 +67,10 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
         currentTask?.cancel()
 
         switch action {
-        case let .command(type, arguments):
+        case let .command(command):
             currentTask = Task {
                 do {
-                    try await sendGeneralCommand(type: type, arguments: arguments?.arguments)
+                    try await sendGeneralCommand(command)
                     await MainActor.run {
                         self.eventSubject.send(.commandSent)
                         self.state = .connected
@@ -89,25 +88,7 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
         case let .playState(command):
             currentTask = Task {
                 do {
-                    try await sendPlaystateCommand(command: command)
-                    await MainActor.run {
-                        self.eventSubject.send(.commandSent)
-                        self.state = .connected
-                    }
-                } catch {
-                    await MainActor.run {
-                        self.eventSubject.send(.error(error))
-                        self.state = .error(error.localizedDescription)
-                    }
-                }
-            }.asAnyCancellable()
-
-            return .connected
-
-        case let .seek(positionTicks):
-            currentTask = Task {
-                do {
-                    try await sendPlaystateCommand(command: .seek, seekPositionTicks: Int(positionTicks))
+                    try await sendPlaystateCommand(command)
                     await MainActor.run {
                         self.eventSubject.send(.commandSent)
                         self.state = .connected
@@ -144,24 +125,22 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
 
     // MARK: - General Command
 
-    private func sendGeneralCommand(type: GeneralCommandType, arguments: [String: String]?) async throws {
+    private func sendGeneralCommand(_ fullCommand: FullGeneralCommand) async throws {
+        let generalCommand = fullCommand.command(userID: userSession.user.id)
+
         guard let sessionID = session.id,
-              session.supportedCommands?.contains(type) == true
+              let commandName = generalCommand.name,
+              session.supportedCommands?.contains(commandName) == true
         else {
             throw JellyfinAPIError("Command not supported")
         }
 
         let request: Request<Void>
 
-        if let arguments = arguments {
-            let generalCommand = GeneralCommand(
-                arguments: arguments,
-                controllingUserID: userSession.user.id,
-                name: type
-            )
+        if let arguments = generalCommand.arguments {
             request = Paths.sendFullGeneralCommand(sessionID: sessionID, generalCommand)
         } else {
-            request = Paths.sendGeneralCommand(sessionID: sessionID, command: type.rawValue)
+            request = Paths.sendGeneralCommand(sessionID: sessionID, command: generalCommand.name?.rawValue ?? "")
         }
 
         _ = try await userSession.client.send(request)
@@ -169,18 +148,20 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
 
     // MARK: - PlayState Command
 
-    private func sendPlaystateCommand(command: PlaystateCommand, seekPositionTicks: Int? = nil) async throws {
+    private func sendPlaystateCommand(_ fullCommand: FullPlaystateCommand) async throws {
         guard let sessionID = session.id,
               session.isSupportsMediaControl == true
         else {
             throw JellyfinAPIError("PlayState command not supported")
         }
 
+        let playstateRequest = fullCommand.command(userID: userSession.user.id)
+
         let request = Paths.sendPlaystateCommand(
             sessionID: sessionID,
-            command: command.rawValue,
-            seekPositionTicks: seekPositionTicks,
-            controllingUserID: userSession.user.id
+            command: playstateRequest.command?.rawValue ?? "",
+            seekPositionTicks: playstateRequest.seekPositionTicks,
+            controllingUserID: playstateRequest.controllingUserID
         )
 
         _ = try await userSession.client.send(request)

@@ -19,10 +19,8 @@ struct RemoteControlView: View {
 
     @State
     private var volumeLevel: Double = 50
-
     @State
     private var isKeyboardPresented = false
-
     @State
     private var keyboardInput = ""
 
@@ -129,7 +127,7 @@ struct RemoteControlView: View {
                             // MARK: Select Button
 
                             Button {
-                                viewModel.send(.command(.select))
+                                viewModel.send(.command(FullGeneralCommand(.select)))
                             } label: {
                                 Image(systemName: "circle")
                                     .font(.title)
@@ -200,7 +198,7 @@ struct RemoteControlView: View {
                 set: { newValue in
                     guard let dur = session.nowPlayingItem?.runTimeTicks else { return }
                     let newTicks = Int64(CGFloat(dur) * newValue)
-                    viewModel.send(.seek(positionTicks: newTicks))
+                    viewModel.send(.playState(FullPlaystateCommand(seekPositionTicks: Int(newTicks))))
                     box.value?.playState?.positionTicks = Int(newTicks)
                 }
             ))
@@ -244,14 +242,14 @@ struct RemoteControlView: View {
 
             controlButton(
                 systemName: "backward.end.alt.fill",
-                action: { viewModel.send(.playState(.previousTrack)) },
+                action: { viewModel.send(.playState(FullPlaystateCommand(.previousTrack))) },
                 enabled: canControlMedia
             )
 
             // MARK: Play/Pause
 
             Button {
-                viewModel.send(.playState(.playPause))
+                viewModel.send(.playState(FullPlaystateCommand(.playPause)))
             } label: {
                 Image(systemName: session.playState?.isPaused == true ? "play.fill" : "pause.fill")
                     .font(.system(size: 24))
@@ -267,7 +265,7 @@ struct RemoteControlView: View {
 
             controlButton(
                 systemName: "forward.end.alt.fill",
-                action: { viewModel.send(.playState(.nextTrack)) },
+                action: { viewModel.send(.playState(FullPlaystateCommand(.nextTrack))) },
                 enabled: canControlMedia
             )
 
@@ -294,7 +292,7 @@ struct RemoteControlView: View {
 
                     Button {
                         let isCurrentlyShuffled = session.playState?.playbackOrder == PlaybackOrder.shuffle
-                        viewModel.send(.command(.setShuffleQueue, .shuffleMode(!isCurrentlyShuffled)))
+                        viewModel.send(.command(FullGeneralCommand(shuffleMode: !isCurrentlyShuffled)))
                     } label: {
                         Image(systemName: "shuffle")
                             .font(.title3)
@@ -333,15 +331,15 @@ struct RemoteControlView: View {
                         .tint(.white)
                         .onChange(of: volumeLevel) { newValue in
                             let volume = Int(newValue)
-                            viewModel.send(.command(.setVolume, .volume(volume)))
+                            viewModel.send(.command(FullGeneralCommand(volume: volume)))
                             box.value?.playState?.volumeLevel = volume
                         }
 
                     Button {
                         if session.playState?.isMuted == true {
-                            viewModel.send(.command(.unmute))
+                            viewModel.send(.command(FullGeneralCommand(.unmute)))
                         } else {
-                            viewModel.send(.command(.mute))
+                            viewModel.send(.command(FullGeneralCommand(.mute)))
                         }
                     } label: {
                         Image(systemName: session.playState?.isMuted == true ? "speaker.wave.2.fill" : "speaker.slash.fill")
@@ -430,7 +428,7 @@ struct RemoteControlView: View {
     private func dPadButton(systemName: String, command: GeneralCommandType) -> some View {
         let enabled = session.supportedCommands?.contains(command) == true
         return Button {
-            viewModel.send(.command(command))
+            viewModel.send(.command(FullGeneralCommand(command)))
         } label: {
             Image(systemName: systemName)
                 .font(.title2)
@@ -490,7 +488,7 @@ struct RemoteControlView: View {
 
         let newPosition = max(Int64(0), Int64(currentPosition) + deltaTicks)
 
-        viewModel.send(.seek(positionTicks: newPosition))
+        viewModel.send(.playState(FullPlaystateCommand(seekPositionTicks: Int(newPosition))))
     }
 
     private func cycleRepeatMode() {
@@ -503,7 +501,7 @@ struct RemoteControlView: View {
         case .repeatOne:
             .repeatNone
         }
-        viewModel.send(.command(.setRepeatMode, .repeatMode(nextMode)))
+        viewModel.send(.command(FullGeneralCommand(repeatMode: nextMode)))
     }
 
     // MARK: Keyboard Input
@@ -513,10 +511,10 @@ struct RemoteControlView: View {
         guard !trimmed.isEmpty,
               session.supportedCommands?.contains(.sendString) == true else { return }
 
-        viewModel.send(.command(.sendString, .string(trimmed)))
+        viewModel.send(.command(FullGeneralCommand(string: trimmed)))
 
         if session.supportedCommands?.contains(.sendKey) == true {
-            viewModel.send(.command(.sendKey, .key("Enter")))
+            viewModel.send(.command(FullGeneralCommand(key: "Enter")))
         }
 
         keyboardInput = ""
