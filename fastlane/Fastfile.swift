@@ -10,6 +10,8 @@ import Foundation
 
 class Fastfile: LaneFile {
     
+    private let swiftfinXcodeProject = "Swiftfin.xcodeproj"
+    
     // MARK: TestFlight
     
     // TODO: verify tvOS
@@ -37,6 +39,15 @@ class Fastfile: LaneFile {
             exit(1)
         }
         
+        if let branch = options["branch"] {
+            sh(
+                command: "git checkout \(branch)",
+                log: .userDefined(true)
+            ) { errorMessage in
+                puts(message: "ERROR: \(errorMessage)")
+            }
+        }
+        
         if let xcodeVersion = options["xcodeVersion"] {
             xcodes(version: xcodeVersion)
         }
@@ -51,7 +62,7 @@ class Fastfile: LaneFile {
         )
         
         updateCodeSigningSettings(
-            path: "Swiftfin.xcodeproj",
+            path: swiftfinXcodeProject,
             useAutomaticSigning: false,
             codeSignIdentity: .userDefined(decodedCodeSignIdentity),
             profileName: .userDefined(profileName)
@@ -60,18 +71,18 @@ class Fastfile: LaneFile {
         if let version = options["version"] {
             incrementVersionNumber(
                 versionNumber: .userDefined(version),
-                xcodeproj: "Swiftfin.xcodeproj"
+                xcodeproj: .userDefined(swiftfinXcodeProject)
             )
         }
         
         if let build = options["build"] {
             incrementBuildNumber(
                 buildNumber: .userDefined(build),
-                xcodeproj: "Swiftfin.xcodeproj"
+                xcodeproj: .userDefined(swiftfinXcodeProject)
             )
         } else {
             incrementBuildNumber(
-                xcodeproj: "Swiftfin.xcodeproj"
+                xcodeproj: .userDefined(swiftfinXcodeProject)
             )
         }
         
