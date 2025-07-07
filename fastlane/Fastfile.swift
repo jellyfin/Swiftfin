@@ -10,11 +10,13 @@ import Foundation
 
 class Fastfile: LaneFile {
     
+    private let swiftfinBundleIdentifier = "com.jellyfin.swiftfin"
     private let swiftfinXcodeProject = "Swiftfin.xcodeproj"
     
     // MARK: TestFlight
     
     // TODO: verify tvOS
+    /// - Important: Remember to pass in options from GitHub Actions
     func testFlightLane(withOptions options: [String: String]?) {
         
         guard let options,
@@ -65,7 +67,8 @@ class Fastfile: LaneFile {
             path: swiftfinXcodeProject,
             useAutomaticSigning: false,
             codeSignIdentity: .userDefined(decodedCodeSignIdentity),
-            profileName: .userDefined(profileName)
+            profileName: .userDefined(profileName),
+            bundleIdentifier: .userDefined(swiftfinBundleIdentifier)
         )
         
         if let version = options["version"] {
