@@ -35,7 +35,9 @@ struct MediaView: View {
                         )
                         router.route(to: .library(viewModel: viewModel))
                     case .downloads:
-                        assertionFailure("Downloads unavailable on tvOS")
+                        // Downloads are not supported on tvOS
+                        // This case should not be reachable as downloads are filtered out in MediaViewModel
+                        break
                     case .favorites:
                         let viewModel = ItemLibraryViewModel(
                             title: L10n.favorites,

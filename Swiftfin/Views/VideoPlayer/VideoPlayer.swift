@@ -192,93 +192,58 @@ struct VideoPlayer: View {
     }
 
     var body: some View {
+        mainContent
+            .navigationBarHidden(true)
+            .statusBar(hidden: true)
+            .ignoresSafeArea()
+            .onAppear {
+                // Configure audio session to prevent overload
+                VLCVideoPlayer.configureAudioSession()
+            }
+            .onDisappear {
+                // Reset audio session when leaving
+                VLCVideoPlayer.resetAudioSession()
+            }
+            .audioVideoModifiers(
+                audioOffset: audioOffset,
+                isAspectFilled: isAspectFilled,
+                isGestureLocked: isGestureLocked,
+                isScrubbing: isScrubbing,
+                videoPlayerManager: videoPlayerManager,
+                currentProgressHandler: currentProgressHandler,
+                updateViewProxy: updateViewProxy
+            )
+            .subtitleModifiers(
+                subtitleColor: subtitleColor,
+                subtitleFontName: subtitleFontName,
+                subtitleOffset: subtitleOffset,
+                subtitleSize: subtitleSize,
+                videoPlayerManager: videoPlayerManager
+            )
+            .viewModelModifiers(
+                videoPlayerManager: videoPlayerManager,
+                onViewModelChange: { newViewModel in
+                    guard let newViewModel else { return }
+
+                    Task { @MainActor in
+                        videoPlayerManager.proxy.playNewMedia(newViewModel.vlcVideoPlayerConfiguration)
+
+                        isAspectFilled = false
+                        audioOffset = 0
+                        subtitleOffset = 0
+                    }
+                }
+            )
+            .scenePhaseModifiers(videoPlayerManager: videoPlayerManager)
+    }
+
+    private var mainContent: some View {
         Group {
             if let _ = videoPlayerManager.currentViewModel {
                 playerView
             } else {
                 LoadingView()
                     .transition(.opacity)
-            }
-        }
-        .navigationBarHidden(true)
-        .statusBar(hidden: true)
-        .ignoresSafeArea()
-        .onAppear {
-            // Configure audio session to prevent overload
-            VLCVideoPlayer.configureAudioSession()
-        }
-        .onDisappear {
-            // Reset audio session when leaving
-            VLCVideoPlayer.resetAudioSession()
-        }
-        .onChange(of: audioOffset) { newValue in
-            Task { @MainActor in
-                videoPlayerManager.proxy.setAudioDelay(.ticks(newValue))
-            }
-        }
-        .onChange(of: isAspectFilled) { newValue in
-            Task { @MainActor in
-                UIView.animate(withDuration: 0.2) {
-                    videoPlayerManager.proxy.aspectFill(newValue ? 1 : 0)
-                }
-            }
-        }
-        .onChange(of: isGestureLocked) { newValue in
-            if newValue {
-                updateViewProxy.present(systemName: "lock.fill", title: L10n.gesturesLocked)
-            } else {
-                updateViewProxy.present(systemName: "lock.open.fill", title: L10n.gesturesUnlocked)
-            }
-        }
-        .onChange(of: isScrubbing) { newValue in
-            guard !newValue else { return }
-            Task { @MainActor in
-                videoPlayerManager.proxy.setTime(.seconds(currentProgressHandler.scrubbedSeconds))
-            }
-        }
-        .onChange(of: subtitleColor) { newValue in
-            Task { @MainActor in
-                videoPlayerManager.proxy.setSubtitleColor(.absolute(newValue.uiColor))
-            }
-        }
-        .onChange(of: subtitleFontName) { newValue in
-            Task { @MainActor in
-                videoPlayerManager.proxy.setSubtitleFont(newValue)
-            }
-        }
-        .onChange(of: subtitleOffset) { newValue in
-            Task { @MainActor in
-                videoPlayerManager.proxy.setSubtitleDelay(.ticks(newValue))
-            }
-        }
-        .onChange(of: subtitleSize) { newValue in
-            Task { @MainActor in
-                videoPlayerManager.proxy.setSubtitleSize(.absolute(24 - newValue))
-            }
-        }
-        .onChange(of: videoPlayerManager.currentViewModel) { newViewModel in
-            guard let newViewModel else { return }
-
-            Task { @MainActor in
-                videoPlayerManager.proxy.playNewMedia(newViewModel.vlcVideoPlayerConfiguration)
-
-                isAspectFilled = false
-                audioOffset = 0
-                subtitleOffset = 0
-            }
-        }
-        .onScenePhase(.active) {
-            if Defaults[.VideoPlayer.Transition.playOnActive] {
-                Task { @MainActor in
-                    videoPlayerManager.proxy.play()
-                }
-            }
-        }
-        .onScenePhase(.background) {
-            if Defaults[.VideoPlayer.Transition.pauseOnBackground] {
-                Task { @MainActor in
-                    videoPlayerManager.proxy.pause()
-                }
             }
         }
     }
@@ -602,5 +567,105 @@ extension VideoPlayer {
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
             slider.value = newVolume
         }
+    }
+}
+
+// MARK: - ViewModifier Extensions
+
+extension View {
+
+    func audioVideoModifiers(
+        audioOffset: Int,
+        isAspectFilled: Bool,
+        isGestureLocked: Bool,
+        isScrubbing: Bool,
+        videoPlayerManager: VideoPlayerManager,
+        currentProgressHandler: VideoPlayerManager.CurrentProgressHandler,
+        updateViewProxy: UpdateViewProxy
+    ) -> some View {
+        self
+            .onChange(of: audioOffset) { newValue in
+                Task { @MainActor in
+                    videoPlayerManager.proxy.setAudioDelay(.ticks(newValue))
+                }
+            }
+            .onChange(of: isAspectFilled) { newValue in
+                Task { @MainActor in
+                    UIView.animate(withDuration: 0.2) {
+                        videoPlayerManager.proxy.aspectFill(newValue ? 1 : 0)
+                    }
+                }
+            }
+            .onChange(of: isGestureLocked) { newValue in
+                if newValue {
+                    updateViewProxy.present(systemName: "lock.fill", title: L10n.gesturesLocked)
+                } else {
+                    updateViewProxy.present(systemName: "lock.open.fill", title: L10n.gesturesUnlocked)
+                }
+            }
+            .onChange(of: isScrubbing) { newValue in
+                guard !newValue else { return }
+                Task { @MainActor in
+                    videoPlayerManager.proxy.setTime(.seconds(currentProgressHandler.scrubbedSeconds))
+                }
+            }
+    }
+
+    func subtitleModifiers(
+        subtitleColor: Color,
+        subtitleFontName: String,
+        subtitleOffset: Int,
+        subtitleSize: Int,
+        videoPlayerManager: VideoPlayerManager
+    ) -> some View {
+        self
+            .onChange(of: subtitleColor) { newValue in
+                Task { @MainActor in
+                    videoPlayerManager.proxy.setSubtitleColor(.absolute(newValue.uiColor))
+                }
+            }
+            .onChange(of: subtitleFontName) { newValue in
+                Task { @MainActor in
+                    videoPlayerManager.proxy.setSubtitleFont(newValue)
+                }
+            }
+            .onChange(of: subtitleOffset) { newValue in
+                Task { @MainActor in
+                    videoPlayerManager.proxy.setSubtitleDelay(.ticks(newValue))
+                }
+            }
+            .onChange(of: subtitleSize) { newValue in
+                Task { @MainActor in
+                    videoPlayerManager.proxy.setSubtitleSize(.absolute(24 - newValue))
+                }
+            }
+    }
+
+    func viewModelModifiers(
+        videoPlayerManager: VideoPlayerManager,
+        onViewModelChange: @escaping (VideoPlayerViewModel?) -> Void
+    ) -> some View {
+        self
+            .onChange(of: videoPlayerManager.currentViewModel) { newViewModel in
+                onViewModelChange(newViewModel)
+            }
+    }
+
+    func scenePhaseModifiers(videoPlayerManager: VideoPlayerManager) -> some View {
+        self
+            .onScenePhase(.active) {
+                if Defaults[.VideoPlayer.Transition.playOnActive] {
+                    Task { @MainActor in
+                        videoPlayerManager.proxy.play()
+                    }
+                }
+            }
+            .onScenePhase(.background) {
+                if Defaults[.VideoPlayer.Transition.pauseOnBackground] {
+                    Task { @MainActor in
+                        videoPlayerManager.proxy.pause()
+                    }
+                }
+            }
     }
 }

@@ -36,16 +36,18 @@ struct DownloadTaskButton: View {
                     .foregroundStyle(.red)
             case .complete:
                 Image(systemName: "arrow.down.circle.fill")
-                    .foregroundStyle(.purple)
+                    .foregroundStyle(.primary)
             case let .downloading(progress):
                 CircularProgressView(progress: progress, size: 24, strokeWidth: 4)
             case .error:
-                Image(systemName: "exclamationmark.triangle")
+                Image(systemName: "exclamationmark.circle")
                     .foregroundStyle(.red)
             case .ready:
                 Image(systemName: "arrow.down.circle")
-                    .foregroundStyle(.gray)
+                    .foregroundStyle(.primary)
             }
+            
+            
         }
         .alert("Cancel Download", isPresented: $showingCancelConfirmation) {
             Button("Cancel Download", role: .destructive) {

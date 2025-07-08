@@ -11,7 +11,7 @@ import Foundation
 #if os(iOS)
 extension FileManager {
 
-    var availableStorage: Int {
+    var availableStorage: Int64 {
         let availableStorage: Int64
 
         let fileURL = URL(fileURLWithPath: NSHomeDirectory() as String)
@@ -28,7 +28,7 @@ extension FileManager {
             availableStorage = -1
         }
 
-        return Int(availableStorage)
+        return Int64(availableStorage)
     }
 }
 #endif

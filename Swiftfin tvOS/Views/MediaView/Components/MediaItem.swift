@@ -34,7 +34,6 @@ extension MediaView {
 
         private var useTitleLabel: Bool {
             useRandomImage ||
-                mediaType == .downloads ||
                 mediaType == .favorites
         }
 

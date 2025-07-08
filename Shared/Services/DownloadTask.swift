@@ -20,18 +20,6 @@ class DownloadTask: NSObject, ObservableObject {
 
     // MARK: - Types
 
-    enum DownloadError: Error {
-
-        case notEnoughStorage
-
-        var localizedDescription: String {
-            switch self {
-            case .notEnoughStorage:
-                return "Not enough storage"
-            }
-        }
-    }
-
     enum State {
 
         case cancelled

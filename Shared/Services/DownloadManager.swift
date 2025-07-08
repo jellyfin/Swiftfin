@@ -21,8 +21,6 @@ class DownloadManager: ObservableObject {
     // MARK: - Properties
 
     private let logger = Logger.swiftfin()
-    @Injected(\.downloadDiagnostics)
-    private var downloadDiagnostics: DownloadDiagnostics
 
     @Published
     private(set) var downloads: [DownloadTask] = []

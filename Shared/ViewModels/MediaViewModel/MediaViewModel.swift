@@ -38,6 +38,16 @@ final class MediaViewModel: ViewModel, Stateful {
     @Published
     var state: State = .initial
 
+    // MARK: - Platform Support
+
+    private var isDownloadsSupported: Bool {
+        #if os(iOS)
+        return true
+        #else
+        return false
+        #endif
+    }
+
     func respond(to action: Action) -> State {
         switch action {
         case let .error(error):
@@ -121,11 +131,6 @@ final class MediaViewModel: ViewModel, Stateful {
 
         // live tv doesn't have random
         if case MediaType.liveTV = mediaType {
-            return []
-        }
-
-        // downloads doesn't have random
-        if mediaType == .downloads {
             return []
         }
 

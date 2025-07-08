@@ -16,9 +16,6 @@ struct DownloadsView: View {
     @Injected(\.downloadManager)
     private var downloadManager
 
-    @Injected(\.downloadDiagnostics)
-    private var downloadDiagnostics
-
     @Injected(\.networkMonitor)
     private var networkMonitor
 
@@ -200,6 +197,7 @@ struct DownloadsView: View {
                             }
                         } label: {
                             Image(systemName: "arrow.clockwise")
+                                .rotationEffect(.degrees(isLoading ? 360 : 0))
                                 .foregroundColor(.secondary)
                         }
                     }
@@ -229,9 +227,6 @@ struct DownloadsView: View {
         logger.debug("Network status: \(networkMonitor.isConnected)")
         logger.debug("User session available: \(userSession != nil)")
         logger.debug("Downloads directory path: \(URL.downloads.path)")
-
-        // Run debugging analysis
-        downloadDiagnostics.debugDownloadsDirectory()
 
         // Check if downloads directory exists
         var isDirectory: ObjCBool = false
