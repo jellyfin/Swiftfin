@@ -13,7 +13,7 @@ import JellyfinAPI
 import Logging
 
 extension Container {
-    var downloadManager: Factory<DownloadManager> { self { DownloadManager() }.shared }
+    var downloadManager: Factory<DownloadManager> { self { DownloadManager() }.singleton }
 }
 
 class DownloadManager: ObservableObject {
@@ -74,22 +74,16 @@ class DownloadManager: ObservableObject {
             }
         }
 
-        // Remove any existing cancelled tasks for this item
-        let cancelledTasks = downloads.filter { $0.item == task.item && {
+        // Remove any existing ready, cancelled or error tasks for this item
+        downloads.removeAll {
+            guard $0.item == task.item else { return false }
             switch $0.state {
-            case .cancelled: return true
-            default: return false
+            case .ready, .cancelled, .error:
+                logger.debug("Removing existing task in state \($0.state) for item: \(task.item.displayTitle)")
+                return true
+            default:
+                return false
             }
-        }($0) }
-
-        if !cancelledTasks.isEmpty {
-            logger.debug("Removing \(cancelledTasks.count) cancelled tasks for item: \(task.item.displayTitle)")
-            downloads.removeAll(where: { $0.item == task.item && {
-                switch $0.state {
-                case .cancelled: return true
-                default: return false
-                }
-            }($0) })
         }
 
         // Don't add if already downloading or completed
@@ -194,7 +188,6 @@ class DownloadManager: ObservableObject {
     func cancel(task: DownloadTask) {
         logger.info("Cancelling download for item: \(task.item.displayTitle) (ID: \(task.item.id ?? "unknown"))")
         logger.debug("Current task state: \(task.state)")
-        logger.debug("Task exists in downloads array: \(downloads.contains(where: { $0.item == task.item }))")
 
         guard downloads.contains(where: { $0.item == task.item }) else {
             logger.warning("Attempted to cancel task that is not in downloads array")
@@ -204,13 +197,8 @@ class DownloadManager: ObservableObject {
         task.cancel()
         logger.debug("Called task.cancel()")
 
-        // Update the task state to cancelled to ensure UI reflects the change
-        task.state = .cancelled
-        logger.debug("Updated task state to cancelled")
-
-        // Don't immediately remove the task - let the UI observe the cancelled state
-        // The task will be removed when the user starts a new download or the app restarts
-        logger.info("Download cancelled successfully. Task remains in array for UI observation.")
+        remove(task: task)
+        logger.info("Download cancelled and removed successfully.")
     }
 
     func remove(task: DownloadTask) {

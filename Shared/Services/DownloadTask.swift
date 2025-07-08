@@ -190,15 +190,7 @@ class DownloadTask: NSObject, ObservableObject {
         logger.debug("Cleaning up partial downloads")
         deleteRootFolder()
 
-        // Update state to cancelled
-        self.state = .cancelled
-        logger.debug("State updated to cancelled")
-
-        // Remove from download manager
-        logger.debug("Removing task from download manager")
-        Container.shared.downloadManager().remove(task: self)
-
-        logger.info("Download cancelled successfully for: \(item.displayTitle)")
+        logger.info("Internal download task for '\(item.displayTitle)' cancelled.")
     }
 
     // MARK: - File Management

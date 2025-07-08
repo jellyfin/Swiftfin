@@ -13,8 +13,8 @@ import SwiftUI
 
 struct DownloadsView: View {
 
-    @Injected(\.downloadManager)
-    private var downloadManager
+    @StateObject
+    private var downloadManager = Container.shared.downloadManager()
 
     @Injected(\.networkMonitor)
     private var networkMonitor
@@ -47,6 +47,23 @@ struct DownloadsView: View {
     private var isServerUnreachable: Bool = false
 
     private let logger = Logger.swiftfin()
+
+    // MARK: - Computed Properties
+
+    private var activeDownloads: [DownloadTask] {
+        downloadManager.downloads.filter { task in
+            switch task.state {
+            case .ready, .downloading:
+                return true
+            default:
+                return false
+            }
+        }
+    }
+
+    private var hasActiveDownloads: Bool {
+        !activeDownloads.isEmpty
+    }
 
     private var emptyView: some View {
         VStack(spacing: 20) {
@@ -110,11 +127,22 @@ struct DownloadsView: View {
                 }
                 .padding(.horizontal)
 
-                DownloadsHierarchicalView(
-                    downloadGroups: hierarchicalGroups,
-                    onPlayItem: playDownloadedItem,
-                    onDeleteItem: deleteDownloadedItem
-                )
+                // In-Progress Downloads Section
+                if hasActiveDownloads {
+                    InProgressDownloadsSection(
+                        activeDownloads: activeDownloads,
+                        onCancelDownload: cancelDownload
+                    )
+                }
+
+                // Completed Downloads Section
+                if !hierarchicalGroups.isEmpty {
+                    DownloadsHierarchicalView(
+                        downloadGroups: hierarchicalGroups,
+                        onPlayItem: playDownloadedItem,
+                        onDeleteItem: deleteDownloadedItem
+                    )
+                }
             }
             .padding(.vertical)
         }
@@ -144,7 +172,7 @@ struct DownloadsView: View {
                         Text("Loading downloads...")
                             .foregroundColor(.secondary)
                     }
-                } else if hierarchicalGroups.isEmpty {
+                } else if hierarchicalGroups.isEmpty && !hasActiveDownloads {
                     emptyView
                 } else {
                     contentView
@@ -177,7 +205,7 @@ struct DownloadsView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack {
-                        // Delete All button (only show if there are downloads)
+                        // Delete All button (only show if there are completed downloads)
                         if !hierarchicalGroups.isEmpty {
                             Button {
                                 logger.info("User requested to delete all downloads")
@@ -221,6 +249,8 @@ struct DownloadsView: View {
             }
         }
     }
+
+    // MARK: - Private Methods
 
     private func loadDownloadedItems() {
         logger.info("Loading downloaded items")
@@ -299,6 +329,11 @@ struct DownloadsView: View {
         showingDeleteAlert = true
     }
 
+    private func cancelDownload(_ downloadTask: DownloadTask) {
+        logger.info("User requested to cancel download: \(downloadTask.item.displayTitle)")
+        downloadManager.cancel(task: downloadTask)
+    }
+
     private func confirmDelete() {
         guard let taskToDelete = taskToDelete else { return }
 
@@ -325,5 +360,148 @@ struct DownloadsView: View {
         downloadedItems.removeAll()
         hierarchicalGroups.removeAll()
         logger.info("Successfully deleted all downloads from UI")
+    }
+}
+
+// MARK: - In-Progress Downloads Section
+
+struct InProgressDownloadsSection: View {
+    let activeDownloads: [DownloadTask]
+    let onCancelDownload: (DownloadTask) -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Section Header
+            HStack {
+                Text("In Progress")
+                    .font(.headline)
+                    .fontWeight(.semibold)
+
+                Spacer()
+
+                Text("\(activeDownloads.count) download\(activeDownloads.count == 1 ? "" : "s")")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.secondary.opacity(0.15))
+                    .cornerRadius(8)
+            }
+            .padding(.horizontal)
+
+            // In-Progress Downloads List
+            LazyVStack(spacing: 8) {
+                ForEach(activeDownloads) { downloadTask in
+                    InProgressDownloadRow(
+                        downloadTask: downloadTask,
+                        onCancel: { onCancelDownload(downloadTask) }
+                    )
+                }
+            }
+            .padding(.horizontal)
+        }
+    }
+}
+
+// MARK: - In-Progress Download Row
+
+struct InProgressDownloadRow: View {
+    @ObservedObject
+    var downloadTask: DownloadTask
+    let onCancel: () -> Void
+
+    var body: some View {
+        HStack(spacing: 12) {
+            // Thumbnail
+            ImageView(downloadTask.getImageURL(name: "Primary") ?? downloadTask.getImageURL(name: "Backdrop"))
+                .failure {
+                    Rectangle()
+                        .foregroundColor(.secondary.opacity(0.3))
+                        .overlay {
+                            Image(systemName: "photo")
+                                .foregroundColor(.secondary)
+                        }
+                }
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 80, height: 48)
+                .cornerRadius(8)
+                .clipped()
+
+            // Info and Progress
+            VStack(alignment: .leading, spacing: 4) {
+                Text(downloadTask.item.displayTitle)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .lineLimit(1)
+
+                // Progress Bar and Percentage
+                HStack(spacing: 8) {
+                    // Progress Bar
+                    GeometryReader { geometry in
+                        ZStack(alignment: .leading) {
+                            Rectangle()
+                                .fill(Color.secondary.opacity(0.2))
+                                .frame(height: 4)
+                                .cornerRadius(2)
+
+                            Rectangle()
+                                .fill(Color.accentColor)
+                                .frame(width: geometry.size.width * progressValue, height: 4)
+                                .cornerRadius(2)
+                                .animation(.linear(duration: 0.2), value: progressValue)
+                        }
+                    }
+                    .frame(height: 4)
+
+                    // Percentage
+                    Text("\(Int(progressValue * 100))%")
+                        .font(.caption2)
+                        .fontWeight(.medium)
+                        .foregroundColor(.secondary)
+                        .frame(width: 35, alignment: .trailing)
+                }
+
+                // Status Text
+                Text(statusText)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+
+            // Cancel Button
+            Button {
+                onCancel()
+            } label: {
+                Image(systemName: "stop.circle.fill")
+                    .font(.title2)
+                    .foregroundColor(.red)
+            }
+        }
+        .padding()
+        .background(Color.secondary.opacity(0.1))
+        .cornerRadius(10)
+    }
+
+    private var progressValue: Double {
+        switch downloadTask.state {
+        case let .downloading(progress):
+            return progress
+        case .ready:
+            return 0.0
+        default:
+            return 0.0
+        }
+    }
+
+    private var statusText: String {
+        switch downloadTask.state {
+        case .ready:
+            return "Preparing download..."
+        case let .downloading(progress):
+            return "Downloading... \(Int(progress * 100))%"
+        default:
+            return "Unknown status"
+        }
     }
 }
