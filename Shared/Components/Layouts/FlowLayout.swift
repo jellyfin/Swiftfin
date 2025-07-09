@@ -10,6 +10,7 @@ import SwiftUI
 
 /// A custom layout that arranges views in a flow pattern, automatically wrapping items to new rows
 struct FlowLayout: Layout {
+
     // MARK: - Fill Direction
 
     enum Direction {
