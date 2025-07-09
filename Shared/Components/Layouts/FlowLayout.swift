@@ -80,7 +80,7 @@ struct FlowLayout: Layout {
     }
 
     // MARK: - Size That Fits
-
+    
     /// Calculates the minimum size needed to display all subviews according to the flow layout rules
     func sizeThatFits(
         proposal: ProposedViewSize,
@@ -92,7 +92,7 @@ struct FlowLayout: Layout {
             let maxWidth = proposal.width ?? .infinity
             let rows = computeRows(sizes: sizes, maxWidth: maxWidth)
             let totalSize = computeTotalSize(rows: rows, sizes: sizes)
-
+    
             cache = CacheData(
                 subviewSizes: sizes,
                 rows: rows,
@@ -101,8 +101,8 @@ struct FlowLayout: Layout {
                 lastBounds: cache.lastBounds
             )
         }
-
-        // Ensure we return the actual height needed while respecting width constraints
+    
+        // Return the calculated height but respect the proposed width
         return CGSize(
             width: min(cache.totalSize.width, proposal.width ?? cache.totalSize.width),
             height: cache.totalSize.height
