@@ -102,7 +102,11 @@ struct FlowLayout: Layout {
             )
         }
 
-        return cache.totalSize
+        // Ensure we return the actual height needed while respecting width constraints
+        return CGSize(
+            width: min(cache.totalSize.width, proposal.width ?? cache.totalSize.width),
+            height: cache.totalSize.height
+        )
     }
 
     // MARK: - Place Subviews
@@ -117,11 +121,12 @@ struct FlowLayout: Layout {
         if cache.lastBounds != bounds || cache.lastProposal != proposal || cache.subviewSizes.isEmpty {
             let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
             let rows = computeRows(sizes: sizes, maxWidth: bounds.width)
+            let totalSize = computeTotalSize(rows: rows, sizes: sizes)
 
             cache = CacheData(
                 subviewSizes: sizes,
                 rows: rows,
-                totalSize: cache.totalSize,
+                totalSize: totalSize,
                 lastProposal: proposal,
                 lastBounds: bounds
             )
