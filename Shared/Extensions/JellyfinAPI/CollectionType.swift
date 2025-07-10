@@ -18,6 +18,7 @@ extension CollectionType: SupportedCaseIterable {
             .movies,
             .tvshows,
             .livetv,
+            .playlists,
         ]
     }
 }
