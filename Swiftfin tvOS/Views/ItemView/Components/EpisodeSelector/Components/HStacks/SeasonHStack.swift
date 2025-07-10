@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Marquee
 import SwiftUI
 
 extension SeriesEpisodeSelector {
@@ -96,7 +97,10 @@ extension SeriesEpisodeSelector {
             Button {
                 selection = season.id
             } label: {
-                Text(season.season.displayTitle)
+                Marquee(season.season.displayTitle)
+                    .marqueeDelay(0)
+                    .marqueeWhenUnfocused(false)
+                    .frame(maxWidth: 300)
                     .font(.headline)
                     .fontWeight(.semibold)
                     .padding(.vertical, 10)
