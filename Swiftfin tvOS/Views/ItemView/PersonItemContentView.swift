@@ -6,18 +6,20 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionHStack
 import JellyfinAPI
+import OrderedCollections
 import SwiftUI
 
 extension ItemView {
 
-    struct CollectionItemContentView: View {
-
-        @ObservedObject
-        var viewModel: TypeItemViewModel
+    struct PersonItemContentView: View {
 
         @Router
         private var router
+
+        @ObservedObject
+        var viewModel: TypeItemViewModel
 
         var body: some View {
             VStack(spacing: 0) {
@@ -26,15 +28,13 @@ extension ItemView {
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
+                // MARK: - Items
+
                 ForEach(
                     viewModel.sections.elements,
                     id: \.key
                 ) { element in
                     ItemTypeCollectionHStack(element: element)
-                }
-
-                if viewModel.similarItems.isNotEmpty {
-                    ItemView.SimilarItemsHStack(items: viewModel.similarItems)
                 }
 
                 ItemView.AboutView(viewModel: viewModel)
