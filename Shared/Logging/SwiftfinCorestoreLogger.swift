@@ -55,14 +55,16 @@ struct SwiftfinCorestoreLogger: CoreStoreLogger {
         lineNumber: Int,
         functionName: StaticString
     ) {
-        logger.critical(
-            "\(message())",
-            metadata: nil,
-            source: "Corestore",
-            file: fileName.description,
-            function: functionName.description,
-            line: UInt(lineNumber)
-        )
+        if !condition() {
+            logger.critical(
+                "\(message())",
+                metadata: nil,
+                source: "Corestore",
+                file: fileName.description,
+                function: functionName.description,
+                line: UInt(lineNumber)
+            )
+        }
     }
 }
 
