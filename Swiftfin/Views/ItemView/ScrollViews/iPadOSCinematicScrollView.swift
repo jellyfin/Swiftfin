@@ -117,7 +117,7 @@ extension ItemView.iPadOSCinematicScrollView {
                                 .fontWeight(.semibold)
                                 .lineLimit(2)
                                 .multilineTextAlignment(.leading)
-                                .foregroundColor(.white)
+                                .foregroundStyle(.white)
                         }
                         .aspectRatio(contentMode: .fit)
                         .frame(maxWidth: geometry.size.width * 0.4, maxHeight: 130, alignment: .bottomLeading)
@@ -125,7 +125,7 @@ extension ItemView.iPadOSCinematicScrollView {
                         ItemView.OverviewView(item: viewModel.item)
                             .overviewLineLimit(3)
                             .taglineLineLimit(2)
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
 
                         if viewModel.item.type != .person {
                             FlowLayout(
@@ -148,7 +148,7 @@ extension ItemView.iPadOSCinematicScrollView {
                                     }
                                 }
                                 .font(.footnote)
-                                .foregroundColor(Color(UIColor.lightGray))
+                                .foregroundStyle(Color(UIColor.lightGray))
                                 .fixedSize(horizontal: true, vertical: false)
 
                                 ItemView.AttributesHStack(
@@ -179,7 +179,7 @@ extension ItemView.iPadOSCinematicScrollView {
 
                         ItemView.ActionButtonHStack(viewModel: viewModel)
                             .font(.title)
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                     }
                     .frame(width: 250)
                 }
