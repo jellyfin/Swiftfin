@@ -57,15 +57,17 @@ extension ItemView {
         var body: some View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
-                    overlay
-                        .frame(
-                            height: (size.height + safeAreaInsets.vertical) * heightRatio,
-                            alignment: .bottom
-                        )
-                        .overlay {
-                            Color.systemBackground
-                                .opacity(headerOpacity)
-                        }
+                    if size.height > 0 {
+                        overlay
+                            .frame(height: headerHeight, alignment: .bottom)
+                            .overlay {
+                                Color.systemBackground
+                                    .opacity(headerOpacity)
+                            }
+                    } else {
+                        Color.clear
+                            .frame(height: UIScreen.main.bounds.height * heightRatio)
+                    }
 
                     content
                 }
