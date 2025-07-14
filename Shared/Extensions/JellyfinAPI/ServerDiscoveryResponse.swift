@@ -11,8 +11,12 @@ import JellyfinAPI
 
 extension ServerDiscoveryResponse {
 
-    var asServerState: ServerState {
-        .init(
+    var asServerState: ServerState? {
+        guard let url else {
+            return nil
+        }
+
+        return ServerState(
             urls: [url],
             currentURL: url,
             name: name,

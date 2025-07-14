@@ -90,7 +90,9 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
         discovery.discoveredServers
             .receive(on: RunLoop.main)
             .sink { [weak self] response in
-                _ = self?.localServers.append(response.asServerState)
+                if let serverState = response.asServerState {
+                    self?.localServers.append(serverState)
+                }
             }
             .store(in: &cancellables)
     }

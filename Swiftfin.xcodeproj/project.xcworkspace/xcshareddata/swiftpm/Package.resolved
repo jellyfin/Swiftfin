@@ -1,5 +1,5 @@
 {
-  "originHash" : "6969fa353bd27e268c044e6b2c4882cc2bb1d00af0a81994d8835fd686b71e40",
+  "originHash" : "bca57f9866ff8f03dcae88e2ce078537586fa9fe8fb706ac94f62b7425d29321",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -97,7 +97,7 @@
       "location" : "https://github.com/JPKribs/jellyfin-sdk-swift.git",
       "state" : {
         "branch" : "serverDiscovery",
-        "revision" : "6c1bf5eb0168547b884093a57b0a2ea08058a617"
+        "revision" : "56afc4edbd18e5403b7a3ea451de629929f9d663"
       }
     },
     {

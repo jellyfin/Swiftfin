@@ -91,7 +91,6 @@
 		E179E8692E14CDBF00D9F245 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E179E8682E14CDBF00D9F245 /* CollectionVGrid */; };
 		E179E86B2E14CDCF00D9F245 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E179E86A2E14CDCF00D9F245 /* CollectionHStack */; };
 		E179E86D2E14CDCF00D9F245 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E179E86C2E14CDCF00D9F245 /* CollectionVGrid */; };
-		E18443CB2A037773002DDDC8 /* UDPBroadcast in Frameworks */ = {isa = PBXBuildFile; productRef = E18443CA2A037773002DDDC8 /* UDPBroadcast */; };
 		E18A8E7A28D5FEDF00333B9A /* VLCUI in Frameworks */ = {isa = PBXBuildFile; productRef = E18A8E7928D5FEDF00333B9A /* VLCUI */; };
 		E18D6AA62BAA96F000A0D167 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E18D6AA52BAA96F000A0D167 /* CollectionHStack */; };
 		E192608328D2D0DB002314B4 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E192608228D2D0DB002314B4 /* Factory */; };
@@ -136,19 +135,14 @@
 
 /* Begin PBXFileReference section */
 		535870602669D21600D05A09 /* Swiftfin tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Swiftfin tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5362E4A7267D4067000E2F71 /* GoogleCast.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleCast.framework; path = "../../Downloads/GoogleCastSDK-ios-4.6.0_dynamic/GoogleCast.framework"; sourceTree = "<group>"; };
 		5362E4AA267D40AD000E2F71 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		5362E4AC267D40B1000E2F71 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		5362E4AE267D40B5000E2F71 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		5362E4B0267D40B9000E2F71 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
-		5362E4B2267D40BE000E2F71 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
-		5362E4B4267D40C5000E2F71 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		5362E4B6267D40CA000E2F71 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		5362E4B8267D40CE000E2F71 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		5362E4BA267D40D2000E2F71 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		5362E4BC267D40D8000E2F71 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5362E4BE267D40E4000E2F71 /* MediaAccessibility.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaAccessibility.framework; path = System/Library/Frameworks/MediaAccessibility.framework; sourceTree = SDKROOT; };
-		5362E4C0267D40E8000E2F71 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		5362E4C2267D40EC000E2F71 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		5362E4C4267D40F0000E2F71 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		5362E4C6267D40F4000E2F71 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -159,10 +153,6 @@
 		625CB57D2678E81E00530A6E /* TVVLCKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = TVVLCKit.xcframework; path = Carthage/Build/TVVLCKit.xcframework; sourceTree = "<group>"; };
 		62666E0027E5016900EC0ECD /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		62666E0527E5017A00EC0ECD /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
-		62666E0727E5018D00EC0ECD /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
-		62666E0827E5019800EC0ECD /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
-		62666E0927E5019C00EC0ECD /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
-		62666E0A27E501A100EC0ECD /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
 		62666E0B27E501A500EC0ECD /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		62666E0F27E501B400EC0ECD /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
 		62666E1227E501C300EC0ECD /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
@@ -174,20 +164,11 @@
 		62666E1E27E501DF00EC0ECD /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/CoreText.framework; sourceTree = DEVELOPER_DIR; };
 		62666E2027E501E400EC0ECD /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/CoreVideo.framework; sourceTree = DEVELOPER_DIR; };
 		62666E2227E501EB00EC0ECD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		62666E2527E501FA00EC0ECD /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libbz2.tbd; sourceTree = DEVELOPER_DIR; };
-		62666E2627E501FE00EC0ECD /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
-		62666E2727E5020200EC0ECD /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libiconv.tbd; sourceTree = DEVELOPER_DIR; };
-		62666E2827E5020600EC0ECD /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libxml2.tbd; sourceTree = DEVELOPER_DIR; };
 		62666E2927E5020A00EC0ECD /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		62666E2B27E5021000EC0ECD /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		62666E2D27E5021400EC0ECD /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		62666E2F27E5021800EC0ECD /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/VideoToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		62666E3127E5021E00EC0ECD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		62666E3A27E503E400EC0ECD /* GoogleCastSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoogleCastSDK.xcframework; path = Frameworks/GoogleCastSDK.xcframework; sourceTree = "<group>"; };
-		628B95212670CABD0091AF3B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
-		628B95232670CABD0091AF3B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
-		637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = UDPBroadcast.xcframework; path = Carthage/Build/UDPBroadcast.xcframework; sourceTree = "<group>"; };
-		E1B2AB9628808CDF0072B3B9 /* GoogleCast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoogleCast.xcframework; path = Carthage/Build/GoogleCast.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -367,6 +348,46 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4E39D97A2E25CF5B00EB70A0 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				5362E4BE267D40E4000E2F71 /* MediaAccessibility.framework */,
+				5362E4B0267D40B9000E2F71 /* CFNetwork.framework */,
+				5362E4C8267D40F7000E2F71 /* UIKit.framework */,
+				53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */,
+				5362E4B8267D40CE000E2F71 /* CoreMedia.framework */,
+				62666E0527E5017A00EC0ECD /* CoreVideo.framework */,
+				5362E4B6267D40CA000E2F71 /* CoreGraphics.framework */,
+				62666E0F27E501B400EC0ECD /* VideoToolbox.framework */,
+				62666E0B27E501A500EC0ECD /* OpenGLES.framework */,
+				62666E0027E5016900EC0ECD /* CoreFoundation.framework */,
+				5362E4BC267D40D8000E2F71 /* Foundation.framework */,
+				5362E4BA267D40D2000E2F71 /* CoreText.framework */,
+				5362E4C4267D40F0000E2F71 /* Security.framework */,
+				5362E4AA267D40AD000E2F71 /* AVFoundation.framework */,
+				5362E4AE267D40B5000E2F71 /* AudioToolbox.framework */,
+				5362E4C2267D40EC000E2F71 /* QuartzCore.framework */,
+				5362E4C6267D40F4000E2F71 /* SystemConfiguration.framework */,
+				62666E1627E501CC00EC0ECD /* CFNetwork.framework */,
+				625CB57D2678E81E00530A6E /* TVVLCKit.xcframework */,
+				62666E3127E5021E00EC0ECD /* UIKit.framework */,
+				62666E2927E5020A00EC0ECD /* OpenGLES.framework */,
+				62666E1C27E501DB00EC0ECD /* CoreMedia.framework */,
+				62666E2F27E5021800EC0ECD /* VideoToolbox.framework */,
+				62666E2227E501EB00EC0ECD /* Foundation.framework */,
+				62666E2027E501E400EC0ECD /* CoreVideo.framework */,
+				62666E1A27E501D400EC0ECD /* CoreGraphics.framework */,
+				62666E2B27E5021000EC0ECD /* QuartzCore.framework */,
+				62666E1827E501D000EC0ECD /* CoreFoundation.framework */,
+				62666E2D27E5021400EC0ECD /* Security.framework */,
+				53ABFDDB267972BF00886593 /* TVServices.framework */,
+				62666E1E27E501DF00EC0ECD /* CoreText.framework */,
+				62666E1427E501C800EC0ECD /* AVFoundation.framework */,
+				62666E1227E501C300EC0ECD /* AudioToolbox.framework */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		5377CBE8263B596A003A4E83 = {
 			isa = PBXGroup;
 			children = (
@@ -375,9 +396,9 @@
 				E14563272DFCAE6E008FF700 /* Shared */,
 				E1456FC82DFCB323008FF700 /* Translations */,
 				5377CBF2263B596A003A4E83 /* Products */,
-				53D5E3DB264B47EE00BADDC8 /* Frameworks */,
 				E14565DD2DFCAE78008FF700 /* Scripts */,
 				E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */,
+				4E39D97A2E25CF5B00EB70A0 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -388,446 +409,6 @@
 				535870602669D21600D05A09 /* Swiftfin tvOS.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		53D5E3DB264B47EE00BADDC8 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				4E90F7592CC72B1F00417C31 /* DetailsSection.swift */,
-				4E90F75A2CC72B1F00417C31 /* LastErrorSection.swift */,
-				4E90F75B2CC72B1F00417C31 /* LastRunSection.swift */,
-				E11969692CC99EA9001A58BE /* ServerTaskProgressSection.swift */,
-				4E90F75D2CC72B1F00417C31 /* TriggersSection.swift */,
-			);
-			path = Sections;
-			sourceTree = "<group>";
-		};
-		4E90F7602CC72B1F00417C31 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4E90F75E2CC72B1F00417C31 /* Sections */,
-				4E90F75F2CC72B1F00417C31 /* TriggerRow.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		4E90F7622CC72B1F00417C31 /* EditServerTaskView */ = {
-			isa = PBXGroup;
-			children = (
-				4E90F7602CC72B1F00417C31 /* Components */,
-				4E90F7612CC72B1F00417C31 /* EditServerTaskView.swift */,
-			);
-			path = EditServerTaskView;
-			sourceTree = "<group>";
-		};
-		4E98F7C82D123AD4001E7518 /* Modifiers */ = {
-			isa = PBXGroup;
-			children = (
-				4E98F7C12D123AD4001E7518 /* NavigationBarMenuButton.swift */,
-			);
-			path = Modifiers;
-			sourceTree = "<group>";
-		};
-		4E98F7CA2D123AD4001E7518 /* View */ = {
-			isa = PBXGroup;
-			children = (
-				4E98F7C82D123AD4001E7518 /* Modifiers */,
-				4E98F7C92D123AD4001E7518 /* View-tvOS.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		4E98F7CB2D123AD4001E7518 /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				4E98F7CA2D123AD4001E7518 /* View */,
-			);
-			path = Extensions;
-			sourceTree = "<group>";
-		};
-		4E9A24E32C82B4700023DA83 /* CustomDeviceProfileSettingsView */ = {
-			isa = PBXGroup;
-			children = (
-				4E9A24E42C82B5440023DA83 /* Components */,
-				4E9A24E52C82B5A50023DA83 /* CustomDeviceProfileSettingsView.swift */,
-			);
-			path = CustomDeviceProfileSettingsView;
-			sourceTree = "<group>";
-		};
-		4E9A24E42C82B5440023DA83 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4E9A24E72C82B6190023DA83 /* CustomProfileButton.swift */,
-				4E9A24EC2C82BAFB0023DA83 /* EditCustomDeviceProfileView.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		4EA09DDF2CC4E4D000CB27E4 /* APIKeyView */ = {
-			isa = PBXGroup;
-			children = (
-				4EA09DE22CC4E7BE00CB27E4 /* Components */,
-				4EA09DE02CC4E4F000CB27E4 /* APIKeysView.swift */,
-			);
-			path = APIKeyView;
-			sourceTree = "<group>";
-		};
-		4EA09DE22CC4E7BE00CB27E4 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4EA09DE32CC4E85700CB27E4 /* APIKeysRow.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		4EA78B152D2A0C4A0093BFCE /* ItemImageDetailsView */ = {
-			isa = PBXGroup;
-			children = (
-				4EA78B1B2D2A266A0093BFCE /* Components */,
-				4EA78B142D2A0C4A0093BFCE /* ItemImageDetailsView.swift */,
-			);
-			path = ItemImageDetailsView;
-			sourceTree = "<group>";
-		};
-		4EA78B1B2D2A266A0093BFCE /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4EECA4F22D2CA59B0080A863 /* ItemImageDetailsDeleteButton.swift */,
-				4EECA4F02D2C9E7B0080A863 /* ItemImageDetailsDetailsSection.swift */,
-				4EECA4EE2D2C9B260080A863 /* ItemImageDetailsHeaderSection.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		4EA78B1E2D2B5A960093BFCE /* ItemPhotoPickerView */ = {
-			isa = PBXGroup;
-			children = (
-				4EA78B212D2B5CDD0093BFCE /* Components */,
-				4EA78B1F2D2B5A9E0093BFCE /* ItemPhotoPickerView.swift */,
-			);
-			path = ItemPhotoPickerView;
-			sourceTree = "<group>";
-		};
-		4EA78B212D2B5CDD0093BFCE /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4EA78B222D2B5CEF0093BFCE /* ItemPhotoCropView.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		4EB1A8CF2C9B2FA200F43898 /* ActiveSessionsView */ = {
-			isa = PBXGroup;
-			children = (
-				4EB1A8C92C9A765800F43898 /* ActiveSessionsView.swift */,
-				4EB1A8D02C9B2FB600F43898 /* Components */,
-			);
-			path = ActiveSessionsView;
-			sourceTree = "<group>";
-		};
-		4EB1A8D02C9B2FB600F43898 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4EE141682C8BABDF0045B661 /* ActiveSessionProgressSection.swift */,
-				4EB1A8CD2C9B2D0100F43898 /* ActiveSessionRow.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		4EB1A8D32C9B91A200F43898 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4EB1404B2C8E45B1008691F3 /* StreamSection.swift */,
-				4EC6C16A2C92999800FC904B /* TranscodeSection.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		4EB3F0302D8CCD3500EBEDAA /* ActionButtonHStack */ = {
-			isa = PBXGroup;
-			children = (
-				E18E01D9288747230022598C /* ActionButtonHStack.swift */,
-				4EB3F0312D8CD1EF00EBEDAA /* Components */,
-			);
-			path = ActionButtonHStack;
-			sourceTree = "<group>";
-		};
-		4EB3F0312D8CD1EF00EBEDAA /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4EB3F0382D8CD5CC00EBEDAA /* TrailerMenu.swift */,
-				4EB3F03A2D8CD6A700EBEDAA /* VersionMenu.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		4EB3F0342D8CD2B500EBEDAA /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4EDDB49B2D596E0700DA16E8 /* VersionMenu.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		4EB3F0352D8CD32900EBEDAA /* ActionButton */ = {
-			isa = PBXGroup;
-			children = (
-				4EB3F0362D8CD33100EBEDAA /* ActionButton.swift */,
-			);
-			path = ActionButton;
-			sourceTree = "<group>";
-		};
-		4EB538B32CE3C75900EB72D5 /* ServerUserPermissionsView */ = {
-			isa = PBXGroup;
-			children = (
-				4EB538B82CE3CB2400EB72D5 /* Components */,
-				4EB538B42CE3C76D00EB72D5 /* ServerUserPermissionsView.swift */,
-			);
-			path = ServerUserPermissionsView;
-			sourceTree = "<group>";
-		};
-		4EB538B82CE3CB2400EB72D5 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4EB538B92CE3CB2900EB72D5 /* Sections */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		4EB538B92CE3CB2900EB72D5 /* Sections */ = {
-			isa = PBXGroup;
-			children = (
-				4EB538C42CE3E25500EB72D5 /* ExternalAccessSection.swift */,
-				4EB538C02CE3CF0E00EB72D5 /* ManagementSection.swift */,
-				4EB538BC2CE3CCCF00EB72D5 /* MediaPlaybackSection.swift */,
-				4E49DECC2CE54C7200352DCD /* PermissionSection.swift */,
-				4EB538C72CE3E8A100EB72D5 /* RemoteControlSection.swift */,
-				4E49DECA2CE54A9200352DCD /* SessionsSection.swift */,
-				4EB538C22CE3E21500EB72D5 /* SyncPlaySection.swift */,
-				4E49DED72CE5509000352DCD /* StatusSection.swift */,
-			);
-			path = Sections;
-			sourceTree = "<group>";
-		};
-		4EB7C8D32CCED318000CC011 /* AddServerUserView */ = {
-			isa = PBXGroup;
-			children = (
-				4EB7C8D42CCED6E1000CC011 /* AddServerUserView.swift */,
-			);
-			path = AddServerUserView;
-			sourceTree = "<group>";
-		};
-		4EC1C86A2C80900B00E2879E /* CustomDeviceProfileSettingsView */ = {
-			isa = PBXGroup;
-			children = (
-				4EC1C86B2C80902200E2879E /* Components */,
-				4EC1C8682C808FBB00E2879E /* CustomDeviceProfileSettingsView.swift */,
-			);
-			path = CustomDeviceProfileSettingsView;
-			sourceTree = "<group>";
-		};
-		4EC1C86B2C80902200E2879E /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4EC1C86C2C80903A00E2879E /* CustomProfileButton.swift */,
-				4E71D6882C80910900A0174D /* EditCustomDeviceProfileView.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		4EC2B1992CC96E5E00D866BE /* ServerUsersView */ = {
-			isa = PBXGroup;
-			children = (
-				4EC2B19C2CC96E9400D866BE /* Components */,
-				4EC2B19A2CC96E7000D866BE /* ServerUsersView.swift */,
-			);
-			path = ServerUsersView;
-			sourceTree = "<group>";
-		};
-		4EC2B19C2CC96E9400D866BE /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4EC2B19D2CC96EA300D866BE /* ServerUsersRow.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		4EC2B1A72CC9725400D866BE /* ServerUserDetailsView */ = {
-			isa = PBXGroup;
-			children = (
-				4EC2B1A82CC97C0400D866BE /* ServerUserDetailsView.swift */,
-			);
-			path = ServerUserDetailsView;
-			sourceTree = "<group>";
-		};
-		4EC71FBA2D161FD800D0B3A8 /* Scripts */ = {
-			isa = PBXGroup;
-			children = (
-				4E75B34D2D16583900D16531 /* Translations */,
-			);
-			path = Scripts;
-			sourceTree = "<group>";
-		};
-		4ECF5D822D0A3D0200F066B1 /* AddAccessScheduleView */ = {
-			isa = PBXGroup;
-			children = (
-				4ECF5D812D0A3D0200F066B1 /* AddAccessScheduleView.swift */,
-			);
-			path = AddAccessScheduleView;
-			sourceTree = "<group>";
-		};
-		4ECF5D8C2D0A780F00F066B1 /* ServerTasks */ = {
-			isa = PBXGroup;
-			children = (
-				4E35CE5B2CBED3F300DBD886 /* AddTaskTriggerView */,
-				4E90F7622CC72B1F00417C31 /* EditServerTaskView */,
-				4E182C9A2C94991800FBEFD5 /* ServerTasksView */,
-			);
-			path = ServerTasks;
-			sourceTree = "<group>";
-		};
-		4ED25C9F2D07E20C0010333C /* ServerUserAccessSchedule */ = {
-			isa = PBXGroup;
-			children = (
-				4ECF5D822D0A3D0200F066B1 /* AddAccessScheduleView */,
-				4ED25CA52D07E64F0010333C /* EditAccessScheduleView */,
-			);
-			path = ServerUserAccessSchedule;
-			sourceTree = "<group>";
-		};
-		4ED25CA32D07E4990010333C /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4ED25CA22D07E4990010333C /* EditAccessScheduleRow.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		4ED25CA52D07E64F0010333C /* EditAccessScheduleView */ = {
-			isa = PBXGroup;
-			children = (
-				4ED25CA32D07E4990010333C /* Components */,
-				4ED25CA02D07E3520010333C /* EditAccessScheduleView.swift */,
-			);
-			path = EditAccessScheduleView;
-			sourceTree = "<group>";
-		};
-		4EE766F32D131F6E009658F0 /* IdentifyItemView */ = {
-			isa = PBXGroup;
-			children = (
-				4EE767062D13401C009658F0 /* Components */,
-				4EE766F42D131FB7009658F0 /* IdentifyItemView.swift */,
-			);
-			path = IdentifyItemView;
-			sourceTree = "<group>";
-		};
-		4EE767062D13401C009658F0 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4EE767092D135CAC009658F0 /* RemoteSearchResultView.swift */,
-				4EE767072D134020009658F0 /* RemoteSearchResultRow.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		4EECA4E12D2C7D450080A863 /* PhotoPickerView */ = {
-			isa = PBXGroup;
-			children = (
-				4EECA4E42D2C7D570080A863 /* Components */,
-				4EECA4E22D2C7D530080A863 /* PhotoPickerView.swift */,
-			);
-			path = PhotoPickerView;
-			sourceTree = "<group>";
-		};
-		4EECA4E42D2C7D570080A863 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4EECA4E52D2C7D650080A863 /* PhotoCropView.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		4EED87472CBF824B002354D2 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4EED87462CBF824B002354D2 /* DeviceRow.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		4EED87492CBF824B002354D2 /* DevicesView */ = {
-			isa = PBXGroup;
-			children = (
-				4EED87472CBF824B002354D2 /* Components */,
-				4EED87482CBF824B002354D2 /* DevicesView.swift */,
-			);
-			path = DevicesView;
-			sourceTree = "<group>";
-		};
-		4EF10D4C2CE2EC5A000ED5F5 /* ResetUserPasswordView */ = {
-			isa = PBXGroup;
-			children = (
-				4E026A8A2CE804E7005471B5 /* ResetUserPasswordView.swift */,
-			);
-			path = ResetUserPasswordView;
-			sourceTree = "<group>";
-		};
-		4EF18B232CB9932F00343666 /* PagingLibraryView */ = {
-			isa = PBXGroup;
-			children = (
-				E1B2AB9628808CDF0072B3B9 /* GoogleCast.xcframework */,
-				637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */,
-				62666E3A27E503E400EC0ECD /* GoogleCastSDK.xcframework */,
-				62666E3127E5021E00EC0ECD /* UIKit.framework */,
-				62666E2F27E5021800EC0ECD /* VideoToolbox.framework */,
-				62666E2D27E5021400EC0ECD /* Security.framework */,
-				62666E2B27E5021000EC0ECD /* QuartzCore.framework */,
-				62666E2927E5020A00EC0ECD /* OpenGLES.framework */,
-				62666E2827E5020600EC0ECD /* libxml2.tbd */,
-				62666E2727E5020200EC0ECD /* libiconv.tbd */,
-				62666E2627E501FE00EC0ECD /* libc++.tbd */,
-				62666E2527E501FA00EC0ECD /* libbz2.tbd */,
-				62666E2227E501EB00EC0ECD /* Foundation.framework */,
-				62666E2027E501E400EC0ECD /* CoreVideo.framework */,
-				62666E1E27E501DF00EC0ECD /* CoreText.framework */,
-				62666E1C27E501DB00EC0ECD /* CoreMedia.framework */,
-				62666E1A27E501D400EC0ECD /* CoreGraphics.framework */,
-				62666E1827E501D000EC0ECD /* CoreFoundation.framework */,
-				62666E1627E501CC00EC0ECD /* CFNetwork.framework */,
-				62666E1427E501C800EC0ECD /* AVFoundation.framework */,
-				62666E1227E501C300EC0ECD /* AudioToolbox.framework */,
-				62666E0F27E501B400EC0ECD /* VideoToolbox.framework */,
-				62666E0B27E501A500EC0ECD /* OpenGLES.framework */,
-				62666E0A27E501A100EC0ECD /* libxml2.tbd */,
-				62666E0927E5019C00EC0ECD /* libiconv.tbd */,
-				62666E0827E5019800EC0ECD /* libc++.tbd */,
-				62666E0727E5018D00EC0ECD /* libbz2.tbd */,
-				62666E0527E5017A00EC0ECD /* CoreVideo.framework */,
-				62666E0027E5016900EC0ECD /* CoreFoundation.framework */,
-				5362E4C8267D40F7000E2F71 /* UIKit.framework */,
-				5362E4C6267D40F4000E2F71 /* SystemConfiguration.framework */,
-				5362E4C4267D40F0000E2F71 /* Security.framework */,
-				5362E4C2267D40EC000E2F71 /* QuartzCore.framework */,
-				5362E4C0267D40E8000E2F71 /* MediaPlayer.framework */,
-				5362E4BE267D40E4000E2F71 /* MediaAccessibility.framework */,
-				5362E4BC267D40D8000E2F71 /* Foundation.framework */,
-				5362E4BA267D40D2000E2F71 /* CoreText.framework */,
-				5362E4B8267D40CE000E2F71 /* CoreMedia.framework */,
-				5362E4B6267D40CA000E2F71 /* CoreGraphics.framework */,
-				5362E4B4267D40C5000E2F71 /* CoreData.framework */,
-				5362E4B2267D40BE000E2F71 /* CoreBluetooth.framework */,
-				5362E4B0267D40B9000E2F71 /* CFNetwork.framework */,
-				5362E4AE267D40B5000E2F71 /* AudioToolbox.framework */,
-				5362E4AC267D40B1000E2F71 /* Accelerate.framework */,
-				5362E4AA267D40AD000E2F71 /* AVFoundation.framework */,
-				5362E4A7267D4067000E2F71 /* GoogleCast.framework */,
-				53ABFDDB267972BF00886593 /* TVServices.framework */,
-				625CB57D2678E81E00530A6E /* TVVLCKit.xcframework */,
-				53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */,
-				628B95212670CABD0091AF3B /* WidgetKit.framework */,
-				628B95232670CABD0091AF3B /* SwiftUI.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
