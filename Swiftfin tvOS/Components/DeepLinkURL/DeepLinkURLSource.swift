@@ -94,6 +94,7 @@ enum DeepLinkURLSource: String, CaseIterable {
         case .amazonPrime:
             return "primevideo://"
         case .hbo:
+            // TODO: Keep an eye on this in case this changes with the recent name change (Valid as of 07/14/2025)
             return "hbomax://"
         case .hulu:
             return "hulu://"
@@ -161,7 +162,7 @@ enum DeepLinkURLSource: String, CaseIterable {
         return map
     }()
 
-    // MARK: - Validation
+    // MARK: - Validate URL based on DeepLinkURLSource
 
     func validate(url: URL) -> Bool {
         switch self {
@@ -172,13 +173,15 @@ enum DeepLinkURLSource: String, CaseIterable {
         }
     }
 
-    // MARK: - Get DeepLinkURLSource from Prefix
+    // MARK: - Initializers
+
+    // MARK: Get DeepLinkURLSource from Prefix
 
     static func fromPrefix(_ prefix: String) -> DeepLinkURLSource {
         allCases.first { $0.prefix == prefix } ?? .unknown
     }
 
-    // MARK: - Get DeepLinkURLSource from URL
+    // MARK: Get DeepLinkURLSource from URL
 
     static func fromURL(_ urlString: String) -> DeepLinkURLSource {
         /// Check for prefix matches first (most specific and often quicker)
