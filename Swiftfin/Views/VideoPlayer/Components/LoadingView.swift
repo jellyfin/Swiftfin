@@ -6,15 +6,14 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Stinsen
 import SwiftUI
 
 extension VideoPlayer {
 
     struct LoadingView: View {
 
-        @EnvironmentObject
-        private var router: VideoPlayerCoordinator.Router
+        @Router
+        private var router
 
         var body: some View {
             ZStack {
@@ -28,7 +27,7 @@ extension VideoPlayer {
                     ProgressView()
 
                     Button {
-                        router.dismissCoordinator()
+                        router.dismiss()
                     } label: {
                         Text(L10n.cancel)
                             .foregroundColor(.red)

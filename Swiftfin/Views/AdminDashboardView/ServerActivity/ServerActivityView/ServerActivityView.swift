@@ -10,24 +10,18 @@ import CollectionVGrid
 import JellyfinAPI
 import SwiftUI
 
+// TODO: WebSocket
 struct ServerActivityView: View {
 
-    // MARK: - Environment Objects
+    // MARK: - Router
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     // MARK: - State Objects
 
     @StateObject
     private var viewModel = ServerActivityViewModel()
-
-    // MARK: - Dialog States
-
-    @State
-    private var isDatePickerShowing: Bool = false
-    @State
-    private var tempDate: Date?
 
     // MARK: - Body
 
@@ -48,19 +42,18 @@ struct ServerActivityView: View {
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.activity)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarMenuButton(
-            isLoading: viewModel.backgroundStates.contains(.gettingNextPage)
-        ) {
-            Section(L10n.filters) {
+        .topBarTrailing {
+            if viewModel.backgroundStates.contains(.gettingNextPage) {
+                ProgressView()
+            }
+
+            Menu(L10n.filters, systemImage: "line.3.horizontal.decrease.circle") {
                 startDateButton
                 userFilterButton
             }
         }
         .onFirstAppear {
             viewModel.send(.refresh)
-        }
-        .sheet(isPresented: $isDatePickerShowing, onDismiss: { isDatePickerShowing = false }) {
-            startDatePickerSheet
         }
     }
 
@@ -91,7 +84,7 @@ struct ServerActivityView: View {
                 )
 
                 LogEntry(viewModel: logViewModel) {
-                    router.route(to: \.activityDetails, logViewModel)
+                    router.route(to: .activityDetails(viewModel: logViewModel))
                 }
             }
             .onReachedBottomEdge(offset: .offset(300)) {
@@ -105,94 +98,55 @@ struct ServerActivityView: View {
 
     @ViewBuilder
     private var userFilterButton: some View {
-        Menu(
-            L10n.type,
-            systemImage: viewModel.hasUserId == true ? "person.fill" :
-                viewModel.hasUserId == false ? "gearshape.fill" : "line.3.horizontal"
-        ) {
-            Picker(L10n.type, selection: $viewModel.hasUserId) {
-                Section {
-                    Label(
-                        L10n.all,
-                        systemImage: "line.3.horizontal"
-                    )
-                    .tag(nil as Bool?)
-                }
+        Picker(selection: $viewModel.hasUserId) {
+            Label(
+                L10n.all,
+                systemImage: "line.3.horizontal"
+            )
+            .tag(nil as Bool?)
 
-                Label(
-                    L10n.users,
-                    systemImage: "person"
-                )
-                .tag(true as Bool?)
+            Label(
+                L10n.users,
+                systemImage: "person"
+            )
+            .tag(true as Bool?)
 
-                Label(
-                    L10n.system,
-                    systemImage: "gearshape"
-                )
-                .tag(false as Bool?)
+            Label(
+                L10n.system,
+                systemImage: "gearshape"
+            )
+            .tag(false as Bool?)
+        } label: {
+            Text(L10n.type)
+
+            if let hasUserID = viewModel.hasUserId {
+                Text(hasUserID ? L10n.users : L10n.system)
+                Image(systemName: hasUserID ? "person" : "gearshape")
+
+            } else {
+                Text(L10n.all)
+                Image(systemName: "line.3.horizontal")
             }
         }
+        .pickerStyle(.menu)
     }
 
     // MARK: - Start Date Button
 
     @ViewBuilder
     private var startDateButton: some View {
-        Button(L10n.startDate, systemImage: "calendar") {
-            if let minDate = viewModel.minDate {
-                tempDate = minDate
+        Button {
+            router.route(to: .activityFilters(viewModel: viewModel))
+        } label: {
+            Text(L10n.startDate)
+
+            if let startDate = viewModel.minDate {
+                Text(startDate.formatted(date: .numeric, time: .omitted))
             } else {
-                tempDate = .now
+                Text(verbatim: .emptyDash)
             }
-            isDatePickerShowing = true
-        }
-    }
 
-    // MARK: - Start Date Picker Sheet
-
-    @ViewBuilder
-    private var startDatePickerSheet: some View {
-        NavigationView {
-            List {
-                Section {
-                    DatePicker(
-                        L10n.date,
-                        selection: $tempDate.coalesce(.now),
-                        in: ...Date.now,
-                        displayedComponents: .date
-                    )
-                    .datePickerStyle(.graphical)
-                    .labelsHidden()
-                }
-
-                /// Reset button to remove the filter
-                if viewModel.minDate != nil {
-                    Section {
-                        ListRowButton(L10n.reset, role: .destructive) {
-                            viewModel.minDate = nil
-                            isDatePickerShowing = false
-                        }
-                    } footer: {
-                        Text(L10n.resetFilterFooter)
-                    }
-                }
-            }
-            .navigationTitle(L10n.startDate.localizedCapitalized)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarCloseButton {
-                isDatePickerShowing = false
-            }
-            .topBarTrailing {
-                let startOfDay = Calendar.current
-                    .startOfDay(for: tempDate ?? .now)
-
-                Button(L10n.save) {
-                    viewModel.minDate = startOfDay
-                    isDatePickerShowing = false
-                }
-                .buttonStyle(.toolbarPill)
-                .disabled(viewModel.minDate != nil && startOfDay == viewModel.minDate)
-            }
+            Image(systemName: "calendar")
         }
     }
 }

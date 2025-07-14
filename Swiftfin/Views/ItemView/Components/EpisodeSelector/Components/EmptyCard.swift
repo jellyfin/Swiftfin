@@ -6,8 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-import JellyfinAPI
 import SwiftUI
 
 extension SeriesEpisodeSelector {
@@ -21,9 +19,10 @@ extension SeriesEpisodeSelector {
                     .posterStyle(.landscape)
 
                 SeriesEpisodeSelector.EpisodeContent(
-                    subHeader: .emptyDash,
                     header: L10n.noResults,
-                    content: L10n.noEpisodesAvailable
+                    subHeader: .emptyDash,
+                    content: L10n.noEpisodesAvailable,
+                    action: {}
                 )
                 .disabled(true)
             }

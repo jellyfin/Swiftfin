@@ -13,49 +13,42 @@ import OrderedCollections
 
 final class CollectionItemViewModel: ItemViewModel {
 
-    // MARK: - Published Collection Items
+    @ObservedPublisher
+    var sections: OrderedDictionary<BaseItemKind, ItemLibraryViewModel>
 
-    @Published
-    private(set) var collectionItems: OrderedDictionary<BaseItemKind, [BaseItemDto]> = [:]
+    private let itemCollection: ItemTypeCollection
+
+    // MARK: - Disable PlayButton
 
     override var presentPlayButton: Bool {
         false
     }
 
-    // MARK: - On Refresh
+    override init(item: BaseItemDto) {
+        self.itemCollection = ItemTypeCollection(
+            parent: item,
+            itemTypes: BaseItemKind.supportedCases
+                .appending(.episode)
+                .removing(.boxSet)
+        )
+        self._sections = ObservedPublisher(
+            wrappedValue: [:],
+            observing: itemCollection.$elements
+        )
 
-    override func onRefresh() async throws {
-        let collectionItems = try await self.getCollectionItems()
-
-        await MainActor.run {
-            self.collectionItems = collectionItems
-        }
+        super.init(item: item)
     }
 
-    // MARK: - Get Collection Items
+    // MARK: - Override Response
 
-    private func getCollectionItems() async throws -> OrderedDictionary<BaseItemKind, [BaseItemDto]> {
-        var parameters = Paths.GetItemsByUserIDParameters()
-        parameters.fields = .MinimumFields
-        parameters.includeItemTypes = BaseItemKind.supportedCases
-            .appending(.episode)
-        parameters.parentID = item.id
+    override func respond(to action: ItemViewModel.Action) -> ItemViewModel.State {
 
-        let request = Paths.getItemsByUserID(
-            userID: userSession.user.id,
-            parameters: parameters
-        )
-        let response = try await userSession.client.send(request)
+        switch action {
+        case .refresh, .backgroundRefresh:
+            itemCollection.send(.refresh)
+        default: ()
+        }
 
-        let items = response.value.items ?? []
-
-        let result = OrderedDictionary<BaseItemKind?, [BaseItemDto]>(
-            grouping: items,
-            by: \.type
-        )
-        .compactKeys()
-        .sortedKeys { $0.rawValue < $1.rawValue }
-
-        return result
+        return super.respond(to: action)
     }
 }

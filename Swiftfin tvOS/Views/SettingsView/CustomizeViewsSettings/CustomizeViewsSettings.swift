@@ -31,8 +31,8 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.Library.displayType)
     private var libraryViewType
 
-    @EnvironmentObject
-    private var router: CustomizeSettingsCoordinator.Router
+    @Router
+    private var router
 
     var body: some View {
         SplitFormWindowView()
@@ -54,7 +54,7 @@ struct CustomizeViewsSettings: View {
                 Section(L10n.posters) {
 
                     ChevronButton(L10n.indicators) {
-                        router.route(to: \.indicatorSettings)
+                        router.route(to: .indicatorSettings)
                     }
 
                     Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)

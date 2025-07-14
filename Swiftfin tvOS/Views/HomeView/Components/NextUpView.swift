@@ -16,8 +16,8 @@ extension HomeView {
         @Default(.Customization.nextUpPosterType)
         private var nextUpPosterType
 
-        @EnvironmentObject
-        private var router: HomeCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: NextUpLibraryViewModel
@@ -28,9 +28,8 @@ extension HomeView {
                     title: L10n.nextUp,
                     type: nextUpPosterType,
                     items: viewModel.elements
-                )
-                .onSelect { item in
-                    router.route(to: \.item, item)
+                ) { item in
+                    router.route(to: .item(item: item))
                 }
             }
         }

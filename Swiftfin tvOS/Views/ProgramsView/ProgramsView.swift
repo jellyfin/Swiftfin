@@ -15,8 +15,8 @@ import SwiftUI
 
 struct ProgramsView: View {
 
-    @EnvironmentObject
-    private var router: VideoPlayerWrapperCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var programsViewModel = ProgramsViewModel()
@@ -61,20 +61,18 @@ struct ProgramsView: View {
             title: title,
             type: .landscape,
             items: programsViewModel[keyPath: keyPath]
-        )
-        .content {
-            ProgramButtonContent(program: $0)
-        }
-        .imageOverlay {
-            ProgramProgressOverlay(program: $0)
-        }
-//        .onSelect { channelProgram in
+        ) { _ in
 //            guard let mediaSource = channelProgram.channel.mediaSources?.first else { return }
 //            router.route(
 //                to: \.liveVideoPlayer,
 //                LiveVideoPlayerManager(item: channelProgram.channel, mediaSource: mediaSource)
 //            )
-//        }
+        } label: {
+            ProgramButtonContent(program: $0)
+        }
+        .posterOverlay(for: BaseItemDto.self) {
+            ProgramProgressOverlay(program: $0)
+        }
     }
 
     var body: some View {

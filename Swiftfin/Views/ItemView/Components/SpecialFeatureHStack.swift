@@ -14,8 +14,8 @@ extension ItemView {
 
     struct SpecialFeaturesHStack: View {
 
-        @EnvironmentObject
-        private var router: MainCoordinator.Router
+        @Router
+        private var router
 
         let items: [BaseItemDto]
 
@@ -24,10 +24,9 @@ extension ItemView {
                 title: L10n.specialFeatures,
                 type: .landscape,
                 items: items
-            )
-            .onSelect { item in
+            ) { item, _ in
                 guard let mediaSource = item.mediaSources?.first else { return }
-                router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: item, mediaSource: mediaSource))
+                router.route(to: .videoPlayer(manager: OnlineVideoPlayerManager(item: item, mediaSource: mediaSource)))
             }
         }
     }

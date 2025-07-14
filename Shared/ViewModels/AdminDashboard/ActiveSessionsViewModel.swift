@@ -12,19 +12,20 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
+@MainActor
 final class ActiveSessionsViewModel: ViewModel, Stateful {
 
     // MARK: - Action
 
     enum Action: Equatable {
-        case getSessions
-        case refreshSessions
+        case refresh
+        case backgroundRefresh
     }
 
     // MARK: - BackgroundState
 
     enum BackgroundState: Hashable {
-        case gettingSessions
+        case backgroundRefreshing
     }
 
     // MARK: - State
@@ -36,23 +37,36 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
     }
 
     @Published
+    var activeWithinSeconds: Int? = 900 {
+        didSet {
+            send(.refresh)
+        }
+    }
+
+    @Published
+    var showSessionType: ActiveSessionFilter = .all {
+        didSet {
+            send(.refresh)
+        }
+    }
+
+    @Published
     var backgroundStates: Set<BackgroundState> = []
     @Published
     var sessions: OrderedDictionary<String, BindingBox<SessionInfoDto?>> = [:]
     @Published
     var state: State = .initial
 
-    private let activeWithinSeconds: Int = 960
     private var sessionTask: AnyCancellable?
 
     func respond(to action: Action) -> State {
         switch action {
-        case .getSessions:
+        case .backgroundRefresh:
             sessionTask?.cancel()
 
             sessionTask = Task { [weak self] in
                 await MainActor.run {
-                    let _ = self?.backgroundStates.insert(.gettingSessions)
+                    let _ = self?.backgroundStates.insert(.backgroundRefreshing)
                 }
 
                 do {
@@ -65,13 +79,13 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
                 }
 
                 await MainActor.run {
-                    let _ = self?.backgroundStates.remove(.gettingSessions)
+                    let _ = self?.backgroundStates.remove(.backgroundRefreshing)
                 }
             }
             .asAnyCancellable()
 
             return state
-        case .refreshSessions:
+        case .refresh:
             sessionTask?.cancel()
 
             sessionTask = Task { [weak self] in
@@ -100,6 +114,8 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
         }
     }
 
+    // MARK: - updateSessions
+
     private func updateSessions() async throws {
         var parameters = Paths.GetSessionsParameters()
         parameters.activeWithinSeconds = activeWithinSeconds
@@ -107,13 +123,23 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
         let request = Paths.getSessions(parameters: parameters)
         let response = try await userSession.client.send(request)
 
-        let removedSessionIDs = sessions.keys.filter { !response.value.map(\.id).contains($0) }
+        let filteredSessions: [SessionInfoDto]
+        switch showSessionType {
+        case .all:
+            filteredSessions = response.value
+        case .active:
+            filteredSessions = response.value.filter { $0.nowPlayingItem != nil }
+        case .inactive:
+            filteredSessions = response.value.filter { $0.nowPlayingItem == nil }
+        }
+
+        let removedSessionIDs = sessions.keys.filter { !filteredSessions.map(\.id).contains($0) }
 
         let existingIDs = sessions.keys
             .filter {
-                response.value.map(\.id).contains($0)
+                filteredSessions.map(\.id).contains($0)
             }
-        let newSessions = response.value
+        let newSessions = filteredSessions
             .filter {
                 guard let id = $0.id else { return false }
                 return !sessions.keys.contains(id)
@@ -135,7 +161,7 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
             }
 
             for id in existingIDs {
-                sessions[id]?.value = response.value.first(where: { $0.id == id })
+                sessions[id]?.value = filteredSessions.first(where: { $0.id == id })
             }
 
             for session in newSessions {

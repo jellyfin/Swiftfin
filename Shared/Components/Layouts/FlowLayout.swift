@@ -24,8 +24,7 @@ struct FlowLayout: Layout {
         let subviewSizes: [CGSize]
         let rows: [[Int]]
         let totalSize: CGSize
-        let lastProposal: ProposedViewSize?
-        let lastBounds: CGRect?
+        let lastWidth: CGFloat?
     }
 
     // MARK: - Properties
@@ -62,8 +61,7 @@ struct FlowLayout: Layout {
             subviewSizes: [],
             rows: [],
             totalSize: .zero,
-            lastProposal: nil,
-            lastBounds: nil
+            lastWidth: nil
         )
     }
 
@@ -74,9 +72,25 @@ struct FlowLayout: Layout {
             subviewSizes: [],
             rows: [],
             totalSize: .zero,
-            lastProposal: nil,
-            lastBounds: nil
+            lastWidth: nil
         )
+    }
+
+    // MARK: - Calculate Layout
+
+    private func calculateLayout(
+        subviews: Subviews,
+        width: CGFloat
+    ) -> (sizes: [CGSize], rows: [[Int]], totalSize: CGSize) {
+        let sizes = subviews.map { subview in
+            let size = subview.sizeThatFits(.unspecified)
+            return CGSize(width: ceil(size.width), height: ceil(size.height))
+        }
+
+        let rows = computeRows(sizes: sizes, maxWidth: width)
+        let totalSize = computeTotalSize(rows: rows, sizes: sizes)
+
+        return (sizes, rows, totalSize)
     }
 
     // MARK: - Size That Fits
@@ -87,22 +101,28 @@ struct FlowLayout: Layout {
         subviews: Subviews,
         cache: inout CacheData
     ) -> CGSize {
-        if cache.lastProposal != proposal || cache.subviewSizes.isEmpty {
-            let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
-            let maxWidth = proposal.width ?? .infinity
-            let rows = computeRows(sizes: sizes, maxWidth: maxWidth)
-            let totalSize = computeTotalSize(rows: rows, sizes: sizes)
+        let availableWidth = proposal.width ?? .infinity
+        let effectiveWidth = availableWidth.isFinite ? availableWidth : 1000
+
+        if cache.lastWidth != effectiveWidth || cache.subviewSizes.isEmpty {
+            let (sizes, rows, totalSize) = calculateLayout(
+                subviews: subviews,
+                width: effectiveWidth
+            )
 
             cache = CacheData(
                 subviewSizes: sizes,
                 rows: rows,
                 totalSize: totalSize,
-                lastProposal: proposal,
-                lastBounds: cache.lastBounds
+                lastWidth: effectiveWidth
             )
         }
 
-        return cache.totalSize
+        // Return the calculated height but respect the proposed width
+        return CGSize(
+            width: min(cache.totalSize.width, proposal.width ?? cache.totalSize.width),
+            height: cache.totalSize.height
+        )
     }
 
     // MARK: - Place Subviews
@@ -114,16 +134,19 @@ struct FlowLayout: Layout {
         subviews: Subviews,
         cache: inout CacheData
     ) {
-        if cache.lastBounds != bounds || cache.lastProposal != proposal || cache.subviewSizes.isEmpty {
-            let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
-            let rows = computeRows(sizes: sizes, maxWidth: bounds.width)
+        let availableWidth = bounds.width
+
+        if cache.lastWidth != availableWidth || cache.subviewSizes.isEmpty {
+            let (sizes, rows, totalSize) = calculateLayout(
+                subviews: subviews,
+                width: availableWidth
+            )
 
             cache = CacheData(
                 subviewSizes: sizes,
                 rows: rows,
-                totalSize: cache.totalSize,
-                lastProposal: proposal,
-                lastBounds: bounds
+                totalSize: totalSize,
+                lastWidth: availableWidth
             )
         }
 
@@ -183,15 +206,20 @@ struct FlowLayout: Layout {
         var currentWidth: CGFloat = 0
 
         for (index, size) in sizes.enumerated() {
-            let itemWidth = size.width + (currentRow.isEmpty ? 0 : spacing)
-
-            if currentWidth + itemWidth <= maxWidth || currentRow.isEmpty {
+            if currentRow.isEmpty {
                 currentRow.append(index)
-                currentWidth += itemWidth
-            } else {
-                rows.append(currentRow)
-                currentRow = [index]
                 currentWidth = size.width
+            } else {
+                let widthWithItem = currentWidth + spacing + size.width
+
+                if widthWithItem <= maxWidth {
+                    currentRow.append(index)
+                    currentWidth = widthWithItem
+                } else {
+                    rows.append(currentRow)
+                    currentRow = [index]
+                    currentWidth = size.width
+                }
             }
         }
 
@@ -234,14 +262,16 @@ struct FlowLayout: Layout {
 
         for i in 0 ..< optimizedRows.count - 1 {
             while optimizedRows[i].count > minRowLength {
-                let lastItem = optimizedRows[i].removeLast()
-                let newNextRow = optimizedRows[i + 1] + [lastItem]
-                let newWidth = computeRowWidth(indices: newNextRow, sizes: sizes)
+                let lastItem = optimizedRows[i].last!
+
+                var testRow = optimizedRows[i + 1]
+                testRow.append(lastItem)
+                let newWidth = computeRowWidth(indices: testRow, sizes: sizes)
 
                 if newWidth <= maxWidth {
-                    optimizedRows[i + 1] = newNextRow
+                    optimizedRows[i].removeLast()
+                    optimizedRows[i + 1].append(lastItem)
                 } else {
-                    optimizedRows[i].append(lastItem)
                     break
                 }
             }
@@ -260,14 +290,16 @@ struct FlowLayout: Layout {
 
         for i in (0 ..< optimizedRows.count - 1).reversed() {
             while optimizedRows[i + 1].count > minRowLength {
-                let firstItem = optimizedRows[i + 1].removeFirst()
-                let newPrevRow = optimizedRows[i] + [firstItem]
-                let newWidth = computeRowWidth(indices: newPrevRow, sizes: sizes)
+                let firstItem = optimizedRows[i + 1].first!
+
+                var testRow = optimizedRows[i]
+                testRow.append(firstItem)
+                let newWidth = computeRowWidth(indices: testRow, sizes: sizes)
 
                 if newWidth <= maxWidth {
-                    optimizedRows[i] = newPrevRow
+                    optimizedRows[i + 1].removeFirst()
+                    optimizedRows[i].append(firstItem)
                 } else {
-                    optimizedRows[i + 1].insert(firstItem, at: 0)
                     break
                 }
             }

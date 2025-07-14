@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
 import JellyfinAPI
 import SwiftUI
 
@@ -14,10 +13,11 @@ extension SeriesEpisodeSelector {
 
     struct EpisodeCard: View {
 
-        @EnvironmentObject
-        private var mainRouter: MainCoordinator.Router
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Namespace
+        private var namespace
+
+        @Router
+        private var router
 
         let episode: BaseItemDto
 
@@ -54,28 +54,28 @@ extension SeriesEpisodeSelector {
             VStack(alignment: .leading) {
                 Button {
                     guard let mediaSource = episode.mediaSources?.first else { return }
-                    mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: episode, mediaSource: mediaSource))
+                    router.route(to: .videoPlayer(manager: OnlineVideoPlayerManager(item: episode, mediaSource: mediaSource)))
                 } label: {
-                    ZStack {
-                        Color.clear
-
-                        ImageView(episode.imageSource(.primary, maxWidth: 250))
-                            .failure {
-                                SystemImageContentView(systemName: episode.systemImage)
-                            }
-
-                        overlayView
-                    }
-                    .posterStyle(.landscape)
+                    ImageView(episode.imageSource(.primary, maxWidth: 250))
+                        .failure {
+                            SystemImageContentView(systemName: episode.systemImage)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .overlay {
+                            overlayView
+                        }
+                        .contentShape(.contextMenuPreview, Rectangle())
+                        .backport
+                        .matchedTransitionSource(id: "item", in: namespace)
+                        .posterStyle(.landscape)
                 }
 
                 SeriesEpisodeSelector.EpisodeContent(
-                    subHeader: episode.episodeLocator ?? .emptyDash,
                     header: episode.displayTitle,
+                    subHeader: episode.episodeLocator ?? .emptyDash,
                     content: episodeContent
-                )
-                .onSelect {
-                    router.route(to: \.item, episode)
+                ) {
+                    router.route(to: .item(item: episode), in: namespace)
                 }
             }
         }

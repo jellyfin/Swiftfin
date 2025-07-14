@@ -10,122 +10,92 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: if no context menu defined, don't add context menu
+private let landscapeMaxWidth: CGFloat = 500
+private let portraitMaxWidth: CGFloat = 500
 
 struct PosterButton<Item: Poster>: View {
 
-    @FocusState
-    private var isFocused: Bool
+    @EnvironmentTypeValue<Item>(\.posterOverlayRegistry)
+    private var posterOverlayRegistry
 
-    private var item: Item
-    private var type: PosterDisplayType
+    @State
+    private var posterSize: CGSize = .zero
+
     private var horizontalAlignment: HorizontalAlignment
-    private var content: () -> any View
-    private var imageOverlay: () -> any View
-    private var contextMenu: () -> any View
-    private var onSelect: () -> Void
+    private let item: Item
+    private let type: PosterDisplayType
+    private let label: any View
+    private let action: () -> Void
 
-    // Setting the .focused() modifier causes significant performance issues.
-    // Only set if desiring focus changes
-    private var onFocusChanged: ((Bool) -> Void)?
-
-    private func imageView(from item: Item) -> ImageView {
+    private func imageSources(from item: Item) -> [ImageSource] {
         switch type {
-        case .portrait:
-            ImageView(item.portraitImageSources(maxWidth: 500))
         case .landscape:
-            ImageView(item.landscapeImageSources(maxWidth: 500))
+            item.landscapeImageSources(maxWidth: landscapeMaxWidth)
+        case .portrait:
+            item.portraitImageSources(maxWidth: portraitMaxWidth)
         }
+    }
+
+    @ViewBuilder
+    private func poster(overlay: some View) -> some View {
+        ImageView(imageSources(from: item))
+            .failure {
+                if item.showTitle {
+                    SystemImageContentView(systemName: item.systemImage)
+                } else {
+                    SystemImageContentView(
+                        title: item.displayTitle,
+                        systemName: item.systemImage
+                    )
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .overlay { overlay }
+            .contentShape(.contextMenuPreview, Rectangle())
+            .posterStyle(type)
+            .posterShadow()
+            .hoverEffect(.highlight)
     }
 
     var body: some View {
-        VStack(alignment: horizontalAlignment) {
-            Button {
-                onSelect()
-            } label: {
-                ZStack {
-                    Color.clear
-
-                    imageView(from: item)
-                        .failure {
-                            if item.showTitle {
-                                SystemImageContentView(systemName: item.systemImage)
-                            } else {
-                                SystemImageContentView(
-                                    title: item.displayTitle,
-                                    systemName: item.systemImage
-                                )
-                            }
-                        }
-                        .accessibilityIgnoresInvertColors()
-
-                    imageOverlay()
-                        .eraseToAnyView()
-                }
-                .posterStyle(type)
-            }
-            .buttonStyle(.card)
-            .contextMenu(menuItems: {
-                contextMenu()
-                    .eraseToAnyView()
-            })
-            .posterShadow()
-            .ifLet(onFocusChanged) { view, onFocusChanged in
-                view
-                    .focused($isFocused)
-                    .onChange(of: isFocused) { _, newValue in
-                        onFocusChanged(newValue)
-                    }
-            }
-            .accessibilityLabel(item.displayTitle)
-
-            content()
+        Button(action: action) {
+            let overlay = posterOverlayRegistry?(item) ??
+                PosterButton.DefaultOverlay(item: item)
                 .eraseToAnyView()
-                .zIndex(-1)
+
+            poster(overlay: overlay)
+                .trackingSize($posterSize)
+
+            label
+                .eraseToAnyView()
+        }
+        .buttonStyle(.borderless)
+        .buttonBorderShape(.roundedRectangle)
+        .focusedValue(\.focusedPoster, AnyPoster(item))
+        .accessibilityLabel(item.displayTitle)
+        .matchedContextMenu(for: item) {
+            EmptyView()
         }
     }
 }
 
 extension PosterButton {
 
-    init(item: Item, type: PosterDisplayType) {
-        self.init(
-            item: item,
-            type: type,
-            horizontalAlignment: .leading,
-            content: { TitleSubtitleContentView(item: item) },
-            imageOverlay: { DefaultOverlay(item: item) },
-            contextMenu: { EmptyView() },
-            onSelect: {},
-            onFocusChanged: nil
-        )
+    init(
+        item: Item,
+        type: PosterDisplayType,
+        action: @escaping () -> Void,
+        @ViewBuilder label: @escaping () -> any View
+    ) {
+        self.item = item
+        self.type = type
+        self.action = action
+        self.label = label()
+        self.horizontalAlignment = .leading
     }
-}
-
-extension PosterButton {
 
     func horizontalAlignment(_ alignment: HorizontalAlignment) -> Self {
         copy(modifying: \.horizontalAlignment, with: alignment)
-    }
-
-    func content(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.content, with: content)
-    }
-
-    func imageOverlay(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.imageOverlay, with: content)
-    }
-
-    func contextMenu(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.contextMenu, with: content)
-    }
-
-    func onSelect(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
-    }
-
-    func onFocusChanged(_ action: @escaping (Bool) -> Void) -> Self {
-        copy(modifying: \.onFocusChanged, with: action)
     }
 }
 

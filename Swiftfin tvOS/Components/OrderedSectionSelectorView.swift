@@ -42,7 +42,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             SplitFormWindowView()
                 .descriptionView {
                     Image(systemName: systemImage)

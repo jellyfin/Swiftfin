@@ -9,6 +9,7 @@
 import CollectionVGrid
 import Defaults
 import JellyfinAPI
+import Nuke
 import SwiftUI
 
 // TODO: need to think about better design for views that may not support current library display type
@@ -43,11 +44,11 @@ struct PagingLibraryView<Element: Poster>: View {
     @Default(.Customization.Library.rememberLayout)
     private var rememberLayout
 
-    @Default
+    @Default(.Customization.Library.displayType)
     private var defaultDisplayType: LibraryDisplayType
-    @Default
+    @Default(.Customization.Library.listColumnCount)
     private var defaultListColumnCount: Int
-    @Default
+    @Default(.Customization.Library.posterType)
     private var defaultPosterType: PosterDisplayType
 
     @Default(.Customization.Library.letterPickerEnabled)
@@ -55,8 +56,11 @@ struct PagingLibraryView<Element: Poster>: View {
     @Default(.Customization.Library.letterPickerOrientation)
     private var letterPickerOrientation
 
-    @EnvironmentObject
-    private var router: LibraryCoordinator<Element>.Router
+    @Namespace
+    private var namespace
+
+    @Router
+    private var router
 
     @State
     private var layout: CollectionVGridLayout
@@ -81,21 +85,23 @@ struct PagingLibraryView<Element: Poster>: View {
 
         // have to set these properties manually to get proper initial layout
 
-        self._defaultDisplayType = Default(.Customization.Library.displayType)
-        self._defaultListColumnCount = Default(.Customization.Library.listColumnCount)
-        self._defaultPosterType = Default(.Customization.Library.posterType)
-
         self._displayType = StoredValue(.User.libraryDisplayType(parentID: viewModel.parent?.id))
         self._listColumnCount = StoredValue(.User.libraryListColumnCount(parentID: viewModel.parent?.id))
         self._posterType = StoredValue(.User.libraryPosterType(parentID: viewModel.parent?.id))
 
         self._viewModel = StateObject(wrappedValue: viewModel)
 
-        let initialDisplayType = Defaults[.Customization.Library.rememberLayout] ? _displayType.wrappedValue : _defaultDisplayType
-            .wrappedValue
-        let initialListColumnCount = Defaults[.Customization.Library.rememberLayout] ? _listColumnCount
-            .wrappedValue : _defaultListColumnCount.wrappedValue
-        let initialPosterType = Defaults[.Customization.Library.rememberLayout] ? _posterType.wrappedValue : _defaultPosterType.wrappedValue
+        let defaultDisplayType = Defaults[.Customization.Library.displayType]
+        let defaultListColumnCount = Defaults[.Customization.Library.listColumnCount]
+        let defaultPosterType = Defaults[.Customization.Library.posterType]
+
+        let displayType = StoredValues[.User.libraryDisplayType(parentID: viewModel.parent?.id)]
+        let listColumnCount = StoredValues[.User.libraryListColumnCount(parentID: viewModel.parent?.id)]
+        let posterType = StoredValues[.User.libraryPosterType(parentID: viewModel.parent?.id)]
+
+        let initialDisplayType = Defaults[.Customization.Library.rememberLayout] ? displayType : defaultDisplayType
+        let initialListColumnCount = Defaults[.Customization.Library.rememberLayout] ? listColumnCount : defaultListColumnCount
+        let initialPosterType = Defaults[.Customization.Library.rememberLayout] ? posterType : defaultPosterType
 
         if UIDevice.isPhone {
             layout = Self.phoneLayout(
@@ -113,33 +119,25 @@ struct PagingLibraryView<Element: Poster>: View {
 
     // MARK: onSelect
 
-    private func onSelect(_ element: Element) {
+    private func onSelect(_ element: Element, in namespace: Namespace.ID) {
         switch element {
         case let element as BaseItemDto:
-            select(item: element)
+            select(item: element, in: namespace)
         case let element as BaseItemPerson:
-            select(person: element)
+            select(item: BaseItemDto(person: element), in: namespace)
         default:
             assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
         }
     }
 
-    private func select(item: BaseItemDto) {
+    private func select(item: BaseItemDto, in namespace: Namespace.ID) {
         switch item.type {
         case .collectionFolder, .folder:
             let viewModel = ItemLibraryViewModel(parent: item, filters: .default)
-            router.route(to: \.library, viewModel)
-        case .person:
-            let viewModel = ItemLibraryViewModel(parent: item)
-            router.route(to: \.library, viewModel)
+            router.route(to: .library(viewModel: viewModel), in: namespace)
         default:
-            router.route(to: \.item, item)
+            router.route(to: .item(item: item), in: namespace)
         }
-    }
-
-    private func select(person: BaseItemPerson) {
-        let viewModel = ItemLibraryViewModel(parent: person)
-        router.route(to: \.library, viewModel)
     }
 
     // MARK: layout
@@ -181,47 +179,32 @@ struct PagingLibraryView<Element: Poster>: View {
     //       so an empty content view is necessary
 
     @ViewBuilder
-    private func landscapeGridItemView(item: Element) -> some View {
-        PosterButton(item: item, type: .landscape)
-            .content {
-                if item.showTitle {
-                    PosterButton.TitleContentView(item: item)
-                        .lineLimit(1, reservesSpace: true)
-                } else if viewModel.parent?.libraryType == .folder {
-                    PosterButton.TitleContentView(item: item)
-                        .lineLimit(1, reservesSpace: true)
-                        .hidden()
-                }
+    private func gridItemView(item: Element, posterType: PosterDisplayType) -> some View {
+        PosterButton(
+            item: item,
+            type: posterType
+        ) { namespace in
+            onSelect(item, in: namespace)
+        } label: {
+            if item.showTitle {
+                PosterButton<Element>.TitleContentView(title: item.displayTitle)
+                    .lineLimit(1, reservesSpace: true)
+            } else if viewModel.parent?.libraryType == .folder {
+                PosterButton<Element>.TitleContentView(title: item.displayTitle)
+                    .lineLimit(1, reservesSpace: true)
+                    .hidden()
             }
-            .onSelect {
-                onSelect(item)
-            }
-    }
-
-    @ViewBuilder
-    private func portraitGridItemView(item: Element) -> some View {
-        PosterButton(item: item, type: .portrait)
-            .content {
-                if item.showTitle {
-                    PosterButton.TitleContentView(item: item)
-                        .lineLimit(1, reservesSpace: true)
-                } else if viewModel.parent?.libraryType == .folder {
-                    PosterButton.TitleContentView(item: item)
-                        .lineLimit(1, reservesSpace: true)
-                        .hidden()
-                }
-            }
-            .onSelect {
-                onSelect(item)
-            }
+        }
     }
 
     @ViewBuilder
     private func listItemView(item: Element, posterType: PosterDisplayType) -> some View {
-        LibraryRow(item: item, posterType: posterType)
-            .onSelect {
-                onSelect(item)
-            }
+        LibraryRow(
+            item: item,
+            posterType: posterType
+        ) { namespace in
+            onSelect(item, in: namespace)
+        }
     }
 
     @ViewBuilder
@@ -233,23 +216,19 @@ struct PagingLibraryView<Element: Poster>: View {
     }
 
     @ViewBuilder
-    private var gridView: some View {
+    private var elementsView: some View {
         CollectionVGrid(
             uniqueElements: viewModel.elements,
             id: \.unwrappedIDHashOrZero,
             layout: layout
         ) { item in
+            let displayType = Defaults[.Customization.Library.rememberLayout] ? displayType : defaultDisplayType
+            let posterType = Defaults[.Customization.Library.rememberLayout] ? posterType : defaultPosterType
 
-            let displayType = Defaults[.Customization.Library.rememberLayout] ? _displayType.wrappedValue : _defaultDisplayType
-                .wrappedValue
-            let posterType = Defaults[.Customization.Library.rememberLayout] ? _posterType.wrappedValue : _defaultPosterType.wrappedValue
-
-            switch (posterType, displayType) {
-            case (.landscape, .grid):
-                landscapeGridItemView(item: item)
-            case (.portrait, .grid):
-                portraitGridItemView(item: item)
-            case (_, .list):
+            switch displayType {
+            case .grid:
+                gridItemView(item: item, posterType: posterType)
+            case .list:
                 listItemView(item: item, posterType: posterType)
             }
         }
@@ -257,7 +236,7 @@ struct PagingLibraryView<Element: Poster>: View {
             viewModel.send(.getNextPage)
         }
         .proxy(collectionVGridProxy)
-        .scrollIndicatorsVisible(false)
+        .scrollIndicators(.hidden)
     }
 
     @ViewBuilder
@@ -267,7 +246,7 @@ struct PagingLibraryView<Element: Poster>: View {
             if viewModel.elements.isEmpty {
                 L10n.noResults.text
             } else {
-                gridView
+                elementsView
             }
         case .initial, .refreshing:
             DelayedProgressView()
@@ -321,7 +300,7 @@ struct PagingLibraryView<Element: Poster>: View {
                 viewModel: filterViewModel,
                 types: enabledDrawerFilters
             ) {
-                router.route(to: \.filter, $0)
+                router.route(to: .filter(type: $0.type, viewModel: $0.viewModel))
             }
         }
         .onChange(of: defaultDisplayType) { newValue in
@@ -454,10 +433,9 @@ struct PagingLibraryView<Element: Poster>: View {
             case let .gotRandomItem(item):
                 switch item {
                 case let item as BaseItemDto:
-                    router.route(to: \.item, item)
+                    select(item: item, in: namespace)
                 case let item as BaseItemPerson:
-                    let viewModel = ItemLibraryViewModel(parent: item, filters: .default)
-                    router.route(to: \.library, viewModel)
+                    select(item: BaseItemDto(person: item), in: namespace)
                 default:
                     assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
                 }

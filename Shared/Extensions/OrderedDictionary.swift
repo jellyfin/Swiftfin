@@ -22,12 +22,18 @@ extension OrderedDictionary {
         }
     }
 
-    func sortedKeys(by areInIncreasingOrder: (Key, Key) -> Bool) -> OrderedDictionary<Key, Value> {
+    func sortedKeys(by areInIncreasingOrder: (Key, Key) -> Bool) -> Self {
         let sortedKeys = keys.sorted(by: areInIncreasingOrder)
 
         return OrderedDictionary(uniqueKeysWithValues: sortedKeys.compactMap { key in
             guard let value = self[key] else { return nil }
             return (key, value)
         })
+    }
+
+    func sortedKeys<KeyValue: Comparable>(using keyValue: (Key) -> KeyValue) -> Self {
+        sortedKeys { lhs, rhs in
+            keyValue(lhs) < keyValue(rhs)
+        }
     }
 }

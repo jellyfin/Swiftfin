@@ -17,8 +17,8 @@ extension ItemView {
         @StoredValue(.User.itemViewAttributes)
         private var attributes
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         private var viewModel: ItemViewModel
@@ -70,13 +70,13 @@ extension ItemView {
                 .foregroundColor(.secondary)
                 .padding(.horizontal)
 
-                ItemView.AttributesHStack(
-                    attributes: attributes,
-                    viewModel: viewModel,
-                    alignment: .center
-                )
-
                 Group {
+                    ItemView.AttributesHStack(
+                        attributes: attributes,
+                        viewModel: viewModel,
+                        alignment: .center
+                    )
+
                     if viewModel.presentPlayButton {
                         ItemView.PlayButton(viewModel: viewModel)
                             .frame(height: 50)

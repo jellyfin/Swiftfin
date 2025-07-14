@@ -13,8 +13,8 @@ extension HomeView {
 
     struct CinematicResumeView: View {
 
-        @EnvironmentObject
-        private var router: HomeCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: HomeViewModel
@@ -59,14 +59,14 @@ extension HomeView {
                         Text(" ")
                     }
                 }
-                .itemImageOverlay { item in
+                .onSelect { item in
+                    router.route(to: .item(item: item))
+                }
+                .posterOverlay(for: BaseItemDto.self) { item in
                     LandscapePosterProgressBar(
                         title: item.progressLabel ?? L10n.continue,
                         progress: (item.userData?.playedPercentage ?? 0) / 100
                     )
-                }
-                .onSelect { item in
-                    router.route(to: \.item, item)
                 }
         }
     }

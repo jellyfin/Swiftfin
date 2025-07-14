@@ -19,8 +19,8 @@ struct DeviceDetailsView: View {
 
     // MARK: - State & Environment Objects
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel: DeviceDetailViewModel
@@ -61,7 +61,7 @@ struct DeviceDetailsView: View {
                     user: user,
                     lastActivityDate: viewModel.device.dateLastActivity
                 ) {
-                    router.route(to: \.userDetails, user)
+                    router.route(to: .userDetails(user: user))
                 }
             }
 

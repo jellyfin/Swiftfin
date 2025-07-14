@@ -19,16 +19,14 @@ struct ItemImagesView: View {
 
     // MARK: - Observed & Environment Objects
 
-    @EnvironmentObject
-    private var router: ItemImagesCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     var viewModel: ItemImagesViewModel
 
     // MARK: - Dialog State
 
-    @State
-    private var selectedImage: ImageInfo?
     @State
     private var selectedType: ImageType?
     @State
@@ -61,29 +59,7 @@ struct ItemImagesView: View {
             viewModel.send(.refresh)
         }
         .navigationBarCloseButton {
-            router.dismissCoordinator()
-        }
-        .sheet(item: $selectedImage) {
-            selectedImage = nil
-        } content: { imageInfo in
-            ItemImageDetailsView(
-                viewModel: viewModel,
-                imageSource: imageInfo.itemImageSource(
-                    itemID: viewModel.item.id!,
-                    client: viewModel.userSession.client
-                ),
-                index: imageInfo.imageIndex,
-                width: imageInfo.width,
-                height: imageInfo.height,
-                onClose: {
-                    selectedImage = nil
-                },
-                onDelete: {
-                    viewModel.send(.deleteImage(imageInfo))
-                    selectedImage = nil
-                }
-            )
-            .environment(\.isEditing, true)
+            router.dismiss()
         }
         .fileImporter(
             isPresented: $isFilePickerPresented,
@@ -140,7 +116,12 @@ struct ItemImagesView: View {
                 HStack {
                     ForEach(images, id: \.self) { imageInfo in
                         imageButton(imageInfo: imageInfo) {
-                            selectedImage = imageInfo
+                            router.route(
+                                to: .itemImageDetails(
+                                    viewModel: viewModel,
+                                    imageInfo: imageInfo
+                                )
+                            )
                         }
                     }
                 }
@@ -161,10 +142,7 @@ struct ItemImagesView: View {
 
             Menu(L10n.options, systemImage: "plus") {
                 Button(L10n.search, systemImage: "magnifyingglass") {
-                    router.route(
-                        to: \.addImage,
-                        imageType
-                    )
+                    router.route(to: .addItemImage(viewModel: viewModel, imageType: imageType))
                 }
 
                 Divider()
@@ -175,7 +153,7 @@ struct ItemImagesView: View {
                 }
 
                 Button(L10n.uploadPhoto, systemImage: "photo.badge.plus") {
-                    router.route(to: \.photoPicker, imageType)
+                    router.route(to: .itemImageSelector(viewModel: viewModel, imageType: imageType))
                 }
             }
             .font(.body)

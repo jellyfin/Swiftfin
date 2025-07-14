@@ -10,7 +10,7 @@ import CollectionVGrid
 import Defaults
 import Factory
 import JellyfinAPI
-import Stinsen
+
 import SwiftUI
 
 // TODO: seems to redraw view when popped to sometimes?
@@ -19,8 +19,8 @@ import SwiftUI
 // TODO: `afterLastDisappear` with `backgroundRefresh`
 struct MediaView: View {
 
-    @EnvironmentObject
-    private var router: MediaCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = MediaViewModel()
@@ -39,29 +39,28 @@ struct MediaView: View {
             uniqueElements: viewModel.mediaItems,
             layout: UIDevice.isPhone ? phoneLayout : padLayout
         ) { mediaType in
-            MediaItem(viewModel: viewModel, type: mediaType)
-                .onSelect {
-                    switch mediaType {
-                    case let .collectionFolder(item):
-                        let viewModel = ItemLibraryViewModel(
-                            parent: item,
-                            filters: .default
-                        )
-                        router.route(to: \.library, viewModel)
-                    case .downloads:
-                        router.route(to: \.downloads)
-                    case .favorites:
-                        // TODO: favorites should have its own view instead of a library
-                        let viewModel = ItemLibraryViewModel(
-                            title: L10n.favorites,
-                            id: "favorites",
-                            filters: .favorites
-                        )
-                        router.route(to: \.library, viewModel)
-                    case .liveTV:
-                        router.route(to: \.liveTV)
-                    }
+            MediaItem(viewModel: viewModel, type: mediaType) { namespace in
+                switch mediaType {
+                case let .collectionFolder(item):
+                    let viewModel = ItemLibraryViewModel(
+                        parent: item,
+                        filters: .default
+                    )
+                    router.route(to: .library(viewModel: viewModel), in: namespace)
+                case .downloads:
+                    router.route(to: .downloadList)
+                case .favorites:
+                    // TODO: favorites should have its own view instead of a library
+                    let viewModel = ItemLibraryViewModel(
+                        title: L10n.favorites,
+                        id: "favorites",
+                        filters: .favorites
+                    )
+                    router.route(to: .library(viewModel: viewModel), in: namespace)
+                case .liveTV:
+                    router.route(to: .liveTV)
                 }
+            }
         }
     }
 
