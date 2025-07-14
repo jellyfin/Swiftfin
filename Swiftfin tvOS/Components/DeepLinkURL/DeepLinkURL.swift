@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 struct DeepLinkURL {
-    let type: DeepLinkType
+    let type: DeepLinkURLSource
     let path: String
 
     // MARK: - Completed DeepLink URL with Prefix
@@ -29,13 +29,13 @@ struct DeepLinkURL {
     // MARK: - Initialize from a URL String
 
     init(_ urlString: String) {
-        self.type = DeepLinkType.fromURL(urlString)
+        self.type = DeepLinkURLSource.fromURL(urlString)
         self.path = urlString
     }
 
     // MARK: - Initialize from Valid Components
 
-    init(type: DeepLinkType, path: String) {
+    init(type: DeepLinkURLSource, path: String) {
         self.type = type
         self.path = path
     }

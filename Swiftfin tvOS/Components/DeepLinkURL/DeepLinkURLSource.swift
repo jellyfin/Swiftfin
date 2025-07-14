@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-enum DeepLinkType: String, CaseIterable {
+enum DeepLinkURLSource: String, CaseIterable {
     /// Common trailer platforms
     case youtube
     case vimeo
@@ -22,7 +22,7 @@ enum DeepLinkType: String, CaseIterable {
     case netflix
     case disneyPlus
     case amazonPrime
-    case hboMax
+    case hbo
     case hulu
     case peacock
     case paramountPlus
@@ -38,7 +38,6 @@ enum DeepLinkType: String, CaseIterable {
 
     // MARK: - Display Title
 
-    /// Localization is not required for Proper Nouns
     var displayTitle: String {
         switch self {
         case .youtube:
@@ -55,8 +54,8 @@ enum DeepLinkType: String, CaseIterable {
             return "Disney+"
         case .amazonPrime:
             return "Amazon Prime Video"
-        case .hboMax:
-            return "HBO Max"
+        case .hbo:
+            return "HBO"
         case .hulu:
             return "Hulu"
         case .peacock:
@@ -94,7 +93,7 @@ enum DeepLinkType: String, CaseIterable {
             return "disneyplus://"
         case .amazonPrime:
             return "primevideo://"
-        case .hboMax:
+        case .hbo:
             return "hbomax://"
         case .hulu:
             return "hulu://"
@@ -117,103 +116,100 @@ enum DeepLinkType: String, CaseIterable {
 
     // MARK: - Host Patterns
 
-    private var hostPatterns: [String] {
+    var hostPatterns: [String] {
         switch self {
         case .youtube:
-            return ["youtube", "youtu.be"]
+            return ["youtube.com", "youtu.be", "m.youtube.com", "youtu.be"]
         case .vimeo:
-            return ["vimeo"]
+            return ["vimeo.com"]
         case .netflix:
-            return ["netflix"]
+            return ["netflix.com"]
         case .disneyPlus:
-            return ["disneyplus"]
+            return ["disneyplus.com"]
         case .amazonPrime:
-            return ["amazon"]
-        case .hboMax:
-            return ["hbomax", "max.com"]
+            return ["amazon.com", "primevideo.com"]
+        case .hbo:
+            return ["hbomax.com", "max.com"]
         case .hulu:
-            return ["hulu"]
+            return ["hulu.com"]
         case .peacock:
-            return ["peacocktv"]
+            return ["peacocktv.com"]
         case .paramountPlus:
-            return ["paramountplus"]
+            return ["paramountplus.com"]
         case .dailymotion:
-            return ["dailymotion"]
+            return ["dailymotion.com"]
         case .twitch:
-            return ["twitch"]
+            return ["twitch.tv"]
         case .imdb:
-            return ["imdb"]
+            return ["imdb.com"]
         case .tmdb:
-            return ["themoviedb"]
+            return ["themoviedb.org"]
         default:
             return []
         }
     }
 
-    // MARK: - Get DeepLink from a Prefix String
+    // MARK: - Internal Pre-Computed Host Pattern Map
 
-    static func fromPrefix(_ prefix: String) -> DeepLinkType {
-        DeepLinkType.allCases.first { $0.prefix == prefix } ?? .unknown
-    }
-
-    // MARK: - Get DeepLink from a URL String
-
-    static func fromURL(_ urlString: String) -> DeepLinkType {
-        if let typeFromPrefix = _checkDeepLinkPrefix(urlString) {
-            return typeFromPrefix
-        }
-
-        guard let url = URL(string: urlString) else {
-            return .unknown
-        }
-
-        return _detectFromWebURL(url)
-    }
-
-    // MARK: - Check Deep Link Prefix
-
-    private static func _checkDeepLinkPrefix(_ urlString: String) -> DeepLinkType? {
-        for type in DeepLinkType.allCases where type != .unknown {
-            if urlString.hasPrefix(type.prefix) {
-                return type
+    private static let hostPatternMap: [String: DeepLinkURLSource] = {
+        var map: [String: DeepLinkURLSource] = [:]
+        for source in DeepLinkURLSource.allCases where source != .unknown {
+            for pattern in source.hostPatterns {
+                map[pattern] = source
             }
         }
-        return nil
-    }
+        return map
+    }()
 
-    // MARK: - Detect from Web URL
+    // MARK: - Validation
 
-    private static func _detectFromWebURL(_ url: URL) -> DeepLinkType {
-        let hostString = url.host ?? ""
-
-        for type in DeepLinkType.allCases where type != .unknown {
-            if type.matchesHost(hostString, url: url) {
-                return type
-            }
-        }
-
-        return .unknown
-    }
-
-    // MARK: - Matches Host
-
-    private func matchesHost(_ hostString: String, url: URL) -> Bool {
-        for pattern in hostPatterns {
-            if hostString.contains(pattern) {
-                return validateSpecialCases(for: self, url: url)
-            }
-        }
-        return false
-    }
-
-    // MARK: - Validate Special Cases
-
-    private func validateSpecialCases(for type: DeepLinkType, url: URL) -> Bool {
-        switch type {
+    func validate(url: URL) -> Bool {
+        switch self {
         case .amazonPrime:
             return url.path.contains("/video")
         default:
             return true
         }
+    }
+
+    // MARK: - Get DeepLinkURLSource from Prefix
+
+    static func fromPrefix(_ prefix: String) -> DeepLinkURLSource {
+        allCases.first { $0.prefix == prefix } ?? .unknown
+    }
+
+    // MARK: - Get DeepLinkURLSource from URL
+
+    static func fromURL(_ urlString: String) -> DeepLinkURLSource {
+        /// Check for prefix matches first (most specific and often quicker)
+        if let match = allCases.first(where: { urlString.hasPrefix($0.prefix) }) {
+            return match
+        }
+
+        guard let url = URL(string: urlString),
+              let host = url.host?.lowercased()
+        else {
+            return .unknown
+        }
+
+        /// Check for host pattern matches using the pre-computed map
+        for (pattern, source) in hostPatternMap {
+            if host.contains(pattern) {
+                return source.validate(url: url) ? source : .unknown
+            }
+        }
+
+        /// Fallback for Apple TV and iTunes which don't use host patterns
+        if url.scheme == "https" || url.scheme == "http" {
+            if host.contains("apple.com") && url.path.contains("/tv-app/") {
+                return .appleTV
+            }
+            if host.contains("apple.com") && (url.path.contains("/itunes/") || url.path.contains("/app/")) {
+                return .itunes
+            }
+        }
+
+        /// Fallback to unknown
+        return .unknown
     }
 }
