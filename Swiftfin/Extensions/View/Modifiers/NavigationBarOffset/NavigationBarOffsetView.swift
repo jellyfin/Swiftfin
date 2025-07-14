@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: fix lifecycle with zoom transition
+
 struct NavigationBarOffsetView<Content: View>: UIViewControllerRepresentable {
 
     @Binding

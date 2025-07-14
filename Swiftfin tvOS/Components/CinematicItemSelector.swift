@@ -15,62 +15,55 @@ import SwiftUI
 
 struct CinematicItemSelector<Item: Poster>: View {
 
-    @State
-    private var focusedItem: Item?
+    @FocusState
+    private var isSectionFocused
+
+    @FocusedValue(\.focusedPoster)
+    private var focusedPoster
 
     @StateObject
-    private var viewModel: CinematicBackgroundView<Item>.ViewModel = .init()
+    private var viewModel: CinematicBackgroundView.Proxy = .init()
 
     private var topContent: (Item) -> any View
     private var itemContent: (Item) -> any View
-    private var itemImageOverlay: (Item) -> any View
-    private var itemContextMenu: (Item) -> any View
     private var trailingContent: () -> any View
     private var onSelect: (Item) -> Void
 
     let items: [Item]
 
     var body: some View {
-        ZStack(alignment: .bottomLeading) {
+        VStack(alignment: .leading, spacing: 10) {
 
-            Color.clear
-
-            VStack(alignment: .leading, spacing: 10) {
-
-                Spacer()
-
-                if let currentItem = viewModel.currentItem {
-                    topContent(currentItem)
-                        .eraseToAnyView()
-                        .id(currentItem.hashValue)
-                        .transition(.opacity)
-                }
-
-                PosterHStack(type: .landscape, items: items)
-                    .content(itemContent)
-                    .imageOverlay(itemImageOverlay)
-                    .contextMenu(itemContextMenu)
-                    .trailing(trailingContent)
-                    .onSelect(onSelect)
-                    .focusedItem($focusedItem)
+            if let focusedPoster, let focusedItem = focusedPoster._poster as? Item {
+                topContent(focusedItem)
+                    .eraseToAnyView()
+                    .id(focusedItem.hashValue)
+                    .transition(.opacity)
             }
-        }
-        .background(alignment: .top) {
-            ZStack {
-                CinematicBackgroundView(
-                    viewModel: viewModel,
-                    initialItem: items.first
-                )
 
-                LinearGradient(
-                    stops: [
-                        .init(color: .clear, location: 0.5),
-                        .init(color: .black.opacity(0.4), location: 0.6),
-                        .init(color: .black, location: 1),
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+            // TODO: fix intrinsic content sizing without frame
+            PosterHStack(
+                type: .landscape,
+                items: items,
+                action: onSelect,
+                label: itemContent
+            )
+            .frame(height: 400)
+        }
+        .frame(height: UIScreen.main.bounds.height - 75, alignment: .bottomLeading)
+        .frame(maxWidth: .infinity)
+        .background(alignment: .top) {
+            CinematicBackgroundView(
+                viewModel: viewModel,
+                initialItem: items.first
+            )
+            .overlay {
+                Color.black
+                    .maskLinearGradient {
+                        (location: 0.5, opacity: 0)
+                        (location: 0.6, opacity: 0.4)
+                        (location: 1, opacity: 1)
+                    }
             }
             .frame(height: UIScreen.main.bounds.height)
             .maskLinearGradient {
@@ -78,15 +71,12 @@ struct CinematicItemSelector<Item: Poster>: View {
                 (location: 1, opacity: 0)
             }
         }
-        .frame(height: UIScreen.main.bounds.height - 75)
-        .frame(maxWidth: .infinity)
-        .onChange(of: focusedItem) { _, newValue in
-            guard let newValue else { return }
-            viewModel.select(item: newValue)
+        .onChange(of: focusedPoster) {
+            guard let focusedPoster, isSectionFocused else { return }
+            viewModel.select(item: focusedPoster)
         }
-        .onAppear {
-            focusedItem = items.first
-        }
+        .focusSection()
+        .focused($isSectionFocused)
     }
 }
 
@@ -96,8 +86,6 @@ extension CinematicItemSelector {
         self.init(
             topContent: { _ in EmptyView() },
             itemContent: { _ in EmptyView() },
-            itemImageOverlay: { _ in EmptyView() },
-            itemContextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
             onSelect: { _ in },
             items: items
@@ -113,14 +101,6 @@ extension CinematicItemSelector {
 
     func content(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
         copy(modifying: \.itemContent, with: content)
-    }
-
-    func itemImageOverlay(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
-        copy(modifying: \.itemImageOverlay, with: content)
-    }
-
-    func contextMenu<M: View>(@ViewBuilder _ content: @escaping (Item) -> M) -> Self {
-        copy(modifying: \.itemContextMenu, with: content)
     }
 
     func trailingContent<T: View>(@ViewBuilder _ content: @escaping () -> T) -> Self {

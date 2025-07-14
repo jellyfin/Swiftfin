@@ -40,6 +40,15 @@ extension NavigationRoute {
         }
     }
 
+    static func activityFilters(viewModel: ServerActivityViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "activityFilters",
+            style: .sheet
+        ) {
+            ServerActivityFilterView(viewModel: viewModel)
+        }
+    }
+
     // MARK: - Server Tasks
 
     static func addServerTaskTrigger(observer: ServerTaskObserver) -> NavigationRoute {

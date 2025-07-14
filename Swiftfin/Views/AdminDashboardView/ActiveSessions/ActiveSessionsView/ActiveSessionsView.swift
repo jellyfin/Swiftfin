@@ -11,12 +11,20 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: filter for streaming/inactive
-
 struct ActiveSessionsView: View {
+
+    @Default(.accentColor)
+    private var accentColor
+
+    // MARK: - Router
 
     @Router
     private var router
+
+    // MARK: - Track Filter State
+
+    @State
+    private var isFiltersPresented = false
 
     @StateObject
     private var viewModel = ActiveSessionsViewModel()
@@ -49,7 +57,7 @@ struct ActiveSessionsView: View {
     private func errorView(with error: some Error) -> some View {
         ErrorView(error: error)
             .onRetry {
-                viewModel.send(.refreshSessions)
+                viewModel.send(.refresh)
             }
     }
 
@@ -69,19 +77,99 @@ struct ActiveSessionsView: View {
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.sessions)
-        .onFirstAppear {
-            viewModel.send(.refreshSessions)
-        }
-        .onReceive(timer) { _ in
-            viewModel.send(.getSessions)
-        }
-        .refreshable {
-            viewModel.send(.refreshSessions)
-        }
+        .navigationBarTitleDisplayMode(.inline)
         .topBarTrailing {
-            if viewModel.backgroundStates.contains(.gettingSessions) {
+            if viewModel.backgroundStates.contains(.backgroundRefreshing) {
                 ProgressView()
             }
+
+            Menu(L10n.filters, systemImage: "line.3.horizontal.decrease.circle") {
+                activeWithinFilterButton
+                showInactiveSessionsButton
+            }
+            .menuStyle(.button)
+            .buttonStyle(.isPressed { isPressed in
+                isFiltersPresented = isPressed
+            })
+            .foregroundStyle(accentColor)
         }
+        .onFirstAppear {
+            viewModel.send(.refresh)
+        }
+        .onReceive(timer) { _ in
+            guard !isFiltersPresented else { return }
+            viewModel.send(.backgroundRefresh)
+        }
+        .refreshable {
+            viewModel.send(.refresh)
+        }
+    }
+
+    // MARK: - Active Within Filter Button
+
+    @ViewBuilder
+    private var activeWithinFilterButton: some View {
+        Picker(selection: $viewModel.activeWithinSeconds) {
+            Label(
+                L10n.all,
+                systemImage: "infinity"
+            )
+            .tag(nil as Int?)
+
+            Label(
+                300.formatted(.hourMinute),
+                systemImage: "clock"
+            )
+            .tag(300 as Int?)
+
+            Label(
+                900.formatted(.hourMinute),
+                systemImage: "clock"
+            )
+            .tag(900 as Int?)
+
+            Label(
+                1800.formatted(.hourMinute),
+                systemImage: "clock"
+            )
+            .tag(1800 as Int?)
+
+            Label(
+                3600.formatted(.hourMinute),
+                systemImage: "clock"
+            )
+            .tag(3600 as Int?)
+        } label: {
+            Text(L10n.lastSeen)
+
+            if let activeWithinSeconds = viewModel.activeWithinSeconds {
+                Text(Double(activeWithinSeconds).formatted(.hourMinute))
+            } else {
+                Text(L10n.all)
+            }
+
+            Image(systemName: viewModel.activeWithinSeconds == nil ? "infinity" : "clock")
+        }
+        .pickerStyle(.menu)
+    }
+
+    // MARK: - Show Inactive Sessions Button
+
+    @ViewBuilder
+    private var showInactiveSessionsButton: some View {
+        Picker(selection: $viewModel.showSessionType) {
+            ForEach(ActiveSessionFilter.allCases, id: \.self) { filter in
+                Label(
+                    filter.displayTitle,
+                    systemImage: filter.systemImage
+                )
+                .tag(filter)
+            }
+        } label: {
+            Text(L10n.sessions)
+            Text(viewModel.showSessionType.displayTitle)
+            Image(systemName: viewModel.showSessionType.systemImage)
+        }
+        .pickerStyle(.menu)
     }
 }

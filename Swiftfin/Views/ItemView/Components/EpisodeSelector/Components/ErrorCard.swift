@@ -13,21 +13,10 @@ extension SeriesEpisodeSelector {
     struct ErrorCard: View {
 
         let error: JellyfinAPIError
-        private var onSelect: () -> Void
-
-        init(error: JellyfinAPIError) {
-            self.error = error
-            self.onSelect = {}
-        }
-
-        func onSelect(perform action: @escaping () -> Void) -> Self {
-            copy(modifying: \.onSelect, with: action)
-        }
+        let action: () -> Void
 
         var body: some View {
-            Button {
-                onSelect()
-            } label: {
+            Button(action: action) {
                 VStack(alignment: .leading) {
                     Color.secondarySystemFill
                         .opacity(0.75)
@@ -38,9 +27,10 @@ extension SeriesEpisodeSelector {
                         }
 
                     SeriesEpisodeSelector.EpisodeContent(
-                        subHeader: .emptyDash,
                         header: L10n.error,
-                        content: error.localizedDescription
+                        subHeader: .emptyDash,
+                        content: error.localizedDescription,
+                        action: action
                     )
                 }
             }

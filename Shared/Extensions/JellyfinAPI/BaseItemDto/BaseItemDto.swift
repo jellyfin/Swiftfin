@@ -14,6 +14,17 @@ import UIKit
 
 // TODO: clean up
 
+extension BaseItemDto {
+
+    init(person: BaseItemPerson) {
+        self.init(
+            id: person.id,
+            name: person.name,
+            type: .person
+        )
+    }
+}
+
 extension BaseItemDto: Displayable {
 
     var displayTitle: String {
@@ -29,6 +40,21 @@ extension BaseItemDto: LibraryIdentifiable {
 }
 
 extension BaseItemDto {
+
+    var birthday: Date? {
+        guard type == .person else { return nil }
+        return premiereDate
+    }
+
+    var birthplace: String? {
+        guard type == .person else { return nil }
+        return productionLocations?.first
+    }
+
+    var deathday: Date? {
+        guard type == .person else { return nil }
+        return endDate
+    }
 
     var episodeLocator: String? {
         guard let episodeNo = indexNumber else { return nil }

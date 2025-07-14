@@ -68,4 +68,5 @@ jobs:
         profileName64:${{ secrets.PROFILE_NAME_64 }} \
         xcodeVersion:${{ github.event.client_payload.xcodeVersion }} \
         build:${{ github.event.client_payload.build }} \
-        version:${{ github.event.client_payload.version }}
+        version:${{ github.event.client_payload.version }} \
+        branch:${{ github.event.client_payload.branch }}

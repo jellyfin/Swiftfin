@@ -7,57 +7,49 @@
 //
 
 import CollectionHStack
-import OrderedCollections
 import SwiftUI
 
-struct PosterHStack<Element: Poster & Identifiable, Data: Collection>: View where Data.Element == Element, Data.Index == Int {
+// TODO: Migrate to single `header: View`
+
+struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element == Element, Data.Index == Int {
 
     private var data: Data
     private var header: () -> any View
     private var title: String?
     private var type: PosterDisplayType
-    private var content: (Element) -> any View
-    private var imageOverlay: (Element) -> any View
-    private var contextMenu: (Element) -> any View
+    private var label: (Element) -> any View
     private var trailingContent: () -> any View
-    private var onSelect: (Element) -> Void
+    private var action: (Element, Namespace.ID) -> Void
 
-    @ViewBuilder
-    private var padHStack: some View {
-        CollectionHStack(
-            uniqueElements: data,
-            minWidth: type == .portrait ? 140 : 220
-        ) { item in
-            PosterButton(
-                item: item,
-                type: type
+    private var layout: CollectionHStackLayout {
+        if UIDevice.isPhone {
+            return .grid(
+                columns: type == .portrait ? 3 : 2,
+                rows: 1,
+                columnTrailingInset: 0
             )
-            .content { content(item).eraseToAnyView() }
-            .imageOverlay { imageOverlay(item).eraseToAnyView() }
-            .contextMenu { contextMenu(item).eraseToAnyView() }
-            .onSelect { onSelect(item) }
+        } else {
+            return .minimumWidth(
+                columnWidth: type == .portrait ? 140 : 220,
+                rows: 1
+            )
         }
-        .clipsToBounds(false)
-        .dataPrefix(20)
-        .insets(horizontal: EdgeInsets.edgePadding)
-        .itemSpacing(EdgeInsets.edgePadding / 2)
-        .scrollBehavior(.continuousLeadingEdge)
     }
 
     @ViewBuilder
-    private var phoneHStack: some View {
+    private var stack: some View {
         CollectionHStack(
             uniqueElements: data,
-            columns: type == .portrait ? 3 : 2
+            layout: layout
         ) { item in
             PosterButton(
                 item: item,
                 type: type
-            )
-            .content { content(item).eraseToAnyView() }
-            .imageOverlay { imageOverlay(item).eraseToAnyView() }
-            .contextMenu { contextMenu(item).eraseToAnyView() }
-            .onSelect { onSelect(item) }
+            ) { namespace in
+                action(item, namespace)
+            } label: {
+                label(item).eraseToAnyView()
+            }
         }
         .clipsToBounds(false)
         .dataPrefix(20)
@@ -80,11 +72,7 @@ struct PosterHStack<Element: Poster & Identifiable, Data: Collection>: View wher
             }
             .edgePadding(.horizontal)
 
-            if UIDevice.isPhone {
-                phoneHStack
-            } else {
-                padHStack
-            }
+            stack
         }
     }
 }
@@ -94,43 +82,23 @@ extension PosterHStack {
     init(
         title: String? = nil,
         type: PosterDisplayType,
-        items: Data
+        items: Data,
+        action: @escaping (Element, Namespace.ID) -> Void,
+        @ViewBuilder label: @escaping (Element) -> any View = { PosterButton<Element>.TitleSubtitleContentView(item: $0) }
     ) {
         self.init(
             data: items,
             header: { DefaultHeader(title: title) },
             title: title,
             type: type,
-            content: { PosterButton.TitleSubtitleContentView(item: $0) },
-            imageOverlay: { PosterButton.DefaultOverlay(item: $0) },
-            contextMenu: { _ in EmptyView() },
+            label: label,
             trailingContent: { EmptyView() },
-            onSelect: { _ in }
+            action: action
         )
-    }
-
-    func header(@ViewBuilder _ header: @escaping () -> any View) -> Self {
-        copy(modifying: \.header, with: header)
-    }
-
-    func content(@ViewBuilder _ content: @escaping (Element) -> any View) -> Self {
-        copy(modifying: \.content, with: content)
-    }
-
-    func imageOverlay(@ViewBuilder _ content: @escaping (Element) -> any View) -> Self {
-        copy(modifying: \.imageOverlay, with: content)
-    }
-
-    func contextMenu(@ViewBuilder _ content: @escaping (Element) -> any View) -> Self {
-        copy(modifying: \.contextMenu, with: content)
     }
 
     func trailing(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.trailingContent, with: content)
-    }
-
-    func onSelect(_ action: @escaping (Element) -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
     }
 }
 

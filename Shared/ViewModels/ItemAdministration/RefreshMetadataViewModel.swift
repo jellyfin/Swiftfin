@@ -152,7 +152,8 @@ final class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: - Poll Progress
 
-    // TODO: Find a way to actually check refresh progress. Not currently possible on 10.10.6 (2025-03-27)
+    // TODO: Find a way to actually check refresh progress.
+    // - Will require the WebSocket to be implemented first.
     private func pollRefreshProgress() async throws {
         let totalDuration: Double = 5.0
         let interval: Double = 0.05

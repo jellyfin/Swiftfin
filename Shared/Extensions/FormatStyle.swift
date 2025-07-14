@@ -205,6 +205,25 @@ extension FormatStyle where Self == LastSeenFormatStyle {
     static var lastSeen: LastSeenFormatStyle { LastSeenFormatStyle() }
 }
 
+extension FormatStyle where Self == AgeFormatStyle {
+
+    static var age: AgeFormatStyle { AgeFormatStyle() }
+}
+
+struct AgeFormatStyle: FormatStyle {
+
+    private var death: Date?
+
+    func death(_ date: Date?) -> AgeFormatStyle {
+        copy(self, modifying: \.death, to: date)
+    }
+
+    func format(_ value: Date) -> String {
+        let age = Calendar.current.dateComponents([.year], from: value, to: death ?? .now).year ?? 0
+        return L10n.yearsOld(age)
+    }
+}
+
 struct IntBitRateFormatStyle: FormatStyle {
     func format(_ value: Int) -> String {
         let units = [

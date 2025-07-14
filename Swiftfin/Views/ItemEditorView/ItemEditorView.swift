@@ -73,7 +73,10 @@ struct ItemEditorView: View {
                     editTextView
                 }
 
-                editComponentsView
+                // TODO: add `BaseItemDto.hasComponenets`
+                if viewModel.item.type != .person {
+                    editComponentsView
+                }
             } /*  else if canManageSubtitles || canManageLyrics {
 
                  // TODO: Enable when Subtitle / Lyric Editing is added

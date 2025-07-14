@@ -9,6 +9,9 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: have items provide labeled attributes
+// TODO: don't layout `VStack` if no data
+
 extension ItemView {
 
     struct OverviewView: View {
@@ -37,10 +40,32 @@ extension ItemView {
                             router.route(to: .itemOverview(item: item))
                         }
                         .seeMoreType(.view)
-                        .font(.footnote)
                         .lineLimit(overviewLineLimit)
                 }
+
+                if let birthday = item.birthday?.formatted(date: .long, time: .omitted) {
+                    LabeledContent(
+                        L10n.born,
+                        value: birthday
+                    )
+                }
+
+                if let deathday = item.deathday?.formatted(date: .long, time: .omitted) {
+                    LabeledContent(
+                        L10n.died,
+                        value: deathday
+                    )
+                }
+
+                if let birthplace = item.birthplace {
+                    LabeledContent(
+                        L10n.birthplace,
+                        value: birthplace
+                    )
+                }
             }
+            .font(.footnote)
+            .labeledContentStyle(.itemAttribute)
         }
     }
 }
