@@ -119,12 +119,12 @@ extension ItemView.CompactLogoScrollView {
                 .foregroundColor(Color(UIColor.lightGray))
                 .padding(.horizontal)
 
-                ItemView.AttributesHStack(
-                    attributes: attributes,
-                    viewModel: viewModel
-                )
-
                 Group {
+                    ItemView.AttributesHStack(
+                        attributes: attributes,
+                        viewModel: viewModel
+                    )
+
                     if viewModel.presentPlayButton {
                         ItemView.PlayButton(viewModel: viewModel)
                             .frame(height: 50)
