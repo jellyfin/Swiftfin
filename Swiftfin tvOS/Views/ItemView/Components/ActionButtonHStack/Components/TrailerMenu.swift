@@ -145,7 +145,7 @@ extension ItemView {
 
             let deepLink = DeepLinkURL(urlString)
 
-            if let deepLinkURL = deepLink.url, deepLink.valid {
+            if let deepLinkURL = deepLink.url, deepLink.isValid {
                 UIApplication.shared.open(deepLinkURL) { success in
                     if !success {
                         self.error = JellyfinAPIError(L10n.unableToOpenTrailerApp(deepLink.type.displayTitle))

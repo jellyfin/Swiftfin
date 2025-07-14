@@ -36,8 +36,9 @@ enum DeepLinkType: String, CaseIterable {
     /// Unknown URL
     case unknown
 
-    // MARK: Display Title
+    // MARK: - Display Title
 
+    /// Localization is not required for Proper Nouns
     var displayTitle: String {
         switch self {
         case .youtube:
@@ -75,7 +76,7 @@ enum DeepLinkType: String, CaseIterable {
         }
     }
 
-    // MARK: URL Prefix
+    // MARK: - URL Prefix
 
     var prefix: String {
         switch self {
@@ -114,6 +115,41 @@ enum DeepLinkType: String, CaseIterable {
         }
     }
 
+    // MARK: - Host Patterns
+
+    private var hostPatterns: [String] {
+        switch self {
+        case .youtube:
+            return ["youtube", "youtu.be"]
+        case .vimeo:
+            return ["vimeo"]
+        case .netflix:
+            return ["netflix"]
+        case .disneyPlus:
+            return ["disneyplus"]
+        case .amazonPrime:
+            return ["amazon"]
+        case .hboMax:
+            return ["hbomax", "max.com"]
+        case .hulu:
+            return ["hulu"]
+        case .peacock:
+            return ["peacocktv"]
+        case .paramountPlus:
+            return ["paramountplus"]
+        case .dailymotion:
+            return ["dailymotion"]
+        case .twitch:
+            return ["twitch"]
+        case .imdb:
+            return ["imdb"]
+        case .tmdb:
+            return ["themoviedb"]
+        default:
+            return []
+        }
+    }
+
     // MARK: - Get DeepLink from a Prefix String
 
     static func fromPrefix(_ prefix: String) -> DeepLinkType {
@@ -123,46 +159,61 @@ enum DeepLinkType: String, CaseIterable {
     // MARK: - Get DeepLink from a URL String
 
     static func fromURL(_ urlString: String) -> DeepLinkType {
-        for type in DeepLinkType.allCases where type != .unknown {
-            if urlString.hasPrefix(type.prefix) {
-                return type
-            }
+        if let typeFromPrefix = _checkDeepLinkPrefix(urlString) {
+            return typeFromPrefix
         }
 
         guard let url = URL(string: urlString) else {
             return .unknown
         }
 
+        return _detectFromWebURL(url)
+    }
+
+    // MARK: - Check Deep Link Prefix
+
+    private static func _checkDeepLinkPrefix(_ urlString: String) -> DeepLinkType? {
+        for type in DeepLinkType.allCases where type != .unknown {
+            if urlString.hasPrefix(type.prefix) {
+                return type
+            }
+        }
+        return nil
+    }
+
+    // MARK: - Detect from Web URL
+
+    private static func _detectFromWebURL(_ url: URL) -> DeepLinkType {
         let hostString = url.host ?? ""
 
-        if hostString.contains("youtube") || hostString.contains("youtu.be") {
-            return .youtube
-        } else if hostString.contains("vimeo") {
-            return .vimeo
-        } else if hostString.contains("netflix") {
-            return .netflix
-        } else if hostString.contains("disneyplus") {
-            return .disneyPlus
-        } else if hostString.contains("amazon") && url.path.contains("/video") {
-            return .amazonPrime
-        } else if hostString.contains("hbomax") || hostString.contains("max.com") {
-            return .hboMax
-        } else if hostString.contains("hulu") {
-            return .hulu
-        } else if hostString.contains("peacocktv") {
-            return .peacock
-        } else if hostString.contains("paramountplus") {
-            return .paramountPlus
-        } else if hostString.contains("dailymotion") {
-            return .dailymotion
-        } else if hostString.contains("twitch") {
-            return .twitch
-        } else if hostString.contains("imdb") {
-            return .imdb
-        } else if hostString.contains("themoviedb") {
-            return .tmdb
+        for type in DeepLinkType.allCases where type != .unknown {
+            if type.matchesHost(hostString, url: url) {
+                return type
+            }
         }
 
         return .unknown
+    }
+
+    // MARK: - Matches Host
+
+    private func matchesHost(_ hostString: String, url: URL) -> Bool {
+        for pattern in hostPatterns {
+            if hostString.contains(pattern) {
+                return validateSpecialCases(for: self, url: url)
+            }
+        }
+        return false
+    }
+
+    // MARK: - Validate Special Cases
+
+    private func validateSpecialCases(for type: DeepLinkType, url: URL) -> Bool {
+        switch type {
+        case .amazonPrime:
+            return url.path.contains("/video")
+        default:
+            return true
+        }
     }
 }

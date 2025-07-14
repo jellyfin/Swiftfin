@@ -21,7 +21,7 @@ struct DeepLinkURL {
 
     // MARK: - Verify this URL can be Opened
 
-    var valid: Bool {
+    var isValid: Bool {
         guard let url else { return false }
         return UIApplication.shared.canOpenURL(url)
     }
