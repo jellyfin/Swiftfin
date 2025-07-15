@@ -42,13 +42,15 @@ extension ItemView {
 
             let bottomColor = viewModel.item.blurHash(for: imageType)?.averageLinearColor ?? Color.secondarySystemFill
 
-            ImageView(viewModel.item.imageSource(
-                imageType,
-                maxWidth: UIScreen.main.bounds.width
-            ))
-            .aspectRatio(usePrimaryImage ? (2 / 3) : 1.77, contentMode: .fill)
-            .frame(height: UIScreen.main.bounds.height * 0.6)
-            .bottomEdgeGradient(bottomColor: bottomColor)
+            GeometryReader { proxy in
+                ImageView(viewModel.item.imageSource(
+                    imageType,
+                    maxWidth: proxy.size.width
+                ))
+                .aspectRatio(usePrimaryImage ? (2 / 3) : 1.77, contentMode: .fill)
+                .frame(width: proxy.size.width, height: proxy.size.height * 0.6)
+                .bottomEdgeGradient(bottomColor: bottomColor)
+            }
         }
 
         var body: some View {
