@@ -78,7 +78,7 @@ struct EditServerView: View {
                 } header: {
                     L10n.url.text
                 } footer: {
-                    if !viewModel.userSession.server.isVersionCompatible {
+                    if !viewModel.server.isVersionCompatible {
                         Label(
                             L10n.serverVersionWarning(JellyfinClient.sdkVersion.majorMinor.description),
                             systemImage: "exclamationmark.circle.fill"

@@ -11,6 +11,10 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
+// TODO: consolidate `ItemTypCollection` stacks
+//       - Show show name in episode subheader
+//       - CollectionItemContentView
+
 extension ItemView {
 
     struct PersonItemContentView: View {
@@ -50,15 +54,14 @@ extension ItemView {
                 title: element.key.pluralDisplayTitle,
                 type: .portrait,
                 items: element.value.elements
-            )
+            ) { item, namespace in
+                router.route(to: .item(item: item), in: namespace)
+            }
             .trailing {
                 SeeAllButton()
                     .onSelect {
                         router.route(to: .library(viewModel: element.value))
                     }
-            }
-            .onSelect { item in
-                router.route(to: .item(item: item))
             }
         }
 

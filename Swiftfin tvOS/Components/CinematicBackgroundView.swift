@@ -10,15 +10,15 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-struct CinematicBackgroundView<Item: Poster>: View {
+struct CinematicBackgroundView: View {
 
     @ObservedObject
-    var viewModel: ViewModel
+    var viewModel: Proxy
 
     @StateObject
     private var proxy: RotateContentView.Proxy = .init()
 
-    var initialItem: Item?
+    var initialItem: (any Poster)?
 
     var body: some View {
         RotateContentView(proxy: proxy)
@@ -36,13 +36,13 @@ struct CinematicBackgroundView<Item: Poster>: View {
             }
     }
 
-    class ViewModel: ObservableObject {
+    class Proxy: ObservableObject {
 
         @Published
-        var currentItem: Item?
+        var currentItem: AnyPoster?
 
         private var cancellables = Set<AnyCancellable>()
-        private var currentItemSubject = CurrentValueSubject<Item?, Never>(nil)
+        private var currentItemSubject = CurrentValueSubject<AnyPoster?, Never>(nil)
 
         init() {
             currentItemSubject
@@ -54,8 +54,8 @@ struct CinematicBackgroundView<Item: Poster>: View {
                 .store(in: &cancellables)
         }
 
-        func select(item: Item) {
-            currentItemSubject.send(item)
+        func select(item: some Poster) {
+            currentItemSubject.send(AnyPoster(item))
         }
     }
 }

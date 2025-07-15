@@ -41,8 +41,6 @@ final class ServerActivityViewModel: PagingLibraryViewModel<ActivityLogEntry> {
                 do {
                     let users = try await getUsers()
 
-                    print("here")
-
                     await MainActor.run {
                         self.users = users
                         _ = super.respond(to: action)

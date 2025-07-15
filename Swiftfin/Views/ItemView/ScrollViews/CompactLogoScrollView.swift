@@ -40,7 +40,7 @@ extension ItemView {
         }
 
         var body: some View {
-            OffsetScrollView(headerHeight: 0.5) {
+            OffsetScrollView(heightRatio: 0.5) {
                 headerView
             } overlay: {
                 OverlayView(viewModel: viewModel)
@@ -54,12 +54,8 @@ extension ItemView {
                                 (location: 0.3, opacity: 1)
                             }
                     }
-                    .frame(
-                        maxHeight: .infinity,
-                        alignment: .bottom
-                    )
             } content: {
-                SeparatorVStack {
+                SeparatorVStack(alignment: .leading) {
                     RowDivider()
                         .padding(.vertical, 10)
                 } content: {
@@ -67,6 +63,7 @@ extension ItemView {
                         .overviewLineLimit(4)
                         .taglineLineLimit(2)
                         .edgePadding(.horizontal)
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     content
                 }
@@ -122,12 +119,12 @@ extension ItemView.CompactLogoScrollView {
                 .foregroundColor(Color(UIColor.lightGray))
                 .padding(.horizontal)
 
-                ItemView.AttributesHStack(
-                    attributes: attributes,
-                    viewModel: viewModel
-                )
-
                 Group {
+                    ItemView.AttributesHStack(
+                        attributes: attributes,
+                        viewModel: viewModel
+                    )
+
                     if viewModel.presentPlayButton {
                         ItemView.PlayButton(viewModel: viewModel)
                             .frame(height: 50)
