@@ -110,17 +110,15 @@ struct ProgramsView: View {
             title: title,
             type: .landscape,
             items: programsViewModel[keyPath: keyPath]
-        )
-        .content {
+        ) { item, _ in
+            router.route(
+                to: .liveVideoPlayer(manager: LiveVideoPlayerManager(program: item))
+            )
+        } label: {
             ProgramButtonContent(program: $0)
         }
-        .imageOverlay {
+        .posterOverlay(for: BaseItemDto.self) {
             ProgramProgressOverlay(program: $0)
-        }
-        .onSelect {
-            router.route(
-                to: .liveVideoPlayer(manager: LiveVideoPlayerManager(program: $0))
-            )
         }
     }
 

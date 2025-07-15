@@ -148,9 +148,9 @@ extension SeriesEpisodeSelector {
                     .focused(focusedEpisodeID, equals: "emptyCard")
                     .padding(.horizontal, 4)
             }
-            .allowScrolling(false)
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
+            .scrollDisabled(true)
         }
     }
 
@@ -176,9 +176,9 @@ extension SeriesEpisodeSelector {
                     .focused(focusedEpisodeID, equals: "errorCard")
                     .padding(.horizontal, 4)
             }
-            .allowScrolling(false)
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
+            .scrollDisabled(true)
         }
     }
 
@@ -197,9 +197,9 @@ extension SeriesEpisodeSelector {
                     .focused(focusedEpisodeID, equals: "loadingCard")
                     .padding(.horizontal, 4)
             }
-            .allowScrolling(false)
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
+            .scrollDisabled(true)
         }
     }
 }

@@ -88,3 +88,20 @@ struct ActionButtonStyle: ButtonStyle {
         }
     }
 }
+
+extension ButtonStyle where Self == IsPressedButtonStyle {
+
+    static func isPressed(_ isPressed: @escaping (Bool) -> Void) -> IsPressedButtonStyle {
+        IsPressedButtonStyle(isPressed: isPressed)
+    }
+}
+
+struct IsPressedButtonStyle: ButtonStyle {
+
+    let isPressed: (Bool) -> Void
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .onChange(of: configuration.isPressed, perform: isPressed)
+    }
+}

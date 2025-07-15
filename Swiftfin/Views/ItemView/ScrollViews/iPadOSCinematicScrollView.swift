@@ -70,7 +70,7 @@ extension ItemView {
 
         var body: some View {
             OffsetScrollView(
-                headerHeight: globalSize.isLandscape ? 0.75 : 0.6
+                heightRatio: globalSize.isLandscape ? 0.75 : 0.6
             ) {
                 headerView
             } overlay: {
@@ -84,13 +84,10 @@ extension ItemView {
                                 (location: 0.8, opacity: 1)
                             }
                     }
-                    .frame(
-                        maxHeight: .infinity,
-                        alignment: .bottom
-                    )
             } content: {
                 content
-                    .edgePadding(.vertical)
+                    .padding(.top, 10)
+                    .edgePadding(.bottom)
             }
             .trackingSize($globalSize)
         }

@@ -23,16 +23,13 @@ extension ItemView {
                 title: L10n.specialFeatures,
                 type: .landscape,
                 items: items
-            )
-            .onSelect { item in
+            ) { item in
                 guard let mediaSource = item.mediaSources?.first else { return }
                 router.route(
                     to: .videoPlayer(manager: OnlineVideoPlayerManager(item: item, mediaSource: mediaSource))
                 )
             }
-            .imageOverlay { _ in
-                EmptyView()
-            }
+            .posterOverlay(for: BaseItemDto.self) { _ in EmptyView() }
         }
     }
 }

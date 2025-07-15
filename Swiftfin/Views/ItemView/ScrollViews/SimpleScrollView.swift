@@ -70,13 +70,13 @@ extension ItemView {
                 .foregroundColor(.secondary)
                 .padding(.horizontal)
 
-                ItemView.AttributesHStack(
-                    attributes: attributes,
-                    viewModel: viewModel,
-                    alignment: .center
-                )
-
                 Group {
+                    ItemView.AttributesHStack(
+                        attributes: attributes,
+                        viewModel: viewModel,
+                        alignment: .center
+                    )
+
                     if viewModel.presentPlayButton {
                         ItemView.PlayButton(viewModel: viewModel)
                             .frame(height: 50)
