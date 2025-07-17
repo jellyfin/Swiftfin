@@ -55,6 +55,7 @@ struct SwiftfinCorestoreLogger: CoreStoreLogger {
         lineNumber: Int,
         functionName: StaticString
     ) {
+        guard !condition() else { return }
         logger.critical(
             "\(message())",
             metadata: nil,
