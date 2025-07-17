@@ -33,9 +33,8 @@ extension BaseItemDto: LibraryParent {
     }
 
     var isRecursiveCollection: Bool {
-        if let collectionType, [.tvshows, .boxsets].contains(collectionType) {
-            return false
-        }
-        return true
+        guard let collectionType, libraryType != .userView else { return true }
+
+        return ![.tvshows, .boxsets].contains(collectionType)
     }
 }
