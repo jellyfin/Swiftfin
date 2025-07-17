@@ -79,6 +79,7 @@ extension ServerState {
         return ImageSource(url: client.fullURL(with: request))
     }
 
+    @MainActor
     func updateServerInfo() async throws {
         guard let server = try? SwiftfinStore.dataStack.fetchOne(
             From<ServerModel>().where(Where(\.$id == id))
