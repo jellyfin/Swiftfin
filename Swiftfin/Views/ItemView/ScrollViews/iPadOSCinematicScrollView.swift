@@ -120,7 +120,7 @@ extension ItemView.iPadOSCinematicScrollView {
                                 .foregroundStyle(.white)
                         }
                         .aspectRatio(contentMode: .fit)
-                        .frame(maxWidth: 120, maxHeight: 130, alignment: .bottomLeading)
+                        .frame(maxHeight: 130, alignment: .bottomLeading)
 
                         ItemView.OverviewView(item: viewModel.item)
                             .overviewLineLimit(3)
