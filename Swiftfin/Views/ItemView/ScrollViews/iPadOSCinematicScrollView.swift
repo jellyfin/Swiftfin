@@ -105,7 +105,7 @@ extension ItemView.iPadOSCinematicScrollView {
 
                         ImageView(viewModel.item.imageSource(
                             .logo,
-                            maxWidth: geometry.size.width * 0.4,
+                            maxWidth: 120,
                             maxHeight: 130
                         ))
                         .placeholder { _ in
@@ -120,7 +120,7 @@ extension ItemView.iPadOSCinematicScrollView {
                                 .foregroundStyle(.white)
                         }
                         .aspectRatio(contentMode: .fit)
-                        .frame(maxWidth: geometry.size.width * 0.4, maxHeight: 130, alignment: .bottomLeading)
+                        .frame(maxWidth: 120, maxHeight: 130, alignment: .bottomLeading)
 
                         ItemView.OverviewView(item: viewModel.item)
                             .overviewLineLimit(3)
