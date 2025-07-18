@@ -118,6 +118,7 @@ class VideoPlayerManager: ViewModel {
         }
 
         if newState == .stopped || newState == .ended {
+            hasSentStart = false
             sendStopReport()
         }
     }
@@ -156,7 +157,7 @@ class VideoPlayerManager: ViewModel {
                     // 3
                     previousItem = items[0]
                 }
-            } else {
+            } else if items.count >= 3 {
                 nextItem = items[2]
                 previousItem = items[0]
             }
