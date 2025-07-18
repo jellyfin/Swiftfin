@@ -63,7 +63,7 @@ extension ItemView {
 
         var body: some View {
             OffsetScrollView(
-                heightRatio: globalSize.isLandscape ? 0.75 : 0.6
+                heightRatio: globalSize.isLandscape ? 0.75 : 0.5
             ) {
                 headerView
             } overlay: {
