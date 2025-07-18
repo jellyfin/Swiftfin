@@ -55,20 +55,21 @@ extension ItemView {
         }
 
         var body: some View {
-            AlternateLayoutView {
-                Color.clear
-            } content: {
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 0) {
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+                    AlternateLayoutView {
+                        Color.clear
+                            .frame(height: headerHeight, alignment: .bottom)
+                    } content: {
                         overlay
                             .frame(height: headerHeight, alignment: .bottom)
-                            .overlay {
-                                Color.systemBackground
-                                    .opacity(headerOpacity)
-                            }
-
-                        content
                     }
+                    .overlay {
+                        Color.systemBackground
+                            .opacity(headerOpacity)
+                    }
+
+                    content
                 }
             }
             .edgesIgnoringSafeArea(.top)
