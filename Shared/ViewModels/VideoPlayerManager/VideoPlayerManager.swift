@@ -57,10 +57,17 @@ class VideoPlayerManager: ViewModel {
             hasSentStart = false
             getAdjacentEpisodes(for: newValue.item)
         }
+        didSet {
+            updateNowPlayingInfo()
+        }
     }
 
     @Published
-    var nextViewModel: VideoPlayerViewModel?
+    var nextViewModel: VideoPlayerViewModel? {
+        didSet {
+            commandCenter.nextTrackCommand.isEnabled = nextViewModel != nil
+        }
+    }
 
     var currentProgressHandler: CurrentProgressHandler = .init()
     let proxy: VLCVideoPlayer.Proxy = .init()
@@ -74,8 +81,10 @@ class VideoPlayerManager: ViewModel {
         super.init()
 
         setupControlListeners()
-
         setupNotifications()
+        
+        // Enable remote control events
+        UIApplication.shared.beginReceivingRemoteControlEvents()
     }
 
     func selectNextViewModel() {
@@ -101,6 +110,9 @@ class VideoPlayerManager: ViewModel {
         if subtitleTrackIndex != playbackInformation.currentSubtitleTrack.index {
             subtitleTrackIndex = playbackInformation.currentSubtitleTrack.index
         }
+        
+        // Update now playing info with current playback time
+        updateNowPlayingPlaybackInfo()
     }
 
     func onStateUpdated(newState: VLCVideoPlayer.State) {
@@ -120,6 +132,9 @@ class VideoPlayerManager: ViewModel {
         if newState == .stopped || newState == .ended {
             sendStopReport()
         }
+        
+        // Update now playing playback rate when state changes
+        updateNowPlayingPlaybackInfo()
     }
 
     func getAdjacentEpisodes(for item: BaseItemDto) {
@@ -175,6 +190,7 @@ class VideoPlayerManager: ViewModel {
             await MainActor.run {
                 self.nextViewModel = nextViewModel
                 self.previousViewModel = previousViewModel
+                self.commandCenter.previousTrackCommand.isEnabled = previousViewModel != nil
             }
         }
     }
@@ -308,14 +324,76 @@ class VideoPlayerManager: ViewModel {
     func setupControlListeners() {
         commandCenter.pauseCommand.addTarget { [weak self] _ in
             self?.proxy.pause()
-
             return .success
         }
 
         commandCenter.playCommand.addTarget { [weak self] _ in
             self?.proxy.play()
-
             return .success
+        }
+        
+        // Skip forward/backward commands
+        commandCenter.skipForwardCommand.isEnabled = true
+        commandCenter.skipForwardCommand.preferredIntervals = [NSNumber(value: 15)]
+        commandCenter.skipForwardCommand.addTarget { [weak self] event in
+            guard let self = self,
+                  let skipEvent = event as? MPSkipIntervalCommandEvent else { return .commandFailed }
+            
+            let currentTime = self.currentProgressHandler.seconds
+            let newTime = currentTime + Int(skipEvent.interval)
+            self.proxy.setTime(.seconds(newTime))
+            
+            return .success
+        }
+        
+        commandCenter.skipBackwardCommand.isEnabled = true
+        commandCenter.skipBackwardCommand.preferredIntervals = [NSNumber(value: 15)]
+        commandCenter.skipBackwardCommand.addTarget { [weak self] event in
+            guard let self = self,
+                  let skipEvent = event as? MPSkipIntervalCommandEvent else { return .commandFailed }
+            
+            let currentTime = self.currentProgressHandler.seconds
+            let newTime = max(0, currentTime - Int(skipEvent.interval))
+            self.proxy.setTime(.seconds(newTime))
+            
+            return .success
+        }
+        
+        // Change playback position command (scrubbing)
+        commandCenter.changePlaybackPositionCommand.isEnabled = true
+        commandCenter.changePlaybackPositionCommand.addTarget { [weak self] event in
+            guard let self = self,
+                  let positionEvent = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
+            
+            self.proxy.setTime(.seconds(Int(positionEvent.positionTime)))
+            
+            return .success
+        }
+        
+        // Previous/Next track commands for episodes
+        commandCenter.previousTrackCommand.isEnabled = false
+        commandCenter.nextTrackCommand.isEnabled = false
+        
+        commandCenter.previousTrackCommand.addTarget { [weak self] _ in
+            guard let self = self else { return .commandFailed }
+            
+            if self.previousViewModel != nil {
+                self.selectPreviousViewModel()
+                return .success
+            }
+            
+            return .noActionableNowPlayingItem
+        }
+        
+        commandCenter.nextTrackCommand.addTarget { [weak self] _ in
+            guard let self = self else { return .commandFailed }
+            
+            if self.nextViewModel != nil {
+                self.selectNextViewModel()
+                return .success
+            }
+            
+            return .noActionableNowPlayingItem
         }
     }
 
@@ -346,6 +424,92 @@ class VideoPlayerManager: ViewModel {
             }
         @unknown default:
             break
+        }
+    }
+    
+    // MARK: - Now Playing Info Center
+    
+    func updateNowPlayingInfo() {
+        guard let currentViewModel else { return }
+
+        let nowPlayingInfo = NSMutableDictionary()
+
+        // Basic metadata
+        nowPlayingInfo[MPMediaItemPropertyTitle] = currentViewModel.item.displayTitle
+        nowPlayingInfo[MPMediaItemPropertyArtist] = currentViewModel.item.seriesName ?? currentViewModel.item.albumArtist ?? ""
+        nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = currentViewModel.item.album ?? currentViewModel.item.seriesName ?? ""
+
+        // Duration
+        if let runTimeTicks = currentViewModel.item.runTimeTicks {
+            let durationInSeconds = Double(runTimeTicks) / 10_000_000.0
+            nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = durationInSeconds
+        }
+
+        // Episode information - use track number as episode number for TV shows
+        if currentViewModel.item.type == .episode {
+            if let episodeNumber = currentViewModel.item.indexNumber {
+                nowPlayingInfo[MPMediaItemPropertyAlbumTrackNumber] = episodeNumber
+            }
+            // Season information can be included in the album title
+            if let seasonNumber = currentViewModel.item.parentIndexNumber {
+                let seasonText = "Season \(seasonNumber)"
+                if let seriesName = currentViewModel.item.seriesName {
+                    nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = "\(seriesName) - \(seasonText)"
+                } else {
+                    nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = seasonText
+                }
+            }
+        }
+
+        // Set initial playback info
+        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = Double(currentProgressHandler.seconds)
+        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = state == .playing ? 1.0 : 0.0
+
+        // Set initial info without artwork
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo as? [String: Any]
+        
+        // Load artwork asynchronously
+        Task {
+            await loadAndSetArtwork(for: currentViewModel.item)
+        }
+    }
+    
+    func updateNowPlayingPlaybackInfo() {
+        guard var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo else { return }
+        
+        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = Double(currentProgressHandler.seconds)
+        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = state == .playing ? Double(playbackSpeed.rawValue) : 0.0
+        
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+    }
+    
+    private func loadAndSetArtwork(for item: BaseItemDto) async {
+        do {
+            // Use the existing BaseItemDto extension to get the primary image URL
+            guard let baseImageURL = item.imageURL(.primary, maxWidth: 600) else { return }
+            
+            // Add API key to URL for authentication
+            guard var components = URLComponents(url: baseImageURL, resolvingAgainstBaseURL: false) else { return }
+            
+            let apiKey = userSession.user.accessToken
+            components.queryItems = (components.queryItems ?? []) + [URLQueryItem(name: "api_key", value: apiKey)]
+            
+            guard let imageURL = components.url else { return }
+
+            // Download the image
+            let (data, _) = try await URLSession.shared.data(from: imageURL)
+
+            guard let image = UIImage(data: data) else { return }
+            
+            let artwork = MPMediaItemArtwork(boundsSize: image.size) { _ in image }
+
+            await MainActor.run {
+                guard var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo else { return }
+                nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
+                MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+            }
+        } catch {
+            logger.error("Failed to load artwork for Now Playing: \(error)")
         }
     }
 }
