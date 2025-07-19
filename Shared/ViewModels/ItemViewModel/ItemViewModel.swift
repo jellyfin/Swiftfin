@@ -361,7 +361,7 @@ class ItemViewModel: ViewModel, Stateful {
             )
         }
 
-        let _ = try await userSession.client.send(request)
+        _ = try await userSession.client.send(request)
         Notifications[.itemShouldRefreshMetadata].post(itemID)
     }
 
@@ -383,7 +383,7 @@ class ItemViewModel: ViewModel, Stateful {
             )
         }
 
-        let _ = try await userSession.client.send(request)
+        _ = try await userSession.client.send(request)
         Notifications[.itemShouldRefreshMetadata].post(itemID)
     }
 }
