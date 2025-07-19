@@ -64,7 +64,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
             .eraseToAnyPublisher()
     }
 
-    private var connectTask: AnyCancellable? = nil
+    private var connectTask: AnyCancellable?
     private var discoveryTask: Task<Void, Never>?
     private let discovery = ServerDiscovery()
     private var eventSubject = PassthroughSubject<Event, Never>()
