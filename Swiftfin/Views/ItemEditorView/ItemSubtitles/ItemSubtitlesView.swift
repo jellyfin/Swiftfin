@@ -169,47 +169,48 @@ struct ItemSubtitlesView: View {
             )
 
             if !hasSubtitles {
-                Menu(L10n.add) {
-                    Button(L10n.uploadFile, systemImage: "plus") {
-                        router.route(to: .uploadSubtitle(viewModel: viewModel))
-                    }
-
-                    Button(L10n.search, systemImage: "magnifyingglass") {
-                        router.route(to: .searchSubtitle(viewModel: viewModel))
-                    }
+                Button(L10n.uploadFile, systemImage: "plus") {
+                    router.route(to: .uploadSubtitle(viewModel: viewModel))
                 }
-            } else {
-                if viewModel.internalSubtitles.isNotEmpty {
-                    Section {
-                        DisclosureGroup(L10n.embedded) {
-                            ForEach(viewModel.internalSubtitles, id: \.index) { subtitle in
-                                SubtitleButton(subtitle) {
+                .foregroundStyle(.primary, .secondary)
+
+                Button(L10n.search, systemImage: "magnifyingglass") {
+                    router.route(to: .searchSubtitle(viewModel: viewModel))
+                }
+                .foregroundStyle(.primary, .secondary)
+            }
+
+            if viewModel.internalSubtitles.isNotEmpty {
+                Section {
+                    DisclosureGroup(L10n.embedded) {
+                        ForEach(viewModel.internalSubtitles, id: \.index) { subtitle in
+                            SubtitleButton(subtitle) {
+                                router.route(to: .mediaStreamInfo(mediaStream: subtitle))
+                            }
+                            .environment(\.isEnabled, !isEditing)
+                        }
+                    }
+                } footer: {
+                    Text(L10n.embeddedSubtitleFooter)
+                }
+            }
+
+            if viewModel.externalSubtitles.isNotEmpty {
+                Section {
+                    DisclosureGroup(L10n.external) {
+                        ForEach(viewModel.externalSubtitles, id: \.index) { subtitle in
+                            SubtitleButton(subtitle) {
+                                if isEditing {
+                                    selectedSubtitles.toggle(value: subtitle)
+                                } else {
                                     router.route(to: .mediaStreamInfo(mediaStream: subtitle))
                                 }
-                                .environment(\.isEnabled, !isEditing)
+                            } deleteAction: {
+                                selectedSubtitles = [subtitle]
+                                isPresentingDeleteConfirmation = true
                             }
-                        }
-                    } footer: {
-                        Text(L10n.embeddedSubtitleFooter)
-                    }
-                }
-                if viewModel.externalSubtitles.isNotEmpty {
-                    Section {
-                        DisclosureGroup(L10n.external) {
-                            ForEach(viewModel.externalSubtitles, id: \.index) { subtitle in
-                                SubtitleButton(subtitle) {
-                                    if isEditing {
-                                        selectedSubtitles.toggle(value: subtitle)
-                                    } else {
-                                        router.route(to: .mediaStreamInfo(mediaStream: subtitle))
-                                    }
-                                } deleteAction: {
-                                    selectedSubtitles = [subtitle]
-                                    isPresentingDeleteConfirmation = true
-                                }
-                                .environment(\.isSelected, selectedSubtitles.contains(subtitle))
-                                .environment(\.isEditing, isEditing)
-                            }
+                            .environment(\.isSelected, selectedSubtitles.contains(subtitle))
+                            .environment(\.isEditing, isEditing)
                         }
                     }
                 }
