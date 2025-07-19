@@ -36,7 +36,7 @@ extension SwiftfinStore.V2 {
     final class AnyData: CoreStoreObject {
 
         @Field.Stored("data")
-        var data: Data? = nil
+        var data: Data?
 
         @Field.Stored("domain")
         var domain: String = ""
