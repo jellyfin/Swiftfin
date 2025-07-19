@@ -330,6 +330,8 @@ internal enum L10n {
   internal static func columnsWithCount(_ p1: Any) -> String {
     return L10n.tr("Localizable", "columnsWithCount", String(describing: p1), fallback: "Columns: %@")
   }
+  /// Commands
+  internal static let commands = L10n.tr("Localizable", "commands", fallback: "Commands")
   /// Community
   internal static let community = L10n.tr("Localizable", "community", fallback: "Community")
   /// Community rating
@@ -926,6 +928,8 @@ internal enum L10n {
   internal static let menu = L10n.tr("Localizable", "menu", fallback: "Menu")
   /// Menu Buttons
   internal static let menuButtons = L10n.tr("Localizable", "menuButtons", fallback: "Menu Buttons")
+  /// Message
+  internal static let message = L10n.tr("Localizable", "message", fallback: "Message")
   /// Metadata
   internal static let metadata = L10n.tr("Localizable", "metadata", fallback: "Metadata")
   /// Metadata preferences
@@ -1342,6 +1346,12 @@ internal enum L10n {
   internal static let selectImage = L10n.tr("Localizable", "selectImage", fallback: "Select Image")
   /// Select server
   internal static let selectServer = L10n.tr("Localizable", "selectServer", fallback: "Select server")
+  /// Send
+  internal static let send = L10n.tr("Localizable", "send", fallback: "Send")
+  /// Send a message to %@
+  internal static func sendMessageToRecipient(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "sendMessageToRecipient", String(describing: p1), fallback: "Send a message to %@")
+  }
   /// Series
   internal static let series = L10n.tr("Localizable", "series", fallback: "Series")
   /// Series Backdrop
