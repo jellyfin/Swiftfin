@@ -47,20 +47,20 @@ struct AnyPoster: Poster {
         _poster.showTitle
     }
 
-    func portraitImageSources(maxWidth: CGFloat?) -> [ImageSource] {
-        _poster.portraitImageSources(maxWidth: maxWidth)
+    func portraitImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
+        _poster.portraitImageSources(maxWidth: maxWidth, quality: quality)
     }
 
-    func landscapeImageSources(maxWidth: CGFloat?) -> [ImageSource] {
-        _poster.landscapeImageSources(maxWidth: maxWidth)
+    func landscapeImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
+        _poster.landscapeImageSources(maxWidth: maxWidth, quality: quality)
     }
 
-    func cinematicImageSources(maxWidth: CGFloat?) -> [ImageSource] {
-        _poster.cinematicImageSources(maxWidth: maxWidth)
+    func cinematicImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
+        _poster.cinematicImageSources(maxWidth: maxWidth, quality: quality)
     }
 
-    func squareImageSources(maxWidth: CGFloat?) -> [ImageSource] {
-        _poster.squareImageSources(maxWidth: maxWidth)
+    func squareImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
+        _poster.squareImageSources(maxWidth: maxWidth, quality: quality)
     }
 
     static func == (lhs: AnyPoster, rhs: AnyPoster) -> Bool {

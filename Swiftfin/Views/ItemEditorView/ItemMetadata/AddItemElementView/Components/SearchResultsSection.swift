@@ -89,7 +89,7 @@ extension AddItemElementView {
                 HStack {
                     ZStack {
                         Color.clear
-                        ImageView(person.portraitImageSources(maxWidth: 30))
+                        ImageView(person.portraitImageSources(maxWidth: 30, quality: 70))
                             .failure {
                                 SystemImageContentView(systemName: "person.fill")
                             }

@@ -63,7 +63,7 @@ extension ChapterInfo {
             self.secondsRange = secondsRange
         }
 
-        func landscapeImageSources(maxWidth: CGFloat?) -> [ImageSource] {
+        func landscapeImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
             [imageSource]
         }
     }
