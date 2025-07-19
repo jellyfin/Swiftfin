@@ -11,30 +11,49 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-// TODO: consolidate `ItemTypCollection` stacks
-//       - Show show name in episode subheader
-//       - PersonItemContentView
-
 extension ItemView {
 
-    struct CollectionItemContentView: View {
+    struct ItemTypeCollectionHStack: View {
 
         typealias Element = OrderedDictionary<BaseItemKind, ItemLibraryViewModel>.Elements.Element
 
         @Router
         private var router
 
-        @ObservedObject
-        var viewModel: TypeItemViewModel
+        let element: Element
+
+        // MARK: - Body
+
+        var body: some View {
+            Group {
+                if element.key == .episode {
+                    episodeHStack(element: element)
+                } else {
+                    posterHStack(element: element)
+                }
+            }
+            .padding(.bottom, 10)
+        }
+
+        // MARK: - Episode Poster HStack
 
         private func episodeHStack(element: Element) -> some View {
             VStack(alignment: .leading) {
 
-                Text(L10n.episodes)
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .accessibility(addTraits: [.isHeader])
-                    .edgePadding(.horizontal)
+                HStack {
+                    Text(L10n.episodes)
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .accessibility(addTraits: [.isHeader])
+
+                    Spacer()
+
+                    SeeAllButton()
+                        .onSelect {
+                            router.route(to: .library(viewModel: element.value))
+                        }
+                }
+                .edgePadding(.horizontal)
 
                 CollectionHStack(
                     uniqueElements: element.value.elements,
@@ -49,6 +68,8 @@ extension ItemView {
             }
         }
 
+        // MARK: - Default Poster HStack
+
         private func posterHStack(element: Element) -> some View {
             PosterHStack(
                 title: element.key.pluralDisplayTitle,
@@ -62,43 +83,6 @@ extension ItemView {
                     .onSelect {
                         router.route(to: .library(viewModel: element.value))
                     }
-            }
-        }
-
-        var body: some View {
-            SeparatorVStack(alignment: .leading) {
-                RowDivider()
-                    .padding(.vertical, 10)
-            } content: {
-
-                // MARK: - Items
-
-                ForEach(
-                    viewModel.sections.elements,
-                    id: \.key
-                ) { element in
-                    ItemTypeCollectionHStack(element: element)
-                }
-
-                // MARK: Genres
-
-                if let genres = viewModel.item.itemGenres, genres.isNotEmpty {
-                    ItemView.GenresHStack(genres: genres)
-                }
-
-                // MARK: Studios
-
-                if let studios = viewModel.item.studios, studios.isNotEmpty {
-                    ItemView.StudiosHStack(studios: studios)
-                }
-
-                // MARK: Similar
-
-                if viewModel.similarItems.isNotEmpty {
-                    ItemView.SimilarItemsHStack(items: viewModel.similarItems)
-                }
-
-                ItemView.AboutView(viewModel: viewModel)
             }
         }
     }
