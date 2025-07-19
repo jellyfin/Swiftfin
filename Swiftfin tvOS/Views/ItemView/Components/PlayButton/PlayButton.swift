@@ -81,6 +81,24 @@ extension ItemView {
              } */
         }
 
+        // MARK: - Resume Alert Details
+
+        private var alertTitle: String {
+            if viewModel.playButtonItem?.type == .episode {
+                return viewModel.playButtonItem?.seriesName ?? L10n.playback
+            } else {
+                return viewModel.playButtonItem?.displayTitle ?? L10n.playback
+            }
+        }
+
+        private var alertDescription: String? {
+            if viewModel.playButtonItem?.type == .episode {
+                return viewModel.playButtonItem?.displayTitle
+            } else {
+                return nil
+            }
+        }
+
         // MARK: - Body
 
         var body: some View {
@@ -109,7 +127,6 @@ extension ItemView {
                         .foregroundColor(!isValid ? Color(UIColor.secondaryLabel) : Color.black)
                         .font(.title3)
 
-                    // TODO: Use `MarqueeText`
                     Text(title)
                         .foregroundStyle(!isValid ? Color(UIColor.secondaryLabel) : Color.black)
                         .fontWeight(.semibold)
@@ -129,7 +146,7 @@ extension ItemView {
             .disabled(!isValid)
             .focused($isFocused)
             .buttonStyle(.card)
-            .alert(viewModel.playButtonItem?.displayTitle ?? L10n.playback, isPresented: $isPresentingResume) {
+            .alert(alertTitle, isPresented: $isPresentingResume) {
                 Button(L10n.resume) {
                     playContent()
                 }
@@ -140,6 +157,10 @@ extension ItemView {
 
                 Button(L10n.cancel, role: .cancel) {
                     isPresentingResume = false
+                }
+            } message: {
+                if let alertDescription {
+                    Text(alertDescription)
                 }
             }
             .errorMessage($error)
