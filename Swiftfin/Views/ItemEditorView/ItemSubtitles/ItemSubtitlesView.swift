@@ -169,10 +169,15 @@ struct ItemSubtitlesView: View {
             )
 
             if !hasSubtitles {
-                Text(L10n.none)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(.zero)
+                Menu(L10n.add) {
+                    Button(L10n.uploadFile, systemImage: "plus") {
+                        router.route(to: .uploadSubtitle(viewModel: viewModel))
+                    }
+
+                    Button(L10n.search, systemImage: "magnifyingglass") {
+                        router.route(to: .searchSubtitle(viewModel: viewModel))
+                    }
+                }
             } else {
                 if viewModel.internalSubtitles.isNotEmpty {
                     Section {
