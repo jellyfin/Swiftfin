@@ -96,7 +96,10 @@ extension SeriesEpisodeSelector {
             Button {
                 selection = season.id
             } label: {
-                Text(season.season.displayTitle)
+                Marquee(season.season.displayTitle)
+                    .marqueeDelay(0)
+                    .marqueeWhenFocused(true)
+                    .frame(maxWidth: 300)
                     .font(.headline)
                     .fontWeight(.semibold)
                     .padding(.vertical, 10)
