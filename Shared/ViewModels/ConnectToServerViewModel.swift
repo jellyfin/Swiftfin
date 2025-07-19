@@ -49,12 +49,14 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
 
     @Published
     var backgroundStates: Set<BackgroundState> = []
+    @Published
+    var state: State = .initial
 
     // no longer-found servers are not cleared, but not an issue
     @Published
     var localServers: OrderedSet<ServerState> = []
     @Published
-    var state: State = .initial
+    var discoveryStatus: ServerDiscovery.State = .inactive
 
     var events: AnyPublisher<Event, Never> {
         eventSubject
@@ -63,26 +65,36 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
     }
 
     private var connectTask: AnyCancellable?
+    private var discoveryTask: Task<Void, Never>?
     private let discovery = ServerDiscovery()
-    private var eventSubject: PassthroughSubject<Event, Never> = .init()
-
-    deinit {
-        discovery.close()
-    }
+    private var eventSubject = PassthroughSubject<Event, Never>()
 
     override init() {
         super.init()
 
-        Task { [weak self] in
-            guard let self else { return }
-
-            for await response in discovery.discoveredServers.values {
-                await MainActor.run {
-                    let _ = self.localServers.append(response.asServerState)
+        // Subscribe to discovery status
+        discovery.state
+            .receive(on: RunLoop.main)
+            .sink { [weak self] newState in
+                self?.discoveryStatus = newState
+                switch newState {
+                case .active:
+                    self?.backgroundStates.insert(.searching)
+                default:
+                    self?.backgroundStates.remove(.searching)
                 }
             }
-        }
-        .store(in: &cancellables)
+            .store(in: &cancellables)
+
+        // Subscribe to discovered servers
+        discovery.discoveredServers
+            .receive(on: RunLoop.main)
+            .sink { [weak self] response in
+                if let serverState = response.asServerState {
+                    self?.localServers.append(serverState)
+                }
+            }
+            .store(in: &cancellables)
     }
 
     func respond(to action: Action) -> State {
@@ -91,17 +103,17 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
             addNewURL(server: server)
 
             return state
+
         case .cancel:
             connectTask?.cancel()
 
             return .initial
+
         case let .connect(url):
             connectTask?.cancel()
-
             connectTask = Task {
                 do {
                     let server = try await connectToServer(url: url)
-
                     if isDuplicate(server: server) {
                         await MainActor.run {
                             // server has same id, but (possible) new URL
@@ -130,16 +142,21 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
             .asAnyCancellable()
 
             return .connecting
+
         case .searchForServers:
-            discovery.broadcast()
+            discoveryTask?.cancel()
+            discoveryTask = Task {
+                self.discovery.reset()
+                self.discovery.broadcast()
+            }
 
             return state
         }
     }
 
     private func connectToServer(url: String) async throws -> ServerState {
-
-        let formattedURL = url.trimmingCharacters(in: .whitespacesAndNewlines)
+        let formattedURL = url
+            .trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
             .trimmingCharacters(in: ["/"])
             .prepending("http://", if: !url.contains("://"))
@@ -165,15 +182,13 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
             response: response.response.url
         )
 
-        let newServerState = ServerState(
+        return ServerState(
             urls: [connectionURL],
             currentURL: connectionURL,
             name: name,
             id: id,
             usersIDs: []
         )
-
-        return newServerState
     }
 
     // In the event of redirects, get the new host URL from response
@@ -221,7 +236,9 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
     private func addNewURL(server: ServerState) {
         do {
             let newState = try dataStack.perform { transaction in
-                let existingServer = try self.dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id))
+                let existingServer = try self.dataStack.fetchOne(
+                    From<ServerModel>().where(\.$id == server.id)
+                )
                 guard let editServer = transaction.edit(existingServer) else {
                     logger.critical("Could not find server to add new url")
                     throw JellyfinAPIError("An internal error has occurred")
