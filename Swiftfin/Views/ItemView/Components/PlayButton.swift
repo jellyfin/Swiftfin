@@ -98,7 +98,7 @@ extension ItemView {
                 }
             }
             .disabled(!isValid)
-            .alert(viewModel.item.displayTitle, isPresented: $isPresentingResume) {
+            .alert(viewModel.playButtonItem?.displayTitle ?? L10n.playback, isPresented: $isPresentingResume) {
                 Button(L10n.resume) {
                     playContent()
                 }
