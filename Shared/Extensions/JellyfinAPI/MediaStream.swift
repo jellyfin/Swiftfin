@@ -224,9 +224,6 @@ extension [MediaStream] {
 
         let subtitleInternal = internalTracks.filter { $0.type == .subtitle }
 
-        // TODO: Do we need this for other media types? I think movies/shows we only care about video, audio, and subtitles.
-        let otherInternal = internalTracks.filter { $0.type != .video && $0.type != .audio && $0.type != .subtitle }
-
         if playMethod == .transcode {
             // Only include the first video and first audio track for transcode.
             let videoInternal = internalTracks.filter { $0.type == .video }
@@ -240,12 +237,11 @@ extension [MediaStream] {
             }
 
             orderedInternal += subtitleInternal
-            orderedInternal += otherInternal
         } else {
             let videoInternal = internalTracks.filter { $0.type == .video }
             let audioInternal = internalTracks.filter { $0.type == .audio }
 
-            orderedInternal = videoInternal + audioInternal + subtitleInternal + otherInternal
+            orderedInternal = videoInternal + audioInternal + subtitleInternal
         }
 
         var newInternalTracks: [MediaStream] = []
