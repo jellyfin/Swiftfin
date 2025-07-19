@@ -1,5 +1,5 @@
 {
-  "originHash" : "663a3b34a009c00a9190de33f766891d288f224fc31597e4f528666199fa153a",
+  "originHash" : "a894d25132ab940f29b2147c07aeac799af1bb7328626e0e4ca3a8e5ef39bf11",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -116,15 +116,6 @@
       "state" : {
         "revision" : "ccc498ea429774d948a0a8aacacde207f7ffff48",
         "version" : "2.21.0"
-      }
-    },
-    {
-      "identity" : "marquee",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/samglt/Marquee",
-      "state" : {
-        "revision" : "b918456175fe236f840e3c3557b770a3bf2ebdef",
-        "version" : "1.0.0"
       }
     },
     {

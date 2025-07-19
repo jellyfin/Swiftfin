@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ABFDDB267972BF00886593 /* TVServices.framework */; };
-		5E7534B42E1B02AA003B0AD3 /* Marquee in Frameworks */ = {isa = PBXBuildFile; productRef = 5E7534B32E1B02AA003B0AD3 /* Marquee */; };
-		5EACE2412E2081BD006A5A7A /* Marquee in Frameworks */ = {isa = PBXBuildFile; productRef = 5EACE2402E2081BD006A5A7A /* Marquee */; };
 		62666DF727E5012C00EC0ECD /* MobileVLCKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; };
 		62666DF827E5012C00EC0ECD /* MobileVLCKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		62666DFA27E5013700EC0ECD /* TVVLCKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 625CB57D2678E81E00530A6E /* TVVLCKit.xcframework */; };
@@ -269,7 +267,6 @@
 				62666E1D27E501DB00EC0ECD /* CoreMedia.framework in Frameworks */,
 				62666E3027E5021800EC0ECD /* VideoToolbox.framework in Frameworks */,
 				BD88CB422D77E6A0006BB5E3 /* TVOSPicker in Frameworks */,
-				5E7534B42E1B02AA003B0AD3 /* Marquee in Frameworks */,
 				62666E2327E501EB00EC0ECD /* Foundation.framework in Frameworks */,
 				62666E2127E501E400EC0ECD /* CoreVideo.framework in Frameworks */,
 				E1392FED2BA218A80034110D /* SwiftUIIntrospect in Frameworks */,
@@ -348,7 +345,6 @@
 				62666E2427E501F300EC0ECD /* Foundation.framework in Frameworks */,
 				E132D3C82BD200C10058A2DF /* CollectionVGrid in Frameworks */,
 				E18A8E7A28D5FEDF00333B9A /* VLCUI in Frameworks */,
-				5EACE2412E2081BD006A5A7A /* Marquee in Frameworks */,
 				E114DB332B1944FA00B75FB3 /* CollectionVGrid in Frameworks */,
 				E15210562946DF1B00375CC2 /* PulseLogHandler in Frameworks */,
 				62666E0427E5017500EC0ECD /* CoreText.framework in Frameworks */,
@@ -507,7 +503,6 @@
 				BD88CB412D77E6A0006BB5E3 /* TVOSPicker */,
 				E179E86A2E14CDCF00D9F245 /* CollectionHStack */,
 				E179E86C2E14CDCF00D9F245 /* CollectionVGrid */,
-				5E7534B32E1B02AA003B0AD3 /* Marquee */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -575,7 +570,6 @@
 				E110F9262E145144009B7072 /* CollectionVGrid */,
 				E179E8652E14CDAA00D9F245 /* CollectionHStack */,
 				E179E8682E14CDBF00D9F245 /* CollectionVGrid */,
-				5EACE2402E2081BD006A5A7A /* Marquee */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -680,7 +674,6 @@
 				BD88CB402D77E6A0006BB5E3 /* XCRemoteSwiftPackageReference "TVOSPicker" */,
 				E179E8642E14CDAA00D9F245 /* XCRemoteSwiftPackageReference "CollectionHStack" */,
 				E179E8672E14CDBF00D9F245 /* XCRemoteSwiftPackageReference "CollectionVGrid" */,
-				5EACE23F2E2081BD006A5A7A /* XCRemoteSwiftPackageReference "Marquee" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -1156,14 +1149,6 @@
 				minimumVersion = 1.0.0;
 			};
 		};
-		5EACE23F2E2081BD006A5A7A /* XCRemoteSwiftPackageReference "Marquee" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/samglt/Marquee";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
 		62666E3727E502CE00EC0ECD /* XCRemoteSwiftPackageReference "SwizzleSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/MarioIannotta/SwizzleSwift";
@@ -1343,15 +1328,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		5E7534B32E1B02AA003B0AD3 /* Marquee */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Marquee;
-		};
-		5EACE2402E2081BD006A5A7A /* Marquee */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5EACE23F2E2081BD006A5A7A /* XCRemoteSwiftPackageReference "Marquee" */;
-			productName = Marquee;
-		};
 		62666E3827E502CE00EC0ECD /* SwizzleSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 62666E3727E502CE00EC0ECD /* XCRemoteSwiftPackageReference "SwizzleSwift" */;
