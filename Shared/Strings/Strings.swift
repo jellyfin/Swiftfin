@@ -744,6 +744,8 @@ internal enum L10n {
   internal static let images = L10n.tr("Localizable", "images", fallback: "Images")
   /// Image source
   internal static let imageSource = L10n.tr("Localizable", "imageSource", fallback: "Image source")
+  /// Inactive
+  internal static let inactive = L10n.tr("Localizable", "inactive", fallback: "Inactive")
   /// Incorrect pin for %@
   internal static func incorrectPinForUser(_ p1: Any) -> String {
     return L10n.tr("Localizable", "incorrectPinForUser", String(describing: p1), fallback: "Incorrect pin for %@")
