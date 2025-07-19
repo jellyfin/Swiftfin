@@ -9,7 +9,9 @@
 import AVKit
 import Combine
 import Defaults
+import Factory
 import JellyfinAPI
+import Logging
 import SwiftUI
 
 struct NativeVideoPlayer: View {
@@ -61,8 +63,14 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
 
     let videoPlayerManager: VideoPlayerManager
 
+    private let logger = Logger.swiftfin()
+
     private var rateObserver: NSKeyValueObservation!
+    private var statusObserver: NSKeyValueObservation!
     private var timeObserverToken: Any!
+    private var hasReportedError = false
+    private var asset: AVAsset?
+    private var isShowingAlert = false
 
     init(manager: VideoPlayerManager) {
 
@@ -70,14 +78,57 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        let newPlayer: AVPlayer = .init(url: manager.currentViewModel.playbackURL)
+        // Create asset and player item properly
+        let url = manager.currentViewModel.playbackURL
+        asset = AVAsset(url: url)
 
+        // Load asset properties before creating player item
+        guard let asset = asset else { return }
+
+        let playerItem = AVPlayerItem(asset: asset)
+        playerItem.externalMetadata = createMetadata()
+
+        let newPlayer = AVPlayer(playerItem: playerItem)
         newPlayer.allowsExternalPlayback = true
         newPlayer.appliesMediaSelectionCriteriaAutomatically = false
-        newPlayer.currentItem?.externalMetadata = createMetadata()
 
         // enable pip
         allowsPictureInPicturePlayback = true
+
+        // Observe player item status for error detection
+        statusObserver = newPlayer.observe(\.currentItem?.status, options: [.new, .initial]) { [weak self] player, _ in
+            guard let self = self,
+                  let status = player.currentItem?.status else { return }
+
+            switch status {
+            case .readyToPlay:
+                self.hasReportedError = false
+            case .failed:
+                if !self.hasReportedError {
+                    self.hasReportedError = true
+                    let error = player.currentItem?.error
+                    let nsError = error as NSError?
+                    logger.error("Native player failed to load", metadata: [
+                        "error": "\(error?.localizedDescription ?? "Unknown error")",
+                        "code": "\(nsError?.code ?? -1)",
+                        "domain": "\(nsError?.domain ?? "unknown")",
+                        "userInfo": "\(nsError?.userInfo ?? [:])",
+                    ])
+
+                    // Report error state as stopped to trigger UI update
+                    self.videoPlayerManager.onStateUpdated(newState: .stopped)
+
+                    // Show error alert
+                    DispatchQueue.main.async {
+                        self.showErrorAlert(error: error)
+                    }
+                }
+            case .unknown:
+                break
+            @unknown default:
+                break
+            }
+        }
 
         rateObserver = newPlayer.observe(\.rate, options: .new) { _, change in
             guard let newValue = change.newValue else { return }
@@ -127,22 +178,67 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         stop()
         guard let timeObserverToken else { return }
         player?.removeTimeObserver(timeObserverToken)
+
+        // Clean up observers
+        rateObserver?.invalidate()
+        statusObserver?.invalidate()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        player?.seek(
-            to: CMTimeMake(
-                value: Int64(videoPlayerManager.currentViewModel.item.startTimeSeconds - Defaults[.VideoPlayer.resumeOffset]),
-                timescale: 1
-            ),
-            toleranceBefore: .zero,
-            toleranceAfter: .zero,
-            completionHandler: { _ in
-                self.play()
+        // Load asset properties before playing
+        loadAssetAndPlay()
+    }
+
+    private func loadAssetAndPlay() {
+        guard let asset = asset else {
+            showErrorAlert(error: nil)
+            return
+        }
+
+        let keys = ["playable", "duration", "tracks"]
+        asset.loadValuesAsynchronously(forKeys: keys) { [weak self] in
+            guard let self = self else { return }
+
+            DispatchQueue.main.async {
+                var error: NSError?
+                for key in keys {
+                    let status = asset.statusOfValue(forKey: key, error: &error)
+                    if status == .failed {
+                        self.logger.error("Failed to load asset key", metadata: [
+                            "key": "\(key)",
+                            "error": "\(error?.localizedDescription ?? "Unknown error")",
+                        ])
+                        self.showErrorAlert(error: error)
+                        return
+                    }
+                }
+
+                if !asset.isPlayable {
+                    self.logger.error("Asset is not playable")
+                    self.showErrorAlert(error: NSError(
+                        domain: "VideoPlayer",
+                        code: -1,
+                        userInfo: [NSLocalizedDescriptionKey: "This video format is not supported"]
+                    ))
+                    return
+                }
+
+                // Asset is ready, seek and play
+                self.player?.seek(
+                    to: CMTimeMake(
+                        value: Int64(self.videoPlayerManager.currentViewModel.item.startTimeSeconds - Defaults[.VideoPlayer.resumeOffset]),
+                        timescale: 1
+                    ),
+                    toleranceBefore: .zero,
+                    toleranceAfter: .zero,
+                    completionHandler: { _ in
+                        self.play()
+                    }
+                )
             }
-        )
+        }
     }
 
     private func createMetadata() -> [AVMetadataItem] {
@@ -179,5 +275,48 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         player?.pause()
 
         videoPlayerManager.sendStopReport()
+    }
+
+    private func showErrorAlert(error: Error?) {
+        // Prevent multiple alerts
+        guard !isShowingAlert else { return }
+        isShowingAlert = true
+
+        var errorMessage = "The video could not be played."
+
+        if let nsError = error as NSError? {
+            switch nsError.code {
+            case -11850: // AVErrorServerIncorrectlyConfigured
+                errorMessage = "The server is not configured to provide video in a format compatible with the native player. Please switch to the Swiftfin player in settings."
+            case -11800: // AVErrorUnknown
+                errorMessage = "An unknown playback error occurred. Please try again or switch to the Swiftfin player."
+            case -11819: // AVErrorMediaServicesWereReset
+                errorMessage = "Media services were reset. Please try again."
+            case -11839: // AVErrorDecoderNotFound
+                errorMessage = "This video format is not supported by the native player. Please switch to the Swiftfin player."
+            default:
+                errorMessage = error?.localizedDescription ?? "The video could not be played. Please check your network connection or try a different video format."
+            }
+        }
+
+        let alert = UIAlertController(
+            title: "Native Player Error",
+            message: errorMessage,
+            preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] _ in
+            self?.isShowingAlert = false
+            self?.dismiss(animated: true)
+        })
+
+        // Check if we can present the alert
+        if self.presentedViewController == nil {
+            present(alert, animated: true)
+        } else {
+            // If already presenting, just dismiss
+            isShowingAlert = false
+            dismiss(animated: true)
+        }
     }
 }
