@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
 import JellyfinAPI
 import SwiftUI
 
@@ -15,7 +14,7 @@ struct SubtitleResultRow: View {
     // MARK: - Environment Variables
 
     @Environment(\.isSelected)
-    var isSelected
+    private var isSelected
 
     // MARK: - Subtitle Variable
 
@@ -23,12 +22,12 @@ struct SubtitleResultRow: View {
 
     // MARK: - Subtitle Action
 
-    let onSelect: () -> Void
+    let action: () -> Void
 
     // MARK: - Body
 
     var body: some View {
-        Button(action: onSelect) {
+        Button(action: action) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(subtitle.name ?? L10n.unknown)
@@ -36,29 +35,25 @@ struct SubtitleResultRow: View {
                         .fontWeight(.semibold)
 
                     LabeledContent(L10n.language, value: subtitle.threeLetterISOLanguageName ?? L10n.unknown)
-                        .font(.caption)
 
                     if let downloadCount = subtitle.downloadCount {
                         LabeledContent(L10n.downloads, value: downloadCount.description)
-                            .font(.caption)
                     }
 
                     if let rating = subtitle.communityRating {
                         LabeledContent(L10n.communityRating, value: String(format: "%.1f", rating))
-                            .font(.caption)
                     }
 
                     if let author = subtitle.author {
                         LabeledContent(L10n.author, value: author)
-                            .font(.caption)
                     }
 
                     if let format = subtitle.format {
                         LabeledContent(L10n.format, value: format)
-                            .font(.caption)
                     }
                 }
                 .foregroundStyle(isSelected ? .primary : .secondary, .secondary)
+                .font(.caption)
 
                 Spacer()
 

@@ -77,18 +77,16 @@ final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
 
     init(item: BaseItemDto) {
         self.item = item
-        self.internalSubtitles = []
-        self.externalSubtitles = []
+
+        let subtitles = (item.mediaSources ?? [])
+            .compactMap(\.subtitleStreams)
+            .flattened()
+            .grouped(by: \.isExternal)
+
+        self.internalSubtitles = subtitles[false] ?? []
+        self.externalSubtitles = subtitles[true] ?? []
 
         super.init()
-
-        /// Extract subtitle streams from all media sources
-        for mediaSource in item.mediaSources ?? [] {
-            if let streams = mediaSource.subtitleStreams {
-                self.internalSubtitles.append(contentsOf: streams.filter { $0.isExternal == false })
-                self.externalSubtitles.append(contentsOf: streams.filter { $0.isExternal == true })
-            }
-        }
 
         /// Setup debounced search
         searchQuery
@@ -249,19 +247,17 @@ final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
         }
 
         /// Extract non-nil indexes from mediaStreams
-        let indexes = mediaStreams.compactMap(\.index)
-
-        /// Sort indexes in descending order to avoid index shifting problems
-        let sortedIndexes = indexes.sorted(by: >)
+        let indices = mediaStreams.compactMap(\.index)
+            .sorted(by: >)
 
         /// Track successfully deleted indexes
-        var deletedIndexes = Set<Int>()
+        var deletedIndices = Set<Int>()
 
-        for index in sortedIndexes {
+        for index in indices {
             let request = Paths.deleteSubtitle(itemID: itemID, index: index)
             do {
                 _ = try await userSession.client.send(request)
-                deletedIndexes.insert(index)
+                deletedIndices.insert(index)
             } catch {
                 throw JellyfinAPIError(L10n.failedDeletionAtIndexError(
                     index,
@@ -327,9 +323,6 @@ final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
             _ = backgroundStates.insert(.updating)
         }
 
-        /// Wait a second to ensure that the upload completes
-        try await Task.sleep(nanoseconds: 1_000_000_000)
-
         let request = Paths.getItem(
             itemID: itemID,
             userID: userSession.user.id
@@ -339,17 +332,16 @@ final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
 
         await MainActor.run {
             self.item = response.value
-            self.internalSubtitles = []
-            self.externalSubtitles = []
 
             /// Important: Subtitle track indexes change sporadically
             /// Extract subtitle streams from all media sources
-            for mediaSource in item.mediaSources ?? [] {
-                if let streams = mediaSource.subtitleStreams {
-                    self.internalSubtitles.append(contentsOf: streams.filter { $0.isExternal == false })
-                    self.externalSubtitles.append(contentsOf: streams.filter { $0.isExternal == true })
-                }
-            }
+            let subtitles = (item.mediaSources ?? [])
+                .compactMap(\.subtitleStreams)
+                .flattened()
+                .grouped(by: \.isExternal)
+
+            self.internalSubtitles = subtitles[false] ?? []
+            self.externalSubtitles = subtitles[true] ?? []
 
             _ = backgroundStates.remove(.updating)
             Notifications[.itemMetadataDidChange].post(item)

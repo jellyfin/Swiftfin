@@ -26,8 +26,8 @@ extension ItemSubtitlesView {
 
         // MARK: - Row Actions
 
-        private let onSelect: () -> Void
-        private let onDelete: (() -> Void)?
+        private let action: () -> Void
+        private let deleteAction: (() -> Void)?
 
         // MARK: - Body
 
@@ -35,15 +35,15 @@ extension ItemSubtitlesView {
             ListRow {} content: {
                 rowContent
             }
-            .onSelect(perform: onSelect)
+            .onSelect(perform: action)
             .isSeparatorVisible(false)
-            .ifLet(onDelete) { button, onDelete in
+            .ifLet(deleteAction) { button, deleteAction in
                 button
                     .swipeActions {
                         Button(
                             L10n.delete,
                             systemImage: "trash",
-                            action: onDelete
+                            action: deleteAction
                         )
                         .tint(.red)
                     }
@@ -52,6 +52,7 @@ extension ItemSubtitlesView {
 
         // MARK: - Row Content
 
+        @ViewBuilder
         private var rowContent: some View {
             HStack {
                 Text(subtitle.displayTitle ?? L10n.unknown)
@@ -71,19 +72,19 @@ extension ItemSubtitlesView.SubtitleButton {
 
     init(
         _ subtitle: MediaStream,
-        onSelect: @escaping () -> Void,
-        onDelete: @escaping () -> Void
+        action: @escaping () -> Void,
+        deleteAction: @escaping () -> Void
     ) {
         self.subtitle = subtitle
-        self.onSelect = onSelect
-        self.onDelete = onDelete
+        self.action = action
+        self.deleteAction = deleteAction
     }
 
     // MARK: - Initialize without Delete Action
 
-    init(_ subtitle: MediaStream, onSelect: @escaping () -> Void) {
+    init(_ subtitle: MediaStream, action: @escaping () -> Void) {
         self.subtitle = subtitle
-        self.onSelect = onSelect
-        self.onDelete = nil
+        self.action = action
+        self.deleteAction = nil
     }
 }

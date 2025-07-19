@@ -8,7 +8,6 @@
 
 import JellyfinAPI
 import SwiftUI
-import UniformTypeIdentifiers
 
 struct ItemSubtitlesView: View {
 
@@ -26,11 +25,6 @@ struct ItemSubtitlesView: View {
 
     @State
     private var isEditing = false
-
-    // MARK: - Subtitle State
-
-    @State
-    private var expandedSubtitle: MediaStream?
 
     // MARK: - Deletion Dialog States
 
@@ -60,6 +54,20 @@ struct ItemSubtitlesView: View {
 
     init(item: BaseItemDto) {
         self._viewModel = StateObject(wrappedValue: .init(item: item))
+    }
+
+    // MARK: - Toggle All Selection
+
+    private func toggleAllSelection() {
+        selectedSubtitles = isAllSelected ? [] : Set(viewModel.externalSubtitles)
+    }
+
+    // MARK: - Cancel Editing
+
+    private func cancelEditing() {
+        isEditing = false
+        UIDevice.impact(.light)
+        selectedSubtitles.removeAll()
     }
 
     // MARK: - Body
@@ -132,16 +140,17 @@ struct ItemSubtitlesView: View {
                 }
             }
         }
-        // TODO: Fix after Stinsen is replaced.
-        .sheet(isPresented: .constant(expandedSubtitle != nil), onDismiss: { expandedSubtitle = nil }) {
-            expandedSubtitleSheet
-        }
         .confirmationDialog(
             L10n.delete,
             isPresented: $isPresentingDeleteConfirmation,
             titleVisibility: .visible
         ) {
-            deleteConfirmationActions {
+            Button(L10n.cancel, role: .cancel) {}
+
+            Button(L10n.delete, role: .destructive) {
+                viewModel.send(.delete(selectedSubtitles))
+                selectedSubtitles.removeAll()
+                isEditing = false
                 isPresentingDeleteConfirmation = false
             }
         } message: {
@@ -151,6 +160,7 @@ struct ItemSubtitlesView: View {
 
     // MARK: - Content Views
 
+    @ViewBuilder
     private var contentView: some View {
         List {
             ListTitleSection(
@@ -169,7 +179,7 @@ struct ItemSubtitlesView: View {
                         DisclosureGroup(L10n.embedded) {
                             ForEach(viewModel.internalSubtitles, id: \.index) { subtitle in
                                 SubtitleButton(subtitle) {
-                                    expandedSubtitle = subtitle
+                                    router.route(to: .mediaStreamInfo(mediaStream: subtitle))
                                 }
                                 .environment(\.isEnabled, !isEditing)
                             }
@@ -186,9 +196,9 @@ struct ItemSubtitlesView: View {
                                     if isEditing {
                                         selectedSubtitles.toggle(value: subtitle)
                                     } else {
-                                        expandedSubtitle = subtitle
+                                        router.route(to: .mediaStreamInfo(mediaStream: subtitle))
                                     }
-                                } onDelete: {
+                                } deleteAction: {
                                     selectedSubtitles = [subtitle]
                                     isPresentingDeleteConfirmation = true
                                 }
@@ -199,49 +209,6 @@ struct ItemSubtitlesView: View {
                     }
                 }
             }
-        }
-    }
-
-    // MARK: - Subtitle Detail Sheet
-
-    @ViewBuilder
-    private var expandedSubtitleSheet: some View {
-        NavigationStack {
-            if let mediaStream = expandedSubtitle {
-                MediaStreamInfoView(mediaStream: mediaStream)
-                    .navigationBarTitleDisplayMode(.inline)
-                    .navigationBarCloseButton {
-                        expandedSubtitle = nil
-                    }
-            }
-        }
-    }
-
-    // MARK: - Toggle All Selection
-
-    private func toggleAllSelection() {
-        selectedSubtitles = isAllSelected ? [] : Set(viewModel.externalSubtitles)
-    }
-
-    // MARK: - Cancel Editing
-
-    private func cancelEditing() {
-        isEditing = false
-        UIDevice.impact(.light)
-        selectedSubtitles.removeAll()
-    }
-
-    // MARK: - Delete Confirmation Actions
-
-    @ViewBuilder
-    private func deleteConfirmationActions(onDelete: @escaping () -> Void) -> some View {
-        Button(L10n.cancel, role: .cancel) {}
-
-        Button(L10n.delete, role: .destructive) {
-            viewModel.send(.delete(selectedSubtitles))
-            selectedSubtitles.removeAll()
-            isEditing = false
-            isPresentingDeleteConfirmation = false
         }
     }
 }
