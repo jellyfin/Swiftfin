@@ -7,10 +7,9 @@
 //
 
 import Defaults
-import Factory
+import JellyfinAPI
+import Logging
 import SwiftUI
-
-// TODO: fix play from beginning
 
 extension ItemView {
 
@@ -19,81 +18,123 @@ extension ItemView {
         @Default(.accentColor)
         private var accentColor
 
-        @Injected(\.logService)
-        private var logger
-
         @Router
         private var router
 
         @ObservedObject
         var viewModel: ItemViewModel
 
-        private var title: String {
-            if let seriesViewModel = viewModel as? SeriesItemViewModel {
-                return seriesViewModel.playButtonItem?.seasonEpisodeLabel ?? L10n.play
-            } else {
-                return viewModel.playButtonItem?.playButtonLabel ?? L10n.play
-            }
+        private let logger = Logger.swiftfin()
+
+        // MARK: - Dialog States
+
+        @State
+        private var isPresentingResume = false
+
+        @State
+        private var error: Error?
+
+        // MARK: - ddd
+
+        private var isValid: Bool {
+            viewModel.playButtonItem != nil
         }
+
+        // MARK: - Title
+
+        private var title: String {
+            if let seriesViewModel = viewModel as? SeriesItemViewModel,
+               let seasonEpisodeLabel = seriesViewModel.playButtonItem?.seasonEpisodeLabel
+            {
+                return seasonEpisodeLabel
+            } else if let playButtonLabel = viewModel.playButtonItem?.playButtonLabel {
+                return playButtonLabel
+            } else {
+                return L10n.play
+            }
+
+            // TODO: For use with `MarqueeText` on the `PlayButton`
+
+            /* if let sourceLabel = viewModel.selectedMediaSource?.displayTitle,
+                viewModel.item.mediaSources?.count ?? 0 > 1
+             {
+                 return sourceLabel
+             } else if let seriesViewModel = viewModel as? SeriesItemViewModel,
+                       let seasonEpisodeLabel = seriesViewModel.playButtonItem?.seasonEpisodeLabel
+             {
+                 return seasonEpisodeLabel
+             } else if let playButtonLabel = viewModel.playButtonItem?.playButtonLabel {
+                 return playButtonLabel
+             } else {
+                 return L10n.play
+             } */
+        }
+
+        // MARK: - Body
 
         var body: some View {
             Button {
-                if let playButtonItem = viewModel.playButtonItem,
-                   let selectedMediaSource = viewModel.selectedMediaSource
-                {
-                    router.route(
-                        to: .videoPlayer(
-                            manager: OnlineVideoPlayerManager(
-                                item: playButtonItem,
-                                mediaSource: selectedMediaSource
-                            )
-                        )
-                    )
+                if viewModel.playButtonItem?.userData?.playbackPositionTicks == 0 {
+                    playContent()
                 } else {
-                    logger.error("No media source available")
+                    isPresentingResume = true
                 }
             } label: {
                 ZStack {
                     Rectangle()
-                        .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : accentColor)
+                        .foregroundColor(!isValid ? Color(UIColor.secondarySystemFill) : accentColor)
                         .cornerRadius(10)
 
                     HStack {
                         Image(systemName: "play.fill")
                             .font(.system(size: 20))
 
+                        // TODO: Use `MarqueeText`
                         Text(title)
                             .font(.callout)
                             .fontWeight(.semibold)
                     }
-                    .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : accentColor.overlayColor)
+                    .foregroundColor(!isValid ? Color(UIColor.secondaryLabel) : accentColor.overlayColor)
                 }
             }
-            .disabled(viewModel.playButtonItem == nil)
-            .contextMenu {
-                if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
-                    Button {
-                        if var playButtonItem = viewModel.playButtonItem,
-                           let selectedMediaSource = viewModel.selectedMediaSource
-                        {
-                            /// Reset playback to the beginning
-                            playButtonItem.userData?.playbackPositionTicks = 0
-
-                            router.route(
-                                to: .videoPlayer(
-                                    manager: OnlineVideoPlayerManager(
-                                        item: playButtonItem,
-                                        mediaSource: selectedMediaSource
-                                    )
-                                )
-                            )
-                        } else {
-                            logger.error("No media source available")
-                        }
-                    } label: {
-                        Label(L10n.playFromBeginning, systemImage: "gobackward")
-                    }
+            .disabled(!isValid)
+            .alert(viewModel.item.displayTitle, isPresented: $isPresentingResume) {
+                Button(L10n.resume) {
+                    playContent()
                 }
+
+                Button(L10n.playFromBeginning) {
+                    playContent(restart: true)
+                }
+
+                Button(L10n.cancel, role: .cancel) {
+                    isPresentingResume = false
+                }
+            }
+            .errorMessage($error)
+        }
+
+        // MARK: - Play Content
+
+        private func playContent(restart: Bool = false) {
+            if var playButtonItem = viewModel.playButtonItem,
+               let selectedMediaSource = viewModel.selectedMediaSource
+            {
+                if restart {
+                    playButtonItem.userData?.playbackPositionTicks = 0
+                }
+
+                router.route(
+                    to: .videoPlayer(
+                        manager: OnlineVideoPlayerManager(
+                            item: playButtonItem,
+                            mediaSource: selectedMediaSource
+                        )
+                    )
+                )
+            } else {
+                logger.error("No media source available")
+                error = JellyfinAPIError("No media source available")
             }
         }
     }
