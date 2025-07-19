@@ -36,23 +36,23 @@ struct Marquee<Content>: View where Content: View {
     @State
     private var isAppear = false
 
-    public init(@ViewBuilder content: @escaping () -> Content) {
+    init(@ViewBuilder content: @escaping () -> Content) {
         self.content = content
     }
 
-    public init(_ stringKey: LocalizedStringKey) where Content == Text {
+    init(_ stringKey: LocalizedStringKey) where Content == Text {
         content = {
             Text(stringKey)
         }
     }
 
-    public init(_ string: String) where Content == Text {
+    init(_ string: String) where Content == Text {
         content = {
             Text(string)
         }
     }
 
-    public var body: some View {
+    var body: some View {
         ViewThatFits(in: .horizontal) {
             content()
             GeometryReader { proxy in
