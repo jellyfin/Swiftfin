@@ -56,6 +56,12 @@ extension ItemView {
             viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item)
         }
 
+        // MARK: - Can Manage Subtitles
+
+        private var canManageSubtitles: Bool {
+            viewModel.userSession.user.permissions.items.canManageSubtitles(item: viewModel.item)
+        }
+
         // MARK: - Deletion or Refreshing is Enabled
 
         private var enableMenu: Bool {
@@ -131,8 +137,22 @@ extension ItemView {
 
                 if enableMenu {
                     ActionButton(L10n.advanced, icon: "ellipsis", isCompact: true) {
-                        if canRefresh {
-                            RefreshMetadataButton(item: viewModel.item)
+                        if canRefresh || canManageSubtitles {
+                            Section(L10n.manage) {
+                                if canRefresh {
+                                    RefreshMetadataButton(item: viewModel.item)
+                                }
+
+                                if canManageSubtitles {
+                                    Button(L10n.subtitles, systemImage: "textformat") {
+                                        router.route(
+                                            to: .searchSubtitle(
+                                                viewModel: .init(item: viewModel.item)
+                                            )
+                                        )
+                                    }
+                                }
+                            }
                         }
 
                         if canDelete {
