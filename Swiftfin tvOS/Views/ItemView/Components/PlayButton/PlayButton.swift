@@ -109,6 +109,7 @@ extension ItemView {
                         .foregroundColor(!isValid ? Color(UIColor.secondaryLabel) : Color.black)
                         .font(.title3)
 
+                    // TODO: Use `MarqueeText`
                     Text(title)
                         .foregroundStyle(!isValid ? Color(UIColor.secondaryLabel) : Color.black)
                         .fontWeight(.semibold)
@@ -128,7 +129,7 @@ extension ItemView {
             .disabled(!isValid)
             .focused($isFocused)
             .buttonStyle(.card)
-            .alert(viewModel.item.displayTitle, isPresented: $isPresentingResume) {
+            .alert(viewModel.playButtonItem?.displayTitle ?? L10n.playback, isPresented: $isPresentingResume) {
                 Button(L10n.resume) {
                     playContent()
                 }
