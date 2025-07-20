@@ -50,4 +50,57 @@ extension SwiftfinStore.Mappings {
             ]
         )
     }()
+
+#if os(tvOS)
+
+    // MARK: - Migrate from Old tvOS Location to New
+
+    static func migrateFromOldLocation() throws {
+        let fileManager = FileManager.default
+        
+        let cachesDirectory = NSSearchPathForDirectoriesInDomains(
+            .cachesDirectory,
+            .userDomainMask,
+            true
+        ).first!
+        
+        let oldDatabaseDirectory = URL(fileURLWithPath: cachesDirectory)
+        
+        let applicationSupportDirectory = NSSearchPathForDirectoriesInDomains(
+            .applicationSupportDirectory,
+            .userDomainMask,
+            true
+        ).first!
+        
+        let newDatabaseDirectory = URL(fileURLWithPath: applicationSupportDirectory)
+            .appendingPathComponent("Swiftfin")
+        
+        let oldDatabasePath = oldDatabaseDirectory.appendingPathComponent("Swiftfin.sqlite")
+        let newDatabasePath = newDatabaseDirectory.appendingPathComponent("Swiftfin.sqlite")
+        
+        guard fileManager.fileExists(atPath: oldDatabasePath.path) else {
+            return
+        }
+        
+        guard !fileManager.fileExists(atPath: newDatabasePath.path) else {
+            try fileManager.removeItem(at: oldDatabasePath)
+            return
+        }
+        
+        try fileManager.createDirectory(
+            at: newDatabaseDirectory,
+            withIntermediateDirectories: true,
+            attributes: nil
+        )
+        
+        let oldFiles = try fileManager.contentsOfDirectory(at: oldDatabaseDirectory, includingPropertiesForKeys: nil)
+            .filter { $0.lastPathComponent.hasPrefix("Swiftfin") }
+        
+        for file in oldFiles {
+            let fileName = file.lastPathComponent
+            let destinationURL = newDatabaseDirectory.appendingPathComponent(fileName)
+            try fileManager.moveItem(at: file, to: destinationURL)
+        }
+    }
+#endif
 }

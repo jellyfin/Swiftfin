@@ -51,10 +51,36 @@ extension SwiftfinStore {
     }()
 
     private static let storage: SQLiteStore = {
-        SQLiteStore(
+        #if os(tvOS)
+
+        /// Manually force the Application Support directory on tvOS to avoid purging
+        let applicationSupportDirectory = NSSearchPathForDirectoriesInDomains(
+            .applicationSupportDirectory,
+            .userDomainMask,
+            true
+        ).first!
+
+        let swiftfinApplicationDirectory = URL(fileURLWithPath: applicationSupportDirectory)
+            .appendingPathComponent("Swiftfin")
+
+        // MARK: Create Database subdirectory if needed
+
+        try? FileManager.default.createDirectory(
+            at: swiftfinApplicationDirectory,
+            withIntermediateDirectories: true,
+            attributes: nil
+        )
+
+        return SQLiteStore(
+            fileURL: swiftfinApplicationDirectory.appendingPathComponent("Swiftfin.sqlite"),
+            migrationMappingProviders: [Mappings.userV1_V2]
+        )
+        #else
+        return SQLiteStore(
             fileName: "Swiftfin.sqlite",
             migrationMappingProviders: [Mappings.userV1_V2]
         )
+        #endif
     }()
 
     static func requiresMigration() throws -> Bool {
@@ -62,6 +88,10 @@ extension SwiftfinStore {
     }
 
     static func setupDataStack() async throws {
+        #if os(tvOS)
+        try Mappings.migrateFromOldLocation()
+        #endif
+        
         try await withCheckedThrowingContinuation { continuation in
             _ = dataStack.addStorage(storage) { result in
                 switch result {
