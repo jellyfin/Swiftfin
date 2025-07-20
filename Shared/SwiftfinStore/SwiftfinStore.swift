@@ -51,41 +51,26 @@ extension SwiftfinStore {
         )
     }()
 
-    // MARK: - Bundle Identifier
+    private static func storeDirectory(base: URL) -> URL {
+        base
+            .appendingPathComponent(
+                Bundle.main.bundleIdentifier ?? "com.CoreStore.DataStack",
+                isDirectory: true
+            )
+    }
 
-    private static let bundleIdentifier = Bundle.main.bundleIdentifier ?? "com.CoreStore.DataStack"
+    private static func storeFileURL(base: URL) -> URL {
+        storeDirectory(base: base)
+            .appendingPathComponent("Swiftfin.sqlite")
+    }
 
     // MARK: - Storage
 
     private static let storage: SQLiteStore = {
-
-        let logger = Logging.Logger.swiftfin()
-
-        let applicationSupportDirectory = FileManager.default.urls(
-            for: .applicationSupportDirectory,
-            in: .userDomainMask
-        ).first!
-
-        let databaseURL = applicationSupportDirectory.appendingPathComponent(bundleIdentifier, isDirectory: true)
-            .appendingPathComponent("Swiftfin.sqlite")
-
-        logger.info("Using the SQLite Database at: \(databaseURL.absoluteString)")
-
-        #if os(tvOS)
-
-        return SQLiteStore(
-            fileURL: databaseURL,
+        SQLiteStore(
+            fileURL: storeFileURL(base: .applicationSupportDirectory),
             migrationMappingProviders: [Mappings.userV1_V2]
         )
-
-        #else
-
-        return SQLiteStore(
-            fileName: "Swiftfin.sqlite",
-            migrationMappingProviders: [Mappings.userV1_V2]
-        )
-
-        #endif
     }()
 
     // MARK: - Requires a Migration
@@ -101,8 +86,7 @@ extension SwiftfinStore {
         let logger = Logging.Logger.swiftfin()
 
         #if os(tvOS)
-        /// Attempt to migrate the legeacy database on tvOS
-        try Mappings.migrateFromOldLocation(bundleIdentifier: bundleIdentifier)
+        moveStoreFromCacheDirectory()
         #endif
 
         try await withCheckedThrowingContinuation { continuation in
@@ -115,6 +99,26 @@ extension SwiftfinStore {
                     continuation.resume(throwing: JellyfinAPIError("Failed creating datastack with: \(error.localizedDescription)"))
                 }
             }
+        }
+    }
+
+    // tvOS used to store database in Caches directory,
+    // don't crash application if unable to move
+    static func moveStoreFromCacheDirectory() {
+
+        let applicationSupportStoreURL = storeFileURL(base: .applicationSupportDirectory)
+        let cachesStoreURL = storeFileURL(base: .cachesDirectory)
+        let fileManager = FileManager.default
+
+        guard !fileManager.fileExists(atPath: applicationSupportStoreURL.path(percentEncoded: false)),
+              fileManager.fileExists(atPath: cachesStoreURL.path(percentEncoded: false)) else { return }
+
+        do {
+            try fileManager.createDirectory(at: storeDirectory(base: .applicationSupportDirectory), withIntermediateDirectories: true)
+            try fileManager.moveItem(at: cachesStoreURL, to: applicationSupportStoreURL)
+        } catch {
+            let logger = Logging.Logger.swiftfin()
+            logger.critical("Error moving caches store to application support directory: \(error.localizedDescription)")
         }
     }
 }
