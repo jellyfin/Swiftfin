@@ -59,8 +59,7 @@ extension SwiftfinStore {
             )
     }
 
-    private static func storeFileURL(base: URL) -> [URL] {
-
+    private static func storeFileURLs(base: URL) -> [URL] {
         let baseDir = storeDirectory(base: base)
 
         return [
@@ -74,7 +73,7 @@ extension SwiftfinStore {
 
     private static let storage: SQLiteStore = {
         SQLiteStore(
-            fileURL: storeFileURL(base: .applicationSupportDirectory)[0],
+            fileURL: storeFileURLs(base: .applicationSupportDirectory)[0],
             migrationMappingProviders: [Mappings.userV1_V2]
         )
     }()
@@ -112,8 +111,8 @@ extension SwiftfinStore {
     // don't crash application if unable to move
     static func moveStoreFromCacheDirectory() {
 
-        let applicationSupportURLs = storeFileURL(base: .applicationSupportDirectory)
-        let cachesURLs = storeFileURL(base: .cachesDirectory)
+        let applicationSupportURLs = storeFileURLs(base: .applicationSupportDirectory)
+        let cachesURLs = storeFileURLs(base: .cachesDirectory)
         let fileManager = FileManager.default
 
         guard !fileManager.fileExists(atPath: applicationSupportURLs[0].path(percentEncoded: false)),
