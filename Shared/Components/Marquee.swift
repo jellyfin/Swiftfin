@@ -6,6 +6,8 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+// This component based on https://github.com/SwiftUIKit/Marquee
+
 import SwiftUI
 
 private enum MarqueeState {
@@ -14,21 +16,17 @@ private enum MarqueeState {
 }
 
 struct Marquee<Content>: View where Content: View {
-    @Environment(\.marqueeSpeed)
-    var speed: CGFloat
-    @Environment(\.marqueeDelay)
-    var delay: Double
-    @Environment(\.marqueeGap)
-    var gap: CGFloat
-    @Environment(\.marqueeWhenFocused)
-    var animateWhenFocused: Bool
-    @Environment(\.marqueeFade)
-    var fade: CGFloat
-
     @Environment(\.isFocused)
     var isFocused: Bool
 
-    private var content: () -> Content
+    let speed: CGFloat
+    let delay: Double
+    let gap: CGFloat
+    let animateWhenFocused: Bool
+    let fade: CGFloat
+
+    let content: () -> Content
+
     @State
     private var state: MarqueeState = .idle
     @State
@@ -36,17 +34,20 @@ struct Marquee<Content>: View where Content: View {
     @State
     private var isAppear = false
 
-    init(@ViewBuilder content: @escaping () -> Content) {
-        self.content = content
-    }
+    init(
+        _ string: String,
+        speed: CGFloat = 60.0,
+        delay: Double = 3.0,
+        gap: CGFloat = 50.0,
+        animateWhenFocused: Bool = false,
+        fade: CGFloat = 10.0,
+    ) where Content == Text {
+        self.speed = speed
+        self.delay = delay
+        self.gap = gap
+        self.animateWhenFocused = animateWhenFocused
+        self.fade = fade
 
-    init(_ stringKey: LocalizedStringKey) where Content == Text {
-        content = {
-            Text(stringKey)
-        }
-    }
-
-    init(_ string: String) where Content == Text {
         content = {
             Text(string)
         }
@@ -206,49 +207,6 @@ struct Marquee<Content>: View where Content: View {
         withAnimation(.linear(duration: 0.005)) {
             self.state = .idle
         }
-    }
-}
-
-private extension EnvironmentValues {
-    @Entry
-    var marqueeSpeed: CGFloat = 60.0
-
-    @Entry
-    var marqueeDelay: Double = 3.0
-
-    @Entry
-    var marqueeGap: CGFloat = 50.0
-
-    @Entry
-    var marqueeFade: CGFloat = 10
-
-    @Entry
-    var marqueeWhenFocused: Bool = false
-}
-
-extension View {
-    /// Sets the speed in pt/s of Marquee animations in this view.
-    func marqueeSpeed(_ speed: CGFloat) -> some View {
-        environment(\.marqueeSpeed, speed)
-    }
-
-    /// Sets the length of pause in seconds before Marquee animations begin in this view.
-    func marqueeDelay(_ delay: Double) -> some View {
-        environment(\.marqueeDelay, delay)
-    }
-
-    /// Sets the size of the gap between instances of Marquee content.
-    func marqueeGap(_ size: CGFloat) -> some View {
-        environment(\.marqueeGap, size)
-    }
-
-    func marqueeFade(_ size: CGFloat) -> some View {
-        environment(\.marqueeFade, size)
-    }
-
-    /// Animate Marquees only when focused..
-    func marqueeWhenFocused(_ animate: Bool) -> some View {
-        environment(\.marqueeWhenFocused, animate)
     }
 }
 
