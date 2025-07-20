@@ -124,7 +124,7 @@ extension ItemView {
             .buttonStyle(.card)
             .contextMenu {
                 if viewModel.playButtonItem?.userData?.playbackPositionTicks ?? 0 > 0 {
-                    Button(L10n.playFromBeginning) {
+                    Button(L10n.playFromBeginning, systemImage: "gobackward") {
                         playContent(restart: true)
                     }
                 }
