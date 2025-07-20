@@ -10,6 +10,7 @@ import CoreStore
 import Factory
 import Foundation
 import JellyfinAPI
+import Logging
 
 typealias AnyStoredData = SwiftfinStore.V2.AnyData
 typealias ServerModel = SwiftfinStore.V2.StoredServer
@@ -57,18 +58,21 @@ extension SwiftfinStore {
     // MARK: - Storage
 
     private static let storage: SQLiteStore = {
+
+        let logger = Logging.Logger.swiftfin()
+
         let applicationSupportDirectory = FileManager.default.urls(
             for: .applicationSupportDirectory,
             in: .userDomainMask
         ).first!
 
-        let appDirectory = applicationSupportDirectory.appendingPathComponent(
-            bundleIdentifier,
-            isDirectory: true
-        )
+        let databaseURL = applicationSupportDirectory.appendingPathComponent(bundleIdentifier, isDirectory: true)
+            .appendingPathComponent("Swiftfin.sqlite")
+
+        logger.info("Using the SQLite Database at: \(databaseURL.absoluteString)")
 
         return SQLiteStore(
-            fileURL: appDirectory.appendingPathComponent("Swiftfin.sqlite"),
+            fileURL: databaseURL,
             migrationMappingProviders: [Mappings.userV1_V2]
         )
     }()
@@ -82,7 +86,11 @@ extension SwiftfinStore {
     // MARK: - Set Up Data Stack
 
     static func setupDataStack() async throws {
+
+        let logger = Logging.Logger.swiftfin()
+
         #if os(tvOS)
+        /// Attempt to migrate the legeacy database on tvOS
         try Mappings.migrateFromOldLocation(bundleIdentifier: bundleIdentifier)
         #endif
 
@@ -92,7 +100,7 @@ extension SwiftfinStore {
                 case .success:
                     continuation.resume()
                 case let .failure(error):
-                    Container.shared.logService().error("Failed creating datastack with: \(error.localizedDescription)")
+                    logger.error("Failed creating datastack with: \(error.localizedDescription)")
                     continuation.resume(throwing: JellyfinAPIError("Failed creating datastack with: \(error.localizedDescription)"))
                 }
             }

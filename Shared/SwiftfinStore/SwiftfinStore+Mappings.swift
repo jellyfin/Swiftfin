@@ -10,6 +10,7 @@ import CoreStore
 import Factory
 import Foundation
 import KeychainSwift
+import Logging
 
 extension SwiftfinStore {
     enum Mappings {}
@@ -54,19 +55,25 @@ extension SwiftfinStore.Mappings {
     // MARK: - Migrate from Old tvOS Location to New
 
     static func migrateFromOldLocation(bundleIdentifier: String) throws {
+
+        let logger = Logging.Logger.swiftfin()
         let fileManager = FileManager.default
 
         /// Get the default tvOS directory for CoreStore
-        let oldCoreStoreDirectory = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)
+        let legacyDirectory = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)
             .first!
+            .appendingPathComponent(bundleIdentifier, isDirectory: true)
 
-        let oldDatabase = oldCoreStoreDirectory
+        let legacyDatabase = legacyDirectory
             .appendingPathComponent("Swiftfin.sqlite")
 
         /// Safely return if there is no old Swiftfin data to migrate
-        guard fileManager.fileExists(atPath: oldDatabase.path) else {
+        guard fileManager.fileExists(atPath: legacyDatabase.path) else {
+            logger.info("No legacy Swiftfin data needs to be migrated. Exiting migration process...")
             return
         }
+
+        logger.warning("Legacy Swiftfin data must be migrated from: \(legacyDatabase.absoluteString)")
 
         /// Get the Application Support directory for all new CoreStore
         let newDirectory = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)
@@ -78,18 +85,31 @@ extension SwiftfinStore.Mappings {
 
         /// Skip migration if new database already exists and is not empty
         if fileManager.fileExists(atPath: newDatabase.path) {
+
+            logger.warning("Pre-existing Swiftfin data already exists at: \(newDatabase.absoluteString)")
+
             if let attrs = try? fileManager.attributesOfItem(atPath: newDatabase.path),
                let size = attrs[.size] as? NSNumber,
                size.intValue > 0
             {
+                logger.info("Pre-existing Swiftfin data is not empty. Exiting migration process...")
+
                 /// Clean up old files only if new database has content
-                try? fileManager.removeItem(at: oldDatabase)
+                try? fileManager.removeItem(at: legacyDatabase)
                 return
+            } else {
+                logger.warning("Pre-existing Swiftfin data is empty and will be overridden by the migration.")
             }
         }
 
         /// Create the Application Support directory if it does not exist
         if !fileManager.fileExists(atPath: newDirectory.path) {
+
+            logger
+                .warning(
+                    "The Application Support directory doesn't exist on this device. A new folder will be created at: \(newDirectory.absoluteString)"
+                )
+
             try fileManager.createDirectory(
                 at: newDirectory,
                 withIntermediateDirectories: true,
@@ -98,7 +118,7 @@ extension SwiftfinStore.Mappings {
         }
 
         /// Get all old Swiftfin files
-        let oldFiles = try fileManager.contentsOfDirectory(at: oldCoreStoreDirectory, includingPropertiesForKeys: nil)
+        let oldFiles = try fileManager.contentsOfDirectory(at: legacyDirectory, includingPropertiesForKeys: nil)
             .filter { $0.lastPathComponent.hasPrefix("Swiftfin") }
 
         /// Move files atomically - only delete old files after ALL moves succeed
@@ -106,10 +126,14 @@ extension SwiftfinStore.Mappings {
             let fileName = file.lastPathComponent
             let destinationURL = newDirectory.appendingPathComponent(fileName)
 
-            /// Remove destination if it exists to avoid conflicts
-            if fileManager.fileExists(atPath: destinationURL.path) {
-                try fileManager.removeItem(at: destinationURL)
-            }
+            logger.warning(
+                """
+                Moving file \(fileName) from:
+                \(legacyDirectory.absoluteString)
+                to:
+                \(newDirectory.absoluteString)
+                """
+            )
 
             try fileManager.moveItem(at: file, to: destinationURL)
         }
