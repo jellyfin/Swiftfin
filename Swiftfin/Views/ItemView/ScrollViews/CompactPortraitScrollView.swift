@@ -58,7 +58,7 @@ extension ItemView {
             GeometryReader { proxy in
                 if proxy.size.height.isZero { EmptyView() }
                 else {
-                    withHeaderImageItem(maxWidth: proxy.size.width) { imageSource, bottomColor in
+                    withHeaderImageItem(maxWidth: proxy.size.height * 0.78 * 1.77) { imageSource, bottomColor in
                         ImageView(imageSource)
                             .aspectRatio(1.77, contentMode: .fill)
                             .frame(height: proxy.size.height * 0.78)
