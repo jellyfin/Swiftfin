@@ -50,48 +50,42 @@ extension SwiftfinStore {
         )
     }()
 
-    private static let storage: SQLiteStore = {
-        #if os(tvOS)
+    // MARK: - Bundle Identifier
 
-        /// Manually force the Application Support directory on tvOS to avoid purging
-        let applicationSupportDirectory = NSSearchPathForDirectoriesInDomains(
-            .applicationSupportDirectory,
-            .userDomainMask,
-            true
+    private static let bundleIdentifier = Bundle.main.bundleIdentifier ?? "com.CoreStore.DataStack"
+
+    // MARK: - Storage
+
+    private static let storage: SQLiteStore = {
+        let applicationSupportDirectory = FileManager.default.urls(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask
         ).first!
 
-        let swiftfinApplicationDirectory = URL(fileURLWithPath: applicationSupportDirectory)
-            .appendingPathComponent("Swiftfin")
-
-        // MARK: Create Database subdirectory if needed
-
-        try? FileManager.default.createDirectory(
-            at: swiftfinApplicationDirectory,
-            withIntermediateDirectories: true,
-            attributes: nil
+        let appDirectory = applicationSupportDirectory.appendingPathComponent(
+            bundleIdentifier,
+            isDirectory: true
         )
 
         return SQLiteStore(
-            fileURL: swiftfinApplicationDirectory.appendingPathComponent("Swiftfin.sqlite"),
+            fileURL: appDirectory.appendingPathComponent("Swiftfin.sqlite"),
             migrationMappingProviders: [Mappings.userV1_V2]
         )
-        #else
-        return SQLiteStore(
-            fileName: "Swiftfin.sqlite",
-            migrationMappingProviders: [Mappings.userV1_V2]
-        )
-        #endif
     }()
+
+    // MARK: - Requires a Migration
 
     static func requiresMigration() throws -> Bool {
         try dataStack.requiredMigrationsForStorage(storage).isNotEmpty
     }
 
+    // MARK: - Set Up Data Stack
+
     static func setupDataStack() async throws {
         #if os(tvOS)
-        try Mappings.migrateFromOldLocation()
+        try Mappings.migrateFromOldLocation(bundleIdentifier: bundleIdentifier)
         #endif
-        
+
         try await withCheckedThrowingContinuation { continuation in
             _ = dataStack.addStorage(storage) { result in
                 switch result {

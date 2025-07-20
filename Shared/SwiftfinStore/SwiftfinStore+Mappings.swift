@@ -51,56 +51,57 @@ extension SwiftfinStore.Mappings {
         )
     }()
 
-#if os(tvOS)
-
     // MARK: - Migrate from Old tvOS Location to New
 
-    static func migrateFromOldLocation() throws {
+    static func migrateFromOldLocation(bundleIdentifier: String) throws {
         let fileManager = FileManager.default
-        
-        let cachesDirectory = NSSearchPathForDirectoriesInDomains(
-            .cachesDirectory,
-            .userDomainMask,
-            true
-        ).first!
-        
-        let oldDatabaseDirectory = URL(fileURLWithPath: cachesDirectory)
-        
-        let applicationSupportDirectory = NSSearchPathForDirectoriesInDomains(
-            .applicationSupportDirectory,
-            .userDomainMask,
-            true
-        ).first!
-        
-        let newDatabaseDirectory = URL(fileURLWithPath: applicationSupportDirectory)
-            .appendingPathComponent("Swiftfin")
-        
-        let oldDatabasePath = oldDatabaseDirectory.appendingPathComponent("Swiftfin.sqlite")
-        let newDatabasePath = newDatabaseDirectory.appendingPathComponent("Swiftfin.sqlite")
-        
-        guard fileManager.fileExists(atPath: oldDatabasePath.path) else {
+
+        /// Get the default tvOS directory for CoreStore
+        let oldCoreStoreDirectory = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)
+            .first!
+            .appendingPathComponent(bundleIdentifier, isDirectory: true)
+
+        let oldDatabase = oldCoreStoreDirectory
+            .appendingPathComponent("Swiftfin.sqlite")
+
+        /// Safely return if there is no old Swiftfin data to migrate
+        guard fileManager.fileExists(atPath: oldDatabase.path) else {
             return
         }
-        
-        guard !fileManager.fileExists(atPath: newDatabasePath.path) else {
-            try fileManager.removeItem(at: oldDatabasePath)
+
+        /// Get the Application Support directory for all new CoreStore
+        let newDirectory = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)
+            .first!
+            .appendingPathComponent(bundleIdentifier, isDirectory: true)
+
+        let newDatabase = newDirectory
+            .appendingPathComponent("Swiftfin.sqlite")
+
+        /// Remove the old Swiftfin data if the new data exists then safely return
+        guard !fileManager.fileExists(atPath: newDatabase.path) else {
+            try fileManager.removeItem(at: oldDatabase)
             return
         }
-        
-        try fileManager.createDirectory(
-            at: newDatabaseDirectory,
-            withIntermediateDirectories: true,
-            attributes: nil
-        )
-        
-        let oldFiles = try fileManager.contentsOfDirectory(at: oldDatabaseDirectory, includingPropertiesForKeys: nil)
+
+        /// Attempt to create the Application Support directory if it does not exist
+        /// This directory should `always` exist but just in case
+        if !fileManager.fileExists(atPath: newDirectory.path) {
+            try fileManager.createDirectory(
+                at: newDirectory,
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
+        }
+
+        /// Identify any old Swiftfin files in the old Caches Directory
+        let oldFiles = try fileManager.contentsOfDirectory(at: oldCoreStoreDirectory, includingPropertiesForKeys: nil)
             .filter { $0.lastPathComponent.hasPrefix("Swiftfin") }
-        
+
+        /// Move any old Swiftfin files in the old Caches Directory to the Application Support directory
         for file in oldFiles {
             let fileName = file.lastPathComponent
-            let destinationURL = newDatabaseDirectory.appendingPathComponent(fileName)
+            let destinationURL = newDirectory.appendingPathComponent(fileName)
             try fileManager.moveItem(at: file, to: destinationURL)
         }
     }
-#endif
 }
