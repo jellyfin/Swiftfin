@@ -16,28 +16,29 @@ private enum MarqueeState {
 }
 
 struct Marquee<Content>: View where Content: View {
+
     @Environment(\.isFocused)
-    var isFocused: Bool
+    private var isFocused: Bool
 
-    let speed: CGFloat
-    let delay: Double
-    let gap: CGFloat
-    let animateWhenFocused: Bool
-    let fade: CGFloat
-
-    let content: () -> Content
-
-    @State
-    private var state: MarqueeState = .idle
     @State
     private var contentSize: CGSize = .zero
     @State
     private var isAppear = false
+    @State
+    private var state: MarqueeState = .idle
+
+    private let speed: CGFloat
+    private let delay: Double
+    private let gap: CGFloat
+    private let animateWhenFocused: Bool
+    private let fade: CGFloat
+
+    private let content: Content
 
     init(
-        _ string: String,
+        _ title: String,
         speed: CGFloat = 60.0,
-        delay: Double = 3.0,
+        delay: Double = 2.0,
         gap: CGFloat = 50.0,
         animateWhenFocused: Bool = false,
         fade: CGFloat = 10.0,
@@ -47,20 +48,18 @@ struct Marquee<Content>: View where Content: View {
         self.gap = gap
         self.animateWhenFocused = animateWhenFocused
         self.fade = fade
-
-        content = {
-            Text(string)
-        }
+        content = Text(title)
     }
 
     var body: some View {
         ViewThatFits(in: .horizontal) {
-            content()
+            content
+
             GeometryReader { proxy in
                 VStack(alignment: .leading) {
                     if isAppear {
                         ZStack {
-                            content()
+                            content
                                 .onSizeChanged { size, _ in
                                     let widthChanged = self.contentSize.width != size.width
                                     self.contentSize = size
@@ -74,7 +73,7 @@ struct Marquee<Content>: View where Content: View {
                                 .frame(maxHeight: .infinity)
 
                             if contentSize.width >= proxy.size.width {
-                                content()
+                                content
                                     .fixedSize()
                                     .marqueeOffset(
                                         x: offsetX(proxy: proxy) + contentSize.width + gap(proxy),
@@ -215,10 +214,6 @@ struct Marquee<Content>: View where Content: View {
 private extension View {
     func marqueeOffset(x: CGFloat, y: CGFloat) -> some View {
         modifier(_OffsetEffect(offset: CGSize(width: x, height: y)))
-    }
-
-    func marqueeOffset(_ offset: CGSize) -> some View {
-        modifier(_OffsetEffect(offset: offset))
     }
 }
 
