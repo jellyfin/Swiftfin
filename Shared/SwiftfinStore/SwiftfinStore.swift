@@ -77,7 +77,7 @@ extension SwiftfinStore {
             fileURL: databaseURL,
             migrationMappingProviders: [Mappings.userV1_V2]
         )
-        
+
         #else
 
         return SQLiteStore(
