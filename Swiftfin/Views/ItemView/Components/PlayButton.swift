@@ -26,15 +26,10 @@ extension ItemView {
 
         private let logger = Logger.swiftfin()
 
-        // MARK: - Error State
-
-        @State
-        private var error: Error?
-
         // MARK: - ddd
 
-        private var isValid: Bool {
-            viewModel.playButtonItem != nil
+        private var isEnabled: Bool {
+            viewModel.selectedMediaSource != nil
         }
 
         // MARK: - Title
@@ -71,11 +66,11 @@ extension ItemView {
 
         var body: some View {
             Button {
-                playContent()
+                play()
             } label: {
                 ZStack {
                     Rectangle()
-                        .foregroundColor(!isValid ? Color(UIColor.secondarySystemFill) : accentColor)
+                        .foregroundStyle(isEnabled ? accentColor : Color(UIColor.secondarySystemFill))
                         .cornerRadius(10)
 
                     HStack {
@@ -87,42 +82,41 @@ extension ItemView {
                             .font(.callout)
                             .fontWeight(.semibold)
                     }
-                    .foregroundColor(!isValid ? Color(UIColor.secondaryLabel) : accentColor.overlayColor)
+                    .foregroundStyle(isEnabled ? accentColor.overlayColor : Color(UIColor.secondaryLabel))
                 }
             }
-            .disabled(!isValid)
             .contextMenu {
-                if viewModel.playButtonItem?.userData?.playbackPositionTicks ?? 0 > 0 {
+                if viewModel.playButtonItem?.userData?.playbackPositionTicks != 0 {
                     Button(L10n.playFromBeginning, systemImage: "gobackward") {
-                        playContent(restart: true)
+                        play(fromBeginning: true)
                     }
                 }
             }
-            .errorMessage($error)
+            .disabled(!isEnabled)
         }
 
         // MARK: - Play Content
 
-        private func playContent(restart: Bool = false) {
-            if var playButtonItem = viewModel.playButtonItem,
-               let selectedMediaSource = viewModel.selectedMediaSource
-            {
-                if restart {
-                    playButtonItem.userData?.playbackPositionTicks = 0
-                }
+        private func play(fromBeginning: Bool = false) {
+            guard var playButtonItem = viewModel.playButtonItem,
+                  let selectedMediaSource = viewModel.selectedMediaSource
+            else {
+                logger.error("Play selected with no item or media source")
+                return
+            }
 
-                router.route(
-                    to: .videoPlayer(
-                        manager: OnlineVideoPlayerManager(
-                            item: playButtonItem,
-                            mediaSource: selectedMediaSource
-                        )
+            if fromBeginning {
+                playButtonItem.userData?.playbackPositionTicks = 0
+            }
+
+            router.route(
+                to: .videoPlayer(
+                    manager: OnlineVideoPlayerManager(
+                        item: playButtonItem,
+                        mediaSource: selectedMediaSource
                     )
                 )
-            } else {
-                logger.error("No media source available")
-                error = JellyfinAPIError("No media source available")
-            }
+            )
         }
     }
 }
