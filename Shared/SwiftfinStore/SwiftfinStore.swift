@@ -71,10 +71,21 @@ extension SwiftfinStore {
 
         logger.info("Using the SQLite Database at: \(databaseURL.absoluteString)")
 
+        #if os(tvOS)
+
         return SQLiteStore(
             fileURL: databaseURL,
             migrationMappingProviders: [Mappings.userV1_V2]
         )
+        
+        #else
+
+        return SQLiteStore(
+            fileName: "Swiftfin.sqlite",
+            migrationMappingProviders: [Mappings.userV1_V2]
+        )
+
+        #endif
     }()
 
     // MARK: - Requires a Migration
