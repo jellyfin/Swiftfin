@@ -59,16 +59,22 @@ extension SwiftfinStore {
             )
     }
 
-    private static func storeFileURL(base: URL) -> URL {
-        storeDirectory(base: base)
-            .appendingPathComponent("Swiftfin.sqlite")
+    private static func storeFileURL(base: URL) -> [URL] {
+
+        let baseDir = storeDirectory(base: base)
+
+        return [
+            baseDir.appendingPathComponent("Swiftfin.sqlite"),
+            baseDir.appendingPathComponent("Swiftfin.sqlite-wal"),
+            baseDir.appendingPathComponent("Swiftfin.sqlite-shm")
+        ]
     }
 
     // MARK: - Storage
 
     private static let storage: SQLiteStore = {
         SQLiteStore(
-            fileURL: storeFileURL(base: .applicationSupportDirectory),
+            fileURL: storeFileURL(base: .applicationSupportDirectory)[0],
             migrationMappingProviders: [Mappings.userV1_V2]
         )
     }()
@@ -106,16 +112,18 @@ extension SwiftfinStore {
     // don't crash application if unable to move
     static func moveStoreFromCacheDirectory() {
 
-        let applicationSupportStoreURL = storeFileURL(base: .applicationSupportDirectory)
-        let cachesStoreURL = storeFileURL(base: .cachesDirectory)
+        let applicationSupportURLs = storeFileURL(base: .applicationSupportDirectory)
+        let cachesURLs = storeFileURL(base: .cachesDirectory)
         let fileManager = FileManager.default
 
-        guard !fileManager.fileExists(atPath: applicationSupportStoreURL.path(percentEncoded: false)),
-              fileManager.fileExists(atPath: cachesStoreURL.path(percentEncoded: false)) else { return }
+        guard !fileManager.fileExists(atPath: applicationSupportURLs[0].path(percentEncoded: false)),
+              fileManager.fileExists(atPath: cachesURLs[0].path(percentEncoded: false)) else { return }
 
         do {
             try fileManager.createDirectory(at: storeDirectory(base: .applicationSupportDirectory), withIntermediateDirectories: true)
-            try fileManager.moveItem(at: cachesStoreURL, to: applicationSupportStoreURL)
+            try fileManager.moveItem(at: cachesURLs[0], to: applicationSupportURLs[0])
+            try fileManager.moveItem(at: cachesURLs[1], to: applicationSupportURLs[1])
+            try fileManager.moveItem(at: cachesURLs[2], to: applicationSupportURLs[2])
         } catch {
             let logger = Logging.Logger.swiftfin()
             logger.critical("Error moving caches store to application support directory: \(error.localizedDescription)")
