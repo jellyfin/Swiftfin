@@ -66,7 +66,7 @@ extension SwiftfinStore {
         return [
             baseDir.appendingPathComponent("Swiftfin.sqlite"),
             baseDir.appendingPathComponent("Swiftfin.sqlite-wal"),
-            baseDir.appendingPathComponent("Swiftfin.sqlite-shm")
+            baseDir.appendingPathComponent("Swiftfin.sqlite-shm"),
         ]
     }
 
