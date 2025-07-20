@@ -26,10 +26,7 @@ extension ItemView {
 
         private let logger = Logger.swiftfin()
 
-        // MARK: - Dialog States
-
-        @State
-        private var isPresentingResume = false
+        // MARK: - Error State
 
         @State
         private var error: Error?
@@ -70,33 +67,11 @@ extension ItemView {
              } */
         }
 
-        // MARK: - Resume Alert Details
-
-        private var alertTitle: String {
-            if viewModel.playButtonItem?.type == .episode {
-                return viewModel.playButtonItem?.seriesName ?? L10n.playback
-            } else {
-                return viewModel.playButtonItem?.displayTitle ?? L10n.playback
-            }
-        }
-
-        private var alertDescription: String? {
-            if viewModel.playButtonItem?.type == .episode {
-                return viewModel.playButtonItem?.displayTitle
-            } else {
-                return nil
-            }
-        }
-
         // MARK: - Body
 
         var body: some View {
             Button {
-                if viewModel.playButtonItem?.userData?.playbackPositionTicks == 0 {
-                    playContent()
-                } else {
-                    isPresentingResume = true
-                }
+                playContent()
             } label: {
                 ZStack {
                     Rectangle()
@@ -116,21 +91,11 @@ extension ItemView {
                 }
             }
             .disabled(!isValid)
-            .alert(alertTitle, isPresented: $isPresentingResume) {
-                Button(L10n.resume) {
-                    playContent()
-                }
-
-                Button(L10n.playFromBeginning) {
-                    playContent(restart: true)
-                }
-
-                Button(L10n.cancel, role: .cancel) {
-                    isPresentingResume = false
-                }
-            } message: {
-                if let alertDescription {
-                    Text(alertDescription)
+            .contextMenu {
+                if viewModel.playButtonItem?.userData?.playbackPositionTicks ?? 0 > 0 {
+                    Button(L10n.playFromBeginning) {
+                        playContent(restart: true)
+                    }
                 }
             }
             .errorMessage($error)
