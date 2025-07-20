@@ -38,7 +38,7 @@ extension ItemView {
                 else {
                     ImageView(viewModel.item.imageSource(.backdrop, maxWidth: proxy.size.height * 0.70 * 1.77))
                         .aspectRatio(1.77, contentMode: .fill)
-                        .frame(height: proxy.size.height * 0.70, alignment: .top)
+                        .frame(width: proxy.size.width, height: proxy.size.height * 0.70, alignment: .top)
                         .bottomEdgeGradient(bottomColor: bottomColor)
                 }
             }

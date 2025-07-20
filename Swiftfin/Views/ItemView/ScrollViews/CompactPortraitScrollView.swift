@@ -61,7 +61,7 @@ extension ItemView {
                     withHeaderImageItem(maxWidth: proxy.size.height * 0.78 * 1.77) { imageSource, bottomColor in
                         ImageView(imageSource)
                             .aspectRatio(1.77, contentMode: .fill)
-                            .frame(height: proxy.size.height * 0.78)
+                            .frame(width: proxy.size.width, height: proxy.size.height * 0.78, alignment: .top)
                             .bottomEdgeGradient(bottomColor: bottomColor)
                     }
                 }
