@@ -25,11 +25,6 @@ extension ItemView {
 
         private let logger = Logger.swiftfin()
 
-        // MARK: - Error State
-
-        @State
-        private var error: Error?
-
         // MARK: - Media Sources
 
         private var mediaSources: [MediaSourceInfo] {
@@ -44,8 +39,8 @@ extension ItemView {
 
         // MARK: - Validation
 
-        private var isValid: Bool {
-            viewModel.playButtonItem != nil
+        private var isEnabled: Bool {
+            viewModel.selectedMediaSource != nil
         }
 
         // MARK: - Title
@@ -95,23 +90,22 @@ extension ItemView {
 
         private var playButton: some View {
             Button {
-                playContent()
+                play()
             } label: {
                 HStack(spacing: 15) {
                     Image(systemName: "play.fill")
-                        .foregroundColor(!isValid ? Color(UIColor.secondaryLabel) : Color.black)
                         .font(.title3)
 
                     // TODO: Use `MarqueeText`
                     Text(title)
-                        .foregroundStyle(!isValid ? Color(UIColor.secondaryLabel) : Color.black)
                         .fontWeight(.semibold)
                 }
+                .foregroundStyle(isEnabled ? .black : Color(UIColor.secondaryLabel))
                 .padding(20)
                 .frame(width: multipleVersions ? 320 : 440, height: 100, alignment: .center)
                 .background {
                     if isFocused {
-                        !isValid ? Color.secondarySystemFill : Color.white
+                        isEnabled ? Color.white : Color.secondarySystemFill
                     } else {
                         Color.white
                             .opacity(0.5)
@@ -119,41 +113,40 @@ extension ItemView {
                 }
                 .cornerRadius(10)
             }
-            .disabled(!isValid)
-            .focused($isFocused)
             .buttonStyle(.card)
             .contextMenu {
-                if viewModel.playButtonItem?.userData?.playbackPositionTicks ?? 0 > 0 {
+                if viewModel.playButtonItem?.userData?.playbackPositionTicks != 0 {
                     Button(L10n.playFromBeginning, systemImage: "gobackward") {
-                        playContent(restart: true)
+                        play(fromBeginning: true)
                     }
                 }
             }
-            .errorMessage($error)
+            .disabled(!isEnabled)
+            .focused($isFocused)
         }
 
         // MARK: - Play Content
 
-        private func playContent(restart: Bool = false) {
-            if var playButtonItem = viewModel.playButtonItem,
-               let selectedMediaSource = viewModel.selectedMediaSource
-            {
-                if restart {
-                    playButtonItem.userData?.playbackPositionTicks = 0
-                }
+        private func play(fromBeginning: Bool = false) {
+            guard var playButtonItem = viewModel.playButtonItem,
+                  let selectedMediaSource = viewModel.selectedMediaSource
+            else {
+                logger.error("Play selected with no item or media source")
+                return
+            }
 
-                router.route(
-                    to: .videoPlayer(
-                        manager: OnlineVideoPlayerManager(
-                            item: playButtonItem,
-                            mediaSource: selectedMediaSource
-                        )
+            if fromBeginning {
+                playButtonItem.userData?.playbackPositionTicks = 0
+            }
+
+            router.route(
+                to: .videoPlayer(
+                    manager: OnlineVideoPlayerManager(
+                        item: playButtonItem,
+                        mediaSource: selectedMediaSource
                     )
                 )
-            } else {
-                logger.error("No media source available")
-                error = JellyfinAPIError("No media source available")
-            }
+            )
         }
     }
 }

@@ -70,7 +70,7 @@ extension ItemView {
             } label: {
                 ZStack {
                     Rectangle()
-                        .foregroundStyle(isEnabled ? accentColor : Color(UIColor.secondarySystemFill))
+                        .foregroundStyle(isEnabled ? accentColor : Color.secondarySystemFill)
                         .cornerRadius(10)
 
                     HStack {
