@@ -30,7 +30,6 @@ extension ItemView {
         }
 
         private func withHeaderImageItem(
-            maxWidth: CGFloat,
             @ViewBuilder content: @escaping (ImageSource, Color) -> some View
         ) -> some View {
 
@@ -46,7 +45,7 @@ extension ItemView {
 
             let imageType: ImageType = item.type == .episode ? .primary : .backdrop
             let bottomColor = item.blurHash(for: imageType)?.averageLinearColor ?? Color.secondarySystemFill
-            let imageSource = item.imageSource(imageType, maxWidth: maxWidth)
+            let imageSource = item.imageSource(imageType, maxWidth: 1320)
 
             return content(imageSource, bottomColor)
                 .id(imageSource.url?.hashValue)
@@ -58,7 +57,7 @@ extension ItemView {
             GeometryReader { proxy in
                 if proxy.size.height.isZero { EmptyView() }
                 else {
-                    withHeaderImageItem(maxWidth: proxy.size.height * 0.78 * 1.77) { imageSource, bottomColor in
+                    withHeaderImageItem { imageSource, bottomColor in
                         ImageView(imageSource)
                             .aspectRatio(1.77, contentMode: .fill)
                             .frame(width: proxy.size.width, height: proxy.size.height * 0.78, alignment: .top)
