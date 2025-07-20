@@ -10,7 +10,6 @@ import CoreStore
 import Factory
 import Foundation
 import KeychainSwift
-import Logging
 
 extension SwiftfinStore {
     enum Mappings {}
