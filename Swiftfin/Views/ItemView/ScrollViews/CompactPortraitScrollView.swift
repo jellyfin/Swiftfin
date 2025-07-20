@@ -30,6 +30,7 @@ extension ItemView {
         }
 
         private func withHeaderImageItem(
+            maxWidth: CGFloat,
             @ViewBuilder content: @escaping (ImageSource, Color) -> some View
         ) -> some View {
 
@@ -45,7 +46,7 @@ extension ItemView {
 
             let imageType: ImageType = item.type == .episode ? .primary : .backdrop
             let bottomColor = item.blurHash(for: imageType)?.averageLinearColor ?? Color.secondarySystemFill
-            let imageSource = item.imageSource(imageType, maxWidth: UIScreen.main.bounds.width)
+            let imageSource = item.imageSource(imageType, maxWidth: maxWidth)
 
             return content(imageSource, bottomColor)
                 .id(imageSource.url?.hashValue)
@@ -54,11 +55,16 @@ extension ItemView {
 
         @ViewBuilder
         private var headerView: some View {
-            withHeaderImageItem { imageSource, bottomColor in
-                ImageView(imageSource)
-                    .aspectRatio(1.77, contentMode: .fill)
-                    .frame(height: UIScreen.main.bounds.height * 0.35)
-                    .bottomEdgeGradient(bottomColor: bottomColor)
+            GeometryReader { proxy in
+                if proxy.size.height.isZero { EmptyView() }
+                else {
+                    withHeaderImageItem(maxWidth: proxy.size.width) { imageSource, bottomColor in
+                        ImageView(imageSource)
+                            .aspectRatio(1.77, contentMode: .fill)
+                            .frame(height: proxy.size.height * 0.78)
+                            .bottomEdgeGradient(bottomColor: bottomColor)
+                    }
+                }
             }
         }
 
@@ -119,6 +125,7 @@ extension ItemView.CompactPosterScrollView {
 
                 Text(viewModel.item.displayTitle)
                     .font(.title2)
+                    .lineLimit(2)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
 
