@@ -55,14 +55,11 @@ extension ItemView {
         @ViewBuilder
         private var headerView: some View {
             GeometryReader { proxy in
-                if proxy.size.height.isZero { EmptyView() }
-                else {
-                    withHeaderImageItem { imageSource, bottomColor in
-                        ImageView(imageSource)
-                            .aspectRatio(1.77, contentMode: .fill)
-                            .frame(width: proxy.size.width, height: proxy.size.height * 0.78, alignment: .top)
-                            .bottomEdgeGradient(bottomColor: bottomColor)
-                    }
+                withHeaderImageItem { imageSource, bottomColor in
+                    ImageView(imageSource)
+                        .aspectRatio(1.77, contentMode: .fill)
+                        .frame(width: proxy.size.width, height: proxy.size.height * 0.78, alignment: .top)
+                        .bottomEdgeGradient(bottomColor: bottomColor)
                 }
             }
         }
