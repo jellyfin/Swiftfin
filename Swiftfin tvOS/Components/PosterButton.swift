@@ -30,9 +30,9 @@ struct PosterButton<Item: Poster>: View {
     private func imageSources(from item: Item) -> [ImageSource] {
         switch type {
         case .landscape:
-            item.landscapeImageSources(maxWidth: landscapeMaxWidth, quality: 70)
+            item.landscapeImageSources(maxWidth: landscapeMaxWidth, quality: 90)
         case .portrait:
-            item.portraitImageSources(maxWidth: portraitMaxWidth, quality: 70)
+            item.portraitImageSources(maxWidth: portraitMaxWidth, quality: 90)
         }
     }
 

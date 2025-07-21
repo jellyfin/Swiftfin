@@ -25,7 +25,13 @@ extension BaseItemDto {
         maxHeight: CGFloat? = nil,
         quality: Int? = nil
     ) -> URL? {
-        _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, quality: quality, itemID: id ?? "")
+        _imageURL(
+            type,
+            maxWidth: maxWidth,
+            maxHeight: maxHeight,
+            quality: quality,
+            itemID: id ?? ""
+        )
     }
 
     // TODO: will server actually only have a single blurhash per type?
@@ -50,7 +56,12 @@ extension BaseItemDto {
         return nil
     }
 
-    func imageSource(_ type: ImageType, maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil, quality: Int? = nil) -> ImageSource {
+    func imageSource(
+        _ type: ImageType,
+        maxWidth: CGFloat? = nil,
+        maxHeight: CGFloat? = nil,
+        quality: Int? = nil
+    ) -> ImageSource {
         _imageSource(
             type,
             maxWidth: maxWidth,
@@ -63,7 +74,12 @@ extension BaseItemDto {
 
     /// - Note: Will force the creation of an image source even if it doesn't have a tag, due
     /// to episodes also retrieving series images in some areas. This may cause more 404s.
-    func seriesImageURL(_ type: ImageType, maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil, quality: Int? = nil) -> URL? {
+    func seriesImageURL(
+        _ type: ImageType,
+        maxWidth: CGFloat? = nil,
+        maxHeight: CGFloat? = nil,
+        quality: Int? = nil
+    ) -> URL? {
         _imageURL(
             type,
             maxWidth: maxWidth,
@@ -76,7 +92,12 @@ extension BaseItemDto {
 
     /// - Note: Will force the creation of an image source even if it doesn't have a tag, due
     /// to episodes also retrieving series images in some areas. This may cause more 404s.
-    func seriesImageSource(_ type: ImageType, maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil, quality: Int? = nil) -> ImageSource {
+    func seriesImageSource(
+        _ type: ImageType,
+        maxWidth: CGFloat? = nil,
+        maxHeight: CGFloat? = nil,
+        quality: Int? = nil
+    ) -> ImageSource {
         let url = _imageURL(
             type,
             maxWidth: maxWidth,
@@ -102,9 +123,9 @@ extension BaseItemDto {
         itemID: String,
         requireTag: Bool = true
     ) -> URL? {
-        let scaleWidth = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
-        let scaleHeight = maxHeight == nil ? nil : UIScreen.main.scale(maxHeight!)
-        let validQuality = quality.map { min(max($0, 1), 100) }
+        let scaleWidth = maxWidth.map { UIScreen.main.scale($0) }
+        let scaleHeight = maxWidth.map { UIScreen.main.scale($0) }
+        let validQuality = quality.map { clamp($0, min: 1, max: 100) }
 
         let tag = getImageTag(for: type)
 
@@ -117,7 +138,7 @@ extension BaseItemDto {
             maxHeight: scaleHeight,
             quality: validQuality,
             tag: tag,
-            format: type == .logo ? .png : nil,
+            format: type == .logo ? .png : nil
         )
 
         let request = Paths.getItemImage(
@@ -140,8 +161,19 @@ extension BaseItemDto {
         }
     }
 
-    private func _imageSource(_ type: ImageType, maxWidth: CGFloat?, maxHeight: CGFloat?, quality: Int?) -> ImageSource {
-        let url = _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, quality: quality, itemID: id ?? "")
+    private func _imageSource(
+        _ type: ImageType,
+        maxWidth: CGFloat?,
+        maxHeight: CGFloat?,
+        quality: Int?
+    ) -> ImageSource {
+        let url = _imageURL(
+            type,
+            maxWidth: maxWidth,
+            maxHeight: maxHeight,
+            quality: quality,
+            itemID: id ?? ""
+        )
         let blurHash = blurHashString(for: type)
 
         return ImageSource(
