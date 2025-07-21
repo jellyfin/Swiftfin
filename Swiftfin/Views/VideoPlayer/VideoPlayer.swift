@@ -95,16 +95,6 @@ struct VideoPlayer: View {
 
                         manager.seconds = newSeconds
                     }
-//                    .onTicksUpdated { newTicks, _ in
-//
-//                        let newSeconds = TimeInterval(newTicks) / 1000
-//
-//                        if !isScrubbing {
-//                            scrubbedSeconds = newSeconds
-//                        }
-//
-//                        manager.seconds.value = newSeconds
-//                    }
                     .onStateUpdated { state, _ in
 
                         switch state {
