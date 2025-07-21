@@ -106,7 +106,7 @@ extension ItemView {
                     viewModel.send(.toggleIsPlayed)
                 }
                 .foregroundStyle(.purple)
-                .environment(\.isSelected, isCheckmarkSelected)
+                .isSelected(isCheckmarkSelected)
                 .frame(minWidth: 100, maxWidth: .infinity)
 
                 // MARK: Toggle Favorite
@@ -121,7 +121,7 @@ extension ItemView {
                     viewModel.send(.toggleIsFavorite)
                 }
                 .foregroundStyle(.pink)
-                .environment(\.isSelected, isHeartSelected)
+                .isSelected(isHeartSelected)
                 .frame(minWidth: 100, maxWidth: .infinity)
 
                 // MARK: Watch a Trailer
