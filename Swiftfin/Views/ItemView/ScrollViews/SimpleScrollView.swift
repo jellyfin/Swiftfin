@@ -91,10 +91,18 @@ extension ItemView {
         }
 
         private var imageType: ImageType {
-            if viewModel.item.type == .episode {
+            if [.episode, .musicAlbum, .playlist].contains(viewModel.item.type) {
                 return .primary
             } else {
                 return .backdrop
+            }
+        }
+
+        private var posterStyle: PosterDisplayType {
+            if [.musicAlbum, .playlist].contains(viewModel.item.type) {
+                return .portrait
+            } else {
+                return .landscape
             }
         }
 
@@ -114,7 +122,7 @@ extension ItemView {
                         SystemImageContentView(systemName: viewModel.item.systemImage)
                     }
                     .frame(maxHeight: 300)
-                    .posterStyle(.landscape)
+                    .posterStyle(posterStyle)
                     .posterShadow()
                     .padding(.horizontal)
 
