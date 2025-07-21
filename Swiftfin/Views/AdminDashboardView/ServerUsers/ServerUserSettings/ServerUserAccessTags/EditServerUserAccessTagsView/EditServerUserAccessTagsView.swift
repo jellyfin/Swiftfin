@@ -158,8 +158,8 @@ struct EditServerUserAccessTagsView: View {
             selectedTags = [tag]
             isPresentingDeleteConfirmation = true
         }
-        .environment(\.isEditing, isEditing)
-        .environment(\.isSelected, selectedTags.contains(tag))
+        .isEditing(isEditing)
+        .isSelected(selectedTags.contains(tag))
     }
 
     // MARK: - Content View

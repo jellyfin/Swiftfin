@@ -209,8 +209,8 @@ struct ItemSubtitlesView: View {
                                 selectedSubtitles = [subtitle]
                                 isPresentingDeleteConfirmation = true
                             }
-                            .environment(\.isSelected, selectedSubtitles.contains(subtitle))
-                            .environment(\.isEditing, isEditing)
+                            .isSelected(selectedSubtitles.contains(subtitle))
+                            .isEditing(isEditing)
                         }
                     }
                 }
