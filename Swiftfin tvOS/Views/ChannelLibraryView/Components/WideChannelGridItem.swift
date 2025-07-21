@@ -63,7 +63,7 @@ extension ChannelLibraryView {
                         Text(startDate, style: .time)
                             .monospacedDigit()
                     } else {
-                        Text(String.emptyTime)
+                        Text(String.emptyDash)
                     }
                 }
 

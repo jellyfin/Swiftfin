@@ -25,15 +25,6 @@ extension NavigationRoute {
         ProgramsView()
     }
 
-    static func liveVideoPlayer(manager: LiveVideoPlayerManager) -> NavigationRoute {
-        NavigationRoute(
-            id: "liveVideoPlayer",
-            style: .fullscreen
-        ) {
-            LiveVideoPlayerViewShim(videoPlayerManager: manager)
-        }
-    }
-
     static func mediaSourceInfo(source: MediaSourceInfo) -> NavigationRoute {
         NavigationRoute(
             id: "mediaSourceInfo",
@@ -51,12 +42,12 @@ extension NavigationRoute {
     }
     #endif
 
-    static func videoPlayer(manager: VideoPlayerManager) -> NavigationRoute {
+    static func videoPlayer(manager: MediaPlayerManager) -> NavigationRoute {
         NavigationRoute(
             id: "videoPlayer",
             style: .fullscreen
         ) {
-            VideoPlayerViewShim(videoPlayerManager: manager)
+            VideoPlayerViewShim(manager: manager)
         }
     }
 }
@@ -65,8 +56,7 @@ extension NavigationRoute {
 
 struct VideoPlayerViewShim: View {
 
-    @StateObject
-    var videoPlayerManager: VideoPlayerManager
+    let manager: MediaPlayerManager
 
     var body: some View {
         #if os(iOS)
@@ -74,9 +64,9 @@ struct VideoPlayerViewShim: View {
         PreferencesView {
             Group {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                    VideoPlayer(manager: self.videoPlayerManager)
+                    VideoPlayer(manager: manager)
                 } else {
-                    NativeVideoPlayer(manager: self.videoPlayerManager)
+                    NativeVideoPlayer(manager: manager)
                 }
             }
             .preferredColorScheme(.dark)
@@ -94,43 +84,6 @@ struct VideoPlayerViewShim: View {
         } else {
             NativeVideoPlayer(manager: self.videoPlayerManager)
         }
-        #endif
-    }
-}
-
-struct LiveVideoPlayerViewShim: View {
-
-    @StateObject
-    var videoPlayerManager: LiveVideoPlayerManager
-
-    var body: some View {
-        #if os(iOS)
-
-        PreferencesView {
-            Group {
-                if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                    LiveVideoPlayer(manager: self.videoPlayerManager)
-                } else {
-                    LiveNativeVideoPlayer(manager: self.videoPlayerManager)
-                }
-            }
-            .preferredColorScheme(.dark)
-            .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
-        }
-        .ignoresSafeArea()
-        .persistentSystemOverlays(.hidden)
-
-        #else
-
-        PreferencesView {
-            if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                LiveVideoPlayer(manager: self.videoPlayerManager)
-            } else {
-                LiveNativeVideoPlayer(manager: self.videoPlayerManager)
-            }
-        }
-        .ignoresSafeArea()
-
         #endif
     }
 }

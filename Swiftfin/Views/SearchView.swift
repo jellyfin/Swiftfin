@@ -93,19 +93,19 @@ struct SearchView: View {
 
     private func select(_ item: BaseItemDto, in namespace: Namespace.ID) {
         switch item.type {
-        case .program:
-            router.route(
-                to: .liveVideoPlayer(
-                    manager: LiveVideoPlayerManager(program: item)
-                )
-            )
+        case .program: ()
+        // router.route(
+        //     to: .liveVideoPlayer(
+        //         manager: LiveVideoPlayerManager(program: item)
+        //     )
+        // )
         case .tvChannel:
             guard let mediaSource = item.mediaSources?.first else { return }
-            router.route(
-                to: .liveVideoPlayer(
-                    manager: LiveVideoPlayerManager(item: item, mediaSource: mediaSource)
-                )
-            )
+//            router.route(
+//                to: .liveVideoPlayer(
+//                    manager: LiveVideoPlayerManager(item: item, mediaSource: mediaSource)
+//                )
+//            )
         default:
             router.route(to: .item(item: item), in: namespace)
         }
