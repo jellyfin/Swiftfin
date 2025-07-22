@@ -141,8 +141,8 @@ struct DevicesView: View {
                         selectedDevices.insert(id)
                         isPresentingDeleteConfirmation = true
                     }
-                    .environment(\.isEditing, isEditing)
-                    .environment(\.isSelected, selectedDevices.contains(device.id ?? ""))
+                    .isEditing(isEditing)
+                    .isSelected(selectedDevices.contains(device.id ?? ""))
                     .listRowInsets(.edgeInsets)
                 }
             }
