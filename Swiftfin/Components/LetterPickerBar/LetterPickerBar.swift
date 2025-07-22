@@ -27,7 +27,7 @@ struct LetterPickerBar: View {
                     size: LetterPickerBar.size,
                     viewModel: viewModel
                 )
-                .environment(\.isSelected, viewModel.currentFilters.letter.contains(filterLetter))
+                .isSelected(viewModel.currentFilters.letter.contains(filterLetter))
             }
 
             Spacer()
