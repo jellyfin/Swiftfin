@@ -35,31 +35,27 @@ extension ItemView {
         // MARK: - Title
 
         private var title: String {
-            if let seriesViewModel = viewModel as? SeriesItemViewModel,
-               let seasonEpisodeLabel = seriesViewModel.playButtonItem?.seasonEpisodeLabel
+
+            /// Use the Media Source name if there is more than one Media Source
+            if let sourceLabel = viewModel.selectedMediaSource?.displayTitle,
+               viewModel.item.mediaSources?.count ?? 0 > 1
+            {
+                return sourceLabel
+
+                /// Use the Season/Episode label for the Series ItemView
+            } else if let seriesViewModel = viewModel as? SeriesItemViewModel,
+                      let seasonEpisodeLabel = seriesViewModel.playButtonItem?.seasonEpisodeLabel
             {
                 return seasonEpisodeLabel
+
+                /// Use a Play/Resume label for single Media Source items that are not Series
             } else if let playButtonLabel = viewModel.playButtonItem?.playButtonLabel {
                 return playButtonLabel
+
+                /// Fallback to a generic `Play` label
             } else {
                 return L10n.play
             }
-
-            // TODO: For use with `MarqueeText` on the `PlayButton`
-
-            /* if let sourceLabel = viewModel.selectedMediaSource?.displayTitle,
-                viewModel.item.mediaSources?.count ?? 0 > 1
-             {
-                 return sourceLabel
-             } else if let seriesViewModel = viewModel as? SeriesItemViewModel,
-                       let seasonEpisodeLabel = seriesViewModel.playButtonItem?.seasonEpisodeLabel
-             {
-                 return seasonEpisodeLabel
-             } else if let playButtonLabel = viewModel.playButtonItem?.playButtonLabel {
-                 return playButtonLabel
-             } else {
-                 return L10n.play
-             } */
         }
 
         // MARK: - Body
@@ -76,13 +72,15 @@ extension ItemView {
                     HStack {
                         Image(systemName: "play.fill")
                             .font(.system(size: 20))
+                            .padding(.horizontal, 3)
 
-                        // TODO: Use `MarqueeText`
-                        Text(title)
+                        Marquee(title, speed: 40, delay: 3, fade: 5)
                             .font(.callout)
                             .fontWeight(.semibold)
+                            .padding(.trailing, 3)
                     }
                     .foregroundStyle(isEnabled ? accentColor.overlayColor : Color(UIColor.secondaryLabel))
+                    .padding(.horizontal, 10)
                 }
             }
             .contextMenu {

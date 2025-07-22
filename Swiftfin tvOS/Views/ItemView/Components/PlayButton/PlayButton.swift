@@ -46,31 +46,27 @@ extension ItemView {
         // MARK: - Title
 
         private var title: String {
-            if let seriesViewModel = viewModel as? SeriesItemViewModel,
-               let seasonEpisodeLabel = seriesViewModel.playButtonItem?.seasonEpisodeLabel
+
+            /// Use the Media Source name if there is more than one Media Source
+            if let sourceLabel = viewModel.selectedMediaSource?.displayTitle,
+               viewModel.item.mediaSources?.count ?? 0 > 1
+            {
+                return sourceLabel
+
+                /// Use the Season/Episode label for the Series ItemView
+            } else if let seriesViewModel = viewModel as? SeriesItemViewModel,
+                      let seasonEpisodeLabel = seriesViewModel.playButtonItem?.seasonEpisodeLabel
             {
                 return seasonEpisodeLabel
+
+                /// Use a Play/Resume label for single Media Source items that are not Series
             } else if let playButtonLabel = viewModel.playButtonItem?.playButtonLabel {
                 return playButtonLabel
+
+                /// Fallback to a generic `Play` label
             } else {
                 return L10n.play
             }
-
-            // TODO: For use with `MarqueeText` on the `PlayButton`
-
-            /* if let sourceLabel = viewModel.selectedMediaSource?.displayTitle,
-                viewModel.item.mediaSources?.count ?? 0 > 1
-             {
-                 return sourceLabel
-             } else if let seriesViewModel = viewModel as? SeriesItemViewModel,
-                       let seasonEpisodeLabel = seriesViewModel.playButtonItem?.seasonEpisodeLabel
-             {
-                 return seasonEpisodeLabel
-             } else if let playButtonLabel = viewModel.playButtonItem?.playButtonLabel {
-                 return playButtonLabel
-             } else {
-                 return L10n.play
-             } */
         }
 
         // MARK: - Body
@@ -95,13 +91,13 @@ extension ItemView {
                 HStack(spacing: 15) {
                     Image(systemName: "play.fill")
                         .font(.title3)
+                        .padding(.trailing, 4)
 
-                    // TODO: Use `MarqueeText`
-                    Text(title)
+                    Marquee(title, animateWhenFocused: true)
                         .fontWeight(.semibold)
                 }
                 .foregroundStyle(isEnabled ? .black : Color(UIColor.secondaryLabel))
-                .padding(20)
+                .padding(23)
                 .frame(width: multipleVersions ? 320 : 440, height: 100, alignment: .center)
                 .background {
                     if isFocused {
