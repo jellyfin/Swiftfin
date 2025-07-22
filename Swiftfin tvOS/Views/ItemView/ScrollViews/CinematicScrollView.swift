@@ -31,7 +31,7 @@ extension ItemView {
             let item: BaseItemDto
 
             if viewModel.item.type == .person || viewModel.item.type == .musicArtist,
-               let typeViewModel = viewModel as? TypeItemViewModel,
+               let typeViewModel = viewModel as? CollectionItemViewModel,
                let randomItem = typeViewModel.randomItem()
             {
                 item = randomItem
@@ -48,26 +48,28 @@ extension ItemView {
         }
 
         var body: some View {
-            ZStack {
-                backgroundImageView()
+            GeometryReader { geometry in
+                ZStack {
+                    backgroundImageView()
 
-                ScrollView(.vertical, showsIndicators: false) {
-                    content
-                        .background {
-                            BlurView(style: .dark)
-                                .mask {
-                                    VStack(spacing: 0) {
-                                        LinearGradient(gradient: Gradient(stops: [
-                                            .init(color: .white, location: 0),
-                                            .init(color: .white.opacity(0.7), location: 0.4),
-                                            .init(color: .white.opacity(0), location: 1),
-                                        ]), startPoint: .bottom, endPoint: .top)
-                                            .frame(height: UIScreen.main.bounds.height - 150)
+                    ScrollView(.vertical, showsIndicators: false) {
+                        content
+                            .background {
+                                BlurView(style: .dark)
+                                    .mask {
+                                        VStack(spacing: 0) {
+                                            LinearGradient(gradient: Gradient(stops: [
+                                                .init(color: .white, location: 0),
+                                                .init(color: .white.opacity(0.7), location: 0.4),
+                                                .init(color: .white.opacity(0), location: 1),
+                                            ]), startPoint: .bottom, endPoint: .top)
+                                                .frame(height: geometry.size.height - 150)
 
-                                        Color.white
+                                            Color.white
+                                        }
                                     }
-                                }
-                        }
+                            }
+                    }
                 }
             }
             .ignoresSafeArea()
@@ -103,28 +105,26 @@ extension ItemView {
                     .focused($focusedLayer, equals: .top)
 
                 HStack(alignment: .bottom) {
-
+                    
                     VStack(alignment: .leading, spacing: 20) {
 
                         ImageView(viewModel.item.imageSource(
                             .logo,
-                            maxWidth: UIScreen.main.bounds.width * 0.4,
                             maxHeight: 250
                         ))
                         .placeholder { _ in
                             EmptyView()
                         }
                         .failure {
-                            Text(viewModel.item.displayTitle)
+                            Marquee(viewModel.item.displayTitle, speed: 100, delay: 3, animateWhenFocused: false)
                                 .font(.largeTitle)
                                 .fontWeight(.semibold)
-                                .lineLimit(2)
+                                .lineLimit(1)
                                 .multilineTextAlignment(.leading)
                                 .foregroundColor(.white)
                         }
                         .aspectRatio(contentMode: .fit)
                         .padding(.bottom)
-                        .frame(maxHeight: 250, alignment: .bottomLeading)
 
                         OverviewView(item: viewModel.item)
                             .taglineLineLimit(1)
@@ -161,7 +161,7 @@ extension ItemView {
 
                     VStack {
                         if viewModel.item.type == .person || viewModel.item.type == .musicArtist,
-                           let typeViewModel = viewModel as? TypeItemViewModel
+                           let typeViewModel = viewModel as? CollectionItemViewModel
                         {
                             ImageView(typeViewModel.item.imageSource(.primary, maxWidth: 440))
                                 .failure {

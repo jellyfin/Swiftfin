@@ -23,20 +23,6 @@ extension ItemView {
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
 
-                if let firstTagline = item.taglines?.first {
-                    Text(firstTagline)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .multilineTextAlignment(.leading)
-                        .lineLimit(taglineLineLimit)
-                }
-
-                if let itemOverview = item.overview {
-                    Text(itemOverview)
-                        .font(.subheadline)
-                        .lineLimit(overviewLineLimit)
-                }
-
                 if let birthday = item.birthday?.formatted(date: .long, time: .omitted) {
                     LabeledContent(
                         L10n.born,
@@ -51,11 +37,18 @@ extension ItemView {
                     )
                 }
 
-                if let birthplace = item.birthplace {
-                    LabeledContent(
-                        L10n.birthplace,
-                        value: birthplace
-                    )
+                if let firstTagline = item.taglines?.first {
+                    Text(firstTagline)
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(taglineLineLimit)
+                }
+
+                if let itemOverview = item.overview {
+                    Text(itemOverview)
+                        .font(.subheadline)
+                        .lineLimit(overviewLineLimit)
                 }
             }
             .font(.footnote)

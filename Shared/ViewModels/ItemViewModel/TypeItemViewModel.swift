@@ -11,7 +11,7 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-final class TypeItemViewModel: ItemViewModel {
+final class CollectionItemViewModel: ItemViewModel {
 
     @ObservedPublisher
     var sections: OrderedDictionary<BaseItemKind, ItemLibraryViewModel>
