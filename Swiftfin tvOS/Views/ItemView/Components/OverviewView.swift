@@ -37,6 +37,13 @@ extension ItemView {
                     )
                 }
 
+                if let birthplace = item.birthplace {
+                    LabeledContent(
+                        L10n.birthplace,
+                        value: birthplace
+                    )
+                }
+
                 if let firstTagline = item.taglines?.first {
                     Text(firstTagline)
                         .font(.subheadline)
