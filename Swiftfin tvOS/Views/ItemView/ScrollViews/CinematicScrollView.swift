@@ -105,7 +105,7 @@ extension ItemView {
                     .focused($focusedLayer, equals: .top)
 
                 HStack(alignment: .bottom) {
-                    
+
                     VStack(alignment: .leading, spacing: 20) {
 
                         ImageView(viewModel.item.imageSource(
