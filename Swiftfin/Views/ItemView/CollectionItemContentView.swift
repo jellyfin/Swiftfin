@@ -25,7 +25,7 @@ extension ItemView {
         private var router
 
         @ObservedObject
-        var viewModel: TypeItemViewModel
+        var viewModel: CollectionItemViewModel
 
         private func episodeHStack(element: Element) -> some View {
             VStack(alignment: .leading) {

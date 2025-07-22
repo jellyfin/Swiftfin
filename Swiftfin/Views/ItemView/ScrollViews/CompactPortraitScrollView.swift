@@ -36,7 +36,7 @@ extension ItemView {
             let item: BaseItemDto
 
             if viewModel.item.type == .person || viewModel.item.type == .musicArtist,
-               let typeViewModel = viewModel as? TypeItemViewModel,
+               let typeViewModel = viewModel as? CollectionItemViewModel,
                let randomItem = typeViewModel.randomItem()
             {
                 item = randomItem
