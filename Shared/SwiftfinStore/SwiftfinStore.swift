@@ -51,29 +51,11 @@ extension SwiftfinStore {
         )
     }()
 
-    private static func storeDirectory(base: URL) -> URL {
-        base
-            .appendingPathComponent(
-                Bundle.main.bundleIdentifier ?? "com.CoreStore.DataStack",
-                isDirectory: true
-            )
-    }
-
-    private static func storeFileURLs(base: URL) -> [URL] {
-        let baseDir = storeDirectory(base: base)
-
-        return [
-            baseDir.appendingPathComponent("Swiftfin.sqlite"),
-            baseDir.appendingPathComponent("Swiftfin.sqlite-wal"),
-            baseDir.appendingPathComponent("Swiftfin.sqlite-shm"),
-        ]
-    }
-
     // MARK: - Storage
 
     private static let storage: SQLiteStore = {
         SQLiteStore(
-            fileURL: storeFileURLs(base: .applicationSupportDirectory)[0],
+            fileName: "Swiftfin.sqlite",
             migrationMappingProviders: [Mappings.userV1_V2]
         )
     }()
@@ -90,10 +72,6 @@ extension SwiftfinStore {
 
         let logger = Logging.Logger.swiftfin()
 
-        #if os(tvOS)
-        moveStoreFromCacheDirectory()
-        #endif
-
         try await withCheckedThrowingContinuation { continuation in
             _ = dataStack.addStorage(storage) { result in
                 switch result {
@@ -104,28 +82,6 @@ extension SwiftfinStore {
                     continuation.resume(throwing: JellyfinAPIError("Failed creating datastack with: \(error.localizedDescription)"))
                 }
             }
-        }
-    }
-
-    // tvOS used to store database in Caches directory,
-    // don't crash application if unable to move
-    static func moveStoreFromCacheDirectory() {
-
-        let applicationSupportURLs = storeFileURLs(base: .applicationSupportDirectory)
-        let cachesURLs = storeFileURLs(base: .cachesDirectory)
-        let fileManager = FileManager.default
-
-        guard !fileManager.fileExists(atPath: applicationSupportURLs[0].path(percentEncoded: false)),
-              fileManager.fileExists(atPath: cachesURLs[0].path(percentEncoded: false)) else { return }
-
-        do {
-            try fileManager.createDirectory(at: storeDirectory(base: .applicationSupportDirectory), withIntermediateDirectories: true)
-            try fileManager.moveItem(at: cachesURLs[0], to: applicationSupportURLs[0])
-            try fileManager.moveItem(at: cachesURLs[1], to: applicationSupportURLs[1])
-            try fileManager.moveItem(at: cachesURLs[2], to: applicationSupportURLs[2])
-        } catch {
-            let logger = Logging.Logger.swiftfin()
-            logger.critical("Error moving caches store to application support directory: \(error.localizedDescription)")
         }
     }
 }

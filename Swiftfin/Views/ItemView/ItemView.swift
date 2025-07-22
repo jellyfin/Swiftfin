@@ -64,14 +64,14 @@ struct ItemView: View {
             return CollectionItemViewModel(item: item)
         case .episode:
             return EpisodeItemViewModel(item: item)
-        case .playlist:
-            return PlaylistItemViewModel(item: item)
         case .movie:
             return MovieItemViewModel(item: item)
+        case .musicArtist, .person:
+            return PersonItemViewModel(item: item)
+        case .playlist:
+            return PlaylistItemViewModel(item: item)
         case .series:
             return SeriesItemViewModel(item: item)
-        case .person, .musicArtist:
-            return PersonItemViewModel(item: item)
         default:
             assertionFailure("Unsupported item")
             return ItemViewModel(item: item)
@@ -92,12 +92,12 @@ struct ItemView: View {
             EpisodeItemContentView(viewModel: viewModel as! EpisodeItemViewModel)
         case .movie:
             MovieItemContentView(viewModel: viewModel as! MovieItemViewModel)
+        case .musicArtist, .person:
+            PersonItemContentView(viewModel: viewModel as! PersonItemViewModel)
         case .playlist:
-            PlaylistItemContentView(viewModel: viewModel as! PlaylistItemViewModel)
+            PagingItemContentView(viewModel: viewModel as! PlaylistItemViewModel)
         case .series:
             SeriesItemContentView(viewModel: viewModel as! SeriesItemViewModel)
-        case .person, .musicArtist:
-            PersonItemContentView(viewModel: viewModel as! PersonItemViewModel)
         default:
             Text(L10n.notImplementedYetWithType(viewModel.item.type ?? "--"))
         }
@@ -123,7 +123,7 @@ struct ItemView: View {
             case .cinematic:
                 return CinematicScrollView(viewModel: viewModel, content: content)
             }
-        case .person, .musicArtist:
+        case .musicArtist, .person:
             return CompactPosterScrollView(viewModel: viewModel, content: content)
         default:
             return SimpleScrollView(viewModel: viewModel, content: content)

@@ -9,6 +9,7 @@
 import Defaults
 import Factory
 import JellyfinAPI
+import Logging
 import SwiftUI
 
 extension ItemView {
@@ -18,11 +19,10 @@ extension ItemView {
         @Default(.accentColor)
         private var accentColor
 
-        @Injected(\.logService)
-        private var logger
-
         @Router
         private var router
+
+        private let logger = Logging.Logger.swiftfin()
 
         let item: BaseItemDto
         let onSelect: () -> Void

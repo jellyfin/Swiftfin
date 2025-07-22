@@ -19,10 +19,10 @@ extension ItemView {
         @Default(.accentColor)
         private var accentColor
 
-        private let logger = Logging.Logger.swiftfin()
-
         @Router
         private var router
+
+        private let logger = Logging.Logger.swiftfin()
 
         let item: BaseItemDto
         let onSelect: () -> Void

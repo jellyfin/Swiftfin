@@ -12,7 +12,7 @@ import SwiftUI
 
 extension ItemView {
 
-    struct PlaylistItemContentView: View {
+    struct PagingItemContentView: View {
 
         @Router
         private var router
@@ -21,12 +21,20 @@ extension ItemView {
         var viewModel: PlaylistItemViewModel
 
         var body: some View {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 500))], spacing: 10) {
-                ForEach(viewModel.playlistItems) { item in
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 500))], spacing: 20) {
+                ForEach(viewModel.contents.elements) { item in
                     ItemView.PlayableContentRow(item: item) {
                         router.route(to: .item(item: item))
                     }
+                    .onFirstAppear {
+                        if item == viewModel.contents.elements.last {
+                            viewModel.contents.send(.getNextPage)
+                        }
+                    }
                 }
+            }
+            .onFirstAppear {
+                viewModel.send(.refresh)
             }
         }
     }

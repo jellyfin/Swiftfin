@@ -25,16 +25,24 @@ extension ItemView {
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 750))], spacing: 20) {
-                    ForEach(viewModel.playlistItems) { item in
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 20) {
+                    ForEach(viewModel.contents.elements) { item in
                         ItemView.PlayableContentRow(item: item) {
                             router.route(to: .item(item: item))
+                        }
+                        .onFirstAppear {
+                            if item == viewModel.contents.elements.last {
+                                viewModel.contents.send(.getNextPage)
+                            }
                         }
                     }
                 }
                 .padding(EdgeInsets.edgePadding)
 
                 ItemView.AboutView(viewModel: viewModel)
+            }
+            .onFirstAppear {
+                viewModel.send(.refresh)
             }
         }
     }

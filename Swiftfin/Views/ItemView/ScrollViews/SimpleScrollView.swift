@@ -106,6 +106,14 @@ extension ItemView {
             }
         }
 
+        private var posterHeight: CGFloat {
+            if [.musicAlbum, .playlist].contains(viewModel.item.type) {
+                return 600
+            } else {
+                return 300
+            }
+        }
+
         @ViewBuilder
         private var header: some View {
             VStack(alignment: .center) {
@@ -121,7 +129,10 @@ extension ItemView {
                     .failure {
                         SystemImageContentView(systemName: viewModel.item.systemImage)
                     }
-                    .frame(maxHeight: 300)
+                    .frame(maxHeight: posterHeight)
+                    .if([.musicAlbum, .playlist].contains(viewModel.item.type)) { poster in
+                        poster.aspectRatio(1.0, contentMode: .fit)
+                    }
                     .posterStyle(posterStyle)
                     .posterShadow()
                     .padding(.horizontal)
