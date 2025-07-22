@@ -220,7 +220,7 @@ extension NavigationRoute {
                 viewModel: viewModel,
                 imageInfo: imageInfo
             )
-            .environment(\.isEditing, true)
+            .isEditing(true)
         }
     }
 
@@ -267,7 +267,7 @@ extension NavigationRoute {
                 viewModel: viewModel,
                 remoteImageInfo: remoteImageInfo
             )
-            .environment(\.isEditing, false)
+            .isEditing(false)
         }
     }
 

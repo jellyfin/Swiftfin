@@ -10,7 +10,6 @@ import CoreStore
 import Factory
 import Foundation
 import JellyfinAPI
-import Logging
 
 typealias AnyStoredData = SwiftfinStore.V2.AnyData
 typealias ServerModel = SwiftfinStore.V2.StoredServer
@@ -51,8 +50,6 @@ extension SwiftfinStore {
         )
     }()
 
-    // MARK: - Storage
-
     private static let storage: SQLiteStore = {
         SQLiteStore(
             fileName: "Swiftfin.sqlite",
@@ -60,25 +57,18 @@ extension SwiftfinStore {
         )
     }()
 
-    // MARK: - Requires a Migration
-
     static func requiresMigration() throws -> Bool {
         try dataStack.requiredMigrationsForStorage(storage).isNotEmpty
     }
 
-    // MARK: - Set Up Data Stack
-
     static func setupDataStack() async throws {
-
-        let logger = Logging.Logger.swiftfin()
-
         try await withCheckedThrowingContinuation { continuation in
             _ = dataStack.addStorage(storage) { result in
                 switch result {
                 case .success:
                     continuation.resume()
                 case let .failure(error):
-                    logger.error("Failed creating datastack with: \(error.localizedDescription)")
+                    Container.shared.logService().error("Failed creating datastack with: \(error.localizedDescription)")
                     continuation.resume(throwing: JellyfinAPIError("Failed creating datastack with: \(error.localizedDescription)"))
                 }
             }

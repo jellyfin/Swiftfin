@@ -259,7 +259,7 @@ struct SelectUserView: View {
         } onDelete: {
             delete(user: user)
         }
-        .environment(\.isSelected, selectedUsers.contains(user))
+        .isSelected(selectedUsers.contains(user))
     }
 
     // MARK: - iPad Grid Content View
@@ -347,7 +347,7 @@ struct SelectUserView: View {
                 } onDelete: {
                     delete(user: user)
                 }
-                .environment(\.isSelected, selectedUsers.contains(user))
+                .isSelected(selectedUsers.contains(user))
                 .swipeActions {
                     if !isEditingUsers {
                         Button(
@@ -388,7 +388,7 @@ struct SelectUserView: View {
                 }
             }
             .animation(.linear(duration: 0.1), value: userListDisplayType)
-            .environment(\.isEditing, isEditingUsers)
+            .isEditing(isEditingUsers)
             .frame(maxHeight: .infinity)
             .mask {
                 VStack(spacing: 0) {
