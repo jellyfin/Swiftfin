@@ -91,26 +91,10 @@ extension ItemView {
         }
 
         private var imageType: ImageType {
-            if [.episode, .musicAlbum, .playlist].contains(viewModel.item.type) {
+            if viewModel.item.type == .episode {
                 return .primary
             } else {
                 return .backdrop
-            }
-        }
-
-        private var posterStyle: PosterDisplayType {
-            if [.musicAlbum, .playlist].contains(viewModel.item.type) {
-                return .portrait
-            } else {
-                return .landscape
-            }
-        }
-
-        private var posterHeight: CGFloat {
-            if [.musicAlbum, .playlist].contains(viewModel.item.type) {
-                return 600
-            } else {
-                return 300
             }
         }
 
@@ -129,11 +113,8 @@ extension ItemView {
                     .failure {
                         SystemImageContentView(systemName: viewModel.item.systemImage)
                     }
-                    .frame(maxHeight: posterHeight)
-                    .if([.musicAlbum, .playlist].contains(viewModel.item.type)) { poster in
-                        poster.aspectRatio(1.0, contentMode: .fit)
-                    }
-                    .posterStyle(posterStyle)
+                    .frame(maxHeight: 300)
+                    .posterStyle(.landscape)
                     .posterShadow()
                     .padding(.horizontal)
 

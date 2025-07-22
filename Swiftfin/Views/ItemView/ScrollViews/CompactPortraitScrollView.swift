@@ -36,9 +36,13 @@ extension ItemView {
             let item: BaseItemDto
 
             if let personViewModel = viewModel as? PersonItemViewModel,
-               let randomItem = personViewModel.randomItem()
+               let randomPerson = personViewModel.randomItem()
             {
-                item = randomItem
+                item = randomPerson
+            } else if let playlistItemViewModel = viewModel as? PlaylistItemViewModel,
+                      let randomPlaylistItem = playlistItemViewModel.contents.elements.randomElement()
+            {
+                item = randomPlaylistItem
             } else {
                 item = viewModel.item
             }
