@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
@@ -16,16 +15,8 @@ extension ItemView {
         @ObservedObject
         var viewModel: CollectionItemViewModel
 
-        @Router
-        private var router
-
         var body: some View {
             VStack(spacing: 0) {
-
-                ItemView.CinematicHeaderView(viewModel: viewModel)
-                    .frame(height: UIScreen.main.bounds.height - 150)
-                    .padding(.bottom, 50)
-
                 ForEach(
                     viewModel.sections.elements,
                     id: \.key

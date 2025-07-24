@@ -6,30 +6,17 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionHStack
-import JellyfinAPI
-import OrderedCollections
 import SwiftUI
 
 extension ItemView {
 
     struct PersonItemContentView: View {
 
-        @Router
-        private var router
-
         @ObservedObject
         var viewModel: CollectionItemViewModel
 
         var body: some View {
             VStack(spacing: 0) {
-
-                ItemView.CinematicHeaderView(viewModel: viewModel)
-                    .frame(height: UIScreen.main.bounds.height - 150)
-                    .padding(.bottom, 50)
-
-                // MARK: - Items
-
                 ForEach(
                     viewModel.sections.elements,
                     id: \.key

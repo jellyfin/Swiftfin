@@ -82,8 +82,7 @@ final class ItemTypeCollection: ViewModel, Stateful {
 
     private func getItems(for itemType: BaseItemKind) async -> ItemLibraryViewModel {
 
-        // TODO: Resolve from Jellyfin Server
-        /// This is hacky, but an item should NEVER contain a `UserView`. Adding this fixes the boxset quirk.
+        /// Server will edit filters if only boxset, add userView as workaround.
         let itemTypes = (itemType == .boxSet ? [.boxSet, .userView] : [itemType])
 
         let viewModel = ItemLibraryViewModel(

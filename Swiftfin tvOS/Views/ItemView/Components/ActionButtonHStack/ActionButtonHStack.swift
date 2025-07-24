@@ -107,7 +107,7 @@ extension ItemView {
                         viewModel.send(.toggleIsPlayed)
                     }
                     .foregroundStyle(.purple)
-                    .environment(\.isSelected, isCheckmarkSelected)
+                    .isSelected(isCheckmarkSelected)
                     .frame(minWidth: 100, maxWidth: .infinity)
                 }
 

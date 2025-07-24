@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -16,6 +15,9 @@ extension ItemView {
 
         @ObservedObject
         private var viewModel: ItemViewModel
+
+        @StateObject
+        private var focusGuide = FocusGuide()
 
         private let content: Content
 
@@ -48,27 +50,42 @@ extension ItemView {
         }
 
         var body: some View {
-            GeometryReader { geometry in
+            GeometryReader { proxy in
                 ZStack {
                     backgroundImageView()
 
                     ScrollView(.vertical, showsIndicators: false) {
-                        content
-                            .background {
-                                BlurView(style: .dark)
-                                    .mask {
-                                        VStack(spacing: 0) {
-                                            LinearGradient(gradient: Gradient(stops: [
-                                                .init(color: .white, location: 0),
-                                                .init(color: .white.opacity(0.7), location: 0.4),
-                                                .init(color: .white.opacity(0), location: 1),
-                                            ]), startPoint: .bottom, endPoint: .top)
-                                                .frame(height: geometry.size.height - 150)
+                        VStack(spacing: 0) {
+                            CinematicHeaderView(viewModel: viewModel)
+                                .ifLet(viewModel as? SeriesItemViewModel) { view, _ in
+                                    view
+                                        .focusGuide(
+                                            focusGuide,
+                                            tag: "header",
+                                            bottom: "belowHeader"
+                                        )
+                                }
+                                .frame(height: proxy.size.height - 150)
+                                .padding(.bottom, 50)
 
-                                            Color.white
-                                        }
+                            content
+                        }
+                        .background {
+                            BlurView(style: .dark)
+                                .mask {
+                                    VStack(spacing: 0) {
+                                        LinearGradient(gradient: Gradient(stops: [
+                                            .init(color: .white, location: 0),
+                                            .init(color: .white.opacity(0.7), location: 0.4),
+                                            .init(color: .white.opacity(0), location: 1),
+                                        ]), startPoint: .bottom, endPoint: .top)
+                                            .frame(height: proxy.size.height - 150)
+
+                                        Color.white
                                     }
-                            }
+                                }
+                        }
+                        .environmentObject(focusGuide)
                     }
                 }
             }
@@ -116,12 +133,11 @@ extension ItemView {
                             EmptyView()
                         }
                         .failure {
-                            Marquee(viewModel.item.displayTitle, speed: 100, delay: 3, animateWhenFocused: false)
+                            Marquee(viewModel.item.displayTitle)
                                 .font(.largeTitle)
                                 .fontWeight(.semibold)
                                 .lineLimit(1)
-                                .multilineTextAlignment(.leading)
-                                .foregroundColor(.white)
+                                .foregroundStyle(.white)
                         }
                         .aspectRatio(contentMode: .fit)
                         .padding(.bottom)
@@ -169,7 +185,7 @@ extension ItemView {
                                 }
                                 .posterStyle(.portrait, contentMode: .fill)
                                 .frame(width: 440)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .cornerRadius(10)
                                 .accessibilityIgnoresInvertColors()
                         } else if viewModel.item.presentPlayButton {
                             ItemView.PlayButton(viewModel: viewModel)
