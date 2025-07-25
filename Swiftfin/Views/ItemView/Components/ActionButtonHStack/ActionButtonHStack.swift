@@ -114,9 +114,8 @@ extension ItemView {
 
                 // MARK: Select a Version
 
-                if let mediaSources = viewModel.playButtonItem?.mediaSources,
-                   mediaSources.count > 1
-                {
+                let mediaSources = viewModel.playButtonItem?.mediaSources ?? []
+                if mediaSources.count > 1 {
                     VersionMenu(viewModel: viewModel, mediaSources: mediaSources)
                         .if(equalSpacing) { view in
                             view.frame(maxWidth: .infinity)
@@ -136,11 +135,8 @@ extension ItemView {
                 }
 
                 if enableDownload {
-                    DownloadTaskButton(item: viewModel.item)
-                        .onSelect { _ in
-                            // Download functionality is now handled inline in the button
-                            // No need to open modal or route to download task view
-                        }
+
+                    DownloadTaskButton(item: viewModel.item, mediaSources: mediaSources)
                         .if(equalSpacing) { view in
                             view.frame(maxWidth: .infinity)
                         }

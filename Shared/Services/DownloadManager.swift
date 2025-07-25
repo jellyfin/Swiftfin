@@ -185,6 +185,44 @@ class DownloadManager: ObservableObject {
         }
     }
 
+    /// Checks if a specific media source of an item is already downloaded
+    func isMediaSourceDownloaded(item: BaseItemDto, mediaSourceId: String) -> Bool {
+        logger.debug("Checking if media source \(mediaSourceId) is downloaded for item: \(item.displayTitle)")
+
+        // First, check active downloads that are complete
+        if let activeTask = downloads.first(where: { task in
+            guard task.item.id == item.id else { return false }
+            if case .complete = task.state { return true }
+            return false
+        }) {
+            let hasMediaSource = activeTask.item.mediaSources?.contains { source in
+                source.id == mediaSourceId
+            } ?? false
+
+            if hasMediaSource {
+                logger.debug("Found media source in active completed download")
+                return true
+            }
+        }
+
+        // Then check persisted completed downloads
+        if let itemId = item.id,
+           let parsedTask = parseDownloadItem(with: itemId)
+        {
+            let hasMediaSource = parsedTask.item.mediaSources?.contains { source in
+                source.id == mediaSourceId
+            } ?? false
+
+            if hasMediaSource {
+                logger.debug("Found media source in persisted download")
+                return true
+            }
+        }
+
+        logger.debug("Media source not found in downloads")
+        return false
+    }
+
     func cancel(task: DownloadTask) {
         logger.info("Cancelling download for item: \(task.item.displayTitle) (ID: \(task.item.id ?? "unknown"))")
         logger.debug("Current task state: \(task.state)")
@@ -361,6 +399,63 @@ class DownloadManager: ObservableObject {
         }
 
         logger.info("Successfully deleted download for: \(task.item.displayTitle)")
+    }
+
+    // MARK: - Media Source Download Status
+
+    /// Checks if a specific media source from an item is already downloaded
+    func isMediaSourceDownloaded(item: BaseItemDto, mediaSourceId: String?) -> Bool {
+        guard let mediaSourceId = mediaSourceId else {
+            logger.debug("No media source ID provided for download check")
+            return false
+        }
+
+        logger.debug("Checking if media source \(mediaSourceId) is downloaded for item: \(item.displayTitle)")
+
+        // Check all downloaded items
+        let downloadedItems = downloadedItems()
+
+        for downloadedTask in downloadedItems {
+            // Check if this download is related to the same base item
+            if downloadedTask.item.id == item.id || downloadedTask.item.seriesID == item.id {
+                // Check if the downloaded item's media source matches
+                if let downloadedMediaSources = downloadedTask.item.mediaSources {
+                    for mediaSource in downloadedMediaSources {
+                        if mediaSource.id == mediaSourceId {
+                            logger.debug("Found downloaded media source: \(mediaSourceId)")
+                            return true
+                        }
+                    }
+                }
+            }
+        }
+
+        logger.debug("Media source \(mediaSourceId) not found in downloads")
+        return false
+    }
+
+    /// Gets all downloaded media source IDs for a given item
+    func downloadedMediaSourceIds(for item: BaseItemDto) -> Set<String> {
+        var downloadedIds = Set<String>()
+
+        let downloadedItems = downloadedItems()
+
+        for downloadedTask in downloadedItems {
+            // Check if this download is related to the same base item
+            if downloadedTask.item.id == item.id || downloadedTask.item.seriesID == item.id {
+                // Collect all media source IDs from this download
+                if let mediaSources = downloadedTask.item.mediaSources {
+                    for mediaSource in mediaSources {
+                        if let id = mediaSource.id {
+                            downloadedIds.insert(id)
+                        }
+                    }
+                }
+            }
+        }
+
+        logger.debug("Found \(downloadedIds.count) downloaded media sources for item: \(item.displayTitle)")
+        return downloadedIds
     }
 
     func deleteAllDownloads() {
