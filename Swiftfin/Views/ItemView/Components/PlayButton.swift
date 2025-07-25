@@ -26,7 +26,7 @@ extension ItemView {
 
         private let logger = Logger.swiftfin()
 
-        // MARK: - ddd
+        // MARK: - Validation
 
         private var isEnabled: Bool {
             viewModel.selectedMediaSource != nil
@@ -35,16 +35,9 @@ extension ItemView {
         // MARK: - Title
 
         private var title: String {
-
-            /// Use the Media Source name if there is more than one Media Source
-            if let sourceLabel = viewModel.selectedMediaSource?.displayTitle,
-               viewModel.item.mediaSources?.count ?? 0 > 1
-            {
-                return sourceLabel
-
-                /// Use the Season/Episode label for the Series ItemView
-            } else if let seriesViewModel = viewModel as? SeriesItemViewModel,
-                      let seasonEpisodeLabel = seriesViewModel.playButtonItem?.seasonEpisodeLabel
+            /// Use the Season/Episode label for the Series ItemView
+            if let seriesViewModel = viewModel as? SeriesItemViewModel,
+               let seasonEpisodeLabel = seriesViewModel.playButtonItem?.seasonEpisodeLabel
             {
                 return seasonEpisodeLabel
 
@@ -56,6 +49,18 @@ extension ItemView {
             } else {
                 return L10n.play
             }
+        }
+
+        // MARK: - Media Source
+
+        private var source: String? {
+            guard let sourceLabel = viewModel.selectedMediaSource?.displayTitle,
+                  viewModel.item.mediaSources?.count ?? 0 > 1
+            else {
+                return nil
+            }
+
+            return sourceLabel
         }
 
         // MARK: - Body
@@ -74,10 +79,18 @@ extension ItemView {
                             .font(.system(size: 20))
                             .padding(.horizontal, 3)
 
-                        Marquee(title, speed: 40, delay: 3, fade: 5)
-                            .font(.callout)
-                            .fontWeight(.semibold)
-                            .padding(.trailing, 3)
+                        VStack(alignment: .leading) {
+                            Text(title)
+                                .font(.callout)
+                                .fontWeight(.semibold)
+
+                            if let source = source {
+                                Marquee(source, speed: 40, delay: 3, fade: 5)
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                            }
+                        }
+                        .padding(.trailing, 3)
                     }
                     .foregroundStyle(isEnabled ? accentColor.overlayColor : Color(UIColor.secondaryLabel))
                     .padding(.horizontal, 10)
