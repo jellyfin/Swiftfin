@@ -163,16 +163,8 @@ struct ItemAddToCollectionView: View {
                     Text(overview)
                 }
             }
-            Section(L10n.details) {
-                if let collectionType = selectedCollection.collectionType {
-                    // TextPairView(leading: L10n.type, trailing: collectionType)
-                }
-                if let childCount = selectedCollection.childCount {
-                    // TextPairView(leading: L10n.items, trailing: childCount.description)
-                }
-            }
         } else {
-            Section(L10n.add) {
+            Section(L10n.name) {
                 TextField(L10n.name, text: $collectionName)
             }
         }
