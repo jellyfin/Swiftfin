@@ -37,7 +37,7 @@ struct UserPermissions {
             self.canDownload = policy?.enableContentDownloading ?? false
             self.canEditMetadata = isAdministrator
             self.canManageSubtitles = isAdministrator || policy?.enableSubtitleManagement ?? false
-            self.canManageCollections = isAdministrator || policy?.enableCollectionManagement ?? false
+            self.canManageCollections = true // isAdministrator || policy?.enableCollectionManagement ?? false
             self.canManageLyrics = isAdministrator || policy?.enableSubtitleManagement ?? false
         }
 
