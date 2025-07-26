@@ -257,6 +257,14 @@ extension View {
         return copy
     }
 
+    func isEditing(_ isEditing: Bool) -> some View {
+        environment(\.isEditing, isEditing)
+    }
+
+    func isSelected(_ isSelected: Bool) -> some View {
+        environment(\.isSelected, isSelected)
+    }
+
     /// - Important: Do not use this to add or remove a view from the view heirarchy.
     ///              Use a conditional statement instead.
     @inlinable

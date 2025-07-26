@@ -65,7 +65,7 @@ extension ItemView {
                     .buttonStyle(.action)
                     .labelStyle(.iconOnly)
                     .foregroundStyle(accentColor.overlayColor, accentColor, Color(UIColor.lightGray))
-                    .environment(\.isSelected, isCheckmarkSelected)
+                    .isSelected(isCheckmarkSelected)
                     .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in
                         view.aspectRatio(1, contentMode: .fit)
@@ -82,7 +82,7 @@ extension ItemView {
                 .buttonStyle(.action)
                 .labelStyle(.iconOnly)
                 .foregroundStyle(accentColor.overlayColor, .red, Color(UIColor.lightGray))
-                .environment(\.isSelected, isHeartSelected)
+                .isSelected(isHeartSelected)
                 .frame(maxWidth: .infinity)
                 .if(!equalSpacing) { view in
                     view.aspectRatio(1, contentMode: .fit)
