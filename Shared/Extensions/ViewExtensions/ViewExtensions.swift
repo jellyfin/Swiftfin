@@ -168,17 +168,26 @@ extension View {
     func cornerRadius(
         _ radius: CGFloat,
         corners: RectangleCorner = .allCorners,
-        style: RoundedCornerStyle = .circular
+        style: RoundedCornerStyle = .circular,
+        container: Bool = false,
     ) -> some View {
-        let shape = UnevenRoundedRectangle(
-            topLeadingRadius: corners.contains(.topLeft) ? radius : 0,
-            bottomLeadingRadius: corners.contains(.bottomLeft) ? radius : 0,
-            bottomTrailingRadius: corners.contains(.bottomRight) ? radius : 0,
-            topTrailingRadius: corners.contains(.topRight) ? radius : 0,
-            style: style
-        )
+        if corners == .allCorners {
+            let shape = RoundedRectangle(cornerRadius: radius, style: style)
 
-        clipShape(shape)
+            clipShape(shape)
+                .if(container) { $0.containerShape(shape) }
+        } else {
+            let shape = UnevenRoundedRectangle(
+                topLeadingRadius: corners.contains(.topLeft) ? radius : 0,
+                bottomLeadingRadius: corners.contains(.bottomLeft) ? radius : 0,
+                bottomTrailingRadius: corners.contains(.bottomRight) ? radius : 0,
+                topTrailingRadius: corners.contains(.topRight) ? radius : 0,
+                style: style
+            )
+
+            clipShape(shape)
+                .if(container) { $0.containerShape(shape) }
+        }
     }
 
     /// Apply a corner radius as a ratio of a view's side
@@ -193,16 +202,7 @@ extension View {
             OnSizeChangedModifier { size in
                 let radius = size[keyPath: side] * ratio
 
-                let shape = UnevenRoundedRectangle(
-                    topLeadingRadius: corners.contains(.topLeft) ? radius : 0,
-                    bottomLeadingRadius: corners.contains(.bottomLeft) ? radius : 0,
-                    bottomTrailingRadius: corners.contains(.bottomRight) ? radius : 0,
-                    topTrailingRadius: corners.contains(.topRight) ? radius : 0,
-                    style: style
-                )
-
-                self.clipShape(shape)
-                    .containerShape(shape)
+                self.cornerRadius(radius, corners: corners, style: style, container: true)
             }
         )
     }
