@@ -20,6 +20,13 @@ extension ButtonStyle where Self == ToolbarPillButtonStyle {
     }
 }
 
+extension ButtonStyle where Self == ActionButtonStyle {
+
+    static var action: ActionButtonStyle {
+        ActionButtonStyle()
+    }
+}
+
 // TODO: don't take `Color`, take generic `ShapeStyle`
 struct ToolbarPillButtonStyle: ButtonStyle {
 
@@ -38,6 +45,47 @@ struct ToolbarPillButtonStyle: ButtonStyle {
             .background(isEnabled ? primary : secondary)
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .opacity(isEnabled && !configuration.isPressed ? 1 : 0.5)
+    }
+}
+
+struct ActionButtonStyle: ButtonStyle {
+
+    // MARK: - Environment Objects
+
+    @Environment(\.isSelected)
+    private var isSelected
+    @Environment(\.isEnabled)
+    private var isEnabled
+
+    // MARK: - Body
+
+    func makeBody(configuration: Configuration) -> some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10)
+                .foregroundStyle(backgroundStyle)
+
+            configuration.label
+                .font(.title3)
+                .fontWeight(.semibold)
+                .foregroundStyle(textStyle)
+                .symbolRenderingMode(.monochrome)
+        }
+    }
+
+    // MARK: - Text Style
+
+    private var textStyle: AnyShapeStyle {
+        isEnabled ? AnyShapeStyle(.primary) : AnyShapeStyle(Color.secondarySystemFill)
+    }
+
+    // MARK: - Background Style
+
+    private var backgroundStyle: AnyShapeStyle {
+        if isEnabled {
+            return AnyShapeStyle(isSelected ? .secondary : .tertiary)
+        } else {
+            return AnyShapeStyle(Color.secondarySystemFill)
+        }
     }
 }
 
