@@ -52,10 +52,16 @@ struct ItemView: View {
         // || viewModel.userSession.user.permissions.items.canManageSubtitles(item: viewModel.item)
     }
 
+    // MARK: - Adding to Collections is Enabled
+
+    private var canAddToCollection: Bool {
+        viewModel.userSession.user.permissions.items.canManageCollections
+    }
+
     // MARK: - Deletion or Editing is Enabled
 
     private var enableMenu: Bool {
-        canEdit || canDelete
+        canEdit || canDelete || canAddToCollection
     }
 
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
@@ -155,6 +161,19 @@ struct ItemView: View {
             isLoading: viewModel.backgroundStates.contains(.refresh),
             isHidden: !enableMenu
         ) {
+            // TODO: Add to Playlist
+            /*
+             Button(L10n.addToPlaylist, systemImage: "text.badge.plus") {
+                 router.route(to: .itemEditor(viewModel: viewModel))
+             }
+             */
+
+            if canAddToCollection {
+                Button("Add to collection", systemImage: "rectangle.stack.badge.plus") {
+                    router.route(to: .itemAddToCollection(item: viewModel.item))
+                }
+            }
+
             if canEdit {
                 Button(L10n.edit, systemImage: "pencil") {
                     router.route(to: .itemEditor(viewModel: viewModel))

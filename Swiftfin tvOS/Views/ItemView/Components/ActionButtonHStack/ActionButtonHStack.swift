@@ -62,10 +62,16 @@ extension ItemView {
             viewModel.userSession.user.permissions.items.canManageSubtitles(item: viewModel.item)
         }
 
+        // MARK: - Adding to Collections is Enabled
+
+        private var canAddToCollection: Bool {
+            viewModel.userSession.user.permissions.items.canManageCollections
+        }
+
         // MARK: - Deletion or Refreshing is Enabled
 
         private var enableMenu: Bool {
-            canDelete || canRefresh
+            canDelete || canRefresh || canAddToCollection
         }
 
         // MARK: - Has Trailers
@@ -137,10 +143,23 @@ extension ItemView {
 
                 if enableMenu {
                     ActionButton(L10n.advanced, icon: "ellipsis", isCompact: true) {
-                        if canRefresh || canManageSubtitles {
+                        if canRefresh || canManageSubtitles || canAddToCollection {
                             Section(L10n.manage) {
                                 if canRefresh {
                                     RefreshMetadataButton(item: viewModel.item)
+                                }
+
+                                // TODO: Add to Playlist
+                                /*
+                                 Button(L10n.addToPlaylist, systemImage: "text.badge.plus") {
+                                     router.route(to: .itemEditor(viewModel: viewModel))
+                                 }
+                                 */
+
+                                if canAddToCollection {
+                                    Button("Add to collection", systemImage: "rectangle.stack.badge.plus") {
+                                        router.route(to: .itemAddToCollection(item: viewModel.item))
+                                    }
                                 }
 
                                 if canManageSubtitles {
