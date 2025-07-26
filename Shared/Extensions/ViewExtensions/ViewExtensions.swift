@@ -171,6 +171,8 @@ extension View {
         style: RoundedCornerStyle = .circular,
         container: Bool = false,
     ) -> some View {
+        // Note: UnevenRoundedRectangle with all equal radii performs worse than RoundedRectangle
+        //       due to internal use of UIBezierPath.
         if corners == .allCorners {
             let shape = RoundedRectangle(cornerRadius: radius, style: style)
 
