@@ -157,6 +157,7 @@ struct ItemAddToCollectionView: View {
         if let selectedCollection = selectedCollection {
 
             AdminDashboardView.MediaItemSection(item: selectedCollection)
+                .id(selectedCollection.id)
 
             if let overview = selectedCollection.overview {
                 Section(L10n.overview) {
