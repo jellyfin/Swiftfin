@@ -122,6 +122,12 @@ struct ItemAddToCollectionView: View {
     private var collectionPickerSection: some View {
         Section(L10n.collection) {
             ListRowMenu(L10n.collection) {
+                if let selectedCollection {
+                    Text(selectedCollection.displayTitle)
+                } else {
+                    Label(L10n.add, systemImage: "plus")
+                }
+            } content: {
                 Picker(L10n.collection, selection: $selectedCollection) {
                     Text(L10n.add)
                         .tag(nil as BaseItemDto?)

@@ -121,7 +121,7 @@ struct ItemAddToCollectionView: View {
     private var collectionPickerView: some View {
         Section(L10n.collection) {
             Picker(L10n.collection, selection: $selectedCollection) {
-                Text(L10n.add)
+                Label(L10n.add, systemImage: "plus")
                     .tag(nil as BaseItemDto?)
 
                 ForEach(viewModel.collections) { collection in
