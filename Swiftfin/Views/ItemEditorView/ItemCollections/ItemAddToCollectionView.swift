@@ -32,6 +32,8 @@ struct ItemAddToCollectionView: View {
     // MARK: - New Collection Variables
 
     @State
+    private var selectedCollection: BaseItemDto?
+    @State
     private var collectionName: String = ""
     @State
     private var searchForMetadata: Bool = false
@@ -40,22 +42,6 @@ struct ItemAddToCollectionView: View {
 
     @State
     private var error: Error?
-
-    // MARK: - Computed Variables
-
-    // MARK: Selected Collection Binding
-
-    private var selectedCollectionBinding: Binding<BaseItemDto?> {
-        Binding(
-            get: { selectedCollection },
-            set: { newValue in
-                selectedCollection = newValue
-            }
-        )
-    }
-
-    @State
-    private var selectedCollection: BaseItemDto?
 
     // MARK: Valid State
 
@@ -134,7 +120,7 @@ struct ItemAddToCollectionView: View {
 
     private var collectionPickerView: some View {
         Section(L10n.collection) {
-            Picker(L10n.collection, selection: selectedCollectionBinding) {
+            Picker(L10n.collection, selection: $selectedCollection) {
                 Text(L10n.add)
                     .tag(nil as BaseItemDto?)
 

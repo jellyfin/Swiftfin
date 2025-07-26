@@ -33,6 +33,8 @@ struct ItemAddToCollectionView: View {
     // MARK: - New Collection Variables
 
     @State
+    private var selectedCollection: BaseItemDto?
+    @State
     private var collectionName: String = ""
     @State
     private var searchForMetadata: Bool = false
@@ -41,22 +43,6 @@ struct ItemAddToCollectionView: View {
 
     @State
     private var error: Error?
-
-    // MARK: - Computed Variables
-
-    // MARK: Selected Collection Binding
-
-    private var selectedCollectionBinding: Binding<BaseItemDto?> {
-        Binding(
-            get: { selectedCollection },
-            set: { newValue in
-                selectedCollection = newValue
-            }
-        )
-    }
-
-    @State
-    private var selectedCollection: BaseItemDto?
 
     // MARK: Valid State
 
@@ -136,7 +122,7 @@ struct ItemAddToCollectionView: View {
     private var collectionPickerSection: some View {
         Section(L10n.collection) {
             ListRowMenu(L10n.collection) {
-                Picker(L10n.collection, selection: selectedCollectionBinding) {
+                Picker(L10n.collection, selection: $selectedCollection) {
                     Text(L10n.add)
                         .tag(nil as BaseItemDto?)
 
@@ -179,7 +165,13 @@ struct ItemAddToCollectionView: View {
     private var actionSection: some View {
         Section {
             ListRowButton(L10n.add) {
-                addToCollection()
+                guard let itemID = item.id else { return }
+
+                if selectedCollection == nil {
+                    viewModel.send(.createCollection(collectionName, items: [itemID], search: searchForMetadata))
+                } else if let collectionID = selectedCollection?.id {
+                    viewModel.send(.addItem(collectionID: collectionID, items: [itemID]))
+                }
             }
             .foregroundStyle(
                 accentColor.overlayColor,
@@ -191,18 +183,6 @@ struct ItemAddToCollectionView: View {
         }
     }
 
-    // MARK: - Add to Collection
-
-    private func addToCollection() {
-        guard let itemID = item.id else { return }
-
-        if selectedCollection == nil {
-            viewModel.send(.createCollection(collectionName, items: [itemID], search: searchForMetadata))
-        } else if let collectionID = selectedCollection?.id {
-            viewModel.send(.addItem(collectionID: collectionID, items: [itemID]))
-        }
-    }
-
     // MARK: - Collection Poster & Details
 
     private func mediaItemSection(item: BaseItemDto) -> some View {
@@ -211,13 +191,13 @@ struct ItemAddToCollectionView: View {
                 ZStack {
                     Color.clear
 
-                    ImageView(item.portraitImageSources(maxWidth: 250, quality: 90))
+                    ImageView(item.portraitImageSources(maxWidth: 200, quality: 90))
                         .failure {
                             SystemImageContentView(systemName: item.systemImage)
                         }
                 }
                 .posterStyle(.portrait)
-                .frame(width: 250)
+                .frame(width: 200)
                 .accessibilityIgnoresInvertColors()
 
                 VStack(alignment: .leading) {
