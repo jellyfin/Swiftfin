@@ -36,9 +36,13 @@ extension ItemView {
             let item: BaseItemDto
 
             if let personViewModel = viewModel as? PersonItemViewModel,
-               let randomItem = personViewModel.randomItem()
+               let randomPerson = personViewModel.randomItem()
             {
-                item = randomItem
+                item = randomPerson
+            } else if let playlistItemViewModel = viewModel as? PlaylistItemViewModel,
+                      let randomPlaylistItem = playlistItemViewModel.contents.elements.randomElement()
+            {
+                item = randomPlaylistItem
             } else {
                 item = viewModel.item
             }
@@ -164,14 +168,24 @@ extension ItemView.iPadOSCinematicScrollView {
 
                     VStack(spacing: 10) {
                         if let personViewModel = viewModel as? PersonItemViewModel {
-                            ImageView(personViewModel.item.imageSource(.primary, maxWidth: 200))
+                            ImageView(personViewModel.item.imageSource(.primary, maxWidth: 250))
                                 .failure {
                                     SystemImageContentView(systemName: viewModel.item.systemImage)
                                 }
                                 .posterStyle(.portrait, contentMode: .fit)
-                                .frame(width: 200)
+                                .frame(width: 250)
                                 .accessibilityIgnoresInvertColors()
-                        } else if viewModel.presentPlayButton {
+                        } else if let playlistViewModel = viewModel as? PlaylistItemViewModel {
+                            ImageView(playlistViewModel.item.imageSource(.primary, maxWidth: 250))
+                                .failure {
+                                    EmptyView()
+                                }
+                                .posterStyle(.portrait, contentMode: .fit)
+                                .frame(width: 250)
+                                .accessibilityIgnoresInvertColors()
+                        }
+
+                        if viewModel.presentPlayButton {
                             ItemView.PlayButton(viewModel: viewModel)
                                 .frame(height: 50)
                         }

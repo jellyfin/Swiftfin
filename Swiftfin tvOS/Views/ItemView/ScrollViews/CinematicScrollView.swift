@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
@@ -26,13 +27,46 @@ extension ItemView {
             self.content = content()
         }
 
+        private func withHeaderImageItem(
+            @ViewBuilder content: @escaping (ImageSource, Color) -> some View
+        ) -> some View {
+
+            let item: BaseItemDto
+
+            if let personViewModel = viewModel as? PersonItemViewModel,
+               let randomPerson = personViewModel.randomItem()
+            {
+                item = randomPerson
+            } else if let playlistItemViewModel = viewModel as? PlaylistItemViewModel,
+                      let randomPlaylistItem = playlistItemViewModel.contents.elements.randomElement()
+            {
+                item = randomPlaylistItem
+            } else {
+                item = viewModel.item
+            }
+
+            let imageType: ImageType = item.type == .episode ? .primary : .backdrop
+            let bottomColor = item.blurHash(for: imageType)?.averageLinearColor ?? Color.secondarySystemFill
+            let imageSource = item.imageSource(imageType, maxWidth: 1920)
+
+            return content(imageSource, bottomColor)
+                .id(imageSource.url?.hashValue)
+                .animation(.linear(duration: 0.1), value: imageSource.url?.hashValue)
+        }
+
+        @ViewBuilder
+        private var headerView: some View {
+            withHeaderImageItem { imageSource, bottomColor in
+                ImageView(imageSource)
+                    .aspectRatio(1.77, contentMode: .fill)
+                    .bottomEdgeGradient(bottomColor: bottomColor)
+            }
+        }
+
         var body: some View {
             ZStack {
-                if viewModel.item.type == .episode {
-                    ImageView(viewModel.item.imageSource(.primary, maxWidth: 1920))
-                } else {
-                    ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1920))
-                }
+
+                headerView
 
                 ScrollView(.vertical, showsIndicators: false) {
                     content

@@ -40,6 +40,16 @@ struct ItemEditorView: View {
         viewModel.userSession.user.permissions.items.canManageLyrics(item: viewModel.item) == true
     }
 
+    // MARK: - Can Identify
+
+    private var canIdentify: Bool {
+        if let itemKind = viewModel.item.type {
+            BaseItemKind.itemIdentifiableCases.contains(itemKind)
+        } else {
+            false
+        }
+    }
+
     // MARK: - Body
 
     var body: some View {
@@ -70,15 +80,31 @@ struct ItemEditorView: View {
             /// Hide metadata options to Lyric/Subtitle only users
             if canEditMetadata {
 
-                refreshButtonView
+                /// Only indentifiable items can be refreshed
+                if canIdentify {
+                    refreshButtonView
+                }
 
                 Section(L10n.edit) {
-                    editMetadataView
+
+                    /// Only administrators can edit metadata
+                    if viewModel.userSession.user.permissions.isAdministrator {
+                        editMetadataView
+                    }
+
+                    /// Playlist specific settings
+                    if let itemKind = viewModel.item.type, itemKind == .playlist {
+                        // TODO: Rename Playlist
+                        // TODO: Public/Private Playlist Toggle
+                    }
+
+                    /// Lyrics & Subtitles
                     editTextView
                 }
 
                 // TODO: add `BaseItemDto.hasComponenets`
-                if viewModel.item.type != .person {
+                /// Only administrators can edit metadata components
+                if viewModel.userSession.user.permissions.isAdministrator && viewModel.item.type != .person {
                     editComponentsView
                 }
             } /*  else if canManageSubtitles || canManageLyrics {
@@ -134,9 +160,7 @@ struct ItemEditorView: View {
     @ViewBuilder
     private var editMetadataView: some View {
 
-        if let itemKind = viewModel.item.type,
-           BaseItemKind.itemIdentifiableCases.contains(itemKind)
-        {
+        if canIdentify {
             ChevronButton(L10n.identify) {
                 router.route(to: .identifyItem(item: viewModel.item))
             }
