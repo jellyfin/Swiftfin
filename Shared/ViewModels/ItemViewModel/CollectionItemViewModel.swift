@@ -18,18 +18,12 @@ final class CollectionItemViewModel: ItemViewModel {
 
     private let itemCollection: ItemTypeCollection
 
-    // MARK: - Disable PlayButton
-
-    override var presentPlayButton: Bool {
-        false
-    }
-
     override init(item: BaseItemDto) {
         self.itemCollection = ItemTypeCollection(
             parent: item,
             itemTypes: BaseItemKind.supportedCases
                 .appending(.episode)
-                .removing(.boxSet)
+                .appending(.person)
         )
         self._sections = ObservedPublisher(
             wrappedValue: [:],
@@ -50,5 +44,23 @@ final class CollectionItemViewModel: ItemViewModel {
         }
 
         return super.respond(to: action)
+    }
+
+    // TODO: possibly multiple items, for image source fallbacks
+    func randomItem() -> BaseItemDto? {
+        // Try to exclude episodes if possible
+
+        if itemCollection.elements.elements.count == 1 {
+            return itemCollection.elements.elements.first?.value.elements.first
+        }
+
+        return itemCollection.elements
+            .elements
+            .shuffled()
+            .filter { $0.key != .episode }
+            .randomElement()?
+            .value
+            .elements
+            .randomElement()
     }
 }

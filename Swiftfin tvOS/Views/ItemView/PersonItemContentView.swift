@@ -10,7 +10,7 @@ import SwiftUI
 
 extension ItemView {
 
-    struct CollectionItemContentView: View {
+    struct PersonItemContentView: View {
 
         @ObservedObject
         var viewModel: CollectionItemViewModel
@@ -22,10 +22,6 @@ extension ItemView {
                     id: \.key
                 ) { element in
                     ItemTypeCollectionHStack(element: element)
-                }
-
-                if viewModel.similarItems.isNotEmpty {
-                    ItemView.SimilarItemsHStack(items: viewModel.similarItems)
                 }
 
                 ItemView.AboutView(viewModel: viewModel)

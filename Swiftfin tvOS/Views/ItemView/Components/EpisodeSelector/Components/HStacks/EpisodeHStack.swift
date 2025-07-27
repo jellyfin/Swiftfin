@@ -116,7 +116,7 @@ extension SeriesEpisodeSelector {
                 onContentFocus: {
                     getContentFocus()
                 },
-                top: "seasons"
+                top: "belowHeader"
             )
             .onChange(of: viewModel.id) {
                 lastFocusedEpisodeID = viewModel.elements.first?.id

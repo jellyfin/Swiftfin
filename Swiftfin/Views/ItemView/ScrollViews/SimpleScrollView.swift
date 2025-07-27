@@ -77,7 +77,7 @@ extension ItemView {
                         alignment: .center
                     )
 
-                    if viewModel.presentPlayButton {
+                    if viewModel.item.presentPlayButton {
                         ItemView.PlayButton(viewModel: viewModel)
                             .frame(height: 50)
                     }

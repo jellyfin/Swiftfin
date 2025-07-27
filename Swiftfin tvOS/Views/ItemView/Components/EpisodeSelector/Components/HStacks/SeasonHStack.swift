@@ -50,9 +50,9 @@ extension SeriesEpisodeSelector {
                 .focusSection()
                 .focusGuide(
                     focusGuide,
-                    tag: "seasons",
+                    tag: "belowHeader",
                     onContentFocus: { focusedSeason = selection },
-                    top: "top",
+                    top: "header",
                     bottom: "episodes"
                 )
                 .mask {

@@ -72,7 +72,7 @@ struct FocusGuideModifier: ViewModifier {
         }
         .onChange(of: focusGuide.focusedTag) { _, newTag in
             if newTag == focusConstructor.tag {
-                if let onContentFocus = onContentFocus {
+                if let onContentFocus {
                     onContentFocus()
                 } else {
                     focusDirection = .content
@@ -134,6 +134,10 @@ struct FocusConstructor {
         self.rightTarget = rightTarget
     }
 }
+
+// TODO: generic focus values instead of strings
+// TODO: keep mapping of all tag connections,
+//       only add complete connections
 
 class FocusGuide: ObservableObject {
 
