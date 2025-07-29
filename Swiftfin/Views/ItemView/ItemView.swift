@@ -134,6 +134,8 @@ struct ItemView: View {
         .eraseToAnyView()
     }
 
+    // MARK: - Body
+
     var body: some View {
         ZStack {
             switch viewModel.state {
