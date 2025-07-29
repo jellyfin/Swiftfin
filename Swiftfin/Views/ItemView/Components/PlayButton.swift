@@ -77,23 +77,21 @@ extension ItemView {
                     HStack {
                         Image(systemName: "play.fill")
                             .font(.system(size: 20))
-                            .padding(.horizontal, 3)
 
                         VStack(alignment: .leading) {
                             Text(title)
                                 .font(.callout)
                                 .fontWeight(.semibold)
 
-                            if let source = source {
+                            if let source {
                                 Marquee(source, speed: 40, delay: 3, fade: 5)
                                     .font(.caption)
                                     .fontWeight(.medium)
+                                    .frame(maxWidth: 150)
                             }
                         }
-                        .padding(.trailing, 3)
                     }
                     .foregroundStyle(isEnabled ? accentColor.overlayColor : Color(UIColor.secondaryLabel))
-                    .padding(.horizontal, 10)
                 }
             }
             .contextMenu {
