@@ -96,18 +96,20 @@ extension ItemView {
 
                 // MARK: Toggle Played
 
-                let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
+                if viewModel.item.canBePlayed {
+                    let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
 
-                ActionButton(
-                    L10n.played,
-                    icon: "checkmark.circle",
-                    selectedIcon: "checkmark.circle.fill"
-                ) {
-                    viewModel.send(.toggleIsPlayed)
+                    ActionButton(
+                        L10n.played,
+                        icon: "checkmark.circle",
+                        selectedIcon: "checkmark.circle.fill"
+                    ) {
+                        viewModel.send(.toggleIsPlayed)
+                    }
+                    .foregroundStyle(.purple)
+                    .isSelected(isCheckmarkSelected)
+                    .frame(minWidth: 100, maxWidth: .infinity)
                 }
-                .foregroundStyle(.purple)
-                .isSelected(isCheckmarkSelected)
-                .frame(minWidth: 100, maxWidth: .infinity)
 
                 // MARK: Toggle Favorite
 

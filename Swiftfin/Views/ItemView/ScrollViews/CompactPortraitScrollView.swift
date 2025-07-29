@@ -35,8 +35,9 @@ extension ItemView {
 
             let item: BaseItemDto
 
-            if let personViewModel = viewModel as? PersonItemViewModel,
-               let randomItem = personViewModel.randomItem()
+            if viewModel.item.type == .person || viewModel.item.type == .musicArtist,
+               let typeViewModel = viewModel as? CollectionItemViewModel,
+               let randomItem = typeViewModel.randomItem()
             {
                 item = randomItem
             } else {
@@ -179,7 +180,7 @@ extension ItemView.CompactPosterScrollView {
 
                 HStack(alignment: .center) {
 
-                    if viewModel.presentPlayButton {
+                    if viewModel.item.presentPlayButton {
                         ItemView.PlayButton(viewModel: viewModel)
                             .frame(width: 130, height: 45)
                     }
