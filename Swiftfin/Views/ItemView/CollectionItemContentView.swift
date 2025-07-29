@@ -11,9 +11,7 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-// TODO: consolidate `ItemTypCollection` stacks
-//       - Show show name in episode subheader
-//       - PersonItemContentView
+// TODO: Show show name in episode subheader
 
 extension ItemView {
 
@@ -77,7 +75,11 @@ extension ItemView {
                     viewModel.sections.elements,
                     id: \.key
                 ) { element in
-                    ItemTypeCollectionHStack(element: element)
+                    if element.key == .episode {
+                        episodeHStack(element: element)
+                    } else {
+                        posterHStack(element: element)
+                    }
                 }
 
                 // MARK: Genres

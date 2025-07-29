@@ -29,7 +29,9 @@ extension ItemView {
             self.content = content()
         }
 
-        private func backgroundImageView() -> some View {
+        private func withBackgroundImageSource(
+            @ViewBuilder content: @escaping (ImageSource) -> some View
+        ) -> some View {
             let item: BaseItemDto
 
             if viewModel.item.type == .person || viewModel.item.type == .musicArtist,
@@ -44,7 +46,7 @@ extension ItemView {
             let imageType: ImageType = item.type == .episode ? .primary : .backdrop
             let imageSource = item.imageSource(imageType, maxWidth: 1920)
 
-            return ImageView(imageSource)
+            return content(imageSource)
                 .id(imageSource.url?.hashValue)
                 .animation(.linear(duration: 0.1), value: imageSource.url?.hashValue)
         }
@@ -52,7 +54,9 @@ extension ItemView {
         var body: some View {
             GeometryReader { proxy in
                 ZStack {
-                    backgroundImageView()
+                    withBackgroundImageSource { imageSource in
+                        ImageView(imageSource)
+                    }
 
                     ScrollView(.vertical, showsIndicators: false) {
                         VStack(spacing: 0) {
@@ -176,10 +180,8 @@ extension ItemView {
                     Spacer()
 
                     VStack {
-                        if viewModel.item.type == .person || viewModel.item.type == .musicArtist,
-                           let typeViewModel = viewModel as? CollectionItemViewModel
-                        {
-                            ImageView(typeViewModel.item.imageSource(.primary, maxWidth: 440))
+                        if viewModel.item.type == .person || viewModel.item.type == .musicArtist {
+                            ImageView(viewModel.item.imageSource(.primary, maxWidth: 440))
                                 .failure {
                                     SystemImageContentView(systemName: viewModel.item.systemImage)
                                 }

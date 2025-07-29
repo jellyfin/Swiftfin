@@ -46,14 +46,12 @@ struct ItemView: View {
     @ViewBuilder
     private var scrollContentView: some View {
         switch viewModel.item.type {
-        case .boxSet:
+        case .boxSet, .person, .musicArtist:
             CollectionItemContentView(viewModel: viewModel as! CollectionItemViewModel)
         case .episode:
             EpisodeItemContentView(viewModel: viewModel as! EpisodeItemViewModel)
         case .movie:
             MovieItemContentView(viewModel: viewModel as! MovieItemViewModel)
-        case .person, .musicArtist:
-            PersonItemContentView(viewModel: viewModel as! CollectionItemViewModel)
         case .series:
             SeriesItemContentView(viewModel: viewModel as! SeriesItemViewModel)
         default:
