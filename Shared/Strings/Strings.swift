@@ -1360,6 +1360,8 @@ internal enum L10n {
   internal static let security = L10n.tr("Localizable", "security", fallback: "Security")
   /// See All
   internal static let seeAll = L10n.tr("Localizable", "seeAll", fallback: "See All")
+  /// See Less
+  internal static let seeLess = L10n.tr("Localizable", "seeLess", fallback: "See Less")
   /// See More
   internal static let seeMore = L10n.tr("Localizable", "seeMore", fallback: "See More")
   /// Select All
