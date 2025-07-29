@@ -35,12 +35,13 @@ extension ItemView {
                 }
 
                 if let itemOverview = item.overview {
-                    TruncatedText(itemOverview)
-                        .onSeeMore {
-                            router.route(to: .itemOverview(item: item))
-                        }
-                        .seeMoreType(.view)
-                        .lineLimit(overviewLineLimit)
+                    CollapsableOverview(text: itemOverview)
+//                    TruncatedText(itemOverview)
+//                        .onSeeMore {
+//                            router.route(to: .itemOverview(item: item))
+//                        }
+//                        .seeMoreType(.view)
+//                        .lineLimit(overviewLineLimit)
                 }
 
                 if let birthday = item.birthday?.formatted(date: .long, time: .omitted) {
