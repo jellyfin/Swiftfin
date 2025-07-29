@@ -87,11 +87,12 @@ extension ItemView {
                                 Marquee(source, speed: 40, delay: 3, fade: 5)
                                     .font(.caption)
                                     .fontWeight(.medium)
-                                    .frame(maxWidth: 150)
+                                    .frame(maxWidth: 175)
                             }
                         }
                     }
                     .foregroundStyle(isEnabled ? accentColor.overlayColor : Color(UIColor.secondaryLabel))
+                    .padding(.horizontal, 5)
                 }
             }
             .contextMenu {

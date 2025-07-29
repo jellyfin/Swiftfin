@@ -102,14 +102,15 @@ extension ItemView {
                         Text(title)
                             .fontWeight(.semibold)
 
-                        if let source = source {
+                        if let source {
                             Marquee(source, animateWhenFocused: true)
                                 .font(.caption)
+                                .frame(maxWidth: 250)
                         }
                     }
                 }
                 .foregroundStyle(isEnabled ? .black : Color(UIColor.secondaryLabel))
-                .padding(23)
+                .padding(20)
                 .frame(width: multipleVersions ? 320 : 440, height: 100, alignment: .center)
                 .background {
                     if isFocused {
