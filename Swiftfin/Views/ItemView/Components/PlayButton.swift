@@ -26,7 +26,7 @@ extension ItemView {
 
         private let logger = Logger.swiftfin()
 
-        // MARK: - ddd
+        // MARK: - Validation
 
         private var isEnabled: Bool {
             viewModel.selectedMediaSource != nil
@@ -35,31 +35,32 @@ extension ItemView {
         // MARK: - Title
 
         private var title: String {
+            /// Use the Season/Episode label for the Series ItemView
             if let seriesViewModel = viewModel as? SeriesItemViewModel,
                let seasonEpisodeLabel = seriesViewModel.playButtonItem?.seasonEpisodeLabel
             {
                 return seasonEpisodeLabel
+
+                /// Use a Play/Resume label for single Media Source items that are not Series
             } else if let playButtonLabel = viewModel.playButtonItem?.playButtonLabel {
                 return playButtonLabel
+
+                /// Fallback to a generic `Play` label
             } else {
                 return L10n.play
             }
+        }
 
-            // TODO: For use with `MarqueeText` on the `PlayButton`
+        // MARK: - Media Source
 
-            /* if let sourceLabel = viewModel.selectedMediaSource?.displayTitle,
-                viewModel.item.mediaSources?.count ?? 0 > 1
-             {
-                 return sourceLabel
-             } else if let seriesViewModel = viewModel as? SeriesItemViewModel,
-                       let seasonEpisodeLabel = seriesViewModel.playButtonItem?.seasonEpisodeLabel
-             {
-                 return seasonEpisodeLabel
-             } else if let playButtonLabel = viewModel.playButtonItem?.playButtonLabel {
-                 return playButtonLabel
-             } else {
-                 return L10n.play
-             } */
+        private var source: String? {
+            guard let sourceLabel = viewModel.selectedMediaSource?.displayTitle,
+                  viewModel.item.mediaSources?.count ?? 0 > 1
+            else {
+                return nil
+            }
+
+            return sourceLabel
         }
 
         // MARK: - Body
@@ -77,12 +78,21 @@ extension ItemView {
                         Image(systemName: "play.fill")
                             .font(.system(size: 20))
 
-                        // TODO: Use `MarqueeText`
-                        Text(title)
-                            .font(.callout)
-                            .fontWeight(.semibold)
+                        VStack(alignment: .leading) {
+                            Text(title)
+                                .font(.callout)
+                                .fontWeight(.semibold)
+
+                            if let source {
+                                Marquee(source, speed: 40, delay: 3, fade: 5)
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                                    .frame(maxWidth: 175)
+                            }
+                        }
                     }
                     .foregroundStyle(isEnabled ? accentColor.overlayColor : Color(UIColor.secondaryLabel))
+                    .padding(.horizontal, 5)
                 }
             }
             .contextMenu {
