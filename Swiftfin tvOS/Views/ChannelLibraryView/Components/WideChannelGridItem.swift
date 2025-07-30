@@ -31,7 +31,7 @@ extension ChannelLibraryView {
                 ZStack {
                     Color.clear
 
-                    ImageView(channel.portraitImageSources(maxWidth: 110))
+                    ImageView(channel.portraitImageSources(maxWidth: 110, quality: 90))
                         .image {
                             $0.aspectRatio(contentMode: .fit)
                         }

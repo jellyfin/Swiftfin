@@ -74,11 +74,7 @@ struct SearchView: View {
 
     private func select(_ item: BaseItemDto) {
         switch item.type {
-        case .person:
-            let viewModel = ItemLibraryViewModel(parent: item)
-            router.route(to: .library(viewModel: viewModel))
         case .program: ()
-        // router.route(to: .liveVideoPlayer(manager: LiveVideoPlayerManager(program: item)))
         case .tvChannel:
             guard let mediaSource = item.mediaSources?.first else { return }
 //            router.route(

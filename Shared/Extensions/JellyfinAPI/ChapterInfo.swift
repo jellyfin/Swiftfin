@@ -67,7 +67,7 @@ extension ChapterInfo {
             self.unitRange = secondsRange.lowerBound / runtime ..< secondsRange.upperBound / runtime
         }
 
-        func landscapeImageSources(maxWidth: CGFloat?) -> [ImageSource] {
+        func landscapeImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
             [imageSource]
         }
     }

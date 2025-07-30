@@ -156,8 +156,8 @@ struct EditAccessScheduleView: View {
                         selectedSchedules = [schedule]
                         isPresentingDeleteConfirmation = true
                     }
-                    .environment(\.isEditing, isEditing)
-                    .environment(\.isSelected, selectedSchedules.contains(schedule))
+                    .isEditing(isEditing)
+                    .isSelected(selectedSchedules.contains(schedule))
                 }
             }
         }

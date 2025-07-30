@@ -33,7 +33,7 @@ struct NavigationBarFilterDrawer: View {
                         }
                     } label: {
                         FilterDrawerButton(systemName: "line.3.horizontal.decrease.circle.fill")
-                            .environment(\.isSelected, true)
+                            .isSelected(true)
                     }
                 }
 

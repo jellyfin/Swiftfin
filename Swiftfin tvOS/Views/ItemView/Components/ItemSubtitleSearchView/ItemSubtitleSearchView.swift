@@ -166,8 +166,8 @@ struct ItemSubtitleSearchView: View {
                     selectedSubtitles.toggle(value: subtitleID)
                 }
                 .foregroundStyle(isSelected ? .primary : .secondary, .secondary)
-                .environment(\.isSelected, isSelected)
-                .environment(\.isEditing, true)
+                .isSelected(isSelected)
+                .isEditing(true)
             }
         }
     }

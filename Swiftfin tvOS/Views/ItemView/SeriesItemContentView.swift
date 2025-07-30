@@ -6,31 +6,19 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Foundation
 import SwiftUI
 
 extension ItemView {
 
     struct SeriesItemContentView: View {
 
-        @StateObject
-        private var focusGuide = FocusGuide()
-
         @ObservedObject
         var viewModel: SeriesItemViewModel
 
         var body: some View {
             VStack(spacing: 0) {
-
-                ItemView.CinematicHeaderView(viewModel: viewModel)
-                    .focusGuide(focusGuide, tag: "top", bottom: "seasons")
-                    .frame(height: UIScreen.main.bounds.height - 150)
-                    .padding(.bottom, 50)
-
                 if viewModel.seasons.isNotEmpty {
                     SeriesEpisodeSelector(viewModel: viewModel)
-                        .environmentObject(focusGuide)
                 }
 
                 if let castAndCrew = viewModel.item.people, castAndCrew.isNotEmpty {
