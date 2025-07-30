@@ -11,17 +11,6 @@ import Foundation
 import JellyfinAPI
 import VLCUI
 
-/// A box for a `Published` value
-class PublishedBox<Value>: ObservableObject {
-
-    @Published
-    var value: Value
-
-    init(initialValue: Value) {
-        self.value = initialValue
-    }
-}
-
 // TODO: proper error catching
 // TODO: set playback rate
 //       - what if proxy couldn't set rate?
@@ -102,17 +91,8 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     ///
     /// - Note: This is boxed to avoid unnecessary `View` updates for
     ///         views that do not implement the current value.
-
-    // TODO: change to `Duration`
-    // TODO: change the box to private, with new `seconds` property w/ get/set
-    let secondsBox: PublishedBox<TimeInterval> = .init(initialValue: .zero)
-
-    var seconds: Duration {
-        get { Duration.seconds(secondsBox.value) }
-        set {
-            secondsBox.value = newValue.seconds
-        }
-    }
+    @BoxedPublished
+    var seconds: Duration = .zero
 
     var proxy: MediaPlayerProxy?
     var queue: (any MediaPlayerQueue)?

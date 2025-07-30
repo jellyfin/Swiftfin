@@ -6,11 +6,15 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
+import Combine
 
-extension Double {
+/// A box for a `Published` value
+class PublishedBox<Value>: ObservableObject {
 
-    var rateLabel: String {
-        String(format: "%.2f", self).appending("x")
+    @Published
+    var value: Value
+
+    init(initialValue: Value) {
+        self.value = initialValue
     }
 }

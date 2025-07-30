@@ -23,6 +23,13 @@ struct VideoPlayer: View {
     @Default(.VideoPlayer.Subtitle.subtitleSize)
     private var subtitleSize
 
+    /// The current scrubbed seconds for UI presentation and editing.
+    ///
+    /// - Note: This value is boxed to avoid unnecessary updates
+    ///         for views that do not implement the current value.
+    @BoxedPublished
+    private var scrubbedSeconds: Duration = .zero
+
     @Router
     private var router
 
@@ -42,24 +49,8 @@ struct VideoPlayer: View {
     @StateObject
     private var manager: MediaPlayerManager
 
-    /// The current scrubbed seconds for UI presentation and editing.
-    ///
-    /// - Note: This value is boxed to avoid unnecessary updates
-    ///         for views that do not implement the current value.
-    @StateObject
-    private var scrubbedSecondsBox: PublishedBox<Duration> = .init(initialValue: .zero)
-
     @StateObject
     private var vlcUIProxy: VLCVideoPlayer.Proxy
-
-    private var scrubbedSeconds: Duration {
-        get {
-            scrubbedSecondsBox.value
-        }
-        nonmutating set {
-            scrubbedSecondsBox.value = newValue
-        }
-    }
 
     // MARK: init
 
@@ -124,7 +115,7 @@ struct VideoPlayer: View {
                 .environment(\.isScrubbing, $isScrubbing)
                 .environment(\.safeAreaInsets, safeAreaInsets)
                 .environmentObject(manager)
-                .environmentObject(scrubbedSecondsBox)
+                .environmentObject(_scrubbedSeconds.box)
         }
     }
 
@@ -146,8 +137,8 @@ struct VideoPlayer: View {
             .toolbar(.hidden, for: .navigationBar)
             .statusBarHidden()
             .trackingSize(.constant(.zero), $safeAreaInsets)
-            .onChange(of: audioOffset) { _ in
-//                vlcUIProxy.setAudioDelay(.seconds(newValue))
+            .onChange(of: audioOffset) { newValue in
+                vlcUIProxy.setAudioDelay(newValue)
             }
             .onChange(of: isAspectFilled) { newValue in
                 UIView.animate(withDuration: 0.2) {
@@ -166,11 +157,11 @@ struct VideoPlayer: View {
             .onChange(of: subtitleFontName) { newValue in
                 vlcUIProxy.setSubtitleFont(newValue)
             }
-            .onChange(of: subtitleOffset) { _ in
-//                vlcUIProxy.setSubtitleDelay(.seconds(newValue))
+            .onChange(of: subtitleOffset) { newValue in
+                vlcUIProxy.setSubtitleDelay(newValue)
             }
             .onChange(of: subtitleSize) { newValue in
-                vlcUIProxy.setSubtitleSize(.absolute(24 - newValue))
+                vlcUIProxy.setSubtitleSize(.absolute(25 - newValue))
             }
             .onReceive(manager.events) { @MainActor event in
                 switch event {

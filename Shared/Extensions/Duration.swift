@@ -9,8 +9,8 @@
 import Foundation
 
 extension Duration {
+
     var seconds: Double {
-        let v = components
-        return Double(v.seconds) + Double(v.attoseconds) * 1e-18
+        Double(components.seconds) + Double(components.attoseconds) * 1e-18
     }
 }

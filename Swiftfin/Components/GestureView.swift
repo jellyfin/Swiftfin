@@ -248,7 +248,7 @@ class UIGestureView: UIView {
         let location = gestureRecognizer.location(in: self)
         let unitPoint = gestureRecognizer.unitPoint(in: self)
 
-        if let lastTouchLocation, lastTouchLocation.isNear(lastTouchLocation, padding: samePointPadding) {
+        if let lastTouchLocation, lastTouchLocation.isNear(lastTouchLocation, epsilon: samePointPadding) {
             multiTapOccurred(at: location)
             onTap(unitPoint, multiTapAmount)
         } else {
