@@ -196,8 +196,8 @@ class UIGestureView: UIView {
         addGestureRecognizer(tapGesture)
 //        addGestureRecognizer(doubleTouchGesture)
         addGestureRecognizer(longPressGesture)
-        addGestureRecognizer(verticalPanGesture)
-        addGestureRecognizer(horizontalPanGesture)
+//        addGestureRecognizer(verticalPanGesture)
+//        addGestureRecognizer(horizontalPanGesture)
     }
 
     @available(*, unavailable)

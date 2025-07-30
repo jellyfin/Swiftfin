@@ -119,23 +119,9 @@ struct VideoPlayer: View {
         }
     }
 
-    // MARK: body
-
-    @ViewBuilder
-    private var contentView: some View {
-        PreferencesView {
-            playerView
-                .supportedOrientations(.allButUpsideDown)
-        }
-        .ignoresSafeArea()
-        .persistentSystemOverlays(.hidden)
-    }
-
     var body: some View {
         playerView
-            .ignoresSafeArea()
             .toolbar(.hidden, for: .navigationBar)
-            .statusBarHidden()
             .trackingSize(.constant(.zero), $safeAreaInsets)
             .onChange(of: audioOffset) { newValue in
                 vlcUIProxy.setAudioDelay(newValue)

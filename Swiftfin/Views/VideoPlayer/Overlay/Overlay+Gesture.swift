@@ -97,8 +97,8 @@ extension VideoPlayer.Overlay {
         var body: some View {
             GestureView()
 //                .onDoubleTouch TODO: implement
-                    .onHorizontalPan(handleHorizontalPan)
-                    .onHorizontalSwipe(translation: 100, velocity: 1500, sameSwipeDirectionTimeout: 1, handleHorizontalSwipe)
+//                    .onHorizontalPan(handleHorizontalPan)
+//                    .onHorizontalSwipe(translation: 100, velocity: 1500, sameSwipeDirectionTimeout: 1, handleHorizontalSwipe)
                     .onLongPress(minimumDuration: 1, handleLongPress)
                     .onPinch(handlePinch)
                     .onTap(samePointPadding: 10, samePointTimeout: 0.7) { _, _ in
@@ -110,7 +110,7 @@ extension VideoPlayer.Overlay {
                             isPresentingOverlay.toggle()
                         }
                     }
-                    .onVerticalPan(handleVerticalPan)
+//                    .onVerticalPan(handleVerticalPan)
         }
     }
 }

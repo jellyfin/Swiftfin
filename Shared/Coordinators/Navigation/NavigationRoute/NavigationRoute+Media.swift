@@ -10,6 +10,7 @@ import Defaults
 import JellyfinAPI
 import PreferencesView
 import SwiftUI
+import Transmission
 
 extension NavigationRoute {
 
@@ -61,17 +62,15 @@ struct VideoPlayerViewShim: View {
     var body: some View {
         #if os(iOS)
 
-        PreferencesView {
-            Group {
-                if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                    VideoPlayer(manager: manager)
-                } else {
-                    NativeVideoPlayer(manager: manager)
-                }
+        Group {
+            if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+                VideoPlayer(manager: manager)
+            } else {
+                NativeVideoPlayer(manager: manager)
             }
-            .preferredColorScheme(.dark)
-            .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
         }
+        .colorScheme(.dark) // use over `preferredColorScheme(.dark)` to not have destination change
+        .supportedOrientations(.allButUpsideDown)
         .ignoresSafeArea()
         .persistentSystemOverlays(.hidden)
 

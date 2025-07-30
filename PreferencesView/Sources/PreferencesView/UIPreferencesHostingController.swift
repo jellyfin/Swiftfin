@@ -10,7 +10,7 @@ import SwiftUI
 
 public class UIPreferencesHostingController: UIHostingController<AnyView> {
 
-    init<Content: View>(@ViewBuilder content: @escaping () -> Content) {
+    public init(@ViewBuilder content: @escaping () -> some View) {
         let box = Box()
         let rootView = AnyView(
             content()

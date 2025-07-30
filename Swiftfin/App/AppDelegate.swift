@@ -10,6 +10,7 @@ import AVFAudio
 import CoreStore
 import Defaults
 import Logging
+import PreferencesView
 import Pulse
 import PulseLogHandler
 import SwiftUI
@@ -30,5 +31,18 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         }
 
         return true
+    }
+
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+           let keyWindow = scene.keyWindow,
+           let topViewCOntroller = keyWindow.rootViewController
+        {
+            if let preferencesHostingController = topViewCOntroller.presentedViewController as? UIPreferencesHostingController {
+                return preferencesHostingController.supportedInterfaceOrientations
+            }
+        }
+
+        return UIDevice.isPad ? .allButUpsideDown : .portrait
     }
 }

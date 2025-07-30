@@ -6,7 +6,9 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import PreferencesView
 import SwiftUI
+import Transmission
 
 struct NavigationInjectionView: View {
 
@@ -50,16 +52,25 @@ struct NavigationInjectionView: View {
                 route.destination
             }
         }
-        .fullScreenCover(
-            item: $coordinator.presentedFullScreen
-        ) {
-            coordinator.presentedFullScreen = nil
-        } content: { route in
-            let newCoordinator = NavigationCoordinator()
+        .presentation(
+            $coordinator.presentedFullScreen,
+            transition: .zoomIfAvailable(
+                options: .init(dimmingVisualEffect: .systemThickMaterialDark),
+                otherwise: .slide(.init(edge: .bottom), options: .init())
+            )
+        ) { routeBinding, _ in
+            let vc = UIPreferencesHostingController {
+                let newCoordinator = NavigationCoordinator()
 
-            NavigationInjectionView(coordinator: newCoordinator) {
-                route.destination
+                NavigationInjectionView(coordinator: newCoordinator) {
+                    routeBinding.wrappedValue.destination
+                }
             }
+
+            // TODO: presentation options for customizing background color, dimming effect, etc.
+            vc.view.backgroundColor = .black
+
+            return vc
         }
     }
 }
