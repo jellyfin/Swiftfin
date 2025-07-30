@@ -28,13 +28,13 @@ extension VideoPlayer {
         private var manager: MediaPlayerManager
 
         @State
+        private var bottomContentFrame: CGRect = .zero
+        @State
         private var effectiveSafeArea: EdgeInsets = .init(vertical: 0, horizontal: 50)
         @State
         private var isGestureLocked: Bool = false
         @State
         private var isPresentingOverlay: Bool = true
-        @State
-        private var progressViewFrame: CGRect = .zero
         @State
         private var selectedSupplement: AnyMediaPlayerSupplement?
 
@@ -55,13 +55,13 @@ extension VideoPlayer {
                 .isVisible(!isScrubbing && isPresentingOverlay)
         }
 
+        // TODO: have progressViewFrame be the entire bottom content
         @ViewBuilder
         private var bottomContent: some View {
             if !isPresentingSupplement {
                 PlaybackProgress()
                     .isVisible(isScrubbing || isPresentingOverlay)
                     .transition(.move(edge: .top).combined(with: .opacity))
-                    .trackingFrame($progressViewFrame)
             }
 
             HStack(spacing: 10) {
@@ -91,7 +91,7 @@ extension VideoPlayer {
                             (location: 1, opacity: 0.5)
                         }
                         .isVisible(isScrubbing)
-                        .frame(height: progressViewFrame.height)
+                        .frame(height: bottomContentFrame.height)
                 }
                 .animation(.linear(duration: 0.25), value: isPresentingOverlay)
 
@@ -115,6 +115,7 @@ extension VideoPlayer {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(effectiveSafeArea)
                             .offset(y: isPresentingOverlay ? 0 : 20)
+                            .trackingFrame($bottomContentFrame)
 
                         // TODO: changing supplement transition
                         if isPresentingSupplement, let selectedSupplement {

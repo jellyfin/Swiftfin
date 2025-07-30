@@ -10,6 +10,7 @@ import SwiftUI
 
 extension VideoPlayer.Overlay {
 
+    // TODO: only have play buttons have circle background
     struct OverlayButtonStyle: ButtonStyle {
 
         @Environment(\.isEnabled)
@@ -22,12 +23,23 @@ extension VideoPlayer.Overlay {
                 .foregroundStyle(isEnabled ? AnyShapeStyle(HierarchicalShapeStyle.primary) : AnyShapeStyle(Color.gray))
                 .labelStyle(.iconOnly)
                 .contentShape(Rectangle())
-                .padding(8)
                 .scaleEffect(
                     configuration.isPressed ? 0.8 : 1,
                     anchor: .init(x: 0.5, y: 0.5)
                 )
                 .animation(.bouncy(duration: 0.25, extraBounce: 0.25), value: configuration.isPressed)
+                .padding(4)
+                .animation(nil, value: configuration.isPressed)
+                .background {
+                    Circle()
+                        .foregroundStyle(Color.white.opacity(configuration.isPressed ? 0.25 : 0))
+                        .scaleEffect(
+                            configuration.isPressed ? 1 : 0.8,
+                            anchor: .init(x: 0.5, y: 0.5)
+                        )
+                }
+                .animation(.linear(duration: 0.1).delay(configuration.isPressed ? 0.2 : 0), value: configuration.isPressed)
+                .padding(4)
                 .onChange(of: configuration.isPressed, perform: onPressed)
         }
     }
