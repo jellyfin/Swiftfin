@@ -20,6 +20,9 @@ struct SettingsView: View {
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
 
+    @EnvironmentObject
+    private var toastProxy: ToastProxy
+
     @Router
     private var router
 
@@ -28,6 +31,10 @@ struct SettingsView: View {
 
     var body: some View {
         Form {
+
+            Button("Toast") {
+                toastProxy.present("Love", systemName: "heart.fill")
+            }
 
             Section {
 

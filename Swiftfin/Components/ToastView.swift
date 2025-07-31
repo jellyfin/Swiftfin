@@ -8,17 +8,25 @@
 
 import Combine
 import SwiftUI
+import Transmission
 
+// TODO: make whole toasting system
+//       - allow actions
+//       - single injection function
+//       - multiple toasts
+//       - sizes, stacked
+
+@MainActor
 class ToastProxy: ObservableObject {
 
     @Published
-    private(set) var isPresenting: Bool = false
+    var isPresenting: Bool = false
     @Published
     private(set) var systemName: String? = nil
     @Published
     private(set) var title: Text = Text("")
-    @Published
-    private(set) var messageID: String = ""
+//    @Published
+//    private(set) var messageID: String = ""
 
     private let pokeTimer = PokeIntervalTimer(defaultInterval: 1)
     private var pokeCancellable: AnyCancellable?
@@ -26,7 +34,9 @@ class ToastProxy: ObservableObject {
     init() {
         pokeCancellable = pokeTimer.hasFired
             .sink {
-                self.isPresenting = false
+//                withAnimation {
+//                    self.isPresenting = false
+//                }
             }
     }
 
@@ -42,10 +52,12 @@ class ToastProxy: ObservableObject {
     }
 
     private func poke(equalsPrevious: Bool) {
-        isPresenting = true
+//        if equalsPrevious {
+//            messageID = UUID().uuidString
+//        }
 
-        if equalsPrevious {
-            messageID = UUID().uuidString
+        withAnimation(.spring) {
+            isPresenting = true
         }
 
         pokeTimer.poke()
@@ -54,37 +66,46 @@ class ToastProxy: ObservableObject {
 
 struct ToastView: View {
 
+    @Environment(\.presentationCoordinator)
+    var presentationCoordinator
+
     @EnvironmentObject
     private var proxy: ToastProxy
 
     var body: some View {
-        ZStack {
-            if proxy.isPresenting {
-                HStack {
-                    if let systemName = proxy.systemName {
-                        Image(systemName: systemName)
-                            .renderingMode(.template)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 25, height: 25)
-                    }
-
-                    proxy.title
-                        .font(.body)
-                        .fontWeight(.bold)
-                        .monospacedDigit()
+        Button {
+            presentationCoordinator.dismiss()
+        } label: {
+            HStack {
+                if let systemName = proxy.systemName {
+                    Image(systemName: systemName)
+                        .renderingMode(.template)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 25, height: 25)
                 }
-                .padding(.horizontal, 24)
-                .padding(.vertical, 8)
-                .frame(minHeight: 50)
-                .background(BlurView())
-                .clipShape(Capsule())
-                .overlay(Capsule().stroke(Color.gray.opacity(0.2), lineWidth: 1))
-                .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 6)
-                .transition(.opacity)
-                .animation(.linear(duration: 0.2), value: proxy.messageID)
+
+                proxy.title
+                    .font(.body)
+                    .fontWeight(.bold)
+                    .monospacedDigit()
             }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 8)
+            .frame(minHeight: 50)
+            .background(BlurView())
+            .clipShape(Capsule())
+            .overlay(Capsule().stroke(Color.gray.opacity(0.2), lineWidth: 1))
+            .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 6)
         }
-        .animation(.spring, value: proxy.isPresenting)
+        .buttonStyle(ToastButtonStyle())
+    }
+
+    struct ToastButtonStyle: ButtonStyle {
+        func makeBody(configuration: Configuration) -> some View {
+            configuration.label
+                .scaleEffect(configuration.isPressed ? 0.92 : 1)
+                .animation(.interactiveSpring, value: configuration.isPressed)
+        }
     }
 }

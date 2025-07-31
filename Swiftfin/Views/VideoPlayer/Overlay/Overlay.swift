@@ -15,6 +15,9 @@ extension VideoPlayer {
 
     struct Overlay: View {
 
+        @Environment(\.horizontalSizeClass)
+        private var horizontalSizeClass
+
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
@@ -30,8 +33,6 @@ extension VideoPlayer {
         @State
         private var bottomContentFrame: CGRect = .zero
         @State
-        private var effectiveSafeArea: EdgeInsets = .init(vertical: 0, horizontal: 50)
-        @State
         private var isGestureLocked: Bool = false
         @State
         private var isPresentingOverlay: Bool = true
@@ -42,8 +43,8 @@ extension VideoPlayer {
         private var jumpProgressObserver: JumpProgressObserver = .init()
         @StateObject
         private var overlayTimer: PokeIntervalTimer = .init()
-        @StateObject
-        private var toastProxy: ToastProxy = .init()
+//        @StateObject
+//        private var toastProxy: ToastProxy = .init()
 
         private var isPresentingSupplement: Bool {
             selectedSupplement != nil
@@ -103,8 +104,9 @@ extension VideoPlayer {
 
                 VStack {
                     navigationBar
-                        .padding(.top, EdgeInsets.edgePadding / 2)
-                        .padding(effectiveSafeArea)
+                        .padding(.top, safeAreaInsets.top)
+                        .padding(.leading, safeAreaInsets.leading)
+                        .padding(.trailing, safeAreaInsets.trailing)
                         .offset(y: isPresentingOverlay ? 0 : -20)
 
                     Spacer()
@@ -113,7 +115,6 @@ extension VideoPlayer {
                     VStack {
                         bottomContent
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(effectiveSafeArea)
                             .offset(y: isPresentingOverlay ? 0 : 20)
                             .trackingFrame($bottomContentFrame)
 
@@ -122,15 +123,14 @@ extension VideoPlayer {
                             selectedSupplement.supplement
                                 .videoPlayerBody()
                                 .eraseToAnyView()
-                                .frame(height: 150)
+                                .frame(height: horizontalSizeClass == .compact ? 400 : 150)
                                 .id(selectedSupplement.id)
                                 .transition(.opacity.animation(.linear(duration: 0.1)))
-                                .environment(\.safeAreaInsets, effectiveSafeArea)
                         }
-
-                        Color.clear
-                            .frame(height: EdgeInsets.edgePadding)
                     }
+                    .padding(.bottom, safeAreaInsets.bottom)
+                    .padding(.leading, safeAreaInsets.leading)
+                    .padding(.trailing, safeAreaInsets.trailing)
                     .background {
                         if isPresentingOverlay {
                             EmptyHitTestView()
@@ -144,10 +144,10 @@ extension VideoPlayer {
                         .transition(.opacity)
                 }
             }
-            .overlay(alignment: .top) {
-                ToastView()
-                    .edgePadding()
-            }
+//            .overlay(alignment: .top) {
+//                ToastView()
+//                    .edgePadding()
+//            }
             .modifier(VideoPlayer.KeyCommandsModifier())
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.bouncy(duration: 0.4), value: isPresentingSupplement)
@@ -156,7 +156,7 @@ extension VideoPlayer {
             .environment(\.selectedMediaPlayerSupplement, $selectedSupplement)
             .environmentObject(jumpProgressObserver)
             .environmentObject(overlayTimer)
-            .environmentObject(toastProxy)
+//            .environmentObject(toastProxy)
             .onChange(of: isPresentingOverlay) { newValue in
                 guard newValue, !isScrubbing else { return }
                 overlayTimer.poke()
@@ -180,19 +180,6 @@ extension VideoPlayer {
                     overlayTimer.poke()
                 } else {
                     overlayTimer.stop()
-                }
-            }
-            .onSizeChanged { newSize, _ in
-                if newSize.isPortrait {
-                    effectiveSafeArea = .init(
-                        vertical: min(safeAreaInsets.top, safeAreaInsets.bottom),
-                        horizontal: 0
-                    )
-                } else {
-                    effectiveSafeArea = .init(
-                        vertical: 0,
-                        horizontal: min(safeAreaInsets.leading, safeAreaInsets.trailing)
-                    )
                 }
             }
         }

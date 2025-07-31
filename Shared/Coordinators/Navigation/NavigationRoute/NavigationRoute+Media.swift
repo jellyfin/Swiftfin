@@ -57,6 +57,9 @@ extension NavigationRoute {
 
 struct VideoPlayerViewShim: View {
 
+    @State
+    private var safeAreaInsets: EdgeInsets = .init()
+
     let manager: MediaPlayerManager
 
     var body: some View {
@@ -65,6 +68,7 @@ struct VideoPlayerViewShim: View {
         Group {
             if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
                 VideoPlayer(manager: manager)
+                    .environment(\.safeAreaInsets, safeAreaInsets)
             } else {
                 NativeVideoPlayer(manager: manager)
             }
@@ -73,6 +77,9 @@ struct VideoPlayerViewShim: View {
         .supportedOrientations(.allButUpsideDown)
         .ignoresSafeArea()
         .persistentSystemOverlays(.hidden)
+        .onSizeChanged { _, safeArea in
+            self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
+        }
 
         #else
         if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {

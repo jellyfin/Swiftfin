@@ -15,6 +15,7 @@ import PreferencesView
 import Pulse
 import PulseLogHandler
 import SwiftUI
+import Transmission
 
 @main
 struct SwiftfinApp: App {
@@ -22,6 +23,8 @@ struct SwiftfinApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self)
     var appDelegate
 
+    @StateObject
+    private var toastProxy: ToastProxy = .init()
     @StateObject
     private var valueObservation = ValueObservation()
 
@@ -78,6 +81,15 @@ struct SwiftfinApp: App {
                 RootView()
                     .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
             }
+            .window(
+                level: .alert,
+                transition: .move(edge: .top).combined(with: .opacity),
+                isPresented: $toastProxy.isPresenting
+            ) {
+                ToastView()
+                    .environmentObject(toastProxy)
+            }
+            .environmentObject(toastProxy)
             .ignoresSafeArea()
             .onNotification(.applicationDidEnterBackground) {
                 Defaults[.backgroundTimeStamp] = Date.now

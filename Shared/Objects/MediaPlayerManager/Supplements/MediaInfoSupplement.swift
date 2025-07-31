@@ -25,7 +25,7 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
         _View(item: item)
     }
 
-    private struct _View: View {
+    private struct _View: HorizontalSizeClassView {
 
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets
@@ -72,7 +72,11 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
             .frame(width: 275, height: 50)
         }
 
-        var body: some View {
+        var compact: some View {
+            Color.red.opacity(0.5)
+        }
+
+        var regular: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
                 ZStack {
                     Color.clear
@@ -130,3 +134,60 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
 //        .previewInterfaceOrientation(.landscapeRight)
 //    }
 // }
+
+// struct HorizontalSizeClassView<Regular: View, Compact: View>: View {
+//    @Environment(\.horizontalSizeClass)
+//    private var horizontalSizeClass
+//
+//    private let regular: Regular
+//    private let compact: Compact
+//
+//    init(
+//        @ViewBuilder regular: () -> Regular,
+//        @ViewBuilder compact: () -> Compact
+//    ) {
+//        self.regular = regular()
+//        self.compact = compact()
+//    }
+//
+//    var body: some View {
+//        if horizontalSizeClass == .regular {
+//            regular
+//        } else {
+//            compact
+//        }
+//    }
+// }
+
+protocol HorizontalSizeClassView: View {
+
+    associatedtype CompactBody: View
+    associatedtype RegularBody: View
+
+    @ViewBuilder @MainActor
+    var compact: CompactBody { get }
+    @ViewBuilder @MainActor
+    var regular: RegularBody { get }
+}
+
+extension HorizontalSizeClassView where Body == _HorizontalSizeClassView<Self> {
+    var body: _HorizontalSizeClassView<Self> {
+        _HorizontalSizeClassView(content: self)
+    }
+}
+
+struct _HorizontalSizeClassView<Content: HorizontalSizeClassView>: View {
+
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
+
+    let content: Content
+
+    var body: some View {
+        if horizontalSizeClass == .compact {
+            content.compact
+        } else {
+            content.regular
+        }
+    }
+}

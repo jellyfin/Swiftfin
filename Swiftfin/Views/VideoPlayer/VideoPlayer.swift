@@ -42,8 +42,6 @@ struct VideoPlayer: View {
     @State
     private var isScrubbing: Bool = false
     @State
-    private var safeAreaInsets: EdgeInsets = .zero
-    @State
     private var subtitleOffset: Duration = .zero
 
     @StateObject
@@ -113,7 +111,6 @@ struct VideoPlayer: View {
                 .environment(\.isAspectFilled, $isAspectFilled)
                 .environment(\.isGestureLocked, $isGestureLocked)
                 .environment(\.isScrubbing, $isScrubbing)
-                .environment(\.safeAreaInsets, safeAreaInsets)
                 .environmentObject(manager)
                 .environmentObject(_scrubbedSeconds.box)
         }
@@ -122,7 +119,6 @@ struct VideoPlayer: View {
     var body: some View {
         playerView
             .toolbar(.hidden, for: .navigationBar)
-            .trackingSize(.constant(.zero), $safeAreaInsets)
             .onChange(of: audioOffset) { newValue in
                 vlcUIProxy.setAudioDelay(newValue)
             }
