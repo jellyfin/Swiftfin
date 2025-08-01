@@ -20,6 +20,17 @@ extension ButtonStyle where Self == ToolbarPillButtonStyle {
     }
 }
 
+extension ButtonStyle where Self == OrnamentButtonStyle {
+
+    static var ornament: OrnamentButtonStyle {
+        OrnamentButtonStyle(Defaults[.accentColor])
+    }
+
+    static func ornament(_ primary: Color = .accentColor, iconOnly: Bool = false) -> OrnamentButtonStyle {
+        OrnamentButtonStyle(primary, iconOnly: iconOnly)
+    }
+}
+
 // TODO: don't take `Color`, take generic `ShapeStyle`
 struct ToolbarPillButtonStyle: ButtonStyle {
 
@@ -38,6 +49,81 @@ struct ToolbarPillButtonStyle: ButtonStyle {
             .background(isEnabled ? primary : secondary)
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .opacity(isEnabled && !configuration.isPressed ? 1 : 0.5)
+    }
+}
+
+struct OrnamentButtonStyle: ButtonStyle {
+
+    // MARK: - Environment
+
+    @Environment(\.isEnabled)
+    private var isEnabled
+    @Environment(\.isSelected)
+    private var isSelected
+
+    // MARK: - Configuration
+
+    private let primary: Color
+    private let iconOnly: Bool
+
+    // MARK: - Initializer
+
+    init(_ primary: Color, iconOnly: Bool = false) {
+        self.primary = primary
+        self.iconOnly = iconOnly
+    }
+
+    // MARK: - Body
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.caption)
+            .fontWeight(.semibold)
+            .padding(10)
+            .foregroundStyle(foregroundStyle(isPressed: configuration.isPressed))
+            .background(
+                ZStack {
+                    backgroundShape
+                        .fill(.ultraThinMaterial)
+                    backgroundShape
+                        .fill(backgroundFill(isPressed: configuration.isPressed))
+                }
+            )
+            .contentShape(backgroundShape)
+            .symbolRenderingMode(.palette)
+            .aspectRatio(iconOnly ? 1 : nil, contentMode: .fit)
+    }
+
+    private var backgroundShape: AnyShape {
+        iconOnly ? AnyShape(Circle()) : AnyShape(Capsule())
+    }
+
+    // MARK: - Background Color Fill
+
+    private func backgroundFill(isPressed: Bool) -> Color {
+        if !isEnabled {
+            return Color.secondary.opacity(0.3)
+        } else if isPressed {
+            return Color.systemFill.opacity(0.7)
+        } else if isSelected {
+            return primary
+        } else {
+            return Color.systemFill.opacity(0.3)
+        }
+    }
+
+    // MARK: - Foreground Color
+
+    private func foregroundStyle(isPressed: Bool) -> Color {
+        if !isEnabled {
+            return Color.primary
+        } else if isPressed {
+            return primary.opacity(0.7)
+        } else if isSelected {
+            return Color.systemBackground
+        } else {
+            return primary
+        }
     }
 }
 
