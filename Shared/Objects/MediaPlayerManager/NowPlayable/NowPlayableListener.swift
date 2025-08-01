@@ -12,8 +12,6 @@ import Logging
 import MediaPlayer
 import Nuke
 
-// TODO: cleanup
-
 class NowPlayableListener: MediaPlayerListener {
 
     private let logger = Logger.swiftfin()
@@ -24,11 +22,12 @@ class NowPlayableListener: MediaPlayerListener {
             .play,
             .pause,
             .togglePausePlay,
-            .skipForward,
             .skipBackward,
+            .skipForward,
             .changePlaybackPosition,
-            .nextTrack,
-            .previousTrack,
+            // TODO: only register next/previous if there is a queue
+//            .nextTrack,
+//            .previousTrack,
         ]
     }
 
@@ -44,19 +43,17 @@ class NowPlayableListener: MediaPlayerListener {
     init(manager: MediaPlayerManager) {
         self.manager = manager
 
-        try! handleNowPlayableConfiguration(
-            commands: defaultRegisteredCommands,
-            commandHandler: { _, _ in .success },
-            interruptionHandler: { _ in }
+        configureRemoteCommands(
+            defaultRegisteredCommands,
+            commandHandler: handleCommand
         )
-
-        setup(with: manager)
     }
 
     private func setup(with manager: MediaPlayerManager) {
         manager.$playbackItem.sink(receiveValue: itemDidChange).store(in: &cancellables)
         manager.secondsBox.$value.sink(receiveValue: secondsDidChange).store(in: &cancellables)
         manager.$state.sink(receiveValue: stateDidChange).store(in: &cancellables)
+        manager.events.sink(receiveValue: didReceiveManagerEvent).store(in: &cancellables)
     }
 
     private func itemDidChange(newItem: MediaPlayerItem?) {
@@ -65,7 +62,7 @@ class NowPlayableListener: MediaPlayerListener {
         handleNowPlayableItemChange(metadata: .init(mediaType: .video, title: newItem.baseItem.displayTitle))
 
         itemImageCancellable = Task {
-            guard let image = await getNowPlayingImage(for: newItem) else { return }
+            guard let image = await newItem.thumbnailProvider?() else { return }
 
             await MainActor.run {
                 setNowPlayingMetadata(
@@ -80,17 +77,12 @@ class NowPlayableListener: MediaPlayerListener {
         .asAnyCancellable()
     }
 
-    private func getNowPlayingImage(for item: MediaPlayerItem) async -> UIImage? {
-        let imageRequests = item.baseItem.portraitImageSources(maxWidth: 100, quality: 90)
-        return await ImagePipeline.Swiftfin.other.loadFirstImage(from: imageRequests)
-    }
-
     private func secondsDidChange(newSeconds: Duration) {
         handleNowPlayablePlaybackChange(
             playing: true,
             metadata: .init(
-                position: Float(newSeconds.seconds),
-                duration: Float(manager?.item.runtime?.seconds ?? 0)
+                position: newSeconds,
+                duration: manager?.item.runtime ?? .zero
             )
         )
     }
@@ -99,50 +91,51 @@ class NowPlayableListener: MediaPlayerListener {
         handleNowPlayablePlaybackChange(
             playing: true,
             metadata: .init(
-                position: 12,
-                duration: 123
+                position: manager?.seconds ?? .zero,
+                duration: manager?.item.runtime ?? .zero
             )
         )
     }
 
-    //    private func handleCommand(command: NowPlayableCommand, event: MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus {
-    //        switch command {
-    //        case .togglePausePlay:
-    //            if state == .playing {
-    //                proxy.pause()
-    //            } else {
-    //                proxy.play()
-    //            }
-    //        case .play:
-    //            proxy.play()
-    //        case .pause:
-    //            proxy.pause()
-    //        case .skipForward:
-    //            proxy.jumpForward(15)
-    //        case .skipBackward:
-    //            proxy.jumpBackward(15)
-    //        case .changePlaybackPosition:
-    //            guard let event = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
-    //            proxy.setTime(event.positionTime)
-    ////        case .nextTrack:
-    ////            selectNextViewModel()
-    ////        case .previousTrack:
-    ////            selectPreviousViewModel()
-    //        default: ()
-    //        }
-    //
-    //        return .success
-    //    }
+    private func didReceiveManagerEvent(event: MediaPlayerManager.Event) {
+        switch event {
+        case .playbackStopped:
+            cancellables = []
 
-    private func handleNowPlayableConfiguration(
-        commands: [NowPlayableCommand],
-        commandHandler: @escaping (NowPlayableCommand, MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus,
-        interruptionHandler: @escaping (NowPlayableInterruption) -> Void
-    ) throws {
-        try configureRemoteCommands(
-            commands,
-            commandHandler: commandHandler
-        )
+            for command in defaultRegisteredCommands {
+                command.removeHandler()
+            }
+        default: ()
+        }
+    }
+
+    private func handleCommand(command: NowPlayableCommand, event: MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus {
+        switch command {
+        case .pause:
+            manager?.proxy?.pause()
+        case .play:
+            manager?.proxy?.play()
+        case .togglePausePlay:
+            if manager?.playbackRequestStatus == .playing {
+                manager?.proxy?.pause()
+            } else {
+                manager?.proxy?.play()
+            }
+        case .skipBackward:
+            guard let event = event as? MPSkipIntervalCommandEvent else { return .commandFailed }
+            manager?.proxy?.jumpBackward(.seconds(event.interval))
+        case .skipForward:
+            guard let event = event as? MPSkipIntervalCommandEvent else { return .commandFailed }
+            manager?.proxy?.jumpForward(.seconds(event.interval))
+        case .changePlaybackPosition:
+            guard let event = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
+            manager?.proxy?.setSeconds(Duration.seconds(event.positionTime))
+        case .nextTrack: ()
+        case .previousTrack: ()
+        default: ()
+        }
+
+        return .success
     }
 
     func startSession() {
@@ -181,25 +174,15 @@ class NowPlayableListener: MediaPlayerListener {
 
     private func configureRemoteCommands(
         _ commands: [NowPlayableCommand],
-        commandHandler: @escaping (NowPlayableCommand, MPRemoteCommandEvent)
-            -> MPRemoteCommandHandlerStatus
-    ) throws {
-
-        // Check that at least one command is being handled.
-
-        guard commands.count > 1 else { throw NowPlayableError.noRegisteredCommands }
-
-        // Configure each command.
+        commandHandler: @escaping (NowPlayableCommand, MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus
+    ) {
+        guard commands.isNotEmpty else { return }
 
         for command in commands {
-            command.removeHandler()
             command.addHandler(commandHandler)
-            command.setDisabled(false)
+            command.isEnabled(true)
         }
     }
-
-    // Set per-track metadata. Implementations of `handleNowPlayableItemChange(metadata:)`
-    // will typically invoke this method.
 
     private func setNowPlayingMetadata(_ metadata: NowPlayableStaticMetadata) {
 
@@ -217,16 +200,13 @@ class NowPlayableListener: MediaPlayerListener {
         nowPlayingInfoCenter.nowPlayingInfo = nowPlayingInfo
     }
 
-    // Set playback info. Implementations of `handleNowPlayablePlaybackChange(playing:rate:position:duration:)`
-    // will typically invoke this method.
-
     private func setNowPlayingPlaybackInfo(_ metadata: NowPlayableDynamicMetadata) {
 
         let nowPlayingInfoCenter = MPNowPlayingInfoCenter.default()
         var nowPlayingInfo: [String: Any] = nowPlayingInfoCenter.nowPlayingInfo ?? [:]
 
-        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = metadata.duration
-        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = metadata.position
+        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = Float(metadata.duration.seconds)
+        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = Float(metadata.position.seconds)
         nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = metadata.rate
         nowPlayingInfo[MPNowPlayingInfoPropertyDefaultPlaybackRate] = 1.0
         nowPlayingInfo[MPNowPlayingInfoPropertyCurrentLanguageOptions] = metadata.currentLanguageOptions

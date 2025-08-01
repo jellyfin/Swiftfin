@@ -15,6 +15,7 @@ import VLCUI
 // TODO: set playback rate
 //       - what if proxy couldn't set rate?
 // TODO: buffering state
+// TODO: make a container service, injected into players
 
 protocol MediaPlayerListener {
 
@@ -70,8 +71,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     var playbackItem: MediaPlayerItem? = nil {
         didSet {
             if let playbackItem {
-//                seconds.value = playbackItem.baseItem.startTimeSeconds
-//                seconds = playbackItem.baseItem.startTimeSeconds
+                seconds = playbackItem.baseItem.startSeconds ?? .zero
                 playbackItem.manager = self
 
                 for var l in listeners {
@@ -92,9 +92,6 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     final var state: State = .playback
 
     /// The current seconds media playback is set to.
-    ///
-    /// - Note: This is boxed to avoid unnecessary `View` updates for
-    ///         views that do not implement the current value.
     let secondsBox: PublishedBox<Duration> = .init(initialValue: .zero)
 
     var seconds: Duration {

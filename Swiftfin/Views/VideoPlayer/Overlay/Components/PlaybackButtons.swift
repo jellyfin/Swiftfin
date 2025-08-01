@@ -115,6 +115,7 @@ extension VideoPlayer.Overlay {
                 }
             }
             .buttonStyle(OverlayButtonStyle(onPressed: onPressed))
+            .padding(.horizontal, 50)
         }
     }
 }

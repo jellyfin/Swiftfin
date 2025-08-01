@@ -33,10 +33,10 @@ struct _HorizontalSizeClassView<Content: HorizontalSizeClassView>: View {
     let content: Content
 
     var body: some View {
-        if horizontalSizeClass == .compact {
-            content.compact
-        } else {
-            content.regular
-        }
+//        if horizontalSizeClass == .compact {
+//            content.compact
+//        } else {
+        content.regular
+//        }
     }
 }

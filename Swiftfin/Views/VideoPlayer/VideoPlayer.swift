@@ -13,6 +13,7 @@ import SwiftUI
 import VLCUI
 
 // TODO: move audio/subtitle offset to manager?
+// TODO: decouple from VLC, just use manager's proxy
 
 struct VideoPlayer: View {
 
@@ -53,13 +54,13 @@ struct VideoPlayer: View {
 
         let videoPlayerProxy = VLCVideoPlayerProxy()
         let vlcUIProxy = VLCVideoPlayer.Proxy()
-
         videoPlayerProxy.vlcUIProxy = vlcUIProxy
-        manager.proxy = videoPlayerProxy
 
-        manager.listeners.append(NowPlayableListener(manager: manager))
-
-        self._manager = StateObject(wrappedValue: manager)
+        self._manager = StateObject(wrappedValue: {
+            manager.proxy = videoPlayerProxy
+            manager.listeners.append(NowPlayableListener(manager: manager))
+            return manager
+        }())
         self._vlcUIProxy = StateObject(wrappedValue: vlcUIProxy)
     }
 

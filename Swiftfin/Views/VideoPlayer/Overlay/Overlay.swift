@@ -111,30 +111,33 @@ extension VideoPlayer {
                     Spacer()
                         .allowsHitTesting(false)
 
+                    // Only apply horizontal safe area to bottom content, have
+                    // supplement bodies internally respond to safe area
                     VStack {
                         bottomContent
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .offset(y: isPresentingOverlay ? 0 : 20)
                             .trackingFrame($bottomContentFrame)
+                            .padding(.leading, safeAreaInsets.leading)
+                            .padding(.trailing, safeAreaInsets.trailing)
 
                         // TODO: changing supplement transition
                         if isPresentingSupplement, let selectedSupplement {
                             selectedSupplement.supplement
                                 .videoPlayerBody()
                                 .eraseToAnyView()
-                                .frame(height: horizontalSizeClass == .compact ? 400 : 150, alignment: .topLeading)
+                                .frame(height: 150, alignment: .topLeading)
+//                                .frame(height: horizontalSizeClass == .compact ? 400 : 150, alignment: .topLeading)
                                 .id(selectedSupplement.id)
                                 .transition(.opacity.animation(.linear(duration: 0.1)))
                         }
                     }
-                    .padding(.bottom, safeAreaInsets.bottom)
-                    .padding(.leading, safeAreaInsets.leading)
-                    .padding(.trailing, safeAreaInsets.trailing)
                     .background {
                         if isPresentingOverlay {
                             EmptyHitTestView()
                         }
                     }
+                    .padding(.bottom, safeAreaInsets.bottom)
                 }
 
                 if !isPresentingSupplement {
@@ -179,48 +182,3 @@ extension VideoPlayer {
         }
     }
 }
-
-// import VLCUI
-//
-// struct VideoPlayer_Overlay_Previews: PreviewProvider {
-//
-//    static var previews: some View {
-//        VideoPlayer.Overlay()
-//            .environmentObject(
-//                MediaPlayerManager(
-//                    playbackItem: .init(
-//                        baseItem: .init(
-//                            //                            channelType: .tv,
-//                            indexNumber: 1,
-//                            name: "The Bear",
-//                            parentIndexNumber: 1,
-//                            runTimeTicks: 10_000_000_000,
-//                            type: .episode
-//                        ),
-//                        mediaSource: .init(),
-//                        playSessionID: "",
-//                        url: URL(string: "/")!
-//                    )
-//                )
-//            )
-//            .environmentObject(VLCVideoPlayer.Proxy())
-//            .environment(\.isScrubbing, .mock(false))
-//            .environment(\.isAspectFilled, .mock(false))
-//            .environment(\.isPresentingOverlay, .constant(true))
-////            .environment(\.playbackSpeed, .constant(1.0))
-//            .environment(\.selectedMediaPlayerSupplement, .mock(nil))
-//            .previewInterfaceOrientation(.landscapeLeft)
-//            .preferredColorScheme(.dark)
-//    }
-// }
-//
-// extension Binding {
-//
-//    static func mock(_ value: Value) -> Self {
-//        var value = value
-//        return Binding(
-//            get: { value },
-//            set: { value = $0 }
-//        )
-//    }
-// }

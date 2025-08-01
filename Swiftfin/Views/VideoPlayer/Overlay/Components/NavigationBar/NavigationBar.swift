@@ -23,13 +23,6 @@ extension VideoPlayer.Overlay {
         private var overlayTimer: PokeIntervalTimer
 
         private func onPressed(isPressed: Bool) {
-
-            // TODO: remove after Chapters is no longer
-            //       an action button
-            guard selectedMediaPlayerSupplement == nil else {
-                return
-            }
-
             if isPressed {
                 overlayTimer.stop()
             } else {
@@ -39,13 +32,12 @@ extension VideoPlayer.Overlay {
 
         var body: some View {
             HStack(alignment: .center) {
-                Button("Close", systemImage: "xmark") {
+                Button(L10n.close, systemImage: "xmark") {
                     manager.send(.stop)
                 }
 
                 TitleView(item: manager.item)
-
-                Spacer()
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                 ActionButtons()
             }

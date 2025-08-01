@@ -11,22 +11,20 @@ import Defaults
 import Foundation
 import JellyfinAPI
 
-// TODO: how to get seconds for current item
-
 class MediaProgressListener: ViewModel, MediaPlayerListener {
 
     weak var manager: MediaPlayerManager? {
         didSet {
-            if let manager = manager {
+            if let manager {
                 setup(with: manager)
             }
         }
     }
 
+    private let timer = PokeIntervalTimer()
     private var hasSentStart = false
     private var item: MediaPlayerItem?
     private var lastPlaybackStatus: MediaPlayerManager.PlaybackRequestStatus = .playing
-    private var lastSeconds: TimeInterval = 0
 
     init(item: MediaPlayerItem) {
         self.item = item
@@ -39,12 +37,12 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
         switch lastPlaybackStatus {
         case .playing:
             if hasSentStart {
-                sendProgressReport(for: item, seconds: lastSeconds)
+                sendProgressReport(for: item, seconds: manager?.seconds)
             } else {
-                sendStartReport(for: item, seconds: lastSeconds)
+                sendStartReport(for: item, seconds: manager?.seconds)
             }
         case .paused:
-            sendProgressReport(for: item, seconds: lastSeconds, isPaused: true)
+            sendProgressReport(for: item, seconds: manager?.seconds, isPaused: true)
 //        case .buffering: ()
         }
     }
@@ -52,37 +50,48 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
     private func setup(with manager: MediaPlayerManager) {
         cancellables = []
 
-//        Timer.publish(every: 5, on: .main, in: .common)
-//            .autoconnect()
-//            .sink { _ in
-//                self.sendReport()
-//            }
-//            .store(in: &cancellables)
+        timer.hasFired
+            .sink { [weak self] in
+                self?.sendReport()
+                self?.timer.poke()
+            }
+            .store(in: &cancellables)
 
         manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
-//        manager.$seconds.sink(receiveValue: secondsDidChange).store(in: &cancellables)
         manager.$playbackRequestStatus.sink(receiveValue: playbackStatusDidChange).store(in: &cancellables)
+        manager.events.sink(receiveValue: didReceiveManagerEvent).store(in: &cancellables)
     }
 
     private func playbackItemDidChange(newItem: MediaPlayerItem?) {
+        timer.poke()
 
         if let item, newItem !== item {
-            sendStopReport(for: item, seconds: lastSeconds)
+            sendStopReport(for: item, seconds: manager?.seconds)
 
-            // release
-            self.item = nil
+            self.item = newItem
+            self.hasSentStart = false
+            sendReport()
         }
     }
 
     private func playbackStatusDidChange(newStatus: MediaPlayerManager.PlaybackRequestStatus) {
+        timer.poke()
         lastPlaybackStatus = newStatus
     }
 
-    private func secondsDidChange(newSeconds: TimeInterval) {
-        lastSeconds = newSeconds
+    private func didReceiveManagerEvent(event: MediaPlayerManager.Event) {
+        switch event {
+        case .playbackStopped:
+            guard let item else { return }
+            sendStopReport(for: item, seconds: manager?.seconds)
+            timer.stop()
+            cancellables = []
+            self.item = nil
+        default: ()
+        }
     }
 
-    private func sendStartReport(for item: MediaPlayerItem, seconds: TimeInterval) {
+    private func sendStartReport(for item: MediaPlayerItem, seconds: Duration?) {
 
         #if DEBUG
         guard Defaults[.sendProgressReports] else { return }
@@ -94,7 +103,7 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
             info.itemID = item.baseItem.id
             info.mediaSourceID = item.mediaSource.id
             info.playSessionID = item.playSessionID
-            info.positionTicks = Int(seconds * 10_000_000)
+            info.positionTicks = seconds?.ticks
             info.sessionID = item.playSessionID
             info.subtitleStreamIndex = item.selectedSubtitleStreamIndex
 
@@ -103,11 +112,9 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
 
             self.hasSentStart = true
         }
-        .asAnyCancellable()
-        .store(in: &cancellables)
     }
 
-    private func sendStopReport(for item: MediaPlayerItem, seconds: TimeInterval) {
+    private func sendStopReport(for item: MediaPlayerItem, seconds: Duration?) {
 
         #if DEBUG
         guard Defaults[.sendProgressReports] else { return }
@@ -117,17 +124,15 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
             var info = PlaybackStopInfo()
             info.itemID = item.baseItem.id
             info.mediaSourceID = item.mediaSource.id
-            info.positionTicks = Int(seconds * 10_000_000)
+            info.positionTicks = seconds?.ticks
             info.sessionID = item.playSessionID
 
             let request = Paths.reportPlaybackStopped(info)
             let _ = try await userSession.client.send(request)
         }
-        .asAnyCancellable()
-        .store(in: &cancellables)
     }
 
-    private func sendProgressReport(for item: MediaPlayerItem, seconds: TimeInterval, isPaused: Bool = false) {
+    private func sendProgressReport(for item: MediaPlayerItem, seconds: Duration?, isPaused: Bool = false) {
 
         #if DEBUG
         guard Defaults[.sendProgressReports] else { return }
@@ -140,14 +145,12 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
             info.itemID = item.baseItem.id
             info.mediaSourceID = item.mediaSource.id
             info.playSessionID = item.playSessionID
-            info.positionTicks = Int(seconds * 10_000_000)
+            info.positionTicks = seconds?.ticks
             info.sessionID = item.playSessionID
             info.subtitleStreamIndex = item.selectedSubtitleStreamIndex
 
             let request = Paths.reportPlaybackProgress(info)
             let _ = try await userSession.client.send(request)
         }
-        .asAnyCancellable()
-        .store(in: &cancellables)
     }
 }

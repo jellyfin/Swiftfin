@@ -26,11 +26,9 @@ struct AnyMediaPlayerSupplement: Equatable, Identifiable {
     }
 }
 
-protocol MediaPlayerSupplement: Identifiable<String> {
+protocol MediaPlayerSupplement: Displayable, Identifiable<String> {
 
     associatedtype VideoPlayerBody: HorizontalSizeClassView
-
-    var title: String { get }
 
     func videoPlayerBody() -> Self.VideoPlayerBody
 }

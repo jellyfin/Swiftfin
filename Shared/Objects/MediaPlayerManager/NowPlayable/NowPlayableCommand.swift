@@ -43,8 +43,6 @@ enum NowPlayableCommand: CaseIterable {
     case enableLanguageOption
     case disableLanguageOption
 
-    // The underlying `MPRemoteCommandCenter` command for this `NowPlayable` command.
-
     var remoteCommand: MPRemoteCommand {
         let remoteCommandCenter = MPRemoteCommandCenter.shared()
 
@@ -92,15 +90,14 @@ enum NowPlayableCommand: CaseIterable {
         }
     }
 
-    // Remove all handlers associated with this command.
-
     func removeHandler() {
         remoteCommand.removeTarget(nil)
     }
 
-    // Install a handler for this command.
-
     func addHandler(_ handler: @escaping (NowPlayableCommand, MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus) {
+
+        remoteCommand.removeTarget(nil)
+
         switch self {
         case .skipBackward:
             MPRemoteCommandCenter.shared().skipBackwardCommand.preferredIntervals = [15.0]
@@ -112,9 +109,7 @@ enum NowPlayableCommand: CaseIterable {
         remoteCommand.addTarget { handler(self, $0) }
     }
 
-    // Disable this command.
-
-    func setDisabled(_ isDisabled: Bool) {
-        remoteCommand.isEnabled = !isDisabled
+    func isEnabled(_ isEnabled: Bool) {
+        remoteCommand.isEnabled = isEnabled
     }
 }

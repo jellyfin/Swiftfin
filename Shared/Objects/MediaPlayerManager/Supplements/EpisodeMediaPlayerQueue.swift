@@ -18,7 +18,7 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     weak var manager: MediaPlayerManager?
 
     var items: IdentifiedArrayOf<BaseItemDto> = []
-    let title: String = "Episodes"
+    let displayTitle: String = L10n.episodes
     let id: String = "EpisodeMediaPlayerQueue"
 
     private let seriesViewModel: SeriesItemViewModel
@@ -39,17 +39,20 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     private func setup(with manager: MediaPlayerManager) {
         cancellables = []
 
-//        manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
-//        manager.$seconds.sink(receiveValue: secondsDidChange).store(in: &cancellables)
-//        manager.$playbackRequestStatus.sink(receiveValue: playbackStatusDidChange).store(in: &cancellables)
+        //        manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
+        //        manager.$seconds.sink(receiveValue: secondsDidChange).store(in: &cancellables)
+        //        manager.$playbackRequestStatus.sink(receiveValue: playbackStatusDidChange).store(in: &cancellables)
     }
 
     @ViewBuilder
     func videoPlayerBody() -> some HorizontalSizeClassView {
         _View(viewModel: seriesViewModel)
     }
+}
 
-    struct _View: HorizontalSizeClassView {
+extension EpisodeMediaPlayerQueue {
+
+    private struct _View: HorizontalSizeClassView {
 
         @EnvironmentObject
         private var manager: MediaPlayerManager

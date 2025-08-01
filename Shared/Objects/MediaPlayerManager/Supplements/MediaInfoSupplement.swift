@@ -14,19 +14,21 @@ import SwiftUI
 
 struct MediaInfoSupplement: MediaPlayerSupplement {
 
-    let title: String = "Info"
+    let displayTitle: String = "Info"
+    let id: String = "MediaInfoSupplement"
     let item: BaseItemDto
-
-    var id: String {
-        "MediaInfoSupplement"
-    }
 
     func videoPlayerBody() -> some HorizontalSizeClassView {
         _View(item: item)
     }
+}
+
+extension MediaInfoSupplement {
 
     private struct _View: HorizontalSizeClassView {
 
+        @Environment(\.safeAreaInsets)
+        private var safeAreaInsets: EdgeInsets
         @Environment(\.selectedMediaPlayerSupplement)
         @Binding
         private var selectedMediaPlayerSupplement: AnyMediaPlayerSupplement?
@@ -58,8 +60,8 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
         @ViewBuilder
         private var fromBeginningButton: some View {
             Button("From Beginning", systemImage: "play.fill") {
-//                manager.proxy?.setTime(0)
-//                manager.set(seconds: 0)
+                manager.proxy?.setSeconds(.zero)
+                manager.proxy?.play()
                 selectedMediaPlayerSupplement = nil
             }
             .buttonStyle(.videoPlayerDrawerContent)
@@ -69,7 +71,6 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
         var compact: some View {
             VStack(alignment: .leading) {
                 Text(item.displayTitle)
-                    .font(.callout)
                     .fontWeight(.semibold)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
@@ -78,7 +79,6 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
                     Text(overview)
                         .font(.subheadline)
                         .fontWeight(.regular)
-//                        .scrollIfLargerThanContainer()
                 }
 
                 accessoryView
@@ -88,18 +88,16 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
             .frame(maxWidth: .infinity, alignment: .topLeading)
         }
 
+        // TODO: may need to be a layout for correct overview frame
+        //       with scrolling if too long
         var regular: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
-                ZStack {
-                    Color.clear
-
-                    ImageView(item.portraitImageSources(maxWidth: 60))
-                        .failure {
-                            SystemImageContentView(systemName: item.systemImage)
-                        }
-                }
-                .posterStyle(.portrait, contentMode: .fit)
-                .posterShadow()
+                ImageView(item.portraitImageSources(maxWidth: 60))
+                    .failure {
+                        SystemImageContentView(systemName: item.systemImage)
+                    }
+                    .posterStyle(.portrait, contentMode: .fit)
+                    .posterShadow()
 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(item.displayTitle)
@@ -110,8 +108,9 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
 
                     if let overview = item.overview {
                         Text(overview)
-                            .font(.subheadline.weight(.regular))
-                            .scrollIfLargerThanContainer()
+                            .font(.subheadline)
+                            .fontWeight(.regular)
+                            .lineLimit(3)
                     }
 
                     accessoryView
@@ -124,23 +123,25 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
                     fromBeginningButton
                 }
             }
+            .padding(.leading, safeAreaInsets.leading)
+            .padding(.trailing, safeAreaInsets.trailing)
         }
     }
 }
 
-// struct ContentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        MediaInfoSupplement(item: .init(
-//            indexNumber: 1,
-//            name: "The Bear",
-//            parentIndexNumber: 1,
-//            runTimeTicks: 10_000_000_000,
-//            type: .episode
-//        ))
-//        .videoPlayerBody()
-//        .eraseToAnyView()
-//        .environment(\.safeAreaInsets, .constant(EdgeInsets.edgeInsets))
-//        .frame(height: 110)
-//        .previewInterfaceOrientation(.landscapeRight)
-//    }
-// }
+#Preview {
+    MediaInfoSupplement(item: .init(
+        indexNumber: 1,
+        name: "The Bear",
+        overview: "A young chef returns home to Chicago to run his family's sandwich shop after his brother's death.",
+        parentIndexNumber: 1,
+        runTimeTicks: 10_000_000_000,
+        type: .episode
+    ))
+    .videoPlayerBody()
+    .eraseToAnyView()
+    .padding(EdgeInsets.edgePadding)
+    .environment(\.horizontalSizeClass, .regular)
+    .previewInterfaceOrientation(.landscapeLeft)
+    .frame(height: 150)
+}

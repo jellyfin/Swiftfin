@@ -43,16 +43,16 @@ struct NowPlayableStaticMetadata {
 struct NowPlayableDynamicMetadata {
 
     let rate: Float
-    let position: Float
-    let duration: Float
+    let position: Duration
+    let duration: Duration
 
     let currentLanguageOptions: [MPNowPlayingInfoLanguageOption]
     let availableLanguageOptionGroups: [MPNowPlayingInfoLanguageOptionGroup]
 
     init(
         rate: Float = 1,
-        position: Float,
-        duration: Float,
+        position: Duration,
+        duration: Duration,
         currentLanguageOptions: [MPNowPlayingInfoLanguageOption] = [],
         availableLanguageOptionGroups: [MPNowPlayingInfoLanguageOptionGroup] = []
     ) {

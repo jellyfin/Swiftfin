@@ -17,12 +17,10 @@ import VLCUI
 // TODO: scroll to current chapter on appear
 
 struct MediaChaptersSupplement: MediaPlayerSupplement {
-    var id: String {
-        "Chapters"
-    }
 
-    let title: String = "Chapters"
     let chapters: [ChapterInfo.FullInfo]
+    let displayTitle: String = L10n.chapters
+    let id: String = "Chapters"
 
     func chapter(for second: Duration) -> ChapterInfo.FullInfo? {
         chapters.first { $0.secondsRange.contains(second) }
@@ -35,7 +33,7 @@ struct MediaChaptersSupplement: MediaPlayerSupplement {
 
 extension MediaChaptersSupplement {
 
-    struct ChapterOverlay: HorizontalSizeClassView {
+    private struct ChapterOverlay: HorizontalSizeClassView {
 
         @StateObject
         private var collectionHStackProxy: CollectionHStackProxy = .init()
@@ -103,15 +101,15 @@ extension MediaChaptersSupplement {
         private var manager: MediaPlayerManager
 
         @State
+        private var activeSeconds: Duration = .zero
+        @State
         private var contentSize: CGSize = .zero
 
         let chapter: ChapterInfo.FullInfo
 
         var body: some View {
             Button {
-//                manager.set(seconds: chapter.secondsRange.lowerBound)
-
-//                manager.proxy?.setTime(chapter.secondsRange.lowerBound)
+                manager.proxy?.setSeconds(chapter.secondsRange.lowerBound)
             } label: {
                 VStack(alignment: .leading, spacing: 5) {
                     AlternateLayoutView {
@@ -129,7 +127,7 @@ extension MediaChaptersSupplement {
                             }
                     }
                     .overlay {
-                        if chapter.secondsRange.contains(manager.seconds) {
+                        if chapter.secondsRange.contains(activeSeconds) {
                             RoundedRectangle(cornerRadius: contentSize.width / 30)
                                 .stroke(accentColor, lineWidth: 8)
                         }
@@ -156,6 +154,9 @@ extension MediaChaptersSupplement {
                 .font(.subheadline.weight(.semibold))
             }
             .trackingSize($contentSize)
+            .onReceive(manager.secondsBox.$value) { newValue in
+                activeSeconds = newValue
+            }
         }
     }
 }

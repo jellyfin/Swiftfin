@@ -26,7 +26,7 @@ extension VideoPlayer.Overlay {
         }
 
         var body: some View {
-            Text(supplement.supplement.title)
+            Text(supplement.supplement.displayTitle)
                 .fontWeight(.semibold)
                 .foregroundStyle(isActive ? .black : .white)
                 .padding(.horizontal, 10)
