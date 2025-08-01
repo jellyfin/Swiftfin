@@ -10,11 +10,36 @@ import Combine
 import SwiftUI
 import Transmission
 
-// TODO: make whole toasting system
+// TODO: make toasting system
 //       - allow actions
 //       - single injection function
 //       - multiple toasts
 //       - sizes, stacked
+
+struct ToastView<Content: View>: View {
+
+    @StateObject
+    private var toastProxy: ToastProxy = .init()
+
+    private let content: Content
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    var body: some View {
+        content
+            .window(
+                level: .alert,
+                transition: .move(edge: .top).combined(with: .opacity),
+                isPresented: $toastProxy.isPresenting
+            ) {
+                _ToastView()
+                    .environmentObject(toastProxy)
+            }
+            .environmentObject(toastProxy)
+    }
+}
 
 @MainActor
 class ToastProxy: ObservableObject {
@@ -64,10 +89,10 @@ class ToastProxy: ObservableObject {
     }
 }
 
-struct ToastView: View {
+private struct _ToastView: View {
 
     @Environment(\.presentationCoordinator)
-    var presentationCoordinator
+    private var presentationCoordinator
 
     @EnvironmentObject
     private var proxy: ToastProxy

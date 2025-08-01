@@ -21,14 +21,11 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
         "MediaInfoSupplement"
     }
 
-    func videoPlayerBody() -> some View {
+    func videoPlayerBody() -> some HorizontalSizeClassView {
         _View(item: item)
     }
 
     private struct _View: HorizontalSizeClassView {
-
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets
 
         @Environment(\.selectedMediaPlayerSupplement)
         @Binding
@@ -36,9 +33,6 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
-
-        @State
-        private var contentSize: CGSize = .zero
 
         let item: BaseItemDto
 
@@ -68,12 +62,30 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
 //                manager.set(seconds: 0)
                 selectedMediaPlayerSupplement = nil
             }
-//            .buttonStyle(.videoPlayerDrawerContent)
+            .buttonStyle(.videoPlayerDrawerContent)
             .frame(width: 275, height: 50)
         }
 
         var compact: some View {
-            Color.red.opacity(0.5)
+            VStack(alignment: .leading) {
+                Text(item.displayTitle)
+                    .font(.callout)
+                    .fontWeight(.semibold)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+
+                if let overview = item.overview {
+                    Text(overview)
+                        .font(.subheadline)
+                        .fontWeight(.regular)
+//                        .scrollIfLargerThanContainer()
+                }
+
+                accessoryView
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .topLeading)
         }
 
         var regular: some View {
@@ -112,8 +124,6 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
                     fromBeginningButton
                 }
             }
-            .padding(.horizontal, safeAreaInsets.leading)
-            .trackingSize($contentSize)
         }
     }
 }
@@ -134,60 +144,3 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
 //        .previewInterfaceOrientation(.landscapeRight)
 //    }
 // }
-
-// struct HorizontalSizeClassView<Regular: View, Compact: View>: View {
-//    @Environment(\.horizontalSizeClass)
-//    private var horizontalSizeClass
-//
-//    private let regular: Regular
-//    private let compact: Compact
-//
-//    init(
-//        @ViewBuilder regular: () -> Regular,
-//        @ViewBuilder compact: () -> Compact
-//    ) {
-//        self.regular = regular()
-//        self.compact = compact()
-//    }
-//
-//    var body: some View {
-//        if horizontalSizeClass == .regular {
-//            regular
-//        } else {
-//            compact
-//        }
-//    }
-// }
-
-protocol HorizontalSizeClassView: View {
-
-    associatedtype CompactBody: View
-    associatedtype RegularBody: View
-
-    @ViewBuilder @MainActor
-    var compact: CompactBody { get }
-    @ViewBuilder @MainActor
-    var regular: RegularBody { get }
-}
-
-extension HorizontalSizeClassView where Body == _HorizontalSizeClassView<Self> {
-    var body: _HorizontalSizeClassView<Self> {
-        _HorizontalSizeClassView(content: self)
-    }
-}
-
-struct _HorizontalSizeClassView<Content: HorizontalSizeClassView>: View {
-
-    @Environment(\.horizontalSizeClass)
-    private var horizontalSizeClass
-
-    let content: Content
-
-    var body: some View {
-        if horizontalSizeClass == .compact {
-            content.compact
-        } else {
-            content.regular
-        }
-    }
-}

@@ -43,8 +43,6 @@ extension VideoPlayer {
         private var jumpProgressObserver: JumpProgressObserver = .init()
         @StateObject
         private var overlayTimer: PokeIntervalTimer = .init()
-//        @StateObject
-//        private var toastProxy: ToastProxy = .init()
 
         private var isPresentingSupplement: Bool {
             selectedSupplement != nil
@@ -70,6 +68,7 @@ extension VideoPlayer {
                     SupplementTitleButton(supplement: supplement)
                 }
             }
+            .frame(minHeight: 30)
             .isVisible(!isScrubbing && isPresentingOverlay)
         }
 
@@ -123,7 +122,7 @@ extension VideoPlayer {
                             selectedSupplement.supplement
                                 .videoPlayerBody()
                                 .eraseToAnyView()
-                                .frame(height: horizontalSizeClass == .compact ? 400 : 150)
+                                .frame(height: horizontalSizeClass == .compact ? 400 : 150, alignment: .topLeading)
                                 .id(selectedSupplement.id)
                                 .transition(.opacity.animation(.linear(duration: 0.1)))
                         }
@@ -144,10 +143,6 @@ extension VideoPlayer {
                         .transition(.opacity)
                 }
             }
-//            .overlay(alignment: .top) {
-//                ToastView()
-//                    .edgePadding()
-//            }
             .modifier(VideoPlayer.KeyCommandsModifier())
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.bouncy(duration: 0.4), value: isPresentingSupplement)
@@ -156,7 +151,6 @@ extension VideoPlayer {
             .environment(\.selectedMediaPlayerSupplement, $selectedSupplement)
             .environmentObject(jumpProgressObserver)
             .environmentObject(overlayTimer)
-//            .environmentObject(toastProxy)
             .onChange(of: isPresentingOverlay) { newValue in
                 guard newValue, !isScrubbing else { return }
                 overlayTimer.poke()
@@ -186,47 +180,47 @@ extension VideoPlayer {
     }
 }
 
-import VLCUI
-
-struct VideoPlayer_Overlay_Previews: PreviewProvider {
-
-    static var previews: some View {
-        VideoPlayer.Overlay()
-            .environmentObject(
-                MediaPlayerManager(
-                    playbackItem: .init(
-                        baseItem: .init(
-                            //                            channelType: .tv,
-                            indexNumber: 1,
-                            name: "The Bear",
-                            parentIndexNumber: 1,
-                            runTimeTicks: 10_000_000_000,
-                            type: .episode
-                        ),
-                        mediaSource: .init(),
-                        playSessionID: "",
-                        url: URL(string: "/")!
-                    )
-                )
-            )
-            .environmentObject(VLCVideoPlayer.Proxy())
-            .environment(\.isScrubbing, .mock(false))
-            .environment(\.isAspectFilled, .mock(false))
-            .environment(\.isPresentingOverlay, .constant(true))
-//            .environment(\.playbackSpeed, .constant(1.0))
-            .environment(\.selectedMediaPlayerSupplement, .mock(nil))
-            .previewInterfaceOrientation(.landscapeLeft)
-            .preferredColorScheme(.dark)
-    }
-}
-
-extension Binding {
-
-    static func mock(_ value: Value) -> Self {
-        var value = value
-        return Binding(
-            get: { value },
-            set: { value = $0 }
-        )
-    }
-}
+// import VLCUI
+//
+// struct VideoPlayer_Overlay_Previews: PreviewProvider {
+//
+//    static var previews: some View {
+//        VideoPlayer.Overlay()
+//            .environmentObject(
+//                MediaPlayerManager(
+//                    playbackItem: .init(
+//                        baseItem: .init(
+//                            //                            channelType: .tv,
+//                            indexNumber: 1,
+//                            name: "The Bear",
+//                            parentIndexNumber: 1,
+//                            runTimeTicks: 10_000_000_000,
+//                            type: .episode
+//                        ),
+//                        mediaSource: .init(),
+//                        playSessionID: "",
+//                        url: URL(string: "/")!
+//                    )
+//                )
+//            )
+//            .environmentObject(VLCVideoPlayer.Proxy())
+//            .environment(\.isScrubbing, .mock(false))
+//            .environment(\.isAspectFilled, .mock(false))
+//            .environment(\.isPresentingOverlay, .constant(true))
+////            .environment(\.playbackSpeed, .constant(1.0))
+//            .environment(\.selectedMediaPlayerSupplement, .mock(nil))
+//            .previewInterfaceOrientation(.landscapeLeft)
+//            .preferredColorScheme(.dark)
+//    }
+// }
+//
+// extension Binding {
+//
+//    static func mock(_ value: Value) -> Self {
+//        var value = value
+//        return Binding(
+//            get: { value },
+//            set: { value = $0 }
+//        )
+//    }
+// }

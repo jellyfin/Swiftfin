@@ -7,35 +7,16 @@
 //
 
 import Combine
-import Factory
 import Foundation
+import Logging
 import MediaPlayer
+import Nuke
 
 // TODO: cleanup
 
-//    func getNowPlayingImage(_ completion: @escaping () -> Void) {
-//
-//        let imageSource = item.portraitImageSources(maxWidth: 200)
-//        guard let url = imageSource.compacted(using: \.url).first?.url else { return }
-//
-//        // TODO: look at Nuke loading for cache use
-//        DispatchQueue.global().async { [weak self] in
-//            if let data = try? Data(contentsOf: url) {
-//                if let image = UIImage(data: data) {
-//                    DispatchQueue.main.async {
-//                        guard let self else { return }
-//                        self.nowPlayingImage = image
-//                        completion()
-//                    }
-//                }
-//            }
-//        }
-//    }
-
 class NowPlayableListener: MediaPlayerListener {
 
-    @Injected(\.logService)
-    private var logger
+    private let logger = Logger.swiftfin()
 
     private var cancellables: Set<AnyCancellable> = []
     private var defaultRegisteredCommands: [NowPlayableCommand] {
@@ -50,6 +31,8 @@ class NowPlayableListener: MediaPlayerListener {
             .previousTrack,
         ]
     }
+
+    private var itemImageCancellable: AnyCancellable?
 
     weak var manager: MediaPlayerManager? {
         willSet {
@@ -72,25 +55,45 @@ class NowPlayableListener: MediaPlayerListener {
 
     private func setup(with manager: MediaPlayerManager) {
         manager.$playbackItem.sink(receiveValue: itemDidChange).store(in: &cancellables)
-//        manager.$progress.sink(receiveValue: secondsDidChange).store(in: &cancellables)
-//        manager.$state.sink(receiveValue: stateDidChange).store(in: &cancellables)
+        manager.secondsBox.$value.sink(receiveValue: secondsDidChange).store(in: &cancellables)
+        manager.$state.sink(receiveValue: stateDidChange).store(in: &cancellables)
     }
 
     private func itemDidChange(newItem: MediaPlayerItem?) {
         guard let newItem else { return }
 
         handleNowPlayableItemChange(metadata: .init(mediaType: .video, title: newItem.baseItem.displayTitle))
+
+        itemImageCancellable = Task {
+            guard let image = await getNowPlayingImage(for: newItem) else { return }
+
+            await MainActor.run {
+                setNowPlayingMetadata(
+                    .init(
+                        mediaType: .video,
+                        title: newItem.baseItem.displayTitle,
+                        artwork: MPMediaItemArtwork(boundsSize: image.size) { _ in image }
+                    )
+                )
+            }
+        }
+        .asAnyCancellable()
     }
 
-//    private func secondsDidChange(newProgress: ProgressBoxValue) {
-//        handleNowPlayablePlaybackChange(
-//            playing: true,
-//            metadata: .init(
-//                position: Float(newProgress.seconds),
-//                duration: Float(manager?.item.runTimeSeconds ?? 0)
-//            )
-//        )
-//    }
+    private func getNowPlayingImage(for item: MediaPlayerItem) async -> UIImage? {
+        let imageRequests = item.baseItem.portraitImageSources(maxWidth: 100, quality: 90)
+        return await ImagePipeline.Swiftfin.other.loadFirstImage(from: imageRequests)
+    }
+
+    private func secondsDidChange(newSeconds: Duration) {
+        handleNowPlayablePlaybackChange(
+            playing: true,
+            metadata: .init(
+                position: Float(newSeconds.seconds),
+                duration: Float(manager?.item.runtime?.seconds ?? 0)
+            )
+        )
+    }
 
     private func stateDidChange(newState: MediaPlayerManager.State) {
         handleNowPlayablePlaybackChange(
@@ -150,7 +153,7 @@ class NowPlayableListener: MediaPlayerListener {
             try audioSession.setCategory(.playback, mode: .default)
             try audioSession.setActive(true)
         } catch {
-            logger.error("Unable to begin AVAudioSession instance: \(error.localizedDescription)")
+            logger.critical("Unable to activate AVAudioSession instance: \(error.localizedDescription)")
         }
     }
 
@@ -163,7 +166,7 @@ class NowPlayableListener: MediaPlayerListener {
         do {
             try AVAudioSession.sharedInstance().setActive(false)
         } catch {
-            logger.error("Unable to deactivate AVAudioSession instance: \(error.localizedDescription)")
+            logger.critical("Unable to deactivate AVAudioSession instance: \(error.localizedDescription)")
         }
     }
 

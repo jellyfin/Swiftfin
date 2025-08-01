@@ -24,9 +24,6 @@ struct VideoPlayer: View {
     private var subtitleSize
 
     /// The current scrubbed seconds for UI presentation and editing.
-    ///
-    /// - Note: This value is boxed to avoid unnecessary updates
-    ///         for views that do not implement the current value.
     @BoxedPublished
     private var scrubbedSeconds: Duration = .zero
 
@@ -118,7 +115,6 @@ struct VideoPlayer: View {
 
     var body: some View {
         playerView
-            .toolbar(.hidden, for: .navigationBar)
             .onChange(of: audioOffset) { newValue in
                 vlcUIProxy.setAudioDelay(newValue)
             }

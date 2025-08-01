@@ -9,6 +9,7 @@
 import Defaults
 import Factory
 import JellyfinAPI
+import Logging
 import SwiftUI
 import VLCUI
 
@@ -136,7 +137,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
 
     static func build(for item: BaseItemDto, mediaSource: MediaSourceInfo) async throws -> MediaPlayerItem {
 
-        let logger = Container.shared.logService()
+        let logger = Logger.swiftfin()
 
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
         let currentVideoBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]

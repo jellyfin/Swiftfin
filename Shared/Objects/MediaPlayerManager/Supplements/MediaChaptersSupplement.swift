@@ -7,6 +7,7 @@
 //
 
 import CollectionHStack
+import CollectionVGrid
 import Defaults
 import JellyfinAPI
 import SwiftUI
@@ -27,21 +28,60 @@ struct MediaChaptersSupplement: MediaPlayerSupplement {
         chapters.first { $0.secondsRange.contains(second) }
     }
 
-    func videoPlayerBody() -> some View {
+    func videoPlayerBody() -> some HorizontalSizeClassView {
         ChapterOverlay(chapters: chapters)
     }
 }
 
 extension MediaChaptersSupplement {
 
-    struct ChapterOverlay: View {
+    struct ChapterOverlay: HorizontalSizeClassView {
 
         @StateObject
         private var collectionHStackProxy: CollectionHStackProxy = .init()
 
         let chapters: [ChapterInfo.FullInfo]
 
-        var body: some View {
+        var compact: some View {
+            CollectionVGrid(
+                uniqueElements: chapters,
+                layout: .columns(1, insets: .zero)
+            ) { chapter, _ in
+                HStack {
+                    ImageView(chapter.landscapeImageSources(maxWidth: 200))
+                        .failure {
+                            ZStack {
+                                Rectangle()
+                                    .fill(Material.ultraThinMaterial)
+
+                                SystemImageContentView(systemName: chapter.systemImage)
+                                    .background(color: Color.clear)
+                            }
+                        }
+                        .posterStyle(.landscape)
+
+                    VStack(alignment: .leading) {
+                        Text(chapter.chapterInfo.displayTitle)
+                            .lineLimit(1)
+                            .foregroundStyle(.white)
+                            .frame(height: 15)
+
+                        Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
+                            .frame(height: 20)
+                            .foregroundStyle(Color(UIColor.systemBlue))
+                            .padding(.horizontal, 4)
+                            .background {
+                                Color(.darkGray)
+                                    .opacity(0.2)
+                                    .cornerRadius(4)
+                            }
+                    }
+                }
+                .frame(height: 100)
+            }
+        }
+
+        var regular: some View {
             CollectionHStack(
                 uniqueElements: chapters
             ) { chapter in
@@ -119,35 +159,3 @@ extension MediaChaptersSupplement {
         }
     }
 }
-
-// struct MediaChaptersSupplement_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ChapterOverlay(chapters: [
-//            .init(chapterInfo: .init(name: "Test", startPositionTicks: 0), imageSource: .init(), secondsRange: 0 ..< 100),
-//            .init(chapterInfo: .init(name: "Test", startPositionTicks: 100), imageSource: .init(), secondsRange: 100 ..< 200),
-//            .init(chapterInfo: .init(name: "Test", startPositionTicks: 200), imageSource: .init(), secondsRange: 200 ..< 301),
-//            .init(chapterInfo: .init(name: "Test", startPositionTicks: 200), imageSource: .init(), secondsRange: 200 ..< 301),
-//            .init(chapterInfo: .init(name: "Test", startPositionTicks: 200), imageSource: .init(), secondsRange: 200 ..< 303),
-//        ])
-//        .frame(height: 150)
-//        .environment(\.safeAreaInsets, .constant(EdgeInsets.edgeInsets))
-//        .environmentObject(
-//            MediaPlayerManager(
-//                playbackItem: .init(
-//                    baseItem: .init(
-//                        indexNumber: 1,
-//                        name: "The Bear",
-//                        parentIndexNumber: 1,
-//                        runTimeTicks: 10_000_000_000,
-//                        type: .episode
-//                    ),
-//                    mediaSource: .init(),
-//                    playSessionID: "",
-//                    url: URL(string: "/")!
-//                )
-//            )
-//        )
-//        .previewInterfaceOrientation(.landscapeRight)
-//        .preferredColorScheme(.dark)
-//    }
-// }

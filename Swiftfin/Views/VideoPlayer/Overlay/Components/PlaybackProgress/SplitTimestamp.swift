@@ -25,6 +25,9 @@ extension VideoPlayer.Overlay {
         @EnvironmentObject
         private var scrubbedSecondsBox: PublishedBox<Duration>
 
+        @State
+        private var activeSeconds: Duration = .zero
+
         private var scrubbedSeconds: Duration {
             scrubbedSecondsBox.value
         }
@@ -38,7 +41,7 @@ extension VideoPlayer.Overlay {
                 Group {
                     Text("/")
 
-                    Text(manager.seconds, format: .runtime)
+                    Text(activeSeconds, format: .runtime)
                 }
                 .foregroundStyle(.secondary)
                 .isVisible(isScrubbing)
@@ -50,7 +53,7 @@ extension VideoPlayer.Overlay {
             HStack(spacing: 2) {
                 Group {
                     if let runtime = manager.item.runtime {
-                        Text(runtime - manager.seconds, format: .runtime)
+                        Text(runtime - activeSeconds, format: .runtime)
                     } else {
                         Text(verbatim: .emptyRuntime)
                     }
@@ -94,6 +97,9 @@ extension VideoPlayer.Overlay {
                 .lineLimit(1)
             }
             .foregroundStyle(.primary, .secondary)
+            .onReceive(manager.secondsBox.$value) { newValue in
+                activeSeconds = newValue
+            }
         }
     }
 }

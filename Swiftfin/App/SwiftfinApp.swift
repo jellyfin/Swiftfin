@@ -24,8 +24,6 @@ struct SwiftfinApp: App {
     var appDelegate
 
     @StateObject
-    private var toastProxy: ToastProxy = .init()
-    @StateObject
     private var valueObservation = ValueObservation()
 
     init() {
@@ -77,19 +75,12 @@ struct SwiftfinApp: App {
 
     var body: some Scene {
         WindowGroup {
-            PreferencesView {
-                RootView()
-                    .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
+            ToastView {
+                PreferencesView {
+                    RootView()
+                        .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
+                }
             }
-            .window(
-                level: .alert,
-                transition: .move(edge: .top).combined(with: .opacity),
-                isPresented: $toastProxy.isPresenting
-            ) {
-                ToastView()
-                    .environmentObject(toastProxy)
-            }
-            .environmentObject(toastProxy)
             .ignoresSafeArea()
             .onNotification(.applicationDidEnterBackground) {
                 Defaults[.backgroundTimeStamp] = Date.now

@@ -73,6 +73,10 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 //                seconds.value = playbackItem.baseItem.startTimeSeconds
 //                seconds = playbackItem.baseItem.startTimeSeconds
                 playbackItem.manager = self
+
+                for var l in listeners {
+                    l.manager = self
+                }
             }
         }
     }
@@ -91,8 +95,12 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     ///
     /// - Note: This is boxed to avoid unnecessary `View` updates for
     ///         views that do not implement the current value.
-    @BoxedPublished
-    var seconds: Duration = .zero
+    let secondsBox: PublishedBox<Duration> = .init(initialValue: .zero)
+
+    var seconds: Duration {
+        get { secondsBox.value }
+        set { secondsBox.value = newValue }
+    }
 
     var proxy: MediaPlayerProxy?
     var queue: (any MediaPlayerQueue)?

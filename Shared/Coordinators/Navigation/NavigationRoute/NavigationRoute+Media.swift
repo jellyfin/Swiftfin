@@ -77,6 +77,8 @@ struct VideoPlayerViewShim: View {
         .supportedOrientations(.allButUpsideDown)
         .ignoresSafeArea()
         .persistentSystemOverlays(.hidden)
+        .toolbar(.hidden, for: .navigationBar)
+        .statusBarHidden()
         .onSizeChanged { _, safeArea in
             self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
         }

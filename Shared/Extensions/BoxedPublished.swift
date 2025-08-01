@@ -11,10 +11,11 @@ import SwiftUI
 @propertyWrapper
 struct BoxedPublished<Value>: DynamicProperty {
 
-    let storage: PublishedBox<Value>
+    @StateObject
+    var storage: PublishedBox<Value>
 
     init(wrappedValue: Value) {
-        self.storage = PublishedBox(initialValue: wrappedValue)
+        self._storage = StateObject(wrappedValue: PublishedBox(initialValue: wrappedValue))
     }
 
     var wrappedValue: Value {
