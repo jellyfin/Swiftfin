@@ -10,6 +10,7 @@ import Factory
 import Foundation
 import Nuke
 import Pulse
+import UIKit
 
 extension ImagePipeline {
 
@@ -85,5 +86,19 @@ final class SwiftfinImagePipelineDelegate: ImagePipelineDelegate {
     func cacheKey(for request: ImageRequest, pipeline: ImagePipeline) -> String? {
         guard let url = request.url else { return nil }
         return ImagePipeline.cacheKey(for: url)
+    }
+}
+
+extension ImagePipeline {
+
+    func loadFirstImage(from requests: some Collection<ImageSource>) async -> UIImage? {
+        guard let url = requests.first?.url else { return nil }
+
+        do {
+            return try await image(for: url)
+        } catch {
+            var requests = requests.dropFirst()
+            return await loadFirstImage(from: requests)
+        }
     }
 }

@@ -30,8 +30,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     @Default(.Customization.Library.posterType)
     private var defaultPosterType: PosterDisplayType
 
-    @FocusedValue(\.focusedPoster)
-    private var focusedPoster
+    @Router
+    private var router
 
     @Router
     private var router

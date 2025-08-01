@@ -10,9 +10,9 @@ import UIKit
 
 extension CGPoint {
 
-    func isNear(_ other: CGPoint, padding: CGFloat) -> Bool {
-        let xRange = (x - padding) ... (x + padding)
-        let yRange = (y - padding) ... (y + padding)
+    func isNear(_ other: CGPoint, epsilon: CGFloat) -> Bool {
+        let xRange = (x - epsilon) ... (x + epsilon)
+        let yRange = (y - epsilon) ... (y + epsilon)
 
         return xRange.contains(other.x) && yRange.contains(other.y)
     }

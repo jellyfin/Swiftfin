@@ -32,6 +32,7 @@ extension ItemView {
                 SeeAllButton()
                     .onSelect {
                         router.route(to: .castAndCrew(people: people, itemID: nil))
+                        router.route(to: .castAndCrew(people: people, itemID: nil))
                     }
             }
         }

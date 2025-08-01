@@ -66,19 +66,36 @@ extension BaseItemDto {
         return genres.map(ItemGenre.init)
     }
 
-    var runTimeSeconds: Int {
-        let playbackPositionTicks = runTimeTicks ?? 0
-        return Int(playbackPositionTicks / 10_000_000)
+    /// Differs from `isLive` to indicate an item
+    /// would be streaming from a live source.
+    var isLiveStream: Bool {
+        channelType == .tv
+    }
+
+    // TODO: Change to Duration
+    @available(*, deprecated, message: "Use `runtime` instead")
+    var runTimeSeconds: TimeInterval {
+        TimeInterval(runTimeTicks ?? 0) / 10_000_000
+    }
+
+    @available(*, deprecated, message: "Use `startDuration` instead")
+    var startTimeSeconds: TimeInterval {
+        TimeInterval(userData?.playbackPositionTicks ?? 0) / 10_000_000
+    }
+
+    var runtime: Duration? {
+        guard let ticks = runTimeTicks else { return nil }
+        return Duration.microseconds(ticks / 10)
+    }
+
+    var startSeconds: Duration? {
+        guard let ticks = userData?.playbackPositionTicks else { return nil }
+        return Duration.microseconds(ticks / 10)
     }
 
     var seasonEpisodeLabel: String? {
         guard let seasonNo = parentIndexNumber, let episodeNo = indexNumber else { return nil }
         return L10n.seasonAndEpisode(String(seasonNo), String(episodeNo))
-    }
-
-    var startTimeSeconds: Int {
-        let playbackPositionTicks = userData?.playbackPositionTicks ?? 0
-        return Int(playbackPositionTicks / 10_000_000)
     }
 
     // MARK: Calculations
@@ -195,12 +212,15 @@ extension BaseItemDto {
 
     // MARK: Chapter Images
 
+    // TODO: move to whatever listener for chapters
     var fullChapterInfo: [ChapterInfo.FullInfo] {
         guard let chapters else { return [] }
 
-        let ranges: [Range<Int>] = chapters
-            .map(\.startTimeSeconds)
-            .appending(runTimeSeconds + 1)
+        let afterRuntime = (runtime ?? .zero) + .seconds(1)
+
+        let ranges: [Range<Duration>] = chapters
+            .map { $0.startSeconds ?? .zero }
+            .appending(afterRuntime)
             .adjacentPairs()
             .map { $0 ..< $1 }
 
@@ -227,7 +247,8 @@ extension BaseItemDto {
                 return .init(
                     chapterInfo: zip.0,
                     imageSource: .init(url: imageURL),
-                    secondsRange: zip.1
+                    secondsRange: zip.1,
+                    runtime: runtime ?? .zero
                 )
             }
     }

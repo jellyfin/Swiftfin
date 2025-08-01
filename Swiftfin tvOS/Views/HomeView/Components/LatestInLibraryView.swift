@@ -19,6 +19,8 @@ extension HomeView {
 
         @Router
         private var router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: LatestInLibraryViewModel
