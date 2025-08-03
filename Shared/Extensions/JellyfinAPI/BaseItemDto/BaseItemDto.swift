@@ -264,6 +264,30 @@ extension BaseItemDto {
         originalTitle != displayTitle ? originalTitle : nil
     }
 
+    /// Can this `BaseItemDto` be played
+    var presentPlayButton: Bool {
+        switch type {
+        case .audio, .audioBook, .book, .channel, .channelFolderItem, .episode,
+             .movie, .liveTvChannel, .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .playlist,
+             .program, .recording, .season, .series, .trailer, .tvChannel, .tvProgram, .video:
+            return true
+        default:
+            return false
+        }
+    }
+
+    /// Can this `BaseItemDto` be mark as played
+    var canBePlayed: Bool {
+        switch type {
+        case .audio, .audioBook, .book, .boxSet, .channel, .channelFolderItem, .collectionFolder, .episode, .manualPlaylistsFolder,
+             .movie, .liveTvChannel, .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .playlist, .playlistsFolder,
+             .program, .recording, .season, .series, .trailer, .tvChannel, .tvProgram, .video:
+            return true
+        default:
+            return false
+        }
+    }
+
     var playButtonLabel: String {
 
         if isUnaired {
@@ -289,6 +313,18 @@ extension BaseItemDto {
             seriesName
         default:
             nil
+        }
+    }
+
+    /// Does this `BaseItemDto` have `Genres`, `People`, `Studios`, or `Tags`
+    var hasComponents: Bool {
+        switch type {
+        case .audio, .audioBook, .book, .boxSet, .channelFolderItem, .collectionFolder, .episode, .manualPlaylistsFolder, .movie,
+             .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .playlist, .playlistsFolder, .program, .recording, .season,
+             .series, .trailer, .tvProgram, .video:
+            return true
+        default:
+            return false
         }
     }
 }
