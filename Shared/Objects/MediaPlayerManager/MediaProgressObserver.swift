@@ -11,7 +11,7 @@ import Defaults
 import Foundation
 import JellyfinAPI
 
-class MediaProgressListener: ViewModel, MediaPlayerListener {
+class MediaProgressObserver: ViewModel, MediaPlayerObserver {
 
     weak var manager: MediaPlayerManager? {
         didSet {
@@ -24,7 +24,7 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
     private let timer = PokeIntervalTimer()
     private var hasSentStart = false
     private var item: MediaPlayerItem?
-    private var lastPlaybackStatus: MediaPlayerManager.PlaybackRequestStatus = .playing
+    private var lastPlaybackRequestStatus: MediaPlayerManager.PlaybackRequestStatus = .playing
 
     init(item: MediaPlayerItem) {
         self.item = item
@@ -34,7 +34,7 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
     private func sendReport() {
         guard let item else { return }
 
-        switch lastPlaybackStatus {
+        switch lastPlaybackRequestStatus {
         case .playing:
             if hasSentStart {
                 sendProgressReport(for: item, seconds: manager?.seconds)
@@ -76,7 +76,7 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
 
     private func playbackStatusDidChange(newStatus: MediaPlayerManager.PlaybackRequestStatus) {
         timer.poke()
-        lastPlaybackStatus = newStatus
+        lastPlaybackRequestStatus = newStatus
     }
 
     private func didReceiveManagerEvent(event: MediaPlayerManager.Event) {

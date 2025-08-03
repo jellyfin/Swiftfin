@@ -18,14 +18,14 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
     let id: String = "MediaInfoSupplement"
     let item: BaseItemDto
 
-    func videoPlayerBody() -> some HorizontalSizeClassView {
+    func videoPlayerBody() -> some View {
         _View(item: item)
     }
 }
 
 extension MediaInfoSupplement {
 
-    private struct _View: HorizontalSizeClassView {
+    private struct _View: View {
 
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets: EdgeInsets
@@ -64,33 +64,33 @@ extension MediaInfoSupplement {
                 manager.proxy?.play()
                 selectedMediaPlayerSupplement = nil
             }
-            .buttonStyle(.videoPlayerDrawerContent)
+//            .buttonStyle(.videoPlayerDrawerContent)
             .frame(width: 275, height: 50)
         }
 
-        var compact: some View {
-            VStack(alignment: .leading) {
-                Text(item.displayTitle)
-                    .fontWeight(.semibold)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
-
-                if let overview = item.overview {
-                    Text(overview)
-                        .font(.subheadline)
-                        .fontWeight(.regular)
-                }
-
-                accessoryView
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .topLeading)
-        }
+//        var compact: some View {
+//            VStack(alignment: .leading) {
+//                Text(item.displayTitle)
+//                    .fontWeight(.semibold)
+//                    .lineLimit(2)
+//                    .multilineTextAlignment(.leading)
+//
+//                if let overview = item.overview {
+//                    Text(overview)
+//                        .font(.subheadline)
+//                        .fontWeight(.regular)
+//                }
+//
+//                accessoryView
+//                    .font(.caption)
+//                    .foregroundStyle(.secondary)
+//            }
+//            .frame(maxWidth: .infinity, alignment: .topLeading)
+//        }
 
         // TODO: may need to be a layout for correct overview frame
         //       with scrolling if too long
-        var regular: some View {
+        var body: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
                 ImageView(item.portraitImageSources(maxWidth: 60))
                     .failure {

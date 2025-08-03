@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ABFDDB267972BF00886593 /* TVServices.framework */; };
-		6220D0C926D63F3700B8E046 /* Stinsen in Frameworks */ = {isa = PBXBuildFile; productRef = 6220D0C826D63F3700B8E046 /* Stinsen */; };
 		62666DF727E5012C00EC0ECD /* MobileVLCKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; };
 		62666DF827E5012C00EC0ECD /* MobileVLCKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		62666DFA27E5013700EC0ECD /* TVVLCKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 625CB57D2678E81E00530A6E /* TVVLCKit.xcframework */; };
@@ -44,7 +43,6 @@
 		62666E3927E502CE00EC0ECD /* SwizzleSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 62666E3827E502CE00EC0ECD /* SwizzleSwift */; };
 		62666E3E27E503FA00EC0ECD /* MediaAccessibility.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5362E4BE267D40E4000E2F71 /* MediaAccessibility.framework */; };
 		62666E3F27E5040300EC0ECD /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5362E4C6267D40F4000E2F71 /* SystemConfiguration.framework */; };
-		62C29E9C26D0FE4200C1D2E7 /* Stinsen in Frameworks */ = {isa = PBXBuildFile; productRef = 62C29E9B26D0FE4200C1D2E7 /* Stinsen */; };
 		BD88CB422D77E6A0006BB5E3 /* TVOSPicker in Frameworks */ = {isa = PBXBuildFile; productRef = BD88CB412D77E6A0006BB5E3 /* TVOSPicker */; };
 		E1002B682793CFBA00E47059 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = E1002B672793CFBA00E47059 /* Algorithms */; };
 		E1002B6B2793E36600E47059 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = E1002B6A2793E36600E47059 /* Algorithms */; };
@@ -110,6 +108,7 @@
 		E1B5F7AB29577BCE004B26CF /* PulseUI in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7AA29577BCE004B26CF /* PulseUI */; };
 		E1B5F7AD29577BDD004B26CF /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7AC29577BDD004B26CF /* OrderedCollections */; };
 		E1DC9814296DC06200982F06 /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E1DC9813296DC06200982F06 /* PulseLogHandler */; };
+		E1E2D7BF2E3FD936004E2E5F /* Transmission in Frameworks */ = {isa = PBXBuildFile; productRef = E1E2D7BE2E3FD936004E2E5F /* Transmission */; };
 		E1FAD1C62A0375BA007F5521 /* UDPBroadcast in Frameworks */ = {isa = PBXBuildFile; productRef = E1FAD1C52A0375BA007F5521 /* UDPBroadcast */; };
 /* End PBXBuildFile section */
 
@@ -273,7 +272,6 @@
 				BD88CB422D77E6A0006BB5E3 /* TVOSPicker in Frameworks */,
 				62666E2327E501EB00EC0ECD /* Foundation.framework in Frameworks */,
 				62666E2127E501E400EC0ECD /* CoreVideo.framework in Frameworks */,
-				6220D0C926D63F3700B8E046 /* Stinsen in Frameworks */,
 				E1392FED2BA218A80034110D /* SwiftUIIntrospect in Frameworks */,
 				E13AF3B828A0C598009093AB /* NukeExtensions in Frameworks */,
 				E1575E58293E7685001665B1 /* Files in Frameworks */,
@@ -301,6 +299,7 @@
 				E13AF3BC28A0C59E009093AB /* BlurHashKit in Frameworks */,
 				E150C0C32BFD6DA200944FFA /* JellyfinAPI in Frameworks */,
 				62666E1327E501C300EC0ECD /* AudioToolbox.framework in Frameworks */,
+				E1E2D7BF2E3FD936004E2E5F /* Transmission in Frameworks */,
 				E13AF3B628A0C598009093AB /* Nuke in Frameworks */,
 				E12186DE2718F1C50010884C /* Defaults in Frameworks */,
 				E192608828D2E5F0002314B4 /* Factory in Frameworks */,
@@ -334,7 +333,6 @@
 				E145EB4B2BE16849003BF6F3 /* KeychainSwift in Frameworks */,
 				E10706142942F57D00646DAF /* PulseUI in Frameworks */,
 				E175679A2E0375F300B90F41 /* VLCUI in Frameworks */,
-				62C29E9C26D0FE4200C1D2E7 /* Stinsen in Frameworks */,
 				62666E0227E5016D00EC0ECD /* CoreGraphics.framework in Frameworks */,
 				E1575E3C293C6B15001665B1 /* Files in Frameworks */,
 				E1137D2F2E090C1A0091EB60 /* VLCUI in Frameworks */,
@@ -485,7 +483,6 @@
 			);
 			name = "Swiftfin tvOS";
 			packageProductDependencies = (
-				6220D0C826D63F3700B8E046 /* Stinsen */,
 				E13DD3CC27164CA7009D4DAF /* CoreStore */,
 				E12186DD2718F1C50010884C /* Defaults */,
 				E1002B6A2793E36600E47059 /* Algorithms */,
@@ -511,6 +508,7 @@
 				E1A09F782D05935A00835265 /* CollectionHStack */,
 				BD88CB412D77E6A0006BB5E3 /* TVOSPicker */,
 				E1137D302E090C230091EB60 /* VLCUI */,
+				E1E2D7BE2E3FD936004E2E5F /* Transmission */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -540,7 +538,6 @@
 			);
 			name = "Swiftfin iOS";
 			packageProductDependencies = (
-				62C29E9B26D0FE4200C1D2E7 /* Stinsen */,
 				E13DD3C52716499E009D4DAF /* CoreStore */,
 				E13DD3D227168E65009D4DAF /* Defaults */,
 				E1002B672793CFBA00E47059 /* Algorithms */,
@@ -662,7 +659,6 @@
 			mainGroup = 5377CBE8263B596A003A4E83;
 			packageReferences = (
 				5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
-				62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */,
 				E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */,
 				E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */,
 				E1002B662793CFBA00E47059 /* XCRemoteSwiftPackageReference "swift-algorithms" */,
@@ -1169,14 +1165,6 @@
 				minimumVersion = 1.0.0;
 			};
 		};
-		62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/rundfunk47/stinsen";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
 		BD88CB402D77E6A0006BB5E3 /* XCRemoteSwiftPackageReference "TVOSPicker" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ViacomInc/TVOSPicker";
@@ -1356,20 +1344,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		6220D0C826D63F3700B8E046 /* Stinsen */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */;
-			productName = Stinsen;
-		};
 		62666E3827E502CE00EC0ECD /* SwizzleSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 62666E3727E502CE00EC0ECD /* XCRemoteSwiftPackageReference "SwizzleSwift" */;
 			productName = SwizzleSwift;
-		};
-		62C29E9B26D0FE4200C1D2E7 /* Stinsen */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */;
-			productName = Stinsen;
 		};
 		BD88CB412D77E6A0006BB5E3 /* TVOSPicker */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1682,6 +1660,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */;
 			productName = PulseLogHandler;
+		};
+		E1E2D7BE2E3FD936004E2E5F /* Transmission */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E164308A2E3AA9710028D4E8 /* XCRemoteSwiftPackageReference "Transmission" */;
+			productName = Transmission;
 		};
 		E1FAD1C52A0375BA007F5521 /* UDPBroadcast */ = {
 			isa = XCSwiftPackageProductDependency;

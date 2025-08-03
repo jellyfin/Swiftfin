@@ -8,11 +8,12 @@
 
 import Defaults
 import JellyfinAPI
-import Stinsen
+import PreferencesView
 import SwiftUI
 import VLCUI
 
 // TODO: move audio/subtitle offset to manager?
+// TODO: decouple from VLC, just use manager's proxy
 
 struct VideoPlayer: View {
 
@@ -22,6 +23,10 @@ struct VideoPlayer: View {
     private var subtitleFontName
     @Default(.VideoPlayer.Subtitle.subtitleSize)
     private var subtitleSize
+
+    /// The current scrubbed seconds for UI presentation and editing.
+    @BoxedPublished
+    private var scrubbedSeconds: Duration = .zero
 
     @Router
     private var router
@@ -35,31 +40,13 @@ struct VideoPlayer: View {
     @State
     private var isScrubbing: Bool = false
     @State
-    private var safeAreaInsets: EdgeInsets = .zero
-    @State
     private var subtitleOffset: Duration = .zero
 
     @StateObject
     private var manager: MediaPlayerManager
 
-    /// The current scrubbed seconds for UI presentation and editing.
-    ///
-    /// - Note: This is value is boxed to avoid unnecessary `View` updates
-    ///         for views that do not implement the current value.
-    @StateObject
-    private var scrubbedSecondsBox: PublishedBox<TimeInterval> = .init(initialValue: 0)
-
     @StateObject
     private var vlcUIProxy: VLCVideoPlayer.Proxy
-
-    private var scrubbedSeconds: TimeInterval {
-        get {
-            scrubbedSecondsBox.value
-        }
-        nonmutating set {
-            scrubbedSecondsBox.value = newValue
-        }
-    }
 
     // MARK: init
 
@@ -67,13 +54,13 @@ struct VideoPlayer: View {
 
         let videoPlayerProxy = VLCVideoPlayerProxy()
         let vlcUIProxy = VLCVideoPlayer.Proxy()
-
         videoPlayerProxy.vlcUIProxy = vlcUIProxy
-        manager.proxy = videoPlayerProxy
 
-        manager.listeners.append(NowPlayableListener(manager: manager))
-
-        self._manager = StateObject(wrappedValue: manager)
+        self._manager = StateObject(wrappedValue: {
+            manager.proxy = videoPlayerProxy
+            manager.observers.append(NowPlayableObserver(manager: manager))
+            return manager
+        }())
         self._vlcUIProxy = StateObject(wrappedValue: vlcUIProxy)
     }
 
@@ -88,14 +75,13 @@ struct VideoPlayer: View {
             if let playbackitem = manager.playbackItem {
                 VLCVideoPlayer(configuration: playbackitem.vlcConfiguration)
                     .proxy(vlcUIProxy)
-//                    .onSecondsUpdated { newSeconds, _ in
-//
-//                        if !isScrubbing {
-//                            scrubbedSeconds = newSeconds
-//                        }
-//
-                    ////                        manager.set(seconds: newSeconds)
-//                    }
+                    .onSecondsUpdated { newSeconds, _ in
+                        if !isScrubbing {
+                            scrubbedSeconds = newSeconds
+                        }
+
+                        manager.seconds = newSeconds
+                    }
                     .onStateUpdated { state, _ in
 
                         switch state {
@@ -123,21 +109,15 @@ struct VideoPlayer: View {
                 .environment(\.isAspectFilled, $isAspectFilled)
                 .environment(\.isGestureLocked, $isGestureLocked)
                 .environment(\.isScrubbing, $isScrubbing)
-                .environment(\.safeAreaInsets, safeAreaInsets)
                 .environmentObject(manager)
-                .environmentObject(scrubbedSecondsBox)
+                .environmentObject(_scrubbedSeconds.box)
         }
     }
 
-    // MARK: body
-
     var body: some View {
         playerView
-            .ignoresSafeArea()
-            .toolbar(.hidden, for: .navigationBar)
-            .trackingSize(.constant(.zero), $safeAreaInsets)
-            .onChange(of: audioOffset) { _ in
-//                vlcUIProxy.setAudioDelay(.seconds(newValue))
+            .onChange(of: audioOffset) { newValue in
+                vlcUIProxy.setAudioDelay(newValue)
             }
             .onChange(of: isAspectFilled) { newValue in
                 UIView.animate(withDuration: 0.2) {
@@ -147,8 +127,8 @@ struct VideoPlayer: View {
             .onChange(of: isScrubbing) { isScrubbing in
                 guard !isScrubbing else { return }
 
-                manager.proxy?.setTime(scrubbedSeconds)
-//                manager.set(seconds: scrubbedSeconds)
+                manager.seconds = scrubbedSeconds
+                manager.proxy?.setSeconds(scrubbedSeconds)
             }
             .onChange(of: subtitleColor) { newValue in
                 vlcUIProxy.setSubtitleColor(.absolute(newValue.uiColor))
@@ -156,11 +136,11 @@ struct VideoPlayer: View {
             .onChange(of: subtitleFontName) { newValue in
                 vlcUIProxy.setSubtitleFont(newValue)
             }
-            .onChange(of: subtitleOffset) { _ in
-//                vlcUIProxy.setSubtitleDelay(.seconds(newValue))
+            .onChange(of: subtitleOffset) { newValue in
+                vlcUIProxy.setSubtitleDelay(newValue)
             }
             .onChange(of: subtitleSize) { newValue in
-                vlcUIProxy.setSubtitleSize(.absolute(24 - newValue))
+                vlcUIProxy.setSubtitleSize(.absolute(25 - newValue))
             }
             .onReceive(manager.events) { @MainActor event in
                 switch event {
@@ -169,14 +149,11 @@ struct VideoPlayer: View {
                     router.dismiss()
                 case let .itemChanged(playbackItem: item):
                     isAspectFilled = false
-                    audioOffset = 0
-                    subtitleOffset = 0
+                    audioOffset = .zero
+                    subtitleOffset = .zero
 
-                    let seconds = item.vlcConfiguration
-                        .startTime
-//                        .asSeconds
-//                    scrubbedSeconds = seconds
-//                    vlcUIProxy.playNewMedia(item.vlcConfiguration)
+                    scrubbedSeconds = item.baseItem.startSeconds ?? .zero
+                    vlcUIProxy.playNewMedia(item.vlcConfiguration)
                 }
             }
     }

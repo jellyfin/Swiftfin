@@ -17,17 +17,11 @@ import VLCUI
 // TODO: buffering state
 // TODO: make a container service, injected into players
 
-protocol MediaPlayerListener {
-
-    var manager: MediaPlayerManager? { get set }
-}
-
 typealias MediaPlayerItemProvider = (BaseItemDto) async throws -> MediaPlayerItem
 
 class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
-    /// A status indicating the player's
-    /// request for media playback.
+    /// A status indicating the player's request for media playback.
     enum PlaybackRequestStatus {
 
         /// The player requests media playback
@@ -74,8 +68,8 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
                 seconds = playbackItem.baseItem.startSeconds ?? .zero
                 playbackItem.manager = self
 
-                for var l in listeners {
-                    l.manager = self
+                for var o in observers {
+                    o.manager = self
                 }
             }
         }
@@ -102,8 +96,8 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     var proxy: MediaPlayerProxy?
     var queue: (any MediaPlayerQueue)?
 
-    /// Listeners of the media player.
-    var listeners: [any MediaPlayerListener] = []
+    /// Observers of the media player.
+    var observers: [any MediaPlayerObserver] = []
 
     /// Supplements of the media player.
     @Published

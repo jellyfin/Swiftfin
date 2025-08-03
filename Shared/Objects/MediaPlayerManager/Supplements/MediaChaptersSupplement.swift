@@ -26,60 +26,60 @@ struct MediaChaptersSupplement: MediaPlayerSupplement {
         chapters.first { $0.secondsRange.contains(second) }
     }
 
-    func videoPlayerBody() -> some HorizontalSizeClassView {
+    func videoPlayerBody() -> some View {
         ChapterOverlay(chapters: chapters)
     }
 }
 
 extension MediaChaptersSupplement {
 
-    private struct ChapterOverlay: HorizontalSizeClassView {
+    private struct ChapterOverlay: View {
 
         @StateObject
         private var collectionHStackProxy: CollectionHStackProxy = .init()
 
         let chapters: [ChapterInfo.FullInfo]
 
-        var compact: some View {
-            CollectionVGrid(
-                uniqueElements: chapters,
-                layout: .columns(1, insets: .zero)
-            ) { chapter, _ in
-                HStack {
-                    ImageView(chapter.landscapeImageSources(maxWidth: 200))
-                        .failure {
-                            ZStack {
-                                Rectangle()
-                                    .fill(Material.ultraThinMaterial)
+//        var compact: some View {
+//            CollectionVGrid(
+//                uniqueElements: chapters,
+//                layout: .columns(1, insets: .zero)
+//            ) { chapter, _ in
+//                HStack {
+//                    ImageView(chapter.landscapeImageSources(maxWidth: 200))
+//                        .failure {
+//                            ZStack {
+//                                Rectangle()
+//                                    .fill(Material.ultraThinMaterial)
+//
+//                                SystemImageContentView(systemName: chapter.systemImage)
+//                                    .background(color: Color.clear)
+//                            }
+//                        }
+//                        .posterStyle(.landscape)
+//
+//                    VStack(alignment: .leading) {
+//                        Text(chapter.chapterInfo.displayTitle)
+//                            .lineLimit(1)
+//                            .foregroundStyle(.white)
+//                            .frame(height: 15)
+//
+//                        Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
+//                            .frame(height: 20)
+//                            .foregroundStyle(Color(UIColor.systemBlue))
+//                            .padding(.horizontal, 4)
+//                            .background {
+//                                Color(.darkGray)
+//                                    .opacity(0.2)
+//                                    .cornerRadius(4)
+//                            }
+//                    }
+//                }
+//                .frame(height: 100)
+//            }
+//        }
 
-                                SystemImageContentView(systemName: chapter.systemImage)
-                                    .background(color: Color.clear)
-                            }
-                        }
-                        .posterStyle(.landscape)
-
-                    VStack(alignment: .leading) {
-                        Text(chapter.chapterInfo.displayTitle)
-                            .lineLimit(1)
-                            .foregroundStyle(.white)
-                            .frame(height: 15)
-
-                        Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
-                            .frame(height: 20)
-                            .foregroundStyle(Color(UIColor.systemBlue))
-                            .padding(.horizontal, 4)
-                            .background {
-                                Color(.darkGray)
-                                    .opacity(0.2)
-                                    .cornerRadius(4)
-                            }
-                    }
-                }
-                .frame(height: 100)
-            }
-        }
-
-        var regular: some View {
+        var body: some View {
             CollectionHStack(
                 uniqueElements: chapters
             ) { chapter in

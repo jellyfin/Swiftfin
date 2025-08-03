@@ -58,7 +58,7 @@ struct VideoPlayer: View {
 
         self._manager = StateObject(wrappedValue: {
             manager.proxy = videoPlayerProxy
-            manager.listeners.append(NowPlayableListener(manager: manager))
+            manager.observers.append(NowPlayableObserver(manager: manager))
             return manager
         }())
         self._vlcUIProxy = StateObject(wrappedValue: vlcUIProxy)

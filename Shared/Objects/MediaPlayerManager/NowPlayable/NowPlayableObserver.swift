@@ -12,7 +12,7 @@ import Logging
 import MediaPlayer
 import Nuke
 
-class NowPlayableListener: MediaPlayerListener {
+class NowPlayableObserver: MediaPlayerObserver {
 
     private let logger = Logger.swiftfin()
 

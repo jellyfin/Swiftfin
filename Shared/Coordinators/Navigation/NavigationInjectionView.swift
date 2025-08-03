@@ -52,25 +52,37 @@ struct NavigationInjectionView: View {
                 route.destination
             }
         }
-        .presentation(
-            $coordinator.presentedFullScreen,
-            transition: .zoomIfAvailable(
-                options: .init(dimmingVisualEffect: .systemThickMaterialDark),
-                otherwise: .slide(.init(edge: .bottom), options: .init())
-            )
-        ) { routeBinding, _ in
-            let vc = UIPreferencesHostingController {
-                let newCoordinator = NavigationCoordinator()
+        #if os(tvOS)
+        .fullScreenCover(
+            item: $coordinator.presentedFullScreen
+        ) { route in
+            let newCoordinator = NavigationCoordinator()
 
-                NavigationInjectionView(coordinator: newCoordinator) {
-                    routeBinding.wrappedValue.destination
-                }
+            NavigationInjectionView(coordinator: newCoordinator) {
+                route.destination
             }
-
-            // TODO: presentation options for customizing background color, dimming effect, etc.
-            vc.view.backgroundColor = .black
-
-            return vc
         }
+        #else
+        .presentation(
+                $coordinator.presentedFullScreen,
+                transition: .zoomIfAvailable(
+                    options: .init(dimmingVisualEffect: .systemThickMaterialDark),
+                    otherwise: .slide(.init(edge: .bottom), options: .init())
+                )
+            ) { routeBinding, _ in
+                let vc = UIPreferencesHostingController {
+                    let newCoordinator = NavigationCoordinator()
+
+                    NavigationInjectionView(coordinator: newCoordinator) {
+                        routeBinding.wrappedValue.destination
+                    }
+                }
+
+                // TODO: presentation options for customizing background color, dimming effect, etc.
+                vc.view.backgroundColor = .black
+
+                return vc
+            }
+        #endif
     }
 }

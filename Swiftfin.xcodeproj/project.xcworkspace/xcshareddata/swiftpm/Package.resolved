@@ -1,5 +1,5 @@
 {
-  "originHash" : "264ca71db1e0f81519f3d985840b4fe4d92056a7eddd4a3e675e4857083b4316",
+  "originHash" : "27451c3da150be2695309a3a77007b032d902e3210c60a02cae0fbc418ce6c32",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -152,15 +152,6 @@
       "state" : {
         "revision" : "477e9ef76615f0b76b43bb502af432fe6750b704",
         "version" : "5.1.0"
-      }
-    },
-    {
-      "identity" : "stinsen",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/rundfunk47/stinsen",
-      "state" : {
-        "branch" : "master",
-        "revision" : "d6ad23f4c68212fed8ac64c739bef224628776e3"
       }
     },
     {

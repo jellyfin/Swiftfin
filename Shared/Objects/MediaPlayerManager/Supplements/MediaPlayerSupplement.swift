@@ -28,7 +28,7 @@ struct AnyMediaPlayerSupplement: Equatable, Identifiable {
 
 protocol MediaPlayerSupplement: Displayable, Identifiable<String> {
 
-    associatedtype VideoPlayerBody: HorizontalSizeClassView
+    associatedtype VideoPlayerBody: View
 
     func videoPlayerBody() -> Self.VideoPlayerBody
 }
@@ -45,9 +45,4 @@ extension MediaPlayerSupplement where VideoPlayerBody == EmptyView {
     func makeBody() -> EmptyView {
         EmptyView()
     }
-}
-
-extension EmptyView: HorizontalSizeClassView {
-    var compact: some View { EmptyView() }
-    var regular: some View { EmptyView() }
 }

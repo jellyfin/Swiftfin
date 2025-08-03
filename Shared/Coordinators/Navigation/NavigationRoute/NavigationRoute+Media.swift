@@ -10,7 +10,6 @@ import Defaults
 import JellyfinAPI
 import PreferencesView
 import SwiftUI
-import Transmission
 
 extension NavigationRoute {
 
@@ -63,8 +62,6 @@ struct VideoPlayerViewShim: View {
     let manager: MediaPlayerManager
 
     var body: some View {
-        #if os(iOS)
-
         Group {
             if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
                 VideoPlayer(manager: manager)
@@ -82,16 +79,5 @@ struct VideoPlayerViewShim: View {
         .onSizeChanged { _, safeArea in
             self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
         }
-
-        #else
-        if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-            PreferencesView {
-                VideoPlayer(manager: self.videoPlayerManager)
-            }
-            .ignoresSafeArea()
-        } else {
-            NativeVideoPlayer(manager: self.videoPlayerManager)
-        }
-        #endif
     }
 }

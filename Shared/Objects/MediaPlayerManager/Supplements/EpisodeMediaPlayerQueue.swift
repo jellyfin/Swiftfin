@@ -45,14 +45,14 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     }
 
     @ViewBuilder
-    func videoPlayerBody() -> some HorizontalSizeClassView {
+    func videoPlayerBody() -> some View {
         _View(viewModel: seriesViewModel)
     }
 }
 
 extension EpisodeMediaPlayerQueue {
 
-    private struct _View: HorizontalSizeClassView {
+    private struct _View: View {
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
@@ -68,11 +68,7 @@ extension EpisodeMediaPlayerQueue {
             return viewModel.seasons[id: selection]
         }
 
-        var compact: some View {
-            Color.red
-        }
-
-        var regular: some View {
+        var body: some View {
             ZStack {
                 if let selectionViewModel {
                     CollectionHStack(

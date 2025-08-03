@@ -37,7 +37,10 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         newPlayer.appliesMediaSelectionCriteriaAutomatically = false
 
         allowsPictureInPicturePlayback = true
+
+        #if !os(tvOS)
         updatesNowPlayingInfoCenter = false
+        #endif
 
         timeObserver = newPlayer.addPeriodicTimeObserver(
             forInterval: CMTime(seconds: 1, preferredTimescale: 1000),

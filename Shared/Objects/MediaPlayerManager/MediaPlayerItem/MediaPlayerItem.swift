@@ -17,7 +17,7 @@ import VLCUI
 
 // TODO: decouple from VLCUI
 
-class MediaPlayerItem: ViewModel, MediaPlayerListener {
+class MediaPlayerItem: ViewModel, MediaPlayerObserver {
 
     typealias ThumnailProvider = () async -> UIImage?
 
@@ -37,13 +37,13 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
 
     weak var manager: MediaPlayerManager? {
         didSet {
-            for var l in listeners {
-                l.manager = manager
+            for var o in observers {
+                o.manager = manager
             }
         }
     }
 
-    var listeners: [any MediaPlayerListener] = []
+    var observers: [any MediaPlayerObserver] = []
     var supplements: [any MediaPlayerSupplement] = []
 
     let baseItem: BaseItemDto
@@ -124,7 +124,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
         selectedAudioStreamIndex = mediaSource.defaultAudioStreamIndex ?? -1
         selectedSubtitleStreamIndex = mediaSource.defaultSubtitleStreamIndex ?? -1
 
-        listeners.append(MediaProgressListener(item: self))
+        observers.append(MediaProgressObserver(item: self))
 
         supplements.append(MediaInfoSupplement(item: baseItem))
 

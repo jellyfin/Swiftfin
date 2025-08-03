@@ -9,7 +9,7 @@
 import IdentifiedCollections
 import JellyfinAPI
 
-protocol MediaPlayerQueue: MediaPlayerListener, MediaPlayerSupplement {
+protocol MediaPlayerQueue: MediaPlayerObserver, MediaPlayerSupplement {
 
     var hasNextItem: Bool { get }
     var hasPreviousItem: Bool { get }

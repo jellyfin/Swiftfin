@@ -22,4 +22,10 @@ extension View {
             )
         )
     }
+
+    /// - Important: This does nothing on tvOS.
+    @ViewBuilder
+    func statusBarHidden() -> some View {
+        self
+    }
 }
