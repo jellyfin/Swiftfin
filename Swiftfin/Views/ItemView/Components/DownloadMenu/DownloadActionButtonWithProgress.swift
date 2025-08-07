@@ -8,32 +8,39 @@
 
 import SwiftUI
 
-enum DownloadButtonTaskState {
-    case ready
-    case downloading
-    case paused
-    case completed
-}
-
 struct DownloadActionButtonWithProgress: View {
-    let state: DownloadButtonTaskState
-    let progress: Double
+    @StateObject
+    var viewModel: DownloadActionButtonWithProgressViewModel
+
+    var onErrorTap: (() -> Void)?
+
+    var onStartTap: (() -> Void)?
 
     var body: some View {
         Button {
-            // onSelect(downloadTask)
+            switch viewModel.state {
+            case .ready:
+                onStartTap?()
+            case .downloading:
+                viewModel.pause()
+            case .paused:
+                viewModel.resume()
+            case .error:
+                onErrorTap?()
+            case .completed,.partiallyCompleted:
+                break
+            }
         } label: {
-            if state == .downloading {
-                progressIcon()
-            } else if state == .paused {
-                progressIcon(iconName: "chevron.right.2", iconColor: .orange)
-
+            if viewModel.state == .downloading {
+                progressIcon(progress: viewModel.progress)
+            } else if viewModel.state == .paused {
+                progressIcon(iconName: "chevron.right.2", iconColor: .orange, progress: viewModel.progress)
             } else {
-                Image(systemName: iconName(for: state))
+                Image(systemName: iconName(for: viewModel.state))
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 25, height: 25)
-                    .foregroundColor(iconColor(for: state))
+                    .frame(width: 26, height: 26)
+                    .foregroundColor(iconColor(for: viewModel.state))
             }
         }
         .buttonStyle(.plain)
@@ -41,7 +48,7 @@ struct DownloadActionButtonWithProgress: View {
 
     // MARK: - Progress Icon
 
-    private func progressIcon(iconName: String = "arrow.down", iconColor: Color = .accentColor) -> some View {
+    private func progressIcon(iconName: String = "arrow.down", iconColor: Color = .accentColor, progress: Double) -> some View {
         ZStack {
             // Background circle (full, gray)
             Circle()
@@ -52,7 +59,7 @@ struct DownloadActionButtonWithProgress: View {
                 .trim(from: 0, to: progress)
                 .stroke(
                     iconColor,
-                    style: StrokeStyle(lineWidth: 2.5, lineCap: .round)
+                    style: StrokeStyle(lineWidth: 3, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
 
@@ -70,7 +77,7 @@ struct DownloadActionButtonWithProgress: View {
 
     // MARK: - Icon logic
 
-    private func iconName(for state: DownloadButtonTaskState) -> String {
+    private func iconName(for state: DownloadTaskState) -> String {
         switch state {
         case .completed:
             return "checkmark.circle.fill"
@@ -80,13 +87,21 @@ struct DownloadActionButtonWithProgress: View {
             return "arrow.down.circle"
         case .downloading:
             return "arrow.down" // Not used, handled by progressIcon
+        case .error:
+            return "exclamationmark.circle"
+        case .partiallyCompleted:
+            return "checkmark.circle"
         }
     }
 
-    private func iconColor(for state: DownloadButtonTaskState) -> Color {
+    private func iconColor(for state: DownloadTaskState) -> Color {
         switch state {
-        case .completed:
+        case .completed, .partiallyCompleted:
             return .green
+        case .ready:
+            return .primary
+        case .error:
+            return .red
         default:
             return .accentColor
         }
@@ -97,9 +112,12 @@ struct DownloadActionButtonWithProgress: View {
 
 #Preview {
     HStack(spacing: 20) {
-        DownloadActionButtonWithProgress(state: .ready, progress: 0.0)
-        DownloadActionButtonWithProgress(state: .downloading, progress: 0.6)
-        DownloadActionButtonWithProgress(state: .paused, progress: 0.3)
-        DownloadActionButtonWithProgress(state: .completed, progress: 1.0)
+        DownloadActionButtonWithProgress(viewModel: .init(state: .ready, progress: 0.0))
+        DownloadActionButtonWithProgress(viewModel: .init(state: .downloading, progress: 0.3))
+        DownloadActionButtonWithProgress(viewModel: .init(state: .paused, progress: 0.3))
+        DownloadActionButtonWithProgress(viewModel: .init(state: .error, progress: 0.3))
+
+        DownloadActionButtonWithProgress(viewModel: .init(state: .partiallyCompleted))
+        DownloadActionButtonWithProgress(viewModel: .init(state: .completed))
     }
 }

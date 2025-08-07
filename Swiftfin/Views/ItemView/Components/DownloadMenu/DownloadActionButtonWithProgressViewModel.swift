@@ -7,13 +7,17 @@
 //
 
 import Combine
+import Factory
 import Foundation
 
 #if DEBUG
 enum DownloadTaskState {
     case ready
     case downloading
-    case finished
+    case paused
+    case error
+    case partiallyCompleted
+    case completed
 }
 #endif
 
@@ -39,7 +43,13 @@ final class DownloadActionButtonWithProgressViewModel: ObservableObject {
     // Optionally, reference to the download task (if needed)
     // private let downloadTask: DownloadTask
 
-    init(state: DownloadTaskState = .ready, progress: Double = 0.0) {
+    private let downloadTask: DownloadTask?
+
+    @Injected(\.downloadManager)
+    private var downloadManager: DownloadManager
+
+    init(downloadTask: DownloadTask? = nil, state: DownloadTaskState = .ready, progress: Double = 0.0) {
+        self.downloadTask = downloadTask
         self.state = state
         self.progress = progress
     }
@@ -55,16 +65,23 @@ final class DownloadActionButtonWithProgressViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    // Example: Actions
+    // TODO: - dummy logic
+
+    func start() {
+        self.state = .downloading
+        self.progress = 0.42
+    }
+
     func pause() {
-        // Implement pause logic
+        self.state = .paused
     }
 
     func resume() {
-        // Implement resume logic
+        self.progress = 0.84
+        self.state = .completed
     }
 
     func cancel() {
-        // Implement cancel logic
+        self.state = .completed
     }
 }

@@ -130,7 +130,7 @@ extension ItemView {
 
                 if viewModel.item.type == .episode || viewModel.item.type == .movie {
 
-                    DownloadActionButtonWithProgress(state: .ready, progress: 0)
+                    DownloadActionButtonWithProgress(viewModel: .init())
                         .if(equalSpacing) { view in
                             view.frame(maxWidth: .infinity)
                         }
