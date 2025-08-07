@@ -36,6 +36,9 @@ struct DownloadTaskButton: View {
             case .error:
                 Image(systemName: "exclamationmark.circle.fill")
                     .foregroundColor(.red)
+            case .paused:
+                Image(systemName: "pause.circle.fill")
+                    .foregroundColor(.orange)
             case .ready:
                 Image(systemName: "arrow.down.circle")
             }

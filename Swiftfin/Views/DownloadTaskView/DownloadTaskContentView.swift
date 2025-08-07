@@ -71,6 +71,13 @@ extension DownloadTaskView {
                             }
                         }
                         .padding(.horizontal)
+                    case .paused:
+                        PrimaryButton(title: "Resume")
+                            .onSelect {
+                                downloadManager.download(task: downloadTask)
+                            }
+                            .frame(maxWidth: 300)
+                            .frame(height: 50)
                     case let .error(error):
                         VStack {
                             PrimaryButton(title: L10n.retry)

@@ -11,6 +11,7 @@ import Files
 import Foundation
 import Get
 import JellyfinAPI
+import Logging
 
 // TODO: Only move items if entire download successful
 // TODO: Better state for which stage of downloading
@@ -35,11 +36,11 @@ class DownloadTask: NSObject, ObservableObject {
         case complete
         case downloading(Double)
         case error(Error)
+        case paused
         case ready
     }
 
-    @Injected(\.logService)
-    private var logger
+    private let logger = Logger.swiftfin()
     @Injected(\.currentUserSession)
     private var userSession: UserSession!
 
@@ -50,6 +51,34 @@ class DownloadTask: NSObject, ObservableObject {
 
     let item: BaseItemDto
 
+    // Enhanced API properties
+    let taskID: UUID
+    let mediaSourceId: String?
+    let versionId: String?
+    let container: String
+    let isStatic: Bool
+    let allowVideoStreamCopy: Bool
+    let allowAudioStreamCopy: Bool
+    let deviceId: String?
+    let deviceProfileId: String?
+
+    // Pause/Resume support
+    var resumeData: Data?
+
+    // Retry logic
+    var retryCount: Int = 0
+    private let maxRetries: Int = 3
+
+    // For TV series episodes
+    var season: Int? {
+        item.parentIndexNumber
+    }
+
+    var episodeID: String? {
+        guard item.type == .episode else { return nil }
+        return item.id
+    }
+
     var imagesFolder: URL? {
         item.downloadFolder?.appendingPathComponent("Images")
     }
@@ -58,8 +87,28 @@ class DownloadTask: NSObject, ObservableObject {
         item.downloadFolder?.appendingPathComponent("Metadata")
     }
 
-    init(item: BaseItemDto) {
+    init(
+        item: BaseItemDto,
+        taskID: UUID = UUID(),
+        mediaSourceId: String? = nil,
+        versionId: String? = nil,
+        container: String = "mp4",
+        isStatic: Bool = true,
+        allowVideoStreamCopy: Bool = true,
+        allowAudioStreamCopy: Bool = true,
+        deviceId: String? = nil,
+        deviceProfileId: String? = nil
+    ) {
         self.item = item
+        self.taskID = taskID
+        self.mediaSourceId = mediaSourceId
+        self.versionId = versionId
+        self.container = container
+        self.isStatic = isStatic
+        self.allowVideoStreamCopy = allowVideoStreamCopy
+        self.allowAudioStreamCopy = allowAudioStreamCopy
+        self.deviceId = deviceId
+        self.deviceProfileId = deviceProfileId
     }
 
     func createFolder() throws {
@@ -102,6 +151,48 @@ class DownloadTask: NSObject, ObservableObject {
         self.state = .cancelled
 
         logger.trace("Cancelled download for: \(item.displayTitle)")
+    }
+
+    func pause() {
+        // TODO: Implement pause functionality when we migrate to URLSession
+        logger.trace("Paused download for: \(item.displayTitle)")
+        self.state = .paused
+
+        // Note: Actual pause/resume will be implemented when we integrate with DownloadManager's URLSession
+        // For now, this is a placeholder that updates the state
+    }
+
+    func resume() {
+        // TODO: Implement resume functionality when we migrate to URLSession
+        logger.trace("Resumed download for: \(item.displayTitle)")
+        self.state = .downloading(0.0)
+
+        // Note: Actual pause/resume will be implemented when we integrate with DownloadManager's URLSession
+        // For now, this is a placeholder that updates the state
+    }
+
+    func shouldRetry(for error: Error) -> Bool {
+        guard retryCount < maxRetries else { return false }
+
+        // Check if error is retryable
+        if let urlError = error as? URLError {
+            switch urlError.code {
+            case .timedOut, .networkConnectionLost, .notConnectedToInternet, .cannotConnectToHost:
+                return true
+            default:
+                return false
+            }
+        }
+
+        return false
+    }
+
+    func incrementRetryCount() {
+        retryCount += 1
+    }
+
+    func resetRetryCount() {
+        retryCount = 0
     }
 
     func deleteRootFolder() {
@@ -300,7 +391,7 @@ extension DownloadTask: URLSessionDownloadDelegate {
 
 extension DownloadTask: Identifiable {
 
-    var id: String {
-        item.id!
+    var id: UUID {
+        taskID
     }
 }
