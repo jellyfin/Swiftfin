@@ -27,7 +27,7 @@ struct DownloadActionButtonWithProgress: View {
                 viewModel.resume()
             case .error:
                 onErrorTap?()
-            case .completed,.partiallyCompleted:
+            case .completed, .partiallyCompleted:
                 break
             }
         } label: {
@@ -116,7 +116,6 @@ struct DownloadActionButtonWithProgress: View {
         DownloadActionButtonWithProgress(viewModel: .init(state: .downloading, progress: 0.3))
         DownloadActionButtonWithProgress(viewModel: .init(state: .paused, progress: 0.3))
         DownloadActionButtonWithProgress(viewModel: .init(state: .error, progress: 0.3))
-
         DownloadActionButtonWithProgress(viewModel: .init(state: .partiallyCompleted))
         DownloadActionButtonWithProgress(viewModel: .init(state: .completed))
     }

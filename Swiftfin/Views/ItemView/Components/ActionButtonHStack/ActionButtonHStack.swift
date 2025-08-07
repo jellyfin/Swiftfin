@@ -19,7 +19,8 @@ extension ItemView {
 
         @Default(.accentColor)
         private var accentColor
-
+        @Router
+        private var router
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers: TrailerSelection
 
@@ -130,10 +131,15 @@ extension ItemView {
 
                 if viewModel.item.type == .episode || viewModel.item.type == .movie {
 
-                    DownloadActionButtonWithProgress(viewModel: .init())
-                        .if(equalSpacing) { view in
-                            view.frame(maxWidth: .infinity)
+                    DownloadActionButtonWithProgress(
+                        viewModel: .init(),
+                        onStartTap: {
+                            router.route(to: .itemDownloadSelection(item: viewModel.item))
                         }
+                    )
+                    .if(equalSpacing) { view in
+                        view.frame(maxWidth: .infinity)
+                    }
                 }
             }
         }
