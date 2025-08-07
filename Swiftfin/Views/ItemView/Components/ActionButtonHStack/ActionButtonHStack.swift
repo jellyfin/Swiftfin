@@ -134,7 +134,11 @@ extension ItemView {
                     DownloadActionButtonWithProgress(
                         viewModel: .init(),
                         onStartTap: {
-                            router.route(to: .itemDownloadSelection(item: viewModel.item))
+                            if let sources = viewModel.item.mediaSources, sources.count > 1 {
+                                router.route(to: .itemDownloadSelection(item: viewModel.item))
+                            } else {
+                                // If there's only one source, start the download directly
+                            }
                         }
                     )
                     .if(equalSpacing) { view in

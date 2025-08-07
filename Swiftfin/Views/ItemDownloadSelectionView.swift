@@ -35,18 +35,8 @@ struct ItemDownloadSelectionView: View {
                 ForEach(item.mediaSources ?? [], id: \.id) { mediaSource in
                     VStack(alignment: .leading, spacing: 4) {
                         // Media source name
-
-                        #if DEBUG
                         Text(mediaSource.name ?? "Unknown Source")
-                            .font(.subheadline)
-                        #endif
-
-                        // Path
-                        if let path = mediaSource.path {
-                            Text(path)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
+                            .font(.headline)
 
                         // Two-column layout for remaining metadata
                         HStack(alignment: .top, spacing: 20) {
@@ -103,6 +93,12 @@ struct ItemDownloadSelectionView: View {
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
+
+                            VStack {
+                                DownloadActionButtonWithProgress(
+                                    viewModel: .init(),
+                                )
+                            }
                         }
                     }
                     .padding(.vertical, 8)
