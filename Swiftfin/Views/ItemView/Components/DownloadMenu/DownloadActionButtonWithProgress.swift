@@ -16,12 +16,15 @@ struct DownloadActionButtonWithProgress: View {
     var onErrorTap: (() -> Void)?
     var onStartTap: (() -> Void)?
 
+    private let shouldAutoStart: Bool
+
     // MARK: - Convenience Initializers
 
     /// Creates a download button for a single item
     init(
         item: BaseItemDto,
         mediaSourceId: String? = nil,
+        shouldAutoStart: Bool = true,
         onStartTap: (() -> Void)? = nil,
         onErrorTap: (() -> Void)? = nil
     ) {
@@ -29,6 +32,7 @@ struct DownloadActionButtonWithProgress: View {
             item: item,
             mediaSourceId: mediaSourceId
         ))
+        self.shouldAutoStart = shouldAutoStart
         self.onStartTap = onStartTap
         self.onErrorTap = onErrorTap
     }
@@ -36,10 +40,12 @@ struct DownloadActionButtonWithProgress: View {
     /// Creates a download button with an existing view model
     init(
         viewModel: DownloadActionButtonWithProgressViewModel,
+        shouldAutoStart: Bool = true,
         onStartTap: (() -> Void)? = nil,
         onErrorTap: (() -> Void)? = nil
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self.shouldAutoStart = shouldAutoStart
         self.onStartTap = onStartTap
         self.onErrorTap = onErrorTap
     }
@@ -49,7 +55,9 @@ struct DownloadActionButtonWithProgress: View {
             switch viewModel.state {
             case .ready:
                 onStartTap?()
-                viewModel.start()
+                if shouldAutoStart {
+                    viewModel.start()
+                }
             case .downloading:
                 viewModel.pause()
             case .paused:

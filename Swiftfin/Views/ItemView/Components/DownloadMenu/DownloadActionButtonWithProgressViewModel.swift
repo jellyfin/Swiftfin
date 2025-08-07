@@ -59,7 +59,10 @@ final class DownloadActionButtonWithProgressViewModel: ObservableObject {
     init(item: BaseItemDto, mediaSourceId: String? = nil) {
         self.item = item
         self.mediaSourceId = mediaSourceId
-        self.downloadTask = downloadManager.task(for: item)
+        // Find the specific download task that matches both item and mediaSourceId
+        self.downloadTask = downloadManager.downloads.first { task in
+            task.item.id == item.id && task.mediaSourceId == mediaSourceId
+        }
         self.taskID = downloadTask?.taskID
 
         setupStateObservation()
@@ -81,8 +84,10 @@ final class DownloadActionButtonWithProgressViewModel: ObservableObject {
             .sink { [weak self] downloads in
                 guard let self = self, let itemId = self.item?.id else { return }
 
-                // Find our task in the downloads array
-                let currentTask = downloads.first { $0.item.id == itemId }
+                // Find our specific task in the downloads array by both item ID and media source ID
+                let currentTask = downloads.first { task in
+                    task.item.id == itemId && task.mediaSourceId == self.mediaSourceId
+                }
 
                 // Update our references
                 self.downloadTask = currentTask
