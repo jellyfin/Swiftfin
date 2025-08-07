@@ -182,15 +182,15 @@ extension ItemView.CompactPosterScrollView {
 
                     if viewModel.item.presentPlayButton {
                         ItemView.PlayButton(viewModel: viewModel)
-                            .frame(width: 130, height: 45)
+                            .frame(width: 130)
                     }
 
                     Spacer()
 
                     ItemView.ActionButtonHStack(viewModel: viewModel, equalSpacing: false)
                         .font(.system(size: 20))
-                        .frame(height: 40)
                 }
+                .frame(height: 45)
             }
         }
     }

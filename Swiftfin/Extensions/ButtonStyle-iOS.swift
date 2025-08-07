@@ -61,31 +61,23 @@ struct ActionButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 10)
-                .foregroundStyle(backgroundStyle)
+            TintedMaterial()
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .tint(buttonTint)
+                .id(isSelected)
 
             configuration.label
                 .font(.title3)
                 .fontWeight(.semibold)
-                .foregroundStyle(textStyle)
+                .foregroundStyle(Color.primary)
                 .symbolRenderingMode(.monochrome)
         }
     }
 
-    // MARK: - Text Style
+    // MARK: -  Button Tint
 
-    private var textStyle: AnyShapeStyle {
-        isEnabled ? AnyShapeStyle(.primary) : AnyShapeStyle(Color.secondarySystemFill)
-    }
-
-    // MARK: - Background Style
-
-    private var backgroundStyle: AnyShapeStyle {
-        if isEnabled {
-            return AnyShapeStyle(isSelected ? .secondary : .tertiary)
-        } else {
-            return AnyShapeStyle(Color.secondarySystemFill)
-        }
+    private var buttonTint: AnyShapeStyle {
+        isSelected ? AnyShapeStyle(HierarchicalShapeStyle.primary) : AnyShapeStyle(Color.gray.opacity(0.5))
     }
 }
 

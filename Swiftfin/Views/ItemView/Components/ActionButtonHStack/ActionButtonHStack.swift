@@ -64,7 +64,7 @@ extension ItemView {
                     }
                     .buttonStyle(.action)
                     .labelStyle(.iconOnly)
-                    .foregroundStyle(accentColor.overlayColor, accentColor, Color(UIColor.lightGray))
+                    .foregroundStyle(accentColor)
                     .isSelected(isCheckmarkSelected)
                     .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in
@@ -81,7 +81,7 @@ extension ItemView {
                 }
                 .buttonStyle(.action)
                 .labelStyle(.iconOnly)
-                .foregroundStyle(accentColor.overlayColor, .red, Color(UIColor.lightGray))
+                .foregroundStyle(.red)
                 .isSelected(isHeartSelected)
                 .frame(maxWidth: .infinity)
                 .if(!equalSpacing) { view in
@@ -100,7 +100,6 @@ extension ItemView {
                     .menuStyle(.button)
                     .buttonStyle(.action)
                     .labelStyle(.iconOnly)
-                    .foregroundStyle(accentColor.overlayColor, Color(UIColor.lightGray))
                     .environment(\.isSelected, false)
                     .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in
@@ -118,7 +117,6 @@ extension ItemView {
                     .menuStyle(.button)
                     .buttonStyle(.action)
                     .labelStyle(.iconOnly)
-                    .foregroundStyle(accentColor.overlayColor, Color(UIColor.lightGray))
                     .environment(\.isSelected, false)
                     .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in
