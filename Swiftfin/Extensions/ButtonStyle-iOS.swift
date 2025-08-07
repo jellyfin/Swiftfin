@@ -74,7 +74,7 @@ struct ActionButtonStyle: ButtonStyle {
         }
     }
 
-    // MARK: -  Button Tint
+    // MARK: - Button Tint
 
     private var buttonTint: AnyShapeStyle {
         isSelected ? AnyShapeStyle(HierarchicalShapeStyle.primary) : AnyShapeStyle(Color.gray.opacity(0.5))
