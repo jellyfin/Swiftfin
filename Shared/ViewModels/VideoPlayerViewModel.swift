@@ -70,7 +70,7 @@ final class VideoPlayerViewModel: ViewModel {
             configuration.audioIndex = .absolute(selectedAudioStreamIndex)
         }
         configuration.subtitleIndex = .absolute(selectedSubtitleStreamIndex)
-        configuration.subtitleSize = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleSize])
+        configuration.subtitleSize = .absolute(25 - Defaults[.VideoPlayer.Subtitle.subtitleSize])
         configuration.subtitleColor = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleColor].uiColor)
 
         if let font = UIFont(name: Defaults[.VideoPlayer.Subtitle.subtitleFontName], size: 0) {

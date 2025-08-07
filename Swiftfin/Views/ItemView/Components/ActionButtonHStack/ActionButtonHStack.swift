@@ -69,7 +69,7 @@ extension ItemView {
                         UIDevice.impact(.light)
                         viewModel.send(.toggleIsPlayed)
                     }
-                    .environment(\.isSelected, isCheckmarkSelected)
+                    .isSelected(isCheckmarkSelected)
                     .if(isCheckmarkSelected) { item in
                         item
                             .foregroundStyle(
@@ -94,7 +94,7 @@ extension ItemView {
                     UIDevice.impact(.light)
                     viewModel.send(.toggleIsFavorite)
                 }
-                .environment(\.isSelected, isHeartSelected)
+                .isSelected(isHeartSelected)
                 .if(isHeartSelected) { item in
                     item
                         .foregroundStyle(Color.red)

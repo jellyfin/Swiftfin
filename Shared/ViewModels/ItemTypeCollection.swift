@@ -81,9 +81,13 @@ final class ItemTypeCollection: ViewModel, Stateful {
     }
 
     private func getItems(for itemType: BaseItemKind) async -> ItemLibraryViewModel {
+
+        /// Server will edit filters if only boxset, add userView as workaround.
+        let itemTypes = (itemType == .boxSet ? [.boxSet, .userView] : [itemType])
+
         let viewModel = ItemLibraryViewModel(
             parent: parent,
-            filters: .init(itemTypes: [itemType]),
+            filters: .init(itemTypes: itemTypes),
             pageSize: 20
         )
 

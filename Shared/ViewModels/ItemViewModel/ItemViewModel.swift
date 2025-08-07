@@ -80,11 +80,6 @@ class ItemViewModel: ViewModel, Stateful {
     @Published
     var state: State = .initial
 
-    // TODO: move to `BaseItemDto`
-    var presentPlayButton: Bool { true }
-    // TODO: move to `BaseItemDto`
-    var canBePlayed: Bool { true }
-
     // tasks
 
     private var toggleIsFavoriteTask: AnyCancellable?
@@ -361,7 +356,7 @@ class ItemViewModel: ViewModel, Stateful {
             )
         }
 
-        let _ = try await userSession.client.send(request)
+        _ = try await userSession.client.send(request)
         Notifications[.itemShouldRefreshMetadata].post(itemID)
     }
 
@@ -383,7 +378,7 @@ class ItemViewModel: ViewModel, Stateful {
             )
         }
 
-        let _ = try await userSession.client.send(request)
+        _ = try await userSession.client.send(request)
         Notifications[.itemShouldRefreshMetadata].post(itemID)
     }
 }
