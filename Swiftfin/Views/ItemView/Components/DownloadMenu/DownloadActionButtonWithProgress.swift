@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 struct DownloadActionButtonWithProgress: View {
@@ -13,14 +14,42 @@ struct DownloadActionButtonWithProgress: View {
     var viewModel: DownloadActionButtonWithProgressViewModel
 
     var onErrorTap: (() -> Void)?
-
     var onStartTap: (() -> Void)?
+
+    // MARK: - Convenience Initializers
+
+    /// Creates a download button for a single item
+    init(
+        item: BaseItemDto,
+        mediaSourceId: String? = nil,
+        onStartTap: (() -> Void)? = nil,
+        onErrorTap: (() -> Void)? = nil
+    ) {
+        self._viewModel = StateObject(wrappedValue: DownloadActionButtonWithProgressViewModel(
+            item: item,
+            mediaSourceId: mediaSourceId
+        ))
+        self.onStartTap = onStartTap
+        self.onErrorTap = onErrorTap
+    }
+
+    /// Creates a download button with an existing view model
+    init(
+        viewModel: DownloadActionButtonWithProgressViewModel,
+        onStartTap: (() -> Void)? = nil,
+        onErrorTap: (() -> Void)? = nil
+    ) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+        self.onStartTap = onStartTap
+        self.onErrorTap = onErrorTap
+    }
 
     var body: some View {
         Button {
             switch viewModel.state {
             case .ready:
                 onStartTap?()
+                viewModel.start()
             case .downloading:
                 viewModel.pause()
             case .paused:
@@ -28,7 +57,7 @@ struct DownloadActionButtonWithProgress: View {
             case .error:
                 onErrorTap?()
             case .completed, .partiallyCompleted:
-                break
+                break // No action for completed states
             }
         } label: {
             if viewModel.state == .downloading {
@@ -44,6 +73,7 @@ struct DownloadActionButtonWithProgress: View {
             }
         }
         .buttonStyle(.plain)
+        .disabled(viewModel.state == .completed || viewModel.state == .partiallyCompleted)
     }
 
     // MARK: - Progress Icon

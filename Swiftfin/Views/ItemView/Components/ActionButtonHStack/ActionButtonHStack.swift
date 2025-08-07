@@ -132,12 +132,13 @@ extension ItemView {
                 if viewModel.item.type == .episode || viewModel.item.type == .movie {
 
                     DownloadActionButtonWithProgress(
-                        viewModel: .init(),
+                        item: viewModel.item,
                         onStartTap: {
                             if let sources = viewModel.item.mediaSources, sources.count > 1 {
                                 router.route(to: .itemDownloadSelection(item: viewModel.item))
                             } else {
-                                // If there's only one source, start the download directly
+                                // Single source - the ViewModel will handle the download start automatically
+                                // No additional action needed here as the button will call viewModel.start()
                             }
                         }
                     )

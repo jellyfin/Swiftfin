@@ -9,8 +9,10 @@
 import Combine
 import Factory
 import Foundation
+import JellyfinAPI
 
-#if DEBUG
+// MARK: - DownloadTaskState Enum for UI
+
 enum DownloadTaskState {
     case ready
     case downloading
@@ -19,14 +21,6 @@ enum DownloadTaskState {
     case partiallyCompleted
     case completed
 }
-#endif
-
-// MARK: - DownloadTaskState Enum (if not already defined elsewhere)
-
-// Remove this if DownloadTask.State is imported from your DownloadTask module
-// enum DownloadTaskState: Equatable {
-//     case ready, downloading, paused, complete, cancelled, error
-// }
 
 // MARK: - ViewModel
 
@@ -34,54 +28,140 @@ enum DownloadTaskState {
 final class DownloadActionButtonWithProgressViewModel: ObservableObject {
     // Published properties for state and progress
     @Published
-    var state: DownloadTaskState
+    var state: DownloadTaskState = .ready
     @Published
-    var progress: Double // 0.0 ... 1.0
+    var progress: Double = 0.0 // 0.0 ... 1.0
 
     private var cancellables = Set<AnyCancellable>()
+    private var downloadTask: DownloadTask?
+    private var taskID: UUID?
 
-    // Optionally, reference to the download task (if needed)
-    // private let downloadTask: DownloadTask
-
-    private let downloadTask: DownloadTask?
+    // Item and media source information
+    private let item: BaseItemDto?
+    private let mediaSourceId: String?
 
     @Injected(\.downloadManager)
     private var downloadManager: DownloadManager
 
-    init(downloadTask: DownloadTask? = nil, state: DownloadTaskState = .ready, progress: Double = 0.0) {
+    // MARK: - Initializers
+
+    /// Initialize with an existing download task
+    init(downloadTask: DownloadTask) {
         self.downloadTask = downloadTask
+        self.item = downloadTask.item
+        self.mediaSourceId = downloadTask.mediaSourceId
+        self.taskID = downloadTask.taskID
+
+        setupStateObservation()
+    }
+
+    /// Initialize with an item and optional media source for new downloads
+    init(item: BaseItemDto, mediaSourceId: String? = nil) {
+        self.item = item
+        self.mediaSourceId = mediaSourceId
+        self.downloadTask = downloadManager.task(for: item)
+        self.taskID = downloadTask?.taskID
+
+        setupStateObservation()
+    }
+
+    /// Initialize for testing/preview purposes
+    init(state: DownloadTaskState = .ready, progress: Double = 0.0) {
+        self.item = nil
+        self.mediaSourceId = nil
         self.state = state
         self.progress = progress
     }
 
-    // Example: Update state and progress from a download task publisher
-    func bind(to publisher: AnyPublisher<(DownloadTaskState, Double), Never>) {
-        publisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] state, progress in
-                self?.state = state
-                self?.progress = progress
+    // MARK: - State Management
+
+    private func setupStateObservation() {
+        // Observe download manager's downloads array for changes to our task
+        downloadManager.$downloads
+            .sink { [weak self] downloads in
+                guard let self = self, let itemId = self.item?.id else { return }
+
+                // Find our task in the downloads array
+                let currentTask = downloads.first { $0.item.id == itemId }
+
+                // Update our references
+                self.downloadTask = currentTask
+                self.taskID = currentTask?.taskID
+
+                // Update UI state
+                self.updateStateFromDownloadTask(currentTask)
+            }
+            .store(in: &cancellables)
+
+        // Set up a timer to periodically check task state (for real-time progress updates)
+        Timer.publish(every: 0.5, on: .main, in: .common)
+            .autoconnect()
+            .sink { [weak self] _ in
+                guard let self = self, let task = self.downloadTask else { return }
+                self.updateStateFromDownloadTask(task)
             }
             .store(in: &cancellables)
     }
 
-    // TODO: - dummy logic
+    private func updateStateFromDownloadTask(_ task: DownloadTask?) {
+        guard let task = task else {
+            self.state = .ready
+            self.progress = 0.0
+            return
+        }
+
+        switch task.state {
+        case .ready:
+            self.state = .ready
+            self.progress = 0.0
+        case let .downloading(progressValue):
+            self.state = .downloading
+            self.progress = progressValue
+        case .paused:
+            self.state = .paused
+        // Keep existing progress
+        case .complete:
+            self.state = .completed
+            self.progress = 1.0
+        case .cancelled:
+            self.state = .ready
+            self.progress = 0.0
+        case .error:
+            self.state = .error
+            // Keep existing progress
+        }
+    }
+
+    // MARK: - Download Actions
 
     func start() {
-        self.state = .downloading
-        self.progress = 0.42
+        guard let item = item else { return }
+
+        // Check if we already have a download task for this item
+        if let existingTask = downloadTask {
+            downloadManager.download(task: existingTask)
+        } else {
+            // Create a new download task
+            let taskID = downloadManager.startDownload(
+                itemId: item.id!,
+                mediaSourceId: mediaSourceId
+            )
+            self.taskID = taskID
+        }
     }
 
     func pause() {
-        self.state = .paused
+        guard let taskID = taskID else { return }
+        downloadManager.pauseDownload(taskID: taskID)
     }
 
     func resume() {
-        self.progress = 0.84
-        self.state = .completed
+        guard let taskID = taskID else { return }
+        downloadManager.resumeDownload(taskID: taskID)
     }
 
     func cancel() {
-        self.state = .completed
+        guard let taskID = taskID else { return }
+        downloadManager.cancelDownload(taskID: taskID, removeFile: true)
     }
 }
