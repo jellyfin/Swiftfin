@@ -26,6 +26,57 @@ class DownloadManager: NSObject, ObservableObject {
         case subtitle(index: Int)
     }
 
+    enum DownloadQuality: Hashable, Equatable {
+        case original
+        case high // 1080p, ~4 Mbps
+        case medium // 720p, ~2 Mbps
+        case low // 480p, ~1 Mbps
+        case custom(TranscodingParameters)
+    }
+
+    struct TranscodingParameters: Hashable, Equatable {
+        let maxWidth: Int?
+        let maxHeight: Int?
+        let videoBitRate: Int?
+        let audioBitRate: Int?
+        let enableAutoStreamCopy: Bool
+
+        init(
+            maxWidth: Int? = nil,
+            maxHeight: Int? = nil,
+            videoBitRate: Int? = nil,
+            audioBitRate: Int? = nil,
+            enableAutoStreamCopy: Bool = true
+        ) {
+            self.maxWidth = maxWidth
+            self.maxHeight = maxHeight
+            self.videoBitRate = videoBitRate
+            self.audioBitRate = audioBitRate
+            self.enableAutoStreamCopy = enableAutoStreamCopy
+        }
+
+        static let highQuality = TranscodingParameters(
+            maxWidth: 1920,
+            maxHeight: 1080,
+            videoBitRate: 4_000_000,
+            audioBitRate: 128_000
+        )
+
+        static let mediumQuality = TranscodingParameters(
+            maxWidth: 1280,
+            maxHeight: 720,
+            videoBitRate: 2_000_000,
+            audioBitRate: 128_000
+        )
+
+        static let lowQuality = TranscodingParameters(
+            maxWidth: 854,
+            maxHeight: 480,
+            videoBitRate: 1_000_000,
+            audioBitRate: 96000
+        )
+    }
+
     struct DownloadJob {
         let type: DownloadJobType
         let taskID: UUID
@@ -113,9 +164,10 @@ class DownloadManager: NSObject, ObservableObject {
     /// Starts downloading a media file from Jellyfin.
     /// - Parameters:
     ///   - itemId: The Jellyfin Item ID of the movie or episode to download.
+    ///   - quality: The download quality - original file or transcoded quality level.
     ///   - mediaSourceId: Optional MediaSource ID to select a specific version or quality. If nil, defaults to the primary source.
     ///   - container: Desired file container (e.g. "mp4", "mkv").
-    ///   - isStatic: Stream the original file without re-encoding (static=true).
+    ///   - isStatic: Stream the original file without re-encoding (static=true). Ignored when using transcoded quality.
     ///   - allowVideoStreamCopy: Permit direct copy of the video stream when possible.
     ///   - allowAudioStreamCopy: Permit direct copy of the audio stream when possible.
     ///   - deviceId: Optional client device ID for server-side session tracking.
@@ -123,6 +175,7 @@ class DownloadManager: NSObject, ObservableObject {
     /// - Returns: A UUID to identify and manage the download task.
     func startDownload(
         itemId: String,
+        quality: DownloadQuality = .original,
         mediaSourceId: String? = nil,
         container: String = "mp4",
         isStatic: Bool = true,
@@ -157,6 +210,7 @@ class DownloadManager: NSObject, ObservableObject {
                     mediaSourceId: mediaSourceId,
                     versionId: mediaSourceId, // Use mediaSourceId as versionId for now
                     container: container,
+                    quality: quality,
                     isStatic: isStatic,
                     allowVideoStreamCopy: allowVideoStreamCopy,
                     allowAudioStreamCopy: allowAudioStreamCopy,
@@ -165,8 +219,9 @@ class DownloadManager: NSObject, ObservableObject {
                 )
 
                 // Construct download URL
-                guard let downloadURL = constructDownloadURL(
+                guard let downloadURL = constructMediaURL(
                     itemId: itemId,
+                    quality: quality,
                     mediaSourceId: mediaSourceId,
                     container: container,
                     isStatic: isStatic,
@@ -309,8 +364,9 @@ class DownloadManager: NSObject, ObservableObject {
             // Restart all downloads from the beginning
             Task {
                 do {
-                    let downloadURL = constructDownloadURL(
+                    let downloadURL = constructMediaURL(
                         itemId: task.item.id!,
+                        quality: task.quality,
                         mediaSourceId: task.mediaSourceId,
                         container: task.container,
                         isStatic: task.isStatic,
@@ -368,6 +424,175 @@ class DownloadManager: NSObject, ObservableObject {
         downloads
     }
 
+    /// Deletes all downloaded media files and folders from the device.
+    /// This will permanently remove all downloaded content.
+    func deleteAllDownloadedMedia() {
+        logger.info("Deleting all downloaded media")
+
+        // Cancel any active downloads first
+        let activeTasks = downloads.map(\.taskID)
+        for taskID in activeTasks {
+            cancelDownload(taskID: taskID, removeFile: true)
+        }
+
+        // Clear the downloads folder entirely
+        do {
+            let downloadFolders = try FileManager.default.contentsOfDirectory(atPath: URL.downloads.path)
+
+            for folderName in downloadFolders {
+                let folderPath = URL.downloads.appendingPathComponent(folderName)
+                try FileManager.default.removeItem(at: folderPath)
+                logger.trace("Deleted download folder: \(folderName)")
+            }
+
+            logger.info("Successfully deleted all downloaded media")
+        } catch {
+            logger.error("Failed to delete all downloads: \(error.localizedDescription)")
+        }
+
+        // Clear in-memory state
+        reset()
+    }
+
+    /// Deletes downloaded media for a specific item by its ID.
+    /// - Parameter itemId: The Jellyfin item ID to delete
+    /// - Returns: True if the item was found and deleted, false otherwise
+    @discardableResult
+    func deleteDownloadedMedia(itemId: String) -> Bool {
+        logger.info("Deleting downloaded media for item: \(itemId)")
+
+        // First check if there's an active download for this item
+        if let activeTask = downloads.first(where: { $0.item.id == itemId }) {
+            cancelDownload(taskID: activeTask.taskID, removeFile: true)
+            return true
+        }
+
+        // Check if there's a completed download
+        let downloadPath = URL.downloads.appendingPathComponent(itemId)
+
+        guard FileManager.default.fileExists(atPath: downloadPath.path) else {
+            logger.warning("No downloaded media found for item: \(itemId)")
+            return false
+        }
+
+        do {
+            try FileManager.default.removeItem(at: downloadPath)
+            logger.info("Successfully deleted downloaded media for item: \(itemId)")
+            return true
+        } catch {
+            logger.error("Failed to delete downloaded media for item \(itemId): \(error.localizedDescription)")
+            return false
+        }
+    }
+
+    /// Deletes downloaded media for multiple items.
+    /// - Parameter itemIds: Array of Jellyfin item IDs to delete
+    /// - Returns: Array of item IDs that were successfully deleted
+    func deleteDownloadedMedia(itemIds: [String]) -> [String] {
+        logger.info("Deleting downloaded media for \(itemIds.count) items")
+
+        var successfulDeletions: [String] = []
+
+        for itemId in itemIds {
+            if deleteDownloadedMedia(itemId: itemId) {
+                successfulDeletions.append(itemId)
+            }
+        }
+
+        logger.info("Successfully deleted \(successfulDeletions.count) out of \(itemIds.count) items")
+        return successfulDeletions
+    }
+
+    /// Gets the total storage size used by all downloaded media.
+    /// - Returns: Size in bytes, or nil if unable to calculate
+    func getTotalDownloadSize() -> Int64? {
+        do {
+            let downloadContents = try FileManager.default.contentsOfDirectory(atPath: URL.downloads.path)
+            var totalSize: Int64 = 0
+
+            for itemFolder in downloadContents {
+                let itemPath = URL.downloads.appendingPathComponent(itemFolder)
+                let folderSize = try getFolderSize(at: itemPath)
+                totalSize += folderSize
+            }
+
+            return totalSize
+        } catch {
+            logger.error("Failed to calculate total download size: \(error.localizedDescription)")
+            return nil
+        }
+    }
+
+    /// Gets the storage size for a specific downloaded item.
+    /// - Parameter itemId: The Jellyfin item ID
+    /// - Returns: Size in bytes, or nil if item not found or error occurred
+    func getDownloadSize(itemId: String) -> Int64? {
+        let itemPath = URL.downloads.appendingPathComponent(itemId)
+
+        guard FileManager.default.fileExists(atPath: itemPath.path) else {
+            return nil
+        }
+
+        do {
+            return try getFolderSize(at: itemPath)
+        } catch {
+            logger.error("Failed to calculate download size for item \(itemId): \(error.localizedDescription)")
+            return nil
+        }
+    }
+
+    /// Helper method to calculate folder size recursively.
+    private func getFolderSize(at url: URL) throws -> Int64 {
+        let resourceKeys: [URLResourceKey] = [.isRegularFileKey, .fileAllocatedSizeKey]
+        let directoryEnumerator = FileManager.default.enumerator(
+            at: url,
+            includingPropertiesForKeys: resourceKeys,
+            options: [.skipsHiddenFiles]
+        )
+
+        var totalSize: Int64 = 0
+
+        for case let fileURL as URL in directoryEnumerator ?? [] {
+            let resourceValues = try fileURL.resourceValues(forKeys: Set(resourceKeys))
+
+            if resourceValues.isRegularFile == true {
+                totalSize += Int64(resourceValues.fileAllocatedSize ?? 0)
+            }
+        }
+
+        return totalSize
+    }
+
+    /// Checks if a specific item is downloaded.
+    /// - Parameter itemId: The Jellyfin item ID to check
+    /// - Returns: True if the item is downloaded, false otherwise
+    func isItemDownloaded(itemId: String) -> Bool {
+        let downloadPath = URL.downloads.appendingPathComponent(itemId)
+        var isDirectory: ObjCBool = false
+
+        let exists = FileManager.default.fileExists(atPath: downloadPath.path, isDirectory: &isDirectory)
+        return exists && isDirectory.boolValue
+    }
+
+    /// Gets a list of all downloaded item IDs.
+    /// - Returns: Array of item IDs that have been downloaded
+    func getDownloadedItemIds() -> [String] {
+        do {
+            let downloadContents = try FileManager.default.contentsOfDirectory(atPath: URL.downloads.path)
+            return downloadContents.filter { itemId in
+                // Verify it's a valid download by checking for metadata
+                let metadataPath = URL.downloads
+                    .appendingPathComponent(itemId)
+                    .appendingPathComponent("Metadata")
+                    .appendingPathComponent("Item.json")
+                return FileManager.default.fileExists(atPath: metadataPath.path)
+            }
+        } catch {
+            logger.error("Failed to get downloaded item IDs: \(error.localizedDescription)")
+            return []
+        }
+    }
+
     // MARK: Private Helper Methods
 
     private func markJobCompleted(taskID: UUID, jobType: DownloadJobType) {
@@ -398,6 +623,76 @@ class DownloadManager: NSObject, ObservableObject {
 
         if capacity < minimumFreeSpace {
             throw DownloadTask.DownloadError.notEnoughStorage
+        }
+    }
+
+    private func constructMediaURL(
+        itemId: String,
+        quality: DownloadQuality,
+        mediaSourceId: String?,
+        container: String,
+        isStatic: Bool,
+        allowVideoStreamCopy: Bool,
+        allowAudioStreamCopy: Bool,
+        deviceId: String?,
+        deviceProfileId: String?
+    ) -> URL? {
+        switch quality {
+        case .original:
+            return constructDownloadURL(
+                itemId: itemId,
+                mediaSourceId: mediaSourceId,
+                container: container,
+                isStatic: isStatic,
+                allowVideoStreamCopy: allowVideoStreamCopy,
+                allowAudioStreamCopy: allowAudioStreamCopy,
+                deviceId: deviceId,
+                deviceProfileId: deviceProfileId
+            )
+        case .high:
+            return constructStreamingURL(
+                itemId: itemId,
+                transcodingParams: .highQuality,
+                mediaSourceId: mediaSourceId,
+                container: container,
+                allowVideoStreamCopy: allowVideoStreamCopy,
+                allowAudioStreamCopy: allowAudioStreamCopy,
+                deviceId: deviceId,
+                deviceProfileId: deviceProfileId
+            )
+        case .medium:
+            return constructStreamingURL(
+                itemId: itemId,
+                transcodingParams: .mediumQuality,
+                mediaSourceId: mediaSourceId,
+                container: container,
+                allowVideoStreamCopy: allowVideoStreamCopy,
+                allowAudioStreamCopy: allowAudioStreamCopy,
+                deviceId: deviceId,
+                deviceProfileId: deviceProfileId
+            )
+        case .low:
+            return constructStreamingURL(
+                itemId: itemId,
+                transcodingParams: .lowQuality,
+                mediaSourceId: mediaSourceId,
+                container: container,
+                allowVideoStreamCopy: allowVideoStreamCopy,
+                allowAudioStreamCopy: allowAudioStreamCopy,
+                deviceId: deviceId,
+                deviceProfileId: deviceProfileId
+            )
+        case let .custom(params):
+            return constructStreamingURL(
+                itemId: itemId,
+                transcodingParams: params,
+                mediaSourceId: mediaSourceId,
+                container: container,
+                allowVideoStreamCopy: allowVideoStreamCopy,
+                allowAudioStreamCopy: allowAudioStreamCopy,
+                deviceId: deviceId,
+                deviceProfileId: deviceProfileId
+            )
         }
     }
 
@@ -438,6 +733,74 @@ class DownloadManager: NSObject, ObservableObject {
 
         guard let baseURL = userSession.client.fullURL(with: path) else { return nil }
         guard var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false) else { return nil }
+
+        components.queryItems = queryItems
+
+        // Add API key to query if needed
+        if let accessToken = userSession.client.accessToken {
+            components.queryItems?.append(URLQueryItem(name: "api_key", value: accessToken))
+        }
+
+        return components.url
+    }
+
+    private func constructStreamingURL(
+        itemId: String,
+        transcodingParams: TranscodingParameters,
+        mediaSourceId: String?,
+        container: String,
+        allowVideoStreamCopy: Bool,
+        allowAudioStreamCopy: Bool,
+        deviceId: String?,
+        deviceProfileId: String?
+    ) -> URL? {
+        guard let userSession = Container.shared.currentUserSession() else { return nil }
+
+        // Use the streaming endpoint for transcoded downloads
+        let path = "/Videos/\(itemId)/stream.\(container)"
+
+        guard let baseURL = userSession.client.fullURL(with: path) else { return nil }
+        guard var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false) else { return nil }
+
+        var queryItems: [URLQueryItem] = []
+
+        // Force transcoding by setting static=false
+        queryItems.append(URLQueryItem(name: "static", value: "false"))
+
+        if let mediaSourceId = mediaSourceId {
+            queryItems.append(URLQueryItem(name: "MediaSourceId", value: mediaSourceId))
+        }
+
+        queryItems.append(URLQueryItem(name: "Container", value: container))
+        queryItems.append(URLQueryItem(name: "AllowVideoStreamCopy", value: allowVideoStreamCopy.description))
+        queryItems.append(URLQueryItem(name: "AllowAudioStreamCopy", value: allowAudioStreamCopy.description))
+
+        // Add transcoding parameters
+        if let maxWidth = transcodingParams.maxWidth {
+            queryItems.append(URLQueryItem(name: "maxWidth", value: String(maxWidth)))
+        }
+
+        if let maxHeight = transcodingParams.maxHeight {
+            queryItems.append(URLQueryItem(name: "maxHeight", value: String(maxHeight)))
+        }
+
+        if let videoBitRate = transcodingParams.videoBitRate {
+            queryItems.append(URLQueryItem(name: "videoBitRate", value: String(videoBitRate)))
+        }
+
+        if let audioBitRate = transcodingParams.audioBitRate {
+            queryItems.append(URLQueryItem(name: "audioBitRate", value: String(audioBitRate)))
+        }
+
+        queryItems.append(URLQueryItem(name: "enableAutoStreamCopy", value: transcodingParams.enableAutoStreamCopy.description))
+
+        if let deviceId = deviceId {
+            queryItems.append(URLQueryItem(name: "DeviceId", value: deviceId))
+        }
+
+        if let deviceProfileId = deviceProfileId {
+            queryItems.append(URLQueryItem(name: "DeviceProfileId", value: deviceProfileId))
+        }
 
         components.queryItems = queryItems
 
@@ -852,8 +1215,9 @@ extension DownloadManager: URLSessionDownloadDelegate {
     }
 
     private func retryMediaDownload(for downloadTask: DownloadTask) {
-        guard let downloadURL = constructDownloadURL(
+        guard let downloadURL = constructMediaURL(
             itemId: downloadTask.item.id!,
+            quality: downloadTask.quality,
             mediaSourceId: downloadTask.mediaSourceId,
             container: downloadTask.container,
             isStatic: downloadTask.isStatic,
