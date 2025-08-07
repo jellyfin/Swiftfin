@@ -10,15 +10,19 @@ import AVKit
 import Combine
 import Defaults
 import JellyfinAPI
+import Logging
 import SwiftUI
 
 class UINativeVideoPlayerViewController: AVPlayerViewController {
 
+    private let logger = Logger.swiftfin()
     private let manager: MediaPlayerManager
     private let proxy: AVPlayerVideoPlayerProxy
 
     private var managerEventObserver: AnyCancellable!
+
     private var rateObserver: NSKeyValueObservation!
+    private var statusObserver: NSKeyValueObservation!
     private var timeObserver: Any!
 
     init(manager: MediaPlayerManager) {
@@ -35,7 +39,6 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
 
         newPlayer.allowsExternalPlayback = true
         newPlayer.appliesMediaSelectionCriteriaAutomatically = false
-
         allowsPictureInPicturePlayback = true
 
         #if !os(tvOS)
@@ -46,15 +49,24 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
             forInterval: CMTime(seconds: 1, preferredTimescale: 1000),
             queue: .main
         ) { newTime in
-            print(newTime)
-//            Task {
-//                await manager.send(.seek(seconds: newTime.seconds))
-//            }
+            manager.seconds = .seconds(newTime.seconds)
         }
 
         rateObserver = newPlayer.observe(\.rate, options: [.new, .initial]) { _, value in
-            if let rate = value.newValue {
-                print(rate)
+            DispatchQueue.main.async {
+                manager.set(rate: value.newValue ?? 1.0)
+            }
+        }
+
+        statusObserver = newPlayer.observe(\.currentItem?.status, options: [.new, .initial]) { _, value in
+            print(value)
+            guard let newValue = value.newValue else { return }
+            switch newValue {
+            case .failed: print("AVPlayer failed with error: \(String(describing: newPlayer.error))")
+            case .readyToPlay: print("AVPlayer ready to play")
+            case .unknown: ()
+            case .none: ()
+            @unknown default: ()
             }
         }
 
@@ -69,7 +81,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
             .sink { event in
                 switch event {
                 case .playbackStopped:
-                    self.dismiss(animated: true)
+                    self.playbackStopped()
                 case let .itemChanged(playbackItem):
                     self.playNew(playbackItem: playbackItem)
                 }
@@ -81,65 +93,43 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-
-        proxy.stop()
-
+    private func playbackStopped() {
+        player?.pause()
         guard let timeObserver else { return }
         player?.removeTimeObserver(timeObserver)
+        rateObserver.invalidate()
+        statusObserver.invalidate()
     }
 
     private func playNew(playbackItem: MediaPlayerItem) {
+        Task {
+            let newAVPlayerItem = AVPlayerItem(url: playbackItem.url)
+            newAVPlayerItem.externalMetadata = playbackItem.baseItem.avMetadata
 
-        let newAVPlayerItem = AVPlayerItem(url: playbackItem.url)
+            do {
+                _ = try await newAVPlayerItem.asset.load(.duration, .tracks, .isPlayable)
+            } catch {
+                await MainActor.run {
+                    manager.send(.error(.init("Unable to load AVPlayer item")))
+                }
+                return
+            }
 
-        player?.replaceCurrentItem(with: newAVPlayerItem)
-        player?.currentItem?.externalMetadata = createAVMetadata(for: playbackItem.baseItem)
+            let startSeconds = max(
+                .zero,
+                (playbackItem.baseItem.startSeconds ?? .zero) - Duration.seconds(Defaults[.VideoPlayer.resumeOffset])
+            )
 
-//        seek(to: playbackItem.baseItem.startTimeSeconds)
-    }
-
-    // TODO: get metadata from playback item
-    private func createAVMetadata(for item: BaseItemDto) -> [AVMetadataItem] {
-        let title: String
-        var subtitle: String? = nil
-        let description = item.overview
-
-        if item.type == .episode,
-           let seriesName = item.seriesName
-        {
-            title = seriesName
-            subtitle = item.displayTitle
-        } else {
-            title = item.displayTitle
+            await MainActor.run {
+                player?.replaceCurrentItem(with: newAVPlayerItem)
+                seek(to: startSeconds)
+            }
         }
-
-        return [
-            AVMetadataIdentifier.commonIdentifierTitle: title,
-            .iTunesMetadataTrackSubTitle: subtitle,
-            .commonIdentifierDescription: description,
-        ]
-            .compactMap(createMetadataItem)
     }
 
-    private func createMetadataItem(
-        for identifier: AVMetadataIdentifier,
-        value: Any?
-    ) -> AVMetadataItem? {
-        guard let value else { return nil }
-
-        let item = AVMutableMetadataItem()
-        item.identifier = identifier
-        item.value = value as? NSCopying & NSObjectProtocol
-        item.extendedLanguageTag = "und"
-
-        return item.copy() as? AVMetadataItem
-    }
-
-    private func seek(to seconds: TimeInterval) {
+    private func seek(to seconds: Duration) {
         player?.seek(
-            to: CMTime(seconds: seconds, preferredTimescale: 1),
+            to: CMTime(seconds: seconds.seconds, preferredTimescale: 1),
             toleranceBefore: .zero,
             toleranceAfter: .zero,
             completionHandler: { _ in

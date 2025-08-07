@@ -21,10 +21,14 @@ struct NativeVideoPlayer: View {
     }
 
     var body: some View {
-        NativeVideoPlayerView(manager: manager)
-            .toolbar(.hidden)
-            .statusBarHidden()
-            .ignoresSafeArea()
+        switch manager.state {
+        case .loadingItem:
+            ProgressView()
+        case let .error(error):
+            Text(error.localizedDescription)
+        default:
+            NativeVideoPlayerView(manager: manager)
+        }
     }
 }
 
