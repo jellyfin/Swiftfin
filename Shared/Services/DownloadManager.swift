@@ -12,6 +12,47 @@ import Foundation
 import JellyfinAPI
 import Logging
 
+// MARK: - Download Metadata Structures
+
+struct DownloadMetadata: Codable {
+    let itemId: String
+    let itemType: String?
+    let displayTitle: String
+    var versions: [VersionInfo]
+
+    init(itemId: String, itemType: String?, displayTitle: String, versions: [VersionInfo] = []) {
+        self.itemId = itemId
+        self.itemType = itemType
+        self.displayTitle = displayTitle
+        self.versions = versions
+    }
+}
+
+struct VersionInfo: Codable {
+    let versionId: String
+    let container: String
+    let isStatic: Bool
+    let mediaSourceId: String?
+    let downloadDate: String
+    let taskId: String
+
+    init(
+        versionId: String,
+        container: String,
+        isStatic: Bool,
+        mediaSourceId: String?,
+        downloadDate: String,
+        taskId: String
+    ) {
+        self.versionId = versionId
+        self.container = container
+        self.isStatic = isStatic
+        self.mediaSourceId = mediaSourceId
+        self.downloadDate = downloadDate
+        self.taskId = taskId
+    }
+}
+
 extension Container {
     var downloadManager: Factory<DownloadManager> { self { DownloadManager() }.shared }
 }
@@ -154,7 +195,7 @@ class DownloadManager: NSObject, ObservableObject {
     }
 
     func download(task: DownloadTask) {
-        guard !downloads.contains(where: { $0.item == task.item }) else { return }
+        guard !downloads.contains(where: { $0.taskID == task.taskID }) else { return }
 
         downloads.append(task)
 
@@ -208,7 +249,7 @@ class DownloadManager: NSObject, ObservableObject {
                     item: item,
                     taskID: taskID,
                     mediaSourceId: mediaSourceId,
-                    versionId: mediaSourceId, // Use mediaSourceId as versionId for now
+                    versionId: mediaSourceId, // Keep for backward compatibility, but we use mediaSourceId for uniqueness
                     container: container,
                     quality: quality,
                     isStatic: isStatic,
@@ -266,17 +307,42 @@ class DownloadManager: NSObject, ObservableObject {
         // Start media download
         try await startSpecificDownload(for: downloadTask, jobType: .media, url: mediaURL)
 
-        // Start image downloads
+        // Start image downloads (non-blocking - failures won't prevent completion)
         if let backdropURL = createImageDownloadURL(for: downloadTask.item, imageType: .backdropImage) {
-            try await startSpecificDownload(for: downloadTask, jobType: .backdropImage, url: backdropURL)
+            do {
+                try await startSpecificDownload(for: downloadTask, jobType: .backdropImage, url: backdropURL)
+            } catch {
+                logger.warning("Failed to start backdrop image download: \(error.localizedDescription)")
+            }
         }
 
         if let primaryURL = createImageDownloadURL(for: downloadTask.item, imageType: .primaryImage) {
-            try await startSpecificDownload(for: downloadTask, jobType: .primaryImage, url: primaryURL)
+            do {
+                try await startSpecificDownload(for: downloadTask, jobType: .primaryImage, url: primaryURL)
+            } catch {
+                logger.warning("Failed to start primary image download: \(error.localizedDescription)")
+            }
         }
 
         // Start metadata download (we'll create a dummy URL for this since metadata is generated locally)
         try await startMetadataJob(for: downloadTask)
+
+        // Add a safety timeout to ensure downloads complete even if images hang
+        Task {
+            try? await Task.sleep(nanoseconds: 60_000_000_000) // 60 seconds
+
+            // Check if download is still pending and complete it if essential parts are done
+            if let taskIndex = downloads.firstIndex(where: { $0.taskID == downloadTask.taskID }),
+               case .downloading = downloads[taskIndex].state,
+               isTaskFullyCompleted(taskID: downloadTask.taskID)
+            {
+
+                await MainActor.run {
+                    self.downloads[taskIndex].state = .complete
+                }
+                logger.info("Download completed via timeout safety mechanism: \(downloadTask.item.displayTitle)")
+            }
+        }
     }
 
     private func startSpecificDownload(for downloadTask: DownloadTask, jobType: DownloadJobType, url: URL) async throws {
@@ -605,8 +671,9 @@ class DownloadManager: NSObject, ObservableObject {
     private func isTaskFullyCompleted(taskID: UUID) -> Bool {
         guard let completed = completedJobsByTask[taskID] else { return false }
 
-        // Define required downloads based on item type
-        let requiredJobs: Set<DownloadJobType> = [.media, .backdropImage, .primaryImage, .metadata]
+        // Only require essential downloads - media and metadata
+        // Images are optional and shouldn't block completion
+        let requiredJobs: Set<DownloadJobType> = [.media, .metadata]
 
         return requiredJobs.isSubset(of: completed)
     }
@@ -841,7 +908,9 @@ class DownloadManager: NSObject, ObservableObject {
     }
 
     func task(for item: BaseItemDto) -> DownloadTask? {
-        if let currentlyDownloading = downloads.first(where: { $0.item == item }) {
+        // For backward compatibility, return any task for this item
+        // In the future, this could be enhanced to take mediaSourceId parameter
+        if let currentlyDownloading = downloads.first(where: { $0.item.id == item.id }) {
             return currentlyDownloading
         } else {
             var isDir: ObjCBool = true
@@ -853,7 +922,7 @@ class DownloadManager: NSObject, ObservableObject {
     }
 
     func cancel(task: DownloadTask) {
-        guard downloads.contains(where: { $0.item == task.item }) else { return }
+        guard downloads.contains(where: { $0.taskID == task.taskID }) else { return }
 
         task.cancel()
 
@@ -861,7 +930,7 @@ class DownloadManager: NSObject, ObservableObject {
     }
 
     func remove(task: DownloadTask) {
-        downloads.removeAll(where: { $0.item == task.item })
+        downloads.removeAll(where: { $0.taskID == task.taskID })
     }
 
     func reset() {
@@ -921,13 +990,12 @@ extension DownloadManager: URLSessionDownloadDelegate {
             // Track completion
             markJobCompleted(taskID: downloadJob.taskID, jobType: downloadJob.type)
 
-            // Check if all downloads for this task are complete
+            // Check completion status - complete when essential downloads (media + metadata) are done
             if isTaskFullyCompleted(taskID: downloadJob.taskID) {
                 DispatchQueue.main.async {
                     self.downloads[downloadTaskIndex].state = .complete
                 }
-
-                logger.trace("All downloads completed for: \(swiftfinDownloadTask.item.displayTitle)")
+                logger.trace("Essential downloads completed for: \(swiftfinDownloadTask.item.displayTitle)")
             }
 
         } catch {
@@ -999,8 +1067,41 @@ extension DownloadManager: URLSessionDownloadDelegate {
                 activeJobs.removeValue(forKey: downloadTask.taskIdentifier)
 
             } else {
-                DispatchQueue.main.async {
-                    self.downloads[downloadTaskIndex].state = .error(error)
+                // Handle failed downloads based on type
+                switch downloadJob.type {
+                case .media:
+                    // Media download failure is critical - mark as error
+                    DispatchQueue.main.async {
+                        self.downloads[downloadTaskIndex].state = .error(error)
+                    }
+                case .backdropImage, .primaryImage:
+                    // Image download failures are not critical - check if we can complete without them
+                    logger
+                        .warning(
+                            "Image download failed for \(downloadJob.type), checking if task can complete without it: \(error.localizedDescription)"
+                        )
+
+                    // Check if essential downloads are complete (media + metadata)
+                    if isTaskFullyCompleted(taskID: downloadJob.taskID) {
+                        DispatchQueue.main.async {
+                            self.downloads[downloadTaskIndex].state = .complete
+                        }
+                        logger.trace("Task completed despite image download failure: \(swiftfinDownloadTask.item.displayTitle)")
+                    }
+                case .metadata:
+                    // Metadata failure is critical - mark as error
+                    DispatchQueue.main.async {
+                        self.downloads[downloadTaskIndex].state = .error(error)
+                    }
+                case .subtitle:
+                    // Subtitle failures are not critical
+                    logger.warning("Subtitle download failed: \(error.localizedDescription)")
+
+                    if isTaskFullyCompleted(taskID: downloadJob.taskID) {
+                        DispatchQueue.main.async {
+                            self.downloads[downloadTaskIndex].state = .complete
+                        }
+                    }
                 }
 
                 // Clean up active job
@@ -1128,49 +1229,66 @@ extension DownloadManager: URLSessionDownloadDelegate {
     private func saveMetadata(for downloadTask: DownloadTask, at folder: URL) throws {
         let metadataFile = folder.appendingPathComponent("metadata.json")
 
-        var metadata: [String: Any] = [:]
-
         // Load existing metadata if it exists
+        var downloadMetadata: DownloadMetadata
+
         if FileManager.default.fileExists(atPath: metadataFile.path),
-           let existingData = FileManager.default.contents(atPath: metadataFile.path),
-           let existingMetadata = try? JSONSerialization.jsonObject(with: existingData) as? [String: Any]
+           let existingData = FileManager.default.contents(atPath: metadataFile.path)
         {
-            metadata = existingMetadata
+            // Try to decode existing metadata
+            do {
+                downloadMetadata = try JSONDecoder().decode(DownloadMetadata.self, from: existingData)
+            } catch {
+                // If decoding fails, create new metadata (might be old format)
+                logger.warning("Failed to decode existing metadata.json, creating new: \(error)")
+                downloadMetadata = DownloadMetadata(
+                    itemId: downloadTask.item.id ?? "",
+                    itemType: downloadTask.item.type?.rawValue,
+                    displayTitle: downloadTask.item.displayTitle
+                )
+            }
+        } else {
+            // Create new metadata
+            downloadMetadata = DownloadMetadata(
+                itemId: downloadTask.item.id ?? "",
+                itemType: downloadTask.item.type?.rawValue,
+                displayTitle: downloadTask.item.displayTitle
+            )
         }
 
-        // Create version entry
-        let versionId = downloadTask.versionId ?? "default"
-        let versionMetadata: [String: Any] = [
-            "versionId": versionId,
-            "container": downloadTask.container,
-            "isStatic": downloadTask.isStatic,
-            "mediaSourceId": downloadTask.mediaSourceId as Any,
-            "downloadDate": ISO8601DateFormatter().string(from: Date()),
-            "taskId": downloadTask.taskID.uuidString,
-        ]
+        // Create version entry - use mediaSourceId as the unique identifier
+        let uniqueVersionId = downloadTask.mediaSourceId ?? downloadTask.item.id ?? "default"
+        let versionInfo = VersionInfo(
+            versionId: uniqueVersionId,
+            container: downloadTask.container,
+            isStatic: downloadTask.isStatic,
+            mediaSourceId: downloadTask.mediaSourceId,
+            downloadDate: ISO8601DateFormatter().string(from: Date()),
+            taskId: downloadTask.taskID.uuidString
+        )
 
-        // Add version to metadata
-        var versions = metadata["versions"] as? [[String: Any]] ?? []
+        // Remove existing version with same mediaSourceId if it exists
+        downloadMetadata.versions.removeAll { version in
+            let existingMediaSourceId = version.mediaSourceId
+            let currentMediaSourceId = downloadTask.mediaSourceId
 
-        // Remove existing version with same ID if it exists
-        versions.removeAll { version in
-            (version["versionId"] as? String) == versionId
+            // Compare mediaSourceIds, treating nil as equivalent to item.id
+            let normalizedExisting = existingMediaSourceId ?? downloadTask.item.id
+            let normalizedCurrent = currentMediaSourceId ?? downloadTask.item.id
+
+            return normalizedExisting == normalizedCurrent
         }
 
         // Add new version
-        versions.append(versionMetadata)
-        metadata["versions"] = versions
+        downloadMetadata.versions.append(versionInfo)
 
-        // Add item metadata
-        metadata["itemId"] = downloadTask.item.id
-        metadata["itemType"] = downloadTask.item.type?.rawValue
-        metadata["displayTitle"] = downloadTask.item.displayTitle
-
-        // Save metadata
-        let jsonData = try JSONSerialization.data(withJSONObject: metadata, options: .prettyPrinted)
+        // Save metadata using JSONEncoder for consistent formatting
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        let jsonData = try encoder.encode(downloadMetadata)
         try jsonData.write(to: metadataFile)
 
-        logger.trace("Updated metadata.json for: \(downloadTask.item.displayTitle)")
+        logger.trace("Updated metadata.json for: \(downloadTask.item.displayTitle) with \(downloadMetadata.versions.count) versions")
     }
 
     private func saveAllMetadata(for downloadTask: DownloadTask) throws {
@@ -1253,5 +1371,35 @@ extension DownloadManager: URLSessionDownloadDelegate {
                 logger.error("Failed to retry image download: \(error.localizedDescription)")
             }
         }
+    }
+
+    // MARK: - Metadata Helper Methods
+
+    /// Reads the download metadata for a specific item
+    /// - Parameter itemId: The Jellyfin item ID
+    /// - Returns: DownloadMetadata if found and readable, nil otherwise
+    func getDownloadMetadata(for itemId: String) -> DownloadMetadata? {
+        let downloadPath = URL.downloads.appendingPathComponent(itemId)
+        let metadataFile = downloadPath.appendingPathComponent("metadata.json")
+
+        guard FileManager.default.fileExists(atPath: metadataFile.path),
+              let data = FileManager.default.contents(atPath: metadataFile.path)
+        else {
+            return nil
+        }
+
+        do {
+            return try JSONDecoder().decode(DownloadMetadata.self, from: data)
+        } catch {
+            logger.warning("Failed to decode metadata for item \(itemId): \(error)")
+            return nil
+        }
+    }
+
+    /// Gets all versions downloaded for a specific item
+    /// - Parameter itemId: The Jellyfin item ID
+    /// - Returns: Array of VersionInfo, empty if no metadata found
+    func getDownloadedVersions(for itemId: String) -> [VersionInfo] {
+        getDownloadMetadata(for: itemId)?.versions ?? []
     }
 }
