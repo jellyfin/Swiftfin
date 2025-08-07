@@ -19,31 +19,7 @@ struct DownloadTaskButton: View {
 
     private var onSelect: (DownloadTask) -> Void
 
-    var body: some View {
-        Button {
-            onSelect(downloadTask)
-        } label: {
-            switch downloadTask.state {
-            case .cancelled:
-                Image(systemName: "exclamationmark.circle.fill")
-                    .foregroundColor(.red)
-            case .complete:
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(.green)
-            case .downloading:
-                EmptyView()
-//                CircularProgressView(progress: progress)
-            case .error:
-                Image(systemName: "exclamationmark.circle.fill")
-                    .foregroundColor(.red)
-            case .paused:
-                Image(systemName: "pause.circle.fill")
-                    .foregroundColor(.orange)
-            case .ready:
-                Image(systemName: "arrow.down.circle")
-            }
-        }
-    }
+    var body: some View {}
 }
 
 extension DownloadTaskButton {

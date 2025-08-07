@@ -125,6 +125,16 @@ extension ItemView {
                         view.frame(maxWidth: .infinity)
                     }
                 }
+
+                // MARK: Download Task Button
+
+                if viewModel.item.type == .episode || viewModel.item.type == .movie {
+
+                    DownloadActionButtonWithProgress(state: .ready, progress: 0)
+                        .if(equalSpacing) { view in
+                            view.frame(maxWidth: .infinity)
+                        }
+                }
             }
         }
     }

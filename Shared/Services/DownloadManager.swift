@@ -552,11 +552,12 @@ class DownloadManager: NSObject, ObservableObject {
 
         var totalSize: Int64 = 0
 
-        for case let fileURL as URL in directoryEnumerator ?? [] {
-            let resourceValues = try fileURL.resourceValues(forKeys: Set(resourceKeys))
-
-            if resourceValues.isRegularFile == true {
-                totalSize += Int64(resourceValues.fileAllocatedSize ?? 0)
+        if let enumerator = directoryEnumerator as? FileManager.DirectoryEnumerator {
+            for case let fileURL as URL in enumerator {
+                let resourceValues = try fileURL.resourceValues(forKeys: Set(resourceKeys))
+                if resourceValues.isRegularFile == true {
+                    totalSize += Int64(resourceValues.fileAllocatedSize ?? 0)
+                }
             }
         }
 
