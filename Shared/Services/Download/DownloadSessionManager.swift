@@ -225,19 +225,26 @@ extension DownloadSessionManager: URLSessionDownloadDelegate {
         guard totalBytesExpectedToWrite > 0 else { return }
         let progress = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite)
 
-        // Notify delegate about progress
-        delegate?.sessionDidUpdateProgress(
-            taskIdentifier: downloadTask.taskIdentifier,
-            progress: progress
-        )
-
-        // Log only if progress changed by more than 10%
+        // Throttle progress updates to reduce UI churn - only notify delegate if progress changed by 5% or more
         enum ProgressTracker {
+            static var lastReported: [Int: Double] = [:]
             static var lastLogged: [Int: Double] = [:]
         }
         let taskId = downloadTask.taskIdentifier
-        let last = ProgressTracker.lastLogged[taskId] ?? 0.0
-        if abs(progress - last) >= 0.10 || progress == 1.0 {
+        let lastReported = ProgressTracker.lastReported[taskId] ?? 0.0
+
+        // Only notify delegate if progress changed by more than 5% or completed
+        if abs(progress - lastReported) >= 0.05 || progress == 1.0 {
+            delegate?.sessionDidUpdateProgress(
+                taskIdentifier: downloadTask.taskIdentifier,
+                progress: progress
+            )
+            ProgressTracker.lastReported[taskId] = progress
+        }
+
+        // Log only if progress changed by more than 10%
+        let lastLogged = ProgressTracker.lastLogged[taskId] ?? 0.0
+        if abs(progress - lastLogged) >= 0.10 || progress == 1.0 {
             logger.trace("Download progress: \(progress) for task: \(taskId)")
             ProgressTracker.lastLogged[taskId] = progress
         }

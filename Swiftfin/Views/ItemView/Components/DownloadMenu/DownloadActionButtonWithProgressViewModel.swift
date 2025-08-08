@@ -33,6 +33,7 @@ final class DownloadActionButtonWithProgressViewModel: ObservableObject {
     var progress: Double = 0.0 // 0.0 ... 1.0
 
     private var cancellables = Set<AnyCancellable>()
+    private var taskStateObserver: AnyCancellable?
     private var downloadTask: DownloadTask?
     private var taskID: UUID?
 
@@ -57,10 +58,6 @@ final class DownloadActionButtonWithProgressViewModel: ObservableObject {
 
     /// Initialize with an item and optional media source for new downloads
     init(item: BaseItemDto, mediaSourceId: String? = nil) {
-        print(
-            "DownloadActionButtonWithProgressViewModel.init: Creating ViewModel for itemId: \(item.id ?? "nil"), mediaSourceId: \(mediaSourceId ?? "nil")"
-        )
-
         self.item = item
         self.mediaSourceId = mediaSourceId
         // Find the specific download task that matches both item and mediaSourceId
@@ -68,8 +65,6 @@ final class DownloadActionButtonWithProgressViewModel: ObservableObject {
             task.item.id == item.id && task.mediaSourceId == mediaSourceId
         }
         self.taskID = downloadTask?.taskID
-
-        print("DownloadActionButtonWithProgressViewModel.init: Found existing downloadTask: \(downloadTask != nil)")
 
         setupStateObservation()
     }
@@ -88,8 +83,9 @@ final class DownloadActionButtonWithProgressViewModel: ObservableObject {
         // First, check if the item is already downloaded locally
         checkInitialDownloadState()
 
-        // Observe download manager's downloads array for changes to our task
+        // Observe downloads array for task creation/removal
         downloadManager.$downloads
+            .debounce(for: .milliseconds(50), scheduler: DispatchQueue.main)
             .sink { [weak self] downloads in
                 guard let self = self, let itemId = self.item?.id else { return }
 
@@ -98,60 +94,110 @@ final class DownloadActionButtonWithProgressViewModel: ObservableObject {
                     task.item.id == itemId && task.mediaSourceId == self.mediaSourceId
                 }
 
-                // Update our references
-                self.downloadTask = currentTask
-                self.taskID = currentTask?.taskID
+                // Only update if task reference actually changed
+                let taskChanged = (self.downloadTask?.taskID != currentTask?.taskID)
 
-                // Update UI state, but only if there's no active download or if we're not already completed
-                // This prevents overriding the completed state when no active download exists
-                if currentTask != nil || self.state != .completed {
+                if taskChanged {
+                    // Update our references
+                    self.downloadTask = currentTask
+                    self.taskID = currentTask?.taskID
+
+                    // Cancel existing task state observer
+                    self.taskStateObserver?.cancel()
+                    self.taskStateObserver = nil
+
+                    // Set up new task state observer if we have a task
+                    if let taskID = currentTask?.taskID {
+                        self.observeTaskState(taskID: taskID)
+                    }
+
+                    // Update UI state
                     self.updateStateFromDownloadTask(currentTask)
                 }
             }
             .store(in: &cancellables)
+    }
 
-        // Observe task states for real-time state updates
-        downloadManager.$taskStates
-            .sink { [weak self] _ in
-                guard let self = self else { return }
-                self.updateStateFromDownloadTask(self.downloadTask)
+    private func observeTaskState(taskID: UUID) {
+        taskStateObserver = downloadManager.$taskStates
+            .compactMap { $0[taskID] }
+            .removeDuplicates { prev, curr in
+                // Custom comparison for DownloadTask.State
+                switch (prev, curr) {
+                case let (.downloading(prevProgress), .downloading(currProgress)):
+                    return abs(prevProgress - currProgress) < 0.05 // 5% threshold
+                case (.ready, .ready), (.paused, .paused), (.complete, .complete), (.cancelled, .cancelled):
+                    return true
+                case (.error, .error):
+                    return true // Don't duplicate error states
+                default:
+                    return false // Different states, should update
+                }
             }
-            .store(in: &cancellables)
+            .sink { [weak self] taskState in
+                guard let self = self else { return }
+                self.updateFromTaskState(taskState)
+            }
+    }
+
+    private func updateFromTaskState(_ taskState: DownloadTask.State) {
+        switch taskState {
+        case .ready:
+            if self.state != .ready {
+                self.state = .ready
+                self.progress = 0.0
+            }
+        case let .downloading(progressValue):
+            let isStateTransition = self.state != .downloading
+            let isSignificantProgressChange = abs(progressValue - self.progress) >= 0.05
+            let isCompletion = progressValue == 1.0
+
+            if isStateTransition || isSignificantProgressChange || isCompletion {
+                self.state = .downloading
+                self.progress = progressValue
+            }
+        case .paused:
+            if self.state != .paused {
+                self.state = .paused
+            }
+        case .complete:
+            if self.state != .completed {
+                self.state = .completed
+                self.progress = 1.0
+            }
+        case .cancelled:
+            if self.state != .ready {
+                self.state = .ready
+                self.progress = 0.0
+            }
+        case .error:
+            if self.state != .error {
+                self.state = .error
+            }
+        }
     }
 
     private func checkInitialDownloadState() {
         guard let item = item, let itemId = item.id else { return }
 
-        print(
-            "DownloadActionButtonWithProgressViewModel: Checking initial download state for itemId: \(itemId), mediaSourceId: \(mediaSourceId ?? "nil")"
-        )
-
-        // Debug: List all downloaded items when we have a specific mediaSourceId (like in ItemDownloadSelectionView)
-        if mediaSourceId != nil {
-            print("DownloadActionButtonWithProgressViewModel: MediaSourceId specified, listing all downloaded items for comparison:")
-            downloadManager.debugListDownloadedItems()
-            downloadManager.debugCheckSpecificVersion(itemId: itemId, mediaSourceId: mediaSourceId)
-        }
-
         // Check if this specific version is already downloaded
         if downloadManager.isItemVersionDownloaded(itemId: itemId, mediaSourceId: mediaSourceId) {
-            print("DownloadActionButtonWithProgressViewModel: Item version is downloaded, setting state to completed")
             self.state = .completed
             self.progress = 1.0
-        } else {
-            print("DownloadActionButtonWithProgressViewModel: Item version not downloaded, keeping ready state")
         }
     }
 
     private func updateStateFromDownloadTask(_ task: DownloadTask?) {
         guard let task = task else {
-            // No active download task - check if item is downloaded locally
-            if let item = item, let itemId = item.id,
+            // No active download task - check if item is downloaded locally only if we're not already in completed state
+            if self.state != .completed,
+               let item = item, let itemId = item.id,
                downloadManager.isItemVersionDownloaded(itemId: itemId, mediaSourceId: mediaSourceId)
             {
                 self.state = .completed
                 self.progress = 1.0
-            } else {
+            } else if self.state != .ready && self.state != .completed {
+                // Only reset to ready if we're not already ready or completed
                 self.state = .ready
                 self.progress = 0.0
             }
@@ -161,23 +207,40 @@ final class DownloadActionButtonWithProgressViewModel: ObservableObject {
         let taskState = downloadManager.getTaskState(taskID: task.taskID)
         switch taskState {
         case .ready:
-            self.state = .ready
-            self.progress = 0.0
+            if self.state != .ready {
+                self.state = .ready
+                self.progress = 0.0
+            }
         case let .downloading(progressValue):
-            self.state = .downloading
-            self.progress = progressValue
+            // Always allow state transitions, but throttle progress updates within the same state
+            let isStateTransition = self.state != .downloading
+            let isSignificantProgressChange = abs(progressValue - self.progress) >= 0.05
+            let isCompletion = progressValue == 1.0
+
+            if isStateTransition || isSignificantProgressChange || isCompletion {
+                self.state = .downloading
+                self.progress = progressValue
+            }
         case .paused:
-            self.state = .paused
-        // Keep existing progress
+            if self.state != .paused {
+                self.state = .paused
+                // Keep existing progress
+            }
         case .complete:
-            self.state = .completed
-            self.progress = 1.0
+            if self.state != .completed {
+                self.state = .completed
+                self.progress = 1.0
+            }
         case .cancelled:
-            self.state = .ready
-            self.progress = 0.0
+            if self.state != .ready {
+                self.state = .ready
+                self.progress = 0.0
+            }
         case .error:
-            self.state = .error
-            // Keep existing progress
+            if self.state != .error {
+                self.state = .error
+                // Keep existing progress
+            }
         }
     }
 
@@ -216,7 +279,6 @@ final class DownloadActionButtonWithProgressViewModel: ObservableObject {
 
     /// Manually refresh the download state - useful for debugging or when state might be stale
     func refreshDownloadState() {
-        print("DownloadActionButtonWithProgressViewModel: Manually refreshing download state")
         checkInitialDownloadState()
     }
 }
