@@ -32,92 +32,88 @@ struct ItemDownloadSelectionView: View {
     var body: some View {
         ScrollView(showsIndicators: true) {
             VStack(alignment: .leading, spacing: 12) {
-                // Debug: Print item and media sources info
-                let _ = print("ItemDownloadSelectionView: Item ID = \(item.id ?? "nil"), Title = \(item.displayTitle)")
-                let _ = print("ItemDownloadSelectionView: Found \(item.mediaSources?.count ?? 0) media sources")
+                ForEach(item.mediaSources ?? [], id: \.id) { mediaSource in VStack(alignment: .leading, spacing: 4) {
+                    // Media source name
+                    Text(mediaSource.name ?? "Unknown Source")
+                        .font(.headline)
 
-                ForEach(item.mediaSources ?? [], id: \.id) { mediaSource in
-                    let _ =
-                        print(
-                            "ItemDownloadSelectionView: Processing mediaSource with ID = \(mediaSource.id ?? "nil"), Name = \(mediaSource.name ?? "Unknown")"
-                        )
+                    #if DEBUG
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Item ID: \(item.id ?? "Unknown")")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                        Text("Media Source ID: \(mediaSource.id ?? "Unknown")")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                    #endif
 
-                    VStack(alignment: .leading, spacing: 4) {
-                        // Media source name
-                        Text(mediaSource.name ?? "Unknown Source")
-                            .font(.headline)
+                    // Two-column layout for remaining metadata
+                    HStack(alignment: .top, spacing: 20) {
+                        // Left column
+                        VStack(alignment: .leading, spacing: 4) {
 
-                        // Two-column layout for remaining metadata
-                        HStack(alignment: .top, spacing: 20) {
-                            // Left column
-                            VStack(alignment: .leading, spacing: 4) {
-
-                                // Size
-                                if let size = mediaSource.size {
-                                    let sizeString = sizeFormatter.string(fromByteCount: Int64(size))
-                                    Text("Size: \(sizeString)")
-                                        .font(.caption)
-                                }
-
-                                // Resolution
-                                if let videoStream = mediaSource.videoStreams?.first,
-                                   let width = videoStream.width,
-                                   let height = videoStream.height
-                                {
-                                    Text("Resolution: \(width)x\(height)")
-                                        .font(.caption)
-                                }
-                                // Duration
-                                if let duration = mediaSource.runTimeTicks {
-                                    let seconds = Double(duration) / 10_000_000
-                                    if let formatted = durationFormatter.string(from: seconds) {
-                                        Text("Length: \(formatted)")
-                                            .font(.caption)
-                                    }
-                                }
+                            // Size
+                            if let size = mediaSource.size {
+                                let sizeString = sizeFormatter.string(fromByteCount: Int64(size))
+                                Text("Size: \(sizeString)")
+                                    .font(.caption)
                             }
-                            .frame(maxWidth: .infinity, alignment: .leading)
 
-                            // Right column
-                            VStack(alignment: .leading, spacing: 4) {
-
-                                // Container
-                                if let container = mediaSource.container {
-                                    Text("Container: \(container)")
-                                        .font(.caption)
-                                }
-
-                                // Video codec
-                                if let videoCodec = mediaSource.videoStreams?.first?.codec {
-                                    Text("Video: \(videoCodec)")
-                                        .font(.caption)
-                                }
-                                // Audio info
-                                if let audioStream = mediaSource.audioStreams?.first,
-                                   let audioCodec = audioStream.codec
-                                {
-                                    let audioChannelsString = audioStream.channels != nil ? " (\(audioStream.channels!) ch)" : ""
-                                    Text("Audio: \(audioCodec)\(audioChannelsString)")
-                                        .font(.caption)
-                                }
+                            // Resolution
+                            if let videoStream = mediaSource.videoStreams?.first,
+                               let width = videoStream.width,
+                               let height = videoStream.height
+                            {
+                                Text("Resolution: \(width)x\(height)")
+                                    .font(.caption)
                             }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-
-                            VStack {
-                                DownloadActionButtonWithProgress(
-                                    item: item,
-                                    mediaSourceId: mediaSource.id
-                                )
-                                .onAppear {
-                                    print(
-                                        "ItemDownloadSelectionView: DownloadActionButtonWithProgress appeared for mediaSourceId: \(mediaSource.id ?? "nil")"
-                                    )
+                            // Duration
+                            if let duration = mediaSource.runTimeTicks {
+                                let seconds = Double(duration) / 10_000_000
+                                if let formatted = durationFormatter.string(from: seconds) {
+                                    Text("Length: \(formatted)")
+                                        .font(.caption)
                                 }
                             }
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                        // Right column
+                        VStack(alignment: .leading, spacing: 4) {
+
+                            // Container
+                            if let container = mediaSource.container {
+                                Text("Container: \(container)")
+                                    .font(.caption)
+                            }
+
+                            // Video codec
+                            if let videoCodec = mediaSource.videoStreams?.first?.codec {
+                                Text("Video: \(videoCodec)")
+                                    .font(.caption)
+                            }
+                            // Audio info
+                            if let audioStream = mediaSource.audioStreams?.first,
+                               let audioCodec = audioStream.codec
+                            {
+                                let audioChannelsString = audioStream.channels != nil ? " (\(audioStream.channels!) ch)" : ""
+                                Text("Audio: \(audioCodec)\(audioChannelsString)")
+                                    .font(.caption)
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                        VStack {
+                            DownloadActionButtonWithProgress(
+                                item: item,
+                                mediaSourceId: mediaSource.id
+                            )
+                        }
                     }
-                    .padding(.vertical, 8)
-                    Divider()
+                }
+                .padding(.vertical, 8)
+                Divider()
                 }
             }
             .padding()

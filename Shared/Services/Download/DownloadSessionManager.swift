@@ -33,7 +33,10 @@ final class DownloadSessionManager: NSObject, DownloadSessionManaging {
     // MARK: - Public Interface
 
     func start(url: URL, taskID: UUID, jobType: DownloadJobType) async throws {
-        let urlRequest = URLRequest(url: url)
+        var urlRequest = URLRequest(url: url)
+        // Ensure redirects are allowed; we'll log the final request/response in delegate
+        urlRequest.httpShouldHandleCookies = true
+        urlRequest.httpShouldUsePipelining = true
         let urlDownloadTask = backgroundSession.downloadTask(with: urlRequest)
 
         let downloadJob = DownloadJob(
@@ -48,7 +51,16 @@ final class DownloadSessionManager: NSObject, DownloadSessionManaging {
 
         urlDownloadTask.resume()
 
-        logger.trace("Started \(jobType) download with task identifier: \(urlDownloadTask.taskIdentifier)")
+        // Redact sensitive query params for logging
+        func redacted(_ url: URL) -> String {
+            guard var comps = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return url.absoluteString }
+            if let idx = comps.queryItems?.firstIndex(where: { $0.name.lowercased() == "api_key" }) {
+                comps.queryItems?[idx].value = "REDACTED"
+            }
+            return comps.string ?? url.absoluteString
+        }
+
+        logger.trace("Started \(jobType) download: taskId=\(urlDownloadTask.taskIdentifier), url=\(redacted(url))")
     }
 
     func pause(taskID: UUID) {
@@ -170,7 +182,29 @@ final class DownloadSessionManager: NSObject, DownloadSessionManaging {
 extension DownloadSessionManager: URLSessionDownloadDelegate {
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        logger.trace("Download completed: \(downloadTask.taskIdentifier)")
+        // Log original and final URL (post-redirect) if available
+        let original = downloadTask.originalRequest?.url
+        let current = downloadTask.currentRequest?.url
+        func redact(_ url: URL?) -> String {
+            guard let url else { return "nil" }
+            guard var comps = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return url.absoluteString }
+            if let idx = comps.queryItems?.firstIndex(where: { $0.name.lowercased() == "api_key" }) {
+                comps.queryItems?[idx].value = "REDACTED"
+            }
+            return comps.string ?? url.absoluteString
+        }
+        var status: String = "unknown"
+        var locationHeader: String = ""
+        if let http = downloadTask.response as? HTTPURLResponse {
+            status = "\(http.statusCode)"
+            if let loc = http.allHeaderFields["Location"] as? String, !loc.isEmpty {
+                locationHeader = ", Location=\(loc)"
+            }
+        }
+        logger
+            .trace(
+                "Download completed: task=\(downloadTask.taskIdentifier), status=\(status)\(locationHeader), original=\(redact(original)), final=\(redact(current)))"
+            )
 
         // Notify delegate about completion
         delegate?.sessionDidCompleteDownload(
@@ -203,7 +237,17 @@ extension DownloadSessionManager: URLSessionDownloadDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         guard let error = error else { return }
 
-        logger.error("Download task completed with error: \(error.localizedDescription)")
+        let original = task.originalRequest?.url
+        let current = task.currentRequest?.url
+        func redact(_ url: URL?) -> String {
+            guard let url else { return "nil" }
+            guard var comps = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return url.absoluteString }
+            if let idx = comps.queryItems?.firstIndex(where: { $0.name.lowercased() == "api_key" }) {
+                comps.queryItems?[idx].value = "REDACTED"
+            }
+            return comps.string ?? url.absoluteString
+        }
+        logger.error("Download task error: \(error.localizedDescription), original=\(redact(original)), final=\(redact(current)))")
 
         if let downloadTask = task as? URLSessionDownloadTask {
             // Notify delegate about error

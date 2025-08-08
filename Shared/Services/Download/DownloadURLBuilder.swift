@@ -159,8 +159,9 @@ final class DownloadURLBuilder: DownloadURLBuilding {
             queryItems.append(URLQueryItem(name: "DeviceProfileId", value: deviceProfileId))
         }
 
+        // TODO: do more tests and make sure to always use mediaSourceID - to download correct file
         // Build the URL path
-        let path = "/Items/\(itemId)/Download"
+        let path = "/Items/\(mediaSourceId ?? itemId)/Download"
 
         guard let baseURL = userSession.client.fullURL(with: path) else { return nil }
         guard var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false) else { return nil }

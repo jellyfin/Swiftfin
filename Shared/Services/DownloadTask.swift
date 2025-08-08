@@ -211,8 +211,40 @@ class DownloadTask: NSObject, ObservableObject {
 
         guard let downloadFolder = item.downloadFolder else { return }
 
-        let request = Paths.getDownload(itemID: item.id!)
-        let response = try await userSession.client.download(for: request, delegate: self)
+        // Always construct proper download URL with all parameters to ensure consistency
+        let downloadURL: URL
+        let path = "/Items/\(item.id!)/Download"
+        guard let userSession = userSession,
+              let baseURL = userSession.client.fullURL(with: path),
+              var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
+        else {
+            throw JellyfinAPIError("Failed to construct download URL")
+        }
+
+        var queryItems: [URLQueryItem] = []
+
+        // Always include MediaSourceId if specified (this is the key fix)
+        if let mediaSourceId = self.mediaSourceId {
+            queryItems.append(URLQueryItem(name: "MediaSourceId", value: mediaSourceId))
+        }
+
+        queryItems.append(URLQueryItem(name: "Container", value: container))
+        queryItems.append(URLQueryItem(name: "Static", value: isStatic.description))
+        queryItems.append(URLQueryItem(name: "AllowVideoStreamCopy", value: allowVideoStreamCopy.description))
+        queryItems.append(URLQueryItem(name: "AllowAudioStreamCopy", value: allowAudioStreamCopy.description))
+
+        if let token = userSession.client.accessToken {
+            queryItems.append(URLQueryItem(name: "api_key", value: token))
+        }
+
+        components.queryItems = queryItems
+
+        guard let url = components.url else {
+            throw JellyfinAPIError("Failed to construct download URL")
+        }
+        downloadURL = url
+
+        let response = try await userSession.client.download(for: .init(url: downloadURL).withResponse(URL.self), delegate: self)
 
         let subtype = response.response.mimeSubtype
         let mediaExtension = subtype == nil ? "" : ".\(subtype!)"
