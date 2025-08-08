@@ -15,7 +15,7 @@ extension NavigationRoute {
     static let downloadList = NavigationRoute(
         id: "downloadList"
     ) {
-        DownloadListView(viewModel: .init())
+        DownloadListView()
     }
 }
 #endif

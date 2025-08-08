@@ -82,7 +82,7 @@ extension TabItem {
         title: L10n.downloads,
         systemImage: "arrow.down.circle"
     ) {
-        DownloadListView(viewModel: .init())
+        DownloadListView()
     }
     #endif
 
