@@ -106,7 +106,7 @@ extension ItemView {
                     ) {
                         viewModel.send(.toggleIsPlayed)
                     }
-                    .foregroundStyle(.black, Color.jellyfinPurple, .white)
+                    .foregroundStyle(Color.jellyfinPurple)
                     .isSelected(isCheckmarkSelected)
                     .frame(minWidth: 100, maxWidth: .infinity)
                 }
@@ -122,7 +122,7 @@ extension ItemView {
                 ) {
                     viewModel.send(.toggleIsFavorite)
                 }
-                .foregroundStyle(.black, .pink, .white)
+                .foregroundStyle(.pink)
                 .isSelected(isHeartSelected)
                 .frame(minWidth: 100, maxWidth: .infinity)
 
@@ -133,7 +133,6 @@ extension ItemView {
                         localTrailers: viewModel.localTrailers,
                         externalTrailers: viewModel.item.remoteTrailers ?? []
                     )
-                    .foregroundStyle(.black, .white)
                 }
 
                 // MARK: Advanced Options
@@ -166,7 +165,6 @@ extension ItemView {
                             }
                         }
                     }
-                    .foregroundStyle(.black, .white)
                     .frame(width: 60)
                 }
             }
