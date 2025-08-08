@@ -13,6 +13,8 @@ import SwiftUI
 
 struct DownloadListView: View {
 
+    // MARK: - State Properties
+
     @StateObject
     private var downloadManager = Container.shared.downloadManager()
 
@@ -20,7 +22,7 @@ struct DownloadListView: View {
     private var downloadedItems: [DownloadTask] = []
 
     @State
-    private var isLoading: Bool = true
+    private var isLoading = true
 
     @State
     private var showingDeleteAlert = false
@@ -31,57 +33,66 @@ struct DownloadListView: View {
     @State
     private var taskToDelete: DownloadTask?
 
+    // MARK: - Dependencies
+
     private let logger = Logger.swiftfin()
 
     // MARK: - Computed Properties
 
     private var totalStorageUsed: String {
         guard let totalBytes = downloadManager.getTotalDownloadSize() else {
-            return "Unknown"
+            return L10n.unknown
         }
         return ByteCountFormatter.string(fromByteCount: totalBytes, countStyle: .file)
     }
 
+    // MARK: - Empty State View
+
+    @ViewBuilder
     private var emptyView: some View {
         VStack(spacing: 20) {
             Image(systemName: "arrow.down.circle")
                 .font(.system(size: 72))
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
 
             Text("No Downloads")
                 .font(.title2)
                 .fontWeight(.semibold)
 
             Text("Download content to watch offline")
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
         }
         .padding()
     }
 
+    // MARK: - Content View
+
+    @ViewBuilder
     private var contentView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
+                // Storage summary header
                 HStack {
                     Text("Downloaded content available for offline viewing")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
 
                     Spacer()
 
                     if !downloadedItems.isEmpty {
                         Text("\(downloadedItems.count) items • \(totalStorageUsed)")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(Color.secondary.opacity(0.15))
-                            .cornerRadius(8)
+                            .background(.secondary.opacity(0.15))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
                 }
                 .padding(.horizontal)
 
-                // Downloads List
+                // Downloads list
                 LazyVStack(spacing: 12) {
                     ForEach(downloadedItems) { downloadTask in
                         DownloadItemRow(
@@ -96,12 +107,11 @@ struct DownloadListView: View {
             .padding(.vertical)
         }
         .refreshable {
-            logger.info("Pull-to-refresh triggered")
-            await Task {
-                loadDownloadedItems()
-            }.value
+            await refreshDownloads()
         }
     }
+
+    // MARK: - Body
 
     var body: some View {
         NavigationView {
@@ -110,7 +120,7 @@ struct DownloadListView: View {
                     VStack(spacing: 20) {
                         ProgressView()
                         Text("Loading downloads...")
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
                 } else if downloadedItems.isEmpty {
                     emptyView
@@ -144,26 +154,20 @@ struct DownloadListView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack {
-                        // Delete All button (only show if there are downloads)
-                        if !downloadedItems.isEmpty {
-                            Button {
-                                logger.info("User requested to delete all downloads")
-                                showingDeleteAllAlert = true
-                            } label: {
-                                Image(systemName: "trash")
-                                    .foregroundColor(.red)
-                            }
+                    if !downloadedItems.isEmpty {
+                        Button {
+                            logger.info("User requested to delete all downloads")
+                            showingDeleteAllAlert = true
+                        } label: {
+                            Image(systemName: "trash")
+                                .foregroundStyle(.red)
                         }
                     }
                 }
             }
         }
         .onAppear {
-            logger.info("DownloadListView appeared")
-            Task {
-                loadDownloadedItems()
-            }
+            loadDownloadedItems()
         }
     }
 
@@ -175,11 +179,15 @@ struct DownloadListView: View {
         let items = downloadManager.downloadedItems()
         logger.info("DownloadManager returned \(items.count) downloaded items")
 
-        DispatchQueue.main.async {
-            self.downloadedItems = items
-            self.isLoading = false
-            self.logger.info("Updated UI with \(items.count) downloaded items")
-        }
+        downloadedItems = items
+        isLoading = false
+        logger.info("Updated UI with \(items.count) downloaded items")
+    }
+
+    @MainActor
+    private func refreshDownloads() async {
+        logger.info("Pull-to-refresh triggered")
+        loadDownloadedItems()
     }
 
     private func deleteDownloadedItem(_ downloadTask: DownloadTask) {
@@ -194,18 +202,15 @@ struct DownloadListView: View {
 
         logger.info("Confirming deletion of download: \(taskToDelete.item.displayTitle)")
 
-        // Delete the download using DownloadManager
         let success = downloadManager.deleteDownloadedMedia(itemId: itemId)
 
         if success {
-            // Remove from UI list
             downloadedItems.removeAll { $0.item.id == itemId }
             logger.info("Successfully deleted download from UI")
         } else {
             logger.error("Failed to delete download for item: \(itemId)")
         }
 
-        // Clear the task reference
         self.taskToDelete = nil
     }
 
@@ -220,9 +225,14 @@ struct DownloadListView: View {
 // MARK: - Download Item Row
 
 struct DownloadItemRow: View {
+
+    // MARK: - Properties
+
     let downloadTask: DownloadTask
     let downloadManager: DownloadManager
     let onDelete: () -> Void
+
+    // MARK: - Body
 
     var body: some View {
         HStack(spacing: 12) {
@@ -232,18 +242,17 @@ struct DownloadItemRow: View {
             )
             .failure {
                 Rectangle()
-                    .foregroundColor(.secondary.opacity(0.3))
+                    .foregroundStyle(.secondary.opacity(0.3))
                     .overlay {
                         Image(systemName: "photo")
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
             }
             .aspectRatio(contentMode: .fill)
             .frame(width: 80, height: 120)
-            .cornerRadius(8)
-            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: 8))
 
-            // Content Info
+            // Content info
             VStack(alignment: .leading, spacing: 6) {
                 Text(downloadTask.item.displayTitle)
                     .font(.headline)
@@ -253,19 +262,19 @@ struct DownloadItemRow: View {
                 if let overview = downloadTask.item.overview {
                     Text(overview)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                         .lineLimit(3)
                 }
 
-                // Additional info
+                // Metadata badges
                 HStack {
                     if let year = downloadTask.item.productionYear {
                         Text(String(year))
                             .font(.caption2)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(Color.secondary.opacity(0.2))
-                            .cornerRadius(4)
+                            .background(.secondary.opacity(0.2))
+                            .clipShape(RoundedRectangle(cornerRadius: 4))
                     }
 
                     if let runtime = downloadTask.item.runTimeTicks {
@@ -274,8 +283,8 @@ struct DownloadItemRow: View {
                             .font(.caption2)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(Color.secondary.opacity(0.2))
-                            .cornerRadius(4)
+                            .background(.secondary.opacity(0.2))
+                            .clipShape(RoundedRectangle(cornerRadius: 4))
                     }
 
                     Spacer()
@@ -286,17 +295,17 @@ struct DownloadItemRow: View {
 
             Spacer()
 
-            // Delete Button
+            // Delete button
             Button {
                 onDelete()
             } label: {
                 Image(systemName: "trash")
                     .font(.title2)
-                    .foregroundColor(.red)
+                    .foregroundStyle(.red)
             }
         }
         .padding()
-        .background(Color.secondary.opacity(0.05))
-        .cornerRadius(12)
+        .background(.secondary.opacity(0.05))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
