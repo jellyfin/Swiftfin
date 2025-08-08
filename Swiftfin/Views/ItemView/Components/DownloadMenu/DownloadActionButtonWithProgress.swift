@@ -30,7 +30,8 @@ struct DownloadActionButtonWithProgress: View {
     ) {
         self._viewModel = StateObject(wrappedValue: DownloadActionButtonWithProgressViewModel(
             item: item,
-            mediaSourceId: mediaSourceId
+            mediaSourceId: mediaSourceId,
+            shouldAutoStart: shouldAutoStart
         ))
         self.shouldAutoStart = shouldAutoStart
         self.onStartTap = onStartTap
@@ -59,13 +60,24 @@ struct DownloadActionButtonWithProgress: View {
                     viewModel.start()
                 }
             case .downloading:
-                viewModel.pause()
+                onStartTap?()
+                if shouldAutoStart {
+                    viewModel.pause()
+                }
             case .paused:
-                viewModel.resume()
+                onStartTap?()
+                if shouldAutoStart {
+                    viewModel.resume()
+                }
             case .error:
-                onErrorTap?()
-            case .completed, .partiallyCompleted:
-                break // No action for completed states
+                onStartTap?()
+                if shouldAutoStart {
+                    onErrorTap?()
+                }
+            case .partiallyCompleted:
+                onStartTap?() // Allow navigation to selection view, but don't auto-start
+            case .completed:
+                break // No action for fully completed downloads
             }
         } label: {
             if viewModel.state == .downloading {
@@ -81,7 +93,7 @@ struct DownloadActionButtonWithProgress: View {
             }
         }
         .buttonStyle(.plain)
-        .disabled(viewModel.state == .completed || viewModel.state == .partiallyCompleted)
+        .disabled(viewModel.state == .completed)
         .onAppear {
             // Refresh the download state when the view appears to ensure it's up to date
             viewModel.refreshDownloadState()
