@@ -22,9 +22,16 @@ extension BaseItemDto {
     func imageURL(
         _ type: ImageType,
         maxWidth: CGFloat? = nil,
-        maxHeight: CGFloat? = nil
+        maxHeight: CGFloat? = nil,
+        quality: Int? = nil
     ) -> URL? {
-        _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: id ?? "")
+        _imageURL(
+            type,
+            maxWidth: maxWidth,
+            maxHeight: maxHeight,
+            quality: quality,
+            itemID: id ?? ""
+        )
     }
 
     // TODO: will server actually only have a single blurhash per type?
@@ -49,11 +56,17 @@ extension BaseItemDto {
         return nil
     }
 
-    func imageSource(_ type: ImageType, maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil) -> ImageSource {
+    func imageSource(
+        _ type: ImageType,
+        maxWidth: CGFloat? = nil,
+        maxHeight: CGFloat? = nil,
+        quality: Int? = nil
+    ) -> ImageSource {
         _imageSource(
             type,
             maxWidth: maxWidth,
-            maxHeight: maxHeight
+            maxHeight: maxHeight,
+            quality: quality
         )
     }
 
@@ -61,11 +74,17 @@ extension BaseItemDto {
 
     /// - Note: Will force the creation of an image source even if it doesn't have a tag, due
     /// to episodes also retrieving series images in some areas. This may cause more 404s.
-    func seriesImageURL(_ type: ImageType, maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil) -> URL? {
+    func seriesImageURL(
+        _ type: ImageType,
+        maxWidth: CGFloat? = nil,
+        maxHeight: CGFloat? = nil,
+        quality: Int? = nil
+    ) -> URL? {
         _imageURL(
             type,
             maxWidth: maxWidth,
             maxHeight: maxHeight,
+            quality: quality,
             itemID: seriesID ?? "",
             requireTag: false
         )
@@ -73,11 +92,17 @@ extension BaseItemDto {
 
     /// - Note: Will force the creation of an image source even if it doesn't have a tag, due
     /// to episodes also retrieving series images in some areas. This may cause more 404s.
-    func seriesImageSource(_ type: ImageType, maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil) -> ImageSource {
+    func seriesImageSource(
+        _ type: ImageType,
+        maxWidth: CGFloat? = nil,
+        maxHeight: CGFloat? = nil,
+        quality: Int? = nil
+    ) -> ImageSource {
         let url = _imageURL(
             type,
             maxWidth: maxWidth,
             maxHeight: maxHeight,
+            quality: quality,
             itemID: seriesID ?? "",
             requireTag: false
         )
@@ -94,22 +119,24 @@ extension BaseItemDto {
         _ type: ImageType,
         maxWidth: CGFloat?,
         maxHeight: CGFloat?,
+        quality: Int?,
         itemID: String,
         requireTag: Bool = true
     ) -> URL? {
-        let scaleWidth = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
-        let scaleHeight = maxHeight == nil ? nil : UIScreen.main.scale(maxHeight!)
+        let scaleWidth = maxWidth.map { UIScreen.main.scale($0) }
+        let scaleHeight = maxWidth.map { UIScreen.main.scale($0) }
+        let validQuality = quality.map { clamp($0, min: 1, max: 100) }
 
         let tag = getImageTag(for: type)
 
         guard tag != nil || !requireTag else { return nil }
 
-        // TODO: client passing for widget/shared group views?
         guard let client = Container.shared.currentUserSession()?.client else { return nil }
 
         let parameters = Paths.GetItemImageParameters(
             maxWidth: scaleWidth,
             maxHeight: scaleHeight,
+            quality: validQuality,
             tag: tag,
             format: type == .logo ? .png : nil
         )
@@ -134,8 +161,19 @@ extension BaseItemDto {
         }
     }
 
-    private func _imageSource(_ type: ImageType, maxWidth: CGFloat?, maxHeight: CGFloat?) -> ImageSource {
-        let url = _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: id ?? "")
+    private func _imageSource(
+        _ type: ImageType,
+        maxWidth: CGFloat?,
+        maxHeight: CGFloat?,
+        quality: Int?
+    ) -> ImageSource {
+        let url = _imageURL(
+            type,
+            maxWidth: maxWidth,
+            maxHeight: maxHeight,
+            quality: quality,
+            itemID: id ?? ""
+        )
         let blurHash = blurHashString(for: type)
 
         return ImageSource(

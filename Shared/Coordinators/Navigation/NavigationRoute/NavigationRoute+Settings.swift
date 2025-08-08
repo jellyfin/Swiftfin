@@ -85,9 +85,10 @@ extension NavigationRoute {
         }
     }
 
-    static func editServer(server: ServerState) -> NavigationRoute {
+    static func editServer(server: ServerState, isEditing: Bool = false) -> NavigationRoute {
         NavigationRoute(id: "editServer") {
             EditServerView(server: server)
+                .isEditing(isEditing)
         }
     }
 

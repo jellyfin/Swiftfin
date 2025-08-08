@@ -54,52 +54,52 @@ extension BaseItemDto: Poster {
         }
     }
 
-    func portraitImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
+    func portraitImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
         switch type {
         case .episode:
-            [seriesImageSource(.primary, maxWidth: maxWidth)]
+            [seriesImageSource(.primary, maxWidth: maxWidth, quality: quality)]
         case .boxSet, .channel, .tvChannel, .liveTvChannel, .movie, .series, .person:
-            [imageSource(.primary, maxWidth: maxWidth)]
+            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
         default:
             []
         }
     }
 
-    func landscapeImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
+    func landscapeImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
         switch type {
         case .episode:
             if Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
                 [
-                    seriesImageSource(.thumb, maxWidth: maxWidth),
-                    seriesImageSource(.backdrop, maxWidth: maxWidth),
-                    imageSource(.primary, maxWidth: maxWidth),
+                    seriesImageSource(.thumb, maxWidth: maxWidth, quality: quality),
+                    seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality),
+                    imageSource(.primary, maxWidth: maxWidth, quality: quality),
                 ]
             } else {
-                [imageSource(.primary, maxWidth: maxWidth)]
+                [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
             }
         case .folder, .program, .video:
-            [imageSource(.primary, maxWidth: maxWidth)]
+            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
         default:
             [
-                imageSource(.thumb, maxWidth: maxWidth),
-                imageSource(.backdrop, maxWidth: maxWidth),
+                imageSource(.thumb, maxWidth: maxWidth, quality: quality),
+                imageSource(.backdrop, maxWidth: maxWidth, quality: quality),
             ]
         }
     }
 
-    func cinematicImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
+    func cinematicImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
         switch type {
         case .episode:
-            [seriesImageSource(.backdrop, maxWidth: maxWidth)]
+            [seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality)]
         default:
-            [imageSource(.backdrop, maxWidth: maxWidth)]
+            [imageSource(.backdrop, maxWidth: maxWidth, quality: quality)]
         }
     }
 
-    func squareImageSources(maxWidth: CGFloat?) -> [ImageSource] {
+    func squareImageSources(maxWidth: CGFloat?, quality: Int? = nil) -> [ImageSource] {
         switch type {
         case .audio, .musicAlbum:
-            [imageSource(.primary, maxWidth: maxWidth)]
+            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
         default:
             []
         }
