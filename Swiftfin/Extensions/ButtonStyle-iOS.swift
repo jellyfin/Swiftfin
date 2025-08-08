@@ -69,7 +69,7 @@ struct ActionButtonStyle: ButtonStyle {
             configuration.label
                 .font(.title3)
                 .fontWeight(.semibold)
-                .foregroundStyle(Color.primary)
+                .foregroundStyle(Color.white)
                 .symbolRenderingMode(.monochrome)
         }
     }
@@ -77,7 +77,7 @@ struct ActionButtonStyle: ButtonStyle {
     // MARK: - Button Tint
 
     private var buttonTint: AnyShapeStyle {
-        isSelected ? AnyShapeStyle(HierarchicalShapeStyle.primary) : AnyShapeStyle(Color.gray.opacity(0.5))
+        isSelected ? AnyShapeStyle(HierarchicalShapeStyle.primary) : AnyShapeStyle(Color.gray.opacity(0.33))
     }
 }
 
