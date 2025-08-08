@@ -13,54 +13,36 @@ struct DownloadListView: View {
     @ObservedObject
     var viewModel: DownloadListViewModel
 
+    private var emptyView: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "arrow.down.circle")
+                .font(.system(size: 72))
+                .foregroundColor(.secondary)
+
+            Text("No Downloads")
+                .font(.title2)
+                .fontWeight(.semibold)
+
+            Text("Download content to watch offline")
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+
+            /* TODO:
+             if !networkMonitor.isConnected {
+                 OfflineBanner(type: .offline, showDescription: true)
+             } else if isServerUnreachable {
+                 OfflineBanner(type: .serverUnreachable, showDescription: true)
+             }
+              */
+        }
+        .padding()
+    }
+
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            ForEach(viewModel.items) { item in
-                DownloadTaskRow(downloadTask: item)
-            }
+        NavigationView {
+            emptyView
         }
         .navigationTitle(L10n.downloads)
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
-extension DownloadListView {
-
-    struct DownloadTaskRow: View {
-
-        @EnvironmentObject
-        private var downloadManager: DownloadManager
-        @Router
-        private var router
-
-        let downloadTask: DownloadTask
-
-        var body: some View {
-            Button {
-                // router.route(to: .downloadTask(downloadTask: downloadTask))
-            } label: {
-                HStack(alignment: .bottom) {
-                    ImageView(downloadManager.getImageURL(for: downloadTask, name: "Primary"))
-                        .failure {
-                            Color.secondary
-                                .opacity(0.8)
-                        }
-//                        .posterStyle(type: .portrait, width: 60)
-                        .posterShadow()
-
-                    VStack(alignment: .leading) {
-                        Text(downloadTask.item.displayTitle)
-                            .foregroundColor(.primary)
-                            .fontWeight(.semibold)
-                            .lineLimit(2)
-                            .multilineTextAlignment(.leading)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .padding(.vertical)
-
-                    Spacer()
-                }
-            }
-        }
+        .navigationBarTitleDisplayMode(.large)
     }
 }
