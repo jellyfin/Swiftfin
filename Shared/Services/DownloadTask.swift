@@ -61,7 +61,7 @@ class DownloadTask: NSObject, ObservableObject {
     let allowAudioStreamCopy: Bool
     let deviceId: String?
     let deviceProfileId: String?
-    let quality: DownloadManager.DownloadQuality
+    let quality: DownloadQuality
 
     // Pause/Resume support
     var resumeData: Data?
@@ -94,7 +94,7 @@ class DownloadTask: NSObject, ObservableObject {
         mediaSourceId: String? = nil,
         versionId: String? = nil,
         container: String = "mp4",
-        quality: DownloadManager.DownloadQuality = .original,
+        quality: DownloadQuality = .original,
         isStatic: Bool = true,
         allowVideoStreamCopy: Bool = true,
         allowAudioStreamCopy: Bool = true,

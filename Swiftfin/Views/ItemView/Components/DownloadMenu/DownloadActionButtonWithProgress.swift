@@ -82,6 +82,10 @@ struct DownloadActionButtonWithProgress: View {
         }
         .buttonStyle(.plain)
         .disabled(viewModel.state == .completed || viewModel.state == .partiallyCompleted)
+        .onAppear {
+            // Refresh the download state when the view appears to ensure it's up to date
+            viewModel.refreshDownloadState()
+        }
     }
 
     // MARK: - Progress Icon

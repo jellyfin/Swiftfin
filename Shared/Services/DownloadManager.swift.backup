@@ -1,0 +1,1708 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+//
+
+import Factory
+import Files
+import Foundation
+import JellyfinAPI
+import Logging
+
+// MARK: - Download Metadata Structures
+
+/// Represents the metadata for a downloaded item, including version information
+struct DownloadMetadata: Codable {
+    let itemId: String
+    let itemType: String?
+    let displayTitle: String
+    // Full item payload merged into metadata.json; optional for backward compatibility
+    var item: BaseItemDto?
+    var versions: [VersionInfo]
+
+    init(itemId: String, itemType: String?, displayTitle: String, item: BaseItemDto? = nil, versions: [VersionInfo] = []) {
+        self.itemId = itemId
+        self.itemType = itemType
+        self.displayTitle = displayTitle
+        self.item = item
+        self.versions = versions
+    }
+}
+
+/// Information about a specific version of a downloaded item
+struct VersionInfo: Codable {
+    let versionId: String
+    let container: String
+    let isStatic: Bool
+    let mediaSourceId: String?
+    let downloadDate: String
+    let taskId: String
+
+    init(
+        versionId: String,
+        container: String,
+        isStatic: Bool,
+        mediaSourceId: String?,
+        downloadDate: String,
+        taskId: String
+    ) {
+        self.versionId = versionId
+        self.container = container
+        self.isStatic = isStatic
+        self.mediaSourceId = mediaSourceId
+        self.downloadDate = downloadDate
+        self.taskId = taskId
+    }
+}
+
+// MARK: - Factory Extension
+
+extension Container {
+    var downloadManager: Factory<DownloadManager> { self { DownloadManager() }.shared }
+}
+
+// MARK: - DownloadManager
+
+/// Manages media downloads from Jellyfin server with support for multiple quality levels,
+/// background downloads, and comprehensive metadata management
+final class DownloadManager: NSObject, ObservableObject {
+
+    // MARK: - Types
+
+    enum DownloadJobType: Hashable, Equatable {
+        case media
+        case backdropImage
+        case primaryImage
+        case metadata
+        case subtitle(index: Int)
+    }
+
+    enum DownloadQuality: Hashable, Equatable {
+        case original
+        case high // 1080p, ~4 Mbps
+        case medium // 720p, ~2 Mbps
+        case low // 480p, ~1 Mbps
+        case custom(TranscodingParameters)
+    }
+
+    struct TranscodingParameters: Hashable, Equatable {
+        let maxWidth: Int?
+        let maxHeight: Int?
+        let videoBitRate: Int?
+        let audioBitRate: Int?
+        let enableAutoStreamCopy: Bool
+
+        init(
+            maxWidth: Int? = nil,
+            maxHeight: Int? = nil,
+            videoBitRate: Int? = nil,
+            audioBitRate: Int? = nil,
+            enableAutoStreamCopy: Bool = true
+        ) {
+            self.maxWidth = maxWidth
+            self.maxHeight = maxHeight
+            self.videoBitRate = videoBitRate
+            self.audioBitRate = audioBitRate
+            self.enableAutoStreamCopy = enableAutoStreamCopy
+        }
+
+        static let highQuality = TranscodingParameters(
+            maxWidth: 1920,
+            maxHeight: 1080,
+            videoBitRate: 4_000_000,
+            audioBitRate: 128_000
+        )
+
+        static let mediumQuality = TranscodingParameters(
+            maxWidth: 1280,
+            maxHeight: 720,
+            videoBitRate: 2_000_000,
+            audioBitRate: 128_000
+        )
+
+        static let lowQuality = TranscodingParameters(
+            maxWidth: 854,
+            maxHeight: 480,
+            videoBitRate: 1_000_000,
+            audioBitRate: 96000
+        )
+    }
+
+    struct DownloadJob {
+        let type: DownloadJobType
+        let taskID: UUID
+        let url: URL
+        let destinationPath: String
+    }
+
+    private let logger = Logger.swiftfin()
+
+    @Published
+    private(set) var downloads: [DownloadTask] = []
+
+    // Background URLSession infrastructure
+    private var backgroundSession: URLSession!
+    private let sessionQueue = DispatchQueue(label: "downloadManager.session", qos: .utility)
+    private static let backgroundSessionIdentifier = "com.jellyfin.swiftfin.background-downloads"
+
+    // Mapping between URLSessionDownloadTask identifier and DownloadJob
+    private var activeJobs: [Int: DownloadJob] = [:]
+
+    // Track completion status for each DownloadTask
+    private var completedJobsByTask: [UUID: Set<DownloadJobType>] = [:]
+
+    // Internal errors for media validation
+    private enum MediaValidationError: Error, LocalizedError {
+        case invalidHTTPStatus(Int)
+        case unacceptableContentType(String?)
+        case suspiciouslySmallFile(Int64)
+
+        var errorDescription: String? {
+            switch self {
+            case let .invalidHTTPStatus(code):
+                return "Invalid HTTP status: \(code)"
+            case let .unacceptableContentType(type):
+                return "Unacceptable content type: \(type ?? "unknown")"
+            case let .suspiciouslySmallFile(size):
+                return "Downloaded media file is too small (\(size) bytes)"
+            }
+        }
+    }
+
+    override fileprivate init() {
+        super.init()
+        setupBackgroundSession()
+        createDownloadDirectory()
+        recoverActiveDownloads()
+    }
+
+    // MARK: - Private Setup Methods
+
+    private func recoverActiveDownloads() {
+        // Recover active downloads from background session
+        backgroundSession.getAllTasks { tasks in
+            for task in tasks {
+                if let downloadTask = task as? URLSessionDownloadTask {
+                    self.logger.trace("Found active background download task: \(downloadTask.taskIdentifier)")
+
+                    // TODO: We need to associate this with a DownloadTask
+                    // For now, just log that we found active tasks
+                    // In a full implementation, we would restore the DownloadTask from persistence
+                }
+            }
+        }
+    }
+
+    private func setupBackgroundSession() {
+        let config = URLSessionConfiguration.background(withIdentifier: Self.backgroundSessionIdentifier)
+        config.sessionSendsLaunchEvents = true
+        config.isDiscretionary = false
+        config.allowsCellularAccess = true
+
+        backgroundSession = URLSession(
+            configuration: config,
+            delegate: self,
+            delegateQueue: nil
+        )
+    }
+
+    private func createDownloadDirectory() {
+        do {
+            try FileManager.default.createDirectory(
+                at: URL.downloads,
+                withIntermediateDirectories: true,
+                attributes: [.protectionKey: FileProtectionType.complete]
+            )
+            logger.trace("Created downloads directory at: \(URL.downloads.path)")
+        } catch {
+            logger.error("Failed to create downloads directory: \(error.localizedDescription)")
+        }
+    }
+
+    // MARK: - Public Interface Methods
+
+    func clearTmp() {
+        do {
+            try Folder(path: URL.tmp.path).files.delete()
+            logger.trace("Cleared tmp directory")
+        } catch {
+            logger.error("Unable to clear tmp directory: \(error.localizedDescription)")
+        }
+    }
+
+    func download(task: DownloadTask) {
+        guard !downloads.contains(where: { $0.taskID == task.taskID }) else { return }
+
+        downloads.append(task)
+
+        task.download()
+    }
+
+    /// Starts downloading a media file from Jellyfin.
+    /// - Parameters:
+    ///   - itemId: The Jellyfin Item ID of the movie or episode to download.
+    ///   - quality: The download quality - original file or transcoded quality level.
+    ///   - mediaSourceId: Optional MediaSource ID to select a specific version or quality. If nil, defaults to the primary source.
+    ///   - container: Desired file container (e.g. "mp4", "mkv").
+    ///   - isStatic: Stream the original file without re-encoding (static=true). Ignored when using transcoded quality.
+    ///   - allowVideoStreamCopy: Permit direct copy of the video stream when possible.
+    ///   - allowAudioStreamCopy: Permit direct copy of the audio stream when possible.
+    ///   - deviceId: Optional client device ID for server-side session tracking.
+    ///   - deviceProfileId: Optional device profile ID for DLNA or encoding profiles.
+    /// - Returns: A UUID to identify and manage the download task.
+    func startDownload(
+        itemId: String,
+        quality: DownloadQuality = .original,
+        mediaSourceId: String? = nil,
+        container: String = "mp4",
+        isStatic: Bool = true,
+        allowVideoStreamCopy: Bool = true,
+        allowAudioStreamCopy: Bool = true,
+        deviceId: String? = nil,
+        deviceProfileId: String? = nil
+    ) -> UUID {
+        // Prevent duplicate concurrent downloads for the same item/version
+        if let existing = downloads.first(where: { task in
+            guard task.item.id == itemId && task.mediaSourceId == mediaSourceId else { return false }
+            switch task.state {
+            case .ready, .downloading, .paused:
+                return true
+            default:
+                return false
+            }
+        }) {
+            logger
+                .info(
+                    "Download already in progress for item: \(itemId), mediaSourceId: \(mediaSourceId ?? "nil"). Returning existing task ID."
+                )
+            return existing.taskID
+        }
+
+        let taskID = UUID()
+        logger.trace("Starting download for item: \(itemId) with task ID: \(taskID)")
+
+        // Start async task to fetch item and begin download
+        Task {
+            do {
+                // Check available disk space first
+                try checkAvailableDiskSpace()
+
+                // Fetch item details from Jellyfin API
+                guard let userSession = Container.shared.currentUserSession() else {
+                    logger.error("No user session available for download")
+                    return
+                }
+
+                let request = Paths.getItem(itemID: itemId, userID: userSession.user.id)
+                let response = try await userSession.client.send(request)
+                let item = response.value
+
+                // Create DownloadTask
+                let downloadTask = DownloadTask(
+                    item: item,
+                    taskID: taskID,
+                    mediaSourceId: mediaSourceId,
+                    versionId: mediaSourceId, // Keep for backward compatibility, but we use mediaSourceId for uniqueness
+                    container: container,
+                    quality: quality,
+                    isStatic: isStatic,
+                    allowVideoStreamCopy: allowVideoStreamCopy,
+                    allowAudioStreamCopy: allowAudioStreamCopy,
+                    deviceId: deviceId,
+                    deviceProfileId: deviceProfileId
+                )
+
+                // Construct download URL
+                guard let downloadURL = constructMediaURL(
+                    itemId: itemId,
+                    quality: quality,
+                    mediaSourceId: mediaSourceId,
+                    container: container,
+                    isStatic: isStatic,
+                    allowVideoStreamCopy: allowVideoStreamCopy,
+                    allowAudioStreamCopy: allowAudioStreamCopy,
+                    deviceId: deviceId,
+                    deviceProfileId: deviceProfileId
+                ) else {
+                    logger.error("Failed to construct download URL for item: \(itemId)")
+                    return
+                }
+
+                // Add to downloads array on main thread
+                await MainActor.run {
+                    downloads.append(downloadTask)
+                }
+
+                // Initialize completion tracking
+                completedJobsByTask[taskID] = Set<DownloadJobType>()
+
+                // Start all downloads (media, images, metadata)
+                try await startAllDownloads(for: downloadTask, with: downloadURL)
+
+                logger.trace("Started all downloads for item: \(itemId)")
+
+            } catch {
+                logger.error("Failed to start download for item: \(itemId) - \(error.localizedDescription)")
+
+                // Clean up on failure
+                await MainActor.run {
+                    if let index = self.downloads.firstIndex(where: { $0.taskID == taskID }) {
+                        self.downloads[index].state = .error(error)
+                    }
+                }
+            }
+        }
+
+        return taskID
+    }
+
+    private func startAllDownloads(for downloadTask: DownloadTask, with mediaURL: URL) async throws {
+        // Ensure the root download folder exists before any work
+        if let downloadFolder = downloadTask.item.downloadFolder {
+            try FileManager.default.createDirectory(at: downloadFolder, withIntermediateDirectories: true)
+        }
+
+        // Save metadata first so presence checks work early
+        try await startMetadataJob(for: downloadTask)
+
+        // Start media download
+        try await startSpecificDownload(for: downloadTask, jobType: .media, url: mediaURL)
+
+        // Start image downloads (non-blocking - failures won't prevent completion)
+        if let backdropURL = createImageDownloadURL(for: downloadTask.item, imageType: .backdropImage) {
+            do {
+                try await startSpecificDownload(for: downloadTask, jobType: .backdropImage, url: backdropURL)
+            } catch {
+                logger.warning("Failed to start backdrop image download: \(error.localizedDescription)")
+            }
+        }
+
+        if let primaryURL = createImageDownloadURL(for: downloadTask.item, imageType: .primaryImage) {
+            do {
+                try await startSpecificDownload(for: downloadTask, jobType: .primaryImage, url: primaryURL)
+            } catch {
+                logger.warning("Failed to start primary image download: \(error.localizedDescription)")
+            }
+        }
+
+        // Add a safety timeout to ensure downloads complete even if images hang
+        Task {
+            try? await Task.sleep(nanoseconds: 60_000_000_000) // 60 seconds
+
+            // Check if download is still pending and complete it if essential parts are done
+            if let taskIndex = downloads.firstIndex(where: { $0.taskID == downloadTask.taskID }),
+               case .downloading = downloads[taskIndex].state,
+               isTaskFullyCompleted(taskID: downloadTask.taskID)
+            {
+
+                await MainActor.run {
+                    self.downloads[taskIndex].state = .complete
+                }
+                logger.info("Download completed via timeout safety mechanism: \(downloadTask.item.displayTitle)")
+            }
+        }
+    }
+
+    private func startSpecificDownload(for downloadTask: DownloadTask, jobType: DownloadJobType, url: URL) async throws {
+        let urlRequest = URLRequest(url: url)
+        let urlDownloadTask = backgroundSession.downloadTask(with: urlRequest)
+
+        let downloadJob = DownloadJob(
+            type: jobType,
+            taskID: downloadTask.taskID,
+            url: url,
+            destinationPath: "" // Will be determined during file move
+        )
+
+        // Associate URLSessionDownloadTask with DownloadJob
+        activeJobs[urlDownloadTask.taskIdentifier] = downloadJob
+
+        urlDownloadTask.resume()
+
+        if case .media = jobType {
+            await MainActor.run {
+                downloadTask.state = .downloading(0.0)
+            }
+        }
+
+        logger.trace("Started \(jobType) download for: \(downloadTask.item.displayTitle)")
+    }
+
+    private func startMetadataJob(for downloadTask: DownloadTask) async throws {
+        // Create folders and save metadata files; only mark complete after success
+        try saveAllMetadata(for: downloadTask)
+        markJobCompleted(taskID: downloadTask.taskID, jobType: .metadata)
+    }
+
+    func pauseDownload(taskID: UUID) {
+        guard let task = downloads.first(where: { $0.taskID == taskID }) else { return }
+
+        // Find all corresponding URLSessionDownloadTasks for this DownloadTask
+        let relatedTasks = activeJobs.filter { $0.value.taskID == taskID }
+
+        for (urlTaskIdentifier, downloadJob) in relatedTasks {
+            backgroundSession.getAllTasks { tasks in
+                if let urlTask = tasks.first(where: { $0.taskIdentifier == urlTaskIdentifier }) as? URLSessionDownloadTask {
+                    urlTask.cancel { resumeData in
+                        DispatchQueue.main.async {
+                            // Store resume data for media downloads only
+                            if case .media = downloadJob.type {
+                                task.resumeData = resumeData
+                                task.state = .paused
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Remove from task mapping since task is cancelled
+            activeJobs.removeValue(forKey: urlTaskIdentifier)
+        }
+    }
+
+    func resumeDownload(taskID: UUID) {
+        guard let task = downloads.first(where: { $0.taskID == taskID }) else { return }
+
+        // For now, we'll only support resuming the media download
+        // Other downloads (images, metadata) will be restarted from the beginning
+        if let resumeData = task.resumeData {
+            // Resume media download
+            let urlDownloadTask = backgroundSession.downloadTask(withResumeData: resumeData)
+
+            let downloadJob = DownloadJob(
+                type: .media,
+                taskID: taskID,
+                url: URL(string: "")!, // URL not needed for resume
+                destinationPath: ""
+            )
+
+            activeJobs[urlDownloadTask.taskIdentifier] = downloadJob
+            urlDownloadTask.resume()
+
+            DispatchQueue.main.async {
+                task.state = .downloading(0.0)
+            }
+        } else {
+            // Restart all downloads from the beginning
+            Task {
+                do {
+                    let downloadURL = constructMediaURL(
+                        itemId: task.item.id!,
+                        quality: task.quality,
+                        mediaSourceId: task.mediaSourceId,
+                        container: task.container,
+                        isStatic: task.isStatic,
+                        allowVideoStreamCopy: task.allowVideoStreamCopy,
+                        allowAudioStreamCopy: task.allowAudioStreamCopy,
+                        deviceId: task.deviceId,
+                        deviceProfileId: task.deviceProfileId
+                    )
+
+                    guard let url = downloadURL else {
+                        logger.error("Failed to construct download URL for resume")
+                        return
+                    }
+
+                    try await startAllDownloads(for: task, with: url)
+                } catch {
+                    logger.error("Failed to resume download: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
+    func cancelDownload(taskID: UUID, removeFile: Bool = false) {
+        guard let task = downloads.first(where: { $0.taskID == taskID }) else {
+            logger.warning("Attempted to cancel non-existent download task: \(taskID)")
+            return
+        }
+
+        logger.info("Cancelling download for task: \(taskID)")
+
+        // Cancel all URLSession tasks for this DownloadTask on the session queue
+        sessionQueue.async {
+            let relatedTasks = self.activeJobs.filter { $0.value.taskID == taskID }
+
+            for (urlTaskIdentifier, _) in relatedTasks {
+                self.backgroundSession.getAllTasks { tasks in
+                    if let urlTask = tasks.first(where: { $0.taskIdentifier == urlTaskIdentifier }) {
+                        urlTask.cancel()
+                        self.logger.trace("Cancelled URLSession task: \(urlTaskIdentifier)")
+                    }
+                }
+
+                // Remove from task mapping
+                self.activeJobs.removeValue(forKey: urlTaskIdentifier)
+            }
+        }
+
+        // Clean up completion tracking
+        completedJobsByTask.removeValue(forKey: taskID)
+
+        if removeFile {
+            task.deleteRootFolder()
+        }
+
+        cancel(task: task)
+    }
+
+    func downloadStatus(taskID: UUID) -> DownloadTask.State? {
+        downloads.first(where: { $0.taskID == taskID })?.state
+    }
+
+    func allDownloads() -> [DownloadTask] {
+        downloads
+    }
+
+    /// Deletes all downloaded media files and folders from the device.
+    /// This will permanently remove all downloaded content.
+    func deleteAllDownloadedMedia() {
+        logger.info("Deleting all downloaded media")
+
+        // Cancel any active downloads first
+        let activeTasks = downloads.map(\.taskID)
+        for taskID in activeTasks {
+            cancelDownload(taskID: taskID, removeFile: true)
+        }
+
+        // Clear the downloads folder entirely
+        do {
+            let downloadFolders = try FileManager.default.contentsOfDirectory(atPath: URL.downloads.path)
+
+            for folderName in downloadFolders {
+                let folderPath = URL.downloads.appendingPathComponent(folderName)
+                try FileManager.default.removeItem(at: folderPath)
+                logger.trace("Deleted download folder: \(folderName)")
+            }
+
+            logger.info("Successfully deleted all downloaded media")
+        } catch {
+            logger.error("Failed to delete all downloads: \(error.localizedDescription)")
+        }
+
+        // Clear in-memory state
+        reset()
+    }
+
+    /// Deletes downloaded media for a specific item by its ID.
+    /// - Parameter itemId: The Jellyfin item ID to delete
+    /// - Returns: True if the item was found and deleted, false otherwise
+    @discardableResult
+    func deleteDownloadedMedia(itemId: String) -> Bool {
+        logger.info("Deleting downloaded media for item: \(itemId)")
+
+        // First check if there's an active download for this item
+        if let activeTask = downloads.first(where: { $0.item.id == itemId }) {
+            cancelDownload(taskID: activeTask.taskID, removeFile: true)
+            return true
+        }
+
+        // Check if there's a completed download
+        let downloadPath = URL.downloads.appendingPathComponent(itemId)
+
+        guard FileManager.default.fileExists(atPath: downloadPath.path) else {
+            logger.warning("No downloaded media found for item: \(itemId)")
+            return false
+        }
+
+        do {
+            try FileManager.default.removeItem(at: downloadPath)
+            logger.info("Successfully deleted downloaded media for item: \(itemId)")
+            return true
+        } catch {
+            logger.error("Failed to delete downloaded media for item \(itemId): \(error.localizedDescription)")
+            return false
+        }
+    }
+
+    /// Deletes downloaded media for multiple items.
+    /// - Parameter itemIds: Array of Jellyfin item IDs to delete
+    /// - Returns: Array of item IDs that were successfully deleted
+    func deleteDownloadedMedia(itemIds: [String]) -> [String] {
+        logger.info("Deleting downloaded media for \(itemIds.count) items")
+
+        var successfulDeletions: [String] = []
+
+        for itemId in itemIds {
+            if deleteDownloadedMedia(itemId: itemId) {
+                successfulDeletions.append(itemId)
+            }
+        }
+
+        logger.info("Successfully deleted \(successfulDeletions.count) out of \(itemIds.count) items")
+        return successfulDeletions
+    }
+
+    /// Gets the total storage size used by all downloaded media.
+    /// - Returns: Size in bytes, or nil if unable to calculate
+    func getTotalDownloadSize() -> Int64? {
+        do {
+            let downloadContents = try FileManager.default.contentsOfDirectory(atPath: URL.downloads.path)
+            var totalSize: Int64 = 0
+
+            for itemFolder in downloadContents {
+                let itemPath = URL.downloads.appendingPathComponent(itemFolder)
+                let folderSize = try getFolderSize(at: itemPath)
+                totalSize += folderSize
+            }
+
+            return totalSize
+        } catch {
+            logger.error("Failed to calculate total download size: \(error.localizedDescription)")
+            return nil
+        }
+    }
+
+    /// Gets the storage size for a specific downloaded item.
+    /// - Parameter itemId: The Jellyfin item ID
+    /// - Returns: Size in bytes, or nil if item not found or error occurred
+    func getDownloadSize(itemId: String) -> Int64? {
+        let itemPath = URL.downloads.appendingPathComponent(itemId)
+
+        guard FileManager.default.fileExists(atPath: itemPath.path) else {
+            return nil
+        }
+
+        do {
+            return try getFolderSize(at: itemPath)
+        } catch {
+            logger.error("Failed to calculate download size for item \(itemId): \(error.localizedDescription)")
+            return nil
+        }
+    }
+
+    /// Helper method to calculate folder size recursively.
+    private func getFolderSize(at url: URL) throws -> Int64 {
+        let resourceKeys: [URLResourceKey] = [.isRegularFileKey, .fileAllocatedSizeKey]
+        let directoryEnumerator = FileManager.default.enumerator(
+            at: url,
+            includingPropertiesForKeys: resourceKeys,
+            options: [.skipsHiddenFiles]
+        )
+
+        var totalSize: Int64 = 0
+
+        if let enumerator = directoryEnumerator as? FileManager.DirectoryEnumerator {
+            for case let fileURL as URL in enumerator {
+                let resourceValues = try fileURL.resourceValues(forKeys: Set(resourceKeys))
+                if resourceValues.isRegularFile == true {
+                    totalSize += Int64(resourceValues.fileAllocatedSize ?? 0)
+                }
+            }
+        }
+
+        return totalSize
+    }
+
+    /// Checks if a specific item is downloaded.
+    /// - Parameter itemId: The Jellyfin item ID to check
+    /// - Returns: True if the item is downloaded, false otherwise
+    func isItemDownloaded(itemId: String) -> Bool {
+        let downloadPath = URL.downloads.appendingPathComponent(itemId)
+        var isDirectory: ObjCBool = false
+
+        let exists = FileManager.default.fileExists(atPath: downloadPath.path, isDirectory: &isDirectory)
+        return exists && isDirectory.boolValue
+    }
+
+    /// Checks if a specific item version is downloaded locally.
+    /// - Parameters:
+    ///   - itemId: The Jellyfin item ID to check
+    ///   - mediaSourceId: The specific media source ID to check for. If nil, will check for default version
+    /// - Returns: True if the specific version is downloaded, false otherwise
+    func isItemVersionDownloaded(itemId: String, mediaSourceId: String?) -> Bool {
+        logger.debug("Checking if item version is downloaded - itemId: \(itemId), mediaSourceId: \(mediaSourceId ?? "nil")")
+
+        guard isItemDownloaded(itemId: itemId) else {
+            logger.debug("Item directory not found for itemId: \(itemId)")
+            return false
+        }
+
+        let downloadedVersions = getDownloadedVersions(for: itemId)
+        logger.debug("Found \(downloadedVersions.count) downloaded versions for itemId: \(itemId)")
+
+        // Normalize the mediaSourceId - nil should be treated as itemId
+        let targetMediaSourceId = mediaSourceId ?? itemId
+        logger.debug("Target mediaSourceId (normalized): \(targetMediaSourceId)")
+
+        let hasMetadataVersion = downloadedVersions.contains { version in
+            let versionMediaSourceId = version.mediaSourceId ?? itemId
+            logger.debug("Comparing target '\(targetMediaSourceId)' with version '\(versionMediaSourceId)'")
+            return versionMediaSourceId == targetMediaSourceId
+        }
+
+        // Also ensure the media file for this version exists on disk
+        let hasMedia = hasMediaFile(for: itemId, mediaSourceId: mediaSourceId)
+
+        let isDownloaded = hasMetadataVersion && hasMedia
+        logger.debug("Item version downloaded result: \(isDownloaded)")
+        return isDownloaded
+    }
+
+    private func hasMediaFile(for itemId: String, mediaSourceId: String?) -> Bool {
+        let root = URL.downloads.appendingPathComponent(itemId)
+        var isDir: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: root.path, isDirectory: &isDir), isDir.boolValue else { return false }
+
+        let normalized = mediaSourceId ?? itemId
+
+        // Search recursively up to depth 2 for a media file matching item/version
+        guard let enumerator = FileManager.default.enumerator(
+            at: root,
+            includingPropertiesForKeys: [.isRegularFileKey],
+            options: [.skipsHiddenFiles]
+        ) else { return false }
+        for case let url as URL in enumerator {
+            do {
+                let values = try url.resourceValues(forKeys: [.isRegularFileKey])
+                guard values.isRegularFile == true else { continue }
+                let name = url.lastPathComponent
+
+                // Accept either the new naming scheme or legacy "Media.*"
+                if name.hasPrefix("Media.") { return true }
+
+                // New naming for movies: itemId[-versionId].ext
+                if name.contains(itemId) {
+                    if mediaSourceId == nil {
+                        return true
+                    } else if name.contains("-\(normalized)") {
+                        return true
+                    }
+                }
+            } catch {
+                continue
+            }
+        }
+        return false
+    }
+
+    /// Gets a list of all downloaded item IDs.
+    /// - Returns: Array of item IDs that have been downloaded
+    func getDownloadedItemIds() -> [String] {
+        do {
+            let downloadsURL = URL.downloads
+
+            // Use enumerator for better performance with large numbers of downloads
+            guard let enumerator = FileManager.default.enumerator(
+                at: downloadsURL,
+                includingPropertiesForKeys: [.isDirectoryKey, .nameKey],
+                options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles]
+            ) else {
+                logger.warning("Unable to enumerate downloads directory")
+                return []
+            }
+
+            var itemIds: [String] = []
+
+            for case let url as URL in enumerator {
+                do {
+                    let resourceValues = try url.resourceValues(forKeys: [.isDirectoryKey, .nameKey])
+
+                    // Only process directories (downloaded items)
+                    guard resourceValues.isDirectory == true,
+                          let name = resourceValues.name else { continue }
+
+                    // Verify it's a valid download by checking for metadata.json
+                    let metadataPath = url.appendingPathComponent("metadata.json")
+                    if FileManager.default.fileExists(atPath: metadataPath.path) {
+                        itemIds.append(name)
+                    }
+                } catch {
+                    logger.trace("Error reading directory entry \(url.lastPathComponent): \(error.localizedDescription)")
+                }
+            }
+
+            return itemIds.sorted() // Return sorted for consistent ordering
+        } catch {
+            logger.error("Error reading downloads directory: \(error.localizedDescription)")
+            return []
+        }
+    }
+
+    // MARK: - Completion Tracking
+
+    private func markJobCompleted(taskID: UUID, jobType: DownloadJobType) {
+        var completed = completedJobsByTask[taskID] ?? Set<DownloadJobType>()
+        completed.insert(jobType)
+        completedJobsByTask[taskID] = completed
+    }
+
+    private func isTaskFullyCompleted(taskID: UUID) -> Bool {
+        guard let completed = completedJobsByTask[taskID] else { return false }
+
+        // Only require essential downloads - media and metadata
+        // Images are optional and shouldn't block completion
+        let requiredJobs: Set<DownloadJobType> = [.media, .metadata]
+
+        return requiredJobs.isSubset(of: completed)
+    }
+
+    /// Checks available disk space and throws if insufficient for downloads
+    /// - Throws: DownloadTask.DownloadError.notEnoughStorage if less than minimum required space
+    private func checkAvailableDiskSpace() throws {
+        let fileURL = URL.downloads
+        let values = try fileURL.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
+
+        guard let capacity = values.volumeAvailableCapacityForImportantUsage else {
+            logger.warning("Unable to determine available disk capacity")
+            throw DownloadTask.DownloadError.notEnoughStorage
+        }
+
+        // Require at least 100MB free space
+        let minimumFreeSpace: Int64 = 100 * 1024 * 1024
+
+        if capacity < minimumFreeSpace {
+            logger.error("Insufficient disk space: \(capacity) bytes available, \(minimumFreeSpace) bytes required")
+            throw DownloadTask.DownloadError.notEnoughStorage
+        }
+
+        logger.trace("Disk space check passed: \(capacity) bytes available")
+    }
+
+    // MARK: - URL Construction Methods
+
+    private func constructMediaURL(
+        itemId: String,
+        quality: DownloadQuality,
+        mediaSourceId: String?,
+        container: String,
+        isStatic: Bool,
+        allowVideoStreamCopy: Bool,
+        allowAudioStreamCopy: Bool,
+        deviceId: String?,
+        deviceProfileId: String?
+    ) -> URL? {
+        switch quality {
+        case .original:
+            return constructDownloadURL(
+                itemId: itemId,
+                mediaSourceId: mediaSourceId,
+                container: container,
+                isStatic: isStatic,
+                allowVideoStreamCopy: allowVideoStreamCopy,
+                allowAudioStreamCopy: allowAudioStreamCopy,
+                deviceId: deviceId,
+                deviceProfileId: deviceProfileId
+            )
+        case .high:
+            return constructTranscodingDownloadURL(
+                itemId: itemId,
+                transcodingParams: .highQuality,
+                mediaSourceId: mediaSourceId,
+                container: container,
+                allowVideoStreamCopy: allowVideoStreamCopy,
+                allowAudioStreamCopy: allowAudioStreamCopy,
+                deviceId: deviceId,
+                deviceProfileId: deviceProfileId
+            )
+        case .medium:
+            return constructTranscodingDownloadURL(
+                itemId: itemId,
+                transcodingParams: .mediumQuality,
+                mediaSourceId: mediaSourceId,
+                container: container,
+                allowVideoStreamCopy: allowVideoStreamCopy,
+                allowAudioStreamCopy: allowAudioStreamCopy,
+                deviceId: deviceId,
+                deviceProfileId: deviceProfileId
+            )
+        case .low:
+            return constructTranscodingDownloadURL(
+                itemId: itemId,
+                transcodingParams: .lowQuality,
+                mediaSourceId: mediaSourceId,
+                container: container,
+                allowVideoStreamCopy: allowVideoStreamCopy,
+                allowAudioStreamCopy: allowAudioStreamCopy,
+                deviceId: deviceId,
+                deviceProfileId: deviceProfileId
+            )
+        case let .custom(params):
+            return constructTranscodingDownloadURL(
+                itemId: itemId,
+                transcodingParams: params,
+                mediaSourceId: mediaSourceId,
+                container: container,
+                allowVideoStreamCopy: allowVideoStreamCopy,
+                allowAudioStreamCopy: allowAudioStreamCopy,
+                deviceId: deviceId,
+                deviceProfileId: deviceProfileId
+            )
+        }
+    }
+
+    private func constructDownloadURL(
+        itemId: String,
+        mediaSourceId: String?,
+        container: String,
+        isStatic: Bool,
+        allowVideoStreamCopy: Bool,
+        allowAudioStreamCopy: Bool,
+        deviceId: String?,
+        deviceProfileId: String?
+    ) -> URL? {
+        // Input validation
+        guard !itemId.isEmpty, !container.isEmpty else {
+            logger.error("Invalid parameters: itemId and container cannot be empty")
+            return nil
+        }
+
+        guard let userSession = Container.shared.currentUserSession() else {
+            logger.error("No user session available for download URL construction")
+            return nil
+        }
+
+        // Construct the download request with enhanced parameters
+        var queryItems: [URLQueryItem] = []
+
+        if let mediaSourceId = mediaSourceId {
+            queryItems.append(URLQueryItem(name: "MediaSourceId", value: mediaSourceId))
+        }
+
+        queryItems.append(URLQueryItem(name: "Container", value: container))
+        queryItems.append(URLQueryItem(name: "Static", value: isStatic.description))
+        queryItems.append(URLQueryItem(name: "AllowVideoStreamCopy", value: allowVideoStreamCopy.description))
+        queryItems.append(URLQueryItem(name: "AllowAudioStreamCopy", value: allowAudioStreamCopy.description))
+
+        if let deviceId = deviceId {
+            queryItems.append(URLQueryItem(name: "DeviceId", value: deviceId))
+        }
+
+        if let deviceProfileId = deviceProfileId {
+            queryItems.append(URLQueryItem(name: "DeviceProfileId", value: deviceProfileId))
+        }
+
+        // Build the URL path
+        let path = "/Items/\(itemId)/Download"
+
+        guard let baseURL = userSession.client.fullURL(with: path) else { return nil }
+        guard var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false) else { return nil }
+
+        components.queryItems = queryItems
+
+        // Add API key to query if needed
+        if let accessToken = userSession.client.accessToken {
+            components.queryItems?.append(URLQueryItem(name: "api_key", value: accessToken))
+        }
+
+        return components.url
+    }
+
+    /// Constructs a download URL with server-side transcoding parameters for direct file download.
+    private func constructTranscodingDownloadURL(
+        itemId: String,
+        transcodingParams: TranscodingParameters,
+        mediaSourceId: String?,
+        container: String,
+        allowVideoStreamCopy: Bool,
+        allowAudioStreamCopy: Bool,
+        deviceId: String?,
+        deviceProfileId: String?
+    ) -> URL? {
+        guard let userSession = Container.shared.currentUserSession() else { return nil }
+        let path = "/Items/\(itemId)/Download"
+        guard let baseURL = userSession.client.fullURL(with: path),
+              var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
+        else { return nil }
+        var queryItems: [URLQueryItem] = []
+        // Force transcoding
+        queryItems.append(URLQueryItem(name: "Static", value: "false"))
+        if let source = mediaSourceId {
+            queryItems.append(URLQueryItem(name: "MediaSourceId", value: source))
+        }
+        queryItems.append(URLQueryItem(name: "Container", value: container))
+        queryItems.append(URLQueryItem(name: "AllowVideoStreamCopy", value: allowVideoStreamCopy.description))
+        queryItems.append(URLQueryItem(name: "AllowAudioStreamCopy", value: allowAudioStreamCopy.description))
+        if let maxWidth = transcodingParams.maxWidth {
+            queryItems.append(URLQueryItem(name: "maxWidth", value: String(maxWidth)))
+        }
+        if let maxHeight = transcodingParams.maxHeight {
+            queryItems.append(URLQueryItem(name: "maxHeight", value: String(maxHeight)))
+        }
+        if let vbr = transcodingParams.videoBitRate {
+            queryItems.append(URLQueryItem(name: "videoBitRate", value: String(vbr)))
+        }
+        if let abr = transcodingParams.audioBitRate {
+            queryItems.append(URLQueryItem(name: "audioBitRate", value: String(abr)))
+        }
+        queryItems.append(URLQueryItem(name: "enableAutoStreamCopy", value: transcodingParams.enableAutoStreamCopy.description))
+        if let deviceId = deviceId {
+            queryItems.append(URLQueryItem(name: "DeviceId", value: deviceId))
+        }
+        if let deviceProfileId = deviceProfileId {
+            queryItems.append(URLQueryItem(name: "DeviceProfileId", value: deviceProfileId))
+        }
+        components.queryItems = queryItems
+        if let token = userSession.client.accessToken {
+            components.queryItems?.append(URLQueryItem(name: "api_key", value: token))
+        }
+        return components.url
+    }
+
+    private func createImageDownloadURL(for item: BaseItemDto, imageType: DownloadJobType) -> URL? {
+        let imageURL: URL?
+
+        switch imageType {
+        case .backdropImage:
+            switch item.type {
+            case .movie, .series:
+                imageURL = item.imageSource(.backdrop, maxWidth: 600).url
+            case .episode:
+                imageURL = item.imageSource(.primary, maxWidth: 600).url
+            default:
+                return nil
+            }
+        case .primaryImage:
+            switch item.type {
+            case .movie, .series:
+                imageURL = item.imageSource(.primary, maxWidth: 300).url
+            default:
+                return nil
+            }
+        default:
+            return nil
+        }
+
+        return imageURL
+    }
+
+    func task(for item: BaseItemDto) -> DownloadTask? {
+        // For backward compatibility, return any task for this item
+        // In the future, this could be enhanced to take mediaSourceId parameter
+        if let currentlyDownloading = downloads.first(where: { $0.item.id == item.id }) {
+            return currentlyDownloading
+        } else {
+            var isDir: ObjCBool = true
+            guard let downloadFolder = item.downloadFolder else { return nil }
+            guard FileManager.default.fileExists(atPath: downloadFolder.path, isDirectory: &isDir) else { return nil }
+
+            return parseDownloadItem(with: item.id!)
+        }
+    }
+
+    func cancel(task: DownloadTask) {
+        guard downloads.contains(where: { $0.taskID == task.taskID }) else { return }
+
+        task.cancel()
+
+        remove(task: task)
+    }
+
+    func remove(task: DownloadTask) {
+        downloads.removeAll(where: { $0.taskID == task.taskID })
+    }
+
+    func reset() {
+        downloads.removeAll()
+    }
+
+    func downloadedItems() -> [DownloadTask] {
+        do {
+            let downloadContents = try FileManager.default.contentsOfDirectory(atPath: URL.downloads.path)
+            return downloadContents.compactMap(parseDownloadItem(with:))
+        } catch {
+            logger.error("Error retrieving all downloads: \(error.localizedDescription)")
+
+            return []
+        }
+    }
+
+    private func parseDownloadItem(with id: String) -> DownloadTask? {
+        let root = URL.downloads.appendingPathComponent(id)
+        let mergedMetadataFile = root.appendingPathComponent("metadata.json")
+
+        let jsonDecoder = JSONDecoder()
+
+        // Prefer merged metadata.json with embedded item
+        if let data = FileManager.default.contents(atPath: mergedMetadataFile.path),
+           let meta = try? jsonDecoder.decode(DownloadMetadata.self, from: data),
+           let offlineItem = meta.item
+        {
+            let task = DownloadTask(item: offlineItem)
+            task.state = .complete
+            return task
+        }
+
+        // Backward-compatibility: try old Metadata/Item.json
+        let legacyItemFile = root.appendingPathComponent("Metadata").appendingPathComponent("Item.json")
+        if let itemData = FileManager.default.contents(atPath: legacyItemFile.path),
+           let offlineItem = try? jsonDecoder.decode(BaseItemDto.self, from: itemData)
+        {
+            let task = DownloadTask(item: offlineItem)
+            task.state = .complete
+            return task
+        }
+
+        return nil
+    }
+}
+
+// MARK: - URLSessionDownloadDelegate
+
+extension DownloadManager: URLSessionDownloadDelegate {
+
+    // MARK: Download Completion
+
+    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+        logger.trace("Download completed: \(downloadTask.taskIdentifier)")
+
+        guard let downloadJob = activeJobs[downloadTask.taskIdentifier],
+              let downloadTaskIndex = downloads.firstIndex(where: { $0.taskID == downloadJob.taskID })
+        else {
+            logger.error("Could not find corresponding DownloadTask for URLSessionDownloadTask: \(downloadTask.taskIdentifier)")
+            return
+        }
+
+        let swiftfinDownloadTask = downloads[downloadTaskIndex]
+
+        // Move file to final destination
+        do {
+            try moveDownloadedFile(from: location, for: swiftfinDownloadTask, with: downloadTask.response, jobType: downloadJob.type)
+
+            // Track completion
+            markJobCompleted(taskID: downloadJob.taskID, jobType: downloadJob.type)
+
+            // Check completion status - complete when essential downloads (media + metadata) are done
+            if isTaskFullyCompleted(taskID: downloadJob.taskID) {
+                DispatchQueue.main.async {
+                    self.downloads[downloadTaskIndex].state = .complete
+                }
+                logger.trace("Essential downloads completed for: \(swiftfinDownloadTask.item.displayTitle)")
+            }
+
+        } catch {
+            logger.error("Failed to move downloaded file: \(error.localizedDescription)")
+
+            DispatchQueue.main.async {
+                self.downloads[downloadTaskIndex].state = .error(error)
+            }
+        }
+
+        // Clean up active job
+        activeJobs.removeValue(forKey: downloadTask.taskIdentifier)
+    }
+
+    // MARK: Progress Tracking
+
+    func urlSession(
+        _ session: URLSession,
+        downloadTask: URLSessionDownloadTask,
+        didWriteData bytesWritten: Int64,
+        totalBytesWritten: Int64,
+        totalBytesExpectedToWrite: Int64
+    ) {
+        // Guard against unknown content length which can be -1
+        guard totalBytesExpectedToWrite > 0 else { return }
+        let progress = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite)
+
+        guard let downloadJob = activeJobs[downloadTask.taskIdentifier],
+              let downloadTaskIndex = downloads.firstIndex(where: { $0.taskID == downloadJob.taskID })
+        else {
+            return
+        }
+
+        // Only update progress for media downloads to avoid confusing UI
+        if case .media = downloadJob.type {
+            DispatchQueue.main.async {
+                self.downloads[downloadTaskIndex].state = .downloading(progress)
+            }
+        }
+
+        logger.trace("Download progress: \(progress) for task: \(downloadTask.taskIdentifier)")
+    }
+
+    // MARK: Error Handling
+
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        guard let error = error else { return }
+
+        logger.error("Download task completed with error: \(error.localizedDescription)")
+
+        if let downloadTask = task as? URLSessionDownloadTask,
+           let downloadJob = activeJobs[downloadTask.taskIdentifier],
+           let downloadTaskIndex = downloads.firstIndex(where: { $0.taskID == downloadJob.taskID })
+        {
+
+            let swiftfinDownloadTask = downloads[downloadTaskIndex]
+
+            // Check if we should retry
+            if swiftfinDownloadTask.shouldRetry(for: error) {
+                logger
+                    .info(
+                        "Retrying download for: \(swiftfinDownloadTask.item.displayTitle) (attempt \(swiftfinDownloadTask.retryCount + 1))"
+                    )
+
+                swiftfinDownloadTask.incrementRetryCount()
+
+                // Exponential backoff: 2^retryCount seconds
+                let delay = pow(2.0, Double(swiftfinDownloadTask.retryCount))
+
+                DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
+                    self.retrySpecificDownload(for: swiftfinDownloadTask, jobType: downloadJob.type)
+                }
+
+                // Clean up current active job
+                activeJobs.removeValue(forKey: downloadTask.taskIdentifier)
+
+            } else {
+                // Handle failed downloads based on type
+                switch downloadJob.type {
+                case .media:
+                    // Media download failure is critical - mark as error
+                    DispatchQueue.main.async {
+                        self.downloads[downloadTaskIndex].state = .error(error)
+                    }
+                case .backdropImage, .primaryImage:
+                    // Image download failures are not critical - check if we can complete without them
+                    logger
+                        .warning(
+                            "Image download failed for \(downloadJob.type), checking if task can complete without it: \(error.localizedDescription)"
+                        )
+
+                    // Check if essential downloads are complete (media + metadata)
+                    if isTaskFullyCompleted(taskID: downloadJob.taskID) {
+                        DispatchQueue.main.async {
+                            self.downloads[downloadTaskIndex].state = .complete
+                        }
+                        logger.trace("Task completed despite image download failure: \(swiftfinDownloadTask.item.displayTitle)")
+                    }
+                case .metadata:
+                    // Metadata failure is critical - mark as error
+                    DispatchQueue.main.async {
+                        self.downloads[downloadTaskIndex].state = .error(error)
+                    }
+                case .subtitle:
+                    // Subtitle failures are not critical
+                    logger.warning("Subtitle download failed: \(error.localizedDescription)")
+
+                    if isTaskFullyCompleted(taskID: downloadJob.taskID) {
+                        DispatchQueue.main.async {
+                            self.downloads[downloadTaskIndex].state = .complete
+                        }
+                    }
+                }
+
+                // Clean up active job
+                activeJobs.removeValue(forKey: downloadTask.taskIdentifier)
+            }
+        }
+    }
+
+    // MARK: Background Session Events
+
+    func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
+        logger.trace("Background URLSession did finish events")
+
+        DispatchQueue.main.async {
+            // TODO: Call completion handler for background app refresh
+        }
+    }
+
+    // MARK: - File Management Helper Methods
+
+    private func moveDownloadedFile(
+        from tempLocation: URL,
+        for downloadTask: DownloadTask,
+        with response: URLResponse?,
+        jobType: DownloadJobType
+    ) throws {
+        guard let downloadFolder = downloadTask.item.downloadFolder else {
+            throw DownloadTask.DownloadError.notEnoughStorage
+        }
+
+        try FileManager.default.createDirectory(at: downloadFolder, withIntermediateDirectories: true)
+
+        var finalDestination: URL
+
+        switch jobType {
+        case .media:
+            // Validate media response before moving
+            try validateMediaDownload(tempLocation: tempLocation, response: response)
+            finalDestination = try createMediaFileDestination(
+                downloadTask: downloadTask,
+                response: response,
+                downloadFolder: downloadFolder
+            )
+
+        case .backdropImage, .primaryImage:
+            finalDestination = try createImageFileDestination(
+                downloadTask: downloadTask,
+                response: response,
+                downloadFolder: downloadFolder,
+                jobType: jobType
+            )
+
+        case .metadata:
+            // Metadata is handled separately, not moved from temp location
+            return
+
+        case .subtitle:
+            // TODO: Implement subtitle file destination creation
+            throw DownloadTask.DownloadError.notEnoughStorage
+        }
+
+        // If a file already exists at destination, replace it atomically
+        if FileManager.default.fileExists(atPath: finalDestination.path) {
+            let backupURL = finalDestination.appendingPathExtension("backup")
+
+            // Move existing file to backup location first
+            try FileManager.default.moveItem(at: finalDestination, to: backupURL)
+
+            do {
+                // Move new file to final destination
+                try FileManager.default.moveItem(at: tempLocation, to: finalDestination)
+
+                // Remove backup if successful
+                try? FileManager.default.removeItem(at: backupURL)
+            } catch {
+                // Restore backup if move failed
+                try? FileManager.default.moveItem(at: backupURL, to: finalDestination)
+                throw error
+            }
+        } else {
+            // Move file directly if no existing file
+            try FileManager.default.moveItem(at: tempLocation, to: finalDestination)
+        }
+
+        // Set file protection, exclude from backup, and apply security attributes
+        var resourceValues = URLResourceValues()
+        resourceValues.isExcludedFromBackup = true
+
+        // Add file protection for sensitive media content
+        do {
+            try finalDestination.setResourceValues(resourceValues)
+            try (finalDestination as NSURL).setResourceValue(
+                FileProtectionType.completeUntilFirstUserAuthentication,
+                forKey: .fileProtectionKey
+            )
+        } catch {
+            logger.warning("Failed to set file protection attributes: \(error.localizedDescription)")
+        }
+
+        logger.trace("Moved \(jobType) file to: \(finalDestination.path)")
+    }
+
+    /// Validates a downloaded media file for security and integrity
+    /// - Parameters:
+    ///   - tempLocation: Temporary location of the downloaded file
+    ///   - response: HTTP response from the download
+    /// - Throws: MediaValidationError if validation fails
+    private func validateMediaDownload(tempLocation: URL, response: URLResponse?) throws {
+        // Validate HTTP status code
+        if let httpResponse = response as? HTTPURLResponse {
+            guard (200 ... 299).contains(httpResponse.statusCode) else {
+                logger.error("Invalid HTTP status \(httpResponse.statusCode) for media download")
+                throw MediaValidationError.invalidHTTPStatus(httpResponse.statusCode)
+            }
+        }
+
+        // Basic file size validation - ensure it's not suspiciously small (likely an error page)
+        do {
+            let fileAttributes = try FileManager.default.attributesOfItem(atPath: tempLocation.path)
+            if let fileSize = fileAttributes[.size] as? Int64, fileSize < 1024 {
+                logger.error("Downloaded file is suspiciously small: \(fileSize) bytes")
+                throw MediaValidationError.suspiciouslySmallFile(fileSize)
+            }
+        } catch {
+            logger.warning("Unable to validate file size: \(error.localizedDescription)")
+        }
+    }
+
+    private func createMediaFileDestination(downloadTask: DownloadTask, response: URLResponse?, downloadFolder: URL) throws -> URL {
+        // Determine file extension from response
+        let fileExtension: String
+        if let httpResponse = response as? HTTPURLResponse,
+           let contentType = httpResponse.mimeType
+        {
+            fileExtension = contentType.contains("mp4") ? ".mp4" :
+                contentType.contains("mkv") ? ".mkv" :
+                ".\(downloadTask.container)"
+        } else {
+            fileExtension = ".\(downloadTask.container)"
+        }
+
+        // Create versioned filename based on file structure specification
+        if downloadTask.item.type == .episode,
+           let season = downloadTask.season,
+           let episodeId = downloadTask.episodeID
+        {
+            // For episodes: Downloads/[itemId]/Season-[season]/[episodeId]-[versionId].ext
+            let seasonFolder = downloadFolder.appendingPathComponent("Season-\(season)")
+            try FileManager.default.createDirectory(at: seasonFolder, withIntermediateDirectories: true)
+
+            let versionSuffix = downloadTask.versionId.map { "-\($0)" } ?? ""
+            let filename = "\(episodeId)\(versionSuffix)\(fileExtension)"
+            return seasonFolder.appendingPathComponent(filename)
+        } else {
+            // For movies: Downloads/[itemId]/[itemId]-[versionId].ext
+            let versionSuffix = downloadTask.versionId.map { "-\($0)" } ?? ""
+            let filename = "\(downloadTask.item.id!)\(versionSuffix)\(fileExtension)"
+            return downloadFolder.appendingPathComponent(filename)
+        }
+    }
+
+    private func createImageFileDestination(
+        downloadTask: DownloadTask,
+        response: URLResponse?,
+        downloadFolder: URL,
+        jobType: DownloadJobType
+    ) throws -> URL {
+        let imagesFolder = downloadFolder.appendingPathComponent("Images")
+        try FileManager.default.createDirectory(at: imagesFolder, withIntermediateDirectories: true)
+
+        // Always use deterministic filenames to avoid collisions
+        let imageExtension = (response as? HTTPURLResponse)?.mimeSubtype ?? "jpeg"
+        let prefix = jobType == .backdropImage ? "Backdrop" : "Primary"
+        let filename = "\(prefix).\(imageExtension)"
+
+        return imagesFolder.appendingPathComponent(filename)
+    }
+
+    private func saveMetadata(for downloadTask: DownloadTask, at folder: URL) throws {
+        let metadataFile = folder.appendingPathComponent("metadata.json")
+
+        // Load existing metadata if it exists
+        var downloadMetadata: DownloadMetadata
+
+        // Ensure folder exists before writing metadata
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+
+        if FileManager.default.fileExists(atPath: metadataFile.path),
+           let existingData = FileManager.default.contents(atPath: metadataFile.path)
+        {
+            // Try to decode existing metadata
+            do {
+                downloadMetadata = try JSONDecoder().decode(DownloadMetadata.self, from: existingData)
+            } catch {
+                // If decoding fails, create new metadata (might be old format)
+                logger.warning("Failed to decode existing metadata.json, creating new: \(error)")
+                downloadMetadata = DownloadMetadata(
+                    itemId: downloadTask.item.id ?? "",
+                    itemType: downloadTask.item.type?.rawValue,
+                    displayTitle: downloadTask.item.displayTitle
+                )
+            }
+        } else {
+            // Create new metadata
+            downloadMetadata = DownloadMetadata(
+                itemId: downloadTask.item.id ?? "",
+                itemType: downloadTask.item.type?.rawValue,
+                displayTitle: downloadTask.item.displayTitle
+            )
+        }
+
+        // Ensure embedded item is present/updated
+        downloadMetadata.item = downloadTask.item
+
+        // Create version entry - use mediaSourceId as the unique identifier
+        let uniqueVersionId = downloadTask.mediaSourceId ?? downloadTask.item.id ?? "default"
+        let versionInfo = VersionInfo(
+            versionId: uniqueVersionId,
+            container: downloadTask.container,
+            isStatic: downloadTask.isStatic,
+            mediaSourceId: downloadTask.mediaSourceId,
+            downloadDate: ISO8601DateFormatter().string(from: Date()),
+            taskId: downloadTask.taskID.uuidString
+        )
+
+        // Remove existing version with same mediaSourceId if it exists
+        downloadMetadata.versions.removeAll { version in
+            let existingMediaSourceId = version.mediaSourceId
+            let currentMediaSourceId = downloadTask.mediaSourceId
+
+            // Compare mediaSourceIds, treating nil as equivalent to item.id
+            let normalizedExisting = existingMediaSourceId ?? downloadTask.item.id
+            let normalizedCurrent = currentMediaSourceId ?? downloadTask.item.id
+
+            return normalizedExisting == normalizedCurrent
+        }
+
+        // Add new version
+        downloadMetadata.versions.append(versionInfo)
+
+        // Save metadata using JSONEncoder for consistent formatting
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        let jsonData = try encoder.encode(downloadMetadata)
+        try jsonData.write(to: metadataFile)
+
+        logger.trace("Updated metadata.json for: \(downloadTask.item.displayTitle) with \(downloadMetadata.versions.count) versions")
+    }
+
+    private func saveAllMetadata(for downloadTask: DownloadTask) throws {
+        guard let downloadFolder = downloadTask.item.downloadFolder else { return }
+
+        // Ensure root folder exists before saving
+        try FileManager.default.createDirectory(at: downloadFolder, withIntermediateDirectories: true)
+
+        // Save the merged metadata.json containing item and versions
+        try saveMetadata(for: downloadTask, at: downloadFolder)
+
+        // Cleanup: remove legacy Metadata folder if present
+        let legacyMetadataFolder = downloadFolder.appendingPathComponent("Metadata")
+        var isDir: ObjCBool = false
+        if FileManager.default.fileExists(atPath: legacyMetadataFolder.path, isDirectory: &isDir), isDir.boolValue {
+            do { try FileManager.default.removeItem(at: legacyMetadataFolder) } catch {
+                logger.warning("Failed to remove legacy Metadata folder: \(error.localizedDescription)")
+            }
+        }
+
+        logger.trace("Saved merged metadata for: \(downloadTask.item.displayTitle)")
+    }
+
+    private func retrySpecificDownload(for downloadTask: DownloadTask, jobType: DownloadJobType) {
+        switch jobType {
+        case .media:
+            retryMediaDownload(for: downloadTask)
+        case .backdropImage, .primaryImage:
+            retryImageDownload(for: downloadTask, imageType: jobType)
+        case .metadata:
+            // Metadata doesn't need retry, just regenerate
+            do {
+                try saveAllMetadata(for: downloadTask)
+                markJobCompleted(taskID: downloadTask.taskID, jobType: .metadata)
+            } catch {
+                logger.error("Failed to save metadata on retry: \(error.localizedDescription)")
+            }
+        case .subtitle:
+            // TODO: Implement subtitle retry
+            break
+        }
+    }
+
+    private func retryMediaDownload(for downloadTask: DownloadTask) {
+        guard let downloadURL = constructMediaURL(
+            itemId: downloadTask.item.id!,
+            quality: downloadTask.quality,
+            mediaSourceId: downloadTask.mediaSourceId,
+            container: downloadTask.container,
+            isStatic: downloadTask.isStatic,
+            allowVideoStreamCopy: downloadTask.allowVideoStreamCopy,
+            allowAudioStreamCopy: downloadTask.allowAudioStreamCopy,
+            deviceId: downloadTask.deviceId,
+            deviceProfileId: downloadTask.deviceProfileId
+        ) else {
+            logger.error("Failed to construct download URL for retry of item: \(downloadTask.item.id!)")
+            return
+        }
+
+        Task {
+            do {
+                try await startSpecificDownload(for: downloadTask, jobType: .media, url: downloadURL)
+            } catch {
+                logger.error("Failed to retry media download: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    private func retryImageDownload(for downloadTask: DownloadTask, imageType: DownloadJobType) {
+        guard let imageURL = createImageDownloadURL(for: downloadTask.item, imageType: imageType) else {
+            logger.error("Failed to create image URL for retry")
+            return
+        }
+
+        Task {
+            do {
+                try await startSpecificDownload(for: downloadTask, jobType: imageType, url: imageURL)
+            } catch {
+                logger.error("Failed to retry image download: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    // MARK: - Metadata Helper Methods
+
+    /// Reads the download metadata for a specific item
+    /// - Parameter itemId: The Jellyfin item ID
+    /// - Returns: DownloadMetadata if found and readable, nil otherwise
+    func getDownloadMetadata(for itemId: String) -> DownloadMetadata? {
+        let downloadPath = URL.downloads.appendingPathComponent(itemId)
+        let metadataFile = downloadPath.appendingPathComponent("metadata.json")
+
+        logger.debug("Looking for metadata file at: \(metadataFile.path)")
+
+        guard FileManager.default.fileExists(atPath: metadataFile.path),
+              let data = FileManager.default.contents(atPath: metadataFile.path)
+        else {
+            logger.debug("Metadata file not found or empty for itemId: \(itemId)")
+            return nil
+        }
+
+        do {
+            let metadata = try JSONDecoder().decode(DownloadMetadata.self, from: data)
+            logger.debug("Successfully decoded metadata for itemId: \(itemId), versions count: \(metadata.versions.count)")
+            return metadata
+        } catch {
+            logger.warning("Failed to decode metadata for item \(itemId): \(error)")
+            return nil
+        }
+    }
+
+    /// Gets all versions downloaded for a specific item
+    /// - Parameter itemId: The Jellyfin item ID
+    /// - Returns: Array of VersionInfo, empty if no metadata found
+    func getDownloadedVersions(for itemId: String) -> [VersionInfo] {
+        getDownloadMetadata(for: itemId)?.versions ?? []
+    }
+
+    /// Debug helper to list all downloaded items and their metadata
+    func debugListDownloadedItems() {
+        logger.debug("=== DEBUG: Listing all downloaded items ===")
+
+        do {
+            let downloadContents = try FileManager.default.contentsOfDirectory(atPath: URL.downloads.path)
+            logger.debug("Found \(downloadContents.count) folders in downloads directory")
+
+            for itemId in downloadContents {
+                logger.debug("Checking item folder: \(itemId)")
+
+                let downloadPath = URL.downloads.appendingPathComponent(itemId)
+                var isDirectory: ObjCBool = false
+
+                if FileManager.default.fileExists(atPath: downloadPath.path, isDirectory: &isDirectory) && isDirectory.boolValue {
+                    logger.debug("  - Is valid directory")
+
+                    let metadataFile = downloadPath.appendingPathComponent("metadata.json")
+                    if FileManager.default.fileExists(atPath: metadataFile.path) {
+                        logger.debug("  - metadata.json exists")
+
+                        if let metadata = getDownloadMetadata(for: itemId) {
+                            logger.debug("  - Metadata loaded successfully: \(metadata.displayTitle)")
+                            logger.debug("  - Versions count: \(metadata.versions.count)")
+
+                            for (index, version) in metadata.versions.enumerated() {
+                                logger
+                                    .debug(
+                                        "    Version \(index): versionId=\(version.versionId), mediaSourceId=\(version.mediaSourceId ?? "nil")"
+                                    )
+                            }
+                        } else {
+                            logger.debug("  - Failed to load metadata")
+                        }
+                    } else {
+                        logger.debug("  - metadata.json does not exist")
+                    }
+                } else {
+                    logger.debug("  - Not a valid directory")
+                }
+            }
+        } catch {
+            logger.error("Error listing downloaded items: \(error)")
+        }
+
+        logger.debug("=== END DEBUG ===")
+    }
+
+    /// Debug helper to check if a specific item+mediaSourceId combination exists
+    func debugCheckSpecificVersion(itemId: String, mediaSourceId: String?) {
+        logger.debug("=== DEBUG: Checking specific version ===")
+        logger.debug("Looking for itemId: \(itemId), mediaSourceId: \(mediaSourceId ?? "nil")")
+
+        let result = isItemVersionDownloaded(itemId: itemId, mediaSourceId: mediaSourceId)
+        logger.debug("Result: \(result)")
+        logger.debug("=== END SPECIFIC VERSION DEBUG ===")
+    }
+}

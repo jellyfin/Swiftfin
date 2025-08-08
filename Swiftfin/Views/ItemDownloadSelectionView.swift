@@ -32,7 +32,16 @@ struct ItemDownloadSelectionView: View {
     var body: some View {
         ScrollView(showsIndicators: true) {
             VStack(alignment: .leading, spacing: 12) {
+                // Debug: Print item and media sources info
+                let _ = print("ItemDownloadSelectionView: Item ID = \(item.id ?? "nil"), Title = \(item.displayTitle)")
+                let _ = print("ItemDownloadSelectionView: Found \(item.mediaSources?.count ?? 0) media sources")
+
                 ForEach(item.mediaSources ?? [], id: \.id) { mediaSource in
+                    let _ =
+                        print(
+                            "ItemDownloadSelectionView: Processing mediaSource with ID = \(mediaSource.id ?? "nil"), Name = \(mediaSource.name ?? "Unknown")"
+                        )
+
                     VStack(alignment: .leading, spacing: 4) {
                         // Media source name
                         Text(mediaSource.name ?? "Unknown Source")
@@ -99,6 +108,11 @@ struct ItemDownloadSelectionView: View {
                                     item: item,
                                     mediaSourceId: mediaSource.id
                                 )
+                                .onAppear {
+                                    print(
+                                        "ItemDownloadSelectionView: DownloadActionButtonWithProgress appeared for mediaSourceId: \(mediaSource.id ?? "nil")"
+                                    )
+                                }
                             }
                         }
                     }
