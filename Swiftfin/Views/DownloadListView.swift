@@ -28,6 +28,8 @@ extension DownloadListView {
 
     struct DownloadTaskRow: View {
 
+        @EnvironmentObject
+        private var downloadManager: DownloadManager
         @Router
         private var router
 
@@ -35,10 +37,10 @@ extension DownloadListView {
 
         var body: some View {
             Button {
-                router.route(to: .downloadTask(downloadTask: downloadTask))
+                // router.route(to: .downloadTask(downloadTask: downloadTask))
             } label: {
                 HStack(alignment: .bottom) {
-                    ImageView(downloadTask.getImageURL(name: "Primary"))
+                    ImageView(downloadManager.getImageURL(for: downloadTask, name: "Primary"))
                         .failure {
                             Color.secondary
                                 .opacity(0.8)

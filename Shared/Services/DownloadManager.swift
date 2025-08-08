@@ -20,6 +20,10 @@ final class DownloadManager: NSObject, ObservableObject {
     @Published
     private(set) var downloads: [DownloadTask] = []
 
+    // Published state tracking for each task
+    @Published
+    private(set) var taskStates: [UUID: DownloadTask.State] = [:]
+
     // Injected services
     private var sessionManager: DownloadSessionManaging
     private let urlBuilder: DownloadURLBuilding
@@ -64,11 +68,75 @@ final class DownloadManager: NSObject, ObservableObject {
         fileService.clearTmp()
     }
 
+    // MARK: - State Management
+
+    func getTaskState(taskID: UUID) -> DownloadTask.State {
+        taskStates[taskID] ?? .ready
+    }
+
+    private func updateTaskState(taskID: UUID, state: DownloadTask.State) {
+        DispatchQueue.main.async {
+            self.taskStates[taskID] = state
+        }
+    }
+
+    func deleteRootFolder(for task: DownloadTask) {
+        guard let downloadFolder = task.item.downloadFolder else { return }
+        try? FileManager.default.removeItem(at: downloadFolder)
+    }
+
+    func createFolder(for task: DownloadTask) throws {
+        guard let downloadFolder = task.item.downloadFolder else { return }
+        try FileManager.default.createDirectory(at: downloadFolder, withIntermediateDirectories: true)
+    }
+
     func download(task: DownloadTask) {
         guard !downloads.contains(where: { $0.taskID == task.taskID }) else { return }
 
         downloads.append(task)
-        task.download()
+        updateTaskState(taskID: task.taskID, state: .ready)
+
+        // Start the download using the new architecture
+        Task {
+            await startDownloadForTask(task)
+        }
+    }
+
+    private func startDownloadForTask(_ downloadTask: DownloadTask) async {
+        do {
+            // Check available disk space first
+            try fileService.checkAvailableDiskSpace()
+
+            // Construct download URL
+            guard let downloadURL = urlBuilder.mediaURL(
+                itemId: downloadTask.item.id!,
+                quality: downloadTask.quality,
+                mediaSourceId: downloadTask.mediaSourceId,
+                container: downloadTask.container,
+                isStatic: downloadTask.isStatic,
+                allowVideoStreamCopy: downloadTask.allowVideoStreamCopy,
+                allowAudioStreamCopy: downloadTask.allowAudioStreamCopy,
+                deviceId: downloadTask.deviceId,
+                deviceProfileId: downloadTask.deviceProfileId
+            ) else {
+                logger.error("Failed to construct download URL for item: \(downloadTask.item.id!)")
+                updateTaskState(taskID: downloadTask.taskID, state: .error(JellyfinAPIError("Failed to construct download URL")))
+                return
+            }
+
+            // Initialize completion tracking
+            completedJobsByTask[downloadTask.taskID] = Set<DownloadJobType>()
+
+            // Start all downloads (media, images, metadata)
+            try await startAllDownloads(for: downloadTask, with: downloadURL)
+
+            logger.trace("Started all downloads for item: \(downloadTask.item.id!)")
+
+        } catch {
+            logger.error("Failed to start download for item: \(downloadTask.item.id!) - \(error.localizedDescription)")
+
+            updateTaskState(taskID: downloadTask.taskID, state: .error(error))
+        }
     }
 
     /// Starts downloading a media file from Jellyfin.
@@ -86,7 +154,8 @@ final class DownloadManager: NSObject, ObservableObject {
         // Prevent duplicate concurrent downloads for the same item/version
         if let existing = downloads.first(where: { task in
             guard task.item.id == itemId && task.mediaSourceId == mediaSourceId else { return false }
-            switch task.state {
+            let currentState = taskStates[task.taskID] ?? .ready
+            switch currentState {
             case .ready, .downloading, .paused:
                 return true
             default:
@@ -153,6 +222,7 @@ final class DownloadManager: NSObject, ObservableObject {
                 // Add to downloads array on main thread
                 await MainActor.run {
                     downloads.append(downloadTask)
+                    self.taskStates[taskID] = .ready
                 }
 
                 // Initialize completion tracking
@@ -169,7 +239,7 @@ final class DownloadManager: NSObject, ObservableObject {
                 // Clean up on failure
                 await MainActor.run {
                     if let index = self.downloads.firstIndex(where: { $0.taskID == taskID }) {
-                        self.downloads[index].state = .error(error)
+                        self.taskStates[taskID] = .error(error)
                     }
                 }
             }
@@ -184,9 +254,7 @@ final class DownloadManager: NSObject, ObservableObject {
         sessionManager.pause(taskID: taskID)
 
         // Update task state
-        DispatchQueue.main.async {
-            task.state = .paused
-        }
+        updateTaskState(taskID: taskID, state: .paused)
     }
 
     func resumeDownload(taskID: UUID) {
@@ -196,9 +264,7 @@ final class DownloadManager: NSObject, ObservableObject {
             do {
                 try await sessionManager.resume(taskID: taskID, with: task.resumeData)
 
-                await MainActor.run {
-                    task.state = .downloading(0.0)
-                }
+                updateTaskState(taskID: taskID, state: .downloading(0.0))
             } catch {
                 // If resume fails, restart the download
                 logger.info("Resume failed, restarting download: \(error.localizedDescription)")
@@ -221,14 +287,14 @@ final class DownloadManager: NSObject, ObservableObject {
         completedJobsByTask.removeValue(forKey: taskID)
 
         if removeFile {
-            task.deleteRootFolder()
+            deleteRootFolder(for: task)
         }
 
         cancel(task: task)
     }
 
     func downloadStatus(taskID: UUID) -> DownloadTask.State? {
-        downloads.first(where: { $0.taskID == taskID })?.state
+        taskStates[taskID]
     }
 
     func allDownloads() -> [DownloadTask] {
@@ -345,6 +411,34 @@ final class DownloadManager: NSObject, ObservableObject {
         metadataManager.getDownloadedVersions(for: itemId)
     }
 
+    // MARK: - File Operations for Tasks
+
+    func getImageURL(for task: DownloadTask, name: String) -> URL? {
+        do {
+            guard let imagesFolder = task.imagesFolder else { return nil }
+            let images = try FileManager.default.contentsOfDirectory(atPath: imagesFolder.path)
+
+            guard let imageFilename = images.first(where: { $0.starts(with: name) }) else { return nil }
+
+            return imagesFolder.appendingPathComponent(imageFilename)
+        } catch {
+            return nil
+        }
+    }
+
+    func getMediaURL(for task: DownloadTask) -> URL? {
+        do {
+            guard let downloadFolder = task.item.downloadFolder else { return nil }
+            let contents = try FileManager.default.contentsOfDirectory(atPath: downloadFolder.path)
+
+            guard let mediaFilename = contents.first(where: { $0.starts(with: "Media") }) else { return nil }
+
+            return downloadFolder.appendingPathComponent(mediaFilename)
+        } catch {
+            return nil
+        }
+    }
+
     // MARK: - Legacy/Compatibility Methods
 
     func task(for item: BaseItemDto) -> DownloadTask? {
@@ -359,16 +453,18 @@ final class DownloadManager: NSObject, ObservableObject {
     func cancel(task: DownloadTask) {
         guard downloads.contains(where: { $0.taskID == task.taskID }) else { return }
 
-        task.cancel()
+        updateTaskState(taskID: task.taskID, state: .cancelled)
         remove(task: task)
     }
 
     func remove(task: DownloadTask) {
         downloads.removeAll(where: { $0.taskID == task.taskID })
+        taskStates.removeValue(forKey: task.taskID)
     }
 
     func reset() {
         downloads.removeAll()
+        taskStates.removeAll()
     }
 
     func downloadedItems() -> [DownloadTask] {
@@ -406,9 +502,7 @@ final class DownloadManager: NSObject, ObservableObject {
         // Start media download
         try await sessionManager.start(url: mediaURL, taskID: downloadTask.taskID, jobType: .media)
 
-        await MainActor.run {
-            downloadTask.state = .downloading(0.0)
-        }
+        updateTaskState(taskID: downloadTask.taskID, state: .downloading(0.0))
 
         // Start image downloads (non-blocking)
         imageManager.downloadImages(for: downloadTask) { result in
@@ -425,14 +519,11 @@ final class DownloadManager: NSObject, ObservableObject {
             try? await Task.sleep(nanoseconds: 60_000_000_000) // 60 seconds
 
             // Check if download is still pending and complete it if essential parts are done
-            if let taskIndex = downloads.firstIndex(where: { $0.taskID == downloadTask.taskID }),
-               case .downloading = downloads[taskIndex].state,
+            if let currentState = taskStates[downloadTask.taskID],
+               case .downloading = currentState,
                isTaskFullyCompleted(taskID: downloadTask.taskID)
             {
-
-                await MainActor.run {
-                    self.downloads[taskIndex].state = .complete
-                }
+                updateTaskState(taskID: downloadTask.taskID, state: .complete)
                 logger.info("Download completed via timeout safety mechanism: \(downloadTask.item.displayTitle)")
             }
         }
@@ -525,18 +616,14 @@ extension DownloadManager: DownloadSessionDelegate {
 
             // Check completion status - complete when essential downloads are done
             if isTaskFullyCompleted(taskID: downloadJob.taskID) {
-                DispatchQueue.main.async {
-                    self.downloads[downloadTaskIndex].state = .complete
-                }
+                updateTaskState(taskID: downloadJob.taskID, state: .complete)
                 logger.trace("Essential downloads completed for: \(swiftfinDownloadTask.item.displayTitle)")
             }
 
         } catch {
             logger.error("Failed to move downloaded file: \(error.localizedDescription)")
 
-            DispatchQueue.main.async {
-                self.downloads[downloadTaskIndex].state = .error(error)
-            }
+            updateTaskState(taskID: downloadJob.taskID, state: .error(error))
         }
 
         // Clean up active job
@@ -552,9 +639,7 @@ extension DownloadManager: DownloadSessionDelegate {
 
         // Only update progress for media downloads to avoid confusing UI
         if case .media = downloadJob.type {
-            DispatchQueue.main.async {
-                self.downloads[downloadTaskIndex].state = .downloading(progress)
-            }
+            updateTaskState(taskID: downloadJob.taskID, state: .downloading(progress))
         }
     }
 
@@ -572,10 +657,17 @@ extension DownloadManager: DownloadSessionDelegate {
         if swiftfinDownloadTask.shouldRetry(for: error) {
             logger.info("Retrying download for: \(swiftfinDownloadTask.item.displayTitle) (attempt \(swiftfinDownloadTask.retryCount + 1))")
 
-            swiftfinDownloadTask.incrementRetryCount()
+            // Update retry count in our tracking
+            if var updatedTask = downloads.first(where: { $0.taskID == swiftfinDownloadTask.taskID }) {
+                updatedTask.incrementRetryCount()
+                // Update the task in our array
+                if let index = downloads.firstIndex(where: { $0.taskID == swiftfinDownloadTask.taskID }) {
+                    downloads[index] = updatedTask
+                }
+            }
 
             // Exponential backoff: 2^retryCount seconds
-            let delay = pow(2.0, Double(swiftfinDownloadTask.retryCount))
+            let delay = pow(2.0, Double(swiftfinDownloadTask.retryCount + 1))
 
             DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
                 Task {
@@ -588,18 +680,14 @@ extension DownloadManager: DownloadSessionDelegate {
             switch downloadJob.type {
             case .media, .metadata:
                 // Media and metadata download failures are critical
-                DispatchQueue.main.async {
-                    self.downloads[downloadTaskIndex].state = .error(error)
-                }
+                updateTaskState(taskID: downloadJob.taskID, state: .error(error))
             case .backdropImage, .primaryImage, .subtitle:
                 // Image and subtitle download failures are not critical
                 logger
                     .warning("\(downloadJob.type) download failed, checking if task can complete without it: \(error.localizedDescription)")
 
                 if isTaskFullyCompleted(taskID: downloadJob.taskID) {
-                    DispatchQueue.main.async {
-                        self.downloads[downloadTaskIndex].state = .complete
-                    }
+                    updateTaskState(taskID: downloadJob.taskID, state: .complete)
                     logger.trace("Task completed despite \(downloadJob.type) download failure: \(swiftfinDownloadTask.item.displayTitle)")
                 }
             }

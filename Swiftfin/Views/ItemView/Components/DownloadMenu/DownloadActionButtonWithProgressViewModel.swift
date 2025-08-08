@@ -110,12 +110,11 @@ final class DownloadActionButtonWithProgressViewModel: ObservableObject {
             }
             .store(in: &cancellables)
 
-        // Set up a timer to periodically check task state (for real-time progress updates)
-        Timer.publish(every: 0.5, on: .main, in: .common)
-            .autoconnect()
+        // Observe task states for real-time state updates
+        downloadManager.$taskStates
             .sink { [weak self] _ in
-                guard let self = self, let task = self.downloadTask else { return }
-                self.updateStateFromDownloadTask(task)
+                guard let self = self else { return }
+                self.updateStateFromDownloadTask(self.downloadTask)
             }
             .store(in: &cancellables)
     }
@@ -159,7 +158,8 @@ final class DownloadActionButtonWithProgressViewModel: ObservableObject {
             return
         }
 
-        switch task.state {
+        let taskState = downloadManager.getTaskState(taskID: task.taskID)
+        switch taskState {
         case .ready:
             self.state = .ready
             self.progress = 0.0

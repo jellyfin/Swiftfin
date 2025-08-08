@@ -83,7 +83,7 @@ final class DownloadMetadataManager: DownloadMetadataManaging {
            let offlineItem = meta.item
         {
             let task = DownloadTask(item: offlineItem)
-            task.state = .complete
+            // task.state = .complete
             return task
         }
 
@@ -93,7 +93,7 @@ final class DownloadMetadataManager: DownloadMetadataManaging {
            let offlineItem = try? jsonDecoder.decode(BaseItemDto.self, from: itemData)
         {
             let task = DownloadTask(item: offlineItem)
-            task.state = .complete
+            // task.state = .complete
             return task
         }
 

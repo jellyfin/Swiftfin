@@ -17,14 +17,5 @@ extension NavigationRoute {
     ) {
         DownloadListView(viewModel: .init())
     }
-
-    static func downloadTask(downloadTask: DownloadTask) -> NavigationRoute {
-        NavigationRoute(
-            id: "downloadTask",
-            style: .sheet
-        ) {
-            DownloadTaskView(downloadTask: downloadTask)
-        }
-    }
 }
 #endif

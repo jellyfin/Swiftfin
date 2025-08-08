@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import Foundation
 import JellyfinAPI
 
@@ -14,7 +15,8 @@ final class DownloadVideoPlayerManager: VideoPlayerManager {
     init(downloadTask: DownloadTask) {
         super.init()
 
-        guard let playbackURL = downloadTask.getMediaURL() else {
+        let downloadManager = Container.shared.downloadManager()
+        guard let playbackURL = downloadManager.getMediaURL(for: downloadTask) else {
             logger.error("Download task does not have media url for item: \(downloadTask.item.displayTitle)")
 
             return

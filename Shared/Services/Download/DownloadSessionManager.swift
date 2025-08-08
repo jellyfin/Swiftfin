@@ -231,7 +231,16 @@ extension DownloadSessionManager: URLSessionDownloadDelegate {
             progress: progress
         )
 
-        logger.trace("Download progress: \(progress) for task: \(downloadTask.taskIdentifier)")
+        // Log only if progress changed by more than 10%
+        enum ProgressTracker {
+            static var lastLogged: [Int: Double] = [:]
+        }
+        let taskId = downloadTask.taskIdentifier
+        let last = ProgressTracker.lastLogged[taskId] ?? 0.0
+        if abs(progress - last) >= 0.10 || progress == 1.0 {
+            logger.trace("Download progress: \(progress) for task: \(taskId)")
+            ProgressTracker.lastLogged[taskId] = progress
+        }
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
