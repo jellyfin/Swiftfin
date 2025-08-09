@@ -264,6 +264,14 @@ extension NavigationRoute {
         }
     }
 
+    static func itemDownloadList(item: BaseItemDto) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemDownloadList"
+        ) {
+            ItemDownloadListView(item: item)
+        }
+    }
+
     #if os(iOS)
 
     static func itemSearchImageDetails(viewModel: ItemImagesViewModel, remoteImageInfo: RemoteImageInfo) -> NavigationRoute {
