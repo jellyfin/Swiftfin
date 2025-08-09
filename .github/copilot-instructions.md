@@ -21,6 +21,8 @@
 - Use `XcodeConfig/DevelopmentTeam.xcconfig` to set your development team and bundle identifier for local builds.
 - Lint with `swiftformat .` before submitting PRs.
 - Automated builds for iOS and tvOS must pass for PRs to be merged.
+- Always use Build command: `xcodebuild -scheme "Swiftfin" -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5" build`
+
 
 ## Architecture & Patterns
 - **SwiftUI** is used for UI; UIKit is used only where necessary.

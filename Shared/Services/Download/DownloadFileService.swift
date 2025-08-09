@@ -213,7 +213,8 @@ final class DownloadFileService: DownloadFileServicing {
 
         let normalized = mediaSourceId ?? itemId
 
-        // Search recursively up to depth 2 for a media file matching item/version
+        // Search recursively up to depth 3 for a media file matching item/version
+        // This handles both the old structure (episode folders) and new structure (series folders)
         guard let enumerator = FileManager.default.enumerator(
             at: root,
             includingPropertiesForKeys: [.isRegularFileKey],
@@ -229,7 +230,12 @@ final class DownloadFileService: DownloadFileServicing {
                 // Accept either the new naming scheme or legacy "Media.*"
                 if name.hasPrefix("Media.") { return true }
 
-                // New naming for movies: itemId[-versionId].ext
+                // New naming: [episodeId]-[versionId].ext or [itemId]-[versionId].ext
+                if name.hasPrefix(normalized) {
+                    return true
+                }
+
+                // For backward compatibility, also check if file contains itemId
                 if name.contains(itemId) {
                     if mediaSourceId == nil {
                         return true
@@ -370,8 +376,8 @@ final class DownloadFileService: DownloadFileServicing {
            let season = downloadTask.season,
            let episodeId = downloadTask.episodeID
         {
-            // For episodes: Downloads/[itemId]/Season-[season]/[episodeId]-[versionId].ext
-            let seasonFolder = downloadFolder.appendingPathComponent("Season-\(season)")
+            // For episodes: Downloads/[seriesId]/Season-[XX]/[episodeId]-[versionId].ext
+            let seasonFolder = downloadFolder.appendingPathComponent("Season-\(String(format: "%02d", season))")
             try FileManager.default.createDirectory(at: seasonFolder, withIntermediateDirectories: true)
 
             let versionSuffix = downloadTask.versionId.map { "-\($0)" } ?? ""
@@ -392,25 +398,46 @@ final class DownloadFileService: DownloadFileServicing {
         jobType: DownloadJobType,
         context: ImageDownloadContext
     ) throws -> URL {
-        let imagesFolder = downloadFolder.appendingPathComponent("Images")
-        try FileManager.default.createDirectory(at: imagesFolder, withIntermediateDirectories: true)
-
         // Determine file extension
         let imageExtension = (response as? HTTPURLResponse)?.mimeSubtype ?? "jpeg"
 
         // Create context-aware filename
         let imageTypePrefix = jobType == .backdropImage ? "Backdrop" : "Primary"
         let filename: String
+        let imagesFolder: URL
 
         switch context {
         case let .episode(id):
+            // Episode images go to season Images folder
+            guard let season = downloadTask.season else {
+                throw NSError(
+                    domain: "DownloadFileService",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey: "Season number required for episode images"]
+                )
+            }
+            let seasonFolder = downloadFolder.appendingPathComponent("Season-\(String(format: "%02d", season))")
+            imagesFolder = seasonFolder.appendingPathComponent("Images")
             filename = "Episode-\(id)-\(imageTypePrefix).\(imageExtension)"
         case let .season(id):
+            // Season images go to season Images folder
+            guard let season = downloadTask.season else {
+                throw NSError(
+                    domain: "DownloadFileService",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey: "Season number required for season images"]
+                )
+            }
+            let seasonFolder = downloadFolder.appendingPathComponent("Season-\(String(format: "%02d", season))")
+            imagesFolder = seasonFolder.appendingPathComponent("Images")
             filename = "Season-\(id)-\(imageTypePrefix).\(imageExtension)"
         case let .series(id):
+            // Series images go to show root Images folder
+            imagesFolder = downloadFolder.appendingPathComponent("Images")
             filename = "Series-\(id)-\(imageTypePrefix).\(imageExtension)"
         }
 
+        try FileManager.default.createDirectory(at: imagesFolder, withIntermediateDirectories: true)
         return imagesFolder.appendingPathComponent(filename)
     }
 }

@@ -27,21 +27,61 @@ final class DownloadMetadataManager: DownloadMetadataManaging {
 
         logger.debug("Looking for metadata file at: \(metadataFile.path)")
 
-        guard FileManager.default.fileExists(atPath: metadataFile.path),
-              let data = FileManager.default.contents(atPath: metadataFile.path)
-        else {
-            logger.debug("Metadata file not found or empty for itemId: \(itemId)")
-            return nil
+        // First try to read from the main metadata file
+        if FileManager.default.fileExists(atPath: metadataFile.path),
+           let data = FileManager.default.contents(atPath: metadataFile.path)
+        {
+            do {
+                let metadata = try JSONDecoder().decode(DownloadMetadata.self, from: data)
+                logger.debug("Successfully decoded metadata for itemId: \(itemId), versions count: \(metadata.versions.count)")
+                return metadata
+            } catch {
+                logger.warning("Failed to decode metadata for item \(itemId): \(error)")
+            }
         }
 
+        // If not found, check if this might be a series folder and aggregate metadata from seasons
         do {
-            let metadata = try JSONDecoder().decode(DownloadMetadata.self, from: data)
-            logger.debug("Successfully decoded metadata for itemId: \(itemId), versions count: \(metadata.versions.count)")
-            return metadata
+            let contents = try FileManager.default.contentsOfDirectory(atPath: downloadPath.path)
+            let seasonFolders = contents.filter { $0.hasPrefix("Season-") }
+
+            if !seasonFolders.isEmpty {
+                // This is a series folder, aggregate metadata from season folders
+                var allVersions: [VersionInfo] = []
+                var seriesItem: BaseItemDto?
+
+                for seasonFolder in seasonFolders.sorted() {
+                    let seasonPath = downloadPath.appendingPathComponent(seasonFolder)
+                    let seasonMetadataFile = seasonPath.appendingPathComponent("metadata.json")
+
+                    if let seasonData = FileManager.default.contents(atPath: seasonMetadataFile.path),
+                       let seasonMeta = try? JSONDecoder().decode(DownloadMetadata.self, from: seasonData)
+                    {
+                        allVersions.append(contentsOf: seasonMeta.versions)
+                        if seriesItem == nil, let item = seasonMeta.item {
+                            seriesItem = item
+                        }
+                    }
+                }
+
+                if !allVersions.isEmpty {
+                    let aggregatedMetadata = DownloadMetadata(
+                        itemId: itemId,
+                        itemType: "Series",
+                        displayTitle: seriesItem?.seriesName ?? "Unknown Series",
+                        item: seriesItem,
+                        versions: allVersions
+                    )
+                    logger.debug("Aggregated metadata for series: \(itemId), total versions: \(allVersions.count)")
+                    return aggregatedMetadata
+                }
+            }
         } catch {
-            logger.warning("Failed to decode metadata for item \(itemId): \(error)")
-            return nil
+            logger.debug("Could not read series contents: \(error)")
         }
+
+        logger.debug("Metadata file not found or empty for itemId: \(itemId)")
+        return nil
     }
 
     func writeMetadata(for task: DownloadTask) throws {
@@ -50,8 +90,14 @@ final class DownloadMetadataManager: DownloadMetadataManaging {
         // Ensure root folder exists before saving
         try FileManager.default.createDirectory(at: downloadFolder, withIntermediateDirectories: true)
 
-        // Save the merged metadata.json containing item and versions
-        try saveMetadata(for: task, at: downloadFolder)
+        if task.item.type == .episode {
+            // For episodes, write metadata at both series and season levels
+            try writeSeriesMetadata(for: task, at: downloadFolder)
+            try writeSeasonMetadata(for: task, at: downloadFolder)
+        } else {
+            // For movies, write metadata at item level (existing behavior)
+            try saveMetadata(for: task, at: downloadFolder)
+        }
 
         // Cleanup: remove legacy Metadata folder if present
         let legacyMetadataFolder = downloadFolder.appendingPathComponent("Metadata")
@@ -64,7 +110,7 @@ final class DownloadMetadataManager: DownloadMetadataManaging {
             }
         }
 
-        logger.trace("Saved merged metadata for: \(task.item.displayTitle)")
+        logger.trace("Saved metadata for: \(task.item.displayTitle)")
     }
 
     func getDownloadedVersions(for itemId: String) -> [VersionInfo] {
@@ -77,14 +123,39 @@ final class DownloadMetadataManager: DownloadMetadataManaging {
 
         let jsonDecoder = JSONDecoder()
 
-        // Prefer merged metadata.json with embedded item
+        // First, try merged metadata.json with embedded item (new format)
         if let data = FileManager.default.contents(atPath: mergedMetadataFile.path),
            let meta = try? jsonDecoder.decode(DownloadMetadata.self, from: data),
            let offlineItem = meta.item
         {
             let task = DownloadTask(item: offlineItem)
-            // task.state = .complete
             return task
+        }
+
+        // Check if this is a series folder with season subfolders
+        do {
+            let contents = try FileManager.default.contentsOfDirectory(atPath: root.path)
+            let seasonFolders = contents.filter { $0.hasPrefix("Season-") }
+
+            if !seasonFolders.isEmpty {
+                // This is a series folder, look for episodes in season folders
+                for seasonFolder in seasonFolders {
+                    let seasonPath = root.appendingPathComponent(seasonFolder)
+                    let seasonMetadataFile = seasonPath.appendingPathComponent("metadata.json")
+
+                    if let seasonData = FileManager.default.contents(atPath: seasonMetadataFile.path),
+                       let seasonMeta = try? jsonDecoder.decode(DownloadMetadata.self, from: seasonData),
+                       let episodeItem = seasonMeta.item,
+                       episodeItem.type == .episode
+                    {
+                        // Return the first episode found as a representative
+                        let task = DownloadTask(item: episodeItem)
+                        return task
+                    }
+                }
+            }
+        } catch {
+            logger.debug("Could not read contents of download folder: \(error)")
         }
 
         // Backward-compatibility: try old Metadata/Item.json
@@ -93,7 +164,6 @@ final class DownloadMetadataManager: DownloadMetadataManaging {
            let offlineItem = try? jsonDecoder.decode(BaseItemDto.self, from: itemData)
         {
             let task = DownloadTask(item: offlineItem)
-            // task.state = .complete
             return task
         }
 
@@ -178,6 +248,103 @@ final class DownloadMetadataManager: DownloadMetadataManaging {
     }
 
     // MARK: - Private Helpers
+
+    private func writeSeriesMetadata(for task: DownloadTask, at seriesFolder: URL) throws {
+        guard task.item.type == .episode else { return }
+
+        let metadataFile = seriesFolder.appendingPathComponent("metadata.json")
+        var seriesMetadata: DownloadMetadata
+
+        // Create or update series metadata
+        if FileManager.default.fileExists(atPath: metadataFile.path),
+           let existingData = FileManager.default.contents(atPath: metadataFile.path),
+           let existing = try? JSONDecoder().decode(DownloadMetadata.self, from: existingData)
+        {
+            seriesMetadata = existing
+        } else {
+            // Create new series metadata using series information
+            let seriesId = task.item.seriesID ?? ""
+            let seriesName = task.item.seriesName ?? task.item.displayTitle
+            seriesMetadata = DownloadMetadata(
+                itemId: seriesId,
+                itemType: "Series",
+                displayTitle: seriesName
+            )
+        }
+
+        // Save series metadata
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        let jsonData = try encoder.encode(seriesMetadata)
+        try jsonData.write(to: metadataFile)
+
+        logger.trace("Updated series metadata for: \(seriesMetadata.displayTitle)")
+    }
+
+    private func writeSeasonMetadata(for task: DownloadTask, at seriesFolder: URL) throws {
+        guard task.item.type == .episode,
+              let season = task.season else { return }
+
+        let seasonFolder = seriesFolder.appendingPathComponent("Season-\(String(format: "%02d", season))")
+        try FileManager.default.createDirectory(at: seasonFolder, withIntermediateDirectories: true)
+
+        let metadataFile = seasonFolder.appendingPathComponent("metadata.json")
+        var seasonMetadata: DownloadMetadata
+
+        // Create or update season metadata
+        if FileManager.default.fileExists(atPath: metadataFile.path),
+           let existingData = FileManager.default.contents(atPath: metadataFile.path),
+           let existing = try? JSONDecoder().decode(DownloadMetadata.self, from: existingData)
+        {
+            seasonMetadata = existing
+        } else {
+            // Create new season metadata
+            let seasonId = task.item.seasonID ?? ""
+            let seasonName = "Season \(season)"
+            seasonMetadata = DownloadMetadata(
+                itemId: seasonId,
+                itemType: "Season",
+                displayTitle: seasonName
+            )
+        }
+
+        // Create version entry for this episode
+        let uniqueVersionId = task.mediaSourceId ?? task.item.id ?? "default"
+        let versionInfo = VersionInfo(
+            versionId: uniqueVersionId,
+            container: task.container,
+            isStatic: task.isStatic,
+            mediaSourceId: task.mediaSourceId,
+            downloadDate: ISO8601DateFormatter().string(from: Date()),
+            taskId: task.taskID.uuidString
+        )
+
+        // Remove existing version with same mediaSourceId if it exists
+        seasonMetadata.versions.removeAll { version in
+            let existingMediaSourceId = version.mediaSourceId
+            let currentMediaSourceId = task.mediaSourceId
+
+            // Compare mediaSourceIds, treating nil as equivalent to item.id
+            let normalizedExisting = existingMediaSourceId ?? task.item.id
+            let normalizedCurrent = currentMediaSourceId ?? task.item.id
+
+            return normalizedExisting == normalizedCurrent
+        }
+
+        // Add new version
+        seasonMetadata.versions.append(versionInfo)
+
+        // Update embedded item with episode info
+        seasonMetadata.item = task.item
+
+        // Save season metadata
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        let jsonData = try encoder.encode(seasonMetadata)
+        try jsonData.write(to: metadataFile)
+
+        logger.trace("Updated season metadata for: \(seasonMetadata.displayTitle) with \(seasonMetadata.versions.count) episodes")
+    }
 
     private func saveMetadata(for task: DownloadTask, at folder: URL) throws {
         let metadataFile = folder.appendingPathComponent("metadata.json")
