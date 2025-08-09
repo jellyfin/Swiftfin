@@ -65,6 +65,12 @@ enum DownloadJobType: Hashable, Equatable {
     case subtitle(index: Int)
 }
 
+enum ImageDownloadContext: Hashable, Equatable {
+    case episode(id: String)
+    case season(id: String)
+    case series(id: String)
+}
+
 enum DownloadQuality: Hashable, Equatable {
     case original
     case high // 1080p, ~4 Mbps
@@ -147,7 +153,14 @@ enum MediaValidationError: Error, LocalizedError {
 protocol DownloadFileServicing {
     func ensureDownloadDirectory() throws
     func moveMediaFile(from temp: URL, to destination: URL, for task: DownloadTask, response: URLResponse?) throws
-    func moveImageFile(from temp: URL, to destination: URL, for task: DownloadTask, response: URLResponse?, jobType: DownloadJobType) throws
+    func moveImageFile(
+        from temp: URL,
+        to destination: URL,
+        for task: DownloadTask,
+        response: URLResponse?,
+        jobType: DownloadJobType,
+        context: ImageDownloadContext
+    ) throws
     func validateMediaFile(at url: URL, response: URLResponse?) throws
     func calculateSize(of folder: URL) throws -> Int64
     func deleteDownloads(for itemId: String) throws -> Bool

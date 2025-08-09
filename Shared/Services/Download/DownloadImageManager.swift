@@ -27,10 +27,12 @@ final class DownloadImageManager: DownloadImageManaging {
         let group = DispatchGroup()
         var errors: [Error] = []
 
-        // Download backdrop image
-        if let backdropURL = urlBuilder.imageURL(for: task.item, type: .backdropImage) {
+        // Download episode's own images
+        if let backdropURL = urlBuilder.imageURL(for: task.item, type: .backdropImage),
+           let episodeID = task.item.id
+        {
             group.enter()
-            downloadSingleImage(url: backdropURL, for: task, type: .backdropImage) { result in
+            downloadSingleImage(url: backdropURL, for: task, type: .backdropImage, context: .episode(id: episodeID)) { result in
                 switch result {
                 case .success:
                     self.logger.trace("Successfully downloaded backdrop image for: \(task.item.displayTitle)")
@@ -41,11 +43,11 @@ final class DownloadImageManager: DownloadImageManaging {
                 group.leave()
             }
         }
-
-        // Download primary image
-        if let primaryURL = urlBuilder.imageURL(for: task.item, type: .primaryImage) {
+        if let primaryURL = urlBuilder.imageURL(for: task.item, type: .primaryImage),
+           let episodeID = task.item.id
+        {
             group.enter()
-            downloadSingleImage(url: primaryURL, for: task, type: .primaryImage) { result in
+            downloadSingleImage(url: primaryURL, for: task, type: .primaryImage, context: .episode(id: episodeID)) { result in
                 switch result {
                 case .success:
                     self.logger.trace("Successfully downloaded primary image for: \(task.item.displayTitle)")
@@ -54,6 +56,76 @@ final class DownloadImageManager: DownloadImageManaging {
                     errors.append(error)
                 }
                 group.leave()
+            }
+        }
+
+        // If the item is an episode, also download show and series images
+        if task.item.type == .episode {
+            // Download season's primary image (parent)
+            if let seasonPrimaryURL = task.item.seasonImageURL(.primary), seasonPrimaryURL != urlBuilder.imageURL(
+                for: task.item,
+                type: .primaryImage
+            ) {
+                let seasonContext: ImageDownloadContext = {
+                    if let seasonID = task.item.seasonID {
+                        return .season(id: seasonID)
+                    } else {
+                        return .episode(id: task.item.id ?? "")
+                    }
+                }()
+
+                group.enter()
+                downloadSingleImage(url: seasonPrimaryURL, for: task, type: .primaryImage, context: seasonContext) { result in
+                    switch result {
+                    case .success:
+                        self.logger.trace("Successfully downloaded season primary image for: \(task.item.displayTitle)")
+                    case let .failure(error):
+                        self.logger.warning("Failed to download season primary image: \(error.localizedDescription)")
+                        errors.append(error)
+                    }
+                    group.leave()
+                }
+            }
+            // Download series images (if available)
+            if let seriesBackdropURL = task.item.seriesImageURL(.backdrop),
+               let seriesID = task.item.seriesID
+            {
+                group.enter()
+                downloadSingleImage(
+                    url: seriesBackdropURL,
+                    for: task,
+                    type: .backdropImage,
+                    context: .series(id: seriesID)
+                ) { result in
+                    switch result {
+                    case .success:
+                        self.logger.trace("Successfully downloaded series backdrop image for: \(task.item.displayTitle)")
+                    case let .failure(error):
+                        self.logger.warning("Failed to download series backdrop image: \(error.localizedDescription)")
+                        errors.append(error)
+                    }
+                    group.leave()
+                }
+            }
+            if let seriesPrimaryURL = task.item.seriesImageURL(.primary),
+               let seriesID = task.item.seriesID
+            {
+                group.enter()
+                downloadSingleImage(
+                    url: seriesPrimaryURL,
+                    for: task,
+                    type: .primaryImage,
+                    context: .series(id: seriesID)
+                ) { result in
+                    switch result {
+                    case .success:
+                        self.logger.trace("Successfully downloaded series primary image for: \(task.item.displayTitle)")
+                    case let .failure(error):
+                        self.logger.warning("Failed to download series primary image: \(error.localizedDescription)")
+                        errors.append(error)
+                    }
+                    group.leave()
+                }
             }
         }
 
@@ -76,6 +148,7 @@ final class DownloadImageManager: DownloadImageManaging {
         url: URL,
         for task: DownloadTask,
         type: DownloadJobType,
+        context: ImageDownloadContext,
         completion: @escaping (Result<Void, Error>) -> Void
     ) {
         let urlRequest = URLRequest(url: url)
@@ -112,7 +185,8 @@ final class DownloadImageManager: DownloadImageManaging {
                     to: downloadFolder,
                     for: task,
                     response: response,
-                    jobType: type
+                    jobType: type,
+                    context: context
                 )
 
                 completion(.success(()))

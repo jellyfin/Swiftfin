@@ -596,12 +596,16 @@ extension DownloadManager: DownloadSessionDelegate {
                     response: response
                 )
             case .backdropImage, .primaryImage:
+                // Default to episode context since we don't have rich context here
+                let context: ImageDownloadContext = .episode(id: swiftfinDownloadTask.item.id ?? "")
+
                 try fileService.moveImageFile(
                     from: location,
                     to: swiftfinDownloadTask.item.downloadFolder!,
                     for: swiftfinDownloadTask,
                     response: response,
-                    jobType: downloadJob.type
+                    jobType: downloadJob.type,
+                    context: context
                 )
             case .metadata:
                 // Metadata is handled separately

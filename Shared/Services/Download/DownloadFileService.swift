@@ -66,7 +66,8 @@ final class DownloadFileService: DownloadFileServicing {
         to destination: URL,
         for task: DownloadTask,
         response: URLResponse?,
-        jobType: DownloadJobType
+        jobType: DownloadJobType,
+        context: ImageDownloadContext
     ) throws {
         guard let downloadFolder = task.item.downloadFolder else {
             throw DownloadTask.DownloadError.notEnoughStorage
@@ -76,7 +77,8 @@ final class DownloadFileService: DownloadFileServicing {
             downloadTask: task,
             response: response,
             downloadFolder: downloadFolder,
-            jobType: jobType
+            jobType: jobType,
+            context: context
         )
 
         try moveFileAtomically(from: temp, to: finalDestination)
@@ -387,15 +389,27 @@ final class DownloadFileService: DownloadFileServicing {
         downloadTask: DownloadTask,
         response: URLResponse?,
         downloadFolder: URL,
-        jobType: DownloadJobType
+        jobType: DownloadJobType,
+        context: ImageDownloadContext
     ) throws -> URL {
         let imagesFolder = downloadFolder.appendingPathComponent("Images")
         try FileManager.default.createDirectory(at: imagesFolder, withIntermediateDirectories: true)
 
-        // Always use deterministic filenames to avoid collisions
+        // Determine file extension
         let imageExtension = (response as? HTTPURLResponse)?.mimeSubtype ?? "jpeg"
-        let prefix = jobType == .backdropImage ? "Backdrop" : "Primary"
-        let filename = "\(prefix).\(imageExtension)"
+
+        // Create context-aware filename
+        let imageTypePrefix = jobType == .backdropImage ? "Backdrop" : "Primary"
+        let filename: String
+
+        switch context {
+        case let .episode(id):
+            filename = "Episode-\(id)-\(imageTypePrefix).\(imageExtension)"
+        case let .season(id):
+            filename = "Season-\(id)-\(imageTypePrefix).\(imageExtension)"
+        case let .series(id):
+            filename = "Series-\(id)-\(imageTypePrefix).\(imageExtension)"
+        }
 
         return imagesFolder.appendingPathComponent(filename)
     }
