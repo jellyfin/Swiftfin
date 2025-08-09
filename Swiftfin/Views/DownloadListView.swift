@@ -15,6 +15,10 @@ import SwiftUI
 
 struct DownloadListView: View {
 
+    // MARK: - Properties
+
+    var error: Error?
+
     // MARK: - State Properties
 
     @Router
@@ -78,15 +82,21 @@ struct DownloadListView: View {
     @ViewBuilder
     private var contentView: some View {
         ScrollView {
+
             VStack(alignment: .leading, spacing: 20) {
                 // Storage summary header
-                HStack {
-                    Text("Downloaded content available for offline viewing")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                HStack(alignment: .center, spacing: 10) {
 
                     Spacer()
-
+                    if let error {
+                        Text(error.localizedDescription)
+                            .font(.caption)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(.orange.opacity(0.2))
+                            .foregroundStyle(.orange)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
                     if !viewModel.downloadedShows.isEmpty || !viewModel.downloadedMovies.isEmpty {
                         Text("\(totalItemCount) items • \(totalStorageUsed)")
                             .font(.caption)
@@ -200,7 +210,9 @@ struct DownloadListView: View {
                 }
             }
         }
-        .onAppear { viewModel.load() }
+        .onAppear {
+            viewModel.load()
+        }
     }
 
     // MARK: - Private Methods

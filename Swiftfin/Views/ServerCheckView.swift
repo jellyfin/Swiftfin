@@ -53,7 +53,7 @@ struct ServerCheckView: View {
                     ProgressView()
                 }
             case let .error(error):
-                errorView(error)
+                DownloadListView(error: error)
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
@@ -63,15 +63,6 @@ struct ServerCheckView: View {
         .onReceive(viewModel.$state) { newState in
             if newState == .connected {
                 rootCoordinator.root(.mainTab)
-            }
-        }
-        .topBarTrailing {
-
-            SettingsBarButton(
-                server: viewModel.userSession.server,
-                user: viewModel.userSession.user
-            ) {
-                router.route(to: .settings)
             }
         }
     }
