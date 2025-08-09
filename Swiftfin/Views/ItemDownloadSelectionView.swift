@@ -37,17 +37,6 @@ struct ItemDownloadSelectionView: View {
                     Text(mediaSource.name ?? "Unknown Source")
                         .font(.headline)
 
-                    #if DEBUG
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Item ID: \(item.id ?? "Unknown")")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                        Text("Media Source ID: \(mediaSource.id ?? "Unknown")")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                    }
-                    #endif
-
                     // Two-column layout for remaining metadata
                     HStack(alignment: .top, spacing: 20) {
                         // Left column

@@ -85,10 +85,10 @@ struct DownloadListView: View {
 
             VStack(alignment: .leading, spacing: 20) {
                 // Storage summary header
-                HStack(alignment: .center, spacing: 10) {
+                HStack {
 
-                    Spacer()
                     if let error {
+                        Spacer()
                         Text(error.localizedDescription)
                             .font(.caption)
                             .padding(.horizontal, 8)
@@ -96,6 +96,11 @@ struct DownloadListView: View {
                             .background(.orange.opacity(0.2))
                             .foregroundStyle(.orange)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
+                    } else {
+                        Text("Content avaliable for offline viewing")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                        Spacer()
                     }
                     if !viewModel.downloadedShows.isEmpty || !viewModel.downloadedMovies.isEmpty {
                         Text("\(totalItemCount) items • \(totalStorageUsed)")
