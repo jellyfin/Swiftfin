@@ -809,11 +809,22 @@ struct DownloadedShowRow: View {
 
                 // Content info
                 VStack(alignment: .leading, spacing: 6) {
-                    HStack {
+                    HStack(alignment: .top) {
                         Text(show.displayTitle)
                             .font(.headline)
                             .fontWeight(.semibold)
                             .lineLimit(2)
+
+                        Spacer()
+
+                        Button {
+                            onDelete()
+                        } label: {
+                            Image(systemName: "trash")
+                                .font(.caption)
+                                .foregroundStyle(.red)
+                        }
+                        .buttonStyle(.plain)
                     }
 
                     if let overview = show.seriesItem.overview {
@@ -852,20 +863,6 @@ struct DownloadedShowRow: View {
 
                         Spacer()
                     }
-
-                    Spacer()
-
-                    // Delete button
-                    Button {
-                        onDelete()
-                    } label: {
-                        Image(systemName: "trash")
-                            .font(.title2)
-                            .foregroundStyle(.red)
-                    }
-                    .buttonStyle(.plain)
-
-                    Spacer()
                 }
             }
             .padding()
@@ -907,11 +904,22 @@ struct DownloadedMovieRow: View {
 
                 // Content info
                 VStack(alignment: .leading, spacing: 6) {
-                    HStack {
+                    HStack(alignment: .top) {
                         Text(movie.displayTitle)
                             .font(.headline)
                             .fontWeight(.semibold)
                             .lineLimit(2)
+
+                        Spacer()
+
+                        Button {
+                            onDelete()
+                        } label: {
+                            Image(systemName: "trash")
+                                .font(.caption)
+                                .foregroundStyle(.red)
+                        }
+                        .buttonStyle(.plain)
                     }
 
                     if let overview = movie.movieItem.overview {
@@ -944,26 +952,12 @@ struct DownloadedMovieRow: View {
                                 .font(.caption2)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
-                                .background(.secondary.opacity(0.2))
+                                .background(.blue.opacity(0.2))
                                 .clipShape(RoundedRectangle(cornerRadius: 4))
                         }
 
                         Spacer()
                     }
-
-                    Spacer()
-
-                    // Delete button
-                    Button {
-                        onDelete()
-                    } label: {
-                        Image(systemName: "trash")
-                            .font(.title2)
-                            .foregroundStyle(.red)
-                    }
-                    .buttonStyle(.plain)
-
-                    Spacer()
                 }
             }
             .padding()
