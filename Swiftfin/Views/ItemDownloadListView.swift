@@ -97,7 +97,6 @@ struct ItemDownloadListView: View {
 
     @ViewBuilder
     private var contentView: some View {
-
         List {
 
             // Episodes grouped by season
