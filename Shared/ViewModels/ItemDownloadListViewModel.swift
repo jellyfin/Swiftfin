@@ -146,7 +146,8 @@ final class ItemDownloadListViewModel: ViewModel {
                                 versionInfo: finalVersionInfo,
                                 mediaURL: finalMediaURL,
                                 primaryImageURL: primaryImageURL,
-                                backdropImageURL: backdropImageURL
+                                backdropImageURL: backdropImageURL,
+                                fileSize: try? FileManager.default.attributesOfItem(atPath: finalMediaURL.path)[.size] as? Int64
                             )
 
                             episodes.append(downloadedEpisode)
@@ -213,7 +214,8 @@ final class ItemDownloadListViewModel: ViewModel {
                                     versionInfo: versionInfo,
                                     mediaURL: mediaURL,
                                     primaryImageURL: primaryImageURL,
-                                    backdropImageURL: backdropImageURL
+                                    backdropImageURL: backdropImageURL,
+                                    fileSize: try? FileManager.default.attributesOfItem(atPath: mediaURL!.path)[.size] as? Int64
                                 )
 
                                 episodes.append(downloadedEpisode)

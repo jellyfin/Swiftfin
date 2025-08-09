@@ -32,6 +32,7 @@ struct DownloadedEpisode: Identifiable {
     let mediaURL: URL?
     let primaryImageURL: URL?
     let backdropImageURL: URL?
+    let fileSize: Int64?
 
     var seasonNumber: Int? { episodeItem.parentIndexNumber }
     var episodeNumber: Int? { episodeItem.indexNumber }
@@ -221,6 +222,31 @@ class DownloadListViewModel: ViewModel {
         }
     }
 
+    private func getEpisodeMediaURL(for seriesId: String, in seasonPath: URL, episodeItem: BaseItemDto, versionInfo: VersionInfo) -> URL? {
+        do {
+            let contents = try FileManager.default.contentsOfDirectory(atPath: seasonPath.path)
+
+            if let mediaSourceId = versionInfo.mediaSourceId,
+               let mediaFile = contents.first(where: { $0.contains(mediaSourceId) && !$0.contains("metadata") })
+            {
+                return seasonPath.appendingPathComponent(mediaFile)
+            }
+
+            if let episodeId = episodeItem.id,
+               let mediaFile = contents.first(where: { $0.contains(episodeId) && !$0.contains("metadata") })
+            {
+                return seasonPath.appendingPathComponent(mediaFile)
+            }
+
+            if let mediaFile = contents.first(where: { $0.hasPrefix("Media.") }) {
+                return seasonPath.appendingPathComponent(mediaFile)
+            }
+        } catch {
+            logger.warning("Error reading season folder contents at \(seasonPath.path): \(error)")
+        }
+        return nil
+    }
+
     private func getMediaURL(for itemId: String, versionInfo: VersionInfo) -> URL? {
         let downloadPath = URL.downloads.appendingPathComponent(itemId)
         if let enumerator = FileManager.default.enumerator(
@@ -280,35 +306,93 @@ class DownloadListViewModel: ViewModel {
                           let seasonMetadata = try? JSONDecoder().decode(DownloadMetadata.self, from: seasonData)
                     else { continue }
 
-                    for versionInfo in seasonMetadata.versions {
-                        var episodeItem: BaseItemDto?
-
-                        if let epId = versionInfo.episodeId, let epItem = seasonMetadata.episodes?[epId] {
-                            episodeItem = epItem
-                        } else if let inferredId = inferEpisodeId(in: seasonPath, versionInfo: versionInfo),
-                                  let epItem = seasonMetadata.episodes?[inferredId]
-                        {
-                            episodeItem = epItem
-                        } else if let templateItem = seasonMetadata.item, templateItem.type == .episode {
-                            episodeItem = templateItem
-                        }
-
-                        if let episodeItem {
+                    if let episodesDict = seasonMetadata.episodes, !episodesDict.isEmpty {
+                        // New strategy: Iterate over the episodes dictionary
+                        for (episodeId, episodeItem) in episodesDict {
                             if seriesItem == nil { seriesItem = createSeriesItemFromEpisode(episodeItem) }
 
-                            let mediaURL = getMediaURL(for: itemId, versionInfo: versionInfo)
+                            let versionInfo = seasonMetadata.versions.first {
+                                $0.episodeId == episodeId || $0.versionId == episodeId || $0.mediaSourceId == episodeId
+                            }
+
+                            let finalVersionInfo = versionInfo ?? VersionInfo(
+                                versionId: episodeId,
+                                container: "mp4",
+                                isStatic: true,
+                                mediaSourceId: episodeId,
+                                episodeId: episodeId,
+                                downloadDate: "",
+                                taskId: ""
+                            )
+
+                            let mediaURL = getEpisodeMediaURL(
+                                for: itemId,
+                                in: seasonPath,
+                                episodeItem: episodeItem,
+                                versionInfo: finalVersionInfo
+                            )
+
+                            guard let finalMediaURL = mediaURL, FileManager.default.fileExists(atPath: finalMediaURL.path) else {
+                                logger
+                                    .warning(
+                                        "Could not find media file for episode '\(episodeItem.displayTitle)' in season folder. Skipping."
+                                    )
+                                continue
+                            }
+
                             let primaryImageURL = getPrimaryImageURL(for: itemId, item: episodeItem)
                             let backdropImageURL = getBackdropImageURL(for: itemId, item: episodeItem)
 
                             let downloadedEpisode = DownloadedEpisode(
-                                id: (episodeItem.id ?? UUID().uuidString) + ":" + versionInfo.versionId,
+                                id: (episodeItem.id ?? UUID().uuidString) + ":" + finalVersionInfo.versionId,
                                 episodeItem: episodeItem,
-                                versionInfo: versionInfo,
-                                mediaURL: mediaURL,
+                                versionInfo: finalVersionInfo,
+                                mediaURL: finalMediaURL,
                                 primaryImageURL: primaryImageURL,
-                                backdropImageURL: backdropImageURL
+                                backdropImageURL: backdropImageURL,
+                                fileSize: try? FileManager.default.attributesOfItem(atPath: finalMediaURL.path)[.size] as? Int64
                             )
                             allEpisodes.append(downloadedEpisode)
+                        }
+                    } else {
+                        // Fallback for older metadata that might not have the 'episodes' dictionary.
+                        for versionInfo in seasonMetadata.versions {
+                            var episodeItem: BaseItemDto?
+
+                            if let epId = versionInfo.episodeId, let epItem = seasonMetadata.episodes?[epId] {
+                                episodeItem = epItem
+                            } else if let inferredId = inferEpisodeId(in: seasonPath, versionInfo: versionInfo),
+                                      let epItem = seasonMetadata.episodes?[inferredId]
+                            {
+                                episodeItem = epItem
+                            } else if let templateItem = seasonMetadata.item, templateItem.type == .episode {
+                                episodeItem = templateItem
+                            }
+
+                            if let episodeItem {
+                                if seriesItem == nil { seriesItem = createSeriesItemFromEpisode(episodeItem) }
+
+                                let mediaURL = getEpisodeMediaURL(
+                                    for: itemId,
+                                    in: seasonPath,
+                                    episodeItem: episodeItem,
+                                    versionInfo: versionInfo
+                                )
+                                let primaryImageURL = getPrimaryImageURL(for: itemId, item: episodeItem)
+                                let backdropImageURL = getBackdropImageURL(for: itemId, item: episodeItem)
+
+                                let downloadedEpisode = DownloadedEpisode(
+                                    id: (episodeItem.id ?? UUID().uuidString) + ":" + versionInfo.versionId,
+                                    episodeItem: episodeItem,
+                                    versionInfo: versionInfo,
+                                    mediaURL: mediaURL,
+                                    primaryImageURL: primaryImageURL,
+                                    backdropImageURL: backdropImageURL,
+                                    fileSize: mediaURL
+                                        .flatMap { try? FileManager.default.attributesOfItem(atPath: $0.path)[.size] as? Int64 }
+                                )
+                                allEpisodes.append(downloadedEpisode)
+                            }
                         }
                     }
                 }
@@ -336,7 +420,9 @@ class DownloadListViewModel: ViewModel {
                                     versionInfo: versionInfo,
                                     mediaURL: mediaURL,
                                     primaryImageURL: primaryImageURL,
-                                    backdropImageURL: backdropImageURL
+                                    backdropImageURL: backdropImageURL,
+                                    fileSize: mediaURL
+                                        .flatMap { try? FileManager.default.attributesOfItem(atPath: $0.path)[.size] as? Int64 }
                                 )
                             )
                         }

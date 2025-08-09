@@ -178,69 +178,81 @@ struct DownloadedEpisodeRow: View {
     // MARK: - Body
 
     var body: some View {
-        HStack(spacing: 6) {
-            // Thumbnail
-            ImageView(episode.backdropImageURL)
-                .failure {
-                    Rectangle()
-                        .foregroundStyle(.secondary.opacity(0.3))
-                        .overlay {
-                            Image(systemName: "tv")
-                        }
-                }
-                .aspectRatio(16 / 9, contentMode: .fill)
-                .frame(width: 120, height: 67.5)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
 
-            // Episode info
-            VStack(alignment: .leading, spacing: 4) {
-                // Episode number and title
-                HStack {
-                    if let episodeNumber = episode.episodeNumber {
-                        Text("Episode \(episodeNumber)")
-                            .font(.caption)
-                            .fontWeight(.bold)
-                            .foregroundStyle(.secondary)
-                    }
+        VStack {
 
-                    if let runtime = episode.episodeItem.runTimeTicks {
-                        let minutes = runtime / 600_000_000
-                        Text("\(minutes)m")
-                            .font(.caption2)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(.secondary.opacity(0.2))
-                            .clipShape(RoundedRectangle(cornerRadius: 4))
-                    }
-
-                    Spacer()
-
-                    // Delete button
-                    Button {
-                        onDelete()
-                    } label: {
-                        Image(systemName: "trash")
-                            .font(.caption)
-                            .foregroundStyle(.red)
-                    }
-                    .buttonStyle(.plain)
-                }
-
-                Text(episode.displayTitle)
-                    .font(.system(size: 13, weight: .semibold)) // Between subheadline (~15) and caption (~12)
-                    .foregroundStyle(.primary)
-                    .lineLimit(2)
-
-                if let overview = episode.episodeItem.overview {
-                    Text(overview)
-                        .font(.caption2)
+            HStack {
+                if let episodeNumber = episode.episodeNumber {
+                    Text("Episode \(episodeNumber)")
+                        .font(.caption)
+                        .fontWeight(.bold)
                         .foregroundStyle(.secondary)
-                        .lineLimit(2)
                 }
-            }
 
-            Spacer()
+                if let runtime = episode.episodeItem.runTimeTicks {
+                    let minutes = runtime / 600_000_000
+                    Text("\(minutes)m")
+                        .font(.caption2)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(.secondary.opacity(0.2))
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                }
+
+                if let fileSize = episode.fileSize {
+                    Text(fileSize.toReadableFileSize())
+                        .font(.caption2)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(.secondary.opacity(0.2))
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                }
+
+                Spacer()
+
+                // Delete button
+                Button {
+                    onDelete()
+                } label: {
+                    Image(systemName: "trash")
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
+                .buttonStyle(.plain)
+            }
+            HStack(spacing: 6) {
+                // Thumbnail
+                ImageView(episode.backdropImageURL)
+                    .failure {
+                        Rectangle()
+                            .foregroundStyle(.secondary.opacity(0.3))
+                            .overlay {
+                                Image(systemName: "tv")
+                            }
+                    }
+                    .aspectRatio(16 / 9, contentMode: .fill)
+                    .frame(width: 120, height: 67.5)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                // Episode info
+                VStack(alignment: .leading, spacing: 4) {
+
+                    Text(episode.displayTitle)
+                        .font(.system(size: 13, weight: .semibold)) // Between subheadline (~15) and caption (~12)
+                        .foregroundStyle(.primary)
+                        .lineLimit(2)
+
+                    if let overview = episode.episodeItem.overview {
+                        Text(overview)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(3)
+                    }
+                }
+
+                Spacer()
+            }
+            .padding(.vertical, 4)
         }
-        .padding(.vertical, 4)
     }
 }
