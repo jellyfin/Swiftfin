@@ -120,6 +120,7 @@ enum ImageDownloadContext {
     case episode(id: String)
     case season(id: String)
     case series(id: String)
+    case movie(id: String)
 }
 ```
 

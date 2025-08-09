@@ -596,8 +596,17 @@ extension DownloadManager: DownloadSessionDelegate {
                     response: response
                 )
             case .backdropImage, .primaryImage:
-                // Default to episode context since we don't have rich context here
-                let context: ImageDownloadContext = .episode(id: swiftfinDownloadTask.item.id ?? "")
+                // Use appropriate context based on item type
+                let context: ImageDownloadContext
+                switch swiftfinDownloadTask.item.type {
+                case .movie:
+                    context = .movie(id: swiftfinDownloadTask.item.id ?? "")
+                case .episode:
+                    context = .episode(id: swiftfinDownloadTask.item.id ?? "")
+                default:
+                    // Default to episode context for unknown types
+                    context = .episode(id: swiftfinDownloadTask.item.id ?? "")
+                }
 
                 try fileService.moveImageFile(
                     from: location,

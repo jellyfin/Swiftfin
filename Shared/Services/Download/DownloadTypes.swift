@@ -18,13 +18,25 @@ struct DownloadMetadata: Codable {
     let displayTitle: String
     // Full item payload merged into metadata.json; optional for backward compatibility
     var item: BaseItemDto?
+    // Optional map of per-episode metadata for season-level metadata files.
+    // Keyed by episodeId so individual episode details can be restored when listing.
+    // Backward compatible: absent in existing metadata files.
+    var episodes: [String: BaseItemDto]? // episodeId -> BaseItemDto
     var versions: [VersionInfo]
 
-    init(itemId: String, itemType: String?, displayTitle: String, item: BaseItemDto? = nil, versions: [VersionInfo] = []) {
+    init(
+        itemId: String,
+        itemType: String?,
+        displayTitle: String,
+        item: BaseItemDto? = nil,
+        episodes: [String: BaseItemDto]? = nil,
+        versions: [VersionInfo] = []
+    ) {
         self.itemId = itemId
         self.itemType = itemType
         self.displayTitle = displayTitle
         self.item = item
+        self.episodes = episodes
         self.versions = versions
     }
 }
@@ -35,6 +47,9 @@ struct VersionInfo: Codable {
     let container: String
     let isStatic: Bool
     let mediaSourceId: String?
+    // Optional explicit episode id for season-level metadata entries representing episodes
+    // Backward compatible: may be nil for movies or legacy metadata
+    let episodeId: String?
     let downloadDate: String
     let taskId: String
 
@@ -43,6 +58,7 @@ struct VersionInfo: Codable {
         container: String,
         isStatic: Bool,
         mediaSourceId: String?,
+        episodeId: String? = nil,
         downloadDate: String,
         taskId: String
     ) {
@@ -50,6 +66,7 @@ struct VersionInfo: Codable {
         self.container = container
         self.isStatic = isStatic
         self.mediaSourceId = mediaSourceId
+        self.episodeId = episodeId
         self.downloadDate = downloadDate
         self.taskId = taskId
     }
@@ -69,6 +86,7 @@ enum ImageDownloadContext: Hashable, Equatable {
     case episode(id: String)
     case season(id: String)
     case series(id: String)
+    case movie(id: String)
 }
 
 enum DownloadQuality: Hashable, Equatable {

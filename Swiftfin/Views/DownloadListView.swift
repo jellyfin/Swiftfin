@@ -57,7 +57,9 @@ struct DownloadedEpisode: Identifiable {
         primaryImageURL: URL? = nil,
         backdropImageURL: URL? = nil
     ) {
-        self.id = episodeItem.id ?? UUID().uuidString
+        // Make identity unique per episode-version to avoid SwiftUI collisions when multiple versions exist
+        let baseId = episodeItem.id ?? UUID().uuidString
+        self.id = baseId + ":" + versionInfo.versionId
         self.episodeItem = episodeItem
         self.versionInfo = versionInfo
         self.mediaURL = mediaURL
@@ -377,15 +379,16 @@ struct DownloadListView: View {
                                     // Look for media file matching this version
                                     var episodeItem: BaseItemDto?
 
-                                    // First, try to use the embedded item from season metadata as a template
-                                    // and modify it for each episode
-                                    if let templateItem = seasonMetadata.item, templateItem.type == .episode {
+                                    // Prefer per-episode metadata when available
+                                    if let epId = versionInfo.episodeId, let epItem = seasonMetadata.episodes?[epId] {
+                                        episodeItem = epItem
+                                    } else if let inferredId = inferEpisodeId(in: seasonPath, versionInfo: versionInfo),
+                                              let epItem = seasonMetadata.episodes?[inferredId]
+                                    {
+                                        episodeItem = epItem
+                                    } else if let templateItem = seasonMetadata.item, templateItem.type == .episode {
+                                        // Fallback to template for backward compatibility
                                         episodeItem = templateItem
-
-                                        // If the versionId contains episode information, we might be able to
-                                        // distinguish different episodes. For now, we'll use the template.
-                                        // In a more robust implementation, we'd need to store episode metadata
-                                        // separately for each episode or derive it from filenames.
                                     }
 
                                     // If we have episode item data, create DownloadedEpisode
@@ -699,6 +702,24 @@ struct DownloadListView: View {
         return nil
     }
 
+    // Try to infer the episodeId from filenames like "[episodeId]-[versionId].ext" within a Season-XX folder
+    private func inferEpisodeId(in seasonFolder: URL, versionInfo: VersionInfo) -> String? {
+        do {
+            let contents = try FileManager.default.contentsOfDirectory(atPath: seasonFolder.path)
+            let candidates = contents.filter { filename in
+                guard !filename.contains("metadata") else { return false }
+                if let msid = versionInfo.mediaSourceId, filename.contains(msid) { return true }
+                return filename.contains("-")
+            }
+            if let match = candidates.first, let dash = match.firstIndex(of: "-") {
+                return String(match[..<dash])
+            }
+        } catch {
+            logger.debug("Failed to infer episode id from season folder: \(error)")
+        }
+        return nil
+    }
+
     @MainActor
     private func refreshDownloads() async {
         logger.info("Pull-to-refresh triggered")
@@ -796,6 +817,7 @@ struct DownloadedShowRow: View {
             HStack(spacing: 12) {
                 // Thumbnail
                 ImageView(show.primaryImageURL ?? show.backdropImageURL)
+                    .pipeline(.Swiftfin.local)
                     .failure {
                         Rectangle()
                             .foregroundStyle(.secondary.opacity(0.3))
@@ -891,6 +913,7 @@ struct DownloadedMovieRow: View {
             HStack(spacing: 12) {
                 // Thumbnail
                 ImageView(movie.primaryImageURL ?? movie.backdropImageURL)
+                    .pipeline(.Swiftfin.local)
                     .failure {
                         Rectangle()
                             .foregroundStyle(.secondary.opacity(0.3))

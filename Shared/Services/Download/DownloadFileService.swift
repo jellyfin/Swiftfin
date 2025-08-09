@@ -435,6 +435,10 @@ final class DownloadFileService: DownloadFileServicing {
             // Series images go to show root Images folder
             imagesFolder = downloadFolder.appendingPathComponent("Images")
             filename = "Series-\(id)-\(imageTypePrefix).\(imageExtension)"
+        case .movie:
+            // Movie images go to movie root Images folder
+            imagesFolder = downloadFolder.appendingPathComponent("Images")
+            filename = "\(imageTypePrefix).\(imageExtension)"
         }
 
         try FileManager.default.createDirectory(at: imagesFolder, withIntermediateDirectories: true)

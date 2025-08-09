@@ -189,23 +189,28 @@ struct ItemDownloadListView: View {
 
                     logger.debug("Processing season folder: \(seasonFolder) with \(seasonMetadata.versions.count) versions")
 
-                    // For series structured folders, each version represents an episode
-                    // The season metadata contains a template episode item, but we need to
-                    // create individual episodes for each version
+                    // For series structured folders, each version represents an episode.
+                    // Prefer per-episode metadata when available; otherwise fall back to template.
                     for versionInfo in seasonMetadata.versions {
                         var episodeItem: BaseItemDto?
 
-                        // Use the embedded item from season metadata as a template
-                        if let templateItem = seasonMetadata.item, templateItem.type == .episode {
-                            episodeItem = templateItem
-
-                            // In an ideal world, we'd have separate episode metadata for each episode
-                            // but for now we'll use the template. This means multiple episodes from
-                            // the same season will have the same metadata (last downloaded episode)
-                            // but different version information and media files.
+                        // 1) Use explicit per-episode metadata if present
+                        if let epId = versionInfo.episodeId, let epItem = seasonMetadata.episodes?[epId] {
+                            episodeItem = epItem
                         }
 
-                        // If we have episode item data, create DownloadedEpisode
+                        // 2) Fallback: try to infer episodeId from media file name in season folder
+                        if episodeItem == nil {
+                            if let inferredId = inferEpisodeId(in: seasonPath, versionInfo: versionInfo) {
+                                episodeItem = seasonMetadata.episodes?[inferredId]
+                            }
+                        }
+
+                        // 3) Last resort: use season-level template
+                        if episodeItem == nil, let templateItem = seasonMetadata.item, templateItem.type == .episode {
+                            episodeItem = templateItem
+                        }
+
                         if let episodeItem = episodeItem {
                             let mediaURL = getMediaURL(for: seriesId, episodeItem: episodeItem, versionInfo: versionInfo)
                             let primaryImageURL = getPrimaryImageURL(for: seriesId, episodeItem: episodeItem)
@@ -267,6 +272,30 @@ struct ItemDownloadListView: View {
         isLoading = false
 
         logger.info("Loaded \(episodes.count) episodes across \(grouped.keys.count) seasons")
+    }
+
+    // Try to infer the episodeId from filenames like "[episodeId]-[versionId].ext"
+    private func inferEpisodeId(in seasonFolder: URL, versionInfo: VersionInfo) -> String? {
+        do {
+            let contents = try FileManager.default.contentsOfDirectory(atPath: seasonFolder.path)
+            // Prefer matching by version mediaSourceId when present
+            let candidates = contents.filter { filename in
+                guard !filename.contains("metadata") else { return false }
+                if let msid = versionInfo.mediaSourceId, filename.contains(msid) { return true }
+                // Otherwise, match pattern like "<episodeId>-<versionId>"
+                return filename.contains("-")
+            }
+            // Parse episodeId as prefix up to first '-'
+            if let match = candidates.first {
+                if let dash = match.firstIndex(of: "-") {
+                    let prefix = String(match[..<dash])
+                    return prefix
+                }
+            }
+        } catch {
+            logger.debug("Failed to infer episode id from season folder: \(error)")
+        }
+        return nil
     }
 
     private func getMediaURL(for seriesId: String, episodeItem: BaseItemDto, versionInfo: VersionInfo) -> URL? {

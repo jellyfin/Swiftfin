@@ -29,10 +29,20 @@ final class DownloadImageManager: DownloadImageManaging {
 
         // Download episode's own images
         if let backdropURL = urlBuilder.imageURL(for: task.item, type: .backdropImage),
-           let episodeID = task.item.id
+           let itemID = task.item.id
         {
+            let context: ImageDownloadContext
+            switch task.item.type {
+            case .movie:
+                context = .movie(id: itemID)
+            case .episode:
+                context = .episode(id: itemID)
+            default:
+                context = .episode(id: itemID)
+            }
+
             group.enter()
-            downloadSingleImage(url: backdropURL, for: task, type: .backdropImage, context: .episode(id: episodeID)) { result in
+            downloadSingleImage(url: backdropURL, for: task, type: .backdropImage, context: context) { result in
                 switch result {
                 case .success:
                     self.logger.trace("Successfully downloaded backdrop image for: \(task.item.displayTitle)")
@@ -44,10 +54,20 @@ final class DownloadImageManager: DownloadImageManaging {
             }
         }
         if let primaryURL = urlBuilder.imageURL(for: task.item, type: .primaryImage),
-           let episodeID = task.item.id
+           let itemID = task.item.id
         {
+            let context: ImageDownloadContext
+            switch task.item.type {
+            case .movie:
+                context = .movie(id: itemID)
+            case .episode:
+                context = .episode(id: itemID)
+            default:
+                context = .episode(id: itemID)
+            }
+
             group.enter()
-            downloadSingleImage(url: primaryURL, for: task, type: .primaryImage, context: .episode(id: episodeID)) { result in
+            downloadSingleImage(url: primaryURL, for: task, type: .primaryImage, context: context) { result in
                 switch result {
                 case .success:
                     self.logger.trace("Successfully downloaded primary image for: \(task.item.displayTitle)")

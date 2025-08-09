@@ -310,11 +310,13 @@ final class DownloadMetadataManager: DownloadMetadataManaging {
 
         // Create version entry for this episode
         let uniqueVersionId = task.mediaSourceId ?? task.item.id ?? "default"
+        let episodeId = task.item.id
         let versionInfo = VersionInfo(
             versionId: uniqueVersionId,
             container: task.container,
             isStatic: task.isStatic,
             mediaSourceId: task.mediaSourceId,
+            episodeId: episodeId,
             downloadDate: ISO8601DateFormatter().string(from: Date()),
             taskId: task.taskID.uuidString
         )
@@ -334,8 +336,15 @@ final class DownloadMetadataManager: DownloadMetadataManaging {
         // Add new version
         seasonMetadata.versions.append(versionInfo)
 
-        // Update embedded item with episode info
+        // Update embedded item with episode info (template for backward compatibility)
         seasonMetadata.item = task.item
+
+        // Ensure per-episode metadata map exists and store this episode's full item metadata
+        var episodesMap = seasonMetadata.episodes ?? [:]
+        if let episodeKey = episodeId {
+            episodesMap[episodeKey] = task.item
+        }
+        seasonMetadata.episodes = episodesMap
 
         // Save season metadata
         let encoder = JSONEncoder()
