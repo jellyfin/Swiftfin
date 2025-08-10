@@ -188,7 +188,7 @@ extension ItemView.CompactPosterScrollView {
                     Spacer()
 
                     ItemView.ActionButtonHStack(viewModel: viewModel, equalSpacing: false)
-                        .font(.system(size: 20))
+                        .foregroundStyle(.white)
                 }
                 .frame(height: 45)
             }

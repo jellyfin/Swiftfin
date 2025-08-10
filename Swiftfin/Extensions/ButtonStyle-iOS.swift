@@ -52,8 +52,6 @@ struct TintedMaterialButtonStyle: ButtonStyle {
 
     // MARK: Environment Objects
 
-    @Default(.accentColor)
-    private var accentColor
     @Environment(\.isSelected)
     private var isSelected
     @Environment(\.isEnabled)
@@ -78,7 +76,7 @@ struct TintedMaterialButtonStyle: ButtonStyle {
 
     private var buttonTint: AnyShapeStyle {
         if isEnabled && isSelected {
-            AnyShapeStyle(HierarchicalShapeStyle.primary)
+            AnyShapeStyle(HierarchicalShapeStyle.secondary)
         } else {
             AnyShapeStyle(Color.gray.opacity(0.3))
         }
@@ -88,11 +86,7 @@ struct TintedMaterialButtonStyle: ButtonStyle {
 
     private var foregroundStyle: AnyShapeStyle {
         if isEnabled {
-            if isSelected {
-                AnyShapeStyle(Color.systemBackground)
-            } else {
-                AnyShapeStyle(accentColor)
-            }
+            AnyShapeStyle(HierarchicalShapeStyle.primary)
         } else {
             AnyShapeStyle(Color.gray.opacity(0.3))
         }

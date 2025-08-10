@@ -61,7 +61,7 @@ extension ItemView {
                     Button(L10n.played, systemImage: "checkmark") {
                         viewModel.send(.toggleIsPlayed)
                     }
-                    .foregroundStyle(accentColor)
+                    .foregroundStyle(.primary, accentColor)
                     .isSelected(isCheckmarkSelected)
                     .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in
@@ -77,7 +77,7 @@ extension ItemView {
                     viewModel.send(.toggleIsFavorite)
                 }
 
-                .foregroundStyle(.red)
+                .foregroundStyle(.primary, .red)
                 .isSelected(isHeartSelected)
                 .frame(maxWidth: .infinity)
                 .if(!equalSpacing) { view in
@@ -94,6 +94,7 @@ extension ItemView {
                         mediaSources: mediaSources
                     )
                     .menuStyle(.button)
+                    .foregroundStyle(.primary)
                     .environment(\.isSelected, false)
                     .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in
@@ -109,6 +110,7 @@ extension ItemView {
                         externalTrailers: viewModel.item.remoteTrailers ?? []
                     )
                     .menuStyle(.button)
+                    .foregroundStyle(.primary)
                     .environment(\.isSelected, false)
                     .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in

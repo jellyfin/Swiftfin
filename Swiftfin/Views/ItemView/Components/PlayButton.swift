@@ -84,6 +84,8 @@ extension ItemView {
                 .padding(.horizontal, 5)
             }
             .buttonStyle(.tintedMaterial)
+            .foregroundStyle(.white, accentColor)
+            .isSelected(true)
             .contextMenu {
                 if viewModel.playButtonItem?.userData?.playbackPositionTicks != 0 {
                     Button(L10n.playFromBeginning, systemImage: "gobackward") {
