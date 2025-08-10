@@ -52,18 +52,15 @@ extension ItemView {
         var body: some View {
             HStack(alignment: .center, spacing: 10) {
 
-                /// Marking Persons and Artists as played doesn't do anything.
-                if viewModel.item.type != .person && viewModel.item.type != .musicArtist {
+                if viewModel.item.canBePlayed {
 
                     // MARK: - Toggle Played
 
                     let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
 
-                    Button(L10n.played, systemImage: isCheckmarkSelected ? "checkmark.circle.fill" : "checkmark.circle") {
+                    Button(L10n.played, systemImage: "checkmark") {
                         viewModel.send(.toggleIsPlayed)
                     }
-                    .buttonStyle(.action)
-                    .labelStyle(.iconOnly)
                     .foregroundStyle(accentColor)
                     .isSelected(isCheckmarkSelected)
                     .frame(maxWidth: .infinity)
@@ -79,8 +76,7 @@ extension ItemView {
                 Button(L10n.favorite, systemImage: isHeartSelected ? "heart.fill" : "heart") {
                     viewModel.send(.toggleIsFavorite)
                 }
-                .buttonStyle(.action)
-                .labelStyle(.iconOnly)
+
                 .foregroundStyle(.red)
                 .isSelected(isHeartSelected)
                 .frame(maxWidth: .infinity)
@@ -98,8 +94,6 @@ extension ItemView {
                         mediaSources: mediaSources
                     )
                     .menuStyle(.button)
-                    .buttonStyle(.action)
-                    .labelStyle(.iconOnly)
                     .environment(\.isSelected, false)
                     .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in
@@ -115,8 +109,6 @@ extension ItemView {
                         externalTrailers: viewModel.item.remoteTrailers ?? []
                     )
                     .menuStyle(.button)
-                    .buttonStyle(.action)
-                    .labelStyle(.iconOnly)
                     .environment(\.isSelected, false)
                     .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in
@@ -124,6 +116,8 @@ extension ItemView {
                     }
                 }
             }
+            .buttonStyle(.tintedMaterial)
+            .labelStyle(.iconOnly)
         }
     }
 }

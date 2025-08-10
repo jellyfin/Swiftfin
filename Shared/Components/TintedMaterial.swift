@@ -27,9 +27,7 @@ private struct _TintedMaterial: UIViewRepresentable {
     let tint: Color
 
     func makeUIView(context: Context) -> UIVisualEffectView {
-        let uiView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
-        set(tint: tint, for: uiView)
-        return uiView
+        UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
     }
 
     func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
@@ -38,6 +36,6 @@ private struct _TintedMaterial: UIViewRepresentable {
 
     private func set(tint: Color, for view: UIVisualEffectView) {
         let overlayView = view.subviews.first { type(of: $0) == NSClassFromString("_UIVisualEffectSubview") }
-        overlayView?.backgroundColor = UIColor(tint.opacity(0.6))
+        overlayView?.backgroundColor = UIColor(tint.opacity(0.75))
     }
 }

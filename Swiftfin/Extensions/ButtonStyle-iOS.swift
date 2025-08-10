@@ -20,13 +20,6 @@ extension ButtonStyle where Self == ToolbarPillButtonStyle {
     }
 }
 
-extension ButtonStyle where Self == ActionButtonStyle {
-
-    static var action: ActionButtonStyle {
-        ActionButtonStyle()
-    }
-}
-
 // TODO: don't take `Color`, take generic `ShapeStyle`
 struct ToolbarPillButtonStyle: ButtonStyle {
 
@@ -48,7 +41,14 @@ struct ToolbarPillButtonStyle: ButtonStyle {
     }
 }
 
-struct ActionButtonStyle: ButtonStyle {
+extension ButtonStyle where Self == TintedMaterialButtonStyle {
+
+    static var tintedMaterial: TintedMaterialButtonStyle {
+        TintedMaterialButtonStyle()
+    }
+}
+
+struct TintedMaterialButtonStyle: ButtonStyle {
 
     // MARK: - Environment Objects
 
