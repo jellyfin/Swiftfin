@@ -9,8 +9,9 @@
 import AVFoundation
 import Foundation
 import JellyfinAPI
+import SwiftUI
 
-class AVPlayerVideoPlayerProxy: MediaPlayerProxy {
+class AVPlayerMediaPlayerProxy: MediaPlayerProxy {
 
     weak var avPlayer: AVPlayer?
 
@@ -22,32 +23,26 @@ class AVPlayerVideoPlayerProxy: MediaPlayerProxy {
         avPlayer?.pause()
     }
 
-    func jumpForward(_ seconds: Duration) {}
+    func jumpForward(_ seconds: Duration) {
+        guard let avPlayer else { return }
+        let currentTime = avPlayer.currentTime()
+        let newTime = currentTime + CMTime(seconds: seconds.seconds, preferredTimescale: 1)
+        avPlayer.seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
+    }
 
-    func jumpBackward(_ seconds: Duration) {}
+    func jumpBackward(_ seconds: Duration) {
+        guard let avPlayer else { return }
+        let currentTime = avPlayer.currentTime()
+        let newTime = max(.zero, currentTime - CMTime(seconds: seconds.seconds, preferredTimescale: 1))
+        avPlayer.seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
+    }
 
-    func setSeconds(_ seconds: Duration) {}
-
-//    func jumpForward(_ seconds: TimeInterval) {
-//        guard let avPlayer else { return }
-//
-//        let time = avPlayer.currentTime() + CMTime(seconds: seconds, preferredTimescale: 1)
-//        avPlayer.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
-//    }
-//
-//    func jumpBackward(_ seconds: TimeInterval) {
-//        guard let avPlayer else { return }
-//
-//        let time = avPlayer.currentTime() - CMTime(seconds: seconds, preferredTimescale: 1)
-//        avPlayer.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
-//    }
+    func setSeconds(_ seconds: Duration) {
+        let time = CMTime(seconds: seconds.seconds, preferredTimescale: 1)
+        avPlayer?.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
+    }
 
     func setRate(_ rate: Float) {}
-
-//    func setTime(_ time: TimeInterval) {
-//        let time = CMTime(value: CMTimeValue(time), timescale: 1)
-//        avPlayer?.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
-//    }
 
     func stop() {
         avPlayer?.pause()
@@ -55,4 +50,21 @@ class AVPlayerVideoPlayerProxy: MediaPlayerProxy {
 
     func setAudioStream(_ stream: MediaStream) {}
     func setSubtitleStream(_ stream: MediaStream) {}
+
+    func makeVideoPlayerBody(manager: MediaPlayerManager) -> some View {
+        _VideoPlayerBody(manager: manager)
+    }
+}
+
+extension AVPlayerMediaPlayerProxy {
+
+    struct _VideoPlayerBody: View {
+
+        @ObservedObject
+        var manager: MediaPlayerManager
+
+        var body: some View {
+            NativeVideoPlayer(manager: manager)
+        }
+    }
 }

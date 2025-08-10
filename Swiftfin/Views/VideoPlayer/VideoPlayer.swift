@@ -12,7 +12,6 @@ import PreferencesView
 import SwiftUI
 import VLCUI
 
-// TODO: move audio/subtitle offset to manager?
 // TODO: decouple from VLC, just use manager's proxy
 
 struct VideoPlayer: View {
@@ -42,26 +41,24 @@ struct VideoPlayer: View {
     @State
     private var subtitleOffset: Duration = .zero
 
-    @StateObject
+    @ObservedObject
     private var manager: MediaPlayerManager
-
-    @StateObject
-    private var vlcUIProxy: VLCVideoPlayer.Proxy
 
     // MARK: init
 
     init(manager: MediaPlayerManager) {
+        self.manager = manager
 
-        let videoPlayerProxy = VLCVideoPlayerProxy()
-        let vlcUIProxy = VLCVideoPlayer.Proxy()
-        videoPlayerProxy.vlcUIProxy = vlcUIProxy
-
-        self._manager = StateObject(wrappedValue: {
-            manager.proxy = videoPlayerProxy
-            manager.observers.append(NowPlayableObserver(manager: manager))
-            return manager
-        }())
-        self._vlcUIProxy = StateObject(wrappedValue: vlcUIProxy)
+//        let videoPlayerProxy = VLCVideoPlayerProxy()
+//        let vlcUIProxy = VLCVideoPlayer.Proxy()
+//        videoPlayerProxy.vlcUIProxy = vlcUIProxy
+//
+//        self._manager = StateObject(wrappedValue: {
+//            manager.proxy = videoPlayerProxy
+//            manager.observers.append(NowPlayableObserver(manager: manager))
+//            return manager
+//        }())
+//        self._vlcUIProxy = StateObject(wrappedValue: vlcUIProxy)
     }
 
     // MARK: playerView
@@ -72,56 +69,27 @@ struct VideoPlayer: View {
 
             Color.black
 
-            if let playbackitem = manager.playbackItem {
-                VLCVideoPlayer(configuration: playbackitem.vlcConfiguration)
-                    .proxy(vlcUIProxy)
-                    .onSecondsUpdated { newSeconds, _ in
-                        if !isScrubbing {
-                            scrubbedSeconds = newSeconds
-                        }
-
-                        manager.seconds = newSeconds
-                    }
-                    .onStateUpdated { state, _ in
-
-                        switch state {
-                        case .buffering, .esAdded, .opening: ()
-//                            if manager.playbackStatus != .buffering {
-//                                manager.playbackStatus = .buffering
-//                            }
-                        case .ended, .stopped:
-                            isScrubbing = false
-                            manager.send(.ended)
-                        case .error:
-                            // TODO: localize
-                            isScrubbing = false
-                            manager.send(.error(.init("Unable to perform playback")))
-                        case .playing:
-                            manager.set(playbackRequestStatus: .playing)
-                        case .paused:
-                            manager.set(playbackRequestStatus: .paused)
-                        }
-                    }
-            }
+            manager.proxy?.makeVideoPlayerBody(manager: manager)
+                .eraseToAnyView()
 
             Overlay()
-                .environment(\.audioOffset, $audioOffset)
-                .environment(\.isAspectFilled, $isAspectFilled)
-                .environment(\.isGestureLocked, $isGestureLocked)
-                .environment(\.isScrubbing, $isScrubbing)
-                .environmentObject(manager)
-                .environmentObject(_scrubbedSeconds.box)
         }
+        .environment(\.audioOffset, $audioOffset)
+        .environment(\.isAspectFilled, $isAspectFilled)
+        .environment(\.isGestureLocked, $isGestureLocked)
+        .environment(\.isScrubbing, $isScrubbing)
+        .environmentObject(manager)
+        .environmentObject(_scrubbedSeconds.box)
     }
 
     var body: some View {
         playerView
-            .onChange(of: audioOffset) { newValue in
-                vlcUIProxy.setAudioDelay(newValue)
+            .onChange(of: audioOffset) { _ in
+//                vlcUIProxy.setAudioDelay(newValue)
             }
-            .onChange(of: isAspectFilled) { newValue in
+            .onChange(of: isAspectFilled) { _ in
                 UIView.animate(withDuration: 0.2) {
-                    vlcUIProxy.aspectFill(newValue ? 1 : 0)
+//                    vlcUIProxy.aspectFill(newValue ? 1 : 0)
                 }
             }
             .onChange(of: isScrubbing) { isScrubbing in
@@ -130,22 +98,22 @@ struct VideoPlayer: View {
                 manager.seconds = scrubbedSeconds
                 manager.proxy?.setSeconds(scrubbedSeconds)
             }
-            .onChange(of: subtitleColor) { newValue in
-                vlcUIProxy.setSubtitleColor(.absolute(newValue.uiColor))
+            .onChange(of: subtitleColor) { _ in
+//                vlcUIProxy.setSubtitleColor(.absolute(newValue.uiColor))
             }
-            .onChange(of: subtitleFontName) { newValue in
-                vlcUIProxy.setSubtitleFont(newValue)
+            .onChange(of: subtitleFontName) { _ in
+//                vlcUIProxy.setSubtitleFont(newValue)
             }
-            .onChange(of: subtitleOffset) { newValue in
-                vlcUIProxy.setSubtitleDelay(newValue)
+            .onChange(of: subtitleOffset) { _ in
+//                vlcUIProxy.setSubtitleDelay(newValue)
             }
-            .onChange(of: subtitleSize) { newValue in
-                vlcUIProxy.setSubtitleSize(.absolute(25 - newValue))
+            .onChange(of: subtitleSize) { _ in
+//                vlcUIProxy.setSubtitleSize(.absolute(25 - newValue))
             }
             .onReceive(manager.events) { @MainActor event in
                 switch event {
                 case .playbackStopped:
-                    vlcUIProxy.stop()
+                    manager.proxy?.stop()
                     router.dismiss()
                 case let .itemChanged(playbackItem: item):
                     isAspectFilled = false
@@ -153,7 +121,7 @@ struct VideoPlayer: View {
                     subtitleOffset = .zero
 
                     scrubbedSeconds = item.baseItem.startSeconds ?? .zero
-                    vlcUIProxy.playNewMedia(item.vlcConfiguration)
+//                    vlcUIProxy.playNewMedia(item.vlcConfiguration)
                 }
             }
     }

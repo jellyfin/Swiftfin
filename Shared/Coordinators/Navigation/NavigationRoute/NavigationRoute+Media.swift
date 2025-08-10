@@ -72,8 +72,17 @@ struct VideoPlayerViewShim: View {
     var body: some View {
         Group {
             if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                VideoPlayer(manager: manager)
-                    .environment(\.safeAreaInsets, safeAreaInsets)
+                VideoPlayer(manager: {
+                    if Defaults[.Customization.Indicators.showFavorited] {
+                        manager.proxy = VLCMediaPlayerProxy()
+                    } else {
+                        manager.proxy = AVPlayerMediaPlayerProxy()
+                    }
+
+                    return manager
+                }()
+                )
+                .environment(\.safeAreaInsets, safeAreaInsets)
             } else {
                 NativeVideoPlayer(manager: manager)
             }
@@ -84,8 +93,9 @@ struct VideoPlayerViewShim: View {
         .persistentSystemOverlays(.hidden)
         .toolbar(.hidden, for: .navigationBar)
         .statusBarHidden()
-        .onSizeChanged { _, safeArea in
-            self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
+        .onSizeChanged { _, _ in
+            // TODO: remakes proxies, set proxies elsewhere
+//            self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
         }
     }
 }
