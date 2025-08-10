@@ -116,6 +116,8 @@ extension ItemView {
                     }
                 }
             }
+            .font(.title3)
+            .fontWeight(.semibold)
             .buttonStyle(.tintedMaterial)
             .labelStyle(.iconOnly)
         }

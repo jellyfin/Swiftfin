@@ -69,8 +69,6 @@ struct TintedMaterialButtonStyle: ButtonStyle {
                 .id(isSelected)
 
             configuration.label
-                .font(.title3)
-                .fontWeight(.semibold)
                 .foregroundStyle(foregroundStyle)
                 .symbolRenderingMode(.monochrome)
         }
