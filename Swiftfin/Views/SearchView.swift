@@ -93,22 +93,40 @@ struct SearchView: View {
 
     private func select(_ item: BaseItemDto, in namespace: Namespace.ID) {
         switch item.type {
-        case .program: ()
-        // router.route(
-        //     to: .liveVideoPlayer(
-        //         manager: LiveVideoPlayerManager(program: item)
-        //     )
-        // )
+        case .program:
+            let manager = MediaPlayerManager(item: item) { program in
+                guard let channel = try? await self.getChannel(for: program), let mediaSource = channel.mediaSources?.first else {
+                    viewModel.logger.error("Unable to get channel or media source for program")
+                    throw JellyfinAPIError(L10n.unknownError)
+                }
+
+                return try await MediaPlayerItem.build(for: program, mediaSource: mediaSource)
+            }
+
+            router.route(to: .videoPlayer(manager: manager))
+
         case .tvChannel:
             guard let mediaSource = item.mediaSources?.first else { return }
-//            router.route(
-//                to: .liveVideoPlayer(
-//                    manager: LiveVideoPlayerManager(item: item, mediaSource: mediaSource)
-//                )
-//            )
+            router.route(to: .videoPlayer(item: item, mediaSource: mediaSource))
+
         default:
             router.route(to: .item(item: item), in: namespace)
         }
+    }
+
+    private func getChannel(for program: BaseItemDto) async throws -> BaseItemDto? {
+
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.fields = .MinimumFields
+        parameters.ids = [program.channelID ?? ""]
+
+        let request = Paths.getItemsByUserID(
+            userID: viewModel.userSession.user.id,
+            parameters: parameters
+        )
+        let response = try await viewModel.userSession.client.send(request)
+
+        return response.value.items?.first
     }
 
     @ViewBuilder

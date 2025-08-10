@@ -50,6 +50,14 @@ extension NavigationRoute {
             VideoPlayerViewShim(manager: manager)
         }
     }
+
+    static func videoPlayer(item: BaseItemDto, mediaSource: MediaSourceInfo) -> NavigationRoute {
+        let manager = MediaPlayerManager(item: item) { item in
+            try await MediaPlayerItem.build(for: item, mediaSource: mediaSource)
+        }
+
+        return Self.videoPlayer(manager: manager)
+    }
 }
 
 // TODO: temporary shims for navigation work until video player refactor
