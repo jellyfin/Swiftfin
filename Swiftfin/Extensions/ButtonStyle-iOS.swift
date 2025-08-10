@@ -50,14 +50,16 @@ extension ButtonStyle where Self == TintedMaterialButtonStyle {
 
 struct TintedMaterialButtonStyle: ButtonStyle {
 
-    // MARK: - Environment Objects
+    // MARK: Environment Objects
 
+    @Default(.accentColor)
+    private var accentColor
     @Environment(\.isSelected)
     private var isSelected
     @Environment(\.isEnabled)
     private var isEnabled
 
-    // MARK: - Body
+    // MARK: Body
 
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
@@ -69,15 +71,33 @@ struct TintedMaterialButtonStyle: ButtonStyle {
             configuration.label
                 .font(.title3)
                 .fontWeight(.semibold)
-                .foregroundStyle(Color.white)
+                .foregroundStyle(foregroundStyle)
                 .symbolRenderingMode(.monochrome)
         }
     }
 
-    // MARK: - Button Tint
+    // MARK: Button Tint
 
     private var buttonTint: AnyShapeStyle {
-        isSelected ? AnyShapeStyle(HierarchicalShapeStyle.primary) : AnyShapeStyle(Color.gray.opacity(0.33))
+        if isEnabled && isSelected {
+            AnyShapeStyle(HierarchicalShapeStyle.primary)
+        } else {
+            AnyShapeStyle(Color.gray.opacity(0.3))
+        }
+    }
+
+    // MARK: Foreground Style
+
+    private var foregroundStyle: AnyShapeStyle {
+        if isEnabled {
+            if isSelected {
+                AnyShapeStyle(Color.systemBackground)
+            } else {
+                AnyShapeStyle(accentColor)
+            }
+        } else {
+            AnyShapeStyle(Color.gray.opacity(0.3))
+        }
     }
 }
 
