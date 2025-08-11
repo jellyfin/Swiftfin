@@ -8,15 +8,12 @@
 
 import Factory
 import JellyfinAPI
+import Logging
 import SwiftUI
 
 extension ItemView {
 
     struct TrailerMenu: View {
-
-        // TODO: Learn the new logger service
-        @Injected(\.logService)
-        private var logger
 
         // MARK: - Stored Value
 
@@ -35,6 +32,7 @@ extension ItemView {
 
         let localTrailers: [BaseItemDto]
         let externalTrailers: [MediaURL]
+        let logger = Logger.swiftfin()
 
         private var showLocalTrailers: Bool {
             enabledTrailers.contains(.local) && localTrailers.isNotEmpty
