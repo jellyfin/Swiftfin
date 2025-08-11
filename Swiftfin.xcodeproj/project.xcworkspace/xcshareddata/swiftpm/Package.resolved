@@ -146,15 +146,6 @@
       }
     },
     {
-      "identity" : "stinsen",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/rundfunk47/stinsen",
-      "state" : {
-        "branch" : "master",
-        "revision" : "d6ad23f4c68212fed8ac64c739bef224628776e3"
-      }
-    },
-    {
       "identity" : "svgkit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SVGKit/SVGKit",
