@@ -20,17 +20,6 @@ extension ButtonStyle where Self == ToolbarPillButtonStyle {
     }
 }
 
-extension ButtonStyle where Self == OrnamentButtonStyle {
-
-    static var ornament: OrnamentButtonStyle {
-        OrnamentButtonStyle(Defaults[.accentColor])
-    }
-
-    static func ornament(_ primary: Color = .accentColor, iconOnly: Bool = false) -> OrnamentButtonStyle {
-        OrnamentButtonStyle(primary, iconOnly: iconOnly)
-    }
-}
-
 // TODO: don't take `Color`, take generic `ShapeStyle`
 struct ToolbarPillButtonStyle: ButtonStyle {
 
@@ -55,13 +44,18 @@ struct ToolbarPillButtonStyle: ButtonStyle {
 extension ButtonStyle where Self == TintedMaterialButtonStyle {
 
     static var material: TintedMaterialButtonStyle {
-        TintedMaterialButtonStyle(tint: Color.clear, foregroundColor: Color.primary)
+        TintedMaterialButtonStyle(tint: Color.clear, foregroundColor: Color.primary, isPressed: nil)
     }
 
-    static func tintedMaterial(tint: Color, foregroundColor: Color) -> TintedMaterialButtonStyle {
+    static func material(_ isPressed: @escaping (Bool) -> Void) -> TintedMaterialButtonStyle {
+        TintedMaterialButtonStyle(tint: Color.clear, foregroundColor: Color.primary, isPressed: isPressed)
+    }
+
+    static func tintedMaterial(tint: Color, foregroundColor: Color, isPressed: ((Bool) -> Void)? = nil) -> TintedMaterialButtonStyle {
         TintedMaterialButtonStyle(
             tint: tint,
-            foregroundColor: foregroundColor
+            foregroundColor: foregroundColor,
+            isPressed: isPressed
         )
     }
 }
@@ -77,19 +71,22 @@ struct TintedMaterialButtonStyle: ButtonStyle {
     // global accent color causes flashes of color
     let tint: Color
     let foregroundColor: Color
+    let isPressed: ((Bool) -> Void)?
 
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
-            // TODO: use container relative shape instead of corner radius
             TintedMaterial(tint: buttonTint)
-                .cornerRadius(10)
                 .id(isSelected)
 
             configuration.label
                 .foregroundStyle(foregroundStyle)
                 .symbolRenderingMode(.monochrome)
+                .ifLet(isPressed) { button, action in
+                    button
+                        .onChange(of: configuration.isPressed, perform: action)
+                }
         }
-    }https://github.com/jellyfin/Swiftfin/pull/1545/conflict?name=Swiftfin%252FExtensions%252FButtonStyle-iOS.swift&ancestor_oid=1f4dc5d7fa33461a437aba4454dcf88c13a9ef63&base_oid=80afef2207956a9a7e6e0c3448a6956be8aa6757&head_oid=c9faebf966872f1a5594e612810746749a440505
+    }
 
     private var buttonTint: Color {
         if isEnabled && isSelected {

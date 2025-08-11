@@ -22,8 +22,16 @@ struct NavigationBarCloseButtonModifier: ViewModifier {
             ToolbarItemGroup(placement: .topBarLeading) {
                 Button(action: action) {
                     Label(L10n.close, systemImage: "xmark")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .frame(width: 10, height: 10)
+                        .padding(10)
                 }
-                .buttonStyle(.ornament(iconOnly: true))
+                .labelStyle(.iconOnly)
+                .menuStyle(.button)
+                .buttonStyle(.tintedMaterial(tint: Color.gray.opacity(0.3), foregroundColor: accentColor))
+                .clipShape(.circle)
+                .isSelected(true)
                 .disabled(disabled)
             }
         }

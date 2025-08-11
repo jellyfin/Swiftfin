@@ -64,6 +64,7 @@ extension ItemView {
                     .buttonStyle(.tintedMaterial(tint: .jellyfinPurple, foregroundColor: .white))
                     .isSelected(isCheckmarkSelected)
                     .frame(maxWidth: .infinity)
+                    .cornerRadius(10)
                     .if(!equalSpacing) { view in
                         view.aspectRatio(1, contentMode: .fit)
                     }
@@ -79,6 +80,7 @@ extension ItemView {
                 .buttonStyle(.tintedMaterial(tint: .red, foregroundColor: .white))
                 .isSelected(isHeartSelected)
                 .frame(maxWidth: .infinity)
+                .cornerRadius(10)
                 .if(!equalSpacing) { view in
                     view.aspectRatio(1, contentMode: .fit)
                 }
@@ -94,6 +96,7 @@ extension ItemView {
                     )
                     .menuStyle(.button)
                     .frame(maxWidth: .infinity)
+                    .cornerRadius(10)
                     .if(!equalSpacing) { view in
                         view.aspectRatio(1, contentMode: .fit)
                     }
@@ -108,6 +111,7 @@ extension ItemView {
                     )
                     .menuStyle(.button)
                     .frame(maxWidth: .infinity)
+                    .cornerRadius(10)
                     .if(!equalSpacing) { view in
                         view.aspectRatio(1, contentMode: .fit)
                     }

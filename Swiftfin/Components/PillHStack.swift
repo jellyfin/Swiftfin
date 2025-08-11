@@ -29,8 +29,12 @@ struct PillHStack<Item: Displayable>: View {
                             onSelect(item)
                         } label: {
                             Text(item.displayTitle)
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .padding(10)
                         }
-                        .buttonStyle(.ornament(.primary))
+                        .buttonStyle(.material)
+                        .cornerRadius(10)
                     }
                 }
                 .edgePadding(.horizontal)
