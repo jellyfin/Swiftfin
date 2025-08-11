@@ -61,8 +61,7 @@ extension ItemView {
                     Button(L10n.played, systemImage: "checkmark") {
                         viewModel.send(.toggleIsPlayed)
                     }
-                    .buttonStyle(.tintedMaterial(tint: .jellyfinPurple))
-                    .foregroundStyle(.white)
+                    .buttonStyle(.tintedMaterial(tint: .jellyfinPurple, foregroundColor: .white))
                     .isSelected(isCheckmarkSelected)
                     .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in
@@ -77,8 +76,7 @@ extension ItemView {
                 Button(L10n.favorite, systemImage: isHeartSelected ? "heart.fill" : "heart") {
                     viewModel.send(.toggleIsFavorite)
                 }
-                .buttonStyle(.tintedMaterial(tint: .red))
-                .foregroundStyle(.white)
+                .buttonStyle(.tintedMaterial(tint: .red, foregroundColor: .white))
                 .isSelected(isHeartSelected)
                 .frame(maxWidth: .infinity)
                 .if(!equalSpacing) { view in
