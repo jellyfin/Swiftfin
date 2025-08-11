@@ -17,7 +17,6 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
 
     private let logger = Logger.swiftfin()
     private let manager: MediaPlayerManager
-    private let proxy: AVPlayerMediaPlayerProxy
 
     private let isScrubbing: Binding<Bool>
     private let scrubbedSeconds: Binding<Duration>
@@ -37,7 +36,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
 //        let videoPlayerProxy = AVPlayerMediaPlayerProxy()
 //        manager.proxy = videoPlayerProxy
 
-        self.proxy = manager.proxy as! AVPlayerMediaPlayerProxy
+//        self.proxy = manager.proxy as! AVPlayerMediaPlayerProxy
         self.manager = manager
         self.scrubbedSeconds = scrubbedSeconds
         self.isScrubbing = isScrubbing
@@ -49,6 +48,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         newPlayer.allowsExternalPlayback = true
         newPlayer.appliesMediaSelectionCriteriaAutomatically = false
         allowsPictureInPicturePlayback = true
+        allowsVideoFrameAnalysis = false
         showsPlaybackControls = false
 
         #if !os(tvOS)
@@ -68,7 +68,10 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         }
 
         player = newPlayer
-        proxy.avPlayer = player
+        ((manager.proxy as! AnyMediaPlayerProxy).proxy as! AVPlayerMediaPlayerProxy)
+            .avPlayer = player
+
+//        proxy.avPlayer = player
 
         if let playbackItem = manager.playbackItem {
             playNew(playbackItem: playbackItem)
@@ -149,7 +152,8 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
             toleranceBefore: .zero,
             toleranceAfter: .zero,
             completionHandler: { _ in
-                self.proxy.play()
+                self.manager.proxy?.play()
+//                self.proxy.play()
             }
         )
     }

@@ -12,7 +12,7 @@ import SwiftUI
 
 /// The proxy for top-down communication to an
 /// underlying media player
-protocol MediaPlayerProxy {
+protocol MediaPlayerProxy: ObservableObject {
 
     associatedtype VideoPlayerBody: View = EmptyView
 
@@ -24,7 +24,7 @@ protocol MediaPlayerProxy {
     func setSeconds(_ seconds: Duration)
     func setAudioStream(_ stream: MediaStream)
     func setSubtitleStream(_ stream: MediaStream)
-
+    func setAspectFill(_ aspectFill: Bool)
     func stop()
 
     @ViewBuilder
@@ -35,5 +35,58 @@ protocol MediaPlayerProxy {
 extension MediaPlayerProxy where VideoPlayerBody == EmptyView {
     func makeVideoPlayerBody(manager: MediaPlayerManager) -> VideoPlayerBody {
         EmptyView()
+    }
+}
+
+class AnyMediaPlayerProxy: MediaPlayerProxy {
+
+    let proxy: any MediaPlayerProxy
+
+    init(_ proxy: any MediaPlayerProxy) {
+        self.proxy = proxy
+    }
+
+    func play() {
+        proxy.play()
+    }
+
+    func pause() {
+        proxy.pause()
+    }
+
+    func jumpForward(_ seconds: Duration) {
+        proxy.jumpForward(seconds)
+    }
+
+    func jumpBackward(_ seconds: Duration) {
+        proxy.jumpBackward(seconds)
+    }
+
+    func setRate(_ rate: Float) {
+        proxy.setRate(rate)
+    }
+
+    func setSeconds(_ seconds: Duration) {
+        proxy.setSeconds(seconds)
+    }
+
+    func setAudioStream(_ stream: JellyfinAPI.MediaStream) {
+        proxy.setAudioStream(stream)
+    }
+
+    func setSubtitleStream(_ stream: JellyfinAPI.MediaStream) {
+        proxy.setSubtitleStream(stream)
+    }
+
+    func setAspectFill(_ aspectFill: Bool) {
+        proxy.setAspectFill(aspectFill)
+    }
+
+    func stop() {
+        proxy.stop()
+    }
+
+    func makeVideoPlayerBody(manager: MediaPlayerManager) -> AnyView? {
+        AnyView(proxy.makeVideoPlayerBody(manager: manager))
     }
 }

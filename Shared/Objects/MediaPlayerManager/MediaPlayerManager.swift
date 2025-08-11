@@ -93,7 +93,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         set { secondsBox.value = newValue }
     }
 
-    var proxy: (any MediaPlayerProxy)?
+    weak var proxy: (any MediaPlayerProxy)?
     var queue: (any MediaPlayerQueue)?
 
     /// Observers of the media player.

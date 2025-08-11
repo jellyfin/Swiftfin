@@ -51,6 +51,10 @@ class VLCMediaPlayerProxy: MediaPlayerProxy {
         vlcUIProxy.setSubtitleTrack(.absolute(stream.index ?? -1))
     }
 
+    func setAspectFill(_ aspectFill: Bool) {
+        vlcUIProxy.aspectFill(aspectFill ? 1 : 0)
+    }
+
     func makeVideoPlayerBody(manager: MediaPlayerManager) -> some View {
         _VideoPlayerBody(manager: manager)
             .environmentObject(vlcUIProxy)
@@ -107,6 +111,13 @@ extension VLCMediaPlayerProxy {
                             manager.set(playbackRequestStatus: .playing)
                         case .paused:
                             manager.set(playbackRequestStatus: .paused)
+                        }
+                    }
+                    .onReceive(manager.events) { event in
+                        switch event {
+                        case let .itemChanged(playbackItem: item):
+                            vlcUIProxy.playNewMedia(item.vlcConfiguration)
+                        default: ()
                         }
                     }
             }

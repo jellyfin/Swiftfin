@@ -11,6 +11,8 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
+// TODO: make AVPlayerLayer backed video view
+
 class AVPlayerMediaPlayerProxy: MediaPlayerProxy {
 
     weak var avPlayer: AVPlayer?
@@ -44,6 +46,8 @@ class AVPlayerMediaPlayerProxy: MediaPlayerProxy {
 
     func setRate(_ rate: Float) {}
 
+    func setAspectFill(_ aspectFill: Bool) {}
+
     func stop() {
         avPlayer?.pause()
     }
@@ -52,19 +56,6 @@ class AVPlayerMediaPlayerProxy: MediaPlayerProxy {
     func setSubtitleStream(_ stream: MediaStream) {}
 
     func makeVideoPlayerBody(manager: MediaPlayerManager) -> some View {
-        _VideoPlayerBody(manager: manager)
-    }
-}
-
-extension AVPlayerMediaPlayerProxy {
-
-    struct _VideoPlayerBody: View {
-
-        @ObservedObject
-        var manager: MediaPlayerManager
-
-        var body: some View {
-            NativeVideoPlayer(manager: manager)
-        }
+        NativeVideoPlayer(manager: manager)
     }
 }

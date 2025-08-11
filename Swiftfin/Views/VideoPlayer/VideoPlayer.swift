@@ -27,6 +27,9 @@ struct VideoPlayer: View {
     @BoxedPublished
     private var scrubbedSeconds: Duration = .zero
 
+    @ObservedObject
+    private var manager: MediaPlayerManager
+
     @Router
     private var router
 
@@ -41,24 +44,21 @@ struct VideoPlayer: View {
     @State
     private var subtitleOffset: Duration = .zero
 
-    @ObservedObject
-    private var manager: MediaPlayerManager
+    @StateObject
+    private var proxy: AnyMediaPlayerProxy
 
     // MARK: init
 
     init(manager: MediaPlayerManager) {
-        self.manager = manager
+        self._proxy = StateObject(wrappedValue: {
+//            let actualProxy = VLCMediaPlayerProxy()
+            let actualProxy = AVPlayerMediaPlayerProxy()
+            let anyProxy = AnyMediaPlayerProxy(actualProxy)
+            manager.proxy = anyProxy
+            return anyProxy
+        }())
 
-//        let videoPlayerProxy = VLCVideoPlayerProxy()
-//        let vlcUIProxy = VLCVideoPlayer.Proxy()
-//        videoPlayerProxy.vlcUIProxy = vlcUIProxy
-//
-//        self._manager = StateObject(wrappedValue: {
-//            manager.proxy = videoPlayerProxy
-//            manager.observers.append(NowPlayableObserver(manager: manager))
-//            return manager
-//        }())
-//        self._vlcUIProxy = StateObject(wrappedValue: vlcUIProxy)
+        self.manager = manager
     }
 
     // MARK: playerView
@@ -69,8 +69,7 @@ struct VideoPlayer: View {
 
             Color.black
 
-            manager.proxy?.makeVideoPlayerBody(manager: manager)
-                .eraseToAnyView()
+            proxy.makeVideoPlayerBody(manager: manager)
 
             Overlay()
         }
@@ -87,16 +86,16 @@ struct VideoPlayer: View {
             .onChange(of: audioOffset) { _ in
 //                vlcUIProxy.setAudioDelay(newValue)
             }
-            .onChange(of: isAspectFilled) { _ in
+            .onChange(of: isAspectFilled) { newValue in
                 UIView.animate(withDuration: 0.2) {
-//                    vlcUIProxy.aspectFill(newValue ? 1 : 0)
+                    proxy.setAspectFill(newValue)
                 }
             }
             .onChange(of: isScrubbing) { isScrubbing in
                 guard !isScrubbing else { return }
 
                 manager.seconds = scrubbedSeconds
-                manager.proxy?.setSeconds(scrubbedSeconds)
+                proxy.setSeconds(scrubbedSeconds)
             }
             .onChange(of: subtitleColor) { _ in
 //                vlcUIProxy.setSubtitleColor(.absolute(newValue.uiColor))
@@ -113,7 +112,7 @@ struct VideoPlayer: View {
             .onReceive(manager.events) { @MainActor event in
                 switch event {
                 case .playbackStopped:
-                    manager.proxy?.stop()
+                    proxy.stop()
                     router.dismiss()
                 case let .itemChanged(playbackItem: item):
                     isAspectFilled = false
@@ -121,7 +120,6 @@ struct VideoPlayer: View {
                     subtitleOffset = .zero
 
                     scrubbedSeconds = item.baseItem.startSeconds ?? .zero
-//                    vlcUIProxy.playNewMedia(item.vlcConfiguration)
                 }
             }
     }

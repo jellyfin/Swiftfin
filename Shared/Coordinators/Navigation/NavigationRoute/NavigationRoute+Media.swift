@@ -60,7 +60,7 @@ extension NavigationRoute {
     }
 }
 
-// TODO: temporary shims for navigation work until video player refactor
+// TODO: shim until native vs swiftfin player is moved to vlc vs av layers
 
 struct VideoPlayerViewShim: View {
 
@@ -72,30 +72,20 @@ struct VideoPlayerViewShim: View {
     var body: some View {
         Group {
             if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                VideoPlayer(manager: {
-                    if Defaults[.Customization.Indicators.showFavorited] {
-                        manager.proxy = VLCMediaPlayerProxy()
-                    } else {
-                        manager.proxy = AVPlayerMediaPlayerProxy()
-                    }
-
-                    return manager
-                }()
-                )
-                .environment(\.safeAreaInsets, safeAreaInsets)
+                VideoPlayer(manager: manager)
             } else {
                 NativeVideoPlayer(manager: manager)
             }
         }
         .colorScheme(.dark) // use over `preferredColorScheme(.dark)` to not have destination change
+        .environment(\.safeAreaInsets, safeAreaInsets)
         .supportedOrientations(.allButUpsideDown)
         .ignoresSafeArea()
         .persistentSystemOverlays(.hidden)
         .toolbar(.hidden, for: .navigationBar)
         .statusBarHidden()
-        .onSizeChanged { _, _ in
-            // TODO: remakes proxies, set proxies elsewhere
-//            self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
+        .onSizeChanged { _, safeArea in
+            self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
         }
     }
 }
