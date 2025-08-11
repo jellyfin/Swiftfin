@@ -43,27 +43,31 @@ struct ToolbarPillButtonStyle: ButtonStyle {
 
 extension ButtonStyle where Self == TintedMaterialButtonStyle {
 
-    static var tintedMaterial: TintedMaterialButtonStyle {
-        TintedMaterialButtonStyle()
+    static var material: TintedMaterialButtonStyle {
+        TintedMaterialButtonStyle(tint: Color.clear)
+    }
+
+    static func tintedMaterial(tint: Color) -> TintedMaterialButtonStyle {
+        TintedMaterialButtonStyle(tint: tint)
     }
 }
 
 struct TintedMaterialButtonStyle: ButtonStyle {
-
-    // MARK: Environment Objects
 
     @Environment(\.isSelected)
     private var isSelected
     @Environment(\.isEnabled)
     private var isEnabled
 
-    // MARK: Body
+    // Take tint instead of reading from view as
+    // global accent color causes flashes of color
+    let tint: Color
 
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
-            TintedMaterial()
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .tint(buttonTint)
+            // TODO: use container relative shape instead of corner radius
+            TintedMaterial(tint: buttonTint)
+                .cornerRadius(10)
                 .id(isSelected)
 
             configuration.label
@@ -72,17 +76,13 @@ struct TintedMaterialButtonStyle: ButtonStyle {
         }
     }
 
-    // MARK: Button Tint
-
-    private var buttonTint: AnyShapeStyle {
+    private var buttonTint: Color {
         if isEnabled && isSelected {
-            AnyShapeStyle(HierarchicalShapeStyle.secondary)
+            tint
         } else {
-            AnyShapeStyle(Color.gray.opacity(0.3))
+            Color.gray.opacity(0.3)
         }
     }
-
-    // MARK: Foreground Style
 
     private var foregroundStyle: AnyShapeStyle {
         if isEnabled {

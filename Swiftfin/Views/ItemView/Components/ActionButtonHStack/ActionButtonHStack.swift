@@ -61,7 +61,8 @@ extension ItemView {
                     Button(L10n.played, systemImage: "checkmark") {
                         viewModel.send(.toggleIsPlayed)
                     }
-                    .foregroundStyle(.primary, accentColor)
+                    .buttonStyle(.tintedMaterial(tint: .jellyfinPurple))
+                    .foregroundStyle(.white)
                     .isSelected(isCheckmarkSelected)
                     .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in
@@ -76,8 +77,8 @@ extension ItemView {
                 Button(L10n.favorite, systemImage: isHeartSelected ? "heart.fill" : "heart") {
                     viewModel.send(.toggleIsFavorite)
                 }
-
-                .foregroundStyle(.primary, .red)
+                .buttonStyle(.tintedMaterial(tint: .red))
+                .foregroundStyle(.white)
                 .isSelected(isHeartSelected)
                 .frame(maxWidth: .infinity)
                 .if(!equalSpacing) { view in
@@ -94,8 +95,6 @@ extension ItemView {
                         mediaSources: mediaSources
                     )
                     .menuStyle(.button)
-                    .foregroundStyle(.primary)
-                    .environment(\.isSelected, false)
                     .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in
                         view.aspectRatio(1, contentMode: .fit)
@@ -110,8 +109,6 @@ extension ItemView {
                         externalTrailers: viewModel.item.remoteTrailers ?? []
                     )
                     .menuStyle(.button)
-                    .foregroundStyle(.primary)
-                    .environment(\.isSelected, false)
                     .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in
                         view.aspectRatio(1, contentMode: .fit)
@@ -120,7 +117,7 @@ extension ItemView {
             }
             .font(.title3)
             .fontWeight(.semibold)
-            .buttonStyle(.tintedMaterial)
+            .buttonStyle(.material)
             .labelStyle(.iconOnly)
         }
     }

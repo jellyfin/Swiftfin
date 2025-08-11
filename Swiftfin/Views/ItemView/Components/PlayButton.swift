@@ -83,8 +83,8 @@ extension ItemView {
                 }
                 .padding(.horizontal, 5)
             }
-            .buttonStyle(.tintedMaterial)
-            .foregroundStyle(.white, accentColor)
+            .buttonStyle(.tintedMaterial(tint: accentColor))
+            .foregroundStyle(accentColor.overlayColor)
             .isSelected(true)
             .contextMenu {
                 if viewModel.playButtonItem?.userData?.playbackPositionTicks != 0 {

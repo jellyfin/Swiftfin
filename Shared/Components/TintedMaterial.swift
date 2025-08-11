@@ -8,21 +8,7 @@
 
 import SwiftUI
 
-struct TintedMaterial: View {
-
-    @State
-    private var tintColor: Color = .blue
-
-    var body: some View {
-        TintReader { color in
-            _TintedMaterial(
-                tint: color
-            )
-        }
-    }
-}
-
-private struct _TintedMaterial: UIViewRepresentable {
+struct TintedMaterial: UIViewRepresentable {
 
     let tint: Color
 
