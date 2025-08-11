@@ -40,7 +40,7 @@ extension ActiveSessionsView {
                         ZStack {
                             Color.clear
 
-                            ImageView(nowPlayingItem.squareImageSources(maxWidth: 60))
+                            ImageView(nowPlayingItem.squareImageSources(maxWidth: 60, quality: 90))
                                 .failure {
                                     SystemImageContentView(systemName: nowPlayingItem.systemImage)
                                 }
@@ -51,7 +51,7 @@ extension ActiveSessionsView {
                         ZStack {
                             Color.clear
 
-                            ImageView(nowPlayingItem.portraitImageSources(maxWidth: 60))
+                            ImageView(nowPlayingItem.portraitImageSources(maxWidth: 60, quality: 90))
                                 .failure {
                                     SystemImageContentView(systemName: nowPlayingItem.systemImage)
                                 }

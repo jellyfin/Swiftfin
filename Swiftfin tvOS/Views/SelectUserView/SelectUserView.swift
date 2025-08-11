@@ -158,7 +158,7 @@ struct SelectUserView: View {
                 selectedUsers.insert(user)
                 isPresentingConfirmDeleteUsers = true
             }
-            .environment(\.isSelected, selectedUsers.contains(user))
+            .isSelected(selectedUsers.contains(user))
         }
     }
 
@@ -203,7 +203,7 @@ struct SelectUserView: View {
                 .scrollIfLargerThanContainer(padding: 100)
                 .scrollViewOffset($scrollViewOffset)
             }
-            .environment(\.isEditing, isEditingUsers)
+            .isEditing(isEditingUsers)
 
             SelectUserBottomBar(
                 isEditing: $isEditingUsers,

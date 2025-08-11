@@ -44,7 +44,10 @@ extension SelectUserView {
 
                     if let selectedServer {
                         Button(L10n.editServer, systemImage: "server.rack") {
-                            router.route(to: .editServerFromSelectUser(server: selectedServer))
+                            router.route(
+                                to: .editServer(server: selectedServer, isEditing: true),
+                                style: .sheet
+                            )
                         }
                     }
                 }

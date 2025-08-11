@@ -23,7 +23,7 @@ extension AdminDashboardView {
                             ZStack {
                                 Color.clear
 
-                                ImageView(item.squareImageSources(maxWidth: 60))
+                                ImageView(item.squareImageSources(maxWidth: 60, quality: 90))
                                     .failure {
                                         SystemImageContentView(systemName: item.systemImage)
                                     }
@@ -33,7 +33,7 @@ extension AdminDashboardView {
                             ZStack {
                                 Color.clear
 
-                                ImageView(item.portraitImageSources(maxWidth: 60))
+                                ImageView(item.portraitImageSources(maxWidth: 60, quality: 90))
                                     .failure {
                                         SystemImageContentView(systemName: item.systemImage)
                                     }

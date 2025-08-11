@@ -52,77 +52,60 @@ struct ToolbarPillButtonStyle: ButtonStyle {
     }
 }
 
-struct OrnamentButtonStyle: ButtonStyle {
+extension ButtonStyle where Self == TintedMaterialButtonStyle {
 
-    // MARK: - Environment
+    static var material: TintedMaterialButtonStyle {
+        TintedMaterialButtonStyle(tint: Color.clear, foregroundColor: Color.primary)
+    }
 
-    @Environment(\.isEnabled)
-    private var isEnabled
+    static func tintedMaterial(tint: Color, foregroundColor: Color) -> TintedMaterialButtonStyle {
+        TintedMaterialButtonStyle(
+            tint: tint,
+            foregroundColor: foregroundColor
+        )
+    }
+}
+
+struct TintedMaterialButtonStyle: ButtonStyle {
+
     @Environment(\.isSelected)
     private var isSelected
+    @Environment(\.isEnabled)
+    private var isEnabled
 
-    // MARK: - Configuration
-
-    private let primary: Color
-    private let iconOnly: Bool
-
-    // MARK: - Initializer
-
-    init(_ primary: Color, iconOnly: Bool = false) {
-        self.primary = primary
-        self.iconOnly = iconOnly
-    }
-
-    // MARK: - Body
+    // Take tint instead of reading from view as
+    // global accent color causes flashes of color
+    let tint: Color
+    let foregroundColor: Color
 
     func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.caption)
-            .fontWeight(.semibold)
-            .padding(10)
-            .foregroundStyle(foregroundStyle(isPressed: configuration.isPressed))
-            .background(
-                ZStack {
-                    backgroundShape
-                        .fill(.ultraThinMaterial)
-                    backgroundShape
-                        .fill(backgroundFill(isPressed: configuration.isPressed))
-                }
-            )
-            .contentShape(backgroundShape)
-            .symbolRenderingMode(.palette)
-            .aspectRatio(iconOnly ? 1 : nil, contentMode: .fit)
-    }
+        ZStack {
+            // TODO: use container relative shape instead of corner radius
+            TintedMaterial(tint: buttonTint)
+                .cornerRadius(10)
+                .id(isSelected)
 
-    private var backgroundShape: AnyShape {
-        iconOnly ? AnyShape(Circle()) : AnyShape(Capsule())
-    }
+            configuration.label
+                .foregroundStyle(foregroundStyle)
+                .symbolRenderingMode(.monochrome)
+        }
+    }https://github.com/jellyfin/Swiftfin/pull/1545/conflict?name=Swiftfin%252FExtensions%252FButtonStyle-iOS.swift&ancestor_oid=1f4dc5d7fa33461a437aba4454dcf88c13a9ef63&base_oid=80afef2207956a9a7e6e0c3448a6956be8aa6757&head_oid=c9faebf966872f1a5594e612810746749a440505
 
-    // MARK: - Background Color Fill
-
-    private func backgroundFill(isPressed: Bool) -> Color {
-        if !isEnabled {
-            return Color.secondary.opacity(0.3)
-        } else if isPressed {
-            return Color.systemFill.opacity(0.7)
-        } else if isSelected {
-            return primary
+    private var buttonTint: Color {
+        if isEnabled && isSelected {
+            tint
         } else {
-            return Color.systemFill.opacity(0.3)
+            Color.gray.opacity(0.3)
         }
     }
 
-    // MARK: - Foreground Color
-
-    private func foregroundStyle(isPressed: Bool) -> Color {
-        if !isEnabled {
-            return Color.primary
-        } else if isPressed {
-            return primary.opacity(0.7)
-        } else if isSelected {
-            return Color.systemBackground
+    private var foregroundStyle: AnyShapeStyle {
+        if isSelected {
+            AnyShapeStyle(foregroundColor)
+        } else if isEnabled {
+            AnyShapeStyle(HierarchicalShapeStyle.primary)
         } else {
-            return primary
+            AnyShapeStyle(Color.gray.opacity(0.3))
         }
     }
 }
