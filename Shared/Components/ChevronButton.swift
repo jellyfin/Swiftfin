@@ -79,10 +79,15 @@ extension ChevronButton {
 
         let label: Label
         let action: () -> Void
+        let hasIcon: Bool
 
         var body: some View {
             Button(action: action) {
-                label
+                if hasIcon {
+                    label
+                } else {
+                    label.labelStyle(.titleOnly)
+                }
             }
             .foregroundStyle(.primary, .secondary)
         }
