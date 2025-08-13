@@ -60,7 +60,7 @@ extension NavigationRoute {
     }
 }
 
-// TODO: shim until native vs swiftfin player is moved to vlc vs av layers
+// TODO: shim until native vs swiftfin player is replace with vlc vs av layers
 
 struct VideoPlayerViewShim: View {
 

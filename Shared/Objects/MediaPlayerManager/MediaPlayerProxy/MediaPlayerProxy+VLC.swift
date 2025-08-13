@@ -11,7 +11,10 @@ import JellyfinAPI
 import SwiftUI
 import VLCUI
 
-class VLCMediaPlayerProxy: MediaPlayerProxy {
+class VLCMediaPlayerProxy: MediaPlayerProxy,
+    MediaPlayerOffsetConfigurable,
+    MediaPlayerSubtitleConfigurable
+{
 
     let vlcUIProxy: VLCVideoPlayer.Proxy = .init()
 
@@ -21,6 +24,10 @@ class VLCMediaPlayerProxy: MediaPlayerProxy {
 
     func pause() {
         vlcUIProxy.pause()
+    }
+
+    func stop() {
+        vlcUIProxy.stop()
     }
 
     func jumpForward(_ seconds: Duration) {
@@ -39,10 +46,6 @@ class VLCMediaPlayerProxy: MediaPlayerProxy {
         vlcUIProxy.setSeconds(seconds)
     }
 
-    func stop() {
-        vlcUIProxy.stop()
-    }
-
     func setAudioStream(_ stream: MediaStream) {
         vlcUIProxy.setAudioTrack(.absolute(stream.index ?? -1))
     }
@@ -54,6 +57,16 @@ class VLCMediaPlayerProxy: MediaPlayerProxy {
     func setAspectFill(_ aspectFill: Bool) {
         vlcUIProxy.aspectFill(aspectFill ? 1 : 0)
     }
+
+    func setAudioOffset(_ seconds: Duration) {}
+
+    func setSubtitleOffset(_ seconds: Duration) {}
+
+    func setSubtitleColor(_ color: Color) {}
+
+    func setSubtitleFontName(_ fontName: String) {}
+
+    func setSubtitleFontSize(_ fontSize: Int) {}
 
     func makeVideoPlayerBody(manager: MediaPlayerManager) -> some View {
         _VideoPlayerBody(manager: manager)

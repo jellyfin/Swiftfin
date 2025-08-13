@@ -10,6 +10,7 @@ import SwiftUI
 
 extension VideoPlayer.Overlay {
 
+    // TODO: change to PrimitiveButtonStyle?
     struct SupplementTitleButton: View {
 
         @Environment(\.selectedMediaPlayerSupplement)

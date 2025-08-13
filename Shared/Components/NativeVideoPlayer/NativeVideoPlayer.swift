@@ -6,7 +6,9 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import AVKit
 import JellyfinAPI
+import Logging
 import SwiftUI
 
 // TODO: loading view during `loadingItem` state
@@ -36,8 +38,7 @@ struct NativeVideoPlayer: View {
             Text(error.localizedDescription)
         default:
             NativeVideoPlayerView(
-                manager: manager,
-                scrubbedSeconds: $scrubbedSecondsBox.value
+                manager: manager
             )
         }
     }
@@ -46,15 +47,44 @@ struct NativeVideoPlayer: View {
 struct NativeVideoPlayerView: UIViewControllerRepresentable {
 
     let manager: MediaPlayerManager
-    let scrubbedSeconds: Binding<Duration>
 
     func makeUIViewController(context: Context) -> UINativeVideoPlayerViewController {
-        UINativeVideoPlayerViewController(
-            manager: manager,
-            isScrubbing: context.environment.isScrubbing,
-            scrubbedSeconds: scrubbedSeconds
-        )
+        UINativeVideoPlayerViewController(manager: manager)
     }
 
     func updateUIViewController(_ uiViewController: UINativeVideoPlayerViewController, context: Context) {}
+}
+
+class UINativeVideoPlayerViewController: AVPlayerViewController {
+
+    private let logger = Logger.swiftfin()
+    private let manager: MediaPlayerManager
+    private var avPlayerManagerDelegate: AVPlayerManagerDelegate?
+
+    init(
+        manager: MediaPlayerManager,
+    ) {
+        self.manager = manager
+
+        super.init(nibName: nil, bundle: nil)
+
+        let newPlayer: AVPlayer = .init()
+
+        newPlayer.allowsExternalPlayback = true
+        newPlayer.appliesMediaSelectionCriteriaAutomatically = false
+        allowsPictureInPicturePlayback = true
+
+        #if !os(tvOS)
+        updatesNowPlayingInfoCenter = false
+        #endif
+
+        player = newPlayer
+        self.avPlayerManagerDelegate = AVPlayerManagerDelegate(manager: manager)
+        self.avPlayerManagerDelegate?.set(player: newPlayer)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }

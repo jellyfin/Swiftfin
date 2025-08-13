@@ -10,6 +10,9 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
+// TODO: behavioral implementations
+//       - PiP
+
 /// The proxy for top-down communication to an
 /// underlying media player
 protocol MediaPlayerProxy: ObservableObject {
@@ -18,14 +21,17 @@ protocol MediaPlayerProxy: ObservableObject {
 
     func play()
     func pause()
+    func stop()
+
     func jumpForward(_ seconds: Duration)
     func jumpBackward(_ seconds: Duration)
     func setRate(_ rate: Float)
     func setSeconds(_ seconds: Duration)
+
     func setAudioStream(_ stream: MediaStream)
     func setSubtitleStream(_ stream: MediaStream)
+
     func setAspectFill(_ aspectFill: Bool)
-    func stop()
 
     @ViewBuilder
     @MainActor
@@ -38,55 +44,13 @@ extension MediaPlayerProxy where VideoPlayerBody == EmptyView {
     }
 }
 
-class AnyMediaPlayerProxy: MediaPlayerProxy {
+protocol MediaPlayerOffsetConfigurable {
+    func setAudioOffset(_ seconds: Duration)
+    func setSubtitleOffset(_ seconds: Duration)
+}
 
-    let proxy: any MediaPlayerProxy
-
-    init(_ proxy: any MediaPlayerProxy) {
-        self.proxy = proxy
-    }
-
-    func play() {
-        proxy.play()
-    }
-
-    func pause() {
-        proxy.pause()
-    }
-
-    func jumpForward(_ seconds: Duration) {
-        proxy.jumpForward(seconds)
-    }
-
-    func jumpBackward(_ seconds: Duration) {
-        proxy.jumpBackward(seconds)
-    }
-
-    func setRate(_ rate: Float) {
-        proxy.setRate(rate)
-    }
-
-    func setSeconds(_ seconds: Duration) {
-        proxy.setSeconds(seconds)
-    }
-
-    func setAudioStream(_ stream: JellyfinAPI.MediaStream) {
-        proxy.setAudioStream(stream)
-    }
-
-    func setSubtitleStream(_ stream: JellyfinAPI.MediaStream) {
-        proxy.setSubtitleStream(stream)
-    }
-
-    func setAspectFill(_ aspectFill: Bool) {
-        proxy.setAspectFill(aspectFill)
-    }
-
-    func stop() {
-        proxy.stop()
-    }
-
-    func makeVideoPlayerBody(manager: MediaPlayerManager) -> AnyView? {
-        AnyView(proxy.makeVideoPlayerBody(manager: manager))
-    }
+protocol MediaPlayerSubtitleConfigurable {
+    func setSubtitleColor(_ color: Color)
+    func setSubtitleFontName(_ fontName: String)
+    func setSubtitleFontSize(_ fontSize: Int)
 }

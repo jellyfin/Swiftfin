@@ -21,8 +21,7 @@ extension MediaPlayerItem {
 
         let logger = Logger.swiftfin()
 
-//        let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
-        let currentVideoPlayerType: VideoPlayerType = .native
+        let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
         let currentVideoBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
         let compatibilityMode = Defaults[.VideoPlayer.Playback.compatibilityMode]
 

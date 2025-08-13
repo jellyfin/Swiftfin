@@ -8,11 +8,7 @@
 
 import Defaults
 import JellyfinAPI
-import PreferencesView
 import SwiftUI
-import VLCUI
-
-// TODO: decouple from VLC, just use manager's proxy
 
 struct VideoPlayer: View {
 
@@ -26,6 +22,9 @@ struct VideoPlayer: View {
     /// The current scrubbed seconds for UI presentation and editing.
     @BoxedPublished
     private var scrubbedSeconds: Duration = .zero
+
+    @LazyState
+    private var proxy: any MediaPlayerProxy
 
     @ObservedObject
     private var manager: MediaPlayerManager
@@ -44,24 +43,15 @@ struct VideoPlayer: View {
     @State
     private var subtitleOffset: Duration = .zero
 
-    @StateObject
-    private var proxy: AnyMediaPlayerProxy
-
-    // MARK: init
-
     init(manager: MediaPlayerManager) {
-        self._proxy = StateObject(wrappedValue: {
-//            let actualProxy = VLCMediaPlayerProxy()
-            let actualProxy = AVPlayerMediaPlayerProxy()
-            let anyProxy = AnyMediaPlayerProxy(actualProxy)
-            manager.proxy = anyProxy
-            return anyProxy
-        }())
-
         self.manager = manager
+        self._proxy = .init(wrappedValue: {
+            // TODO: AV, VLC selection
+            let proxy = VLCMediaPlayerProxy()
+            manager.proxy = proxy
+            return proxy
+        }())
     }
-
-    // MARK: playerView
 
     @ViewBuilder
     private var playerView: some View {
@@ -69,7 +59,8 @@ struct VideoPlayer: View {
 
             Color.black
 
-            proxy.makeVideoPlayerBody(manager: manager)
+            manager.proxy?.makeVideoPlayerBody(manager: manager)
+                .eraseToAnyView()
 
             Overlay()
         }
@@ -83,8 +74,10 @@ struct VideoPlayer: View {
 
     var body: some View {
         playerView
-            .onChange(of: audioOffset) { _ in
-//                vlcUIProxy.setAudioDelay(newValue)
+            .onChange(of: audioOffset) { newValue in
+                if let proxy = proxy as? MediaPlayerOffsetConfigurable {
+                    proxy.setAudioOffset(newValue)
+                }
             }
             .onChange(of: isAspectFilled) { newValue in
                 UIView.animate(withDuration: 0.2) {
@@ -97,17 +90,25 @@ struct VideoPlayer: View {
                 manager.seconds = scrubbedSeconds
                 proxy.setSeconds(scrubbedSeconds)
             }
-            .onChange(of: subtitleColor) { _ in
-//                vlcUIProxy.setSubtitleColor(.absolute(newValue.uiColor))
+            .onChange(of: subtitleColor) { newValue in
+                if let proxy = proxy as? MediaPlayerSubtitleConfigurable {
+                    proxy.setSubtitleColor(newValue)
+                }
             }
-            .onChange(of: subtitleFontName) { _ in
-//                vlcUIProxy.setSubtitleFont(newValue)
+            .onChange(of: subtitleFontName) { newValue in
+                if let proxy = proxy as? MediaPlayerSubtitleConfigurable {
+                    proxy.setSubtitleFontName(newValue)
+                }
             }
-            .onChange(of: subtitleOffset) { _ in
-//                vlcUIProxy.setSubtitleDelay(newValue)
+            .onChange(of: subtitleOffset) { newValue in
+                if let proxy = proxy as? MediaPlayerOffsetConfigurable {
+                    proxy.setSubtitleOffset(newValue)
+                }
             }
-            .onChange(of: subtitleSize) { _ in
-//                vlcUIProxy.setSubtitleSize(.absolute(25 - newValue))
+            .onChange(of: subtitleSize) { newValue in
+                if let proxy = proxy as? MediaPlayerSubtitleConfigurable {
+                    proxy.setSubtitleFontSize(newValue)
+                }
             }
             .onReceive(manager.events) { @MainActor event in
                 switch event {

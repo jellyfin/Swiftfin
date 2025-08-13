@@ -11,51 +11,104 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-// TODO: make AVPlayerLayer backed video view
-
 class AVPlayerMediaPlayerProxy: MediaPlayerProxy {
 
-    weak var avPlayer: AVPlayer?
+    let avPlayerLayer: AVPlayerLayer
+    private let player: AVPlayer
+
+    init() {
+        self.player = AVPlayer()
+        self.avPlayerLayer = AVPlayerLayer(player: player)
+    }
 
     func play() {
-        avPlayer?.play()
+        player.play()
     }
 
     func pause() {
-        avPlayer?.pause()
+        player.pause()
+    }
+
+    func stop() {
+        player.pause()
     }
 
     func jumpForward(_ seconds: Duration) {
-        guard let avPlayer else { return }
-        let currentTime = avPlayer.currentTime()
+        let currentTime = player.currentTime()
         let newTime = currentTime + CMTime(seconds: seconds.seconds, preferredTimescale: 1)
-        avPlayer.seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
+        player.seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
     }
 
     func jumpBackward(_ seconds: Duration) {
-        guard let avPlayer else { return }
-        let currentTime = avPlayer.currentTime()
+        let currentTime = player.currentTime()
         let newTime = max(.zero, currentTime - CMTime(seconds: seconds.seconds, preferredTimescale: 1))
-        avPlayer.seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
+        player.seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
     }
 
     func setSeconds(_ seconds: Duration) {
         let time = CMTime(seconds: seconds.seconds, preferredTimescale: 1)
-        avPlayer?.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
+        player.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
     }
 
     func setRate(_ rate: Float) {}
 
-    func setAspectFill(_ aspectFill: Bool) {}
-
-    func stop() {
-        avPlayer?.pause()
-    }
-
     func setAudioStream(_ stream: MediaStream) {}
     func setSubtitleStream(_ stream: MediaStream) {}
 
+    func setAspectFill(_ aspectFill: Bool) {
+        avPlayerLayer.videoGravity = aspectFill ? .resizeAspectFill : .resizeAspect
+    }
+
     func makeVideoPlayerBody(manager: MediaPlayerManager) -> some View {
-        NativeVideoPlayer(manager: manager)
+        AVPlayerView(manager: manager)
+    }
+}
+
+extension AVPlayerMediaPlayerProxy {
+
+    struct AVPlayerView: UIViewRepresentable {
+
+        let manager: MediaPlayerManager
+
+        func makeUIView(context: Context) -> UIView {
+            let proxy = manager.proxy as! AVPlayerMediaPlayerProxy
+            context.coordinator.otherDelegate.set(player: proxy.player)
+            return UIAVPlayerView(proxy: proxy)
+        }
+
+        func updateUIView(_ uiView: UIView, context: Context) {}
+
+        func makeCoordinator() -> Coordinator {
+            Coordinator(manager: manager)
+        }
+
+        class Coordinator {
+            let otherDelegate: AVPlayerManagerDelegate
+
+            init(manager: MediaPlayerManager) {
+                self.otherDelegate = AVPlayerManagerDelegate(manager: manager)
+            }
+        }
+    }
+
+    private class UIAVPlayerView: UIView {
+
+        let proxy: AVPlayerMediaPlayerProxy
+
+        init(proxy: AVPlayerMediaPlayerProxy) {
+            self.proxy = proxy
+            super.init(frame: .zero)
+            layer.addSublayer(proxy.avPlayerLayer)
+        }
+
+        @available(*, unavailable)
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            proxy.avPlayerLayer.frame = bounds
+        }
     }
 }

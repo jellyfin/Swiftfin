@@ -16,6 +16,7 @@ import VLCUI
 //       - what if proxy couldn't set rate?
 // TODO: buffering state
 // TODO: make a container service, injected into players
+// TODO: change playback item + provider to just a provider
 
 typealias MediaPlayerItemProvider = (BaseItemDto) async throws -> MediaPlayerItem
 
