@@ -23,15 +23,19 @@ extension PagingLibraryView {
         private var posterType: PosterDisplayType
         @Binding
         private var viewType: LibraryDisplayType
+        @Binding
+        private var grouping: LibraryGroupingType
 
         init(
             posterType: Binding<PosterDisplayType>,
             viewType: Binding<LibraryDisplayType>,
+            grouping: Binding<LibraryGroupingType>,
             listColumnCount: Binding<Int>
         ) {
             self._listColumnCount = listColumnCount
             self._posterType = posterType
             self._viewType = viewType
+            self._grouping = grouping
         }
 
         var body: some View {
@@ -77,6 +81,28 @@ extension PagingLibraryView {
                             Label(L10n.list, systemImage: "checkmark")
                         } else {
                             Label(L10n.list, systemImage: "square.fill.text.grid.1x2")
+                        }
+                    }
+                }
+
+                Section("Grouping") {
+                    Button {
+                        grouping = .group
+                    } label: {
+                        if grouping == .group {
+                            Label("Group", systemImage: "checkmark")
+                        } else {
+                            Label("Group", systemImage: "rectangle.3.group.fill")
+                        }
+                    }
+
+                    Button {
+                        grouping = .ungrouped
+                    } label: {
+                        if grouping == .ungrouped {
+                            Label("Ungrouped", systemImage: "checkmark")
+                        } else {
+                            Label("Ungrouped", systemImage: "rectangle.3.group")
                         }
                     }
                 }

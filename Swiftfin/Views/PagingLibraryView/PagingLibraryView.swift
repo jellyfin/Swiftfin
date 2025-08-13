@@ -74,6 +74,10 @@ struct PagingLibraryView<Element: Poster>: View {
     @StoredValue
     private var posterType: PosterDisplayType
 
+    // TODO: @StoredValue
+    @State
+    private var grouping: LibraryGroupingType = LibraryGroupingType.group
+
     @StateObject
     private var collectionVGridProxy: CollectionVGridProxy = .init()
     @StateObject
@@ -453,12 +457,14 @@ struct PagingLibraryView<Element: Poster>: View {
                 LibraryViewTypeToggle(
                     posterType: $posterType,
                     viewType: $displayType,
+                    grouping: $grouping,
                     listColumnCount: $listColumnCount
                 )
             } else {
                 LibraryViewTypeToggle(
                     posterType: $defaultPosterType,
                     viewType: $defaultDisplayType,
+                    grouping: $grouping,
                     listColumnCount: $defaultListColumnCount
                 )
             }
