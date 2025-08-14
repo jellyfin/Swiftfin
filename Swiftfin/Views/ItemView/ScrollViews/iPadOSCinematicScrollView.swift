@@ -39,7 +39,7 @@ extension ItemView {
                let typeViewModel = viewModel as? CollectionItemViewModel,
                let randomItem = typeViewModel.randomItem()
             {
-                item = randomPerson
+                item = randomItem
             } else if let playlistItemViewModel = viewModel as? PlaylistItemViewModel,
                       let randomPlaylistItem = playlistItemViewModel.contents.elements.randomElement()
             {
@@ -186,7 +186,7 @@ extension ItemView.iPadOSCinematicScrollView {
                                 .accessibilityIgnoresInvertColors()
                         }
 
-                        if viewModel.presentPlayButton {
+                        if viewModel.item.presentPlayButton {
                             ItemView.PlayButton(viewModel: viewModel)
                                 .frame(height: 50)
                         }

@@ -39,7 +39,7 @@ extension ItemView {
                let typeViewModel = viewModel as? CollectionItemViewModel,
                let randomItem = typeViewModel.randomItem()
             {
-                item = randomPerson
+                item = randomItem
             } else if let playlistItemViewModel = viewModel as? PlaylistItemViewModel,
                       let randomPlaylistItem = playlistItemViewModel.contents.elements.randomElement()
             {
