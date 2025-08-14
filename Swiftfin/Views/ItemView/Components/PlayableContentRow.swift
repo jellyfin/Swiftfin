@@ -84,8 +84,7 @@ extension ItemView {
 
                     Spacer()
 
-                    // TODO: Make Ornament
-                    Button(L10n.play, systemImage: "play.fill") {
+                    Button {
                         if let itemMediaSource = item.mediaSources?.first {
                             router.route(
                                 to: .videoPlayer(
@@ -98,9 +97,19 @@ extension ItemView {
                         } else {
                             logger.error("No media source available")
                         }
+                    } label: {
+                        Label(L10n.play, systemImage: "play.fill")
+                            .font(.caption)
+                            .fontWeight(.bold)
+                            .frame(width: 10, height: 10)
+                            .padding(10)
                     }
                     .labelStyle(.iconOnly)
-                    .foregroundStyle(accentColor)
+                    .menuStyle(.button)
+                    .buttonStyle(.tintedMaterial(tint: Color.gray.opacity(0.3), foregroundColor: accentColor))
+                    .clipShape(.circle)
+                    .frame(width: 15, height: 15)
+                    .isSelected(true)
                 }
             }
             .onSelect(perform: onSelect)
