@@ -11,34 +11,13 @@ import SwiftUI
 
 extension ItemView {
 
+    // TODO: take in binding instead of view model
     struct VersionMenu: View {
 
         @ObservedObject
         var viewModel: ItemViewModel
 
         let mediaSources: [MediaSourceInfo]
-
-        private var selectedAudioStreamIndex: Binding<Int?> {
-            Binding(
-                get: { viewModel.selectedMediaSource?.defaultAudioStreamIndex },
-                set: { newIndex in
-                    guard var selectedMediaSource = viewModel.selectedMediaSource else { return }
-                    selectedMediaSource.defaultAudioStreamIndex = newIndex
-                    viewModel.send(.selectMediaSource(selectedMediaSource))
-                }
-            )
-        }
-
-        private var selectedSubtitleStreamIndex: Binding<Int?> {
-            Binding(
-                get: { viewModel.selectedMediaSource?.defaultSubtitleStreamIndex },
-                set: { newIndex in
-                    guard var selectedMediaSource = viewModel.selectedMediaSource else { return }
-                    selectedMediaSource.defaultSubtitleStreamIndex = newIndex
-                    viewModel.send(.selectMediaSource(selectedMediaSource))
-                }
-            )
-        }
 
         private var selectedMediaSourceBinding: Binding<MediaSourceInfo?> {
             Binding(
@@ -55,7 +34,7 @@ extension ItemView {
 
         var body: some View {
             Menu(L10n.version, systemImage: "list.dash") {
-                Picker(L10n.version, selection: selectedMediaSource) {
+                Picker(L10n.version, selection: selectedMediaSourceBinding) {
                     ForEach(mediaSources, id: \.hashValue) { mediaSource in
                         Button {
                             Text(mediaSource.displayTitle)
