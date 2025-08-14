@@ -231,6 +231,7 @@ extension Defaults.Keys {
             static let rates: Key<[Float]> = UserKey("videoPlayerPlaybackRates", default: [0.5, 1.0, 1.25, 1.5, 2.0])
         }
 
+        // TODO: transition into a SubtitleConfiguration instead of multiple types
         enum Subtitle {
 
             static let subtitleColor: Key<Color> = UserKey("subtitleColor", default: .white)

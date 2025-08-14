@@ -144,7 +144,7 @@ extension EpisodeMediaPlayerQueue {
         var body: some View {
             Button {
                 isPresentingOverlay = false
-                manager.send(.playNewBaseItem(item: item))
+//                manager.send(.playNewBaseItem(item: item))
             } label: {
                 VStack(alignment: .leading, spacing: 5) {
                     ZStack {

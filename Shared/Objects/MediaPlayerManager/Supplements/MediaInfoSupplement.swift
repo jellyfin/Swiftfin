@@ -119,8 +119,10 @@ extension MediaInfoSupplement {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                VStack {
-                    fromBeginningButton
+                if item.isLiveStream {
+                    VStack {
+                        fromBeginningButton
+                    }
                 }
             }
             .padding(.leading, safeAreaInsets.leading)

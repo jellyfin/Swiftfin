@@ -6,9 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-// TODO: have delegate-like functions for callbacks, rather
-// than observers implementing internal publishers
-
 /// A protocol for observers of a `MediaPlayerManager`
 protocol MediaPlayerObserver {
 

@@ -50,13 +50,13 @@ class NowPlayableObserver: MediaPlayerObserver {
     }
 
     private func setup(with manager: MediaPlayerManager) {
-        manager.$playbackItem.sink(receiveValue: itemDidChange).store(in: &cancellables)
+        cancellables = []
+        manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
         manager.secondsBox.$value.sink(receiveValue: secondsDidChange).store(in: &cancellables)
         manager.$state.sink(receiveValue: stateDidChange).store(in: &cancellables)
-        manager.events.sink(receiveValue: didReceiveManagerEvent).store(in: &cancellables)
     }
 
-    private func itemDidChange(newItem: MediaPlayerItem?) {
+    private func playbackItemDidChange(newItem: MediaPlayerItem?) {
         guard let newItem else { return }
 
         handleNowPlayableItemChange(metadata: .init(mediaType: .video, title: newItem.baseItem.displayTitle))
@@ -87,25 +87,22 @@ class NowPlayableObserver: MediaPlayerObserver {
         )
     }
 
+    // TODO: respond to error
     private func stateDidChange(newState: MediaPlayerManager.State) {
-        handleNowPlayablePlaybackChange(
-            playing: true,
-            metadata: .init(
-                position: manager?.seconds ?? .zero,
-                duration: manager?.item.runtime ?? .zero
-            )
-        )
-    }
-
-    private func didReceiveManagerEvent(event: MediaPlayerManager.Event) {
-        switch event {
-        case .playbackStopped:
+        if newState == .stopped {
             cancellables = []
 
             for command in defaultRegisteredCommands {
                 command.removeHandler()
             }
-        default: ()
+        } else {
+            handleNowPlayablePlaybackChange(
+                playing: true,
+                metadata: .init(
+                    position: manager?.seconds ?? .zero,
+                    duration: manager?.item.runtime ?? .zero
+                )
+            )
         }
     }
 
@@ -138,30 +135,31 @@ class NowPlayableObserver: MediaPlayerObserver {
         return .success
     }
 
-    func startSession() {
-
-        let audioSession = AVAudioSession.sharedInstance()
-
-        do {
-            try audioSession.setCategory(.playback, mode: .default)
-            try audioSession.setActive(true)
-        } catch {
-            logger.critical("Unable to activate AVAudioSession instance: \(error.localizedDescription)")
-        }
-    }
-
-    func stopSession() {
-
-        for command in NowPlayableCommand.allCases {
-            command.removeHandler()
-        }
-
-        do {
-            try AVAudioSession.sharedInstance().setActive(false)
-        } catch {
-            logger.critical("Unable to deactivate AVAudioSession instance: \(error.localizedDescription)")
-        }
-    }
+    // TODO: need?
+//    func startSession() {
+//
+//        let audioSession = AVAudioSession.sharedInstance()
+//
+//        do {
+//            try audioSession.setCategory(.playback, mode: .default)
+//            try audioSession.setActive(true)
+//        } catch {
+//            logger.critical("Unable to activate AVAudioSession instance: \(error.localizedDescription)")
+//        }
+//    }
+//
+//    func stopSession() {
+//
+//        for command in NowPlayableCommand.allCases {
+//            command.removeHandler()
+//        }
+//
+//        do {
+//            try AVAudioSession.sharedInstance().setActive(false)
+//        } catch {
+//            logger.critical("Unable to deactivate AVAudioSession instance: \(error.localizedDescription)")
+//        }
+//    }
 
     private func handleNowPlayableItemChange(metadata: NowPlayableStaticMetadata) {
         setNowPlayingMetadata(metadata)

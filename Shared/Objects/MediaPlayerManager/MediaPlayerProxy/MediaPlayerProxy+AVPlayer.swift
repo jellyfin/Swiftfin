@@ -7,18 +7,82 @@
 //
 
 import AVFoundation
+import Combine
 import Foundation
 import JellyfinAPI
 import SwiftUI
 
+// TODO: After NativeVideoPlayer is removed, can move bindings and
+//       observers to AVPlayerView, like the VLC delegate
+//       - wouldn't need to have MediaPlayerProxy: MediaPlayerObserver
+// TODO: report playback information, see VLCUI.PlaybackInformation (dropped frames, etc.)
+// TODO: manager able to replace MediaPlayerItem in-place for changing audio/subtitle tracks
+
 class AVPlayerMediaPlayerProxy: MediaPlayerProxy {
 
     let avPlayerLayer: AVPlayerLayer
-    private let player: AVPlayer
+    let player: AVPlayer
+
+    private var rateObserver: NSKeyValueObservation!
+    private var statusObserver: NSKeyValueObservation!
+    private var timeObserver: Any!
+    private var managerItemObserver: AnyCancellable?
+    private var managerStateObserver: AnyCancellable?
+
+    weak var manager: MediaPlayerManager? {
+        didSet {
+            if let manager {
+                managerItemObserver = manager.$playbackItem
+                    .sink { playbackItem in
+                        if let playbackItem {
+                            self.playNew(playbackItem: playbackItem)
+                        }
+                    }
+
+                managerStateObserver = manager.$state
+                    .sink { state in
+                        switch state {
+                        case .stopped:
+                            self.playbackStopped()
+                        default: break
+                        }
+                    }
+            } else {
+                managerItemObserver?.cancel()
+                managerStateObserver?.cancel()
+            }
+        }
+    }
+
+    var isScrubbing: Binding<Bool> = .constant(false)
+    var scrubbedSeconds: Binding<Duration> = .constant(.zero)
 
     init() {
         self.player = AVPlayer()
         self.avPlayerLayer = AVPlayerLayer(player: player)
+
+        print("AVPlayerMediaPlayerProxy initialized")
+
+        timeObserver = player.addPeriodicTimeObserver(
+            forInterval: CMTime(seconds: 1, preferredTimescale: 1000),
+            queue: .main
+        ) { newTime in
+            let newSeconds = Duration.seconds(newTime.seconds)
+
+            if !self.isScrubbing.wrappedValue {
+                self.scrubbedSeconds.wrappedValue = newSeconds
+            }
+
+            self.manager?.seconds = newSeconds
+        }
+
+        if let playbackItem = manager?.playbackItem {
+            playNew(playbackItem: playbackItem)
+        }
+    }
+
+    deinit {
+        print("AVPlayerMediaPlayerProxy deinitialized")
     }
 
     func play() {
@@ -59,36 +123,72 @@ class AVPlayerMediaPlayerProxy: MediaPlayerProxy {
         avPlayerLayer.videoGravity = aspectFill ? .resizeAspectFill : .resizeAspect
     }
 
-    func makeVideoPlayerBody(manager: MediaPlayerManager) -> some View {
-        AVPlayerView(manager: manager)
+    func makeVideoPlayerBody() -> some View {
+        AVPlayerView(proxy: self)
     }
 }
 
 extension AVPlayerMediaPlayerProxy {
 
+    private func playbackStopped() {
+        player.pause()
+        guard let timeObserver else { return }
+        player.removeTimeObserver(timeObserver)
+        rateObserver.invalidate()
+        statusObserver.invalidate()
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    private func playNew(playbackItem: MediaPlayerItem) {
+        let newAVPlayerItem = AVPlayerItem(url: playbackItem.url)
+        newAVPlayerItem.externalMetadata = playbackItem.baseItem.avMetadata
+
+        player.replaceCurrentItem(with: newAVPlayerItem)
+
+        rateObserver = player.observe(\.rate, options: [.new, .initial]) { _, value in
+            DispatchQueue.main.async {
+                self.manager?.set(rate: value.newValue ?? 1.0)
+            }
+        }
+
+        statusObserver = player.observe(\.currentItem?.status, options: [.new, .initial]) { _, value in
+            guard let newValue = value.newValue else { return }
+            switch newValue {
+            case .failed:
+                if let error = self.player.error {
+                    DispatchQueue.main.async {
+                        self.manager?.send(.error(.init("AVPlayer error: \(error.localizedDescription)")))
+                    }
+                }
+            case .readyToPlay:
+                self.player.play()
+            case .none, .unknown:
+                print("here")
+                self.player.play()
+            @unknown default: ()
+            }
+        }
+    }
+}
+
+// MARK: - AVPlayerView
+
+extension AVPlayerMediaPlayerProxy {
+
     struct AVPlayerView: UIViewRepresentable {
 
-        let manager: MediaPlayerManager
+        @EnvironmentObject
+        private var scrubbedSeconds: PublishedBox<Duration>
+
+        let proxy: AVPlayerMediaPlayerProxy
 
         func makeUIView(context: Context) -> UIView {
-            let proxy = manager.proxy as! AVPlayerMediaPlayerProxy
-            context.coordinator.otherDelegate.set(player: proxy.player)
+            proxy.isScrubbing = context.environment.isScrubbing
+            proxy.scrubbedSeconds = $scrubbedSeconds.value
             return UIAVPlayerView(proxy: proxy)
         }
 
         func updateUIView(_ uiView: UIView, context: Context) {}
-
-        func makeCoordinator() -> Coordinator {
-            Coordinator(manager: manager)
-        }
-
-        class Coordinator {
-            let otherDelegate: AVPlayerManagerDelegate
-
-            init(manager: MediaPlayerManager) {
-                self.otherDelegate = AVPlayerManagerDelegate(manager: manager)
-            }
-        }
     }
 
     private class UIAVPlayerView: UIView {

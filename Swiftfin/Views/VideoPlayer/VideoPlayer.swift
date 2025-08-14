@@ -46,7 +46,7 @@ struct VideoPlayer: View {
     init(manager: MediaPlayerManager) {
         self.manager = manager
         self._proxy = .init(wrappedValue: {
-            // TODO: AV, VLC selection
+            // TODO: layer selection
             let proxy = VLCMediaPlayerProxy()
             manager.proxy = proxy
             return proxy
@@ -59,7 +59,7 @@ struct VideoPlayer: View {
 
             Color.black
 
-            manager.proxy?.makeVideoPlayerBody(manager: manager)
+            proxy.makeVideoPlayerBody()
                 .eraseToAnyView()
 
             Overlay()
@@ -110,17 +110,17 @@ struct VideoPlayer: View {
                     proxy.setSubtitleFontSize(newValue)
                 }
             }
-            .onReceive(manager.events) { @MainActor event in
-                switch event {
-                case .playbackStopped:
+            .onReceive(manager.$playbackItem) { newItem in
+                isAspectFilled = false
+                audioOffset = .zero
+                subtitleOffset = .zero
+
+                scrubbedSeconds = newItem?.baseItem.startSeconds ?? .zero
+            }
+            .onReceive(manager.$state) { newState in
+                if newState == .stopped {
                     proxy.stop()
                     router.dismiss()
-                case let .itemChanged(playbackItem: item):
-                    isAspectFilled = false
-                    audioOffset = .zero
-                    subtitleOffset = .zero
-
-                    scrubbedSeconds = item.baseItem.startSeconds ?? .zero
                 }
             }
     }

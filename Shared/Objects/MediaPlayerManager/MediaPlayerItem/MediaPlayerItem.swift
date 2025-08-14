@@ -6,16 +6,8 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Factory
 import JellyfinAPI
-import Logging
-import MediaPlayer
-import Nuke
 import SwiftUI
-import VLCUI
-
-// TODO: decouple from VLCUI
 
 class MediaPlayerItem: ViewModel, MediaPlayerObserver {
 
@@ -56,8 +48,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
     let subtitleStreams: [MediaStream]
     let videoStreams: [MediaStream]
 
-    let vlcConfiguration: VLCVideoPlayer.Configuration
-
     // MARK: init
 
     init(
@@ -73,51 +63,18 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         self.thumbnailProvider = thumbnailProvider
         self.url = url
 
-        //        let adjustedMediaStreams = mediaSource.mediaStreams?.adjustedTrackIndexes(
-        //            for: <#T##PlayMethod#>,
-        //            selectedAudioStreamIndex: <#T##Int#>
-        //        )
-        //
-        //        let adjustedMediaStreams = mediaSource.mediaStreams?.adjustedTrackIndexes(
-        //            isTranscoded: mediaSource.transcodingURL != nil,
-        //            selectedAudioStreamIndex: mediaSource.defaultAudioStreamIndex ?? 0
-        //        )
-        //
-        //        let audioStreams = adjustedMediaStreams?.filter { $0.type == .audio } ?? []
-        //        let subtitleStreams = adjustedMediaStreams?.filter { $0.type == .subtitle } ?? []
-        //        let videoStreams = adjustedMediaStreams?.filter { $0.type == .video } ?? []
+        let adjustedMediaStreams = mediaSource.mediaStreams?.adjustedTrackIndexes(
+            for: mediaSource.transcodingURL == nil ? .directPlay : .transcode,
+            selectedAudioStreamIndex: mediaSource.defaultAudioStreamIndex ?? 0
+        )
 
-        //        self.audioStreams = audioStreams
-        //        self.subtitleStreams = subtitleStreams
-        //        self.videoStreams = videoStreams
+        let audioStreams = adjustedMediaStreams?.filter { $0.type == .audio } ?? []
+        let subtitleStreams = adjustedMediaStreams?.filter { $0.type == .subtitle } ?? []
+        let videoStreams = adjustedMediaStreams?.filter { $0.type == .video } ?? []
 
-        self.audioStreams = []
-        self.subtitleStreams = []
-        self.videoStreams = []
-
-        var configuration = VLCVideoPlayer.Configuration(url: url)
-        configuration.autoPlay = true
-
-        let startSeconds = max(.zero, (baseItem.startSeconds ?? .zero) - Duration.seconds(Defaults[.VideoPlayer.resumeOffset]))
-
-        if !baseItem.isLiveStream {
-            configuration.startSeconds = startSeconds
-            configuration.audioIndex = .absolute(mediaSource.defaultAudioStreamIndex ?? -1)
-            configuration.subtitleIndex = .absolute(mediaSource.defaultSubtitleStreamIndex ?? -1)
-        }
-
-        configuration.subtitleSize = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleSize])
-        configuration.subtitleColor = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleColor].uiColor)
-
-        if let font = UIFont(name: Defaults[.VideoPlayer.Subtitle.subtitleFontName], size: 0) {
-            configuration.subtitleFont = .absolute(font)
-        }
-
-        //        configuration.playbackChildren = subtitleStreams
-        //            .filter { $0.deliveryMethod == .external }
-        //            .compactMap(\.asPlaybackChild)
-
-        vlcConfiguration = configuration
+        self.audioStreams = audioStreams
+        self.subtitleStreams = subtitleStreams
+        self.videoStreams = videoStreams
 
         super.init()
 
@@ -125,7 +82,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         selectedSubtitleStreamIndex = mediaSource.defaultSubtitleStreamIndex ?? -1
 
         observers.append(MediaProgressObserver(item: self))
-
+        // TODO: move to manager?
         supplements.append(MediaInfoSupplement(item: baseItem))
 
         let chapters = baseItem.fullChapterInfo
@@ -137,29 +94,5 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
                 )
             )
         }
-    }
-}
-
-extension BaseItemDto {
-
-    func nowPlayableStaticMetadata(_ image: UIImage? = nil) -> NowPlayableStaticMetadata {
-
-        let mediaType: MPNowPlayingInfoMediaType = {
-            switch type {
-            case .audio, .audioBook: .audio
-            default: .video
-            }
-        }()
-
-        // TODO: only fill artist, albumArtist, and albumTitle if audio type
-        return .init(
-            mediaType: mediaType,
-            isLiveStream: isLiveStream,
-            title: displayTitle,
-            artist: nil,
-            artwork: nil,
-            albumArtist: nil,
-            albumTitle: nil
-        )
     }
 }

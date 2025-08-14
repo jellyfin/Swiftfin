@@ -11,6 +11,7 @@ import AVKit
 import Factory
 import Foundation
 import JellyfinAPI
+import MediaPlayer
 import UIKit
 
 // TODO: clean up
@@ -69,6 +70,27 @@ extension BaseItemDto {
 
                 return item.copy() as? AVMetadataItem
             }
+    }
+
+    func nowPlayableStaticMetadata(_ image: UIImage? = nil) -> NowPlayableStaticMetadata {
+
+        let mediaType: MPNowPlayingInfoMediaType = {
+            switch type {
+            case .audio, .audioBook: .audio
+            default: .video
+            }
+        }()
+
+        // TODO: only fill artist, albumArtist, and albumTitle if audio type
+        return .init(
+            mediaType: mediaType,
+            isLiveStream: isLiveStream,
+            title: displayTitle,
+            artist: nil,
+            artwork: nil,
+            albumArtist: nil,
+            albumTitle: nil
+        )
     }
 
     var birthday: Date? {

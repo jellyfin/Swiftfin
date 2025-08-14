@@ -6,10 +6,13 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import JellyfinAPI
 import SwiftUI
 import VLCUI
+
+// TODO: make supplement for playback information
 
 class VLCMediaPlayerProxy: MediaPlayerProxy,
     MediaPlayerOffsetConfigurable,
@@ -17,6 +20,8 @@ class VLCMediaPlayerProxy: MediaPlayerProxy,
 {
 
     let vlcUIProxy: VLCVideoPlayer.Proxy = .init()
+
+    weak var manager: MediaPlayerManager?
 
     func play() {
         vlcUIProxy.play()
@@ -68,8 +73,8 @@ class VLCMediaPlayerProxy: MediaPlayerProxy,
 
     func setSubtitleFontSize(_ fontSize: Int) {}
 
-    func makeVideoPlayerBody(manager: MediaPlayerManager) -> some View {
-        _VideoPlayerBody(manager: manager)
+    func makeVideoPlayerBody() -> some View {
+        _VideoPlayerBody()
             .environmentObject(vlcUIProxy)
     }
 }
@@ -83,36 +88,56 @@ extension VLCMediaPlayerProxy {
         private var isScrubbing: Bool
 
         @EnvironmentObject
+        private var manager: MediaPlayerManager
+        @EnvironmentObject
         private var scrubbedSecondsBox: PublishedBox<Duration>
         @EnvironmentObject
         private var vlcUIProxy: VLCVideoPlayer.Proxy
 
-        @ObservedObject
-        var manager: MediaPlayerManager
+        private func vlcConfiguration(for item: MediaPlayerItem) -> VLCVideoPlayer.Configuration {
+            let baseItem = item.baseItem
+            let mediaSource = item.mediaSource
 
-        private var scrubbedSeconds: Duration {
-            get { scrubbedSecondsBox.value }
-            nonmutating set { scrubbedSecondsBox.value = newValue }
+            var configuration = VLCVideoPlayer.Configuration(url: item.url)
+            configuration.autoPlay = true
+
+            let startSeconds = max(.zero, (baseItem.startSeconds ?? .zero) - Duration.seconds(Defaults[.VideoPlayer.resumeOffset]))
+
+            if !baseItem.isLiveStream {
+                configuration.startSeconds = startSeconds
+                configuration.audioIndex = .absolute(mediaSource.defaultAudioStreamIndex ?? -1)
+                configuration.subtitleIndex = .absolute(mediaSource.defaultSubtitleStreamIndex ?? -1)
+            }
+
+            configuration.subtitleSize = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleSize])
+            configuration.subtitleColor = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleColor].uiColor)
+
+            if let font = UIFont(name: Defaults[.VideoPlayer.Subtitle.subtitleFontName], size: 0) {
+                configuration.subtitleFont = .absolute(font)
+            }
+
+            configuration.playbackChildren = item.subtitleStreams
+                .filter { $0.deliveryMethod == .external }
+                .compactMap(\.asVLCPlaybackChild)
+
+            return configuration
         }
 
         var body: some View {
             if let playbackItem = manager.playbackItem {
-                VLCVideoPlayer(configuration: playbackItem.vlcConfiguration)
+                VLCVideoPlayer(configuration: vlcConfiguration(for: playbackItem))
                     .proxy(vlcUIProxy)
                     .onSecondsUpdated { newSeconds, _ in
                         if !isScrubbing {
-                            scrubbedSeconds = newSeconds
+                            scrubbedSecondsBox.value = newSeconds
                         }
 
                         manager.seconds = newSeconds
                     }
                     .onStateUpdated { state, _ in
-
                         switch state {
+                        // buffering state is on proxy
                         case .buffering, .esAdded, .opening: ()
-                        //                            if manager.playbackStatus != .buffering {
-                        //                                manager.playbackStatus = .buffering
-                        //                            }
                         case .ended, .stopped:
                             isScrubbing = false
                             manager.send(.ended)
@@ -126,12 +151,9 @@ extension VLCMediaPlayerProxy {
                             manager.set(playbackRequestStatus: .paused)
                         }
                     }
-                    .onReceive(manager.events) { event in
-                        switch event {
-                        case let .itemChanged(playbackItem: item):
-                            vlcUIProxy.playNewMedia(item.vlcConfiguration)
-                        default: ()
-                        }
+                    .onReceive(manager.$playbackItem) { playbackItem in
+                        guard let playbackItem else { return }
+                        vlcUIProxy.playNewMedia(vlcConfiguration(for: playbackItem))
                     }
             }
         }

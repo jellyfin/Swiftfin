@@ -43,7 +43,6 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
             }
         case .paused:
             sendProgressReport(for: item, seconds: manager?.seconds, isPaused: true)
-//        case .buffering: ()
         }
     }
 
@@ -58,8 +57,8 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
             .store(in: &cancellables)
 
         manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
-        manager.$playbackRequestStatus.sink(receiveValue: playbackStatusDidChange).store(in: &cancellables)
-        manager.events.sink(receiveValue: didReceiveManagerEvent).store(in: &cancellables)
+        manager.$playbackRequestStatus.sink(receiveValue: playbackRequestStatusDidChange).store(in: &cancellables)
+        manager.$state.sink(receiveValue: stateDidChange).store(in: &cancellables)
     }
 
     private func playbackItemDidChange(newItem: MediaPlayerItem?) {
@@ -74,16 +73,18 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
         }
     }
 
-    private func playbackStatusDidChange(newStatus: MediaPlayerManager.PlaybackRequestStatus) {
+    private func playbackRequestStatusDidChange(newStatus: MediaPlayerManager.PlaybackRequestStatus) {
         timer.poke()
         lastPlaybackRequestStatus = newStatus
     }
 
-    private func didReceiveManagerEvent(event: MediaPlayerManager.Event) {
-        switch event {
-        case .playbackStopped:
-            guard let item else { return }
-            sendStopReport(for: item, seconds: manager?.seconds)
+    // TODO: respond to error
+    private func stateDidChange(newState: MediaPlayerManager.State) {
+        switch newState {
+        case .stopped:
+            if let item {
+                sendStopReport(for: item, seconds: manager?.seconds)
+            }
             timer.stop()
             cancellables = []
             self.item = nil

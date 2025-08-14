@@ -15,7 +15,7 @@ import SwiftUI
 
 /// The proxy for top-down communication to an
 /// underlying media player
-protocol MediaPlayerProxy: ObservableObject {
+protocol MediaPlayerProxy: ObservableObject, MediaPlayerObserver {
 
     associatedtype VideoPlayerBody: View = EmptyView
 
@@ -35,11 +35,11 @@ protocol MediaPlayerProxy: ObservableObject {
 
     @ViewBuilder
     @MainActor
-    func makeVideoPlayerBody(manager: MediaPlayerManager) -> VideoPlayerBody
+    func makeVideoPlayerBody() -> VideoPlayerBody
 }
 
 extension MediaPlayerProxy where VideoPlayerBody == EmptyView {
-    func makeVideoPlayerBody(manager: MediaPlayerManager) -> VideoPlayerBody {
+    func makeVideoPlayerBody() -> VideoPlayerBody {
         EmptyView()
     }
 }
