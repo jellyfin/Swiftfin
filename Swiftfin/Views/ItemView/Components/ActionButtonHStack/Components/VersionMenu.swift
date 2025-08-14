@@ -54,43 +54,13 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            ActionButton(L10n.version, icon: "list.dash") {
-                Section("Versions") {
-                    Picker(L10n.version, selection: selectedMediaSourceBinding) {
-                        ForEach(mediaSources, id: \.hashValue) { mediaSource in
-                            Button {
-                                Text(mediaSource.displayTitle)
-                            }
-                            .tag(mediaSource as MediaSourceInfo?)
+            Menu(L10n.version, systemImage: "list.dash") {
+                Picker(L10n.version, selection: selectedMediaSource) {
+                    ForEach(mediaSources, id: \.hashValue) { mediaSource in
+                        Button {
+                            Text(mediaSource.displayTitle)
                         }
-                    }
-                }
-
-                Menu(L10n.audio) {
-                    Picker(
-                        L10n.audio,
-                        selection: selectedAudioStreamIndex
-                    ) {
-                        ForEach(viewModel.selectedMediaSource?.audioStreams ?? [], id: \.self) { source in
-                            Button {
-                                Text(source.displayTitle ?? L10n.unknown)
-                            }
-                            .tag(source.index as Int?)
-                        }
-                    }
-                }
-
-                Menu(L10n.subtitles) {
-                    Picker(
-                        L10n.subtitles,
-                        selection: selectedSubtitleStreamIndex
-                    ) {
-                        ForEach(viewModel.selectedMediaSource?.subtitleStreams ?? [], id: \.self) { source in
-                            Button {
-                                Text(source.displayTitle ?? L10n.unknown)
-                            }
-                            .tag(source.index as Int?)
-                        }
+                        .tag(mediaSource as MediaSourceInfo?)
                     }
                 }
             }

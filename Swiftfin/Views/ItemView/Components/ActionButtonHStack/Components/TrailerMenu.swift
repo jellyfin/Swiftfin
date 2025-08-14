@@ -8,14 +8,12 @@
 
 import Factory
 import JellyfinAPI
+import Logging
 import SwiftUI
 
 extension ItemView {
 
     struct TrailerMenu: View {
-
-        @Injected(\.logService)
-        private var logger
 
         // MARK: - Stored Value
 
@@ -34,6 +32,7 @@ extension ItemView {
 
         let localTrailers: [BaseItemDto]
         let externalTrailers: [MediaURL]
+        let logger = Logger.swiftfin()
 
         private var showLocalTrailers: Bool {
             enabledTrailers.contains(.local) && localTrailers.isNotEmpty
@@ -61,9 +60,9 @@ extension ItemView {
 
         @ViewBuilder
         private var trailerButton: some View {
-            ActionButton(
+            Button(
                 L10n.trailers,
-                icon: "movieclapper"
+                systemImage: "movieclapper"
             ) {
                 if showLocalTrailers, let firstTrailer = localTrailers.first {
                     playLocalTrailer(firstTrailer)
@@ -79,7 +78,7 @@ extension ItemView {
 
         @ViewBuilder
         private var trailerMenu: some View {
-            ActionButton(L10n.trailers, icon: "movieclapper") {
+            Menu(L10n.trailers, systemImage: "movieclapper") {
 
                 if showLocalTrailers {
                     Section(L10n.local) {

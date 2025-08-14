@@ -133,8 +133,8 @@ extension ItemView.CompactLogoScrollView {
                     }
 
                     ItemView.ActionButtonHStack(viewModel: viewModel)
-                        .font(.title)
                         .foregroundStyle(.white)
+                        .frame(height: 50)
                 }
                 .frame(maxWidth: 300)
             }
