@@ -82,7 +82,12 @@ extension ChevronButton {
 
         var body: some View {
             Button(action: action) {
-                label
+                if Icon.self == EmptyView.self {
+                    label
+                        .labelStyle(.titleOnly)
+                } else {
+                    label
+                }
             }
             .foregroundStyle(.primary, .secondary)
         }

@@ -102,9 +102,7 @@ struct ItemEditorView: View {
                     editTextView
                 }
 
-                // TODO: add `BaseItemDto.hasComponenets`
-                /// Only administrators can edit metadata components
-                if viewModel.userSession.user.permissions.isAdministrator && viewModel.item.type != .person {
+                if viewModel.item.hasComponents {
                     editComponentsView
                 }
             } /*  else if canManageSubtitles || canManageLyrics {

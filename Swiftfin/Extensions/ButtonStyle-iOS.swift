@@ -41,6 +41,64 @@ struct ToolbarPillButtonStyle: ButtonStyle {
     }
 }
 
+extension ButtonStyle where Self == TintedMaterialButtonStyle {
+
+    static var material: TintedMaterialButtonStyle {
+        TintedMaterialButtonStyle(tint: Color.clear, foregroundColor: Color.primary)
+    }
+
+    static func tintedMaterial(tint: Color, foregroundColor: Color) -> TintedMaterialButtonStyle {
+        TintedMaterialButtonStyle(
+            tint: tint,
+            foregroundColor: foregroundColor
+        )
+    }
+}
+
+struct TintedMaterialButtonStyle: ButtonStyle {
+
+    @Environment(\.isSelected)
+    private var isSelected
+    @Environment(\.isEnabled)
+    private var isEnabled
+
+    // Take tint instead of reading from view as
+    // global accent color causes flashes of color
+    let tint: Color
+    let foregroundColor: Color
+
+    func makeBody(configuration: Configuration) -> some View {
+        ZStack {
+            // TODO: use container relative shape instead of corner radius
+            TintedMaterial(tint: buttonTint)
+                .cornerRadius(10)
+                .id(isSelected)
+
+            configuration.label
+                .foregroundStyle(foregroundStyle)
+                .symbolRenderingMode(.monochrome)
+        }
+    }
+
+    private var buttonTint: Color {
+        if isEnabled && isSelected {
+            tint
+        } else {
+            Color.gray.opacity(0.3)
+        }
+    }
+
+    private var foregroundStyle: AnyShapeStyle {
+        if isSelected {
+            AnyShapeStyle(foregroundColor)
+        } else if isEnabled {
+            AnyShapeStyle(HierarchicalShapeStyle.primary)
+        } else {
+            AnyShapeStyle(Color.gray.opacity(0.3))
+        }
+    }
+}
+
 extension ButtonStyle where Self == IsPressedButtonStyle {
 
     static func isPressed(_ isPressed: @escaping (Bool) -> Void) -> IsPressedButtonStyle {
