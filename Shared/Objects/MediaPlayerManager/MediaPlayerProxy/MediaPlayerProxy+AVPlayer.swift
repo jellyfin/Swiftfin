@@ -18,7 +18,7 @@ import SwiftUI
 // TODO: report playback information, see VLCUI.PlaybackInformation (dropped frames, etc.)
 // TODO: manager able to replace MediaPlayerItem in-place for changing audio/subtitle tracks
 
-class AVPlayerMediaPlayerProxy: MediaPlayerProxy {
+class AVMediaPlayerProxy: MediaPlayerProxy {
 
     let avPlayerLayer: AVPlayerLayer
     let player: AVPlayer
@@ -128,7 +128,7 @@ class AVPlayerMediaPlayerProxy: MediaPlayerProxy {
     }
 }
 
-extension AVPlayerMediaPlayerProxy {
+extension AVMediaPlayerProxy {
 
     private func playbackStopped() {
         player.pause()
@@ -173,14 +173,14 @@ extension AVPlayerMediaPlayerProxy {
 
 // MARK: - AVPlayerView
 
-extension AVPlayerMediaPlayerProxy {
+extension AVMediaPlayerProxy {
 
     struct AVPlayerView: UIViewRepresentable {
 
         @EnvironmentObject
         private var scrubbedSeconds: PublishedBox<Duration>
 
-        let proxy: AVPlayerMediaPlayerProxy
+        let proxy: AVMediaPlayerProxy
 
         func makeUIView(context: Context) -> UIView {
             proxy.isScrubbing = context.environment.isScrubbing
@@ -193,9 +193,9 @@ extension AVPlayerMediaPlayerProxy {
 
     private class UIAVPlayerView: UIView {
 
-        let proxy: AVPlayerMediaPlayerProxy
+        let proxy: AVMediaPlayerProxy
 
-        init(proxy: AVPlayerMediaPlayerProxy) {
+        init(proxy: AVMediaPlayerProxy) {
             self.proxy = proxy
             super.init(frame: .zero)
             layer.addSublayer(proxy.avPlayerLayer)

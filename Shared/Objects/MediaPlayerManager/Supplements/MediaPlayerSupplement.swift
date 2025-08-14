@@ -11,6 +11,7 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: fullscreen supplement styles
+// TODO: tvOS vs iOS views
 // TODO: break out
 
 struct AnyMediaPlayerSupplement: Equatable, Identifiable {

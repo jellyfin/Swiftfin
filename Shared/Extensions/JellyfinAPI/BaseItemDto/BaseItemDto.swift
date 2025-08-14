@@ -124,25 +124,14 @@ extension BaseItemDto {
         channelType == .tv
     }
 
-    // TODO: Change to Duration
-    @available(*, deprecated, message: "Use `runtime` instead")
-    var runTimeSeconds: TimeInterval {
-        TimeInterval(runTimeTicks ?? 0) / 10_000_000
-    }
-
-    @available(*, deprecated, message: "Use `startDuration` instead")
-    var startTimeSeconds: TimeInterval {
-        TimeInterval(userData?.playbackPositionTicks ?? 0) / 10_000_000
-    }
-
     var runtime: Duration? {
         guard let ticks = runTimeTicks else { return nil }
-        return Duration.microseconds(ticks / 10)
+        return Duration.ticks(ticks)
     }
 
     var startSeconds: Duration? {
         guard let ticks = userData?.playbackPositionTicks else { return nil }
-        return Duration.microseconds(ticks / 10)
+        return Duration.ticks(ticks)
     }
 
     var seasonEpisodeLabel: String? {

@@ -12,6 +12,7 @@ import SwiftUI
 
 // TODO: bar color default to style
 // TODO: possible issue with runTimeSeconds == 0
+// TODO: smooth out animation when done scrubbing
 
 extension VideoPlayer.Overlay {
 

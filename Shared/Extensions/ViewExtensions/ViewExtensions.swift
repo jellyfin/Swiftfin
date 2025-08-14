@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Defaults
 import Foundation
 import SwiftUI
@@ -339,6 +340,12 @@ extension View {
                 placement: .topBarTrailing,
                 content: content
             )
+        }
+    }
+
+    func assign<P>(_ publisher: P, to binding: Binding<P.Output>) -> some View where P: Publisher, P.Failure == Never {
+        onReceive(publisher) { output in
+            binding.wrappedValue = output
         }
     }
 

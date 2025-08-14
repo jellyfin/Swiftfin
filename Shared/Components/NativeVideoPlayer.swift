@@ -23,7 +23,7 @@ struct NativeVideoPlayer: View {
     private var scrubbedSecondsBox: PublishedBox<Duration>
 
     @LazyState
-    private var proxy: AVPlayerMediaPlayerProxy
+    private var proxy: AVMediaPlayerProxy
 
     @ObservedObject
     private var manager: MediaPlayerManager
@@ -33,7 +33,7 @@ struct NativeVideoPlayer: View {
     ) {
         self.manager = manager
         self._proxy = .init(wrappedValue: {
-            let proxy = AVPlayerMediaPlayerProxy()
+            let proxy = AVMediaPlayerProxy()
             manager.proxy = proxy
             return proxy
         }())
@@ -55,7 +55,7 @@ extension NativeVideoPlayer {
 
     private struct NativeVideoPlayerView: UIViewControllerRepresentable {
 
-        let proxy: AVPlayerMediaPlayerProxy
+        let proxy: AVMediaPlayerProxy
 
         func makeUIViewController(context: Context) -> UINativeVideoPlayerViewController {
             UINativeVideoPlayerViewController(proxy: proxy)
@@ -66,9 +66,9 @@ extension NativeVideoPlayer {
 
     private class UINativeVideoPlayerViewController: AVPlayerViewController {
 
-        private let proxy: AVPlayerMediaPlayerProxy
+        private let proxy: AVMediaPlayerProxy
 
-        init(proxy: AVPlayerMediaPlayerProxy) {
+        init(proxy: AVMediaPlayerProxy) {
             self.proxy = proxy
 
             super.init(nibName: nil, bundle: nil)

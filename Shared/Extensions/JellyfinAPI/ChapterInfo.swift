@@ -18,15 +18,9 @@ extension ChapterInfo: Displayable {
 
 extension ChapterInfo {
 
-    // TODO: Change to Duration
-    @available(*, deprecated, message: "Use `startSeconds` instead")
-    var startTimeSeconds: TimeInterval {
-        TimeInterval(startPositionTicks ?? 0) / 10_000_000
-    }
-
     var startSeconds: Duration? {
         guard let startPositionTicks else { return nil }
-        return Duration.microseconds(startPositionTicks / 10)
+        return Duration.ticks(startPositionTicks)
     }
 }
 

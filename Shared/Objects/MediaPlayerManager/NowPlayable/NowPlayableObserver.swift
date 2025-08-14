@@ -12,6 +12,9 @@ import Logging
 import MediaPlayer
 import Nuke
 
+// TODO: interruptions
+//       - calls
+
 class NowPlayableObserver: MediaPlayerObserver {
 
     private let logger = Logger.swiftfin()

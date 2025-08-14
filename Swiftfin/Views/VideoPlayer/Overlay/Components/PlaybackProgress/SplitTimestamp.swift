@@ -97,9 +97,7 @@ extension VideoPlayer.Overlay {
                 .lineLimit(1)
             }
             .foregroundStyle(.primary, .secondary)
-            .onReceive(manager.secondsBox.$value) { newValue in
-                activeSeconds = newValue
-            }
+            .assign(scrubbedSecondsBox.$value, to: $activeSeconds)
         }
     }
 }

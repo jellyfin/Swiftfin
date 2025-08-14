@@ -10,6 +10,8 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: move to Shared
+
 struct VideoPlayer: View {
 
     @Default(.VideoPlayer.Subtitle.subtitleColor)

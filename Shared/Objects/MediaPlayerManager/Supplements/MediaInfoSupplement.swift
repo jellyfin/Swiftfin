@@ -119,7 +119,7 @@ extension MediaInfoSupplement {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                if item.isLiveStream {
+                if !item.isLiveStream {
                     VStack {
                         fromBeginningButton
                     }

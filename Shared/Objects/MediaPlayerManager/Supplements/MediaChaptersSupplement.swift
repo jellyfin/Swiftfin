@@ -15,16 +15,13 @@ import VLCUI
 
 // TODO: current button
 // TODO: scroll to current chapter on appear
+// TODO: fix swapping between chapters on selection
 
 struct MediaChaptersSupplement: MediaPlayerSupplement {
 
     let chapters: [ChapterInfo.FullInfo]
     let displayTitle: String = L10n.chapters
     let id: String = "Chapters"
-
-    func chapter(for second: Duration) -> ChapterInfo.FullInfo? {
-        chapters.first { $0.secondsRange.contains(second) }
-    }
 
     func videoPlayerBody() -> some View {
         ChapterOverlay(chapters: chapters)
@@ -34,6 +31,9 @@ struct MediaChaptersSupplement: MediaPlayerSupplement {
 extension MediaChaptersSupplement {
 
     private struct ChapterOverlay: View {
+
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
 
         @StateObject
         private var collectionHStackProxy: CollectionHStackProxy = .init()
@@ -89,6 +89,10 @@ extension MediaChaptersSupplement {
             .insets(horizontal: .zero)
             .proxy(collectionHStackProxy)
             .frame(height: 150)
+            .onAppear {
+                guard let currentChapter = chapters.first(where: { $0.secondsRange.contains(manager.seconds) }) else { return }
+                collectionHStackProxy.scrollTo(id: currentChapter.id)
+            }
         }
     }
 
@@ -106,6 +110,10 @@ extension MediaChaptersSupplement {
         private var contentSize: CGSize = .zero
 
         let chapter: ChapterInfo.FullInfo
+
+        private var isCurrentChapter: Bool {
+            chapter.secondsRange.contains(activeSeconds)
+        }
 
         var body: some View {
             Button {
@@ -127,7 +135,7 @@ extension MediaChaptersSupplement {
                             }
                     }
                     .overlay {
-                        if chapter.secondsRange.contains(activeSeconds) {
+                        if isCurrentChapter {
                             RoundedRectangle(cornerRadius: contentSize.width / 30)
                                 .stroke(accentColor, lineWidth: 8)
                         }
@@ -154,9 +162,7 @@ extension MediaChaptersSupplement {
                 .font(.subheadline.weight(.semibold))
             }
             .trackingSize($contentSize)
-            .onReceive(manager.secondsBox.$value) { newValue in
-                activeSeconds = newValue
-            }
+            .assign(manager.secondsBox.$value, to: $activeSeconds)
         }
     }
 }
