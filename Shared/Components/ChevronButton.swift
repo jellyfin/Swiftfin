@@ -79,14 +79,14 @@ extension ChevronButton {
 
         let label: Label
         let action: () -> Void
-        let hasIcon: Bool
 
         var body: some View {
             Button(action: action) {
-                if hasIcon {
+                if Icon.self == EmptyView.self {
                     label
+                        .labelStyle(.titleOnly)
                 } else {
-                    label.labelStyle(.titleOnly)
+                    label
                 }
             }
             .foregroundStyle(.primary, .secondary)
@@ -109,8 +109,7 @@ extension ChevronButton {
         self.innerContent = { label in
             ButtonContentView(
                 label: label,
-                action: action,
-                hasIcon: true
+                action: action
             )
         }
     }
@@ -128,8 +127,7 @@ extension ChevronButton {
         self.innerContent = { label in
             ButtonContentView(
                 label: label,
-                action: action,
-                hasIcon: true
+                action: action
             )
         }
     }
@@ -149,8 +147,7 @@ extension ChevronButton where Icon == EmptyView, Subtitle == Text {
         self.innerContent = { label in
             ButtonContentView(
                 label: label,
-                action: action,
-                hasIcon: false
+                action: action
             )
         }
     }
@@ -167,8 +164,7 @@ extension ChevronButton where Icon == EmptyView, Subtitle == Text {
         self.innerContent = { label in
             ButtonContentView(
                 label: label,
-                action: action,
-                hasIcon: false
+                action: action
             )
         }
     }
@@ -187,8 +183,7 @@ extension ChevronButton where Icon == EmptyView, Subtitle == EmptyView {
         self.innerContent = { label in
             ButtonContentView(
                 label: label,
-                action: action,
-                hasIcon: false
+                action: action
             )
         }
     }
@@ -211,8 +206,7 @@ extension ChevronButton where Icon == Image, Subtitle == Text {
         self.innerContent = { label in
             ButtonContentView(
                 label: label,
-                action: action,
-                hasIcon: true
+                action: action
             )
         }
     }
@@ -230,8 +224,7 @@ extension ChevronButton where Icon == Image, Subtitle == Text {
         self.innerContent = { label in
             ButtonContentView(
                 label: label,
-                action: action,
-                hasIcon: true
+                action: action
             )
         }
     }
@@ -251,8 +244,7 @@ extension ChevronButton where Icon == Image, Subtitle == Text {
         self.innerContent = { label in
             ButtonContentView(
                 label: label,
-                action: action,
-                hasIcon: true
+                action: action
             )
         }
     }
@@ -270,8 +262,7 @@ extension ChevronButton where Icon == Image, Subtitle == Text {
         self.innerContent = { label in
             ButtonContentView(
                 label: label,
-                action: action,
-                hasIcon: true
+                action: action
             )
         }
     }
@@ -293,8 +284,7 @@ extension ChevronButton where Icon == Image, Subtitle == EmptyView {
         self.innerContent = { label in
             ButtonContentView(
                 label: label,
-                action: action,
-                hasIcon: true
+                action: action
             )
         }
     }
@@ -313,8 +303,7 @@ extension ChevronButton where Icon == Image, Subtitle == EmptyView {
         self.innerContent = { label in
             ButtonContentView(
                 label: label,
-                action: action,
-                hasIcon: true
+                action: action
             )
         }
     }
