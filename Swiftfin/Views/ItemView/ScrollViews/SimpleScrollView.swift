@@ -77,14 +77,13 @@ extension ItemView {
                         alignment: .center
                     )
 
-                    if viewModel.presentPlayButton {
+                    if viewModel.item.presentPlayButton {
                         ItemView.PlayButton(viewModel: viewModel)
                             .frame(height: 50)
                     }
 
                     ItemView.ActionButtonHStack(viewModel: viewModel)
-                        .font(.title)
-                        .foregroundStyle(.primary)
+                        .frame(height: 50)
                 }
                 .frame(maxWidth: 300)
             }

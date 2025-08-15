@@ -50,9 +50,9 @@ extension SeriesEpisodeSelector {
                 .focusSection()
                 .focusGuide(
                     focusGuide,
-                    tag: "seasons",
+                    tag: "belowHeader",
                     onContentFocus: { focusedSeason = selection },
-                    top: "top",
+                    top: "header",
                     bottom: "episodes"
                 )
                 .mask {
@@ -96,7 +96,8 @@ extension SeriesEpisodeSelector {
             Button {
                 selection = season.id
             } label: {
-                Text(season.season.displayTitle)
+                Marquee(season.season.displayTitle, animateWhenFocused: true)
+                    .frame(maxWidth: 300)
                     .font(.headline)
                     .fontWeight(.semibold)
                     .padding(.vertical, 10)

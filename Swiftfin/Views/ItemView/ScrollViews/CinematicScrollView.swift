@@ -134,14 +134,14 @@ extension ItemView.CinematicScrollView {
                     .padding(.horizontal)
 
                     Group {
-                        if viewModel.presentPlayButton {
+                        if viewModel.item.presentPlayButton {
                             ItemView.PlayButton(viewModel: viewModel)
                                 .frame(height: 50)
                         }
 
                         ItemView.ActionButtonHStack(viewModel: viewModel)
-                            .font(.title)
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
+                            .frame(height: 50)
                     }
                     .frame(maxWidth: 300)
                 }

@@ -25,7 +25,7 @@ extension BaseItemPerson: Poster {
         "person.fill"
     }
 
-    func portraitImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
+    func portraitImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
 
         guard let client = Container.shared.currentUserSession()?.client else { return [] }
 
@@ -35,7 +35,8 @@ extension BaseItemPerson: Poster {
 
         let imageRequestParameters = Paths.GetItemImageParameters(
             maxWidth: scaleWidth ?? Int(maxWidth),
-            tag: primaryImageTag
+            quality: quality,
+            tag: primaryImageTag,
         )
 
         let imageRequest = Paths.getItemImage(

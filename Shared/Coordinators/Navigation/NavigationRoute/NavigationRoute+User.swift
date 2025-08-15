@@ -18,16 +18,6 @@ extension NavigationRoute {
         ConnectToServerView()
     }
 
-    static func editServerFromSelectUser(server: ServerState) -> NavigationRoute {
-        NavigationRoute(
-            id: "editServerFromSelectUser",
-            style: .sheet
-        ) {
-            EditServerView(server: server)
-                .environment(\.isEditing, true)
-        }
-    }
-
     static func quickConnect(quickConnect: QuickConnect) -> NavigationRoute {
         NavigationRoute(
             id: "quickConnectView",

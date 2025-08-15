@@ -18,19 +18,23 @@ protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
     var showTitle: Bool { get }
 
     func portraitImageSources(
-        maxWidth: CGFloat?
+        maxWidth: CGFloat?,
+        quality: Int?
     ) -> [ImageSource]
 
     func landscapeImageSources(
-        maxWidth: CGFloat?
+        maxWidth: CGFloat?,
+        quality: Int?
     ) -> [ImageSource]
 
     func cinematicImageSources(
-        maxWidth: CGFloat?
+        maxWidth: CGFloat?,
+        quality: Int?
     ) -> [ImageSource]
 
     func squareImageSources(
-        maxWidth: CGFloat?
+        maxWidth: CGFloat?,
+        quality: Int?
     ) -> [ImageSource]
 }
 
@@ -45,25 +49,29 @@ extension Poster {
     }
 
     func portraitImageSources(
-        maxWidth: CGFloat? = nil
+        maxWidth: CGFloat? = nil,
+        quality: Int? = nil
     ) -> [ImageSource] {
         []
     }
 
     func landscapeImageSources(
-        maxWidth: CGFloat? = nil
+        maxWidth: CGFloat? = nil,
+        quality: Int? = nil
     ) -> [ImageSource] {
         []
     }
 
     func cinematicImageSources(
-        maxWidth: CGFloat?
+        maxWidth: CGFloat?,
+        quality: Int? = nil
     ) -> [ImageSource] {
         []
     }
 
     func squareImageSources(
-        maxWidth: CGFloat?
+        maxWidth: CGFloat?,
+        quality: Int? = nil
     ) -> [ImageSource] {
         []
     }

@@ -33,10 +33,12 @@ extension ItemView {
 
             let bottomColor = viewModel.item.blurHash(for: .backdrop)?.averageLinearColor ?? Color.secondarySystemFill
 
-            ImageView(viewModel.item.imageSource(.backdrop, maxHeight: UIScreen.main.bounds.height * 0.35))
-                .aspectRatio(1.77, contentMode: .fill)
-                .frame(height: UIScreen.main.bounds.height * 0.35)
-                .bottomEdgeGradient(bottomColor: bottomColor)
+            GeometryReader { proxy in
+                ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1320))
+                    .aspectRatio(1.77, contentMode: .fill)
+                    .frame(width: proxy.size.width, height: proxy.size.height * 0.70, alignment: .top)
+                    .bottomEdgeGradient(bottomColor: bottomColor)
+            }
         }
 
         var body: some View {
@@ -125,14 +127,14 @@ extension ItemView.CompactLogoScrollView {
                         viewModel: viewModel
                     )
 
-                    if viewModel.presentPlayButton {
+                    if viewModel.item.presentPlayButton {
                         ItemView.PlayButton(viewModel: viewModel)
                             .frame(height: 50)
                     }
 
                     ItemView.ActionButtonHStack(viewModel: viewModel)
-                        .font(.title)
                         .foregroundStyle(.white)
+                        .frame(height: 50)
                 }
                 .frame(maxWidth: 300)
             }
