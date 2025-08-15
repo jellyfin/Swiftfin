@@ -38,7 +38,7 @@ extension ActiveSessionDetailView {
                 Section(L10n.commands) {
                     if session.isSupportsMediaControl == true && session.nowPlayingItem != nil {
                         Button {
-                            viewModel.send(.playState(FullPlaystateCommand(.playPause)))
+                            viewModel.send(.playState(.playPause))
                         } label: {
                             HStack {
                                 Text(session.playState?.isPaused == true ? L10n.play : L10n.pause)
@@ -50,7 +50,7 @@ extension ActiveSessionDetailView {
                         }
 
                         Button {
-                            viewModel.send(.playState(FullPlaystateCommand(.stop)))
+                            viewModel.send(.playState(.stop))
                         } label: {
                             HStack {
                                 Text(L10n.stop)

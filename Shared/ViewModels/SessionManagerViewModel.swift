@@ -14,31 +14,23 @@ import URLQueryEncoder
 
 final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
 
-    // MARK: - Event
-
     enum Event {
         case commandSent
         case messageSent
         case error(Error)
     }
 
-    // MARK: - Action
-
     enum Action: Equatable {
-        case command(FullGeneralCommand)
-        case playState(FullPlaystateCommand)
+        case command(SendGeneralCommand)
+        case playState(SendPlaystateCommand)
         case message(String)
     }
-
-    // MARK: - State
 
     enum State: Hashable {
         case initial
         case connected
         case error(String)
     }
-
-    // MARK: - Published Properties
 
     @Published
     var session: SessionInfoDto
@@ -55,13 +47,9 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
     private var currentTask: AnyCancellable?
     private var eventSubject: PassthroughSubject<Event, Never> = .init()
 
-    // MARK: - Init
-
     init(_ session: SessionInfoDto) {
         self.session = session
     }
-
-    // MARK: - Respond
 
     func respond(to action: Action) -> State {
         currentTask?.cancel()
@@ -123,10 +111,10 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
         }
     }
 
-    // MARK: - General Command
+    // MARK: - Send General Command
 
-    private func sendGeneralCommand(_ fullCommand: FullGeneralCommand) async throws {
-        let generalCommand = fullCommand.command(userID: userSession.user.id)
+    private func sendGeneralCommand(_ SendCommand: SendGeneralCommand) async throws {
+        let generalCommand = SendCommand.toGeneralCommand(userID: userSession.user.id)
 
         guard let sessionID = session.id,
               let commandName = generalCommand.name,
@@ -146,16 +134,16 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
         _ = try await userSession.client.send(request)
     }
 
-    // MARK: - PlayState Command
+    // MARK: - Send Playstate Command
 
-    private func sendPlaystateCommand(_ fullCommand: FullPlaystateCommand) async throws {
+    private func sendPlaystateCommand(_ SendCommand: SendPlaystateCommand) async throws {
         guard let sessionID = session.id,
               session.isSupportsMediaControl == true
         else {
             throw JellyfinAPIError("PlayState command not supported")
         }
 
-        let playstateRequest = fullCommand.command(userID: userSession.user.id)
+        let playstateRequest = SendCommand.toPlaystateRequest(userID: userSession.user.id)
 
         let request = Paths.sendPlaystateCommand(
             sessionID: sessionID,
@@ -167,7 +155,7 @@ final class SessionManagerViewModel: ViewModel, Eventful, Stateful {
         _ = try await userSession.client.send(request)
     }
 
-    // MARK: - Message Command
+    // MARK: - Send Message
 
     private func sendMessage(_ message: String) async throws {
         guard let sessionID = session.id,
