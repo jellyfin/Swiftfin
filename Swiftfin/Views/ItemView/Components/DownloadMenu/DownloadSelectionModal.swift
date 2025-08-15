@@ -6,16 +6,14 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
 import SwiftUI
 
-#if os(iOS)
-extension NavigationRoute {
-
-    static let downloadList = NavigationRoute(
-        id: "downloadList"
-    ) {
-        DownloadListView()
+struct DownloadSelectionModal: View {
+    var body: some View {
+        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 }
-#endif
+
+#Preview {
+    DownloadSelectionModal()
+}
