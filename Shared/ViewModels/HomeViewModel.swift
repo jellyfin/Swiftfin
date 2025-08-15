@@ -223,6 +223,6 @@ final class HomeViewModel: ViewModel, Stateful {
             )
         }
 
-        let _ = try await userSession.client.send(request)
+        _ = try await userSession.client.send(request)
     }
 }
