@@ -596,6 +596,10 @@ internal enum L10n {
   internal static let editServer = L10n.tr("Localizable", "editServer", fallback: "Edit Server")
   /// Edit Users
   internal static let editUsers = L10n.tr("Localizable", "editUsers", fallback: "Edit Users")
+  /// Embedded
+  internal static let embedded = L10n.tr("Localizable", "embedded", fallback: "Embedded")
+  /// Embedded subtitles cannot be edited.
+  internal static let embeddedSubtitleFooter = L10n.tr("Localizable", "embeddedSubtitleFooter", fallback: "Embedded subtitles cannot be edited.")
   /// Enable all devices
   internal static let enableAllDevices = L10n.tr("Localizable", "enableAllDevices", fallback: "Enable all devices")
   /// Enable all libraries
@@ -662,6 +666,10 @@ internal enum L10n {
   internal static let experimental = L10n.tr("Localizable", "experimental", fallback: "Experimental")
   /// External
   internal static let external = L10n.tr("Localizable", "external", fallback: "External")
+  /// Failed to delete item at index %1$@: %2$@
+  internal static func failedDeletionAtIndexError(_ p1: Any, _ p2: Any) -> String {
+    return L10n.tr("Localizable", "failedDeletionAtIndexError", String(describing: p1), String(describing: p2), fallback: "Failed to delete item at index %1$@: %2$@")
+  }
   /// Failed logins
   internal static let failedLogins = L10n.tr("Localizable", "failedLogins", fallback: "Failed logins")
   /// Favorite
@@ -672,6 +680,8 @@ internal enum L10n {
   internal static let favorites = L10n.tr("Localizable", "favorites", fallback: "Favorites")
   /// Featurette
   internal static let featurette = L10n.tr("Localizable", "featurette", fallback: "Featurette")
+  /// File
+  internal static let file = L10n.tr("Localizable", "file", fallback: "File")
   /// Filters
   internal static let filters = L10n.tr("Localizable", "filters", fallback: "Filters")
   /// Find Missing
@@ -682,6 +692,8 @@ internal enum L10n {
   internal static let folder = L10n.tr("Localizable", "folder", fallback: "Folder")
   /// Folders
   internal static let folders = L10n.tr("Localizable", "folders", fallback: "Folders")
+  /// Forced
+  internal static let forced = L10n.tr("Localizable", "forced", fallback: "Forced")
   /// Force remote media transcoding
   internal static let forceRemoteTranscoding = L10n.tr("Localizable", "forceRemoteTranscoding", fallback: "Force remote media transcoding")
   /// Format
@@ -718,6 +730,8 @@ internal enum L10n {
   internal static let halfSideBySide = L10n.tr("Localizable", "halfSideBySide", fallback: "Half Side-by-Side")
   /// Half Top and Bottom
   internal static let halfTopAndBottom = L10n.tr("Localizable", "halfTopAndBottom", fallback: "Half Top and Bottom")
+  /// Hearing impaired
+  internal static let hearingImpaired = L10n.tr("Localizable", "hearingImpaired", fallback: "Hearing impaired")
   /// Hidden
   internal static let hidden = L10n.tr("Localizable", "hidden", fallback: "Hidden")
   /// Hide user from login screen
@@ -768,6 +782,8 @@ internal enum L10n {
   internal static let interval = L10n.tr("Localizable", "interval", fallback: "Interval")
   /// Interview
   internal static let interview = L10n.tr("Localizable", "interview", fallback: "Interview")
+  /// Invalid format
+  internal static let invalidFormat = L10n.tr("Localizable", "invalidFormat", fallback: "Invalid format")
   /// Inverted Dark
   internal static let invertedDark = L10n.tr("Localizable", "invertedDark", fallback: "Inverted Dark")
   /// Inverted Light
@@ -886,8 +902,12 @@ internal enum L10n {
   internal static let lyricist = L10n.tr("Localizable", "lyricist", fallback: "Lyricist")
   /// Lyrics
   internal static let lyrics = L10n.tr("Localizable", "lyrics", fallback: "Lyrics")
+  /// Manage
+  internal static let manage = L10n.tr("Localizable", "manage", fallback: "Manage")
   /// Management
   internal static let management = L10n.tr("Localizable", "management", fallback: "Management")
+  /// Delete, upload, or search for external subtitles
+  internal static let manageSubtitlesDescription = L10n.tr("Localizable", "manageSubtitlesDescription", fallback: "Delete, upload, or search for external subtitles")
   /// Manual playlists folder
   internal static let manualPlaylistsFolder = L10n.tr("Localizable", "manualPlaylistsFolder", fallback: "Manual playlists folder")
   /// Manual playlists folders
@@ -996,6 +1016,8 @@ internal enum L10n {
   internal static let noDeviceProfileWarning = L10n.tr("Localizable", "noDeviceProfileWarning", fallback: "No profiles defined. Playback issues may occur.")
   /// No episodes available
   internal static let noEpisodesAvailable = L10n.tr("Localizable", "noEpisodesAvailable", fallback: "No episodes available")
+  /// No item selected
+  internal static let noItemSelected = L10n.tr("Localizable", "noItemSelected", fallback: "No item selected")
   /// No local servers found
   internal static let noLocalServersFound = L10n.tr("Localizable", "noLocalServersFound", fallback: "No local servers found")
   /// None
@@ -1070,6 +1092,8 @@ internal enum L10n {
   internal static let people = L10n.tr("Localizable", "people", fallback: "People")
   /// People who helped create or perform specific media.
   internal static let peopleDescription = L10n.tr("Localizable", "peopleDescription", fallback: "People who helped create or perform specific media.")
+  /// Perfect match
+  internal static let perfectMatch = L10n.tr("Localizable", "perfectMatch", fallback: "Perfect match")
   /// Permissions
   internal static let permissions = L10n.tr("Localizable", "permissions", fallback: "Permissions")
   /// Person
@@ -1242,6 +1266,8 @@ internal enum L10n {
   internal static let replaceMetadata = L10n.tr("Localizable", "replaceMetadata", fallback: "Replace Metadata")
   /// Replace unlocked metadata with new information.
   internal static let replaceMetadataDescription = L10n.tr("Localizable", "replaceMetadataDescription", fallback: "Replace unlocked metadata with new information.")
+  /// Replace subtitle
+  internal static let replaceSubtitle = L10n.tr("Localizable", "replaceSubtitle", fallback: "Replace subtitle")
   /// Required
   internal static let `required` = L10n.tr("Localizable", "required", fallback: "Required")
   /// Require device authentication when signing in to the user.
