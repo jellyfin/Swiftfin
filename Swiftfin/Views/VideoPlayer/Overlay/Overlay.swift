@@ -17,9 +17,6 @@ extension VideoPlayer {
 
     struct Overlay: View {
 
-        @Environment(\.horizontalSizeClass)
-        private var horizontalSizeClass
-
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
@@ -38,6 +35,8 @@ extension VideoPlayer {
         private var isGestureLocked: Bool = false
         @State
         private var isPresentingOverlay: Bool = true
+        @State
+        private var overlaySize: CGSize = .zero
         @State
         private var selectedSupplement: AnyMediaPlayerSupplement?
 
@@ -133,8 +132,7 @@ extension VideoPlayer {
                             selectedSupplement.supplement
                                 .videoPlayerBody()
                                 .eraseToAnyView()
-                                .frame(height: 150, alignment: .topLeading)
-//                                .frame(height: horizontalSizeClass == .compact ? 400 : 150, alignment: .topLeading)
+                                .frame(height: overlaySize.isPortrait ? 400 : 150, alignment: .topLeading)
                                 .id(selectedSupplement.id)
                                 .transition(.opacity.animation(.linear(duration: 0.1)))
                         }
@@ -153,6 +151,7 @@ extension VideoPlayer {
                         .transition(.opacity)
                 }
             }
+            .trackingSize($overlaySize)
             .modifier(VideoPlayer.KeyCommandsModifier())
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.bouncy(duration: 0.4), value: isPresentingSupplement)

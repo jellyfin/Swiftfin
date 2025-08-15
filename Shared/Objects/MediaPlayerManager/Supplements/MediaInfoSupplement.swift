@@ -69,38 +69,57 @@ extension MediaInfoSupplement {
             .fontWeight(.semibold)
         }
 
-//        var compact: some View {
-//            VStack(alignment: .leading) {
-//                Text(item.displayTitle)
-//                    .fontWeight(.semibold)
-//                    .lineLimit(2)
-//                    .multilineTextAlignment(.leading)
-//
-//                if let overview = item.overview {
-//                    Text(overview)
-//                        .font(.subheadline)
-//                        .fontWeight(.regular)
-//                }
-//
-//                accessoryView
-//                    .font(.caption)
-//                    .foregroundStyle(.secondary)
-//            }
-//            .frame(maxWidth: .infinity, alignment: .topLeading)
-//        }
-
-        var tvOSView: some View { EmptyView() }
-
         // TODO: may need to be a layout for correct overview frame
         //       with scrolling if too long
         var iOSView: some View {
+            let shouldBeCompact: (CGSize) -> Bool = { size in
+                size.width < 300 || size.isPortrait
+            }
+
+            CompactOrRegularView(shouldBeCompact: shouldBeCompact) {
+                iOSCompactView
+            } regularView: {
+                iOSRegularView
+            }
+            .padding(.leading, safeAreaInsets.leading)
+            .padding(.trailing, safeAreaInsets.trailing)
+            .edgePadding(.horizontal)
+        }
+
+        @ViewBuilder
+        private var iOSCompactView: some View {
+            VStack(alignment: .leading) {
+                Text(item.displayTitle)
+                    .fontWeight(.semibold)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+
+                if let overview = item.overview {
+                    Text(overview)
+                        .font(.subheadline)
+                        .fontWeight(.regular)
+                }
+
+                accessoryView
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .topLeading)
+        }
+
+        @ViewBuilder
+        private var iOSRegularView: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
-                ImageView(item.portraitImageSources(maxWidth: 60))
-                    .failure {
-                        SystemImageContentView(systemName: item.systemImage)
-                    }
-                    .posterStyle(.portrait, contentMode: .fit)
-                    .posterShadow()
+                AlternateLayoutView {
+                    Color.clear
+                } content: {
+                    ImageView(item.portraitImageSources(maxWidth: 60))
+                        .failure {
+                            SystemImageContentView(systemName: item.systemImage)
+                        }
+                }
+                .posterStyle(.portrait, contentMode: .fit)
+                .posterShadow()
 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(item.displayTitle)
@@ -128,10 +147,9 @@ extension MediaInfoSupplement {
                     }
                 }
             }
-            .padding(.leading, safeAreaInsets.leading)
-            .padding(.trailing, safeAreaInsets.trailing)
-            .edgePadding(.horizontal)
         }
+
+        var tvOSView: some View { EmptyView() }
     }
 }
 

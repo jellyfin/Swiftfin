@@ -40,52 +40,39 @@ extension MediaChaptersSupplement {
 
         let chapters: [ChapterInfo.FullInfo]
 
-//        var compact: some View {
-//            CollectionVGrid(
-//                uniqueElements: chapters,
-//                layout: .columns(1, insets: .zero)
-//            ) { chapter, _ in
-//                HStack {
-//                    ImageView(chapter.landscapeImageSources(maxWidth: 200))
-//                        .failure {
-//                            ZStack {
-//                                Rectangle()
-//                                    .fill(Material.ultraThinMaterial)
-//
-//                                SystemImageContentView(systemName: chapter.systemImage)
-//                                    .background(color: Color.clear)
-//                            }
-//                        }
-//                        .posterStyle(.landscape)
-//
-//                    VStack(alignment: .leading) {
-//                        Text(chapter.chapterInfo.displayTitle)
-//                            .lineLimit(1)
-//                            .foregroundStyle(.white)
-//                            .frame(height: 15)
-//
-//                        Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
-//                            .frame(height: 20)
-//                            .foregroundStyle(Color(UIColor.systemBlue))
-//                            .padding(.horizontal, 4)
-//                            .background {
-//                                Color(.darkGray)
-//                                    .opacity(0.2)
-//                                    .cornerRadius(4)
-//                            }
-//                    }
-//                }
-//                .frame(height: 100)
-//            }
-//        }
-
         var iOSView: some View {
+            let shouldBeCompact: (CGSize) -> Bool = { size in
+                size.width < 300 || size.isPortrait
+            }
+
+            CompactOrRegularView(shouldBeCompact: shouldBeCompact) {
+                iOSCompactView
+            } regularView: {
+                iOSRegularView
+            }
+        }
+
+        @ViewBuilder
+        private var iOSCompactView: some View {
+            // TODO: scroll to current chapter
+            CollectionVGrid(
+                uniqueElements: chapters,
+                layout: .columns(1, insets: .zero)
+            ) { chapter, _ in
+                ChapterButton(chapter: chapter, isCompact: true)
+                    .frame(height: 100)
+                    .edgePadding(.horizontal)
+            }
+        }
+
+        @ViewBuilder
+        private var iOSRegularView: some View {
             // TODO: change to continuousLeadingEdge after
             // layout inset fix in CollectionHStack
             CollectionHStack(
                 uniqueElements: chapters
             ) { chapter in
-                ChapterButton(chapter: chapter)
+                ChapterButton(chapter: chapter, isCompact: false)
                     .frame(height: 150)
             }
             .insets(horizontal: .zero)
@@ -114,16 +101,26 @@ extension MediaChaptersSupplement {
         private var contentSize: CGSize = .zero
 
         let chapter: ChapterInfo.FullInfo
+        let isCompact: Bool
 
         private var isCurrentChapter: Bool {
             chapter.secondsRange.contains(activeSeconds)
+        }
+
+        @ViewBuilder
+        private func withAlignmentStack(@ViewBuilder content: @escaping () -> some View) -> some View {
+            if isCompact {
+                HStack(spacing: 5) { content() }
+            } else {
+                VStack(alignment: .leading, spacing: 5) { content() }
+            }
         }
 
         var body: some View {
             Button {
                 manager.proxy?.setSeconds(chapter.secondsRange.lowerBound)
             } label: {
-                VStack(alignment: .leading, spacing: 5) {
+                withAlignmentStack {
                     AlternateLayoutView {
                         Color.clear
                     } content: {
@@ -144,26 +141,28 @@ extension MediaChaptersSupplement {
                                 .stroke(accentColor, lineWidth: 8)
                         }
                     }
-                    .aspectRatio(1.77, contentMode: .fill)
-                    .posterBorder()
-                    .cornerRadius(ratio: 1 / 30, of: \.width)
+                    .posterStyle(.landscape, contentMode: isCompact ? .fit : .fill)
 
-                    Text(chapter.chapterInfo.displayTitle)
-                        .lineLimit(1)
-                        .foregroundStyle(.white)
-                        .frame(height: 15)
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(chapter.chapterInfo.displayTitle)
+                            .lineLimit(1)
+                            .foregroundStyle(.white)
+                            .frame(height: 15)
 
-                    Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
-                        .frame(height: 20)
-                        .foregroundStyle(Color(UIColor.systemBlue))
-                        .padding(.horizontal, 4)
-                        .background {
-                            Color(.darkGray)
-                                .opacity(0.2)
-                                .cornerRadius(4)
-                        }
+                        Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
+                            .frame(height: 20)
+                            .foregroundStyle(Color(UIColor.systemBlue))
+                            .padding(.horizontal, 4)
+                            .background {
+                                Color(.darkGray)
+                                    .opacity(0.2)
+                                    .cornerRadius(4)
+                            }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .font(.subheadline.weight(.semibold))
+                .font(.subheadline)
+                .fontWeight(.semibold)
             }
             .trackingSize($contentSize)
             .assign(manager.secondsBox.$value, to: $activeSeconds)

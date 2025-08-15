@@ -10,8 +10,6 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: move to Shared
-
 struct VideoPlayer: View {
 
     @Default(.VideoPlayer.Subtitle.subtitleColor)
@@ -21,7 +19,6 @@ struct VideoPlayer: View {
     @Default(.VideoPlayer.Subtitle.subtitleSize)
     private var subtitleSize
 
-    /// The current scrubbed seconds for UI presentation and editing.
     @BoxedPublished
     private var scrubbedSeconds: Duration = .zero
 

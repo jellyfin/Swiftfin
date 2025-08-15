@@ -22,7 +22,6 @@ extension MediaPlayerItem {
         let logger = Logger.swiftfin()
 
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
-//        let currentVideoPlayerType = VideoPlayerType.native
         let currentVideoBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
         let compatibilityMode = Defaults[.VideoPlayer.Playback.compatibilityMode]
 
@@ -35,7 +34,7 @@ extension MediaPlayerItem {
         )
 
         guard let userSession = Container.shared.currentUserSession() else {
-            logger.error("No user session while building online media player item!")
+            logger.critical("No user session while building online media player item!")
             throw JellyfinAPIError(L10n.unknownError)
         }
 

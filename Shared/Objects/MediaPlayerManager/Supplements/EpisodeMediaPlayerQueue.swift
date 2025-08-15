@@ -7,6 +7,7 @@
 //
 
 import CollectionHStack
+import CollectionVGrid
 import Defaults
 import Foundation
 import IdentifiedCollections
@@ -47,35 +48,13 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 
     @ViewBuilder
     func videoPlayerBody() -> some PlatformView {
-        _View(viewModel: seriesViewModel)
+        EpisodeOverlay(viewModel: seriesViewModel)
     }
 }
 
 extension EpisodeMediaPlayerQueue {
 
-    struct SeasonStackObserver: View {
-
-        @ObservedObject
-        var selectionViewModel: SeasonItemViewModel
-
-        var body: some View {
-            CollectionHStack(
-                uniqueElements: selectionViewModel.elements,
-                id: \.unwrappedIDHashOrZero
-            ) { item in
-                EpisodeButton(item: item)
-                    .frame(height: 150)
-            }
-            .insets(horizontal: .zero)
-            .debugBackground(.green.opacity(0.5))
-            .frame(height: 150)
-            .onAppear {
-                selectionViewModel.send(.refresh)
-            }
-        }
-    }
-
-    private struct _View: PlatformView {
+    private struct EpisodeOverlay: PlatformView {
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
@@ -94,20 +73,15 @@ extension EpisodeMediaPlayerQueue {
         var tvOSView: some View { EmptyView() }
 
         var iOSView: some View {
-            ZStack {
-                if let selectionViewModel {
-                    SeasonStackObserver(selectionViewModel: selectionViewModel)
-                } else {
-                    CollectionHStack(count: Int.random(in: 2 ..< 5)) { _ in
-                        Color.secondarySystemFill
-                            .opacity(0.75)
-                            .posterStyle(.landscape)
-                            .frame(height: 150)
-                    }
-                    .insets(horizontal: .zero)
-                }
+            let shouldBeCompact: (CGSize) -> Bool = { size in
+                size.width < 300 || size.isPortrait
             }
-            .frame(height: 150)
+
+            CompactOrRegularView(shouldBeCompact: shouldBeCompact) {
+                iOSCompactView
+            } regularView: {
+                iOSRegularView
+            }
             .onAppear {
                 if let seasonID = manager.item.seasonID, let season = viewModel.seasons[id: seasonID] {
                     selection = season.id
@@ -115,61 +89,99 @@ extension EpisodeMediaPlayerQueue {
                     selection = viewModel.seasons.first?.id
                 }
             }
-//            .onReceive(viewModel.playButtonItem.publisher) { newValue in
-//                if let season = viewModel.seasons[id: newValue.seasonID.hashValueOrZero] {
-//                    selection = season.id
-//                } else {
-//                    selection = viewModel.seasons.first?.id
-//                }
-//            }
-//            .onChange(of: selection) { newValue in
-//                guard let newValue else {
-//                    return
-//                }
-//
-//                manager.queue?.items =
-//            }
-//            .onChange(of: selection) { newValue in
-//                guard let newValue else { return }
-//                selectionViewModel = viewModel.seasons[id: newValue]
-//                guard let selection else { return nil }
-//                return viewModel.seasons[id: selection]
-//            }
-//            .onChange(of: selection) { newValue in
-//                guard let newValue else {
-//                    manager.queue?.items.removeAll()
-//                    return
-//                }
-//
-//                manager.queue?.items = newValue.elements
-//
-//                if newValue.state == .initial {
-//                    newValue.send(.refresh)
-//                }
-//            }
-//            .onChange(of: selection?.elements) { newValue in
-//                guard let newValue else { return }
-//
-//                manager.queue?.items = newValue
-//            }
+        }
+
+        @ViewBuilder
+        private var iOSCompactView: some View {
+            if let selectionViewModel {
+                CompactSeasonStackObserver(selectionViewModel: selectionViewModel)
+            } else {
+                Color.red
+                    .opacity(0.2)
+            }
+        }
+
+        @ViewBuilder
+        private var iOSRegularView: some View {
+            if let selectionViewModel {
+                RegularSeasonStackObserver(selectionViewModel: selectionViewModel)
+            } else {
+                Color.red
+                    .opacity(0.2)
+            }
         }
     }
 
-    struct EpisodeButton: View {
+    private struct CompactSeasonStackObserver: View {
+
+        @ObservedObject
+        var selectionViewModel: SeasonItemViewModel
+
+        var body: some View {
+            CollectionVGrid(
+                uniqueElements: selectionViewModel.elements,
+                layout: .columns(1, insets: .zero)
+            ) { item in
+                EpisodeButton(item: item, isCompact: true)
+                    .frame(height: 100)
+                    .edgePadding(.horizontal)
+            }
+        }
+    }
+
+    private struct RegularSeasonStackObserver: View {
+
+        @ObservedObject
+        var selectionViewModel: SeasonItemViewModel
+
+        var body: some View {
+            CollectionHStack(
+                uniqueElements: selectionViewModel.elements,
+                id: \.unwrappedIDHashOrZero
+            ) { item in
+                EpisodeButton(item: item, isCompact: false)
+                    .frame(height: 150)
+            }
+            .insets(horizontal: .zero)
+            .frame(height: 150)
+            .onAppear {
+                selectionViewModel.send(.refresh)
+            }
+        }
+    }
+
+    private struct EpisodeButton: View {
 
         @Default(.accentColor)
         private var accentColor
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
+        
+        @State
+        private var contentSize: CGSize = .zero
 
         let item: BaseItemDto
+        let isCompact: Bool
+        
+        private var isCurrentEpisode: Bool {
+            manager.item.id == item.id
+        }
+
+        @ViewBuilder
+        private func withAlignmentStack(@ViewBuilder content: @escaping () -> some View) -> some View {
+            if isCompact {
+                HStack(spacing: 5) { content() }
+            } else {
+                VStack(alignment: .leading, spacing: 5) { content() }
+            }
+        }
 
         var body: some View {
             Button {
 //                manager.send(.playNewBaseItem(item: item))
             } label: {
-                VStack(alignment: .leading, spacing: 5) {
+                withAlignmentStack {
                     AlternateLayoutView {
                         Color.clear
                     } content: {
@@ -185,33 +197,35 @@ extension EpisodeMediaPlayerQueue {
                             }
                     }
                     .overlay {
-                        if manager.item.id == item.id {
-                            Rectangle()
+                        if isCurrentEpisode {
+                            RoundedRectangle(cornerRadius: contentSize.width / 30)
                                 .stroke(accentColor, lineWidth: 8)
-                                .cornerRadius(ratio: 1 / 30, of: \.width)
                         }
                     }
-                    .aspectRatio(1.77, contentMode: .fill)
-                    .posterBorder()
-                    .cornerRadius(ratio: 1 / 30, of: \.width)
+                    .posterStyle(.landscape, contentMode: isCompact ? .fit : .fill)
 
-                    Text(item.displayTitle)
-                        .lineLimit(1)
-                        .foregroundStyle(.white)
-                        .frame(height: 15)
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(item.displayTitle)
+                            .lineLimit(1)
+                            .foregroundStyle(.white)
+                            .frame(height: 15)
 
-                    Text(item.seasonEpisodeLabel ?? .emptyDash)
-                        .frame(height: 20)
-                        .foregroundStyle(Color(UIColor.systemBlue))
-                        .padding(.horizontal, 4)
-                        .background {
-                            Color(.darkGray)
-                                .opacity(0.2)
-                                .cornerRadius(4)
-                        }
+                        Text(item.seasonEpisodeLabel ?? .emptyDash)
+                            .frame(height: 20)
+                            .foregroundStyle(Color(UIColor.systemBlue))
+                            .padding(.horizontal, 4)
+                            .background {
+                                Color(.darkGray)
+                                    .opacity(0.2)
+                                    .cornerRadius(4)
+                            }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .font(.subheadline.weight(.semibold))
+                .font(.subheadline)
+                .fontWeight(.semibold)
             }
+            .trackingSize($contentSize)
         }
     }
 }
