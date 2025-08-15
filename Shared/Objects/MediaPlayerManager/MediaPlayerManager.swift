@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Factory
 import Foundation
 import JellyfinAPI
 import VLCUI
@@ -46,26 +47,13 @@ class MediaPlayerManager: ViewModel, Stateful {
         case paused
     }
 
-    // MARK: Event
-
-    // TODO: remove and just have downstream listen to playbackItem and state?
-//    enum Event {
-//        case playbackStopped
-//        case itemChanged(playbackItem: MediaPlayerItem)
-//    }
-
     // MARK: Action
 
-    // TODO: have play new MediaPlayerItem
-    indirect enum Action: Equatable {
-
+    enum Action: Equatable {
         case error(JellyfinAPIError)
         case ended
         case stop
-
-        case playNewBaseItem(provider: MediaPlayerItemProvider)
-        // TODO: - Equatable
-//        case playNewMdiaItem(item: MediaPlayerItem)
+        case playNewItem(provider: MediaPlayerItemProvider)
     }
 
     // MARK: State
@@ -83,23 +71,23 @@ class MediaPlayerManager: ViewModel, Stateful {
             if let playbackItem {
                 seconds = playbackItem.baseItem.startSeconds ?? .zero
                 playbackItem.manager = self
-
-                for var o in observers {
-                    o.manager = self
-                }
             }
         }
     }
 
     @Published
     private(set) var item: BaseItemDto
-
     @Published
     private(set) var playbackRequestStatus: PlaybackRequestStatus = .playing
     @Published
     private(set) var rate: Float = 1.0
     @Published
     final var state: State = .playback
+
+    // TODO: need supplements at manager level?
+    //       - supplements of the proxy vs media player item?
+    @Published
+    private(set) var supplements: [any MediaPlayerSupplement] = []
 
     /// The current seconds media playback is set to.
     let secondsBox: PublishedBox<Duration> = .init(initialValue: .zero)
@@ -109,6 +97,7 @@ class MediaPlayerManager: ViewModel, Stateful {
         set { secondsBox.value = newValue }
     }
 
+    /// Holds a weak reference to the current media player proxy.
     weak var proxy: (any MediaPlayerProxy)? {
         didSet {
             if var proxy {
@@ -119,20 +108,6 @@ class MediaPlayerManager: ViewModel, Stateful {
 
     var queue: (any MediaPlayerQueue)?
 
-    /// Observers of the media player.
-    var observers: [any MediaPlayerObserver] = []
-
-    /// Supplements of the media player.
-    @Published
-    private(set) var supplements: [any MediaPlayerSupplement] = []
-
-//    var events: AnyPublisher<Event, Never> {
-//        eventSubject
-//            .receive(on: RunLoop.main)
-//            .eraseToAnyPublisher()
-//    }
-
-//    private let eventSubject: PassthroughSubject<Event, Never> = .init()
     private var itemBuildTask: AnyCancellable?
 
     // MARK: init
@@ -152,7 +127,6 @@ class MediaPlayerManager: ViewModel, Stateful {
         buildMediaItem(from: mediaPlayerItemProvider) { @MainActor newItem in
             self.state = .playback
             self.playbackItem = newItem
-//            self.eventSubject.send(.itemChanged(playbackItem: newItem))
             self.supplements = newItem.supplements
         }
     }
@@ -169,8 +143,6 @@ class MediaPlayerManager: ViewModel, Stateful {
 
         state = .playback
         self.playbackItem = playbackItem
-//        eventSubject.send(.itemChanged(playbackItem: playbackItem))
-
         self.supplements = playbackItem.supplements
     }
 
@@ -188,15 +160,12 @@ class MediaPlayerManager: ViewModel, Stateful {
             // TODO: go next in queue or stop
             return .loadingItem
         case .stop:
-//            Task { @MainActor in
-//                eventSubject.send(.playbackStopped)
-//            }
             return .stopped
-        case let .playNewBaseItem(provider: provider):
+        case let .playNewItem(provider: provider):
+            self.item = provider.item
             buildMediaItem(from: provider.function) { @MainActor newItem in
                 self.state = .playback
                 self.playbackItem = newItem
-//                self.eventSubject.send(.itemChanged(playbackItem: newItem))
             }
 
             return .loadingItem

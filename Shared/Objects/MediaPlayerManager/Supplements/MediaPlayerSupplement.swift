@@ -12,7 +12,6 @@ import SwiftUI
 
 // TODO: fullscreen supplement styles
 // TODO: tvOS vs iOS views
-// TODO: break out
 
 struct AnyMediaPlayerSupplement: Equatable, Identifiable {
 
@@ -29,7 +28,7 @@ struct AnyMediaPlayerSupplement: Equatable, Identifiable {
 
 protocol MediaPlayerSupplement: Displayable, Identifiable<String> {
 
-    associatedtype VideoPlayerBody: View
+    associatedtype VideoPlayerBody: PlatformView
 
     func videoPlayerBody() -> Self.VideoPlayerBody
 }
@@ -41,9 +40,31 @@ extension MediaPlayerSupplement {
     }
 }
 
-extension MediaPlayerSupplement where VideoPlayerBody == EmptyView {
+protocol PlatformView: View {
 
-    func makeBody() -> EmptyView {
-        EmptyView()
+    associatedtype iOSBody: View
+    associatedtype tvOSBody: View
+
+    @ViewBuilder
+    @MainActor
+    var iOSView: Self.iOSBody { get }
+    @ViewBuilder
+    @MainActor
+    var tvOSView: Self.tvOSBody { get }
+}
+
+extension PlatformView {
+    #if os(iOS)
+    @ViewBuilder
+    @MainActor
+    var body: some View {
+        iOSView
     }
+    #elseif os(tvOS)
+    @ViewBuilder
+    @MainActor
+    var body: some View {
+        tvOSView
+    }
+    #endif
 }

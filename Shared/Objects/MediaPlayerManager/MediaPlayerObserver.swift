@@ -6,7 +6,11 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-/// A protocol for observers of a `MediaPlayerManager`
+/// A protocol for observers of a `MediaPlayerManager`.
+///
+/// - Important: The `manager` property should most likely be a `weak`
+/// reference to avoid retain cycles. The observer itself should be
+/// strongly held by a `MediaPlayerItem` or other parent object or view.
 protocol MediaPlayerObserver {
 
     var manager: MediaPlayerManager? { get set }

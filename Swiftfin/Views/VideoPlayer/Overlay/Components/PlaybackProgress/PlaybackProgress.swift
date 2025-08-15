@@ -86,7 +86,7 @@ extension VideoPlayer.Overlay {
                     isScrubbing = newValue
                 }
                 .foregroundStyle(sliderColor)
-                .frame(maxWidth: isScrubbing ? nil : max(0, capsuleSliderSize.width - 30))
+                .frame(maxWidth: isScrubbing ? nil : max(0, capsuleSliderSize.width - EdgeInsets.edgePadding * 2))
                 .frame(height: isScrubbing ? 20 : 10)
             }
             .animation(.linear(duration: 0.05), value: scrubbedSeconds)

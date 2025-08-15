@@ -17,8 +17,13 @@ import SwiftUI
 //       - wouldn't need to have MediaPlayerProxy: MediaPlayerObserver
 // TODO: report playback information, see VLCUI.PlaybackInformation (dropped frames, etc.)
 // TODO: manager able to replace MediaPlayerItem in-place for changing audio/subtitle tracks
+// TODO: report buffering state
 
 class AVMediaPlayerProxy: MediaPlayerProxy {
+
+    let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
+    var isScrubbing: Binding<Bool> = .constant(false)
+    var scrubbedSeconds: Binding<Duration> = .constant(.zero)
 
     let avPlayerLayer: AVPlayerLayer
     let player: AVPlayer
@@ -53,9 +58,6 @@ class AVMediaPlayerProxy: MediaPlayerProxy {
             }
         }
     }
-
-    var isScrubbing: Binding<Bool> = .constant(false)
-    var scrubbedSeconds: Binding<Duration> = .constant(.zero)
 
     init() {
         self.player = AVPlayer()

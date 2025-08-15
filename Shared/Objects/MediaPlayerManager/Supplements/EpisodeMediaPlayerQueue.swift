@@ -13,23 +13,24 @@ import IdentifiedCollections
 import JellyfinAPI
 import SwiftUI
 
+// TODO: loading, error states
+// TODO: season selection
+
 class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 
     weak var manager: MediaPlayerManager?
 
-    var items: IdentifiedArrayOf<BaseItemDto> = []
     let displayTitle: String = L10n.episodes
     let id: String = "EpisodeMediaPlayerQueue"
+
+    var nextItem: MediaPlayerItemProvider?
+    var previousItem: MediaPlayerItemProvider?
 
     private let seriesViewModel: SeriesItemViewModel
 
     init(episode: BaseItemDto) {
         self.seriesViewModel = SeriesItemViewModel(episode: episode)
         super.init()
-
-        seriesViewModel.$seasons.sink { _ in
-        }
-        .store(in: &cancellables)
 
         Task {
             await seriesViewModel.send(.refresh)
@@ -45,14 +46,36 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     }
 
     @ViewBuilder
-    func videoPlayerBody() -> some View {
+    func videoPlayerBody() -> some PlatformView {
         _View(viewModel: seriesViewModel)
     }
 }
 
 extension EpisodeMediaPlayerQueue {
 
-    private struct _View: View {
+    struct SeasonStackObserver: View {
+
+        @ObservedObject
+        var selectionViewModel: SeasonItemViewModel
+
+        var body: some View {
+            CollectionHStack(
+                uniqueElements: selectionViewModel.elements,
+                id: \.unwrappedIDHashOrZero
+            ) { item in
+                EpisodeButton(item: item)
+                    .frame(height: 150)
+            }
+            .insets(horizontal: .zero)
+            .debugBackground(.green.opacity(0.5))
+            .frame(height: 150)
+            .onAppear {
+                selectionViewModel.send(.refresh)
+            }
+        }
+    }
+
+    private struct _View: PlatformView {
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
@@ -68,19 +91,12 @@ extension EpisodeMediaPlayerQueue {
             return viewModel.seasons[id: selection]
         }
 
-        var body: some View {
+        var tvOSView: some View { EmptyView() }
+
+        var iOSView: some View {
             ZStack {
                 if let selectionViewModel {
-                    CollectionHStack(
-                        uniqueElements: selectionViewModel.elements,
-                        id: \.unwrappedIDHashOrZero
-                    ) { item in
-                        EpisodeButton(item: item)
-                            .frame(height: 150)
-                    }
-                    .insets(horizontal: .zero)
-                    .debugBackground(.green.opacity(0.5))
-                    .frame(maxHeight: .infinity)
+                    SeasonStackObserver(selectionViewModel: selectionViewModel)
                 } else {
                     CollectionHStack(count: Int.random(in: 2 ..< 5)) { _ in
                         Color.secondarySystemFill
@@ -92,6 +108,13 @@ extension EpisodeMediaPlayerQueue {
                 }
             }
             .frame(height: 150)
+            .onAppear {
+                if let seasonID = manager.item.seasonID, let season = viewModel.seasons[id: seasonID] {
+                    selection = season.id
+                } else {
+                    selection = viewModel.seasons.first?.id
+                }
+            }
 //            .onReceive(viewModel.playButtonItem.publisher) { newValue in
 //                if let season = viewModel.seasons[id: newValue.seasonID.hashValueOrZero] {
 //                    selection = season.id
@@ -99,14 +122,19 @@ extension EpisodeMediaPlayerQueue {
 //                    selection = viewModel.seasons.first?.id
 //                }
 //            }
-            .onChange(of: selection) { newValue in
-                guard let newValue else {
-                    manager.queue?.items.removeAll()
-                    return
-                }
-
+//            .onChange(of: selection) { newValue in
+//                guard let newValue else {
+//                    return
+//                }
+//
 //                manager.queue?.items =
-            }
+//            }
+//            .onChange(of: selection) { newValue in
+//                guard let newValue else { return }
+//                selectionViewModel = viewModel.seasons[id: newValue]
+//                guard let selection else { return nil }
+//                return viewModel.seasons[id: selection]
+//            }
 //            .onChange(of: selection) { newValue in
 //                guard let newValue else {
 //                    manager.queue?.items.removeAll()
@@ -132,10 +160,6 @@ extension EpisodeMediaPlayerQueue {
         @Default(.accentColor)
         private var accentColor
 
-        @Environment(\.isPresentingOverlay)
-        @Binding
-        private var isPresentingOverlay: Bool
-
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
@@ -143,17 +167,17 @@ extension EpisodeMediaPlayerQueue {
 
         var body: some View {
             Button {
-                isPresentingOverlay = false
 //                manager.send(.playNewBaseItem(item: item))
             } label: {
                 VStack(alignment: .leading, spacing: 5) {
-                    ZStack {
+                    AlternateLayoutView {
                         Color.clear
-
+                    } content: {
                         ImageView(item.imageSource(.primary, maxWidth: 150))
                             .failure {
                                 ZStack {
-                                    BlurView()
+                                    Rectangle()
+                                        .fill(Material.ultraThinMaterial)
 
                                     SystemImageContentView(systemName: item.systemImage)
                                         .background(color: Color.clear)

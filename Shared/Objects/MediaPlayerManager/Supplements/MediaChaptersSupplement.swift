@@ -23,14 +23,14 @@ struct MediaChaptersSupplement: MediaPlayerSupplement {
     let displayTitle: String = L10n.chapters
     let id: String = "Chapters"
 
-    func videoPlayerBody() -> some View {
+    func videoPlayerBody() -> some PlatformView {
         ChapterOverlay(chapters: chapters)
     }
 }
 
 extension MediaChaptersSupplement {
 
-    private struct ChapterOverlay: View {
+    private struct ChapterOverlay: PlatformView {
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
@@ -79,7 +79,9 @@ extension MediaChaptersSupplement {
 //            }
 //        }
 
-        var body: some View {
+        var iOSView: some View {
+            // TODO: change to continuousLeadingEdge after
+            // layout inset fix in CollectionHStack
             CollectionHStack(
                 uniqueElements: chapters
             ) { chapter in
@@ -94,6 +96,8 @@ extension MediaChaptersSupplement {
                 collectionHStackProxy.scrollTo(id: currentChapter.id)
             }
         }
+
+        var tvOSView: some View { EmptyView() }
     }
 
     struct ChapterButton: View {

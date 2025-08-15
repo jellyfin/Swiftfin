@@ -15,11 +15,8 @@ import Nuke
 // TODO: interruptions
 //       - calls
 
-class NowPlayableObserver: MediaPlayerObserver {
+class NowPlayableObserver: ViewModel, MediaPlayerObserver {
 
-    private let logger = Logger.swiftfin()
-
-    private var cancellables: Set<AnyCancellable> = []
     private var defaultRegisteredCommands: [NowPlayableCommand] {
         [
             .play,
@@ -45,6 +42,7 @@ class NowPlayableObserver: MediaPlayerObserver {
 
     init(manager: MediaPlayerManager) {
         self.manager = manager
+        super.init()
 
         configureRemoteCommands(
             defaultRegisteredCommands,

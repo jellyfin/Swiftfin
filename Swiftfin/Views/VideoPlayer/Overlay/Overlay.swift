@@ -69,9 +69,14 @@ extension VideoPlayer {
                 ForEach(manager.supplements.map(\.asAny)) { supplement in
                     SupplementTitleButton(supplement: supplement)
                 }
+
+                if let queue = manager.queue {
+                    SupplementTitleButton(supplement: queue.asAny)
+                }
             }
             .frame(minHeight: 30)
             .isVisible(!isScrubbing && isPresentingOverlay)
+            .edgePadding(.leading)
         }
 
         // MARK: body

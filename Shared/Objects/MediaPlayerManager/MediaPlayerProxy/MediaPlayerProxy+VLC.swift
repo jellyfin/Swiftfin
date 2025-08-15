@@ -12,14 +12,13 @@ import JellyfinAPI
 import SwiftUI
 import VLCUI
 
-// TODO: make supplement for playback information
-
 class VLCMediaPlayerProxy: MediaPlayerProxy,
     MediaPlayerOffsetConfigurable,
     MediaPlayerSubtitleConfigurable
 {
 
     let vlcUIProxy: VLCVideoPlayer.Proxy = .init()
+    let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
 
     weak var manager: MediaPlayerManager?
 
@@ -63,15 +62,25 @@ class VLCMediaPlayerProxy: MediaPlayerProxy,
         vlcUIProxy.aspectFill(aspectFill ? 1 : 0)
     }
 
-    func setAudioOffset(_ seconds: Duration) {}
+    func setAudioOffset(_ seconds: Duration) {
+        vlcUIProxy.setAudioDelay(seconds)
+    }
 
-    func setSubtitleOffset(_ seconds: Duration) {}
+    func setSubtitleOffset(_ seconds: Duration) {
+        vlcUIProxy.setSubtitleDelay(seconds)
+    }
 
-    func setSubtitleColor(_ color: Color) {}
+    func setSubtitleColor(_ color: Color) {
+        vlcUIProxy.setSubtitleColor(.absolute(color.uiColor))
+    }
 
-    func setSubtitleFontName(_ fontName: String) {}
+    func setSubtitleFontName(_ fontName: String) {
+        vlcUIProxy.setSubtitleFont(fontName)
+    }
 
-    func setSubtitleFontSize(_ fontSize: Int) {}
+    func setSubtitleFontSize(_ fontSize: Int) {
+        vlcUIProxy.setSubtitleSize(.absolute(fontSize))
+    }
 
     func makeVideoPlayerBody() -> some View {
         _VideoPlayerBody()
@@ -136,8 +145,9 @@ extension VLCMediaPlayerProxy {
                     }
                     .onStateUpdated { state, _ in
                         switch state {
-                        // buffering state is on proxy
-                        case .buffering, .esAdded, .opening: ()
+                        case .buffering, .esAdded, .opening:
+                            // TODO: figure out when to properly set to false
+                            manager.proxy?.isBuffering.value = true
                         case .ended, .stopped:
                             isScrubbing = false
                             manager.send(.ended)

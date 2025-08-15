@@ -10,7 +10,6 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: scroll if description too long
-// TODO: other buttons depending on item type
 
 struct MediaInfoSupplement: MediaPlayerSupplement {
 
@@ -18,14 +17,14 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
     let id: String = "MediaInfoSupplement"
     let item: BaseItemDto
 
-    func videoPlayerBody() -> some View {
+    func videoPlayerBody() -> some PlatformView {
         _View(item: item)
     }
 }
 
 extension MediaInfoSupplement {
 
-    private struct _View: View {
+    private struct _View: PlatformView {
 
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets: EdgeInsets
@@ -64,8 +63,10 @@ extension MediaInfoSupplement {
                 manager.proxy?.play()
                 selectedMediaPlayerSupplement = nil
             }
-//            .buttonStyle(.videoPlayerDrawerContent)
+            .buttonStyle(.material)
             .frame(width: 275, height: 50)
+            .font(.subheadline)
+            .fontWeight(.semibold)
         }
 
 //        var compact: some View {
@@ -88,9 +89,11 @@ extension MediaInfoSupplement {
 //            .frame(maxWidth: .infinity, alignment: .topLeading)
 //        }
 
+        var tvOSView: some View { EmptyView() }
+
         // TODO: may need to be a layout for correct overview frame
         //       with scrolling if too long
-        var body: some View {
+        var iOSView: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
                 ImageView(item.portraitImageSources(maxWidth: 60))
                     .failure {
@@ -127,23 +130,25 @@ extension MediaInfoSupplement {
             }
             .padding(.leading, safeAreaInsets.leading)
             .padding(.trailing, safeAreaInsets.trailing)
+            .edgePadding(.horizontal)
         }
     }
 }
 
-#Preview {
-    MediaInfoSupplement(item: .init(
-        indexNumber: 1,
-        name: "The Bear",
-        overview: "A young chef returns home to Chicago to run his family's sandwich shop after his brother's death.",
-        parentIndexNumber: 1,
-        runTimeTicks: 10_000_000_000,
-        type: .episode
-    ))
-    .videoPlayerBody()
-    .eraseToAnyView()
-    .padding(EdgeInsets.edgePadding)
-    .environment(\.horizontalSizeClass, .regular)
-    .previewInterfaceOrientation(.landscapeLeft)
-    .frame(height: 150)
+struct MediaInfoSupplement_Previews: PreviewProvider {
+    static var previews: some View {
+        MediaInfoSupplement(item: .init(
+            indexNumber: 1,
+            name: "The Bear",
+            overview: "A young chef returns home to Chicago to run his family's sandwich shop after his brother's death.",
+            parentIndexNumber: 1,
+            runTimeTicks: 10_000_000_000,
+            type: .episode
+        ))
+        .videoPlayerBody()
+        .eraseToAnyView()
+        .environment(\.horizontalSizeClass, .regular)
+        .previewInterfaceOrientation(.landscapeLeft)
+        .frame(height: 150)
+    }
 }

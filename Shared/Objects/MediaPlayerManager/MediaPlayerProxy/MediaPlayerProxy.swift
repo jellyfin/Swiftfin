@@ -12,12 +12,15 @@ import SwiftUI
 
 // TODO: behavioral implementations
 //       - PiP
+// TODO: Chromecast proxy
 
 /// The proxy for top-down communication to an
 /// underlying media player
 protocol MediaPlayerProxy: ObservableObject, MediaPlayerObserver {
 
     associatedtype VideoPlayerBody: View = EmptyView
+
+    var isBuffering: PublishedBox<Bool> { get }
 
     func play()
     func pause()

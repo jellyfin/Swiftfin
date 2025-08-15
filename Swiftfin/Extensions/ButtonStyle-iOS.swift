@@ -43,6 +43,7 @@ struct ToolbarPillButtonStyle: ButtonStyle {
 
 extension ButtonStyle where Self == TintedMaterialButtonStyle {
 
+    // TODO: just be `Material` backed instead of `TintedMaterial`
     static var material: TintedMaterialButtonStyle {
         TintedMaterialButtonStyle(tint: Color.clear, foregroundColor: Color.primary)
     }
@@ -96,27 +97,6 @@ struct TintedMaterialButtonStyle: ButtonStyle {
         } else {
             AnyShapeStyle(Color.gray.opacity(0.3))
         }
-    }
-}
-
-struct VideoPlayerDrawerContentButton: ButtonStyle {
-
-    func makeBody(configuration: Configuration) -> some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 7)
-                .fill(Material.ultraThinMaterial)
-
-            configuration.label
-                .font(.subheadline)
-                .fontWeight(.semibold)
-        }
-    }
-}
-
-extension ButtonStyle where Self == VideoPlayerDrawerContentButton {
-
-    static var videoPlayerDrawerContent: VideoPlayerDrawerContentButton {
-        VideoPlayerDrawerContentButton()
     }
 }
 

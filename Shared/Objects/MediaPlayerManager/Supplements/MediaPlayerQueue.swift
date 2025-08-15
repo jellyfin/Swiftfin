@@ -16,10 +16,8 @@ protocol MediaPlayerQueue: MediaPlayerObserver, MediaPlayerSupplement {
     var hasNextItem: Bool { get }
     var hasPreviousItem: Bool { get }
 
-    var items: IdentifiedArrayOf<BaseItemDto> { get set }
-
-    var nextItem: BaseItemDto? { get }
-    var previousItem: BaseItemDto? { get }
+    var nextItem: MediaPlayerItemProvider? { get }
+    var previousItem: MediaPlayerItemProvider? { get }
 }
 
 extension MediaPlayerQueue {
@@ -30,21 +28,5 @@ extension MediaPlayerQueue {
 
     var hasPreviousItem: Bool {
         previousItem != nil
-    }
-
-    var nextItem: BaseItemDto? {
-        guard let currentItem = manager?.item,
-              let i = items.index(id: currentItem.id),
-              i != items.endIndex else { return nil }
-
-        return items[items.index(after: i)]
-    }
-
-    var previousItem: BaseItemDto? {
-        guard let currentItem = manager?.item,
-              let i = items.index(id: currentItem.id),
-              i != items.startIndex else { return nil }
-
-        return items[items.index(before: i)]
     }
 }

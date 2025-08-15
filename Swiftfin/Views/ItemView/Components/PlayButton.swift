@@ -110,8 +110,8 @@ extension ItemView {
             }
 
             let manager = MediaPlayerManager(
-                item: playButtonItem
-//                        queue: EpisodeMediaPlayerQueue(episode: playButtonItem)
+                item: playButtonItem,
+                queue: playButtonItem.type == .episode ? EpisodeMediaPlayerQueue(episode: playButtonItem) : nil
             ) { item in
                 try await MediaPlayerItem.build(for: item, mediaSource: selectedMediaSource)
             }
