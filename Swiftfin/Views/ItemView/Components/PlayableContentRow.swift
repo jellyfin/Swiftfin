@@ -109,6 +109,7 @@ extension ItemView {
                     .buttonStyle(.tintedMaterial(tint: Color.gray.opacity(0.3), foregroundColor: accentColor))
                     .clipShape(.circle)
                     .frame(width: 15, height: 15)
+                    .padding()
                     .isSelected(true)
                 }
             }
