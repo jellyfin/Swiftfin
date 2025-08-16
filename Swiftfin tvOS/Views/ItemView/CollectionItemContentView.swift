@@ -54,7 +54,8 @@ extension ItemView {
                 .contextMenu(for: BaseItemDto.self) { item in
                     if let posterID = item.id,
                        let collectionID = viewModel.item.id,
-                       viewModel.userSession.user.permissions.items.canManageCollections
+                       viewModel.userSession.user.permissions.items.canManageCollections &&
+                       StoredValues[.User.enableCollectionManagement]
                     {
                         Button(role: .destructive) {
                             editorViewModel.send(.removeItem(collectionID: collectionID, items: [posterID]))
@@ -80,7 +81,8 @@ extension ItemView {
             .contextMenu(for: BaseItemDto.self) { item in
                 if let posterID = item.id,
                    let collectionID = viewModel.item.id,
-                   viewModel.userSession.user.permissions.items.canManageCollections
+                   viewModel.userSession.user.permissions.items.canManageCollections &&
+                   StoredValues[.User.enableCollectionManagement]
                 {
                     Button(role: .destructive) {
                         editorViewModel.send(.removeItem(collectionID: collectionID, items: [posterID]))
