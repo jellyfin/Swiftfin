@@ -74,9 +74,9 @@ struct HomeView: View {
         }
         .ignoresSafeArea()
         .sinceLastDisappear { interval in
-            if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {
+            if interval > 60 || viewModel.notificationsReceived.contains(.didItemMetadataChange) {
                 viewModel.send(.backgroundRefresh)
-                viewModel.notificationsReceived.remove(.itemMetadataDidChange)
+                viewModel.notificationsReceived.remove(.didItemMetadataChange)
             }
         }
     }

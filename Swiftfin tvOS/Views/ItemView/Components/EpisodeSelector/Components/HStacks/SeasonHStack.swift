@@ -71,8 +71,14 @@ extension SeriesEpisodeSelector {
                     }
                 }
                 .onChange(of: focusedSeason) { _, newValue in
-                    if let newValue = newValue {
+                    if let newValue, newValue != selection {
                         selection = newValue
+                    }
+                }
+                .onChange(of: viewModel.playButtonItem?.seasonID) { _, newSeason in
+                    if let newSeason {
+                        selection = newSeason
+                        focusedSeason = newSeason
                     }
                 }
                 .onFirstAppear {

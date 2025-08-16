@@ -94,7 +94,7 @@ class ItemViewModel: ViewModel, Stateful {
         Notifications[.didItemUserDataChange]
             .publisher
             .sink { [weak self] itemID in
-                guard let self = self, itemID == item.id else { return }
+                guard let self = self, (itemID == item.id || itemID == playButtonItem?.id) else { return }
 
                 Task {
                     await self.send(.backgroundRefresh)
@@ -105,10 +105,21 @@ class ItemViewModel: ViewModel, Stateful {
         Notifications[.didItemMetadataChange]
             .publisher
             .sink { [weak self] newItem in
-                guard let self = self, newItem.id == item.id, newItem != item else { return }
+                guard let self = self,
+                      (newItem.id == item.id && newItem != item) ||
+                      (newItem.id == playButtonItem?.id && newItem != playButtonItem)
+                else { return }
 
-                Task { @MainActor in
-                    self.item = newItem
+                /// Replace if the item was updated
+                /// Refresh if the playButtonItem was updated
+                Task {
+                    if newItem.id == item.id {
+                        await MainActor.run {
+                            self.item = newItem
+                        }
+                    } else {
+                        await self.send(.backgroundRefresh)
+                    }
                 }
             }
             .store(in: &cancellables)
@@ -242,9 +253,11 @@ class ItemViewModel: ViewModel, Stateful {
             toggleIsPlayedTask = Task {
 
                 let beforeIsPlayed = item.userData?.isPlayed ?? false
+                let beforePlaybackPosition = item.userData?.playbackPositionTicks
 
                 await MainActor.run {
                     item.userData?.isPlayed?.toggle()
+                    item.userData?.playbackPositionTicks = nil
                 }
 
                 do {
@@ -252,6 +265,7 @@ class ItemViewModel: ViewModel, Stateful {
                 } catch {
                     await MainActor.run {
                         item.userData?.isPlayed = beforeIsPlayed
+                        item.userData?.playbackPositionTicks = beforePlaybackPosition
                         // emit event that toggle unsuccessful
                     }
                 }
