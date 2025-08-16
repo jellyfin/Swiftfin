@@ -137,11 +137,40 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
         super.init()
 
-        Notifications[.didDeleteItem]
+        Notifications[.didItemDeletionOccur]
             .publisher
             .receive(on: RunLoop.main)
             .sink { id in
                 self.elements.remove(id: id.hashValue)
+            }
+            .store(in: &cancellables)
+
+        Notifications[.didItemMetadataChange]
+            .publisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] newItem in
+                guard let self = self, let element = newItem as? Element else { return }
+
+                let elementHash = element.unwrappedIDHashOrZero
+
+                /// Do not replace the element if they are already the same
+                if self.elements.ids.contains(elementHash) && self.elements[id: elementHash] != element {
+                    self.elements[id: elementHash] = element
+                }
+            }
+            .store(in: &cancellables)
+
+        Notifications[.doesItemRequireRefresh]
+            .publisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] itemId in
+                guard let self = self, let element = self.elements[id: itemId.hashValue] else { return }
+
+                Task { @MainActor in
+                    if let refreshedItem = try await self.refreshUserData(element: element) {
+                        self.elements[id: itemId.hashValue] = refreshedItem
+                    }
+                }
             }
             .store(in: &cancellables)
     }
@@ -192,10 +221,39 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
         super.init()
 
-        Notifications[.didDeleteItem]
+        Notifications[.didItemDeletionOccur]
             .publisher
             .sink { id in
                 self.elements.remove(id: id.hashValue)
+            }
+            .store(in: &cancellables)
+
+        Notifications[.didItemMetadataChange]
+            .publisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] newItem in
+                guard let self = self, let element = newItem as? Element else { return }
+
+                let elementHash = element.unwrappedIDHashOrZero
+
+                /// Do not replace the element if they are already the same
+                if self.elements.ids.contains(elementHash) && self.elements[id: elementHash] != element {
+                    self.elements[id: elementHash] = element
+                }
+            }
+            .store(in: &cancellables)
+
+        Notifications[.doesItemRequireRefresh]
+            .publisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] itemId in
+                guard let self = self, let element = self.elements[id: itemId.hashValue] else { return }
+
+                Task { @MainActor in
+                    if let refreshedItem = try await self.refreshUserData(element: element) {
+                        self.elements[id: itemId.hashValue] = refreshedItem
+                    }
+                }
             }
             .store(in: &cancellables)
 
@@ -370,5 +428,11 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     /// come from another source instead.
     func getRandomItem() async throws -> Element? {
         elements.randomElement()
+    }
+
+    /// Replaces an item's UserData in `elements`. Override if item should
+    /// come from another source instead.
+    func refreshUserData(element: Element) async throws -> Element? {
+        nil
     }
 }

@@ -60,14 +60,21 @@ struct SeriesEpisodeSelector: View {
             seasonSelectorMenu
                 .edgePadding(.horizontal)
 
-            Group {
-                if let selectionViewModel {
-                    EpisodeHStack(viewModel: selectionViewModel, playButtonItem: viewModel.playButtonItem)
-                } else {
-                    LoadingHStack()
+            RedrawOnNotificationView(
+                .doesItemRequireRefresh,
+                filter: { itemID in
+                    selectionViewModel?.elements.contains(where: { $0.id == itemID }) ?? false
                 }
+            ) {
+                Group {
+                    if let selectionViewModel {
+                        EpisodeHStack(viewModel: selectionViewModel, playButtonItem: viewModel.playButtonItem)
+                    } else {
+                        LoadingHStack()
+                    }
+                }
+                .transition(.opacity.animation(.linear(duration: 0.1)))
             }
-            .transition(.opacity.animation(.linear(duration: 0.1)))
         }
         .onReceive(viewModel.playButtonItem.publisher) { newValue in
 
@@ -86,6 +93,10 @@ struct SeriesEpisodeSelector: View {
             if selectionViewModel.state == .initial {
                 selectionViewModel.send(.refresh)
             }
+        }
+        .onChange(of: viewModel.playButtonItem?.seasonID) { newSeason in
+            guard let newSeason else { return }
+            selection = newSeason
         }
     }
 }
