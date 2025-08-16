@@ -37,7 +37,8 @@ struct UserPermissions {
             self.canDownload = policy?.enableContentDownloading ?? false
             self.canEditMetadata = isAdministrator
             self.canManageSubtitles = isAdministrator || policy?.enableSubtitleManagement ?? false
-            self.canManageCollections = isAdministrator || policy?.enableCollectionManagement ?? false
+            self.canManageCollections = (isAdministrator || policy?.enableCollectionManagement ?? false)
+                && StoredValues[.User.enableCollectionManagement]
             self.canManageLyrics = isAdministrator || policy?.enableSubtitleManagement ?? false
         }
 
@@ -54,7 +55,6 @@ struct UserPermissions {
                 return item.canDelete == true
             case .boxSet:
                 return canManageCollections
-                    && StoredValues[.User.enableCollectionManagement]
                     && item.canDelete == true
             default:
                 return canDelete
@@ -78,8 +78,8 @@ struct UserPermissions {
                 /// Playlists can only be edited by owners who can also delete
                 return item.canDelete == true
             case .boxSet:
-                return (canManageCollections || canEditMetadata)
-                    && StoredValues[.User.enableCollectionManagement]
+                return canManageCollections ||
+                    (canEditMetadata && StoredValues[.User.enableCollectionManagement])
             default:
                 return canEditMetadata
                     && StoredValues[.User.enableItemEditing]
