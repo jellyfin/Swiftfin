@@ -24,6 +24,8 @@ extension ItemView {
 
         @ObservedObject
         var viewModel: CollectionItemViewModel
+        @ObservedObject
+        var editorViewModel = CollectionEditorViewModel()
 
         private func episodeHStack(element: Element) -> some View {
             VStack(alignment: .leading) {
@@ -60,6 +62,18 @@ extension ItemView {
                     .onSelect {
                         router.route(to: .library(viewModel: element.value))
                     }
+            }
+            .contextMenu(for: BaseItemDto.self) { item in
+                if let posterID = item.id,
+                   let collectionID = viewModel.item.id,
+                   viewModel.userSession.user.permissions.items.canManageCollections
+                {
+                    Button(role: .destructive) {
+                        editorViewModel.send(.removeItem(collectionID: collectionID, items: [posterID]))
+                    } label: {
+                        Label("Remove", systemImage: "trash")
+                    }
+                }
             }
         }
 
