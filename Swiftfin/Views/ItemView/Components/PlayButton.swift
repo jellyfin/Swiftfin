@@ -69,32 +69,22 @@ extension ItemView {
             Button {
                 play()
             } label: {
-                ZStack {
-                    Rectangle()
-                        .foregroundStyle(isEnabled ? accentColor : Color.secondarySystemFill)
-                        .cornerRadius(10)
+                HStack {
+                    Label(title, systemImage: "play.fill")
+                        .font(.callout)
+                        .fontWeight(.semibold)
 
-                    HStack {
-                        Image(systemName: "play.fill")
-                            .font(.system(size: 20))
-
-                        VStack(alignment: .leading) {
-                            Text(title)
-                                .font(.callout)
-                                .fontWeight(.semibold)
-
-                            if let source {
-                                Marquee(source, speed: 40, delay: 3, fade: 5)
-                                    .font(.caption)
-                                    .fontWeight(.medium)
-                                    .frame(maxWidth: 175)
-                            }
-                        }
+                    if let source {
+                        Marquee(source, speed: 40, delay: 3, fade: 5)
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .frame(maxWidth: 175)
                     }
-                    .foregroundStyle(isEnabled ? accentColor.overlayColor : Color(UIColor.secondaryLabel))
-                    .padding(.horizontal, 5)
                 }
+                .padding(.horizontal, 5)
             }
+            .buttonStyle(.tintedMaterial(tint: accentColor, foregroundColor: accentColor.overlayColor))
+            .isSelected(true)
             .contextMenu {
                 if viewModel.playButtonItem?.userData?.playbackPositionTicks != 0 {
                     Button(L10n.playFromBeginning, systemImage: "gobackward") {
