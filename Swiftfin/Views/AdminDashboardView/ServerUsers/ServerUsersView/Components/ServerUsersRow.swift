@@ -83,8 +83,8 @@ extension ServerUsersView {
                     )
                 )
                 .environment(\.isEnabled, userActive)
-                .environment(\.isEditing, isEditing)
-                .environment(\.isSelected, isSelected)
+                .isEditing(isEditing)
+                .isSelected(isSelected)
             }
             .frame(width: 60, height: 60)
         }

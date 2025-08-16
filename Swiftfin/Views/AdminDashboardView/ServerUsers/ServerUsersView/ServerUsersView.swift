@@ -187,8 +187,8 @@ struct ServerUsersView: View {
                             selectedUsers.insert(userID)
                             isPresentingDeleteConfirmation = true
                         }
-                        .environment(\.isEditing, isEditing)
-                        .environment(\.isSelected, selectedUsers.contains(userID))
+                        .isEditing(isEditing)
+                        .isSelected(selectedUsers.contains(userID))
                         .listRowInsets(.edgeInsets)
                     }
                 }

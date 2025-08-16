@@ -72,7 +72,7 @@ extension ItemView {
                         )
                 } else {
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(isFocused ? Color.white : Color.white.opacity(0.5))
+                        .fill(isFocused ? .white : .white.opacity(0.5))
                 }
 
                 Label(title, systemImage: labelIconName)
