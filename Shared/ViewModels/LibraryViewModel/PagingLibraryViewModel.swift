@@ -148,36 +148,27 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         Notifications[.didItemMetadataChange]
             .publisher
             .receive(on: RunLoop.main)
-            .sink { [weak self] updatedItem in
-                guard let self = self else { return }
+            .sink { [weak self] newItem in
+                guard let self = self, let element = newItem as? Element else { return }
 
-                if let element = updatedItem as? Element {
-                    let elementHash = element.unwrappedIDHashOrZero
-                    if self.elements.ids.contains(elementHash) {
-                        self.elements[id: elementHash] = element
-                    }
+                let elementHash = element.unwrappedIDHashOrZero
+
+                /// Do not replace the element if they are already the same
+                if self.elements.ids.contains(elementHash) && self.elements[id: elementHash] != element {
+                    self.elements[id: elementHash] = element
                 }
             }
             .store(in: &cancellables)
 
-        Notifications[.didItemUserdataChange]
+        Notifications[.didItemUserDataChange]
             .publisher
             .receive(on: RunLoop.main)
             .sink { [weak self] itemId in
-                guard let self = self else { return }
+                guard let self = self, let element = self.elements[id: itemId.hashValue] else { return }
 
-                let itemHash = itemId.hashValue
-                if let element = self.elements[id: itemHash] {
-                    Task {
-                        do {
-                            if let refreshedItem = try await self.getItemUserData(element: element) {
-                                await MainActor.run {
-                                    self.elements[id: itemHash] = refreshedItem
-                                }
-                            }
-                        } catch {
-                            // No action required
-                        }
+                Task { @MainActor in
+                    if let refreshedItem = try await self.refreshUserData(element: element) {
+                        self.elements[id: itemId.hashValue] = refreshedItem
                     }
                 }
             }
@@ -240,36 +231,27 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         Notifications[.didItemMetadataChange]
             .publisher
             .receive(on: RunLoop.main)
-            .sink { [weak self] updatedItem in
-                guard let self = self else { return }
+            .sink { [weak self] newItem in
+                guard let self = self, let element = newItem as? Element else { return }
 
-                if let element = updatedItem as? Element {
-                    let elementHash = element.unwrappedIDHashOrZero
-                    if self.elements.ids.contains(elementHash) {
-                        self.elements[id: elementHash] = element
-                    }
+                let elementHash = element.unwrappedIDHashOrZero
+
+                /// Do not replace the element if they are already the same
+                if self.elements.ids.contains(elementHash) && self.elements[id: elementHash] != element {
+                    self.elements[id: elementHash] = element
                 }
             }
             .store(in: &cancellables)
 
-        Notifications[.didItemUserdataChange]
+        Notifications[.didItemUserDataChange]
             .publisher
             .receive(on: RunLoop.main)
             .sink { [weak self] itemId in
-                guard let self = self else { return }
+                guard let self = self, let element = self.elements[id: itemId.hashValue] else { return }
 
-                let itemHash = itemId.hashValue
-                if let element = self.elements[id: itemHash] {
-                    Task {
-                        do {
-                            if let refreshedItem = try await self.getItemUserData(element: element) {
-                                await MainActor.run {
-                                    self.elements[id: itemHash] = refreshedItem
-                                }
-                            }
-                        } catch {
-                            // No action required
-                        }
+                Task { @MainActor in
+                    if let refreshedItem = try await self.refreshUserData(element: element) {
+                        self.elements[id: itemId.hashValue] = refreshedItem
                     }
                 }
             }
@@ -448,15 +430,9 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         elements.randomElement()
     }
 
-    /// Replaces an item from `elements`. Override if item should
-    /// come from another source instead.
-    func getItemMetadata(id: String) async throws -> Element? {
-        nil
-    }
-
     /// Replaces an item's UserData in `elements`. Override if item should
     /// come from another source instead.
-    func getItemUserData(element: Element) async throws -> Element? {
+    func refreshUserData(element: Element) async throws -> Element? {
         nil
     }
 }

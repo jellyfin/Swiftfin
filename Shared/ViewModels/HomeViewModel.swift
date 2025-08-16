@@ -68,7 +68,8 @@ final class HomeViewModel: ViewModel, Stateful {
             .sink { _ in
                 // Necessary because when this notification is posted, even with asyncAfter,
                 // the view will cause layout issues since it will redraw while in landscape.
-                // TODO: look for better solution
+                // TODO: Look for better solution
+                // TODO: Only update changed items
                 DispatchQueue.main.async {
                     self.notificationsReceived.insert(.didItemMetadataChange)
                 }

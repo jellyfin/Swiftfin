@@ -47,7 +47,7 @@ final class SeasonItemViewModel: PagingLibraryViewModel<BaseItemDto>, Identifiab
         return response.value.items ?? []
     }
 
-    override func getItemUserData(element: BaseItemDto) async throws -> BaseItemDto {
+    override func refreshUserData(element: BaseItemDto) async throws -> BaseItemDto {
 
         guard let itemID = element.id else { return element }
 

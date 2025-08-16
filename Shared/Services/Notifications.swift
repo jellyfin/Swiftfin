@@ -129,9 +129,9 @@ extension Notifications.Key {
 
     // MARK: - Media Items
 
-    /// - Payload: The ID of the item that should refresh
-    static var didItemUserdataChange: Key<String> {
-        Key("didItemUserdataChange")
+    /// - Payload: The ID of the item that should refresh its UserData.
+    static var didItemUserDataChange: Key<String> {
+        Key("didItemUserDataChange")
     }
 
     /// - Payload: The new item with updated metadata.

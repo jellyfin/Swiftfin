@@ -24,7 +24,6 @@ class ItemViewModel: ViewModel, Stateful {
         case backgroundRefresh
         case error(JellyfinAPIError)
         case refresh
-        case replace(BaseItemDto)
         case toggleIsFavorite
         case toggleIsPlayed
         case selectMediaSource(MediaSourceInfo)
@@ -92,13 +91,13 @@ class ItemViewModel: ViewModel, Stateful {
         self.item = item
         super.init()
 
-        Notifications[.didItemUserdataChange]
+        Notifications[.didItemUserDataChange]
             .publisher
             .sink { [weak self] itemID in
-                guard itemID == self?.item.id else { return }
+                guard let self = self, itemID == item.id else { return }
 
                 Task {
-                    await self?.send(.backgroundRefresh)
+                    await self.send(.backgroundRefresh)
                 }
             }
             .store(in: &cancellables)
@@ -106,10 +105,10 @@ class ItemViewModel: ViewModel, Stateful {
         Notifications[.didItemMetadataChange]
             .publisher
             .sink { [weak self] newItem in
-                guard let newItemID = newItem.id, newItemID == self?.item.id else { return }
+                guard let self = self, newItem.id == item.id, newItem != item else { return }
 
-                Task {
-                    await self?.send(.replace(newItem))
+                Task { @MainActor in
+                    self.item = newItem
                 }
             }
             .store(in: &cancellables)
@@ -212,22 +211,6 @@ class ItemViewModel: ViewModel, Stateful {
             .asAnyCancellable()
 
             return .refreshing
-        case let .replace(newItem):
-
-            backgroundStates.insert(.refresh)
-
-            Task { [weak self] in
-                guard let self else { return }
-                do {
-                    await MainActor.run {
-                        self.backgroundStates.remove(.refresh)
-                        self.item = newItem
-                    }
-                }
-            }
-            .store(in: &cancellables)
-
-            return state
         case .toggleIsFavorite:
 
             toggleIsFavoriteTask?.cancel()
@@ -346,18 +329,21 @@ class ItemViewModel: ViewModel, Stateful {
 
         if isPlayed {
             request = Paths.markPlayedItem(
-                itemID: item.id!,
+                itemID: itemID,
                 userID: userSession.user.id
             )
         } else {
             request = Paths.markUnplayedItem(
-                itemID: item.id!,
+                itemID: itemID,
                 userID: userSession.user.id
             )
         }
 
         _ = try await userSession.client.send(request)
-        Notifications[.didItemUserdataChange].post(itemID)
+
+        await MainActor.run {
+            Notifications[.didItemMetadataChange].post(item)
+        }
     }
 
     private func setIsFavorite(_ isFavorite: Bool) async throws {
@@ -368,17 +354,20 @@ class ItemViewModel: ViewModel, Stateful {
 
         if isFavorite {
             request = Paths.markFavoriteItem(
-                itemID: item.id!,
+                itemID: itemID,
                 userID: userSession.user.id
             )
         } else {
             request = Paths.unmarkFavoriteItem(
-                itemID: item.id!,
+                itemID: itemID,
                 userID: userSession.user.id
             )
         }
 
         _ = try await userSession.client.send(request)
-        Notifications[.didItemUserdataChange].post(itemID)
+
+        await MainActor.run {
+            Notifications[.didItemMetadataChange].post(item)
+        }
     }
 }

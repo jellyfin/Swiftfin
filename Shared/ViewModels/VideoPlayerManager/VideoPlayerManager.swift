@@ -235,13 +235,14 @@ class VideoPlayerManager: ViewModel {
             let _ = try await userSession.client.send(request)
 
             // TODO: Revise as part of the PlayerManager Rework
+            //
             if let itemID = currentViewModel.item.id {
-                Notifications[.didItemUserdataChange].post(itemID)
+                Notifications[.didItemUserDataChange].post(itemID)
             }
 
             // TODO: Revise as part of the PlayerManager Rework
             if let seriesID = currentViewModel.item.seriesID {
-                Notifications[.didItemUserdataChange].post(seriesID)
+                Notifications[.didItemUserDataChange].post(seriesID)
             }
         }
     }

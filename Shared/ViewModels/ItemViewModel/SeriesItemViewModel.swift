@@ -31,15 +31,14 @@ final class SeriesItemViewModel: ItemViewModel {
 
         switch action {
         case .backgroundRefresh, .refresh:
-            let parentState = super.respond(to: action)
+            _ = super.respond(to: action)
 
             seriesItemTask?.cancel()
 
             Task { [weak self] in
                 guard let self else { return }
 
-                /// Only replace the seasons on a full refresh
-                /// Otherwith, just append new seasons
+                /// Only replace the seasons on a full refresh. Otherwise, just append new seasons.
                 if action == .refresh {
                     await MainActor.run {
                         self.seasons.removeAll()
