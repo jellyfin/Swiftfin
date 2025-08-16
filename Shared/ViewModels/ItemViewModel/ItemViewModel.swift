@@ -91,7 +91,7 @@ class ItemViewModel: ViewModel, Stateful {
         self.item = item
         super.init()
 
-        Notifications[.didItemUserDataChange]
+        Notifications[.doesItemRequireRefresh]
             .publisher
             .sink { [weak self] itemID in
                 guard let self = self, (itemID == item.id || itemID == playButtonItem?.id) else { return }
@@ -117,9 +117,8 @@ class ItemViewModel: ViewModel, Stateful {
                         await MainActor.run {
                             self.item = newItem
                         }
-                    } else {
-                        await self.send(.backgroundRefresh)
                     }
+                    await self.send(.backgroundRefresh)
                 }
             }
             .store(in: &cancellables)

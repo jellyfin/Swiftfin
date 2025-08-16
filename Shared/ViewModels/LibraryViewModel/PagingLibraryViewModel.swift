@@ -160,7 +160,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             }
             .store(in: &cancellables)
 
-        Notifications[.didItemUserDataChange]
+        Notifications[.doesItemRequireRefresh]
             .publisher
             .receive(on: RunLoop.main)
             .sink { [weak self] itemId in
@@ -243,7 +243,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             }
             .store(in: &cancellables)
 
-        Notifications[.didItemUserDataChange]
+        Notifications[.doesItemRequireRefresh]
             .publisher
             .receive(on: RunLoop.main)
             .sink { [weak self] itemId in

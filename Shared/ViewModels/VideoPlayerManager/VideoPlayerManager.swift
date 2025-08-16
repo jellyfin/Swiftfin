@@ -237,12 +237,12 @@ class VideoPlayerManager: ViewModel {
             // TODO: Revise as part of the PlayerManager Rework
             //
             if let itemID = currentViewModel.item.id {
-                Notifications[.didItemUserDataChange].post(itemID)
+                Notifications[.doesItemRequireRefresh].post(itemID)
             }
 
             // TODO: Revise as part of the PlayerManager Rework
             if let seriesID = currentViewModel.item.seriesID {
-                Notifications[.didItemUserDataChange].post(seriesID)
+                Notifications[.doesItemRequireRefresh].post(seriesID)
             }
         }
     }
