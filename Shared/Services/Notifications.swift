@@ -129,21 +129,19 @@ extension Notifications.Key {
 
     // MARK: - Media Items
 
-    // TODO: come up with a cleaner, more defined way for item update notifications
-
-    /// - Payload: The new item with updated metadata.
-    static var itemMetadataDidChange: Key<BaseItemDto> {
-        Key("itemMetadataDidChange")
+    /// - Payload: The ID of the item that should refresh
+    static var didItemUserdataChange: Key<String> {
+        Key("didItemUserdataChange")
     }
 
-    /// - Payload: The ID of the item that should refresh
-    static var itemShouldRefreshMetadata: Key<String> {
-        Key("itemShouldRefresh")
+    /// - Payload: The new item with updated metadata.
+    static var didItemMetadataChange: Key<BaseItemDto> {
+        Key("didItemMetadataChange")
     }
 
     /// - Payload: The ID of the deleted item.
-    static var didDeleteItem: Key<String> {
-        Key("didDeleteItem")
+    static var didItemDeletionOccur: Key<String> {
+        Key("didItemDeletionOccur")
     }
 
     // MARK: - Server

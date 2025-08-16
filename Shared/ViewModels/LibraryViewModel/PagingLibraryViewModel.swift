@@ -137,7 +137,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
         super.init()
 
-        Notifications[.didDeleteItem]
+        Notifications[.didItemDeletionOccur]
             .publisher
             .receive(on: RunLoop.main)
             .sink { id in
@@ -145,7 +145,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             }
             .store(in: &cancellables)
 
-        Notifications[.itemMetadataDidChange]
+        Notifications[.didItemMetadataChange]
             .publisher
             .receive(on: RunLoop.main)
             .sink { [weak self] updatedItem in
@@ -160,7 +160,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             }
             .store(in: &cancellables)
 
-        Notifications[.itemShouldRefreshMetadata]
+        Notifications[.didItemUserdataChange]
             .publisher
             .receive(on: RunLoop.main)
             .sink { [weak self] itemId in
@@ -230,14 +230,14 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
         super.init()
 
-        Notifications[.didDeleteItem]
+        Notifications[.didItemDeletionOccur]
             .publisher
             .sink { id in
                 self.elements.remove(id: id.hashValue)
             }
             .store(in: &cancellables)
 
-        Notifications[.itemMetadataDidChange]
+        Notifications[.didItemMetadataChange]
             .publisher
             .receive(on: RunLoop.main)
             .sink { [weak self] updatedItem in
@@ -252,7 +252,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             }
             .store(in: &cancellables)
 
-        Notifications[.itemShouldRefreshMetadata]
+        Notifications[.didItemUserdataChange]
             .publisher
             .receive(on: RunLoop.main)
             .sink { [weak self] itemId in

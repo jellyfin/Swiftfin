@@ -40,10 +40,10 @@ extension SeriesEpisodeSelector {
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
             .proxy(proxy)
-            .onChange(of: playButtonItem?.unwrappedIDHashOrZero) { newValue in
+            .onChange(of: playButtonItem?.unwrappedIDHashOrZero) { newIndex in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    guard let newValue else { return }
-                    proxy.scrollTo(id: newValue, animated: true)
+                    guard let newIndex, viewModel.elements.ids.contains(newIndex) else { return }
+                    proxy.scrollTo(id: newIndex, animated: true)
                 }
             }
             .onFirstAppear {

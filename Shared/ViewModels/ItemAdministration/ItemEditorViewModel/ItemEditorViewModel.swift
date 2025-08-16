@@ -237,7 +237,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
         try await refreshItem()
 
         await MainActor.run {
-            Notifications[.itemMetadataDidChange].post(newItem)
+            Notifications[.didItemMetadataChange].post(newItem)
         }
     }
 

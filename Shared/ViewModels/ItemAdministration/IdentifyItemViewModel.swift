@@ -221,7 +221,7 @@ final class IdentifyItemViewModel: ViewModel, Stateful, Eventful {
 
         await MainActor.run {
             self.item = response.value
-            Notifications[.itemShouldRefreshMetadata].post(itemID)
+            Notifications[.didItemUserdataChange].post(itemID)
         }
     }
 }

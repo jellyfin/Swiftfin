@@ -174,7 +174,7 @@ struct EditItemElementView<Element: Hashable>: View {
         } message: {
             Text(L10n.deleteItemConfirmation)
         }
-        .onNotification(.itemMetadataDidChange) { _ in
+        .onNotification(.didItemMetadataChange) { _ in
             self.elements = type.getElement(for: self.viewModel.item)
         }
     }

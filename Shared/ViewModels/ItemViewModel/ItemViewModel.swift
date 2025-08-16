@@ -92,7 +92,7 @@ class ItemViewModel: ViewModel, Stateful {
         self.item = item
         super.init()
 
-        Notifications[.itemShouldRefreshMetadata]
+        Notifications[.didItemUserdataChange]
             .publisher
             .sink { [weak self] itemID in
                 guard itemID == self?.item.id else { return }
@@ -103,7 +103,7 @@ class ItemViewModel: ViewModel, Stateful {
             }
             .store(in: &cancellables)
 
-        Notifications[.itemMetadataDidChange]
+        Notifications[.didItemMetadataChange]
             .publisher
             .sink { [weak self] newItem in
                 guard let newItemID = newItem.id, newItemID == self?.item.id else { return }
@@ -357,7 +357,7 @@ class ItemViewModel: ViewModel, Stateful {
         }
 
         _ = try await userSession.client.send(request)
-        Notifications[.itemShouldRefreshMetadata].post(itemID)
+        Notifications[.didItemUserdataChange].post(itemID)
     }
 
     private func setIsFavorite(_ isFavorite: Bool) async throws {
@@ -379,6 +379,6 @@ class ItemViewModel: ViewModel, Stateful {
         }
 
         _ = try await userSession.client.send(request)
-        Notifications[.itemShouldRefreshMetadata].post(itemID)
+        Notifications[.didItemUserdataChange].post(itemID)
     }
 }
