@@ -8,42 +8,34 @@
 
 import SwiftUI
 
-extension VideoPlayer.Overlay {
+extension VideoPlayer.PlaybackControls {
 
-    // TODO: change to PrimitiveButtonStyle?
-    struct SupplementTitleButton: View {
+    struct SupplementButtonStyle: PrimitiveButtonStyle {
 
-        @Environment(\.selectedMediaPlayerSupplement)
-        @Binding
-        private var selection: AnyMediaPlayerSupplement?
+        @Environment(\.isSelected)
+        private var isSelected
 
         @State
         private var isPressed: Bool = false
 
-        let supplement: AnyMediaPlayerSupplement
-
-        private var isActive: Bool {
-            selection?.id == supplement.id
-        }
-
-        var body: some View {
-            Text(supplement.supplement.displayTitle)
+        func makeBody(configuration: Configuration) -> some View {
+            configuration.label
                 .fontWeight(.semibold)
-                .foregroundStyle(isActive ? .black : .white)
+                .foregroundStyle(isSelected ? .black : .white)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 3)
                 .background {
                     ZStack {
                         EmptyHitTestView()
 
-                        if isActive {
+                        if isSelected {
                             Rectangle()
                                 .foregroundStyle(.white)
                         }
                     }
                 }
                 .overlay {
-                    if !isActive {
+                    if !isSelected {
                         RoundedRectangle(cornerRadius: 7)
                             .stroke(Color.white, lineWidth: 4)
                     }
@@ -52,15 +44,9 @@ extension VideoPlayer.Overlay {
                     RoundedRectangle(cornerRadius: 7)
                 }
                 .onTapGesture {
-                    if isActive {
-                        selection = nil
-                    } else {
-                        selection = supplement
-                    }
-
-                    UIDevice.impact(.light)
+                    configuration.trigger()
                 }
-                .onLongPressGesture(minimumDuration: 0.1) {} onPressingChanged: { isPressing in
+                .onLongPressGesture(minimumDuration: 0.01) {} onPressingChanged: { isPressing in
                     isPressed = isPressing
                 }
                 .scaleEffect(
@@ -70,6 +56,7 @@ extension VideoPlayer.Overlay {
                 )
                 .animation(.bouncy(duration: 0.4), value: isPressed)
                 .opacity(isPressed ? 0.6 : 1)
+                .animation(.linear(duration: 0.05), value: isPressed)
         }
     }
 }

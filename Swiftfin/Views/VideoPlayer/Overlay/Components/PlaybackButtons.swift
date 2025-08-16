@@ -9,7 +9,7 @@
 import Defaults
 import SwiftUI
 
-extension VideoPlayer.Overlay {
+extension VideoPlayer.PlaybackControls {
 
     struct PlaybackButtons: View {
 

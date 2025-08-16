@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
+extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
     struct AspectFill: View {
 

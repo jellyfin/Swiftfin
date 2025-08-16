@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension VideoPlayer.Overlay {
+extension VideoPlayer.PlaybackControls {
 
     // TODO: only have play buttons have circle background
     struct OverlayButtonStyle: ButtonStyle {

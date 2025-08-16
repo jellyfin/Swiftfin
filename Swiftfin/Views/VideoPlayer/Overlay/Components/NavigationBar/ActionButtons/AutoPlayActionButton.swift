@@ -9,7 +9,7 @@
 import Defaults
 import SwiftUI
 
-extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
+extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
     struct AutoPlay: View {
 

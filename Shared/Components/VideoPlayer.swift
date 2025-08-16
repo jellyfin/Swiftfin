@@ -41,6 +41,8 @@ struct VideoPlayer: View {
     private var isScrubbing: Bool = false
     @State
     private var subtitleOffset: Duration = .zero
+    @State
+    private var selectedSupplement: AnyMediaPlayerSupplement?
 
     init(manager: MediaPlayerManager) {
         self.manager = manager
@@ -60,19 +62,37 @@ struct VideoPlayer: View {
 
             proxy.makeVideoPlayerBody()
                 .eraseToAnyView()
-
-            Overlay()
         }
-        .environment(\.audioOffset, $audioOffset)
-        .environment(\.isAspectFilled, $isAspectFilled)
-        .environment(\.isGestureLocked, $isGestureLocked)
-        .environment(\.isScrubbing, $isScrubbing)
+    }
+
+    @ViewBuilder
+    private var containerView: some View {
+        VideoPlayerContainerView {
+            playerView
+                .environment(\.audioOffset, $audioOffset)
+                .environment(\.isAspectFilled, $isAspectFilled)
+                .environment(\.isGestureLocked, $isGestureLocked)
+                .environment(\.isScrubbing, $isScrubbing)
+                .environment(\.selectedMediaPlayerSupplement, $selectedSupplement)
+                .environmentObject(manager)
+                .environmentObject(_scrubbedSeconds.box)
+        } playbackControls: {
+            PlaybackControls()
+                .environment(\.audioOffset, $audioOffset)
+                .environment(\.isAspectFilled, $isAspectFilled)
+                .environment(\.isGestureLocked, $isGestureLocked)
+                .environment(\.isScrubbing, $isScrubbing)
+                .environment(\.selectedMediaPlayerSupplement, $selectedSupplement)
+                .environmentObject(manager)
+                .environmentObject(_scrubbedSeconds.box)
+        }
         .environmentObject(manager)
-        .environmentObject(_scrubbedSeconds.box)
+        .environment(\.isScrubbing, $isScrubbing)
+        .environment(\.selectedMediaPlayerSupplement, $selectedSupplement)
     }
 
     var body: some View {
-        playerView
+        containerView
             .backport
             .onChange(of: audioOffset) { _, newValue in
                 if let proxy = proxy as? MediaPlayerOffsetConfigurable {

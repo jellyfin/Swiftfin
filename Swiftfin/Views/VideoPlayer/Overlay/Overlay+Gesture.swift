@@ -10,7 +10,7 @@ import Defaults
 import MediaPlayer
 import SwiftUI
 
-extension VideoPlayer.Overlay.GestureLayer {
+extension VideoPlayer.PlaybackControls.GestureLayer {
 
     struct PanGestureState<Value: Comparable & AdditiveArithmetic> {
 
@@ -25,7 +25,7 @@ extension VideoPlayer.Overlay.GestureLayer {
     }
 }
 
-extension VideoPlayer.Overlay {
+extension VideoPlayer.PlaybackControls {
 
     struct GestureLayer: View {
 
@@ -117,7 +117,7 @@ extension VideoPlayer.Overlay {
 
 // MARK: - Handle
 
-extension VideoPlayer.Overlay.GestureLayer {
+extension VideoPlayer.PlaybackControls.GestureLayer {
 
     private func checkGestureLock() -> Bool {
         if isGestureLocked {
@@ -273,11 +273,11 @@ extension VideoPlayer.Overlay.GestureLayer {
 
 // MARK: - Long press
 
-extension VideoPlayer.Overlay.GestureLayer {}
+extension VideoPlayer.PlaybackControls.GestureLayer {}
 
 // MARK: - Pan
 
-extension VideoPlayer.Overlay.GestureLayer {
+extension VideoPlayer.PlaybackControls.GestureLayer {
 
     // MARK: - Offset
 
@@ -428,7 +428,7 @@ extension VideoPlayer.Overlay.GestureLayer {
 
 // MARK: - Pinch
 
-extension VideoPlayer.Overlay.GestureLayer {
+extension VideoPlayer.PlaybackControls.GestureLayer {
 
     // MARK: - Aspect Fill
 
@@ -448,7 +448,7 @@ extension VideoPlayer.Overlay.GestureLayer {
 
 // MARK: - Swipe
 
-extension VideoPlayer.Overlay.GestureLayer {
+extension VideoPlayer.PlaybackControls.GestureLayer {
 
     private func jumpAction(point: UnitPoint, direction: Direction) {
         switch direction {

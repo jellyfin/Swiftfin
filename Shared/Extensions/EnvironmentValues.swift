@@ -23,6 +23,9 @@ extension EnvironmentValues {
     var isGestureLocked: Binding<Bool> = .constant(false)
 
     @Entry
+    var isHorizontallyCompact: Bool = false
+
+    @Entry
     var isInMenu: Bool = false
 
     @Entry

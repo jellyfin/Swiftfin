@@ -14,7 +14,7 @@ import SwiftUI
 // TODO: possible issue with runTimeSeconds == 0
 // TODO: smooth out animation when done scrubbing
 
-extension VideoPlayer.Overlay {
+extension VideoPlayer.PlaybackControls {
 
     struct PlaybackProgress: View {
 
