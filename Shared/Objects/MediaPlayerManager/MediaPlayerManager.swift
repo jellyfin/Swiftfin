@@ -124,7 +124,7 @@ class MediaPlayerManager: ViewModel, Stateful {
         self.queue?.manager = self
 
         // TODO: don't build on init?
-        buildMediaItem(from: mediaPlayerItemProvider) { @MainActor newItem in
+        buildMediaItem(from: .init(item: item, function: mediaPlayerItemProvider)) { @MainActor newItem in
             self.state = .playback
             self.playbackItem = newItem
             self.supplements = newItem.supplements
@@ -163,7 +163,7 @@ class MediaPlayerManager: ViewModel, Stateful {
             return .stopped
         case let .playNewItem(provider: provider):
             self.item = provider.item
-            buildMediaItem(from: provider.function) { @MainActor newItem in
+            buildMediaItem(from: provider) { @MainActor newItem in
                 self.state = .playback
                 self.playbackItem = newItem
             }
@@ -189,7 +189,7 @@ class MediaPlayerManager: ViewModel, Stateful {
     // MARK: buildMediaItem
 
     private func buildMediaItem(
-        from provider: @escaping MediaPlayerItemProviderFunction,
+        from provider: MediaPlayerItemProvider,
         onComplete: @escaping (MediaPlayerItem) async -> Void
     ) {
         itemBuildTask?.cancel()
@@ -201,7 +201,7 @@ class MediaPlayerManager: ViewModel, Stateful {
                     self.state = .loadingItem
                 }
 
-                let playbackItem = try await provider(self.item)
+                let playbackItem = try await provider.function(provider.item)
 
                 await onComplete(playbackItem)
             } catch {

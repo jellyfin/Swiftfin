@@ -157,13 +157,13 @@ extension EpisodeMediaPlayerQueue {
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
-        
+
         @State
         private var contentSize: CGSize = .zero
 
         let item: BaseItemDto
         let isCompact: Bool
-        
+
         private var isCurrentEpisode: Bool {
             manager.item.id == item.id
         }
