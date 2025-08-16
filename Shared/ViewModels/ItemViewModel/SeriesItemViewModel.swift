@@ -38,8 +38,12 @@ final class SeriesItemViewModel: ItemViewModel {
             Task { [weak self] in
                 guard let self else { return }
 
-                await MainActor.run {
-                    self.seasons.removeAll()
+                /// Only replace the seasons on a full refresh
+                /// Otherwith, just append new seasons
+                if action == .refresh {
+                    await MainActor.run {
+                        self.seasons.removeAll()
+                    }
                 }
 
                 do {

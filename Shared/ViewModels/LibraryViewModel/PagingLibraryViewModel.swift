@@ -144,6 +144,44 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
                 self.elements.remove(id: id.hashValue)
             }
             .store(in: &cancellables)
+
+        Notifications[.itemMetadataDidChange]
+            .publisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] updatedItem in
+                guard let self = self else { return }
+
+                if let element = updatedItem as? Element {
+                    let elementHash = element.unwrappedIDHashOrZero
+                    if self.elements.ids.contains(elementHash) {
+                        self.elements[id: elementHash] = element
+                    }
+                }
+            }
+            .store(in: &cancellables)
+
+        Notifications[.itemShouldRefreshMetadata]
+            .publisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] itemId in
+                guard let self = self else { return }
+
+                let itemHash = itemId.hashValue
+                if let element = self.elements[id: itemHash] {
+                    Task {
+                        do {
+                            if let refreshedItem = try await self.getItemUserData(element: element) {
+                                await MainActor.run {
+                                    self.elements[id: itemHash] = refreshedItem
+                                }
+                            }
+                        } catch {
+                            // No action required
+                        }
+                    }
+                }
+            }
+            .store(in: &cancellables)
     }
 
     convenience init(
@@ -196,6 +234,44 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             .publisher
             .sink { id in
                 self.elements.remove(id: id.hashValue)
+            }
+            .store(in: &cancellables)
+
+        Notifications[.itemMetadataDidChange]
+            .publisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] updatedItem in
+                guard let self = self else { return }
+
+                if let element = updatedItem as? Element {
+                    let elementHash = element.unwrappedIDHashOrZero
+                    if self.elements.ids.contains(elementHash) {
+                        self.elements[id: elementHash] = element
+                    }
+                }
+            }
+            .store(in: &cancellables)
+
+        Notifications[.itemShouldRefreshMetadata]
+            .publisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] itemId in
+                guard let self = self else { return }
+
+                let itemHash = itemId.hashValue
+                if let element = self.elements[id: itemHash] {
+                    Task {
+                        do {
+                            if let refreshedItem = try await self.getItemUserData(element: element) {
+                                await MainActor.run {
+                                    self.elements[id: itemHash] = refreshedItem
+                                }
+                            }
+                        } catch {
+                            // No action required
+                        }
+                    }
+                }
             }
             .store(in: &cancellables)
 
@@ -370,5 +446,17 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     /// come from another source instead.
     func getRandomItem() async throws -> Element? {
         elements.randomElement()
+    }
+
+    /// Replaces an item from `elements`. Override if item should
+    /// come from another source instead.
+    func getItemMetadata(id: String) async throws -> Element? {
+        nil
+    }
+
+    /// Replaces an item's UserData in `elements`. Override if item should
+    /// come from another source instead.
+    func getItemUserData(element: Element) async throws -> Element? {
+        nil
     }
 }
