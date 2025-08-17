@@ -106,12 +106,25 @@ class ItemViewModel: ViewModel, Stateful {
             .publisher
             .sink { [weak self] newItem in
                 guard let self = self,
+                      /// item check
                       (newItem.id == item.id && newItem != item) ||
-                      (newItem.id == playButtonItem?.id && newItem != playButtonItem)
+                      /// playButtonItem check
+                      (newItem.id == playButtonItem?.id && newItem != playButtonItem) ||
+                      /// Previous playButtonItem check
+                      (
+                          playButtonItem?.type == .episode &&
+                              newItem.type == .episode &&
+                              newItem.seriesID == playButtonItem?.seriesID &&
+                              (
+                                  newItem.seasonID == playButtonItem?.seasonID &&
+                                      newItem.indexNumber == ((playButtonItem?.indexNumber ?? 0) - 1) ||
+                                      newItem.indexNumberEnd == ((playButtonItem?.indexNumber ?? 0) - 1)
+                              )
+                      )
                 else { return }
 
                 /// Replace if the item was updated
-                /// Refresh if the playButtonItem was updated
+                /// Refresh if the playButtonItem was updated or we might need to revert to the previous playButtonItem
                 Task {
                     if newItem.id == item.id {
                         await MainActor.run {
