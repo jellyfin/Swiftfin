@@ -60,21 +60,12 @@ struct SeriesEpisodeSelector: View {
             seasonSelectorMenu
                 .edgePadding(.horizontal)
 
-            RedrawOnNotificationView(
-                .doesItemRequireRefresh,
-                filter: { itemID in
-                    selectionViewModel?.elements.contains(where: { $0.id == itemID }) ?? false
+            Group {
+                if let selectionViewModel {
+                    EpisodeHStack(viewModel: selectionViewModel, playButtonItem: viewModel.playButtonItem)
                 }
-            ) {
-                Group {
-                    if let selectionViewModel {
-                        EpisodeHStack(viewModel: selectionViewModel, playButtonItem: viewModel.playButtonItem)
-                    } else {
-                        LoadingHStack()
-                    }
-                }
-                .transition(.opacity.animation(.linear(duration: 0.1)))
             }
+            .transition(.opacity.animation(.linear(duration: 0.1)))
         }
         .onReceive(viewModel.playButtonItem.publisher) { newValue in
 

@@ -40,20 +40,13 @@ struct SeriesEpisodeSelector: View {
             SeasonsHStack(viewModel: viewModel, selection: $selection)
                 .environmentObject(parentFocusGuide)
 
-            RedrawOnNotificationView(
-                .doesItemRequireRefresh,
-                filter: { itemID in
-                    selectionViewModel?.elements.contains(where: { $0.id == itemID }) ?? false
+            Group {
+                if let selectionViewModel {
+                    EpisodeHStack(viewModel: selectionViewModel, playButtonItem: viewModel.playButtonItem)
+                        .environmentObject(parentFocusGuide)
                 }
-            ) {
-                Group {
-                    if let selectionViewModel {
-                        EpisodeHStack(viewModel: selectionViewModel, playButtonItem: viewModel.playButtonItem)
-                            .environmentObject(parentFocusGuide)
-                    }
-                }
-                .transition(.opacity.animation(.linear(duration: 0.1)))
             }
+            .transition(.opacity.animation(.linear(duration: 0.1)))
         }
         .onReceive(viewModel.playButtonItem.publisher) { newValue in
 
