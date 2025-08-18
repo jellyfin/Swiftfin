@@ -43,8 +43,10 @@ extension ItemView {
                     id: \.unwrappedIDHashOrZero,
                     columns: 3.5
                 ) { episode in
-                    SeriesEpisodeSelector.EpisodeCard(episode: episode)
-                        .padding(.horizontal, 4)
+                    if let episodeID = episode.id {
+                        SeriesEpisodeSelector.EpisodeCard(id: episodeID, viewModel: element.value)
+                            .padding(.horizontal, 4)
+                    }
                 }
                 .scrollBehavior(.continuousLeadingEdge)
                 .insets(horizontal: EdgeInsets.edgePadding)

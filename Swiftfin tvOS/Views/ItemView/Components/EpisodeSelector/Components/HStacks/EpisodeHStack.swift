@@ -42,33 +42,24 @@ extension SeriesEpisodeSelector {
                 id: \.unwrappedIDHashOrZero,
                 columns: 3.5
             ) { episode in
-                SeriesEpisodeSelector.EpisodeCard(episode: episode)
-                    .focused($focusedEpisodeID, equals: episode.id)
-                    .padding(.horizontal, 4)
+                if let episodeID = episode.id {
+                    SeriesEpisodeSelector.EpisodeCard(id: episodeID, viewModel: viewModel)
+                        .focused($focusedEpisodeID, equals: episode.id)
+                        .padding(.horizontal, 4)
+                }
             }
             .scrollBehavior(.continuousLeadingEdge)
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
             .proxy(proxy)
-            .onChange(of: playButtonItem) { _, newItem in
-                guard let newItem else { return }
-
-                /// 500ms because, on view entry, the cursor will first focus something THEN we can move it.
-                /// Otherwise, we move the focus and the the first focus will occur
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    if focusedEpisodeID != nil {
-                        focusedEpisodeID = newItem.id
-                    }
-                    lastFocusedEpisodeID = newItem.id
-                    proxy.scrollTo(id: newItem.unwrappedIDHashOrZero, animated: true)
-                }
-            }
             .onFirstAppear {
                 guard !didScrollToPlayButtonItem else { return }
                 didScrollToPlayButtonItem = true
 
                 lastFocusedEpisodeID = playButtonItem?.id
 
+                /// 250ms because, on view entry, the cursor will first focus something THEN we can move it.
+                /// Otherwise, we move the focus and the the first focus will occur
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
                     guard let playButtonItem else { return }
                     proxy.scrollTo(id: playButtonItem.unwrappedIDHashOrZero, animated: false)

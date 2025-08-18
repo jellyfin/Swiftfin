@@ -75,12 +75,6 @@ extension SeriesEpisodeSelector {
                         selection = newValue
                     }
                 }
-                .onChange(of: viewModel.playButtonItem?.seasonID) { _, newSeason in
-                    if let newSeason {
-                        selection = newSeason
-                        focusedSeason = newSeason
-                    }
-                }
                 .onFirstAppear {
                     guard !didScrollToPlayButtonSeason else { return }
                     didScrollToPlayButtonSeason = true

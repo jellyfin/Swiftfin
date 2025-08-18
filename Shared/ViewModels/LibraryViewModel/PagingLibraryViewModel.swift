@@ -155,6 +155,12 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
                     Task { @MainActor in
                         self.elements[id: newElement.unwrappedIDHashOrZero] = newElement
                     }
+                } else if newItem.type == .series {
+                    Task { @MainActor in
+                        for id in self.elements.ids {
+                            try await self.elements[id: id]?.refresh()
+                        }
+                    }
                 }
             }
             .store(in: &cancellables)
@@ -234,6 +240,12 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
                 if elements.ids.contains(newElement.unwrappedIDHashOrZero) && elements[id: newElement.unwrappedIDHashOrZero] != newElement {
                     Task { @MainActor in
                         self.elements[id: newElement.unwrappedIDHashOrZero] = newElement
+                    }
+                } else if newItem.type == .series {
+                    Task { @MainActor in
+                        for id in self.elements.ids {
+                            try await self.elements[id: id]?.refresh()
+                        }
                     }
                 }
             }

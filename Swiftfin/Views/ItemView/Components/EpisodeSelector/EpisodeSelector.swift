@@ -85,9 +85,5 @@ struct SeriesEpisodeSelector: View {
                 selectionViewModel.send(.refresh)
             }
         }
-        .onChange(of: viewModel.playButtonItem?.seasonID) { newSeason in
-            guard let newSeason else { return }
-            selection = newSeason
-        }
     }
 }
