@@ -27,7 +27,7 @@ extension SeriesEpisodeSelector {
         private var episode: BaseItemDto {
             viewModel.elements.first { element in
                 element.id == id
-            }!
+            } ?? .init()
         }
 
         @ViewBuilder

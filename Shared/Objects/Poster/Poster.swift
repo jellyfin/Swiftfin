@@ -36,6 +36,8 @@ protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
         maxWidth: CGFloat?,
         quality: Int?
     ) -> [ImageSource]
+
+    mutating func refresh() async throws
 }
 
 extension Poster {
@@ -75,4 +77,6 @@ extension Poster {
     ) -> [ImageSource] {
         []
     }
+
+    mutating func refresh() async throws {}
 }

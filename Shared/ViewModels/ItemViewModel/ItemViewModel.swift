@@ -96,8 +96,8 @@ class ItemViewModel: ViewModel, Stateful {
             .sink { [weak self] itemID in
                 guard let self = self, (itemID == item.id || itemID == playButtonItem?.id) else { return }
 
-                Task {
-                    await self.send(.backgroundRefresh)
+                Task { @MainActor in
+                    self.send(.backgroundRefresh)
                 }
             }
             .store(in: &cancellables)
@@ -125,13 +125,13 @@ class ItemViewModel: ViewModel, Stateful {
 
                 /// Replace if the item was updated
                 /// Refresh if the playButtonItem was updated or we might need to revert to the previous playButtonItem
-                Task {
+                Task { @MainActor in
                     if newItem.id == item.id {
                         await MainActor.run {
                             self.item = newItem
                         }
                     }
-                    await self.send(.backgroundRefresh)
+                    self.send(.backgroundRefresh)
                 }
             }
             .store(in: &cancellables)

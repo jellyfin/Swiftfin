@@ -149,13 +149,12 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             .publisher
             .receive(on: RunLoop.main)
             .sink { [weak self] newItem in
-                guard let self = self, let element = newItem as? Element else { return }
+                guard let self = self, let newElement = newItem as? Element else { return }
 
-                let elementHash = element.unwrappedIDHashOrZero
-
-                /// Do not replace the element if they are already the same
-                if self.elements.ids.contains(elementHash) && self.elements[id: elementHash] != element {
-                    self.elements[id: elementHash] = element
+                if elements.ids.contains(newElement.unwrappedIDHashOrZero) && elements[id: newElement.unwrappedIDHashOrZero] != newElement {
+                    Task { @MainActor in
+                        self.elements[id: newElement.unwrappedIDHashOrZero] = newElement
+                    }
                 }
             }
             .store(in: &cancellables)
@@ -164,12 +163,10 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             .publisher
             .receive(on: RunLoop.main)
             .sink { [weak self] itemId in
-                guard let self = self, let element = self.elements[id: itemId.hashValue] else { return }
+                guard let self = self else { return }
 
                 Task { @MainActor in
-                    if let refreshedItem = try await self.refreshUserData(element: element) {
-                        self.elements[id: itemId.hashValue] = refreshedItem
-                    }
+                    try await self.elements[id: itemId.hashValue]?.refresh()
                 }
             }
             .store(in: &cancellables)
@@ -232,13 +229,12 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             .publisher
             .receive(on: RunLoop.main)
             .sink { [weak self] newItem in
-                guard let self = self, let element = newItem as? Element else { return }
+                guard let self = self, let newElement = newItem as? Element else { return }
 
-                let elementHash = element.unwrappedIDHashOrZero
-
-                /// Do not replace the element if they are already the same
-                if self.elements.ids.contains(elementHash) && self.elements[id: elementHash] != element {
-                    self.elements[id: elementHash] = element
+                if elements.ids.contains(newElement.unwrappedIDHashOrZero) && elements[id: newElement.unwrappedIDHashOrZero] != newElement {
+                    Task { @MainActor in
+                        self.elements[id: newElement.unwrappedIDHashOrZero] = newElement
+                    }
                 }
             }
             .store(in: &cancellables)
@@ -247,12 +243,10 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             .publisher
             .receive(on: RunLoop.main)
             .sink { [weak self] itemId in
-                guard let self = self, let element = self.elements[id: itemId.hashValue] else { return }
+                guard let self = self else { return }
 
                 Task { @MainActor in
-                    if let refreshedItem = try await self.refreshUserData(element: element) {
-                        self.elements[id: itemId.hashValue] = refreshedItem
-                    }
+                    try await self.elements[id: itemId.hashValue]?.refresh()
                 }
             }
             .store(in: &cancellables)
@@ -428,11 +422,5 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     /// come from another source instead.
     func getRandomItem() async throws -> Element? {
         elements.randomElement()
-    }
-
-    /// Replaces an item's UserData in `elements`. Override if item should
-    /// come from another source instead.
-    func refreshUserData(element: Element) async throws -> Element? {
-        nil
     }
 }
