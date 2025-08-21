@@ -9,7 +9,7 @@
 import Defaults
 import SwiftUI
 
-extension VideoPlayer.PlaybackControls {
+extension VideoPlayer.Overlay {
 
     struct SplitTimeStamp: View {
 

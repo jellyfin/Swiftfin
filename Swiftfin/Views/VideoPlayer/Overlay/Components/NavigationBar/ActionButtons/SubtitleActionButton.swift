@@ -11,7 +11,7 @@ import SwiftUI
 // TODO: figure out better way of value observation rather
 //       than onAppear and onChange
 
-extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
+extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
 
     struct Subtitles: View {
 

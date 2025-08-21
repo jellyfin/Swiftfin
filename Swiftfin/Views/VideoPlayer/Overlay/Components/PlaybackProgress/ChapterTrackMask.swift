@@ -11,7 +11,7 @@ import SwiftUI
 
 // TODO: fix
 
-extension VideoPlayer.PlaybackControls.PlaybackProgress {
+extension VideoPlayer.Overlay.PlaybackProgress {
 
     struct ChapterTrackMask: View {
 

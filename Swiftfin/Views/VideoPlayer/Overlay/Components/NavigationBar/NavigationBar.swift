@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension VideoPlayer.PlaybackControls {
+extension VideoPlayer.Overlay {
 
     struct NavigationBar: View {
 
@@ -50,7 +50,7 @@ extension VideoPlayer.PlaybackControls {
     }
 }
 
-extension VideoPlayer.PlaybackControls.NavigationBar {
+extension VideoPlayer.Overlay.NavigationBar {
 
     struct TitleView: View {
 
