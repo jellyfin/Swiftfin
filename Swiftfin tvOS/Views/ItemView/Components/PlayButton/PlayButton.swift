@@ -89,6 +89,8 @@ extension ItemView {
                         .frame(width: 100, height: 100)
                 }
             }
+            .font(.title3)
+            .fontWeight(.semibold)
         }
 
         // MARK: - Play Button
@@ -99,17 +101,19 @@ extension ItemView {
             } label: {
                 HStack(spacing: 15) {
                     Image(systemName: "play.fill")
-                        .font(.title3)
                         .padding(.trailing, 4)
 
                     VStack(alignment: .leading) {
                         Text(title)
-                            .fontWeight(.semibold)
+                            .if(!multipleVersions) { text in
+                                text
+                                    .font(.caption)
+                            }
 
                         if let source {
                             Marquee(source, animateWhenFocused: true)
                                 .font(.caption)
-                                .frame(maxWidth: 300)
+                                .frame(maxWidth: 300, alignment: .leading)
                         }
                     }
                 }

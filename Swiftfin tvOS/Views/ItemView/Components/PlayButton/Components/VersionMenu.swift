@@ -47,6 +47,7 @@ extension ItemView {
                     }
                 }
             }
+            .labelStyle(.iconOnly)
             .buttonStyle(.material)
         }
     }

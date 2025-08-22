@@ -167,8 +167,6 @@ extension ItemView {
                 }
             }
             .frame(height: 100)
-            .padding(.top, 1)
-            .padding(.bottom, 10)
             .labelStyle(.iconOnly)
             .font(.title3)
             .fontWeight(.semibold)
