@@ -10,40 +10,32 @@ import SwiftUI
 
 extension VideoPlayer.Overlay {
 
-    // TODO: change to PrimitiveButtonStyle?
-    struct SupplementTitleButton: View {
+    struct SupplementTitleButtonStyle: PrimitiveButtonStyle {
 
-        @Environment(\.selectedMediaPlayerSupplement)
-        @Binding
-        private var selection: AnyMediaPlayerSupplement?
+        @Environment(\.isSelected)
+        private var isSelected
 
         @State
-        private var isPressed: Bool = false
+        private var isPressed = false
 
-        let supplement: AnyMediaPlayerSupplement
-
-        private var isActive: Bool {
-            selection?.id == supplement.id
-        }
-
-        var body: some View {
-            Text(supplement.supplement.displayTitle)
+        func makeBody(configuration: Configuration) -> some View {
+            configuration.label
                 .fontWeight(.semibold)
-                .foregroundStyle(isActive ? .black : .white)
+                .foregroundStyle(isSelected ? .black : .white)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 3)
                 .background {
                     ZStack {
                         EmptyHitTestView()
 
-                        if isActive {
+                        if isSelected {
                             Rectangle()
                                 .foregroundStyle(.white)
                         }
                     }
                 }
                 .overlay {
-                    if !isActive {
+                    if !isSelected {
                         RoundedRectangle(cornerRadius: 7)
                             .stroke(Color.white, lineWidth: 4)
                     }
@@ -52,12 +44,7 @@ extension VideoPlayer.Overlay {
                     RoundedRectangle(cornerRadius: 7)
                 }
                 .onTapGesture {
-                    if isActive {
-                        selection = nil
-                    } else {
-                        selection = supplement
-                    }
-
+                    configuration.trigger()
                     UIDevice.impact(.light)
                 }
                 .onLongPressGesture(minimumDuration: 0.1) {} onPressingChanged: { isPressing in

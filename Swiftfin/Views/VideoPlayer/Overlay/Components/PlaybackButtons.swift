@@ -55,9 +55,6 @@ extension VideoPlayer.Overlay {
                         Label("Pause", systemImage: "pause.fill")
                     case .paused:
                         Label(L10n.play, systemImage: "play.fill")
-//                    case .buffering:
-//                        ProgressView()
-//                            .scaleEffect(2)
                     }
                 }
                 .transition(.opacity.combined(with: .scale).animation(.bouncy(duration: 0.7, extraBounce: 0.2)))

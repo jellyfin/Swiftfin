@@ -66,13 +66,32 @@ extension VideoPlayer {
 
             HStack(spacing: 10) {
                 ForEach(manager.supplements.map(\.asAny)) { supplement in
-                    SupplementTitleButton(supplement: supplement)
+                    let isSupplementSelected = selectedSupplement?.id == supplement.id
+
+                    Button(supplement.displayTitle) {
+                        if isSupplementSelected {
+                            selectedSupplement = nil
+                        } else {
+                            selectedSupplement = supplement
+                        }
+                    }
+                    .isSelected(isSupplementSelected)
                 }
 
                 if let queue = manager.queue {
-                    SupplementTitleButton(supplement: queue.asAny)
+                    let isSupplementSelected = selectedSupplement?.id == queue.id
+
+                    Button(queue.displayTitle) {
+                        if isSupplementSelected {
+                            selectedSupplement = nil
+                        } else {
+                            selectedSupplement = queue.asAny
+                        }
+                    }
+                    .isSelected(isSupplementSelected)
                 }
             }
+            .buttonStyle(SupplementTitleButtonStyle())
             .frame(minHeight: 30)
             .isVisible(!isScrubbing && isPresentingOverlay)
             .edgePadding(.leading)
