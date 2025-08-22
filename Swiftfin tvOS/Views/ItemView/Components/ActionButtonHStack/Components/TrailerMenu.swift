@@ -70,10 +70,9 @@ extension ItemView {
         // MARK: - Single Trailer Button
 
         private var trailerButton: some View {
-            ActionButton(
+            Button(
                 L10n.trailers,
-                icon: "movieclapper",
-                selectedIcon: "movieclapper"
+                systemImage: "movieclapper"
             ) {
                 if showLocalTrailers, let firstTrailer = localTrailers.first {
                     playLocalTrailer(firstTrailer)
@@ -89,7 +88,7 @@ extension ItemView {
 
         @ViewBuilder
         private var trailerMenu: some View {
-            ActionButton(L10n.trailers, icon: "movieclapper") {
+            Menu(L10n.trailers, systemImage: "movieclapper") {
 
                 if showLocalTrailers {
                     Section(L10n.local) {

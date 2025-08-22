@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import Logging
 import SwiftUI
@@ -13,6 +14,9 @@ import SwiftUI
 extension ItemView {
 
     struct PlayButton: View {
+
+        @Default(.accentColor)
+        private var accentColor
 
         @Router
         private var router
@@ -77,7 +81,7 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            HStack(spacing: 20) {
+            HStack(spacing: 30) {
                 playButton
 
                 if multipleVersions {
@@ -105,24 +109,16 @@ extension ItemView {
                         if let source {
                             Marquee(source, animateWhenFocused: true)
                                 .font(.caption)
-                                .frame(maxWidth: 250)
+                                .frame(maxWidth: 300)
                         }
                     }
                 }
                 .foregroundStyle(isEnabled ? .black : Color(UIColor.secondaryLabel))
                 .padding(20)
-                .frame(width: multipleVersions ? 320 : 440, height: 100, alignment: .center)
-                .background {
-                    if isFocused {
-                        isEnabled ? Color.white : Color.secondarySystemFill
-                    } else {
-                        Color.white
-                            .opacity(0.5)
-                    }
-                }
+                .frame(width: multipleVersions ? 320 : 450, alignment: .center)
                 .cornerRadius(10)
             }
-            .buttonStyle(.card)
+            .buttonStyle(.tintedMaterial(tint: accentColor, foregroundColor: accentColor.overlayColor))
             .contextMenu {
                 if viewModel.playButtonItem?.userData?.playbackPositionTicks != 0 {
                     Button(L10n.playFromBeginning, systemImage: "gobackward") {
@@ -130,6 +126,7 @@ extension ItemView {
                     }
                 }
             }
+            .isSelected(true)
             .disabled(!isEnabled)
             .focused($isFocused)
         }
