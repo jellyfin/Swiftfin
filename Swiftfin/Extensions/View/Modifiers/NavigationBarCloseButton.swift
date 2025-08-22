@@ -20,19 +20,16 @@ struct NavigationBarCloseButtonModifier: ViewModifier {
     func body(content: Content) -> some View {
         content.toolbar {
             ToolbarItemGroup(placement: .topBarLeading) {
-                Button(action: action) {
-                    Label(L10n.close, systemImage: "xmark")
-                        .font(.caption)
-                        .fontWeight(.bold)
-                        .frame(width: 10, height: 10)
-                        .padding(10)
-                }
-                .labelStyle(.iconOnly)
-                .menuStyle(.button)
-                .buttonStyle(.tintedMaterial(tint: Color.gray.opacity(0.3), foregroundColor: accentColor))
-                .clipShape(.circle)
-                .isSelected(true)
-                .disabled(disabled)
+                Button(L10n.close, systemImage: "xmark", action: action)
+                    .labelStyle(.iconOnly)
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .frame(width: 30, height: 30)
+                    .menuStyle(.button)
+                    .buttonStyle(.tintedMaterial(tint: Color.gray.opacity(0.3), foregroundColor: accentColor))
+                    .clipShape(.circle)
+                    .isSelected(true)
+                    .disabled(disabled)
             }
         }
     }
