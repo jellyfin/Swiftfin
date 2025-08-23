@@ -38,6 +38,7 @@ extension VideoPlayer.Overlay {
         var body: some View {
             VStack(alignment: .center, spacing: 10) {
                 tvOSSliderView(value: .constant(1.0))
+                    .frame(height: 50)
             }
         }
     }

@@ -88,6 +88,7 @@ extension VideoPlayer.Overlay.NavigationBar {
 
 extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
 
+    // TODO: change to button style
     struct RoundActionButton: View {
 
         let title: String

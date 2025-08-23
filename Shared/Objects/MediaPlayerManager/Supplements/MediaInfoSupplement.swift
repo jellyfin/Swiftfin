@@ -63,7 +63,9 @@ extension MediaInfoSupplement {
                 manager.proxy?.play()
                 selectedMediaPlayerSupplement = nil
             }
+            #if os(iOS)
             .buttonStyle(.material)
+            #endif
             .frame(width: 275, height: 50)
             .font(.subheadline)
             .fontWeight(.semibold)
