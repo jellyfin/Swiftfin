@@ -19,16 +19,7 @@ extension SeriesEpisodeSelector {
         @Router
         private var router
 
-        let id: String
-
-        @ObservedObject
-        var viewModel: PagingLibraryViewModel<BaseItemDto>
-
-        private var episode: BaseItemDto {
-            viewModel.elements.first { element in
-                element.id == id
-            } ?? .init()
-        }
+        let episode: BaseItemDto
 
         @ViewBuilder
         private var overlayView: some View {

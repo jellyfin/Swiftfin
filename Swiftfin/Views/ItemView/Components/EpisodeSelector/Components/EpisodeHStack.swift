@@ -33,9 +33,7 @@ extension SeriesEpisodeSelector {
                 id: \.unwrappedIDHashOrZero,
                 columns: UIDevice.isPhone ? 1.5 : 3.5
             ) { episode in
-                if let episodeID = episode.id {
-                    SeriesEpisodeSelector.EpisodeCard(id: episodeID, viewModel: viewModel)
-                }
+                SeriesEpisodeSelector.EpisodeCard(episode: episode)
             }
             .clipsToBounds(false)
             .scrollBehavior(.continuousLeadingEdge)

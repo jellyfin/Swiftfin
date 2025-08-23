@@ -43,14 +43,11 @@ extension ItemView {
                     id: \.unwrappedIDHashOrZero,
                     columns: 3.5
                 ) { episode in
-                    if let episodeID = episode.id {
-                        SeriesEpisodeSelector.EpisodeCard(id: episodeID, viewModel: element.value)
-                            .padding(.horizontal, 4)
-                    }
+                    SeriesEpisodeSelector.EpisodeCard(episode: episode)
                 }
                 .scrollBehavior(.continuousLeadingEdge)
                 .insets(horizontal: EdgeInsets.edgePadding)
-                .itemSpacing(EdgeInsets.edgePadding / 2)
+                .itemSpacing(EdgeInsets.edgePadding)
             }
             .focusSection()
         }

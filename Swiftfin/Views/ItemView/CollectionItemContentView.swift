@@ -39,9 +39,7 @@ extension ItemView {
                     id: \.unwrappedIDHashOrZero,
                     columns: UIDevice.isPhone ? 1.5 : 3.5
                 ) { episode in
-                    if let episodeID = episode.id {
-                        SeriesEpisodeSelector.EpisodeCard(id: episodeID, viewModel: element.value)
-                    }
+                    SeriesEpisodeSelector.EpisodeCard(episode: episode)
                 }
                 .scrollBehavior(.continuousLeadingEdge)
                 .insets(horizontal: EdgeInsets.edgePadding)

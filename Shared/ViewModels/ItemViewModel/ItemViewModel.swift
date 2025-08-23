@@ -95,7 +95,14 @@ class ItemViewModel: ViewModel, Stateful {
             .publisher
             .receive(on: RunLoop.main)
             .sink { [weak self] itemId, userData in
-                guard let self = self, self.item.id == itemId else { return }
+                guard let self = self,
+                      /// item check
+                      (itemId == item.id && userData != item.userData) ||
+                      /// playButtonItem check
+                      (itemId == playButtonItem?.id && userData != playButtonItem?.userData) ||
+                      /// Previous playButtonItem check
+                      (playButtonItem?.type == .episode && itemId == playButtonItem?.seriesID && userData != playButtonItem?.userData)
+                else { return }
 
                 Task { @MainActor in
                     self.item.userData = userData
