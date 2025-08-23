@@ -53,38 +53,4 @@ extension BaseItemPerson: Poster {
             blurHash: blurHash
         )]
     }
-
-    @MainActor
-    mutating func refresh() async throws {
-        guard let name = self.name, let userSession = Container.shared.currentUserSession() else { return }
-
-        let request = Paths.getPerson(name: name, userID: userSession.user.id)
-        let response = try await userSession.client.send(request)
-        let person = response.value
-
-        let imageBlurHashes: BaseItemPerson.ImageBlurHashes = .init(
-            art: person.imageBlurHashes?.art,
-            backdrop: person.imageBlurHashes?.backdrop,
-            banner: person.imageBlurHashes?.banner,
-            box: person.imageBlurHashes?.box,
-            boxRear: person.imageBlurHashes?.boxRear,
-            chapter: person.imageBlurHashes?.chapter,
-            disc: person.imageBlurHashes?.disc,
-            logo: person.imageBlurHashes?.logo,
-            menu: person.imageBlurHashes?.menu,
-            primary: person.imageBlurHashes?.primary,
-            profile: person.imageBlurHashes?.profile,
-            screenshot: person.imageBlurHashes?.screenshot,
-            thumb: person.imageBlurHashes?.thumb,
-        )
-
-        self = .init(
-            id: person.id,
-            imageBlurHashes: imageBlurHashes,
-            name: person.name,
-            primaryImageTag: person.imageTags?.first { $0.key == "primary" }?.value,
-            role: role,
-            type: type
-        )
-    }
 }

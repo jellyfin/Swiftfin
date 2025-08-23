@@ -155,24 +155,25 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
                     Task { @MainActor in
                         self.elements[id: newElement.unwrappedIDHashOrZero] = newElement
                     }
-                } else if newItem.type == .series {
-                    Task { @MainActor in
-                        for id in self.elements.ids {
-                            try await self.elements[id: id]?.refresh()
-                        }
-                    }
                 }
             }
             .store(in: &cancellables)
 
-        Notifications[.doesItemRequireRefresh]
+        Notifications[.didItemUserDataChange]
             .publisher
             .receive(on: RunLoop.main)
-            .sink { [weak self] itemId in
-                guard let self = self else { return }
+            .sink { [weak self] itemId, userData in
+                guard let self = self, let elementIndex = self.elements.index(id: itemId.hashValue) else { return }
 
-                Task { @MainActor in
-                    try await self.elements[id: itemId.hashValue]?.refresh()
+                if var origItem = self.elements[elementIndex] as? BaseItemDto {
+
+                    origItem.userData = userData
+
+                    if let newElement = origItem as? Element {
+                        Task { @MainActor in
+                            self.elements[elementIndex] = newElement
+                        }
+                    }
                 }
             }
             .store(in: &cancellables)
@@ -241,24 +242,25 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
                     Task { @MainActor in
                         self.elements[id: newElement.unwrappedIDHashOrZero] = newElement
                     }
-                } else if newItem.type == .series {
-                    Task { @MainActor in
-                        for id in self.elements.ids {
-                            try await self.elements[id: id]?.refresh()
-                        }
-                    }
                 }
             }
             .store(in: &cancellables)
 
-        Notifications[.doesItemRequireRefresh]
+        Notifications[.didItemUserDataChange]
             .publisher
             .receive(on: RunLoop.main)
-            .sink { [weak self] itemId in
-                guard let self = self else { return }
+            .sink { [weak self] itemId, userData in
+                guard let self = self, let elementIndex = self.elements.index(id: itemId.hashValue) else { return }
 
-                Task { @MainActor in
-                    try await self.elements[id: itemId.hashValue]?.refresh()
+                if var origItem = self.elements[elementIndex] as? BaseItemDto {
+
+                    origItem.userData = userData
+
+                    if let newElement = origItem as? Element {
+                        Task { @MainActor in
+                            self.elements[elementIndex] = newElement
+                        }
+                    }
                 }
             }
             .store(in: &cancellables)

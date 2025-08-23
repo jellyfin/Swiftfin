@@ -95,11 +95,11 @@ struct HomeView: View {
         .sinceLastDisappear { interval in
             if interval > 60 ||
                 viewModel.notificationsReceived.contains(.didItemMetadataChange) ||
-                viewModel.notificationsReceived.contains(.doesItemRequireRefresh)
+                viewModel.notificationsReceived.contains(.didItemUserDataChange)
             {
                 viewModel.send(.backgroundRefresh)
                 viewModel.notificationsReceived.remove(.didItemMetadataChange)
-                viewModel.notificationsReceived.remove(.doesItemRequireRefresh)
+                viewModel.notificationsReceived.remove(.didItemUserDataChange)
             }
         }
     }

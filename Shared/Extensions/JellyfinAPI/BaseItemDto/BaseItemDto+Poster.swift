@@ -7,7 +7,6 @@
 //
 
 import Defaults
-import Factory
 import Foundation
 import JellyfinAPI
 import UIKit
@@ -104,15 +103,5 @@ extension BaseItemDto: Poster {
         default:
             []
         }
-    }
-
-    @MainActor
-    mutating func refresh() async throws {
-        guard let itemID = self.id, let userSession = Container.shared.currentUserSession() else { return }
-
-        let request = Paths.getItem(itemID: itemID, userID: userSession.user.id)
-        let response = try await userSession.client.send(request)
-
-        self = response.value
     }
 }

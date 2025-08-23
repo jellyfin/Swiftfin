@@ -91,12 +91,14 @@ class ItemViewModel: ViewModel, Stateful {
         self.item = item
         super.init()
 
-        Notifications[.doesItemRequireRefresh]
+        Notifications[.didItemUserDataChange]
             .publisher
-            .sink { [weak self] itemID in
-                guard let self = self, (itemID == item.id || itemID == playButtonItem?.id) else { return }
+            .receive(on: RunLoop.main)
+            .sink { [weak self] itemId, userData in
+                guard let self = self, self.item.id == itemId else { return }
 
                 Task { @MainActor in
+                    self.item.userData = userData
                     self.send(.backgroundRefresh)
                 }
             }
@@ -126,11 +128,7 @@ class ItemViewModel: ViewModel, Stateful {
                 /// Replace if the item was updated
                 /// Refresh if the playButtonItem was updated or we might need to revert to the previous playButtonItem
                 Task { @MainActor in
-                    if newItem.id == item.id {
-                        await MainActor.run {
-                            self.item = newItem
-                        }
-                    }
+                    self.item = newItem
                     self.send(.backgroundRefresh)
                 }
             }
@@ -368,7 +366,9 @@ class ItemViewModel: ViewModel, Stateful {
         _ = try await userSession.client.send(request)
 
         await MainActor.run {
-            Notifications[.didItemMetadataChange].post(item)
+            if let userData = item.userData {
+                Notifications[.didItemUserDataChange].post((itemID, userData))
+            }
         }
     }
 
@@ -393,7 +393,9 @@ class ItemViewModel: ViewModel, Stateful {
         _ = try await userSession.client.send(request)
 
         await MainActor.run {
-            Notifications[.didItemMetadataChange].post(item)
+            if let userData = item.userData {
+                Notifications[.didItemUserDataChange].post((itemID, userData))
+            }
         }
     }
 }

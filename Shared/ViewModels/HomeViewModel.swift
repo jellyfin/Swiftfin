@@ -63,7 +63,7 @@ final class HomeViewModel: ViewModel, Stateful {
     override init() {
         super.init()
 
-        Notifications[.doesItemRequireRefresh]
+        Notifications[.didItemUserDataChange]
             .publisher
             .sink { _ in
                 // Necessary because when this notification is posted, even with asyncAfter,
@@ -71,7 +71,7 @@ final class HomeViewModel: ViewModel, Stateful {
                 // TODO: Look for better solution
                 // TODO: Only update changed items
                 DispatchQueue.main.async {
-                    self.notificationsReceived.insert(.doesItemRequireRefresh)
+                    self.notificationsReceived.insert(.didItemUserDataChange)
                 }
             }
             .store(in: &cancellables)
