@@ -105,7 +105,7 @@ extension ItemView {
 
                     VStack(alignment: .leading) {
                         Text(title)
-                            .if(!multipleVersions) { text in
+                            .if(multipleVersions) { text in
                                 text
                                     .font(.caption)
                             }
