@@ -238,24 +238,12 @@ class VideoPlayerManager: ViewModel {
 
             // TODO: Revise as part of the PlayerManager Rework
             if let itemID = currentViewModel.item.id {
-
-                /// Pull the UserData from server to avoid situations where our new playback position is being treated as `Played`
-                let userDataRequest = Paths.getItemUserData(itemID: itemID, userID: userSession.user.id)
-                let userDataResponse = try await userSession.client.send(userDataRequest)
-                let userData = userDataResponse.value
-
-                Notifications[.didItemUserDataChange].post((itemID, userData))
+                Notifications[.doesItemRequireRefresh].post((itemID, .userData))
             }
 
             // TODO: Revise as part of the PlayerManager Rework
             if let seriesID = currentViewModel.item.seriesID {
-
-                /// Pull the UserData from server to avoid situations where our new playback position is being treated as `Played`
-                let userDataRequest = Paths.getItemUserData(itemID: seriesID, userID: userSession.user.id)
-                let userDataResponse = try await userSession.client.send(userDataRequest)
-                let userData = userDataResponse.value
-
-                Notifications[.didItemUserDataChange].post((seriesID, userData))
+                Notifications[.doesItemRequireRefresh].post((seriesID, .userData))
             }
         }
     }
