@@ -50,6 +50,10 @@ struct SwiftfinApp: App {
         ImageCache.shared.costLimit = 1024 * 1024 * 200 // 200 MB
         ImageCache.shared.ttl = 300 // 5 min
 
+        // Notification Handlers
+
+        _ = Container.shared.notificationHandlers()
+
         ImageDecoderRegistry.shared.register { context in
             guard let mimeType = context.urlResponse?.mimeType else { return nil }
             return mimeType.contains("svg") ? ImageDecoders.Empty() : nil

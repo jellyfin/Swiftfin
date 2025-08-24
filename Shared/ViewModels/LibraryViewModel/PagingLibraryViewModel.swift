@@ -137,46 +137,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
         super.init()
 
-        Notifications[.didItemDeletionOccur]
-            .publisher
-            .receive(on: RunLoop.main)
-            .sink { id in
-                self.elements.remove(id: id.hashValue)
-            }
-            .store(in: &cancellables)
-
-        Notifications[.didItemMetadataChange]
-            .publisher
-            .receive(on: RunLoop.main)
-            .sink { [weak self] newItem in
-                guard let self = self, let newElement = newItem as? Element else { return }
-
-                if elements.ids.contains(newElement.unwrappedIDHashOrZero) && elements[id: newElement.unwrappedIDHashOrZero] != newElement {
-                    Task { @MainActor in
-                        self.elements[id: newElement.unwrappedIDHashOrZero] = newElement
-                    }
-                }
-            }
-            .store(in: &cancellables)
-
-        Notifications[.didItemUserDataChange]
-            .publisher
-            .receive(on: RunLoop.main)
-            .sink { [weak self] itemId, userData in
-                guard let self = self, let elementIndex = self.elements.index(id: itemId.hashValue) else { return }
-
-                if var origItem = self.elements[elementIndex] as? BaseItemDto {
-
-                    origItem.userData = userData
-
-                    if let newElement = origItem as? Element {
-                        Task { @MainActor in
-                            self.elements[elementIndex] = newElement
-                        }
-                    }
-                }
-            }
-            .store(in: &cancellables)
+        registerNotifications()
     }
 
     convenience init(
@@ -225,6 +186,41 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
         super.init()
 
+        registerNotifications()
+
+        if let filterViewModel {
+            filterViewModel.$currentFilters
+                .dropFirst()
+                .debounce(for: 1, scheduler: RunLoop.main)
+                .removeDuplicates()
+                .sink { [weak self] _ in
+                    guard let self else { return }
+
+                    Task { @MainActor in
+                        self.send(.refresh)
+                    }
+                }
+                .store(in: &cancellables)
+        }
+    }
+
+    convenience init(
+        title: String,
+        id: String?,
+        filters: ItemFilterCollection? = nil,
+        pageSize: Int = DefaultPageSize
+    ) {
+        self.init(
+            parent: TitledLibraryParent(
+                displayTitle: title,
+                id: id
+            ),
+            filters: filters,
+            pageSize: pageSize
+        )
+    }
+
+    private func registerNotifications() {
         Notifications[.didItemDeletionOccur]
             .publisher
             .sink { id in
@@ -264,37 +260,6 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
                 }
             }
             .store(in: &cancellables)
-
-        if let filterViewModel {
-            filterViewModel.$currentFilters
-                .dropFirst()
-                .debounce(for: 1, scheduler: RunLoop.main)
-                .removeDuplicates()
-                .sink { [weak self] _ in
-                    guard let self else { return }
-
-                    Task { @MainActor in
-                        self.send(.refresh)
-                    }
-                }
-                .store(in: &cancellables)
-        }
-    }
-
-    convenience init(
-        title: String,
-        id: String?,
-        filters: ItemFilterCollection? = nil,
-        pageSize: Int = DefaultPageSize
-    ) {
-        self.init(
-            parent: TitledLibraryParent(
-                displayTitle: title,
-                id: id
-            ),
-            filters: filters,
-            pageSize: pageSize
-        )
     }
 
     // MARK: respond

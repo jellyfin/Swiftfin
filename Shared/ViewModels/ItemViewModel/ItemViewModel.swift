@@ -99,9 +99,7 @@ class ItemViewModel: ViewModel, Stateful {
                       /// item check
                       (itemId == item.id && userData != item.userData) ||
                       /// playButtonItem check
-                      (itemId == playButtonItem?.id && userData != playButtonItem?.userData) ||
-                      /// Previous playButtonItem check
-                      (playButtonItem?.type == .episode && itemId == playButtonItem?.seriesID && userData != playButtonItem?.userData)
+                      (itemId == playButtonItem?.id && userData != playButtonItem?.userData)
                 else { return }
 
                 Task { @MainActor in
@@ -120,15 +118,13 @@ class ItemViewModel: ViewModel, Stateful {
                       /// playButtonItem check
                       (newItem.id == playButtonItem?.id && newItem != playButtonItem) ||
                       /// Previous playButtonItem check
-                      (
-                          playButtonItem?.type == .episode &&
-                              newItem.type == .episode &&
-                              newItem.seriesID == playButtonItem?.seriesID &&
-                              (
-                                  newItem.seasonID == playButtonItem?.seasonID &&
-                                      newItem.indexNumber == ((playButtonItem?.indexNumber ?? 0) - 1) ||
-                                      newItem.indexNumberEnd == ((playButtonItem?.indexNumber ?? 0) - 1)
-                              )
+                      (playButtonItem?.type == .episode &&
+                          newItem.type == .episode &&
+                          newItem.seriesID == playButtonItem?.seriesID &&
+                          (newItem.seasonID == playButtonItem?.seasonID &&
+                              newItem.indexNumber == ((playButtonItem?.indexNumber ?? 0) - 1) ||
+                              newItem.indexNumberEnd == ((playButtonItem?.indexNumber ?? 0) - 1)
+                          )
                       )
                 else { return }
 
