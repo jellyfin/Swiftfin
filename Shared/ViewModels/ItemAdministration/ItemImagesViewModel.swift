@@ -397,7 +397,7 @@ final class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         await MainActor.run {
             self.item = response.value
             _ = backgroundStates.remove(.updating)
-            Notifications[.itemMetadataDidChange].post(item)
+            Notifications[.didItemMetadataChange].post(item)
         }
     }
 }

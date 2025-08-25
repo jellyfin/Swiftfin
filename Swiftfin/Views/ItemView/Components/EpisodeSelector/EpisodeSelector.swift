@@ -63,8 +63,6 @@ struct SeriesEpisodeSelector: View {
             Group {
                 if let selectionViewModel {
                     EpisodeHStack(viewModel: selectionViewModel, playButtonItem: viewModel.playButtonItem)
-                } else {
-                    LoadingHStack()
                 }
             }
             .transition(.opacity.animation(.linear(duration: 0.1)))

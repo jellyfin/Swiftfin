@@ -63,14 +63,28 @@ final class HomeViewModel: ViewModel, Stateful {
     override init() {
         super.init()
 
-        Notifications[.itemMetadataDidChange]
+        Notifications[.didItemUserDataChange]
             .publisher
             .sink { _ in
                 // Necessary because when this notification is posted, even with asyncAfter,
                 // the view will cause layout issues since it will redraw while in landscape.
-                // TODO: look for better solution
+                // TODO: Look for better solution
+                // TODO: Only update changed items
                 DispatchQueue.main.async {
-                    self.notificationsReceived.insert(.itemMetadataDidChange)
+                    self.notificationsReceived.insert(.didItemUserDataChange)
+                }
+            }
+            .store(in: &cancellables)
+
+        Notifications[.didItemMetadataChange]
+            .publisher
+            .sink { _ in
+                // Necessary because when this notification is posted, even with asyncAfter,
+                // the view will cause layout issues since it will redraw while in landscape.
+                // TODO: Look for better solution
+                // TODO: Only update changed items
+                DispatchQueue.main.async {
+                    self.notificationsReceived.insert(.didItemMetadataChange)
                 }
             }
             .store(in: &cancellables)
