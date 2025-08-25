@@ -23,7 +23,7 @@ struct MediaChaptersSupplement: MediaPlayerSupplement {
     let displayTitle: String = L10n.chapters
     let id: String = "Chapters"
 
-    func videoPlayerBody() -> some PlatformView {
+    var videoPlayerBody: some PlatformView {
         ChapterOverlay(chapters: chapters)
     }
 }

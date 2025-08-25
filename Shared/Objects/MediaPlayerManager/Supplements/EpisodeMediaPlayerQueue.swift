@@ -46,8 +46,7 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
         //        manager.$playbackRequestStatus.sink(receiveValue: playbackStatusDidChange).store(in: &cancellables)
     }
 
-    @ViewBuilder
-    func videoPlayerBody() -> some PlatformView {
+    var videoPlayerBody: some PlatformView {
         EpisodeOverlay(viewModel: seriesViewModel)
     }
 }

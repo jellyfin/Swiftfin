@@ -35,6 +35,9 @@ extension EnvironmentValues {
     var isSelected: Bool = false
 
     @Entry
+    var panGestureAction: PanGestureAction = .init(action: { _, _, _, _ in })
+
+    @Entry
     var playbackSpeed: Binding<Double> = .constant(1)
 
     @Entry
@@ -45,4 +48,25 @@ extension EnvironmentValues {
 
     @Entry
     var subtitleOffset: Binding<Duration> = .constant(.zero)
+
+    @Entry
+    var tapGestureAction: TapGestureAction = .init(action: { _, _ in })
+}
+
+struct PanGestureAction {
+
+    let action: (_ point: CGPoint, _ velocity: CGFloat, _ location: CGPoint, _ state: UIGestureRecognizer.State) -> Void
+
+    func callAsFunction(_ point: CGPoint, _ velocity: CGFloat, _ location: CGPoint, _ state: UIGestureRecognizer.State) {
+        action(point, velocity, location, state)
+    }
+}
+
+struct TapGestureAction {
+
+    let action: (_ point: UnitPoint, _ count: Int) -> Void
+
+    func callAsFunction(_ point: UnitPoint, _ count: Int) {
+        action(point, count)
+    }
 }

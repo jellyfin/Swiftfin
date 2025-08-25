@@ -16,7 +16,7 @@ struct VLCPlaybackInformationSupplement: MediaPlayerSupplement {
     let displayTitle: String = "Playback Info"
     let id: String = "VLCPlaybackInformation"
 
-    func videoPlayerBody() -> some PlatformView {
+    var videoPlayerBody: some PlatformView {
         PlaybackInformationView()
     }
 

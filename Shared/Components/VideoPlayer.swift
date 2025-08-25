@@ -53,26 +53,30 @@ struct VideoPlayer: View {
     }
 
     @ViewBuilder
-    private var playerView: some View {
-        ZStack {
-
-            Color.black
-
+    private var containerView: some View {
+        VideoPlayerContainerView {
             proxy.makeVideoPlayerBody()
                 .eraseToAnyView()
-
-            Overlay()
+                .environment(\.audioOffset, $audioOffset)
+                .environment(\.isAspectFilled, $isAspectFilled)
+                .environment(\.isGestureLocked, $isGestureLocked)
+                .environment(\.isScrubbing, $isScrubbing)
+                .environmentObject(manager)
+                .environmentObject(_scrubbedSeconds.box)
+        } playbackControls: {
+            PlaybackControls()
+                .environment(\.audioOffset, $audioOffset)
+                .environment(\.isAspectFilled, $isAspectFilled)
+                .environment(\.isGestureLocked, $isGestureLocked)
+                .environment(\.isScrubbing, $isScrubbing)
+                .environmentObject(manager)
+                .environmentObject(_scrubbedSeconds.box)
         }
-        .environment(\.audioOffset, $audioOffset)
-        .environment(\.isAspectFilled, $isAspectFilled)
-        .environment(\.isGestureLocked, $isGestureLocked)
-        .environment(\.isScrubbing, $isScrubbing)
         .environmentObject(manager)
-        .environmentObject(_scrubbedSeconds.box)
     }
 
     var body: some View {
-        playerView
+        containerView
             .backport
             .onChange(of: audioOffset) { _, newValue in
                 if let proxy = proxy as? MediaPlayerOffsetConfigurable {

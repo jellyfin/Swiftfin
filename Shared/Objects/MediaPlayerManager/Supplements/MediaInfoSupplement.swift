@@ -17,7 +17,7 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
     let id: String = "MediaInfoSupplement"
     let item: BaseItemDto
 
-    func videoPlayerBody() -> some PlatformView {
+    var videoPlayerBody: some PlatformView {
         _View(item: item)
     }
 }
@@ -165,7 +165,7 @@ struct MediaInfoSupplement_Previews: PreviewProvider {
             runTimeTicks: 10_000_000_000,
             type: .episode
         ))
-        .videoPlayerBody()
+        .videoPlayerBody
         .eraseToAnyView()
         .environment(\.horizontalSizeClass, .regular)
         .previewInterfaceOrientation(.landscapeLeft)
