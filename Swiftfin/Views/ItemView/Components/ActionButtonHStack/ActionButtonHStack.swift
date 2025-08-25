@@ -17,7 +17,8 @@ extension ItemView {
 
         @Default(.accentColor)
         private var accentColor
-
+        @Router
+        private var router
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers: TrailerSelection
 
@@ -110,6 +111,27 @@ extension ItemView {
                     .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in
                         view.aspectRatio(1, contentMode: .fit)
+                    }
+                }
+
+                // MARK: Download Task Button
+
+                if viewModel.item.type == .episode || viewModel.item.type == .movie {
+
+                    DownloadActionButtonWithProgress(
+                        item: viewModel.item,
+                        shouldAutoStart: viewModel.item.mediaSources?.count ?? 0 <= 1, // Only auto-start for single source
+                        onStartTap: {
+                            if let sources = viewModel.item.mediaSources, sources.count > 1 {
+                                router.route(to: .itemDownloadSelection(item: viewModel.item))
+                            } else {
+                                // Single source - the ViewModel will handle the download start automatically
+                                // No additional action needed here as the button will call viewModel.start()
+                            }
+                        }
+                    )
+                    .if(equalSpacing) { view in
+                        view.frame(maxWidth: .infinity)
                     }
                 }
             }

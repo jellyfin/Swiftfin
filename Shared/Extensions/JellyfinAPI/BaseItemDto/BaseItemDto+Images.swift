@@ -90,6 +90,26 @@ extension BaseItemDto {
         )
     }
 
+    // MARK: Season Images
+
+    /// - Note: Will force the creation of an image source even if it doesn't have a tag, due
+    /// to episodes also retrieving season images in some areas. This may cause more 404s.
+    func seasonImageURL(
+        _ type: ImageType,
+        maxWidth: CGFloat? = nil,
+        maxHeight: CGFloat? = nil,
+        quality: Int? = nil
+    ) -> URL? {
+        _imageURL(
+            type,
+            maxWidth: maxWidth,
+            maxHeight: maxHeight,
+            quality: quality,
+            itemID: seasonID ?? "",
+            requireTag: false
+        )
+    }
+
     /// - Note: Will force the creation of an image source even if it doesn't have a tag, due
     /// to episodes also retrieving series images in some areas. This may cause more 404s.
     func seriesImageSource(
