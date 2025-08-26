@@ -10,6 +10,8 @@ import Combine
 import Engine
 import SwiftUI
 
+// MARK: - VideoPlayerContainerView
+
 struct VideoPlayerContainerView<Player: View, PlaybackControls: View>: UIViewControllerRepresentable {
 
     private let containerState: VideoPlayerContainerState

@@ -88,6 +88,14 @@ extension VideoPlayer {
                     Spacer()
                         .allowsHitTesting(false)
 
+                    // TODO: finalize design/placement
+                    if manager.proxy?.isBuffering.value == true {
+                        ProgressView()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .frame(height: 30)
+                            .padding(.leading, safeAreaInsets.leading)
+                    }
+
                     PlaybackProgress()
                         .isVisible(isPresentingOverlay && !isPresentingSupplement)
                         .frame(maxWidth: .infinity, alignment: .leading)

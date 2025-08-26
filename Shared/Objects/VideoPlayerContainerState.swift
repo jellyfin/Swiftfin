@@ -10,9 +10,6 @@ import Combine
 import Foundation
 import SwiftUI
 
-// TODO: aspect fill state
-// TODO: scrubbed seconds
-
 class VideoPlayerContainerState: ObservableObject {
 
     @Published

@@ -122,6 +122,7 @@ struct VideoPlayer: View {
                 audioOffset = .zero
                 subtitleOffset = .zero
 
+                // TODO: move to container view
                 containerState.scrubbedSeconds.value = newItem?.baseItem.startSeconds ?? .zero
             }
             .onReceive(manager.$state) { newState in

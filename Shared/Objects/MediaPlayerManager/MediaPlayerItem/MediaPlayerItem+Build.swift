@@ -17,18 +17,20 @@ import UIKit
 extension MediaPlayerItem {
 
     /// The main `MediaPlayerItem` builder for normal online usage.
-    static func build(for item: BaseItemDto, mediaSource: MediaSourceInfo) async throws -> MediaPlayerItem {
+    static func build(
+        for item: BaseItemDto,
+        mediaSource: MediaSourceInfo,
+        videoPlayerType: VideoPlayerType = Defaults[.VideoPlayer.videoPlayerType],
+        requestedBitrate: PlaybackBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate],
+        compatibilityMode: PlaybackCompatibility = Defaults[.VideoPlayer.Playback.compatibilityMode]
+    ) async throws -> MediaPlayerItem {
 
         let logger = Logger.swiftfin()
 
-        let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
-        let currentVideoBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
-        let compatibilityMode = Defaults[.VideoPlayer.Playback.compatibilityMode]
-
-        let maxBitrate = try await currentVideoBitrate.getMaxBitrate()
+        let maxBitrate = try await requestedBitrate.getMaxBitrate()
 
         let profile = DeviceProfile.build(
-            for: currentVideoPlayerType,
+            for: videoPlayerType,
             compatibilityMode: compatibilityMode,
             maxBitrate: maxBitrate
         )
@@ -117,6 +119,7 @@ extension MediaPlayerItem {
             mediaSource: matchingMediaSource,
             playSessionID: playSessionID,
             url: playbackURL,
+            requestedBitrate: requestedBitrate,
             thumbnailProvider: getNowPlayingImage
         )
     }

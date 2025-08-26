@@ -48,6 +48,8 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
     let subtitleStreams: [MediaStream]
     let videoStreams: [MediaStream]
 
+    let requestedBitrate: PlaybackBitrate
+
     // MARK: init
 
     init(
@@ -55,11 +57,13 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         mediaSource: MediaSourceInfo,
         playSessionID: String,
         url: URL,
+        requestedBitrate: PlaybackBitrate = .max,
         thumbnailProvider: ThumnailProvider? = nil
     ) {
         self.baseItem = baseItem
         self.mediaSource = mediaSource
         self.playSessionID = playSessionID
+        self.requestedBitrate = requestedBitrate
         self.thumbnailProvider = thumbnailProvider
         self.url = url
 

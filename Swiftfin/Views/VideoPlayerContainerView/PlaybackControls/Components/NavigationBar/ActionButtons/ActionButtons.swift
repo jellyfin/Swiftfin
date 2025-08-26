@@ -40,6 +40,10 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                 if !manager.item.isLiveStream {
                     PlaybackRateMenu()
                 }
+            case .playbackQuality:
+                if !manager.item.isLiveStream {
+                    PlaybackQuality()
+                }
             case .playNextItem:
                 if manager.queue != nil {
                     PlayNextItem()

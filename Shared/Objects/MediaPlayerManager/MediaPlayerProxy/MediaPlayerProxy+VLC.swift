@@ -92,16 +92,10 @@ extension VLCMediaPlayerProxy {
 
     struct _VideoPlayerBody: View {
 
-//        @Environment(\.isScrubbing)
-//        @Binding
-//        private var isScrubbing: Bool
-
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
         private var manager: MediaPlayerManager
-//        @EnvironmentObject
-//        private var scrubbedSecondsBox: PublishedBox<Duration>
         @EnvironmentObject
         private var vlcUIProxy: VLCVideoPlayer.Proxy
 
@@ -155,13 +149,14 @@ extension VLCMediaPlayerProxy {
                             // TODO: figure out when to properly set to false
                             manager.proxy?.isBuffering.value = true
                         case .ended, .stopped:
-//                            isScrubbing = false
+                            manager.proxy?.isBuffering.value = false
                             manager.send(.ended)
                         case .error:
+                            manager.proxy?.isBuffering.value = false
                             // TODO: localize
-//                            isScrubbing = false
                             manager.send(.error(.init("Unable to perform playback")))
                         case .playing:
+                            manager.proxy?.isBuffering.value = false
                             manager.set(playbackRequestStatus: .playing)
                         case .paused:
                             manager.set(playbackRequestStatus: .paused)

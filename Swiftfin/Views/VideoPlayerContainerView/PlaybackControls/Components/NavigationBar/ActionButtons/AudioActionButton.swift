@@ -8,9 +8,6 @@
 
 import SwiftUI
 
-// TODO: figure out better way of value observation rather
-//       than onAppear and onChange
-
 extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
     struct Audio: View {
@@ -62,12 +59,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
                     }
                 }
                 .videoPlayerActionButtonTransition()
-                .onAppear {
-                    selectedAudioStreamIndex = playbackItem.selectedAudioStreamIndex
-                }
-                .onChange(of: playbackItem.selectedAudioStreamIndex) {
-                    selectedAudioStreamIndex = $0
-                }
+                .assign(playbackItem.$selectedSubtitleStreamIndex, to: $selectedAudioStreamIndex)
             }
         }
     }

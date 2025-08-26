@@ -62,12 +62,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
                     }
                 }
                 .videoPlayerActionButtonTransition()
-                .onAppear {
-                    selectedSubtitleStreamIndex = playbackItem.selectedSubtitleStreamIndex
-                }
-                .onChange(of: playbackItem.selectedSubtitleStreamIndex) {
-                    selectedSubtitleStreamIndex = $0
-                }
+                .assign(playbackItem.$selectedSubtitleStreamIndex, to: $selectedSubtitleStreamIndex)
             }
         }
     }

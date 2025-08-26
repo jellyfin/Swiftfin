@@ -8,54 +8,57 @@
 
 import SwiftUI
 
-struct SupplementContainerView: View {
+extension UIVideoPlayerContainerViewController {
 
-    @Environment(\.safeAreaInsets)
-    private var safeAreaInsets
+    struct SupplementContainerView: View {
 
-    @EnvironmentObject
-    private var containerState: VideoPlayerContainerState
-    @EnvironmentObject
-    private var manager: MediaPlayerManager
+        @Environment(\.safeAreaInsets)
+        private var safeAreaInsets
 
-    var body: some View {
-        ZStack {
-            GestureView()
+        @EnvironmentObject
+        private var containerState: VideoPlayerContainerState
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
 
-            VStack(spacing: EdgeInsets.edgePadding) {
-                HStack(spacing: 10) {
-                    ForEach(manager.supplements.map(\.asAny)) { supplement in
-                        let isSelected = containerState.selectedSupplement?.id == supplement.id
+        var body: some View {
+            ZStack {
+                GestureView()
 
-                        Button(supplement.displayTitle) {
-                            if isSelected {
-                                containerState.selectedSupplement = nil
-                            } else {
-                                containerState.selectedSupplement = supplement
+                VStack(spacing: EdgeInsets.edgePadding) {
+                    HStack(spacing: 10) {
+                        ForEach(manager.supplements.map(\.asAny)) { supplement in
+                            let isSelected = containerState.selectedSupplement?.id == supplement.id
+
+                            Button(supplement.displayTitle) {
+                                if isSelected {
+                                    containerState.selectedSupplement = nil
+                                } else {
+                                    containerState.selectedSupplement = supplement
+                                }
                             }
+                            .isSelected(isSelected)
                         }
-                        .isSelected(isSelected)
                     }
-                }
-                .buttonStyle(SupplementTitleButtonStyle())
-                .padding(.leading, safeAreaInsets.leading)
-                .padding(.trailing, safeAreaInsets.trailing)
-                .edgePadding(.horizontal)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                    .buttonStyle(SupplementTitleButtonStyle())
+                    .padding(.leading, safeAreaInsets.leading)
+                    .padding(.trailing, safeAreaInsets.trailing)
+                    .edgePadding(.horizontal)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
-                AlternateLayoutView(alignment: .topLeading) {
-                    Color.clear
-                } content: {
-                    if let selectedSupplement = containerState.selectedSupplement {
-                        selectedSupplement
-                            .videoPlayerBody
-                            .transition(.opacity.animation(.linear(duration: 0.4)))
-                            .padding(.bottom, EdgeInsets.edgePadding)
+                    AlternateLayoutView(alignment: .topLeading) {
+                        Color.clear
+                    } content: {
+                        if let selectedSupplement = containerState.selectedSupplement {
+                            selectedSupplement
+                                .videoPlayerBody
+                                .transition(.opacity.animation(.linear(duration: 0.4)))
+                                .padding(.bottom, EdgeInsets.edgePadding)
+                        }
                     }
                 }
+                .isVisible(containerState.isPresentingOverlay)
             }
-            .isVisible(containerState.isPresentingOverlay)
+            .animation(.linear(duration: 0.2), value: containerState.isPresentingOverlay)
         }
-        .animation(.linear(duration: 0.2), value: containerState.isPresentingOverlay)
     }
 }

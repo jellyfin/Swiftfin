@@ -12,14 +12,13 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Identifiable, S
     case audio
     case autoPlay
     case playbackSpeed
+    case playbackQuality
     case playNextItem
     case playPreviousItem
     case subtitles
 
     var displayTitle: String {
         switch self {
-//        case .advanced:
-//            return L10n.advanced
         case .aspectFill:
             return L10n.aspectFill
         case .audio:
@@ -28,6 +27,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Identifiable, S
             return L10n.autoPlay
         case .playbackSpeed:
             return L10n.playbackSpeed
+        case .playbackQuality:
+            return L10n.playbackQuality
         case .playNextItem:
             return L10n.playNextItem
         case .playPreviousItem:
@@ -47,6 +48,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Identifiable, S
         case .audio: "speaker.wave.2"
         case .autoPlay: "play.circle.fill"
         case .playbackSpeed: "speedometer"
+        case .playbackQuality: "tv.circle.fill"
         case .playNextItem: "chevron.right.circle"
         case .playPreviousItem: "chevron.left.circle"
         case .subtitles: "captions.bubble"

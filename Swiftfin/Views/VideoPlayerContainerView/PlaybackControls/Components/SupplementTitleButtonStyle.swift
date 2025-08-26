@@ -8,56 +8,55 @@
 
 import SwiftUI
 
-// extension VideoPlayer.PlaybackControls {
+extension UIVideoPlayerContainerViewController.SupplementContainerView {
 
-struct SupplementTitleButtonStyle: PrimitiveButtonStyle {
+    struct SupplementTitleButtonStyle: PrimitiveButtonStyle {
 
-    @Environment(\.isSelected)
-    private var isSelected
+        @Environment(\.isSelected)
+        private var isSelected
 
-    @State
-    private var isPressed = false
+        @State
+        private var isPressed = false
 
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .fontWeight(.semibold)
-            .foregroundStyle(isSelected ? .black : .white)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 3)
-            .background {
-                ZStack {
-                    EmptyHitTestView()
+        func makeBody(configuration: Configuration) -> some View {
+            configuration.label
+                .fontWeight(.semibold)
+                .foregroundStyle(isSelected ? .black : .white)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 3)
+                .background {
+                    ZStack {
+                        EmptyHitTestView()
 
-                    if isSelected {
-                        Rectangle()
-                            .foregroundStyle(.white)
+                        if isSelected {
+                            Rectangle()
+                                .foregroundStyle(.white)
+                        }
                     }
                 }
-            }
-            .overlay {
-                if !isSelected {
-                    RoundedRectangle(cornerRadius: 7)
-                        .stroke(Color.white, lineWidth: 4)
+                .overlay {
+                    if !isSelected {
+                        RoundedRectangle(cornerRadius: 7)
+                            .stroke(Color.white, lineWidth: 4)
+                    }
                 }
-            }
-            .mask {
-                RoundedRectangle(cornerRadius: 7)
-            }
-            .onTapGesture {
-                configuration.trigger()
-                UIDevice.impact(.light)
-            }
-            .onLongPressGesture(minimumDuration: 0.1) {} onPressingChanged: { isPressing in
-                isPressed = isPressing
-            }
-            .scaleEffect(
-                x: isPressed ? 0.9 : 1,
-                y: isPressed ? 0.9 : 1,
-                anchor: .init(x: 0.5, y: 0.5)
-            )
-            .animation(.bouncy(duration: 0.4), value: isPressed)
-            .opacity(isPressed ? 0.6 : 1)
+                .mask {
+                    RoundedRectangle(cornerRadius: 7)
+                }
+                .onTapGesture {
+                    configuration.trigger()
+                    UIDevice.impact(.light)
+                }
+                .onLongPressGesture(minimumDuration: 0.1) {} onPressingChanged: { isPressing in
+                    isPressed = isPressing
+                }
+                .scaleEffect(
+                    x: isPressed ? 0.9 : 1,
+                    y: isPressed ? 0.9 : 1,
+                    anchor: .init(x: 0.5, y: 0.5)
+                )
+                .animation(.bouncy(duration: 0.4), value: isPressed)
+                .opacity(isPressed ? 0.6 : 1)
+        }
     }
 }
-
-// }
