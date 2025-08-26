@@ -44,11 +44,10 @@ extension ItemView {
                     columns: 3.5
                 ) { episode in
                     SeriesEpisodeSelector.EpisodeCard(episode: episode)
-                        .padding(.horizontal, 4)
                 }
                 .scrollBehavior(.continuousLeadingEdge)
                 .insets(horizontal: EdgeInsets.edgePadding)
-                .itemSpacing(EdgeInsets.edgePadding / 2)
+                .itemSpacing(EdgeInsets.edgePadding)
             }
             .focusSection()
         }
