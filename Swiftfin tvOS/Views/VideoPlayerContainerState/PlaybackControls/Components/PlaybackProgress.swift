@@ -29,6 +29,8 @@ extension VideoPlayer.PlaybackControls {
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
+
+        // TODO: remove
         @EnvironmentObject
         private var scrubbedSecondsBox: PublishedBox<TimeInterval>
 

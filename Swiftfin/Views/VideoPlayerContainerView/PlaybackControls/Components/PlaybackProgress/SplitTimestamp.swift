@@ -16,20 +16,21 @@ extension VideoPlayer.PlaybackControls {
         @Default(.VideoPlayer.Overlay.trailingTimestampType)
         private var trailingTimestampType
 
-        @Environment(\.isScrubbing)
-        @Binding
-        private var isScrubbing: Bool
-
+        @EnvironmentObject
+        private var containerState: VideoPlayerContainerState
         @EnvironmentObject
         private var manager: MediaPlayerManager
-        @EnvironmentObject
-        private var scrubbedSecondsBox: PublishedBox<Duration>
 
         @State
         private var activeSeconds: Duration = .zero
 
+        private var isScrubbing: Bool {
+            containerState.isScrubbing
+        }
+
         private var scrubbedSeconds: Duration {
-            scrubbedSecondsBox.value
+            containerState.scrubbedSeconds.value
+//            scrubbedSecondsBox.value
         }
 
         @ViewBuilder
@@ -97,7 +98,7 @@ extension VideoPlayer.PlaybackControls {
                 .lineLimit(1)
             }
             .foregroundStyle(.primary, .secondary)
-            .assign(scrubbedSecondsBox.$value, to: $activeSeconds)
+//            .assign(scrubbedSecondsBox.$value, to: $activeSeconds)
         }
     }
 }

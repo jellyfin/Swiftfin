@@ -17,11 +17,6 @@ extension VideoPlayer {
 
     struct PlaybackControls: View {
 
-        // TODO: move to containerState
-        @Environment(\.isScrubbing)
-        @Binding
-        private var isScrubbing: Bool
-
         // since this view ignores safe area, it must
         // get safe area insets from parent views
         @Environment(\.safeAreaInsets)
@@ -43,12 +38,16 @@ extension VideoPlayer {
         @StateObject
         private var jumpProgressObserver: JumpProgressObserver = .init()
 
-        // TODO: move to containerstate
-        @StateObject
-        private var overlayTimer: PokeIntervalTimer = .init()
+        private var isPresentingOverlay: Bool {
+            containerState.isPresentingOverlay
+        }
 
         private var isPresentingSupplement: Bool {
             containerState.isPresentingSupplement
+        }
+
+        private var isScrubbing: Bool {
+            containerState.isScrubbing
         }
 
         // MARK: body
@@ -79,74 +78,38 @@ extension VideoPlayer {
 
                 VStack {
                     NavigationBar()
-                        .isVisible(!isScrubbing && containerState.isPresentingOverlay)
+                        .isVisible(!isScrubbing && isPresentingOverlay)
                         .padding(.top, safeAreaInsets.top)
                         .padding(.leading, safeAreaInsets.leading)
                         .padding(.trailing, safeAreaInsets.trailing)
-                        .offset(y: containerState.isPresentingOverlay ? 0 : -20)
+                        .offset(y: isPresentingOverlay ? 0 : -20)
                         .frame(height: 50)
 
                     Spacer()
                         .allowsHitTesting(false)
 
-                    ZStack {
-                        if !isPresentingSupplement {
-                            PlaybackProgress()
-                                .isVisible(isScrubbing || containerState.isPresentingOverlay)
-                                .transition(.move(edge: .top).combined(with: .opacity))
+                    PlaybackProgress()
+                        .isVisible(isPresentingOverlay && !isPresentingSupplement)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+//                        .offset(y: isPresentingOverlay ? 0 : 20)
+                        .trackingFrame($bottomContentFrame)
+                        .padding(.leading, safeAreaInsets.leading)
+                        .padding(.trailing, safeAreaInsets.trailing)
+                        .background {
+                            if isPresentingOverlay {
+                                EmptyHitTestView()
+                            }
                         }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .offset(y: containerState.isPresentingOverlay ? 0 : 20)
-                    .trackingFrame($bottomContentFrame)
-                    .padding(.leading, safeAreaInsets.leading)
-                    .padding(.trailing, safeAreaInsets.trailing)
-                    .background {
-                        if containerState.isPresentingOverlay {
-                            EmptyHitTestView()
-                        }
-                    }
-                    .padding(.bottom, safeAreaInsets.bottom)
                 }
 
-                if !isPresentingSupplement {
-                    PlaybackButtons()
-                        .isVisible(!isScrubbing && containerState.isPresentingOverlay)
-                        .transition(.opacity)
-                }
+                PlaybackButtons()
+                    .isVisible(!isScrubbing && containerState.isPresentingPlaybackControls)
             }
             .modifier(VideoPlayer.KeyCommandsModifier())
             .animation(.linear(duration: 0.1), value: isScrubbing)
-            .animation(.bouncy(duration: 0.4), value: isPresentingSupplement)
+            .animation(.bouncy(duration: 0.4), value: containerState.isPresentingSupplement)
             .animation(.bouncy(duration: 0.25), value: containerState.isPresentingOverlay)
-            .environment(\.isPresentingOverlay, $containerState.isPresentingOverlay)
             .environmentObject(jumpProgressObserver)
-            .environmentObject(overlayTimer)
-            .onChange(of: containerState.isPresentingOverlay) { newValue in
-                guard newValue, !isScrubbing else { return }
-                overlayTimer.poke()
-            }
-            .onChange(of: isScrubbing) { newValue in
-                if newValue {
-                    overlayTimer.stop()
-                } else {
-                    overlayTimer.poke()
-                }
-            }
-            .onReceive(overlayTimer.hasFired) { _ in
-                guard !isScrubbing else { return }
-
-                withAnimation(.linear(duration: 0.25)) {
-                    containerState.isPresentingOverlay = false
-                }
-            }
-//            .onChange(of: selectedSupplement) { newValue in
-//                if newValue == nil {
-//                    overlayTimer.poke()
-//                } else {
-//                    overlayTimer.stop()
-//                }
-//            }
         }
     }
 }

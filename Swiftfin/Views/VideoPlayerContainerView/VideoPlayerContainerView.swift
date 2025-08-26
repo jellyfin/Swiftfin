@@ -12,22 +12,26 @@ import SwiftUI
 
 struct VideoPlayerContainerView<Player: View, PlaybackControls: View>: UIViewControllerRepresentable {
 
-    @EnvironmentObject
-    private var manager: MediaPlayerManager
-
+    private let containerState: VideoPlayerContainerState
+    private let manager: MediaPlayerManager
     private let player: () -> Player
     private let playbackControls: () -> PlaybackControls
 
     init(
+        containerState: VideoPlayerContainerState,
+        manager: MediaPlayerManager,
         @ViewBuilder player: @escaping () -> Player,
         @ViewBuilder playbackControls: @escaping () -> PlaybackControls
     ) {
+        self.containerState = containerState
+        self.manager = manager
         self.player = player
         self.playbackControls = playbackControls
     }
 
     func makeUIViewController(context: Context) -> UIVideoPlayerContainerViewController {
         UIVideoPlayerContainerViewController(
+            containerState: containerState,
             manager: manager,
             player: player().eraseToAnyView(),
             playbackControls: playbackControls().eraseToAnyView()
@@ -157,11 +161,12 @@ class UIVideoPlayerContainerViewController: UIViewController {
     private var cancellables: Set<AnyCancellable> = []
 
     init(
+        containerState: VideoPlayerContainerState,
         manager: MediaPlayerManager,
         player: AnyView,
         playbackControls: AnyView
     ) {
-        self.containerState = VideoPlayerContainerState()
+        self.containerState = containerState
         self.manager = manager
         self.player = player
         self.playbackControls = playbackControls
@@ -220,7 +225,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
 
             if shouldHaveSupplementPresented, !containerState.isPresentingSupplement {
                 containerState.selectedSupplement = manager.supplements.first?.asAny
-            } else if !shouldHaveSupplementPresented {
+            } else if !shouldHaveSupplementPresented, containerState.selectedSupplement != nil {
                 containerState.selectedSupplement = nil
             }
         } else {
@@ -334,6 +339,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
         containerState.isPresentingPlaybackControls = isCompact
         containerState.supplementOffset = supplementBottomAnchor.constant
 
+        // TODO: finalize values
         if let panningState {
             let velocity = abs(panningState.velocity) / 1000
             let distance = abs(panningState.translation)

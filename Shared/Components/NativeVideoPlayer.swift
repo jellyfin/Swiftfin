@@ -16,9 +16,7 @@ import SwiftUI
 
 struct NativeVideoPlayer: View {
 
-    @Environment(\.isScrubbing)
-    private var isScrubbing: Binding<Bool>
-
+    // TODO: remove
     @EnvironmentObject
     private var scrubbedSecondsBox: PublishedBox<Duration>
 

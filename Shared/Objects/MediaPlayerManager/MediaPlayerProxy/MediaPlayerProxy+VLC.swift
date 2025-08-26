@@ -92,16 +92,22 @@ extension VLCMediaPlayerProxy {
 
     struct _VideoPlayerBody: View {
 
-        @Environment(\.isScrubbing)
-        @Binding
-        private var isScrubbing: Bool
+//        @Environment(\.isScrubbing)
+//        @Binding
+//        private var isScrubbing: Bool
 
         @EnvironmentObject
-        private var manager: MediaPlayerManager
+        private var containerState: VideoPlayerContainerState
         @EnvironmentObject
-        private var scrubbedSecondsBox: PublishedBox<Duration>
+        private var manager: MediaPlayerManager
+//        @EnvironmentObject
+//        private var scrubbedSecondsBox: PublishedBox<Duration>
         @EnvironmentObject
         private var vlcUIProxy: VLCVideoPlayer.Proxy
+
+        private var isScrubbing: Bool {
+            containerState.isScrubbing
+        }
 
         private func vlcConfiguration(for item: MediaPlayerItem) -> VLCVideoPlayer.Configuration {
             let baseItem = item.baseItem
@@ -138,7 +144,7 @@ extension VLCMediaPlayerProxy {
                     .proxy(vlcUIProxy)
                     .onSecondsUpdated { newSeconds, _ in
                         if !isScrubbing {
-                            scrubbedSecondsBox.value = newSeconds
+                            containerState.scrubbedSeconds.value = newSeconds
                         }
 
                         manager.seconds = newSeconds
@@ -149,11 +155,11 @@ extension VLCMediaPlayerProxy {
                             // TODO: figure out when to properly set to false
                             manager.proxy?.isBuffering.value = true
                         case .ended, .stopped:
-                            isScrubbing = false
+//                            isScrubbing = false
                             manager.send(.ended)
                         case .error:
                             // TODO: localize
-                            isScrubbing = false
+//                            isScrubbing = false
                             manager.send(.error(.init("Unable to perform playback")))
                         case .playing:
                             manager.set(playbackRequestStatus: .playing)

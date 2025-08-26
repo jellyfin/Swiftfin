@@ -21,15 +21,15 @@ extension VideoPlayer.PlaybackControls {
         private var showJumpButtons
 
         @EnvironmentObject
-        private var overlayTimer: PokeIntervalTimer
+        private var containerState: VideoPlayerContainerState
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
         private func onPressed(isPressed: Bool) {
             if isPressed {
-                overlayTimer.stop()
+                containerState.timer.stop()
             } else {
-                overlayTimer.poke()
+                containerState.timer.poke()
             }
         }
 

@@ -8,8 +8,10 @@
 
 import Combine
 import Foundation
+import SwiftUI
 
 // TODO: aspect fill state
+// TODO: scrubbed seconds
 
 class VideoPlayerContainerState: ObservableObject {
 
@@ -24,10 +26,26 @@ class VideoPlayerContainerState: ObservableObject {
     var isPresentingPlaybackControls: Bool = false
 
     @Published
-    private(set) var isPresentingSupplement: Bool = false
+    private(set) var isPresentingSupplement: Bool = false {
+        didSet {
+            if isPresentingSupplement {
+                timer.poke()
+            } else {
+                timer.stop()
+            }
+        }
+    }
 
     @Published
-    var isScrubbing: Bool = false
+    var isScrubbing: Bool = false {
+        didSet {
+            if isScrubbing {
+                timer.stop()
+            } else {
+                timer.poke()
+            }
+        }
+    }
 
     @Published
     var selectedSupplement: AnyMediaPlayerSupplement? = nil {
@@ -39,5 +57,18 @@ class VideoPlayerContainerState: ObservableObject {
     @Published
     var supplementOffset: CGFloat = 0.0
 
+    var scrubbedSeconds: PublishedBox<Duration> = .init(initialValue: .zero)
     let timer = PokeIntervalTimer()
+
+    private var timerCancellable: AnyCancellable?
+
+    init() {
+        timerCancellable = timer.hasFired.sink { [weak self] in
+            guard self?.isScrubbing == false else { return }
+
+            withAnimation(.linear(duration: 0.25)) {
+                self?.isPresentingOverlay = false
+            }
+        }
+    }
 }

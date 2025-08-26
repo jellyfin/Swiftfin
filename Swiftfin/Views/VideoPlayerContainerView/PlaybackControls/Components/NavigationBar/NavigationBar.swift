@@ -13,20 +13,16 @@ extension VideoPlayer.PlaybackControls {
 
     struct NavigationBar: View {
 
-        @Environment(\.selectedMediaPlayerSupplement)
-        @Binding
-        private var selectedMediaPlayerSupplement
-
+        @EnvironmentObject
+        private var containerState: VideoPlayerContainerState
         @EnvironmentObject
         private var manager: MediaPlayerManager
-        @EnvironmentObject
-        private var overlayTimer: PokeIntervalTimer
 
         private func onPressed(isPressed: Bool) {
             if isPressed {
-                overlayTimer.stop()
+                containerState.timer.stop()
             } else {
-                overlayTimer.poke()
+                containerState.timer.poke()
             }
         }
 

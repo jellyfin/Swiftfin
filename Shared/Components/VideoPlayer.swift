@@ -19,9 +19,6 @@ struct VideoPlayer: View {
     @Default(.VideoPlayer.Subtitle.subtitleSize)
     private var subtitleSize
 
-    @BoxedPublished
-    private var scrubbedSeconds: Duration = .zero
-
     @LazyState
     private var proxy: any MediaPlayerProxy
 
@@ -38,9 +35,10 @@ struct VideoPlayer: View {
     @State
     private var isGestureLocked: Bool = false
     @State
-    private var isScrubbing: Bool = false
-    @State
     private var subtitleOffset: Duration = .zero
+
+    @StateObject
+    private var containerState: VideoPlayerContainerState = .init()
 
     init(manager: MediaPlayerManager) {
         self.manager = manager
@@ -54,25 +52,23 @@ struct VideoPlayer: View {
 
     @ViewBuilder
     private var containerView: some View {
-        VideoPlayerContainerView {
+        VideoPlayerContainerView(
+            containerState: containerState,
+            manager: manager
+        ) {
             proxy.makeVideoPlayerBody()
                 .eraseToAnyView()
                 .environment(\.audioOffset, $audioOffset)
                 .environment(\.isAspectFilled, $isAspectFilled)
                 .environment(\.isGestureLocked, $isGestureLocked)
-                .environment(\.isScrubbing, $isScrubbing)
                 .environmentObject(manager)
-                .environmentObject(_scrubbedSeconds.box)
         } playbackControls: {
             PlaybackControls()
                 .environment(\.audioOffset, $audioOffset)
                 .environment(\.isAspectFilled, $isAspectFilled)
                 .environment(\.isGestureLocked, $isGestureLocked)
-                .environment(\.isScrubbing, $isScrubbing)
                 .environmentObject(manager)
-                .environmentObject(_scrubbedSeconds.box)
         }
-        .environmentObject(manager)
     }
 
     var body: some View {
@@ -90,9 +86,10 @@ struct VideoPlayer: View {
                 }
             }
             .backport
-            .onChange(of: isScrubbing) { _, newValue in
+            .onChange(of: containerState.isScrubbing) { _, newValue in
                 guard !newValue else { return }
 
+                let scrubbedSeconds = containerState.scrubbedSeconds.value
                 manager.seconds = scrubbedSeconds
                 proxy.setSeconds(scrubbedSeconds)
             }
@@ -125,7 +122,7 @@ struct VideoPlayer: View {
                 audioOffset = .zero
                 subtitleOffset = .zero
 
-                scrubbedSeconds = newItem?.baseItem.startSeconds ?? .zero
+                containerState.scrubbedSeconds.value = newItem?.baseItem.startSeconds ?? .zero
             }
             .onReceive(manager.$state) { newState in
                 if newState == .stopped {

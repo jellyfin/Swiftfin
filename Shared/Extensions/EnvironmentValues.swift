@@ -19,17 +19,18 @@ extension EnvironmentValues {
     @Entry
     var isEditing: Bool = false
 
+    // TODO: move to container state
     @Entry
     var isGestureLocked: Binding<Bool> = .constant(false)
 
     @Entry
     var isInMenu: Bool = false
 
-    @Entry
-    var isPresentingOverlay: Binding<Bool> = .constant(false)
+//    @Entry
+//    var isPresentingOverlay: Binding<Bool> = .constant(false)
 
-    @Entry
-    var isScrubbing: Binding<Bool> = .constant(false)
+//    @Entry
+//    var isScrubbing: Binding<Bool> = .constant(false)
 
     @Entry
     var isSelected: Bool = false
@@ -43,8 +44,8 @@ extension EnvironmentValues {
     @Entry
     var safeAreaInsets: EdgeInsets = UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero
 
-    @Entry
-    var selectedMediaPlayerSupplement: Binding<AnyMediaPlayerSupplement?> = .constant(nil)
+//    @Entry
+//    var selectedMediaPlayerSupplement: Binding<AnyMediaPlayerSupplement?> = .constant(nil)
 
     @Entry
     var subtitleOffset: Binding<Duration> = .constant(.zero)

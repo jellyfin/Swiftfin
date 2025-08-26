@@ -25,26 +25,31 @@ extension VideoPlayer.PlaybackControls {
         @Default(.VideoPlayer.Overlay.sliderType)
         private var sliderType
 
-        @Environment(\.isScrubbing)
-        @Binding
-        private var isScrubbing: Bool
-
+        @EnvironmentObject
+        private var containerState: VideoPlayerContainerState
         @EnvironmentObject
         private var manager: MediaPlayerManager
-        @EnvironmentObject
-        private var scrubbedSecondsBox: PublishedBox<Duration>
 
         @State
         private var capsuleSliderSize = CGSize.zero
         @State
         private var sliderSize: CGSize = .zero
 
+        private var isScrubbing: Bool {
+            get {
+                containerState.isScrubbing
+            }
+            nonmutating set {
+                containerState.isScrubbing = newValue
+            }
+        }
+
         private var progress: Double {
             scrubbedSeconds / (manager.item.runtime ?? .seconds(1))
         }
 
         private var scrubbedSeconds: Duration {
-            scrubbedSecondsBox.value
+            containerState.scrubbedSeconds.value
         }
 
         // TODO: kept for future reference for trickplay scrubbing
@@ -75,7 +80,7 @@ extension VideoPlayer.PlaybackControls {
                     .trackingSize($capsuleSliderSize)
             } content: {
                 CapsuleSlider(
-                    value: $scrubbedSecondsBox.value.map(
+                    value: $containerState.scrubbedSeconds.value.map(
                         getter: { $0.seconds },
                         setter: { .seconds($0) }
                     ),
@@ -96,7 +101,7 @@ extension VideoPlayer.PlaybackControls {
         @ViewBuilder
         private var thumbSlider: some View {
             ThumbSlider(
-                value: $scrubbedSecondsBox.value.map(
+                value: $containerState.scrubbedSeconds.value.map(
                     getter: { $0.seconds },
                     setter: { .seconds($0) }
                 ),

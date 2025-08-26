@@ -48,17 +48,17 @@ extension VideoPlayer.PlaybackControls {
         @Binding
         private var isGestureLocked
 
-        @Environment(\.isPresentingOverlay)
-        @Binding
-        private var isPresentingOverlay
+//        @Environment(\.isPresentingOverlay)
+//        @Binding
+//        private var isPresentingOverlay
 
-        @Environment(\.isScrubbing)
-        @Binding
-        private var isScrubbing: Bool
+//        @Environment(\.isScrubbing)
+//        @Binding
+//        private var isScrubbing: Bool
 
-        @Environment(\.selectedMediaPlayerSupplement)
-        @Binding
-        private var selectedSupplement: AnyMediaPlayerSupplement?
+//        @Environment(\.selectedMediaPlayerSupplement)
+//        @Binding
+//        private var selectedSupplement: AnyMediaPlayerSupplement?
 
         @Environment(\.subtitleOffset)
         @Binding
@@ -68,6 +68,8 @@ extension VideoPlayer.PlaybackControls {
         private var jumpProgressObserver: JumpProgressObserver
         @EnvironmentObject
         private var manager: MediaPlayerManager
+
+        // TODO: remove
         @EnvironmentObject
         private var scrubbedSecondsBox: PublishedBox<Duration>
         @EnvironmentObject
@@ -87,7 +89,8 @@ extension VideoPlayer.PlaybackControls {
         private var volumePanGestureState: PanGestureState<Float> = .zero
 
         private var isPresentingDrawer: Bool {
-            selectedSupplement != nil
+            false
+//            selectedSupplement != nil
         }
 
         private var scrubbedSeconds: TimeInterval {
@@ -138,9 +141,9 @@ extension VideoPlayer.PlaybackControls.GestureLayer {
         switch action {
         case .none:
             return
-        case .gestureLock:
-            guard !isPresentingOverlay else { return }
-            isGestureLocked.toggle()
+        case .gestureLock: ()
+//            guard !isPresentingOverlay else { return }
+//            isGestureLocked.toggle()
         }
     }
 
@@ -382,22 +385,22 @@ extension VideoPlayer.PlaybackControls.GestureLayer {
         pointComponent: KeyPath<UnitPoint, CGFloat>,
         rate: CGFloat
     ) {
-        if state == .began {
-            scrubPanGestureState = .zero
-            scrubPanGestureState.startValue = scrubbedSeconds
-            scrubPanGestureState.startPoint = point
-
-            isScrubbing = true
-        } else if state == .ended {
-            isScrubbing = false
-            return
-        }
-
-        let scrubOffset = scrubPanGestureState
-            .startValue - (scrubPanGestureState.startPoint[keyPath: pointComponent] - point[keyPath: pointComponent])
-        let newSeconds = Duration.seconds(scrubOffset * rate * (manager.item.runtime?.seconds ?? 0))
-
-        print(scrubOffset, newSeconds)
+//        if state == .began {
+//            scrubPanGestureState = .zero
+//            scrubPanGestureState.startValue = scrubbedSeconds
+//            scrubPanGestureState.startPoint = point
+//
+//            isScrubbing = true
+//        } else if state == .ended {
+//            isScrubbing = false
+//            return
+//        }
+//
+//        let scrubOffset = scrubPanGestureState
+//            .startValue - (scrubPanGestureState.startPoint[keyPath: pointComponent] - point[keyPath: pointComponent])
+//        let newSeconds = Duration.seconds(scrubOffset * rate * (manager.item.runtime?.seconds ?? 0))
+//
+//        print(scrubOffset, newSeconds)
 
 //        scrubbedSecondsBox.value = clamp(newSeconds, min: .zero, max: manager.item.runtime ?? .zero)
     }

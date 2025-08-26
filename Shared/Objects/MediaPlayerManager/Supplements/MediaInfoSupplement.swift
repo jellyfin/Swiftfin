@@ -28,10 +28,9 @@ extension MediaInfoSupplement {
 
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets: EdgeInsets
-        @Environment(\.selectedMediaPlayerSupplement)
-        @Binding
-        private var selectedMediaPlayerSupplement: AnyMediaPlayerSupplement?
 
+        @EnvironmentObject
+        private var containerState: VideoPlayerContainerState
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
@@ -61,12 +60,12 @@ extension MediaInfoSupplement {
             Button("From Beginning", systemImage: "play.fill") {
                 manager.proxy?.setSeconds(.zero)
                 manager.proxy?.play()
-                selectedMediaPlayerSupplement = nil
+                containerState.selectedSupplement = nil
             }
             #if os(iOS)
             .buttonStyle(.material)
             #endif
-            .frame(width: 275, height: 50)
+            .frame(width: 200, height: 50)
             .font(.subheadline)
             .fontWeight(.semibold)
         }
@@ -91,16 +90,19 @@ extension MediaInfoSupplement {
         @ViewBuilder
         private var iOSCompactView: some View {
             VStack(alignment: .leading) {
-                Text(item.displayTitle)
-                    .fontWeight(.semibold)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
+                Group {
+                    Text(item.displayTitle)
+                        .fontWeight(.semibold)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
 
-                if let overview = item.overview {
-                    Text(overview)
-                        .font(.subheadline)
-                        .fontWeight(.regular)
+                    if let overview = item.overview {
+                        Text(overview)
+                            .font(.subheadline)
+                            .fontWeight(.regular)
+                    }
                 }
+                .allowsHitTesting(false)
 
                 accessoryView
                     .font(.caption)
