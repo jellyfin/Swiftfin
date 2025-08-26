@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Defaults
 import Foundation
 import SwiftUI
@@ -342,6 +343,12 @@ extension View {
         }
     }
 
+    func assign<P>(_ publisher: P, to binding: Binding<P.Output>) -> some View where P: Publisher, P.Failure == Never {
+        onReceive(publisher) { output in
+            binding.wrappedValue = output
+        }
+    }
+
     func onNotification<P>(_ key: Notifications.Key<P>, perform action: @escaping (P) -> Void) -> some View {
         modifier(
             OnReceiveNotificationModifier(
@@ -359,6 +366,10 @@ extension View {
         @ArrayBuilder<OpacityLinearGradientModifier.Stop> stops: () -> [OpacityLinearGradientModifier.Stop]
     ) -> some View {
         modifier(OpacityLinearGradientModifier(stops: stops()))
+    }
+
+    func videoPlayerActionButtonTransition() -> some View {
+        transition(.opacity.combined(with: .scale).animation(.snappy))
     }
 
     // MARK: debug

@@ -11,25 +11,32 @@ import SwiftUI
 extension EnvironmentValues {
 
     @Entry
-    var audioOffset: Binding<Int> = .constant(0)
+    var audioOffset: Binding<Duration> = .constant(.zero)
 
     @Entry
-    var aspectFilled: Binding<Bool> = .constant(false)
-
-    @Entry
-    var currentOverlayType: Binding<VideoPlayer.OverlayType> = .constant(.main)
+    var isAspectFilled: Binding<Bool> = .constant(false)
 
     @Entry
     var isEditing: Bool = false
 
+    // TODO: move to container state
     @Entry
-    var isPresentingOverlay: Binding<Bool> = .constant(false)
+    var isGestureLocked: Binding<Bool> = .constant(false)
 
     @Entry
-    var isScrubbing: Binding<Bool> = .constant(false)
+    var isInMenu: Bool = false
+
+//    @Entry
+//    var isPresentingOverlay: Binding<Bool> = .constant(false)
+
+//    @Entry
+//    var isScrubbing: Binding<Bool> = .constant(false)
 
     @Entry
     var isSelected: Bool = false
+
+    @Entry
+    var panGestureAction: PanGestureAction = .init(action: { _, _, _, _ in })
 
     @Entry
     var playbackSpeed: Binding<Double> = .constant(1)
@@ -37,6 +44,30 @@ extension EnvironmentValues {
     @Entry
     var safeAreaInsets: EdgeInsets = UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero
 
+//    @Entry
+//    var selectedMediaPlayerSupplement: Binding<AnyMediaPlayerSupplement?> = .constant(nil)
+
     @Entry
-    var subtitleOffset: Binding<Int> = .constant(0)
+    var subtitleOffset: Binding<Duration> = .constant(.zero)
+
+    @Entry
+    var tapGestureAction: TapGestureAction = .init(action: { _, _ in })
+}
+
+struct PanGestureAction {
+
+    let action: (_ point: CGPoint, _ velocity: CGFloat, _ location: CGPoint, _ state: UIGestureRecognizer.State) -> Void
+
+    func callAsFunction(_ point: CGPoint, _ velocity: CGFloat, _ location: CGPoint, _ state: UIGestureRecognizer.State) {
+        action(point, velocity, location, state)
+    }
+}
+
+struct TapGestureAction {
+
+    let action: (_ point: UnitPoint, _ count: Int) -> Void
+
+    func callAsFunction(_ point: UnitPoint, _ count: Int) {
+        action(point, count)
+    }
 }

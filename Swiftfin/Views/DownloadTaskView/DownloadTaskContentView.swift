@@ -88,7 +88,7 @@ extension DownloadTaskView {
                             .onSelect {
                                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
                                     router.dismiss()
-                                    router.route(to: .videoPlayer(manager: DownloadVideoPlayerManager(downloadTask: downloadTask)))
+//                                    router.route(to: .videoPlayer(manager: DownloadVideoPlayerManager(downloadTask: downloadTask)))
                                 } else {
                                     isPresentingVideoPlayerTypeError = true
                                 }
