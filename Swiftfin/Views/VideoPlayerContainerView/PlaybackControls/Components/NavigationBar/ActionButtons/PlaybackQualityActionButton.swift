@@ -12,6 +12,7 @@ import SwiftUI
 // TODO: auto test setting
 // TODO: change to general playback settings?
 //       - versions
+// TODO: have queue consider value to carry setting
 
 extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 

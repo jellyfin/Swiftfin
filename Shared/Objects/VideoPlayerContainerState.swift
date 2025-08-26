@@ -12,6 +12,7 @@ import SwiftUI
 
 class VideoPlayerContainerState: ObservableObject {
 
+    // TODO: rename isPresentingPlaybackControls
     @Published
     var isPresentingOverlay: Bool = false {
         didSet {
@@ -19,6 +20,7 @@ class VideoPlayerContainerState: ObservableObject {
         }
     }
 
+    // TODO: rename isPresentingPlaybackButtons
     @Published
     var isPresentingPlaybackControls: Bool = false
 

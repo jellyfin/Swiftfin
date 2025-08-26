@@ -74,6 +74,8 @@ class ItemViewModel: ViewModel, Stateful {
     private(set) var specialFeatures: [BaseItemDto] = []
     @Published
     private(set) var localTrailers: [BaseItemDto] = []
+    @Published
+    private(set) var additionalParts: [BaseItemDto] = []
 
     @Published
     var backgroundStates: Set<BackgroundState> = []
@@ -188,12 +190,14 @@ class ItemViewModel: ViewModel, Stateful {
                     async let similarItems = getSimilarItems()
                     async let specialFeatures = getSpecialFeatures()
                     async let localTrailers = getLocalTrailers()
+                    async let additionalParts = getAdditionalParts()
 
                     let results = try await (
                         fullItem: fullItem,
                         similarItems: similarItems,
                         specialFeatures: specialFeatures,
-                        localTrailers: localTrailers
+                        localTrailers: localTrailers,
+                        additionalParts: additionalParts
                     )
 
                     guard !Task.isCancelled else { return }
@@ -203,6 +207,7 @@ class ItemViewModel: ViewModel, Stateful {
                         self.similarItems = results.similarItems
                         self.specialFeatures = results.specialFeatures
                         self.localTrailers = results.localTrailers
+                        self.additionalParts = results.additionalParts
 
                         self.state = .content
                     }
@@ -341,6 +346,18 @@ class ItemViewModel: ViewModel, Stateful {
         let response = try? await userSession.client.send(request)
 
         return response?.value ?? []
+    }
+
+    private func getAdditionalParts() async throws -> [BaseItemDto] {
+
+        guard let partCount = item.partCount,
+              partCount > 1,
+              let itemID = item.id else { return [] }
+
+        let request = Paths.getAdditionalPart(itemID: itemID)
+        let response = try? await userSession.client.send(request)
+
+        return response?.value.items ?? []
     }
 
     private func setIsPlayed(_ isPlayed: Bool) async throws {
