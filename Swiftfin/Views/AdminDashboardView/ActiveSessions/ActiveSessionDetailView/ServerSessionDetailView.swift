@@ -40,6 +40,8 @@ struct ActiveSessionDetailView: View {
                 device: session.deviceName,
                 version: session.applicationVersion
             )
+
+            CommandsSection(session: session)
         }
     }
 
@@ -79,6 +81,8 @@ struct ActiveSessionDetailView: View {
                 device: session.deviceName,
                 version: session.applicationVersion
             )
+
+            CommandsSection(session: session)
 
             // TODO: allow showing item stream details?
             // TODO: don't show codec changes on direct play?
