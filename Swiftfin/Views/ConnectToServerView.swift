@@ -101,6 +101,7 @@ struct ConnectToServerView: View {
                 accentColor
             )
             .opacity(url.isEmpty ? 0.5 : 1)
+            .accessibilityIdentifier("ConnectToServer")
         }
     }
 

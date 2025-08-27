@@ -448,6 +448,7 @@ struct SelectUserView: View {
                     router.route(to: .connectToServer)
                 }
                 .frame(maxWidth: 300)
+                .accessibilityIdentifier("ShowConnectToServer")
         }
     }
 
