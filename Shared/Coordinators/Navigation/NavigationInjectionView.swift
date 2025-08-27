@@ -66,8 +66,8 @@ struct NavigationInjectionView: View {
         .presentation(
                 $coordinator.presentedFullScreen,
                 transition: .zoomIfAvailable(
-                    options: .init(dimmingVisualEffect: .systemThickMaterialDark),
-                    otherwise: .slide(.init(edge: .bottom), options: .init())
+                    options: .init(dimmingVisualEffect: .systemThickMaterialDark, options: .init(isInteractive: false)),
+                    otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: false))
                 )
             ) { routeBinding, _ in
                 let vc = UIPreferencesHostingController {

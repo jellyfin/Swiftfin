@@ -13,6 +13,8 @@ import SwiftUI
 // TODO: change to general playback settings?
 //       - versions
 // TODO: have queue consider value to carry setting
+// TODO: reuse-provider instead of making a new one?
+// TODO: somehow don't present when offline
 
 extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 

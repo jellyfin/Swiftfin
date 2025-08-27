@@ -20,18 +20,16 @@ extension VideoPlayer.PlaybackControls {
 
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
-        @Default(.VideoPlayer.Overlay.sliderColor)
-        private var sliderColor
-        @Default(.VideoPlayer.Overlay.sliderType)
-        private var sliderType
 
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
+        private var scrubbedSecondsBox: PublishedBox<Duration>
+        @EnvironmentObject
         private var manager: MediaPlayerManager
 
         @State
-        private var capsuleSliderSize = CGSize.zero
+        private var capsuleSliderSize: CGSize = .zero
         @State
         private var sliderSize: CGSize = .zero
 
@@ -49,7 +47,7 @@ extension VideoPlayer.PlaybackControls {
         }
 
         private var scrubbedSeconds: Duration {
-            containerState.scrubbedSeconds.value
+            scrubbedSecondsBox.value
         }
 
         // TODO: kept for future reference for trickplay scrubbing
@@ -80,37 +78,21 @@ extension VideoPlayer.PlaybackControls {
                     .trackingSize($capsuleSliderSize)
             } content: {
                 CapsuleSlider(
-                    value: $containerState.scrubbedSeconds.value.map(
+                    value: $scrubbedSecondsBox.value.map(
                         getter: { $0.seconds },
                         setter: { .seconds($0) }
                     ),
-                    total: (manager.item.runtime ?? .zero).seconds
+                    total: max(1, (manager.item.runtime ?? .zero).seconds)
                 )
                 .gesturePadding(30)
                 .onEditingChanged { newValue in
                     isScrubbing = newValue
                 }
-                .foregroundStyle(sliderColor)
                 .frame(maxWidth: isScrubbing ? nil : max(0, capsuleSliderSize.width - EdgeInsets.edgePadding * 2))
                 .frame(height: isScrubbing ? 20 : 10)
             }
             .animation(.linear(duration: 0.05), value: scrubbedSeconds)
             .frame(height: 10)
-        }
-
-        @ViewBuilder
-        private var thumbSlider: some View {
-            ThumbSlider(
-                value: $containerState.scrubbedSeconds.value.map(
-                    getter: { $0.seconds },
-                    setter: { .seconds($0) }
-                ),
-                total: (manager.item.runtime ?? .zero).seconds
-            )
-            .onEditingChanged { newValue in
-                isScrubbing = newValue
-            }
-            .frame(height: 20)
         }
 
         var body: some View {
@@ -119,22 +101,14 @@ extension VideoPlayer.PlaybackControls {
                     liveIndicator
                         .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
-                    Group {
-                        switch sliderType {
-                        case .capsule: capsuleSlider
-                        case .thumb: thumbSlider
-                        }
-                    }
-                    .trackingSize($sliderSize)
+                    capsuleSlider
+                        .trackingSize($sliderSize)
 
                     SplitTimeStamp()
-                        .if(sliderType == .capsule) { view in
-                            view.offset(y: isScrubbing ? 5 : 0)
-                                .frame(maxWidth: isScrubbing ? nil : max(0, capsuleSliderSize.width - 30))
-                        }
+                        .offset(y: isScrubbing ? 5 : 0)
+                        .frame(maxWidth: isScrubbing ? nil : max(0, capsuleSliderSize.width - 30))
                 }
             }
-            .disabled(manager.state == .loadingItem)
             .frame(maxWidth: .infinity)
             .animation(.bouncy(duration: 0.4, extraBounce: 0.1), value: isScrubbing)
             // TODO: kept for future reference for trickplay/chapter image scrubbing

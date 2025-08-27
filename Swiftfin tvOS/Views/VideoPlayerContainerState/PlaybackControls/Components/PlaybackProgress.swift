@@ -23,10 +23,6 @@ extension VideoPlayer.PlaybackControls {
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
 
-        @Environment(\.isScrubbing)
-        @Binding
-        private var isScrubbing: Bool
-
         @EnvironmentObject
         private var manager: MediaPlayerManager
 

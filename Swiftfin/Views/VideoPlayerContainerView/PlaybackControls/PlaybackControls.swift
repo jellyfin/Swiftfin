@@ -55,61 +55,52 @@ extension VideoPlayer {
         var body: some View {
             ZStack {
 
-                // MARK: - Dark
-
-                // TODO: keep only bottom gradient on scrubbing
-//                ZStack(alignment: .bottom) {
-//
-//                    Color.black
-//                        .isVisible(opacity: 0.5, !isScrubbing && containerState.isPresentingOverlay)
-//                        .allowsHitTesting(false)
-//
-//                    Color.black
-//                        .maskLinearGradient {
-//                            (location: 0, opacity: 0)
-//                            (location: 1, opacity: 0.5)
-//                        }
-//                        .isVisible(isScrubbing)
-//                        .frame(height: bottomContentFrame.height)
-//                }
-//                .animation(.linear(duration: 0.25), value: containerState.containerState.isPresentingOverlay)
-
                 // MARK: - Buttons and Supplements
 
                 VStack {
                     NavigationBar()
+                        .frame(height: 50)
                         .isVisible(!isScrubbing && isPresentingOverlay)
                         .padding(.top, safeAreaInsets.top)
                         .padding(.leading, safeAreaInsets.leading)
                         .padding(.trailing, safeAreaInsets.trailing)
                         .offset(y: isPresentingOverlay ? 0 : -20)
-                        .frame(height: 50)
 
                     Spacer()
                         .allowsHitTesting(false)
 
                     // TODO: finalize design/placement
-                    if manager.proxy?.isBuffering.value == true {
-                        ProgressView()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .frame(height: 30)
-                            .padding(.leading, safeAreaInsets.leading)
-                    }
+//                    if manager.proxy?.isBuffering.value == true {
+//                        ProgressView()
+//                            .frame(maxWidth: .infinity, alignment: .leading)
+//                            .frame(height: 30)
+//                            .padding(.leading, safeAreaInsets.leading)
+//                    }
 
                     PlaybackProgress()
                         .isVisible(isPresentingOverlay && !isPresentingSupplement)
                         .frame(maxWidth: .infinity, alignment: .leading)
-//                        .offset(y: isPresentingOverlay ? 0 : 20)
-                        .trackingFrame($bottomContentFrame)
                         .padding(.leading, safeAreaInsets.leading)
                         .padding(.trailing, safeAreaInsets.trailing)
+                        .padding(.bottom, 10)
+                        .trackingFrame($bottomContentFrame)
                         .background {
-                            if isPresentingOverlay {
+                            if isPresentingOverlay && !isPresentingSupplement {
                                 EmptyHitTestView()
                             }
                         }
+                        .background(alignment: .top) {
+                            Color.black
+                                .maskLinearGradient {
+                                    (location: 0, opacity: 0)
+                                    (location: 1, opacity: 0.3)
+                                }
+                                .isVisible(isScrubbing)
+                                .frame(height: bottomContentFrame.height + 50 + EdgeInsets.edgePadding)
+                        }
                 }
 
+                // TODO: offset by supplement container height
                 PlaybackButtons()
                     .isVisible(!isScrubbing && containerState.isPresentingPlaybackControls)
             }

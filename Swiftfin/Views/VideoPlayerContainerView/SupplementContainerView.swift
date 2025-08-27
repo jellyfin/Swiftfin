@@ -20,6 +20,14 @@ extension UIVideoPlayerContainerViewController {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
+        private var isPresentingOverlay: Bool {
+            containerState.isPresentingOverlay
+        }
+
+        private var isScrubbing: Bool {
+            containerState.isScrubbing
+        }
+
         var body: some View {
             ZStack {
                 GestureView()
@@ -56,9 +64,11 @@ extension UIVideoPlayerContainerViewController {
                         }
                     }
                 }
-                .isVisible(containerState.isPresentingOverlay)
+                .isVisible(isPresentingOverlay)
+                .isVisible(!isScrubbing)
             }
-            .animation(.linear(duration: 0.2), value: containerState.isPresentingOverlay)
+            .animation(.linear(duration: 0.2), value: isPresentingOverlay)
+            .animation(.linear(duration: 0.1), value: isScrubbing)
         }
     }
 }

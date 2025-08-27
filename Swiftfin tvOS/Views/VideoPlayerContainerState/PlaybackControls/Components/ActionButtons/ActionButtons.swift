@@ -36,6 +36,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                 if manager.queue != nil {
                     AutoPlay()
                 }
+            case .playbackQuality: EmptyView()
             case .playbackSpeed: EmptyView()
 //                if !manager.item.isLiveStream {
 //                    PlaybackRateMenu()

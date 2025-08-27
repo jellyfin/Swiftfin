@@ -216,8 +216,6 @@ extension Defaults.Keys {
         enum Overlay {
 
             static let chapterSlider: Key<Bool> = UserKey("chapterSlider", default: true)
-            static let sliderColor: Key<Color> = UserKey("sliderColor", default: Color.white)
-            static let sliderType: Key<SliderType> = UserKey("sliderType", default: .capsule)
 
             // Timestamp
             static let trailingTimestampType: Key<TrailingTimestampType> = UserKey("trailingTimestamp", default: .timeLeft)

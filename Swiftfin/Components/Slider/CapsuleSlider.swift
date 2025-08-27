@@ -8,10 +8,10 @@
 
 import SwiftUI
 
-struct CapsuleSlider<V: BinaryFloatingPoint>: View {
+struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
 
     @Binding
-    private var value: V
+    private var value: Value
 
     @State
     private var contentSize: CGSize = .zero
@@ -20,13 +20,13 @@ struct CapsuleSlider<V: BinaryFloatingPoint>: View {
     @State
     private var translationStartLocation: CGPoint = .zero
     @State
-    private var translationStartValue: V = 0
+    private var translationStartValue: Value = 0
     @State
     private var currentTranslation: CGFloat = 0
 
     private var gesturePadding: CGFloat = 0
     private var onEditingChanged: (Bool) -> Void
-    private let total: V
+    private let total: Value
 
     private var trackDrag: some Gesture {
         DragGesture(coordinateSpace: .global)
@@ -41,7 +41,7 @@ struct CapsuleSlider<V: BinaryFloatingPoint>: View {
 
                 currentTranslation = translationStartLocation.x - newValue.location.x
 
-                let newProgress = translationStartValue - V(currentTranslation / contentSize.width) * total
+                let newProgress = translationStartValue - Value(currentTranslation / contentSize.width) * total
                 value = clamp(newProgress, min: 0, max: total)
             }
             .onEnded { _ in
@@ -72,7 +72,7 @@ struct CapsuleSlider<V: BinaryFloatingPoint>: View {
 
 extension CapsuleSlider {
 
-    init(value: Binding<V>, total: V = 1.0) {
+    init(value: Binding<Value>, total: Value = 1.0) {
         self.init(
             value: value,
             onEditingChanged: { _ in },
@@ -86,45 +86,5 @@ extension CapsuleSlider {
 
     func gesturePadding(_ padding: CGFloat) -> Self {
         copy(modifying: \.gesturePadding, with: padding)
-    }
-}
-
-struct Test: View {
-
-    @State
-    private var value: Double = 50
-
-    @State
-    private var isEditing = false
-
-    var body: some View {
-        AlternateLayoutView {
-            Color.clear
-                .frame(height: 10)
-        } content: {
-            CapsuleSlider(value: $value, total: 100)
-                .onEditingChanged { newValue in
-                    isEditing = newValue
-                }
-                .gesturePadding(30)
-                .frame(height: isEditing ? 20 : 10)
-                .animation(.bouncy(duration: 0.3), value: isEditing)
-                .onChange(of: value) { newValue in
-                    print(newValue)
-                }
-        }
-        .animation(.linear(duration: 0.05), value: value)
-    }
-}
-
-struct CapsuleSlider_Previews: PreviewProvider {
-    static var previews: some View {
-        VStack {
-
-            Test()
-                .frame(height: 10)
-        }
-        .padding(.horizontal, 10)
-        .previewInterfaceOrientation(.landscapeRight)
     }
 }

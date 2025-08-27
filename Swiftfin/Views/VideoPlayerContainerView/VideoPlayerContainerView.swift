@@ -10,6 +10,11 @@ import Combine
 import Engine
 import SwiftUI
 
+// TODO: don't dismiss overlay while panning and supplement not presented
+// TODO: on compact, have player view bottom anchor to view bottom
+//       - offset to top of supplement title over full state transition
+//       - avoids bottom gap when aspect filled and centers view
+
 // MARK: - VideoPlayerContainerView
 
 struct VideoPlayerContainerView<Player: View, PlaybackControls: View>: UIViewControllerRepresentable {
@@ -59,9 +64,21 @@ class UIVideoPlayerContainerViewController: UIViewController {
 
         let player: AnyView
 
+        private var shouldPresentDimOverlay: Bool {
+            if containerState.isScrubbing {
+                return false
+            }
+
+            if containerState.isCompact {
+                return containerState.isPresentingPlaybackControls
+            } else {
+                return containerState.isPresentingOverlay
+            }
+        }
+
         var body: some View {
             player
-                .overlay(Color.black.opacity(containerState.isPresentingPlaybackControls ? 0.3 : 0.0))
+                .overlay(Color.black.opacity(shouldPresentDimOverlay ? 0.3 : 0.0))
                 .animation(.linear(duration: 0.2), value: containerState.isPresentingPlaybackControls)
         }
     }
@@ -79,6 +96,8 @@ class UIVideoPlayerContainerViewController: UIViewController {
 
                 playbackControls
             }
+            // inject box explicitly
+            .environmentObject(containerState.scrubbedSeconds)
         }
     }
 
@@ -153,13 +172,6 @@ class UIVideoPlayerContainerViewController: UIViewController {
     private let playbackControls: AnyView
     private let containerState: VideoPlayerContainerState
 
-    private var isCompact: Bool = false {
-        didSet {
-            guard containerState.isPresentingSupplement else { return }
-            containerState.isPresentingPlaybackControls = isCompact
-        }
-    }
-
     private var cancellables: Set<AnyCancellable> = []
 
     init(
@@ -178,7 +190,6 @@ class UIVideoPlayerContainerViewController: UIViewController {
         self.containerState.$selectedSupplement
             .dropFirst()
             .sink { newSupplement in
-                print("Selected Supplement: \(String(describing: newSupplement))")
                 self.didPresent(supplement: newSupplement)
             }
             .store(in: &cancellables)
@@ -222,7 +233,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
             isPanning = true
 
             let minimumTranslation =
-                -((isCompact ? compactMinimumTranslation : regularMinimumTranslation) + dismissedSupplementContainerOffset)
+                -((containerState.isCompact ? compactMinimumTranslation : regularMinimumTranslation) + dismissedSupplementContainerOffset)
             let shouldHaveSupplementPresented = self.supplementBottomAnchor.constant < minimumTranslation
 
             if shouldHaveSupplementPresented, !containerState.isPresentingSupplement {
@@ -235,12 +246,11 @@ class UIVideoPlayerContainerViewController: UIViewController {
             verticalPanGestureStartConstant = nil
             isPanning = false
 
-            let translationMin: CGFloat = isCompact ? compactMinimumTranslation : regularMinimumTranslation
+            let translationMin: CGFloat = containerState.isCompact ? compactMinimumTranslation : regularMinimumTranslation
             let shouldActuallyDismissSupplement = didStartPanningWithSupplement && (translation.y > translationMin || velocity > 1000)
             if shouldActuallyDismissSupplement {
                 // If we started with a supplement and panned down more than 100 points, dismiss it
                 containerState.selectedSupplement = nil
-                containerState.isPresentingPlaybackControls = true
             }
 
             let shouldActuallyPresentSupplement = !didStartPanningWithSupplement && (translation.y < -translationMin || velocity < -1000)
@@ -270,7 +280,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
             newOffset = verticalPanGestureStartConstant! - (abs(translation.y) * yDirection)
         }
 
-        if isCompact {
+        if containerState.isCompact {
             clampedOffset = clamp(
                 newOffset,
                 min: -compactSupplementContainerOffset(view.bounds.height),
@@ -307,7 +317,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
     ) {
         if count == 1 {
             if containerState.isPresentingSupplement {
-                if isCompact {
+                if containerState.isCompact {
                     containerState.isPresentingPlaybackControls.toggle()
                 } else {
                     containerState.selectedSupplement = nil
@@ -329,7 +339,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
         let didPresent = supplement != nil
 
         if didPresent {
-            if isCompact {
+            if containerState.isCompact {
                 self.supplementBottomAnchor.constant = -compactSupplementContainerOffset(view.bounds.size.height)
             } else {
                 self.supplementBottomAnchor.constant = -regularSupplementContainerOffset
@@ -338,10 +348,8 @@ class UIVideoPlayerContainerViewController: UIViewController {
             self.supplementBottomAnchor.constant = -dismissedSupplementContainerOffset
         }
 
-        containerState.isPresentingPlaybackControls = isCompact
         containerState.supplementOffset = supplementBottomAnchor.constant
 
-        // TODO: finalize values
         if let panningState {
             let velocity = abs(panningState.velocity) / 1000
             let distance = abs(panningState.translation)
@@ -356,9 +364,9 @@ class UIVideoPlayerContainerViewController: UIViewController {
             ) {
                 self.view.layoutIfNeeded()
             }
-        } else if isCompact {
+        } else {
             UIView.animate(
-                withDuration: 0.75,
+                withDuration: containerState.isCompact ? 0.75 : 0.6,
                 delay: 0,
                 usingSpringWithDamping: 0.8,
                 initialSpringVelocity: 0.4,
@@ -366,24 +374,6 @@ class UIVideoPlayerContainerViewController: UIViewController {
             ) {
                 self.view.layoutIfNeeded()
             }
-        } else {
-            UIView.animate(
-                withDuration: 0.4,
-                delay: 0,
-                options: [.curveEaseInOut, .allowUserInteraction]
-            ) {
-                self.view.layoutIfNeeded()
-            }
-
-//            UIView.animate(
-//                withDuration: 0.75,
-//                delay: 0,
-//                usingSpringWithDamping: 0.8,
-//                initialSpringVelocity: 0.4,
-//                options: .allowUserInteraction
-//            ) {
-//                self.view.layoutIfNeeded()
-//            }
         }
     }
 
@@ -392,7 +382,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
 
         view.backgroundColor = .black
 
-        self.isCompact = UIDevice.isPhone && view.bounds.size.isPortrait
+        containerState.isCompact = UIDevice.isPhone && view.bounds.size.isPortrait
 
         setupViews()
         setupConstraints()
@@ -411,7 +401,8 @@ class UIVideoPlayerContainerViewController: UIViewController {
         addChild(supplementContainerViewController)
         view.addSubview(supplementContainerView)
         supplementContainerViewController.didMove(toParent: self)
-        supplementContainerView.backgroundColor = .green.withAlphaComponent(0.2)
+//        supplementContainerView.backgroundColor = .green.withAlphaComponent(0.2)
+        supplementContainerView.backgroundColor = .clear
     }
 
     private func setupConstraints() {
@@ -472,7 +463,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
     }
 
     private func adjustContraints(shouldBeCompact: Bool, in newSize: CGSize) {
-        self.isCompact = shouldBeCompact
+        containerState.isCompact = shouldBeCompact
 
         if shouldBeCompact {
             NSLayoutConstraint.deactivate(playerRegularConstraints)

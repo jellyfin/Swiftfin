@@ -19,6 +19,8 @@ extension VideoPlayer.PlaybackControls {
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
+        private var scrubbedSecondsBox: PublishedBox<Duration>
+        @EnvironmentObject
         private var manager: MediaPlayerManager
 
         @State
@@ -29,8 +31,7 @@ extension VideoPlayer.PlaybackControls {
         }
 
         private var scrubbedSeconds: Duration {
-            containerState.scrubbedSeconds.value
-//            scrubbedSecondsBox.value
+            scrubbedSecondsBox.value
         }
 
         @ViewBuilder
@@ -98,7 +99,7 @@ extension VideoPlayer.PlaybackControls {
                 .lineLimit(1)
             }
             .foregroundStyle(.primary, .secondary)
-//            .assign(scrubbedSecondsBox.$value, to: $activeSeconds)
+            .assign(manager.secondsBox.$value, to: $activeSeconds)
         }
     }
 }

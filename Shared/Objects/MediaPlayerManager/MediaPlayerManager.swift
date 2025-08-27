@@ -125,7 +125,6 @@ class MediaPlayerManager: ViewModel, Stateful {
 
         // TODO: don't build on init?
         buildMediaItem(from: .init(item: item, function: mediaPlayerItemProvider)) { @MainActor newItem in
-            self.state = .playback
             self.playbackItem = newItem
             self.supplements = newItem.supplements
         }
@@ -164,7 +163,6 @@ class MediaPlayerManager: ViewModel, Stateful {
         case let .playNewItem(provider: provider):
             self.item = provider.item
             buildMediaItem(from: provider) { @MainActor newItem in
-                self.state = .playback
                 self.playbackItem = newItem
             }
 
@@ -204,6 +202,10 @@ class MediaPlayerManager: ViewModel, Stateful {
                 let playbackItem = try await provider.function(provider.item)
 
                 await onComplete(playbackItem)
+
+                await MainActor.run {
+                    self.state = .playback
+                }
             } catch {
                 guard !Task.isCancelled else { return }
 

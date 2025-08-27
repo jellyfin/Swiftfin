@@ -10,27 +10,65 @@ import Combine
 import Foundation
 import SwiftUI
 
+@MainActor
 class VideoPlayerContainerState: ObservableObject {
-
-    // TODO: rename isPresentingPlaybackControls
-    @Published
-    var isPresentingOverlay: Bool = false {
-        didSet {
-            isPresentingPlaybackControls = isPresentingOverlay
-        }
-    }
 
     // TODO: rename isPresentingPlaybackButtons
     @Published
     var isPresentingPlaybackControls: Bool = false
 
+    // TODO: replace with graph dependency package
+    func setPlaybackControlsVisibility() {
+
+        guard isPresentingOverlay else {
+            isPresentingPlaybackControls = false
+            return
+        }
+
+        if isPresentingOverlay && !isPresentingSupplement {
+            isPresentingPlaybackControls = true
+            return
+        }
+
+        if isCompact {
+            if isPresentingSupplement {
+                isPresentingPlaybackControls = true
+            } else {
+                isPresentingPlaybackControls = false
+            }
+        } else {
+            isPresentingPlaybackControls = false
+        }
+    }
+
+    @Published
+    var isCompact: Bool = false {
+        didSet {
+            setPlaybackControlsVisibility()
+        }
+    }
+
+    // TODO: rename isPresentingPlaybackControls
+    @Published
+    var isPresentingOverlay: Bool = false {
+        didSet {
+            setPlaybackControlsVisibility()
+
+            if isPresentingOverlay, !isPresentingSupplement {
+                timer.poke()
+            }
+        }
+    }
+
     @Published
     private(set) var isPresentingSupplement: Bool = false {
         didSet {
+            setPlaybackControlsVisibility()
+
             if isPresentingSupplement {
-                timer.poke()
-            } else {
                 timer.stop()
+            } else {
+                timer.poke()
             }
         }
     }
