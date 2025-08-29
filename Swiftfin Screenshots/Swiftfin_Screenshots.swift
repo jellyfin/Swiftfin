@@ -32,6 +32,40 @@ final class Swiftfin_Screenshots: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
+    // Connect to the demo server from the ConnectToServer view
+    func connectToDemoServer(_ app: XCUIApplication) {
+        app.textFields["Server URL"].tap()
+        app.typeText(demoServerUrl)
+        app.buttons["ConnectToServer"].tap()
+    }
+
+    // Select/Add the demo server from the user selection view
+    func selectDemoServer(_ app: XCUIApplication) {
+        app.images["chevron.up.chevron.down"].firstMatch.tap()
+
+        if app.staticTexts["http://\(demoServerUrl)"].exists {
+            app.staticTexts["http://\(demoServerUrl)"].firstMatch.tap()
+        } else {
+            app.buttons["Add Server"].firstMatch.tap()
+
+            connectToDemoServer(app)
+        }
+    }
+
+    func signInDemoUser(_ app: XCUIApplication) {
+        if app.staticTexts[demoUsername].exists {
+            app.staticTexts[demoUsername].firstMatch.tap()
+        } else {
+            app.images["plus"].tap()
+
+            app.typeText(demoUsername)
+            app.secureTextFields["Password"].tap()
+            app.typeText(demoPassword)
+
+            app.buttons["Sign In"].tap()
+        }
+    }
+
     @MainActor
     func testScreenshots() throws {
         let app = XCUIApplication()
@@ -45,20 +79,32 @@ final class Swiftfin_Screenshots: XCTestCase {
 
         if app.buttons["Connect"].exists {
             app.buttons["ShowConnectToServer"].tap()
-            app.textFields["Server URL"].tap()
-            app.typeText(demoServerUrl)
-            app.buttons["ConnectToServer"].tap()
+            connectToDemoServer(app)
         }
 
-        if app.staticTexts["Add User"].exists {
-            app.images["plus"].tap()
+        if app.images["server.rack"].exists {
+            selectDemoServer(app)
+            signInDemoUser(app)
 
-            app.typeText(demoUsername)
-            app.secureTextFields["Password"].tap()
-            app.typeText(demoPassword)
-
-            app.buttons["Sign In"].tap()
             sleep(2)
+        }
+
+        app.buttons["Settings"].firstMatch.tap()
+        app.staticTexts["Server"].firstMatch.tap()
+        if !app.staticTexts["http://\(demoServerUrl)"].exists {
+            // Log out of this other server
+
+            app.buttons["Settings"].tap()
+            app.buttons["Switch User"].tap()
+
+            selectDemoServer(app)
+            signInDemoUser(app)
+
+            sleep(2)
+        } else {
+            app.navigationBars["Server"]
+                .buttons["Settings"].tap()
+            app.buttons["xmark.circle.fill"].tap()
         }
 
         snapshot("Home")
