@@ -30,7 +30,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
         }
 
         var body: some View {
-            RoundActionButton(
+            Button(
                 "Autoplay",
                 systemImage: systemImage
             ) {

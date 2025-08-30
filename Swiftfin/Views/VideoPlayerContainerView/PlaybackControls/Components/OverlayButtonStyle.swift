@@ -10,7 +10,6 @@ import SwiftUI
 
 extension VideoPlayer.PlaybackControls {
 
-    // TODO: don't have background circle scale up
     struct OverlayButtonStyle: ButtonStyle {
 
         @Environment(\.isEnabled)

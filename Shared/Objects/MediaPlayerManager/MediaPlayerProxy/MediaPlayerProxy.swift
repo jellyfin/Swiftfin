@@ -13,6 +13,8 @@ import SwiftUI
 // TODO: behavioral implementations
 //       - PiP
 // TODO: Chromecast proxy
+// TODO: videoSize
+//       - for video player container custom aspect fill handling
 
 /// The proxy for top-down communication to an
 /// underlying media player

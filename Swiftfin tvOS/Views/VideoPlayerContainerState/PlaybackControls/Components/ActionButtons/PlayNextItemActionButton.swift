@@ -16,7 +16,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
         private var manager: MediaPlayerManager
 
         var body: some View {
-            RoundActionButton(
+            Button(
                 L10n.playNextItem,
                 systemImage: "forward.end.circle.fill"
             ) {

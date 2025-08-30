@@ -392,6 +392,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
         addChild(playerViewController)
         view.addSubview(playerView)
         playerViewController.didMove(toParent: self)
+        playerView.backgroundColor = .black
 
         addChild(playbackControlsViewController)
         view.addSubview(playbackControlsView)
@@ -401,7 +402,6 @@ class UIVideoPlayerContainerViewController: UIViewController {
         addChild(supplementContainerViewController)
         view.addSubview(supplementContainerView)
         supplementContainerViewController.didMove(toParent: self)
-//        supplementContainerView.backgroundColor = .green.withAlphaComponent(0.2)
         supplementContainerView.backgroundColor = .clear
     }
 

@@ -69,7 +69,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
         }
 
         var body: some View {
-            HStack(spacing: 0) {
+            HStack(spacing: 10) {
                 ForEach(
                     VideoPlayerActionButton.allCases,
                     content: view(for:)
@@ -83,31 +83,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
 //                    menuButtons
 //                }
             }
-        }
-    }
-}
-
-extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
-
-    // TODO: change to button style
-    struct RoundActionButton: View {
-
-        let title: String
-        let systemImage: String
-        let action: () -> Void
-
-        init(_ title: String, systemImage: String, action: @escaping () -> Void) {
-            self.title = title
-            self.systemImage = systemImage
-            self.action = action
-        }
-
-        var body: some View {
-            Button(
-                title,
-                systemImage: systemImage,
-                action: action
-            )
+            .menuStyle(.button)
             .labelStyle(.iconOnly)
             .buttonBorderShape(.circle)
             .buttonStyle(.plain)

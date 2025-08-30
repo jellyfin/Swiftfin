@@ -24,9 +24,9 @@ extension VideoPlayer.PlaybackControls {
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
-        private var scrubbedSecondsBox: PublishedBox<Duration>
-        @EnvironmentObject
         private var manager: MediaPlayerManager
+        @EnvironmentObject
+        private var scrubbedSecondsBox: PublishedBox<Duration>
 
         @State
         private var capsuleSliderSize: CGSize = .zero

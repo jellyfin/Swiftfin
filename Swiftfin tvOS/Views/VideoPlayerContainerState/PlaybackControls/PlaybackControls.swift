@@ -23,7 +23,12 @@ extension VideoPlayer {
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
+        private var focusGuide: FocusGuide
+        @EnvironmentObject
         private var manager: MediaPlayerManager
+
+        @OnPressEvent
+        private var onPressEvent
 
         @Router
         private var router
@@ -53,8 +58,8 @@ extension VideoPlayer {
                     .focusSection()
 
                 PlaybackProgress()
-                    .isVisible(isScrubbing || isPresentingOverlay)
-                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .focusGuide(focusGuide, tag: "playbackProgress")
+//                    .isVisible(isScrubbing || isPresentingOverlay)
             }
         }
 
@@ -77,57 +82,20 @@ extension VideoPlayer {
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.bouncy(duration: 0.4), value: isPresentingSupplement)
             .animation(.bouncy(duration: 0.25), value: isPresentingOverlay)
+            .onReceive(onPressEvent) { press in
+                switch press {
+                case (.playPause, _):
+                    manager.togglePlayPause()
+                case (.menu, _):
+                    if isPresentingSupplement {
+                        containerState.selectedSupplement = nil
+                    } else {
+                        manager.proxy?.stop()
+                        router.dismiss()
+                    }
+                default: ()
+                }
+            }
         }
     }
 }
-
-// import VLCUI
-//
-// struct VideoPlayer_Overlay_Previews: PreviewProvider {
-//
-//    static var previews: some View {
-//        ZStack {
-//
-//            Color.red
-//
-//            VideoPlayer.PlaybackControls()
-//                .environmentObject(
-//                    MediaPlayerManager(
-//                        playbackItem: .init(
-//                            baseItem: .init(
-//                                //                            channelType: .tv,
-//                                indexNumber: 1,
-//                                name: "The Bear",
-//                                parentIndexNumber: 1,
-//                                runTimeTicks: 10_000_000_000,
-//                                type: .episode
-//                            ),
-//                            mediaSource: .init(),
-//                            playSessionID: "",
-//                            url: URL(string: "/")!
-//                        )
-//                    )
-//                )
-//                .environmentObject(VLCVideoPlayer.Proxy())
-//                .environment(\.isScrubbing, .mock(false))
-//                .environment(\.isAspectFilled, .mock(false))
-//                .environment(\.isPresentingOverlay, .constant(true))
-//                //            .environment(\.playbackSpeed, .constant(1.0))
-//                .environment(\.selectedMediaPlayerSupplement, .mock(nil))
-//                .previewInterfaceOrientation(.landscapeLeft)
-//                .preferredColorScheme(.dark)
-//        }
-//        .ignoresSafeArea()
-//    }
-// }
-//
-// extension Binding {
-//
-//    static func mock(_ value: Value) -> Self {
-//        var value = value
-//        return Binding(
-//            get: { value },
-//            set: { value = $0 }
-//        )
-//    }
-// }

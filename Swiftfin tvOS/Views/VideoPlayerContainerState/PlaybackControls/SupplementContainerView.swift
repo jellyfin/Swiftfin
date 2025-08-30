@@ -12,18 +12,23 @@ struct SupplementContainerView: View {
 
     @EnvironmentObject
     private var containerState: VideoPlayerContainerState
+    @EnvironmentObject
+    private var focusGuide: FocusGuide
 
     @EnvironmentObject
     private var manager: MediaPlayerManager
 
     @FocusState
     private var isFocused: Bool
+    @FocusState
+    private var isTopBoundaryFocused: Bool
 
     @FocusState
     private var focusedSupplement: AnyMediaPlayerSupplement?
 
     var body: some View {
         VStack(spacing: EdgeInsets.edgePadding) {
+
             HStack(spacing: 10) {
                 ForEach(manager.supplements.map(\.asAny)) { supplement in
                     Button(supplement.displayTitle) {}
@@ -34,6 +39,7 @@ struct SupplementContainerView: View {
             .padding(.leading, EdgeInsets.edgePadding)
             .frame(maxWidth: .infinity, alignment: .leading)
             .frame(height: 75)
+            .focusGuide(focusGuide, tag: "supplementTitles", top: "playbackControls")
 
             AlternateLayoutView(alignment: .topLeading) {
                 Color.clear
@@ -56,10 +62,13 @@ struct SupplementContainerView: View {
         }
         .focusSection()
         .focused($isFocused)
-        .onChange(of: focusedSupplement) { _, newValue in
-            if newValue?.id != containerState.selectedSupplement?.id {
-                containerState.selectedSupplement = newValue
+        .onChange(of: focusedSupplement) {
+            if focusedSupplement?.id != containerState.selectedSupplement?.id {
+                containerState.selectedSupplement = focusedSupplement
             }
+        }
+        .onChange(of: isTopBoundaryFocused) { _, _ in
+            containerState.selectedSupplement = nil
         }
     }
 }

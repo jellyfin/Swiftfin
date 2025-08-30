@@ -77,7 +77,10 @@ class UIVideoPlayerContainerViewController: UIViewController {
     private lazy var playbackControlsViewController: HostingController<AnyView> = {
         let controller = HostingController(
             content: playbackControls
+                .environment(\.onPressEventPublisher, onPressEvent)
                 .environmentObject(containerState)
+                .environmentObject(containerState.scrubbedSeconds)
+                .environmentObject(focusGuide)
                 .eraseToAnyView()
         )
         controller.disablesSafeArea = true
@@ -88,8 +91,9 @@ class UIVideoPlayerContainerViewController: UIViewController {
 
     private lazy var supplementContainerViewController: HostingController<AnyView> = {
         let content = SupplementContainerView()
-            .environmentObject(self.manager)
-            .environmentObject(self.containerState)
+            .environmentObject(manager)
+            .environmentObject(containerState)
+            .environmentObject(focusGuide)
             .eraseToAnyView()
         let controller = HostingController(content: content)
         controller.disablesSafeArea = true
@@ -114,6 +118,9 @@ class UIVideoPlayerContainerViewController: UIViewController {
     private let playbackControls: AnyView
     private let containerState: VideoPlayerContainerState
 
+    let focusGuide = FocusGuide()
+    let onPressEvent = OnPressEvent()
+
     private var cancellables: Set<AnyCancellable> = []
 
     init(
@@ -132,7 +139,6 @@ class UIVideoPlayerContainerViewController: UIViewController {
         self.containerState.$selectedSupplement
             .dropFirst()
             .sink { newSupplement in
-                print("Selected Supplement: \(String(describing: newSupplement))")
                 self.didPresent(supplement: newSupplement)
             }
             .store(in: &cancellables)
@@ -177,12 +183,17 @@ class UIVideoPlayerContainerViewController: UIViewController {
 
         setupViews()
         setupConstraints()
+
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(ignorePress))
+        gesture.allowedPressTypes = [NSNumber(value: UIPress.PressType.menu.rawValue)]
+        view.addGestureRecognizer(gesture)
     }
 
     private func setupViews() {
         addChild(playerViewController)
         view.addSubview(playerView)
         playerViewController.didMove(toParent: self)
+        playerView.backgroundColor = .black
 
         addChild(playbackControlsViewController)
         view.addSubview(playbackControlsView)
@@ -192,7 +203,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
         addChild(supplementContainerViewController)
         view.addSubview(supplementContainerView)
         supplementContainerViewController.didMove(toParent: self)
-        supplementContainerView.backgroundColor = .green.withAlphaComponent(0.2)
+        supplementContainerView.backgroundColor = .clear
     }
 
     private func setupConstraints() {
@@ -232,4 +243,37 @@ class UIVideoPlayerContainerViewController: UIViewController {
 
         NSLayoutConstraint.activate(playbackControlsConstraints)
     }
+
+    @objc
+    func ignorePress() {}
+
+    override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+        print(presses)
+        guard let buttonPress = presses.first else { return }
+
+        onPressEvent.send((type: buttonPress.type, phase: buttonPress.phase))
+    }
+}
+
+extension UIVideoPlayerContainerViewController {
+
+    typealias PressEvent = (type: UIPress.PressType, phase: UIPress.Phase)
+    typealias OnPressEvent = EventPublisher<PressEvent>
+}
+
+@propertyWrapper
+struct OnPressEvent: DynamicProperty {
+
+    @Environment(\.onPressEventPublisher)
+    private var publisher
+
+    var wrappedValue: UIVideoPlayerContainerViewController.OnPressEvent {
+        publisher
+    }
+}
+
+extension EnvironmentValues {
+
+    @Entry
+    var onPressEventPublisher: UIVideoPlayerContainerViewController.OnPressEvent = .init()
 }

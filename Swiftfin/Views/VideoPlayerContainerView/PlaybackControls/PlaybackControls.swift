@@ -9,8 +9,6 @@
 import Defaults
 import SwiftUI
 
-// TODO: supplement transition animation fixes
-// TODO: have overlay show after presentation/rotation
 // TODO: error state
 
 extension VideoPlayer {

@@ -25,7 +25,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
         }
 
         var body: some View {
-            RoundActionButton(
+            Button(
                 "Aspect Fill",
                 systemImage: systemImage
             ) {

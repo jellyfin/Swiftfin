@@ -16,25 +16,30 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
     @FocusState
     private var isFocused: Bool
 
-    let total: Value
+    private let total: Value
+    private var onEditingChanged: (Bool) -> Void
 
     init(value: Binding<Value>, total: Value) {
         self._value = value
         self.total = total
+        self.onEditingChanged = { _ in }
     }
 
     var body: some View {
         SliderContainer(
             value: $value,
             total: total,
-            onEditingChanged: { _ in }
+            onEditingChanged: onEditingChanged
         ) {
             CapsuleSliderContent()
         }
-        .focused($isFocused)
-        .scaleEffect(isFocused ? 1.0 : 0.95)
-        .animation(.easeInOut(duration: 0.3), value: isFocused)
-        .foregroundStyle(isFocused ? Color.white : Color.white.opacity(0.8))
+    }
+}
+
+extension CapsuleSlider {
+
+    func onEditingChanged(_ action: @escaping (Bool) -> Void) -> Self {
+        copy(modifying: \.onEditingChanged, with: action)
     }
 }
 
@@ -47,6 +52,5 @@ private struct CapsuleSliderContent: SliderContentView {
         ProgressView(value: sliderState.value, total: sliderState.total)
             .progressViewStyle(PlaybackProgressViewStyle(cornerStyle: .round))
             .frame(height: 30)
-            .padding()
     }
 }

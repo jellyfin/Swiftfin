@@ -171,9 +171,25 @@ class MediaPlayerManager: ViewModel, Stateful {
     }
 
     @MainActor
+    func togglePlayPause() {
+        switch playbackRequestStatus {
+        case .playing:
+            set(playbackRequestStatus: .paused)
+        case .paused:
+            set(playbackRequestStatus: .playing)
+        }
+    }
+
+    @MainActor
     func set(playbackRequestStatus: PlaybackRequestStatus) {
         if self.playbackRequestStatus != playbackRequestStatus {
             self.playbackRequestStatus = playbackRequestStatus
+
+            if playbackRequestStatus == .paused {
+                proxy?.pause()
+            } else {
+                proxy?.play()
+            }
         }
     }
 
