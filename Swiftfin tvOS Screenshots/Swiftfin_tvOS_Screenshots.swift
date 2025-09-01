@@ -237,15 +237,8 @@ extension XCUIApplication {
 
 extension XCUIElement {
     var details: String {
-        let regex = try! NSRegularExpression(
-            pattern: "0x\\S+",
-            options: .caseInsensitive
-        )
-        return regex.stringByReplacingMatches(
-            in: debugDescription,
-            options: [],
-            range: NSMakeRange(0, debugDescription.count),
-            withTemplate: ""
-        )
+        // Remove instances of " 0x123...," since these addresses change moment to moment
+        let pattern = /\ 0x\S+/
+        return debugDescription.replacing(pattern, with: "")
     }
 }
