@@ -1,22 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "1640"
-   version = "2.2">
+   version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES"
       buildArchitectures = "Automatic">
-      <BuildActionEntries>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
-            <AutocreatedTestPlanReference>
-            </AutocreatedTestPlanReference>
-         </BuildActionEntry>
-      </BuildActionEntries>
    </BuildAction>
    <TestAction
       buildConfiguration = "Debug"
@@ -25,17 +14,6 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       shouldAutocreateTestPlan = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5E8B619D2E4EF4DB00BE6AB5"
-               BuildableName = "Swiftfin Screenshots.xctest"
-               BlueprintName = "Swiftfin Screenshots"
-               ReferencedContainer = "container:Swiftfin.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
          <TestableReference
             skipped = "NO"
             parallelizable = "YES">
@@ -63,9 +41,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5377CBF0263B596A003A4E83"
-            BuildableName = "Swiftfin iOS.app"
-            BlueprintName = "Swiftfin iOS"
+            BlueprintIdentifier = "5358705F2669D21600D05A09"
+            BuildableName = "Swiftfin tvOS.app"
+            BlueprintName = "Swiftfin tvOS"
             ReferencedContainer = "container:Swiftfin.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -76,6 +54,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "5358705F2669D21600D05A09"
+            BuildableName = "Swiftfin tvOS.app"
+            BlueprintName = "Swiftfin tvOS"
+            ReferencedContainer = "container:Swiftfin.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

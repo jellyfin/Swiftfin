@@ -39,6 +39,17 @@
                ReferencedContainer = "container:Swiftfin.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "5E91B8552E6259560061D4F0"
+               BuildableName = "Swiftfin tvOS Screenshots.xctest"
+               BlueprintName = "Swiftfin tvOS Screenshots"
+               ReferencedContainer = "container:Swiftfin.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
