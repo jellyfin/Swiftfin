@@ -19,7 +19,9 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
     override func get(page: Int) async throws -> [BaseItemDto] {
 
-        let parameters = itemParameters(for: page)
+        var parameters = itemParameters(for: page)
+        parameters.includeItemTypes = [.episode]
+        parameters.isRecursive = true
         let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
         let response = try await userSession.client.send(request)
 
