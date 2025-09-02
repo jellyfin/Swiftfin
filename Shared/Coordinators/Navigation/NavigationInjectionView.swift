@@ -17,6 +17,9 @@ struct NavigationInjectionView: View {
     @EnvironmentObject
     private var rootCoordinator: RootCoordinator
 
+    @State
+    private var isZoomPresentationInteractive: Bool = true
+
     private let content: AnyView
 
     init(
@@ -66,8 +69,11 @@ struct NavigationInjectionView: View {
         .presentation(
                 $coordinator.presentedFullScreen,
                 transition: .zoomIfAvailable(
-                    options: .init(dimmingVisualEffect: .systemThickMaterialDark, options: .init(isInteractive: false)),
-                    otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: false))
+                    options: .init(
+                        dimmingVisualEffect: .systemThickMaterialDark,
+                        options: .init(isInteractive: isZoomPresentationInteractive)
+                    ),
+                    otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: isZoomPresentationInteractive))
                 )
             ) { routeBinding, _ in
                 let vc = UIPreferencesHostingController {
@@ -75,6 +81,7 @@ struct NavigationInjectionView: View {
 
                     NavigationInjectionView(coordinator: newCoordinator) {
                         routeBinding.wrappedValue.destination
+                            .environment(\.presentationControllerShouldDismiss, $isZoomPresentationInteractive)
                     }
                 }
 
@@ -85,4 +92,10 @@ struct NavigationInjectionView: View {
             }
         #endif
     }
+}
+
+extension EnvironmentValues {
+
+    @Entry
+    var presentationControllerShouldDismiss: Binding<Bool> = .constant(true)
 }

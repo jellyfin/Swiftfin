@@ -50,12 +50,6 @@ extension VideoPlayer.PlaybackControls {
             scrubbedSecondsBox.value
         }
 
-        // TODO: kept for future reference for trickplay scrubbing
-        private var previewXOffset: CGFloat {
-            let p = sliderSize.width * progress
-            return clamp(p, min: 100, max: sliderSize.width - 100)
-        }
-
         @ViewBuilder
         private var liveIndicator: some View {
             Text("Live")
@@ -111,15 +105,6 @@ extension VideoPlayer.PlaybackControls {
             }
             .frame(maxWidth: .infinity)
             .animation(.bouncy(duration: 0.4, extraBounce: 0.1), value: isScrubbing)
-            // TODO: kept for future reference for trickplay/chapter image scrubbing
-//            .overlay(alignment: .top) {
-//                RoundedRectangle(cornerRadius: 16)
-//                    .fill(Color.white.opacity(0.5))
-//                    .aspectRatio(1.77, contentMode: .fill)
-//                    .frame(width: 200)
-//                    .position(x: previewXOffset, y: -75)
-//                    .isVisible(isScrubbing)
-//            }
         }
     }
 }

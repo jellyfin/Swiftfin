@@ -10,7 +10,7 @@ import UIKit
 
 class DirectionalPanGestureRecognizer: UIPanGestureRecognizer {
 
-    private let direction: Direction
+    var direction: Direction
 
     init(direction: Direction, target: AnyObject, action: Selector) {
         self.direction = direction
@@ -22,13 +22,21 @@ class DirectionalPanGestureRecognizer: UIPanGestureRecognizer {
 
         if state == .began {
             let vel = velocity(in: view)
+
+            let isHorizontal = abs(vel.y) < abs(vel.x)
+            let isVertical = abs(vel.x) < abs(vel.y)
+
+            print("vel: \(vel), isHorizontal: \(isHorizontal), isVertical: \(isVertical), direction: \(direction)")
+
             switch direction {
-            case .horizontal where abs(vel.y) > abs(vel.x):
-                state = .cancelled
-            case .vertical where abs(vel.x) > abs(vel.y):
-                state = .cancelled
+            case .horizontal where isHorizontal: ()
+            case .vertical where isVertical: ()
+            case .up where isVertical && vel.y < 0: ()
+            case .down where isVertical && vel.y > 0: ()
+            case .left where isHorizontal && vel.x < 0: ()
+            case .right where isHorizontal && vel.x > 0: ()
             default:
-                break
+                state = .cancelled
             }
         }
     }

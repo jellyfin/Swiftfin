@@ -40,9 +40,9 @@ extension VideoPlayer.PlaybackControls {
         @Binding
         private var audioOffset: Duration
 
-        @Environment(\.isAspectFilled)
-        @Binding
-        private var isAspectFilled
+//        @Environment(\.isAspectFilled)
+//        @Binding
+//        private var isAspectFilled
 
         @Environment(\.isGestureLocked)
         @Binding
@@ -443,13 +443,13 @@ extension VideoPlayer.PlaybackControls.GestureLayer {
         state: UIGestureRecognizer.State,
         scale: CGFloat
     ) {
-        guard state == .began || state == .ended else { return }
-
-        if scale > 1, !isAspectFilled {
-            isAspectFilled = true
-        } else if scale < 1, isAspectFilled {
-            isAspectFilled = false
-        }
+//        guard state == .began || state == .ended else { return }
+//
+//        if scale > 1, !isAspectFilled {
+//            isAspectFilled = true
+//        } else if scale < 1, isAspectFilled {
+//            isAspectFilled = false
+//        }
     }
 }
 

@@ -23,8 +23,7 @@ extension VideoPlayer.PlaybackControls {
                 .labelStyle(.iconOnly)
                 .contentShape(Rectangle())
                 .scaleEffect(
-                    configuration.isPressed ? 0.8 : 1,
-                    anchor: .init(x: 0.5, y: 0.5)
+                    configuration.isPressed ? 0.8 : 1
                 )
                 .animation(.bouncy(duration: 0.25, extraBounce: 0.25), value: configuration.isPressed)
                 .padding(4)

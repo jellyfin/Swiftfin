@@ -12,15 +12,16 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
     struct AspectFill: View {
 
-        @Environment(\.isAspectFilled)
-        @Binding
-        private var isAspectFilled: Bool
+        @EnvironmentObject
+        private var containerState: VideoPlayerContainerState
 
-        @State
-        private var activeValue: Bool = false
+        private var isAspectFilled: Bool {
+            get { containerState.isAspectFilled }
+            nonmutating set { containerState.isAspectFilled = newValue }
+        }
 
         private var systemImage: String {
-            if activeValue {
+            if isAspectFilled {
                 "arrow.down.right.and.arrow.up.left"
             } else {
                 "arrow.up.left.and.arrow.down.right"
@@ -32,14 +33,10 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
                 "Aspect Fill",
                 systemImage: systemImage
             ) {
-                activeValue.toggle()
-                isAspectFilled = activeValue
+                isAspectFilled.toggle()
             }
             .videoPlayerActionButtonTransition()
             .id(isAspectFilled)
-            .onAppear {
-                activeValue = isAspectFilled
-            }
         }
     }
 }

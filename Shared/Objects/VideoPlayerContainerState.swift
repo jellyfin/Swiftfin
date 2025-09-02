@@ -13,6 +13,9 @@ import SwiftUI
 @MainActor
 class VideoPlayerContainerState: ObservableObject {
 
+    @Published
+    var isAspectFilled: Bool = false
+
     // TODO: rename isPresentingPlaybackButtons
     @Published
     var isPresentingPlaybackControls: Bool = false
@@ -64,6 +67,7 @@ class VideoPlayerContainerState: ObservableObject {
     private(set) var isPresentingSupplement: Bool = false {
         didSet {
             setPlaybackControlsVisibility()
+            presentationControllerShouldDismiss = !isPresentingSupplement
 
             if isPresentingSupplement {
                 timer.stop()
@@ -85,6 +89,9 @@ class VideoPlayerContainerState: ObservableObject {
     }
 
     @Published
+    var presentationControllerShouldDismiss: Bool = true
+
+    @Published
     var selectedSupplement: AnyMediaPlayerSupplement? = nil {
         didSet {
             isPresentingSupplement = selectedSupplement != nil
@@ -94,6 +101,9 @@ class VideoPlayerContainerState: ObservableObject {
     @Published
     var supplementOffset: CGFloat = 0.0
 
+    @Published
+    var centerOffset: CGFloat = 0.0
+
     var scrubbedSeconds: PublishedBox<Duration> = .init(initialValue: .zero)
     let timer = PokeIntervalTimer()
 
@@ -101,10 +111,11 @@ class VideoPlayerContainerState: ObservableObject {
 
     init() {
         timerCancellable = timer.hasFired.sink { [weak self] in
-            guard self?.isScrubbing == false else { return }
+            guard let self else { return }
+            guard !isScrubbing == false, !isPresentingSupplement else { return }
 
             withAnimation(.linear(duration: 0.25)) {
-                self?.isPresentingOverlay = false
+                self.isPresentingOverlay = false
             }
         }
     }

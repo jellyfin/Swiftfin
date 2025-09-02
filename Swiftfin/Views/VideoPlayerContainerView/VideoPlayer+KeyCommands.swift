@@ -20,9 +20,8 @@ extension VideoPlayer {
         @Default(.VideoPlayer.jumpForwardInterval)
         private var jumpForwardInterval
 
-        @Environment(\.isAspectFilled)
-        @Binding
-        private var isAspectFilled
+        @EnvironmentObject
+        private var containerState: VideoPlayerContainerState
 
         @EnvironmentObject
         private var jumpProgressObserver: JumpProgressObserver
@@ -42,26 +41,23 @@ extension VideoPlayer {
                         input: "f",
                         modifierFlags: .command
                     ) { @MainActor in
-                        isAspectFilled.toggle()
+                        containerState.isAspectFilled.toggle()
                     }
 
+                    // TODO: present holding down
                     KeyCommandAction(
                         title: L10n.playAndPause,
                         input: " "
                     ) {
-                        switch manager.playbackRequestStatus {
-                        case .playing:
-                            manager.proxy?.pause()
-                        case .paused:
-                            manager.proxy?.play()
+                        manager.togglePlayPause()
+
+                        if !containerState.isPresentingOverlay {
+                            if manager.playbackRequestStatus == .paused {
+                                toastProxy.present("Paused", systemName: "pause.circle")
+                            } else if manager.playbackRequestStatus == .playing {
+                                toastProxy.present("Playing", systemName: "play.circle")
+                            }
                         }
-                        //                if videoPlayerManager.state == .playing {
-                        //                    videoPlayerManager.proxy?.pause()
-                        //                    updateViewProxy.present(systemName: "pause.fill", title: "Pause")
-                        //                } else {
-                        //                    videoPlayerManager.proxy?.play()
-                        //                    updateViewProxy.present(systemName: "play.fill", title: "Play")
-                        //                }
                     }
 
                     // MARK: - Decrease Playback Speed

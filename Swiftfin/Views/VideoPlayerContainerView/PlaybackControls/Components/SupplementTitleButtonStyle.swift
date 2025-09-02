@@ -47,7 +47,7 @@ extension UIVideoPlayerContainerViewController.SupplementContainerView {
                     configuration.trigger()
                     UIDevice.impact(.light)
                 }
-                .onLongPressGesture(minimumDuration: 0.1) {} onPressingChanged: { isPressing in
+                .onLongPressGesture(minimumDuration: 0.01) {} onPressingChanged: { isPressing in
                     isPressed = isPressing
                 }
                 .scaleEffect(

@@ -80,7 +80,6 @@ extension VideoPlayer {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.leading, safeAreaInsets.leading)
                         .padding(.trailing, safeAreaInsets.trailing)
-                        .padding(.bottom, 10)
                         .trackingFrame($bottomContentFrame)
                         .background {
                             if isPresentingOverlay && !isPresentingSupplement {
@@ -101,6 +100,7 @@ extension VideoPlayer {
                 // TODO: offset by supplement container height
                 PlaybackButtons()
                     .isVisible(!isScrubbing && containerState.isPresentingPlaybackControls)
+                    .offset(y: containerState.centerOffset / 2)
             }
             .modifier(VideoPlayer.KeyCommandsModifier())
             .animation(.linear(duration: 0.1), value: isScrubbing)

@@ -31,8 +31,6 @@ struct VideoPlayer: View {
     @State
     private var audioOffset: Duration = .zero
     @State
-    private var isAspectFilled: Bool = false
-    @State
     private var isGestureLocked: Bool = false
     @State
     private var subtitleOffset: Duration = .zero
@@ -59,15 +57,11 @@ struct VideoPlayer: View {
             proxy.makeVideoPlayerBody()
                 .eraseToAnyView()
                 .environment(\.audioOffset, $audioOffset)
-                .environment(\.isAspectFilled, $isAspectFilled)
                 .environment(\.isGestureLocked, $isGestureLocked)
-                .environmentObject(manager)
         } playbackControls: {
             PlaybackControls()
                 .environment(\.audioOffset, $audioOffset)
-                .environment(\.isAspectFilled, $isAspectFilled)
                 .environment(\.isGestureLocked, $isGestureLocked)
-                .environmentObject(manager)
         }
     }
 
@@ -80,7 +74,7 @@ struct VideoPlayer: View {
                 }
             }
             .backport
-            .onChange(of: isAspectFilled) { _, newValue in
+            .onChange(of: containerState.isAspectFilled) { _, newValue in
                 UIView.animate(withDuration: 0.2) {
                     proxy.setAspectFill(newValue)
                 }
@@ -118,7 +112,7 @@ struct VideoPlayer: View {
                 }
             }
             .onReceive(manager.$playbackItem) { newItem in
-                isAspectFilled = false
+                containerState.isAspectFilled = false
                 audioOffset = .zero
                 subtitleOffset = .zero
 

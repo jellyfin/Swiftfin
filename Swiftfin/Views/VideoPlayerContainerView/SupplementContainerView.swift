@@ -31,6 +31,7 @@ extension UIVideoPlayerContainerViewController {
         var body: some View {
             ZStack {
                 GestureView()
+                    .environment(\.presentationControllerShouldDismiss, $containerState.presentationControllerShouldDismiss)
 
                 VStack(spacing: EdgeInsets.edgePadding) {
                     HStack(spacing: 10) {
@@ -64,6 +65,7 @@ extension UIVideoPlayerContainerViewController {
                         }
                     }
                 }
+                .edgePadding(.top)
                 .isVisible(isPresentingOverlay)
                 .isVisible(!isScrubbing)
             }

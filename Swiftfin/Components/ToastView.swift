@@ -15,6 +15,7 @@ import Transmission
 //       - single injection function
 //       - multiple toasts
 //       - sizes, stacked
+// TODO: be transparent
 
 struct ToastView<Content: View>: View {
 

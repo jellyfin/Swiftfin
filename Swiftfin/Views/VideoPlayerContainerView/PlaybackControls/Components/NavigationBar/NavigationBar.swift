@@ -26,6 +26,7 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
+        // TODO: compact view, help with title truncation with buttons
         var body: some View {
             HStack(alignment: .center) {
                 Button(L10n.close, systemImage: "xmark") {

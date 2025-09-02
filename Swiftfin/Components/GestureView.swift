@@ -26,41 +26,80 @@ typealias TapGestureHandler = (UnitPoint, Int) -> Void
 struct GestureView: UIViewRepresentable {
 
     @Environment(\.panGestureAction)
-    private var panAction: PanGestureAction
+    private var panAction: PanGestureAction?
     @Environment(\.tapGestureAction)
-    private var tapAction: TapGestureAction
+    private var tapAction: TapGestureAction?
 
     func makeUIView(context: Context) -> UIView {
         let view = UIView(frame: .zero)
-        let panGesture = UIPanGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handlePan(_:)))
-        let tapGesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleTap(_:)))
 
-        view.addGestureRecognizer(panGesture)
-        view.addGestureRecognizer(tapGesture)
+        view.addGestureRecognizer(context.coordinator.panGesture)
+        view.addGestureRecognizer(context.coordinator.pinchGesture)
+        view.addGestureRecognizer(context.coordinator.swipeGesture)
+        view.addGestureRecognizer(context.coordinator.tapGesture)
 
         view.backgroundColor = .clear
         return view
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {}
+    func updateUIView(_ uiView: UIView, context: Context) {
+        context.coordinator.panGesture.direction = context.environment.presentationControllerShouldDismiss
+            .wrappedValue ? .up : .vertical
+
+        context.coordinator.panAction = context.environment.panGestureAction
+        context.coordinator.pinchAction = context.environment.pinchGestureAction
+        context.coordinator.tapAction = context.environment.tapGestureAction
+    }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(
-            panAction: panAction,
-            tapAction: tapAction
-        )
+        Coordinator()
     }
 
     class Coordinator {
-        let panAction: PanGestureAction
-        let tapAction: TapGestureAction
 
-        init(
-            panAction: PanGestureAction,
-            tapAction: TapGestureAction
-        ) {
-            self.panAction = panAction
-            self.tapAction = tapAction
+        lazy var panGesture: DirectionalPanGestureRecognizer! = {
+            DirectionalPanGestureRecognizer(
+                direction: .vertical,
+                target: self,
+                action: #selector(handlePan)
+            )
+        }()
+
+        lazy var pinchGesture: UIPinchGestureRecognizer! = {
+            UIPinchGestureRecognizer(
+                target: self,
+                action: #selector(handlePinch)
+            )
+        }()
+
+        lazy var swipeGesture: UISwipeGestureRecognizer = {
+            UISwipeGestureRecognizer(
+                target: self,
+                action: #selector(handleSwipe)
+            )
+        }()
+
+        lazy var tapGesture: UITapGestureRecognizer! = {
+            UITapGestureRecognizer(
+                target: self,
+                action: #selector(handleTap)
+            )
+        }()
+
+        var panAction: PanGestureAction? {
+            didSet { panGesture.isEnabled = panAction != nil }
+        }
+
+        var pinchAction: PinchGestureAction? {
+            didSet { pinchGesture.isEnabled = pinchAction != nil }
+        }
+
+        var swipeAction: SwipeGestureAction? {
+            didSet { swipeGesture.isEnabled = swipeAction != nil }
+        }
+
+        var tapAction: TapGestureAction? {
+            didSet { tapGesture.isEnabled = tapAction != nil }
         }
 
         @objc
@@ -68,7 +107,47 @@ struct GestureView: UIViewRepresentable {
             let translation = gesture.translation(in: gesture.view)
             let velocity = gesture.velocity(in: gesture.view)
             let location = gesture.location(in: gesture.view)
-            panAction(translation, velocity.y, location, gesture.state)
+            panAction?(
+                point: translation,
+                velocity: velocity.y,
+                location: location,
+                state: gesture.state
+            )
+        }
+
+        @objc
+        func handlePinch(_ gesture: UIPinchGestureRecognizer) {
+            pinchAction?(
+                scale: gesture.scale,
+                velocity: gesture.velocity,
+                state: gesture.state
+            )
+        }
+
+        @objc
+        func handleSwipe(_ gesture: UISwipeGestureRecognizer) {
+//            let location = gesture.location(in: gesture.view)
+//            guard let view = gesture.view else { return }
+//
+//            let unitPoint = UnitPoint(
+//                x: location.x / view.bounds.width,
+//                y: location.y / view.bounds.height
+//            )
+//            let direction: Direction
+//            switch gesture.direction {
+//            case .up:
+//                direction = .up
+//            case .down:
+//                direction = .down
+//            case .left:
+//                direction = .left
+//            case .right:
+//                direction = .right
+//            default:
+//                return
+//            }
+            // Assuming a single swipe counts as 1
+//            tapAction(unitPoint, 1)
         }
 
         @objc
@@ -80,7 +159,10 @@ struct GestureView: UIViewRepresentable {
                 x: location.x / view.bounds.width,
                 y: location.y / view.bounds.height
             )
-            tapAction(unitPoint, gesture.numberOfTouches)
+            tapAction?(
+                point: unitPoint,
+                count: gesture.numberOfTouches
+            )
         }
     }
 }

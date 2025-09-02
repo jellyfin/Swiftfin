@@ -15,6 +15,15 @@ import SwiftUI
 //       - offset to top of supplement title over full state transition
 //       - avoids bottom gap when aspect filled and centers view
 
+struct HorizontalStripViewWithBorders: View {
+    var body: some View {
+        Rectangle()
+            .fill(Color.blue)
+            .border(.red, width: 10)
+            .debugCross(.red)
+    }
+}
+
 // MARK: - VideoPlayerContainerView
 
 struct VideoPlayerContainerView<Player: View, PlaybackControls: View>: UIViewControllerRepresentable {
@@ -48,7 +57,9 @@ struct VideoPlayerContainerView<Player: View, PlaybackControls: View>: UIViewCon
     func updateUIViewController(
         _ uiViewController: UIVideoPlayerContainerViewController,
         context: Context
-    ) {}
+    ) {
+        context.environment.presentationControllerShouldDismiss.wrappedValue = containerState.presentationControllerShouldDismiss
+    }
 }
 
 // MARK: - UIVideoPlayerContainerViewController
@@ -93,6 +104,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
         var body: some View {
             ZStack {
                 GestureView()
+                    .environment(\.presentationControllerShouldDismiss, $containerState.presentationControllerShouldDismiss)
 
                 playbackControls
             }
@@ -105,6 +117,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
         let controller = HostingController(
             content: PlayerContainerView(player: player)
                 .environmentObject(containerState)
+                .environmentObject(manager)
                 .eraseToAnyView()
         )
         controller.disablesSafeArea = true
@@ -116,9 +129,11 @@ class UIVideoPlayerContainerViewController: UIViewController {
     private lazy var playbackControlsViewController: HostingController<AnyView> = {
         let controller = HostingController(
             content: PlaybackControlsContainerView(playbackControls: playbackControls)
-                .environmentObject(containerState)
                 .environment(\.panGestureAction, .init(action: handlePanGesture))
+                .environment(\.pinchGestureAction, .init(action: handlePinchGesture))
                 .environment(\.tapGestureAction, .init(action: handleTapGesture))
+                .environmentObject(containerState)
+                .environmentObject(manager)
                 .eraseToAnyView()
         )
         controller.disablesSafeArea = true
@@ -129,10 +144,10 @@ class UIVideoPlayerContainerViewController: UIViewController {
 
     private lazy var supplementContainerViewController: HostingController<AnyView> = {
         let content = SupplementContainerView()
-            .environmentObject(self.manager)
-            .environmentObject(self.containerState)
             .environment(\.panGestureAction, .init(action: handlePanGesture))
             .environment(\.tapGestureAction, .init(action: handleTapGesture))
+            .environmentObject(containerState)
+            .environmentObject(manager)
             .eraseToAnyView()
         let controller = HostingController(content: content)
         controller.disablesSafeArea = true
@@ -148,11 +163,11 @@ class UIVideoPlayerContainerViewController: UIViewController {
     // MARK: - Constants
 
     private let compactSupplementContainerOffset: (CGFloat) -> CGFloat = { totalHeight in
-        max(totalHeight * 0.6 + EdgeInsets.edgePadding * 2, 300 + EdgeInsets.edgePadding * 2)
+        max(totalHeight * 0.6, 300) + EdgeInsets.edgePadding * 2
     }
 
     private let regularSupplementContainerOffset: CGFloat = 200.0 + EdgeInsets.edgePadding * 2
-    private let dismissedSupplementContainerOffset: CGFloat = 50.0 + EdgeInsets.edgePadding
+    private let dismissedSupplementContainerOffset: CGFloat = 50.0 + EdgeInsets.edgePadding * 2
 
     private let compactMinimumTranslation: CGFloat = 100.0
     private let regularMinimumTranslation: CGFloat = 50.0
@@ -164,8 +179,32 @@ class UIVideoPlayerContainerViewController: UIViewController {
     private var playerRegularConstraints: [NSLayoutConstraint] = []
     private var supplementContainerConstraints: [NSLayoutConstraint] = []
 
+    private var playerCompactBottomAnchor: NSLayoutConstraint!
     private var supplementHeightAnchor: NSLayoutConstraint!
     private var supplementBottomAnchor: NSLayoutConstraint!
+
+    private var centerOffset: CGFloat {
+        guard containerState.isCompact else {
+            return dismissedSupplementContainerOffset
+        }
+
+        let supplementContainerHeight = compactSupplementContainerOffset(view.bounds.height)
+        let offsetPercentage = 1 - clamp(abs(supplementBottomAnchor.constant) / supplementContainerHeight, min: 0, max: 1)
+        let offset = (dismissedSupplementContainerOffset + EdgeInsets.edgePadding) * offsetPercentage
+
+        return max(50, offset)
+    }
+
+    private var compactPlayerBottomOffset: CGFloat {
+        guard containerState.isCompact else {
+            return dismissedSupplementContainerOffset
+        }
+        let supplementContainerHeight = compactSupplementContainerOffset(view.bounds.height)
+        let offsetPercentage = 1 - clamp(abs(supplementBottomAnchor.constant) / supplementContainerHeight, min: 0, max: 1)
+        let offset = (dismissedSupplementContainerOffset + EdgeInsets.edgePadding) * offsetPercentage
+
+        return offset
+    }
 
     private let manager: MediaPlayerManager
     private let player: AnyView
@@ -306,7 +345,25 @@ class UIVideoPlayerContainerViewController: UIViewController {
             supplementBottomAnchor.constant = clampedOffset
         }
 
+        playerCompactBottomAnchor.constant = compactPlayerBottomOffset
         containerState.supplementOffset = supplementBottomAnchor.constant
+        containerState.centerOffset = centerOffset
+    }
+
+    // MARK: - Pinch
+
+    private func handlePinchGesture(
+        scale: CGFloat,
+        velocity: CGFloat,
+        state: UIGestureRecognizer.State
+    ) {
+        guard !containerState.isPresentingSupplement, state == .began || state == .changed else { return }
+
+        if scale > 1, !containerState.isAspectFilled {
+            containerState.isAspectFilled = true
+        } else if scale < 1, containerState.isAspectFilled {
+            containerState.isAspectFilled = false
+        }
     }
 
     // MARK: - Tap
@@ -348,7 +405,9 @@ class UIVideoPlayerContainerViewController: UIViewController {
             self.supplementBottomAnchor.constant = -dismissedSupplementContainerOffset
         }
 
+        playerCompactBottomAnchor.constant = compactPlayerBottomOffset
         containerState.supplementOffset = supplementBottomAnchor.constant
+        containerState.centerOffset = centerOffset
 
         if let panningState {
             let velocity = abs(panningState.velocity) / 1000
@@ -376,6 +435,8 @@ class UIVideoPlayerContainerViewController: UIViewController {
             }
         }
     }
+
+    // MARK: - viewDidLoad
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -406,32 +467,15 @@ class UIVideoPlayerContainerViewController: UIViewController {
     }
 
     private func setupConstraints() {
-        playerCompactConstraints = [
-            playerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            playerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            playerView.topAnchor.constraint(equalTo: view.topAnchor),
-            playerView.bottomAnchor.constraint(equalTo: supplementContainerView.topAnchor),
-        ]
-        playerRegularConstraints = [
-            playerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            playerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            playerView.topAnchor.constraint(equalTo: view.topAnchor),
-            playerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ]
 
         let shouldBeCompact = UIDevice.isPhone && view.bounds.size.isPortrait
-
-        if shouldBeCompact {
-            NSLayoutConstraint.activate(playerCompactConstraints)
-        } else {
-            NSLayoutConstraint.activate(playerRegularConstraints)
-        }
 
         supplementBottomAnchor = supplementContainerView.topAnchor.constraint(
             equalTo: view.bottomAnchor,
             constant: -dismissedSupplementContainerOffset
         )
         containerState.supplementOffset = supplementBottomAnchor.constant
+        containerState.centerOffset = centerOffset
 
         let constant = shouldBeCompact ?
             compactSupplementContainerOffset(view.bounds.height) :
@@ -455,6 +499,30 @@ class UIVideoPlayerContainerViewController: UIViewController {
         ]
 
         NSLayoutConstraint.activate(playbackControlsConstraints)
+
+        playerCompactBottomAnchor = playerView.bottomAnchor.constraint(
+            equalTo: supplementContainerView.topAnchor,
+            constant: compactPlayerBottomOffset
+        )
+
+        playerCompactConstraints = [
+            playerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            playerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            playerView.topAnchor.constraint(equalTo: view.topAnchor),
+            playerCompactBottomAnchor,
+        ]
+        playerRegularConstraints = [
+            playerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            playerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            playerView.topAnchor.constraint(equalTo: view.topAnchor),
+            playerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ]
+
+        if shouldBeCompact {
+            NSLayoutConstraint.activate(playerCompactConstraints)
+        } else {
+            NSLayoutConstraint.activate(playerRegularConstraints)
+        }
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
@@ -481,6 +549,8 @@ class UIVideoPlayerContainerViewController: UIViewController {
             supplementHeightAnchor.constant = regularSupplementContainerOffset
         }
 
+        playerCompactBottomAnchor.constant = compactPlayerBottomOffset
         containerState.supplementOffset = supplementHeightAnchor.constant
+        containerState.centerOffset = centerOffset
     }
 }

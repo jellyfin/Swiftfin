@@ -59,9 +59,10 @@ extension MediaChaptersSupplement {
                 uniqueElements: chapters,
                 layout: .columns(1, insets: .zero)
             ) { chapter, _ in
-                ChapterButton(chapter: chapter, isCompact: true)
-                    .frame(height: 100)
-                    .edgePadding(.horizontal)
+                ChapterRow(chapter: chapter) {
+                    manager.proxy?.setSeconds(chapter.secondsRange.lowerBound)
+                }
+                .edgePadding(.horizontal)
             }
         }
 
@@ -72,8 +73,10 @@ extension MediaChaptersSupplement {
             CollectionHStack(
                 uniqueElements: chapters
             ) { chapter in
-                ChapterButton(chapter: chapter, isCompact: false)
-                    .frame(height: 150)
+                ChapterButton(chapter: chapter) {
+                    manager.proxy?.setSeconds(chapter.secondsRange.lowerBound)
+                }
+                .frame(height: 150)
             }
             .insets(horizontal: .zero)
             .proxy(collectionHStackProxy)
@@ -87,7 +90,71 @@ extension MediaChaptersSupplement {
         var tvOSView: some View { EmptyView() }
     }
 
-    struct ChapterButton: View {
+    struct ChapterPreview: View {
+
+        @Default(.accentColor)
+        private var accentColor
+
+        @State
+        private var contentSize: CGSize = .zero
+
+        let chapter: ChapterInfo.FullInfo
+        let isCurrentChapter: Bool
+
+        var body: some View {
+            AlternateLayoutView {
+                Color.clear
+            } content: {
+                ImageView(chapter.landscapeImageSources(maxWidth: 200))
+                    .failure {
+                        ZStack {
+                            Rectangle()
+                                .fill(Material.ultraThinMaterial)
+
+                            SystemImageContentView(systemName: chapter.systemImage)
+                                .background(color: Color.clear)
+                        }
+                    }
+            }
+            .overlay {
+                if isCurrentChapter {
+                    RoundedRectangle(cornerRadius: contentSize.width / 30)
+                        .stroke(accentColor, lineWidth: 8)
+                }
+            }
+            .posterStyle(.landscape)
+            .trackingSize($contentSize)
+        }
+    }
+
+    struct ChapterContent: View {
+
+        let chapter: ChapterInfo.FullInfo
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 5) {
+                Text(chapter.chapterInfo.displayTitle)
+                    .lineLimit(1)
+                    .foregroundStyle(.white)
+                    .frame(height: 15)
+
+                Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
+                    .frame(height: 20)
+                    .foregroundStyle(Color(UIColor.systemBlue))
+                    .padding(.horizontal, 4)
+                    .background {
+                        Color(.darkGray)
+                            .opacity(0.2)
+                            .cornerRadius(4)
+                    }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .font(.subheadline)
+            .fontWeight(.semibold)
+        }
+    }
+
+    struct ChapterRow: View {
 
         @Default(.accentColor)
         private var accentColor
@@ -101,65 +168,56 @@ extension MediaChaptersSupplement {
         private var contentSize: CGSize = .zero
 
         let chapter: ChapterInfo.FullInfo
-        let isCompact: Bool
+        let action: () -> Void
 
         private var isCurrentChapter: Bool {
             chapter.secondsRange.contains(activeSeconds)
         }
 
-        @ViewBuilder
-        private func withAlignmentStack(@ViewBuilder content: @escaping () -> some View) -> some View {
-            if isCompact {
-                HStack(spacing: 5) { content() }
-            } else {
-                VStack(alignment: .leading, spacing: 5) { content() }
+        var body: some View {
+            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
+                ChapterPreview(
+                    chapter: chapter,
+                    isCurrentChapter: isCurrentChapter
+                )
+                .frame(width: 110)
+                .padding(.vertical, 8)
+            } content: {
+                ChapterContent(chapter: chapter)
             }
+            .onSelect(perform: action)
+            .assign(manager.secondsBox.$value, to: $activeSeconds)
+        }
+    }
+
+    struct ChapterButton: View {
+
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
+
+        @State
+        private var activeSeconds: Duration = .zero
+        @State
+        private var contentSize: CGSize = .zero
+
+        let chapter: ChapterInfo.FullInfo
+        let action: () -> Void
+
+        private var isCurrentChapter: Bool {
+            chapter.secondsRange.contains(activeSeconds)
         }
 
         var body: some View {
-            Button {
-                manager.proxy?.setSeconds(chapter.secondsRange.lowerBound)
-            } label: {
-                withAlignmentStack {
-                    AlternateLayoutView {
-                        Color.clear
-                    } content: {
-                        ImageView(chapter.landscapeImageSources(maxWidth: 500))
-                            .failure {
-                                ZStack {
-                                    Rectangle()
-                                        .fill(Material.ultraThinMaterial)
+            Button(action: action) {
+                VStack(alignment: .leading, spacing: 5) {
+                    ChapterPreview(
+                        chapter: chapter,
+                        isCurrentChapter: isCurrentChapter
+                    )
 
-                                    SystemImageContentView(systemName: chapter.systemImage)
-                                        .background(color: Color.clear)
-                                }
-                            }
-                    }
-                    .overlay {
-                        if isCurrentChapter {
-                            RoundedRectangle(cornerRadius: contentSize.width / 30)
-                                .stroke(accentColor, lineWidth: 8)
-                        }
-                    }
-                    .posterStyle(.landscape, contentMode: isCompact ? .fit : .fill)
-
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text(chapter.chapterInfo.displayTitle)
-                            .lineLimit(1)
-                            .foregroundStyle(.white)
-                            .frame(height: 15)
-
-                        Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
-                            .frame(height: 20)
-                            .foregroundStyle(Color(UIColor.systemBlue))
-                            .padding(.horizontal, 4)
-                            .background {
-                                Color(.darkGray)
-                                    .opacity(0.2)
-                                    .cornerRadius(4)
-                            }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    ChapterContent(
+                        chapter: chapter
+                    )
                 }
                 .font(.subheadline)
                 .fontWeight(.semibold)

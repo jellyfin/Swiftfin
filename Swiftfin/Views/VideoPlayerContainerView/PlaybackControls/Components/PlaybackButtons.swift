@@ -61,7 +61,7 @@ extension VideoPlayer.PlaybackControls {
                     }
                 }
                 .transition(.opacity.combined(with: .scale).animation(.bouncy(duration: 0.7, extraBounce: 0.2)))
-                .font(.system(size: 56, weight: .bold, design: .default))
+                .font(.system(size: 36, weight: .bold, design: .default))
                 .contentShape(Rectangle())
                 .labelStyle(.iconOnly)
                 .padding(20)
@@ -108,7 +108,7 @@ extension VideoPlayer.PlaybackControls {
                 }
 
                 playButton
-                    .frame(minWidth: 100, maxWidth: 300)
+                    .frame(minWidth: 70, maxWidth: 200)
 
                 if shouldShowJumpButtons {
                     jumpForwardButton
@@ -116,6 +116,8 @@ extension VideoPlayer.PlaybackControls {
             }
             .buttonStyle(OverlayButtonStyle(onPressed: onPressed))
             .padding(.horizontal, 50)
+            .debugBackground(.orange)
+            .debugCross(.purple)
         }
     }
 }
