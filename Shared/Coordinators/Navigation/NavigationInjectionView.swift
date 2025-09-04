@@ -6,7 +6,9 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import PreferencesView
 import SwiftUI
+import Transmission
 
 struct NavigationInjectionView: View {
 
@@ -14,6 +16,9 @@ struct NavigationInjectionView: View {
     private var coordinator: NavigationCoordinator
     @EnvironmentObject
     private var rootCoordinator: RootCoordinator
+
+    @State
+    private var isZoomPresentationInteractive: Bool = true
 
     private let content: AnyView
 
@@ -50,16 +55,47 @@ struct NavigationInjectionView: View {
                 route.destination
             }
         }
+        #if os(tvOS)
         .fullScreenCover(
             item: $coordinator.presentedFullScreen
-        ) {
-            coordinator.presentedFullScreen = nil
-        } content: { route in
+        ) { route in
             let newCoordinator = NavigationCoordinator()
 
             NavigationInjectionView(coordinator: newCoordinator) {
                 route.destination
             }
         }
+        #else
+        .presentation(
+                $coordinator.presentedFullScreen,
+                transition: .zoomIfAvailable(
+                    options: .init(
+                        dimmingVisualEffect: .systemThickMaterialDark,
+                        options: .init(isInteractive: isZoomPresentationInteractive)
+                    ),
+                    otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: isZoomPresentationInteractive))
+                )
+            ) { routeBinding, _ in
+                let vc = UIPreferencesHostingController {
+                    let newCoordinator = NavigationCoordinator()
+
+                    NavigationInjectionView(coordinator: newCoordinator) {
+                        routeBinding.wrappedValue.destination
+                            .environment(\.presentationControllerShouldDismiss, $isZoomPresentationInteractive)
+                    }
+                }
+
+                // TODO: presentation options for customizing background color, dimming effect, etc.
+                vc.view.backgroundColor = .black
+
+                return vc
+            }
+        #endif
     }
+}
+
+extension EnvironmentValues {
+
+    @Entry
+    var presentationControllerShouldDismiss: Binding<Bool> = .constant(true)
 }

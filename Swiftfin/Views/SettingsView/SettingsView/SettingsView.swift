@@ -28,7 +28,6 @@ struct SettingsView: View {
 
     var body: some View {
         Form {
-
             Section {
 
                 UserProfileRow(user: viewModel.userSession.user.data) {

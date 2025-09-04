@@ -35,6 +35,13 @@ extension ItemView {
                     ItemView.StudiosHStack(studios: studios)
                 }
 
+                // MARK: - Parts
+
+                // TODO: Implement after part queue made
+//                if viewModel.additionalParts.isNotEmpty {
+//                    AdditionalPartsHStack(items: viewModel.additionalParts)
+//                }
+
                 // MARK: Cast and Crew
 
                 if let castAndCrew = viewModel.item.people,

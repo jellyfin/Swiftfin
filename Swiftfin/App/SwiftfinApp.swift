@@ -15,6 +15,7 @@ import PreferencesView
 import Pulse
 import PulseLogHandler
 import SwiftUI
+import Transmission
 
 @main
 struct SwiftfinApp: App {
@@ -74,9 +75,11 @@ struct SwiftfinApp: App {
 
     var body: some Scene {
         WindowGroup {
-            PreferencesView {
-                RootView()
-                    .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
+            ToastView {
+                PreferencesView {
+                    RootView()
+                        .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
+                }
             }
             .ignoresSafeArea()
             .onNotification(.applicationDidEnterBackground) {

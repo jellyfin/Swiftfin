@@ -38,7 +38,9 @@ final class NavigationCoordinator: ObservableObject {
         case .sheet:
             presentedSheet = route
         case .fullscreen:
-            presentedFullScreen = route
+            withAnimation {
+                presentedFullScreen = route
+            }
         }
         #endif
     }

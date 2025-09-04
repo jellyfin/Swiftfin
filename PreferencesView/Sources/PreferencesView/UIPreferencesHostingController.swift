@@ -10,7 +10,7 @@ import SwiftUI
 
 public class UIPreferencesHostingController: UIHostingController<AnyView> {
 
-    init<Content: View>(@ViewBuilder content: @escaping () -> Content) {
+    public init(@ViewBuilder content: @escaping () -> some View) {
         let box = Box()
         let rootView = AnyView(
             content()
@@ -94,6 +94,8 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
     override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         _orientations
     }
+
+    override public var shouldAutorotate: Bool { true }
 
     // MARK: Defer Edges
 

@@ -82,7 +82,7 @@ extension ServerActivityView {
                         if let eventDate = viewModel.log.date {
                             Text(eventDate.formatted(date: .abbreviated, time: .standard))
                         } else {
-                            Text(String.emptyTime)
+                            Text(String.emptyRuntime)
                         }
                     }
                     .font(.caption)
