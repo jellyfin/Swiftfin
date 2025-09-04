@@ -6,7 +6,10 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionVGrid
 import SwiftUI
+
+// TODO: implement paging
 
 extension UIVideoPlayerContainerViewController {
 
@@ -39,11 +42,7 @@ extension UIVideoPlayerContainerViewController {
                             let isSelected = containerState.selectedSupplement?.id == supplement.id
 
                             Button(supplement.displayTitle) {
-                                if isSelected {
-                                    containerState.selectedSupplement = nil
-                                } else {
-                                    containerState.selectedSupplement = supplement
-                                }
+                                containerState.select(supplement: supplement)
                             }
                             .isSelected(isSelected)
                         }
@@ -54,16 +53,25 @@ extension UIVideoPlayerContainerViewController {
                     .edgePadding(.horizontal)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                    AlternateLayoutView(alignment: .topLeading) {
-                        Color.clear
-                    } content: {
-                        if let selectedSupplement = containerState.selectedSupplement {
-                            selectedSupplement
-                                .videoPlayerBody
-                                .transition(.opacity.animation(.linear(duration: 0.4)))
-                                .padding(.bottom, EdgeInsets.edgePadding)
+                    TabView(selection: $containerState.selectedSupplement) {
+                        ForEach(manager.supplements.map(\.asAny)) { supplement in
+                            AlternateLayoutView(alignment: .topLeading) {
+                                Color.clear
+                            } content: {
+                                supplement
+                                    .videoPlayerBody
+                            }
+                            .tag(supplement as AnyMediaPlayerSupplement?)
+                            .background {
+                                GestureView()
+                                    .environment(\.panGestureDirection, .vertical)
+                            }
                         }
                     }
+                    .tabViewStyle(.page(indexDisplayMode: .never))
+                    .isVisible(containerState.isPresentingSupplement)
+                    .disabled(!containerState.isPresentingSupplement)
+                    .animation(.linear(duration: 0.2), value: containerState.selectedSupplement)
                 }
                 .edgePadding(.top)
                 .isVisible(isPresentingOverlay)

@@ -35,6 +35,7 @@ class DirectionalPanGestureRecognizer: UIPanGestureRecognizer {
             case .down where isVertical && vel.y > 0: ()
             case .left where isHorizontal && vel.x < 0: ()
             case .right where isHorizontal && vel.x > 0: ()
+            case .all: ()
             default:
                 state = .cancelled
             }

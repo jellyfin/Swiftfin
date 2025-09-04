@@ -40,25 +40,9 @@ extension VideoPlayer.PlaybackControls {
         @Binding
         private var audioOffset: Duration
 
-//        @Environment(\.isAspectFilled)
-//        @Binding
-//        private var isAspectFilled
-
         @Environment(\.isGestureLocked)
         @Binding
         private var isGestureLocked
-
-//        @Environment(\.isPresentingOverlay)
-//        @Binding
-//        private var isPresentingOverlay
-
-//        @Environment(\.isScrubbing)
-//        @Binding
-//        private var isScrubbing: Bool
-
-//        @Environment(\.selectedMediaPlayerSupplement)
-//        @Binding
-//        private var selectedSupplement: AnyMediaPlayerSupplement?
 
         @Environment(\.subtitleOffset)
         @Binding

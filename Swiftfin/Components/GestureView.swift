@@ -23,6 +23,12 @@ typealias SwipeGestureHandler = (UnitPoint, Direction) -> Void
 // point, amount
 typealias TapGestureHandler = (UnitPoint, Int) -> Void
 
+extension EnvironmentValues {
+
+    @Entry
+    var panGestureDirection: Direction = .all
+}
+
 struct GestureView: UIViewRepresentable {
 
     @Environment(\.panGestureAction)
@@ -43,12 +49,15 @@ struct GestureView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: UIView, context: Context) {
+
         context.coordinator.panGesture.direction = context.environment.presentationControllerShouldDismiss
             .wrappedValue ? .up : .vertical
 
         context.coordinator.panAction = context.environment.panGestureAction
         context.coordinator.pinchAction = context.environment.pinchGestureAction
         context.coordinator.tapAction = context.environment.tapGestureAction
+
+        context.coordinator.panGesture.direction = context.environment.panGestureDirection
     }
 
     func makeCoordinator() -> Coordinator {

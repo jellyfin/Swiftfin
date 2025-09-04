@@ -16,6 +16,9 @@ class VideoPlayerContainerState: ObservableObject {
     @Published
     var isAspectFilled: Bool = false
 
+    @Published
+    var isGestureLocked: Bool = false
+
     // TODO: rename isPresentingPlaybackButtons
     @Published
     var isPresentingPlaybackControls: Bool = false
@@ -35,7 +38,9 @@ class VideoPlayerContainerState: ObservableObject {
 
         if isCompact {
             if isPresentingSupplement {
-                isPresentingPlaybackControls = true
+                if !isPresentingPlaybackControls {
+                    isPresentingPlaybackControls = true
+                }
             } else {
                 isPresentingPlaybackControls = false
             }
@@ -109,6 +114,8 @@ class VideoPlayerContainerState: ObservableObject {
 
     private var timerCancellable: AnyCancellable?
 
+    weak var containerView: UIVideoPlayerContainerViewController?
+
     init() {
         timerCancellable = timer.hasFired.sink { [weak self] in
             guard let self else { return }
@@ -117,6 +124,16 @@ class VideoPlayerContainerState: ObservableObject {
             withAnimation(.linear(duration: 0.25)) {
                 self.isPresentingOverlay = false
             }
+        }
+    }
+
+    func select(supplement: AnyMediaPlayerSupplement?) {
+        if supplement?.id == selectedSupplement?.id {
+            selectedSupplement = nil
+            containerView?.present(supplement: nil)
+        } else {
+            selectedSupplement = supplement
+            containerView?.present(supplement: supplement)
         }
     }
 }

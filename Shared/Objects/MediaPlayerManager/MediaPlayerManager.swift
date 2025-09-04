@@ -84,10 +84,16 @@ class MediaPlayerManager: ViewModel, Stateful {
     @Published
     final var state: State = .playback
 
+    @Published
+    private var _supplements: [any MediaPlayerSupplement] = []
+
     // TODO: need supplements at manager level?
     //       - supplements of the proxy vs media player item?
-    @Published
-    private(set) var supplements: [any MediaPlayerSupplement] = []
+//    @Published
+    private(set) var supplements: [any MediaPlayerSupplement] {
+        get { _supplements.appending(queue!, if: queue != nil) }
+        set { _supplements = newValue }
+    }
 
     /// The current seconds media playback is set to.
     let secondsBox: PublishedBox<Duration> = .init(initialValue: .zero)
@@ -154,11 +160,13 @@ class MediaPlayerManager: ViewModel, Stateful {
 
         switch action {
         case let .error(error):
+            proxy?.stop()
             return .error(error)
         case .ended:
             // TODO: go next in queue or stop
             return .loadingItem
         case .stop:
+            proxy?.stop()
             return .stopped
         case let .playNewItem(provider: provider):
             self.item = provider.item

@@ -18,13 +18,13 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
     let item: BaseItemDto
 
     var videoPlayerBody: some PlatformView {
-        _View(item: item)
+        InfoOverlay(item: item)
     }
 }
 
 extension MediaInfoSupplement {
 
-    private struct _View: PlatformView {
+    private struct InfoOverlay: PlatformView {
 
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets: EdgeInsets
@@ -85,6 +85,7 @@ extension MediaInfoSupplement {
             .padding(.leading, safeAreaInsets.leading)
             .padding(.trailing, safeAreaInsets.trailing)
             .edgePadding(.horizontal)
+            .edgePadding(.bottom)
         }
 
         @ViewBuilder
@@ -154,23 +155,5 @@ extension MediaInfoSupplement {
         }
 
         var tvOSView: some View { EmptyView() }
-    }
-}
-
-struct MediaInfoSupplement_Previews: PreviewProvider {
-    static var previews: some View {
-        MediaInfoSupplement(item: .init(
-            indexNumber: 1,
-            name: "The Bear",
-            overview: "A young chef returns home to Chicago to run his family's sandwich shop after his brother's death.",
-            parentIndexNumber: 1,
-            runTimeTicks: 10_000_000_000,
-            type: .episode
-        ))
-        .videoPlayerBody
-        .eraseToAnyView()
-        .environment(\.horizontalSizeClass, .regular)
-        .previewInterfaceOrientation(.landscapeLeft)
-        .frame(height: 150)
     }
 }

@@ -26,6 +26,8 @@ extension VideoPlayer {
         private var manager: MediaPlayerManager
 
         @State
+        private var activeIsBuffering: Bool = false
+        @State
         private var bottomContentFrame: CGRect = .zero
 
         // TODO: move to containerState
@@ -68,11 +70,12 @@ extension VideoPlayer {
                         .allowsHitTesting(false)
 
                     // TODO: finalize design/placement
-//                    if manager.proxy?.isBuffering.value == true {
+//                    if activeIsBuffering, containerState.isPresentingPlaybackControls {
 //                        ProgressView()
 //                            .frame(maxWidth: .infinity, alignment: .leading)
 //                            .frame(height: 30)
 //                            .padding(.leading, safeAreaInsets.leading)
+//                            .transition(.opacity.animation(.linear(duration: 0.1)))
 //                    }
 
                     PlaybackProgress()
@@ -107,6 +110,9 @@ extension VideoPlayer {
             .animation(.bouncy(duration: 0.4), value: containerState.isPresentingSupplement)
             .animation(.bouncy(duration: 0.25), value: containerState.isPresentingOverlay)
             .environmentObject(jumpProgressObserver)
+            .onChange(of: manager.proxy?.isBuffering.value) { newValue in
+                activeIsBuffering = newValue ?? false
+            }
         }
     }
 }

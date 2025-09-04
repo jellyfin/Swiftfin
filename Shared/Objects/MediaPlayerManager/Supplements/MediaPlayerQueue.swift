@@ -9,8 +9,6 @@
 import IdentifiedCollections
 import JellyfinAPI
 
-// TODO: have providers of next/previous items
-
 protocol MediaPlayerQueue: MediaPlayerObserver, MediaPlayerSupplement {
 
     var hasNextItem: Bool { get }

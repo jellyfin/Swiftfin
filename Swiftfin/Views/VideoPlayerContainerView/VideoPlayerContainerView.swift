@@ -11,18 +11,6 @@ import Engine
 import SwiftUI
 
 // TODO: don't dismiss overlay while panning and supplement not presented
-// TODO: on compact, have player view bottom anchor to view bottom
-//       - offset to top of supplement title over full state transition
-//       - avoids bottom gap when aspect filled and centers view
-
-struct HorizontalStripViewWithBorders: View {
-    var body: some View {
-        Rectangle()
-            .fill(Color.blue)
-            .border(.red, width: 10)
-            .debugCross(.red)
-    }
-}
 
 // MARK: - VideoPlayerContainerView
 
@@ -209,7 +197,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
     private let manager: MediaPlayerManager
     private let player: AnyView
     private let playbackControls: AnyView
-    private let containerState: VideoPlayerContainerState
+    let containerState: VideoPlayerContainerState
 
     private var cancellables: Set<AnyCancellable> = []
 
@@ -226,12 +214,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        self.containerState.$selectedSupplement
-            .dropFirst()
-            .sink { newSupplement in
-                self.didPresent(supplement: newSupplement)
-            }
-            .store(in: &cancellables)
+        containerState.containerView = self
     }
 
     @available(*, unavailable)
@@ -245,9 +228,9 @@ class UIVideoPlayerContainerViewController: UIViewController {
     private var didStartPanningWithSupplement: Bool = false
     private var didStartPanningUpWithoutOverlay: Bool = false
 
-    // MARK: - Pan
+    // MARK: - Supplement Pan Action
 
-    private func handlePanGesture(
+    func handleSupplementPanAction(
         translation: CGPoint,
         velocity: CGFloat,
         location: CGPoint,
@@ -302,7 +285,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
                 verticalPanGestureStartConstant !=
                 nil ?
                 (translation: translation.y, velocity: velocity) : nil
-            didPresent(supplement: containerState.selectedSupplement, with: stateToPass)
+            present(supplement: containerState.selectedSupplement, with: stateToPass)
 
             let shouldActuallyDismissOverlay = didStartPanningUpWithoutOverlay && !containerState.isPresentingSupplement
 
@@ -350,44 +333,9 @@ class UIVideoPlayerContainerViewController: UIViewController {
         containerState.centerOffset = centerOffset
     }
 
-    // MARK: - Pinch
+    // MARK: - present
 
-    private func handlePinchGesture(
-        scale: CGFloat,
-        velocity: CGFloat,
-        state: UIGestureRecognizer.State
-    ) {
-        guard !containerState.isPresentingSupplement, state == .began || state == .changed else { return }
-
-        if scale > 1, !containerState.isAspectFilled {
-            containerState.isAspectFilled = true
-        } else if scale < 1, containerState.isAspectFilled {
-            containerState.isAspectFilled = false
-        }
-    }
-
-    // MARK: - Tap
-
-    private func handleTapGesture(
-        location: UnitPoint,
-        count: Int
-    ) {
-        if count == 1 {
-            if containerState.isPresentingSupplement {
-                if containerState.isCompact {
-                    containerState.isPresentingPlaybackControls.toggle()
-                } else {
-                    containerState.selectedSupplement = nil
-                }
-            } else {
-                containerState.isPresentingOverlay.toggle()
-            }
-        }
-    }
-
-    // MARK: - didPresent
-
-    func didPresent(
+    func present(
         supplement: AnyMediaPlayerSupplement?,
         with panningState: (translation: CGFloat, velocity: CGFloat)? = nil
     ) {

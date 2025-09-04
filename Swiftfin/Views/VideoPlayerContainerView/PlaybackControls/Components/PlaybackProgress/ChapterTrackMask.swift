@@ -9,8 +9,6 @@
 import JellyfinAPI
 import SwiftUI
 
-// TODO: fix
-
 extension VideoPlayer.PlaybackControls.PlaybackProgress {
 
     struct ChapterTrackMask: View {
@@ -21,20 +19,24 @@ extension VideoPlayer.PlaybackControls.PlaybackProgress {
         let chapters: [ChapterInfo.FullInfo]
 
         var body: some View {
-            HStack(spacing: 0) {
-                ForEach(chapters) { chapter in
-                    HStack(spacing: 0) {
+            AlternateLayoutView {
+                Color.clear
+            } content: {
+                HStack(spacing: 0) {
+                    ForEach(chapters) { chapter in
+                        HStack(spacing: 0) {
 
-                        if chapter.secondsRange.lowerBound != .zero {
-                            Color.clear
-                                .frame(width: 1.5)
+                            if chapter.secondsRange.lowerBound != .zero {
+                                Color.clear
+                                    .frame(width: 1.5)
+                            }
+
+                            Color.white
                         }
-
-                        Color.white
+                        .frame(
+                            maxWidth: contentSize.width * (chapter.unitRange.upperBound - chapter.unitRange.lowerBound)
+                        )
                     }
-                    .frame(
-                        maxWidth: contentSize.width * (chapter.unitRange.upperBound - chapter.unitRange.lowerBound)
-                    )
                 }
             }
             .trackingSize($contentSize)

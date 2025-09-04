@@ -186,8 +186,8 @@ extension AVMediaPlayerProxy {
 
         func makeUIView(context: Context) -> UIView {
 //            proxy.isScrubbing = context.environment.isScrubbing
-            proxy.scrubbedSeconds = $scrubbedSeconds.value
-            return UIAVPlayerView(proxy: proxy)
+//            proxy.scrubbedSeconds = $scrubbedSeconds.value
+            UIAVPlayerView(proxy: proxy)
         }
 
         func updateUIView(_ uiView: UIView, context: Context) {}

@@ -10,8 +10,6 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: bar color default to style
-// TODO: possible issue with runTimeSeconds == 0
 // TODO: smooth out animation when done scrubbing
 
 extension VideoPlayer.PlaybackControls {
@@ -30,8 +28,6 @@ extension VideoPlayer.PlaybackControls {
 
         @State
         private var capsuleSliderSize: CGSize = .zero
-        @State
-        private var sliderSize: CGSize = .zero
 
         private var isScrubbing: Bool {
             get {
@@ -82,6 +78,9 @@ extension VideoPlayer.PlaybackControls {
                 .onEditingChanged { newValue in
                     isScrubbing = newValue
                 }
+//                .if(manager.item.fullChapterInfo.isNotEmpty) { view in
+//                    view.mask(ChapterTrackMask(chapters: manager.item.fullChapterInfo))
+//                }
                 .frame(maxWidth: isScrubbing ? nil : max(0, capsuleSliderSize.width - EdgeInsets.edgePadding * 2))
                 .frame(height: isScrubbing ? 20 : 10)
             }
@@ -96,11 +95,11 @@ extension VideoPlayer.PlaybackControls {
                         .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
                     capsuleSlider
-                        .trackingSize($sliderSize)
+                        .trackingSize($capsuleSliderSize)
 
                     SplitTimeStamp()
                         .offset(y: isScrubbing ? 5 : 0)
-                        .frame(maxWidth: isScrubbing ? nil : max(0, capsuleSliderSize.width - 30))
+                        .frame(maxWidth: isScrubbing ? nil : max(0, capsuleSliderSize.width - EdgeInsets.edgePadding * 2))
                 }
             }
             .frame(maxWidth: .infinity)

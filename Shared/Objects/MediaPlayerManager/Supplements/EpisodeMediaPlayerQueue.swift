@@ -83,6 +83,7 @@ extension EpisodeMediaPlayerQueue {
             }
             .onAppear {
                 if let seasonID = manager.item.seasonID, let season = viewModel.seasons[id: seasonID] {
+                    season.send(.refresh)
                     selection = season.id
                 } else {
                     selection = viewModel.seasons.first?.id
@@ -94,9 +95,6 @@ extension EpisodeMediaPlayerQueue {
         private var iOSCompactView: some View {
             if let selectionViewModel {
                 CompactSeasonStackObserver(selectionViewModel: selectionViewModel)
-            } else {
-                Color.red
-                    .opacity(0.2)
             }
         }
 
@@ -104,9 +102,6 @@ extension EpisodeMediaPlayerQueue {
         private var iOSRegularView: some View {
             if let selectionViewModel {
                 RegularSeasonStackObserver(selectionViewModel: selectionViewModel)
-            } else {
-                Color.red
-                    .opacity(0.2)
             }
         }
     }
@@ -119,16 +114,21 @@ extension EpisodeMediaPlayerQueue {
         var body: some View {
             CollectionVGrid(
                 uniqueElements: selectionViewModel.elements,
-                layout: .columns(1, insets: .zero)
+                layout: .columns(
+                    1,
+                    insets: .init(top: 0, leading: 0, bottom: EdgeInsets.edgePadding, trailing: 0)
+                )
             ) { item in
-                EpisodeButton(item: item, isCompact: true)
-                    .frame(height: 100)
+                EpisodeRow(episode: item) {}
                     .edgePadding(.horizontal)
             }
         }
     }
 
     private struct RegularSeasonStackObserver: View {
+
+        @Environment(\.safeAreaInsets)
+        private var safeAreaInsets: EdgeInsets
 
         @ObservedObject
         var selectionViewModel: SeasonItemViewModel
@@ -138,14 +138,96 @@ extension EpisodeMediaPlayerQueue {
                 uniqueElements: selectionViewModel.elements,
                 id: \.unwrappedIDHashOrZero
             ) { item in
-                EpisodeButton(item: item, isCompact: false)
+                EpisodeButton(episode: item) {}
                     .frame(height: 150)
             }
-            .insets(horizontal: .zero)
+            .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
             .frame(height: 150)
-            .onAppear {
-                selectionViewModel.send(.refresh)
+        }
+    }
+
+    private struct EpisodePreview: View {
+
+        @Default(.accentColor)
+        private var accentColor
+
+        @Environment(\.isSelected)
+        private var isSelected: Bool
+
+        @State
+        private var contentSize: CGSize = .zero
+
+        let episode: BaseItemDto
+
+        var body: some View {
+            AlternateLayoutView {
+                Color.clear
+            } content: {
+                ImageView(episode.imageSource(.primary, maxWidth: 200))
+                    .failure {
+                        ZStack {
+                            Rectangle()
+                                .fill(Material.ultraThinMaterial)
+
+                            SystemImageContentView(systemName: episode.systemImage)
+                                .background(color: Color.clear)
+                        }
+                    }
             }
+            .overlay {
+                if isSelected {
+                    RoundedRectangle(cornerRadius: contentSize.width / 30)
+                        .stroke(accentColor, lineWidth: 8)
+                }
+            }
+            .posterStyle(.landscape)
+            .trackingSize($contentSize)
+        }
+    }
+
+    private struct EpisodeRow: View {
+
+        @Default(.accentColor)
+        private var accentColor
+
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
+
+        @State
+        private var contentSize: CGSize = .zero
+
+        let episode: BaseItemDto
+        let action: () -> Void
+
+        private var isCurrentEpisode: Bool {
+            manager.item.id == episode.id
+        }
+
+        var body: some View {
+            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
+                EpisodePreview(episode: episode)
+                    .frame(width: 110)
+                    .padding(.vertical, 8)
+            } content: {
+                HStack {
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(episode.displayTitle)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.primary)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
+
+//                        accessoryView
+//                            .font(.caption)
+//                            .foregroundColor(Color(UIColor.lightGray))
+                    }
+
+                    Spacer()
+                }
+            }
+            .onSelect(perform: action)
+            .isSelected(isCurrentEpisode)
         }
     }
 
@@ -160,56 +242,25 @@ extension EpisodeMediaPlayerQueue {
         @State
         private var contentSize: CGSize = .zero
 
-        let item: BaseItemDto
-        let isCompact: Bool
+        let episode: BaseItemDto
+        let action: () -> Void
 
         private var isCurrentEpisode: Bool {
-            manager.item.id == item.id
-        }
-
-        @ViewBuilder
-        private func withAlignmentStack(@ViewBuilder content: @escaping () -> some View) -> some View {
-            if isCompact {
-                HStack(spacing: 5) { content() }
-            } else {
-                VStack(alignment: .leading, spacing: 5) { content() }
-            }
+            manager.item.id == episode.id
         }
 
         var body: some View {
-            Button {
-//                manager.send(.playNewBaseItem(item: item))
-            } label: {
-                withAlignmentStack {
-                    AlternateLayoutView {
-                        Color.clear
-                    } content: {
-                        ImageView(item.imageSource(.primary, maxWidth: 150))
-                            .failure {
-                                ZStack {
-                                    Rectangle()
-                                        .fill(Material.ultraThinMaterial)
-
-                                    SystemImageContentView(systemName: item.systemImage)
-                                        .background(color: Color.clear)
-                                }
-                            }
-                    }
-                    .overlay {
-                        if isCurrentEpisode {
-                            RoundedRectangle(cornerRadius: contentSize.width / 30)
-                                .stroke(accentColor, lineWidth: 8)
-                        }
-                    }
-                    .posterStyle(.landscape, contentMode: isCompact ? .fit : .fill)
+            Button(action: action) {
+                VStack(alignment: .leading, spacing: 5) {
+                    EpisodePreview(episode: episode)
 
                     VStack(alignment: .leading, spacing: 5) {
-                        Text(item.displayTitle)
+                        Text(episode.displayTitle)
                             .lineLimit(1)
                             .foregroundStyle(.white)
                             .frame(height: 15)
 
-                        Text(item.seasonEpisodeLabel ?? .emptyDash)
+                        Text(episode.seasonEpisodeLabel ?? .emptyDash)
                             .frame(height: 20)
                             .foregroundStyle(Color(UIColor.systemBlue))
                             .padding(.horizontal, 4)
@@ -220,11 +271,12 @@ extension EpisodeMediaPlayerQueue {
                             }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
                 }
-                .font(.subheadline)
-                .fontWeight(.semibold)
             }
             .trackingSize($contentSize)
+            .isSelected(isCurrentEpisode)
         }
     }
 }

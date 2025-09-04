@@ -45,10 +45,8 @@ extension VideoPlayer.PlaybackControls {
             Button {
                 switch manager.playbackRequestStatus {
                 case .playing:
-                    manager.proxy?.pause()
                     manager.set(playbackRequestStatus: .paused)
                 case .paused:
-                    manager.proxy?.play()
                     manager.set(playbackRequestStatus: .playing)
                 }
             } label: {
@@ -116,8 +114,6 @@ extension VideoPlayer.PlaybackControls {
             }
             .buttonStyle(OverlayButtonStyle(onPressed: onPressed))
             .padding(.horizontal, 50)
-            .debugBackground(.orange)
-            .debugCross(.purple)
         }
     }
 }

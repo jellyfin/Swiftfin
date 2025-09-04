@@ -61,6 +61,10 @@ extension ChapterInfo {
             self.unitRange = secondsRange.lowerBound / runtime ..< secondsRange.upperBound / runtime
         }
 
+        func contains(seconds: Duration) -> Bool {
+            secondsRange.contains(seconds)
+        }
+
         func landscapeImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
             [imageSource]
         }

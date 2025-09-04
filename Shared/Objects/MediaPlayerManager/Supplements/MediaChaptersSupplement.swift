@@ -32,6 +32,9 @@ extension MediaChaptersSupplement {
 
     private struct ChapterOverlay: PlatformView {
 
+        @Environment(\.safeAreaInsets)
+        private var safeAreaInsets: EdgeInsets
+
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
@@ -57,10 +60,14 @@ extension MediaChaptersSupplement {
             // TODO: scroll to current chapter
             CollectionVGrid(
                 uniqueElements: chapters,
-                layout: .columns(1, insets: .zero)
+                layout: .columns(
+                    1,
+                    insets: .init(top: 0, leading: 0, bottom: EdgeInsets.edgePadding, trailing: 0)
+                )
             ) { chapter, _ in
                 ChapterRow(chapter: chapter) {
                     manager.proxy?.setSeconds(chapter.secondsRange.lowerBound)
+                    manager.set(playbackRequestStatus: .playing)
                 }
                 .edgePadding(.horizontal)
             }
@@ -75,10 +82,11 @@ extension MediaChaptersSupplement {
             ) { chapter in
                 ChapterButton(chapter: chapter) {
                     manager.proxy?.setSeconds(chapter.secondsRange.lowerBound)
+                    manager.set(playbackRequestStatus: .playing)
                 }
                 .frame(height: 150)
             }
-            .insets(horizontal: .zero)
+            .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
             .proxy(collectionHStackProxy)
             .frame(height: 150)
             .onAppear {
@@ -95,11 +103,13 @@ extension MediaChaptersSupplement {
         @Default(.accentColor)
         private var accentColor
 
+        @Environment(\.isSelected)
+        private var isSelected
+
         @State
         private var contentSize: CGSize = .zero
 
         let chapter: ChapterInfo.FullInfo
-        let isCurrentChapter: Bool
 
         var body: some View {
             AlternateLayoutView {
@@ -117,7 +127,7 @@ extension MediaChaptersSupplement {
                     }
             }
             .overlay {
-                if isCurrentChapter {
+                if isSelected {
                     RoundedRectangle(cornerRadius: contentSize.width / 30)
                         .stroke(accentColor, lineWidth: 8)
                 }
@@ -177,8 +187,7 @@ extension MediaChaptersSupplement {
         var body: some View {
             ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
                 ChapterPreview(
-                    chapter: chapter,
-                    isCurrentChapter: isCurrentChapter
+                    chapter: chapter
                 )
                 .frame(width: 110)
                 .padding(.vertical, 8)
@@ -187,6 +196,7 @@ extension MediaChaptersSupplement {
             }
             .onSelect(perform: action)
             .assign(manager.secondsBox.$value, to: $activeSeconds)
+            .isSelected(isCurrentChapter)
         }
     }
 
@@ -211,8 +221,7 @@ extension MediaChaptersSupplement {
             Button(action: action) {
                 VStack(alignment: .leading, spacing: 5) {
                     ChapterPreview(
-                        chapter: chapter,
-                        isCurrentChapter: isCurrentChapter
+                        chapter: chapter
                     )
 
                     ChapterContent(
@@ -224,6 +233,7 @@ extension MediaChaptersSupplement {
             }
             .trackingSize($contentSize)
             .assign(manager.secondsBox.$value, to: $activeSeconds)
+            .isSelected(isCurrentChapter)
         }
     }
 }
