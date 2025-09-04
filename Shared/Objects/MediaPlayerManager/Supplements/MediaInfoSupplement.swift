@@ -59,8 +59,8 @@ extension MediaInfoSupplement {
         private var fromBeginningButton: some View {
             Button("From Beginning", systemImage: "play.fill") {
                 manager.proxy?.setSeconds(.zero)
-                manager.proxy?.play()
-                containerState.selectedSupplement = nil
+                manager.set(playbackRequestStatus: .playing)
+                containerState.select(supplement: nil)
             }
             #if os(iOS)
             .buttonStyle(.material)

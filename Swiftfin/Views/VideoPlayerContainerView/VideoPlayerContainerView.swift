@@ -11,6 +11,8 @@ import Engine
 import SwiftUI
 
 // TODO: don't dismiss overlay while panning and supplement not presented
+// TODO: get video size from proxies, control aspect fill
+//       - stay within safe areas, aspect fill to screen
 
 // MARK: - VideoPlayerContainerView
 
@@ -222,6 +224,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // TODO: don't force unwrap optional, sometimes gets into weird state
     private var lastVerticalPanLocation: CGPoint?
     private var verticalPanGestureStartConstant: CGFloat?
     private var isPanning: Bool = false

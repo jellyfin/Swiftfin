@@ -45,6 +45,8 @@ extension UIVideoPlayerContainerViewController.SupplementContainerView {
                 }
                 .onTapGesture {
                     configuration.trigger()
+                    
+                    // TODO: disable if disabled
                     UIDevice.impact(.light)
                 }
                 .onLongPressGesture(minimumDuration: 0.01) {} onPressingChanged: { isPressing in

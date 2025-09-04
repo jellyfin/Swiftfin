@@ -11,6 +11,7 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: smooth out animation when done scrubbing
+// TODO: enabled/disabled state
 
 extension VideoPlayer.PlaybackControls {
 

@@ -23,6 +23,7 @@ typealias SwipeGestureHandler = (UnitPoint, Direction) -> Void
 // point, amount
 typealias TapGestureHandler = (UnitPoint, Int) -> Void
 
+// TODO: figure out this directional response stuff
 extension EnvironmentValues {
 
     @Entry

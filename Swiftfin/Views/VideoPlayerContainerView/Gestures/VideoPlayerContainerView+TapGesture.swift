@@ -19,7 +19,7 @@ extension UIVideoPlayerContainerViewController {
                 if containerState.isCompact {
                     containerState.isPresentingPlaybackControls.toggle()
                 } else {
-                    containerState.selectedSupplement = nil
+                    containerState.select(supplement: nil)
                 }
             } else {
                 containerState.isPresentingOverlay.toggle()

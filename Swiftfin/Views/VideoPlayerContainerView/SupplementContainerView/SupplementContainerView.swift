@@ -9,8 +9,6 @@
 import CollectionVGrid
 import SwiftUI
 
-// TODO: implement paging
-
 extension UIVideoPlayerContainerViewController {
 
     struct SupplementContainerView: View {
@@ -37,6 +35,8 @@ extension UIVideoPlayerContainerViewController {
                     .environment(\.presentationControllerShouldDismiss, $containerState.presentationControllerShouldDismiss)
 
                 VStack(spacing: EdgeInsets.edgePadding) {
+                    
+                    // TODO: scroll if larger than horizontal
                     HStack(spacing: 10) {
                         ForEach(manager.supplements.map(\.asAny)) { supplement in
                             let isSelected = containerState.selectedSupplement?.id == supplement.id

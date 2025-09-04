@@ -16,6 +16,8 @@ import Transmission
 //       - multiple toasts
 //       - sizes, stacked
 // TODO: be transparent
+// TODO: don't be a window
+//       - forces to portrait
 
 struct ToastView<Content: View>: View {
 
