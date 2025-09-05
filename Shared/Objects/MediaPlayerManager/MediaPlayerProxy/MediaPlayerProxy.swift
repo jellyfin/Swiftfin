@@ -33,11 +33,6 @@ protocol MediaPlayerProxy: ObservableObject, MediaPlayerObserver {
     func setRate(_ rate: Float)
     func setSeconds(_ seconds: Duration)
 
-    func setAudioStream(_ stream: MediaStream)
-    func setSubtitleStream(_ stream: MediaStream)
-
-    func setAspectFill(_ aspectFill: Bool)
-
     @ViewBuilder
     @MainActor
     func makeVideoPlayerBody() -> VideoPlayerBody
@@ -47,6 +42,15 @@ extension MediaPlayerProxy where VideoPlayerBody == EmptyView {
     func makeVideoPlayerBody() -> VideoPlayerBody {
         EmptyView()
     }
+}
+
+protocol VideoMediaPlayerProxy: MediaPlayerProxy {
+
+    var videoSize: PublishedBox<CGSize> { get }
+
+    func setAspectFill(_ aspectFill: Bool)
+    func setAudioStream(_ stream: MediaStream)
+    func setSubtitleStream(_ stream: MediaStream)
 }
 
 protocol MediaPlayerOffsetConfigurable {

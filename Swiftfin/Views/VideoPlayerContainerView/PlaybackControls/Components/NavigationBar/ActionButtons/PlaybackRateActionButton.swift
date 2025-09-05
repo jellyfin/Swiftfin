@@ -19,6 +19,8 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
         private var rates: [Float]
 
         @EnvironmentObject
+        private var containerState: VideoPlayerContainerState
+        @EnvironmentObject
         private var manager: MediaPlayerManager
 
         var body: some View {
@@ -38,6 +40,13 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
                     }
                 }
 
+//                Button("Custom") {
+//                    containerState.select(
+//                        supplement: PlaybackRateMediaPlayerSupplement().asAny,
+//                        isGuest: true
+//                    )
+//                }
+
                 if !rates.contains(manager.rate) {
                     Divider()
 
@@ -48,5 +57,80 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
                 }
             }
         }
+    }
+}
+
+// TODO: POC of a "guest" supplement, finish
+struct PlaybackRateMediaPlayerSupplement: MediaPlayerSupplement {
+
+    let displayTitle: String = "Playback Rate"
+    let id: String = "Playback Rate"
+
+    var videoPlayerBody: some PlatformView {
+        PlaybackRateOverlay()
+    }
+
+    struct PlaybackRateOverlay: PlatformView {
+
+        @EnvironmentObject
+        private var containerState: VideoPlayerContainerState
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
+
+        @ViewBuilder
+        private var compactView: some View {
+            VStack {
+
+                Text(manager.rate, format: .playbackRate)
+                    .font(.largeTitle)
+
+                HStack {
+                    Button {
+                        manager.set(rate: manager.rate + 0.05)
+                    } label: {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 7)
+                                .foregroundStyle(.white)
+
+                            Text("+")
+                                .fontWeight(.semibold)
+                                .foregroundColor(.black)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+
+                    Button {
+                        manager.set(rate: manager.rate - 0.05)
+                    } label: {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 7)
+                                .foregroundStyle(.white)
+
+                            Text("-")
+                                .fontWeight(.semibold)
+                                .foregroundColor(.black)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .frame(height: 40)
+            }
+        }
+
+        @ViewBuilder
+        private var regularView: some View {}
+
+        var iOSView: some View {
+            CompactOrRegularView(
+                shouldBeCompact: containerState.isCompact
+            ) {
+                compactView
+            } regularView: {
+                Color.orange
+                    .opacity(0.5)
+            }
+        }
+
+        var tvOSView: some View {}
     }
 }

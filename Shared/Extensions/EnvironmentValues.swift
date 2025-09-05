@@ -13,9 +13,6 @@ extension EnvironmentValues {
     @Entry
     var audioOffset: Binding<Duration> = .constant(.zero)
 
-//    @Entry
-//    var isAspectFilled: Binding<Bool> = .constant(false)
-
     @Entry
     var isEditing: Bool = false
 

@@ -12,13 +12,14 @@ import JellyfinAPI
 import SwiftUI
 import VLCUI
 
-class VLCMediaPlayerProxy: MediaPlayerProxy,
+class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     MediaPlayerOffsetConfigurable,
     MediaPlayerSubtitleConfigurable
 {
 
     let vlcUIProxy: VLCVideoPlayer.Proxy = .init()
     let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
+    let videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
 
     weak var manager: MediaPlayerManager?
 
@@ -35,11 +36,11 @@ class VLCMediaPlayerProxy: MediaPlayerProxy,
     }
 
     func jumpForward(_ seconds: Duration) {
-        vlcUIProxy.jumpForward(Int(seconds.components.seconds))
+        vlcUIProxy.jumpForward(seconds)
     }
 
     func jumpBackward(_ seconds: Duration) {
-        vlcUIProxy.jumpBackward(Int(seconds.components.seconds))
+        vlcUIProxy.jumpBackward(seconds)
     }
 
     func setRate(_ rate: Float) {
@@ -136,14 +137,18 @@ extension VLCMediaPlayerProxy {
             if let playbackItem = manager.playbackItem {
                 VLCVideoPlayer(configuration: vlcConfiguration(for: playbackItem))
                     .proxy(vlcUIProxy)
-                    .onSecondsUpdated { newSeconds, _ in
+                    .onSecondsUpdated { newSeconds, info in
                         if !isScrubbing {
                             containerState.scrubbedSeconds.value = newSeconds
                         }
 
                         manager.seconds = newSeconds
+
+                        if let proxy = manager.proxy as? any VideoMediaPlayerProxy {
+                            proxy.videoSize.value = info.videoSize
+                        }
                     }
-                    .onStateUpdated { state, _ in
+                    .onStateUpdated { state, info in
                         switch state {
                         case .buffering, .esAdded, .opening:
                             // TODO: figure out when to properly set to false
@@ -160,6 +165,10 @@ extension VLCMediaPlayerProxy {
                             manager.set(playbackRequestStatus: .playing)
                         case .paused:
                             manager.set(playbackRequestStatus: .paused)
+                        }
+                        
+                        if let proxy = manager.proxy as? any VideoMediaPlayerProxy {
+                            proxy.videoSize.value = info.videoSize
                         }
                     }
                     .onReceive(manager.$playbackItem) { playbackItem in

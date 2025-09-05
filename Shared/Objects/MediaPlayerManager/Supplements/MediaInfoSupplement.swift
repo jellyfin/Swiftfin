@@ -73,11 +73,9 @@ extension MediaInfoSupplement {
         // TODO: may need to be a layout for correct overview frame
         //       with scrolling if too long
         var iOSView: some View {
-            let shouldBeCompact: (CGSize) -> Bool = { size in
-                size.width < 300 || size.isPortrait
-            }
-
-            CompactOrRegularView(shouldBeCompact: shouldBeCompact) {
+            CompactOrRegularView(
+                shouldBeCompact: containerState.isCompact
+            ) {
                 iOSCompactView
             } regularView: {
                 iOSRegularView

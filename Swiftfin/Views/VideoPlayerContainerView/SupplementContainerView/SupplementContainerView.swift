@@ -9,6 +9,12 @@
 import CollectionVGrid
 import SwiftUI
 
+// TODO: possibly make custom tab view to have vertical scroll
+// views be able to swipe down supplement
+// TODO: clean up guest supplementing
+// TODO: fix bug on tabview selection
+//       - possibly cause using AnyMediaPlayerSupplement as the selection/tag
+
 extension UIVideoPlayerContainerViewController {
 
     struct SupplementContainerView: View {
@@ -32,19 +38,26 @@ extension UIVideoPlayerContainerViewController {
         var body: some View {
             ZStack {
                 GestureView()
-                    .environment(\.presentationControllerShouldDismiss, $containerState.presentationControllerShouldDismiss)
+                    .environment(\.panGestureDirection, containerState.presentationControllerShouldDismiss ? .up : .vertical)
 
                 VStack(spacing: EdgeInsets.edgePadding) {
-                    
+
                     // TODO: scroll if larger than horizontal
                     HStack(spacing: 10) {
-                        ForEach(manager.supplements.map(\.asAny)) { supplement in
-                            let isSelected = containerState.selectedSupplement?.id == supplement.id
-
+                        if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
                             Button(supplement.displayTitle) {
                                 containerState.select(supplement: supplement)
                             }
-                            .isSelected(isSelected)
+                            .isSelected(true)
+                        } else {
+                            ForEach(manager.supplements.map(\.asAny)) { supplement in
+                                let isSelected = containerState.selectedSupplement?.id == supplement.id
+
+                                Button(supplement.displayTitle) {
+                                    containerState.select(supplement: supplement)
+                                }
+                                .isSelected(isSelected)
+                            }
                         }
                     }
                     .buttonStyle(SupplementTitleButtonStyle())
@@ -53,18 +66,33 @@ extension UIVideoPlayerContainerViewController {
                     .edgePadding(.horizontal)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                    TabView(selection: $containerState.selectedSupplement) {
-                        ForEach(manager.supplements.map(\.asAny)) { supplement in
+                    ZStack {
+                        if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
                             AlternateLayoutView(alignment: .topLeading) {
                                 Color.clear
                             } content: {
                                 supplement
                                     .videoPlayerBody
                             }
-                            .tag(supplement as AnyMediaPlayerSupplement?)
                             .background {
                                 GestureView()
                                     .environment(\.panGestureDirection, .vertical)
+                            }
+                        } else {
+                            TabView(selection: $containerState.selectedSupplement) {
+                                ForEach(manager.supplements.map(\.asAny)) { supplement in
+                                    AlternateLayoutView(alignment: .topLeading) {
+                                        Color.clear
+                                    } content: {
+                                        supplement
+                                            .videoPlayerBody
+                                    }
+                                    .background {
+                                        GestureView()
+                                            .environment(\.panGestureDirection, .vertical)
+                                    }
+                                    .tag(supplement as AnyMediaPlayerSupplement?)
+                                }
                             }
                         }
                     }

@@ -56,6 +56,9 @@ class VideoPlayerContainerState: ObservableObject {
         }
     }
 
+    @Published
+    var isGuestSupplement: Bool = false
+
     // TODO: rename isPresentingPlaybackControls
     @Published
     var isPresentingOverlay: Bool = false {
@@ -77,6 +80,7 @@ class VideoPlayerContainerState: ObservableObject {
             if isPresentingSupplement {
                 timer.stop()
             } else {
+                isGuestSupplement = false
                 timer.poke()
             }
         }
@@ -127,7 +131,9 @@ class VideoPlayerContainerState: ObservableObject {
         }
     }
 
-    func select(supplement: AnyMediaPlayerSupplement?) {
+    func select(supplement: AnyMediaPlayerSupplement?, isGuest: Bool = false) {
+        isGuestSupplement = isGuest
+
         if supplement?.id == selectedSupplement?.id {
             selectedSupplement = nil
             containerView?.present(supplement: nil)

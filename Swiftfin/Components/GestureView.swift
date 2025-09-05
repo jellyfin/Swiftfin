@@ -51,9 +51,6 @@ struct GestureView: UIViewRepresentable {
 
     func updateUIView(_ uiView: UIView, context: Context) {
 
-        context.coordinator.panGesture.direction = context.environment.presentationControllerShouldDismiss
-            .wrappedValue ? .up : .vertical
-
         context.coordinator.panAction = context.environment.panGestureAction
         context.coordinator.pinchAction = context.environment.pinchGestureAction
         context.coordinator.tapAction = context.environment.tapGestureAction
@@ -69,7 +66,7 @@ struct GestureView: UIViewRepresentable {
 
         lazy var panGesture: DirectionalPanGestureRecognizer! = {
             DirectionalPanGestureRecognizer(
-                direction: .vertical,
+                direction: .all,
                 target: self,
                 action: #selector(handlePan)
             )

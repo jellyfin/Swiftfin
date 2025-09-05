@@ -16,6 +16,8 @@ import SwiftUI
 
 // TODO: loading, error states
 // TODO: season selection
+//        - don't just refresh on appear
+// TODO: watched/status indicators
 
 class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 
@@ -38,14 +40,6 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
         }
     }
 
-    private func setup(with manager: MediaPlayerManager) {
-        cancellables = []
-
-        //        manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
-        //        manager.$seconds.sink(receiveValue: secondsDidChange).store(in: &cancellables)
-        //        manager.$playbackRequestStatus.sink(receiveValue: playbackStatusDidChange).store(in: &cancellables)
-    }
-
     var videoPlayerBody: some PlatformView {
         EpisodeOverlay(viewModel: seriesViewModel)
     }
@@ -55,6 +49,8 @@ extension EpisodeMediaPlayerQueue {
 
     private struct EpisodeOverlay: PlatformView {
 
+        @EnvironmentObject
+        private var containerState: VideoPlayerContainerState
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
@@ -69,14 +65,25 @@ extension EpisodeMediaPlayerQueue {
             return viewModel.seasons[id: selection]
         }
 
+        private func select(episode: BaseItemDto) {
+            let provider = MediaPlayerItemProvider(item: episode) { item in
+                let mediaSource = item.mediaSources?.first
+
+                return try await MediaPlayerItem.build(
+                    for: item,
+                    mediaSource: mediaSource!
+                )
+            }
+
+            manager.send(.playNewItem(provider: provider))
+        }
+
         var tvOSView: some View { EmptyView() }
 
         var iOSView: some View {
-            let shouldBeCompact: (CGSize) -> Bool = { size in
-                size.width < 300 || size.isPortrait
-            }
-
-            CompactOrRegularView(shouldBeCompact: shouldBeCompact) {
+            CompactOrRegularView(
+                shouldBeCompact: containerState.isCompact
+            ) {
                 iOSCompactView
             } regularView: {
                 iOSRegularView
@@ -94,14 +101,20 @@ extension EpisodeMediaPlayerQueue {
         @ViewBuilder
         private var iOSCompactView: some View {
             if let selectionViewModel {
-                CompactSeasonStackObserver(selectionViewModel: selectionViewModel)
+                CompactSeasonStackObserver(
+                    selectionViewModel: selectionViewModel,
+                    action: select
+                )
             }
         }
 
         @ViewBuilder
         private var iOSRegularView: some View {
             if let selectionViewModel {
-                RegularSeasonStackObserver(selectionViewModel: selectionViewModel)
+                RegularSeasonStackObserver(
+                    selectionViewModel: selectionViewModel,
+                    action: select
+                )
             }
         }
     }
@@ -111,6 +124,8 @@ extension EpisodeMediaPlayerQueue {
         @ObservedObject
         var selectionViewModel: SeasonItemViewModel
 
+        let action: (BaseItemDto) -> Void
+
         var body: some View {
             CollectionVGrid(
                 uniqueElements: selectionViewModel.elements,
@@ -119,8 +134,10 @@ extension EpisodeMediaPlayerQueue {
                     insets: .init(top: 0, leading: 0, bottom: EdgeInsets.edgePadding, trailing: 0)
                 )
             ) { item in
-                EpisodeRow(episode: item) {}
-                    .edgePadding(.horizontal)
+                EpisodeRow(episode: item) {
+                    action(item)
+                }
+                .edgePadding(.horizontal)
             }
         }
     }
@@ -133,13 +150,17 @@ extension EpisodeMediaPlayerQueue {
         @ObservedObject
         var selectionViewModel: SeasonItemViewModel
 
+        let action: (BaseItemDto) -> Void
+
         var body: some View {
             CollectionHStack(
                 uniqueElements: selectionViewModel.elements,
                 id: \.unwrappedIDHashOrZero
             ) { item in
-                EpisodeButton(episode: item) {}
-                    .frame(height: 150)
+                EpisodeButton(episode: item) {
+                    action(item)
+                }
+                .frame(height: 150)
             }
             .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
             .frame(height: 150)
@@ -185,6 +206,25 @@ extension EpisodeMediaPlayerQueue {
         }
     }
 
+    private struct EpisodeDescription: View {
+
+        let episode: BaseItemDto
+
+        var body: some View {
+            DotHStack {
+                if let seasonEpisodeLabel = episode.seasonEpisodeLabel {
+                    Text(seasonEpisodeLabel)
+                }
+
+                if let runtime = episode.runTimeLabel {
+                    Text(runtime)
+                }
+            }
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+        }
+    }
+
     private struct EpisodeRow: View {
 
         @Default(.accentColor)
@@ -218,9 +258,7 @@ extension EpisodeMediaPlayerQueue {
                             .lineLimit(2)
                             .multilineTextAlignment(.leading)
 
-//                        accessoryView
-//                            .font(.caption)
-//                            .foregroundColor(Color(UIColor.lightGray))
+                        EpisodeDescription(episode: episode)
                     }
 
                     Spacer()
@@ -260,15 +298,8 @@ extension EpisodeMediaPlayerQueue {
                             .foregroundStyle(.white)
                             .frame(height: 15)
 
-                        Text(episode.seasonEpisodeLabel ?? .emptyDash)
-                            .frame(height: 20)
-                            .foregroundStyle(Color(UIColor.systemBlue))
-                            .padding(.horizontal, 4)
-                            .background {
-                                Color(.darkGray)
-                                    .opacity(0.2)
-                                    .cornerRadius(4)
-                            }
+                        EpisodeDescription(episode: episode)
+                            .frame(height: 20, alignment: .top)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .font(.subheadline)

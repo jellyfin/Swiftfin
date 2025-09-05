@@ -48,7 +48,9 @@ extension MediaChaptersSupplement {
                 size.width < 300 || size.isPortrait
             }
 
-            CompactOrRegularView(shouldBeCompact: shouldBeCompact) {
+            CompactOrRegularView(
+                shouldBeCompact: shouldBeCompact
+            ) {
                 iOSCompactView
             } regularView: {
                 iOSRegularView

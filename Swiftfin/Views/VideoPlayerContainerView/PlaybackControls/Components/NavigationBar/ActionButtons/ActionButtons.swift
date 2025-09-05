@@ -19,9 +19,9 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
         private var menuActionButtons
 
         @EnvironmentObject
-        private var manager: MediaPlayerManager
+        private var containerState: VideoPlayerContainerState
         @EnvironmentObject
-        private var overlayTimer: PokeIntervalTimer
+        private var manager: MediaPlayerManager
 
         @ViewBuilder
         private func view(for button: VideoPlayerActionButton) -> some View {
@@ -60,11 +60,19 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
         }
 
         @ViewBuilder
-        private var menuButtons: some View {
+        private var compactView: some View {
             Menu(
                 "Menu",
                 systemImage: "ellipsis.circle"
             ) {
+                ForEach(
+                    barActionButtons,
+                    content: view(for:)
+                )
+                .environment(\.isInMenu, true)
+
+                Divider()
+
                 ForEach(
                     menuActionButtons,
                     content: view(for:)
@@ -73,7 +81,8 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
             }
         }
 
-        var body: some View {
+        @ViewBuilder
+        private var regularView: some View {
             HStack(spacing: 0) {
                 ForEach(
                     barActionButtons,
@@ -81,8 +90,25 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                 )
 
                 if menuActionButtons.isNotEmpty {
-                    menuButtons
+                    Menu(
+                        "Menu",
+                        systemImage: "ellipsis.circle"
+                    ) {
+                        ForEach(
+                            menuActionButtons,
+                            content: view(for:)
+                        )
+                        .environment(\.isInMenu, true)
+                    }
                 }
+            }
+        }
+
+        var body: some View {
+            if containerState.isCompact {
+                compactView
+            } else {
+                regularView
             }
         }
     }

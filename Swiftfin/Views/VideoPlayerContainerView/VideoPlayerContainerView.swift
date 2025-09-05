@@ -94,7 +94,8 @@ class UIVideoPlayerContainerViewController: UIViewController {
         var body: some View {
             ZStack {
                 GestureView()
-                    .environment(\.presentationControllerShouldDismiss, $containerState.presentationControllerShouldDismiss)
+                    .environment(\.panGestureDirection, containerState.presentationControllerShouldDismiss ? .up : .vertical)
+//                    .environment(\.presentationControllerShouldDismiss, $containerState.presentationControllerShouldDismiss)
 
                 playbackControls
             }
@@ -135,7 +136,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
     private lazy var supplementContainerViewController: HostingController<AnyView> = {
         let content = SupplementContainerView()
             .environment(\.panGestureAction, .init(action: handlePanGesture))
-            .environment(\.tapGestureAction, .init(action: handleTapGesture))
+            .environment(\.tapGestureAction, .init(action: handleTapGestureInSupplement))
             .environmentObject(containerState)
             .environmentObject(manager)
             .eraseToAnyView()

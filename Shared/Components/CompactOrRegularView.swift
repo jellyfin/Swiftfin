@@ -15,6 +15,16 @@ struct CompactOrRegularView<Compact: View, Regular: View>: View {
     private let regularView: Regular
 
     init(
+        shouldBeCompact: Bool,
+        @ViewBuilder compactView: @escaping () -> Compact,
+        @ViewBuilder regularView: @escaping () -> Regular
+    ) {
+        self.shouldBeCompact = { _ in shouldBeCompact }
+        self.compactView = compactView()
+        self.regularView = regularView()
+    }
+
+    init(
         shouldBeCompact: @escaping (CGSize) -> Bool,
         @ViewBuilder compactView: @escaping () -> Compact,
         @ViewBuilder regularView: @escaping () -> Regular

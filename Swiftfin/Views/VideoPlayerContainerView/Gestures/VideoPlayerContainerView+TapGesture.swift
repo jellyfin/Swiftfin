@@ -10,6 +10,14 @@ import SwiftUI
 
 extension UIVideoPlayerContainerViewController {
 
+    func handleTapGestureInSupplement(
+        location: UnitPoint,
+        count: Int
+    ) {
+        guard !containerState.isPresentingSupplement else { return }
+        handleTapGesture(location: location, count: count)
+    }
+
     func handleTapGesture(
         location: UnitPoint,
         count: Int

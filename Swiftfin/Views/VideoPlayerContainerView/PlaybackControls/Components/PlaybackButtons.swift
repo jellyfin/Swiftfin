@@ -77,7 +77,7 @@ extension VideoPlayer.PlaybackControls {
                     systemImage: jumpForwardInterval.forwardSystemImage
                 )
                 .labelStyle(.iconOnly)
-                .font(.system(size: 36, weight: .regular, design: .default))
+                .font(.system(size: 32, weight: .regular, design: .default))
                 .padding(10)
             }
             .foregroundStyle(.primary)
@@ -93,7 +93,7 @@ extension VideoPlayer.PlaybackControls {
                     systemImage: jumpBackwardInterval.backwardSystemImage
                 )
                 .labelStyle(.iconOnly)
-                .font(.system(size: 36, weight: .regular, design: .default))
+                .font(.system(size: 32, weight: .regular, design: .default))
                 .padding(10)
             }
             .foregroundStyle(.primary)
@@ -106,7 +106,7 @@ extension VideoPlayer.PlaybackControls {
                 }
 
                 playButton
-                    .frame(minWidth: 70, maxWidth: 200)
+                    .frame(minWidth: 50, maxWidth: 150)
 
                 if shouldShowJumpButtons {
                     jumpForwardButton

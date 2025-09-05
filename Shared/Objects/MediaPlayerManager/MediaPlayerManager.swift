@@ -35,7 +35,7 @@ struct MediaPlayerItemProvider: Equatable {
     }
 }
 
-class MediaPlayerManager: ViewModel, Stateful {
+final class MediaPlayerManager: ViewModel, Stateful {
 
     /// A status indicating the player's request for media playback.
     enum PlaybackRequestStatus {

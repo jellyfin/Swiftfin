@@ -16,14 +16,18 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
     @Published
     var selectedAudioStreamIndex: Int? = nil {
         didSet {
-            manager?.proxy?.setAudioStream(.init(index: selectedAudioStreamIndex))
+            if let proxy = manager?.proxy as? any VideoMediaPlayerProxy {
+                proxy.setAudioStream(.init(index: selectedAudioStreamIndex))
+            }
         }
     }
 
     @Published
     var selectedSubtitleStreamIndex: Int? = nil {
         didSet {
-            manager?.proxy?.setSubtitleStream(.init(index: selectedSubtitleStreamIndex))
+            if let proxy = manager?.proxy as? any VideoMediaPlayerProxy {
+                proxy.setSubtitleStream(.init(index: selectedSubtitleStreamIndex))
+            }
         }
     }
 

@@ -20,7 +20,7 @@ struct VideoPlayer: View {
     private var subtitleSize
 
     @LazyState
-    private var proxy: any MediaPlayerProxy
+    private var proxy: any VideoMediaPlayerProxy
 
     @ObservedObject
     private var manager: MediaPlayerManager
