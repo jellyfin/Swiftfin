@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import Logging
 import SwiftUI
@@ -13,6 +14,9 @@ import SwiftUI
 extension ItemView {
 
     struct PlayButton: View {
+
+        @Default(.accentColor)
+        private var accentColor
 
         @Router
         private var router
@@ -77,7 +81,7 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            HStack(spacing: 20) {
+            HStack(spacing: 30) {
                 playButton
 
                 if multipleVersions {
@@ -85,6 +89,8 @@ extension ItemView {
                         .frame(width: 100, height: 100)
                 }
             }
+            .font(.title3)
+            .fontWeight(.semibold)
         }
 
         // MARK: - Play Button
@@ -95,34 +101,28 @@ extension ItemView {
             } label: {
                 HStack(spacing: 15) {
                     Image(systemName: "play.fill")
-                        .font(.title3)
                         .padding(.trailing, 4)
 
                     VStack(alignment: .leading) {
                         Text(title)
-                            .fontWeight(.semibold)
+                            .if(multipleVersions) { text in
+                                text
+                                    .font(.caption)
+                            }
 
                         if let source {
                             Marquee(source, animateWhenFocused: true)
                                 .font(.caption)
-                                .frame(maxWidth: 250)
+                                .frame(maxWidth: 300, alignment: .leading)
                         }
                     }
                 }
                 .foregroundStyle(isEnabled ? .black : Color(UIColor.secondaryLabel))
                 .padding(20)
-                .frame(width: multipleVersions ? 320 : 440, height: 100, alignment: .center)
-                .background {
-                    if isFocused {
-                        isEnabled ? Color.white : Color.secondarySystemFill
-                    } else {
-                        Color.white
-                            .opacity(0.5)
-                    }
-                }
+                .frame(width: multipleVersions ? 320 : 450, alignment: .center)
                 .cornerRadius(10)
             }
-            .buttonStyle(.card)
+            .buttonStyle(.tintedMaterial(tint: accentColor, foregroundColor: accentColor.overlayColor))
             .contextMenu {
                 if viewModel.playButtonItem?.userData?.playbackPositionTicks != 0 {
                     Button(L10n.playFromBeginning, systemImage: "gobackward") {
@@ -130,6 +130,7 @@ extension ItemView {
                     }
                 }
             }
+            .isSelected(true)
             .disabled(!isEnabled)
             .focused($isFocused)
         }

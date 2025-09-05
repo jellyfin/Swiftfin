@@ -6,40 +6,9 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
-extension ButtonStyle where Self == ToolbarPillButtonStyle {
-
-    static var toolbarPill: ToolbarPillButtonStyle {
-        ToolbarPillButtonStyle(primary: Defaults[.accentColor], secondary: .secondary)
-    }
-
-    static func toolbarPill(_ primary: Color, _ secondary: Color = Color.secondary) -> ToolbarPillButtonStyle {
-        ToolbarPillButtonStyle(primary: primary, secondary: secondary)
-    }
-}
-
-// TODO: don't take `Color`, take generic `ShapeStyle`
-struct ToolbarPillButtonStyle: ButtonStyle {
-
-    @Environment(\.isEnabled)
-    private var isEnabled
-
-    let primary: Color
-    let secondary: Color
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .foregroundStyle(isEnabled ? primary.overlayColor : secondary)
-            .font(.headline)
-            .padding(.vertical, 5)
-            .padding(.horizontal, 10)
-            .background(isEnabled ? primary : secondary)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .opacity(isEnabled && !configuration.isPressed ? 1 : 0.5)
-    }
-}
+// MARK: - TintedMaterialButtonStyle
 
 extension ButtonStyle where Self == TintedMaterialButtonStyle {
 
@@ -61,6 +30,8 @@ struct TintedMaterialButtonStyle: ButtonStyle {
     private var isSelected
     @Environment(\.isEnabled)
     private var isEnabled
+    @Environment(\.isFocused)
+    private var isFocused
 
     // Take tint instead of reading from view as
     // global accent color causes flashes of color
@@ -70,13 +41,13 @@ struct TintedMaterialButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
             TintedMaterial(tint: buttonTint)
-                .cornerRadius(10)
                 .id(isSelected)
 
             configuration.label
                 .foregroundStyle(foregroundStyle)
                 .symbolRenderingMode(.monochrome)
         }
+        .hoverEffect(.lift)
     }
 
     private var buttonTint: Color {
@@ -95,22 +66,5 @@ struct TintedMaterialButtonStyle: ButtonStyle {
         } else {
             AnyShapeStyle(Color.gray.opacity(0.3))
         }
-    }
-}
-
-extension ButtonStyle where Self == IsPressedButtonStyle {
-
-    static func isPressed(_ isPressed: @escaping (Bool) -> Void) -> IsPressedButtonStyle {
-        IsPressedButtonStyle(isPressed: isPressed)
-    }
-}
-
-struct IsPressedButtonStyle: ButtonStyle {
-
-    let isPressed: (Bool) -> Void
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .onChange(of: configuration.isPressed, perform: isPressed)
     }
 }
