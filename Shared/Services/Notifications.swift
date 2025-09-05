@@ -27,23 +27,35 @@ enum Notifications {
         typealias Key = Notifications.Key
     }
 
-    final class Key<Payload>: _AnyKey {
+    class Key<Payload>: _AnyKey {
 
         @Injected(\.notificationCenter)
         private var notificationCenter
 
         let name: Notification.Name
+        let decodeStrategy: ([AnyHashable: Any]) -> Payload?
+
+        static func defaultDecodeStrategy(userInfo: [AnyHashable: Any]) -> Payload? {
+            if let payload = userInfo["payload"] as? Payload {
+                return payload
+            }
+            return nil
+        }
 
         var rawValue: String {
             name.rawValue
         }
 
-        init(_ string: String) {
-            self.name = Notification.Name(string)
+        convenience init(_ string: String) {
+            self.init(Notification.Name(string))
         }
 
-        init(_ name: Notification.Name) {
+        init(
+            _ name: Notification.Name,
+            decodeStrategy: (([AnyHashable: Any]) -> Payload?)? = nil
+        ) {
             self.name = name
+            self.decodeStrategy = decodeStrategy ?? Self.defaultDecodeStrategy
         }
 
         func post(_ payload: Payload) {
@@ -67,8 +79,9 @@ enum Notifications {
         var publisher: AnyPublisher<Payload, Never> {
             notificationCenter
                 .publisher(for: name)
-                .compactMap { notification in
-                    notification.userInfo?["payload"] as? Payload
+                .compactMap { _ in
+                    nil
+//                    Payload.decode(from: notification.userInfo ?? [:])
                 }
                 .eraseToAnyPublisher()
         }
@@ -81,6 +94,8 @@ enum Notifications {
             notificationCenter.addObserver(object, selector: selector, name: name, object: observed)
         }
     }
+
+//    class SimpleKey<Value>: Key<SimplePayload<Value>> {}
 
     static subscript<Payload>(key: Key<Payload>) -> Key<Payload> {
         key
@@ -193,5 +208,23 @@ extension Notifications.Key {
 
     static var applicationWillTerminate: Key<Void> {
         Key(UIApplication.willTerminateNotification)
+    }
+
+    static var avAudioSessionInterruption: Key<(AVAudioSession.InterruptionType, AVAudioSession.InterruptionOptions)> {
+        Key(AVAudioSession.interruptionNotification) { userInfo in
+            guard let rawValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+                  let type = AVAudioSession.InterruptionType(rawValue: rawValue)
+            else {
+                return nil
+            }
+            guard let optionsUInt = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt
+            else {
+                return nil
+            }
+
+            let options = AVAudioSession.InterruptionOptions(rawValue: optionsUInt)
+
+            return (type, options)
+        }
     }
 }

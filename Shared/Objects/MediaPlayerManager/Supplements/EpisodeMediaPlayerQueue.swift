@@ -82,7 +82,7 @@ extension EpisodeMediaPlayerQueue {
 
         var iOSView: some View {
             CompactOrRegularView(
-                shouldBeCompact: containerState.isCompact
+                isCompact: containerState.isCompact
             ) {
                 iOSCompactView
             } regularView: {
@@ -175,9 +175,6 @@ extension EpisodeMediaPlayerQueue {
         @Environment(\.isSelected)
         private var isSelected: Bool
 
-        @State
-        private var contentSize: CGSize = .zero
-
         let episode: BaseItemDto
 
         var body: some View {
@@ -197,12 +194,15 @@ extension EpisodeMediaPlayerQueue {
             }
             .overlay {
                 if isSelected {
-                    RoundedRectangle(cornerRadius: contentSize.width / 30)
-                        .stroke(accentColor, lineWidth: 8)
+                    ContainerRelativeShape()
+                        .stroke(
+                            accentColor,
+                            lineWidth: 8
+                        )
+                        .clipped()
                 }
             }
             .posterStyle(.landscape)
-            .trackingSize($contentSize)
         }
     }
 
@@ -220,7 +220,7 @@ extension EpisodeMediaPlayerQueue {
                     Text(runtime)
                 }
             }
-            .font(.subheadline)
+            .font(.caption)
             .foregroundStyle(.secondary)
         }
     }
@@ -232,9 +232,6 @@ extension EpisodeMediaPlayerQueue {
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
-
-        @State
-        private var contentSize: CGSize = .zero
 
         let episode: BaseItemDto
         let action: () -> Void
@@ -249,20 +246,17 @@ extension EpisodeMediaPlayerQueue {
                     .frame(width: 110)
                     .padding(.vertical, 8)
             } content: {
-                HStack {
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text(episode.displayTitle)
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.primary)
-                            .lineLimit(2)
-                            .multilineTextAlignment(.leading)
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(episode.displayTitle)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.primary)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
 
-                        EpisodeDescription(episode: episode)
-                    }
-
-                    Spacer()
+                    EpisodeDescription(episode: episode)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .onSelect(perform: action)
             .isSelected(isCurrentEpisode)
@@ -276,9 +270,6 @@ extension EpisodeMediaPlayerQueue {
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
-
-        @State
-        private var contentSize: CGSize = .zero
 
         let episode: BaseItemDto
         let action: () -> Void
@@ -294,19 +285,19 @@ extension EpisodeMediaPlayerQueue {
 
                     VStack(alignment: .leading, spacing: 5) {
                         Text(episode.displayTitle)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
                             .lineLimit(1)
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.primary)
                             .frame(height: 15)
 
                         EpisodeDescription(episode: episode)
                             .frame(height: 20, alignment: .top)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
                 }
             }
-            .trackingSize($contentSize)
+            .foregroundStyle(.primary, .secondary)
             .isSelected(isCurrentEpisode)
         }
     }

@@ -32,14 +32,25 @@ struct ToastView<Content: View>: View {
 
     var body: some View {
         content
-            .window(
-                level: .alert,
-                transition: .move(edge: .top).combined(with: .opacity),
+            .presentation(
+                transition: .toast(
+                    edge: .top,
+                    isInteractive: true,
+                    preferredPresentationBackgroundColor: .clear
+                ),
                 isPresented: $toastProxy.isPresenting
             ) {
-                _ToastView()
+                ToastContent()
                     .environmentObject(toastProxy)
             }
+//            .window(
+//                level: .alert,
+//                transition: .move(edge: .top).combined(with: .opacity),
+//                isPresented: $toastProxy.isPresenting
+//            ) {
+//                ToastContent()
+//                    .environmentObject(toastProxy)
+//            }
             .environmentObject(toastProxy)
     }
 }
@@ -92,7 +103,7 @@ class ToastProxy: ObservableObject {
     }
 }
 
-private struct _ToastView: View {
+private struct ToastContent: View {
 
     @Environment(\.presentationCoordinator)
     private var presentationCoordinator

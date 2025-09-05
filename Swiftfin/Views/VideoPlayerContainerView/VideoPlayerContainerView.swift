@@ -11,8 +11,12 @@ import Engine
 import SwiftUI
 
 // TODO: don't dismiss overlay while panning and supplement not presented
-// TODO: get video size from proxies, control aspect fill
+// TODO: use video size from proxies to control aspect fill
 //       - stay within safe areas, aspect fill to screen
+// TODO: instead of static sizes for supplement view, take into account available space
+//       - necessary for full-screen supplements and/or small screens
+// TODO: custom buttons on playback controls
+//       - skip intro, next episode, etc.
 
 // MARK: - VideoPlayerContainerView
 
@@ -36,11 +40,20 @@ struct VideoPlayerContainerView<Player: View, PlaybackControls: View>: UIViewCon
     }
 
     func makeUIViewController(context: Context) -> UIVideoPlayerContainerViewController {
-        UIVideoPlayerContainerViewController(
+        let playerView = player()
+            .environment(\.audioOffset, context.environment.audioOffset)
+            .environment(\.isGestureLocked, context.environment.isGestureLocked)
+            .eraseToAnyView()
+        let playbackControlsView = playbackControls()
+            .environment(\.audioOffset, context.environment.audioOffset)
+            .environment(\.isGestureLocked, context.environment.isGestureLocked)
+            .eraseToAnyView()
+
+        return UIVideoPlayerContainerViewController(
             containerState: containerState,
             manager: manager,
-            player: player().eraseToAnyView(),
-            playbackControls: playbackControls().eraseToAnyView()
+            player: playerView,
+            playbackControls: playbackControlsView
         )
     }
 
@@ -79,7 +92,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
 
         var body: some View {
             player
-                .overlay(Color.black.opacity(shouldPresentDimOverlay ? 0.3 : 0.0))
+                .overlay(Color.black.opacity(shouldPresentDimOverlay ? 0.5 : 0.0))
                 .animation(.linear(duration: 0.2), value: containerState.isPresentingPlaybackControls)
         }
     }
@@ -92,15 +105,16 @@ class UIVideoPlayerContainerViewController: UIViewController {
         let playbackControls: AnyView
 
         var body: some View {
-            ZStack {
-                GestureView()
-                    .environment(\.panGestureDirection, containerState.presentationControllerShouldDismiss ? .up : .vertical)
-//                    .environment(\.presentationControllerShouldDismiss, $containerState.presentationControllerShouldDismiss)
+            ToastView {
+                ZStack {
+                    GestureView()
+                        .environment(\.panGestureDirection, containerState.presentationControllerShouldDismiss ? .up : .vertical)
 
-                playbackControls
+                    playbackControls
+                }
+                // inject box explicitly
+                .environmentObject(containerState.scrubbedSeconds)
             }
-            // inject box explicitly
-            .environmentObject(containerState.scrubbedSeconds)
         }
     }
 
@@ -120,9 +134,27 @@ class UIVideoPlayerContainerViewController: UIViewController {
     private lazy var playbackControlsViewController: HostingController<AnyView> = {
         let controller = HostingController(
             content: PlaybackControlsContainerView(playbackControls: playbackControls)
-                .environment(\.panGestureAction, .init(action: handlePanGesture))
-                .environment(\.pinchGestureAction, .init(action: handlePinchGesture))
-                .environment(\.tapGestureAction, .init(action: handleTapGesture))
+                .environment(
+                    \.panGestureAction,
+                    .init(
+                        action: {
+                            [weak self] in self?.handlePanGesture(
+                                translation: $0,
+                                velocity: $1,
+                                location: $2,
+                                state: $3
+                            )
+                        }
+                    )
+                )
+                .environment(
+                    \.pinchGestureAction,
+                    .init(action: { [weak self] in self?.handlePinchGesture(scale: $0, velocity: $1, state: $2) })
+                )
+                .environment(
+                    \.tapGestureAction,
+                    .init(action: { [weak self] in self?.handleTapGesture(location: $0, count: $1) })
+                )
                 .environmentObject(containerState)
                 .environmentObject(manager)
                 .eraseToAnyView()
@@ -135,8 +167,25 @@ class UIVideoPlayerContainerViewController: UIViewController {
 
     private lazy var supplementContainerViewController: HostingController<AnyView> = {
         let content = SupplementContainerView()
-            .environment(\.panGestureAction, .init(action: handlePanGesture))
-            .environment(\.tapGestureAction, .init(action: handleTapGestureInSupplement))
+            .environment(
+                \.panGestureAction,
+                .init(
+                    action: {
+                        [weak self] in self?.handlePanGesture(
+                            translation: $0,
+                            velocity: $1,
+                            location: $2,
+                            state: $3
+                        )
+                    }
+                )
+            )
+            .environment(
+                \.tapGestureAction,
+                .init(
+                    action: { [weak self] in self?.handleTapGesture(location: $0, count: $1) }
+                )
+            )
             .environmentObject(containerState)
             .environmentObject(manager)
             .eraseToAnyView()
@@ -372,8 +421,8 @@ class UIVideoPlayerContainerViewController: UIViewController {
                 usingSpringWithDamping: 0.8,
                 initialSpringVelocity: velocity,
                 options: .allowUserInteraction
-            ) {
-                self.view.layoutIfNeeded()
+            ) { [weak self] in
+                self?.view.layoutIfNeeded()
             }
         } else {
             UIView.animate(
@@ -382,8 +431,8 @@ class UIVideoPlayerContainerViewController: UIViewController {
                 usingSpringWithDamping: 0.8,
                 initialSpringVelocity: 0.4,
                 options: .allowUserInteraction
-            ) {
-                self.view.layoutIfNeeded()
+            ) { [weak self] in
+                self?.view.layoutIfNeeded()
             }
         }
     }
@@ -420,7 +469,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
 
     private func setupConstraints() {
 
-        let shouldBeCompact = UIDevice.isPhone && view.bounds.size.isPortrait
+        let isCompact = UIDevice.isPhone && view.bounds.size.isPortrait
 
         supplementBottomAnchor = supplementContainerView.topAnchor.constraint(
             equalTo: view.bottomAnchor,
@@ -429,7 +478,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
         containerState.supplementOffset = supplementBottomAnchor.constant
         containerState.centerOffset = centerOffset
 
-        let constant = shouldBeCompact ?
+        let constant = isCompact ?
             compactSupplementContainerOffset(view.bounds.height) :
             regularSupplementContainerOffset
         supplementHeightAnchor = supplementContainerView.heightAnchor.constraint(equalToConstant: constant)
@@ -470,7 +519,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
             playerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ]
 
-        if shouldBeCompact {
+        if isCompact {
             NSLayoutConstraint.activate(playerCompactConstraints)
         } else {
             NSLayoutConstraint.activate(playerRegularConstraints)
@@ -479,13 +528,13 @@ class UIVideoPlayerContainerViewController: UIViewController {
 
     override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        adjustContraints(shouldBeCompact: UIDevice.isPhone && size.isPortrait, in: size)
+        adjustContraints(isCompact: UIDevice.isPhone && size.isPortrait, in: size)
     }
 
-    private func adjustContraints(shouldBeCompact: Bool, in newSize: CGSize) {
-        containerState.isCompact = shouldBeCompact
+    private func adjustContraints(isCompact: Bool, in newSize: CGSize) {
+        containerState.isCompact = isCompact
 
-        if shouldBeCompact {
+        if isCompact {
             NSLayoutConstraint.deactivate(playerRegularConstraints)
             NSLayoutConstraint.activate(playerCompactConstraints)
 

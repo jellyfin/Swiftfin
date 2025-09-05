@@ -19,6 +19,9 @@ struct VideoPlayer: View {
     @Default(.VideoPlayer.Subtitle.subtitleSize)
     private var subtitleSize
 
+    @EnvironmentObject
+    private var toastProxy: ToastProxy
+
     @LazyState
     private var proxy: any VideoMediaPlayerProxy
 
@@ -54,15 +57,13 @@ struct VideoPlayer: View {
             containerState: containerState,
             manager: manager
         ) {
-            proxy.makeVideoPlayerBody()
+            proxy.videoPlayerBody
                 .eraseToAnyView()
-                .environment(\.audioOffset, $audioOffset)
-                .environment(\.isGestureLocked, $isGestureLocked)
         } playbackControls: {
             PlaybackControls()
-                .environment(\.audioOffset, $audioOffset)
-                .environment(\.isGestureLocked, $isGestureLocked)
         }
+        .environment(\.audioOffset, $audioOffset)
+        .environment(\.isGestureLocked, $isGestureLocked)
     }
 
     var body: some View {

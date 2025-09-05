@@ -90,7 +90,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         selectedSubtitleStreamIndex = mediaSource.defaultSubtitleStreamIndex ?? -1
 
         observers.append(MediaProgressObserver(item: self))
-        // TODO: move to manager?
         supplements.append(MediaInfoSupplement(item: baseItem))
 
         let chapters = baseItem.fullChapterInfo

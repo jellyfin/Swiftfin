@@ -16,6 +16,7 @@ import VLCUI
 // TODO: current button
 // TODO: scroll to current chapter on appear
 // TODO: fix swapping between chapters on selection
+//       - little flicker at seconds boundary
 
 struct MediaChaptersSupplement: MediaPlayerSupplement {
 
@@ -36,6 +37,8 @@ extension MediaChaptersSupplement {
         private var safeAreaInsets: EdgeInsets
 
         @EnvironmentObject
+        private var containerState: VideoPlayerContainerState
+        @EnvironmentObject
         private var manager: MediaPlayerManager
 
         @StateObject
@@ -44,12 +47,8 @@ extension MediaChaptersSupplement {
         let chapters: [ChapterInfo.FullInfo]
 
         var iOSView: some View {
-            let shouldBeCompact: (CGSize) -> Bool = { size in
-                size.width < 300 || size.isPortrait
-            }
-
             CompactOrRegularView(
-                shouldBeCompact: shouldBeCompact
+                isCompact: containerState.isCompact
             ) {
                 iOSCompactView
             } regularView: {
@@ -108,9 +107,6 @@ extension MediaChaptersSupplement {
         @Environment(\.isSelected)
         private var isSelected
 
-        @State
-        private var contentSize: CGSize = .zero
-
         let chapter: ChapterInfo.FullInfo
 
         var body: some View {
@@ -130,12 +126,15 @@ extension MediaChaptersSupplement {
             }
             .overlay {
                 if isSelected {
-                    RoundedRectangle(cornerRadius: contentSize.width / 30)
-                        .stroke(accentColor, lineWidth: 8)
+                    ContainerRelativeShape()
+                        .stroke(
+                            accentColor,
+                            lineWidth: 8
+                        )
+                        .clipped()
                 }
             }
             .posterStyle(.landscape)
-            .trackingSize($contentSize)
         }
     }
 
@@ -176,8 +175,6 @@ extension MediaChaptersSupplement {
 
         @State
         private var activeSeconds: Duration = .zero
-        @State
-        private var contentSize: CGSize = .zero
 
         let chapter: ChapterInfo.FullInfo
         let action: () -> Void
@@ -209,8 +206,6 @@ extension MediaChaptersSupplement {
 
         @State
         private var activeSeconds: Duration = .zero
-        @State
-        private var contentSize: CGSize = .zero
 
         let chapter: ChapterInfo.FullInfo
         let action: () -> Void
@@ -233,7 +228,7 @@ extension MediaChaptersSupplement {
                 .font(.subheadline)
                 .fontWeight(.semibold)
             }
-            .trackingSize($contentSize)
+            .foregroundStyle(.primary, .secondary)
             .assign(manager.secondsBox.$value, to: $activeSeconds)
             .isSelected(isCurrentChapter)
         }

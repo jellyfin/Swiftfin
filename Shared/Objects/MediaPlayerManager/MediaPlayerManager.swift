@@ -15,25 +15,7 @@ import VLCUI
 // TODO: proper error catching
 // TODO: set playback rate
 //       - what if proxy couldn't set rate?
-// TODO: buffering state
 // TODO: make a container service, injected into players
-// TODO: change playback item + provider to just a provider
-
-typealias MediaPlayerItemProviderFunction = (BaseItemDto) async throws -> MediaPlayerItem
-
-struct MediaPlayerItemProvider: Equatable {
-
-    let item: BaseItemDto
-    let function: MediaPlayerItemProviderFunction
-
-    static func == (lhs: MediaPlayerItemProvider, rhs: MediaPlayerItemProvider) -> Bool {
-        false
-    }
-
-    func callAsFunction() async throws -> MediaPlayerItem {
-        try await function(item)
-    }
-}
 
 final class MediaPlayerManager: ViewModel, Stateful {
 

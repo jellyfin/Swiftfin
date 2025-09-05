@@ -13,14 +13,10 @@ import SwiftUI
 // TODO: behavioral implementations
 //       - PiP
 // TODO: Chromecast proxy
-// TODO: videoSize
-//       - for video player container custom aspect fill handling
 
 /// The proxy for top-down communication to an
 /// underlying media player
 protocol MediaPlayerProxy: ObservableObject, MediaPlayerObserver {
-
-    associatedtype VideoPlayerBody: View = EmptyView
 
     var isBuffering: PublishedBox<Bool> { get }
 
@@ -32,25 +28,22 @@ protocol MediaPlayerProxy: ObservableObject, MediaPlayerObserver {
     func jumpBackward(_ seconds: Duration)
     func setRate(_ rate: Float)
     func setSeconds(_ seconds: Duration)
-
-    @ViewBuilder
-    @MainActor
-    func makeVideoPlayerBody() -> VideoPlayerBody
-}
-
-extension MediaPlayerProxy where VideoPlayerBody == EmptyView {
-    func makeVideoPlayerBody() -> VideoPlayerBody {
-        EmptyView()
-    }
 }
 
 protocol VideoMediaPlayerProxy: MediaPlayerProxy {
 
+    associatedtype VideoPlayerBody: View
+
     var videoSize: PublishedBox<CGSize> { get }
 
+    // TODO: remove since container view should handle aspect fill
     func setAspectFill(_ aspectFill: Bool)
     func setAudioStream(_ stream: MediaStream)
     func setSubtitleStream(_ stream: MediaStream)
+
+    @ViewBuilder
+    @MainActor
+    var videoPlayerBody: Self.VideoPlayerBody { get }
 }
 
 protocol MediaPlayerOffsetConfigurable {

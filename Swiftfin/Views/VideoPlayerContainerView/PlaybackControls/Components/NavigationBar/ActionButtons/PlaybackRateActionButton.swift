@@ -122,7 +122,7 @@ struct PlaybackRateMediaPlayerSupplement: MediaPlayerSupplement {
 
         var iOSView: some View {
             CompactOrRegularView(
-                shouldBeCompact: containerState.isCompact
+                isCompact: containerState.isCompact
             ) {
                 compactView
             } regularView: {

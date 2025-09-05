@@ -18,6 +18,7 @@ import UIKit
 
 class AppDelegate: NSObject, UIApplicationDelegate {
 
+    // TODO: remove audio session setup here
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
@@ -36,9 +37,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
            let keyWindow = scene.keyWindow,
-           let topViewCOntroller = keyWindow.rootViewController
+           let topViewController = keyWindow.rootViewController
         {
-            if let preferencesHostingController = topViewCOntroller.presentedViewController as? UIPreferencesHostingController {
+            if let preferencesHostingController = topViewController.presentedViewController as? UIPreferencesHostingController {
                 return preferencesHostingController.supportedInterfaceOrientations
             }
         }

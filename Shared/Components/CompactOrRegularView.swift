@@ -10,33 +10,33 @@ import SwiftUI
 
 struct CompactOrRegularView<Compact: View, Regular: View>: View {
 
-    private let shouldBeCompact: (CGSize) -> Bool
+    private let isCompact: (CGSize) -> Bool
     private let compactView: Compact
     private let regularView: Regular
 
     init(
-        shouldBeCompact: Bool,
+        isCompact: Bool,
         @ViewBuilder compactView: @escaping () -> Compact,
         @ViewBuilder regularView: @escaping () -> Regular
     ) {
-        self.shouldBeCompact = { _ in shouldBeCompact }
+        self.isCompact = { _ in isCompact }
         self.compactView = compactView()
         self.regularView = regularView()
     }
 
     init(
-        shouldBeCompact: @escaping (CGSize) -> Bool,
+        isCompact: @escaping (CGSize) -> Bool,
         @ViewBuilder compactView: @escaping () -> Compact,
         @ViewBuilder regularView: @escaping () -> Regular
     ) {
-        self.shouldBeCompact = shouldBeCompact
+        self.isCompact = isCompact
         self.compactView = compactView()
         self.regularView = regularView()
     }
 
     var body: some View {
         GeometryReader { proxy in
-            if shouldBeCompact(proxy.size) {
+            if isCompact(proxy.size) {
                 compactView
             } else {
                 regularView

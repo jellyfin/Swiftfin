@@ -21,7 +21,17 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
     let videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
 
-    weak var manager: MediaPlayerManager?
+    weak var manager: MediaPlayerManager? {
+        didSet {
+            for var o in observers {
+                o.manager = manager
+            }
+        }
+    }
+
+    var observers: [any MediaPlayerObserver] = [
+        NowPlayableObserver(),
+    ]
 
     func play() {
         vlcUIProxy.play()
@@ -83,22 +93,23 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
         vlcUIProxy.setSubtitleSize(.absolute(fontSize))
     }
 
-    func makeVideoPlayerBody() -> some View {
-        _VideoPlayerBody()
+    @ViewBuilder
+    var videoPlayerBody: some View {
+        VLCPlayerView()
             .environmentObject(vlcUIProxy)
     }
 }
 
 extension VLCMediaPlayerProxy {
 
-    struct _VideoPlayerBody: View {
+    struct VLCPlayerView: View {
 
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
         private var manager: MediaPlayerManager
         @EnvironmentObject
-        private var vlcUIProxy: VLCVideoPlayer.Proxy
+        private var proxy: VLCVideoPlayer.Proxy
 
         private var isScrubbing: Bool {
             containerState.isScrubbing
@@ -136,7 +147,7 @@ extension VLCMediaPlayerProxy {
         var body: some View {
             if let playbackItem = manager.playbackItem {
                 VLCVideoPlayer(configuration: vlcConfiguration(for: playbackItem))
-                    .proxy(vlcUIProxy)
+                    .proxy(proxy)
                     .onSecondsUpdated { newSeconds, info in
                         if !isScrubbing {
                             containerState.scrubbedSeconds.value = newSeconds
@@ -166,14 +177,14 @@ extension VLCMediaPlayerProxy {
                         case .paused:
                             manager.set(playbackRequestStatus: .paused)
                         }
-                        
+
                         if let proxy = manager.proxy as? any VideoMediaPlayerProxy {
                             proxy.videoSize.value = info.videoSize
                         }
                     }
                     .onReceive(manager.$playbackItem) { playbackItem in
                         guard let playbackItem else { return }
-                        vlcUIProxy.playNewMedia(vlcConfiguration(for: playbackItem))
+                        proxy.playNewMedia(vlcConfiguration(for: playbackItem))
                     }
             }
         }

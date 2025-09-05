@@ -19,11 +19,12 @@ import SwiftUI
 // TODO: manager able to replace MediaPlayerItem in-place for changing audio/subtitle tracks
 // TODO: report buffering state
 
-class AVMediaPlayerProxy: MediaPlayerProxy {
+class AVMediaPlayerProxy: VideoMediaPlayerProxy {
 
     let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
     var isScrubbing: Binding<Bool> = .constant(false)
     var scrubbedSeconds: Binding<Duration> = .constant(.zero)
+    var videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
 
     let avPlayerLayer: AVPlayerLayer
     let player: AVPlayer
@@ -125,8 +126,9 @@ class AVMediaPlayerProxy: MediaPlayerProxy {
         avPlayerLayer.videoGravity = aspectFill ? .resizeAspectFill : .resizeAspect
     }
 
-    func makeVideoPlayerBody() -> some View {
-        AVPlayerView(proxy: self)
+    var videoPlayerBody: some View {
+        AVPlayerView()
+            .environmentObject(self)
     }
 }
 
@@ -180,9 +182,9 @@ extension AVMediaPlayerProxy {
     struct AVPlayerView: UIViewRepresentable {
 
         @EnvironmentObject
+        private var proxy: AVMediaPlayerProxy
+        @EnvironmentObject
         private var scrubbedSeconds: PublishedBox<Duration>
-
-        let proxy: AVMediaPlayerProxy
 
         func makeUIView(context: Context) -> UIView {
 //            proxy.isScrubbing = context.environment.isScrubbing

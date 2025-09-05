@@ -74,7 +74,7 @@ extension MediaInfoSupplement {
         //       with scrolling if too long
         var iOSView: some View {
             CompactOrRegularView(
-                shouldBeCompact: containerState.isCompact
+                isCompact: containerState.isCompact
             ) {
                 iOSCompactView
             } regularView: {
@@ -100,12 +100,31 @@ extension MediaInfoSupplement {
                             .font(.subheadline)
                             .fontWeight(.regular)
                     }
+
+                    accessoryView
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
                 .allowsHitTesting(false)
 
-                accessoryView
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                if !item.isLiveStream {
+                    Button {
+                        manager.proxy?.setSeconds(.zero)
+                        manager.set(playbackRequestStatus: .playing)
+                        containerState.select(supplement: nil)
+                    } label: {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 7)
+                                .foregroundStyle(.white)
+
+                            Label("From Beginning", systemImage: "play.fill")
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.black)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 40)
+                }
             }
             .frame(maxWidth: .infinity, alignment: .topLeading)
         }

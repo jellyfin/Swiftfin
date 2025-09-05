@@ -89,18 +89,17 @@ extension VideoPlayer {
                                 EmptyHitTestView()
                             }
                         }
-                        .background(alignment: .top) {
+                        .background(alignment: .bottom) {
                             Color.black
                                 .maskLinearGradient {
                                     (location: 0, opacity: 0)
-                                    (location: 1, opacity: 0.3)
+                                    (location: 1, opacity: 0.5)
                                 }
                                 .isVisible(isScrubbing)
-                                .frame(height: bottomContentFrame.height + 50 + EdgeInsets.edgePadding)
+                                .frame(height: bottomContentFrame.height + 50 + EdgeInsets.edgePadding * 2)
                         }
                 }
 
-                // TODO: offset by supplement container height
                 PlaybackButtons()
                     .isVisible(!isScrubbing && containerState.isPresentingPlaybackControls)
                     .offset(y: containerState.centerOffset / 2)

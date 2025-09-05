@@ -10,6 +10,8 @@ import Combine
 import Foundation
 import SwiftUI
 
+// TODO: turned into spaghetti to get out, clean up with a better state system
+
 @MainActor
 class VideoPlayerContainerState: ObservableObject {
 
