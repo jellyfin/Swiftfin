@@ -89,7 +89,7 @@ extension VideoPlayer {
                                 EmptyHitTestView()
                             }
                         }
-                        .background(alignment: .bottom) {
+                        .background(alignment: .top) {
                             Color.black
                                 .maskLinearGradient {
                                     (location: 0, opacity: 0)

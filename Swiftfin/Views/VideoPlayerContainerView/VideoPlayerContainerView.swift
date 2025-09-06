@@ -71,6 +71,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
 
     // MARK: - Views
 
+    // TODO: preview image while scrubbing
     private struct PlayerContainerView: View {
 
         @EnvironmentObject

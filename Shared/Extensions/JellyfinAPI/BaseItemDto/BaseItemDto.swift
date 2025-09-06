@@ -254,8 +254,8 @@ extension BaseItemDto {
     // MARK: Chapter Images
 
     // TODO: move to whatever listener for chapters
-    var fullChapterInfo: [ChapterInfo.FullInfo] {
-        guard let chapters else { return [] }
+    var fullChapterInfo: [ChapterInfo.FullInfo]? {
+        guard let chapters else { return nil }
 
         let afterRuntime = (runtime ?? .zero) + .seconds(1)
 

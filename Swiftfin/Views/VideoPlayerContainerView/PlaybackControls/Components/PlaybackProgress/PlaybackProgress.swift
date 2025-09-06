@@ -28,7 +28,7 @@ extension VideoPlayer.PlaybackControls {
         private var scrubbedSecondsBox: PublishedBox<Duration>
 
         @State
-        private var capsuleSliderSize: CGSize = .zero
+        private var sliderSize: CGSize = .zero
 
         private var isScrubbing: Bool {
             get {
@@ -39,12 +39,31 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
+        private var previewXOffset: CGFloat {
+            let videoWidth = 85 * videoSizeAspectRatio
+            let p = (sliderSize.width * scrubbedProgress) - (videoWidth / 2)
+            return clamp(p, min: 0, max: sliderSize.width - videoWidth)
+        }
+
         private var progress: Double {
             scrubbedSeconds / (manager.item.runtime ?? .seconds(1))
         }
 
+        private var scrubbedProgress: Double {
+            guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
+            return scrubbedSeconds / runtime
+        }
+
         private var scrubbedSeconds: Duration {
             scrubbedSecondsBox.value
+        }
+
+        private var videoSizeAspectRatio: CGFloat {
+            guard let videoPlayerProxy = manager.proxy as? any VideoMediaPlayerProxy else {
+                return 1.77
+            }
+
+            return max(videoPlayerProxy.videoSize.value.aspectRatio, 2)
         }
 
         @ViewBuilder
@@ -66,7 +85,7 @@ extension VideoPlayer.PlaybackControls {
             AlternateLayoutView {
                 EmptyHitTestView()
                     .frame(height: 10)
-                    .trackingSize($capsuleSliderSize)
+                    .trackingSize($sliderSize)
             } content: {
                 CapsuleSlider(
                     value: $scrubbedSecondsBox.value.map(
@@ -82,7 +101,7 @@ extension VideoPlayer.PlaybackControls {
 //                .if(manager.item.fullChapterInfo.isNotEmpty) { view in
 //                    view.mask(ChapterTrackMask(chapters: manager.item.fullChapterInfo))
 //                }
-                .frame(maxWidth: isScrubbing ? nil : max(0, capsuleSliderSize.width - EdgeInsets.edgePadding * 2))
+                .frame(maxWidth: isScrubbing ? nil : max(0, sliderSize.width - EdgeInsets.edgePadding * 2))
                 .frame(height: isScrubbing ? 20 : 10)
             }
             .animation(.linear(duration: 0.05), value: scrubbedSeconds)
@@ -96,15 +115,25 @@ extension VideoPlayer.PlaybackControls {
                         .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
                     capsuleSlider
-                        .trackingSize($capsuleSliderSize)
+                        .trackingSize($sliderSize)
 
                     SplitTimeStamp()
                         .offset(y: isScrubbing ? 5 : 0)
-                        .frame(maxWidth: isScrubbing ? nil : max(0, capsuleSliderSize.width - EdgeInsets.edgePadding * 2))
+                        .frame(maxWidth: isScrubbing ? nil : max(0, sliderSize.width - EdgeInsets.edgePadding * 2))
                 }
             }
             .frame(maxWidth: .infinity)
             .animation(.bouncy(duration: 0.4, extraBounce: 0.1), value: isScrubbing)
+            .overlay(alignment: .topLeading) {
+                if isScrubbing, let previewImageProvider = manager.playbackItem?.previewImageProvider {
+                    PreviewImageView(previewImageProvider: previewImageProvider)
+                        .aspectRatio(videoSizeAspectRatio, contentMode: .fit)
+                        .frame(height: 85)
+                        .posterBorder()
+                        .cornerRadius(ratio: 1 / 30, of: \.width)
+                        .offset(x: previewXOffset, y: -100)
+                }
+            }
         }
     }
 }

@@ -45,6 +45,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
     let baseItem: BaseItemDto
     let mediaSource: MediaSourceInfo
     let playSessionID: String
+    let previewImageProvider: (any PreviewImageProvider)?
     let thumbnailProvider: ThumnailProvider?
     let url: URL
 
@@ -84,6 +85,20 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         self.subtitleStreams = subtitleStreams
         self.videoStreams = videoStreams
 
+        if let mediaSourceID = mediaSource.id,
+           let itemID = baseItem.id,
+           let trickplayInfo = baseItem.trickplay?[mediaSourceID]?.first
+        {
+            self.previewImageProvider = TrickplayImageProvider(
+                info: trickplayInfo.value,
+                itemID: itemID,
+                mediaSourceID: mediaSourceID,
+                runtime: baseItem.runtime ?? .zero
+            )
+        } else {
+            self.previewImageProvider = nil
+        }
+
         super.init()
 
         selectedAudioStreamIndex = mediaSource.defaultAudioStreamIndex ?? -1
@@ -92,12 +107,10 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         observers.append(MediaProgressObserver(item: self))
         supplements.append(MediaInfoSupplement(item: baseItem))
 
-        let chapters = baseItem.fullChapterInfo
-
-        if chapters.isNotEmpty {
+        if let chapters = baseItem.fullChapterInfo, chapters.isNotEmpty {
             supplements.append(
                 MediaChaptersSupplement(
-                    chapters: baseItem.fullChapterInfo
+                    chapters: chapters
                 )
             )
         }
