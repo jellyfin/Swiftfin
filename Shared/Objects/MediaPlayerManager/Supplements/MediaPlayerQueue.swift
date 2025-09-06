@@ -6,10 +6,10 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import IdentifiedCollections
-import JellyfinAPI
+import Combine
 
-protocol MediaPlayerQueue: MediaPlayerObserver, MediaPlayerSupplement {
+@MainActor
+protocol MediaPlayerQueue: ObservableObject, MediaPlayerObserver, MediaPlayerSupplement {
 
     var hasNextItem: Bool { get }
     var hasPreviousItem: Bool { get }

@@ -15,7 +15,9 @@ import Nuke
 // TODO: interruptions
 // TODO: setup audio session correctly
 //       - remove from app delegate
-// TODO: have player item build static metadata
+// TODO: ensure proper state handling
+//       - manager states
+//       - playback request states
 
 class NowPlayableObserver: ViewModel, MediaPlayerObserver {
 
@@ -43,32 +45,51 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
     }
 
     private func setup(with manager: MediaPlayerManager) {
+        do {
+            try startSession()
+        } catch {
+            logger.critical("Unable to activate audio session: \(error.localizedDescription)")
+        }
+
         cancellables = []
         manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
         manager.secondsBox.$value.sink(receiveValue: secondsDidChange).store(in: &cancellables)
         manager.$state.sink(receiveValue: stateDidChange).store(in: &cancellables)
+        manager.$playbackRequestStatus.sink(receiveValue: playbackRequestStatusDidChange).store(in: &cancellables)
 
         Notifications[.avAudioSessionInterruption]
             .publisher
             .sink { i in
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     self.handleInterruption(type: i.0, options: i.1)
                 }
             }
             .store(in: &cancellables)
 
-        // TODO: fix mainactor warning
-        configureRemoteCommands(
-            defaultRegisteredCommands,
-            commandHandler: handleCommand
+        Task { @MainActor in
+            configureRemoteCommands(
+                defaultRegisteredCommands,
+                commandHandler: handleCommand
+            )
+        }
+    }
+
+    private func playbackRequestStatusDidChange(_ newStatus: MediaPlayerManager.PlaybackRequestStatus) {
+        handleNowPlayablePlaybackChange(
+            playing: newStatus == .playing,
+            metadata: .init(
+                position: manager?.seconds ?? .zero,
+                duration: manager?.item.runtime ?? .zero
+            )
         )
     }
 
     private func playbackItemDidChange(newItem: MediaPlayerItem?) {
+        itemImageCancellable?.cancel()
+        itemImageCancellable = nil
         guard let newItem else { return }
 
-        // TODO: get mediaType from item
-        handleNowPlayableItemChange(metadata: .init(mediaType: .video, title: newItem.baseItem.displayTitle))
+        setNowPlayingMetadata(newItem.baseItem.nowPlayableStaticMetadata())
 
         itemImageCancellable = Task {
             let currentBaseItem = newItem.baseItem
@@ -77,11 +98,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
 
             await MainActor.run {
                 setNowPlayingMetadata(
-                    .init(
-                        mediaType: .video,
-                        title: currentBaseItem.displayTitle,
-                        artwork: MPMediaItemArtwork(boundsSize: image.size) { _ in image }
-                    )
+                    currentBaseItem.nowPlayableStaticMetadata(image)
                 )
             }
         }
@@ -105,6 +122,12 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
 
             for command in defaultRegisteredCommands {
                 command.removeHandler()
+            }
+
+            do {
+                try stopSession()
+            } catch {
+                logger.critical("Unable to stop audio session: \(error.localizedDescription)")
             }
         } else {
             handleNowPlayablePlaybackChange(
@@ -131,7 +154,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
                     manager?.set(playbackRequestStatus: .playing)
                 }
             } catch {
-                print("Failed to reactivate audio session after interruption: \(error)")
+                logger.critical("Unable to reactivate audio session after interruption: \(error.localizedDescription)")
             }
         @unknown default: ()
         }
@@ -155,16 +178,16 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
         case .changePlaybackPosition:
             guard let event = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
             manager?.proxy?.setSeconds(Duration.seconds(event.positionTime))
-        case .nextTrack: ()
-        case .previousTrack: ()
+        case .nextTrack:
+            guard let nextItem = manager?.queue?.nextItem else { return .commandFailed }
+            manager?.send(.playNewItem(provider: nextItem))
+        case .previousTrack:
+            guard let previousItem = manager?.queue?.previousItem else { return .commandFailed }
+            manager?.send(.playNewItem(provider: previousItem))
         default: ()
         }
 
         return .success
-    }
-
-    private func handleNowPlayableItemChange(metadata: NowPlayableStaticMetadata) {
-        setNowPlayingMetadata(metadata)
     }
 
     private func handleNowPlayablePlaybackChange(playing: Bool, metadata: NowPlayableDynamicMetadata) {

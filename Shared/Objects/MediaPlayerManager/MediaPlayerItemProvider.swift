@@ -6,11 +6,11 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
+@preconcurrency import JellyfinAPI
 
-typealias MediaPlayerItemProviderFunction = (BaseItemDto) async throws -> MediaPlayerItem
+typealias MediaPlayerItemProviderFunction = @Sendable (BaseItemDto) async throws -> MediaPlayerItem
 
-struct MediaPlayerItemProvider: Equatable {
+struct MediaPlayerItemProvider: Equatable, Sendable {
 
     let item: BaseItemDto
     let function: MediaPlayerItemProviderFunction

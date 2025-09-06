@@ -11,12 +11,12 @@ import CollectionVGrid
 import Defaults
 import JellyfinAPI
 import SwiftUI
-import VLCUI
 
 // TODO: current button
 // TODO: scroll to current chapter on appear
 // TODO: fix swapping between chapters on selection
 //       - little flicker at seconds boundary
+// TODO: sometimes safe area for CollectionHStack doesn't trigger
 
 struct MediaChaptersSupplement: MediaPlayerSupplement {
 

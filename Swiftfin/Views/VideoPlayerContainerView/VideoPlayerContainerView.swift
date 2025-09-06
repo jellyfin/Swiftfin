@@ -17,6 +17,7 @@ import SwiftUI
 //       - necessary for full-screen supplements and/or small screens
 // TODO: custom buttons on playback controls
 //       - skip intro, next episode, etc.
+// TODO: pass in safe area insets explicitly?
 
 // MARK: - VideoPlayerContainerView
 

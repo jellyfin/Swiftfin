@@ -15,6 +15,7 @@ import SwiftUI
 // TODO: have queue consider value to carry setting
 // TODO: reuse-provider instead of making a new one?
 // TODO: somehow don't present when offline
+//       - value on media player item
 
 extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
@@ -47,6 +48,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
         private func content(playbackItem: MediaPlayerItem) -> some View {
             ForEach(PlaybackBitrate.allCases, id: \.rawValue) { bitrate in
                 Button {
+                    guard playbackItem.requestedBitrate != bitrate else { return }
                     let provider = makeProvider(with: bitrate, for: playbackItem)
                     manager.send(.playNewItem(provider: provider))
                 } label: {

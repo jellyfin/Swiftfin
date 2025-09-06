@@ -81,15 +81,43 @@ extension BaseItemDto {
             }
         }()
 
+        let title: String = {
+            if type == .episode,
+               let seriesName = seriesName
+            {
+                return seriesName
+            } else {
+                return displayTitle
+            }
+        }()
+
+        let albumArtist: String? = {
+            switch type {
+            case .audio:
+                return artists?.joined(separator: ", ")
+            default:
+                return nil
+            }
+        }()
+
+        let albumTitle: String? = {
+            switch type {
+            case .audio:
+                return album
+            default:
+                return nil
+            }
+        }()
+
         // TODO: only fill artist, albumArtist, and albumTitle if audio type
         return .init(
             mediaType: mediaType,
             isLiveStream: isLiveStream,
-            title: displayTitle,
-            artist: nil,
-            artwork: nil,
-            albumArtist: nil,
-            albumTitle: nil
+            title: title,
+            artist: subtitle,
+            artwork: image.map { image in MPMediaItemArtwork(boundsSize: image.size) { _ in image }},
+            albumArtist: albumArtist,
+            albumTitle: albumTitle
         )
     }
 

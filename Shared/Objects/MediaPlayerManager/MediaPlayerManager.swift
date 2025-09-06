@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Defaults
 import Factory
 import Foundation
 import JellyfinAPI
@@ -16,6 +17,16 @@ import VLCUI
 // TODO: set playback rate
 //       - what if proxy couldn't set rate?
 // TODO: make a container service, injected into players
+// TODO: video player stop on presentation dismissal
+
+extension Container {
+
+    var mediaPlayerManager: Factory<MediaPlayerManager?> {
+        self {
+            nil
+        }.cached
+    }
+}
 
 final class MediaPlayerManager: ViewModel, Stateful {
 
@@ -64,11 +75,15 @@ final class MediaPlayerManager: ViewModel, Stateful {
     @Published
     private(set) var rate: Float = 1.0
     @Published
-    final var state: State = .playback
+    final var state: State = .loadingItem
+
+    @Published
+    var queue: (any MediaPlayerQueue)?
 
     @Published
     private var _supplements: [any MediaPlayerSupplement] = []
 
+    // TODO: ensure supplement container updates
     // TODO: need supplements at manager level?
     //       - supplements of the proxy vs media player item?
 //    @Published
@@ -93,8 +108,6 @@ final class MediaPlayerManager: ViewModel, Stateful {
             }
         }
     }
-
-    var queue: (any MediaPlayerQueue)?
 
     private var itemBuildTask: AnyCancellable?
 
@@ -145,8 +158,26 @@ final class MediaPlayerManager: ViewModel, Stateful {
             proxy?.stop()
             return .error(error)
         case .ended:
-            // TODO: go next in queue or stop
-            return .loadingItem
+            // TODO: verify live items
+            // TODO: autoplay
+
+            // Ended should represent natural ending of playback, which
+            // is verifiable by given seconds being near item runtime.
+            guard let runtime = playbackItem?.baseItem.runtime else {
+                return .stopped
+            }
+            let isNearEnd = (runtime - seconds) <= .seconds(1)
+
+            guard isNearEnd else {
+                // If not near end, ignore.
+                return state
+            }
+
+            if let nextItem = queue?.nextItem, Defaults[.VideoPlayer.autoPlayEnabled] {
+                return respond(to: .playNewItem(provider: nextItem))
+            }
+
+            return .stopped
         case .stop:
             proxy?.stop()
             return .stopped

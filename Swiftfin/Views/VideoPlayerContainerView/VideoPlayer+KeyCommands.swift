@@ -115,7 +115,7 @@ extension VideoPlayer {
                         modifierFlags: .command
                     ) {
                         guard let nextItem = manager.queue?.nextItem else { return }
-//                        manager.send(.playNewBaseItem(item: nextItem))
+                        manager.send(.playNewItem(provider: nextItem))
                     }
 
                     // MARK: Play Previous Item
@@ -126,7 +126,7 @@ extension VideoPlayer {
                         modifierFlags: .command
                     ) {
                         guard let previousItem = manager.queue?.previousItem else { return }
-//                        manager.send(.playNewBaseItem(item: previousItem))
+                        manager.send(.playNewItem(provider: previousItem))
                     }
 
                     // MARK: - Jump Backward

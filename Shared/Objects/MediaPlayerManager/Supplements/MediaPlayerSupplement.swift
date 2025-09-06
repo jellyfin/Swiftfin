@@ -24,6 +24,7 @@ struct AnyMediaPlayerSupplement: Displayable, Equatable, Hashable, Identifiable 
         supplement.id
     }
 
+    @MainActor
     var videoPlayerBody: some View {
         supplement.videoPlayerBody
             .eraseToAnyView()
@@ -42,6 +43,8 @@ protocol MediaPlayerSupplement: Displayable, Identifiable<String> {
 
     associatedtype VideoPlayerBody: PlatformView
 
+    @MainActor
+    @ViewBuilder
     var videoPlayerBody: Self.VideoPlayerBody { get }
 }
 

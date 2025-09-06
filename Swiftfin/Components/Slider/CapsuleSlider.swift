@@ -24,29 +24,27 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
     @State
     private var currentTranslation: CGFloat = 0
 
+    @State
+    private var needsToSetDragGestureStartState: Bool = true
+
     private var gesturePadding: CGFloat = 0
     private var onEditingChanged: (Bool) -> Void
     private let total: Value
 
-    private var trackDrag: some Gesture {
+    private var dragGesture: some Gesture {
         DragGesture(coordinateSpace: .global)
             .onChanged { newValue in
-                if !isEditing {
-                    isEditing = true
-                    onEditingChanged(true)
+                if needsToSetDragGestureStartState {
                     translationStartValue = value
                     translationStartLocation = newValue.location
                     currentTranslation = 0
+                    needsToSetDragGestureStartState = false
                 }
 
                 currentTranslation = translationStartLocation.x - newValue.location.x
 
                 let newProgress = translationStartValue - Value(currentTranslation / contentSize.width) * total
                 value = clamp(newProgress, min: 0, max: total)
-            }
-            .onEnded { _ in
-                isEditing = false
-                onEditingChanged(false)
             }
     }
 
@@ -57,7 +55,17 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
                 Color.clear
                     .frame(height: contentSize.height + gesturePadding)
                     .contentShape(Rectangle())
-                    .highPriorityGesture(trackDrag)
+                    .highPriorityGesture(dragGesture)
+                    .onLongPressGesture(minimumDuration: 0.01, perform: {}) { isPressing in
+                        if isPressing {
+                            isEditing = true
+                            onEditingChanged(true)
+                            needsToSetDragGestureStartState = true
+                        } else {
+                            isEditing = false
+                            onEditingChanged(false)
+                        }
+                    }
             }
             .trackingSize($contentSize)
             .onChange(of: value) { newValue in

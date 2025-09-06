@@ -10,7 +10,6 @@ import Defaults
 import SwiftUI
 
 // TODO: adjust button sizes/padding on compact/regular?
-// TODO: have 3 buttons be same sizes
 
 extension VideoPlayer.PlaybackControls {
 

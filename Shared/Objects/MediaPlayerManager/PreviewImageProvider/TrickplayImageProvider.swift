@@ -24,7 +24,7 @@ class TrickplayImageProvider: PreviewImageProvider {
         let rows: Int
         let interval: Duration
 
-        func image(for seconds: Duration) -> UIImage? {
+        func tile(for seconds: Duration) -> UIImage? {
             guard secondsRange.contains(seconds) else {
                 return nil
             }
@@ -36,7 +36,6 @@ class TrickplayImageProvider: PreviewImageProvider {
     }
 
     private let info: TrickplayInfo
-    private let runtime: Duration
     private let itemID: String
     private let mediaSourceID: String
 
@@ -49,10 +48,8 @@ class TrickplayImageProvider: PreviewImageProvider {
         info: TrickplayInfo,
         itemID: String,
         mediaSourceID: String,
-        runtime: Duration
     ) {
         self.info = info
-        self.runtime = runtime
         self.itemID = itemID
         self.mediaSourceID = mediaSourceID
     }
@@ -71,7 +68,7 @@ class TrickplayImageProvider: PreviewImageProvider {
         let tileImageIndex = intervalIndex / area
 
         if let trickplayImage = images[tileImageIndex] {
-            return trickplayImage.image(for: seconds)
+            return trickplayImage.tile(for: seconds)
         }
 
         if let task = imageTasks[tileImageIndex] {
@@ -109,7 +106,7 @@ class TrickplayImageProvider: PreviewImageProvider {
 
             self.images[tileImageIndex] = trickplayImage
             self.imageTasks[tileImageIndex] = nil
-            return trickplayImage.image(for: seconds)
+            return trickplayImage.tile(for: seconds)
         }
 
         imageTasks[tileImageIndex] = newTask

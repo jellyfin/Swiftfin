@@ -68,6 +68,7 @@
 		E13AF3B828A0C598009093AB /* NukeExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = E13AF3B728A0C598009093AB /* NukeExtensions */; };
 		E13AF3BA28A0C598009093AB /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = E13AF3B928A0C598009093AB /* NukeUI */; };
 		E13AF3BC28A0C59E009093AB /* BlurHashKit in Frameworks */ = {isa = PBXBuildFile; productRef = E13AF3BB28A0C59E009093AB /* BlurHashKit */; };
+		E13CCE4C2E6C08710070965F /* LNPopupUI-Static in Frameworks */ = {isa = PBXBuildFile; productRef = E13CCE4B2E6C08710070965F /* LNPopupUI-Static */; };
 		E13DD3C62716499E009D4DAF /* CoreStore in Frameworks */ = {isa = PBXBuildFile; productRef = E13DD3C52716499E009D4DAF /* CoreStore */; };
 		E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */ = {isa = PBXBuildFile; productRef = E13DD3CC27164CA7009D4DAF /* CoreStore */; };
 		E13DD3D327168E65009D4DAF /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = E13DD3D227168E65009D4DAF /* Defaults */; };
@@ -333,6 +334,7 @@
 				E145EB4B2BE16849003BF6F3 /* KeychainSwift in Frameworks */,
 				E10706142942F57D00646DAF /* PulseUI in Frameworks */,
 				E175679A2E0375F300B90F41 /* VLCUI in Frameworks */,
+				E13CCE4C2E6C08710070965F /* LNPopupUI-Static in Frameworks */,
 				62666E0227E5016D00EC0ECD /* CoreGraphics.framework in Frameworks */,
 				E1575E3C293C6B15001665B1 /* Files in Frameworks */,
 				E1137D2F2E090C1A0091EB60 /* VLCUI in Frameworks */,
@@ -577,6 +579,7 @@
 				E17567992E0375F300B90F41 /* VLCUI */,
 				E1137D2E2E090C1A0091EB60 /* VLCUI */,
 				E164308B2E3AA9710028D4E8 /* Transmission */,
+				E13CCE4B2E6C08710070965F /* LNPopupUI-Static */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -682,6 +685,7 @@
 				BD88CB402D77E6A0006BB5E3 /* XCRemoteSwiftPackageReference "TVOSPicker" */,
 				E1137D2D2E090C1A0091EB60 /* XCRemoteSwiftPackageReference "VLCUI" */,
 				E164308A2E3AA9710028D4E8 /* XCRemoteSwiftPackageReference "Transmission" */,
+				E13CCE482E6C077D0070965F /* XCRemoteSwiftPackageReference "LNPopupUI" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -1205,6 +1209,14 @@
 				minimumVersion = 3.0.0;
 			};
 		};
+		E13CCE482E6C077D0070965F /* XCRemoteSwiftPackageReference "LNPopupUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LeoNatan/LNPopupUI/";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/JohnEstropia/CoreStore.git";
@@ -1462,6 +1474,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E19E6E0828A0BEFF005C10C8 /* XCRemoteSwiftPackageReference "BlurHashKit" */;
 			productName = BlurHashKit;
+		};
+		E13CCE4B2E6C08710070965F /* LNPopupUI-Static */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E13CCE482E6C077D0070965F /* XCRemoteSwiftPackageReference "LNPopupUI" */;
+			productName = "LNPopupUI-Static";
 		};
 		E13DD3C52716499E009D4DAF /* CoreStore */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -11,6 +11,9 @@ import Defaults
 import Foundation
 import JellyfinAPI
 
+// TODO: respond properly to end of playback
+//       - when item changes
+
 class MediaProgressObserver: ViewModel, MediaPlayerObserver {
 
     weak var manager: MediaPlayerManager? {
@@ -79,6 +82,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
     }
 
     // TODO: respond to error
+    // TODO: respond properly to ended
     private func stateDidChange(newState: MediaPlayerManager.State) {
         switch newState {
         case .stopped:

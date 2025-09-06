@@ -114,12 +114,26 @@ extension MediaPlayerItem {
             return await ImagePipeline.Swiftfin.other.loadFirstImage(from: imageRequests)
         }
 
+        var previewImageProvider: (any PreviewImageProvider)? = nil
+
+        if let mediaSourceID = mediaSource.id,
+           let itemID = item.id,
+           let trickplayInfo = item.trickplay?[mediaSourceID]?.first
+        {
+            previewImageProvider = TrickplayImageProvider(
+                info: trickplayInfo.value,
+                itemID: itemID,
+                mediaSourceID: mediaSourceID
+            )
+        }
+
         return .init(
             baseItem: item,
             mediaSource: matchingMediaSource,
             playSessionID: playSessionID,
             url: playbackURL,
             requestedBitrate: requestedBitrate,
+            previewImageProvider: previewImageProvider,
             thumbnailProvider: getNowPlayingImage
         )
     }

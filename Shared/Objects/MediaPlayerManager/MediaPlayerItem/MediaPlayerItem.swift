@@ -11,7 +11,7 @@ import SwiftUI
 
 class MediaPlayerItem: ViewModel, MediaPlayerObserver {
 
-    typealias ThumnailProvider = () async -> UIImage?
+    typealias ThumbnailProvider = () async -> UIImage?
 
     @Published
     var selectedAudioStreamIndex: Int? = nil {
@@ -46,7 +46,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
     let mediaSource: MediaSourceInfo
     let playSessionID: String
     let previewImageProvider: (any PreviewImageProvider)?
-    let thumbnailProvider: ThumnailProvider?
+    let thumbnailProvider: ThumbnailProvider?
     let url: URL
 
     let audioStreams: [MediaStream]
@@ -63,12 +63,14 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         playSessionID: String,
         url: URL,
         requestedBitrate: PlaybackBitrate = .max,
-        thumbnailProvider: ThumnailProvider? = nil
+        previewImageProvider: (any PreviewImageProvider)? = nil,
+        thumbnailProvider: ThumbnailProvider? = nil
     ) {
         self.baseItem = baseItem
         self.mediaSource = mediaSource
         self.playSessionID = playSessionID
         self.requestedBitrate = requestedBitrate
+        self.previewImageProvider = previewImageProvider
         self.thumbnailProvider = thumbnailProvider
         self.url = url
 
@@ -84,20 +86,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         self.audioStreams = audioStreams
         self.subtitleStreams = subtitleStreams
         self.videoStreams = videoStreams
-
-        if let mediaSourceID = mediaSource.id,
-           let itemID = baseItem.id,
-           let trickplayInfo = baseItem.trickplay?[mediaSourceID]?.first
-        {
-            self.previewImageProvider = TrickplayImageProvider(
-                info: trickplayInfo.value,
-                itemID: itemID,
-                mediaSourceID: mediaSourceID,
-                runtime: baseItem.runtime ?? .zero
-            )
-        } else {
-            self.previewImageProvider = nil
-        }
 
         super.init()
 

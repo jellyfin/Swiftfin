@@ -8,9 +8,6 @@
 
 import SwiftUI
 
-// TODO: figure out better way of value observation rather
-//       than onAppear and onChange
-
 extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
     struct Subtitles: View {
