@@ -28,6 +28,22 @@ extension VideoPlayer.PlaybackControls {
         private var scrubbedSeconds: Duration {
             scrubbedSecondsBox.value
         }
+        
+        private func getImage(for seconds: Duration) {
+            currentImageTask?.cancel()
+            currentImageTask = nil
+            
+            let initialTask = Task(priority: .userInitiated) {
+                if let image = await previewImageProvider.image(for: seconds) {
+                    let index = previewImageProvider.imageIndex(for: seconds)
+                    self.image = (index: index, image: image)
+                } else {
+                    self.image = nil
+                }
+            }
+
+            currentImageTask = initialTask.asAnyCancellable()
+        }
 
         var body: some View {
             ZStack {
@@ -42,22 +58,14 @@ extension VideoPlayer.PlaybackControls {
                 }
                 .id(image?.index)
             }
+            .onAppear {
+                getImage(for: scrubbedSeconds)
+            }
             .onChange(of: scrubbedSeconds) { newValue in
                 let newIndex = previewImageProvider.imageIndex(for: newValue)
 
                 if newIndex != image?.index {
-                    currentImageTask?.cancel()
-                    currentImageTask = nil
-
-                    let newTask = Task(priority: .userInitiated) {
-                        if let image = await previewImageProvider.image(for: newValue) {
-                            self.image = (index: newIndex, image: image)
-                        } else {
-                            self.image = nil
-                        }
-                    }
-
-                    currentImageTask = newTask.asAnyCancellable()
+                    getImage(for: scrubbedSeconds)
                 }
             }
         }
