@@ -91,7 +91,6 @@
 		E179E8692E14CDBF00D9F245 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E179E8682E14CDBF00D9F245 /* CollectionVGrid */; };
 		E179E86B2E14CDCF00D9F245 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E179E86A2E14CDCF00D9F245 /* CollectionHStack */; };
 		E179E86D2E14CDCF00D9F245 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E179E86C2E14CDCF00D9F245 /* CollectionVGrid */; };
-		E18443CB2A037773002DDDC8 /* UDPBroadcast in Frameworks */ = {isa = PBXBuildFile; productRef = E18443CA2A037773002DDDC8 /* UDPBroadcast */; };
 		E18A8E7A28D5FEDF00333B9A /* VLCUI in Frameworks */ = {isa = PBXBuildFile; productRef = E18A8E7928D5FEDF00333B9A /* VLCUI */; };
 		E18D6AA62BAA96F000A0D167 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E18D6AA52BAA96F000A0D167 /* CollectionHStack */; };
 		E192608328D2D0DB002314B4 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E192608228D2D0DB002314B4 /* Factory */; };
@@ -107,7 +106,6 @@
 		E1B5F7AB29577BCE004B26CF /* PulseUI in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7AA29577BCE004B26CF /* PulseUI */; };
 		E1B5F7AD29577BDD004B26CF /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7AC29577BDD004B26CF /* OrderedCollections */; };
 		E1DC9814296DC06200982F06 /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E1DC9813296DC06200982F06 /* PulseLogHandler */; };
-		E1FAD1C62A0375BA007F5521 /* UDPBroadcast in Frameworks */ = {isa = PBXBuildFile; productRef = E1FAD1C52A0375BA007F5521 /* UDPBroadcast */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -137,19 +135,14 @@
 
 /* Begin PBXFileReference section */
 		535870602669D21600D05A09 /* Swiftfin tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Swiftfin tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5362E4A7267D4067000E2F71 /* GoogleCast.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleCast.framework; path = "../../Downloads/GoogleCastSDK-ios-4.6.0_dynamic/GoogleCast.framework"; sourceTree = "<group>"; };
 		5362E4AA267D40AD000E2F71 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		5362E4AC267D40B1000E2F71 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		5362E4AE267D40B5000E2F71 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		5362E4B0267D40B9000E2F71 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
-		5362E4B2267D40BE000E2F71 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
-		5362E4B4267D40C5000E2F71 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		5362E4B6267D40CA000E2F71 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		5362E4B8267D40CE000E2F71 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		5362E4BA267D40D2000E2F71 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		5362E4BC267D40D8000E2F71 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5362E4BE267D40E4000E2F71 /* MediaAccessibility.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaAccessibility.framework; path = System/Library/Frameworks/MediaAccessibility.framework; sourceTree = SDKROOT; };
-		5362E4C0267D40E8000E2F71 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		5362E4C2267D40EC000E2F71 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		5362E4C4267D40F0000E2F71 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		5362E4C6267D40F4000E2F71 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -160,10 +153,6 @@
 		625CB57D2678E81E00530A6E /* TVVLCKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = TVVLCKit.xcframework; path = Carthage/Build/TVVLCKit.xcframework; sourceTree = "<group>"; };
 		62666E0027E5016900EC0ECD /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		62666E0527E5017A00EC0ECD /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
-		62666E0727E5018D00EC0ECD /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
-		62666E0827E5019800EC0ECD /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
-		62666E0927E5019C00EC0ECD /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
-		62666E0A27E501A100EC0ECD /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
 		62666E0B27E501A500EC0ECD /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		62666E0F27E501B400EC0ECD /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
 		62666E1227E501C300EC0ECD /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
@@ -175,20 +164,11 @@
 		62666E1E27E501DF00EC0ECD /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/CoreText.framework; sourceTree = DEVELOPER_DIR; };
 		62666E2027E501E400EC0ECD /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/CoreVideo.framework; sourceTree = DEVELOPER_DIR; };
 		62666E2227E501EB00EC0ECD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		62666E2527E501FA00EC0ECD /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libbz2.tbd; sourceTree = DEVELOPER_DIR; };
-		62666E2627E501FE00EC0ECD /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
-		62666E2727E5020200EC0ECD /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libiconv.tbd; sourceTree = DEVELOPER_DIR; };
-		62666E2827E5020600EC0ECD /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libxml2.tbd; sourceTree = DEVELOPER_DIR; };
 		62666E2927E5020A00EC0ECD /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		62666E2B27E5021000EC0ECD /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		62666E2D27E5021400EC0ECD /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		62666E2F27E5021800EC0ECD /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/VideoToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		62666E3127E5021E00EC0ECD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		62666E3A27E503E400EC0ECD /* GoogleCastSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoogleCastSDK.xcframework; path = Frameworks/GoogleCastSDK.xcframework; sourceTree = "<group>"; };
-		628B95212670CABD0091AF3B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
-		628B95232670CABD0091AF3B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
-		637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = UDPBroadcast.xcframework; path = Carthage/Build/UDPBroadcast.xcframework; sourceTree = "<group>"; };
-		E1B2AB9628808CDF0072B3B9 /* GoogleCast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoogleCast.xcframework; path = Carthage/Build/GoogleCast.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -281,7 +261,6 @@
 				62666E2C27E5021000EC0ECD /* QuartzCore.framework in Frameworks */,
 				62666E1927E501D000EC0ECD /* CoreFoundation.framework in Frameworks */,
 				E19D41B22BF2BFA50082B8B2 /* KeychainSwift in Frameworks */,
-				E18443CB2A037773002DDDC8 /* UDPBroadcast in Frameworks */,
 				E1155ACB2D0584A90021557A /* IdentifiedCollections in Frameworks */,
 				62666E2E27E5021400EC0ECD /* Security.framework in Frameworks */,
 				E1B5F7AD29577BDD004B26CF /* OrderedCollections in Frameworks */,
@@ -337,7 +316,6 @@
 				62666E1027E501B400EC0ECD /* VideoToolbox.framework in Frameworks */,
 				62666E0C27E501A500EC0ECD /* OpenGLES.framework in Frameworks */,
 				E19E6E0A28A0BEFF005C10C8 /* BlurHashKit in Frameworks */,
-				E1FAD1C62A0375BA007F5521 /* UDPBroadcast in Frameworks */,
 				E1153DD02BBB634F00424D36 /* SVGKit in Frameworks */,
 				E179E8692E14CDBF00D9F245 /* CollectionVGrid in Frameworks */,
 				E18D6AA62BAA96F000A0D167 /* CollectionHStack in Frameworks */,
@@ -370,6 +348,46 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4E39D97A2E25CF5B00EB70A0 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				5362E4BE267D40E4000E2F71 /* MediaAccessibility.framework */,
+				5362E4B0267D40B9000E2F71 /* CFNetwork.framework */,
+				5362E4C8267D40F7000E2F71 /* UIKit.framework */,
+				53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */,
+				5362E4B8267D40CE000E2F71 /* CoreMedia.framework */,
+				62666E0527E5017A00EC0ECD /* CoreVideo.framework */,
+				5362E4B6267D40CA000E2F71 /* CoreGraphics.framework */,
+				62666E0F27E501B400EC0ECD /* VideoToolbox.framework */,
+				62666E0B27E501A500EC0ECD /* OpenGLES.framework */,
+				62666E0027E5016900EC0ECD /* CoreFoundation.framework */,
+				5362E4BC267D40D8000E2F71 /* Foundation.framework */,
+				5362E4BA267D40D2000E2F71 /* CoreText.framework */,
+				5362E4C4267D40F0000E2F71 /* Security.framework */,
+				5362E4AA267D40AD000E2F71 /* AVFoundation.framework */,
+				5362E4AE267D40B5000E2F71 /* AudioToolbox.framework */,
+				5362E4C2267D40EC000E2F71 /* QuartzCore.framework */,
+				5362E4C6267D40F4000E2F71 /* SystemConfiguration.framework */,
+				62666E1627E501CC00EC0ECD /* CFNetwork.framework */,
+				625CB57D2678E81E00530A6E /* TVVLCKit.xcframework */,
+				62666E3127E5021E00EC0ECD /* UIKit.framework */,
+				62666E2927E5020A00EC0ECD /* OpenGLES.framework */,
+				62666E1C27E501DB00EC0ECD /* CoreMedia.framework */,
+				62666E2F27E5021800EC0ECD /* VideoToolbox.framework */,
+				62666E2227E501EB00EC0ECD /* Foundation.framework */,
+				62666E2027E501E400EC0ECD /* CoreVideo.framework */,
+				62666E1A27E501D400EC0ECD /* CoreGraphics.framework */,
+				62666E2B27E5021000EC0ECD /* QuartzCore.framework */,
+				62666E1827E501D000EC0ECD /* CoreFoundation.framework */,
+				62666E2D27E5021400EC0ECD /* Security.framework */,
+				53ABFDDB267972BF00886593 /* TVServices.framework */,
+				62666E1E27E501DF00EC0ECD /* CoreText.framework */,
+				62666E1427E501C800EC0ECD /* AVFoundation.framework */,
+				62666E1227E501C300EC0ECD /* AudioToolbox.framework */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		5377CBE8263B596A003A4E83 = {
 			isa = PBXGroup;
 			children = (
@@ -378,9 +396,9 @@
 				E14563272DFCAE6E008FF700 /* Shared */,
 				E1456FC82DFCB323008FF700 /* Translations */,
 				5377CBF2263B596A003A4E83 /* Products */,
-				53D5E3DB264B47EE00BADDC8 /* Frameworks */,
 				E14565DD2DFCAE78008FF700 /* Scripts */,
 				E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */,
+				4E39D97A2E25CF5B00EB70A0 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -391,64 +409,6 @@
 				535870602669D21600D05A09 /* Swiftfin tvOS.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		53D5E3DB264B47EE00BADDC8 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				E1B2AB9628808CDF0072B3B9 /* GoogleCast.xcframework */,
-				637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */,
-				62666E3A27E503E400EC0ECD /* GoogleCastSDK.xcframework */,
-				62666E3127E5021E00EC0ECD /* UIKit.framework */,
-				62666E2F27E5021800EC0ECD /* VideoToolbox.framework */,
-				62666E2D27E5021400EC0ECD /* Security.framework */,
-				62666E2B27E5021000EC0ECD /* QuartzCore.framework */,
-				62666E2927E5020A00EC0ECD /* OpenGLES.framework */,
-				62666E2827E5020600EC0ECD /* libxml2.tbd */,
-				62666E2727E5020200EC0ECD /* libiconv.tbd */,
-				62666E2627E501FE00EC0ECD /* libc++.tbd */,
-				62666E2527E501FA00EC0ECD /* libbz2.tbd */,
-				62666E2227E501EB00EC0ECD /* Foundation.framework */,
-				62666E2027E501E400EC0ECD /* CoreVideo.framework */,
-				62666E1E27E501DF00EC0ECD /* CoreText.framework */,
-				62666E1C27E501DB00EC0ECD /* CoreMedia.framework */,
-				62666E1A27E501D400EC0ECD /* CoreGraphics.framework */,
-				62666E1827E501D000EC0ECD /* CoreFoundation.framework */,
-				62666E1627E501CC00EC0ECD /* CFNetwork.framework */,
-				62666E1427E501C800EC0ECD /* AVFoundation.framework */,
-				62666E1227E501C300EC0ECD /* AudioToolbox.framework */,
-				62666E0F27E501B400EC0ECD /* VideoToolbox.framework */,
-				62666E0B27E501A500EC0ECD /* OpenGLES.framework */,
-				62666E0A27E501A100EC0ECD /* libxml2.tbd */,
-				62666E0927E5019C00EC0ECD /* libiconv.tbd */,
-				62666E0827E5019800EC0ECD /* libc++.tbd */,
-				62666E0727E5018D00EC0ECD /* libbz2.tbd */,
-				62666E0527E5017A00EC0ECD /* CoreVideo.framework */,
-				62666E0027E5016900EC0ECD /* CoreFoundation.framework */,
-				5362E4C8267D40F7000E2F71 /* UIKit.framework */,
-				5362E4C6267D40F4000E2F71 /* SystemConfiguration.framework */,
-				5362E4C4267D40F0000E2F71 /* Security.framework */,
-				5362E4C2267D40EC000E2F71 /* QuartzCore.framework */,
-				5362E4C0267D40E8000E2F71 /* MediaPlayer.framework */,
-				5362E4BE267D40E4000E2F71 /* MediaAccessibility.framework */,
-				5362E4BC267D40D8000E2F71 /* Foundation.framework */,
-				5362E4BA267D40D2000E2F71 /* CoreText.framework */,
-				5362E4B8267D40CE000E2F71 /* CoreMedia.framework */,
-				5362E4B6267D40CA000E2F71 /* CoreGraphics.framework */,
-				5362E4B4267D40C5000E2F71 /* CoreData.framework */,
-				5362E4B2267D40BE000E2F71 /* CoreBluetooth.framework */,
-				5362E4B0267D40B9000E2F71 /* CFNetwork.framework */,
-				5362E4AE267D40B5000E2F71 /* AudioToolbox.framework */,
-				5362E4AC267D40B1000E2F71 /* Accelerate.framework */,
-				5362E4AA267D40AD000E2F71 /* AVFoundation.framework */,
-				5362E4A7267D4067000E2F71 /* GoogleCast.framework */,
-				53ABFDDB267972BF00886593 /* TVServices.framework */,
-				625CB57D2678E81E00530A6E /* TVVLCKit.xcframework */,
-				53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */,
-				628B95212670CABD0091AF3B /* WidgetKit.framework */,
-				628B95232670CABD0091AF3B /* SwiftUI.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -493,7 +453,6 @@
 				E1B5F7A829577BCE004B26CF /* PulseLogHandler */,
 				E1B5F7AA29577BCE004B26CF /* PulseUI */,
 				E1B5F7AC29577BDD004B26CF /* OrderedCollections */,
-				E18443CA2A037773002DDDC8 /* UDPBroadcast */,
 				E1A7B1642B9A9F7800152546 /* PreferencesView */,
 				E1392FEC2BA218A80034110D /* SwiftUIIntrospect */,
 				E1153DD12BBB649C00424D36 /* SVGKit */,
@@ -547,7 +506,6 @@
 				E15210572946DF1B00375CC2 /* PulseUI */,
 				E19DDEC62948EF9900954E10 /* OrderedCollections */,
 				E1DC9813296DC06200982F06 /* PulseLogHandler */,
-				E1FAD1C52A0375BA007F5521 /* UDPBroadcast */,
 				E114DB322B1944FA00B75FB3 /* CollectionVGrid */,
 				E15D4F042B1B0C3C00442DB8 /* PreferencesView */,
 				E113A2A92B5A179A009CAAAA /* CollectionVGrid */,
@@ -664,7 +622,6 @@
 				E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */,
 				E19DDEC52948EF9900954E10 /* XCRemoteSwiftPackageReference "swift-collections" */,
 				E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */,
-				E1FAD1C42A0375BA007F5521 /* XCRemoteSwiftPackageReference "UDPBroadcastConnection" */,
 				E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */,
 				E1153DCE2BBB634F00424D36 /* XCRemoteSwiftPackageReference "SVGKit" */,
 				E145EB492BE16849003BF6F3 /* XCRemoteSwiftPackageReference "keychain-swift" */,
@@ -1223,10 +1180,10 @@
 		};
 		E150C0BF2BFD62FD00944FFA /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/jellyfin/jellyfin-sdk-swift.git";
+			repositoryURL = "https://github.com/JPKribs/jellyfin-sdk-swift.git";
 			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 0.5.2;
+				branch = serverDiscovery;
+				kind = branch;
 			};
 		};
 		E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */ = {
@@ -1312,14 +1269,6 @@
 		E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kean/PulseLogHandler";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.0;
-			};
-		};
-		E1FAD1C42A0375BA007F5521 /* XCRemoteSwiftPackageReference "UDPBroadcastConnection" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/gunterhager/UDPBroadcastConnection";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 5.0.0;
@@ -1561,11 +1510,6 @@
 			package = E179E8672E14CDBF00D9F245 /* XCRemoteSwiftPackageReference "CollectionVGrid" */;
 			productName = CollectionVGrid;
 		};
-		E18443CA2A037773002DDDC8 /* UDPBroadcast */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1FAD1C42A0375BA007F5521 /* XCRemoteSwiftPackageReference "UDPBroadcastConnection" */;
-			productName = UDPBroadcast;
-		};
 		E18A8E7928D5FEDF00333B9A /* VLCUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E18A8E7828D5FEDF00333B9A /* XCRemoteSwiftPackageReference "VLCUI" */;
@@ -1639,11 +1583,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */;
 			productName = PulseLogHandler;
-		};
-		E1FAD1C52A0375BA007F5521 /* UDPBroadcast */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1FAD1C42A0375BA007F5521 /* XCRemoteSwiftPackageReference "UDPBroadcastConnection" */;
-			productName = UDPBroadcast;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
