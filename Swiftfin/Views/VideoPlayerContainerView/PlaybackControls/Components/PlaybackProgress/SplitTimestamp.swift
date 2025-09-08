@@ -95,8 +95,9 @@ extension VideoPlayer.PlaybackControls {
                     trailingTimestamp
                 }
                 .monospacedDigit()
-                .font(.caption)
+                .font(.caption2)
                 .lineLimit(1)
+                .foregroundStyle(isScrubbing ? .primary : .secondary)
             }
             .foregroundStyle(.primary, .secondary)
             .assign(manager.secondsBox.$value, to: $activeSeconds)

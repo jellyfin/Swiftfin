@@ -12,6 +12,9 @@ import JellyfinAPI
 import UIKit
 
 // TODO: preload chapter images
+//       - somehow tell player if there are no images
+//         and don't present popup overlay
+// TODO: just use image pipeline
 
 class ChapterPreviewImageProvider: PreviewImageProvider {
 

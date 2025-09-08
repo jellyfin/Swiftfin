@@ -10,11 +10,12 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: smooth out animation when done scrubbing
 // TODO: enabled/disabled state
 // TODO: change split timestamp interaction to be split,
 //       make slider gesture padding larger
 // TODO: scrubbing snapping behaviors
+//       - chapter boundaries
+//       - current running time
 
 extension VideoPlayer.PlaybackControls {
 
@@ -31,6 +32,9 @@ extension VideoPlayer.PlaybackControls {
         private var scrubbedSecondsBox: PublishedBox<Duration>
 
         @State
+        private var currentTranslation: CGPoint = .zero
+
+        @State
         private var sliderSize: CGSize = .zero
 
         private var isScrubbing: Bool {
@@ -40,6 +44,10 @@ extension VideoPlayer.PlaybackControls {
             nonmutating set {
                 containerState.isScrubbing = newValue
             }
+        }
+
+        private var isSlowScrubbing: Bool {
+            isScrubbing && (currentTranslation.y >= 60)
         }
 
         private var previewXOffset: CGFloat {
@@ -84,13 +92,23 @@ extension VideoPlayer.PlaybackControls {
         }
 
         @ViewBuilder
+        private var slowScrubbingIndicator: some View {
+            HStack {
+                Image(systemName: "backward.fill")
+                Text("Slow Scrubbing")
+                Image(systemName: "forward.fill")
+            }
+            .font(.caption)
+        }
+
+        @ViewBuilder
         private var capsuleSlider: some View {
             AlternateLayoutView {
                 EmptyHitTestView()
                     .frame(height: 10)
                     .trackingSize($sliderSize)
             } content: {
-                // Use scale effect, progress view implementation doesn't respond well to frame changes
+                // Use scale effect, slider doesn't respond well to horizontal frame changes
                 let xScale = max(1, sliderSize.width / (sliderSize.width - EdgeInsets.edgePadding * 2))
 
                 CapsuleSlider(
@@ -98,7 +116,9 @@ extension VideoPlayer.PlaybackControls {
                         getter: { $0.seconds },
                         setter: { .seconds($0) }
                     ),
-                    total: max(1, (manager.item.runtime ?? .zero).seconds)
+                    total: max(1, (manager.item.runtime ?? .zero).seconds),
+                    translation: $currentTranslation,
+                    valueDamping: isSlowScrubbing ? 0.1 : 1
                 )
                 .gesturePadding(30)
                 .onEditingChanged { newValue in
@@ -116,7 +136,7 @@ extension VideoPlayer.PlaybackControls {
         }
 
         var body: some View {
-            VStack(spacing: 10) {
+            VStack(spacing: 5) {
                 if manager.item.isLiveStream {
                     liveIndicator
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -140,6 +160,17 @@ extension VideoPlayer.PlaybackControls {
                         .cornerRadius(ratio: 1 / 30, of: \.width)
                         .offset(x: previewXOffset, y: -100)
                 }
+            }
+            .overlay(alignment: .bottom) {
+                if isSlowScrubbing {
+                    slowScrubbingIndicator
+                        .offset(y: EdgeInsets.edgePadding * 2)
+                        .transition(.opacity.animation(.linear(duration: 0.1)))
+                }
+            }
+            .onChange(of: isSlowScrubbing) { _ in
+                guard isScrubbing else { return }
+                UIDevice.impact(.soft)
             }
         }
     }

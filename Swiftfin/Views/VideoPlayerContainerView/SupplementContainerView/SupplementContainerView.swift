@@ -104,6 +104,7 @@ extension UIVideoPlayerContainerViewController {
                 .edgePadding(.top)
                 .isVisible(isPresentingOverlay)
                 .isVisible(!isScrubbing)
+                .isVisible(manager.state != .loadingItem)
             }
             .animation(.linear(duration: 0.2), value: isPresentingOverlay)
             .animation(.linear(duration: 0.1), value: isScrubbing)

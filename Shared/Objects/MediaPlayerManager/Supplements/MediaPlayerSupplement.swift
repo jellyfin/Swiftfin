@@ -16,6 +16,7 @@ protocol MediaPlayerSupplement: Displayable, Identifiable {
 
     associatedtype VideoPlayerBody: PlatformView
 
+    /// Note: - This value should differ based on content
     var id: String { get }
 
     @MainActor

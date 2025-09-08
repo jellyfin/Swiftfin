@@ -22,7 +22,10 @@ struct MediaChaptersSupplement: MediaPlayerSupplement {
 
     let chapters: [ChapterInfo.FullInfo]
     let displayTitle: String = L10n.chapters
-    let id: String = "Chapters"
+
+    var id: String {
+        "ChaptersSupplement-\(chapters.hashValue)"
+    }
 
     var videoPlayerBody: some PlatformView {
         ChapterOverlay(chapters: chapters)

@@ -8,6 +8,7 @@
 
 import Combine
 import Engine
+import Logging
 import SwiftUI
 
 // TODO: don't dismiss overlay while panning and supplement not presented
@@ -17,7 +18,9 @@ import SwiftUI
 //       - necessary for full-screen supplements and/or small screens
 // TODO: custom buttons on playback controls
 //       - skip intro, next episode, etc.
+//       - can probably just do on playback controls itself
 // TODO: pass in safe area insets explicitly?
+// TODO: pause when center paused when overlay dismissed
 
 // MARK: - VideoPlayerContainerView
 
@@ -119,6 +122,12 @@ class UIVideoPlayerContainerViewController: UIViewController {
             }
         }
     }
+
+    private lazy var initialHitBlockView: UIView = {
+        let view = UIView(frame: .zero)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
 
     private lazy var playerViewController: HostingController<AnyView> = {
         let controller = HostingController(
@@ -248,12 +257,14 @@ class UIVideoPlayerContainerViewController: UIViewController {
         return offset
     }
 
+    private let logger = Logger.swiftfin()
     private let manager: MediaPlayerManager
     private let player: AnyView
     private let playbackControls: AnyView
     let containerState: VideoPlayerContainerState
 
     private var cancellables: Set<AnyCancellable> = []
+    private var didInitiallyAppear: Bool = false
 
     init(
         containerState: VideoPlayerContainerState,
@@ -350,11 +361,16 @@ class UIVideoPlayerContainerViewController: UIViewController {
             return
         }
 
+        guard let verticalPanGestureStartConstant else {
+            logger.error("Vertical pan gesture invalid state: verticalPanGestureStartConstant is nil")
+            return
+        }
+
         if (!didStartPanningWithSupplement && yDirection > 0) || (didStartPanningWithSupplement && yDirection < 0) {
             // If we started with a supplement and are panning down, or if we didn't start with a supplement and are panning up
-            newOffset = verticalPanGestureStartConstant! + (abs(translation.y) * -yDirection)
+            newOffset = verticalPanGestureStartConstant + (abs(translation.y) * -yDirection)
         } else {
-            newOffset = verticalPanGestureStartConstant! - (abs(translation.y) * yDirection)
+            newOffset = verticalPanGestureStartConstant - (abs(translation.y) * yDirection)
         }
 
         if containerState.isCompact {
@@ -437,6 +453,19 @@ class UIVideoPlayerContainerViewController: UIViewController {
         }
     }
 
+    // MARK: - viewDidAppear
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if !didInitiallyAppear {
+            containerState.isPresentingOverlay = true
+            setupPlayerView()
+            initialHitBlockView.removeFromSuperview()
+            didInitiallyAppear = true
+        }
+    }
+
     // MARK: - viewDidLoad
 
     override func viewDidLoad() {
@@ -446,16 +475,45 @@ class UIVideoPlayerContainerViewController: UIViewController {
 
         containerState.isCompact = UIDevice.isPhone && view.bounds.size.isPortrait
 
-        setupViews()
-        setupConstraints()
+        setupOnLoadViews()
+        setupOnLoadConstraints()
     }
 
-    private func setupViews() {
+    // Setup player view separately after view appears to hopefully
+    // prevent player playing before the view is done presenting
+    private func setupPlayerView() {
         addChild(playerViewController)
         view.addSubview(playerView)
+        view.sendSubviewToBack(playerView)
         playerViewController.didMove(toParent: self)
         playerView.backgroundColor = .black
 
+        playerCompactBottomAnchor = playerView.bottomAnchor.constraint(
+            equalTo: supplementContainerView.topAnchor,
+            constant: compactPlayerBottomOffset
+        )
+
+        playerCompactConstraints = [
+            playerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            playerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            playerView.topAnchor.constraint(equalTo: view.topAnchor),
+            playerCompactBottomAnchor,
+        ]
+        playerRegularConstraints = [
+            playerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            playerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            playerView.topAnchor.constraint(equalTo: view.topAnchor),
+            playerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ]
+
+        if containerState.isCompact {
+            NSLayoutConstraint.activate(playerCompactConstraints)
+        } else {
+            NSLayoutConstraint.activate(playerRegularConstraints)
+        }
+    }
+
+    private func setupOnLoadViews() {
         addChild(playbackControlsViewController)
         view.addSubview(playbackControlsView)
         playbackControlsViewController.didMove(toParent: self)
@@ -465,9 +523,12 @@ class UIVideoPlayerContainerViewController: UIViewController {
         view.addSubview(supplementContainerView)
         supplementContainerViewController.didMove(toParent: self)
         supplementContainerView.backgroundColor = .clear
+
+        view.addSubview(initialHitBlockView)
+        view.bringSubviewToFront(initialHitBlockView)
     }
 
-    private func setupConstraints() {
+    private func setupOnLoadConstraints() {
 
         let isCompact = UIDevice.isPhone && view.bounds.size.isPortrait
 
@@ -501,29 +562,12 @@ class UIVideoPlayerContainerViewController: UIViewController {
 
         NSLayoutConstraint.activate(playbackControlsConstraints)
 
-        playerCompactBottomAnchor = playerView.bottomAnchor.constraint(
-            equalTo: supplementContainerView.topAnchor,
-            constant: compactPlayerBottomOffset
-        )
-
-        playerCompactConstraints = [
-            playerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            playerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            playerView.topAnchor.constraint(equalTo: view.topAnchor),
-            playerCompactBottomAnchor,
-        ]
-        playerRegularConstraints = [
-            playerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            playerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            playerView.topAnchor.constraint(equalTo: view.topAnchor),
-            playerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ]
-
-        if isCompact {
-            NSLayoutConstraint.activate(playerCompactConstraints)
-        } else {
-            NSLayoutConstraint.activate(playerRegularConstraints)
-        }
+        NSLayoutConstraint.activate([
+            initialHitBlockView.topAnchor.constraint(equalTo: view.topAnchor),
+            initialHitBlockView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            initialHitBlockView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            initialHitBlockView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {

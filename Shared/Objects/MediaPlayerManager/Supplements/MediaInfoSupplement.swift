@@ -14,8 +14,11 @@ import SwiftUI
 struct MediaInfoSupplement: MediaPlayerSupplement {
 
     let displayTitle: String = "Info"
-    let id: String = "MediaInfoSupplement"
     let item: BaseItemDto
+
+    var id: String {
+        "MediaInfoSupplement-\(item.id ?? "any")"
+    }
 
     var videoPlayerBody: some PlatformView {
         InfoOverlay(item: item)

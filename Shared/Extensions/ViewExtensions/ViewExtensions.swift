@@ -368,6 +368,7 @@ extension View {
         modifier(OpacityLinearGradientModifier(stops: stops()))
     }
 
+    // TODO: look at changing to symbolEffect
     func videoPlayerActionButtonTransition() -> some View {
         transition(.opacity.combined(with: .scale).animation(.snappy))
     }

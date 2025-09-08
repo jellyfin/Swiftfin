@@ -8,6 +8,10 @@
 
 import SwiftUI
 
+// TODO: change "damping" behavior
+//       - change to be based on given stride of `Value`
+//         to translation diff step
+
 struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
 
     @Binding
@@ -16,34 +20,57 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
     @State
     private var contentSize: CGSize = .zero
     @State
+    private var gestureTranslation: CGPoint = .zero
+    @State
     private var isEditing: Bool = false
     @State
     private var translationStartLocation: CGPoint = .zero
+
     @State
-    private var translationStartValue: Value = 0
+    private var currentValueDampingStartTranslation: CGPoint = .zero
     @State
-    private var currentTranslation: CGFloat = 0
+    private var currentValueDamping: Double = 1.0
+    @State
+    private var currentValueDampingStartValue: Value = .zero
 
     @State
     private var needsToSetTranslationStartState: Bool = true
 
-    private var gesturePadding: CGFloat = 0
+    private var gesturePadding: CGFloat
     private var onEditingChanged: (Bool) -> Void
     private let total: Value
+    private let translationBinding: Binding<CGPoint>
+    private let valueDamping: Double
 
     private var dragGesture: some Gesture {
         DragGesture(coordinateSpace: .global)
             .onChanged { newValue in
                 if needsToSetTranslationStartState {
-                    translationStartValue = value
                     translationStartLocation = newValue.location
-                    currentTranslation = 0
                     needsToSetTranslationStartState = false
+
+                    currentValueDamping = valueDamping
+                    currentValueDampingStartTranslation = newValue.location
+                    currentValueDampingStartValue = value
                 }
 
-                currentTranslation = translationStartLocation.x - newValue.location.x
+                if valueDamping != currentValueDamping {
+                    currentValueDamping = valueDamping
+                    currentValueDampingStartTranslation = newValue.location
+                    currentValueDampingStartValue = value
+                }
 
-                let newProgress = translationStartValue - Value(currentTranslation / contentSize.width) * total
+                gestureTranslation = CGPoint(
+                    x: translationStartLocation.x - newValue.location.x,
+                    y: translationStartLocation.y - newValue.location.y
+                )
+
+                let newTranslation = CGPoint(
+                    x: (currentValueDampingStartTranslation.x - newValue.location.x) * currentValueDamping,
+                    y: currentValueDampingStartTranslation.y - newValue.location.y
+                )
+
+                let newProgress = currentValueDampingStartValue - Value(newTranslation.x / contentSize.width) * total
                 value = clamp(newProgress, min: 0, max: total)
             }
     }
@@ -62,6 +89,7 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
                             onEditingChanged(true)
                             needsToSetTranslationStartState = true
                         } else {
+                            translationBinding.wrappedValue = .zero
                             isEditing = false
                             onEditingChanged(false)
                         }
@@ -75,17 +103,39 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
                     UIDevice.impact(.light)
                 }
             }
+            .onChange(of: gestureTranslation) { newValue in
+                translationBinding.wrappedValue = newValue
+            }
     }
 }
 
 extension CapsuleSlider {
 
-    init(value: Binding<Value>, total: Value = 1.0) {
+    init(
+        value: Binding<Value>,
+        total: Value = 1.0,
+        valueDamping: Double = 1.0
+    ) {
         self.init(
             value: value,
-            onEditingChanged: { _ in },
-            total: total
+            total: total,
+            translation: .constant(.zero),
+            valueDamping: valueDamping
         )
+    }
+
+    init(
+        value: Binding<Value>,
+        total: Value = 1.0,
+        translation: Binding<CGPoint>,
+        valueDamping: Double = 1.0
+    ) {
+        self._value = value
+        self.gesturePadding = 0
+        self.onEditingChanged = { _ in }
+        self.total = total
+        self.translationBinding = translation
+        self.valueDamping = clamp(valueDamping, min: 0.01, max: 2)
     }
 
     func onEditingChanged(perform action: @escaping (Bool) -> Void) -> Self {
