@@ -9,11 +9,11 @@
 import CollectionVGrid
 import SwiftUI
 
-// TODO: possibly make custom tab view to have vertical scroll
-// views be able to swipe down supplement
+// TODO: possibly make custom tab view to have observe
+//       vertical scroll content and transfer to dismissal
 // TODO: clean up guest supplementing
-// TODO: fix bug on tabview selection
-//       - possibly cause using AnyMediaPlayerSupplement as the selection/tag
+// TODO: fix improper supplement selected
+//       - maybe a race issue
 
 extension UIVideoPlayerContainerViewController {
 
@@ -35,6 +35,19 @@ extension UIVideoPlayerContainerViewController {
             containerState.isScrubbing
         }
 
+        @ViewBuilder
+        private func supplementContainer(for supplement: some MediaPlayerSupplement) -> some View {
+            AlternateLayoutView(alignment: .topLeading) {
+                Color.clear
+            } content: {
+                supplement.videoPlayerBody
+            }
+            .background {
+                GestureView()
+                    .environment(\.panGestureDirection, .vertical)
+            }
+        }
+
         var body: some View {
             ZStack {
                 GestureView()
@@ -46,11 +59,11 @@ extension UIVideoPlayerContainerViewController {
                     HStack(spacing: 10) {
                         if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
                             Button(supplement.displayTitle) {
-                                containerState.select(supplement: supplement)
+                                containerState.select(supplement: nil)
                             }
                             .isSelected(true)
                         } else {
-                            ForEach(manager.supplements.map(\.asAny)) { supplement in
+                            ForEach(manager.supplements, id: \.id) { supplement in
                                 let isSelected = containerState.selectedSupplement?.id == supplement.id
 
                                 Button(supplement.displayTitle) {
@@ -68,38 +81,25 @@ extension UIVideoPlayerContainerViewController {
 
                     ZStack {
                         if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
-                            AlternateLayoutView(alignment: .topLeading) {
-                                Color.clear
-                            } content: {
-                                supplement
-                                    .videoPlayerBody
-                            }
-                            .background {
-                                GestureView()
-                                    .environment(\.panGestureDirection, .vertical)
-                            }
+                            supplementContainer(for: supplement)
+                                .eraseToAnyView()
                         } else {
-                            TabView(selection: $containerState.selectedSupplement) {
-                                ForEach(manager.supplements.map(\.asAny)) { supplement in
-                                    AlternateLayoutView(alignment: .topLeading) {
-                                        Color.clear
-                                    } content: {
-                                        supplement
-                                            .videoPlayerBody
-                                    }
-                                    .background {
-                                        GestureView()
-                                            .environment(\.panGestureDirection, .vertical)
-                                    }
-                                    .tag(supplement as AnyMediaPlayerSupplement?)
+                            TabView(selection: $containerState.selectedSupplement.map(
+                                getter: { $0?.id },
+                                setter: { id in manager.supplements.first(where: { $0.id == id }) }
+                            )) {
+                                ForEach(manager.supplements, id: \.id) { supplement in
+                                    supplementContainer(for: supplement)
+                                        .eraseToAnyView()
+                                        .tag(supplement.id as String?)
                                 }
                             }
+                            .tabViewStyle(.page(indexDisplayMode: .never))
                         }
                     }
-                    .tabViewStyle(.page(indexDisplayMode: .never))
                     .isVisible(containerState.isPresentingSupplement)
                     .disabled(!containerState.isPresentingSupplement)
-                    .animation(.linear(duration: 0.2), value: containerState.selectedSupplement)
+                    .animation(.linear(duration: 0.2), value: containerState.selectedSupplement?.id)
                 }
                 .edgePadding(.top)
                 .isVisible(isPresentingOverlay)

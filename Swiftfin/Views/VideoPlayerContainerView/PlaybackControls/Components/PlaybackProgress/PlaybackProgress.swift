@@ -12,6 +12,9 @@ import SwiftUI
 
 // TODO: smooth out animation when done scrubbing
 // TODO: enabled/disabled state
+// TODO: change split timestamp interaction to be split,
+//       make slider gesture padding larger
+// TODO: scrubbing snapping behaviors
 
 extension VideoPlayer.PlaybackControls {
 
@@ -63,7 +66,7 @@ extension VideoPlayer.PlaybackControls {
                 return 1.77
             }
 
-            return max(videoPlayerProxy.videoSize.value.aspectRatio, 2)
+            return clamp(videoPlayerProxy.videoSize.value.aspectRatio, min: 0.25, max: 4)
         }
 
         @ViewBuilder
@@ -87,6 +90,9 @@ extension VideoPlayer.PlaybackControls {
                     .frame(height: 10)
                     .trackingSize($sliderSize)
             } content: {
+                // Use scale effect, progress view implementation doesn't respond well to frame changes
+                let xScale = max(1, sliderSize.width / (sliderSize.width - EdgeInsets.edgePadding * 2))
+
                 CapsuleSlider(
                     value: $scrubbedSecondsBox.value.map(
                         getter: { $0.seconds },
@@ -101,7 +107,8 @@ extension VideoPlayer.PlaybackControls {
 //                .if(manager.item.fullChapterInfo.isNotEmpty) { view in
 //                    view.mask(ChapterTrackMask(chapters: manager.item.fullChapterInfo))
 //                }
-                .frame(maxWidth: isScrubbing ? nil : max(0, sliderSize.width - EdgeInsets.edgePadding * 2))
+                .frame(maxWidth: sliderSize != .zero ? sliderSize.width - EdgeInsets.edgePadding * 2 : .infinity)
+                .scaleEffect(x: isScrubbing ? xScale : 1, y: 1, anchor: .center)
                 .frame(height: isScrubbing ? 20 : 10)
             }
             .animation(.linear(duration: 0.05), value: scrubbedSeconds)
@@ -134,6 +141,31 @@ extension VideoPlayer.PlaybackControls {
                         .offset(x: previewXOffset, y: -100)
                 }
             }
+        }
+    }
+}
+
+// TODO: make option?
+struct SliderTick: View {
+
+    @EnvironmentObject
+    private var manager: MediaPlayerManager
+
+    @State
+    private var activeSeconds: Duration = .zero
+
+    var body: some View {
+        if let runtime = manager.item.runtime, runtime > .zero {
+            GeometryReader { proxy in
+                AlternateLayoutView(alignment: .leading) {
+                    Color.clear
+                } content: {
+                    Color.white
+                        .frame(width: 1.5)
+                        .offset(x: proxy.size.width * (activeSeconds / runtime) - 0.75)
+                }
+            }
+            .assign(manager.secondsBox.$value, to: $activeSeconds)
         }
     }
 }

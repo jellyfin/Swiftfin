@@ -11,6 +11,7 @@ import Foundation
 import SwiftUI
 
 // TODO: turned into spaghetti to get out, clean up with a better state system
+// TODO: verify timer states
 
 @MainActor
 class VideoPlayerContainerState: ObservableObject {
@@ -103,7 +104,7 @@ class VideoPlayerContainerState: ObservableObject {
     var presentationControllerShouldDismiss: Bool = true
 
     @Published
-    var selectedSupplement: AnyMediaPlayerSupplement? = nil {
+    var selectedSupplement: (any MediaPlayerSupplement)? = nil {
         didSet {
             isPresentingSupplement = selectedSupplement != nil
         }
@@ -133,15 +134,15 @@ class VideoPlayerContainerState: ObservableObject {
         }
     }
 
-    func select(supplement: AnyMediaPlayerSupplement?, isGuest: Bool = false) {
+    func select(supplement: (any MediaPlayerSupplement)?, isGuest: Bool = false) {
         isGuestSupplement = isGuest
 
         if supplement?.id == selectedSupplement?.id {
             selectedSupplement = nil
-            containerView?.present(supplement: nil)
+            containerView?.presentSupplementContainer(false)
         } else {
             selectedSupplement = supplement
-            containerView?.present(supplement: supplement)
+            containerView?.presentSupplementContainer(supplement != nil)
         }
     }
 }

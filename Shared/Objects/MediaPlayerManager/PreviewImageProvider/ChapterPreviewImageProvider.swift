@@ -13,7 +13,7 @@ import UIKit
 
 // TODO: preload chapter images
 
-class ChapterImageProvider: PreviewImageProvider {
+class ChapterPreviewImageProvider: PreviewImageProvider {
 
     let chapters: [ChapterInfo.FullInfo]
 

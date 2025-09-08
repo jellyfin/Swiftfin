@@ -26,7 +26,7 @@ class DirectionalPanGestureRecognizer: UIPanGestureRecognizer {
             let isHorizontal = abs(vel.y) < abs(vel.x)
             let isVertical = abs(vel.x) < abs(vel.y)
 
-            print("vel: \(vel), isHorizontal: \(isHorizontal), isVertical: \(isVertical), direction: \(direction)")
+//            print("vel: \(vel), isHorizontal: \(isHorizontal), isVertical: \(isVertical), direction: \(direction)")
 
             switch direction {
             case .horizontal where isHorizontal: ()

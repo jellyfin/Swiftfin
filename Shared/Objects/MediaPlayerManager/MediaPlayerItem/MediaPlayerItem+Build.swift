@@ -27,6 +27,11 @@ extension MediaPlayerItem {
 
         let logger = Logger.swiftfin()
 
+        guard let itemID = item.id else {
+            logger.critical("No item ID while building online media player item!")
+            throw JellyfinAPIError(L10n.unknownError)
+        }
+
         let maxBitrate = try await requestedBitrate.getMaxBitrate()
 
         let profile = DeviceProfile.build(
@@ -47,7 +52,7 @@ extension MediaPlayerItem {
         )
 
         let request = Paths.getPostedPlaybackInfo(
-            itemID: item.id!,
+            itemID: itemID,
             parameters: playbackInfoParameters,
             playbackInfo
         )
@@ -95,11 +100,11 @@ extension MediaPlayerItem {
                 isStatic: true,
                 tag: item.etag,
                 playSessionID: playSessionID,
-                mediaSourceID: item.id
+                mediaSourceID: itemID
             )
 
             let videoStreamRequest = Paths.getVideoStream(
-                itemID: item.id!,
+                itemID: itemID,
                 parameters: videoStreamParameters
             )
 
@@ -114,18 +119,36 @@ extension MediaPlayerItem {
             return await ImagePipeline.Swiftfin.other.loadFirstImage(from: imageRequests)
         }
 
-        var previewImageProvider: (any PreviewImageProvider)? = nil
+        let previewImageProvider: (any PreviewImageProvider)? = {
+            let previewImageScrubbingSetting = StoredValues[.User.previewImageScrubbing]
+            lazy var chapterPreviewImageProvider: ChapterPreviewImageProvider? = {
+                if let chapters = item.fullChapterInfo, chapters.isNotEmpty {
+                    return ChapterPreviewImageProvider(chapters: chapters)
+                }
+                return nil
+            }()
 
-        if let mediaSourceID = mediaSource.id,
-           let itemID = item.id,
-           let trickplayInfo = item.trickplay?[mediaSourceID]?.first
-        {
-            previewImageProvider = TrickplayImageProvider(
-                info: trickplayInfo.value,
-                itemID: itemID,
-                mediaSourceID: mediaSourceID
-            )
-        }
+            if case let PreviewImageScrubbingOption.trickplay(fallbackToChapters: fallbackToChapters) = previewImageScrubbingSetting {
+                if let mediaSourceID = mediaSource.id,
+                   let trickplayInfo = item.trickplay?[mediaSourceID]?.first
+                {
+                    return TrickplayPreviewImageProvider(
+                        info: trickplayInfo.value,
+                        itemID: itemID,
+                        mediaSourceID: mediaSourceID,
+                        runtime: item.runtime ?? .zero
+                    )
+                }
+
+                if fallbackToChapters {
+                    return chapterPreviewImageProvider
+                }
+            } else if previewImageScrubbingSetting == .chapters {
+                return chapterPreviewImageProvider
+            }
+
+            return nil
+        }()
 
         return .init(
             baseItem: item,

@@ -64,6 +64,8 @@ final class MediaPlayerManager: ViewModel, Stateful {
             if let playbackItem {
                 seconds = playbackItem.baseItem.startSeconds ?? .zero
                 playbackItem.manager = self
+
+                Task { _ = await playbackItem.previewImageProvider?.image(for: seconds) }
             }
         }
     }

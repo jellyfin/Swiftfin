@@ -12,45 +12,13 @@ import SwiftUI
 
 // TODO: fullscreen supplement styles
 
-struct AnyMediaPlayerSupplement: Displayable, Equatable, Hashable, Identifiable {
-
-    let supplement: any MediaPlayerSupplement
-
-    var displayTitle: String {
-        supplement.displayTitle
-    }
-
-    var id: String {
-        supplement.id
-    }
-
-    @MainActor
-    var videoPlayerBody: some View {
-        supplement.videoPlayerBody
-            .eraseToAnyView()
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-
-    static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.supplement.id == rhs.supplement.id
-    }
-}
-
-protocol MediaPlayerSupplement: Displayable, Identifiable<String> {
+protocol MediaPlayerSupplement: Displayable, Identifiable {
 
     associatedtype VideoPlayerBody: PlatformView
+
+    var id: String { get }
 
     @MainActor
     @ViewBuilder
     var videoPlayerBody: Self.VideoPlayerBody { get }
-}
-
-extension MediaPlayerSupplement {
-
-    var asAny: AnyMediaPlayerSupplement {
-        AnyMediaPlayerSupplement(supplement: self)
-    }
 }

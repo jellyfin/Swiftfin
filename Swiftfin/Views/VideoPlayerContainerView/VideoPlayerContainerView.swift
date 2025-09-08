@@ -314,7 +314,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
             let shouldHaveSupplementPresented = self.supplementBottomAnchor.constant < minimumTranslation
 
             if shouldHaveSupplementPresented, !containerState.isPresentingSupplement {
-                containerState.selectedSupplement = manager.supplements.first?.asAny
+                containerState.selectedSupplement = manager.supplements.first
             } else if !shouldHaveSupplementPresented, containerState.selectedSupplement != nil {
                 containerState.selectedSupplement = nil
             }
@@ -333,14 +333,14 @@ class UIVideoPlayerContainerViewController: UIViewController {
             let shouldActuallyPresentSupplement = !didStartPanningWithSupplement && (translation.y < -translationMin || velocity < -1000)
             if shouldActuallyPresentSupplement {
                 // If we didn't start with a supplement and panned up more than 100 points, present it
-                containerState.selectedSupplement = manager.supplements.first?.asAny
+                containerState.selectedSupplement = manager.supplements.first
             }
 
             let stateToPass: (translation: CGFloat, velocity: CGFloat)? = lastVerticalPanLocation != nil &&
                 verticalPanGestureStartConstant !=
                 nil ?
                 (translation: translation.y, velocity: velocity) : nil
-            present(supplement: containerState.selectedSupplement, with: stateToPass)
+            presentSupplementContainer(containerState.selectedSupplement != nil, with: stateToPass)
 
             let shouldActuallyDismissOverlay = didStartPanningUpWithoutOverlay && !containerState.isPresentingSupplement
 
@@ -390,13 +390,11 @@ class UIVideoPlayerContainerViewController: UIViewController {
 
     // MARK: - present
 
-    func present(
-        supplement: AnyMediaPlayerSupplement?,
+    func presentSupplementContainer(
+        _ didPresent: Bool,
         with panningState: (translation: CGFloat, velocity: CGFloat)? = nil
     ) {
         guard !isPanning else { return }
-
-        let didPresent = supplement != nil
 
         if didPresent {
             if containerState.isCompact {

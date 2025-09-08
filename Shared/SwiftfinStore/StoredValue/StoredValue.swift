@@ -12,6 +12,10 @@ import Factory
 import Foundation
 import SwiftUI
 
+// TODO: typealias to `Setting`?
+//       - introduce `UserSetting` and `ServerSetting`
+//         that automatically namespace
+
 /// A property wrapper for a stored `AnyData` object.
 @propertyWrapper
 struct StoredValue<Value: Codable>: DynamicProperty {

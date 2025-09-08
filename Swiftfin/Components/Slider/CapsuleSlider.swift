@@ -25,7 +25,7 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
     private var currentTranslation: CGFloat = 0
 
     @State
-    private var needsToSetDragGestureStartState: Bool = true
+    private var needsToSetTranslationStartState: Bool = true
 
     private var gesturePadding: CGFloat = 0
     private var onEditingChanged: (Bool) -> Void
@@ -34,11 +34,11 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
     private var dragGesture: some Gesture {
         DragGesture(coordinateSpace: .global)
             .onChanged { newValue in
-                if needsToSetDragGestureStartState {
+                if needsToSetTranslationStartState {
                     translationStartValue = value
                     translationStartLocation = newValue.location
                     currentTranslation = 0
-                    needsToSetDragGestureStartState = false
+                    needsToSetTranslationStartState = false
                 }
 
                 currentTranslation = translationStartLocation.x - newValue.location.x
@@ -60,7 +60,7 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
                         if isPressing {
                             isEditing = true
                             onEditingChanged(true)
-                            needsToSetDragGestureStartState = true
+                            needsToSetTranslationStartState = true
                         } else {
                             isEditing = false
                             onEditingChanged(false)

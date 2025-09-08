@@ -28,11 +28,11 @@ extension VideoPlayer.PlaybackControls {
         private var scrubbedSeconds: Duration {
             scrubbedSecondsBox.value
         }
-        
+
         private func getImage(for seconds: Duration) {
             currentImageTask?.cancel()
             currentImageTask = nil
-            
+
             let initialTask = Task(priority: .userInitiated) {
                 if let image = await previewImageProvider.image(for: seconds) {
                     let index = previewImageProvider.imageIndex(for: seconds)

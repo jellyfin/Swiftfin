@@ -36,6 +36,8 @@ struct VideoPlayer: View {
     @State
     private var isGestureLocked: Bool = false
     @State
+    private var scrubbingStartDate: Date? = nil
+    @State
     private var subtitleOffset: Duration = .zero
 
     @StateObject
@@ -82,7 +84,13 @@ struct VideoPlayer: View {
             }
             .backport
             .onChange(of: containerState.isScrubbing) { _, newValue in
-                guard !newValue else { return }
+                if newValue { scrubbingStartDate = .now }
+
+                guard let scrubbingStartDate else { return }
+                let scrubbingDelta = Date.now.timeIntervalSince(scrubbingStartDate)
+                let secondsDelta = abs(manager.seconds - containerState.scrubbedSeconds.value)
+
+                guard secondsDelta >= .seconds(1), scrubbingDelta >= 0.1 else { return }
 
                 let scrubbedSeconds = containerState.scrubbedSeconds.value
                 manager.seconds = scrubbedSeconds
@@ -127,4 +135,9 @@ struct VideoPlayer: View {
                 }
             }
     }
+}
+
+@inlinable
+func abs(_ d: Duration) -> Duration {
+    d < .zero ? (.zero - d) : d
 }

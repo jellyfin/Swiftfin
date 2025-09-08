@@ -15,10 +15,18 @@ extension VideoPlayerSettingsView {
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
 
+        @StoredValue(.User.previewImageScrubbing)
+        private var previewImageScrubbing: PreviewImageScrubbingOption
+
         var body: some View {
             Section(L10n.slider) {
 
                 Toggle(L10n.chapterSlider, isOn: $chapterSlider)
+
+                CaseIterablePicker(
+                    "Preview Image",
+                    selection: $previewImageScrubbing
+                )
             }
         }
     }

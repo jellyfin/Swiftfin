@@ -18,6 +18,9 @@ import Transmission
 // TODO: be transparent
 // TODO: don't be a window
 //       - forces to portrait
+// TODO: change proxy to generic "Alert_",
+//       - object injected to environment
+//       - allows different contexts to control alerts
 
 struct ToastView<Content: View>: View {
 

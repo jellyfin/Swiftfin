@@ -13,15 +13,12 @@ extension VideoPlayer.PlaybackControls.PlaybackProgress {
 
     struct ChapterTrackMask: View {
 
-        @State
-        private var contentSize: CGSize = .zero
-
         let chapters: [ChapterInfo.FullInfo]
 
         var body: some View {
             AlternateLayoutView {
                 Color.clear
-            } content: {
+            } content: { contentSize in
                 HStack(spacing: 0) {
                     ForEach(chapters) { chapter in
                         HStack(spacing: 0) {
@@ -39,7 +36,6 @@ extension VideoPlayer.PlaybackControls.PlaybackProgress {
                     }
                 }
             }
-            .trackingSize($contentSize)
         }
     }
 }

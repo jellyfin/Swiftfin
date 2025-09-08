@@ -9,6 +9,8 @@
 import Defaults
 import SwiftUI
 
+// TODO: don't show menu if buttons just return empty views
+
 extension VideoPlayer.PlaybackControls.NavigationBar {
 
     struct ActionButtons: View {
@@ -71,13 +73,15 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                 )
                 .environment(\.isInMenu, true)
 
-                Divider()
+                if menuActionButtons.isNotEmpty {
+                    Divider()
 
-                ForEach(
-                    menuActionButtons,
-                    content: view(for:)
-                )
-                .environment(\.isInMenu, true)
+                    ForEach(
+                        menuActionButtons,
+                        content: view(for:)
+                    )
+                    .environment(\.isInMenu, true)
+                }
             }
         }
 

@@ -10,6 +10,7 @@ import Defaults
 import SwiftUI
 
 // TODO: adjust button sizes/padding on compact/regular?
+// TODO: jump rotation symbol effects
 
 extension VideoPlayer.PlaybackControls {
 

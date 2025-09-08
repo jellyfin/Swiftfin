@@ -8,6 +8,9 @@
 
 import Foundation
 
+// TODO: possibly allow setting common query options?
+//       - imageWidth/height/quality
+
 /// Represents an image source along with a blur hash
 /// to be used as a placeholder.
 struct ImageSource: Hashable {

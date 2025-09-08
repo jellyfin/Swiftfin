@@ -113,7 +113,7 @@ extension MediaChaptersSupplement {
             AlternateLayoutView {
                 Color.clear
             } content: {
-                ImageView(chapter.landscapeImageSources(maxWidth: 200))
+                ImageView(chapter.imageSource)
                     .failure {
                         ZStack {
                             Rectangle()
