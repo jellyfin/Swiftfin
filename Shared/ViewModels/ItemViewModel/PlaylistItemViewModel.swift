@@ -6,19 +6,13 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Foundation
 import JellyfinAPI
 
-extension CollectionType: SupportedCaseIterable {
+final class PlaylistItemViewModel: PagingContentItemViewModel<PlaylistContentsViewModel> {
 
-    static var supportedCases: [CollectionType] {
-        [
-            .boxsets,
-            .folders,
-            .movies,
-            .tvshows,
-            .livetv,
-            .playlists,
-        ]
+    init(item: BaseItemDto) {
+        super.init(item: item, contents: PlaylistContentsViewModel(parent: item))
     }
 }
