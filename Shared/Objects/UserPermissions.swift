@@ -37,21 +37,24 @@ struct UserPermissions {
             self.canDownload = policy?.enableContentDownloading ?? false
             self.canEditMetadata = isAdministrator
             self.canManageSubtitles = isAdministrator || policy?.enableSubtitleManagement ?? false
-            self.canManageCollections = isAdministrator || policy?.enableCollectionManagement ?? false
+            self.canManageCollections = (isAdministrator || policy?.enableCollectionManagement ?? false)
+                && StoredValues[.User.enableCollectionManagement]
             self.canManageLyrics = isAdministrator || policy?.enableSubtitleManagement ?? false
         }
 
         // MARK: - Item Specific Validation
 
         /// Does this user have permission to delete this item?
-        func canDelete(item: BaseItemDto) -> Bool {
+        func canDelete(item: BaseItemDto?) -> Bool {
+
+            guard let item else { return false }
+
             switch item.type {
             case .playlist:
                 /// Playlists can only be edited by owners who can also delete
                 return item.canDelete == true
             case .boxSet:
                 return canManageCollections
-                    && StoredValues[.User.enableCollectionManagement]
                     && item.canDelete == true
             default:
                 return canDelete
@@ -66,14 +69,17 @@ struct UserPermissions {
         }
 
         /// Does this user have permission to edit this item's metadata?
-        func canEditMetadata(item: BaseItemDto) -> Bool {
+        func canEditMetadata(item: BaseItemDto?) -> Bool {
+
+            guard let item else { return false }
+
             switch item.type {
             case .playlist:
                 /// Playlists can only be edited by owners who can also delete
                 return item.canDelete == true
             case .boxSet:
-                return (canManageCollections || canEditMetadata)
-                    && StoredValues[.User.enableCollectionManagement]
+                return canManageCollections ||
+                    (canEditMetadata && StoredValues[.User.enableCollectionManagement])
             default:
                 return canEditMetadata
                     && StoredValues[.User.enableItemEditing]
@@ -81,7 +87,10 @@ struct UserPermissions {
         }
 
         /// Does this user have permission to edit this item's subtitles?
-        func canManageSubtitles(item: BaseItemDto) -> Bool {
+        func canManageSubtitles(item: BaseItemDto?) -> Bool {
+
+            guard let item else { return false }
+
             switch item.type {
             case .episode, .movie, .musicVideo, .trailer, .video:
                 return (canManageSubtitles || canEditMetadata)
@@ -92,7 +101,10 @@ struct UserPermissions {
         }
 
         /// Does this user have permission to edit this item's lyrics?
-        func canManageLyrics(item: BaseItemDto) -> Bool {
+        func canManageLyrics(item: BaseItemDto?) -> Bool {
+
+            guard let item else { return false }
+
             switch item.type {
             case .audio:
                 return (canManageLyrics || canEditMetadata)

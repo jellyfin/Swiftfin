@@ -201,6 +201,15 @@ extension NavigationRoute {
         }
     }
 
+    static func itemAddToCollection(item: BaseItemDto) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemAddToCollection",
+            style: .sheet
+        ) {
+            ItemAddToCollectionView(item: item)
+        }
+    }
+
     #if os(iOS)
     static func itemEditor(viewModel: ItemViewModel) -> NavigationRoute {
         NavigationRoute(
