@@ -7,6 +7,7 @@
 //
 
 import CollectionVGrid
+import IdentifiedCollections
 import SwiftUI
 
 // TODO: possibly make custom tab view to have observe
@@ -14,6 +15,7 @@ import SwiftUI
 // TODO: clean up guest supplementing
 // TODO: fix improper supplement selected
 //       - maybe a race issue
+// TODO: verify supplements update correctly
 
 extension UIVideoPlayerContainerViewController {
 
@@ -26,6 +28,9 @@ extension UIVideoPlayerContainerViewController {
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
         private var manager: MediaPlayerManager
+
+        @State
+        private var currentSupplements: IdentifiedArrayOf<AnyMediaPlayerSupplement> = []
 
         private var isPresentingOverlay: Bool {
             containerState.isPresentingOverlay
@@ -63,11 +68,11 @@ extension UIVideoPlayerContainerViewController {
                             }
                             .isSelected(true)
                         } else {
-                            ForEach(manager.supplements, id: \.id) { supplement in
+                            ForEach(currentSupplements) { supplement in
                                 let isSelected = containerState.selectedSupplement?.id == supplement.id
 
                                 Button(supplement.displayTitle) {
-                                    containerState.select(supplement: supplement)
+                                    containerState.select(supplement: supplement.supplement)
                                 }
                                 .isSelected(isSelected)
                             }
@@ -84,12 +89,16 @@ extension UIVideoPlayerContainerViewController {
                             supplementContainer(for: supplement)
                                 .eraseToAnyView()
                         } else {
-                            TabView(selection: $containerState.selectedSupplement.map(
-                                getter: { $0?.id },
-                                setter: { id in manager.supplements.first(where: { $0.id == id }) }
-                            )) {
-                                ForEach(manager.supplements, id: \.id) { supplement in
-                                    supplementContainer(for: supplement)
+                            TabView(
+                                selection: $containerState.selectedSupplement.map(
+                                    getter: { $0?.id },
+                                    setter: { id -> (any MediaPlayerSupplement)? in
+                                        id.map { currentSupplements[id: $0]?.supplement } ?? nil
+                                    }
+                                )
+                            ) {
+                                ForEach(currentSupplements) { supplement in
+                                    supplementContainer(for: supplement.supplement)
                                         .eraseToAnyView()
                                         .tag(supplement.id as String?)
                                 }
@@ -104,10 +113,16 @@ extension UIVideoPlayerContainerViewController {
                 .edgePadding(.top)
                 .isVisible(isPresentingOverlay)
                 .isVisible(!isScrubbing)
-                .isVisible(manager.state != .loadingItem)
             }
             .animation(.linear(duration: 0.2), value: isPresentingOverlay)
             .animation(.linear(duration: 0.1), value: isScrubbing)
+            .animation(.bouncy(duration: 0.3, extraBounce: 0.1), value: currentSupplements)
+            .onReceive(manager.$supplements) { newValue in
+                let newSupplements = IdentifiedArray(
+                    uniqueElements: newValue.map(AnyMediaPlayerSupplement.init)
+                )
+                currentSupplements = newSupplements
+            }
         }
     }
 }

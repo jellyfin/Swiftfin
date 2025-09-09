@@ -6,11 +6,12 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-enum VideoPlayerActionButton: String, CaseIterable, Displayable, Identifiable, Storable, SystemImageable {
+enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Identifiable, Storable, SystemImageable {
 
     case aspectFill
     case audio
     case autoPlay
+    case gestureLock
     case playbackSpeed
     case playbackQuality
     case playNextItem
@@ -25,6 +26,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Identifiable, S
             return L10n.audio
         case .autoPlay:
             return L10n.autoPlay
+        case .gestureLock:
+            return L10n.gestureLock
         case .playbackSpeed:
             return L10n.playbackSpeed
         case .playbackQuality:
@@ -47,6 +50,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Identifiable, S
         case .aspectFill: "arrow.up.left.and.arrow.down.right"
         case .audio: "speaker.wave.2"
         case .autoPlay: "play.circle.fill"
+        case .gestureLock: "lock.circle"
         case .playbackSpeed: "speedometer"
         case .playbackQuality: "tv.circle.fill"
         case .playNextItem: "chevron.right.circle"

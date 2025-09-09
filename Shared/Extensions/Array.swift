@@ -34,9 +34,9 @@ extension Array {
         [element] + self
     }
 
-    func prepending(_ element: Element, if condition: Bool) -> [Element] {
+    func prepending(_ element: @autoclosure () -> Element, if condition: Bool) -> [Element] {
         if condition {
-            return [element] + self
+            return [element()] + self
         } else {
             return self
         }

@@ -417,4 +417,22 @@ extension BaseItemDto {
             return false
         }
     }
+
+    func getFullItem(userSession: UserSession) async throws -> BaseItemDto {
+        guard let id else {
+            throw JellyfinAPIError(L10n.unknownError)
+        }
+
+        let request = Paths.getItem(itemID: id, userID: userSession.user.id)
+        let response = try await userSession.client.send(request)
+        let newItem = response.value
+
+        guard newItem.id == id else {
+            throw JellyfinAPIError("Mismatching item IDs")
+        }
+
+        try await Task.sleep(for: .seconds(1))
+
+        return newItem
+    }
 }

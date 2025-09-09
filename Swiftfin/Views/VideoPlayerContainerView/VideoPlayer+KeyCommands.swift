@@ -11,6 +11,8 @@ import PreferencesView
 import SwiftUI
 import VLCUI
 
+// TODO: protect against holding down
+
 extension VideoPlayer {
 
     struct KeyCommandsModifier: ViewModifier {
@@ -24,11 +26,10 @@ extension VideoPlayer {
         private var containerState: VideoPlayerContainerState
 
         @EnvironmentObject
-        private var jumpProgressObserver: JumpProgressObserver
-        @EnvironmentObject
-        private var toastProxy: ToastProxy
-        @EnvironmentObject
         private var manager: MediaPlayerManager
+
+        @Toaster
+        private var toaster: ToastProxy
 
         func body(content: Content) -> some View {
             content
@@ -44,7 +45,6 @@ extension VideoPlayer {
                         containerState.isAspectFilled.toggle()
                     }
 
-                    // TODO: present holding down
                     KeyCommandAction(
                         title: L10n.playAndPause,
                         input: " "
@@ -53,9 +53,9 @@ extension VideoPlayer {
 
                         if !containerState.isPresentingOverlay {
                             if manager.playbackRequestStatus == .paused {
-                                toastProxy.present("Paused", systemName: "pause.circle")
+                                toaster.present("Paused", systemName: "pause.circle")
                             } else if manager.playbackRequestStatus == .playing {
-                                toastProxy.present("Playing", systemName: "play.circle")
+                                toaster.present("Playing", systemName: "play.circle")
                             }
                         }
                     }
@@ -75,7 +75,7 @@ extension VideoPlayer {
 
                         manager.set(rate: newRate)
 
-                        toastProxy.present(Text(newRate, format: .playbackRate), systemName: "speedometer")
+                        toaster.present(Text(newRate, format: .playbackRate), systemName: "speedometer")
                     }
 
                     // MARK: - Increase Playback Speed
@@ -93,7 +93,7 @@ extension VideoPlayer {
 
                         manager.set(rate: newRate)
 
-                        toastProxy.present(Text(newRate, format: .playbackRate), systemName: "speedometer")
+                        toaster.present(Text(newRate, format: .playbackRate), systemName: "speedometer")
                     }
 
                     // MARK: Reset Playback Speed
@@ -104,7 +104,7 @@ extension VideoPlayer {
                         modifierFlags: .command
                     ) {
                         manager.set(rate: 1)
-                        toastProxy.present(Text(1, format: .playbackRate), systemName: "speedometer")
+                        toaster.present(Text(1, format: .playbackRate), systemName: "speedometer")
                     }
 
                     // MARK: Play Next Item
@@ -135,13 +135,16 @@ extension VideoPlayer {
                         title: L10n.jumpBackward,
                         input: UIKeyCommand.inputLeftArrow
                     ) {
-                        jumpProgressObserver.jumpBackward()
+                        containerState.jumpProgressObserver.jumpBackward()
                         manager.proxy?.jumpBackward(jumpBackwardInterval.rawValue)
 
-//                        toastProxy.present(
-//                            Text(Double(jumpProgressObserver.jumps) * jumpBackwardInterval.duration, format: .minuteSeconds),
-//                            systemName: "gobackward"
-//                        )
+                        toaster.present(
+                            Text(
+                                jumpBackwardInterval.rawValue * containerState.jumpProgressObserver.jumps,
+                                format: .minuteSecondsAbbreviated
+                            ),
+                            systemName: "gobackward"
+                        )
                     }
 
                     // MARK: - Jump Forward
@@ -150,13 +153,16 @@ extension VideoPlayer {
                         title: L10n.jumpForward,
                         input: UIKeyCommand.inputRightArrow
                     ) {
-                        jumpProgressObserver.jumpForward()
+                        containerState.jumpProgressObserver.jumpForward()
                         manager.proxy?.jumpForward(jumpForwardInterval.rawValue)
 
-//                        toastProxy.present(
-//                            Text(Double(jumpProgressObserver.jumps) * jumpForwardInterval.interval, format: .minuteSeconds),
-//                            systemName: "goforward"
-//                        )
+                        toaster.present(
+                            Text(
+                                jumpForwardInterval.rawValue * containerState.jumpProgressObserver.jumps,
+                                format: .minuteSecondsAbbreviated
+                            ),
+                            systemName: "goforward"
+                        )
                     }
                 }
         }

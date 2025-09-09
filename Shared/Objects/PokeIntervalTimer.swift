@@ -9,7 +9,10 @@
 import Combine
 import Foundation
 
-class PokeIntervalTimer: ObservableObject {
+class PokeIntervalTimer: ObservableObject, Publisher {
+
+    typealias Output = Void
+    typealias Failure = Never
 
     private let defaultInterval: TimeInterval
     private var delaySubject: PassthroughSubject<Void, Never> = .init()
@@ -19,10 +22,8 @@ class PokeIntervalTimer: ObservableObject {
         self.defaultInterval = defaultInterval
     }
 
-    var hasFired: AnyPublisher<Void, Never> {
-        delaySubject
-            .receive(on: RunLoop.main)
-            .eraseToAnyPublisher()
+    func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Never, S.Input == Void {
+        delaySubject.receive(subscriber: subscriber)
     }
 
     func poke(interval: TimeInterval? = nil) {

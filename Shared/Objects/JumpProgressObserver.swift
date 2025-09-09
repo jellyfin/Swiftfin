@@ -17,7 +17,7 @@ class JumpProgressObserver: ObservableObject {
     private var isForward = true
 
     init() {
-        timerCancellable = timer.hasFired
+        timerCancellable = timer
             .sink { _ in
                 self.jumps = 0
             }

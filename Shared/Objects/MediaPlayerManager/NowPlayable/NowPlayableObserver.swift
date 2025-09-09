@@ -13,8 +13,6 @@ import MediaPlayer
 import Nuke
 
 // TODO: interruptions
-// TODO: setup audio session correctly
-//       - remove from app delegate
 // TODO: ensure proper state handling
 //       - manager states
 //       - playback request states
@@ -124,10 +122,16 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
                 command.removeHandler()
             }
 
-            do {
-                try stopSession()
-            } catch {
-                logger.critical("Unable to stop audio session: \(error.localizedDescription)")
+            Task(priority: .userInitiated) {
+                // TODO: figure out way to not need delay
+                // Delay to wait for io to stop
+                try? await Task.sleep(for: .seconds(0.3))
+
+                do {
+                    try stopSession()
+                } catch {
+                    logger.critical("Unable to stop audio session: \(error.localizedDescription)")
+                }
             }
         } else {
             handleNowPlayablePlaybackChange(
@@ -141,6 +145,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
     }
 
     // TODO: complete by referencing apple code
+    //       - restart
     @MainActor
     private func handleInterruption(type: AVAudioSession.InterruptionType, options: AVAudioSession.InterruptionOptions) {
         switch type {
@@ -245,6 +250,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
         do {
             try audioSession.setCategory(.playback, mode: .default)
             try audioSession.setActive(true)
+            logger.info("Started AVAudioSession")
         } catch {
             logger.critical("Unable to activate AVAudioSession instance: \(error.localizedDescription)")
             throw error
@@ -259,6 +265,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
 
         do {
             try AVAudioSession.sharedInstance().setActive(false)
+            logger.info("Stopped AVAudioSession")
         } catch {
             logger.critical("Unable to deactivate AVAudioSession instance: \(error.localizedDescription)")
             throw error

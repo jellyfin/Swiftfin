@@ -18,8 +18,9 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
-        @EnvironmentObject
-        private var toastProxy: ToastProxy
+
+        @Toaster
+        private var toaster
 
         private var systemImage: String {
             if isAutoPlayEnabled {
@@ -37,9 +38,9 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
                 isAutoPlayEnabled.toggle()
 
                 if isAutoPlayEnabled {
-                    toastProxy.present("Auto Play enabled", systemName: "play.circle.fill")
+                    toaster.present("Auto Play enabled", systemName: "play.circle.fill")
                 } else {
-                    toastProxy.present("Auto Play disabled", systemName: "stop.circle")
+                    toaster.present("Auto Play disabled", systemName: "stop.circle")
                 }
             }
             .videoPlayerActionButtonTransition()

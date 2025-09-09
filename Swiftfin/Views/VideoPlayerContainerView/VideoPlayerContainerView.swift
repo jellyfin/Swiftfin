@@ -10,6 +10,7 @@ import Combine
 import Engine
 import Logging
 import SwiftUI
+import Transmission
 
 // TODO: don't dismiss overlay while panning and supplement not presented
 // TODO: use video size from proxies to control aspect fill
@@ -20,7 +21,15 @@ import SwiftUI
 //       - skip intro, next episode, etc.
 //       - can probably just do on playback controls itself
 // TODO: pass in safe area insets explicitly?
-// TODO: pause when center paused when overlay dismissed
+// TODO: pause when center tapped when overlay dismissed
+//       - can be done entirely on playback controls layer
+// TODO: no supplements state
+//       - don't pan
+// TODO: account for gesture state active when item changes
+// TODO: only show player view if not error/other bad states
+//       - only show when have item?
+//       - helps with not rendering before ready
+//       - would require refactor so that video players take media player items
 
 // MARK: - VideoPlayerContainerView
 
@@ -46,11 +55,9 @@ struct VideoPlayerContainerView<Player: View, PlaybackControls: View>: UIViewCon
     func makeUIViewController(context: Context) -> UIVideoPlayerContainerViewController {
         let playerView = player()
             .environment(\.audioOffset, context.environment.audioOffset)
-            .environment(\.isGestureLocked, context.environment.isGestureLocked)
             .eraseToAnyView()
         let playbackControlsView = playbackControls()
             .environment(\.audioOffset, context.environment.audioOffset)
-            .environment(\.isGestureLocked, context.environment.isGestureLocked)
             .eraseToAnyView()
 
         return UIVideoPlayerContainerViewController(
@@ -75,7 +82,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
 
     // MARK: - Views
 
-    // TODO: preview image while scrubbing
+    // TODO: preview image while scrubbing option
     private struct PlayerContainerView: View {
 
         @EnvironmentObject
@@ -110,7 +117,7 @@ class UIVideoPlayerContainerViewController: UIViewController {
         let playbackControls: AnyView
 
         var body: some View {
-            ToastView {
+            OverlayToastView {
                 ZStack {
                     GestureView()
                         .environment(\.panGestureDirection, containerState.presentationControllerShouldDismiss ? .up : .vertical)

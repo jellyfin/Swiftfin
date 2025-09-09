@@ -104,7 +104,9 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
                 }
             }
             .onChange(of: gestureTranslation) { newValue in
-                translationBinding.wrappedValue = newValue
+                if isEditing {
+                    translationBinding.wrappedValue = newValue
+                }
             }
     }
 }

@@ -18,7 +18,7 @@ extension MediaPlayerItem {
 
     /// The main `MediaPlayerItem` builder for normal online usage.
     static func build(
-        for item: BaseItemDto,
+        for initialItem: BaseItemDto,
         mediaSource: MediaSourceInfo,
         videoPlayerType: VideoPlayerType = Defaults[.VideoPlayer.videoPlayerType],
         requestedBitrate: PlaybackBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate],
@@ -27,10 +27,17 @@ extension MediaPlayerItem {
 
         let logger = Logger.swiftfin()
 
-        guard let itemID = item.id else {
+        guard let itemID = initialItem.id else {
             logger.critical("No item ID while building online media player item!")
             throw JellyfinAPIError(L10n.unknownError)
         }
+
+        guard let userSession = Container.shared.currentUserSession() else {
+            logger.critical("No user session while building online media player item!")
+            throw JellyfinAPIError(L10n.unknownError)
+        }
+
+        let item = try await initialItem.getFullItem(userSession: userSession)
 
         let maxBitrate = try await requestedBitrate.getMaxBitrate()
 
@@ -39,11 +46,6 @@ extension MediaPlayerItem {
             compatibilityMode: compatibilityMode,
             maxBitrate: maxBitrate
         )
-
-        guard let userSession = Container.shared.currentUserSession() else {
-            logger.critical("No user session while building online media player item!")
-            throw JellyfinAPIError(L10n.unknownError)
-        }
 
         let playbackInfo = PlaybackInfoDto(deviceProfile: profile)
         let playbackInfoParameters = Paths.GetPostedPlaybackInfoParameters(

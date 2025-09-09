@@ -6,7 +6,10 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
+@inlinable
+func abs(_ d: Duration) -> Duration {
+    d < .zero ? (.zero - d) : d
+}
 
 extension Duration {
 

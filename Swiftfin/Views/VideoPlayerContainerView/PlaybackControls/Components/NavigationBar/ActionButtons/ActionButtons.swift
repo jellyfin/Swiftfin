@@ -9,21 +9,53 @@
 import Defaults
 import SwiftUI
 
-// TODO: don't show menu if buttons just return empty views
+// TODO: ensure changes on playback item change
 
 extension VideoPlayer.PlaybackControls.NavigationBar {
 
     struct ActionButtons: View {
 
         @Default(.VideoPlayer.barActionButtons)
-        private var barActionButtons
+        private var rawBarActionButtons
         @Default(.VideoPlayer.menuActionButtons)
-        private var menuActionButtons
+        private var rawMenuActionButtons
 
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
         private var manager: MediaPlayerManager
+
+        private func filteredActionButtons(_ rawButtons: [VideoPlayerActionButton]) -> [VideoPlayerActionButton] {
+            var filteredButtons = rawButtons
+
+            if manager.playbackItem?.audioStreams.isEmpty == true {
+                filteredButtons.removeAll { $0 == .audio }
+            }
+
+            if manager.playbackItem?.subtitleStreams.isEmpty == true {
+                filteredButtons.removeAll { $0 == .subtitles }
+            }
+
+            if manager.queue == nil {
+                filteredButtons.removeAll { $0 == .playNextItem || $0 == .playPreviousItem || $0 == .autoPlay }
+            }
+
+            if manager.item.isLiveStream {
+                filteredButtons.removeAll { $0 == .autoPlay }
+                filteredButtons.removeAll { $0 == .playbackSpeed }
+                filteredButtons.removeAll { $0 == .playbackQuality }
+            }
+
+            return filteredButtons
+        }
+
+        private var barActionButtons: [VideoPlayerActionButton] {
+            filteredActionButtons(rawBarActionButtons)
+        }
+
+        private var menuActionButtons: [VideoPlayerActionButton] {
+            filteredActionButtons(rawMenuActionButtons)
+        }
 
         @ViewBuilder
         private func view(for button: VideoPlayerActionButton) -> some View {
@@ -31,33 +63,21 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
             case .aspectFill:
                 AspectFill()
             case .audio:
-                if manager.playbackItem?.audioStreams.isNotEmpty == true {
-                    Audio()
-                }
+                Audio()
             case .autoPlay:
-                if manager.queue != nil {
-                    AutoPlay()
-                }
+                AutoPlay()
+            case .gestureLock:
+                GestureLock()
             case .playbackSpeed:
-                if !manager.item.isLiveStream {
-                    PlaybackRateMenu()
-                }
+                PlaybackRateMenu()
             case .playbackQuality:
-                if !manager.item.isLiveStream {
-                    PlaybackQuality()
-                }
+                PlaybackQuality()
             case .playNextItem:
-                if manager.queue != nil {
-                    PlayNextItem()
-                }
+                PlayNextItem()
             case .playPreviousItem:
-                if manager.queue != nil {
-                    PlayPreviousItem()
-                }
+                PlayPreviousItem()
             case .subtitles:
-                if manager.playbackItem?.subtitleStreams.isNotEmpty == true {
-                    Subtitles()
-                }
+                Subtitles()
             }
         }
 
@@ -73,15 +93,13 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                 )
                 .environment(\.isInMenu, true)
 
-                if menuActionButtons.isNotEmpty {
-                    Divider()
+                Divider()
 
-                    ForEach(
-                        menuActionButtons,
-                        content: view(for:)
-                    )
-                    .environment(\.isInMenu, true)
-                }
+                ForEach(
+                    menuActionButtons,
+                    content: view(for:)
+                )
+                .environment(\.isInMenu, true)
             }
         }
 

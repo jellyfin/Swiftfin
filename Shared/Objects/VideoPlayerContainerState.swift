@@ -116,7 +116,8 @@ class VideoPlayerContainerState: ObservableObject {
     @Published
     var centerOffset: CGFloat = 0.0
 
-    var scrubbedSeconds: PublishedBox<Duration> = .init(initialValue: .zero)
+    let jumpProgressObserver: JumpProgressObserver = .init()
+    let scrubbedSeconds: PublishedBox<Duration> = .init(initialValue: .zero)
     let timer = PokeIntervalTimer()
 
     private var timerCancellable: AnyCancellable?
@@ -124,7 +125,7 @@ class VideoPlayerContainerState: ObservableObject {
     weak var containerView: UIVideoPlayerContainerViewController?
 
     init() {
-        timerCancellable = timer.hasFired.sink { [weak self] in
+        timerCancellable = timer.sink { [weak self] in
             guard let self else { return }
             guard !isScrubbing == false, !isPresentingSupplement else { return }
 

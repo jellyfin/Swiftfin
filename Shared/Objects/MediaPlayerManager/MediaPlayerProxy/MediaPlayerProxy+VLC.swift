@@ -145,7 +145,7 @@ extension VLCMediaPlayerProxy {
         }
 
         var body: some View {
-            if let playbackItem = manager.playbackItem {
+            if let playbackItem = manager.playbackItem, manager.state != .stopped {
                 VLCVideoPlayer(configuration: vlcConfiguration(for: playbackItem))
                     .proxy(proxy)
                     .onSecondsUpdated { newSeconds, info in
@@ -185,6 +185,9 @@ extension VLCMediaPlayerProxy {
                     .onReceive(manager.$playbackItem) { playbackItem in
                         guard let playbackItem else { return }
                         proxy.playNewMedia(vlcConfiguration(for: playbackItem))
+                    }
+                    .onChange(of: manager.rate) { newValue in
+                        proxy.setRate(.absolute(newValue))
                     }
             }
         }

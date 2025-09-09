@@ -79,27 +79,37 @@ extension VideoPlayer.PlaybackControls {
         }
 
         var body: some View {
-            Button {
-                switch trailingTimestampType {
-                case .timeLeft:
-                    trailingTimestampType = .totalTime
-                case .totalTime:
-                    trailingTimestampType = .timeLeft
-                }
-            } label: {
-                HStack {
+            HStack {
+                Button {
+                    switch trailingTimestampType {
+                    case .timeLeft:
+                        trailingTimestampType = .totalTime
+                    case .totalTime:
+                        trailingTimestampType = .timeLeft
+                    }
+                } label: {
                     leadingTimestamp
+                }
+                .foregroundStyle(.primary, .secondary)
 
-                    Spacer()
+                Spacer()
 
+                Button {
+                    switch trailingTimestampType {
+                    case .timeLeft:
+                        trailingTimestampType = .totalTime
+                    case .totalTime:
+                        trailingTimestampType = .timeLeft
+                    }
+                } label: {
                     trailingTimestamp
                 }
-                .monospacedDigit()
-                .font(.caption2)
-                .lineLimit(1)
-                .foregroundStyle(isScrubbing ? .primary : .secondary)
+                .foregroundStyle(.primary, .secondary)
             }
-            .foregroundStyle(.primary, .secondary)
+            .monospacedDigit()
+            .font(.caption2)
+            .lineLimit(1)
+            .foregroundStyle(isScrubbing ? .primary : .secondary, .secondary)
             .assign(manager.secondsBox.$value, to: $activeSeconds)
         }
     }

@@ -10,6 +10,9 @@ import PreferencesView
 import SwiftUI
 import Transmission
 
+// TODO: have full screen zoom presentation zoom from/to center
+//       - probably need to make mock view with matching ids
+
 struct NavigationInjectionView: View {
 
     @StateObject
@@ -92,10 +95,4 @@ struct NavigationInjectionView: View {
             }
         #endif
     }
-}
-
-extension EnvironmentValues {
-
-    @Entry
-    var presentationControllerShouldDismiss: Binding<Bool> = .constant(true)
 }

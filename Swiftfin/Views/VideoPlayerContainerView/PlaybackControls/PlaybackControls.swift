@@ -30,14 +30,6 @@ extension VideoPlayer {
         @State
         private var bottomContentFrame: CGRect = .zero
 
-        // TODO: move to containerState
-        @State
-        private var isGestureLocked: Bool = false
-
-        // TODO: move to containerstate
-        @StateObject
-        private var jumpProgressObserver: JumpProgressObserver = .init()
-
         private var isPresentingOverlay: Bool {
             containerState.isPresentingOverlay
         }
@@ -108,7 +100,6 @@ extension VideoPlayer {
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.bouncy(duration: 0.4), value: containerState.isPresentingSupplement)
             .animation(.bouncy(duration: 0.25), value: containerState.isPresentingOverlay)
-            .environmentObject(jumpProgressObserver)
             .onChange(of: manager.proxy?.isBuffering.value) { newValue in
                 activeIsBuffering = newValue ?? false
             }

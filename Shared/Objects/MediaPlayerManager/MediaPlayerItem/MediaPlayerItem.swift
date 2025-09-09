@@ -9,6 +9,9 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: get preview image for current manager seconds?
+//       - would make scrubbing image possibly ready before scrubbing
+
 class MediaPlayerItem: ViewModel, MediaPlayerObserver {
 
     typealias ThumbnailProvider = () async -> UIImage?
@@ -40,7 +43,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
     }
 
     var observers: [any MediaPlayerObserver] = []
-    var supplements: [any MediaPlayerSupplement] = []
 
     let baseItem: BaseItemDto
     let mediaSource: MediaSourceInfo
@@ -93,14 +95,5 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         selectedSubtitleStreamIndex = mediaSource.defaultSubtitleStreamIndex ?? -1
 
         observers.append(MediaProgressObserver(item: self))
-        supplements.append(MediaInfoSupplement(item: baseItem))
-
-        if let chapters = baseItem.fullChapterInfo, chapters.isNotEmpty {
-            supplements.append(
-                MediaChaptersSupplement(
-                    chapters: chapters
-                )
-            )
-        }
     }
 }

@@ -17,7 +17,6 @@ import VLCUI
 // TODO: set playback rate
 //       - what if proxy couldn't set rate?
 // TODO: make a container service, injected into players
-// TODO: video player stop on presentation dismissal
 
 extension Container {
 
@@ -47,6 +46,7 @@ final class MediaPlayerManager: ViewModel, Stateful {
         case ended
         case stop
         case playNewItem(provider: MediaPlayerItemProvider)
+        case start
     }
 
     // MARK: State
@@ -62,8 +62,10 @@ final class MediaPlayerManager: ViewModel, Stateful {
     var playbackItem: MediaPlayerItem? = nil {
         didSet {
             if let playbackItem {
+                self.item = playbackItem.baseItem
                 seconds = playbackItem.baseItem.startSeconds ?? .zero
                 playbackItem.manager = self
+                setSupplements()
 
                 Task { _ = await playbackItem.previewImageProvider?.image(for: seconds) }
             }
@@ -71,27 +73,44 @@ final class MediaPlayerManager: ViewModel, Stateful {
     }
 
     @Published
+    private(set) var error: Error? = nil
+    @Published
     private(set) var item: BaseItemDto
     @Published
     private(set) var playbackRequestStatus: PlaybackRequestStatus = .playing
     @Published
     private(set) var rate: Float = 1.0
     @Published
-    final var state: State = .loadingItem
+    final var state: State
 
     @Published
     var queue: (any MediaPlayerQueue)?
 
-    @Published
-    private var _supplements: [any MediaPlayerSupplement] = []
-
     // TODO: ensure supplement container updates
     // TODO: need supplements at manager level?
     //       - supplements of the proxy vs media player item?
-//    @Published
-    private(set) var supplements: [any MediaPlayerSupplement] {
-        get { _supplements.appending(queue!, if: queue != nil) }
-        set { _supplements = newValue }
+    @Published
+    var supplements: [any MediaPlayerSupplement] = []
+
+    // TODO: replace with graph dependency package
+    private func setSupplements() {
+        var newSupplements: [any MediaPlayerSupplement] = []
+
+        newSupplements.append(MediaInfoSupplement(item: item))
+
+        if let chapters = item.fullChapterInfo, chapters.isNotEmpty {
+            newSupplements.append(
+                MediaChaptersSupplement(
+                    chapters: chapters
+                )
+            )
+        }
+
+        if let queue {
+            newSupplements.append(queue)
+        }
+
+        self.supplements = newSupplements
     }
 
     /// The current seconds media playback is set to.
@@ -113,6 +132,8 @@ final class MediaPlayerManager: ViewModel, Stateful {
 
     private var itemBuildTask: AnyCancellable?
 
+    private var initialMediaPlayerItemProvider: MediaPlayerItemProviderFunction?
+
     // MARK: init
 
     init(
@@ -122,15 +143,11 @@ final class MediaPlayerManager: ViewModel, Stateful {
     ) {
         self.item = item
         self.queue = queue
+        self.state = .loadingItem
+        self.initialMediaPlayerItemProvider = mediaPlayerItemProvider
         super.init()
 
         self.queue?.manager = self
-
-        // TODO: don't build on init?
-        buildMediaItem(from: .init(item: item, function: mediaPlayerItemProvider)) { @MainActor newItem in
-            self.playbackItem = newItem
-            self.supplements = newItem.supplements
-        }
     }
 
     init(
@@ -139,13 +156,11 @@ final class MediaPlayerManager: ViewModel, Stateful {
     ) {
         self.item = playbackItem.baseItem
         self.queue = queue
+        self.state = .playback
         super.init()
 
         self.queue?.manager = self
-
-        state = .playback
         self.playbackItem = playbackItem
-        self.supplements = playbackItem.supplements
     }
 
     // MARK: respond
@@ -157,14 +172,18 @@ final class MediaPlayerManager: ViewModel, Stateful {
 
         switch action {
         case let .error(error):
+            self.error = error
             proxy?.stop()
             return .error(error)
         case .ended:
             // TODO: verify live items
             // TODO: autoplay
+            // TODO: change to observe given seconds against runtime
+            //       instead of sent action?
 
             // Ended should represent natural ending of playback, which
             // is verifiable by given seconds being near item runtime.
+            // VLC proxy will send ended early.
             guard let runtime = playbackItem?.baseItem.runtime else {
                 return .stopped
             }
@@ -181,11 +200,27 @@ final class MediaPlayerManager: ViewModel, Stateful {
 
             return .stopped
         case .stop:
+            // TODO: remove playback item?
+            //       - check that observers would respond well
             proxy?.stop()
+            guard self.state != .loadingItem else { return state }
+
             return .stopped
         case let .playNewItem(provider: provider):
             self.item = provider.item
+            setSupplements()
+            proxy?.stop()
+
             buildMediaItem(from: provider) { @MainActor newItem in
+                self.playbackItem = newItem
+            }
+
+            return .loadingItem
+        case .start:
+            guard let initialMediaPlayerItemProvider else { return state }
+            self.initialMediaPlayerItemProvider = nil
+
+            buildMediaItem(from: .init(item: item, function: initialMediaPlayerItemProvider)) { @MainActor newItem in
                 self.playbackItem = newItem
             }
 

@@ -10,26 +10,35 @@ import Combine
 import SwiftUI
 import Transmission
 
-// TODO: make toasting system
+// TODO: make enhanced toasting system
 //       - allow actions
-//       - single injection function
 //       - multiple toasts
 //       - sizes, stacked
-// TODO: be transparent
-// TODO: don't be a window
-//       - forces to portrait
-// TODO: change proxy to generic "Alert_",
-//       - object injected to environment
-//       - allows different contexts to control alerts
+// TODO: symbol effects
 
-struct ToastView<Content: View>: View {
+// TODO: fix rapid fire animations
+
+/// A basic toasting container view that will present
+/// given toasts on top of the given content.
+struct OverlayToastView<Content: View>: View {
 
     @StateObject
-    private var toastProxy: ToastProxy = .init()
+    private var toastProxy: ToastProxy
 
     private let content: Content
 
-    init(@ViewBuilder content: () -> Content) {
+    init(
+        @ViewBuilder content: () -> Content
+    ) {
+        self._toastProxy = StateObject(wrappedValue: .init())
+        self.content = content()
+    }
+
+    init(
+        proxy: ToastProxy,
+        @ViewBuilder content: () -> Content
+    ) {
+        self._toastProxy = StateObject(wrappedValue: proxy)
         self.content = content()
     }
 
@@ -43,70 +52,14 @@ struct ToastView<Content: View>: View {
                 ),
                 isPresented: $toastProxy.isPresenting
             ) {
-                ToastContent()
+                OverlayToastContent()
                     .environmentObject(toastProxy)
             }
-//            .window(
-//                level: .alert,
-//                transition: .move(edge: .top).combined(with: .opacity),
-//                isPresented: $toastProxy.isPresenting
-//            ) {
-//                ToastContent()
-//                    .environmentObject(toastProxy)
-//            }
             .environmentObject(toastProxy)
     }
 }
 
-@MainActor
-class ToastProxy: ObservableObject {
-
-    @Published
-    var isPresenting: Bool = false
-    @Published
-    private(set) var systemName: String? = nil
-    @Published
-    private(set) var title: Text = Text("")
-//    @Published
-//    private(set) var messageID: String = ""
-
-    private let pokeTimer = PokeIntervalTimer(defaultInterval: 1)
-    private var pokeCancellable: AnyCancellable?
-
-    init() {
-        pokeCancellable = pokeTimer.hasFired
-            .sink {
-//                withAnimation {
-//                    self.isPresenting = false
-//                }
-            }
-    }
-
-    func present(_ title: String, systemName: String? = nil) {
-        present(Text(title), systemName: systemName)
-    }
-
-    func present(_ title: Text, systemName: String? = nil) {
-        self.title = title
-        self.systemName = systemName
-
-        poke(equalsPrevious: title == self.title)
-    }
-
-    private func poke(equalsPrevious: Bool) {
-//        if equalsPrevious {
-//            messageID = UUID().uuidString
-//        }
-
-        withAnimation(.spring) {
-            isPresenting = true
-        }
-
-        pokeTimer.poke()
-    }
-}
-
-private struct ToastContent: View {
+private struct OverlayToastContent: View {
 
     @Environment(\.presentationCoordinator)
     private var presentationCoordinator

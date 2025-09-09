@@ -16,10 +16,6 @@ extension EnvironmentValues {
     @Entry
     var isEditing: Bool = false
 
-    // TODO: move to container state
-    @Entry
-    var isGestureLocked: Binding<Bool> = .constant(false)
-
     @Entry
     var isInMenu: Bool = false
 
@@ -34,6 +30,9 @@ extension EnvironmentValues {
 
     @Entry
     var playbackSpeed: Binding<Double> = .constant(1)
+
+    @Entry
+    var presentationControllerShouldDismiss: Binding<Bool> = .constant(true)
 
     @Entry
     var safeAreaInsets: EdgeInsets = UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero

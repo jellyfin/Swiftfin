@@ -64,7 +64,6 @@ extension VideoPlayer.PlaybackControls {
                 .labelStyle(.iconOnly)
                 .padding(20)
             }
-            .fixedSize()
         }
 
         @ViewBuilder

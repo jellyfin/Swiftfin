@@ -40,10 +40,6 @@ extension VideoPlayer.PlaybackControls {
         @Binding
         private var audioOffset: Duration
 
-        @Environment(\.isGestureLocked)
-        @Binding
-        private var isGestureLocked
-
         @Environment(\.subtitleOffset)
         @Binding
         private var subtitleOffset: Duration
@@ -111,7 +107,7 @@ extension VideoPlayer.PlaybackControls {
 extension VideoPlayer.PlaybackControls.GestureLayer {
 
     private func checkGestureLock() -> Bool {
-        if isGestureLocked {
+        if true {
             toastProxy.present("Gesture lock", systemName: "lock.fill")
             return false
         }

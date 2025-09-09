@@ -22,6 +22,7 @@ struct HourMinuteFormatStyle: FormatStyle {
 
 extension FormatStyle where Self == HourMinuteFormatStyle {
 
+    @available(*, deprecated, message: "Use `Duration` instead.")
     static var hourMinute: HourMinuteFormatStyle { HourMinuteFormatStyle() }
 }
 
@@ -37,10 +38,18 @@ struct MinuteSecondsFormatStyle: FormatStyle {
 
 extension FormatStyle where Self == MinuteSecondsFormatStyle {
 
+    @available(*, deprecated, message: "Use `Duration` instead.")
     static var minuteSeconds: MinuteSecondsFormatStyle { MinuteSecondsFormatStyle() }
 }
 
 extension FormatStyle where Self == Duration.UnitsFormatStyle {
+
+    static var minuteSecondsAbbreviated: Duration.UnitsFormatStyle {
+        Duration.UnitsFormatStyle(
+            allowedUnits: [.minutes, .seconds],
+            width: .abbreviated
+        )
+    }
 
     static var minuteSecondsNarrow: Duration.UnitsFormatStyle {
         Duration.UnitsFormatStyle(

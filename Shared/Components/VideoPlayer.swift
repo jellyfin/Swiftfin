@@ -10,6 +10,8 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: video player stop on presentation dismissal
+
 struct VideoPlayer: View {
 
     @Default(.VideoPlayer.Subtitle.subtitleColor)
@@ -19,8 +21,8 @@ struct VideoPlayer: View {
     @Default(.VideoPlayer.Subtitle.subtitleSize)
     private var subtitleSize
 
-    @EnvironmentObject
-    private var toastProxy: ToastProxy
+    @Environment(\.presentationCoordinator)
+    private var presentationCoordinator
 
     @LazyState
     private var proxy: any VideoMediaPlayerProxy
@@ -40,8 +42,14 @@ struct VideoPlayer: View {
     @State
     private var subtitleOffset: Duration = .zero
 
+    @State
+    private var isBeingDismissedByTransition = false
+
     @StateObject
     private var containerState: VideoPlayerContainerState = .init()
+
+    @TransitionReaderObserver
+    private var transitionReaderObserver
 
     init(manager: MediaPlayerManager) {
         self.manager = manager
@@ -65,7 +73,9 @@ struct VideoPlayer: View {
             PlaybackControls()
         }
         .environment(\.audioOffset, $audioOffset)
-        .environment(\.isGestureLocked, $isGestureLocked)
+        .onAppear {
+            manager.send(.start)
+        }
     }
 
     var body: some View {
@@ -129,15 +139,26 @@ struct VideoPlayer: View {
                 containerState.scrubbedSeconds.value = newItem?.baseItem.startSeconds ?? .zero
             }
             .onReceive(manager.$state) { newState in
-                if newState == .stopped {
+                if newState == .stopped, !isBeingDismissedByTransition {
                     proxy.stop()
                     router.dismiss()
                 }
             }
+            .onChange(of: presentationCoordinator.isPresented) { isPresented in
+                guard !isPresented else { return }
+                isBeingDismissedByTransition = true
+                manager.send(.stop)
+            }
+            .alert(
+                L10n.error,
+                isPresented: .constant(manager.error != nil),
+            ) {
+                Button(L10n.close, role: .cancel) {
+                    router.dismiss()
+                }
+            } message: {
+                // TODO: localize
+                Text("Unable to load this item.")
+            }
     }
-}
-
-@inlinable
-func abs(_ d: Duration) -> Duration {
-    d < .zero ? (.zero - d) : d
 }

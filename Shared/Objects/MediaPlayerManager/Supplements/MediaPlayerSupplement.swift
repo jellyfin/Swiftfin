@@ -23,3 +23,24 @@ protocol MediaPlayerSupplement: Displayable, Identifiable {
     @ViewBuilder
     var videoPlayerBody: Self.VideoPlayerBody { get }
 }
+
+struct AnyMediaPlayerSupplement: Displayable, Equatable, Identifiable {
+
+    let supplement: any MediaPlayerSupplement
+
+    var displayTitle: String {
+        supplement.displayTitle
+    }
+
+    var id: String {
+        supplement.id
+    }
+
+    init(_ supplement: any MediaPlayerSupplement) {
+        self.supplement = supplement
+    }
+
+    static func == (lhs: AnyMediaPlayerSupplement, rhs: AnyMediaPlayerSupplement) -> Bool {
+        lhs.id == rhs.id
+    }
+}

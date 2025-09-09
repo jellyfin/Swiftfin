@@ -52,12 +52,11 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
     private func setup(with manager: MediaPlayerManager) {
         cancellables = []
 
-        timer.hasFired
-            .sink { [weak self] in
-                self?.sendReport()
-                self?.timer.poke()
-            }
-            .store(in: &cancellables)
+        timer.sink { [weak self] in
+            self?.sendReport()
+            self?.timer.poke()
+        }
+        .store(in: &cancellables)
 
         manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
         manager.$playbackRequestStatus.sink(receiveValue: playbackRequestStatusDidChange).store(in: &cancellables)
