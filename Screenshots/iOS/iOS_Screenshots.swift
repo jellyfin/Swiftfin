@@ -19,18 +19,10 @@ final class iOS_Screenshots: XCTestCase {
     let episodeTitle = "The Man From Mars"
 
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run.
-        // The setUp method is a good place to do this.
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
+    override func tearDownWithError() throws {}
 
     // Connect to the demo server from the ConnectToServer view
     func connectToDemoServer(_ app: XCUIApplication) {
@@ -52,6 +44,7 @@ final class iOS_Screenshots: XCTestCase {
         }
     }
 
+    // Select the demo user (or log in) from the user selection view
     func signInDemoUser(_ app: XCUIApplication) {
         if app.staticTexts[demoUsername].exists {
             app.staticTexts[demoUsername].firstMatch.tap()
@@ -131,6 +124,7 @@ final class iOS_Screenshots: XCTestCase {
 
         snapshot("Playback")
 
+        // Now use .coordinate because otherwise the tap presses the corner of the button and does nothing
         app.buttons["OverlayExitButton"].firstMatch.coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.5)).tap()
 
         mediaTab.tap()

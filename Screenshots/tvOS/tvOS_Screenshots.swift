@@ -9,9 +9,9 @@
 import XCTest
 
 final class tvOS_Screenshots: XCTestCase {
-    let demoServerUrl = "127.0.0.1:8096"
-    let demoServerName = "Jellyfin Server"
-    let demoUsername = "username"
+    let demoServerUrl = "192.168.4.4:8097"
+    let demoServerName = "ea6c46313368"
+    let demoUsername = "swiftfin-user"
     let demoPassword = "password"
 
     let movieTitle = "Sintel"
@@ -23,18 +23,10 @@ final class tvOS_Screenshots: XCTestCase {
     let remote = XCUIRemote.shared
 
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run.
-        // The setUp method is a good place to do this.
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
+    override func tearDownWithError() throws {}
 
     func connectToDemoServer() {
         // Start with "Connect" Selected
@@ -67,7 +59,7 @@ final class tvOS_Screenshots: XCTestCase {
                 || app.focused.buttons["Add Server"].exists
         }
 
-        var needAddServer = app.focused.buttons["Add Server"].exists
+        let needAddServer = app.focused.buttons["Add Server"].exists
 
         press(.select)
 
@@ -142,7 +134,9 @@ final class tvOS_Screenshots: XCTestCase {
         // Go home
         press(.up, times: 3)
         press(.left, times: 5)
+        // Select to focus one of the 'up next' items and get a nice backdrop
         press(.select)
+        // Then go back and focus the tab button
         press(.up)
         sleep(2)
 
@@ -172,6 +166,8 @@ final class tvOS_Screenshots: XCTestCase {
         // Press play
         press(.select)
         sleep(5)
+        // Show player UI
+        press(.select, wait: false)
         snapshot("Playback")
 
         // Exit playback, wait, exit to Movies view
@@ -184,6 +180,7 @@ final class tvOS_Screenshots: XCTestCase {
         press(.left)
         press(.select)
 
+        // Find show
         search(repeating: .right) {
             app.focused.staticTexts[showTitle].exists
         }
@@ -192,10 +189,13 @@ final class tvOS_Screenshots: XCTestCase {
 
         snapshot("Series")
 
-        // Go down from Play, to action buttons, to season selector, to thumbnail, to description
+        // Go down from Play -> action buttons -> season selector -> episode thumbnail -> description
         press(.down, times: 4)
-        // The second episode
-        press(.right)
+        // Find episode
+        search(repeating: .right) {
+            app.focused.staticTexts[episodeTitle].exists
+        }
+
         press(.select)
 
         snapshot("Episode")
@@ -212,6 +212,7 @@ final class tvOS_Screenshots: XCTestCase {
         }
     }
 
+    // Repeatedly press the button until the condition returns true, and fail if we reach the end
     func search(repeating: XCUIRemote.Button, condition: () -> Bool) {
         var prevDetails = ""
 
