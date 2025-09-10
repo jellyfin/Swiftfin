@@ -10,15 +10,18 @@ frame_image () {
     screenshotdir=$(dirname "$screenshot")
     screenshotfile=$(basename "$screenshot")
 
+    # turn "iPad Pro 13-inch (M4)-..." into "iPad Pro 13-inch (M4)"
     dashcount=$(echo "$screenshotfile"| tr -dc "-" | awk '{ print length; }')
-
-    # turn "./screenshots/en-US/iPhone 16 Pro-..." into "iPhone 16 Pro"
     device=$(echo "$screenshotfile" | cut -d "-" -f "1-$dashcount")
 
     frame="./resources/$device-frame.png"
     mask="./resources/$device-mask.png"
 
     maskedfile="$screenshotdir/masked-$screenshotfile"
+
+    if [ ! -f "$frame" ]; then
+        return
+    fi
 
     if [ ! -f "$mask" ]; then
         cp "$screenshot" "$maskedfile"
@@ -27,7 +30,7 @@ frame_image () {
         magick "$screenshot" "$mask" -alpha Off -compose CopyOpacity -composite "$maskedfile"
     fi
 
-    framedfile=$(echo "$screenshot" | sed 's|./screenshots|./framed|g')
+    framedfile=$(echo "$screenshot" | sed 's|./output|./framed|g')
 
     mkdir -p $(dirname "$framedfile")
 
