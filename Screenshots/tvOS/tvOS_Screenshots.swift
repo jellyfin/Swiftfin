@@ -8,7 +8,7 @@
 
 import XCTest
 
-final class Swiftfin_tvOS_Screenshots: XCTestCase {
+final class tvOS_Screenshots: XCTestCase {
     let demoServerUrl = "127.0.0.1:8096"
     let demoServerName = "Jellyfin Server"
     let demoUsername = "username"

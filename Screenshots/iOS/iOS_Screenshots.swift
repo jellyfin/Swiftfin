@@ -8,7 +8,7 @@
 
 import XCTest
 
-final class Swiftfin_Screenshots: XCTestCase {
+final class iOS_Screenshots: XCTestCase {
     let demoServerUrl = "127.0.0.1:8096"
     let demoUsername = "username"
     let demoPassword = "password"

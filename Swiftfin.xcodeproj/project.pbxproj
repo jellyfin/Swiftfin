@@ -111,21 +111,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		5E8265C32E5E7DE100F4A5EA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5377CBE9263B596A003A4E83 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5358705F2669D21600D05A09;
-			remoteInfo = "Swiftfin tvOS";
-		};
-		5E8B61A42E4EF4DB00BE6AB5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5377CBE9263B596A003A4E83 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5377CBF0263B596A003A4E83;
-			remoteInfo = "Swiftfin iOS";
-		};
-		5E91B85C2E6259560061D4F0 /* PBXContainerItemProxy */ = {
+		5E8A31062E72277E00964879 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5377CBE9263B596A003A4E83 /* Project object */;
 			proxyType = 1;
@@ -225,15 +211,43 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		5E8265BE2E5E617600F4A5EA /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		5E8A30FA2E72207900964879 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				framed,
+				iOS/iOS_Screenshots.swift,
 				process.sh,
 				resources,
-				screenshots,
+				SnapshotHelper.swift,
+				tvOS/tvOS_Screenshots.swift,
+			);
+			target = 5377CBF0263B596A003A4E83 /* Swiftfin iOS */;
+		};
+		5E8A30FB2E72207900964879 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				iOS/iOS_Screenshots.swift,
+				process.sh,
+				resources,
+				SnapshotHelper.swift,
+				tvOS/tvOS_Screenshots.swift,
+			);
+			target = 5358705F2669D21600D05A09 /* Swiftfin tvOS */;
+		};
+		5E8A30FC2E72207900964879 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				iOS/iOS_Screenshots.swift,
+				SnapshotHelper.swift,
 			);
 			target = 5E8B619D2E4EF4DB00BE6AB5 /* Swiftfin Screenshots */;
+		};
+		5E8A31022E72207D00964879 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				SnapshotHelper.swift,
+				tvOS/tvOS_Screenshots.swift,
+			);
+			target = 5E91B8552E6259560061D4F0 /* Swiftfin tvOS Screenshots */;
 		};
 		E14561A22DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -288,8 +302,7 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		5E8B619F2E4EF4DB00BE6AB5 /* Swiftfin Screenshots */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5E8265BE2E5E617600F4A5EA /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (framed, resources, screenshots, ); path = "Swiftfin Screenshots"; sourceTree = "<group>"; };
-		5E91B8572E6259560061D4F0 /* Swiftfin tvOS Screenshots */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Swiftfin tvOS Screenshots"; sourceTree = "<group>"; };
+		5E8A30F22E72206C00964879 /* Screenshots */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5E8A30FA2E72207900964879 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 5E8A30FB2E72207900964879 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 5E8A30FC2E72207900964879 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 5E8A31022E72207D00964879 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (resources, ); path = Screenshots; sourceTree = "<group>"; };
 		E14560852DFCAE51008FF700 /* Swiftfin */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14561A22DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E14561A32DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Swiftfin; sourceTree = "<group>"; };
 		E14563272DFCAE6E008FF700 /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14565D92DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
 		E14565DD2DFCAE78008FF700 /* Scripts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Scripts; sourceTree = "<group>"; };
@@ -432,12 +445,11 @@
 		5377CBE8263B596A003A4E83 = {
 			isa = PBXGroup;
 			children = (
+				5E8A30F22E72206C00964879 /* Screenshots */,
 				E14560852DFCAE51008FF700 /* Swiftfin */,
 				E145669F2DFCAEFD008FF700 /* Swiftfin tvOS */,
 				E14563272DFCAE6E008FF700 /* Shared */,
 				E1456FC82DFCB323008FF700 /* Translations */,
-				5E8B619F2E4EF4DB00BE6AB5 /* Swiftfin Screenshots */,
-				5E91B8572E6259560061D4F0 /* Swiftfin tvOS Screenshots */,
 				5377CBF2263B596A003A4E83 /* Products */,
 				53D5E3DB264B47EE00BADDC8 /* Frameworks */,
 				E14565DD2DFCAE78008FF700 /* Scripts */,
@@ -534,6 +546,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				5E8A30F22E72206C00964879 /* Screenshots */,
 				E14563272DFCAE6E008FF700 /* Shared */,
 				E145669F2DFCAEFD008FF700 /* Swiftfin tvOS */,
 				E1456FC82DFCB323008FF700 /* Translations */,
@@ -588,6 +601,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				5E8A30F22E72206C00964879 /* Screenshots */,
 				E14560852DFCAE51008FF700 /* Swiftfin */,
 				E14563272DFCAE6E008FF700 /* Shared */,
 				E1456FC82DFCB323008FF700 /* Translations */,
@@ -649,11 +663,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				5E8B61A52E4EF4DB00BE6AB5 /* PBXTargetDependency */,
-				5E8265C42E5E7DE100F4A5EA /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				5E8B619F2E4EF4DB00BE6AB5 /* Swiftfin Screenshots */,
+				5E8A31072E72277E00964879 /* PBXTargetDependency */,
 			);
 			name = "Swiftfin Screenshots";
 			packageProductDependencies = (
@@ -673,11 +683,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				5E91B85D2E6259560061D4F0 /* PBXTargetDependency */,
 				5E91B8622E6259900061D4F0 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				5E91B8572E6259560061D4F0 /* Swiftfin tvOS Screenshots */,
 			);
 			name = "Swiftfin tvOS Screenshots";
 			packageProductDependencies = (
@@ -988,20 +994,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		5E8265C42E5E7DE100F4A5EA /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5358705F2669D21600D05A09 /* Swiftfin tvOS */;
-			targetProxy = 5E8265C32E5E7DE100F4A5EA /* PBXContainerItemProxy */;
-		};
-		5E8B61A52E4EF4DB00BE6AB5 /* PBXTargetDependency */ = {
+		5E8A31072E72277E00964879 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5377CBF0263B596A003A4E83 /* Swiftfin iOS */;
-			targetProxy = 5E8B61A42E4EF4DB00BE6AB5 /* PBXContainerItemProxy */;
-		};
-		5E91B85D2E6259560061D4F0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5377CBF0263B596A003A4E83 /* Swiftfin iOS */;
-			targetProxy = 5E91B85C2E6259560061D4F0 /* PBXContainerItemProxy */;
+			targetProxy = 5E8A31062E72277E00964879 /* PBXContainerItemProxy */;
 		};
 		5E91B8622E6259900061D4F0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1226,6 +1222,7 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_CFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;

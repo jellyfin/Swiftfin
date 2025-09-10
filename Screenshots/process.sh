@@ -38,7 +38,7 @@ frame_image () {
 
 export -f frame_image
 
-find ./screenshots -not -path '*/.*' -type f -depth 2 -exec bash -c 'frame_image "$1"' _ "{}" \;
+find ./output -not -path '*/.*' -type f -depth 2 -exec bash -c 'frame_image "$1"' _ "{}" \;
 
 
 popd > /dev/null

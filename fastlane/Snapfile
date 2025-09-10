@@ -19,7 +19,7 @@ ios_version("18.5")
 scheme("Swiftfin Screenshots")
 
 # Where should the resulting screenshots be stored?
-output_directory("./Swiftfin Screenshots/screenshots")
+output_directory("./Screenshots/output")
 
 # remove the '#' to clear all previously generated screenshots before creating new ones
 # clear_previous_screenshots(true)
