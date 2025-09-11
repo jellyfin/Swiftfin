@@ -10,6 +10,7 @@ import XCTest
 
 final class iOS_Screenshots: XCTestCase {
     let demoServerUrl = "127.0.0.1:8096"
+    let demoServerName = "Jellyfin Server"
     let demoUsername = "username"
     let demoPassword = "password"
 
@@ -33,10 +34,10 @@ final class iOS_Screenshots: XCTestCase {
 
     // Select/Add the demo server from the user selection view
     func selectDemoServer(_ app: XCUIApplication) {
-        app.images["chevron.up.chevron.down"].firstMatch.tap()
+        app.buttons["SelectServerMenu"].firstMatch.tap()
 
-        if app.staticTexts["http://\(demoServerUrl)"].exists {
-            app.staticTexts["http://\(demoServerUrl)"].firstMatch.tap()
+        if app.buttons["\(demoServerName)"].exists {
+            app.buttons["\(demoServerName)"].firstMatch.tap()
         } else {
             app.buttons["Add Server"].firstMatch.tap()
 
@@ -49,7 +50,7 @@ final class iOS_Screenshots: XCTestCase {
         if app.staticTexts[demoUsername].exists {
             app.staticTexts[demoUsername].firstMatch.tap()
         } else {
-            app.images["plus"].tap()
+            app.buttons["AddNewUser"].tap()
 
             app.typeText(demoUsername)
             app.secureTextFields["Password"].tap()
@@ -75,7 +76,7 @@ final class iOS_Screenshots: XCTestCase {
             connectToDemoServer(app)
         }
 
-        if app.images["server.rack"].exists {
+        if app.buttons["SelectServerMenu"].exists {
             selectDemoServer(app)
             signInDemoUser(app)
 
@@ -97,7 +98,7 @@ final class iOS_Screenshots: XCTestCase {
         } else {
             app.navigationBars["Server"]
                 .buttons["Settings"].tap()
-            app.buttons["xmark.circle.fill"].tap()
+            app.buttons["NavigationBarClose"].tap()
         }
 
         snapshot("Home")

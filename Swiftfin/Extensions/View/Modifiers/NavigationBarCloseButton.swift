@@ -30,6 +30,7 @@ struct NavigationBarCloseButtonModifier: ViewModifier {
                         .opacity(disabled ? 0.75 : 1)
                 }
                 .disabled(disabled)
+                .accessibilityIdentifier("NavigationBarClose")
             }
         }
     }
