@@ -24,7 +24,6 @@ class ItemViewModel: ViewModel, Stateful {
         case backgroundRefresh
         case error(JellyfinAPIError)
         case refresh
-        case replace(BaseItemDto)
         case toggleIsFavorite
         case toggleIsPlayed
         case selectMediaSource(MediaSourceInfo)
@@ -92,24 +91,48 @@ class ItemViewModel: ViewModel, Stateful {
         self.item = item
         super.init()
 
-        Notifications[.itemShouldRefreshMetadata]
+        Notifications[.didItemUserDataChange]
             .publisher
-            .sink { [weak self] itemID in
-                guard itemID == self?.item.id else { return }
+            .receive(on: RunLoop.main)
+            .sink { [weak self] itemId, userData in
+                guard let self = self,
+                      /// item check
+                      (itemId == item.id && userData != item.userData) ||
+                      /// playButtonItem check
+                      (itemId == playButtonItem?.id && userData != playButtonItem?.userData)
+                else { return }
 
-                Task {
-                    await self?.send(.backgroundRefresh)
+                Task { @MainActor in
+                    self.item.userData = userData
+                    self.send(.backgroundRefresh)
                 }
             }
             .store(in: &cancellables)
 
-        Notifications[.itemMetadataDidChange]
+        Notifications[.didItemMetadataChange]
             .publisher
             .sink { [weak self] newItem in
-                guard let newItemID = newItem.id, newItemID == self?.item.id else { return }
+                guard let self = self,
+                      /// item check
+                      (newItem.id == item.id && newItem != item) ||
+                      /// playButtonItem check
+                      (newItem.id == playButtonItem?.id && newItem != playButtonItem) ||
+                      /// Previous playButtonItem check
+                      (playButtonItem?.type == .episode &&
+                          newItem.type == .episode &&
+                          newItem.seriesID == playButtonItem?.seriesID &&
+                          (newItem.seasonID == playButtonItem?.seasonID &&
+                              newItem.indexNumber == ((playButtonItem?.indexNumber ?? 0) - 1) ||
+                              newItem.indexNumberEnd == ((playButtonItem?.indexNumber ?? 0) - 1)
+                          )
+                      )
+                else { return }
 
-                Task {
-                    await self?.send(.replace(newItem))
+                /// Replace if the item was updated
+                /// Refresh if the playButtonItem was updated or we might need to revert to the previous playButtonItem
+                Task { @MainActor in
+                    self.item = newItem
+                    self.send(.backgroundRefresh)
                 }
             }
             .store(in: &cancellables)
@@ -212,22 +235,6 @@ class ItemViewModel: ViewModel, Stateful {
             .asAnyCancellable()
 
             return .refreshing
-        case let .replace(newItem):
-
-            backgroundStates.insert(.refresh)
-
-            Task { [weak self] in
-                guard let self else { return }
-                do {
-                    await MainActor.run {
-                        self.backgroundStates.remove(.refresh)
-                        self.item = newItem
-                    }
-                }
-            }
-            .store(in: &cancellables)
-
-            return state
         case .toggleIsFavorite:
 
             toggleIsFavoriteTask?.cancel()
@@ -259,9 +266,11 @@ class ItemViewModel: ViewModel, Stateful {
             toggleIsPlayedTask = Task {
 
                 let beforeIsPlayed = item.userData?.isPlayed ?? false
+                let beforePlaybackPosition = item.userData?.playbackPositionTicks
 
                 await MainActor.run {
                     item.userData?.isPlayed?.toggle()
+                    item.userData?.playbackPositionTicks = nil
                 }
 
                 do {
@@ -269,6 +278,7 @@ class ItemViewModel: ViewModel, Stateful {
                 } catch {
                     await MainActor.run {
                         item.userData?.isPlayed = beforeIsPlayed
+                        item.userData?.playbackPositionTicks = beforePlaybackPosition
                         // emit event that toggle unsuccessful
                     }
                 }
@@ -346,18 +356,23 @@ class ItemViewModel: ViewModel, Stateful {
 
         if isPlayed {
             request = Paths.markPlayedItem(
-                itemID: item.id!,
+                itemID: itemID,
                 userID: userSession.user.id
             )
         } else {
             request = Paths.markUnplayedItem(
-                itemID: item.id!,
+                itemID: itemID,
                 userID: userSession.user.id
             )
         }
 
         _ = try await userSession.client.send(request)
-        Notifications[.itemShouldRefreshMetadata].post(itemID)
+
+        await MainActor.run {
+            if let userData = item.userData {
+                Notifications[.didItemUserDataChange].post((itemID, userData))
+            }
+        }
     }
 
     private func setIsFavorite(_ isFavorite: Bool) async throws {
@@ -368,17 +383,22 @@ class ItemViewModel: ViewModel, Stateful {
 
         if isFavorite {
             request = Paths.markFavoriteItem(
-                itemID: item.id!,
+                itemID: itemID,
                 userID: userSession.user.id
             )
         } else {
             request = Paths.unmarkFavoriteItem(
-                itemID: item.id!,
+                itemID: itemID,
                 userID: userSession.user.id
             )
         }
 
         _ = try await userSession.client.send(request)
-        Notifications[.itemShouldRefreshMetadata].post(itemID)
+
+        await MainActor.run {
+            if let userData = item.userData {
+                Notifications[.didItemUserDataChange].post((itemID, userData))
+            }
+        }
     }
 }

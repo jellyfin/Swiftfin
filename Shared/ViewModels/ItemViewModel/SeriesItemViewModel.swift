@@ -30,16 +30,32 @@ final class SeriesItemViewModel: ItemViewModel {
     override func respond(to action: ItemViewModel.Action) -> ItemViewModel.State {
 
         switch action {
+        case .toggleIsPlayed:
+            _ = super.respond(to: action)
+
+            /// Only refresh seasons that currently contain episodes
+            /// Seasons without episodes will get the new versions on first refresh
+            if !seasons.elements.isEmpty {
+                for season in seasons.elements {
+                    if let seasonID = season.id {
+                        Notifications[.doesItemRequireRefresh].post((seasonID, .childUserData))
+                    }
+                }
+            }
+
         case .backgroundRefresh, .refresh:
-            let parentState = super.respond(to: action)
+            _ = super.respond(to: action)
 
             seriesItemTask?.cancel()
 
             Task { [weak self] in
                 guard let self else { return }
 
-                await MainActor.run {
-                    self.seasons.removeAll()
+                /// Only replace the seasons on a full refresh. Otherwise, just append new seasons.
+                if action == .refresh {
+                    await MainActor.run {
+                        self.seasons.removeAll()
+                    }
                 }
 
                 do {
@@ -68,6 +84,7 @@ final class SeriesItemViewModel: ItemViewModel {
                 }
             }
             .store(in: &cancellables)
+
         default: ()
         }
 
