@@ -9,9 +9,9 @@
 import XCTest
 
 final class tvOS_Screenshots: XCTestCase {
-    let demoServerUrl = "192.168.4.4:8097"
-    let demoServerName = "ea6c46313368"
-    let demoUsername = "swiftfin-user"
+    let demoServerUrl = "127.0.0.1:8096"
+    let demoServerName = "Jellyfin Server"
+    let demoUsername = "username"
     let demoPassword = "password"
 
     let movieTitle = "Sintel"
