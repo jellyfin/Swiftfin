@@ -201,6 +201,7 @@ struct SelectUserView: View {
                     } label: {
                         Label(L10n.addUser, systemImage: "plus")
                     }
+                    .accessibilityIdentifier("AddNewUser")
 
                     Toggle(
                         L10n.editUsers,
@@ -448,6 +449,7 @@ struct SelectUserView: View {
                     router.route(to: .connectToServer)
                 }
                 .frame(maxWidth: 300)
+                .accessibilityIdentifier("ShowConnectToServer")
         }
     }
 
