@@ -171,8 +171,6 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
 
     private func play() {
         player?.play()
-
-        videoPlayerManager.sendStartReport()
     }
 
     private func stop() {
