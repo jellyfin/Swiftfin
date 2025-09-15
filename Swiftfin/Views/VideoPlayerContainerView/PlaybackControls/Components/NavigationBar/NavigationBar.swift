@@ -18,6 +18,9 @@ extension VideoPlayer.PlaybackControls {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
+        @Router
+        private var router
+
         private func onPressed(isPressed: Bool) {
             if isPressed {
                 containerState.timer.stop()
@@ -30,6 +33,7 @@ extension VideoPlayer.PlaybackControls {
             HStack(alignment: .center) {
                 Button(L10n.close, systemImage: "xmark") {
                     manager.send(.stop)
+                    router.dismiss()
                 }
 
                 TitleView(item: manager.item)

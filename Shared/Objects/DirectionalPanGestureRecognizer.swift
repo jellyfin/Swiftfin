@@ -21,21 +21,22 @@ class DirectionalPanGestureRecognizer: UIPanGestureRecognizer {
         super.touchesMoved(touches, with: event)
 
         if state == .began {
-            let vel = velocity(in: view)
+            let velocity = velocity(in: view)
 
-            let isHorizontal = abs(vel.y) < abs(vel.x)
-            let isVertical = abs(vel.x) < abs(vel.y)
+            let isUp = velocity.y < 0
 
-//            print("vel: \(vel), isHorizontal: \(isHorizontal), isVertical: \(isVertical), direction: \(direction)")
+            let isHorizontal = abs(velocity.y) < abs(velocity.x)
+            let isVertical = abs(velocity.x) < abs(velocity.y)
 
             switch direction {
+            case .all: ()
+            case .allButDown where !isUp: ()
             case .horizontal where isHorizontal: ()
             case .vertical where isVertical: ()
-            case .up where isVertical && vel.y < 0: ()
-            case .down where isVertical && vel.y > 0: ()
-            case .left where isHorizontal && vel.x < 0: ()
-            case .right where isHorizontal && vel.x > 0: ()
-            case .all: ()
+            case .up where isVertical && velocity.y < 0: ()
+            case .down where isVertical && velocity.y > 0: ()
+            case .left where isHorizontal && velocity.x < 0: ()
+            case .right where isHorizontal && velocity.x > 0: ()
             default:
                 state = .cancelled
             }

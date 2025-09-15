@@ -37,13 +37,17 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
             }
 
             if manager.queue == nil {
-                filteredButtons.removeAll { $0 == .playNextItem || $0 == .playPreviousItem || $0 == .autoPlay }
+                filteredButtons.removeAll { $0 == .autoPlay }
+                filteredButtons.removeAll { $0 == .playNextItem }
+                filteredButtons.removeAll { $0 == .playPreviousItem }
             }
 
             if manager.item.isLiveStream {
+                filteredButtons.removeAll { $0 == .audio }
                 filteredButtons.removeAll { $0 == .autoPlay }
                 filteredButtons.removeAll { $0 == .playbackSpeed }
-                filteredButtons.removeAll { $0 == .playbackQuality }
+//                filteredButtons.removeAll { $0 == .playbackQuality }
+                filteredButtons.removeAll { $0 == .subtitles }
             }
 
             return filteredButtons
@@ -70,8 +74,8 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                 GestureLock()
             case .playbackSpeed:
                 PlaybackRateMenu()
-            case .playbackQuality:
-                PlaybackQuality()
+//            case .playbackQuality:
+//                PlaybackQuality()
             case .playNextItem:
                 PlayNextItem()
             case .playPreviousItem:
@@ -84,7 +88,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
         @ViewBuilder
         private var compactView: some View {
             Menu(
-                "Menu",
+                L10n.menu,
                 systemImage: "ellipsis.circle"
             ) {
                 ForEach(
@@ -113,7 +117,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
 
                 if menuActionButtons.isNotEmpty {
                     Menu(
-                        "Menu",
+                        L10n.menu,
                         systemImage: "ellipsis.circle"
                     ) {
                         ForEach(

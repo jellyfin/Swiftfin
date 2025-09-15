@@ -203,14 +203,14 @@ extension Defaults.Keys {
 
         enum Gesture {
 
-            static let horizontalPanAction: Key<PanAction> = UserKey("videoPlayerHorizontalPanGesture", default: .none)
-            static let horizontalSwipeAction: Key<SwipeAction> = UserKey("videoPlayerhorizontalSwipeAction", default: .none)
-            static let longPressAction: Key<LongPressAction> = UserKey("videoPlayerLongPressGesture", default: .gestureLock)
-            static let multiTapGesture: Key<MultiTapAction> = UserKey("videoPlayerMultiTapGesture", default: .none)
-            static let doubleTouchGesture: Key<DoubleTouchAction> = UserKey("videoPlayerDoubleTouchGesture", default: .none)
-            static let pinchGesture: Key<PinchAction> = UserKey("videoPlayerSwipeGesture", default: .aspectFill)
-            static let verticalPanLeftAction: Key<PanAction> = UserKey("videoPlayerverticalPanLeftAction", default: .none)
-            static let verticalPanRightAction: Key<PanAction> = UserKey("videoPlayerverticalPanRightAction", default: .none)
+            static let horizontalPanAction: Key<PanGestureAction> = UserKey("videoPlayerHorizontalPanGesture", default: .none)
+            static let horizontalSwipeAction: Key<SwipeGestureAction> = UserKey("videoPlayerhorizontalSwipeAction", default: .none)
+            static let longPressAction: Key<LongPressGestureAction> = UserKey("videoPlayerLongPressGesture", default: .gestureLock)
+            static let multiTapGesture: Key<MultiTapGestureAction> = UserKey("videoPlayerMultiTapGesture", default: .none)
+            static let doubleTouchGesture: Key<DoubleTouchGestureAction> = UserKey("videoPlayerDoubleTouchGesture", default: .none)
+            static let pinchGesture: Key<PinchGestureAction> = UserKey("videoPlayerSwipeGesture", default: .aspectFill)
+            static let verticalPanLeftAction: Key<PanGestureAction> = UserKey("videoPlayerverticalPanLeftAction", default: .none)
+            static let verticalPanRightAction: Key<PanGestureAction> = UserKey("videoPlayerverticalPanRightAction", default: .none)
         }
 
         enum Overlay {

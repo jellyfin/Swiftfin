@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import Factory
 import JellyfinAPI
 import SwiftUI
 
@@ -21,14 +22,16 @@ struct VideoPlayer: View {
     @Default(.VideoPlayer.Subtitle.subtitleSize)
     private var subtitleSize
 
+    @Environment(\.presentationControllerShouldDismiss)
+    private var presentationControllerShouldDismiss
     @Environment(\.presentationCoordinator)
     private var presentationCoordinator
 
+    @InjectedObject(\.mediaPlayerManager)
+    private var manager: MediaPlayerManager
+
     @LazyState
     private var proxy: any VideoMediaPlayerProxy
-
-    @ObservedObject
-    private var manager: MediaPlayerManager
 
     @Router
     private var router
@@ -51,14 +54,8 @@ struct VideoPlayer: View {
     @TransitionReaderObserver
     private var transitionReaderObserver
 
-    init(manager: MediaPlayerManager) {
-        self.manager = manager
-        self._proxy = .init(wrappedValue: {
-            // TODO: layer selection
-            let proxy = VLCMediaPlayerProxy()
-            manager.proxy = proxy
-            return proxy
-        }())
+    init() {
+        self._proxy = .init(wrappedValue: VLCMediaPlayerProxy())
     }
 
     @ViewBuilder
@@ -74,12 +71,20 @@ struct VideoPlayer: View {
         }
         .environment(\.audioOffset, $audioOffset)
         .onAppear {
+            manager.proxy = proxy
             manager.send(.start)
+        }
+        .onSceneWillEnterForeground {
+            manager.set(playbackRequestStatus: .playing)
+        }
+        .onSceneDidEnterBackground {
+            manager.set(playbackRequestStatus: .paused)
         }
     }
 
     var body: some View {
         containerView
+            .preference(key: IsStatusBarHiddenKey.self, value: !containerState.isPresentingOverlay)
             .backport
             .onChange(of: audioOffset) { _, newValue in
                 if let proxy = proxy as? MediaPlayerOffsetConfigurable {
@@ -130,6 +135,17 @@ struct VideoPlayer: View {
                     proxy.setSubtitleFontSize(newValue)
                 }
             }
+            .backport
+            .onChange(of: containerState.presentationControllerShouldDismiss) { _, newValue in
+                presentationControllerShouldDismiss.wrappedValue = newValue
+            }
+            .backport
+            .onChange(of: presentationCoordinator.isPresented) { _, isPresented in
+                Container.shared.mediaPlayerManager.reset()
+                guard !isPresented else { return }
+                isBeingDismissedByTransition = true
+                manager.send(.stop)
+            }
             .onReceive(manager.$playbackItem) { newItem in
                 containerState.isAspectFilled = false
                 audioOffset = .zero
@@ -140,20 +156,16 @@ struct VideoPlayer: View {
             }
             .onReceive(manager.$state) { newState in
                 if newState == .stopped, !isBeingDismissedByTransition {
-                    proxy.stop()
                     router.dismiss()
                 }
             }
-            .onChange(of: presentationCoordinator.isPresented) { isPresented in
-                guard !isPresented else { return }
-                isBeingDismissedByTransition = true
-                manager.send(.stop)
-            }
+
             .alert(
                 L10n.error,
                 isPresented: .constant(manager.error != nil),
             ) {
                 Button(L10n.close, role: .cancel) {
+                    Container.shared.mediaPlayerManager.reset()
                     router.dismiss()
                 }
             } message: {

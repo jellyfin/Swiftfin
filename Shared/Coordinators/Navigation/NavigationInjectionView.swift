@@ -12,6 +12,14 @@ import Transmission
 
 // TODO: have full screen zoom presentation zoom from/to center
 //       - probably need to make mock view with matching ids
+// TODO: have presentation dismissal be through preference keys
+//       - issue with all of the VC/view wrapping
+
+extension EnvironmentValues {
+
+    @Entry
+    var presentationControllerShouldDismiss: Binding<Bool> = .constant(true)
+}
 
 struct NavigationInjectionView: View {
 
@@ -21,15 +29,15 @@ struct NavigationInjectionView: View {
     private var rootCoordinator: RootCoordinator
 
     @State
-    private var isZoomPresentationInteractive: Bool = true
+    private var isPresentationInteractive: Bool = true
 
     private let content: AnyView
 
     init(
-        coordinator: NavigationCoordinator,
+        coordinator: @autoclosure @escaping () -> NavigationCoordinator,
         @ViewBuilder content: @escaping () -> some View
     ) {
-        _coordinator = StateObject(wrappedValue: coordinator)
+        _coordinator = StateObject(wrappedValue: coordinator())
         self.content = AnyView(content())
     }
 
@@ -74,17 +82,17 @@ struct NavigationInjectionView: View {
                 transition: .zoomIfAvailable(
                     options: .init(
                         dimmingVisualEffect: .systemThickMaterialDark,
-                        options: .init(isInteractive: isZoomPresentationInteractive)
+                        options: .init(
+                            isInteractive: isPresentationInteractive
+                        )
                     ),
-                    otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: isZoomPresentationInteractive))
+                    otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: isPresentationInteractive))
                 )
             ) { routeBinding, _ in
                 let vc = UIPreferencesHostingController {
-                    let newCoordinator = NavigationCoordinator()
-
-                    NavigationInjectionView(coordinator: newCoordinator) {
+                    NavigationInjectionView(coordinator: .init()) {
                         routeBinding.wrappedValue.destination
-                            .environment(\.presentationControllerShouldDismiss, $isZoomPresentationInteractive)
+                            .environment(\.presentationControllerShouldDismiss, $isPresentationInteractive)
                     }
                 }
 

@@ -7,9 +7,11 @@
 //
 
 import Defaults
+import Factory
 import JellyfinAPI
 import PreferencesView
 import SwiftUI
+import Transmission
 
 extension NavigationRoute {
 
@@ -42,25 +44,51 @@ extension NavigationRoute {
     }
     #endif
 
+    static func videoPlayer(
+        item: BaseItemDto,
+        mediaSource: MediaSourceInfo,
+        queue: (any MediaPlayerQueue)? = nil
+    ) -> NavigationRoute {
+        let provider = MediaPlayerItemProvider(item: item) { item in
+            try await MediaPlayerItem.build(for: item, mediaSource: mediaSource)
+        }
+        return Self.videoPlayer(provider: provider, queue: queue)
+    }
+
+    static func videoPlayer(
+        provider: MediaPlayerItemProvider,
+        queue: (any MediaPlayerQueue)? = nil
+    ) -> NavigationRoute {
+        let manager = MediaPlayerManager(
+            item: provider.item,
+            queue: queue,
+            mediaPlayerItemProvider: provider.function
+        )
+
+        return Self.videoPlayer(manager: manager)
+    }
+
     static func videoPlayer(manager: MediaPlayerManager) -> NavigationRoute {
-        NavigationRoute(
+
+        Container.shared.mediaPlayerManager.register {
+            manager
+        }
+
+        Container.shared.mediaPlayerManagerPublisher()
+            .send(manager)
+
+        return NavigationRoute(
             id: "videoPlayer",
             style: .fullscreen
         ) {
             VideoPlayerViewShim(manager: manager)
         }
     }
-
-    static func videoPlayer(item: BaseItemDto, mediaSource: MediaSourceInfo) -> NavigationRoute {
-        let manager = MediaPlayerManager(item: item) { item in
-            try await MediaPlayerItem.build(for: item, mediaSource: mediaSource)
-        }
-
-        return Self.videoPlayer(manager: manager)
-    }
 }
 
 // TODO: shim until native vs swiftfin player is replace with vlc vs av layers
+//       - when removed, ensure same behavior with safe area
+//       - may just need to make a VC wrapper to capture them
 
 struct VideoPlayerViewShim: View {
 
@@ -72,9 +100,9 @@ struct VideoPlayerViewShim: View {
     var body: some View {
         Group {
             if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                VideoPlayer(manager: manager)
+                VideoPlayer()
             } else {
-                NativeVideoPlayer(manager: manager)
+                NativeVideoPlayer()
             }
         }
         .colorScheme(.dark) // use over `preferredColorScheme(.dark)` to not have destination change
@@ -83,7 +111,6 @@ struct VideoPlayerViewShim: View {
         .ignoresSafeArea()
         .persistentSystemOverlays(.hidden)
         .toolbar(.hidden, for: .navigationBar)
-        .statusBarHidden()
         .onSizeChanged { _, safeArea in
             self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
         }

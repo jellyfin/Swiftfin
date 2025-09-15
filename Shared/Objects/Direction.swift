@@ -18,4 +18,14 @@ struct Direction: OptionSet {
     static let vertical: Direction = [.up, .down]
     static let horizontal: Direction = [.left, .right]
     static let all: Direction = [.up, .down, .left, .right]
+
+    static let allButDown: Direction = [.up, .left, .right]
+
+    var isHorizontal: Bool {
+        contains(.left) || contains(.right)
+    }
+
+    var isVertical: Bool {
+        contains(.up) || contains(.down)
+    }
 }

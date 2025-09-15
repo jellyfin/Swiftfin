@@ -12,12 +12,10 @@ import SwiftUI
 
 // TODO: possibly make custom tab view to have observe
 //       vertical scroll content and transfer to dismissal
-// TODO: clean up guest supplementing
 // TODO: fix improper supplement selected
 //       - maybe a race issue
-// TODO: verify supplements update correctly
 
-extension UIVideoPlayerContainerViewController {
+extension VideoPlayer.UIVideoPlayerContainerViewController {
 
     struct SupplementContainerView: View {
 
@@ -123,6 +121,32 @@ extension UIVideoPlayerContainerViewController {
                 )
                 currentSupplements = newSupplements
             }
+            .environment(
+                \.panAction,
+                .init(
+                    action: {
+                        containerState.containerView?.handlePanGesture(
+                            translation: $0,
+                            velocity: $1,
+                            location: $2,
+                            unitPoint: $3,
+                            state: $4
+                        )
+                    }
+                )
+            )
+            .environment(
+                \.tapGestureAction,
+                .init(
+                    action: {
+                        containerState.containerView?.handleTapGesture(
+                            location: $0,
+                            unitPoint: $1,
+                            count: $2
+                        )
+                    }
+                )
+            )
         }
     }
 }

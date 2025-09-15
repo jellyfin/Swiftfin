@@ -18,12 +18,22 @@ import VLCUI
 //       - what if proxy couldn't set rate?
 // TODO: make a container service, injected into players
 
+typealias MediaPlayerManagerPublisher = EventPublisher<MediaPlayerManager?>
+
+extension Scope {
+    static let session = Cached()
+}
+
 extension Container {
 
-    var mediaPlayerManager: Factory<MediaPlayerManager?> {
-        self {
-            nil
-        }.cached
+    var mediaPlayerManagerPublisher: Factory<MediaPlayerManagerPublisher> {
+        self { MediaPlayerManagerPublisher() }
+            .singleton
+    }
+
+    var mediaPlayerManager: Factory<MediaPlayerManager> {
+        self { .empty }
+            .scope(.session)
     }
 }
 
@@ -67,6 +77,15 @@ final class MediaPlayerManager: ViewModel, Stateful {
                 playbackItem.manager = self
                 setSupplements()
 
+                logger.info(
+                    "Playing new item",
+                    metadata: [
+                        "itemID": .stringConvertible(playbackItem.baseItem.id ?? "Unknown"),
+                        "itemTitle": .stringConvertible(playbackItem.baseItem.displayTitle),
+                        "url": .stringConvertible(playbackItem.url.absoluteString),
+                    ]
+                )
+
                 Task { _ = await playbackItem.previewImageProvider?.image(for: seconds) }
             }
         }
@@ -86,9 +105,6 @@ final class MediaPlayerManager: ViewModel, Stateful {
     @Published
     var queue: (any MediaPlayerQueue)?
 
-    // TODO: ensure supplement container updates
-    // TODO: need supplements at manager level?
-    //       - supplements of the proxy vs media player item?
     @Published
     var supplements: [any MediaPlayerSupplement] = []
 
@@ -136,6 +152,14 @@ final class MediaPlayerManager: ViewModel, Stateful {
 
     // MARK: init
 
+    static let empty: MediaPlayerManager = .init()
+
+    override private init() {
+        self.item = .init()
+        self.state = .stopped
+        super.init()
+    }
+
     init(
         item: BaseItemDto,
         queue: (any MediaPlayerQueue)? = nil,
@@ -173,19 +197,30 @@ final class MediaPlayerManager: ViewModel, Stateful {
         switch action {
         case let .error(error):
             self.error = error
+            if let playbackItem {
+                logger.error(
+                    "Error while playing item",
+                    metadata: [
+                        "error": .stringConvertible(error.localizedDescription),
+                        "itemID": .stringConvertible(playbackItem.baseItem.id ?? "Unknown"),
+                        "itemTitle": .stringConvertible(playbackItem.baseItem.displayTitle),
+                        "url": .stringConvertible(playbackItem.url.absoluteString),
+                    ]
+                )
+            }
+
             proxy?.stop()
+            Container.shared.mediaPlayerManager.reset()
             return .error(error)
         case .ended:
-            // TODO: verify live items
-            // TODO: autoplay
             // TODO: change to observe given seconds against runtime
             //       instead of sent action?
 
             // Ended should represent natural ending of playback, which
             // is verifiable by given seconds being near item runtime.
             // VLC proxy will send ended early.
-            guard let runtime = playbackItem?.baseItem.runtime else {
-                return .stopped
+            guard let runtime = item.runtime else {
+                return respond(to: .stop)
             }
             let isNearEnd = (runtime - seconds) <= .seconds(1)
 
@@ -198,13 +233,12 @@ final class MediaPlayerManager: ViewModel, Stateful {
                 return respond(to: .playNewItem(provider: nextItem))
             }
 
-            return .stopped
+            return respond(to: .stop)
         case .stop:
             // TODO: remove playback item?
             //       - check that observers would respond well
             proxy?.stop()
-            guard self.state != .loadingItem else { return state }
-
+            Container.shared.mediaPlayerManager.reset()
             return .stopped
         case let .playNewItem(provider: provider):
             self.item = provider.item

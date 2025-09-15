@@ -160,11 +160,17 @@ extension VLCMediaPlayerProxy {
                         }
                     }
                     .onStateUpdated { state, info in
+                        manager.logger.trace("VLC state updated: \(state)")
+
                         switch state {
-                        case .buffering, .esAdded, .opening:
+                        case .buffering,
+                             .esAdded,
+                             .opening:
                             // TODO: figure out when to properly set to false
                             manager.proxy?.isBuffering.value = true
                         case .ended, .stopped:
+                            // Live streams will send stopped/ended events
+                            guard !playbackItem.baseItem.isLiveStream else { return }
                             manager.proxy?.isBuffering.value = false
                             manager.send(.ended)
                         case .error:

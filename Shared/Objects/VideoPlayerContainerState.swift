@@ -20,7 +20,13 @@ class VideoPlayerContainerState: ObservableObject {
     var isAspectFilled: Bool = false
 
     @Published
-    var isGestureLocked: Bool = false
+    var isGestureLocked: Bool = false {
+        didSet {
+            if isGestureLocked {
+                isPresentingOverlay = false
+            }
+        }
+    }
 
     // TODO: rename isPresentingPlaybackButtons
     @Published
@@ -118,21 +124,38 @@ class VideoPlayerContainerState: ObservableObject {
 
     let jumpProgressObserver: JumpProgressObserver = .init()
     let scrubbedSeconds: PublishedBox<Duration> = .init(initialValue: .zero)
-    let timer = PokeIntervalTimer()
+    let timer: PokeIntervalTimer = .init()
+    let toastProxy: ToastProxy = .init()
 
+    weak var containerView: VideoPlayer.UIVideoPlayerContainerViewController?
+    weak var manager: MediaPlayerManager?
+
+    var panHandlingAction: (any _PanHandlingAction)?
+    var didSwipe: Bool = false
+    var lastTapLocation: CGPoint? {
+        didSet {
+            print("Last tap location set to: \(String(describing: lastTapLocation))")
+        }
+    }
+
+    private var jumpProgressCancellable: AnyCancellable?
     private var timerCancellable: AnyCancellable?
-
-    weak var containerView: UIVideoPlayerContainerViewController?
 
     init() {
         timerCancellable = timer.sink { [weak self] in
             guard let self else { return }
-            guard !isScrubbing == false, !isPresentingSupplement else { return }
+            guard !isScrubbing, !isPresentingSupplement else { return }
 
             withAnimation(.linear(duration: 0.25)) {
                 self.isPresentingOverlay = false
             }
         }
+
+        jumpProgressCancellable = jumpProgressObserver
+            .timer
+            .sink { [weak self] in
+                self?.lastTapLocation = nil
+            }
     }
 
     func select(supplement: (any MediaPlayerSupplement)?, isGuest: Bool = false) {

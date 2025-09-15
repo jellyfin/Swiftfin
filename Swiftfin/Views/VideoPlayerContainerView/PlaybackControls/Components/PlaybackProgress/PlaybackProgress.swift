@@ -11,11 +11,11 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: enabled/disabled state
-// TODO: change split timestamp interaction to be split,
-//       make slider gesture padding larger
 // TODO: scrubbing snapping behaviors
 //       - chapter boundaries
 //       - current running time
+// TODO: show chapter title under preview image
+//       - have max width, on separate offset track
 
 extension VideoPlayer.PlaybackControls {
 
@@ -124,21 +124,30 @@ extension VideoPlayer.PlaybackControls {
                 .onEditingChanged { newValue in
                     isScrubbing = newValue
                 }
-//                .if(manager.item.fullChapterInfo.isNotEmpty) { view in
-//                    view.mask(ChapterTrackMask(chapters: manager.item.fullChapterInfo))
-//                }
+                .if(chapterSlider) { view in
+                    view.ifLet(manager.item.fullChapterInfo) { view, chapters in
+                        if chapters.isEmpty {
+                            view
+                        } else {
+                            view.mask(ChapterTrackMask(chapters: chapters))
+                        }
+                    }
+                }
                 .frame(maxWidth: sliderSize != .zero ? sliderSize.width - EdgeInsets.edgePadding * 2 : .infinity)
                 .scaleEffect(x: isScrubbing ? xScale : 1, y: 1, anchor: .center)
                 .frame(height: isScrubbing ? 20 : 10)
+                .foregroundStyle(manager.state == .loadingItem ? .gray : .primary)
             }
             .animation(.linear(duration: 0.05), value: scrubbedSeconds)
             .frame(height: 10)
+            .disabled(manager.state == .loadingItem)
         }
 
         var body: some View {
             VStack(spacing: 5) {
                 if manager.item.isLiveStream {
                     liveIndicator
+                        .edgePadding(.horizontal)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
                     capsuleSlider
@@ -172,31 +181,6 @@ extension VideoPlayer.PlaybackControls {
                 guard isScrubbing else { return }
                 UIDevice.impact(.soft)
             }
-        }
-    }
-}
-
-// TODO: make option?
-struct SliderTick: View {
-
-    @EnvironmentObject
-    private var manager: MediaPlayerManager
-
-    @State
-    private var activeSeconds: Duration = .zero
-
-    var body: some View {
-        if let runtime = manager.item.runtime, runtime > .zero {
-            GeometryReader { proxy in
-                AlternateLayoutView(alignment: .leading) {
-                    Color.clear
-                } content: {
-                    Color.white
-                        .frame(width: 1.5)
-                        .offset(x: proxy.size.width * (activeSeconds / runtime) - 0.75)
-                }
-            }
-            .assign(manager.secondsBox.$value, to: $activeSeconds)
         }
     }
 }

@@ -97,7 +97,7 @@ extension ImagePipeline {
         do {
             return try await image(for: url)
         } catch {
-            var requests = requests.dropFirst()
+            let requests = requests.dropFirst()
             return await loadFirstImage(from: requests)
         }
     }

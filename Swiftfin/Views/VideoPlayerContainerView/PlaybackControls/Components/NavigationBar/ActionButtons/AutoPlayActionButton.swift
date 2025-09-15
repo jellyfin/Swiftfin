@@ -16,6 +16,9 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
         @Default(.VideoPlayer.autoPlayEnabled)
         private var isAutoPlayEnabled
 
+        @Environment(\.isInMenu)
+        private var isInMenu
+
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
@@ -31,16 +34,22 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
         }
 
         var body: some View {
-            Button(
-                "Autoplay",
-                systemImage: systemImage
-            ) {
+            Button {
                 isAutoPlayEnabled.toggle()
 
                 if isAutoPlayEnabled {
-                    toaster.present("Auto Play enabled", systemName: "play.circle.fill")
+                    toaster.present("Auto Play on", systemName: "play.circle.fill")
                 } else {
-                    toaster.present("Auto Play disabled", systemName: "stop.circle")
+                    toaster.present("Auto Play off", systemName: "stop.circle")
+                }
+            } label: {
+                Label(
+                    L10n.autoPlay,
+                    systemImage: systemImage
+                )
+
+                if isInMenu {
+                    Text(isAutoPlayEnabled ? "On" : "Off")
                 }
             }
             .videoPlayerActionButtonTransition()

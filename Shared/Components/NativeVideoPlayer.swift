@@ -7,44 +7,64 @@
 //
 
 import AVKit
+import Factory
 import JellyfinAPI
 import Logging
 import SwiftUI
 
-// TODO: loading view during `loadingItem` state
-// TODO: error state
+// TODO: remove
 
 struct NativeVideoPlayer: View {
 
-    // TODO: remove
-    @EnvironmentObject
-    private var scrubbedSecondsBox: PublishedBox<Duration>
+    @Environment(\.presentationCoordinator)
+    private var presentationCoordinator
+
+    @InjectedObject(\.mediaPlayerManager)
+    private var manager: MediaPlayerManager
 
     @LazyState
     private var proxy: AVMediaPlayerProxy
 
-    @ObservedObject
-    private var manager: MediaPlayerManager
+    @Router
+    private var router
 
-    init(
-        manager: MediaPlayerManager
-    ) {
-        self.manager = manager
-        self._proxy = .init(wrappedValue: {
-            let proxy = AVMediaPlayerProxy()
-            manager.proxy = proxy
-            return proxy
-        }())
+    init() {
+        self._proxy = .init(wrappedValue: AVMediaPlayerProxy())
     }
 
     var body: some View {
-        switch manager.state {
-        case .loadingItem:
-            ProgressView()
-        case let .error(error):
-            Text(error.localizedDescription)
-        default:
-            NativeVideoPlayerView(proxy: proxy)
+        ZStack {
+
+            Color.black
+
+            switch manager.state {
+            case .playback:
+                NativeVideoPlayerView(proxy: proxy)
+            default:
+                ProgressView()
+            }
+        }
+        .onAppear {
+            manager.proxy = proxy
+            manager.send(.start)
+        }
+        .preference(key: IsStatusBarHiddenKey.self, value: true)
+        .onChange(of: presentationCoordinator.isPresented) { isPresented in
+            Container.shared.mediaPlayerManager.reset()
+            guard !isPresented else { return }
+            manager.send(.stop)
+        }
+        .alert(
+            L10n.error,
+            isPresented: .constant(manager.error != nil),
+        ) {
+            Button(L10n.close, role: .cancel) {
+                Container.shared.mediaPlayerManager.reset()
+                router.dismiss()
+            }
+        } message: {
+            // TODO: localize
+            Text("Unable to load this item.")
         }
     }
 }

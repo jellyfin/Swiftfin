@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension UIVideoPlayerContainerViewController.SupplementContainerView {
+extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerView {
 
     struct SupplementTitleButtonStyle: PrimitiveButtonStyle {
 

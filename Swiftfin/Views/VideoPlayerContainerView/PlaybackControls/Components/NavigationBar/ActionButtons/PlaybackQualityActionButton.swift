@@ -14,8 +14,9 @@ import SwiftUI
 //       - versions
 // TODO: have queue consider value to carry setting
 // TODO: reuse-provider instead of making a new one?
-// TODO: somehow don't present when offline
+// TODO: don't present for offline/live items
 //       - value on media player item
+// TODO: filter to sensible subset
 
 extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
@@ -65,7 +66,8 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
             if let playbackItem = manager.playbackItem {
                 Menu(
                     L10n.playbackQuality,
-                    systemImage: VideoPlayerActionButton.playbackQuality.systemImage
+                    systemImage: ""
+//                    systemImage: VideoPlayerActionButton.playbackQuality.systemImage
                 ) {
                     if isInMenu {
                         content(playbackItem: playbackItem)

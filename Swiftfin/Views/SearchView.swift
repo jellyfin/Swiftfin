@@ -94,16 +94,16 @@ struct SearchView: View {
     private func select(_ item: BaseItemDto, in namespace: Namespace.ID) {
         switch item.type {
         case .program:
-            let manager = MediaPlayerManager(item: item) { program in
-                guard let channel = try? await self.getChannel(for: program), let mediaSource = channel.mediaSources?.first else {
-                    viewModel.logger.error("Unable to get channel or media source for program")
+            let provider = MediaPlayerItemProvider(item: item) { program in
+                guard let channel = try? await self.getChannel(for: program),
+                      let mediaSource = channel.mediaSources?.first
+                else {
                     throw JellyfinAPIError(L10n.unknownError)
                 }
-
                 return try await MediaPlayerItem.build(for: program, mediaSource: mediaSource)
             }
 
-            router.route(to: .videoPlayer(manager: manager))
+            router.route(to: .videoPlayer(provider: provider))
 
         case .tvChannel:
             guard let mediaSource = item.mediaSources?.first else { return }

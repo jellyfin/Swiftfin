@@ -24,7 +24,7 @@ struct MediaChaptersSupplement: MediaPlayerSupplement {
     let displayTitle: String = L10n.chapters
 
     var id: String {
-        "ChaptersSupplement-\(chapters.hashValue)"
+        "Chapters-\(chapters.hashValue)"
     }
 
     var videoPlayerBody: some PlatformView {

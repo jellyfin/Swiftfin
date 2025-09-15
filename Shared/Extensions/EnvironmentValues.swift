@@ -23,77 +23,11 @@ extension EnvironmentValues {
     var isSelected: Bool = false
 
     @Entry
-    var panGestureAction: PanGestureAction? = nil
-
-    @Entry
-    var pinchGestureAction: PinchGestureAction? = nil
-
-    @Entry
     var playbackSpeed: Binding<Double> = .constant(1)
-
-    @Entry
-    var presentationControllerShouldDismiss: Binding<Bool> = .constant(true)
 
     @Entry
     var safeAreaInsets: EdgeInsets = UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero
 
     @Entry
     var subtitleOffset: Binding<Duration> = .constant(.zero)
-
-    @Entry
-    var tapGestureAction: TapGestureAction? = nil
-}
-
-struct PanGestureAction {
-
-    let action: (
-        _ point: CGPoint,
-        _ velocity: CGFloat,
-        _ location: CGPoint,
-        _ state: UIGestureRecognizer.State
-    ) -> Void
-
-    func callAsFunction(
-        point: CGPoint,
-        velocity: CGFloat,
-        location: CGPoint,
-        state: UIGestureRecognizer.State
-    ) {
-        action(point, velocity, location, state)
-    }
-}
-
-struct PinchGestureAction {
-
-    let action: (
-        _ scale: CGFloat,
-        _ velocity: CGFloat,
-        _ state: UIGestureRecognizer.State
-    ) -> Void
-
-    func callAsFunction(
-        scale: CGFloat,
-        velocity: CGFloat,
-        state: UIGestureRecognizer.State
-    ) {
-        action(scale, velocity, state)
-    }
-}
-
-struct SwipeGestureAction {
-
-    let action: (Direction) -> Void
-
-    func callAsFunction(_ direction: Direction) {
-        action(direction)
-    }
-}
-
-struct TapGestureAction {
-
-    let action: (_ point: UnitPoint, _ count: Int) -> Void
-
-    func callAsFunction(point: UnitPoint, count: Int) {
-        action(point, count)
-    }
 }

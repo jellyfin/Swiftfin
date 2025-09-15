@@ -16,7 +16,6 @@ protocol MediaPlayerSupplement: Displayable, Identifiable {
 
     associatedtype VideoPlayerBody: PlatformView
 
-    /// Note: - This value should differ based on content
     var id: String { get }
 
     @MainActor
@@ -24,7 +23,7 @@ protocol MediaPlayerSupplement: Displayable, Identifiable {
     var videoPlayerBody: Self.VideoPlayerBody { get }
 }
 
-struct AnyMediaPlayerSupplement: Displayable, Equatable, Identifiable {
+struct AnyMediaPlayerSupplement: MediaPlayerSupplement, Equatable {
 
     let supplement: any MediaPlayerSupplement
 
@@ -34,6 +33,11 @@ struct AnyMediaPlayerSupplement: Displayable, Equatable, Identifiable {
 
     var id: String {
         supplement.id
+    }
+
+    var videoPlayerBody: some PlatformView {
+        supplement.videoPlayerBody
+            .eraseToAnyView()
     }
 
     init(_ supplement: any MediaPlayerSupplement) {

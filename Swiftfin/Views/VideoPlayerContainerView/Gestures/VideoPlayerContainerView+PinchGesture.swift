@@ -6,21 +6,30 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
-extension UIVideoPlayerContainerViewController {
+extension VideoPlayer.UIVideoPlayerContainerViewController {
 
     func handlePinchGesture(
         scale: CGFloat,
         velocity: CGFloat,
         state: UIGestureRecognizer.State
     ) {
-        guard !containerState.isPresentingSupplement, state == .began || state == .changed else { return }
+        guard checkGestureLock() else { return }
+        guard !containerState.isPresentingSupplement, state != .ended else { return }
+        guard state != .ended else { return }
 
-        if scale > 1, !containerState.isAspectFilled {
-            containerState.isAspectFilled = true
-        } else if scale < 1, containerState.isAspectFilled {
-            containerState.isAspectFilled = false
+        let action = Defaults[.VideoPlayer.Gesture.pinchGesture]
+
+        switch action {
+        case .none: ()
+        case .aspectFill:
+            if scale > 1, !containerState.isAspectFilled {
+                containerState.isAspectFilled = true
+            } else if scale < 1, containerState.isAspectFilled {
+                containerState.isAspectFilled = false
+            }
         }
     }
 }

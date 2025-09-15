@@ -19,7 +19,7 @@ extension MediaPlayerItem {
     /// The main `MediaPlayerItem` builder for normal online usage.
     static func build(
         for initialItem: BaseItemDto,
-        mediaSource: MediaSourceInfo,
+        mediaSource initialMediaSource: MediaSourceInfo,
         videoPlayerType: VideoPlayerType = Defaults[.VideoPlayer.videoPlayerType],
         requestedBitrate: PlaybackBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate],
         compatibilityMode: PlaybackCompatibility = Defaults[.VideoPlayer.Playback.compatibilityMode]
@@ -41,31 +41,31 @@ extension MediaPlayerItem {
 
         let maxBitrate = try await requestedBitrate.getMaxBitrate()
 
-        let profile = DeviceProfile.build(
+        let deviceProfile = DeviceProfile.build(
             for: videoPlayerType,
             compatibilityMode: compatibilityMode,
             maxBitrate: maxBitrate
         )
 
-        let playbackInfo = PlaybackInfoDto(deviceProfile: profile)
-        let playbackInfoParameters = Paths.GetPostedPlaybackInfoParameters(
-            userID: userSession.user.id,
-            maxStreamingBitrate: maxBitrate
-        )
+        var playbackInfo = PlaybackInfoDto()
+        playbackInfo.isAutoOpenLiveStream = true
+        playbackInfo.deviceProfile = deviceProfile
+        playbackInfo.liveStreamID = initialMediaSource.liveStreamID
+        playbackInfo.maxStreamingBitrate = maxBitrate
+        playbackInfo.userID = userSession.user.id
 
         let request = Paths.getPostedPlaybackInfo(
             itemID: itemID,
-            parameters: playbackInfoParameters,
             playbackInfo
         )
 
         let response = try await userSession.client.send(request)
 
-        let matchingMediaSource: MediaSourceInfo? = {
+        let mediaSource: MediaSourceInfo? = {
 
             guard let mediaSources = response.value.mediaSources else { return nil }
 
-            if let matchingTag = mediaSources.first(where: { $0.eTag == mediaSource.eTag }) {
+            if let matchingTag = mediaSources.first(where: { $0.eTag == initialMediaSource.eTag }) {
                 return matchingTag
             }
 
@@ -83,7 +83,7 @@ extension MediaPlayerItem {
             return mediaSources.first
         }()
 
-        guard let matchingMediaSource else {
+        guard let mediaSource else {
             throw JellyfinAPIError("Unable to find media source for item")
         }
 
@@ -91,30 +91,12 @@ extension MediaPlayerItem {
             throw JellyfinAPIError("No associated play session ID")
         }
 
-        let playbackURL: URL
-
-        if let transcodingURL = matchingMediaSource.transcodingURL {
-            guard let fullTranscodeURL = userSession.client.fullURL(with: transcodingURL)
-            else { throw JellyfinAPIError("Unable to make transcode URL") }
-            playbackURL = fullTranscodeURL
-        } else {
-            let videoStreamParameters = Paths.GetVideoStreamParameters(
-                isStatic: true,
-                tag: item.etag,
-                playSessionID: playSessionID,
-                mediaSourceID: itemID
-            )
-
-            let videoStreamRequest = Paths.getVideoStream(
-                itemID: itemID,
-                parameters: videoStreamParameters
-            )
-
-            guard let streamURL = userSession.client.fullURL(with: videoStreamRequest)
-            else { throw JellyfinAPIError("Unable to make stream URL") }
-
-            playbackURL = streamURL
-        }
+        let playbackURL = try Self.streamURL(
+            item: item,
+            mediaSource: mediaSource,
+            playSessionID: playSessionID,
+            userSession: userSession
+        )
 
         func getNowPlayingImage() async -> UIImage? {
             let imageRequests = item.portraitImageSources(maxWidth: 100, quality: 90)
@@ -131,7 +113,7 @@ extension MediaPlayerItem {
             }()
 
             if case let PreviewImageScrubbingOption.trickplay(fallbackToChapters: fallbackToChapters) = previewImageScrubbingSetting {
-                if let mediaSourceID = mediaSource.id,
+                if let mediaSourceID = initialMediaSource.id,
                    let trickplayInfo = item.trickplay?[mediaSourceID]?.first
                 {
                     return TrickplayPreviewImageProvider(
@@ -154,12 +136,58 @@ extension MediaPlayerItem {
 
         return .init(
             baseItem: item,
-            mediaSource: matchingMediaSource,
+            mediaSource: mediaSource,
             playSessionID: playSessionID,
             url: playbackURL,
             requestedBitrate: requestedBitrate,
             previewImageProvider: previewImageProvider,
             thumbnailProvider: getNowPlayingImage
         )
+    }
+
+    // TODO: audio type stream
+    // TODO: build live tv stream from Paths.getLiveHlsStream?
+    private static func streamURL(
+        item: BaseItemDto,
+        mediaSource: MediaSourceInfo,
+        playSessionID: String,
+        userSession: UserSession
+    ) throws -> URL {
+
+        guard let itemID = item.id else {
+            throw JellyfinAPIError("No item ID while building online media player item!")
+        }
+
+        if let transcodingURL = mediaSource.transcodingURL {
+            guard let fullTranscodeURL = userSession.client.fullURL(with: transcodingURL)
+            else { throw JellyfinAPIError("Unable to make transcode URL") }
+            return fullTranscodeURL
+        }
+
+        if item.mediaType == .video, !item.isLiveStream {
+
+            let videoStreamParameters = Paths.GetVideoStreamParameters(
+                isStatic: true,
+                tag: item.etag,
+                playSessionID: playSessionID,
+                mediaSourceID: itemID
+            )
+
+            let videoStreamRequest = Paths.getVideoStream(
+                itemID: itemID,
+                parameters: videoStreamParameters
+            )
+
+            guard let videoStreamURL = userSession.client.fullURL(with: videoStreamRequest)
+            else { throw JellyfinAPIError("Unable to make video stream URL") }
+
+            return videoStreamURL
+        }
+
+        guard let path = mediaSource.path, let streamURL = URL(
+            string: path
+        ) else { throw JellyfinAPIError("Unable to make stream URL") }
+
+        return streamURL
     }
 }

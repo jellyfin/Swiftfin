@@ -12,10 +12,8 @@ import Factory
 import Logging
 import Nuke
 import PreferencesView
-import Pulse
 import PulseLogHandler
 import SwiftUI
-import Transmission
 
 @main
 struct SwiftfinApp: App {
@@ -82,10 +80,10 @@ struct SwiftfinApp: App {
                 }
             }
             .ignoresSafeArea()
-            .onNotification(.applicationDidEnterBackground) {
+            .onAppDidEnterBackground {
                 Defaults[.backgroundTimeStamp] = Date.now
             }
-            .onNotification(.applicationWillEnterForeground) {
+            .onAppWillEnterForeground {
 
                 // TODO: needs to check if any background playback is happening
                 //       - atow, background video playback isn't officially supported

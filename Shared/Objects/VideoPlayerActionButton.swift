@@ -6,6 +6,8 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+// TODO: add audio/subtitle offset
+
 enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Identifiable, Storable, SystemImageable {
 
     case aspectFill
@@ -13,7 +15,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     case autoPlay
     case gestureLock
     case playbackSpeed
-    case playbackQuality
+//    case playbackQuality
     case playNextItem
     case playPreviousItem
     case subtitles
@@ -30,8 +32,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
             return L10n.gestureLock
         case .playbackSpeed:
             return L10n.playbackSpeed
-        case .playbackQuality:
-            return L10n.playbackQuality
+//        case .playbackQuality:
+//            return L10n.playbackQuality
         case .playNextItem:
             return L10n.playNextItem
         case .playPreviousItem:
@@ -52,7 +54,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .autoPlay: "play.circle.fill"
         case .gestureLock: "lock.circle"
         case .playbackSpeed: "speedometer"
-        case .playbackQuality: "tv.circle.fill"
+//        case .playbackQuality: "tv.circle.fill"
         case .playNextItem: "chevron.right.circle"
         case .playPreviousItem: "chevron.left.circle"
         case .subtitles: "captions.bubble"

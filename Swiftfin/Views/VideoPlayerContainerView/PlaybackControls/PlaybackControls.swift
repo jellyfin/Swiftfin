@@ -9,8 +9,6 @@
 import Defaults
 import SwiftUI
 
-// TODO: error state
-
 extension VideoPlayer {
 
     struct PlaybackControls: View {
@@ -61,15 +59,6 @@ extension VideoPlayer {
                     Spacer()
                         .allowsHitTesting(false)
 
-                    // TODO: finalize design/placement
-//                    if activeIsBuffering, containerState.isPresentingPlaybackControls {
-//                        ProgressView()
-//                            .frame(maxWidth: .infinity, alignment: .leading)
-//                            .frame(height: 30)
-//                            .padding(.leading, safeAreaInsets.leading)
-//                            .transition(.opacity.animation(.linear(duration: 0.1)))
-//                    }
-
                     PlaybackProgress()
                         .isVisible(isPresentingOverlay && !isPresentingSupplement)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -103,6 +92,7 @@ extension VideoPlayer {
             .onChange(of: manager.proxy?.isBuffering.value) { newValue in
                 activeIsBuffering = newValue ?? false
             }
+            .disabled(manager.error != nil)
         }
     }
 }

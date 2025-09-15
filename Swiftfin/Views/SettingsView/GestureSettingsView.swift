@@ -38,11 +38,13 @@ struct GestureSettingsView: View {
 
             Section {
 
+                // TODO: make toggle sections
+
                 CaseIterablePicker(L10n.horizontalPan, selection: $horizontalPanAction)
-//                    .disabled(horizontalSwipeAction != .none && horizontalPanAction == .none)
+                    .disabled(horizontalSwipeAction != .none)
 
                 CaseIterablePicker(L10n.horizontalSwipe, selection: $horizontalSwipeAction)
-//                    .disabled($horizontalPanAction != .none && horizontalSwipeAction == .none)
+                    .disabled(horizontalPanAction != .none)
 
                 CaseIterablePicker(L10n.longPress, selection: $longPressGesture)
 

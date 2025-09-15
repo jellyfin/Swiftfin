@@ -17,7 +17,7 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
     let item: BaseItemDto
 
     var id: String {
-        "MediaInfoSupplement-\(item.id ?? "any")"
+        "MediaInfo-\(item.id ?? "any")"
     }
 
     var videoPlayerBody: some PlatformView {
@@ -135,9 +135,10 @@ extension MediaInfoSupplement {
         @ViewBuilder
         private var iOSRegularView: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
-                AlternateLayoutView {
-                    Color.clear
-                } content: {
+                ZStack {
+                    Rectangle()
+                        .fill(Material.ultraThinMaterial)
+
                     ImageView(item.portraitImageSources(maxWidth: 60))
                         .failure {
                             SystemImageContentView(systemName: item.systemImage)

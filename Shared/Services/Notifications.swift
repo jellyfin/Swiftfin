@@ -79,9 +79,16 @@ enum Notifications {
         var publisher: AnyPublisher<Payload, Never> {
             notificationCenter
                 .publisher(for: name)
-                .compactMap { _ in
-                    nil
-//                    Payload.decode(from: notification.userInfo ?? [:])
+                .compactMap { output in
+                    if Payload.self == Void.self {
+                        return () as? Payload
+                    }
+
+                    guard let userInfo = output.userInfo else {
+                        return nil
+                    }
+
+                    return self.decodeStrategy(userInfo)
                 }
                 .eraseToAnyPublisher()
         }
@@ -94,8 +101,6 @@ enum Notifications {
             notificationCenter.addObserver(object, selector: selector, name: name, object: observed)
         }
     }
-
-//    class SimpleKey<Value>: Key<SimplePayload<Value>> {}
 
     static subscript<Payload>(key: Key<Payload>) -> Key<Payload> {
         key
@@ -208,6 +213,14 @@ extension Notifications.Key {
 
     static var applicationWillTerminate: Key<Void> {
         Key(UIApplication.willTerminateNotification)
+    }
+
+    static var sceneDidEnterBackground: Key<Void> {
+        Key(UIScene.didEnterBackgroundNotification)
+    }
+
+    static var sceneWillEnterForeground: Key<Void> {
+        Key(UIScene.willEnterForegroundNotification)
     }
 
     static var avAudioSessionInterruption: Key<(AVAudioSession.InterruptionType, AVAudioSession.InterruptionOptions)> {
