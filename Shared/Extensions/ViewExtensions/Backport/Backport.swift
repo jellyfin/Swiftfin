@@ -38,7 +38,7 @@ extension Backport where Content: View {
         }
     }
 
-    @ViewBuilder
+    @MainActor @ViewBuilder
     func scrollClipDisabled(_ disabled: Bool = true) -> some View {
         if #available(iOS 17, *) {
             content.scrollClipDisabled(disabled)
