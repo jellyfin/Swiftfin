@@ -111,6 +111,11 @@ extension CenteredLazyVGrid {
         let minimum: CGFloat
         let spacing: CGFloat
 
+        private var enumeratedId: KeyPath<EnumeratedSequence<Data>.Element, ID> {
+            let element = \EnumeratedSequence<Data>.Element.element
+            return element.appending(path: id)
+        }
+
         private var columnCount: Int? {
             let elementSizeAndWidth = elementSize.width + spacing
             guard elementSizeAndWidth > 0 else { return nil }
@@ -142,7 +147,7 @@ extension CenteredLazyVGrid {
             )]
 
             LazyVGrid(columns: columns, spacing: spacing) {
-                ForEach(Array(data.enumerated()), id: \.offset) { offset, element in
+                ForEach(Array(data.enumerated()), id: enumeratedId) { offset, element in
                     content(element)
                         .trackingSize($elementSize)
                         .offset(x: elementXOffset(for: offset))
@@ -165,6 +170,11 @@ extension CenteredLazyVGrid {
         let data: Data
         let id: KeyPath<Data.Element, ID>
         let spacing: CGFloat
+
+        private var enumeratedId: KeyPath<EnumeratedSequence<Data>.Element, ID> {
+            let element = \EnumeratedSequence<Data>.Element.element
+            return element.appending(path: id)
+        }
 
         /// Calculates the x offset for elements in
         /// the last row of the grid to be centered.
@@ -193,7 +203,7 @@ extension CenteredLazyVGrid {
             )
 
             LazyVGrid(columns: columns, spacing: spacing) {
-                ForEach(Array(data.enumerated()), id: \.offset) { offset, element in
+                ForEach(Array(data.enumerated()), id: enumeratedId) { offset, element in
                     content(element)
                         .trackingSize($elementSize)
                         .offset(x: elementXOffset(for: offset))
