@@ -182,8 +182,7 @@ extension VLCMediaPlayerProxy {
                             manager.send(.ended)
                         case .error:
                             manager.proxy?.isBuffering.value = false
-                            // TODO: localize
-                            manager.send(.error(.init("Unable to perform playback")))
+                            manager.send(.error(.init("VLC player is unable to perform playback")))
                         case .playing:
                             manager.proxy?.isBuffering.value = false
                             manager.set(playbackRequestStatus: .playing)

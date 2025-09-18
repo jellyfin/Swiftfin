@@ -17,6 +17,8 @@ import SwiftUI
 // TODO: fix swapping between chapters on selection
 //       - little flicker at seconds boundary
 // TODO: sometimes safe area for CollectionHStack doesn't trigger
+// TODO: fix chapter image aspect fit
+//       - still be in a 1.77 box
 
 struct MediaChaptersSupplement: MediaPlayerSupplement {
 

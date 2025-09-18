@@ -310,7 +310,6 @@ extension EpisodeMediaPlayerQueue {
             }
 
             var body: some View {
-                // TODO: make experimental
                 VStack {
                     Menu {
                         ForEach(seriesViewModel.seasons, id: \.season.id) { season in

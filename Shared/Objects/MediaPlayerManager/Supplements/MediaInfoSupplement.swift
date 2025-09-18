@@ -135,6 +135,8 @@ extension MediaInfoSupplement {
         @ViewBuilder
         private var iOSRegularView: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
+                // TODO: determine what to do with non-portrait (channel) images
+                //       - use aspect ratio?
                 ZStack {
                     Rectangle()
                         .fill(Material.ultraThinMaterial)

@@ -6,8 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-// TODO: remove audio/subtitle offset, playbackSpeed
-//       - replaced with guest supplements
 enum PanGestureAction: String, GestureAction {
 
     case none

@@ -14,9 +14,6 @@ import JellyfinAPI
 import VLCUI
 
 // TODO: proper error catching
-// TODO: set playback rate
-//       - what if proxy couldn't set rate?
-// TODO: make a container service, injected into players
 
 typealias MediaPlayerManagerPublisher = EventPublisher<MediaPlayerManager?>
 
@@ -245,7 +242,7 @@ final class MediaPlayerManager: ViewModel, Stateful {
             return respond(to: .stop)
         case .stop:
             // TODO: remove playback item?
-            //       - check that observers would respond well
+            //       - check that observers would respond correctly to stopping
             proxy?.stop()
             Container.shared.mediaPlayerManager.reset()
             return .stopped
