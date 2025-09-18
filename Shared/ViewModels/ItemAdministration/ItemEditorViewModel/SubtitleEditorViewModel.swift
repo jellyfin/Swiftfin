@@ -344,7 +344,7 @@ final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
             self.externalSubtitles = subtitles[true] ?? []
 
             _ = backgroundStates.remove(.updating)
-            Notifications[.itemMetadataDidChange].post(item)
+            Notifications[.didItemMetadataChange].post(item)
         }
     }
 }

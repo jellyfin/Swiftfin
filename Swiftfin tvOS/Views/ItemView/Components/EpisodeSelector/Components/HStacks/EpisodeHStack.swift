@@ -44,11 +44,10 @@ extension SeriesEpisodeSelector {
             ) { episode in
                 SeriesEpisodeSelector.EpisodeCard(episode: episode)
                     .focused($focusedEpisodeID, equals: episode.id)
-                    .padding(.horizontal, 4)
             }
             .scrollBehavior(.continuousLeadingEdge)
             .insets(horizontal: EdgeInsets.edgePadding)
-            .itemSpacing(EdgeInsets.edgePadding / 2)
+            .itemSpacing(EdgeInsets.edgePadding)
             .proxy(proxy)
             .onFirstAppear {
                 guard !didScrollToPlayButtonItem else { return }
@@ -56,7 +55,9 @@ extension SeriesEpisodeSelector {
 
                 lastFocusedEpisodeID = playButtonItem?.id
 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                /// 250ms because, on view entry, the cursor will first focus something THEN we can move it.
+                /// Otherwise, we move the focus and the the first focus will occur
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
                     guard let playButtonItem else { return }
                     proxy.scrollTo(id: playButtonItem.unwrappedIDHashOrZero, animated: false)
                 }
