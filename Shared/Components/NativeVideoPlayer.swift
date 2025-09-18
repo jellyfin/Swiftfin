@@ -49,7 +49,8 @@ struct NativeVideoPlayer: View {
             manager.send(.start)
         }
         .preference(key: IsStatusBarHiddenKey.self, value: true)
-        .onChange(of: presentationCoordinator.isPresented) { isPresented in
+        .backport
+        .onChange(of: presentationCoordinator.isPresented) { _, isPresented in
             Container.shared.mediaPlayerManager.reset()
             guard !isPresented else { return }
             manager.send(.stop)

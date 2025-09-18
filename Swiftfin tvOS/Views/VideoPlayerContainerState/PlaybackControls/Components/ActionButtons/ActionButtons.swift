@@ -14,14 +14,50 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
     struct ActionButtons: View {
 
         @Default(.VideoPlayer.barActionButtons)
-        private var barActionButtons
+        private var rawBarActionButtons
         @Default(.VideoPlayer.menuActionButtons)
-        private var menuActionButtons
+        private var rawMenuActionButtons
 
         @EnvironmentObject
-        private var manager: MediaPlayerManager
+        private var containerState: VideoPlayerContainerState
         @EnvironmentObject
-        private var overlayTimer: PokeIntervalTimer
+        private var manager: MediaPlayerManager
+
+        private func filteredActionButtons(_ rawButtons: [VideoPlayerActionButton]) -> [VideoPlayerActionButton] {
+            var filteredButtons = rawButtons
+
+            if manager.playbackItem?.audioStreams.isEmpty == true {
+                filteredButtons.removeAll { $0 == .audio }
+            }
+
+            if manager.playbackItem?.subtitleStreams.isEmpty == true {
+                filteredButtons.removeAll { $0 == .subtitles }
+            }
+
+            if manager.queue == nil {
+                filteredButtons.removeAll { $0 == .autoPlay }
+                filteredButtons.removeAll { $0 == .playNextItem }
+                filteredButtons.removeAll { $0 == .playPreviousItem }
+            }
+
+            if manager.item.isLiveStream {
+                filteredButtons.removeAll { $0 == .audio }
+                filteredButtons.removeAll { $0 == .autoPlay }
+                filteredButtons.removeAll { $0 == .playbackSpeed }
+//                filteredButtons.removeAll { $0 == .playbackQuality }
+                filteredButtons.removeAll { $0 == .subtitles }
+            }
+
+            return filteredButtons
+        }
+
+        private var barActionButtons: [VideoPlayerActionButton] {
+            filteredActionButtons(rawBarActionButtons)
+        }
+
+        private var menuActionButtons: [VideoPlayerActionButton] {
+            filteredActionButtons(rawMenuActionButtons)
+        }
 
         @ViewBuilder
         private func view(for button: VideoPlayerActionButton) -> some View {
@@ -29,30 +65,23 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
             case .aspectFill:
                 AspectFill()
             case .audio:
-                if manager.playbackItem?.audioStreams.isNotEmpty == true {
-                    Audio()
-                }
+                Audio()
             case .autoPlay:
-                if manager.queue != nil {
-                    AutoPlay()
-                }
-            case .playbackQuality: EmptyView()
-            case .playbackSpeed: EmptyView()
-//                if !manager.item.isLiveStream {
-//                    PlaybackRateMenu()
-//                }
+                AutoPlay()
+            case .gestureLock:
+                EmptyView()
+//                GestureLock()
+            case .playbackSpeed:
+                EmptyView()
+//                PlaybackRateMenu()
+//            case .playbackQuality:
+//                PlaybackQuality()
             case .playNextItem:
-                if manager.queue != nil {
-                    PlayNextItem()
-                }
+                PlayNextItem()
             case .playPreviousItem:
-                if manager.queue != nil {
-                    PlayPreviousItem()
-                }
+                PlayPreviousItem()
             case .subtitles:
-                if manager.playbackItem?.subtitleStreams.isNotEmpty == true {
-                    Subtitles()
-                }
+                Subtitles()
             }
         }
 
@@ -71,17 +100,22 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
         var body: some View {
             HStack(spacing: 10) {
                 ForEach(
-                    VideoPlayerActionButton.allCases,
+                    barActionButtons,
                     content: view(for:)
                 )
 
-//                ForEach(barActionButtons) { actionButton in
-//                    view(for: actionButton)
-//                }
-//
-//                if menuActionButtons.isNotEmpty {
-//                    menuButtons
-//                }
+                if menuActionButtons.isNotEmpty {
+                    Menu(
+                        L10n.menu,
+                        systemImage: "ellipsis.circle"
+                    ) {
+                        ForEach(
+                            menuActionButtons,
+                            content: view(for:)
+                        )
+                        .environment(\.isInMenu, true)
+                    }
+                }
             }
             .menuStyle(.button)
             .labelStyle(.iconOnly)

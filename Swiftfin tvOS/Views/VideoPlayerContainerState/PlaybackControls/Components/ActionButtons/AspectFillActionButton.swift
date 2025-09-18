@@ -12,9 +12,13 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
     struct AspectFill: View {
 
-        @Environment(\.isAspectFilled)
-        @Binding
-        private var isAspectFilled: Bool
+        @EnvironmentObject
+        private var containerState: VideoPlayerContainerState
+
+        private var isAspectFilled: Bool {
+            get { containerState.isAspectFilled }
+            nonmutating set { containerState.isAspectFilled = newValue }
+        }
 
         private var systemImage: String {
             if isAspectFilled {

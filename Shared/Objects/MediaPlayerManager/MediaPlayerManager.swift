@@ -207,6 +207,15 @@ final class MediaPlayerManager: ViewModel, Stateful {
                         "url": .stringConvertible(playbackItem.url.absoluteString),
                     ]
                 )
+            } else {
+                logger.error(
+                    "Error with no playback item",
+                    metadata: [
+                        "error": .stringConvertible(error.localizedDescription),
+                        "itemID": .stringConvertible(item.id ?? "Unknown"),
+                        "itemTitle": .stringConvertible(item.displayTitle),
+                    ]
+                )
             }
 
             proxy?.stop()

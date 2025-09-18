@@ -79,7 +79,7 @@ extension VideoPlayer.PlaybackControls {
             let resolution: Double = 100
 
             CapsuleSlider(
-                value: $containerState.scrubbedSeconds.value.map(
+                value: $scrubbedSecondsBox.value.map(
                     getter: {
                         guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
                         return clamp(($0.seconds / runtime.seconds) * resolution, min: 0, max: resolution)

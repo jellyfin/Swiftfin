@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionVGrid
 import IdentifiedCollections
 import SwiftUI
 

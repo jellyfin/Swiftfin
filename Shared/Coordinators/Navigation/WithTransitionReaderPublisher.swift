@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+#if os(iOS)
 import SwiftUI
 import Transmission
 
@@ -52,3 +53,4 @@ extension EnvironmentValues {
     @Entry
     var transitionReader: EventPublisher<TransitionReaderProxy?> = .init()
 }
+#endif

@@ -78,28 +78,4 @@ extension View {
             cell.layer.cornerRadius = radius
         }
     }
-
-    func onAppDidEnterBackground(_ action: @escaping () -> Void) -> some View {
-        onNotification(.applicationDidEnterBackground, perform: action)
-    }
-
-    func onAppWillResignActive(_ action: @escaping () -> Void) -> some View {
-        onNotification(.applicationWillResignActive, perform: action)
-    }
-
-    func onAppWillEnterForeground(_ action: @escaping () -> Void) -> some View {
-        onNotification(.applicationWillEnterForeground, perform: action)
-    }
-
-    func onAppWillTerminate(_ action: @escaping () -> Void) -> some View {
-        onNotification(.applicationWillTerminate, perform: action)
-    }
-
-    func onSceneDidEnterBackground(_ action: @escaping () -> Void) -> some View {
-        onNotification(.sceneDidEnterBackground, perform: action)
-    }
-
-    func onSceneWillEnterForeground(_ action: @escaping () -> Void) -> some View {
-        onNotification(.sceneWillEnterForeground, perform: action)
-    }
 }

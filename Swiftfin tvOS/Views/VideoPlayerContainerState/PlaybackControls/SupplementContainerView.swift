@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import IdentifiedCollections
 import SwiftUI
 
 struct SupplementContainerView: View {
@@ -19,53 +20,71 @@ struct SupplementContainerView: View {
     private var manager: MediaPlayerManager
 
     @FocusState
+    private var focusedSupplementID: AnyMediaPlayerSupplement.ID?
+    @FocusState
     private var isFocused: Bool
     @FocusState
     private var isTopBoundaryFocused: Bool
 
-    @FocusState
-    private var focusedSupplement: AnyMediaPlayerSupplement?
+    @State
+    private var currentSupplements: IdentifiedArrayOf<AnyMediaPlayerSupplement> = []
+
+    @ViewBuilder
+    private func supplementContainer(for supplement: some MediaPlayerSupplement) -> some View {
+        AlternateLayoutView(alignment: .topLeading) {
+            Color.clear
+        } content: {
+            supplement.videoPlayerBody
+        }
+    }
 
     var body: some View {
         VStack(spacing: EdgeInsets.edgePadding) {
 
             HStack(spacing: 10) {
-                ForEach(manager.supplements.map(\.asAny)) { supplement in
-                    Button(supplement.displayTitle) {}
-                        .buttonStyle(SupplementTitleButtonStyle())
-                        .focused($focusedSupplement, equals: supplement)
+                if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
+                    Button(supplement.displayTitle) {
+                        containerState.select(supplement: nil)
+                    }
+                    .focused($focusedSupplementID, equals: supplement.id)
+                } else {
+                    ForEach(currentSupplements) { supplement in
+                        Button(supplement.displayTitle) {}
+                            .focused($focusedSupplementID, equals: supplement.id)
+                    }
                 }
             }
+            .buttonStyle(SupplementTitleButtonStyle())
             .padding(.leading, EdgeInsets.edgePadding)
             .frame(maxWidth: .infinity, alignment: .leading)
             .frame(height: 75)
             .focusGuide(focusGuide, tag: "supplementTitles", top: "playbackControls")
 
-            AlternateLayoutView(alignment: .topLeading) {
-                Color.clear
-            } content: {
-                if let focusedSupplement {
-                    focusedSupplement.videoPlayerBody
-                        .transition(.opacity.animation(.linear(duration: 0.4)))
-                        .padding(.bottom, EdgeInsets.edgePadding)
-                        .id(focusedSupplement.id)
+            ZStack {
+                if let supplement = containerState.selectedSupplement {
+                    supplementContainer(for: supplement)
+                        .eraseToAnyView()
                 }
             }
         }
-//        .isVisible(containerState.isPresentingOverlay)
+        .isVisible(containerState.isPresentingOverlay)
         .animation(.linear(duration: 0.2), value: containerState.isPresentingOverlay)
         .background(Color.blue.opacity(0.2))
-        .onReceive(containerState.$selectedSupplement) { output in
-            if output?.id != focusedSupplement?.id {
-                focusedSupplement = output
-            }
-        }
         .focusSection()
         .focused($isFocused)
-        .onChange(of: focusedSupplement) {
-            if focusedSupplement?.id != containerState.selectedSupplement?.id {
-                containerState.selectedSupplement = focusedSupplement
+        .onReceive(manager.$supplements) { newValue in
+            let newSupplements = IdentifiedArray(
+                uniqueElements: newValue.map(AnyMediaPlayerSupplement.init)
+            )
+            currentSupplements = newSupplements
+        }
+        .onReceive(containerState.$selectedSupplement) { output in
+            if focusedSupplementID != output?.id {
+                focusedSupplementID = output?.id
             }
+        }
+        .onChange(of: focusedSupplementID) { _, _ in
+            if focusedSupplementID != containerState.selectedSupplement?.id {}
         }
         .onChange(of: isTopBoundaryFocused) { _, _ in
             containerState.selectedSupplement = nil

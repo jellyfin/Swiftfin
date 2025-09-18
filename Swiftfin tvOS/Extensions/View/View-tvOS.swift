@@ -28,4 +28,20 @@ extension View {
     func statusBarHidden() -> some View {
         self
     }
+
+    /// - Important: This does nothing on tvOS.
+    @ViewBuilder
+    func prefersStatusBarHidden(_ hidden: Bool) -> some View {
+        self
+    }
+}
+
+extension EnvironmentValues {
+
+    @Entry
+    var presentationCoordinator: PresentationCoordinator = .init()
+}
+
+struct PresentationCoordinator {
+    var isPresented: Bool = false
 }

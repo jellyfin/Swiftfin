@@ -130,6 +130,7 @@ class VideoPlayerContainerState: ObservableObject {
     weak var containerView: VideoPlayer.UIVideoPlayerContainerViewController?
     weak var manager: MediaPlayerManager?
 
+    #if os(iOS)
     var panHandlingAction: (any _PanHandlingAction)?
     var didSwipe: Bool = false
     var lastTapLocation: CGPoint? {
@@ -137,6 +138,7 @@ class VideoPlayerContainerState: ObservableObject {
             print("Last tap location set to: \(String(describing: lastTapLocation))")
         }
     }
+    #endif
 
     private var jumpProgressCancellable: AnyCancellable?
     private var timerCancellable: AnyCancellable?
@@ -151,11 +153,13 @@ class VideoPlayerContainerState: ObservableObject {
             }
         }
 
+        #if os(iOS)
         jumpProgressCancellable = jumpProgressObserver
             .timer
             .sink { [weak self] in
                 self?.lastTapLocation = nil
             }
+        #endif
     }
 
     func select(supplement: (any MediaPlayerSupplement)?, isGuest: Bool = false) {
