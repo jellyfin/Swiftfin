@@ -40,6 +40,10 @@ extension ItemView {
                let randomItem = typeViewModel.randomItem()
             {
                 item = randomItem
+            } else if let playlistItemViewModel = viewModel as? PlaylistItemViewModel,
+                      let randomPlaylistItem = playlistItemViewModel.contents.elements.randomElement()
+            {
+                item = randomPlaylistItem
             } else {
                 item = viewModel.item
             }
@@ -170,9 +174,19 @@ extension ItemView.iPadOSCinematicScrollView {
                                     SystemImageContentView(systemName: viewModel.item.systemImage)
                                 }
                                 .posterStyle(.portrait, contentMode: .fit)
-                                .frame(width: 200)
+                                .frame(width: 250)
                                 .accessibilityIgnoresInvertColors()
-                        } else if viewModel.item.presentPlayButton {
+                        } else if let playlistViewModel = viewModel as? PlaylistItemViewModel {
+                            ImageView(playlistViewModel.item.imageSource(.primary, maxWidth: 250))
+                                .failure {
+                                    EmptyView()
+                                }
+                                .posterStyle(.portrait, contentMode: .fit)
+                                .frame(width: 250)
+                                .accessibilityIgnoresInvertColors()
+                        }
+
+                        if viewModel.item.presentPlayButton {
                             ItemView.PlayButton(viewModel: viewModel)
                                 .frame(height: 50)
                         }

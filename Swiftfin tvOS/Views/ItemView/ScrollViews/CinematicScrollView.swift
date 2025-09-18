@@ -39,6 +39,10 @@ extension ItemView {
                let randomItem = typeViewModel.randomItem()
             {
                 item = randomItem
+            } else if let playlistItemViewModel = viewModel as? PlaylistItemViewModel,
+                      let randomPlaylistItem = playlistItemViewModel.contents.elements.randomElement()
+            {
+                item = randomPlaylistItem
             } else {
                 item = viewModel.item
             }
