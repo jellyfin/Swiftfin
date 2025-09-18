@@ -36,6 +36,7 @@ extension VideoPlayer.Overlay {
                     }
                     .contentShape(Rectangle())
                     .buttonStyle(ScalingButtonStyle(scale: 0.8))
+                    .accessibilityIdentifier("OverlayExitButton")
 
                     Text(viewModel.item.displayTitle)
                         .font(.title3)

@@ -98,6 +98,7 @@ extension SelectUserView {
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             }
             .buttonStyle(.plain)
+            .accessibilityIdentifier("SelectServerMenu")
         }
     }
 }
