@@ -59,7 +59,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
                     }
                 }
                 .videoPlayerActionButtonTransition()
-                .assign(playbackItem.$selectedSubtitleStreamIndex, to: $selectedAudioStreamIndex)
+                .assign(playbackItem.$selectedAudioStreamIndex, to: $selectedAudioStreamIndex)
             }
         }
     }
