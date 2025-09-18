@@ -17,9 +17,9 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     MediaPlayerSubtitleConfigurable
 {
 
-    let vlcUIProxy: VLCVideoPlayer.Proxy = .init()
     let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
     let videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
+    let vlcUIProxy: VLCVideoPlayer.Proxy = .init()
 
     weak var manager: MediaPlayerManager? {
         didSet {
@@ -103,6 +103,13 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
 extension VLCMediaPlayerProxy {
 
     struct VLCPlayerView: View {
+
+        @Default(.VideoPlayer.Subtitle.subtitleColor)
+        private var subtitleColor
+        @Default(.VideoPlayer.Subtitle.subtitleFontName)
+        private var subtitleFontName
+        @Default(.VideoPlayer.Subtitle.subtitleSize)
+        private var subtitleSize
 
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
@@ -192,8 +199,27 @@ extension VLCMediaPlayerProxy {
                         guard let playbackItem else { return }
                         proxy.playNewMedia(vlcConfiguration(for: playbackItem))
                     }
-                    .onChange(of: manager.rate) { newValue in
+                    .backport
+                    .onChange(of: manager.rate) { _, newValue in
                         proxy.setRate(.absolute(newValue))
+                    }
+                    .backport
+                    .onChange(of: subtitleColor) { _, newValue in
+                        if let proxy = proxy as? MediaPlayerSubtitleConfigurable {
+                            proxy.setSubtitleColor(newValue)
+                        }
+                    }
+                    .backport
+                    .onChange(of: subtitleFontName) { _, newValue in
+                        if let proxy = proxy as? MediaPlayerSubtitleConfigurable {
+                            proxy.setSubtitleFontName(newValue)
+                        }
+                    }
+                    .backport
+                    .onChange(of: subtitleSize) { _, newValue in
+                        if let proxy = proxy as? MediaPlayerSubtitleConfigurable {
+                            proxy.setSubtitleFontSize(newValue)
+                        }
                     }
             }
         }

@@ -10,7 +10,7 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-// TODO: behavioral implementations
+// TODO: feature implementations
 //       - PiP
 // TODO: Chromecast proxy
 
@@ -36,7 +36,7 @@ protocol VideoMediaPlayerProxy: MediaPlayerProxy {
 
     var videoSize: PublishedBox<CGSize> { get }
 
-    // TODO: remove since container view should handle aspect fill
+    // TODO: remove when container view handles aspect fill
     func setAspectFill(_ aspectFill: Bool)
     func setAudioStream(_ stream: MediaStream)
     func setSubtitleStream(_ stream: MediaStream)

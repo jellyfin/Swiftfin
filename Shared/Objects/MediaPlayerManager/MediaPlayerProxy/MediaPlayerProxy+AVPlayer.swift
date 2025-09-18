@@ -16,7 +16,6 @@ import SwiftUI
 //       observers to AVPlayerView, like the VLC delegate
 //       - wouldn't need to have MediaPlayerProxy: MediaPlayerObserver
 // TODO: report playback information, see VLCUI.PlaybackInformation (dropped frames, etc.)
-// TODO: manager able to replace MediaPlayerItem in-place for changing audio/subtitle tracks
 // TODO: report buffering state
 
 class AVMediaPlayerProxy: VideoMediaPlayerProxy {
@@ -64,8 +63,6 @@ class AVMediaPlayerProxy: VideoMediaPlayerProxy {
         self.player = AVPlayer()
         self.avPlayerLayer = AVPlayerLayer(player: player)
 
-        print("AVPlayerMediaPlayerProxy initialized")
-
         timeObserver = player.addPeriodicTimeObserver(
             forInterval: CMTime(seconds: 1, preferredTimescale: 1000),
             queue: .main
@@ -82,10 +79,6 @@ class AVMediaPlayerProxy: VideoMediaPlayerProxy {
         if let playbackItem = manager?.playbackItem {
             playNew(playbackItem: playbackItem)
         }
-    }
-
-    deinit {
-        print("AVPlayerMediaPlayerProxy deinitialized")
     }
 
     func play() {
@@ -117,8 +110,8 @@ class AVMediaPlayerProxy: VideoMediaPlayerProxy {
         player.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
     }
 
+    // TODO: complete
     func setRate(_ rate: Float) {}
-
     func setAudioStream(_ stream: MediaStream) {}
     func setSubtitleStream(_ stream: MediaStream) {}
 
@@ -167,7 +160,6 @@ extension AVMediaPlayerProxy {
             case .readyToPlay:
                 self.player.play()
             case .none, .unknown:
-                print("here")
                 self.player.play()
             @unknown default: ()
             }

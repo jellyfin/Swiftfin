@@ -82,6 +82,16 @@ class ItemViewModel: ViewModel, Stateful {
     @Published
     var state: State = .initial
 
+    private var itemID: String {
+        get throws {
+            guard let id = item.id else {
+                logger.error("Item ID is nil")
+                throw JellyfinAPIError(L10n.unknownError)
+            }
+            return id
+        }
+    }
+
     // tasks
 
     private var toggleIsFavoriteTask: AnyCancellable?
@@ -295,18 +305,7 @@ class ItemViewModel: ViewModel, Stateful {
     }
 
     private func getFullItem() async throws -> BaseItemDto {
-
-        var parameters = Paths.GetItemsByUserIDParameters()
-        parameters.enableUserData = true
-        parameters.fields = ItemFields.allCases
-        parameters.ids = [item.id!]
-
-        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
-        let response = try await userSession.client.send(request)
-
-        guard let fullItem = response.value.items?.first else { throw JellyfinAPIError("Full item not in response") }
-
-        return fullItem
+        try await item.getFullItem(userSession: userSession)
     }
 
     private func getSimilarItems() async -> [BaseItemDto] {
@@ -340,9 +339,7 @@ class ItemViewModel: ViewModel, Stateful {
 
     private func getLocalTrailers() async throws -> [BaseItemDto] {
 
-        guard let itemID = item.id else { return [] }
-
-        let request = Paths.getLocalTrailers(itemID: itemID, userID: userSession.user.id)
+        let request = try Paths.getLocalTrailers(itemID: itemID, userID: userSession.user.id)
         let response = try? await userSession.client.send(request)
 
         return response?.value ?? []

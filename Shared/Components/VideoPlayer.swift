@@ -6,21 +6,10 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import Factory
-import JellyfinAPI
 import SwiftUI
 
-// TODO: video player stop on presentation dismissal
-
 struct VideoPlayer: View {
-
-    @Default(.VideoPlayer.Subtitle.subtitleColor)
-    private var subtitleColor
-    @Default(.VideoPlayer.Subtitle.subtitleFontName)
-    private var subtitleFontName
-    @Default(.VideoPlayer.Subtitle.subtitleSize)
-    private var subtitleSize
 
     @Environment(\.presentationControllerShouldDismiss)
     private var presentationControllerShouldDismiss
@@ -39,20 +28,16 @@ struct VideoPlayer: View {
     @State
     private var audioOffset: Duration = .zero
     @State
-    private var isGestureLocked: Bool = false
+    private var isBeingDismissedByTransition = false
+
+    // TODO: move behavior to `PlaybackProgress`
     @State
     private var scrubbingStartDate: Date? = nil
     @State
     private var subtitleOffset: Duration = .zero
 
-    @State
-    private var isBeingDismissedByTransition = false
-
     @StateObject
     private var containerState: VideoPlayerContainerState = .init()
-
-    @TransitionReaderObserver
-    private var transitionReaderObserver
 
     init() {
         self._proxy = .init(wrappedValue: VLCMediaPlayerProxy())
@@ -112,27 +97,9 @@ struct VideoPlayer: View {
                 proxy.setSeconds(scrubbedSeconds)
             }
             .backport
-            .onChange(of: subtitleColor) { _, newValue in
-                if let proxy = proxy as? MediaPlayerSubtitleConfigurable {
-                    proxy.setSubtitleColor(newValue)
-                }
-            }
-            .backport
-            .onChange(of: subtitleFontName) { _, newValue in
-                if let proxy = proxy as? MediaPlayerSubtitleConfigurable {
-                    proxy.setSubtitleFontName(newValue)
-                }
-            }
-            .backport
             .onChange(of: subtitleOffset) { _, newValue in
                 if let proxy = proxy as? MediaPlayerOffsetConfigurable {
                     proxy.setSubtitleOffset(newValue)
-                }
-            }
-            .backport
-            .onChange(of: subtitleSize) { _, newValue in
-                if let proxy = proxy as? MediaPlayerSubtitleConfigurable {
-                    proxy.setSubtitleFontSize(newValue)
                 }
             }
             .backport
