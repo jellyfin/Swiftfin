@@ -153,7 +153,6 @@ extension VideoPlayer {
         func presentSupplementContainer(
             _ didPresent: Bool
         ) {
-
             if didPresent {
                 self.supplementBottomAnchor.constant = -(500 + EdgeInsets.edgePadding * 2)
             } else {
@@ -163,7 +162,6 @@ extension VideoPlayer {
             containerState.isPresentingPlaybackControls = !didPresent
             containerState.supplementOffset = supplementBottomAnchor.constant
 
-            // TODO: different values based on velocity, translation left
             UIView.animate(
                 withDuration: 0.75,
                 delay: 0,
