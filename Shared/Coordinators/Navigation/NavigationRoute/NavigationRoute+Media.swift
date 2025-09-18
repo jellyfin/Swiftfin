@@ -46,7 +46,7 @@ extension NavigationRoute {
 
     static func videoPlayer(
         item: BaseItemDto,
-        mediaSource: MediaSourceInfo,
+        mediaSource: MediaSourceInfo? = nil,
         queue: (any MediaPlayerQueue)? = nil
     ) -> NavigationRoute {
         let provider = MediaPlayerItemProvider(item: item) { item in

@@ -431,8 +431,6 @@ extension BaseItemDto {
             throw JellyfinAPIError("Mismatching item IDs")
         }
 
-        try await Task.sleep(for: .seconds(1))
-
         return newItem
     }
 }

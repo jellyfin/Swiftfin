@@ -19,7 +19,7 @@ extension MediaPlayerItem {
     /// The main `MediaPlayerItem` builder for normal online usage.
     static func build(
         for initialItem: BaseItemDto,
-        mediaSource initialMediaSource: MediaSourceInfo,
+        mediaSource _initialMediaSource: MediaSourceInfo?,
         videoPlayerType: VideoPlayerType = Defaults[.VideoPlayer.videoPlayerType],
         requestedBitrate: PlaybackBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate],
         compatibilityMode: PlaybackCompatibility = Defaults[.VideoPlayer.Playback.compatibilityMode]
@@ -28,16 +28,32 @@ extension MediaPlayerItem {
         let logger = Logger.swiftfin()
 
         guard let itemID = initialItem.id else {
-            logger.critical("No item ID while building online media player item!")
+            logger.critical("No item ID!")
             throw JellyfinAPIError(L10n.unknownError)
         }
 
         guard let userSession = Container.shared.currentUserSession() else {
-            logger.critical("No user session while building online media player item!")
+            logger.critical("No user session!")
             throw JellyfinAPIError(L10n.unknownError)
         }
 
         let item = try await initialItem.getFullItem(userSession: userSession)
+
+        guard let initialMediaSource = {
+            if let _initialMediaSource {
+                return _initialMediaSource
+            }
+
+            if let first = item.mediaSources?.first {
+                logger.trace("Using first media source for item \(itemID)")
+                return first
+            }
+
+            return nil
+        }() else {
+            logger.error("No media sources for item \(itemID)!")
+            throw JellyfinAPIError(L10n.unknownError)
+        }
 
         let maxBitrate = try await requestedBitrate.getMaxBitrate()
 
@@ -113,7 +129,7 @@ extension MediaPlayerItem {
             }()
 
             if case let PreviewImageScrubbingOption.trickplay(fallbackToChapters: fallbackToChapters) = previewImageScrubbingSetting {
-                if let mediaSourceID = initialMediaSource.id,
+                if let mediaSourceID = mediaSource.id,
                    let trickplayInfo = item.trickplay?[mediaSourceID]?.first
                 {
                     return TrickplayPreviewImageProvider(

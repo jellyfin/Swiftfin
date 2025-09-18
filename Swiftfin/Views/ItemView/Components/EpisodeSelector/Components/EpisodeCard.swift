@@ -53,11 +53,9 @@ extension SeriesEpisodeSelector {
         var body: some View {
             VStack(alignment: .leading) {
                 Button {
-                    guard let mediaSource = episode.mediaSources?.first else { return }
                     router.route(
                         to: .videoPlayer(
                             item: episode,
-                            mediaSource: mediaSource,
                             queue: EpisodeMediaPlayerQueue(episode: episode)
                         )
                     )
