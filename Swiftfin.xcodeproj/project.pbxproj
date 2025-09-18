@@ -1146,7 +1146,7 @@
 			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 26.0.0;
+				minimumVersion = 1.0.0;
 			};
 		};
 		62666E3727E502CE00EC0ECD /* XCRemoteSwiftPackageReference "SwizzleSwift" */ = {
