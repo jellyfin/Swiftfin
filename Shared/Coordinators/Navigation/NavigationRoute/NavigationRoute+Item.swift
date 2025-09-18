@@ -244,7 +244,6 @@ extension NavigationRoute {
             )
         }
     }
-
     #endif
 
     static func itemOverview(item: BaseItemDto) -> NavigationRoute {
@@ -253,6 +252,23 @@ extension NavigationRoute {
             style: .sheet
         ) {
             ItemOverviewView(item: item)
+        }
+    }
+
+    static func itemDownloadSelection(item: BaseItemDto) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemDownloadSelection",
+            style: .sheet
+        ) {
+            ItemDownloadSelectionView(item: item)
+        }
+    }
+
+    static func itemDownloadList(item: BaseItemDto) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemDownloadList"
+        ) {
+            ItemDownloadListView(item: item)
         }
     }
 
