@@ -26,34 +26,20 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
         var body: some View {
             Menu(
                 L10n.playbackSpeed,
-                systemImage: "speedometer"
+                systemImage: VideoPlayerActionButton.playbackSpeed.systemImage
             ) {
-                ForEach(rates, id: \.self) { rate in
-                    Button {
-                        manager.set(rate: rate)
-                    } label: {
-                        if rate == manager.rate {
-                            Label("\(rate, format: .playbackRate)", systemImage: "checkmark")
-                        } else {
-                            Text(rate, format: .playbackRate)
-                        }
+                Picker(L10n.playbackSpeed, selection: $manager.rate) {
+                    ForEach(rates, id: \.self) { rate in
+                        Text(rate, format: .playbackRate)
+                            .tag(rate)
                     }
-                }
 
-//                Button("Custom") {
-//                    containerState.select(
-//                        supplement: PlaybackRateMediaPlayerSupplement().asAny,
-//                        isGuest: true
-//                    )
-//                }
+                    if !rates.contains(manager.rate) {
+                        Divider()
 
-                if !rates.contains(manager.rate) {
-                    Divider()
-
-                    Label(
-                        "\(manager.rate, format: .playbackRate)",
-                        systemImage: "checkmark"
-                    )
+                        Text(manager.rate, format: .playbackRate)
+                            .tag(manager.rate)
+                    }
                 }
             }
         }

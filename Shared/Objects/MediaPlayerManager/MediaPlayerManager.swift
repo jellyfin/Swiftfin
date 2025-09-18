@@ -98,7 +98,7 @@ final class MediaPlayerManager: ViewModel, Stateful {
     @Published
     private(set) var playbackRequestStatus: PlaybackRequestStatus = .playing
     @Published
-    private(set) var rate: Float = 1.0
+    var rate: Float = 1.0
     @Published
     final var state: State
 

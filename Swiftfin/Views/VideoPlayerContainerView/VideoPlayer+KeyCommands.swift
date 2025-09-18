@@ -53,9 +53,15 @@ extension VideoPlayer {
 
                         if !containerState.isPresentingOverlay {
                             if manager.playbackRequestStatus == .paused {
-                                toaster.present("Paused", systemName: "pause.circle")
+                                toaster.present(
+                                    L10n.pause,
+                                    systemName: "pause.circle"
+                                )
                             } else if manager.playbackRequestStatus == .playing {
-                                toaster.present("Playing", systemName: "play.circle")
+                                toaster.present(
+                                    L10n.play,
+                                    systemName: "play.circle"
+                                )
                             }
                         }
                     }
@@ -75,7 +81,10 @@ extension VideoPlayer {
 
                         manager.set(rate: newRate)
 
-                        toaster.present(Text(newRate, format: .playbackRate), systemName: "speedometer")
+                        toaster.present(
+                            Text(newRate, format: .playbackRate),
+                            systemName: VideoPlayerActionButton.playbackSpeed.systemImage
+                        )
                     }
 
                     // MARK: - Increase Playback Speed
@@ -93,7 +102,10 @@ extension VideoPlayer {
 
                         manager.set(rate: newRate)
 
-                        toaster.present(Text(newRate, format: .playbackRate), systemName: "speedometer")
+                        toaster.present(
+                            Text(newRate, format: .playbackRate),
+                            systemName: VideoPlayerActionButton.playbackSpeed.systemImage
+                        )
                     }
 
                     // MARK: Reset Playback Speed
@@ -104,7 +116,10 @@ extension VideoPlayer {
                         modifierFlags: .command
                     ) {
                         manager.set(rate: 1)
-                        toaster.present(Text(1, format: .playbackRate), systemName: "speedometer")
+                        toaster.present(
+                            Text(1, format: .playbackRate),
+                            systemName: VideoPlayerActionButton.playbackSpeed.systemImage
+                        )
                     }
 
                     // MARK: Play Next Item

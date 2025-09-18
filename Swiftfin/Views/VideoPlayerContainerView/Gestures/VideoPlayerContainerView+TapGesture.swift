@@ -19,7 +19,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         if containerState.isGestureLocked {
             containerState.toastProxy.present(
                 L10n.gesturesLocked,
-                systemName: "lock.fill"
+                systemName: VideoPlayerActionButton.gestureLock.systemImage
             )
             return false
         }
@@ -179,14 +179,14 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
 
                 containerState.toastProxy.present(
                     L10n.gesturesUnlocked,
-                    systemName: "lock.open.fill"
+                    systemName: VideoPlayerActionButton.gestureLock.secondarySystemImage
                 )
             } else {
                 containerState.isGestureLocked = true
 
                 containerState.toastProxy.present(
                     L10n.gesturesLocked,
-                    systemName: "lock.fill"
+                    systemName: VideoPlayerActionButton.gestureLock.systemImage
                 )
             }
         case .pausePlay:
@@ -212,14 +212,14 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
 
                 containerState.toastProxy.present(
                     L10n.gesturesUnlocked,
-                    systemName: "lock.open.fill"
+                    systemName: VideoPlayerActionButton.gestureLock.secondarySystemImage
                 )
             } else {
                 containerState.isGestureLocked = true
 
                 containerState.toastProxy.present(
                     L10n.gesturesLocked,
-                    systemName: "lock.fill"
+                    systemName: VideoPlayerActionButton.gestureLock.systemImage
                 )
             }
         }

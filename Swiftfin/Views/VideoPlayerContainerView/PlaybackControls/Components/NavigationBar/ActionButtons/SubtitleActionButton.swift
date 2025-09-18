@@ -23,23 +23,18 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
         private var systemImage: String {
             if selectedSubtitleStreamIndex == nil {
-                "captions.bubble"
+                VideoPlayerActionButton.audio.secondarySystemImage
             } else {
-                "captions.bubble.fill"
+                VideoPlayerActionButton.audio.systemImage
             }
         }
 
         @ViewBuilder
         private func content(playbackItem: MediaPlayerItem) -> some View {
-            ForEach(playbackItem.subtitleStreams.prepending(.none), id: \.index) { stream in
-                Button {
-                    playbackItem.selectedSubtitleStreamIndex = stream.index ?? -1
-                } label: {
-                    if selectedSubtitleStreamIndex == stream.index {
-                        Label(stream.displayTitle ?? L10n.unknown, systemImage: "checkmark")
-                    } else {
-                        Text(stream.displayTitle ?? L10n.unknown)
-                    }
+            Picker(L10n.subtitles, selection: $selectedSubtitleStreamIndex) {
+                ForEach(playbackItem.subtitleStreams.prepending(.none), id: \.index) { stream in
+                    Text(stream.displayTitle ?? L10n.unknown)
+                        .tag(stream.index as Int?)
                 }
             }
         }

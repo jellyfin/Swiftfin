@@ -11,6 +11,8 @@ import SwiftUI
 
 // TODO: get preview image for current manager seconds?
 //       - would make scrubbing image possibly ready before scrubbing
+// TODO: fix leaks
+//       - made from publishers of observers not being cancelled
 
 class MediaPlayerItem: ViewModel, MediaPlayerObserver {
 

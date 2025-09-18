@@ -258,7 +258,7 @@ extension VideoPlayer {
             }
 
             let supplementContainerHeight = compactSupplementContainerOffset(view.bounds.height)
-            let offsetPercentage = 1 - clamp(abs(supplementBottomAnchor.constant) / supplementContainerHeight, min: 0, max: 1)
+            let offsetPercentage = 1 - clamp(supplementBottomAnchor.constant.magnitude / supplementContainerHeight, min: 0, max: 1)
             let offset = (dismissedSupplementContainerOffset + EdgeInsets.edgePadding) * offsetPercentage
 
             return max(50, offset)
@@ -269,7 +269,7 @@ extension VideoPlayer {
                 return dismissedSupplementContainerOffset
             }
             let supplementContainerHeight = compactSupplementContainerOffset(view.bounds.height)
-            let offsetPercentage = 1 - clamp(abs(supplementBottomAnchor.constant) / supplementContainerHeight, min: 0, max: 1)
+            let offsetPercentage = 1 - clamp(supplementBottomAnchor.constant.magnitude / supplementContainerHeight, min: 0, max: 1)
             let offset = (dismissedSupplementContainerOffset + EdgeInsets.edgePadding) * offsetPercentage
 
             return offset
@@ -390,9 +390,9 @@ extension VideoPlayer {
 
             if (!didStartPanningWithSupplement && yDirection > 0) || (didStartPanningWithSupplement && yDirection < 0) {
                 // If we started with a supplement and are panning down, or if we didn't start with a supplement and are panning up
-                newOffset = verticalPanGestureStartConstant + (abs(translation.y) * -yDirection)
+                newOffset = verticalPanGestureStartConstant + (translation.y.magnitude * -yDirection)
             } else {
-                newOffset = verticalPanGestureStartConstant - (abs(translation.y) * yDirection)
+                newOffset = verticalPanGestureStartConstant - (translation.y.magnitude * yDirection)
             }
 
             if containerState.isCompact {
@@ -449,8 +449,8 @@ extension VideoPlayer {
             containerState.centerOffset = centerOffset
 
             if let panningState {
-                let velocity = abs(panningState.velocity) / 1000
-                let distance = abs(panningState.translation)
+                let velocity = panningState.velocity.magnitude / 1000
+                let distance = panningState.translation.magnitude
                 let duration = min(max(Double(distance) / Double(velocity * 1000), 0.2), 0.75)
 
                 UIView.animate(

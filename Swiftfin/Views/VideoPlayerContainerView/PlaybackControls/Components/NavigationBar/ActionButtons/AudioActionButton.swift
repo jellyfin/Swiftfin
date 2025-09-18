@@ -23,23 +23,18 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
         private var systemImage: String {
             if selectedAudioStreamIndex == nil {
-                "speaker.wave.2"
+                VideoPlayerActionButton.audio.secondarySystemImage
             } else {
-                "speaker.wave.2.fill"
+                VideoPlayerActionButton.audio.systemImage
             }
         }
 
         @ViewBuilder
         private func content(playbackItem: MediaPlayerItem) -> some View {
-            ForEach(playbackItem.audioStreams, id: \.index) { stream in
-                Button {
-                    playbackItem.selectedAudioStreamIndex = stream.index ?? -1
-                } label: {
-                    if selectedAudioStreamIndex == stream.index {
-                        Label(stream.displayTitle ?? L10n.unknown, systemImage: "checkmark")
-                    } else {
-                        Text(stream.displayTitle ?? L10n.unknown)
-                    }
+            Picker(L10n.audio, selection: $selectedAudioStreamIndex) {
+                ForEach(playbackItem.audioStreams, id: \.index) { stream in
+                    Text(stream.displayTitle ?? L10n.unknown)
+                        .tag(stream.index as Int?)
                 }
             }
         }

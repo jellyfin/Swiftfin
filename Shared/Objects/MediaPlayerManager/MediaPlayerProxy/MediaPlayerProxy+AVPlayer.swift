@@ -28,7 +28,7 @@ class AVMediaPlayerProxy: VideoMediaPlayerProxy {
     let avPlayerLayer: AVPlayerLayer
     let player: AVPlayer
 
-    private var rateObserver: NSKeyValueObservation!
+//    private var rateObserver: NSKeyValueObservation!
     private var statusObserver: NSKeyValueObservation!
     private var timeObserver: Any!
     private var managerItemObserver: AnyCancellable?
@@ -131,7 +131,7 @@ extension AVMediaPlayerProxy {
         player.pause()
         guard let timeObserver else { return }
         player.removeTimeObserver(timeObserver)
-        rateObserver.invalidate()
+//        rateObserver.invalidate()
         statusObserver.invalidate()
         NotificationCenter.default.removeObserver(self)
     }
@@ -142,11 +142,12 @@ extension AVMediaPlayerProxy {
 
         player.replaceCurrentItem(with: newAVPlayerItem)
 
-        rateObserver = player.observe(\.rate, options: [.new, .initial]) { _, value in
-            DispatchQueue.main.async {
-                self.manager?.set(rate: value.newValue ?? 1.0)
-            }
-        }
+        // TODO: protect against paused
+//        rateObserver = player.observe(\.rate, options: [.new, .initial]) { _, value in
+//            DispatchQueue.main.async {
+//                self.manager?.set(rate: value.newValue ?? 1.0)
+//            }
+//        }
 
         statusObserver = player.observe(\.currentItem?.status, options: [.new, .initial]) { _, value in
             guard let newValue = value.newValue else { return }

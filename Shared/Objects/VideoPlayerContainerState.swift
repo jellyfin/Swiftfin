@@ -133,11 +133,7 @@ class VideoPlayerContainerState: ObservableObject {
     #if os(iOS)
     var panHandlingAction: (any _PanHandlingAction)?
     var didSwipe: Bool = false
-    var lastTapLocation: CGPoint? {
-        didSet {
-            print("Last tap location set to: \(String(describing: lastTapLocation))")
-        }
-    }
+    var lastTapLocation: CGPoint?
     #endif
 
     private var jumpProgressCancellable: AnyCancellable?

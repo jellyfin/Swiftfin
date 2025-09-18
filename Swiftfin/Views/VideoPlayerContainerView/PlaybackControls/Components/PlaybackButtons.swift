@@ -20,8 +20,6 @@ extension VideoPlayer.PlaybackControls {
         private var jumpBackwardInterval
         @Default(.VideoPlayer.jumpForwardInterval)
         private var jumpForwardInterval
-        @Default(.VideoPlayer.showJumpButtons)
-        private var showJumpButtons
 
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
@@ -37,7 +35,7 @@ extension VideoPlayer.PlaybackControls {
         }
 
         private var shouldShowJumpButtons: Bool {
-            showJumpButtons && !manager.item.isLiveStream
+            !manager.item.isLiveStream
         }
 
         @ViewBuilder

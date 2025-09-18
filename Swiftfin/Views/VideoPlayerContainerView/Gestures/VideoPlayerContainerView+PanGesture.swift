@@ -43,7 +43,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
 
         let direction: Direction = {
             // Prioritize horizontal detection just a bit more
-            if abs(velocity.y) < abs(velocity.x) + 20 {
+            if velocity.y.magnitude < velocity.x.magnitude + 20 {
                 return velocity.x > 0 ? .right : .left
             }
             return velocity.y > 0 ? .down : .up

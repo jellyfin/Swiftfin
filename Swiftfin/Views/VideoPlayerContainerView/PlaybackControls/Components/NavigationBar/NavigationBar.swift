@@ -9,6 +9,8 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: determine smaller font size for title
+
 extension VideoPlayer.PlaybackControls {
 
     struct NavigationBar: View {

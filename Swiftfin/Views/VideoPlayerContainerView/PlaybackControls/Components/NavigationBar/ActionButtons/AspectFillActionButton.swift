@@ -22,15 +22,15 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
         private var systemImage: String {
             if isAspectFilled {
-                "arrow.down.right.and.arrow.up.left"
+                VideoPlayerActionButton.aspectFill.systemImage
             } else {
-                "arrow.up.left.and.arrow.down.right"
+                VideoPlayerActionButton.aspectFill.secondarySystemImage
             }
         }
 
         var body: some View {
             Button(
-                "Aspect Fill",
+                L10n.aspectFill,
                 systemImage: systemImage
             ) {
                 isAspectFilled.toggle()

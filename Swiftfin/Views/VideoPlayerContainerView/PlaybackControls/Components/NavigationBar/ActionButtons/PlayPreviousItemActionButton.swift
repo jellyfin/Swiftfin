@@ -23,7 +23,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
             WithObservedObject(queue) { queue in
                 Button(
                     L10n.playPreviousItem,
-                    systemImage: "backward.end.circle.fill"
+                    systemImage: VideoPlayerActionButton.playNextItem.systemImage
                 ) {
                     guard let previousItem else { return }
                     manager.send(.playNewItem(provider: previousItem))

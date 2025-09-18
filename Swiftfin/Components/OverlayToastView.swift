@@ -17,6 +17,7 @@ import Transmission
 // TODO: symbol effects
 
 // TODO: fix rapid fire animations
+//       - have one that's presentation based, one just basic overlay?
 
 /// A basic toasting container view that will present
 /// given toasts on top of the given content.

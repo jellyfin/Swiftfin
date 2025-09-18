@@ -23,7 +23,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
         var body: some View {
             Button(
                 L10n.gestureLock,
-                systemImage: "lock.circle"
+                systemImage: VideoPlayerActionButton.gestureLock.systemImage
             ) {
                 isGestureLocked.toggle()
             }

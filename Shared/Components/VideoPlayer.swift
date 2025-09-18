@@ -25,6 +25,7 @@ struct VideoPlayer: View {
     @Router
     private var router
 
+    // TODO: move audio/subtitle offset to container state?
     @State
     private var audioOffset: Duration = .zero
     @State
@@ -108,7 +109,6 @@ struct VideoPlayer: View {
             }
             .backport
             .onChange(of: presentationCoordinator.isPresented) { _, isPresented in
-                Container.shared.mediaPlayerManager.reset()
                 guard !isPresented else { return }
                 isBeingDismissedByTransition = true
                 manager.send(.stop)

@@ -27,9 +27,9 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
         private var systemImage: String {
             if isAutoPlayEnabled {
-                "play.circle.fill"
+                VideoPlayerActionButton.autoPlay.systemImage
             } else {
-                "stop.circle"
+                VideoPlayerActionButton.autoPlay.secondarySystemImage
             }
         }
 

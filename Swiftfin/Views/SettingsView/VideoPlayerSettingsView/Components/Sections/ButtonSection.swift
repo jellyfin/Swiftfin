@@ -13,15 +13,10 @@ extension VideoPlayerSettingsView {
 
     struct ButtonSection: View {
 
-        @Default(.VideoPlayer.showJumpButtons)
-        private var showJumpButtons
-
         @Default(.VideoPlayer.barActionButtons)
         private var barActionButtons
-
         @Default(.VideoPlayer.menuActionButtons)
         private var menuActionButtons
-
         @Default(.VideoPlayer.autoPlayEnabled)
         private var autoPlayEnabled
 
@@ -30,15 +25,6 @@ extension VideoPlayerSettingsView {
 
         var body: some View {
             Section(L10n.buttons) {
-
-//                CaseIterablePicker(L10n.playbackButtons, selection: $playbackButtonType)
-
-                Toggle(isOn: $showJumpButtons) {
-                    HStack {
-                        Image(systemName: "goforward")
-                        Text(L10n.jump)
-                    }
-                }
 
                 ChevronButton(L10n.barButtons) {
                     router.route(to: .actionButtonSelector(selectedButtonsBinding: $barActionButtons))

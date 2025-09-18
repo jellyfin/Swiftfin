@@ -24,13 +24,12 @@ class DirectionalPanGestureRecognizer: UIPanGestureRecognizer {
             let velocity = velocity(in: view)
 
             let isUp = velocity.y < 0
-
-            let isHorizontal = abs(velocity.y) < abs(velocity.x)
-            let isVertical = abs(velocity.x) < abs(velocity.y)
+            let isHorizontal = velocity.y.magnitude < velocity.x.magnitude
+            let isVertical = velocity.x.magnitude < velocity.y.magnitude
 
             switch direction {
             case .all: ()
-            case .allButDown where !isUp: ()
+            case .allButDown where isUp || isHorizontal: ()
             case .horizontal where isHorizontal: ()
             case .vertical where isVertical: ()
             case .up where isVertical && velocity.y < 0: ()

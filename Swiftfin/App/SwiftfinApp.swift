@@ -29,6 +29,8 @@ struct SwiftfinApp: App {
         // Logging
         LoggingSystem.bootstrap { label in
 
+            // TODO: have setting for log level
+            //       - default info, boolean to go down to trace
             let handlers: [any LogHandler] = [PersistentLogHandler(label: label)]
             #if DEBUG
                 .appending(SwiftfinConsoleHandler())

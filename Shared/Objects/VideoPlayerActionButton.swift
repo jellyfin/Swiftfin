@@ -50,14 +50,26 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     var systemImage: String {
         switch self {
         case .aspectFill: "arrow.up.left.and.arrow.down.right"
-        case .audio: "speaker.wave.2"
+        case .audio: "speaker.wave.2.fill"
         case .autoPlay: "play.circle.fill"
-        case .gestureLock: "lock.circle"
+        case .gestureLock: "lock.circle.fill"
         case .playbackSpeed: "speedometer"
 //        case .playbackQuality: "tv.circle.fill"
-        case .playNextItem: "chevron.right.circle"
-        case .playPreviousItem: "chevron.left.circle"
+        case .playNextItem: "forward.end.circle.fill"
+        case .playPreviousItem: "backward.end.circle.fill"
+        case .subtitles: "captions.bubble.fill"
+        }
+    }
+
+    var secondarySystemImage: String {
+        switch self {
+        case .aspectFill: "arrow.down.right.and.arrow.up.left"
+        case .audio: "speaker.wave.2"
+        case .autoPlay: "stop.circle"
+        case .gestureLock: "lock.open.fill"
         case .subtitles: "captions.bubble"
+        default:
+            systemImage
         }
     }
 
