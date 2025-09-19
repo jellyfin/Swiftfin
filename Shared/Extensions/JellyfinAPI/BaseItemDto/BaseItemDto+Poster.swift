@@ -43,10 +43,12 @@ extension BaseItemDto: Poster {
             "film.stack"
         case .channel, .tvChannel, .liveTvChannel, .program:
             "tv"
-        case .episode, .movie, .series:
+        case .episode, .movie, .series, .video:
             "film"
         case .folder:
             "folder.fill"
+        case .musicVideo:
+            "music.note.tv.fill"
         case .person:
             "person.fill"
         default:
@@ -92,7 +94,7 @@ extension BaseItemDto: Poster {
             } else {
                 [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
             }
-        case .folder, .program, .video:
+        case .folder, .program, .musicVideo, .video:
             [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
         default:
             [
@@ -117,6 +119,15 @@ extension BaseItemDto: Poster {
             [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
         default:
             []
+        }
+    }
+
+    func thumbImageSources() -> [ImageSource] {
+        switch type {
+        case .musicVideo, .video:
+            landscapeImageSources(maxWidth: 200, quality: 90)
+        default:
+            portraitImageSources(maxWidth: 200, quality: 90)
         }
     }
 }

@@ -152,6 +152,22 @@ extension BaseItemDto {
         channelType == .tv
     }
 
+    /// Whether the item has independent playable content, similar
+    /// to if an item can provide its own media sources.
+    ///
+    /// ie: A movie and an episode can be directly played,
+    ///     but a series is not as its episodes are playable.
+    var isPlayable: Bool {
+        guard !isMissing else { return false }
+
+        return switch type {
+        case .series:
+            false
+        default:
+            true
+        }
+    }
+
     var runtime: Duration? {
         guard let ticks = runTimeTicks else { return nil }
         return Duration.ticks(ticks)

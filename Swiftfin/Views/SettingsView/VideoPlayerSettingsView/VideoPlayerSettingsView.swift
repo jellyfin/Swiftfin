@@ -28,6 +28,7 @@ struct VideoPlayerSettingsView: View {
                 router.route(to: .gestureSettings)
             }
 
+            // TODO: custom view for custom interval creation
 //            CaseIterablePicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
 
 //            CaseIterablePicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
@@ -52,8 +53,6 @@ struct VideoPlayerSettingsView: View {
             SubtitleSection()
 
             TimestampSection()
-
-            TransitionSection()
         }
         .navigationTitle(L10n.videoPlayer)
     }

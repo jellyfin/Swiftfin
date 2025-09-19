@@ -124,8 +124,8 @@ extension MediaPlayerItem {
         )
 
         func getNowPlayingImage() async -> UIImage? {
-            let imageRequests = item.portraitImageSources(maxWidth: 100, quality: 90)
-            return await ImagePipeline.Swiftfin.other.loadFirstImage(from: imageRequests)
+            let imageSources = item.thumbImageSources()
+            return await ImagePipeline.Swiftfin.other.loadFirstImage(from: imageSources)
         }
 
         let previewImageProvider: (any PreviewImageProvider)? = {

@@ -8,6 +8,11 @@
 
 import Foundation
 
+// TODO: preferred poster display type value
+//       - used in contexts that can be dynamic based on image availability for type
+//       - help with collection-type-based poster display
+//       - ie: movies/series: portrait, music/channel: square, music videos: landscape
+
 /// A type that is displayed as a poster
 protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
 
@@ -36,6 +41,8 @@ protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
         maxWidth: CGFloat?,
         quality: Int?
     ) -> [ImageSource]
+
+    func thumbImageSources() -> [ImageSource]
 }
 
 extension Poster {
@@ -73,6 +80,11 @@ extension Poster {
         maxWidth: CGFloat?,
         quality: Int? = nil
     ) -> [ImageSource] {
+        []
+    }
+
+    // TODO: change to observe preferred poster display type
+    func thumbImageSources() -> [ImageSource] {
         []
     }
 }
