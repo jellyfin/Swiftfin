@@ -19,10 +19,11 @@ extension MediaPlayerItem {
     /// The main `MediaPlayerItem` builder for normal online usage.
     static func build(
         for initialItem: BaseItemDto,
-        mediaSource _initialMediaSource: MediaSourceInfo?,
+        mediaSource _initialMediaSource: MediaSourceInfo? = nil,
         videoPlayerType: VideoPlayerType = Defaults[.VideoPlayer.videoPlayerType],
         requestedBitrate: PlaybackBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate],
-        compatibilityMode: PlaybackCompatibility = Defaults[.VideoPlayer.Playback.compatibilityMode]
+        compatibilityMode: PlaybackCompatibility = Defaults[.VideoPlayer.Playback.compatibilityMode],
+        modifyItem: ((inout BaseItemDto) -> Void)? = nil,
     ) async throws -> MediaPlayerItem {
 
         let logger = Logger.swiftfin()
@@ -37,7 +38,11 @@ extension MediaPlayerItem {
             throw JellyfinAPIError(L10n.unknownError)
         }
 
-        let item = try await initialItem.getFullItem(userSession: userSession)
+        var item = try await initialItem.getFullItem(userSession: userSession)
+
+        if let modifyItem {
+            modifyItem(&item)
+        }
 
         guard let initialMediaSource = {
             if let _initialMediaSource {

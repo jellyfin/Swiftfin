@@ -119,15 +119,19 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
         var nextProvider: MediaPlayerItemProvider?
         var previousProvider: MediaPlayerItemProvider?
 
-        if let nextItem, let mediaSource = nextItem.mediaSources?.first {
+        if let nextItem {
             nextProvider = MediaPlayerItemProvider(item: nextItem) { item in
-                try await MediaPlayerItem.build(for: item, mediaSource: mediaSource)
+                try await MediaPlayerItem.build(for: item) {
+                    $0.userData?.playbackPositionTicks = .zero
+                }
             }
         }
 
-        if let previousItem, let mediaSource = previousItem.mediaSources?.first {
+        if let previousItem {
             previousProvider = MediaPlayerItemProvider(item: previousItem) { item in
-                try await MediaPlayerItem.build(for: item, mediaSource: mediaSource)
+                try await MediaPlayerItem.build(for: item) {
+                    $0.userData?.playbackPositionTicks = .zero
+                }
             }
         }
 
