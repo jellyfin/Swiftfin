@@ -8,6 +8,7 @@
 
 import AVFoundation
 import Combine
+import Defaults
 import Foundation
 import JellyfinAPI
 import SwiftUI
@@ -17,6 +18,7 @@ import SwiftUI
 //       - wouldn't need to have MediaPlayerProxy: MediaPlayerObserver
 // TODO: report playback information, see VLCUI.PlaybackInformation (dropped frames, etc.)
 // TODO: report buffering state
+// TODO: have set seconds with completion handler
 
 class AVMediaPlayerProxy: VideoMediaPlayerProxy {
 
@@ -30,6 +32,7 @@ class AVMediaPlayerProxy: VideoMediaPlayerProxy {
 
 //    private var rateObserver: NSKeyValueObservation!
     private var statusObserver: NSKeyValueObservation!
+    private var timeControlStatusObserver: NSKeyValueObservation!
     private var timeObserver: Any!
     private var managerItemObserver: AnyCancellable?
     private var managerStateObserver: AnyCancellable?
@@ -40,7 +43,7 @@ class AVMediaPlayerProxy: VideoMediaPlayerProxy {
                 managerItemObserver = manager.$playbackItem
                     .sink { playbackItem in
                         if let playbackItem {
-                            self.playNew(playbackItem: playbackItem)
+                            self.playNew(item: playbackItem)
                         }
                     }
 
@@ -74,10 +77,6 @@ class AVMediaPlayerProxy: VideoMediaPlayerProxy {
             }
 
             self.manager?.seconds = newSeconds
-        }
-
-        if let playbackItem = manager?.playbackItem {
-            playNew(playbackItem: playbackItem)
         }
     }
 
@@ -133,12 +132,14 @@ extension AVMediaPlayerProxy {
         player.removeTimeObserver(timeObserver)
 //        rateObserver.invalidate()
         statusObserver.invalidate()
-        NotificationCenter.default.removeObserver(self)
+        timeControlStatusObserver.invalidate()
     }
 
-    private func playNew(playbackItem: MediaPlayerItem) {
-        let newAVPlayerItem = AVPlayerItem(url: playbackItem.url)
-        newAVPlayerItem.externalMetadata = playbackItem.baseItem.avMetadata
+    private func playNew(item: MediaPlayerItem) {
+        let baseItem = item.baseItem
+
+        let newAVPlayerItem = AVPlayerItem(url: item.url)
+        newAVPlayerItem.externalMetadata = item.baseItem.avMetadata
 
         player.replaceCurrentItem(with: newAVPlayerItem)
 
@@ -149,6 +150,23 @@ extension AVMediaPlayerProxy {
 //            }
 //        }
 
+        timeControlStatusObserver = player.observe(\.timeControlStatus, options: [.new, .initial]) { player, _ in
+            let timeControlStatus = player.timeControlStatus
+
+            DispatchQueue.main.async {
+                switch timeControlStatus {
+                case .paused:
+                    self.manager?.set(playbackRequestStatus: .paused, notifyProxy: false)
+                case .waitingToPlayAtSpecifiedRate: ()
+                // TODO: buffering
+                case .playing:
+                    self.manager?.set(playbackRequestStatus: .playing, notifyProxy: false)
+                @unknown default: ()
+                }
+            }
+        }
+
+        // TODO: proper handling of none/unknown states
         statusObserver = player.observe(\.currentItem?.status, options: [.new, .initial]) { _, value in
             guard let newValue = value.newValue else { return }
             switch newValue {
@@ -158,10 +176,20 @@ extension AVMediaPlayerProxy {
                         self.manager?.send(.error(.init("AVPlayer error: \(error.localizedDescription)")))
                     }
                 }
-            case .readyToPlay:
-                self.player.play()
-            case .none, .unknown:
-                self.player.play()
+            case .none, .readyToPlay, .unknown:
+                let startSeconds = max(.zero, (baseItem.startSeconds ?? .zero) - Duration.seconds(Defaults[.VideoPlayer.resumeOffset]))
+
+                self.player.seek(
+                    to: CMTimeMake(
+                        value: startSeconds.components.seconds,
+                        timescale: 1
+                    ),
+                    toleranceBefore: .zero,
+                    toleranceAfter: .zero,
+                    completionHandler: { _ in
+                        self.play()
+                    }
+                )
             @unknown default: ()
             }
         }

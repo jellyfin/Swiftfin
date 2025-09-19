@@ -185,9 +185,9 @@ extension VLCMediaPlayerProxy {
                             manager.send(.error(.init("VLC player is unable to perform playback")))
                         case .playing:
                             manager.proxy?.isBuffering.value = false
-                            manager.set(playbackRequestStatus: .playing)
+                            manager.set(playbackRequestStatus: .playing, notifyProxy: false)
                         case .paused:
-                            manager.set(playbackRequestStatus: .paused)
+                            manager.set(playbackRequestStatus: .paused, notifyProxy: false)
                         }
 
                         if let proxy = manager.proxy as? any VideoMediaPlayerProxy {

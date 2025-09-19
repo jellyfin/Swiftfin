@@ -34,6 +34,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
     }
 
     private var itemImageCancellable: AnyCancellable?
+    private var playbackRequestStateBeforeInterruption: MediaPlayerManager.PlaybackRequestStatus = .playing
 
     weak var manager: MediaPlayerManager? {
         willSet {
@@ -82,6 +83,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
         )
     }
 
+    // TODO: register different commands based on item capabilities
     private func playbackItemDidChange(newItem: MediaPlayerItem?) {
         itemImageCancellable?.cancel()
         itemImageCancellable = nil
@@ -147,26 +149,38 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
     // TODO: complete by referencing apple code
     //       - restart
     @MainActor
-    private func handleInterruption(type: AVAudioSession.InterruptionType, options: AVAudioSession.InterruptionOptions) {
+    private func handleInterruption(
+        type: AVAudioSession.InterruptionType,
+        options: AVAudioSession.InterruptionOptions
+    ) {
         switch type {
         case .began:
+            playbackRequestStateBeforeInterruption = manager?.playbackRequestStatus ?? .playing
             manager?.set(playbackRequestStatus: .paused)
         case .ended:
             do {
                 try startSession()
 
-                if options.contains(.shouldResume) {
-                    manager?.set(playbackRequestStatus: .playing)
+                if playbackRequestStateBeforeInterruption == .playing {
+                    if options.contains(.shouldResume) {
+                        manager?.set(playbackRequestStatus: .playing)
+                    } else {
+                        manager?.set(playbackRequestStatus: .paused)
+                    }
                 }
             } catch {
                 logger.critical("Unable to reactivate audio session after interruption: \(error.localizedDescription)")
+                manager?.send(.stop)
             }
         @unknown default: ()
         }
     }
 
     @MainActor
-    private func handleCommand(command: NowPlayableCommand, event: MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus {
+    private func handleCommand(
+        command: NowPlayableCommand,
+        event: MPRemoteCommandEvent
+    ) -> MPRemoteCommandHandlerStatus {
         switch command {
         case .pause:
             manager?.set(playbackRequestStatus: .paused)
@@ -195,7 +209,10 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
         return .success
     }
 
-    private func handleNowPlayablePlaybackChange(playing: Bool, metadata: NowPlayableDynamicMetadata) {
+    private func handleNowPlayablePlaybackChange(
+        playing: Bool,
+        metadata: NowPlayableDynamicMetadata
+    ) {
         setNowPlayingPlaybackInfo(metadata)
         MPNowPlayingInfoCenter.default().playbackState = playing ? .playing : .paused
     }
@@ -250,7 +267,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
         do {
             try audioSession.setCategory(.playback, mode: .default)
             try audioSession.setActive(true)
-            logger.info("Started AVAudioSession")
+            logger.trace("Started AVAudioSession")
         } catch {
             logger.critical("Unable to activate AVAudioSession instance: \(error.localizedDescription)")
             throw error
@@ -258,14 +275,9 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
     }
 
     private func stopSession() throws {
-
-        for command in NowPlayableCommand.allCases {
-            command.removeHandler()
-        }
-
         do {
             try AVAudioSession.sharedInstance().setActive(false)
-            logger.info("Stopped AVAudioSession")
+            logger.trace("Stopped AVAudioSession")
         } catch {
             logger.critical("Unable to deactivate AVAudioSession instance: \(error.localizedDescription)")
             throw error

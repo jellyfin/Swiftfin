@@ -279,9 +279,11 @@ final class MediaPlayerManager: ViewModel, Stateful {
     }
 
     @MainActor
-    func set(playbackRequestStatus: PlaybackRequestStatus) {
+    func set(playbackRequestStatus: PlaybackRequestStatus, notifyProxy: Bool = true) {
         if self.playbackRequestStatus != playbackRequestStatus {
             self.playbackRequestStatus = playbackRequestStatus
+
+            guard notifyProxy else { return }
 
             if playbackRequestStatus == .paused {
                 proxy?.pause()

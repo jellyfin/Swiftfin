@@ -14,6 +14,9 @@ import Logging
 import Nuke
 import UIKit
 
+// TODO: build report of determined values for playback information
+//       - transcode, video stream, path
+
 extension MediaPlayerItem {
 
     /// The main `MediaPlayerItem` builder for normal online usage.
@@ -116,7 +119,8 @@ extension MediaPlayerItem {
             item: item,
             mediaSource: mediaSource,
             playSessionID: playSessionID,
-            userSession: userSession
+            userSession: userSession,
+            logger: logger
         )
 
         func getNowPlayingImage() async -> UIImage? {
@@ -172,7 +176,8 @@ extension MediaPlayerItem {
         item: BaseItemDto,
         mediaSource: MediaSourceInfo,
         playSessionID: String,
-        userSession: UserSession
+        userSession: UserSession,
+        logger: Logger
     ) throws -> URL {
 
         guard let itemID = item.id else {
@@ -180,12 +185,16 @@ extension MediaPlayerItem {
         }
 
         if let transcodingURL = mediaSource.transcodingURL {
+            logger.trace("Using transcoding URL for item \(itemID)")
+
             guard let fullTranscodeURL = userSession.client.fullURL(with: transcodingURL)
             else { throw JellyfinAPIError("Unable to make transcode URL") }
             return fullTranscodeURL
         }
 
         if item.mediaType == .video, !item.isLiveStream {
+
+            logger.trace("Making video stream URL for item \(itemID)")
 
             let videoStreamParameters = Paths.GetVideoStreamParameters(
                 isStatic: true,
@@ -204,6 +213,8 @@ extension MediaPlayerItem {
 
             return videoStreamURL
         }
+
+        logger.trace("Using media source path for item \(itemID)")
 
         guard let path = mediaSource.path, let streamURL = URL(
             string: path
