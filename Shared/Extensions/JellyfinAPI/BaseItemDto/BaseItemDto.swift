@@ -7,9 +7,11 @@
 //
 
 import Algorithms
+import AVKit
 import Factory
 import Foundation
 import JellyfinAPI
+import MediaPlayer
 import UIKit
 
 // TODO: clean up
@@ -41,6 +43,84 @@ extension BaseItemDto: LibraryIdentifiable {
 
 extension BaseItemDto {
 
+    var avMetadata: [AVMetadataItem] {
+        let title: String
+        var subtitle: String? = nil
+        let description = overview
+
+        if type == .episode,
+           let seriesName = seriesName
+        {
+            title = seriesName
+            subtitle = displayTitle
+        } else {
+            title = displayTitle
+        }
+
+        return [
+            AVMetadataIdentifier.commonIdentifierTitle: title,
+            .iTunesMetadataTrackSubTitle: subtitle,
+            .commonIdentifierDescription: description,
+        ]
+            .compactMap { identifier, value in
+                let item = AVMutableMetadataItem()
+                item.identifier = identifier
+                item.value = value as? NSCopying & NSObjectProtocol
+                item.extendedLanguageTag = "und"
+
+                return item.copy() as? AVMetadataItem
+            }
+    }
+
+    func nowPlayableStaticMetadata(_ image: UIImage? = nil) -> NowPlayableStaticMetadata {
+
+        let mediaType: MPNowPlayingInfoMediaType = {
+            switch type {
+            case .audio, .audioBook: .audio
+            default: .video
+            }
+        }()
+
+        let title: String = {
+            if type == .episode,
+               let seriesName = seriesName
+            {
+                return seriesName
+            } else {
+                return displayTitle
+            }
+        }()
+
+        let albumArtist: String? = {
+            switch type {
+            case .audio:
+                return artists?.joined(separator: ", ")
+            default:
+                return nil
+            }
+        }()
+
+        let albumTitle: String? = {
+            switch type {
+            case .audio:
+                return album
+            default:
+                return nil
+            }
+        }()
+
+        // TODO: only fill artist, albumArtist, and albumTitle if audio type
+        return .init(
+            mediaType: mediaType,
+            isLiveStream: isLiveStream,
+            title: title,
+            artist: subtitle,
+            artwork: image.map { image in MPMediaItemArtwork(boundsSize: image.size) { _ in image }},
+            albumArtist: albumArtist,
+            albumTitle: albumTitle
+        )
+    }
+
     var birthday: Date? {
         guard type == .person else { return nil }
         return premiereDate
@@ -66,19 +146,25 @@ extension BaseItemDto {
         return genres.map(ItemGenre.init)
     }
 
-    var runTimeSeconds: Int {
-        let playbackPositionTicks = runTimeTicks ?? 0
-        return Int(playbackPositionTicks / 10_000_000)
+    /// Differs from `isLive` to indicate an item
+    /// would be streaming from a live source.
+    var isLiveStream: Bool {
+        channelType == .tv
+    }
+
+    var runtime: Duration? {
+        guard let ticks = runTimeTicks else { return nil }
+        return Duration.ticks(ticks)
+    }
+
+    var startSeconds: Duration? {
+        guard let ticks = userData?.playbackPositionTicks else { return nil }
+        return Duration.ticks(ticks)
     }
 
     var seasonEpisodeLabel: String? {
         guard let seasonNo = parentIndexNumber, let episodeNo = indexNumber else { return nil }
         return L10n.seasonAndEpisode(String(seasonNo), String(episodeNo))
-    }
-
-    var startTimeSeconds: Int {
-        let playbackPositionTicks = userData?.playbackPositionTicks ?? 0
-        return Int(playbackPositionTicks / 10_000_000)
     }
 
     // MARK: Calculations
@@ -195,12 +281,15 @@ extension BaseItemDto {
 
     // MARK: Chapter Images
 
-    var fullChapterInfo: [ChapterInfo.FullInfo] {
-        guard let chapters else { return [] }
+    // TODO: move to whatever listener for chapters
+    var fullChapterInfo: [ChapterInfo.FullInfo]? {
+        guard let chapters else { return nil }
 
-        let ranges: [Range<Int>] = chapters
-            .map(\.startTimeSeconds)
-            .appending(runTimeSeconds + 1)
+        let afterRuntime = (runtime ?? .zero) + .seconds(1)
+
+        let ranges: [Range<Duration>] = chapters
+            .map { $0.startSeconds ?? .zero }
+            .appending(afterRuntime)
             .adjacentPairs()
             .map { $0 ..< $1 }
 
@@ -227,7 +316,8 @@ extension BaseItemDto {
                 return .init(
                     chapterInfo: zip.0,
                     imageSource: .init(url: imageURL),
-                    secondsRange: zip.1
+                    secondsRange: zip.1,
+                    runtime: runtime ?? .zero
                 )
             }
     }
@@ -326,5 +416,21 @@ extension BaseItemDto {
         default:
             return false
         }
+    }
+
+    func getFullItem(userSession: UserSession) async throws -> BaseItemDto {
+        guard let id else {
+            throw JellyfinAPIError(L10n.unknownError)
+        }
+
+        let request = Paths.getItem(itemID: id, userID: userSession.user.id)
+        let response = try await userSession.client.send(request)
+        let newItem = response.value
+
+        guard newItem.id == id else {
+            throw JellyfinAPIError("Mismatching item IDs")
+        }
+
+        return newItem
     }
 }

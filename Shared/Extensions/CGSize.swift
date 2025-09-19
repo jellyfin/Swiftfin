@@ -14,6 +14,10 @@ extension CGSize {
         CGSize(width: length, height: length)
     }
 
+    var aspectRatio: CGFloat {
+        width / height
+    }
+
     var isLandscape: Bool {
         width >= height
     }

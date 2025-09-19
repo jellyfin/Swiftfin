@@ -40,6 +40,15 @@ extension EdgeInsets {
     var vertical: CGFloat {
         top + bottom
     }
+
+    func max(_ value: CGFloat) -> EdgeInsets {
+        EdgeInsets(
+            top: Swift.max(top, value),
+            leading: Swift.max(leading, value),
+            bottom: Swift.max(bottom, value),
+            trailing: Swift.max(trailing, value)
+        )
+    }
 }
 
 extension NSDirectionalEdgeInsets {

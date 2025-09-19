@@ -6,7 +6,11 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import SwiftUI
+
+// TODO: move popup to router
+//       - or, make tab view environment object
 
 // TODO: fix weird tvOS icon rendering
 struct MainTabView: View {

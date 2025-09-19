@@ -54,6 +54,8 @@ extension UIDevice {
         #endif
     }
 
+    // TODO: make more custom feedback types with Core Haptics
+    //       - soft with intensity
     static func impact(_ type: UIImpactFeedbackGenerator.FeedbackStyle) {
         #if os(iOS)
         UIImpactFeedbackGenerator(style: type).impactOccurred()

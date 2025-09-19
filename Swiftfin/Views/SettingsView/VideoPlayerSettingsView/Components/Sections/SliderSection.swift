@@ -15,22 +15,18 @@ extension VideoPlayerSettingsView {
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
 
-        @Default(.VideoPlayer.Overlay.sliderColor)
-        private var sliderColor
-
-        @Default(.VideoPlayer.Overlay.sliderType)
-        private var sliderType
+        @StoredValue(.User.previewImageScrubbing)
+        private var previewImageScrubbing: PreviewImageScrubbingOption
 
         var body: some View {
             Section(L10n.slider) {
 
                 Toggle(L10n.chapterSlider, isOn: $chapterSlider)
 
-                ColorPicker(selection: $sliderColor, supportsOpacity: false) {
-                    Text(L10n.sliderColor)
-                }
-
-                CaseIterablePicker(L10n.sliderType, selection: $sliderType)
+                CaseIterablePicker(
+                    "Preview Image",
+                    selection: $previewImageScrubbing
+                )
             }
         }
     }
