@@ -6,19 +6,15 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import BlurHashKit
 import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
 
-    struct EpisodeItemContentView: View {
-
-        @Router
-        private var router
+    struct SimpleItemContentView: View {
 
         @ObservedObject
-        var viewModel: EpisodeItemViewModel
+        var viewModel: ItemViewModel
 
         var body: some View {
             SeparatorVStack(alignment: .leading) {

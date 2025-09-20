@@ -29,6 +29,15 @@ extension ItemView {
             self.viewModel = viewModel
         }
 
+        private var imageType: ImageType {
+            switch viewModel.item.type {
+            case .episode, .musicVideo, .video:
+                .primary
+            default:
+                .backdrop
+            }
+        }
+
         private func withHeaderImageItem(
             @ViewBuilder content: @escaping (ImageSource, Color) -> some View
         ) -> some View {
@@ -44,7 +53,6 @@ extension ItemView {
                 item = viewModel.item
             }
 
-            let imageType: ImageType = item.type == .episode ? .primary : .backdrop
             let bottomColor = item.blurHash(for: imageType)?.averageLinearColor ?? Color.secondarySystemFill
             let imageSource = item.imageSource(imageType, maxWidth: 1920)
 

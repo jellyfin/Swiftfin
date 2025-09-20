@@ -55,7 +55,6 @@ struct VideoPlayer: View {
         } playbackControls: {
             PlaybackControls()
         }
-        .environment(\.audioOffset, $audioOffset)
         .onAppear {
             manager.proxy = proxy
             manager.send(.start)

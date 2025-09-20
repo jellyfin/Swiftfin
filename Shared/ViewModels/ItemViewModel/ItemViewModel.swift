@@ -45,14 +45,13 @@ class ItemViewModel: ViewModel, Stateful {
         case refreshing
     }
 
+    // TODO: create value on `BaseItemDto` whether an item
+    //       only has children as playable items
     @Published
     private(set) var item: BaseItemDto {
         willSet {
-            switch item.type {
-            case .episode, .movie:
-                guard !item.isMissing else { return }
+            if item.isPlayable {
                 playButtonItem = newValue
-            default: ()
             }
         }
     }

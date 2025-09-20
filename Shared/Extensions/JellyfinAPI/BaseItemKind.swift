@@ -18,7 +18,13 @@ extension BaseItemKind: SupportedCaseIterable {
     /// like `LibararyParent` may have additional supported
     /// cases for querying a library.
     static var supportedCases: [BaseItemKind] {
-        [.movie, .series, .boxSet]
+        [
+            .boxSet,
+            .movie,
+            .musicVideo,
+            .series,
+            .video,
+        ]
     }
 }
 

@@ -9,6 +9,8 @@
 import Defaults
 import Foundation
 
+// TODO: conform to `SystemImageable`
+//       - forward to systemImage, backward to secondarySystemImage
 enum MediaJumpInterval: Storable, RawRepresentable {
 
     typealias RawValue = Duration

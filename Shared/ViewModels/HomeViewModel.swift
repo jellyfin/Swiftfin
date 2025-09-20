@@ -177,7 +177,7 @@ final class HomeViewModel: ViewModel, Stateful {
         parameters.userID = userSession.user.id
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
-        parameters.includeItemTypes = [.movie, .episode]
+        parameters.mediaTypes = [.video]
         parameters.limit = 20
 
         let request = Paths.getResumeItems(parameters: parameters)
@@ -195,7 +195,15 @@ final class HomeViewModel: ViewModel, Stateful {
         async let excludedLibraryIDs = getExcludedLibraries()
 
         return try await (userViews.value.items ?? [])
-            .intersection([.movies, .tvshows], using: \.collectionType)
+            .intersection(
+                [
+                    .homevideos,
+                    .movies,
+                    .musicvideos,
+                    .tvshows,
+                ],
+                using: \.collectionType
+            )
             .subtracting(excludedLibraryIDs, using: \.id)
             .map { LatestInLibraryViewModel(parent: $0) }
     }

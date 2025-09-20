@@ -22,9 +22,9 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
         private var systemImage: String {
             if isAspectFilled {
-                VideoPlayerActionButton.aspectFill.systemImage
-            } else {
                 VideoPlayerActionButton.aspectFill.secondarySystemImage
+            } else {
+                VideoPlayerActionButton.aspectFill.systemImage
             }
         }
 

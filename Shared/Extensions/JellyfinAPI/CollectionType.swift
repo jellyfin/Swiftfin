@@ -15,7 +15,9 @@ extension CollectionType: SupportedCaseIterable {
         [
             .boxsets,
             .folders,
+            .homevideos,
             .movies,
+            .musicvideos,
             .tvshows,
             .livetv,
         ]
