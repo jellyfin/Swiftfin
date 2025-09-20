@@ -70,7 +70,7 @@ struct CulturePicker: View {
             #endif
         }
         .onFirstAppear {
-            viewModel.send(.refresh)
+            viewModel.refresh()
         }
     }
 

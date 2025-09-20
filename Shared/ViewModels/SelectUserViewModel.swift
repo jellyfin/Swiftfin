@@ -13,33 +13,32 @@ import JellyfinAPI
 import KeychainSwift
 import OrderedCollections
 
-final class SelectUserViewModel: ViewModel, Eventful, Stateful {
+@MainActor
+@Stateful
+final class SelectUserViewModel: ViewModel, Eventful {
 
     // MARK: Event
 
     enum Event {
-        case error(JellyfinAPIError)
         case signedIn(UserState)
     }
 
     // MARK: Action
 
-    enum Action: Equatable {
+    @CasePathable
+    enum Action {
         case deleteUsers(Set<UserState>)
         case getServers
         case signIn(UserState, pin: String)
     }
 
-    // MARK: State
-
-    enum State: Hashable {
-        case content
+    enum State {
+        case initial
+        case error
     }
 
     @Published
     private(set) var servers: OrderedDictionary<ServerState, [UserState]> = [:]
-    @Published
-    var state: State = .content
 
     var events: AnyPublisher<Event, Never> {
         eventSubject
@@ -48,52 +47,36 @@ final class SelectUserViewModel: ViewModel, Eventful, Stateful {
 
     private var eventSubject: PassthroughSubject<Event, Never> = .init()
 
-    @MainActor
-    func respond(to action: Action) -> State {
-        switch action {
-        case let .deleteUsers(users):
-            do {
-                for user in users {
-                    try delete(user: user)
-                }
-
-                send(.getServers)
-            } catch {
-                eventSubject.send(.error(.init(error.localizedDescription)))
-            }
-        case .getServers:
-            do {
-                servers = try getServers()
-                    .zipped(map: getUsers)
-                    .reduce(into: OrderedDictionary<ServerState, [UserState]>()) { partialResult, pair in
-                        partialResult[pair.0] = pair.1
-                    }
-
-                return .content
-            } catch {
-                eventSubject.send(.error(.init(error.localizedDescription)))
-            }
-        case let .signIn(user, pin):
-
-            if user.accessPolicy == .requirePin, let storedPin = keychain.get("\(user.id)-pin") {
-                if pin != storedPin {
-                    eventSubject.send(.error(.init(L10n.incorrectPinForUser(user.username))))
-                    return .content
-                }
-            }
-
-            eventSubject.send(.signedIn(user))
-        }
-
-        return .content
+    override init() {
+        super.init()
+        Task { await setupPublisherAssignments() }
     }
 
-    private func getServers() throws -> [ServerState] {
-        try SwiftfinStore
+    @Function(\Action.Cases.deleteUsers)
+    private func _deleteUsers(_ users: Set<UserState>) async throws {
+
+        for user in users {
+            try user.delete()
+        }
+
+        try await _getServers()
+    }
+
+    @Function(\Action.Cases.getServers)
+    private func _getServers() async throws {
+        let newServers = try SwiftfinStore
             .dataStack
             .fetchAll(From<ServerModel>())
             .map(\.state)
             .sorted(using: \.name)
+            .zipped(map: getUsers)
+            .reduce(into: OrderedDictionary<ServerState, [UserState]>()) { partialResult, pair in
+                partialResult[pair.0] = pair.1
+            }
+
+        await MainActor.run {
+            servers = newServers
+        }
     }
 
     private func getUsers(for server: ServerState) throws -> [UserState] {
@@ -105,7 +88,14 @@ final class SelectUserViewModel: ViewModel, Eventful, Stateful {
             .map(\.state)
     }
 
-    private func delete(user: UserState) throws {
-        try user.delete()
+    @Function(\Action.Cases.signIn)
+    private func _signIn(_ user: UserState, _ pin: String) throws {
+        if user.accessPolicy == .requirePin, let storedPin = keychain.get("\(user.id)-pin") {
+            guard pin == storedPin else {
+                throw JellyfinAPIError(L10n.incorrectPinForUser(user.username))
+            }
+        }
+
+        eventSubject.send(.signedIn(user))
     }
 }

@@ -63,7 +63,7 @@ struct ServerLogsView: View {
     private func errorView(with error: some Error) -> some View {
         ErrorView(error: error)
             .onRetry {
-                viewModel.send(.getLogs)
+                viewModel.getLogs()
             }
     }
 
@@ -72,8 +72,8 @@ struct ServerLogsView: View {
             switch viewModel.state {
             case .content:
                 contentView
-            case let .error(error):
-                errorView(with: error)
+            case .error:
+                errorView(with: viewModel.error!)
             case .initial:
                 DelayedProgressView()
             }
@@ -81,7 +81,7 @@ struct ServerLogsView: View {
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationBarTitle(L10n.serverLogs)
         .onFirstAppear {
-            viewModel.send(.getLogs)
+            viewModel.getLogs()
         }
     }
 }

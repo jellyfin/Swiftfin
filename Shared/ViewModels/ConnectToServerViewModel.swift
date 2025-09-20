@@ -15,46 +15,53 @@ import JellyfinAPI
 import OrderedCollections
 import Pulse
 
-final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
+@MainActor
+@Stateful
+final class ConnectToServerViewModel: ViewModel, Eventful {
 
     // MARK: Event
 
     enum Event {
         case connected(ServerState)
         case duplicateServer(ServerState)
-        case error(JellyfinAPIError)
     }
 
     // MARK: Action
 
-    enum Action: Equatable {
-        case addNewURL(ServerState)
+    @CasePathable
+    enum Action {
+        case addNewURL(serverState: ServerState)
         case cancel
-        case connect(String)
+        case connect(url: String)
         case searchForServers
+
+        var transition: Transition {
+            switch self {
+            case .addNewURL: .identity
+            case .cancel: .to(.initial)
+            case .connect: .to(.connecting, then: .initial)
+            case .searchForServers: .identity
+            }
+        }
     }
 
     // MARK: BackgroundState
 
-    enum BackgroundState: Hashable {
+    enum BackgroundState {
         case searching
     }
 
     // MARK: State
 
-    enum State: Hashable {
+    enum State {
         case connecting
         case initial
+        case error
     }
-
-    @Published
-    var backgroundStates: Set<BackgroundState> = []
 
     // no longer-found servers are not cleared, but not an issue
     @Published
     var localServers: OrderedSet<ServerState> = []
-    @Published
-    var state: State = .initial
 
     var events: AnyPublisher<Event, Never> {
         eventSubject
@@ -73,6 +80,8 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
     override init() {
         super.init()
 
+        Task { await setupPublisherAssignments() }
+
         Task { [weak self] in
             guard let self else { return }
 
@@ -85,59 +94,8 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
         .store(in: &cancellables)
     }
 
-    func respond(to action: Action) -> State {
-        switch action {
-        case let .addNewURL(server):
-            addNewURL(server: server)
-
-            return state
-        case .cancel:
-            connectTask?.cancel()
-
-            return .initial
-        case let .connect(url):
-            connectTask?.cancel()
-
-            connectTask = Task {
-                do {
-                    let server = try await connectToServer(url: url)
-
-                    if isDuplicate(server: server) {
-                        await MainActor.run {
-                            // server has same id, but (possible) new URL
-                            self.eventSubject.send(.duplicateServer(server))
-                        }
-                    } else {
-                        try await save(server: server)
-
-                        await MainActor.run {
-                            self.eventSubject.send(.connected(server))
-                        }
-                    }
-
-                    await MainActor.run {
-                        self.state = .initial
-                    }
-                } catch is CancellationError {
-                    // cancel doesn't matter
-                } catch {
-                    await MainActor.run {
-                        self.eventSubject.send(.error(.init(error.localizedDescription)))
-                        self.state = .initial
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return .connecting
-        case .searchForServers:
-            discovery.broadcast()
-
-            return state
-        }
-    }
-
-    private func connectToServer(url: String) async throws -> ServerState {
+    @Function(\Action.Cases.connect)
+    private func _connectToServer(_ url: String) async throws {
 
         let formattedURL = url.trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
@@ -173,7 +131,18 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
             usersIDs: []
         )
 
-        return newServerState
+        if isDuplicate(server: newServerState) {
+            await MainActor.run {
+                // server has same id, but (possible) new URL
+                self.eventSubject.send(.duplicateServer(newServerState))
+            }
+        } else {
+            try await save(server: newServerState)
+
+            await MainActor.run {
+                self.eventSubject.send(.connected(newServerState))
+            }
+        }
     }
 
     // In the event of redirects, get the new host URL from response
@@ -218,7 +187,8 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
     }
 
     // server has same id, but (possible) new URL
-    private func addNewURL(server: ServerState) {
+    @Function(\Action.Cases.addNewURL)
+    private func _addNewURL(_ server: ServerState) {
         do {
             let newState = try dataStack.perform { transaction in
                 let existingServer = try self.dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id))
@@ -237,5 +207,10 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
         } catch {
             logger.critical("\(error.localizedDescription)")
         }
+    }
+
+    @Function(\Action.Cases.searchForServers)
+    private func _searchForServers() {
+        discovery.broadcast()
     }
 }

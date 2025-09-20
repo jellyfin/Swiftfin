@@ -70,7 +70,7 @@ struct CountryPicker: View {
             #endif
         }
         .onFirstAppear {
-            viewModel.send(.refresh)
+            viewModel.refresh()
         }
     }
 
