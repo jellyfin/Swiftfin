@@ -19,7 +19,7 @@ final class ServerLogsViewModel: ViewModel {
         case getLogs
 
         var transition: Transition {
-            .to(.refreshing, then: .initial)
+            .loop(.refreshing)
         }
     }
 

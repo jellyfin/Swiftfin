@@ -20,7 +20,7 @@ final class MediaViewModel: ViewModel {
         case refresh
 
         var transition: Transition {
-            .to(.refreshing, then: .initial)
+            .loop(.refreshing)
         }
     }
 

@@ -24,7 +24,7 @@ final class RefreshMetadataViewModel: ViewModel {
         )
 
         var transition: Transition {
-            .to(.refreshing, thenWithError: .initial)
+            .loop(.refreshing)
         }
     }
 

@@ -21,7 +21,7 @@ final class QuickConnectAuthorizeViewModel: ViewModel {
 
         var transition: Transition {
             switch self {
-            case .authorize: .to(.authorizing, thenWithError: .initial)
+            case .authorize: .loop(.authorizing)
             case .cancel: .to(.initial)
             }
         }

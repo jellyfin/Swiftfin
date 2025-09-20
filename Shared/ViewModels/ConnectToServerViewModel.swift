@@ -30,14 +30,10 @@ final class ConnectToServerViewModel: ViewModel {
             switch self {
             case .addNewURL: .identity
             case .cancel: .to(.initial)
-            case .connect: .to(.connecting, thenWithError: .initial)
+            case .connect: .loop(.connecting)
             case .searchForServers: .identity
             }
         }
-    }
-
-    enum BackgroundState {
-        case searching
     }
 
     enum Event {

@@ -18,7 +18,7 @@ class BaseFetchViewModel<Value: Codable>: ViewModel {
         case refresh
 
         var transition: Transition {
-            .to(.refreshing, thenWithError: .initial)
+            .loop(.refreshing)
         }
     }
 
