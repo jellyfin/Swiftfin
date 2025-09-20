@@ -11,6 +11,12 @@ import JellyfinAPI
 
 extension PlayerStateInfo {
 
+    var position: Duration? {
+        guard let positionTicks else { return nil }
+        return Duration.microseconds(positionTicks / 10)
+    }
+
+    @available(*, deprecated, message: "Use `position` instead")
     var positionSeconds: Int? {
         guard let positionTicks else { return nil }
         return positionTicks / 10_000_000

@@ -74,11 +74,23 @@ class ItemViewModel: ViewModel, Stateful {
     private(set) var specialFeatures: [BaseItemDto] = []
     @Published
     private(set) var localTrailers: [BaseItemDto] = []
+    @Published
+    private(set) var additionalParts: [BaseItemDto] = []
 
     @Published
     var backgroundStates: Set<BackgroundState> = []
     @Published
     var state: State = .initial
+
+    private var itemID: String {
+        get throws {
+            guard let id = item.id else {
+                logger.error("Item ID is nil")
+                throw JellyfinAPIError(L10n.unknownError)
+            }
+            return id
+        }
+    }
 
     // tasks
 
@@ -113,6 +125,11 @@ class ItemViewModel: ViewModel, Stateful {
                 }
             }
             .store(in: &cancellables)
+    }
+
+    convenience init(episode: BaseItemDto) {
+        let shellSeriesItem = BaseItemDto(id: episode.seriesID, name: episode.seriesName)
+        self.init(item: shellSeriesItem)
     }
 
     // MARK: respond
@@ -183,12 +200,14 @@ class ItemViewModel: ViewModel, Stateful {
                     async let similarItems = getSimilarItems()
                     async let specialFeatures = getSpecialFeatures()
                     async let localTrailers = getLocalTrailers()
+                    async let additionalParts = getAdditionalParts()
 
                     let results = try await (
                         fullItem: fullItem,
                         similarItems: similarItems,
                         specialFeatures: specialFeatures,
-                        localTrailers: localTrailers
+                        localTrailers: localTrailers,
+                        additionalParts: additionalParts
                     )
 
                     guard !Task.isCancelled else { return }
@@ -198,6 +217,7 @@ class ItemViewModel: ViewModel, Stateful {
                         self.similarItems = results.similarItems
                         self.specialFeatures = results.specialFeatures
                         self.localTrailers = results.localTrailers
+                        self.additionalParts = results.additionalParts
 
                         self.state = .content
                     }
@@ -285,18 +305,7 @@ class ItemViewModel: ViewModel, Stateful {
     }
 
     private func getFullItem() async throws -> BaseItemDto {
-
-        var parameters = Paths.GetItemsByUserIDParameters()
-        parameters.enableUserData = true
-        parameters.fields = ItemFields.allCases
-        parameters.ids = [item.id!]
-
-        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
-        let response = try await userSession.client.send(request)
-
-        guard let fullItem = response.value.items?.first else { throw JellyfinAPIError("Full item not in response") }
-
-        return fullItem
+        try await item.getFullItem(userSession: userSession)
     }
 
     private func getSimilarItems() async -> [BaseItemDto] {
@@ -330,12 +339,22 @@ class ItemViewModel: ViewModel, Stateful {
 
     private func getLocalTrailers() async throws -> [BaseItemDto] {
 
-        guard let itemID = item.id else { return [] }
-
-        let request = Paths.getLocalTrailers(itemID: itemID, userID: userSession.user.id)
+        let request = try Paths.getLocalTrailers(itemID: itemID, userID: userSession.user.id)
         let response = try? await userSession.client.send(request)
 
         return response?.value ?? []
+    }
+
+    private func getAdditionalParts() async throws -> [BaseItemDto] {
+
+        guard let partCount = item.partCount,
+              partCount > 1,
+              let itemID = item.id else { return [] }
+
+        let request = Paths.getAdditionalPart(itemID: itemID)
+        let response = try? await userSession.client.send(request)
+
+        return response?.value.items ?? []
     }
 
     private func setIsPlayed(_ isPlayed: Bool) async throws {

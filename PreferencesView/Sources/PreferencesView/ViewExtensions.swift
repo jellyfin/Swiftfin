@@ -22,10 +22,6 @@ public extension View {
     func prefersHomeIndicatorAutoHidden(_ hidden: Bool) -> some View {
         preference(key: PrefersHomeIndicatorAutoHiddenPreferenceKey.self, value: hidden)
     }
-
-    func supportedOrientations(_ supportedOrientations: UIInterfaceOrientationMask) -> some View {
-        preference(key: SupportedOrientationsPreferenceKey.self, value: supportedOrientations)
-    }
     #endif
 
     #if os(tvOS)
@@ -33,4 +29,32 @@ public extension View {
         preference(key: PressCommandsPreferenceKey.self, value: commands())
     }
     #endif
+
+    /// - Important: This does nothing on tvOS.
+    func supportedOrientations(_ supportedOrientations: UIInterfaceOrientationMask) -> some View {
+        #if os(tvOS)
+        self
+        #else
+        preference(key: SupportedOrientationsPreferenceKey.self, value: supportedOrientations)
+        #endif
+    }
 }
+
+#if os(tvOS)
+public struct UIInterfaceOrientationMask: OptionSet {
+
+    public let rawValue: UInt
+
+    public init(rawValue: UInt) {
+        self.rawValue = rawValue
+    }
+
+    public static let portrait = UIInterfaceOrientationMask(rawValue: 1 << 1)
+    public static let landscapeLeft = UIInterfaceOrientationMask(rawValue: 1 << 4)
+    public static let landscapeRight = UIInterfaceOrientationMask(rawValue: 1 << 3)
+    public static let portraitUpsideDown = UIInterfaceOrientationMask(rawValue: 1 << 2)
+    public static let landscape: UIInterfaceOrientationMask = [.landscapeLeft, .landscapeRight]
+    public static let all: UIInterfaceOrientationMask = [.portrait, .landscapeLeft, .landscapeRight, .portraitUpsideDown]
+    public static let allButUpsideDown: UIInterfaceOrientationMask = [.portrait, .landscapeLeft, .landscapeRight]
+}
+#endif
