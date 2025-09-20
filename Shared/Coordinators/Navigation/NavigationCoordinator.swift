@@ -26,10 +26,12 @@ final class NavigationCoordinator: ObservableObject {
 
         #if os(tvOS)
         switch style {
-        case .push, .sheet:
+        case .push, .fullscreen:
+            withAnimation {
+                presentedFullScreen = route
+            }
+        case .sheet:
             presentedSheet = route
-        case .fullscreen:
-            presentedFullScreen = route
         }
         #else
         switch style {
