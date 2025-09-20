@@ -1,5 +1,5 @@
 {
-  "originHash" : "8fbca7c025330b2dbce8e967d3a67632dd6b5bf4921fa205c5ed517ffd0278f6",
+  "originHash" : "098bc3ab494bb524cbcfb836e486c0430888beb0a133d8457d808fad49fa68a2",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -65,6 +65,15 @@
       }
     },
     {
+      "identity" : "engine",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nathantannar4/Engine",
+      "state" : {
+        "revision" : "3d7c65095a406b151bbb9f7e168e0145dc4241fb",
+        "version" : "2.1.15"
+      }
+    },
+    {
       "identity" : "factory",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/hmlongco/Factory",
@@ -107,6 +116,33 @@
       "state" : {
         "revision" : "5e1b02b6a9dac2a759a1d5dbc175c86bd192a608",
         "version" : "24.0.0"
+      }
+    },
+    {
+      "identity" : "lnpopupcontroller",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LeoNatan/LNPopupController.git",
+      "state" : {
+        "revision" : "e14712b8077f9d25c2b70d23241e922537673338",
+        "version" : "3.0.7"
+      }
+    },
+    {
+      "identity" : "lnpopupui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LeoNatan/LNPopupUI/",
+      "state" : {
+        "revision" : "aa9c813f2b47d055b648628b738e1b115c5e9fad",
+        "version" : "2.0.2"
+      }
+    },
+    {
+      "identity" : "lnswiftuiutils",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LeoNatan/LNSwiftUIUtils.git",
+      "state" : {
+        "revision" : "7be14fd7942f6b215f4b1912315f9e67266cb082",
+        "version" : "1.1.2"
       }
     },
     {
@@ -200,12 +236,21 @@
       }
     },
     {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax",
+      "state" : {
+        "revision" : "f99ae8aa18f0cf0d53481901f88a0991dc3bd4a2",
+        "version" : "601.0.1"
+      }
+    },
+    {
       "identity" : "swiftui-introspect",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
-        "revision" : "668a65735751432b640260c56dfa621cec568368",
-        "version" : "1.2.0"
+        "revision" : "807f73ce09a9b9723f12385e592b4e0aaebd3336",
+        "version" : "1.3.0"
       }
     },
     {
@@ -215,6 +260,15 @@
       "state" : {
         "branch" : "master",
         "revision" : "e2d31c646182bf94a496b173c6ee5ad191230e9a"
+      }
+    },
+    {
+      "identity" : "transmission",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nathantannar4/Transmission",
+      "state" : {
+        "revision" : "2da5049d33111238ad4cb979ebce783af9586cef",
+        "version" : "2.4.5"
       }
     },
     {
@@ -249,8 +303,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/VLCUI",
       "state" : {
-        "branch" : "main",
-        "revision" : "9e0285b13c666aace61835e8a512512edee822a6"
+        "revision" : "9850f460ce5f4154979d17aeae92674c1632ff53",
+        "version" : "0.7.4"
       }
     }
   ],

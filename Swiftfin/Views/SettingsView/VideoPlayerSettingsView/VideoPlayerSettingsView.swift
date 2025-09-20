@@ -11,9 +11,9 @@ import SwiftUI
 
 struct VideoPlayerSettingsView: View {
 
-    @Default(.VideoPlayer.jumpBackwardLength)
+    @Default(.VideoPlayer.jumpBackwardInterval)
     private var jumpBackwardLength
-    @Default(.VideoPlayer.jumpForwardLength)
+    @Default(.VideoPlayer.jumpForwardInterval)
     private var jumpForwardLength
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
@@ -28,9 +28,9 @@ struct VideoPlayerSettingsView: View {
                 router.route(to: .gestureSettings)
             }
 
-            CaseIterablePicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
+//            CaseIterablePicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
 
-            CaseIterablePicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
+//            CaseIterablePicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
 
             Section {
 

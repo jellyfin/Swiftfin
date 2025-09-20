@@ -6,36 +6,34 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Foundation
+// TODO: add audio/subtitle offset
 
-// TODO: atow, advanced was removed to be redesigned before being released
-enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displayable, Identifiable {
+enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Identifiable, Storable, SystemImageable {
 
-//    case advanced
     case aspectFill
     case audio
     case autoPlay
-    case chapters
+    case gestureLock
     case playbackSpeed
+//    case playbackQuality
     case playNextItem
     case playPreviousItem
     case subtitles
 
     var displayTitle: String {
         switch self {
-//        case .advanced:
-//            return L10n.advanced
         case .aspectFill:
             return L10n.aspectFill
         case .audio:
             return L10n.audio
         case .autoPlay:
             return L10n.autoPlay
-        case .chapters:
-            return L10n.chapters
+        case .gestureLock:
+            return L10n.gestureLock
         case .playbackSpeed:
             return L10n.playbackSpeed
+//        case .playbackQuality:
+//            return L10n.playbackQuality
         case .playNextItem:
             return L10n.playNextItem
         case .playPreviousItem:
@@ -49,26 +47,29 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
         rawValue
     }
 
-    var settingsSystemImage: String {
+    var systemImage: String {
         switch self {
-//        case .advanced:
-//            return "gearshape.fill"
-        case .aspectFill:
-            return "arrow.up.left.and.arrow.down.right"
-        case .audio:
-            return "speaker.wave.2"
-        case .autoPlay:
-            return "play.circle.fill"
-        case .chapters:
-            return "list.bullet.circle"
-        case .playbackSpeed:
-            return "speedometer"
-        case .playNextItem:
-            return "chevron.right.circle"
-        case .playPreviousItem:
-            return "chevron.left.circle"
-        case .subtitles:
-            return "captions.bubble"
+        case .aspectFill: "arrow.up.left.and.arrow.down.right"
+        case .audio: "speaker.wave.2.fill"
+        case .autoPlay: "play.circle.fill"
+        case .gestureLock: "lock.circle.fill"
+        case .playbackSpeed: "speedometer"
+//        case .playbackQuality: "tv.circle.fill"
+        case .playNextItem: "forward.end.circle.fill"
+        case .playPreviousItem: "backward.end.circle.fill"
+        case .subtitles: "captions.bubble.fill"
+        }
+    }
+
+    var secondarySystemImage: String {
+        switch self {
+        case .aspectFill: "arrow.down.right.and.arrow.up.left"
+        case .audio: "speaker.wave.2"
+        case .autoPlay: "stop.circle"
+        case .gestureLock: "lock.open.fill"
+        case .subtitles: "captions.bubble"
+        default:
+            systemImage
         }
     }
 
@@ -83,7 +84,5 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
         .audio,
         .subtitles,
         .playbackSpeed,
-        .chapters,
-//        .advanced,
     ]
 }

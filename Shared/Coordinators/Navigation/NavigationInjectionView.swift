@@ -6,7 +6,20 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import PreferencesView
 import SwiftUI
+import Transmission
+
+// TODO: have full screen zoom presentation zoom from/to center
+//       - probably need to make mock view with matching ids
+// TODO: have presentation dismissal be through preference keys
+//       - issue with all of the VC/view wrapping
+
+extension EnvironmentValues {
+
+    @Entry
+    var presentationControllerShouldDismiss: Binding<Bool> = .constant(true)
+}
 
 struct NavigationInjectionView: View {
 
@@ -15,13 +28,16 @@ struct NavigationInjectionView: View {
     @EnvironmentObject
     private var rootCoordinator: RootCoordinator
 
+    @State
+    private var isPresentationInteractive: Bool = true
+
     private let content: AnyView
 
     init(
-        coordinator: NavigationCoordinator,
+        coordinator: @autoclosure @escaping () -> NavigationCoordinator,
         @ViewBuilder content: @escaping () -> some View
     ) {
-        _coordinator = StateObject(wrappedValue: coordinator)
+        _coordinator = StateObject(wrappedValue: coordinator())
         self.content = AnyView(content())
     }
 
@@ -50,16 +66,41 @@ struct NavigationInjectionView: View {
                 route.destination
             }
         }
+        #if os(tvOS)
         .fullScreenCover(
             item: $coordinator.presentedFullScreen
-        ) {
-            coordinator.presentedFullScreen = nil
-        } content: { route in
+        ) { route in
             let newCoordinator = NavigationCoordinator()
 
             NavigationInjectionView(coordinator: newCoordinator) {
                 route.destination
             }
         }
+        #else
+        .presentation(
+                $coordinator.presentedFullScreen,
+                transition: .zoomIfAvailable(
+                    options: .init(
+                        dimmingVisualEffect: .systemThickMaterialDark,
+                        options: .init(
+                            isInteractive: isPresentationInteractive
+                        )
+                    ),
+                    otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: isPresentationInteractive))
+                )
+            ) { routeBinding, _ in
+                let vc = UIPreferencesHostingController {
+                    NavigationInjectionView(coordinator: .init()) {
+                        routeBinding.wrappedValue.destination
+                            .environment(\.presentationControllerShouldDismiss, $isPresentationInteractive)
+                    }
+                }
+
+                // TODO: presentation options for customizing background color, dimming effect, etc.
+                vc.view.backgroundColor = .black
+
+                return vc
+            }
+        #endif
     }
 }

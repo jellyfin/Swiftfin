@@ -11,7 +11,7 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
-// MARK: PortraitPoster
+// MARK: Poster
 
 extension BaseItemDto: Poster {
 
@@ -61,7 +61,22 @@ extension BaseItemDto: Poster {
         case .boxSet, .channel, .tvChannel, .liveTvChannel, .movie, .series, .person:
             [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
         default:
-            []
+            // TODO: cleanup
+            // parentBackdropItemID seems good enough
+            if extraType != nil, let parentBackdropItemID {
+                [.init(
+                    url: _imageURL(
+                        .primary,
+                        maxWidth: maxWidth,
+                        maxHeight: nil,
+                        quality: quality,
+                        itemID: parentBackdropItemID,
+                        requireTag: false
+                    )
+                )]
+            } else {
+                []
+            }
         }
     }
 
