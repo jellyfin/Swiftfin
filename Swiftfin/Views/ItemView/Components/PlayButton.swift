@@ -106,16 +106,28 @@ extension ItemView {
                 return
             }
 
-            if fromBeginning {
-                playButtonItem.userData?.playbackPositionTicks = 0
+            let queue: (any MediaPlayerQueue)? = {
+                if playButtonItem.type == .episode {
+                    return EpisodeMediaPlayerQueue(episode: playButtonItem)
+                }
+                return nil
+            }()
+
+            let provider = MediaPlayerItemProvider(item: playButtonItem) { item in
+                try await MediaPlayerItem.build(
+                    for: item,
+                    mediaSource: selectedMediaSource
+                ) {
+                    if fromBeginning {
+                        $0.userData?.playbackPositionTicks = 0
+                    }
+                }
             }
 
             router.route(
                 to: .videoPlayer(
-                    manager: OnlineVideoPlayerManager(
-                        item: playButtonItem,
-                        mediaSource: selectedMediaSource
-                    )
+                    provider: provider,
+                    queue: queue
                 )
             )
         }

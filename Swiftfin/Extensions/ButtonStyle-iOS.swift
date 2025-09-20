@@ -43,6 +43,7 @@ struct ToolbarPillButtonStyle: ButtonStyle {
 
 extension ButtonStyle where Self == TintedMaterialButtonStyle {
 
+    // TODO: just be `Material` backed instead of `TintedMaterial`
     static var material: TintedMaterialButtonStyle {
         TintedMaterialButtonStyle(tint: Color.clear, foregroundColor: Color.primary, isPressed: nil)
     }
