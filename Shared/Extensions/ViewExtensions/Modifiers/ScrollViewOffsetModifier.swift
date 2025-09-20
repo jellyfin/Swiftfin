@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import SwiftUIIntrospect
+@_spi(Advanced) import SwiftUIIntrospect
 
 struct ScrollViewOffsetModifier: ViewModifier {
 
@@ -21,14 +21,8 @@ struct ScrollViewOffsetModifier: ViewModifier {
     func body(content: Content) -> some View {
         content.introspect(
             .scrollView,
-            on: .iOS(.v15),
-            .iOS(.v16),
-            .iOS(.v17),
-            .iOS(.v18),
-            .tvOS(.v15),
-            .tvOS(.v16),
-            .tvOS(.v17),
-            .tvOS(.v18)
+            on: .iOS(.v15...),
+            .tvOS(.v15...)
         ) { scrollView in
             scrollView.delegate = scrollViewDelegate
         }

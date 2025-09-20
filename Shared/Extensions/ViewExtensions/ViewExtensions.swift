@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Defaults
 import Foundation
 import SwiftUI
@@ -342,6 +343,12 @@ extension View {
         }
     }
 
+    func assign<P>(_ publisher: P, to binding: Binding<P.Output>) -> some View where P: Publisher, P.Failure == Never {
+        onReceive(publisher) { output in
+            binding.wrappedValue = output
+        }
+    }
+
     func onNotification<P>(_ key: Notifications.Key<P>, perform action: @escaping (P) -> Void) -> some View {
         modifier(
             OnReceiveNotificationModifier(
@@ -349,6 +356,30 @@ extension View {
                 onReceive: action
             )
         )
+    }
+
+    func onAppDidEnterBackground(_ action: @escaping () -> Void) -> some View {
+        onNotification(.applicationDidEnterBackground, perform: action)
+    }
+
+    func onAppWillResignActive(_ action: @escaping () -> Void) -> some View {
+        onNotification(.applicationWillResignActive, perform: action)
+    }
+
+    func onAppWillEnterForeground(_ action: @escaping () -> Void) -> some View {
+        onNotification(.applicationWillEnterForeground, perform: action)
+    }
+
+    func onAppWillTerminate(_ action: @escaping () -> Void) -> some View {
+        onNotification(.applicationWillTerminate, perform: action)
+    }
+
+    func onSceneDidEnterBackground(_ action: @escaping () -> Void) -> some View {
+        onNotification(.sceneDidEnterBackground, perform: action)
+    }
+
+    func onSceneWillEnterForeground(_ action: @escaping () -> Void) -> some View {
+        onNotification(.sceneWillEnterForeground, perform: action)
     }
 
     func scrollIfLargerThanContainer(padding: CGFloat = 0) -> some View {
@@ -359,6 +390,11 @@ extension View {
         @ArrayBuilder<OpacityLinearGradientModifier.Stop> stops: () -> [OpacityLinearGradientModifier.Stop]
     ) -> some View {
         modifier(OpacityLinearGradientModifier(stops: stops()))
+    }
+
+    // TODO: look at changing to symbolEffect
+    func videoPlayerActionButtonTransition() -> some View {
+        transition(.opacity.combined(with: .scale).animation(.snappy))
     }
 
     // MARK: debug

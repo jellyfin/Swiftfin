@@ -8,6 +8,7 @@
 
 import Combine
 import Defaults
+import Factory
 import Foundation
 import SwiftUI
 
@@ -33,6 +34,9 @@ extension SwiftfinApp {
 
             lastSignInUserIDCancellable = Task {
                 for await newValue in Defaults.updates(.lastSignedInUserID) {
+
+                    Container.shared.mediaPlayerManager.reset()
+
                     if case .signedIn = newValue {
                         setUserDefaultsObservation()
                     } else {

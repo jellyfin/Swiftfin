@@ -22,3 +22,10 @@ extension Optional where Wrapped: Collection {
         }
     }
 }
+
+extension Optional where Wrapped: Hashable {
+
+    var hashValueOrZero: Int {
+        self?.hashValue ?? 0
+    }
+}

@@ -18,49 +18,51 @@ extension ChapterInfo: Displayable {
 
 extension ChapterInfo {
 
-    var timestampLabel: String {
-        let seconds = (startPositionTicks ?? 0) / 10_000_000
-        return seconds.timeLabel
-    }
-
-    var startTimeSeconds: Int {
-        let playbackPositionTicks = startPositionTicks ?? 0
-        return Int(playbackPositionTicks / 10_000_000)
+    var startSeconds: Duration? {
+        guard let startPositionTicks else { return nil }
+        return Duration.ticks(startPositionTicks)
     }
 }
 
 extension ChapterInfo {
 
-    struct FullInfo: Poster, Equatable {
-
-        var id: Int {
-            chapterInfo.hashValue
-        }
+    struct FullInfo: Poster {
 
         let chapterInfo: ChapterInfo
         let imageSource: ImageSource
-        let secondsRange: Range<Int>
+        let secondsRange: Range<Duration>
+        let systemImage: String = "film"
+        let unitRange: Range<Double>
 
         var displayTitle: String {
             chapterInfo.displayTitle
+        }
+
+        var id: Int {
+            chapterInfo.hashValue
         }
 
         var unwrappedIDHashOrZero: Int {
             id
         }
 
-        let systemImage: String = "film"
         var subtitle: String?
         var showTitle: Bool = true
 
         init(
             chapterInfo: ChapterInfo,
             imageSource: ImageSource,
-            secondsRange: Range<Int>
+            secondsRange: Range<Duration>,
+            runtime: Duration
         ) {
             self.chapterInfo = chapterInfo
             self.imageSource = imageSource
             self.secondsRange = secondsRange
+            self.unitRange = secondsRange.lowerBound / runtime ..< secondsRange.upperBound / runtime
+        }
+
+        func contains(seconds: Duration) -> Bool {
+            secondsRange.contains(seconds)
         }
 
         func landscapeImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
