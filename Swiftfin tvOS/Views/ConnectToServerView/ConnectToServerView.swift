@@ -30,26 +30,27 @@ struct ConnectToServerView: View {
     @StateObject
     private var viewModel = ConnectToServerViewModel()
 
-    // MARK: - Connect to Server Variables
-
     @State
     private var duplicateServer: ServerState? = nil
     @State
-    private var url: String = ""
-
-    // MARK: - Dialog States
-
-    @State
     private var isPresentingDuplicateServer: Bool = false
-
-    // MARK: - Error States
-
     @State
-    private var error: Error? = nil
+    private var url: String = ""
 
     // MARK: - Connection Timer
 
     private let timer = Timer.publish(every: 12, on: .main, in: .common).autoconnect()
+
+    private func onEvent(_ event: ConnectToServerViewModel._Event) {
+        switch event {
+        case let .connected(server):
+            Notifications[.didConnectToServer].post(server)
+            router.dismiss()
+        case let .duplicateServer(server):
+            duplicateServer = server
+            isPresentingDuplicateServer = true
+        }
+    }
 
     // MARK: - Connect Section
 
@@ -63,14 +64,14 @@ struct ConnectToServerView: View {
 
         if viewModel.state == .connecting {
             ListRowButton(L10n.cancel) {
-                viewModel.send(.cancel)
+                viewModel.cancel()
             }
             .foregroundStyle(.red, accentColor)
             .padding(.vertical)
         } else {
             ListRowButton(L10n.connect) {
                 isURLFocused = false
-                viewModel.send(.connect(url))
+                viewModel.connect(url: url)
             }
             .disabled(url.isEmpty)
             .foregroundStyle(
@@ -99,7 +100,7 @@ struct ConnectToServerView: View {
                 ForEach(viewModel.localServers, id: \.id) { server in
                     LocalServerButton(server: server) {
                         url = server.currentURL.absoluteString
-                        viewModel.send(.connect(server.currentURL.absoluteString))
+                        viewModel.connect(url: server.currentURL.absoluteString)
                     }
                     .environment(
                         \.isEnabled,
@@ -124,25 +125,16 @@ struct ConnectToServerView: View {
         }
         .onFirstAppear {
             isURLFocused = true
-            viewModel.send(.searchForServers)
-        }
-        .onReceive(viewModel.events) { event in
-            switch event {
-            case let .connected(server):
-                Notifications[.didConnectToServer].post(server)
-                router.dismiss()
-            case let .duplicateServer(server):
-                duplicateServer = server
-                isPresentingDuplicateServer = true
-            case let .error(eventError):
-                error = eventError
-                isURLFocused = true
-            }
+            viewModel.searchForServers()
         }
         .onReceive(timer) { _ in
             guard viewModel.state != .connecting else { return }
-
-            viewModel.send(.searchForServers)
+            viewModel.searchForServers()
+        }
+        .onReceive(viewModel.events, perform: onEvent)
+        .onReceive(viewModel.$error) { error in
+            guard error != nil else { return }
+            isURLFocused = true
         }
         .alert(
             L10n.server.text,
@@ -152,12 +144,12 @@ struct ConnectToServerView: View {
             Button(L10n.dismiss, role: .destructive)
 
             Button(L10n.addURL) {
-                viewModel.send(.addNewURL(server))
+                viewModel.addNewURL(serverState: server)
                 router.dismiss()
             }
         } message: { server in
             Text(L10n.serverAlreadyConnected(server.name))
         }
-        .errorMessage($error)
+        .errorMessage($viewModel.error)
     }
 }

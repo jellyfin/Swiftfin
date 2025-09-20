@@ -15,7 +15,7 @@ import Transmission
 struct WithTransitionReaderPublisher<Content: View>: View {
 
     @StateObject
-    private var publishedBox: PublishedBox<EventPublisher<TransitionReaderProxy?>> = .init(initialValue: .init())
+    private var publishedBox: PublishedBox<LegacyEventPublisher<TransitionReaderProxy?>> = .init(initialValue: .init())
 
     let content: Content
 
@@ -43,7 +43,7 @@ struct TransitionReaderObserver: DynamicProperty {
     @Environment(\.transitionReader)
     private var publisher
 
-    var wrappedValue: EventPublisher<TransitionReaderProxy?> {
+    var wrappedValue: LegacyEventPublisher<TransitionReaderProxy?> {
         publisher
     }
 }
@@ -51,6 +51,6 @@ struct TransitionReaderObserver: DynamicProperty {
 extension EnvironmentValues {
 
     @Entry
-    var transitionReader: EventPublisher<TransitionReaderProxy?> = .init()
+    var transitionReader: LegacyEventPublisher<TransitionReaderProxy?> = .init()
 }
 #endif

@@ -1,5 +1,5 @@
 {
-  "originHash" : "098bc3ab494bb524cbcfb836e486c0430888beb0a133d8457d808fad49fa68a2",
+  "originHash" : "38a493503cb22432e1bf1b0b812569bb2bdd51f821207a74b6b78ff16a049011",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -182,6 +182,15 @@
       }
     },
     {
+      "identity" : "statefulmacro",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LePips/StatefulMacro",
+      "state" : {
+        "branch" : "main",
+        "revision" : "f7be96ac61a141db24ccf1065563b78ca4c6f026"
+      }
+    },
+    {
       "identity" : "svgkit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SVGKit/SVGKit",
@@ -197,6 +206,15 @@
       "state" : {
         "revision" : "f6919dfc309e7f1b56224378b11e28bab5bccc42",
         "version" : "1.2.0"
+      }
+    },
+    {
+      "identity" : "swift-case-paths",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-case-paths.git",
+      "state" : {
+        "revision" : "6989976265be3f8d2b5802c722f9ba168e227c71",
+        "version" : "1.7.2"
       }
     },
     {
@@ -240,8 +258,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax",
       "state" : {
-        "revision" : "f99ae8aa18f0cf0d53481901f88a0991dc3bd4a2",
-        "version" : "601.0.1"
+        "revision" : "0687f71944021d616d34d922343dcef086855920",
+        "version" : "600.0.1"
       }
     },
     {
@@ -305,6 +323,15 @@
       "state" : {
         "revision" : "9850f460ce5f4154979d17aeae92674c1632ff53",
         "version" : "0.7.4"
+      }
+    },
+    {
+      "identity" : "xctest-dynamic-overlay",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
+      "state" : {
+        "revision" : "b2ed9eabefe56202ee4939dd9fc46b6241c88317",
+        "version" : "1.6.1"
       }
     }
   ],

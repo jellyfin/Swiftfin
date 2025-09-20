@@ -11,64 +11,32 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-final class MediaViewModel: ViewModel, Stateful {
+@MainActor
+@Stateful
+final class MediaViewModel: ViewModel {
 
-    // MARK: Action
-
-    enum Action: Equatable {
-        case error(JellyfinAPIError)
+    @CasePathable
+    enum Action {
         case refresh
+
+        var transition: Transition {
+            .loop(.refreshing)
+        }
     }
 
-    // MARK: State
-
-    enum State: Hashable {
-        case content
-        case error(JellyfinAPIError)
+    enum State {
+        case error
         case initial
         case refreshing
     }
 
     @Published
-    var mediaItems: OrderedSet<MediaType> = []
+    private(set) var mediaItems: OrderedSet<MediaType> = []
 
-    @Published
-    var backgroundStates: Set<BackgroundState> = []
+    @Function(\Action.Cases.refresh)
+    private func _refresh() async throws {
 
-    @Published
-    var state: State = .initial
-
-    func respond(to action: Action) -> State {
-        switch action {
-        case let .error(error):
-            return .error(error)
-        case .refresh:
-            cancellables.removeAll()
-
-            Task {
-                do {
-                    try await refresh()
-
-                    await MainActor.run {
-                        self.state = .content
-                    }
-                } catch {
-                    await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
-                    }
-                }
-            }
-            .store(in: &cancellables)
-
-            return .refreshing
-        }
-    }
-
-    private func refresh() async throws {
-
-        await MainActor.run {
-            mediaItems.removeAll()
-        }
+        mediaItems.removeAll()
 
         let media: [MediaType] = try await getUserViews()
             .compactMap { userView in
@@ -80,9 +48,7 @@ final class MediaViewModel: ViewModel, Stateful {
             }
             .prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
 
-        await MainActor.run {
-            mediaItems.elements = media
-        }
+        mediaItems.elements = media
     }
 
     private func getUserViews() async throws -> [BaseItemDto] {

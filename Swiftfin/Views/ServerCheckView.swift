@@ -20,7 +20,7 @@ struct ServerCheckView: View {
     private var viewModel = ServerCheckViewModel()
 
     @ViewBuilder
-    private func errorView<E: Error>(_ error: E) -> some View {
+    private func errorView(_ error: some Error) -> some View {
         VStack(spacing: 10) {
             Image(systemName: "xmark.circle.fill")
                 .font(.system(size: 72))
@@ -36,7 +36,7 @@ struct ServerCheckView: View {
 
             PrimaryButton(title: L10n.retry)
                 .onSelect {
-                    viewModel.send(.checkServer)
+                    viewModel.checkServer()
                 }
                 .frame(maxWidth: 300)
                 .frame(height: 50)
@@ -46,22 +46,23 @@ struct ServerCheckView: View {
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .initial, .connecting, .connected:
+            case .initial:
                 ZStack {
                     Color.clear
 
                     ProgressView()
                 }
-            case let .error(error):
-                errorView(error)
+            case .error:
+                viewModel.error.map { errorView($0) }
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .onFirstAppear {
-            viewModel.send(.checkServer)
+            viewModel.checkServer()
         }
-        .onReceive(viewModel.$state) { newState in
-            if newState == .connected {
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .connected:
                 rootCoordinator.root(.mainTab)
             }
         }

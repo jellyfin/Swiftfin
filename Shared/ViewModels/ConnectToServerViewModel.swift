@@ -15,56 +15,43 @@ import JellyfinAPI
 import OrderedCollections
 import Pulse
 
-final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
+@MainActor
+@Stateful
+final class ConnectToServerViewModel: ViewModel {
 
-    // MARK: Event
+    @CasePathable
+    enum Action {
+        case addNewURL(serverState: ServerState)
+        case cancel
+        case connect(url: String)
+        case searchForServers
+
+        var transition: Transition {
+            switch self {
+            case .addNewURL: .identity
+            case .cancel: .to(.initial)
+            case .connect: .loop(.connecting)
+            case .searchForServers: .identity
+            }
+        }
+    }
 
     enum Event {
         case connected(ServerState)
         case duplicateServer(ServerState)
-        case error(JellyfinAPIError)
+        case error
     }
 
-    // MARK: Action
-
-    enum Action: Equatable {
-        case addNewURL(ServerState)
-        case cancel
-        case connect(String)
-        case searchForServers
-    }
-
-    // MARK: BackgroundState
-
-    enum BackgroundState: Hashable {
-        case searching
-    }
-
-    // MARK: State
-
-    enum State: Hashable {
+    enum State {
         case connecting
         case initial
     }
 
-    @Published
-    var backgroundStates: Set<BackgroundState> = []
-
     // no longer-found servers are not cleared, but not an issue
     @Published
     var localServers: OrderedSet<ServerState> = []
-    @Published
-    var state: State = .initial
 
-    var events: AnyPublisher<Event, Never> {
-        eventSubject
-            .receive(on: RunLoop.main)
-            .eraseToAnyPublisher()
-    }
-
-    private var connectTask: AnyCancellable?
     private let discovery = ServerDiscovery()
-    private var eventSubject: PassthroughSubject<Event, Never> = .init()
 
     deinit {
         discovery.close()
@@ -73,6 +60,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
     override init() {
         super.init()
 
+        // TODO: refactor, causing retain cycle
         Task { [weak self] in
             guard let self else { return }
 
@@ -85,59 +73,8 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
         .store(in: &cancellables)
     }
 
-    func respond(to action: Action) -> State {
-        switch action {
-        case let .addNewURL(server):
-            addNewURL(server: server)
-
-            return state
-        case .cancel:
-            connectTask?.cancel()
-
-            return .initial
-        case let .connect(url):
-            connectTask?.cancel()
-
-            connectTask = Task {
-                do {
-                    let server = try await connectToServer(url: url)
-
-                    if isDuplicate(server: server) {
-                        await MainActor.run {
-                            // server has same id, but (possible) new URL
-                            self.eventSubject.send(.duplicateServer(server))
-                        }
-                    } else {
-                        try await save(server: server)
-
-                        await MainActor.run {
-                            self.eventSubject.send(.connected(server))
-                        }
-                    }
-
-                    await MainActor.run {
-                        self.state = .initial
-                    }
-                } catch is CancellationError {
-                    // cancel doesn't matter
-                } catch {
-                    await MainActor.run {
-                        self.eventSubject.send(.error(.init(error.localizedDescription)))
-                        self.state = .initial
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return .connecting
-        case .searchForServers:
-            discovery.broadcast()
-
-            return state
-        }
-    }
-
-    private func connectToServer(url: String) async throws -> ServerState {
+    @Function(\Action.Cases.connect)
+    private func connectToServer(_ url: String) async throws {
 
         let formattedURL = url.trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
@@ -157,7 +94,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
               let id = response.value.id
         else {
             logger.critical("Missing server data from network call")
-            throw JellyfinAPIError("An internal error has occurred")
+            throw JellyfinAPIError(L10n.unknownError)
         }
 
         let connectionURL = processConnectionURL(
@@ -173,7 +110,13 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
             usersIDs: []
         )
 
-        return newServerState
+        if isDuplicate(server: newServerState) {
+            // server has same id, but (possible) new URL
+            events.send(.duplicateServer(newServerState))
+        } else {
+            try await save(server: newServerState)
+            events.send(.connected(newServerState))
+        }
     }
 
     // In the event of redirects, get the new host URL from response
@@ -218,24 +161,26 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
     }
 
     // server has same id, but (possible) new URL
-    private func addNewURL(server: ServerState) {
-        do {
-            let newState = try dataStack.perform { transaction in
-                let existingServer = try self.dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id))
-                guard let editServer = transaction.edit(existingServer) else {
-                    logger.critical("Could not find server to add new url")
-                    throw JellyfinAPIError("An internal error has occurred")
-                }
-
-                editServer.urls.insert(server.currentURL)
-                editServer.currentURL = server.currentURL
-
-                return editServer.state
+    @Function(\Action.Cases.addNewURL)
+    private func _addNewURL(_ server: ServerState) throws {
+        let newState = try dataStack.perform { transaction in
+            let existingServer = try self.dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id))
+            guard let editServer = transaction.edit(existingServer) else {
+                logger.critical("Could not find server to add new url")
+                throw JellyfinAPIError("An internal error has occurred")
             }
 
-            Notifications[.didChangeCurrentServerURL].post(newState)
-        } catch {
-            logger.critical("\(error.localizedDescription)")
+            editServer.urls.insert(server.currentURL)
+            editServer.currentURL = server.currentURL
+
+            return editServer.state
         }
+
+        Notifications[.didChangeCurrentServerURL].post(newState)
+    }
+
+    @Function(\Action.Cases.searchForServers)
+    private func _searchForServers() {
+        discovery.broadcast()
     }
 }
