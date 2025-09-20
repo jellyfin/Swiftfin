@@ -33,10 +33,10 @@ final class NavigationCoordinator: ObservableObject {
         switch style {
         case .push:
             presentedPush = route
-        case .fullscreen:
-            presentedFullScreen = route
         case .sheet:
             presentedSheet = route
+        case .fullscreen:
+            presentedFullScreen = route
         }
         #else
         switch style {
