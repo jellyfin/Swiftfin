@@ -22,6 +22,10 @@ extension UIDevice {
         current.userInterfaceIdiom == .phone
     }
 
+    static var isTV: Bool {
+        current.userInterfaceIdiom == .tv
+    }
+
     static var hasNotch: Bool {
         (UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0) > 0 &&
             isPhone
