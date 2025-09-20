@@ -72,7 +72,7 @@ struct ServerUserParentalRatingView: View {
             .disabled(viewModel.user.policy == tempPolicy)
         }
         .onFirstAppear {
-            parentalRatingsViewModel.send(.refresh)
+            parentalRatingsViewModel.refresh()
         }
         .onReceive(viewModel.events) { event in
             switch event {

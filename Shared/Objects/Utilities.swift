@@ -8,6 +8,9 @@
 
 import Foundation
 
+@_exported import CasePaths
+@_exported import StatefulMacros
+
 @inlinable
 func clamp<T: Comparable>(_ x: T, min y: T, max z: T) -> T {
     min(max(x, y), z)
