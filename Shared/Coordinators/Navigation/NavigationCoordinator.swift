@@ -19,6 +19,11 @@ final class NavigationCoordinator: ObservableObject {
     @Published
     var presentedFullScreen: NavigationRoute?
 
+    #if os(tvOS)
+    @Published
+    var presentedPush: NavigationRoute?
+    #endif
+
     func push(
         _ route: NavigationRoute
     ) {
@@ -26,10 +31,10 @@ final class NavigationCoordinator: ObservableObject {
 
         #if os(tvOS)
         switch style {
-        case .push, .fullscreen:
-            withAnimation {
-                presentedFullScreen = route
-            }
+        case .push:
+            presentedPush = route
+        case .fullscreen:
+            presentedFullScreen = route
         case .sheet:
             presentedSheet = route
         }

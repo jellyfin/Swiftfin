@@ -68,6 +68,16 @@ struct NavigationInjectionView: View {
         }
         #if os(tvOS)
         .fullScreenCover(
+            item: $coordinator.presentedPush
+        ) { route in
+            let newCoordinator = NavigationCoordinator()
+
+            NavigationInjectionView(coordinator: newCoordinator) {
+                route.destination
+            }
+            .background(Material.thick, ignoresSafeAreaEdges: .all)
+        }
+        .fullScreenCover(
             item: $coordinator.presentedFullScreen
         ) { route in
             let newCoordinator = NavigationCoordinator()
