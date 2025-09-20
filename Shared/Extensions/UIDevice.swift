@@ -39,15 +39,7 @@ extension UIDevice {
         #endif
     }
 
-    #if os(iOS)
-    static var isPortrait: Bool {
-        current.orientation.isPortrait
-    }
-
-    static var isLandscape: Bool {
-        isPad || current.orientation.isLandscape
-    }
-
+    /// - Important: Does nothing on non-iOS platforms.
     static func feedback(_ type: UINotificationFeedbackGenerator.FeedbackType) {
         #if os(iOS)
         UINotificationFeedbackGenerator().notificationOccurred(type)
@@ -56,10 +48,38 @@ extension UIDevice {
 
     // TODO: make more custom feedback types with Core Haptics
     //       - soft with intensity
+    /// - Important: Does nothing on non-iOS platforms.
     static func impact(_ type: UIImpactFeedbackGenerator.FeedbackStyle) {
         #if os(iOS)
         UIImpactFeedbackGenerator(style: type).impactOccurred()
         #endif
     }
+
+    #if os(iOS)
+    static var isPortrait: Bool {
+        current.orientation.isPortrait
+    }
+
+    static var isLandscape: Bool {
+        isPad || current.orientation.isLandscape
+    }
     #endif
 }
+
+#if os(tvOS)
+enum UINotificationFeedbackGenerator {
+    enum FeedbackType {
+        case success
+        case warning
+        case error
+    }
+}
+
+enum UIImpactFeedbackGenerator {
+    enum FeedbackStyle {
+        case light
+        case medium
+        case heavy
+    }
+}
+#endif

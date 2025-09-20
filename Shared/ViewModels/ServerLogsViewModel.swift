@@ -17,20 +17,16 @@ final class ServerLogsViewModel: ViewModel {
     @CasePathable
     enum Action {
         case getLogs
+
+        var transition: Transition {
+            .to(.refreshing, then: .initial)
+        }
     }
 
     enum State {
-        case content
         case initial
         case error
-    }
-
-    override init() {
-        super.init()
-
-        Task {
-            await setupPublisherAssignments()
-        }
+        case refreshing
     }
 
     @Published
@@ -40,12 +36,7 @@ final class ServerLogsViewModel: ViewModel {
     private func _getLogs() async throws {
         let request = Paths.getServerLogs
         let response = try await userSession.client.send(request)
-
         let newLogs = OrderedSet(response.value)
-
-        await MainActor.run {
-            self.logs = newLogs
-            self.state = .content
-        }
+        self.logs = newLogs
     }
 }

@@ -15,15 +15,7 @@ import OrderedCollections
 
 @MainActor
 @Stateful
-final class SelectUserViewModel: ViewModel, Eventful {
-
-    // MARK: Event
-
-    enum Event {
-        case signedIn(UserState)
-    }
-
-    // MARK: Action
+final class SelectUserViewModel: ViewModel {
 
     @CasePathable
     enum Action {
@@ -32,29 +24,16 @@ final class SelectUserViewModel: ViewModel, Eventful {
         case signIn(UserState, pin: String)
     }
 
-    enum State {
-        case initial
+    enum Event {
         case error
+        case signedIn(UserState)
     }
 
     @Published
     private(set) var servers: OrderedDictionary<ServerState, [UserState]> = [:]
 
-    var events: AnyPublisher<Event, Never> {
-        eventSubject
-            .eraseToAnyPublisher()
-    }
-
-    private var eventSubject: PassthroughSubject<Event, Never> = .init()
-
-    override init() {
-        super.init()
-        Task { await setupPublisherAssignments() }
-    }
-
     @Function(\Action.Cases.deleteUsers)
     private func _deleteUsers(_ users: Set<UserState>) async throws {
-
         for user in users {
             try user.delete()
         }
@@ -74,14 +53,18 @@ final class SelectUserViewModel: ViewModel, Eventful {
                 partialResult[pair.0] = pair.1
             }
 
-        await MainActor.run {
-            servers = newServers
-        }
+        servers = newServers
     }
 
     private func getUsers(for server: ServerState) throws -> [UserState] {
         guard let storedServer = try? dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id)) else {
-            throw JellyfinAPIError("Unable to find server for users")
+            logger.critical(
+                "Unable to find server for users",
+                metadata: [
+                    "serverName": .string(server.name),
+                ]
+            )
+            throw JellyfinAPIError(L10n.unknownError)
         }
 
         return storedServer.users
@@ -96,6 +79,6 @@ final class SelectUserViewModel: ViewModel, Eventful {
             }
         }
 
-        eventSubject.send(.signedIn(user))
+        events.send(.signedIn(user))
     }
 }

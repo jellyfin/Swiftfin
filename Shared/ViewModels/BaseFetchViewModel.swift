@@ -16,36 +16,28 @@ class BaseFetchViewModel<Value: Codable>: ViewModel {
     @CasePathable
     enum Action {
         case refresh
+
+        var transition: Transition {
+            .to(.refreshing, thenWithError: .initial)
+        }
     }
 
-    // MARK: State
-
     enum State {
-        case content
-        case error
         case initial
         case refreshing
     }
 
     @Published
-    var value: Value
+    private(set) var value: Value
 
     init(initialValue: Value) {
         self.value = initialValue
         super.init()
-        Task { await setupPublisherAssignments() }
     }
-
-    private var currentRefreshTask: AnyCancellable?
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
-        let newValue = try await getValue()
-
-        await MainActor.run {
-            self.value = newValue
-            self.state = .content
-        }
+        self.value = try await getValue()
     }
 
     func getValue() async throws -> Value {

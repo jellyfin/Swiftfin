@@ -256,7 +256,7 @@ extension VideoPlayer {
 extension VideoPlayer.UIVideoPlayerContainerViewController {
 
     typealias PressEvent = (type: UIPress.PressType, phase: UIPress.Phase)
-    typealias OnPressEvent = EventPublisher<PressEvent>
+    typealias OnPressEvent = LegacyEventPublisher<PressEvent>
 }
 
 @propertyWrapper

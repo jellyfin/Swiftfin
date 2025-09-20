@@ -116,6 +116,8 @@ struct SelectUserView: View {
 
     // MARK: - Select User(s)
 
+    // TODO: refactor errors thrown/handling
+
     private func select(user: UserState, needsPin: Bool = true) {
         Task { @MainActor in
             selectedUsers.insert(user)
@@ -147,13 +149,7 @@ struct SelectUserView: View {
 
         guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &policyError) else {
             viewModel.logger.critical("\(policyError!.localizedDescription)")
-
-//            await MainActor.run {
-//                self
-//                    .error =
-//                    JellyfinAPIError(L10n.unableToPerformDeviceAuthFaceID)
-//            }
-
+            viewModel.error(JellyfinAPIError(L10n.unableToPerformDeviceAuthFaceID))
             throw JellyfinAPIError(L10n.deviceAuthFailed)
         }
 
@@ -161,11 +157,7 @@ struct SelectUserView: View {
             try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason)
         } catch {
             viewModel.logger.critical("\(error.localizedDescription)")
-
-//            await MainActor.run {
-//                self.error = JellyfinAPIError(L10n.unableToPerformDeviceAuth)
-//            }
-
+            viewModel.error(JellyfinAPIError(L10n.unableToPerformDeviceAuth))
             throw JellyfinAPIError(L10n.deviceAuthFailed)
         }
     }
@@ -515,7 +507,6 @@ struct SelectUserView: View {
         }
         .onAppear {
             viewModel.getServers()
-//            viewModel.send(.getServers)
         }
         .onChange(of: isEditingUsers) { newValue in
             guard !newValue else { return }

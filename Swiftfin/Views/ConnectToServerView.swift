@@ -30,34 +30,25 @@ struct ConnectToServerView: View {
     @StateObject
     private var viewModel = ConnectToServerViewModel()
 
-    // MARK: - URL Variable
-
-    @State
-    private var url: String = ""
-
-    // MARK: - Duplicate Server State
-
     @State
     private var duplicateServer: ServerState? = nil
     @State
     private var isPresentingDuplicateServer: Bool = false
+    @State
+    private var url: String = ""
 
     // MARK: - Connection Timer
 
     private let timer = Timer.publish(every: 12, on: .main, in: .common).autoconnect()
 
-    // MARK: - Handle Connection
-
-    private func handleConnection(_ event: ConnectToServerViewModel.Event) {
+    private func onEvent(_ event: ConnectToServerViewModel._Event) {
         switch event {
         case let .connected(server):
             UIDevice.feedback(.success)
-
             Notifications[.didConnectToServer].post(server)
             router.dismiss()
         case let .duplicateServer(server):
             UIDevice.feedback(.warning)
-
             duplicateServer = server
             isPresentingDuplicateServer = true
         }
@@ -159,14 +150,11 @@ struct ConnectToServerView: View {
             isURLFocused = true
             viewModel.searchForServers()
         }
-        .onReceive(viewModel.events) { event in
-            handleConnection(event)
-        }
         .onReceive(timer) { _ in
             guard viewModel.state != .connecting else { return }
-
             viewModel.searchForServers()
         }
+        .onReceive(viewModel.events, perform: onEvent)
         .onReceive(viewModel.$error) { error in
             guard error != nil else { return }
             UIDevice.feedback(.error)
