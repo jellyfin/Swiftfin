@@ -87,30 +87,30 @@ struct NavigationInjectionView: View {
                     route.destination
                 }
             }
-            .presentation(
-                $coordinator.presentedFullScreen,
-                transition: .zoomIfAvailable(
+        .presentation(
+            $coordinator.presentedFullScreen,
+            transition: .zoomIfAvailable(
+                options: .init(
+                    dimmingVisualEffect: .systemThickMaterialDark,
                     options: .init(
-                        dimmingVisualEffect: .systemThickMaterialDark,
-                        options: .init(
-                            isInteractive: isPresentationInteractive
-                        )
-                    ),
-                    otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: isPresentationInteractive))
-                )
-            ) { routeBinding, _ in
-                let vc = UIPreferencesHostingController {
-                    NavigationInjectionView(coordinator: .init()) {
-                        routeBinding.wrappedValue.destination
-                            .environment(\.presentationControllerShouldDismiss, $isPresentationInteractive)
-                    }
+                        isInteractive: isPresentationInteractive
+                    )
+                ),
+                otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: isPresentationInteractive))
+            )
+        ) { routeBinding, _ in
+            let vc = UIPreferencesHostingController {
+                NavigationInjectionView(coordinator: .init()) {
+                    routeBinding.wrappedValue.destination
+                        .environment(\.presentationControllerShouldDismiss, $isPresentationInteractive)
                 }
-
-                // TODO: presentation options for customizing background color, dimming effect, etc.
-                vc.view.backgroundColor = .black
-
-                return vc
             }
+
+            // TODO: presentation options for customizing background color, dimming effect, etc.
+            vc.view.backgroundColor = .black
+
+            return vc
+        }
         #endif
     }
 }
