@@ -27,7 +27,8 @@ jobs:
       XCODE_VERSION: "16.4"
       IOS_VERSION: "18"
       TVOS_VERSION: "18"
-      IPHONE_VERSION: "16"
+      TVOS_SIMULATOR: "Apple TV 4K (3rd generation)"
+      IPHONE_SIMULATOR: "iPhone 16 Pro"
 
     steps:    
       - name: Checkout
@@ -65,14 +66,20 @@ jobs:
       - name: Set Simulator
         id: set_simulator
         run: |
+          set -e
           if [[ "${{ matrix.scheme }}" == "Swiftfin tvOS" ]]; then
-            latest_sdk=$(xcrun simctl list runtimes tvOS | grep "tvOS ${{ env.TVOS_VERSION }}" | awk '{print $NF}' | sort -V | tail -n 1)
-            latest_device=$(xcrun simctl list devices | grep "tvOS $latest_sdk" | awk -F'[()]' '{for(i=2;i<=NF;i+=2) print $i}' | head -n 1)
+            simulator_id=$(xcrun simctl list devices available | grep -A 1000 -- "-- tvOS ${{ env.TVOS_SIMULATOR }}" | grep -m 1 "${{ env.TVOS_SIMULATOR }}" | awk -F '[()]' '{print $2}')
+            echo "Latest tvOS Device: $simulator_id"
           else
-            latest_sdk=$(xcrun simctl list runtimes iOS | grep "iOS ${{ env.IOS_VERSION }}" | awk '{print $NF}' | sort -V | tail -n 1)
-            latest_device=$(xcrun simctl list devices | grep "iOS $latest_sdk" | grep "iPhone ${{ env.IPHONE_VERSION }}" | awk -F'[()]' '{for(i=2;i<=NF;i+=2) print $i}' | head -n 1)
+            simulator_id=$(xcrun simctl list devices available | grep -A 1000 -- "-- iOS ${{ env.IOS_VERSION }}" | grep -m 1 "${{ env.IPHONE_SIMULATOR }}" | awk -F '[()]' '{print $2}')
+            echo "Latest iOS Device: $simulator_id"
           fi
-          echo "latest_device=$latest_device" >> $GITHUB_OUTPUT
+
+          if [ -z "$simulator_id" ]; then
+            echo "::error::Could not find a suitable simulator."
+            exit 1
+          fi
+          echo "simulator_id=$simulator_id" >> $GITHUB_OUTPUT
 
       - name: Build
         uses: nick-fields/retry@v2
@@ -83,7 +90,7 @@ jobs:
           command: |
             xcodebuild build -project "Swiftfin.xcodeproj" \
             -scheme "${{ matrix.scheme }}" \
-            -destination "id=${{ steps.set_simulator.outputs.latest_device }}" \
+            -destination "id=${{ steps.set_simulator.outputs.simulator_id }}" \
             -clonedSourcePackagesDirPath PackageCache \
             -skipMacroValidation \
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
