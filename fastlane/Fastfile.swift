@@ -101,6 +101,27 @@ class Fastfile: LaneFile {
         )
     }
     
+    func buildLane(withOptions options: [String: String]?) {
+        guard let options,
+              let scheme = options["scheme"]?.trimOption() else {
+            puts(message: "ERROR: missing or incorrect options")
+            exit(1)
+        }
+        
+        if let xcodeVersion = options["xcodeVersion"] {
+            xcodes(version: xcodeVersion)
+        }
+        
+        buildApp(
+            scheme: .userDefined(scheme),
+            exportMethod: .userDefined("development"),
+            skipArchive: .userDefined(true),
+            skipCodesigning: .userDefined(true),
+            xcargs: .userDefined("-skipMacroValidation"),
+            skipProfileDetection: true
+        )
+    }
+    
     // MARK: Utilities
     
     private func decodeBase64(encoded: String) -> String? {

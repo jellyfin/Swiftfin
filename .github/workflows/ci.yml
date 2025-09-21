@@ -27,7 +27,7 @@ jobs:
       XCODE_VERSION: "16.4"
       IOS_VERSION: "18"
       TVOS_VERSION: "18"
-      TVOS_SIMULATOR: "Apple TV 4K (3rd generation)"
+      TVOS_SIMULATOR: "Apple TV 4K"
       IPHONE_SIMULATOR: "iPhone 16 Pro"
 
     steps:    
@@ -36,12 +36,6 @@ jobs:
 
       - name: Install SwiftGen
         run: brew install swiftgen
-
-      - name: Set Xcode Version
-        run: sudo xcode-select -s "/Applications/Xcode_${{ env.XCODE_VERSION }}.app"
-
-      - name: Print Swift version
-        run: swift --version
 
       - name: Cache Carthage
         uses: actions/cache@v4
@@ -63,34 +57,12 @@ jobs:
       #     key: ${{ runner.os }}-${{ matrix.scheme }}-spm-${{ hashFiles('**/Package.resolved') }}
       #     restore-keys: ${{ runner.os }}-${{ matrix.scheme }}-spm-
 
-      - name: Set Simulator
-        id: set_simulator
-        run: |
-          set -e
-          if [[ "${{ matrix.scheme }}" == "Swiftfin tvOS" ]]; then
-            simulator_id=$(xcrun simctl list devices available | grep -A 1000 -- "-- tvOS ${{ env.TVOS_VERSION }}" | grep -m 1 "${{ env.TVOS_SIMULATOR }}" | awk -F '[()]' '{print $2}')
-            echo "Latest tvOS Device: $simulator_id"
-          else
-            simulator_id=$(xcrun simctl list devices available | grep -A 1000 -- "-- iOS ${{ env.IOS_VERSION }}" | grep -m 1 "${{ env.IPHONE_SIMULATOR }}" | awk -F '[()]' '{print $2}')
-            echo "Latest iOS Device: $simulator_id"
-          fi
-
-          if [ -z "$simulator_id" ]; then
-            echo "::error::Could not find a suitable simulator."
-            exit 1
-          fi
-          echo "simulator_id=$simulator_id" >> $GITHUB_OUTPUT
-
       - name: Build
         uses: nick-fields/retry@v2
         with:
           max_attempts: 3
           retry_on: error
           timeout_minutes: 60
-          command: |
-            xcodebuild build -project "Swiftfin.xcodeproj" \
-            -scheme "${{ matrix.scheme }}" \
-            -destination "id=${{ steps.set_simulator.outputs.simulator_id }}" \
-            -clonedSourcePackagesDirPath PackageCache \
-            -skipMacroValidation \
-            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+          command: sudo fastlane buildLane \
+            scheme:\"${{ matrix.scheme }}\" \
+            xcodeVersion:${{ env.XCODE_VERSION }}
