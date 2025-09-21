@@ -68,7 +68,7 @@ jobs:
         run: |
           set -e
           if [[ "${{ matrix.scheme }}" == "Swiftfin tvOS" ]]; then
-            simulator_id=$(xcrun simctl list devices available | grep -A 1000 -- "-- tvOS ${{ env.TVOS_SIMULATOR }}" | grep -m 1 "${{ env.TVOS_SIMULATOR }}" | awk -F '[()]' '{print $2}')
+            simulator_id=$(xcrun simctl list devices available | grep -A 1000 -- "-- tvOS ${{ env.TVOS_VERSION }}" | grep -m 1 "${{ env.TVOS_SIMULATOR }}" | awk -F '[()]' '{print $2}')
             echo "Latest tvOS Device: $simulator_id"
           else
             simulator_id=$(xcrun simctl list devices available | grep -A 1000 -- "-- iOS ${{ env.IOS_VERSION }}" | grep -m 1 "${{ env.IPHONE_SIMULATOR }}" | awk -F '[()]' '{print $2}')
