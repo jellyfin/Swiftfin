@@ -114,25 +114,25 @@ struct ActiveSessionsView: View {
             .tag(nil as Int?)
 
             Label(
-                Duration.seconds(300).formatted(.units(allowed: [.hours, .minutes])),
+                Duration.seconds(300).formatted(.hourMinuteAbbreviated),
                 systemImage: "clock"
             )
             .tag(300 as Int?)
 
             Label(
-                Duration.seconds(900).formatted(.units(allowed: [.hours, .minutes])),
+                Duration.seconds(900).formatted(.hourMinuteAbbreviated),
                 systemImage: "clock"
             )
             .tag(900 as Int?)
 
             Label(
-                Duration.seconds(1800).formatted(.units(allowed: [.hours, .minutes])),
+                Duration.seconds(1800).formatted(.hourMinuteAbbreviated),
                 systemImage: "clock"
             )
             .tag(1800 as Int?)
 
             Label(
-                Duration.seconds(3600).formatted(.units(allowed: [.hours, .minutes])),
+                Duration.seconds(3600).formatted(.hourMinuteAbbreviated),
                 systemImage: "clock"
             )
             .tag(3600 as Int?)
