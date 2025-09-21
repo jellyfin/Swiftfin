@@ -100,9 +100,6 @@ struct ActiveSessionsView: View {
             guard !isFiltersPresented else { return }
             viewModel.backgroundRefresh()
         }
-        .refreshable {
-            viewModel.refresh()
-        }
     }
 
     // MARK: - Active Within Filter Button

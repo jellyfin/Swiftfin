@@ -22,11 +22,15 @@ final class ActiveSessionsViewModel: ViewModel {
         case backgroundRefresh
 
         var transition: Transition {
-            .loop(.refreshing)
+            switch self {
+            case .refresh:
+                .loop(.refreshing)
+            case .backgroundRefresh: .background(.backgroundRefreshing)
+            }
         }
     }
 
-    enum BackgroundState: Hashable {
+    enum BackgroundState {
         case backgroundRefreshing
     }
 
@@ -60,9 +64,6 @@ final class ActiveSessionsViewModel: ViewModel {
 
     @Function(\Action.Cases.backgroundRefresh)
     private func _backgroundRefresh() async throws {
-        backgroundStates.insert(.backgroundRefreshing)
-        defer { backgroundStates.remove(.backgroundRefreshing) }
-
         try await updateSessions()
     }
 
