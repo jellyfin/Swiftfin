@@ -6,11 +6,9 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import Foundation
 import JellyfinAPI
 import OrderedCollections
-import SwiftUI
 
 @MainActor
 @Stateful
@@ -50,12 +48,10 @@ final class ActiveSessionsViewModel: ViewModel {
     }
 
     @Published
-    var sessions: OrderedDictionary<String, BindingBox<SessionInfoDto?>> = [:]
-
-    // MARK: - updateSessions
+    private(set) var sessions: OrderedDictionary<String, BindingBox<SessionInfoDto?>> = [:]
 
     @Function(\Action.Cases.refresh)
-    private func updateSessions() async throws {
+    private func _refresh() async throws {
         var parameters = Paths.GetSessionsParameters()
         parameters.activeWithinSeconds = activeWithinSeconds
 
