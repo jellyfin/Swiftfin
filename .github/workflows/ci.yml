@@ -33,6 +33,9 @@ jobs:
       - name: Set Xcode Version
         run: sudo xcode-select -s "/Applications/Xcode_16.4.app"
 
+      - name: Print Swift version
+        run: swift --version
+
       - name: Cache Carthage
         uses: actions/cache@v4
         id: carthage-cache
