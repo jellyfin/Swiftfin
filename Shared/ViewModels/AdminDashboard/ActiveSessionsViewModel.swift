@@ -6,17 +6,13 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import Foundation
 import JellyfinAPI
 import OrderedCollections
-import SwiftUI
 
 @MainActor
 @Stateful
 final class ActiveSessionsViewModel: ViewModel {
-
-    // MARK: - Actions
 
     @CasePathable
     enum Action {
@@ -37,8 +33,6 @@ final class ActiveSessionsViewModel: ViewModel {
         case refreshing
     }
 
-    // MARK: - Published Variables
-
     @Published
     var activeWithinSeconds: Int? = 900 {
         didSet {
@@ -54,9 +48,7 @@ final class ActiveSessionsViewModel: ViewModel {
     }
 
     @Published
-    var sessions: OrderedDictionary<String, BindingBox<SessionInfoDto?>> = [:]
-
-    // MARK: - Refresh
+    private(set) var sessions: OrderedDictionary<String, BindingBox<SessionInfoDto?>> = [:]
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
