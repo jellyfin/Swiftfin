@@ -64,5 +64,5 @@ jobs:
           retry_on: error
           timeout_minutes: 60
           command: sudo fastlane buildLane \
-            scheme:\"${{ matrix.scheme }}\" \
+            scheme:"\"${{ matrix.scheme }}\"" \
             xcodeVersion:${{ env.XCODE_VERSION }}
