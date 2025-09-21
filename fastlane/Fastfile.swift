@@ -92,6 +92,7 @@ class Fastfile: LaneFile {
         buildApp(
             scheme: .userDefined(scheme),
             skipArchive: .userDefined(false),
+            xcargs: .userDefined("-skipMacroValidation"),
             skipProfileDetection: false
         )
         
