@@ -23,6 +23,12 @@ jobs:
 
     runs-on: macos-15
 
+    env:
+      XCODE_VERSION: "16.4"
+      IOS_VERSION: "18"
+      TVOS_VERSION: "18"
+      IPHONE_VERSION: "16"
+
     steps:    
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,7 +37,7 @@ jobs:
         run: brew install swiftgen
 
       - name: Set Xcode Version
-        run: sudo xcode-select -s "/Applications/Xcode_16.4.app"
+        run: sudo xcode-select -s "/Applications/Xcode_${{ env.XCODE_VERSION }}.app"
 
       - name: Print Swift version
         run: swift --version
@@ -56,6 +62,18 @@ jobs:
       #     key: ${{ runner.os }}-${{ matrix.scheme }}-spm-${{ hashFiles('**/Package.resolved') }}
       #     restore-keys: ${{ runner.os }}-${{ matrix.scheme }}-spm-
 
+      - name: Set Simulator
+        id: set_simulator
+        run: |
+          if [[ "${{ matrix.scheme }}" == "Swiftfin tvOS" ]]; then
+            latest_sdk=$(xcrun simctl list runtimes tvOS | grep "tvOS ${{ env.TVOS_VERSION }}" | awk '{print $NF}' | sort -V | tail -n 1)
+            latest_device=$(xcrun simctl list devices | grep "tvOS $latest_sdk" | awk -F'[()]' '{for(i=2;i<=NF;i+=2) print $i}' | head -n 1)
+          else
+            latest_sdk=$(xcrun simctl list runtimes iOS | grep "iOS ${{ env.IOS_VERSION }}" | awk '{print $NF}' | sort -V | tail -n 1)
+            latest_device=$(xcrun simctl list devices | grep "iOS $latest_sdk" | grep "iPhone ${{ env.IPHONE_VERSION }}" | awk -F'[()]' '{for(i=2;i<=NF;i+=2) print $i}' | head -n 1)
+          fi
+          echo "latest_device=$latest_device" >> $GITHUB_OUTPUT
+
       - name: Build
         uses: nick-fields/retry@v2
         with:
@@ -65,6 +83,7 @@ jobs:
           command: |
             xcodebuild build -project "Swiftfin.xcodeproj" \
             -scheme "${{ matrix.scheme }}" \
+            -destination "id=${{ steps.set_simulator.outputs.latest_device }}" \
             -clonedSourcePackagesDirPath PackageCache \
             -skipMacroValidation \
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
