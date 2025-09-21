@@ -51,6 +51,13 @@ extension FormatStyle where Self == Duration.UnitsFormatStyle {
         )
     }
 
+    static var hourMinuteAbbreviated: Duration.UnitsFormatStyle {
+        Duration.UnitsFormatStyle(
+            allowedUnits: [.hours, .minutes],
+            width: .abbreviated
+        )
+    }
+
     static var minuteSecondsNarrow: Duration.UnitsFormatStyle {
         Duration.UnitsFormatStyle(
             allowedUnits: [.minutes, .seconds],
