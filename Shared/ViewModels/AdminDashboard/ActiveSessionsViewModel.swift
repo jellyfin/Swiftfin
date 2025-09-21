@@ -19,19 +19,14 @@ final class ActiveSessionsViewModel: ViewModel {
     @CasePathable
     enum Action {
         case refresh
-        case backgroundRefresh
 
         var transition: Transition {
-            switch self {
-            case .refresh:
-                .loop(.refreshing)
-            case .backgroundRefresh: .background(.backgroundRefreshing)
-            }
+            .loop(.refreshing, whenBackground: .refreshing)
         }
     }
 
     enum BackgroundState {
-        case backgroundRefreshing
+        case refreshing
     }
 
     enum State {
@@ -57,18 +52,9 @@ final class ActiveSessionsViewModel: ViewModel {
     @Published
     var sessions: OrderedDictionary<String, BindingBox<SessionInfoDto?>> = [:]
 
-    @Function(\Action.Cases.refresh)
-    private func _refresh() async throws {
-        try await updateSessions()
-    }
-
-    @Function(\Action.Cases.backgroundRefresh)
-    private func _backgroundRefresh() async throws {
-        try await updateSessions()
-    }
-
     // MARK: - updateSessions
 
+    @Function(\Action.Cases.refresh)
     private func updateSessions() async throws {
         var parameters = Paths.GetSessionsParameters()
         parameters.activeWithinSeconds = activeWithinSeconds

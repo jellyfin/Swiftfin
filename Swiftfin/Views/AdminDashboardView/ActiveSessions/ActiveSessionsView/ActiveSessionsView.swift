@@ -79,7 +79,7 @@ struct ActiveSessionsView: View {
         .navigationTitle(L10n.sessions)
         .navigationBarTitleDisplayMode(.inline)
         .topBarTrailing {
-            if viewModel.backgroundStates.contains(.backgroundRefreshing) {
+            if viewModel.backgroundStates.contains(.refreshing) {
                 ProgressView()
             }
 
@@ -98,7 +98,7 @@ struct ActiveSessionsView: View {
         }
         .onReceive(timer) { _ in
             guard !isFiltersPresented else { return }
-            viewModel.backgroundRefresh()
+            viewModel.background.refresh()
         }
     }
 
