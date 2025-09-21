@@ -31,5 +31,12 @@ struct ErrorMessageModifier: ViewModifier {
             } message: { error in
                 Text(error.localizedDescription)
             }
+        #if os(iOS)
+            .onChange(of: error != nil) { hasError in
+                if hasError {
+                    UIDevice.feedback(.error)
+                }
+            }
+        #endif
     }
 }

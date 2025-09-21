@@ -55,7 +55,7 @@ final class ActiveSessionsViewModel: ViewModel {
     // MARK: - updateSessions
 
     @Function(\Action.Cases.refresh)
-    private func updateSessions() async throws {
+    private func _refresh() async throws {
         var parameters = Paths.GetSessionsParameters()
         parameters.activeWithinSeconds = activeWithinSeconds
 

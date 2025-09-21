@@ -14,33 +14,54 @@ struct APIKeysView: View {
     @Router
     private var router
 
+    // MARK: - Alerts & Confirmations
+
     @State
     private var showCopiedAlert = false
     @State
-    private var showDeleteConfirmation = false
+    private var showReplaceConfirmation = false
     @State
     private var showCreateAPIAlert = false
     @State
+    private var showDeleteConfirmation = false
+
+    // MARK: - New API Variables
+
+    @State
     private var newAPIName: String = ""
+
+    // MARK: - Update API Variables
+
     @State
     private var deleteAPI: AuthenticationInfo?
+    @State
+    private var replaceAPI: AuthenticationInfo?
+
+    // MARK: - State Objects
 
     @StateObject
     private var viewModel = APIKeysViewModel()
+
+    // MARK: - Error View
+
+    @ViewBuilder
+    private func errorView(with error: some Error) -> some View {
+        ErrorView(error: error)
+            .onRetry {
+                viewModel.refresh()
+            }
+    }
 
     // MARK: - Body
 
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .content:
+            case .error:
+                viewModel.error.map { errorView(with: $0) }
+            case .initial, .updating:
                 contentView
-            case let .error(error):
-                ErrorView(error: error)
-                    .onRetry {
-                        viewModel.send(.getAPIKeys)
-                    }
-            case .initial:
+            case .refreshing:
                 DelayedProgressView()
             }
         }
@@ -48,7 +69,7 @@ struct APIKeysView: View {
         .animation(.linear(duration: 0.1), value: viewModel.apiKeys)
         .navigationTitle(L10n.apiKeys)
         .onFirstAppear {
-            viewModel.send(.getAPIKeys)
+            viewModel.refresh()
         }
         .topBarTrailing {
             if viewModel.apiKeys.isNotEmpty {
@@ -71,23 +92,44 @@ struct APIKeysView: View {
         ) {
             Button(L10n.delete, role: .destructive) {
                 if let key = deleteAPI?.accessToken {
-                    viewModel.send(.deleteAPIKey(key: key))
+                    viewModel.delete(key: key)
                 }
             }
             Button(L10n.cancel, role: .cancel) {}
         } message: {
             Text(L10n.deleteItemConfirmation)
         }
+        .confirmationDialog(
+            L10n.replace,
+            isPresented: $showReplaceConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button(L10n.replace, role: .destructive) {
+                if let key = replaceAPI?.accessToken {
+                    viewModel.update(key: key)
+                }
+            }
+            Button(L10n.cancel, role: .cancel) {}
+        } message: {
+            Text(L10n.replaceItemConfirmation)
+        }
         .alert(L10n.createAPIKey, isPresented: $showCreateAPIAlert) {
             TextField(L10n.applicationName, text: $newAPIName)
             Button(L10n.cancel, role: .cancel) {}
             Button(L10n.save) {
-                viewModel.send(.createAPIKey(name: newAPIName))
+                viewModel.create(name: newAPIName)
                 newAPIName = ""
             }
         } message: {
             Text(L10n.createAPIKeyMessage)
         }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .updated:
+                UIDevice.feedback(.success)
+            }
+        }
+        .errorMessage($viewModel.error)
     }
 
     // MARK: - API Key Content
@@ -107,6 +149,9 @@ struct APIKeysView: View {
                     } onDelete: {
                         deleteAPI = apiKey
                         showDeleteConfirmation = true
+                    } onReplace: {
+                        replaceAPI = apiKey
+                        showReplaceConfirmation = true
                     }
                 }
             } else {

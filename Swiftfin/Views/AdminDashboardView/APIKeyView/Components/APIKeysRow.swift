@@ -23,6 +23,7 @@ extension APIKeysView {
 
         let onSelect: () -> Void
         let onDelete: () -> Void
+        let onReplace: () -> Void
 
         // MARK: - Row Content
 
@@ -63,6 +64,14 @@ extension APIKeysView {
                     action: onDelete
                 )
                 .tint(.red)
+            }
+            .contextMenu {
+                Button(
+                    L10n.replace,
+                    systemImage: "arrow.clockwise",
+                    role: .destructive,
+                    action: onReplace
+                )
             }
         }
     }

@@ -46,11 +46,6 @@ struct AddServerUserView: View {
     @State
     private var confirmPassword: String = ""
 
-    // MARK: - Error State
-
-    @State
-    private var error: Error?
-
     // MARK: - Username is Valid
 
     private var isValid: Bool {
@@ -69,7 +64,7 @@ struct AddServerUserView: View {
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.none)
                 .focused($focusedfield, equals: .username)
-                .disabled(viewModel.state == .creatingUser)
+                .disabled(viewModel.state == .creating)
             } header: {
                 Text(L10n.username)
             } footer: {
@@ -86,7 +81,7 @@ struct AddServerUserView: View {
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.none)
                 .focused($focusedfield, equals: .password)
-                .disabled(viewModel.state == .creatingUser)
+                .disabled(viewModel.state == .creating)
             }
 
             Section {
@@ -94,7 +89,7 @@ struct AddServerUserView: View {
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.none)
                     .focused($focusedfield, equals: .confirmPassword)
-                    .disabled(viewModel.state == .creatingUser)
+                    .disabled(viewModel.state == .creating)
             } header: {
                 Text(L10n.confirmPassword)
             } footer: {
@@ -105,7 +100,7 @@ struct AddServerUserView: View {
             }
         }
         .animation(.linear(duration: 0.2), value: isValid)
-        .interactiveDismissDisabled(viewModel.state == .creatingUser)
+        .interactiveDismissDisabled(viewModel.state == .creating)
         .navigationTitle(L10n.newUser)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
@@ -116,34 +111,28 @@ struct AddServerUserView: View {
         }
         .onReceive(viewModel.events) { event in
             switch event {
-            case let .error(eventError):
-                UIDevice.feedback(.error)
-                error = eventError
-            case let .createdNewUser(newUser):
+            case let .created(newUser):
                 UIDevice.feedback(.success)
                 Notifications[.didAddServerUser].post(newUser)
                 router.dismiss()
             }
         }
         .topBarTrailing {
-            if viewModel.state == .creatingUser {
+            if viewModel.state == .creating {
                 ProgressView()
-            }
-
-            if viewModel.state == .creatingUser {
                 Button(L10n.cancel) {
-                    viewModel.send(.cancel)
+                    viewModel.cancel()
                 }
                 .buttonStyle(.toolbarPill(.red))
             } else {
                 Button(L10n.save) {
-                    viewModel.send(.createUser(username: username, password: password))
+                    viewModel.create(username: username, password: password)
                 }
                 .buttonStyle(.toolbarPill)
                 .disabled(!isValid)
             }
         }
-        .errorMessage($error) {
+        .errorMessage($viewModel.error) {
             focusedfield = .username
         }
     }

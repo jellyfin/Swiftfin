@@ -11,109 +11,108 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-// TODO: for APIKey updating, could temp set new APIKeys
-
-final class APIKeysViewModel: ViewModel, Stateful {
+@MainActor
+@Stateful
+final class APIKeysViewModel: ViewModel {
 
     // MARK: Action
 
-    enum Action: Equatable {
-        case getAPIKeys
-        case createAPIKey(name: String)
-        case deleteAPIKey(key: String)
+    @CasePathable
+    enum Action {
+        case refresh
+        case create(name: String)
+        /// Currently just deletes and creates a new API Key
+        case update(key: String)
+        case delete(key: String)
+
+        var transition: Transition {
+            switch self {
+            case .refresh:
+                .to(.refreshing, then: .initial)
+            case .create, .update, .delete:
+                .to(.updating, then: .initial)
+            }
+        }
     }
 
-    // MARK: State
+    // MARK: Event
 
-    enum State: Hashable {
+    enum Event {
+        case updated
+    }
+
+    // MARK: - State
+
+    enum State {
         case initial
-        case error(JellyfinAPIError)
-        case content
+        case error
+        case updating
+        case refreshing
     }
 
     // MARK: Published Variables
 
     @Published
-    var apiKeys: [AuthenticationInfo] = []
-    @Published
-    var state: State = .initial
+    private(set) var apiKeys: [AuthenticationInfo] = []
 
-    // MARK: Action Responses
+    // MARK: Action Functions
 
-    func respond(to action: Action) -> State {
-        switch action {
-        case .getAPIKeys:
-            Task {
-                do {
-                    try await getAPIKeys()
-
-                    await MainActor.run {
-                        self.state = .content
-                    }
-                } catch {
-                    await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
-                    }
-                }
-            }
-            .store(in: &cancellables)
-        case let .createAPIKey(name):
-            Task {
-                do {
-                    try await createAPIKey(name: name)
-
-                    await MainActor.run {
-                        self.state = .content
-                    }
-                } catch {
-                    await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
-                    }
-                }
-            }
-            .store(in: &cancellables)
-        case let .deleteAPIKey(key):
-            Task {
-                do {
-                    try await deleteAPIKey(key: key)
-
-                    await MainActor.run {
-                        self.state = .content
-                    }
-                } catch {
-                    await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
-                    }
-                }
-            }
-            .store(in: &cancellables)
-        }
-
-        return state
-    }
-
-    private func getAPIKeys() async throws {
+    @Function(\Action.Cases.refresh)
+    private func _refresh() async throws {
         let request = Paths.getKeys
         let response = try await userSession.client.send(request)
 
         guard let items = response.value.items else { return }
 
-        await MainActor.run {
-            self.apiKeys = items
+        apiKeys = items.sorted { lhs, rhs in
+            let lhsName = lhs.appName ?? ""
+            let rhsName = rhs.appName ?? ""
+            return lhsName.localizedCaseInsensitiveCompare(rhsName) == .orderedAscending
         }
     }
 
-    private func createAPIKey(name: String) async throws {
+    @Function(\Action.Cases.create)
+    private func _create(_ name: String) async throws {
         let request = Paths.createKey(app: name)
-        try await userSession.client.send(request).value
+        try await userSession.client.send(request)
 
-        try await getAPIKeys()
+        /// API does not return the new key so a full refresh is required.
+        /// There is no API to return a single API Key.
+        try await _refresh()
+
+        events.send(.updated)
     }
 
-    private func deleteAPIKey(key: String) async throws {
+    @Function(\Action.Cases.update)
+    private func _update(_ key: String) async throws {
+        guard let apiKey = apiKeys.first(where: { $0.accessToken == key }), let keyName = apiKey.appName else {
+            throw JellyfinAPIError("API key not found")
+        }
+
+        let deleteRequest = Paths.revokeKey(key: key)
+        try await userSession.client.send(deleteRequest)
+
+        let createRequest = Paths.createKey(app: keyName)
+        try await userSession.client.send(createRequest)
+
+        /// API does not return the new key so a full refresh is required.
+        /// There is no API to return a single API Key.
+        try await _refresh()
+
+        events.send(.updated)
+    }
+
+    @Function(\Action.Cases.delete)
+    private func _delete(_ key: String) async throws {
+        guard let apiKey = apiKeys.first(where: { $0.accessToken == key }) else {
+            throw JellyfinAPIError("API key not found")
+        }
+
         let request = Paths.revokeKey(key: key)
         try await userSession.client.send(request)
 
-        try await getAPIKeys()
+        apiKeys.removeAll(where: { $0.accessToken == key })
+
+        events.send(.updated)
     }
 }
