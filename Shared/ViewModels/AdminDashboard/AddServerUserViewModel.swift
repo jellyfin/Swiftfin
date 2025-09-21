@@ -16,56 +16,41 @@ import SwiftUI
 @Stateful
 final class AddServerUserViewModel: ViewModel {
 
-    // MARK: - Actions
-
     @CasePathable
     enum Action {
         case cancel
-        case create(username: String, password: String)
+        case add(username: String, password: String)
 
         var transition: Transition {
             switch self {
             case .cancel:
                 .to(.initial)
-            case .create:
-                .to(.creating, then: .initial)
+            case .add:
+                .to(.addingUser, then: .initial)
             }
         }
     }
 
-    // MARK: - Events
-
     enum Event {
-        case created(UserDto)
+        case created(user: UserDto)
         case error
     }
 
-    // MARK: - States
-
     enum State: Hashable {
+        case addingUser
         case initial
-        case creating
-    }
-
-    private var userTask: AnyCancellable?
-
-    // MARK: - Cancel
-
-    @Function(\Action.Cases.cancel)
-    private func _cancel() async throws {
-        userTask?.cancel()
     }
 
     // MARK: - Create User
 
-    @Function(\Action.Cases.create)
-    private func _create(_ username: String, _ password: String) async throws {
-        userTask?.cancel()
-
+    @Function(\Action.Cases.add)
+    private func _add(_ username: String, _ password: String) async throws {
         let parameters = CreateUserByName(name: username, password: password)
         let request = Paths.createUserByName(parameters)
         let response = try await userSession.client.send(request)
 
-        events.send(.created(response.value))
+        try await Task.sleep(for: .seconds(5))
+
+        events.send(.created(user: response.value))
     }
 }

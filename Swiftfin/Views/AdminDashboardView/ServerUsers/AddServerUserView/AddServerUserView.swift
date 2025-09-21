@@ -13,14 +13,7 @@ import SwiftUI
 
 struct AddServerUserView: View {
 
-    // MARK: - Defaults
-
-    @Default(.accentColor)
-    private var accentColor
-
-    // MARK: - Focus Fields
-
-    private enum Field: Hashable {
+    private enum Field {
         case username
         case password
         case confirmPassword
@@ -29,24 +22,18 @@ struct AddServerUserView: View {
     @FocusState
     private var focusedfield: Field?
 
-    // MARK: - State & Environment Objects
-
     @Router
     private var router
 
-    @StateObject
-    private var viewModel = AddServerUserViewModel()
-
-    // MARK: - Element Variables
-
     @State
-    private var username: String = ""
+    private var confirmPassword: String = ""
     @State
     private var password: String = ""
     @State
-    private var confirmPassword: String = ""
+    private var username: String = ""
 
-    // MARK: - Username is Valid
+    @StateObject
+    private var viewModel = AddServerUserViewModel()
 
     private var isValid: Bool {
         username.isNotEmpty && password == confirmPassword
@@ -64,7 +51,7 @@ struct AddServerUserView: View {
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.none)
                 .focused($focusedfield, equals: .username)
-                .disabled(viewModel.state == .creating)
+                .disabled(viewModel.state == .addingUser)
             } header: {
                 Text(L10n.username)
             } footer: {
@@ -81,7 +68,7 @@ struct AddServerUserView: View {
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.none)
                 .focused($focusedfield, equals: .password)
-                .disabled(viewModel.state == .creating)
+                .disabled(viewModel.state == .addingUser)
             }
 
             Section {
@@ -89,7 +76,7 @@ struct AddServerUserView: View {
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.none)
                     .focused($focusedfield, equals: .confirmPassword)
-                    .disabled(viewModel.state == .creating)
+                    .disabled(viewModel.state == .addingUser)
             } header: {
                 Text(L10n.confirmPassword)
             } footer: {
@@ -99,11 +86,11 @@ struct AddServerUserView: View {
                 }
             }
         }
-        .animation(.linear(duration: 0.2), value: isValid)
-        .interactiveDismissDisabled(viewModel.state == .creating)
+        .animation(.linear(duration: 0.1), value: isValid)
+        .interactiveDismissDisabled(viewModel.state == .addingUser)
         .navigationTitle(L10n.newUser)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarCloseButton {
+        .navigationBarCloseButton(disabled: viewModel.state != .initial) {
             router.dismiss()
         }
         .onFirstAppear {
@@ -118,7 +105,7 @@ struct AddServerUserView: View {
             }
         }
         .topBarTrailing {
-            if viewModel.state == .creating {
+            if viewModel.state == .addingUser {
                 ProgressView()
                 Button(L10n.cancel) {
                     viewModel.cancel()
@@ -126,7 +113,7 @@ struct AddServerUserView: View {
                 .buttonStyle(.toolbarPill(.red))
             } else {
                 Button(L10n.save) {
-                    viewModel.create(username: username, password: password)
+                    viewModel.add(username: username, password: password)
                 }
                 .buttonStyle(.toolbarPill)
                 .disabled(!isValid)

@@ -28,10 +28,9 @@ final class ConnectToServerViewModel: ViewModel {
 
         var transition: Transition {
             switch self {
-            case .addNewURL: .identity
+            case .addNewURL, .searchForServers: .none
             case .cancel: .to(.initial)
             case .connect: .loop(.connecting)
-            case .searchForServers: .identity
             }
         }
     }
