@@ -15,7 +15,7 @@ import OrderedCollections
 @Stateful
 final class APIKeysViewModel: ViewModel {
 
-    // MARK: Action
+    // MARK: - Actions
 
     @CasePathable
     enum Action {
@@ -35,13 +35,13 @@ final class APIKeysViewModel: ViewModel {
         }
     }
 
-    // MARK: Event
+    // MARK: - Events
 
     enum Event {
         case updated
     }
 
-    // MARK: - State
+    // MARK: - States
 
     enum State {
         case initial
@@ -50,12 +50,12 @@ final class APIKeysViewModel: ViewModel {
         case refreshing
     }
 
-    // MARK: Published Variables
+    // MARK: - Published Variables
 
     @Published
     private(set) var apiKeys: [AuthenticationInfo] = []
 
-    // MARK: Action Functions
+    // MARK: - Refresh
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
@@ -71,6 +71,8 @@ final class APIKeysViewModel: ViewModel {
         }
     }
 
+    // MARK: - Create API Key
+
     @Function(\Action.Cases.create)
     private func _create(_ name: String) async throws {
         let request = Paths.createKey(app: name)
@@ -82,6 +84,8 @@ final class APIKeysViewModel: ViewModel {
 
         events.send(.updated)
     }
+
+    // MARK: - Update API Key
 
     @Function(\Action.Cases.update)
     private func _update(_ key: String) async throws {
@@ -101,6 +105,8 @@ final class APIKeysViewModel: ViewModel {
 
         events.send(.updated)
     }
+
+    // MARK: - Delete API Key
 
     @Function(\Action.Cases.delete)
     private func _delete(_ key: String) async throws {

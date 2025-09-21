@@ -16,7 +16,7 @@ import SwiftUI
 @Stateful
 final class AddServerUserViewModel: ViewModel {
 
-    // MARK: Actions
+    // MARK: - Actions
 
     @CasePathable
     enum Action {
@@ -33,14 +33,14 @@ final class AddServerUserViewModel: ViewModel {
         }
     }
 
-    // MARK: Event
+    // MARK: - Events
 
     enum Event {
         case created(UserDto)
         case error(JellyfinAPIError)
     }
 
-    // MARK: - State
+    // MARK: - States
 
     enum State: Hashable {
         case initial
@@ -49,12 +49,14 @@ final class AddServerUserViewModel: ViewModel {
 
     private var userTask: AnyCancellable?
 
-    // MARK: - Actions
+    // MARK: - Cancel
 
     @Function(\Action.Cases.cancel)
     private func _cancel() async throws {
         userTask?.cancel()
     }
+
+    // MARK: - Create User
 
     @Function(\Action.Cases.create)
     private func _create(_ username: String, _ password: String) async throws {

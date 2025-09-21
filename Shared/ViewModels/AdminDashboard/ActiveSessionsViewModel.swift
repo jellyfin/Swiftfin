@@ -16,6 +16,8 @@ import SwiftUI
 @Stateful
 final class ActiveSessionsViewModel: ViewModel {
 
+    // MARK: - Actions
+
     @CasePathable
     enum Action {
         case refresh
@@ -25,15 +27,21 @@ final class ActiveSessionsViewModel: ViewModel {
         }
     }
 
+    // MARK: - Background States
+
     enum BackgroundState {
         case refreshing
     }
+
+    // MARK: - States
 
     enum State {
         case initial
         case error
         case refreshing
     }
+
+    // MARK: - Published Variables
 
     @Published
     var activeWithinSeconds: Int? = 900 {
@@ -52,7 +60,7 @@ final class ActiveSessionsViewModel: ViewModel {
     @Published
     var sessions: OrderedDictionary<String, BindingBox<SessionInfoDto?>> = [:]
 
-    // MARK: - updateSessions
+    // MARK: - Refresh
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
