@@ -15,47 +15,39 @@ import OrderedCollections
 @Stateful
 final class APIKeysViewModel: ViewModel {
 
-    // MARK: - Actions
-
     @CasePathable
     enum Action {
         case refresh
         case create(name: String)
-        /// Currently just deletes and creates a new API Key
-        case update(key: String)
-        case delete(key: String)
+        case replace(key: AuthenticationInfo)
+        case delete(key: AuthenticationInfo)
 
         var transition: Transition {
             switch self {
             case .refresh:
                 .to(.refreshing, then: .initial)
-            case .create, .update, .delete:
-                .to(.updating, then: .initial)
+            case .create, .replace, .delete:
+                .background(.updating)
             }
         }
     }
 
-    // MARK: - Events
-
-    enum Event {
-        case updated
+    enum BackgroundState {
+        case updating
     }
 
-    // MARK: - States
+    enum Event {
+        case createdKey
+    }
 
     enum State {
         case initial
         case error
-        case updating
         case refreshing
     }
 
-    // MARK: - Published Variables
-
     @Published
     private(set) var apiKeys: [AuthenticationInfo] = []
-
-    // MARK: - Refresh
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
@@ -71,8 +63,6 @@ final class APIKeysViewModel: ViewModel {
         }
     }
 
-    // MARK: - Create API Key
-
     @Function(\Action.Cases.create)
     private func _create(_ name: String) async throws {
         let request = Paths.createKey(app: name)
@@ -82,43 +72,30 @@ final class APIKeysViewModel: ViewModel {
         /// There is no API to return a single API Key.
         try await _refresh()
 
-        events.send(.updated)
+        events.send(.createdKey)
     }
 
-    // MARK: - Update API Key
-
-    @Function(\Action.Cases.update)
-    private func _update(_ key: String) async throws {
-        guard let apiKey = apiKeys.first(where: { $0.accessToken == key }), let keyName = apiKey.appName else {
-            throw JellyfinAPIError("API key not found")
+    @Function(\Action.Cases.replace)
+    private func _replace(_ key: AuthenticationInfo) async throws {
+        guard let appName = key.appName else {
+            logger.error("App name is nil")
+            throw JellyfinAPIError(L10n.unknownError)
         }
 
-        let deleteRequest = Paths.revokeKey(key: key)
-        try await userSession.client.send(deleteRequest)
-
-        let createRequest = Paths.createKey(app: keyName)
-        try await userSession.client.send(createRequest)
-
-        /// API does not return the new key so a full refresh is required.
-        /// There is no API to return a single API Key.
-        try await _refresh()
-
-        events.send(.updated)
+        try await _delete(key)
+        try await _create(appName)
     }
-
-    // MARK: - Delete API Key
 
     @Function(\Action.Cases.delete)
-    private func _delete(_ key: String) async throws {
-        guard let apiKey = apiKeys.first(where: { $0.accessToken == key }) else {
-            throw JellyfinAPIError("API key not found")
+    private func _delete(_ key: AuthenticationInfo) async throws {
+        guard let accessToken = key.accessToken else {
+            logger.error("Access token is nil")
+            throw JellyfinAPIError(L10n.unknownError)
         }
 
-        let request = Paths.revokeKey(key: key)
+        let request = Paths.revokeKey(key: accessToken)
         try await userSession.client.send(request)
 
-        apiKeys.removeAll(where: { $0.accessToken == key })
-
-        events.send(.updated)
+        apiKeys.removeFirst(equalTo: key)
     }
 }

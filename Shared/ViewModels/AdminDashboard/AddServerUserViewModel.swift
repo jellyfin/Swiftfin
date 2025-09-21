@@ -37,7 +37,7 @@ final class AddServerUserViewModel: ViewModel {
 
     enum Event {
         case created(UserDto)
-        case error(JellyfinAPIError)
+        case error
     }
 
     // MARK: - States

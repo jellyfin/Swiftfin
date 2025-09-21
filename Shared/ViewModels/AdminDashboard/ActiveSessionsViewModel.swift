@@ -27,13 +27,9 @@ final class ActiveSessionsViewModel: ViewModel {
         }
     }
 
-    // MARK: - Background States
-
     enum BackgroundState {
         case refreshing
     }
-
-    // MARK: - States
 
     enum State {
         case initial
