@@ -12,120 +12,54 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-final class DevicesViewModel: ViewModel, Eventful, Stateful {
+@MainActor
+@Stateful
+final class DevicesViewModel: ViewModel {
 
-    // MARK: Event
-
-    enum Event {
-        case error(JellyfinAPIError)
-        case success
-    }
-
-    // MARK: - Action
-
-    enum Action: Equatable {
+    @CasePathable
+    enum Action {
         case refresh
         case delete(ids: [String])
-    }
 
-    // MARK: - BackgroundState
-
-    enum BackgroundState: Hashable {
-        case refreshing
-        case updating
-        case deleting
-    }
-
-    // MARK: - State
-
-    enum State: Hashable {
-        case initial
-        case content
-        case error(JellyfinAPIError)
-    }
-
-    // MARK: Published Values
-
-    @Published
-    var backgroundStates: Set<BackgroundState> = []
-    @Published
-    var devices: [DeviceInfoDto] = []
-    @Published
-    var state: State = .initial
-
-    var events: AnyPublisher<Event, Never> {
-        eventSubject
-            .receive(on: RunLoop.main)
-            .eraseToAnyPublisher()
-    }
-
-    private var deviceTask: AnyCancellable?
-    private var eventSubject: PassthroughSubject<Event, Never> = .init()
-
-    // MARK: - Respond to Action
-
-    func respond(to action: Action) -> State {
-        switch action {
-        case .refresh:
-            deviceTask?.cancel()
-
-            backgroundStates.insert(.refreshing)
-
-            deviceTask = Task { [weak self] in
-                do {
-                    try await self?.loadDevices()
-
-                    await MainActor.run {
-                        self?.state = .content
-                        self?.eventSubject.send(.success)
-                    }
-                } catch {
-                    guard let self else { return }
-                    await MainActor.run {
-                        let jellyfinError = JellyfinAPIError(error.localizedDescription)
-                        self.state = .error(jellyfinError)
-                        self.eventSubject.send(.error(jellyfinError))
-                    }
-                }
-
-                await MainActor.run {
-                    _ = self?.backgroundStates.remove(.refreshing)
-                }
+        var transition: Transition {
+            switch self {
+            case .refresh:
+                .loop(.refreshing, whenBackground: .refreshing)
+            case .delete:
+                .background(.deleting)
             }
-            .asAnyCancellable()
-
-            return state
-        case let .delete(ids):
-            deviceTask?.cancel()
-
-            backgroundStates.insert(.deleting)
-
-            deviceTask = Task { [weak self] in
-                do {
-                    try await self?.deleteDevices(ids: ids)
-                    await MainActor.run {
-                        self?.state = .content
-                        self?.eventSubject.send(.success)
-                    }
-                } catch {
-                    await MainActor.run {
-                        let jellyfinError = JellyfinAPIError(error.localizedDescription)
-                        self?.state = .error(jellyfinError)
-                        self?.eventSubject.send(.error(jellyfinError))
-                    }
-                }
-
-                await MainActor.run {
-                    _ = self?.backgroundStates.remove(.deleting)
-                }
-            }
-            .asAnyCancellable()
-
-            return state
         }
     }
 
-    // MARK: - Load Devices
+    enum BackgroundState {
+        case deleting
+        case refreshing
+    }
+
+    enum Event {
+        case error(JellyfinAPIError)
+        case deleted
+    }
+
+    enum State {
+        case initial
+        case refreshing
+        case error
+    }
+
+    @Published
+    private(set) var devices: [DeviceInfoDto] = []
+
+    @Function(\Action.Cases.refresh)
+    private func _refresh() async throws {
+        try await loadDevices()
+    }
+
+    @Function(\Action.Cases.delete)
+    private func _delete(_ ids: [String]) async throws {
+        try await deleteDevices(ids: ids)
+        events.send(.deleted)
+    }
 
     private func loadDevices() async throws {
         let request = Paths.getDevices()
@@ -135,13 +69,9 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
             return
         }
 
-        await MainActor.run {
-            self.devices = devices.sorted(using: \.dateLastActivity)
-                .reversed()
-        }
+        self.devices = devices.sorted(using: \.dateLastActivity)
+            .reversed()
     }
-
-    // MARK: - Delete Device
 
     private func deleteDevice(id: String) async throws {
         // Don't allow self-deletion
@@ -154,8 +84,6 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
 
         try await loadDevices()
     }
-
-    // MARK: - Delete Devices
 
     private func deleteDevices(ids: [String]) async throws {
         guard ids.isNotEmpty else {

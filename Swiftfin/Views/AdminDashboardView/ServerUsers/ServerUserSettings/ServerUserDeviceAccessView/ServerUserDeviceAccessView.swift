@@ -81,7 +81,7 @@ struct ServerUserDeviceAccessView: View {
                 }
             }
             .onFirstAppear {
-                devicesViewModel.send(.refresh)
+                devicesViewModel.refresh()
             }
             .errorMessage($error)
     }

@@ -12,12 +12,8 @@ import SwiftUI
 
 struct DeviceDetailsView: View {
 
-    // MARK: - Current Date
-
     @CurrentDate
     private var currentDate: Date
-
-    // MARK: - State & Environment Objects
 
     @Router
     private var router
@@ -25,29 +21,13 @@ struct DeviceDetailsView: View {
     @StateObject
     private var viewModel: DeviceDetailViewModel
 
-    // MARK: - Custom Name Variable
-
     @State
     private var temporaryCustomName: String
-
-    // MARK: - Dialog State
-
-    @State
-    private var isPresentingSuccess: Bool = false
-
-    // MARK: - Error State
-
-    @State
-    private var error: Error?
-
-    // MARK: - Initializer
 
     init(device: DeviceInfoDto) {
         _viewModel = StateObject(wrappedValue: DeviceDetailViewModel(device: device))
         self.temporaryCustomName = device.customName ?? device.name ?? ""
     }
-
-    // MARK: - Body
 
     var body: some View {
         List {
@@ -78,12 +58,8 @@ struct DeviceDetailsView: View {
         .navigationTitle(L10n.device)
         .onReceive(viewModel.events) { event in
             switch event {
-            case let .error(eventError):
-                UIDevice.feedback(.error)
-                error = eventError
-            case .setCustomName:
+            case .updatedCustomName:
                 UIDevice.feedback(.success)
-                isPresentingSuccess = true
             }
         }
         .topBarTrailing {
@@ -91,22 +67,11 @@ struct DeviceDetailsView: View {
                 ProgressView()
             }
             Button(L10n.save) {
-                UIDevice.impact(.light)
-                if viewModel.device.id != nil {
-                    viewModel.send(.setCustomName(temporaryCustomName))
-                }
+                viewModel.setCustomName(temporaryCustomName)
             }
             .buttonStyle(.toolbarPill)
             .disabled(temporaryCustomName == viewModel.device.customName)
         }
-        .alert(
-            L10n.success.text,
-            isPresented: $isPresentingSuccess
-        ) {
-            Button(L10n.dismiss, role: .cancel)
-        } message: {
-            Text(L10n.customDeviceNameSaved(temporaryCustomName))
-        }
-        .errorMessage($error)
+        .errorMessage($viewModel.error)
     }
 }
