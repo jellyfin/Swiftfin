@@ -334,6 +334,8 @@ internal enum L10n {
   internal static let community = L10n.tr("Localizable", "community", fallback: "Community")
   /// Community rating
   internal static let communityRating = L10n.tr("Localizable", "communityRating", fallback: "Community rating")
+  /// Community rating on a scale from 1 to 10.
+  internal static let communityRatingDescription = L10n.tr("Localizable", "communityRatingDescription", fallback: "Community rating on a scale from 1 to 10.")
   /// Compact
   internal static let compact = L10n.tr("Localizable", "compact", fallback: "Compact")
   /// Compact Logo
@@ -398,6 +400,8 @@ internal enum L10n {
   internal static let creator = L10n.tr("Localizable", "creator", fallback: "Creator")
   /// Critic rating
   internal static let criticRating = L10n.tr("Localizable", "criticRating", fallback: "Critic rating")
+  /// Critic rating on a scale from 1 to 100.
+  internal static let criticRatingDescription = L10n.tr("Localizable", "criticRatingDescription", fallback: "Critic rating on a scale from 1 to 100.")
   /// Critics
   internal static let critics = L10n.tr("Localizable", "critics", fallback: "Critics")
   /// Current
@@ -1196,10 +1200,6 @@ internal enum L10n {
   internal static let randomImage = L10n.tr("Localizable", "randomImage", fallback: "Random image")
   /// Rating
   internal static let rating = L10n.tr("Localizable", "rating", fallback: "Rating")
-  /// %@ rating on a scale from 1 to 10.
-  internal static func ratingDescription(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "ratingDescription", String(describing: p1), fallback: "%@ rating on a scale from 1 to 10.")
-  }
   /// Ratings
   internal static let ratings = L10n.tr("Localizable", "ratings", fallback: "Ratings")
   /// Recently Added
