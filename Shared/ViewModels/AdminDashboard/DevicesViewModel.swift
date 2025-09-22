@@ -71,10 +71,8 @@ final class DevicesViewModel: ViewModel {
         let request = Paths.updateDeviceOptions(id: id, options)
         try await userSession.client.send(request)
 
-        if let customName = options.customName {
-            if let index = devices.firstIndex(where: { $0.id == id }) {
-                devices[index].customName = customName
-            }
+        if let index = devices.firstIndex(where: { $0.id == id }) {
+            devices[index].customName = options.customName
         }
 
         events.send(.updated)
