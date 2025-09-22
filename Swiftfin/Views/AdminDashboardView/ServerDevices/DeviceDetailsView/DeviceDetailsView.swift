@@ -18,28 +18,25 @@ struct DeviceDetailsView: View {
     @Router
     private var router
 
-    @StateObject
-    private var viewModel: DeviceDetailViewModel
+    @ObservedObject
+    private var viewModel: DevicesViewModel
 
+    @State
+    private var device: DeviceInfoDto
     @State
     private var temporaryCustomName: String
 
-    init(device: DeviceInfoDto) {
-        _viewModel = StateObject(wrappedValue: DeviceDetailViewModel(device: device))
-        self.temporaryCustomName = device.customName ?? ""
-    }
-
     var body: some View {
         List {
-            if let userID = viewModel.device.lastUserID,
-               let userName = viewModel.device.lastUserName
+            if let userID = device.lastUserID,
+               let userName = device.lastUserName
             {
 
                 let user = UserDto(id: userID, name: userName)
 
                 AdminDashboardView.UserSection(
                     user: user,
-                    lastActivityDate: viewModel.device.dateLastActivity
+                    lastActivityDate: device.dateLastActivity
                 ) {
                     router.route(to: .userDetails(user: user))
                 }
@@ -53,18 +50,20 @@ struct DeviceDetailsView: View {
             }
 
             AdminDashboardView.DeviceSection(
-                client: viewModel.device.appName,
-                device: viewModel.device.name,
-                version: viewModel.device.appVersion
+                client: device.appName,
+                device: device.name,
+                version: device.appVersion
             )
 
-            CapabilitiesSection(device: viewModel.device)
+            CapabilitiesSection(device: device)
         }
         .navigationTitle(L10n.device)
         .onReceive(viewModel.events) { event in
             switch event {
             case .updatedCustomName:
                 UIDevice.feedback(.success)
+            default:
+                break
             }
         }
         .topBarTrailing {
@@ -72,11 +71,35 @@ struct DeviceDetailsView: View {
                 ProgressView()
             }
             Button(L10n.save) {
-                viewModel.setCustomName(temporaryCustomName)
+                if let id = device.id {
+                    viewModel.update(
+                        id: id,
+                        options: .init(
+                            customName: temporaryCustomName
+                        )
+                    )
+
+                    device.customName = temporaryCustomName
+                }
             }
             .buttonStyle(.toolbarPill)
-            .disabled(temporaryCustomName.isEmpty || temporaryCustomName == viewModel.device.customName)
+            .disabled(temporaryCustomName.isEmpty || temporaryCustomName == device.customName)
         }
         .errorMessage($viewModel.error)
+    }
+}
+
+extension DeviceDetailsView {
+
+    init(device: DeviceInfoDto, viewModel: DevicesViewModel) {
+        self.device = device
+        self.viewModel = viewModel
+        self.temporaryCustomName = device.customName ?? ""
+    }
+
+    init(device: DeviceInfoDto) {
+        self.device = device
+        self.viewModel = DevicesViewModel()
+        self.temporaryCustomName = device.customName ?? ""
     }
 }

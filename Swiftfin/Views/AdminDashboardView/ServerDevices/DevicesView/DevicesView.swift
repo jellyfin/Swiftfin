@@ -136,7 +136,7 @@ struct DevicesView: View {
                                 selectedDevices.insert(id)
                             }
                         } else {
-                            router.route(to: .deviceDetails(device: device))
+                            router.route(to: .deviceDetails(device: device, viewModel: viewModel))
                         }
                     } onDelete: {
                         guard let id = device.id else { return }

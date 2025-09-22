@@ -81,9 +81,9 @@ extension NavigationRoute {
 
     // MARK: - Devices
 
-    static func deviceDetails(device: DeviceInfoDto) -> NavigationRoute {
+    static func deviceDetails(device: DeviceInfoDto, viewModel: DevicesViewModel) -> NavigationRoute {
         NavigationRoute(id: "deviceDetails") {
-            DeviceDetailsView(device: device)
+            DeviceDetailsView(device: device, viewModel: viewModel)
         }
     }
 

@@ -20,6 +20,7 @@ final class DevicesViewModel: ViewModel {
     enum Action {
         case refresh
         case delete(ids: [String])
+        case update(id: String, options: DeviceOptionsDto)
 
         var transition: Transition {
             switch self {
@@ -27,17 +28,21 @@ final class DevicesViewModel: ViewModel {
                 .loop(.refreshing, whenBackground: .refreshing)
             case .delete:
                 .background(.deleting)
+            case .update:
+                .background(.updating)
             }
         }
     }
 
     enum BackgroundState {
         case deleting
+        case updating
         case refreshing
     }
 
     enum Event {
         case deleted
+        case updatedCustomName
     }
 
     enum State {
@@ -60,6 +65,18 @@ final class DevicesViewModel: ViewModel {
 
         self.devices = devices.sorted(using: \.dateLastActivity)
             .reversed()
+    }
+
+    @Function(\Action.Cases.update)
+    private func _updateDevice(_ id: String, _ options: DeviceOptionsDto) async throws {
+        let request = Paths.updateDeviceOptions(id: id, options)
+        try await userSession.client.send(request)
+
+        if let index = devices.firstIndex(where: { $0.id == id }), let customName = options.customName {
+            devices[index].customName = customName
+        }
+
+        events.send(.updatedCustomName)
     }
 
     @Function(\Action.Cases.delete)
