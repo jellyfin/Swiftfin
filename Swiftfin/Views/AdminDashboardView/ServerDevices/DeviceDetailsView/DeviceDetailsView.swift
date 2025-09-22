@@ -27,9 +27,9 @@ struct DeviceDetailsView: View {
     private var temporaryCustomName: String?
 
     init(device: DeviceInfoDto, viewModel: DevicesViewModel) {
-        self.device = device
+        self._device = State(initialValue: device)
+        self._temporaryCustomName = State(initialValue: device.customName)
         self.viewModel = viewModel
-        self.temporaryCustomName = device.customName
     }
 
     var body: some View {
