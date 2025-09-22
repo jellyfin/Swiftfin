@@ -19,36 +19,32 @@ final class DevicesViewModel: ViewModel {
     @CasePathable
     enum Action {
         case refresh
-        case delete(ids: [String])
+        case delete(ids: Set<String>)
         case update(id: String, options: DeviceOptionsDto)
 
         var transition: Transition {
             switch self {
             case .refresh:
                 .loop(.refreshing, whenBackground: .refreshing)
-            case .delete:
-                .background(.deleting)
-            case .update:
+            case .delete, .update:
                 .background(.updating)
             }
         }
     }
 
     enum BackgroundState {
-        case deleting
-        case updating
         case refreshing
+        case updating
     }
 
     enum Event {
-        case deleted
-        case updatedCustomName
+        case updated
     }
 
     enum State {
+        case error
         case initial
         case refreshing
-        case error
     }
 
     @Published
@@ -63,46 +59,34 @@ final class DevicesViewModel: ViewModel {
             return
         }
 
-        self.devices = devices.sorted(using: \.dateLastActivity)
+        let sortedDevices = Array(devices.sorted(using: \.dateLastActivity)
             .reversed()
+        )
+
+        self.devices = sortedDevices
     }
 
     @Function(\Action.Cases.update)
-    private func _updateDevice(_ id: String, _ options: DeviceOptionsDto) async throws {
+    private func _update(_ id: String, _ options: DeviceOptionsDto) async throws {
         let request = Paths.updateDeviceOptions(id: id, options)
         try await userSession.client.send(request)
 
-        if let index = devices.firstIndex(where: { $0.id == id }), let customName = options.customName {
-            devices[index].customName = customName
+        if let customName = options.customName {
+            if let index = devices.firstIndex(where: { $0.id == id }) {
+                devices[index].customName = customName
+            }
         }
 
-        events.send(.updatedCustomName)
+        events.send(.updated)
     }
 
     @Function(\Action.Cases.delete)
-    private func _delete(_ ids: [String]) async throws {
-        try await deleteDevices(ids: ids)
-        events.send(.deleted)
-    }
-
-    private func deleteDevice(id: String) async throws {
-        // Don't allow self-deletion
-        guard id != userSession.client.configuration.deviceID else {
-            return
-        }
-
-        let request = Paths.deleteDevice(id: id)
-        try await userSession.client.send(request)
-
-        try await _refresh()
-    }
-
-    private func deleteDevices(ids: [String]) async throws {
+    private func _delete(_ ids: Set<String>) async throws {
         guard ids.isNotEmpty else {
             return
         }
 
-        // Don't allow self-deletion
+        // Don't allow self-deletion - compare against the original device IDs
         let deviceIdsToDelete = ids.filter { $0 != userSession.client.configuration.deviceID }
 
         try await withThrowingTaskGroup(of: Void.self) { group in
@@ -115,6 +99,15 @@ final class DevicesViewModel: ViewModel {
             try await group.waitForAll()
         }
 
-        try await _refresh()
+        devices.removeAll { device in
+            guard let deviceId = device.id else { return false }
+            return deviceIdsToDelete.contains(deviceId)
+        }
+    }
+
+    // TODO: Replace when/if Jellyfin API supports deleting in batch
+    private func deleteDevice(id: String) async throws {
+        let request = Paths.deleteDevice(id: id)
+        try await userSession.client.send(request)
     }
 }

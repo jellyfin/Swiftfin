@@ -196,7 +196,7 @@ struct DevicesView: View {
         Button(L10n.cancel, role: .cancel) {}
 
         Button(L10n.confirm, role: .destructive) {
-            viewModel.delete(ids: Array(selectedDevices))
+            viewModel.delete(ids: selectedDevices)
             isEditing = false
             selectedDevices.removeAll()
         }

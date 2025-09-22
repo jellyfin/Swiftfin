@@ -24,7 +24,13 @@ struct DeviceDetailsView: View {
     @State
     private var device: DeviceInfoDto
     @State
-    private var temporaryCustomName: String
+    private var temporaryCustomName: String?
+
+    init(device: DeviceInfoDto, viewModel: DevicesViewModel) {
+        self.device = device
+        self.viewModel = viewModel
+        self.temporaryCustomName = device.customName
+    }
 
     var body: some View {
         List {
@@ -45,7 +51,10 @@ struct DeviceDetailsView: View {
             Section(L10n.name) {
                 TextField(
                     L10n.customName,
-                    text: $temporaryCustomName
+                    text: $temporaryCustomName.map(
+                        getter: { $0 ?? "" },
+                        setter: { $0.isEmpty ? nil : $0 }
+                    )
                 )
             }
 
@@ -60,10 +69,8 @@ struct DeviceDetailsView: View {
         .navigationTitle(L10n.device)
         .onReceive(viewModel.events) { event in
             switch event {
-            case .updatedCustomName:
+            case .updated:
                 UIDevice.feedback(.success)
-            default:
-                break
             }
         }
         .topBarTrailing {
@@ -83,23 +90,8 @@ struct DeviceDetailsView: View {
                 }
             }
             .buttonStyle(.toolbarPill)
-            .disabled(temporaryCustomName.isEmpty || temporaryCustomName == device.customName)
+            .disabled(temporaryCustomName == device.customName)
         }
         .errorMessage($viewModel.error)
-    }
-}
-
-extension DeviceDetailsView {
-
-    init(device: DeviceInfoDto, viewModel: DevicesViewModel) {
-        self.device = device
-        self.viewModel = viewModel
-        self.temporaryCustomName = device.customName ?? ""
-    }
-
-    init(device: DeviceInfoDto) {
-        self.device = device
-        self.viewModel = DevicesViewModel()
-        self.temporaryCustomName = device.customName ?? ""
     }
 }
