@@ -31,7 +31,8 @@ extension CustomizeViewsSettings {
                     L10n.nextUpDays,
                     subtitle: {
                         if maxNextUp > 0 {
-                            return Text(maxNextUp, format: .interval(style: .narrow, fields: [.day]))
+                            let duration = Duration.seconds(TimeInterval(maxNextUp))
+                            return Text(duration, format: .units(allowed: [.days], width: .abbreviated))
                         } else {
                             return Text(L10n.disabled)
                         }
