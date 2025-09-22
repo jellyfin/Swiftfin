@@ -222,7 +222,6 @@
 				ViewModels/AdminDashboard/ActiveSessionsViewModel.swift,
 				ViewModels/AdminDashboard/AddServerUserViewModel.swift,
 				ViewModels/AdminDashboard/APIKeysViewModel.swift,
-				ViewModels/AdminDashboard/DeviceDetailViewModel.swift,
 				ViewModels/AdminDashboard/DevicesViewModel.swift,
 				ViewModels/AdminDashboard/ServerActivityDetailViewModel.swift,
 				ViewModels/AdminDashboard/ServerActivityViewModel.swift,

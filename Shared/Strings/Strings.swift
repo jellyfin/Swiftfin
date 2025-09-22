@@ -412,10 +412,6 @@ internal enum L10n {
   internal static let customConnectionsDescription = L10n.tr("Localizable", "customConnectionsDescription", fallback: "Manually set the maximum number of connections a user can have to the server.")
   /// Allows advanced customization of device profiles for native playback. Incorrect settings may affect playback.
   internal static let customDescription = L10n.tr("Localizable", "customDescription", fallback: "Allows advanced customization of device profiles for native playback. Incorrect settings may affect playback.")
-  /// Your custom device name '%1$@' has been saved.
-  internal static func customDeviceNameSaved(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "customDeviceNameSaved", String(describing: p1), fallback: "Your custom device name '%1$@' has been saved.")
-  }
   /// The custom device profiles will be added to the default Swiftfin device profiles.
   internal static let customDeviceProfileAdd = L10n.tr("Localizable", "customDeviceProfileAdd", fallback: "The custom device profiles will be added to the default Swiftfin device profiles.")
   /// The custom device profiles will replace the default Swiftfin device profiles.
@@ -426,6 +422,8 @@ internal enum L10n {
   internal static let customFailedLogins = L10n.tr("Localizable", "customFailedLogins", fallback: "Custom failed logins")
   /// Customize
   internal static let customize = L10n.tr("Localizable", "customize", fallback: "Customize")
+  /// Custom name
+  internal static let customName = L10n.tr("Localizable", "customName", fallback: "Custom name")
   /// Custom profile
   internal static let customProfile = L10n.tr("Localizable", "customProfile", fallback: "Custom profile")
   /// Custom rating
