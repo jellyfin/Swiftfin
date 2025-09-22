@@ -38,7 +38,10 @@ extension JellyfinClient {
 
 extension JellyfinClient.Configuration {
 
-    static func swiftfinConfiguration(url: URL) -> Self {
+    static func swiftfinConfiguration(
+        url: URL,
+        accessToken: String? = nil
+    ) -> Self {
 
         let client = "Swiftfin \(UIDevice.platform)"
         let deviceName = UIDevice.current.name
@@ -51,6 +54,7 @@ extension JellyfinClient.Configuration {
 
         return .init(
             url: url,
+            accessToken: accessToken,
             client: client,
             deviceName: deviceName,
             deviceID: deviceID,
