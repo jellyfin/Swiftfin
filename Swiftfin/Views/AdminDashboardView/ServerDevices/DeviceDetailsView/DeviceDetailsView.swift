@@ -75,7 +75,7 @@ struct DeviceDetailsView: View {
                 viewModel.setCustomName(temporaryCustomName)
             }
             .buttonStyle(.toolbarPill)
-            .disabled(temporaryCustomName.isEmpty && temporaryCustomName != viewModel.device.customName)
+            .disabled(temporaryCustomName.isEmpty || temporaryCustomName != viewModel.device.customName)
         }
         .errorMessage($viewModel.error)
     }
