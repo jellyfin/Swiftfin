@@ -57,7 +57,7 @@ struct ActiveSessionsView: View {
     private func errorView(with error: some Error) -> some View {
         ErrorView(error: error)
             .onRetry {
-                viewModel.send(.refresh)
+                viewModel.refresh()
             }
     }
 
@@ -67,11 +67,11 @@ struct ActiveSessionsView: View {
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .content:
-                contentView
-            case let .error(error):
-                errorView(with: error)
+            case .error:
+                viewModel.error.map { errorView(with: $0) }
             case .initial:
+                contentView
+            case .refreshing:
                 DelayedProgressView()
             }
         }
@@ -79,7 +79,7 @@ struct ActiveSessionsView: View {
         .navigationTitle(L10n.sessions)
         .navigationBarTitleDisplayMode(.inline)
         .topBarTrailing {
-            if viewModel.backgroundStates.contains(.backgroundRefreshing) {
+            if viewModel.backgroundStates.contains(.refreshing) {
                 ProgressView()
             }
 
@@ -94,14 +94,11 @@ struct ActiveSessionsView: View {
             .foregroundStyle(accentColor)
         }
         .onFirstAppear {
-            viewModel.send(.refresh)
+            viewModel.refresh()
         }
         .onReceive(timer) { _ in
             guard !isFiltersPresented else { return }
-            viewModel.send(.backgroundRefresh)
-        }
-        .refreshable {
-            viewModel.send(.refresh)
+            viewModel.background.refresh()
         }
     }
 
@@ -117,25 +114,25 @@ struct ActiveSessionsView: View {
             .tag(nil as Int?)
 
             Label(
-                300.formatted(.hourMinute),
+                Duration.seconds(300).formatted(.hourMinuteAbbreviated),
                 systemImage: "clock"
             )
             .tag(300 as Int?)
 
             Label(
-                900.formatted(.hourMinute),
+                Duration.seconds(900).formatted(.hourMinuteAbbreviated),
                 systemImage: "clock"
             )
             .tag(900 as Int?)
 
             Label(
-                1800.formatted(.hourMinute),
+                Duration.seconds(1800).formatted(.hourMinuteAbbreviated),
                 systemImage: "clock"
             )
             .tag(1800 as Int?)
 
             Label(
-                3600.formatted(.hourMinute),
+                Duration.seconds(3600).formatted(.hourMinuteAbbreviated),
                 systemImage: "clock"
             )
             .tag(3600 as Int?)
@@ -143,7 +140,7 @@ struct ActiveSessionsView: View {
             Text(L10n.lastSeen)
 
             if let activeWithinSeconds = viewModel.activeWithinSeconds {
-                Text(Double(activeWithinSeconds).formatted(.hourMinute))
+                Text(Duration.seconds(activeWithinSeconds).formatted(.units(allowed: [.hours, .minutes])))
             } else {
                 Text(L10n.all)
             }

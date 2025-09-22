@@ -60,9 +60,9 @@ extension MediaView {
                 }
 
                 if case let MediaViewModel.MediaType.collectionFolder(item) = mediaType {
-                    self.imageSources = [item.imageSource(.primary, maxWidth: 200)]
+                    self.imageSources = [item.imageSource(.primary, maxWidth: 500)]
                 } else if case let MediaViewModel.MediaType.liveTV(item) = mediaType {
-                    self.imageSources = [item.imageSource(.primary, maxWidth: 200)]
+                    self.imageSources = [item.imageSource(.primary, maxWidth: 500)]
                 }
             }
         }
@@ -74,10 +74,10 @@ extension MediaView {
                 .fontWeight(.semibold)
                 .lineLimit(1)
                 .multilineTextAlignment(.center)
+                .frame(alignment: .center)
         }
 
-        // TODO: find a different way to do this local-label-wackiness if possible
-        private func titleLabelOverlay<Content: View>(with content: Content) -> some View {
+        private func titleLabelOverlay(with content: some View) -> some View {
             ZStack {
                 content
 
@@ -119,8 +119,12 @@ extension MediaView {
                     .matchedTransitionSource(id: "item", in: namespace)
             }
             .onFirstAppear(perform: setImageSources)
-            .onChange(of: useRandomImage) { _ in
+            .backport
+            .onChange(of: useRandomImage) { _, _ in
                 setImageSources()
+            }
+            .if(UIDevice.isTV) { view in
+                view.buttonStyle(.card)
             }
         }
     }

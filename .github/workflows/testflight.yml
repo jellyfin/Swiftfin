@@ -1,11 +1,12 @@
-name: "TestFlight ⚙️"
+name: "TestFlight ✈️"
 
 on:
   repository_dispatch:
     types: [testflight]
   
 jobs:
-  test_build:
+  build:
+    name: "TestFlight ✈️"
     runs-on: macos-15
 
     steps:

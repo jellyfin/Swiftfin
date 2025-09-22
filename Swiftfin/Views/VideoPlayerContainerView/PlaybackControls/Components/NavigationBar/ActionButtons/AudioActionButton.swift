@@ -55,6 +55,10 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
                 }
                 .videoPlayerActionButtonTransition()
                 .assign(playbackItem.$selectedAudioStreamIndex, to: $selectedAudioStreamIndex)
+                .backport
+                .onChange(of: selectedAudioStreamIndex) { _, newValue in
+                    playbackItem.selectedAudioStreamIndex = newValue
+                }
             }
         }
     }

@@ -30,46 +30,27 @@ struct ConnectToServerView: View {
     @StateObject
     private var viewModel = ConnectToServerViewModel()
 
-    // MARK: - URL Variable
-
-    @State
-    private var url: String = ""
-
-    // MARK: - Duplicate Server State
-
     @State
     private var duplicateServer: ServerState? = nil
     @State
     private var isPresentingDuplicateServer: Bool = false
-
-    // MARK: - Error State
-
     @State
-    private var error: Error? = nil
+    private var url: String = ""
 
     // MARK: - Connection Timer
 
     private let timer = Timer.publish(every: 12, on: .main, in: .common).autoconnect()
 
-    // MARK: - Handle Connection
-
-    private func handleConnection(_ event: ConnectToServerViewModel.Event) {
+    private func onEvent(_ event: ConnectToServerViewModel._Event) {
         switch event {
         case let .connected(server):
             UIDevice.feedback(.success)
-
             Notifications[.didConnectToServer].post(server)
             router.dismiss()
         case let .duplicateServer(server):
             UIDevice.feedback(.warning)
-
             duplicateServer = server
             isPresentingDuplicateServer = true
-        case let .error(eventError):
-            UIDevice.feedback(.error)
-
-            error = eventError
-            isURLFocused = true
         }
     }
 
@@ -87,13 +68,13 @@ struct ConnectToServerView: View {
 
         if viewModel.state == .connecting {
             ListRowButton(L10n.cancel) {
-                viewModel.send(.cancel)
+                viewModel.cancel()
             }
             .foregroundStyle(.red, .red.opacity(0.2))
         } else {
             ListRowButton(L10n.connect) {
                 isURLFocused = false
-                viewModel.send(.connect(url))
+                viewModel.connect(url: url)
             }
             .disabled(url.isEmpty)
             .foregroundStyle(
@@ -109,7 +90,7 @@ struct ConnectToServerView: View {
     private func localServerButton(for server: ServerState) -> some View {
         Button {
             url = server.currentURL.absoluteString
-            viewModel.send(.connect(server.currentURL.absoluteString))
+            viewModel.connect(url: server.currentURL.absoluteString)
         } label: {
             HStack {
                 VStack(alignment: .leading) {
@@ -167,15 +148,17 @@ struct ConnectToServerView: View {
         }
         .onFirstAppear {
             isURLFocused = true
-            viewModel.send(.searchForServers)
-        }
-        .onReceive(viewModel.events) { event in
-            handleConnection(event)
+            viewModel.searchForServers()
         }
         .onReceive(timer) { _ in
             guard viewModel.state != .connecting else { return }
-
-            viewModel.send(.searchForServers)
+            viewModel.searchForServers()
+        }
+        .onReceive(viewModel.events, perform: onEvent)
+        .onReceive(viewModel.$error) { error in
+            guard error != nil else { return }
+            UIDevice.feedback(.error)
+            isURLFocused = true
         }
         .topBarTrailing {
             if viewModel.state == .connecting {
@@ -190,12 +173,12 @@ struct ConnectToServerView: View {
             Button(L10n.dismiss, role: .destructive)
 
             Button(L10n.addURL) {
-                viewModel.send(.addNewURL(server))
+                viewModel.addNewURL(serverState: server)
                 router.dismiss()
             }
         } message: { server in
             L10n.serverAlreadyExistsPrompt(server.name).text
         }
-        .errorMessage($error)
+        .errorMessage($viewModel.error)
     }
 }

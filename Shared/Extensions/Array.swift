@@ -57,6 +57,12 @@ extension Array {
 
 extension Array where Element: Equatable {
 
+    mutating func removeFirst(equalTo element: Element) {
+        if let index = firstIndex(of: element) {
+            remove(at: index)
+        }
+    }
+
     mutating func removeAll(equalTo element: Element) {
         removeAll { $0 == element }
     }

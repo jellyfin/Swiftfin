@@ -8,9 +8,12 @@
 
 import SwiftUI
 
+// TODO: Causes severe hangs - actually probably not the best idea
+//       - object identifier equatable works okay, test more
+
 /// A view that observes an `ObservableObject` and provides its value to a content closure.
 /// Use whenever the object is derived in a context where `@ObservedObject` cannot be used directly.
-struct WithObservedObject<Value: ObservableObject, Content: View>: View {
+struct WithObservedObject<Value: ObservableObject, Content: View>: View, Equatable {
 
     @ObservedObject
     private var value: Value
@@ -27,5 +30,9 @@ struct WithObservedObject<Value: ObservableObject, Content: View>: View {
 
     var body: some View {
         content(value)
+    }
+
+    static func == (lhs: WithObservedObject<Value, Content>, rhs: WithObservedObject<Value, Content>) -> Bool {
+        ObjectIdentifier(lhs.value) == ObjectIdentifier(rhs.value)
     }
 }

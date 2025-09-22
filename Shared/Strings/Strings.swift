@@ -1258,6 +1258,8 @@ internal enum L10n {
   internal static let replaceImages = L10n.tr("Localizable", "replaceImages", fallback: "Replace Images")
   /// Replace all images with new images.
   internal static let replaceImagesDescription = L10n.tr("Localizable", "replaceImagesDescription", fallback: "Replace all images with new images.")
+  /// Are you sure you want to replace this item?
+  internal static let replaceItemConfirmation = L10n.tr("Localizable", "replaceItemConfirmation", fallback: "Are you sure you want to replace this item?")
   /// Replace Metadata
   internal static let replaceMetadata = L10n.tr("Localizable", "replaceMetadata", fallback: "Replace Metadata")
   /// Replace unlocked metadata with new information.

@@ -157,12 +157,30 @@ extension View {
         modifier(BottomEdgeGradientModifier(bottomColor: bottomColor))
     }
 
+    // TODO: rename `errorAlert`
+
     /// Error Message Alert
     func errorMessage(
         _ error: Binding<Error?>,
-        dismissActions: (() -> Void)? = nil
+        dismissAction: @escaping () -> Void = {}
     ) -> some View {
-        modifier(ErrorMessageModifier(error: error, dismissActions: dismissActions))
+        alert(
+            L10n.error.text,
+            isPresented: .constant(error.wrappedValue != nil),
+            presenting: error.wrappedValue
+        ) { _ in
+            Button(L10n.dismiss, role: .cancel) {
+                error.wrappedValue = nil
+                dismissAction()
+            }
+        } message: { error in
+            Text(error.localizedDescription)
+        }
+        .backport
+        .onChange(of: error.wrappedValue != nil) { _, hasError in
+            guard hasError else { return }
+            UIDevice.feedback(.error)
+        }
     }
 
     @ViewBuilder
