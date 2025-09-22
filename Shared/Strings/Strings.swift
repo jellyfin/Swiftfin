@@ -1198,9 +1198,9 @@ internal enum L10n {
   internal static let randomImage = L10n.tr("Localizable", "randomImage", fallback: "Random image")
   /// Rating
   internal static let rating = L10n.tr("Localizable", "rating", fallback: "Rating")
-  /// %@ rating on a scale from 1 to 10.
-  internal static func ratingDescription(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "ratingDescription", String(describing: p1), fallback: "%@ rating on a scale from 1 to 10.")
+  /// %1$@ rating on a scale from 1 to %2$@.
+  internal static func ratingDescription(_ p1: Any, _ p2: Any) -> String {
+    return L10n.tr("Localizable", "ratingDescription", String(describing: p1), String(describing: p2), fallback: "%1$@ rating on a scale from 1 to %2$@.")
   }
   /// Ratings
   internal static let ratings = L10n.tr("Localizable", "ratings", fallback: "Ratings")

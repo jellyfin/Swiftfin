@@ -27,7 +27,7 @@ extension EditMetadataView {
                 ChevronButton(
                     L10n.critics,
                     subtitle: item.criticRating.map { "\($0)" } ?? .emptyDash,
-                    description: L10n.ratingDescription(L10n.critics)
+                    description: L10n.ratingDescription(L10n.critics, 100)
                 ) {
                     TextField(
                         L10n.rating,
@@ -37,7 +37,7 @@ extension EditMetadataView {
                     .keyboardType(.decimalPad)
                     .onChange(of: item.criticRating) { _ in
                         if let rating = item.criticRating {
-                            item.criticRating = min(max(rating, 0), 10)
+                            item.criticRating = min(max(rating, 0), 100)
                         }
                     }
                 }
@@ -47,12 +47,12 @@ extension EditMetadataView {
                 ChevronButton(
                     L10n.community,
                     subtitle: item.communityRating.map { "\($0)" } ?? .emptyDash,
-                    description: L10n.ratingDescription(L10n.community)
+                    description: L10n.ratingDescription(L10n.community, 10)
                 ) {
                     TextField(
                         L10n.rating,
                         value: $item.communityRating,
-                        format: .number.precision(.fractionLength(1))
+                        format: .number.precision(.fractionLength(2))
                     )
                     .keyboardType(.decimalPad)
                     .onChange(of: item.communityRating) { _ in
