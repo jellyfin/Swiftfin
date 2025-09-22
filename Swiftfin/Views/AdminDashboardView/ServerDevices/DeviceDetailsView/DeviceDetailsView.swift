@@ -22,11 +22,10 @@ struct DeviceDetailsView: View {
     private var viewModel: DeviceDetailViewModel
 
     @State
-    private var temporaryCustomName: String
+    private var temporaryCustomName: String = ""
 
     init(device: DeviceInfoDto) {
         _viewModel = StateObject(wrappedValue: DeviceDetailViewModel(device: device))
-        self.temporaryCustomName = device.customName ?? device.name ?? ""
     }
 
     var body: some View {
@@ -45,7 +44,12 @@ struct DeviceDetailsView: View {
                 }
             }
 
-            CustomDeviceNameSection(customName: $temporaryCustomName)
+            Section(L10n.name) {
+                TextField(
+                    L10n.customName,
+                    text: $temporaryCustomName
+                )
+            }
 
             AdminDashboardView.DeviceSection(
                 client: viewModel.device.appName,
@@ -70,7 +74,7 @@ struct DeviceDetailsView: View {
                 viewModel.setCustomName(temporaryCustomName)
             }
             .buttonStyle(.toolbarPill)
-            .disabled(temporaryCustomName == viewModel.device.customName)
+            .disabled(temporaryCustomName.isEmpty)
         }
         .errorMessage($viewModel.error)
     }
