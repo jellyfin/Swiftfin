@@ -1302,8 +1302,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/nathantannar4/Transmission";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.4.5;
+				kind = exactVersion;
+				version = 2.4.5;
 			};
 		};
 		E176EBDC2D050067009F4CF1 /* XCRemoteSwiftPackageReference "swift-identified-collections" */ = {
