@@ -32,12 +32,8 @@ final class DeviceDetailViewModel: ViewModel {
     }
 
     enum Event {
-        case error(JellyfinAPIError)
+        case error
         case updatedCustomName
-    }
-
-    enum State {
-        case initial
     }
 
     @Published

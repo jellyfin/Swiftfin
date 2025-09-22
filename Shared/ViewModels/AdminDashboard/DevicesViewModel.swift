@@ -37,7 +37,6 @@ final class DevicesViewModel: ViewModel {
     }
 
     enum Event {
-        case error(JellyfinAPIError)
         case deleted
     }
 
@@ -52,16 +51,6 @@ final class DevicesViewModel: ViewModel {
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
-        try await loadDevices()
-    }
-
-    @Function(\Action.Cases.delete)
-    private func _delete(_ ids: [String]) async throws {
-        try await deleteDevices(ids: ids)
-        events.send(.deleted)
-    }
-
-    private func loadDevices() async throws {
         let request = Paths.getDevices()
         let response = try await userSession.client.send(request)
 
@@ -73,6 +62,12 @@ final class DevicesViewModel: ViewModel {
             .reversed()
     }
 
+    @Function(\Action.Cases.delete)
+    private func _delete(_ ids: [String]) async throws {
+        try await deleteDevices(ids: ids)
+        events.send(.deleted)
+    }
+
     private func deleteDevice(id: String) async throws {
         // Don't allow self-deletion
         guard id != userSession.client.configuration.deviceID else {
@@ -82,7 +77,7 @@ final class DevicesViewModel: ViewModel {
         let request = Paths.deleteDevice(id: id)
         try await userSession.client.send(request)
 
-        try await loadDevices()
+        try await _refresh()
     }
 
     private func deleteDevices(ids: [String]) async throws {
@@ -103,6 +98,6 @@ final class DevicesViewModel: ViewModel {
             try await group.waitForAll()
         }
 
-        try await loadDevices()
+        try await _refresh()
     }
 }
