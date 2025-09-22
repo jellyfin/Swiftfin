@@ -27,7 +27,7 @@ extension EditMetadataView {
                 ChevronButton(
                     L10n.critics,
                     subtitle: item.criticRating.map { "\($0)" } ?? .emptyDash,
-                    description: L10n.ratingDescription(L10n.critics, 100)
+                    description: L10n.criticRatingDescription
                 ) {
                     TextField(
                         L10n.rating,
@@ -47,7 +47,7 @@ extension EditMetadataView {
                 ChevronButton(
                     L10n.community,
                     subtitle: item.communityRating.map { "\($0)" } ?? .emptyDash,
-                    description: L10n.ratingDescription(L10n.community, 10)
+                    description: L10n.communityRatingDescription
                 ) {
                     TextField(
                         L10n.rating,
