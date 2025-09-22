@@ -22,12 +22,12 @@ struct DeviceDetailsView: View {
     private var viewModel: DevicesViewModel
 
     @State
-    private var device: DeviceInfoDto
-    @State
     private var temporaryCustomName: String?
 
+    private let device: DeviceInfoDto
+
     init(device: DeviceInfoDto, viewModel: DevicesViewModel) {
-        self._device = State(initialValue: device)
+        self.device = device
         self._temporaryCustomName = State(initialValue: device.customName)
         self.viewModel = viewModel
     }
@@ -85,8 +85,6 @@ struct DeviceDetailsView: View {
                             customName: temporaryCustomName
                         )
                     )
-
-                    device.customName = temporaryCustomName
                 }
             }
             .buttonStyle(.toolbarPill)

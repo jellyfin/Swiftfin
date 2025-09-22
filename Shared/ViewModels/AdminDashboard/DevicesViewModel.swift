@@ -71,7 +71,9 @@ final class DevicesViewModel: ViewModel {
         let request = Paths.updateDeviceOptions(id: id, options)
         try await userSession.client.send(request)
 
-        if let index = devices.firstIndex(where: { $0.id == id }) {
+        let deviceIndices = devices.indices.filter { devices[$0].id == id }
+
+        for index in deviceIndices {
             devices[index].customName = options.customName
         }
 
@@ -80,11 +82,9 @@ final class DevicesViewModel: ViewModel {
 
     @Function(\Action.Cases.delete)
     private func _delete(_ ids: Set<String>) async throws {
-        guard ids.isNotEmpty else {
-            return
-        }
+        guard ids.isNotEmpty else { return }
 
-        // Don't allow self-deletion - compare against the original device IDs
+        // TODO: allow deleting same-device entry, but cannot delete the same-device/same-user pair (current session)
         let deviceIdsToDelete = ids.filter { $0 != userSession.client.configuration.deviceID }
 
         try await withThrowingTaskGroup(of: Void.self) { group in
@@ -97,10 +97,7 @@ final class DevicesViewModel: ViewModel {
             try await group.waitForAll()
         }
 
-        devices.removeAll { device in
-            guard let deviceId = device.id else { return false }
-            return deviceIdsToDelete.contains(deviceId)
-        }
+        devices = devices.subtracting(deviceIdsToDelete, using: \.id)
     }
 
     // TODO: Replace when/if Jellyfin API supports deleting in batch
