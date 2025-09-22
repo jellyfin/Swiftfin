@@ -8,6 +8,21 @@
 
 import SwiftUI
 
+public extension UIInterfaceOrientationMask {
+    var displayTitle: String {
+        switch self {
+        case .all: "All Orientations"
+        case .allButUpsideDown: "All But Upside Down"
+        case .portrait: "Portrait"
+        case .portraitUpsideDown: "Portrait Upside Down"
+        case .landscape: "Landscape"
+        case .landscapeLeft: "Landscape Left"
+        case .landscapeRight: "Landscape Right"
+        default: "Unknown"
+        }
+    }
+}
+
 public extension View {
 
     #if os(iOS)
