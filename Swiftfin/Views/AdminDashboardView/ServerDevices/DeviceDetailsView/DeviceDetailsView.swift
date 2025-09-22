@@ -22,10 +22,11 @@ struct DeviceDetailsView: View {
     private var viewModel: DeviceDetailViewModel
 
     @State
-    private var temporaryCustomName: String = ""
+    private var temporaryCustomName: String
 
     init(device: DeviceInfoDto) {
         _viewModel = StateObject(wrappedValue: DeviceDetailViewModel(device: device))
+        self.temporaryCustomName = device.customName ?? ""
     }
 
     var body: some View {
@@ -74,7 +75,7 @@ struct DeviceDetailsView: View {
                 viewModel.setCustomName(temporaryCustomName)
             }
             .buttonStyle(.toolbarPill)
-            .disabled(temporaryCustomName.isEmpty)
+            .disabled(temporaryCustomName.isEmpty && temporaryCustomName != viewModel.device.customName)
         }
         .errorMessage($viewModel.error)
     }
