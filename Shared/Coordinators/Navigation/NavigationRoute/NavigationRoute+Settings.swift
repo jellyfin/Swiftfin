@@ -39,7 +39,7 @@ extension NavigationRoute {
         style: .sheet
     ) {
         CustomDeviceProfileSettingsView.EditCustomDeviceProfileView(profile: nil)
-            .navigationTitle(L10n.customProfile)
+            .navigationTitle(L10n.customProfile.localizedCapitalized)
     }
 
     static let customDeviceProfileSettings = NavigationRoute(
@@ -68,7 +68,7 @@ extension NavigationRoute {
             style: .sheet
         ) {
             CustomDeviceProfileSettingsView.EditCustomDeviceProfileView(profile: profile)
-                .navigationTitle(L10n.customProfile)
+                .navigationTitle(L10n.customProfile.localizedCapitalized)
         }
     }
 

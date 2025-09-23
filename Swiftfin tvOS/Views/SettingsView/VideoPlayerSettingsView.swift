@@ -87,6 +87,6 @@ struct VideoPlayerSettingsView: View {
                     }
                 }
             }
-            .navigationTitle(L10n.videoPlayer)
+            .navigationTitle(L10n.videoPlayer.localizedCapitalized)
     }
 }

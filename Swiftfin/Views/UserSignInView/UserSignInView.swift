@@ -313,7 +313,7 @@ struct UserSignInView: View {
         }
         .animation(.linear, value: viewModel.isQuickConnectEnabled)
         .interactiveDismissDisabled(viewModel.state == .signingIn)
-        .navigationTitle(L10n.signIn)
+        .navigationTitle(L10n.signIn.localizedCapitalized)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton(disabled: viewModel.state == .signingIn) {
             router.dismiss()
