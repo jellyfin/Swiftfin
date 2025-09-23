@@ -1072,6 +1072,8 @@ internal enum L10n {
   internal static let parentalControls = L10n.tr("Localizable", "parentalControls", fallback: "Parental controls")
   /// Parental rating
   internal static let parentalRating = L10n.tr("Localizable", "parentalRating", fallback: "Parental rating")
+  /// Parental ratings
+  internal static let parentalRatings = L10n.tr("Localizable", "parentalRatings", fallback: "Parental ratings")
   /// Parent index
   internal static let parentIndexNumber = L10n.tr("Localizable", "parentIndexNumber", fallback: "Parent index")
   /// Password
@@ -1662,8 +1664,8 @@ internal enum L10n {
   internal static let uploadPhoto = L10n.tr("Localizable", "uploadPhoto", fallback: "Upload photo")
   /// URL
   internal static let url = L10n.tr("Localizable", "url", fallback: "URL")
-  /// Use as Transcoding Profile
-  internal static let useAsTranscodingProfile = L10n.tr("Localizable", "useAsTranscodingProfile", fallback: "Use as Transcoding Profile")
+  /// Use as transcoding profile
+  internal static let useAsTranscodingProfile = L10n.tr("Localizable", "useAsTranscodingProfile", fallback: "Use as transcoding profile")
   /// Use primary image
   internal static let usePrimaryImage = L10n.tr("Localizable", "usePrimaryImage", fallback: "Use primary image")
   /// Uses the primary image and hides the logo.

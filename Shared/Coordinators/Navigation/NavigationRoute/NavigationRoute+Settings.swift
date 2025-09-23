@@ -13,9 +13,12 @@ import SwiftUI
 extension NavigationRoute {
 
     #if os(iOS)
-    static func actionButtonSelector(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>) -> NavigationRoute {
+    static func actionButtonSelector(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>, title: String? = nil) -> NavigationRoute {
         NavigationRoute(id: "actionButtonSelector") {
             ActionButtonSelectorView(selection: selectedButtonsBinding)
+                .ifLet(title) {
+                    $0.navigationTitle($1)
+                }
         }
     }
 

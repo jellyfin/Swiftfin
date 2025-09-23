@@ -102,6 +102,6 @@ struct PlaybackQualitySettingsView: View {
         }
         .animation(.linear, value: appMaximumBitrate)
         .animation(.linear, value: compatibilityMode)
-        .navigationTitle(L10n.playbackQuality)
+        .navigationTitle(L10n.playbackQuality.localizedCapitalized)
     }
 }

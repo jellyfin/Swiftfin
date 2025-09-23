@@ -25,7 +25,7 @@ struct ServerLogsView: View {
     private var contentView: some View {
         List {
             ListTitleSection(
-                L10n.serverLogs,
+                L10n.serverLogs.localizedCapitalized,
                 description: L10n.logsDescription
             ) {
                 UIApplication.shared.open(URL(string: "https://jellyfin.org/docs/general/administration/troubleshooting")!)
@@ -79,7 +79,7 @@ struct ServerLogsView: View {
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
-        .navigationTitle(L10n.serverLogs)
+        .navigationTitle(L10n.serverLogs.localizedCapitalized)
         .onFirstAppear {
             viewModel.getLogs()
         }
