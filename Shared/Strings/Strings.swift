@@ -366,8 +366,8 @@ internal enum L10n {
   internal static let connect = L10n.tr("Localizable", "connect", fallback: "Connect")
   /// Connect to a Jellyfin server to get started
   internal static let connectToJellyfinServerStart = L10n.tr("Localizable", "connectToJellyfinServerStart", fallback: "Connect to a Jellyfin server to get started")
-  /// Connect to Server
-  internal static let connectToServer = L10n.tr("Localizable", "connectToServer", fallback: "Connect to Server")
+  /// Connect to server
+  internal static let connectToServer = L10n.tr("Localizable", "connectToServer", fallback: "Connect to server")
   /// The container bitrate exceeds the allowed limit
   internal static let containerBitrateExceedsLimit = L10n.tr("Localizable", "containerBitrateExceedsLimit", fallback: "The container bitrate exceeds the allowed limit")
   /// The container format is not supported
