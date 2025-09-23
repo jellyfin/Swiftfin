@@ -482,8 +482,8 @@ internal enum L10n {
   internal static let deleteServer = L10n.tr("Localizable", "deleteServer", fallback: "Delete server")
   /// Delete user
   internal static let deleteUser = L10n.tr("Localizable", "deleteUser", fallback: "Delete user")
-  /// Failed to Delete User
-  internal static let deleteUserFailed = L10n.tr("Localizable", "deleteUserFailed", fallback: "Failed to Delete User")
+  /// Failed to delete user
+  internal static let deleteUserFailed = L10n.tr("Localizable", "deleteUserFailed", fallback: "Failed to delete user")
   /// Are you sure you want to delete %d users?
   internal static func deleteUserMultipleConfirmation(_ p1: Int) -> String {
     return L10n.tr("Localizable", "deleteUserMultipleConfirmation", p1, fallback: "Are you sure you want to delete %d users?")
@@ -516,8 +516,8 @@ internal enum L10n {
   internal static let deviceAuth = L10n.tr("Localizable", "deviceAuth", fallback: "Device authentication")
   /// Device authentication failed
   internal static let deviceAuthFailed = L10n.tr("Localizable", "deviceAuthFailed", fallback: "Device authentication failed")
-  /// Device Profile
-  internal static let deviceProfile = L10n.tr("Localizable", "deviceProfile", fallback: "Device Profile")
+  /// Device profile
+  internal static let deviceProfile = L10n.tr("Localizable", "deviceProfile", fallback: "Device profile")
   /// Decide which media plays natively or requires server transcoding for compatibility.
   internal static let deviceProfileDescription = L10n.tr("Localizable", "deviceProfileDescription", fallback: "Decide which media plays natively or requires server transcoding for compatibility.")
   /// Devices
@@ -532,8 +532,8 @@ internal enum L10n {
   internal static let directDescription = L10n.tr("Localizable", "directDescription", fallback: "Plays content in its original format. May cause playback issues on unsupported media types.")
   /// Director
   internal static let director = L10n.tr("Localizable", "director", fallback: "Director")
-  /// Direct Play
-  internal static let directPlay = L10n.tr("Localizable", "directPlay", fallback: "Direct Play")
+  /// Direct play
+  internal static let directPlay = L10n.tr("Localizable", "directPlay", fallback: "Direct play")
   /// An error occurred during direct play
   internal static let directPlayError = L10n.tr("Localizable", "directPlayError", fallback: "An error occurred during direct play")
   /// Direct Stream
@@ -704,8 +704,8 @@ internal enum L10n {
   internal static let green = L10n.tr("Localizable", "green", fallback: "Green")
   /// Grid
   internal static let grid = L10n.tr("Localizable", "grid", fallback: "Grid")
-  /// Guest Star
-  internal static let guestStar = L10n.tr("Localizable", "guestStar", fallback: "Guest Star")
+  /// Guest star
+  internal static let guestStar = L10n.tr("Localizable", "guestStar", fallback: "Guest star")
   /// Half side-by-side
   internal static let halfSideBySide = L10n.tr("Localizable", "halfSideBySide", fallback: "Half side-by-side")
   /// Half top and bottom
@@ -882,8 +882,8 @@ internal enum L10n {
   internal static let manage = L10n.tr("Localizable", "manage", fallback: "Manage")
   /// Management
   internal static let management = L10n.tr("Localizable", "management", fallback: "Management")
-  /// Delete, upload, or search for external subtitles
-  internal static let manageSubtitlesDescription = L10n.tr("Localizable", "manageSubtitlesDescription", fallback: "Delete, upload, or search for external subtitles")
+  /// Delete, upload, or search for external subtitles.
+  internal static let manageSubtitlesDescription = L10n.tr("Localizable", "manageSubtitlesDescription", fallback: "Delete, upload, or search for external subtitles.")
   /// Manual playlists folder
   internal static let manualPlaylistsFolder = L10n.tr("Localizable", "manualPlaylistsFolder", fallback: "Manual playlists folder")
   /// Manual playlists folders
@@ -1196,12 +1196,12 @@ internal enum L10n {
   internal static let releaseDate = L10n.tr("Localizable", "releaseDate", fallback: "Release date")
   /// Remember layout
   internal static let rememberLayout = L10n.tr("Localizable", "rememberLayout", fallback: "Remember layout")
-  /// Remember layout for individual libraries
-  internal static let rememberLayoutFooter = L10n.tr("Localizable", "rememberLayoutFooter", fallback: "Remember layout for individual libraries")
+  /// Remember layout for individual libraries.
+  internal static let rememberLayoutFooter = L10n.tr("Localizable", "rememberLayoutFooter", fallback: "Remember layout for individual libraries.")
   /// Remember sorting
   internal static let rememberSorting = L10n.tr("Localizable", "rememberSorting", fallback: "Remember sorting")
-  /// Remember sorting for individual libraries
-  internal static let rememberSortingFooter = L10n.tr("Localizable", "rememberSortingFooter", fallback: "Remember sorting for individual libraries")
+  /// Remember sorting for individual libraries.
+  internal static let rememberSortingFooter = L10n.tr("Localizable", "rememberSortingFooter", fallback: "Remember sorting for individual libraries.")
   /// Remixer
   internal static let remixer = L10n.tr("Localizable", "remixer", fallback: "Remixer")
   /// Remote connections
@@ -1252,8 +1252,8 @@ internal enum L10n {
   internal static let resetFilterFooter = L10n.tr("Localizable", "resetFilterFooter", fallback: "Reset the filter values to none.")
   /// Reset settings
   internal static let resetSettings = L10n.tr("Localizable", "resetSettings", fallback: "Reset settings")
-  /// Reset Swiftfin user settings
-  internal static let resetSettingsDescription = L10n.tr("Localizable", "resetSettingsDescription", fallback: "Reset Swiftfin user settings")
+  /// Reset Swiftfin user settings.
+  internal static let resetSettingsDescription = L10n.tr("Localizable", "resetSettingsDescription", fallback: "Reset Swiftfin user settings.")
   /// Are you sure you want to reset all user settings?
   internal static let resetSettingsMessage = L10n.tr("Localizable", "resetSettingsMessage", fallback: "Are you sure you want to reset all user settings?")
   /// Restart server
@@ -1264,8 +1264,8 @@ internal enum L10n {
   internal static let resume = L10n.tr("Localizable", "resume", fallback: "Resume")
   /// Resume offset
   internal static let resumeOffset = L10n.tr("Localizable", "resumeOffset", fallback: "Resume offset")
-  /// Resume content seconds before the recorded resume time
-  internal static let resumeOffsetDescription = L10n.tr("Localizable", "resumeOffsetDescription", fallback: "Resume content seconds before the recorded resume time")
+  /// Resume content seconds before the recorded resume time.
+  internal static let resumeOffsetDescription = L10n.tr("Localizable", "resumeOffsetDescription", fallback: "Resume content seconds before the recorded resume time.")
   /// Retrieving media information
   internal static let retrievingMediaInformation = L10n.tr("Localizable", "retrievingMediaInformation", fallback: "Retrieving media information")
   /// Retry
@@ -1402,12 +1402,12 @@ internal enum L10n {
   }
   /// Sign out on background
   internal static let signoutBackground = L10n.tr("Localizable", "signoutBackground", fallback: "Sign out on background")
-  /// Signs out the last user when Swiftfin has been in the background without media playback after some time
-  internal static let signoutBackgroundFooter = L10n.tr("Localizable", "signoutBackgroundFooter", fallback: "Signs out the last user when Swiftfin has been in the background without media playback after some time")
+  /// Signs out the last user when Swiftfin has been in the background without media playback after some time.
+  internal static let signoutBackgroundFooter = L10n.tr("Localizable", "signoutBackgroundFooter", fallback: "Signs out the last user when Swiftfin has been in the background without media playback after some time.")
   /// Sign out on close
   internal static let signoutClose = L10n.tr("Localizable", "signoutClose", fallback: "Sign out on close")
-  /// Signs out the last user when Swiftfin has been force closed
-  internal static let signoutCloseFooter = L10n.tr("Localizable", "signoutCloseFooter", fallback: "Signs out the last user when Swiftfin has been force closed")
+  /// Signs out the last user when Swiftfin has been force closed.
+  internal static let signoutCloseFooter = L10n.tr("Localizable", "signoutCloseFooter", fallback: "Signs out the last user when Swiftfin has been force closed.")
   /// Similarity score
   internal static let similarityScore = L10n.tr("Localizable", "similarityScore", fallback: "Similarity score")
   /// Slider
@@ -1430,8 +1430,8 @@ internal enum L10n {
   internal static let specialFeatures = L10n.tr("Localizable", "specialFeatures", fallback: "Special features")
   /// Splashscreen
   internal static let splashscreen = L10n.tr("Localizable", "splashscreen", fallback: "Splashscreen")
-  /// When All Servers is selected, use the splashscreen from a single server or a random server
-  internal static let splashscreenFooter = L10n.tr("Localizable", "splashscreenFooter", fallback: "When All Servers is selected, use the splashscreen from a single server or a random server")
+  /// When all servers are selected, use the splashscreen from a single server or a random server.
+  internal static let splashscreenFooter = L10n.tr("Localizable", "splashscreenFooter", fallback: "When all servers are selected, use the splashscreen from a single server or a random server.")
   /// Split
   internal static let split = L10n.tr("Localizable", "split", fallback: "Split")
   /// Sports
