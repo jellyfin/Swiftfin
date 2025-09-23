@@ -89,7 +89,7 @@ struct PlaybackQualitySettingsView: View {
                             value: L10n.compatibleDescription
                         )
                         LabeledContent(
-                            L10n.direct,
+                            L10n.directPlay,
                             value: L10n.directDescription
                         )
                         LabeledContent(

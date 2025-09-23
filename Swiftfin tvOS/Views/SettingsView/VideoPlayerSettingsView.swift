@@ -32,6 +32,7 @@ struct VideoPlayerSettingsView: View {
     @State
     private var isPresentingResumeOffsetStepper: Bool = false
 
+    // TODO: Update with correct settings once the tvOS PlayerUI is complete
     var body: some View {
         SplitFormWindowView()
             .descriptionView {
@@ -43,7 +44,6 @@ struct VideoPlayerSettingsView: View {
             .contentView {
 
                 Section {
-
                     ChevronButton(
                         L10n.offset,
                         subtitle: resumeOffset.secondLabel
@@ -73,7 +73,7 @@ struct VideoPlayerSettingsView: View {
                 }
                 .blurredFullScreenCover(isPresented: $isPresentingResumeOffsetStepper) {
                     StepperView(
-                        title: L10n.resumeOffsetTitle,
+                        title: L10n.resumeOffset.localizedCapitalized,
                         description: L10n.resumeOffsetDescription,
                         value: $resumeOffset,
                         range: 0 ... 30,

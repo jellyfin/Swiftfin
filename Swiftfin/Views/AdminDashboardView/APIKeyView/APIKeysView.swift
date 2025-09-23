@@ -25,7 +25,7 @@ struct APIKeysView: View {
     private var contentView: some View {
         List {
             ListTitleSection(
-                L10n.apiKeysTitle,
+                L10n.apiKeys,
                 description: L10n.apiKeysDescription
             )
 
