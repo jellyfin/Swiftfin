@@ -183,7 +183,7 @@ extension PosterButton {
                             .lineLimit(1, reservesSpace: true)
                     }
 
-                    SeparatorHStack {
+                    DotHStack(padding: 3) {
                         Text(item.seasonEpisodeLabel ?? .emptyDash)
 
                         if item.showTitle || useSeriesLandscapeBackdrop {
@@ -191,11 +191,6 @@ extension PosterButton {
                         } else if let seriesName = item.seriesName {
                             Text(seriesName)
                         }
-                    }
-                    .separator {
-                        Circle()
-                            .frame(width: 2, height: 2)
-                            .padding(.horizontal, 3)
                     }
                     .font(.caption)
                     .foregroundColor(.secondary)

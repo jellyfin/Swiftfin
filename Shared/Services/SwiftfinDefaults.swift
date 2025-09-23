@@ -235,6 +235,10 @@ extension Defaults.Keys {
             static let subtitleFontName: Key<String> = UserKey("subtitleFontName", default: UIFont.systemFont(ofSize: 14).fontName)
             static let subtitleSize: Key<Int> = UserKey("subtitleSize", default: 9)
         }
+
+        enum Transition {
+            static let pauseOnBackground: Key<Bool> = UserKey("playInBackground", default: true)
+        }
     }
 
     // Experimental settings
