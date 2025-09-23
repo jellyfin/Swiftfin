@@ -168,8 +168,8 @@ internal enum L10n {
   internal static let auto = L10n.tr("Localizable", "auto", fallback: "Auto")
   /// Optimizes playback using default settings for most devices. Some formats may require server transcoding for non-compatible media types.
   internal static let autoDescription = L10n.tr("Localizable", "autoDescription", fallback: "Optimizes playback using default settings for most devices. Some formats may require server transcoding for non-compatible media types.")
-  /// Auto Play
-  internal static let autoPlay = L10n.tr("Localizable", "autoPlay", fallback: "Auto Play")
+  /// Auto play
+  internal static let autoPlay = L10n.tr("Localizable", "autoPlay", fallback: "Auto play")
   /// Backdrop
   internal static let backdrop = L10n.tr("Localizable", "backdrop", fallback: "Backdrop")
   /// Banner
