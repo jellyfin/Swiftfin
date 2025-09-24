@@ -377,7 +377,7 @@ extension EpisodeMediaPlayerQueue {
                     Button {
                         guard let nextItem = manager.queue?.nextItem else { return }
                         manager.playNewItem(provider: nextItem)
-                        manager.set(playbackRequestStatus: .playing)
+                        manager.setPlaybackRequestStatus(status: .playing)
                         containerState.select(supplement: nil)
                     } label: {
                         ZStack {
@@ -394,7 +394,7 @@ extension EpisodeMediaPlayerQueue {
                     Button {
                         guard let previousItem = manager.queue?.previousItem else { return }
                         manager.playNewItem(provider: previousItem)
-                        manager.set(playbackRequestStatus: .playing)
+                        manager.setPlaybackRequestStatus(status: .playing)
                         containerState.select(supplement: nil)
                     } label: {
                         ZStack {

@@ -157,11 +157,11 @@ extension AVMediaPlayerProxy {
             DispatchQueue.main.async {
                 switch timeControlStatus {
                 case .paused:
-                    self.manager?.set(playbackRequestStatus: .paused, notifyProxy: false)
+                    self.manager?.setPlaybackRequestStatus(status: .paused)
                 case .waitingToPlayAtSpecifiedRate: ()
                 // TODO: buffering
                 case .playing:
-                    self.manager?.set(playbackRequestStatus: .playing, notifyProxy: false)
+                    self.manager?.setPlaybackRequestStatus(status: .playing)
                 @unknown default: ()
                 }
             }

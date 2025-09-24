@@ -54,20 +54,25 @@ final class MediaPlayerManager: ViewModel {
         case ended
         case error
         case playNewItem(provider: MediaPlayerItemProvider)
+        case setPlaybackRequestStatus(status: PlaybackRequestStatus)
+        case setRate(rate: Float)
         case start
         case stop
+        case togglePlayPause
 
         var transition: Transition {
             switch self {
-            case .ended:
-                .none
             case .error:
                 .to(.error)
+                    .invalid(.stopped)
             case .playNewItem, .start:
                 .to(.loadingItem, then: .playback)
                     .invalid(.stopped)
             case .stop:
                 .to(.stopped)
+            default:
+                .none
+                    .invalid(.stopped)
             }
         }
     }
@@ -260,12 +265,31 @@ final class MediaPlayerManager: ViewModel {
 
     @Function(\Action.Cases.playNewItem)
     private func _playNewItem(_ provider: MediaPlayerItemProvider) async throws {
-        self.item = provider.item
+        item = provider.item
         setSupplements()
         proxy?.stop()
+        playbackItem = try await provider()
+    }
 
-        let newMediaPlayerItem = try await provider()
-        self.playbackItem = newMediaPlayerItem
+    @Function(\Action.Cases.setPlaybackRequestStatus)
+    private func set(_ status: PlaybackRequestStatus) {
+        if self.playbackRequestStatus != status {
+            self.playbackRequestStatus = status
+
+            switch status {
+            case .paused:
+                proxy?.pause()
+            case .playing:
+                proxy?.play()
+            }
+        }
+    }
+
+    @Function(\Action.Cases.setRate)
+    private func set(_ rate: Float) {
+        if self.rate != rate {
+            self.rate = rate
+        }
     }
 
     @Function(\Action.Cases.start)
@@ -275,48 +299,27 @@ final class MediaPlayerManager: ViewModel {
             return
         }
         self.initialMediaPlayerItemProvider = nil
-
-        let newMediaPlayerItem = try await initialMediaPlayerItemProvider()
-        self.playbackItem = newMediaPlayerItem
+        playbackItem = try await initialMediaPlayerItemProvider()
     }
 
     @Function(\Action.Cases.stop)
     private func _stop() async throws {
+        await self.cancel()
+
         // TODO: remove playback item?
         //       - check that observers would respond correctly to stopping
+        itemBuildTask?.cancel()
         proxy?.stop()
         Container.shared.mediaPlayerManager.reset()
     }
 
-    @MainActor
-    func togglePlayPause() {
+    @Function(\Action.Cases.togglePlayPause)
+    private func _togglePlayPause() {
         switch playbackRequestStatus {
         case .playing:
-            set(playbackRequestStatus: .paused)
+            setPlaybackRequestStatus(status: .paused)
         case .paused:
-            set(playbackRequestStatus: .playing)
-        }
-    }
-
-    @MainActor
-    func set(playbackRequestStatus: PlaybackRequestStatus, notifyProxy: Bool = true) {
-        if self.playbackRequestStatus != playbackRequestStatus {
-            self.playbackRequestStatus = playbackRequestStatus
-
-            guard notifyProxy else { return }
-
-            if playbackRequestStatus == .paused {
-                proxy?.pause()
-            } else {
-                proxy?.play()
-            }
-        }
-    }
-
-    @MainActor
-    func set(rate: Float) {
-        if self.rate != rate {
-            self.rate = rate
+            setPlaybackRequestStatus(status: .playing)
         }
     }
 }

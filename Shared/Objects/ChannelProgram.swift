@@ -8,6 +8,7 @@
 
 import Foundation
 import JellyfinAPI
+import SwiftUI
 
 // Note: assumes programs are sorted by start date
 
@@ -42,6 +43,10 @@ struct ChannelProgram: Hashable, Identifiable {
 
 extension ChannelProgram: Poster {
 
+    var preferredPosterDisplayType: PosterDisplayType {
+        .landscape
+    }
+
     var unwrappedIDHashOrZero: Int {
         channel.id?.hashValue ?? 0
     }
@@ -52,5 +57,9 @@ extension ChannelProgram: Poster {
 
     var systemImage: String {
         channel.systemImage
+    }
+
+    func transform(image: Image) -> some View {
+        image
     }
 }

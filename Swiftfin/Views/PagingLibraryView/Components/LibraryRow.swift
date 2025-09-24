@@ -39,6 +39,8 @@ extension PagingLibraryView {
                 element.landscapeImageSources(maxWidth: landscapeMaxWidth, quality: 90)
             case .portrait:
                 element.portraitImageSources(maxWidth: portraitMaxWidth, quality: 90)
+            case .square:
+                element.squareImageSources(maxWidth: portraitMaxWidth, quality: 90)
             }
         }
 

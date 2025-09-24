@@ -9,11 +9,15 @@
 import Defaults
 import Foundation
 import JellyfinAPI
-import UIKit
+import SwiftUI
 
 // MARK: Poster
 
 extension BaseItemDto: Poster {
+
+    var preferredPosterDisplayType: PosterDisplayType {
+        type?.preferredPosterDisplayType ?? .portrait
+    }
 
     var subtitle: String? {
         switch type {
@@ -115,7 +119,7 @@ extension BaseItemDto: Poster {
 
     func squareImageSources(maxWidth: CGFloat?, quality: Int? = nil) -> [ImageSource] {
         switch type {
-        case .audio, .musicAlbum:
+        case .audio, .channel, .musicAlbum, .tvChannel:
             [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
         default:
             []
@@ -128,6 +132,18 @@ extension BaseItemDto: Poster {
             landscapeImageSources(maxWidth: 200, quality: 90)
         default:
             portraitImageSources(maxWidth: 200, quality: 90)
+        }
+    }
+
+    @ViewBuilder
+    func transform(image: Image) -> some View {
+        switch type {
+        case .channel, .tvChannel:
+            image
+                .aspectRatio(contentMode: .fit)
+                .padding(5)
+        default:
+            image
         }
     }
 }

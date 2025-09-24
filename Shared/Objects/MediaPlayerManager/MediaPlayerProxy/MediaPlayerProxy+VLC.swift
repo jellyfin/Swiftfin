@@ -189,9 +189,9 @@ extension VLCMediaPlayerProxy {
                             manager.error(JellyfinAPIError("VLC player is unable to perform playback"))
                         case .playing:
                             manager.proxy?.isBuffering.value = false
-                            manager.set(playbackRequestStatus: .playing, notifyProxy: false)
+                            manager.setPlaybackRequestStatus(status: .playing)
                         case .paused:
-                            manager.set(playbackRequestStatus: .paused, notifyProxy: false)
+                            manager.setPlaybackRequestStatus(status: .paused)
                         }
 
                         if let proxy = manager.proxy as? any VideoMediaPlayerProxy {

@@ -190,6 +190,17 @@ extension BaseItemKind {
             return L10n.years
         }
     }
+
+    var preferredPosterDisplayType: PosterDisplayType {
+        switch self {
+        case .audio, .musicAlbum:
+            .square
+        case .folder, .program, .musicVideo, .video, .userView:
+            .landscape
+        default:
+            .portrait
+        }
+    }
 }
 
 extension BaseItemKind {

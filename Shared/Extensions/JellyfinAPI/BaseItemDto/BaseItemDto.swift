@@ -168,6 +168,51 @@ extension BaseItemDto {
         }
     }
 
+    func getPlaybackItemProvider(
+        userSession: UserSession
+    ) -> MediaPlayerItemProvider {
+        switch type {
+        case .program:
+            MediaPlayerItemProvider(item: self) { program in
+                guard let channel = try? await self.getChannel(
+                    for: program,
+                    userSession: userSession
+                ),
+                    let mediaSource = channel.mediaSources?.first
+                else {
+                    throw JellyfinAPIError(L10n.unknownError)
+                }
+                return try await MediaPlayerItem.build(for: program, mediaSource: mediaSource)
+            }
+        default:
+            MediaPlayerItemProvider(item: self) { item in
+                guard let mediaSource = item.mediaSources?.first else {
+                    throw JellyfinAPIError(L10n.unknownError)
+                }
+                return try await MediaPlayerItem.build(for: item, mediaSource: mediaSource)
+            }
+        }
+    }
+
+    func getChannel(
+        for program: BaseItemDto,
+        userSession: UserSession
+    ) async throws -> BaseItemDto? {
+        guard type == .program else { return nil }
+
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.fields = .MinimumFields
+        parameters.ids = [program.channelID ?? ""]
+
+        let request = Paths.getItemsByUserID(
+            userID: userSession.user.id,
+            parameters: parameters
+        )
+        let response = try await userSession.client.send(request)
+
+        return response.value.items?.first
+    }
+
     var runtime: Duration? {
         guard let ticks = runTimeTicks else { return nil }
         return Duration.ticks(ticks)

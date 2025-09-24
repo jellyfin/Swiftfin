@@ -59,12 +59,20 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
         }
         .store(in: &cancellables)
 
-        manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
-        manager.$playbackRequestStatus.sink(receiveValue: playbackRequestStatusDidChange).store(in: &cancellables)
-        manager.actions.sink { [weak self] in self?.didReceive(action: $0) }.store(in: &cancellables)
+        manager.actions
+            .sink { [weak self] in self?.didReceive(action: $0) }
+            .store(in: &cancellables)
+
+        manager.$playbackItem
+            .sink { [weak self] in self?.playbackItemDidChange($0) }
+            .store(in: &cancellables)
+
+        manager.$playbackRequestStatus
+            .sink { [weak self] in self?.playbackRequestStatusDidChange($0) }
+            .store(in: &cancellables)
     }
 
-    private func playbackItemDidChange(newItem: MediaPlayerItem?) {
+    private func playbackItemDidChange(_ newItem: MediaPlayerItem?) {
         timer.poke()
 
         if let item, newItem !== item {
@@ -76,7 +84,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
         }
     }
 
-    private func playbackRequestStatusDidChange(newStatus: MediaPlayerManager.PlaybackRequestStatus) {
+    private func playbackRequestStatusDidChange(_ newStatus: MediaPlayerManager.PlaybackRequestStatus) {
         timer.poke()
         lastPlaybackRequestStatus = newStatus
     }

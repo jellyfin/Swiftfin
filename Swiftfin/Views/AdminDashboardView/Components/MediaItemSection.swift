@@ -18,29 +18,11 @@ extension AdminDashboardView {
         var body: some View {
             Section {
                 HStack(alignment: .bottom, spacing: 12) {
-                    Group {
-                        if item.type == .audio {
-                            ZStack {
-                                Color.clear
-
-                                ImageView(item.squareImageSources(maxWidth: 60, quality: 90))
-                                    .failure {
-                                        SystemImageContentView(systemName: item.systemImage)
-                                    }
-                            }
-                            .squarePosterStyle()
-                        } else {
-                            ZStack {
-                                Color.clear
-
-                                ImageView(item.portraitImageSources(maxWidth: 60, quality: 90))
-                                    .failure {
-                                        SystemImageContentView(systemName: item.systemImage)
-                                    }
-                            }
-                            .posterStyle(.portrait)
-                        }
-                    }
+                    PosterImage(
+                        item: item,
+                        type: item.preferredPosterDisplayType,
+                        contentMode: .fit
+                    )
                     .frame(width: 100)
                     .accessibilityIgnoresInvertColors()
 

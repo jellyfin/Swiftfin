@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 // TODO: preferred poster display type value
 //       - used in contexts that can be dynamic based on image availability for type
@@ -15,6 +16,10 @@ import Foundation
 
 /// A type that is displayed as a poster
 protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
+
+    associatedtype ImageBody: View
+
+    var preferredPosterDisplayType: PosterDisplayType { get }
 
     /// Optional subtitle when used as a poster
     var subtitle: String? { get }
@@ -43,6 +48,10 @@ protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
     ) -> [ImageSource]
 
     func thumbImageSources() -> [ImageSource]
+
+    @MainActor
+    @ViewBuilder
+    func transform(image: Image) -> ImageBody
 }
 
 extension Poster {

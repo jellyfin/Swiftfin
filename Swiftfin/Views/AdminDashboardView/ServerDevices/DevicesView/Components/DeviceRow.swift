@@ -72,7 +72,7 @@ extension DevicesView {
                         .opacity(isSelected ? 0 : 0.5)
                 }
             }
-            .squarePosterStyle()
+            .posterStyle(.square)
             .posterShadow()
             .frame(width: 60, height: 60)
         }

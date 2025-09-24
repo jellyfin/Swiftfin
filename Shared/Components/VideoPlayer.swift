@@ -59,12 +59,6 @@ struct VideoPlayer: View {
             manager.proxy = proxy
             manager.start()
         }
-        .onSceneWillEnterForeground {
-            manager.set(playbackRequestStatus: .playing)
-        }
-        .onSceneDidEnterBackground {
-            manager.set(playbackRequestStatus: .paused)
-        }
     }
 
     var body: some View {
