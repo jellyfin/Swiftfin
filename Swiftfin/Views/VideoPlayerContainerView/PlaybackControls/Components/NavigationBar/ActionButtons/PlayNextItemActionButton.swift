@@ -26,7 +26,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
                     systemImage: VideoPlayerActionButton.playNextItem.systemImage
                 ) {
                     guard let nextItem else { return }
-                    manager.send(.playNewItem(provider: nextItem))
+                    manager.playNewItem(provider: nextItem)
                 }
                 .disabled(nextItem == nil)
                 .onAppear {

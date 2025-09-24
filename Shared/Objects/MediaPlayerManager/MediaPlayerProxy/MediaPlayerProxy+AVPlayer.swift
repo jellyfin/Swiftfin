@@ -20,6 +20,7 @@ import SwiftUI
 // TODO: report buffering state
 // TODO: have set seconds with completion handler
 
+@MainActor
 class AVMediaPlayerProxy: VideoMediaPlayerProxy {
 
     let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
@@ -173,7 +174,7 @@ extension AVMediaPlayerProxy {
             case .failed:
                 if let error = self.player.error {
                     DispatchQueue.main.async {
-                        self.manager?.send(.error(.init("AVPlayer error: \(error.localizedDescription)")))
+                        self.manager?.error(JellyfinAPIError("AVPlayer error: \(error.localizedDescription)"))
                     }
                 }
             case .none, .readyToPlay, .unknown:

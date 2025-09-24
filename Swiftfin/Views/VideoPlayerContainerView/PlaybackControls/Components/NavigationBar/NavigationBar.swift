@@ -34,7 +34,7 @@ extension VideoPlayer.PlaybackControls {
         var body: some View {
             HStack(alignment: .center) {
                 Button(L10n.close, systemImage: "xmark") {
-                    manager.send(.stop)
+                    manager.stop()
                     router.dismiss()
                 }
 

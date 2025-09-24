@@ -11,6 +11,7 @@
 /// - Important: The `manager` property should most likely be a `weak`
 /// reference to avoid retain cycles. The observer itself should be
 /// strongly held by a `MediaPlayerItem` or other parent object or view.
+@MainActor
 protocol MediaPlayerObserver {
 
     var manager: MediaPlayerManager? { get set }

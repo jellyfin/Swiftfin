@@ -64,8 +64,6 @@
 		E12B93072947CD0F00CE0BD9 /* Pulse in Frameworks */ = {isa = PBXBuildFile; productRef = E15210532946DF1B00375CC2 /* Pulse */; };
 		E132D3C82BD200C10058A2DF /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E132D3C72BD200C10058A2DF /* CollectionVGrid */; };
 		E134DD2C2E7F4DC300AED027 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E134DD2B2E7F4DC300AED027 /* StatefulMacros */; };
-		E134DD2F2E7F589800AED027 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E134DD2E2E7F589800AED027 /* StatefulMacros */; };
-		E134DD312E7F58A200AED027 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E134DD302E7F58A200AED027 /* StatefulMacros */; };
 		E1388A46293F0ABA009721B1 /* SwizzleSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E1388A45293F0ABA009721B1 /* SwizzleSwift */; };
 		E1392FED2BA218A80034110D /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = E1392FEC2BA218A80034110D /* SwiftUIIntrospect */; };
 		E13AF3B628A0C598009093AB /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E13AF3B528A0C598009093AB /* Nuke */; };
@@ -76,6 +74,8 @@
 		E13DD3C62716499E009D4DAF /* CoreStore in Frameworks */ = {isa = PBXBuildFile; productRef = E13DD3C52716499E009D4DAF /* CoreStore */; };
 		E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */ = {isa = PBXBuildFile; productRef = E13DD3CC27164CA7009D4DAF /* CoreStore */; };
 		E13DD3D327168E65009D4DAF /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = E13DD3D227168E65009D4DAF /* Defaults */; };
+		E1454FDA2E83AC6400A4F2B7 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E1454FD92E83AC6400A4F2B7 /* StatefulMacros */; };
+		E1454FDC2E83AC7000A4F2B7 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E1454FDB2E83AC7000A4F2B7 /* StatefulMacros */; };
 		E145EB4B2BE16849003BF6F3 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E145EB4A2BE16849003BF6F3 /* KeychainSwift */; };
 		E14EA1652BF70A8E00DE757A /* Mantis in Frameworks */ = {isa = PBXBuildFile; productRef = E14EA1642BF70A8E00DE757A /* Mantis */; };
 		E150C0C12BFD62FD00944FFA /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E150C0C02BFD62FD00944FFA /* JellyfinAPI */; };
@@ -108,6 +108,7 @@
 		E1A09F752D05935100835265 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1A09F742D05935100835265 /* CollectionHStack */; };
 		E1A09F772D05935A00835265 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E1A09F762D05935A00835265 /* CollectionVGrid */; };
 		E1A09F792D05935A00835265 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1A09F782D05935A00835265 /* CollectionHStack */; };
+		E1A76F1A2E8369A500A5F2C1 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E1A76F192E8369A500A5F2C1 /* StatefulMacros */; };
 		E1A7B1652B9A9F7800152546 /* PreferencesView in Frameworks */ = {isa = PBXBuildFile; productRef = E1A7B1642B9A9F7800152546 /* PreferencesView */; };
 		E1B5F7A729577BCE004B26CF /* Pulse in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7A629577BCE004B26CF /* Pulse */; };
 		E1B5F7A929577BCE004B26CF /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7A829577BCE004B26CF /* PulseLogHandler */; };
@@ -288,7 +289,7 @@
 				62666E1B27E501D400EC0ECD /* CoreGraphics.framework in Frameworks */,
 				E1388A46293F0ABA009721B1 /* SwizzleSwift in Frameworks */,
 				62666E2C27E5021000EC0ECD /* QuartzCore.framework in Frameworks */,
-				E134DD312E7F58A200AED027 /* StatefulMacros in Frameworks */,
+				E1454FDC2E83AC7000A4F2B7 /* StatefulMacros in Frameworks */,
 				62666E1927E501D000EC0ECD /* CoreFoundation.framework in Frameworks */,
 				E19D41B22BF2BFA50082B8B2 /* KeychainSwift in Frameworks */,
 				E18443CB2A037773002DDDC8 /* UDPBroadcast in Frameworks */,
@@ -345,6 +346,7 @@
 				E1575E3C293C6B15001665B1 /* Files in Frameworks */,
 				E1137D2F2E090C1A0091EB60 /* VLCUI in Frameworks */,
 				E176EBE02D0502A6009F4CF1 /* CollectionHStack in Frameworks */,
+				E1454FDA2E83AC6400A4F2B7 /* StatefulMacros in Frameworks */,
 				E14EA1652BF70A8E00DE757A /* Mantis in Frameworks */,
 				E176EBDE2D050067009F4CF1 /* IdentifiedCollections in Frameworks */,
 				62666E1027E501B400EC0ECD /* VideoToolbox.framework in Frameworks */,
@@ -375,7 +377,7 @@
 				E15D4F052B1B0C3C00442DB8 /* PreferencesView in Frameworks */,
 				E19E6E0728A0B958005C10C8 /* NukeUI in Frameworks */,
 				E134DD2C2E7F4DC300AED027 /* StatefulMacros in Frameworks */,
-				E134DD2F2E7F589800AED027 /* StatefulMacros in Frameworks */,
+				E1A76F1A2E8369A500A5F2C1 /* StatefulMacros in Frameworks */,
 				62666E3F27E5040300EC0ECD /* SystemConfiguration.framework in Frameworks */,
 				E1A09F752D05935100835265 /* CollectionHStack in Frameworks */,
 				E164308C2E3AA9710028D4E8 /* Transmission in Frameworks */,
@@ -520,7 +522,7 @@
 				BD88CB412D77E6A0006BB5E3 /* TVOSPicker */,
 				E1137D302E090C230091EB60 /* VLCUI */,
 				E1E2D7BE2E3FD936004E2E5F /* Transmission */,
-				E134DD302E7F58A200AED027 /* StatefulMacros */,
+				E1454FDB2E83AC7000A4F2B7 /* StatefulMacros */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -593,7 +595,8 @@
 				E11ADE832E7E73B6008074FC /* StatefulMacros */,
 				E19138C92E7E7FA20061E464 /* StatefulMacros */,
 				E134DD2B2E7F4DC300AED027 /* StatefulMacros */,
-				E134DD2E2E7F589800AED027 /* StatefulMacros */,
+				E1A76F192E8369A500A5F2C1 /* StatefulMacros */,
+				E1454FD92E83AC6400A4F2B7 /* StatefulMacros */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -700,7 +703,7 @@
 				E1137D2D2E090C1A0091EB60 /* XCRemoteSwiftPackageReference "VLCUI" */,
 				E164308A2E3AA9710028D4E8 /* XCRemoteSwiftPackageReference "Transmission" */,
 				E13CCE482E6C077D0070965F /* XCRemoteSwiftPackageReference "LNPopupUI" */,
-				E134DD2D2E7F589800AED027 /* XCRemoteSwiftPackageReference "StatefulMacro" */,
+				E1454FD82E83AC6300A4F2B7 /* XCRemoteSwiftPackageReference "StatefulMacro" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -1225,14 +1228,6 @@
 				minimumVersion = 3.0.0;
 			};
 		};
-		E134DD2D2E7F589800AED027 /* XCRemoteSwiftPackageReference "StatefulMacro" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LePips/StatefulMacro";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		E13CCE482E6C077D0070965F /* XCRemoteSwiftPackageReference "LNPopupUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/LeoNatan/LNPopupUI/";
@@ -1255,6 +1250,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 8.0.0;
+			};
+		};
+		E1454FD82E83AC6300A4F2B7 /* XCRemoteSwiftPackageReference "StatefulMacro" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LePips/StatefulMacro";
+			requirement = {
+				branch = main;
+				kind = branch;
 			};
 		};
 		E145EB492BE16849003BF6F3 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
@@ -1477,16 +1480,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = StatefulMacros;
 		};
-		E134DD2E2E7F589800AED027 /* StatefulMacros */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E134DD2D2E7F589800AED027 /* XCRemoteSwiftPackageReference "StatefulMacro" */;
-			productName = StatefulMacros;
-		};
-		E134DD302E7F58A200AED027 /* StatefulMacros */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E134DD2D2E7F589800AED027 /* XCRemoteSwiftPackageReference "StatefulMacro" */;
-			productName = StatefulMacros;
-		};
 		E1388A45293F0ABA009721B1 /* SwizzleSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 62666E3727E502CE00EC0ECD /* XCRemoteSwiftPackageReference "SwizzleSwift" */;
@@ -1536,6 +1529,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
+		};
+		E1454FD92E83AC6400A4F2B7 /* StatefulMacros */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1454FD82E83AC6300A4F2B7 /* XCRemoteSwiftPackageReference "StatefulMacro" */;
+			productName = StatefulMacros;
+		};
+		E1454FDB2E83AC7000A4F2B7 /* StatefulMacros */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1454FD82E83AC6300A4F2B7 /* XCRemoteSwiftPackageReference "StatefulMacro" */;
+			productName = StatefulMacros;
 		};
 		E145EB4A2BE16849003BF6F3 /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1693,6 +1696,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E1A09F732D05935100835265 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
 			productName = CollectionHStack;
+		};
+		E1A76F192E8369A500A5F2C1 /* StatefulMacros */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StatefulMacros;
 		};
 		E1A7B1642B9A9F7800152546 /* PreferencesView */ = {
 			isa = XCSwiftPackageProductDependency;

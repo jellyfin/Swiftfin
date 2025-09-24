@@ -13,6 +13,7 @@ import JellyfinAPI
 
 // TODO: respond properly to end of playback
 //       - when item changes
+// TODO: only send stop on manager stop, not per-item
 
 class MediaProgressObserver: ViewModel, MediaPlayerObserver {
 
@@ -60,7 +61,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
 
         manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
         manager.$playbackRequestStatus.sink(receiveValue: playbackRequestStatusDidChange).store(in: &cancellables)
-        manager.$state.sink(receiveValue: stateDidChange).store(in: &cancellables)
+        manager.actions.sink { [weak self] in self?.didReceive(action: $0) }.store(in: &cancellables)
     }
 
     private func playbackItemDidChange(newItem: MediaPlayerItem?) {
@@ -82,15 +83,15 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
 
     // TODO: respond to error
     // TODO: respond properly to ended
-    private func stateDidChange(newState: MediaPlayerManager.State) {
-        switch newState {
-        case .stopped:
+    private func didReceive(action: MediaPlayerManager._Action) {
+        switch action {
+        case .stop:
             if let item {
                 sendStopReport(for: item, seconds: manager?.seconds)
             }
             timer.stop()
             cancellables = []
-            self.item = nil
+            item = nil
         default: ()
         }
     }

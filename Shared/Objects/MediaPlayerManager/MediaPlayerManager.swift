@@ -29,12 +29,56 @@ extension Container {
     }
 
     var mediaPlayerManager: Factory<MediaPlayerManager> {
-        self { .empty }
-            .scope(.session)
+        self { @MainActor in
+            .init(
+                playbackItem: .init(
+                    baseItem: .init(),
+                    mediaSource: .init(),
+                    playSessionID: "",
+                    url: URL(string: "/")!
+                )
+            )
+        }
+        .scope(.session)
     }
 }
 
-final class MediaPlayerManager: ViewModel, Stateful {
+import StatefulMacros
+
+@MainActor
+@Stateful
+final class MediaPlayerManager: ViewModel {
+
+    @CasePathable
+    enum Action {
+        case ended
+        case error
+        case playNewItem(provider: MediaPlayerItemProvider)
+        case start
+        case stop
+
+        var transition: Transition {
+            switch self {
+            case .ended:
+                .none
+            case .error:
+                .to(.error)
+            case .playNewItem, .start:
+                .to(.loadingItem, then: .playback)
+                    .invalid(.stopped)
+            case .stop:
+                .to(.stopped)
+            }
+        }
+    }
+
+    enum State {
+        case error
+        case initial
+        case loadingItem
+        case playback
+        case stopped
+    }
 
     /// A status indicating the player's request for media playback.
     enum PlaybackRequestStatus {
@@ -44,25 +88,6 @@ final class MediaPlayerManager: ViewModel, Stateful {
 
         /// The player is paused
         case paused
-    }
-
-    // MARK: Action
-
-    enum Action: Equatable {
-        case error(JellyfinAPIError)
-        case ended
-        case stop
-        case playNewItem(provider: MediaPlayerItemProvider)
-        case start
-    }
-
-    // MARK: State
-
-    enum State: Hashable {
-        case error(JellyfinAPIError)
-        case loadingItem
-        case playback
-        case stopped
     }
 
     @Published
@@ -89,16 +114,11 @@ final class MediaPlayerManager: ViewModel, Stateful {
     }
 
     @Published
-    private(set) var error: Error? = nil
-    @Published
     private(set) var item: BaseItemDto
     @Published
     private(set) var playbackRequestStatus: PlaybackRequestStatus = .playing
     @Published
     var rate: Float = 1.0
-    @Published
-    final var state: State
-
     @Published
     var queue: (any MediaPlayerQueue)?
 
@@ -145,17 +165,17 @@ final class MediaPlayerManager: ViewModel, Stateful {
 
     private var itemBuildTask: AnyCancellable?
 
-    private var initialMediaPlayerItemProvider: MediaPlayerItemProviderFunction?
+    private var initialMediaPlayerItemProvider: MediaPlayerItemProvider?
 
     // MARK: init
 
-    static let empty: MediaPlayerManager = .init()
+//    static let empty: MediaPlayerManager = .init()
 
-    override private init() {
-        self.item = .init()
-        self.state = .stopped
-        super.init()
-    }
+//    override private init() {
+//        self.item = .init()
+//        self.state = .stopped
+//        super.init()
+//    }
 
     init(
         item: BaseItemDto,
@@ -165,7 +185,10 @@ final class MediaPlayerManager: ViewModel, Stateful {
         self.item = item
         self.queue = queue
         self.state = .loadingItem
-        self.initialMediaPlayerItemProvider = mediaPlayerItemProvider
+        self.initialMediaPlayerItemProvider = .init(
+            item: item,
+            function: mediaPlayerItemProvider
+        )
         super.init()
 
         self.queue?.manager = self
@@ -184,88 +207,85 @@ final class MediaPlayerManager: ViewModel, Stateful {
         self.playbackItem = playbackItem
     }
 
-    // MARK: respond
+    @Function(\Action.Cases.ended)
+    private func _ended() async throws {
+        // TODO: change to observe given seconds against runtime
+        //       instead of sent action?
 
-    @MainActor
-    func respond(to action: Action) -> State {
-
-        guard state != .stopped else { return .stopped }
-
-        switch action {
-        case let .error(error):
-            self.error = error
-            if let playbackItem {
-                logger.error(
-                    "Error while playing item",
-                    metadata: [
-                        "error": .stringConvertible(error.localizedDescription),
-                        "itemID": .stringConvertible(playbackItem.baseItem.id ?? "Unknown"),
-                        "itemTitle": .stringConvertible(playbackItem.baseItem.displayTitle),
-                        "url": .stringConvertible(playbackItem.url.absoluteString),
-                    ]
-                )
-            } else {
-                logger.error(
-                    "Error with no playback item",
-                    metadata: [
-                        "error": .stringConvertible(error.localizedDescription),
-                        "itemID": .stringConvertible(item.id ?? "Unknown"),
-                        "itemTitle": .stringConvertible(item.displayTitle),
-                    ]
-                )
-            }
-
-            proxy?.stop()
-            Container.shared.mediaPlayerManager.reset()
-            return .error(error)
-        case .ended:
-            // TODO: change to observe given seconds against runtime
-            //       instead of sent action?
-
-            // Ended should represent natural ending of playback, which
-            // is verifiable by given seconds being near item runtime.
-            // VLC proxy will send ended early.
-            guard let runtime = item.runtime else {
-                return respond(to: .stop)
-            }
-            let isNearEnd = (runtime - seconds) <= .seconds(1)
-
-            guard isNearEnd else {
-                // If not near end, ignore.
-                return state
-            }
-
-            if let nextItem = queue?.nextItem, Defaults[.VideoPlayer.autoPlayEnabled] {
-                return respond(to: .playNewItem(provider: nextItem))
-            }
-
-            return respond(to: .stop)
-        case .stop:
-            // TODO: remove playback item?
-            //       - check that observers would respond correctly to stopping
-            proxy?.stop()
-            Container.shared.mediaPlayerManager.reset()
-            return .stopped
-        case let .playNewItem(provider: provider):
-            self.item = provider.item
-            setSupplements()
-            proxy?.stop()
-
-            buildMediaItem(from: provider) { @MainActor newItem in
-                self.playbackItem = newItem
-            }
-
-            return .loadingItem
-        case .start:
-            guard let initialMediaPlayerItemProvider else { return state }
-            self.initialMediaPlayerItemProvider = nil
-
-            buildMediaItem(from: .init(item: item, function: initialMediaPlayerItemProvider)) { @MainActor newItem in
-                self.playbackItem = newItem
-            }
-
-            return .loadingItem
+        // Ended should represent natural ending of playback, which
+        // is verifiable by given seconds being near item runtime.
+        // VLC proxy will send ended early.
+        guard let runtime = item.runtime else {
+            await self.stop()
+            return
         }
+        let isNearEnd = (runtime - seconds) <= .seconds(1)
+
+        guard isNearEnd else {
+            // If not near end, ignore.
+            return
+        }
+
+        if let nextItem = queue?.nextItem, Defaults[.VideoPlayer.autoPlayEnabled] {
+            await self.playNewItem(provider: nextItem)
+        }
+    }
+
+    @Function(\Action.Cases.error)
+    private func onError(_ error: Error) async throws {
+        if let playbackItem {
+            logger.error(
+                "Error while playing item",
+                metadata: [
+                    "error": .stringConvertible(error.localizedDescription),
+                    "itemID": .stringConvertible(playbackItem.baseItem.id ?? "Unknown"),
+                    "itemTitle": .stringConvertible(playbackItem.baseItem.displayTitle),
+                    "url": .stringConvertible(playbackItem.url.absoluteString),
+                ]
+            )
+        } else {
+            logger.error(
+                "Error with no playback item",
+                metadata: [
+                    "error": .stringConvertible(error.localizedDescription),
+                    "itemID": .stringConvertible(item.id ?? "Unknown"),
+                    "itemTitle": .stringConvertible(item.displayTitle),
+                ]
+            )
+        }
+
+        proxy?.stop()
+        Container.shared.mediaPlayerManager.reset()
+    }
+
+    @Function(\Action.Cases.playNewItem)
+    private func _playNewItem(_ provider: MediaPlayerItemProvider) async throws {
+        self.item = provider.item
+        setSupplements()
+        proxy?.stop()
+
+        let newMediaPlayerItem = try await provider()
+        self.playbackItem = newMediaPlayerItem
+    }
+
+    @Function(\Action.Cases.start)
+    private func _start() async throws {
+        guard let initialMediaPlayerItemProvider else {
+            await self.stop()
+            return
+        }
+        self.initialMediaPlayerItemProvider = nil
+
+        let newMediaPlayerItem = try await initialMediaPlayerItemProvider()
+        self.playbackItem = newMediaPlayerItem
+    }
+
+    @Function(\Action.Cases.stop)
+    private func _stop() async throws {
+        // TODO: remove playback item?
+        //       - check that observers would respond correctly to stopping
+        proxy?.stop()
+        Container.shared.mediaPlayerManager.reset()
     }
 
     @MainActor
@@ -298,38 +318,5 @@ final class MediaPlayerManager: ViewModel, Stateful {
         if self.rate != rate {
             self.rate = rate
         }
-    }
-
-    // MARK: buildMediaItem
-
-    private func buildMediaItem(
-        from provider: MediaPlayerItemProvider,
-        onComplete: @escaping (MediaPlayerItem) async -> Void
-    ) {
-        itemBuildTask?.cancel()
-
-        itemBuildTask = Task {
-            do {
-
-                await MainActor.run {
-                    self.state = .loadingItem
-                }
-
-                let playbackItem = try await provider.function(provider.item)
-
-                await onComplete(playbackItem)
-
-                await MainActor.run {
-                    self.state = .playback
-                }
-            } catch {
-                guard !Task.isCancelled else { return }
-
-                await MainActor.run {
-                    self.send(.error(.init(error.localizedDescription)))
-                }
-            }
-        }
-        .asAnyCancellable()
     }
 }

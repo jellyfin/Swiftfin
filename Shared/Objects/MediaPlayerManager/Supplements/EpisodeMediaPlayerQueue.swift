@@ -22,15 +22,13 @@ import SwiftUI
 @MainActor
 class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 
-    nonisolated weak var manager: MediaPlayerManager? {
+    weak var manager: MediaPlayerManager? {
         didSet {
             cancellables = []
             guard let manager else { return }
             manager.$playbackItem
-                .sink { newItem in
-                    Task { @MainActor in
-                        self.didReceive(newItem: newItem)
-                    }
+                .sink { [weak self] newItem in
+                    self?.didReceive(newItem: newItem)
                 }
                 .store(in: &cancellables)
         }
@@ -176,7 +174,7 @@ extension EpisodeMediaPlayerQueue {
                 )
             }
 
-            manager.send(.playNewItem(provider: provider))
+            manager.playNewItem(provider: provider)
         }
 
         var tvOSView: some View { EmptyView() }
@@ -344,7 +342,7 @@ extension EpisodeMediaPlayerQueue {
 
                     Button {
                         guard let nextItem = manager.queue?.nextItem else { return }
-                        manager.send(.playNewItem(provider: nextItem))
+                        manager.playNewItem(provider: nextItem)
                         manager.set(playbackRequestStatus: .playing)
                         containerState.select(supplement: nil)
                     } label: {
@@ -361,7 +359,7 @@ extension EpisodeMediaPlayerQueue {
 
                     Button {
                         guard let previousItem = manager.queue?.previousItem else { return }
-                        manager.send(.playNewItem(provider: previousItem))
+                        manager.playNewItem(provider: previousItem)
                         manager.set(playbackRequestStatus: .playing)
                         containerState.select(supplement: nil)
                     } label: {

@@ -17,6 +17,7 @@ import Nuke
 //       - manager states
 //       - playback request states
 
+@MainActor
 class NowPlayableObserver: ViewModel, MediaPlayerObserver {
 
     private var defaultRegisteredCommands: [NowPlayableCommand] {
@@ -83,6 +84,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
         )
     }
 
+    // TODO: remove and respond to manager action publisher instead
     // TODO: register different commands based on item capabilities
     private func playbackItemDidChange(newItem: MediaPlayerItem?) {
         itemImageCancellable?.cancel()
@@ -115,8 +117,9 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
         )
     }
 
+    // TODO: remove and respond to manager action publisher instead
     // TODO: respond to error
-    private func stateDidChange(newState: MediaPlayerManager.State) {
+    private func stateDidChange(newState: MediaPlayerManager._State) {
         if newState == .stopped {
             cancellables = []
 
@@ -170,7 +173,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
                 }
             } catch {
                 logger.critical("Unable to reactivate audio session after interruption: \(error.localizedDescription)")
-                manager?.send(.stop)
+                manager?.stop()
             }
         @unknown default: ()
         }
@@ -199,10 +202,10 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
             manager?.proxy?.setSeconds(Duration.seconds(event.positionTime))
         case .nextTrack:
             guard let nextItem = manager?.queue?.nextItem else { return .commandFailed }
-            manager?.send(.playNewItem(provider: nextItem))
+            manager?.playNewItem(provider: nextItem)
         case .previousTrack:
             guard let previousItem = manager?.queue?.previousItem else { return .commandFailed }
-            manager?.send(.playNewItem(provider: previousItem))
+            manager?.playNewItem(provider: previousItem)
         default: ()
         }
 
