@@ -11,8 +11,6 @@ import Factory
 import JellyfinAPI
 import SwiftUI
 
-// TODO: replace `equalSpacing` handling with a `Layout`
-
 extension ItemView {
 
     struct ActionButtonHStack: View {
@@ -52,80 +50,73 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            HStack(alignment: .center, spacing: 15) {
+            HStack(alignment: .center, spacing: 10) {
 
-                // MARK: Toggle Played
+                if viewModel.item.canBePlayed {
 
-                /// Marking Persons and Artists as played doesn't do anything.
-                if viewModel.item.type != .person && viewModel.item.type != .musicArtist {
+                    // MARK: - Toggle Played
 
                     let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
 
-                    ActionButton(
-                        L10n.played,
-                        icon: "checkmark.circle",
-                        selectedIcon: "checkmark.circle.fill"
-                    ) {
-                        UIDevice.impact(.light)
+                    Button(L10n.played, systemImage: "checkmark") {
                         viewModel.send(.toggleIsPlayed)
                     }
+                    .buttonStyle(.tintedMaterial(tint: .jellyfinPurple, foregroundColor: .white))
                     .isSelected(isCheckmarkSelected)
-                    .if(isCheckmarkSelected) { item in
-                        item
-                            .foregroundStyle(
-                                .primary,
-                                accentColor
-                            )
-                    }
-                    .if(equalSpacing) { view in
-                        view.frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity)
+                    .if(!equalSpacing) { view in
+                        view.aspectRatio(1, contentMode: .fit)
                     }
                 }
 
-                // MARK: Toggle Favorite
+                // MARK: - Toggle Favorite
 
                 let isHeartSelected = viewModel.item.userData?.isFavorite == true
 
-                ActionButton(
-                    L10n.favorited,
-                    icon: "heart",
-                    selectedIcon: "heart.fill"
-                ) {
-                    UIDevice.impact(.light)
+                Button(L10n.favorite, systemImage: isHeartSelected ? "heart.fill" : "heart") {
                     viewModel.send(.toggleIsFavorite)
                 }
+                .buttonStyle(.tintedMaterial(tint: .red, foregroundColor: .white))
                 .isSelected(isHeartSelected)
-                .if(isHeartSelected) { item in
-                    item
-                        .foregroundStyle(Color.red)
-                }
-                .if(equalSpacing) { view in
-                    view.frame(maxWidth: .infinity)
+                .frame(maxWidth: .infinity)
+                .if(!equalSpacing) { view in
+                    view.aspectRatio(1, contentMode: .fit)
                 }
 
-                // MARK: Select a Version
+                // MARK: - Select a Version
 
                 if let mediaSources = viewModel.playButtonItem?.mediaSources,
                    mediaSources.count > 1
                 {
-                    VersionMenu(viewModel: viewModel, mediaSources: mediaSources)
-                        .if(equalSpacing) { view in
-                            view.frame(maxWidth: .infinity)
-                        }
+                    VersionMenu(
+                        viewModel: viewModel,
+                        mediaSources: mediaSources
+                    )
+                    .menuStyle(.button)
+                    .frame(maxWidth: .infinity)
+                    .if(!equalSpacing) { view in
+                        view.aspectRatio(1, contentMode: .fit)
+                    }
                 }
 
-                // MARK: Watch a Trailer
+                // MARK: - Watch a Trailer
 
                 if hasTrailers {
                     TrailerMenu(
                         localTrailers: viewModel.localTrailers,
                         externalTrailers: viewModel.item.remoteTrailers ?? []
                     )
-                    .if(equalSpacing) { view in
-                        view.frame(maxWidth: .infinity)
+                    .menuStyle(.button)
+                    .frame(maxWidth: .infinity)
+                    .if(!equalSpacing) { view in
+                        view.aspectRatio(1, contentMode: .fit)
                     }
                 }
             }
+            .font(.title3)
+            .fontWeight(.semibold)
+            .buttonStyle(.material)
+            .labelStyle(.iconOnly)
         }
     }
 }

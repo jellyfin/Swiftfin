@@ -46,31 +46,32 @@ extension ItemView {
         // MARK: - Title
 
         private var title: String {
+            /// Use the Season/Episode label for the Series ItemView
             if let seriesViewModel = viewModel as? SeriesItemViewModel,
                let seasonEpisodeLabel = seriesViewModel.playButtonItem?.seasonEpisodeLabel
             {
                 return seasonEpisodeLabel
+
+                /// Use a Play/Resume label for single Media Source items that are not Series
             } else if let playButtonLabel = viewModel.playButtonItem?.playButtonLabel {
                 return playButtonLabel
+
+                /// Fallback to a generic `Play` label
             } else {
                 return L10n.play
             }
+        }
 
-            // TODO: For use with `MarqueeText` on the `PlayButton`
+        // MARK: - Media Source
 
-            /* if let sourceLabel = viewModel.selectedMediaSource?.displayTitle,
-                viewModel.item.mediaSources?.count ?? 0 > 1
-             {
-                 return sourceLabel
-             } else if let seriesViewModel = viewModel as? SeriesItemViewModel,
-                       let seasonEpisodeLabel = seriesViewModel.playButtonItem?.seasonEpisodeLabel
-             {
-                 return seasonEpisodeLabel
-             } else if let playButtonLabel = viewModel.playButtonItem?.playButtonLabel {
-                 return playButtonLabel
-             } else {
-                 return L10n.play
-             } */
+        private var source: String? {
+            guard let sourceLabel = viewModel.selectedMediaSource?.displayTitle,
+                  viewModel.item.mediaSources?.count ?? 0 > 1
+            else {
+                return nil
+            }
+
+            return sourceLabel
         }
 
         // MARK: - Body
@@ -95,10 +96,18 @@ extension ItemView {
                 HStack(spacing: 15) {
                     Image(systemName: "play.fill")
                         .font(.title3)
+                        .padding(.trailing, 4)
 
-                    // TODO: Use `MarqueeText`
-                    Text(title)
-                        .fontWeight(.semibold)
+                    VStack(alignment: .leading) {
+                        Text(title)
+                            .fontWeight(.semibold)
+
+                        if let source {
+                            Marquee(source, animateWhenFocused: true)
+                                .font(.caption)
+                                .frame(maxWidth: 250)
+                        }
+                    }
                 }
                 .foregroundStyle(isEnabled ? .black : Color(UIColor.secondaryLabel))
                 .padding(20)
@@ -139,14 +148,14 @@ extension ItemView {
                 playButtonItem.userData?.playbackPositionTicks = 0
             }
 
-            router.route(
-                to: .videoPlayer(
-                    manager: OnlineVideoPlayerManager(
-                        item: playButtonItem,
-                        mediaSource: selectedMediaSource
-                    )
-                )
-            )
+            let manager = MediaPlayerManager(
+                item: playButtonItem
+//                        queue: EpisodeMediaPlayerQueue(episode: playButtonItem)
+            ) { item in
+                try await MediaPlayerItem.build(for: item, mediaSource: selectedMediaSource)
+            }
+
+            router.route(to: .videoPlayer(manager: manager))
         }
     }
 }

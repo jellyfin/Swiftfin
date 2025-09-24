@@ -10,4 +10,11 @@
 protocol SystemImageable {
 
     var systemImage: String { get }
+    var secondarySystemImage: String { get }
+}
+
+extension SystemImageable {
+    var secondarySystemImage: String {
+        systemImage
+    }
 }

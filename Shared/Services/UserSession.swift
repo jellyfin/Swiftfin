@@ -6,14 +6,11 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import CoreData
 import CoreStore
 import Defaults
 import Factory
-import Foundation
 import JellyfinAPI
 import Pulse
-import UIKit
 
 final class UserSession {
 
@@ -29,10 +26,12 @@ final class UserSession {
         self.user = user
 
         let client = JellyfinClient(
-            configuration: .swiftfinConfiguration(url: server.currentURL),
+            configuration: .swiftfinConfiguration(
+                url: server.currentURL,
+                accessToken: user.accessToken
+            ),
             sessionConfiguration: .swiftfin,
-            sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin()),
-            accessToken: user.accessToken
+            sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin())
         )
 
         self.client = client

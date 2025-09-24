@@ -127,14 +127,14 @@ extension ItemView.CompactLogoScrollView {
                         viewModel: viewModel
                     )
 
-                    if viewModel.presentPlayButton {
+                    if viewModel.item.presentPlayButton {
                         ItemView.PlayButton(viewModel: viewModel)
                             .frame(height: 50)
                     }
 
                     ItemView.ActionButtonHStack(viewModel: viewModel)
-                        .font(.title)
                         .foregroundStyle(.white)
+                        .frame(height: 50)
                 }
                 .frame(maxWidth: 300)
             }

@@ -7,9 +7,11 @@
 //
 
 import Defaults
+import Factory
 import JellyfinAPI
 import PreferencesView
 import SwiftUI
+import Transmission
 
 extension NavigationRoute {
 
@@ -23,15 +25,6 @@ extension NavigationRoute {
         id: "liveTV"
     ) {
         ProgramsView()
-    }
-
-    static func liveVideoPlayer(manager: LiveVideoPlayerManager) -> NavigationRoute {
-        NavigationRoute(
-            id: "liveVideoPlayer",
-            style: .fullscreen
-        ) {
-            LiveVideoPlayerViewShim(videoPlayerManager: manager)
-        }
     }
 
     static func mediaSourceInfo(source: MediaSourceInfo) -> NavigationRoute {
@@ -51,86 +44,75 @@ extension NavigationRoute {
     }
     #endif
 
-    static func videoPlayer(manager: VideoPlayerManager) -> NavigationRoute {
-        NavigationRoute(
+    static func videoPlayer(
+        item: BaseItemDto,
+        mediaSource: MediaSourceInfo? = nil,
+        queue: (any MediaPlayerQueue)? = nil
+    ) -> NavigationRoute {
+        let provider = MediaPlayerItemProvider(item: item) { item in
+            try await MediaPlayerItem.build(for: item, mediaSource: mediaSource)
+        }
+        return Self.videoPlayer(provider: provider, queue: queue)
+    }
+
+    static func videoPlayer(
+        provider: MediaPlayerItemProvider,
+        queue: (any MediaPlayerQueue)? = nil
+    ) -> NavigationRoute {
+        let manager = MediaPlayerManager(
+            item: provider.item,
+            queue: queue,
+            mediaPlayerItemProvider: provider.function
+        )
+
+        return Self.videoPlayer(manager: manager)
+    }
+
+    static func videoPlayer(manager: MediaPlayerManager) -> NavigationRoute {
+
+        Container.shared.mediaPlayerManager.register {
+            manager
+        }
+
+        Container.shared.mediaPlayerManagerPublisher()
+            .send(manager)
+
+        return NavigationRoute(
             id: "videoPlayer",
             style: .fullscreen
         ) {
-            VideoPlayerViewShim(videoPlayerManager: manager)
+            VideoPlayerViewShim(manager: manager)
         }
     }
 }
 
-// TODO: temporary shims for navigation work until video player refactor
+// TODO: shim until native vs swiftfin player is replace with vlc vs av layers
+//       - when removed, ensure same behavior with safe area
+//       - may just need to make a VC wrapper to capture them
 
 struct VideoPlayerViewShim: View {
 
-    @StateObject
-    var videoPlayerManager: VideoPlayerManager
+    @State
+    private var safeAreaInsets: EdgeInsets = .init()
+
+    let manager: MediaPlayerManager
 
     var body: some View {
-        #if os(iOS)
-
-        PreferencesView {
-            Group {
-                if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                    VideoPlayer(manager: self.videoPlayerManager)
-                } else {
-                    NativeVideoPlayer(manager: self.videoPlayerManager)
-                }
-            }
-            .preferredColorScheme(.dark)
-            .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
-        }
-        .ignoresSafeArea()
-        .persistentSystemOverlays(.hidden)
-
-        #else
-        if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-            PreferencesView {
-                VideoPlayer(manager: self.videoPlayerManager)
-            }
-            .ignoresSafeArea()
-        } else {
-            NativeVideoPlayer(manager: self.videoPlayerManager)
-        }
-        #endif
-    }
-}
-
-struct LiveVideoPlayerViewShim: View {
-
-    @StateObject
-    var videoPlayerManager: LiveVideoPlayerManager
-
-    var body: some View {
-        #if os(iOS)
-
-        PreferencesView {
-            Group {
-                if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                    LiveVideoPlayer(manager: self.videoPlayerManager)
-                } else {
-                    LiveNativeVideoPlayer(manager: self.videoPlayerManager)
-                }
-            }
-            .preferredColorScheme(.dark)
-            .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
-        }
-        .ignoresSafeArea()
-        .persistentSystemOverlays(.hidden)
-
-        #else
-
-        PreferencesView {
+        Group {
             if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                LiveVideoPlayer(manager: self.videoPlayerManager)
+                VideoPlayer()
             } else {
-                LiveNativeVideoPlayer(manager: self.videoPlayerManager)
+                NativeVideoPlayer()
             }
         }
+        .colorScheme(.dark) // use over `preferredColorScheme(.dark)` to not have destination change
+        .environment(\.safeAreaInsets, safeAreaInsets)
+        .supportedOrientations(.allButUpsideDown)
         .ignoresSafeArea()
-
-        #endif
+        .persistentSystemOverlays(.hidden)
+        .toolbar(.hidden, for: .navigationBar)
+        .onSizeChanged { _, safeArea in
+            self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
+        }
     }
 }

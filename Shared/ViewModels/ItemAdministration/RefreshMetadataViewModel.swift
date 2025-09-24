@@ -10,52 +10,39 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-final class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
+@MainActor
+@Stateful
+final class RefreshMetadataViewModel: ViewModel {
 
-    // MARK: - Events
-
-    enum Event: Equatable {
-        case error(JellyfinAPIError)
-    }
-
-    // MARK: - Action
-
-    enum Action: Equatable {
+    @CasePathable
+    enum Action {
         case refreshMetadata(
             metadataRefreshMode: MetadataRefreshMode,
             imageRefreshMode: MetadataRefreshMode,
             replaceMetadata: Bool,
             replaceImages: Bool
         )
+
+        var transition: Transition {
+            .loop(.refreshing)
+        }
     }
 
-    // MARK: States
+    enum Event {
+        case error
+    }
 
-    enum State: Hashable {
+    enum State {
         case initial
         case refreshing
     }
-
-    @Published
-    var state: State = .initial
 
     // MARK: - Published Items
 
     @Published
     private(set) var progress: Double = 0.0
-    @Published
+
     private var item: BaseItemDto
-
-    // MARK: - Event Objects
-
-    private var itemTask: AnyCancellable?
-    private var eventSubject = PassthroughSubject<Event, Never>()
-
-    var events: AnyPublisher<Event, Never> {
-        eventSubject
-            .receive(on: RunLoop.main)
-            .eraseToAnyPublisher()
-    }
 
     // MARK: - Init
 
@@ -64,53 +51,14 @@ final class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
         super.init()
     }
 
-    // MARK: - Respond
-
-    func respond(to action: Action) -> State {
-        switch action {
-        case let .refreshMetadata(metadataRefreshMode, imageRefreshMode, replaceMetadata, replaceImages):
-            itemTask?.cancel()
-
-            itemTask = Task { [weak self] in
-                guard let self else { return }
-                do {
-                    await MainActor.run {
-                        self.state = .refreshing
-                    }
-
-                    try await self.refreshMetadata(
-                        metadataRefreshMode: metadataRefreshMode,
-                        imageRefreshMode: imageRefreshMode,
-                        replaceMetadata: replaceMetadata,
-                        replaceImages: replaceImages
-                    )
-
-                    await MainActor.run {
-                        self.state = .initial
-                    }
-
-                } catch {
-                    guard !Task.isCancelled else { return }
-
-                    let apiError = JellyfinAPIError(error.localizedDescription)
-                    await MainActor.run {
-                        self.eventSubject.send(.error(apiError))
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return state
-        }
-    }
-
     // MARK: - Metadata Refresh Logic
 
-    private func refreshMetadata(
-        metadataRefreshMode: MetadataRefreshMode,
-        imageRefreshMode: MetadataRefreshMode,
-        replaceMetadata: Bool = false,
-        replaceImages: Bool = false
+    @Function(\Action.Cases.refreshMetadata)
+    private func _refreshMetadata(
+        _ metadataRefreshMode: MetadataRefreshMode,
+        _ imageRefreshMode: MetadataRefreshMode,
+        _ replaceMetadata: Bool = false,
+        _ replaceImages: Bool = false
     ) async throws {
         guard let itemId = item.id else { return }
 
@@ -132,22 +80,14 @@ final class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
     // MARK: - Refresh Item After Request Queued
 
     private func refreshItem() async throws {
-        guard let itemId = item.id else { return }
-
         try await pollRefreshProgress()
 
-        let request = Paths.getItem(
-            itemID: itemId,
-            userID: userSession.user.id
-        )
-        let response = try await userSession.client.send(request)
+        let newItem = try await item.getFullItem(userSession: userSession)
 
-        await MainActor.run {
-            self.item = response.value
-            self.progress = 0.0
+        self.item = newItem
+        self.progress = 0.0
 
-            Notifications[.itemMetadataDidChange].post(self.item)
-        }
+        Notifications[.itemMetadataDidChange].post(newItem)
     }
 
     // MARK: - Poll Progress
@@ -164,9 +104,7 @@ final class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
             try await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
 
             let currentProgress = Double(i) / Double(steps)
-            await MainActor.run {
-                self.progress = currentProgress
-            }
+            self.progress = currentProgress
         }
     }
 }

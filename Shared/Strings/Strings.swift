@@ -334,6 +334,8 @@ internal enum L10n {
   internal static let community = L10n.tr("Localizable", "community", fallback: "Community")
   /// Community rating
   internal static let communityRating = L10n.tr("Localizable", "communityRating", fallback: "Community rating")
+  /// Community rating on a scale from 1 to 10.
+  internal static let communityRatingDescription = L10n.tr("Localizable", "communityRatingDescription", fallback: "Community rating on a scale from 1 to 10.")
   /// Compact
   internal static let compact = L10n.tr("Localizable", "compact", fallback: "Compact")
   /// Compact Logo
@@ -398,6 +400,8 @@ internal enum L10n {
   internal static let creator = L10n.tr("Localizable", "creator", fallback: "Creator")
   /// Critic rating
   internal static let criticRating = L10n.tr("Localizable", "criticRating", fallback: "Critic rating")
+  /// Critic rating on a scale from 1 to 100.
+  internal static let criticRatingDescription = L10n.tr("Localizable", "criticRatingDescription", fallback: "Critic rating on a scale from 1 to 100.")
   /// Critics
   internal static let critics = L10n.tr("Localizable", "critics", fallback: "Critics")
   /// Current
@@ -412,10 +416,6 @@ internal enum L10n {
   internal static let customConnectionsDescription = L10n.tr("Localizable", "customConnectionsDescription", fallback: "Manually set the maximum number of connections a user can have to the server.")
   /// Allows advanced customization of device profiles for native playback. Incorrect settings may affect playback.
   internal static let customDescription = L10n.tr("Localizable", "customDescription", fallback: "Allows advanced customization of device profiles for native playback. Incorrect settings may affect playback.")
-  /// Your custom device name '%1$@' has been saved.
-  internal static func customDeviceNameSaved(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "customDeviceNameSaved", String(describing: p1), fallback: "Your custom device name '%1$@' has been saved.")
-  }
   /// The custom device profiles will be added to the default Swiftfin device profiles.
   internal static let customDeviceProfileAdd = L10n.tr("Localizable", "customDeviceProfileAdd", fallback: "The custom device profiles will be added to the default Swiftfin device profiles.")
   /// The custom device profiles will replace the default Swiftfin device profiles.
@@ -426,6 +426,8 @@ internal enum L10n {
   internal static let customFailedLogins = L10n.tr("Localizable", "customFailedLogins", fallback: "Custom failed logins")
   /// Customize
   internal static let customize = L10n.tr("Localizable", "customize", fallback: "Customize")
+  /// Custom name
+  internal static let customName = L10n.tr("Localizable", "customName", fallback: "Custom name")
   /// Custom profile
   internal static let customProfile = L10n.tr("Localizable", "customProfile", fallback: "Custom profile")
   /// Custom rating
@@ -1198,10 +1200,6 @@ internal enum L10n {
   internal static let randomImage = L10n.tr("Localizable", "randomImage", fallback: "Random image")
   /// Rating
   internal static let rating = L10n.tr("Localizable", "rating", fallback: "Rating")
-  /// %@ rating on a scale from 1 to 10.
-  internal static func ratingDescription(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "ratingDescription", String(describing: p1), fallback: "%@ rating on a scale from 1 to 10.")
-  }
   /// Ratings
   internal static let ratings = L10n.tr("Localizable", "ratings", fallback: "Ratings")
   /// Recently Added
@@ -1258,6 +1256,8 @@ internal enum L10n {
   internal static let replaceImages = L10n.tr("Localizable", "replaceImages", fallback: "Replace Images")
   /// Replace all images with new images.
   internal static let replaceImagesDescription = L10n.tr("Localizable", "replaceImagesDescription", fallback: "Replace all images with new images.")
+  /// Are you sure you want to replace this item?
+  internal static let replaceItemConfirmation = L10n.tr("Localizable", "replaceItemConfirmation", fallback: "Are you sure you want to replace this item?")
   /// Replace Metadata
   internal static let replaceMetadata = L10n.tr("Localizable", "replaceMetadata", fallback: "Replace Metadata")
   /// Replace unlocked metadata with new information.

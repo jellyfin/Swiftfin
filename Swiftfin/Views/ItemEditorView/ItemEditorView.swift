@@ -77,8 +77,7 @@ struct ItemEditorView: View {
                     editTextView
                 }
 
-                // TODO: add `BaseItemDto.hasComponenets`
-                if viewModel.item.type != .person {
+                if viewModel.item.hasComponents {
                     editComponentsView
                 }
             } /*  else if canManageSubtitles || canManageLyrics {

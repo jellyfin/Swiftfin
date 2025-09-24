@@ -14,9 +14,9 @@ extension Array {
         self + [element]
     }
 
-    func appending(_ element: Element, if condition: Bool) -> [Element] {
+    func appending(_ element: @autoclosure () -> Element, if condition: Bool) -> [Element] {
         if condition {
-            return self + [element]
+            return self + [element()]
         } else {
             return self
         }
@@ -34,9 +34,9 @@ extension Array {
         [element] + self
     }
 
-    func prepending(_ element: Element, if condition: Bool) -> [Element] {
+    func prepending(_ element: @autoclosure () -> Element, if condition: Bool) -> [Element] {
         if condition {
-            return [element] + self
+            return [element()] + self
         } else {
             return self
         }
@@ -56,6 +56,12 @@ extension Array {
 }
 
 extension Array where Element: Equatable {
+
+    mutating func removeFirst(equalTo element: Element) {
+        if let index = firstIndex(of: element) {
+            remove(at: index)
+        }
+    }
 
     mutating func removeAll(equalTo element: Element) {
         removeAll { $0 == element }

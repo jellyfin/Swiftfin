@@ -15,16 +15,8 @@ extension ItemView {
         @ObservedObject
         var viewModel: MovieItemViewModel
 
-        @Router
-        private var router
-
         var body: some View {
             VStack(spacing: 0) {
-
-                ItemView.CinematicHeaderView(viewModel: viewModel)
-                    .frame(height: UIScreen.main.bounds.height - 150)
-                    .padding(.bottom, 50)
-
                 if let castAndCrew = viewModel.item.people, castAndCrew.isNotEmpty {
                     ItemView.CastAndCrewHStack(people: castAndCrew)
                 }

@@ -16,11 +16,11 @@ import SwiftUI
 
 struct GestureSettingsView: View {
 
-    @Default(.VideoPlayer.Gesture.horizontalPanGesture)
-    private var horizontalPanGesture
-    @Default(.VideoPlayer.Gesture.horizontalSwipeGesture)
-    private var horizontalSwipeGesture
-    @Default(.VideoPlayer.Gesture.longPressGesture)
+    @Default(.VideoPlayer.Gesture.horizontalPanAction)
+    private var horizontalPanAction
+    @Default(.VideoPlayer.Gesture.horizontalSwipeAction)
+    private var horizontalSwipeAction
+    @Default(.VideoPlayer.Gesture.longPressAction)
     private var longPressGesture
     @Default(.VideoPlayer.Gesture.multiTapGesture)
     private var multiTapGesture
@@ -28,21 +28,23 @@ struct GestureSettingsView: View {
     private var doubleTouchGesture
     @Default(.VideoPlayer.Gesture.pinchGesture)
     private var pinchGesture
-    @Default(.VideoPlayer.Gesture.verticalPanGestureLeft)
-    private var verticalPanGestureLeft
-    @Default(.VideoPlayer.Gesture.verticalPanGestureRight)
-    private var verticalPanGestureRight
+    @Default(.VideoPlayer.Gesture.verticalPanLeftAction)
+    private var verticalPanLeftAction
+    @Default(.VideoPlayer.Gesture.verticalPanRightAction)
+    private var verticalPanRightAction
 
     var body: some View {
         Form {
 
             Section {
 
-                CaseIterablePicker(L10n.horizontalPan, selection: $horizontalPanGesture)
-                    .disabled(horizontalSwipeGesture != .none && horizontalPanGesture == .none)
+                // TODO: make toggle sections
 
-                CaseIterablePicker(L10n.horizontalSwipe, selection: $horizontalSwipeGesture)
-                    .disabled(horizontalPanGesture != .none && horizontalSwipeGesture == .none)
+                CaseIterablePicker(L10n.horizontalPan, selection: $horizontalPanAction)
+                    .disabled(horizontalSwipeAction != .none)
+
+                CaseIterablePicker(L10n.horizontalSwipe, selection: $horizontalSwipeAction)
+                    .disabled(horizontalPanAction != .none)
 
                 CaseIterablePicker(L10n.longPress, selection: $longPressGesture)
 
@@ -52,9 +54,9 @@ struct GestureSettingsView: View {
 
                 CaseIterablePicker(L10n.pinch, selection: $pinchGesture)
 
-                CaseIterablePicker(L10n.leftVerticalPan, selection: $verticalPanGestureLeft)
+                CaseIterablePicker(L10n.leftVerticalPan, selection: $verticalPanLeftAction)
 
-                CaseIterablePicker(L10n.rightVerticalPan, selection: $verticalPanGestureRight)
+                CaseIterablePicker(L10n.rightVerticalPan, selection: $verticalPanRightAction)
             }
         }
         .navigationTitle(L10n.gestures)
