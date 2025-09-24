@@ -175,20 +175,22 @@ extension PosterButton {
             let item: BaseItemDto
 
             var body: some View {
+
                 SeparatorHStack {
-                    Text(item.seasonEpisodeLabel ?? .emptyDash)
-
-                    if item.showTitle {
-                        Text(item.displayTitle)
-
-                    } else if let seriesName = item.seriesName {
-                        Text(seriesName)
-                    }
-                }
-                .separator {
                     Circle()
                         .frame(width: 2, height: 2)
                         .padding(.horizontal, 3)
+                } content: {
+                    SeparatorHStack {
+                        Text(item.seasonEpisodeLabel ?? .emptyDash)
+
+                        if item.showTitle {
+                            Text(item.displayTitle)
+
+                        } else if let seriesName = item.seriesName {
+                            Text(seriesName)
+                        }
+                    }
                 }
                 .font(.caption)
                 .foregroundColor(.secondary)

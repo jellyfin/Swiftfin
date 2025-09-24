@@ -120,7 +120,7 @@ final class MediaPlayerManager: ViewModel {
     @Published
     var rate: Float = 1.0
     @Published
-    var queue: (any MediaPlayerQueue)?
+    var queue: AnyMediaPlayerQueue? = nil
 
     @Published
     var supplements: [any MediaPlayerSupplement] = []
@@ -183,7 +183,7 @@ final class MediaPlayerManager: ViewModel {
         mediaPlayerItemProvider: @escaping MediaPlayerItemProviderFunction
     ) {
         self.item = item
-        self.queue = queue
+        self.queue = queue.map { AnyMediaPlayerQueue($0) }
         self.state = .loadingItem
         self.initialMediaPlayerItemProvider = .init(
             item: item,
@@ -199,7 +199,7 @@ final class MediaPlayerManager: ViewModel {
         queue: (any MediaPlayerQueue)? = nil
     ) {
         self.item = playbackItem.baseItem
-        self.queue = queue
+        self.queue = queue.map { AnyMediaPlayerQueue($0) }
         self.state = .playback
         super.init()
 

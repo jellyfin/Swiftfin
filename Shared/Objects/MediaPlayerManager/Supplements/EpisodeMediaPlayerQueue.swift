@@ -47,6 +47,11 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     @Published
     var hasPreviousItem: Bool = false
 
+    lazy var hasNextItemPublisher: Published<Bool>.Publisher = $hasNextItem
+    lazy var hasPreviousItemPublisher: Published<Bool>.Publisher = $hasPreviousItem
+    lazy var nextItemPublisher: Published<MediaPlayerItemProvider?>.Publisher = $nextItem
+    lazy var previousItemPublisher: Published<MediaPlayerItemProvider?>.Publisher = $previousItem
+
     private var currentAdjacentEpisodesTask: AnyCancellable?
     private let seriesViewModel: SeriesItemViewModel
 
@@ -228,22 +233,35 @@ extension EpisodeMediaPlayerQueue {
             self.action = action
         }
 
+        private struct _Body: View {
+
+            @ObservedObject
+            var selectionViewModel: SeasonItemViewModel
+
+            let action: (BaseItemDto) -> Void
+
+            var body: some View {
+                CollectionVGrid(
+                    uniqueElements: selectionViewModel.elements,
+                    layout: .columns(
+                        1,
+                        insets: .init(top: 0, leading: 0, bottom: EdgeInsets.edgePadding, trailing: 0)
+                    )
+                ) { item in
+                    EpisodeRow(episode: item) {
+                        action(item)
+                    }
+                    .edgePadding(.horizontal)
+                }
+            }
+        }
+
         var body: some View {
             if let selectionViewModel {
-                WithObservedObject(selectionViewModel) { selectionViewModel in
-                    CollectionVGrid(
-                        uniqueElements: selectionViewModel.elements,
-                        layout: .columns(
-                            1,
-                            insets: .init(top: 0, leading: 0, bottom: EdgeInsets.edgePadding, trailing: 0)
-                        )
-                    ) { item in
-                        EpisodeRow(episode: item) {
-                            action(item)
-                        }
-                        .edgePadding(.horizontal)
-                    }
-                }
+                _Body(
+                    selectionViewModel: selectionViewModel,
+                    action: action
+                )
             }
         }
     }
@@ -272,20 +290,36 @@ extension EpisodeMediaPlayerQueue {
             self.action = action
         }
 
+        private struct _Body: View {
+
+            @Environment(\.safeAreaInsets)
+            private var safeAreaInsets: EdgeInsets
+
+            @ObservedObject
+            var selectionViewModel: SeasonItemViewModel
+
+            let action: (BaseItemDto) -> Void
+
+            var body: some View {
+                CollectionHStack(
+                    uniqueElements: selectionViewModel.elements,
+                    id: \.unwrappedIDHashOrZero
+                ) { item in
+                    EpisodeButton(episode: item) {
+                        action(item)
+                    }
+                    .frame(height: 150)
+                }
+                .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
+            }
+        }
+
         var body: some View {
             if let selectionViewModel {
-                WithObservedObject(selectionViewModel) { selectionViewModel in
-                    CollectionHStack(
-                        uniqueElements: selectionViewModel.elements,
-                        id: \.unwrappedIDHashOrZero
-                    ) { item in
-                        EpisodeButton(episode: item) {
-                            action(item)
-                        }
-                        .frame(height: 150)
-                    }
-                    .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
-                }
+                _Body(
+                    selectionViewModel: selectionViewModel,
+                    action: action
+                )
                 .frame(height: 150)
             }
         }
