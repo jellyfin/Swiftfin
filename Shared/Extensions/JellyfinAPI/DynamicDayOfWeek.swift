@@ -14,19 +14,19 @@ extension DynamicDayOfWeek {
     var displayTitle: String {
         switch self {
         case .sunday:
-            DayOfWeek.sunday.displayTitle ?? self.rawValue
+            DayOfWeek.sunday.displayTitle
         case .monday:
-            DayOfWeek.monday.displayTitle ?? self.rawValue
+            DayOfWeek.monday.displayTitle
         case .tuesday:
-            DayOfWeek.tuesday.displayTitle ?? self.rawValue
+            DayOfWeek.tuesday.displayTitle
         case .wednesday:
-            DayOfWeek.wednesday.displayTitle ?? self.rawValue
+            DayOfWeek.wednesday.displayTitle
         case .thursday:
-            DayOfWeek.thursday.displayTitle ?? self.rawValue
+            DayOfWeek.thursday.displayTitle
         case .friday:
-            DayOfWeek.friday.displayTitle ?? self.rawValue
+            DayOfWeek.friday.displayTitle
         case .saturday:
-            DayOfWeek.saturday.displayTitle ?? self.rawValue
+            DayOfWeek.saturday.displayTitle
         case .everyday:
             L10n.everyday
         case .weekday:
