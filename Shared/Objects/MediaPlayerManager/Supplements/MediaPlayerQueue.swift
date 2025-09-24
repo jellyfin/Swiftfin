@@ -8,6 +8,8 @@
 
 import Combine
 
+// TODO: make class
+//       - better environment and observation
 @MainActor
 protocol MediaPlayerQueue: ObservableObject, MediaPlayerObserver, MediaPlayerSupplement {
 

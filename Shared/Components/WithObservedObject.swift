@@ -8,28 +8,27 @@
 
 import SwiftUI
 
-// TODO: Causes severe hangs - actually probably not the best idea
-//       - object identifier equatable works okay, test more
+// TODO: remove, causes severe hangs and equatable check is wrong
 
 /// A view that observes an `ObservableObject` and provides its value to a content closure.
 /// Use whenever the object is derived in a context where `@ObservedObject` cannot be used directly.
-struct WithObservedObject<Value: ObservableObject, Content: View>: View, Equatable {
+struct WithObservedObject<Value: ObservableObject, Content: View>: View {
 
     @ObservedObject
     private var value: Value
 
-    private let content: (Value) -> Content
+    private let content: Content
 
     init(
         _ value: Value,
         @ViewBuilder content: @escaping (Value) -> Content
     ) where Value: ObservableObject {
         self.value = value
-        self.content = content
+        self.content = content(value)
     }
 
     var body: some View {
-        content(value)
+        content
     }
 
     static func == (lhs: WithObservedObject<Value, Content>, rhs: WithObservedObject<Value, Content>) -> Bool {
