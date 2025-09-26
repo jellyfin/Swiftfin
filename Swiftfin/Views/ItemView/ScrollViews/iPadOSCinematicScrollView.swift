@@ -122,8 +122,7 @@ extension ItemView.iPadOSCinematicScrollView {
                         }
                         .aspectRatio(contentMode: .fit)
                         .frame(maxWidth: geometry.size.width * 0.4, maxHeight: 130, alignment: .bottomLeading)
-                        .accessibilityElement(children: .ignore)
-                        .accessibilityLabel(viewModel.item.displayTitle)
+                        .accessibilityHidden(true)
 
                         ItemView.OverviewView(item: viewModel.item)
                             .overviewLineLimit(3)

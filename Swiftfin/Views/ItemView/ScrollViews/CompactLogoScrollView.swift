@@ -104,8 +104,7 @@ extension ItemView.CompactLogoScrollView {
                     }
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 70, alignment: .bottom)
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel(viewModel.item.displayTitle)
+                    .accessibilityHidden(true)
 
                 DotHStack {
                     if let firstGenre = viewModel.item.genres?.first {

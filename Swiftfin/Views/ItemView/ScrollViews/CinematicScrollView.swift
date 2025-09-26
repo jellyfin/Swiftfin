@@ -115,8 +115,7 @@ extension ItemView.CinematicScrollView {
                             }
                             .aspectRatio(contentMode: .fit)
                             .frame(height: 100, alignment: .bottom)
-                            .accessibilityElement(children: .ignore)
-                            .accessibilityLabel(viewModel.item.displayTitle)
+                            .accessibilityHidden(true)
                     }
 
                     DotHStack {

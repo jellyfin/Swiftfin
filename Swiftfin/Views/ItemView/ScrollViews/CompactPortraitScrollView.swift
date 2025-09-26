@@ -126,6 +126,7 @@ extension ItemView.CompactPosterScrollView {
                     .lineLimit(2)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
+                    .accessibilityHidden(true)
 
                 DotHStack {
                     if viewModel.item.type == .person {
