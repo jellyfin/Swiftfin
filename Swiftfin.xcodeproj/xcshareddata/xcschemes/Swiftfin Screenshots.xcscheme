@@ -76,6 +76,16 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "5377CBF0263B596A003A4E83"
+            BuildableName = "Swiftfin iOS.app"
+            BlueprintName = "Swiftfin iOS"
+            ReferencedContainer = "container:Swiftfin.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

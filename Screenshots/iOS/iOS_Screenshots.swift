@@ -50,7 +50,7 @@ final class iOS_Screenshots: XCTestCase {
         if app.staticTexts[demoUsername].exists {
             app.staticTexts[demoUsername].firstMatch.tap()
         } else {
-            app.buttons["AddNewUser"].tap()
+            app.buttons["Add User"].tap()
 
             app.typeText(demoUsername)
             app.secureTextFields["Password"].tap()
@@ -117,16 +117,28 @@ final class iOS_Screenshots: XCTestCase {
         app.staticTexts[movieTitle].tap()
         app.images["play.fill"].tap()
 
-        _ = app.buttons["OverlayExit"].waitForExistence(timeout: 5)
-        sleep(5)
+        sleep(8)
 
-        // Use .coordinate to get a tap anywhere on screen to reveal overlay
-        app.buttons["OverlayExitButton"].firstMatch.coordinate(withNormalizedOffset: .zero).tap()
+        // TODO: There should be a better way to reveal the overlay
+        app.buttons["Exit"].firstMatch.coordinate(withNormalizedOffset: .zero).tap()
+
+        snapshot("PlaybackPortrait")
+
+        app.buttons["Exit"].firstMatch.tap()
+
+        app.images["play.fill"].tap()
+
+        XCUIDevice.shared.orientation = .landscapeLeft
+
+        sleep(8)
+
+        app.buttons["Exit"].firstMatch.coordinate(withNormalizedOffset: .zero).tap()
 
         snapshot("Playback")
 
-        // Now use .coordinate because otherwise the tap presses the corner of the button and does nothing
-        app.buttons["OverlayExitButton"].firstMatch.coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.5)).tap()
+        XCUIDevice.shared.orientation = .portrait
+
+        app.buttons["Exit"].firstMatch.tap()
 
         mediaTab.tap()
         mediaTab.tap()

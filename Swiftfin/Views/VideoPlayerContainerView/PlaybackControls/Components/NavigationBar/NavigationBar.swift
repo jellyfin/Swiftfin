@@ -37,6 +37,7 @@ extension VideoPlayer.PlaybackControls {
                     manager.send(.stop)
                     router.dismiss()
                 }
+                .accessibilityLabel("Exit")
 
                 TitleView(item: manager.item)
                     .frame(maxWidth: .infinity, alignment: .leading)

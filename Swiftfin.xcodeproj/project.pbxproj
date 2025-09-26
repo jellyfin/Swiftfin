@@ -223,6 +223,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				iOS/iOS_Screenshots.swift,
+				output/screenshots.html,
 				process.sh,
 				resources,
 				SnapshotHelper.swift,

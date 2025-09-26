@@ -13,7 +13,7 @@ languages([
 #   ["pt", "pt_BR"] # Portuguese with Brazilian locale
 ])
 
-ios_version("18.5")
+ios_version("18.6")
 
 # The name of the scheme which contains the UI Tests
 scheme("Swiftfin Screenshots")
