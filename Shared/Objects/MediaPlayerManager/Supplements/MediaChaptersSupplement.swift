@@ -72,7 +72,8 @@ extension MediaChaptersSupplement {
                 )
             ) { chapter, _ in
                 ChapterRow(chapter: chapter) {
-                    manager.proxy?.setSeconds(chapter.secondsRange.lowerBound)
+                    guard let startSeconds = chapter.chapterInfo.startSeconds else { return }
+                    manager.proxy?.setSeconds(startSeconds)
                     manager.set(playbackRequestStatus: .playing)
                 }
                 .edgePadding(.horizontal)
@@ -87,7 +88,8 @@ extension MediaChaptersSupplement {
                 uniqueElements: chapters
             ) { chapter in
                 ChapterButton(chapter: chapter) {
-                    manager.proxy?.setSeconds(chapter.secondsRange.lowerBound)
+                    guard let startSeconds = chapter.chapterInfo.startSeconds else { return }
+                    manager.proxy?.setSeconds(startSeconds)
                     manager.set(playbackRequestStatus: .playing)
                 }
                 .frame(height: 150)
@@ -96,7 +98,14 @@ extension MediaChaptersSupplement {
             .proxy(collectionHStackProxy)
             .frame(height: 150)
             .onAppear {
-                guard let currentChapter = chapters.first(where: { $0.secondsRange.contains(manager.seconds) }) else { return }
+                guard let currentChapter = chapters.first(
+                    where: {
+                        guard let startSeconds = $0.chapterInfo.startSeconds else { return false }
+                        return startSeconds <= manager.seconds
+                    }
+                ) else {
+                    return
+                }
                 collectionHStackProxy.scrollTo(id: currentChapter.id)
             }
         }
@@ -185,7 +194,8 @@ extension MediaChaptersSupplement {
         let action: () -> Void
 
         private var isCurrentChapter: Bool {
-            chapter.secondsRange.contains(activeSeconds)
+            false
+//            chapter.secondsRange.contains(activeSeconds)
         }
 
         var body: some View {
@@ -216,7 +226,8 @@ extension MediaChaptersSupplement {
         let action: () -> Void
 
         private var isCurrentChapter: Bool {
-            chapter.secondsRange.contains(activeSeconds)
+            false
+//            chapter.secondsRange.contains(activeSeconds)
         }
 
         var body: some View {

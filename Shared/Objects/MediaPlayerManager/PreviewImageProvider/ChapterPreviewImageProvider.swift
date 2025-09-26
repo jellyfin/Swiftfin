@@ -29,13 +29,16 @@ class ChapterPreviewImageProvider: PreviewImageProvider {
         self.chapters = chapters
     }
 
-    func imageIndex(for seconds: Duration) -> Int {
-        chapters.firstIndex { $0.secondsRange.contains(seconds) } ?? 0
+    func imageIndex(for seconds: Duration) -> Int? {
+        chapters.firstIndex { fullInfo in
+            guard let startSeconds = fullInfo.chapterInfo.startSeconds else { return false }
+            return startSeconds <= seconds
+        }
     }
 
     @MainActor
     func image(for seconds: Duration) async -> UIImage? {
-        let chapterIndex = imageIndex(for: seconds)
+        guard let chapterIndex = imageIndex(for: seconds) else { return nil }
 
         if let image = images[chapterIndex] {
             return image
