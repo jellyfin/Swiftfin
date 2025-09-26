@@ -40,22 +40,12 @@ class VideoPlayerContainerState: ObservableObject {
             return
         }
 
-        if isPresentingOverlay && !isPresentingSupplement {
+        guard isPresentingSupplement else {
             isPresentingPlaybackControls = true
             return
         }
 
-        if isCompact {
-            if isPresentingSupplement {
-                if !isPresentingPlaybackControls {
-                    isPresentingPlaybackControls = true
-                }
-            } else {
-                isPresentingPlaybackControls = false
-            }
-        } else {
-            isPresentingPlaybackControls = false
-        }
+        isPresentingPlaybackControls = isCompact
     }
 
     @Published
