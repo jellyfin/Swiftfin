@@ -38,6 +38,7 @@ extension ItemView {
                     .aspectRatio(1.77, contentMode: .fill)
                     .frame(width: proxy.size.width, height: proxy.size.height * 0.70, alignment: .top)
                     .bottomEdgeGradient(bottomColor: bottomColor)
+                    .accessibilityHidden(true)
             }
         }
 
@@ -103,6 +104,8 @@ extension ItemView.CompactLogoScrollView {
                     }
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 70, alignment: .bottom)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(viewModel.item.displayTitle)
 
                 DotHStack {
                     if let firstGenre = viewModel.item.genres?.first {

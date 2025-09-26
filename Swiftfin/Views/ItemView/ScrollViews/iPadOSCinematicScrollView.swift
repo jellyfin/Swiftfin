@@ -59,6 +59,7 @@ extension ItemView {
                 ImageView(imageSource)
                     .aspectRatio(1.77, contentMode: .fill)
                     .bottomEdgeGradient(bottomColor: bottomColor)
+                    .accessibilityHidden(true)
             }
         }
 
@@ -121,6 +122,8 @@ extension ItemView.iPadOSCinematicScrollView {
                         }
                         .aspectRatio(contentMode: .fit)
                         .frame(maxWidth: geometry.size.width * 0.4, maxHeight: 130, alignment: .bottomLeading)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(viewModel.item.displayTitle)
 
                         ItemView.OverviewView(item: viewModel.item)
                             .overviewLineLimit(3)
