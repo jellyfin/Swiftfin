@@ -45,7 +45,10 @@ extension ChapterInfo {
             imageSource: ImageSource
         ) {
             self.chapterInfo = chapterInfo
+            self.displayTitle = chapterInfo.displayTitle
+            self.id = chapterInfo.hashValue
             self.imageSource = imageSource
+            self.unwrappedIDHashOrZero = chapterInfo.hashValue
         }
 
         func landscapeImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {

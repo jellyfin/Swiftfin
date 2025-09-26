@@ -30,10 +30,14 @@ class ChapterPreviewImageProvider: PreviewImageProvider {
     }
 
     func imageIndex(for seconds: Duration) -> Int? {
-        chapters.firstIndex { fullInfo in
-            guard let startSeconds = fullInfo.chapterInfo.startSeconds else { return false }
-            return startSeconds <= seconds
-        }
+        guard let currentChapterIndex = chapters
+            .firstIndex(where: {
+                guard let startSeconds = $0.chapterInfo.startSeconds else { return false }
+                return startSeconds > seconds
+            }
+            ) else { return nil }
+
+        return max(0, currentChapterIndex - 1)
     }
 
     @MainActor

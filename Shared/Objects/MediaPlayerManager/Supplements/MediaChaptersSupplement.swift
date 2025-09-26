@@ -20,17 +20,31 @@ import SwiftUI
 // TODO: fix chapter image aspect fit
 //       - still be in a 1.77 box
 
-struct MediaChaptersSupplement: MediaPlayerSupplement {
+class MediaChaptersSupplement: ObservableObject, MediaPlayerSupplement {
 
     let chapters: [ChapterInfo.FullInfo]
     let displayTitle: String = L10n.chapters
+    let id: String
 
-    var id: String {
-        "Chapters-\(chapters.hashValue)"
+    init(chapters: [ChapterInfo.FullInfo]) {
+        self.chapters = chapters
+        self.id = "Chapters-\(chapters.hashValue)"
+    }
+
+    func isCurrentChapter(seconds: Duration, chapter: ChapterInfo.FullInfo) -> Bool {
+        guard let currentChapterIndex = chapters
+            .firstIndex(where: {
+                guard let startSeconds = $0.chapterInfo.startSeconds else { return false }
+                return startSeconds > seconds
+            }
+            ) else { return false }
+
+        guard let currentChapter = chapters[safe: max(0, currentChapterIndex - 1)] else { return false }
+        return currentChapter.id == chapter.id
     }
 
     var videoPlayerBody: some PlatformView {
-        ChapterOverlay(chapters: chapters)
+        ChapterOverlay(supplement: self)
     }
 }
 
@@ -46,10 +60,28 @@ extension MediaChaptersSupplement {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
+        @ObservedObject
+        private var supplement: MediaChaptersSupplement
+
         @StateObject
         private var collectionHStackProxy: CollectionHStackProxy = .init()
 
-        let chapters: [ChapterInfo.FullInfo]
+        init(supplement: MediaChaptersSupplement) {
+            self.supplement = supplement
+        }
+
+        private var chapters: [ChapterInfo.FullInfo] {
+            supplement.chapters
+        }
+
+        private var currentChapter: ChapterInfo.FullInfo? {
+            chapters.first(
+                where: {
+                    guard let startSeconds = $0.chapterInfo.startSeconds else { return false }
+                    return startSeconds <= manager.seconds
+                }
+            )
+        }
 
         var iOSView: some View {
             CompactOrRegularView(
@@ -74,9 +106,10 @@ extension MediaChaptersSupplement {
                 ChapterRow(chapter: chapter) {
                     guard let startSeconds = chapter.chapterInfo.startSeconds else { return }
                     manager.proxy?.setSeconds(startSeconds)
-                    manager.set(playbackRequestStatus: .playing)
+                    manager.setPlaybackRequestStatus(status: .playing)
                 }
                 .edgePadding(.horizontal)
+                .environmentObject(supplement)
             }
         }
 
@@ -90,22 +123,16 @@ extension MediaChaptersSupplement {
                 ChapterButton(chapter: chapter) {
                     guard let startSeconds = chapter.chapterInfo.startSeconds else { return }
                     manager.proxy?.setSeconds(startSeconds)
-                    manager.set(playbackRequestStatus: .playing)
+                    manager.setPlaybackRequestStatus(status: .playing)
                 }
                 .frame(height: 150)
+                .environmentObject(supplement)
             }
             .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
             .proxy(collectionHStackProxy)
             .frame(height: 150)
             .onAppear {
-                guard let currentChapter = chapters.first(
-                    where: {
-                        guard let startSeconds = $0.chapterInfo.startSeconds else { return false }
-                        return startSeconds <= manager.seconds
-                    }
-                ) else {
-                    return
-                }
+                guard let currentChapter else { return }
                 collectionHStackProxy.scrollTo(id: currentChapter.id)
             }
         }
@@ -181,11 +208,10 @@ extension MediaChaptersSupplement {
 
     struct ChapterRow: View {
 
-        @Default(.accentColor)
-        private var accentColor
-
         @EnvironmentObject
         private var manager: MediaPlayerManager
+        @EnvironmentObject
+        private var supplement: MediaChaptersSupplement
 
         @State
         private var activeSeconds: Duration = .zero
@@ -194,8 +220,10 @@ extension MediaChaptersSupplement {
         let action: () -> Void
 
         private var isCurrentChapter: Bool {
-            false
-//            chapter.secondsRange.contains(activeSeconds)
+            supplement.isCurrentChapter(
+                seconds: activeSeconds,
+                chapter: chapter
+            )
         }
 
         var body: some View {
@@ -218,6 +246,8 @@ extension MediaChaptersSupplement {
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
+        @EnvironmentObject
+        private var supplement: MediaChaptersSupplement
 
         @State
         private var activeSeconds: Duration = .zero
@@ -226,8 +256,10 @@ extension MediaChaptersSupplement {
         let action: () -> Void
 
         private var isCurrentChapter: Bool {
-            false
-//            chapter.secondsRange.contains(activeSeconds)
+            supplement.isCurrentChapter(
+                seconds: activeSeconds,
+                chapter: chapter
+            )
         }
 
         var body: some View {
