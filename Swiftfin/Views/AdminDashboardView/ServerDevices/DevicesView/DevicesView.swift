@@ -158,7 +158,7 @@ struct DevicesView: View {
 
     @ViewBuilder
     private var navigationBarEditView: some View {
-        if viewModel.backgroundStates.contains(.refreshing) {
+        if viewModel.background.is(.refreshing) {
             ProgressView()
         } else {
             Button(isEditing ? L10n.cancel : L10n.edit) {

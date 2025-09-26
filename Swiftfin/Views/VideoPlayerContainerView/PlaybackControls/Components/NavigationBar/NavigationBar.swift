@@ -33,9 +33,23 @@ extension VideoPlayer.PlaybackControls {
 
         var body: some View {
             HStack(alignment: .center) {
-                Button(L10n.close, systemImage: "xmark") {
-                    manager.send(.stop)
-                    router.dismiss()
+                Button {
+                    if containerState.isPresentingSupplement {
+                        containerState.select(supplement: nil)
+                    } else {
+                        manager.stop()
+                        router.dismiss()
+                    }
+                } label: {
+                    AlternateLayoutView {
+                        Image(systemName: "xmark")
+                    } content: {
+                        Label(
+                            L10n.close,
+                            systemImage: containerState.isPresentingSupplement ? "chevron.down" : "xmark"
+                        )
+                    }
+                    .contentShape(Rectangle())
                 }
 
                 TitleView(item: manager.item)
@@ -61,24 +75,38 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
 
         let item: BaseItemDto
 
-        @ViewBuilder
-        private var subtitle: some View {
-            if let subtitle = item.subtitle {
-                Text(subtitle)
-                    .font(.subheadline)
-                    .foregroundStyle(.white)
-                    .trackingSize($subtitleContentSize)
+        private var _titleSubtitle: (title: String, subtitle: String?) {
+            if item.type == .episode {
+                if let parentTitle = item.parentTitle {
+                    return (title: parentTitle, subtitle: item.seasonEpisodeLabel)
+                }
             }
+
+            return (title: item.displayTitle, subtitle: nil)
+        }
+
+        @ViewBuilder
+        private func _subtitle(_ subtitle: String) -> some View {
+            Text(subtitle)
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .foregroundStyle(.white)
+                .trackingSize($subtitleContentSize)
         }
 
         var body: some View {
-            Text(item.displayTitle)
-                .fontWeight(.bold)
+            let titleSubtitle = self._titleSubtitle
+
+            Text(titleSubtitle.title)
+                .fontWeight(.semibold)
                 .lineLimit(1)
+                .frame(minWidth: max(50, subtitleContentSize.width))
                 .overlay(alignment: .bottomLeading) {
-                    subtitle
-                        .lineLimit(1)
-                        .offset(y: subtitleContentSize.height)
+                    if let subtitle = titleSubtitle.subtitle {
+                        _subtitle(subtitle)
+                            .lineLimit(1)
+                            .offset(y: subtitleContentSize.height)
+                    }
                 }
         }
     }

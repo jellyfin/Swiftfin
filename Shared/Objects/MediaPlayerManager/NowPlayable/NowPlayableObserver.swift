@@ -12,11 +12,12 @@ import Logging
 import MediaPlayer
 import Nuke
 
-// TODO: interruptions
 // TODO: ensure proper state handling
 //       - manager states
 //       - playback request states
+// TODO: have MediaPlayerItem report supported commands
 
+@MainActor
 class NowPlayableObserver: ViewModel, MediaPlayerObserver {
 
     private var defaultRegisteredCommands: [NowPlayableCommand] {
@@ -51,10 +52,22 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
         }
 
         cancellables = []
-        manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
-        manager.secondsBox.$value.sink(receiveValue: secondsDidChange).store(in: &cancellables)
-        manager.$state.sink(receiveValue: stateDidChange).store(in: &cancellables)
-        manager.$playbackRequestStatus.sink(receiveValue: playbackRequestStatusDidChange).store(in: &cancellables)
+
+        manager.actions
+            .sink { [weak self] newValue in self?.actionDidChange(newValue) }
+            .store(in: &cancellables)
+
+        manager.$playbackItem
+            .sink { [weak self] newValue in self?.playbackItemDidChange(newValue) }
+            .store(in: &cancellables)
+
+        manager.$playbackRequestStatus
+            .sink { [weak self] newValue in self?.playbackRequestStatusDidChange(newValue) }
+            .store(in: &cancellables)
+
+        manager.secondsBox.$value
+            .sink { [weak self] newValue in self?.secondsDidChange(newValue) }
+            .store(in: &cancellables)
 
         Notifications[.avAudioSessionInterruption]
             .publisher
@@ -83,8 +96,27 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
         )
     }
 
+    private func secondsDidChange(_ newSeconds: Duration) {
+        handleNowPlayablePlaybackChange(
+            playing: true,
+            metadata: .init(
+                position: newSeconds,
+                duration: manager?.item.runtime ?? .zero
+            )
+        )
+    }
+
+    private func actionDidChange(_ newAction: MediaPlayerManager._Action) {
+        switch newAction {
+        case .stop, .error:
+            handleStopAction()
+        default: ()
+        }
+    }
+
+    // TODO: remove and respond to manager action publisher instead
     // TODO: register different commands based on item capabilities
-    private func playbackItemDidChange(newItem: MediaPlayerItem?) {
+    private func playbackItemDidChange(_ newItem: MediaPlayerItem?) {
         itemImageCancellable?.cancel()
         itemImageCancellable = nil
         guard let newItem else { return }
@@ -103,46 +135,33 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
             }
         }
         .asAnyCancellable()
-    }
 
-    private func secondsDidChange(newSeconds: Duration) {
         handleNowPlayablePlaybackChange(
             playing: true,
             metadata: .init(
-                position: newSeconds,
+                position: manager?.seconds ?? .zero,
                 duration: manager?.item.runtime ?? .zero
             )
         )
     }
 
-    // TODO: respond to error
-    private func stateDidChange(newState: MediaPlayerManager.State) {
-        if newState == .stopped {
-            cancellables = []
+    private func handleStopAction() {
+        cancellables = []
 
-            for command in defaultRegisteredCommands {
-                command.removeHandler()
+        for command in defaultRegisteredCommands {
+            command.removeHandler()
+        }
+
+        Task(priority: .userInitiated) {
+            // TODO: figure out way to not need delay
+            // Delay to wait for io to stop
+            try? await Task.sleep(for: .seconds(0.3))
+
+            do {
+                try stopSession()
+            } catch {
+                logger.critical("Unable to stop audio session: \(error.localizedDescription)")
             }
-
-            Task(priority: .userInitiated) {
-                // TODO: figure out way to not need delay
-                // Delay to wait for io to stop
-                try? await Task.sleep(for: .seconds(0.3))
-
-                do {
-                    try stopSession()
-                } catch {
-                    logger.critical("Unable to stop audio session: \(error.localizedDescription)")
-                }
-            }
-        } else {
-            handleNowPlayablePlaybackChange(
-                playing: true,
-                metadata: .init(
-                    position: manager?.seconds ?? .zero,
-                    duration: manager?.item.runtime ?? .zero
-                )
-            )
         }
     }
 
@@ -156,21 +175,21 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
         switch type {
         case .began:
             playbackRequestStateBeforeInterruption = manager?.playbackRequestStatus ?? .playing
-            manager?.set(playbackRequestStatus: .paused)
+            manager?.setPlaybackRequestStatus(status: .paused)
         case .ended:
             do {
                 try startSession()
 
                 if playbackRequestStateBeforeInterruption == .playing {
                     if options.contains(.shouldResume) {
-                        manager?.set(playbackRequestStatus: .playing)
+                        manager?.setPlaybackRequestStatus(status: .playing)
                     } else {
-                        manager?.set(playbackRequestStatus: .paused)
+                        manager?.setPlaybackRequestStatus(status: .paused)
                     }
                 }
             } catch {
                 logger.critical("Unable to reactivate audio session after interruption: \(error.localizedDescription)")
-                manager?.send(.stop)
+                manager?.stop()
             }
         @unknown default: ()
         }
@@ -183,9 +202,9 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
     ) -> MPRemoteCommandHandlerStatus {
         switch command {
         case .pause:
-            manager?.set(playbackRequestStatus: .paused)
+            manager?.setPlaybackRequestStatus(status: .paused)
         case .play:
-            manager?.set(playbackRequestStatus: .playing)
+            manager?.setPlaybackRequestStatus(status: .playing)
         case .togglePausePlay:
             manager?.togglePlayPause()
         case .skipBackward:
@@ -199,10 +218,10 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
             manager?.proxy?.setSeconds(Duration.seconds(event.positionTime))
         case .nextTrack:
             guard let nextItem = manager?.queue?.nextItem else { return .commandFailed }
-            manager?.send(.playNewItem(provider: nextItem))
+            manager?.playNewItem(provider: nextItem)
         case .previousTrack:
             guard let previousItem = manager?.queue?.previousItem else { return .commandFailed }
-            manager?.send(.playNewItem(provider: previousItem))
+            manager?.playNewItem(provider: previousItem)
         default: ()
         }
 

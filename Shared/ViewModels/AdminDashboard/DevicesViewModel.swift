@@ -25,7 +25,8 @@ final class DevicesViewModel: ViewModel {
         var transition: Transition {
             switch self {
             case .refresh:
-                .loop(.refreshing, whenBackground: .refreshing)
+                .loop(.refreshing)
+                    .whenBackground(.refreshing)
             case .delete, .update:
                 .background(.updating)
             }

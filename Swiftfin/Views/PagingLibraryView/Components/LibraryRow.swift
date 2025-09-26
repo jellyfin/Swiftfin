@@ -33,15 +33,6 @@ extension PagingLibraryView {
             self.posterType = posterType
         }
 
-        private func imageSources(from element: Element) -> [ImageSource] {
-            switch posterType {
-            case .landscape:
-                element.landscapeImageSources(maxWidth: landscapeMaxWidth, quality: 90)
-            case .portrait:
-                element.portraitImageSources(maxWidth: portraitMaxWidth, quality: 90)
-            }
-        }
-
         @ViewBuilder
         private func itemAccessoryView(item: BaseItemDto) -> some View {
             DotHStack {
@@ -102,15 +93,11 @@ extension PagingLibraryView {
 
         @ViewBuilder
         private var rowLeading: some View {
-            AlternateLayoutView {
-                Color.clear
-            } content: {
-                ImageView(imageSources(from: item))
-                    .failure {
-                        SystemImageContentView(systemName: item.systemImage)
-                    }
-            }
-            .posterStyle(posterType)
+            PosterImage(
+                item: item,
+                type: posterType,
+                contentMode: .fill
+            )
             .posterShadow()
             .frame(width: posterType == .landscape ? landscapeMaxWidth : portraitMaxWidth)
             .padding(.vertical, 8)

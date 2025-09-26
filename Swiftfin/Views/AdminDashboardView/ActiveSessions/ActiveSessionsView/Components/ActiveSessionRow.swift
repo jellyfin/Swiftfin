@@ -33,32 +33,14 @@ extension ActiveSessionsView {
 
         @ViewBuilder
         private var rowLeading: some View {
-            // TODO: better handling for different poster types
             Group {
                 if let nowPlayingItem = session.nowPlayingItem {
-                    if nowPlayingItem.type == .audio {
-                        ZStack {
-                            Color.clear
-
-                            ImageView(nowPlayingItem.squareImageSources(maxWidth: 60, quality: 90))
-                                .failure {
-                                    SystemImageContentView(systemName: nowPlayingItem.systemImage)
-                                }
-                        }
-                        .squarePosterStyle()
-                        .frame(width: 60, height: 60)
-                    } else {
-                        ZStack {
-                            Color.clear
-
-                            ImageView(nowPlayingItem.portraitImageSources(maxWidth: 60, quality: 90))
-                                .failure {
-                                    SystemImageContentView(systemName: nowPlayingItem.systemImage)
-                                }
-                        }
-                        .posterStyle(.portrait)
-                        .frame(width: 60, height: 90)
-                    }
+                    PosterImage(
+                        item: nowPlayingItem,
+                        type: nowPlayingItem.preferredPosterDisplayType,
+                        contentMode: .fit
+                    )
+                    .frame(width: 60)
                 } else {
                     ZStack {
                         session.device.clientColor
@@ -68,7 +50,7 @@ extension ActiveSessionsView {
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 40)
                     }
-                    .squarePosterStyle()
+                    .posterStyle(.square)
                     .frame(width: 60, height: 60)
                 }
             }

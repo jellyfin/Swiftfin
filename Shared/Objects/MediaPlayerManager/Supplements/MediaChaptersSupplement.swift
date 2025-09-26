@@ -73,7 +73,7 @@ extension MediaChaptersSupplement {
             ) { chapter, _ in
                 ChapterRow(chapter: chapter) {
                     manager.proxy?.setSeconds(chapter.secondsRange.lowerBound)
-                    manager.set(playbackRequestStatus: .playing)
+                    manager.setPlaybackRequestStatus(status: .playing)
                 }
                 .edgePadding(.horizontal)
             }
@@ -88,7 +88,7 @@ extension MediaChaptersSupplement {
             ) { chapter in
                 ChapterButton(chapter: chapter) {
                     manager.proxy?.setSeconds(chapter.secondsRange.lowerBound)
-                    manager.set(playbackRequestStatus: .playing)
+                    manager.setPlaybackRequestStatus(status: .playing)
                 }
                 .frame(height: 150)
             }

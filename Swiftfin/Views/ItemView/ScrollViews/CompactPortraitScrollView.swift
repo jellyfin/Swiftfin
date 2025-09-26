@@ -166,13 +166,14 @@ extension ItemView.CompactPosterScrollView {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .bottom, spacing: 12) {
 
-                    ImageView(viewModel.item.imageSource(.primary, maxWidth: 130))
-                        .failure {
-                            SystemImageContentView(systemName: viewModel.item.systemImage)
-                        }
-                        .posterStyle(.portrait, contentMode: .fit)
-                        .frame(width: 130)
-                        .accessibilityIgnoresInvertColors()
+                    PosterImage(
+                        item: viewModel.item,
+                        type: .portrait,
+                        contentMode: .fit
+                    )
+                    .environment(\.isOverComplexContent, true)
+                    .frame(width: 130)
+                    .accessibilityIgnoresInvertColors()
 
                     rightShelfView
                         .padding(.bottom)

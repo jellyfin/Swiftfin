@@ -21,11 +21,6 @@ struct VideoPlayerSettingsView: View {
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
 
-    @Default(.VideoPlayer.Transition.pauseOnBackground)
-    private var pauseOnBackground
-    @Default(.VideoPlayer.Transition.playOnActive)
-    private var playOnActive
-
     @Router
     private var router
 
@@ -66,27 +61,22 @@ struct VideoPlayerSettingsView: View {
                 } footer: {
                     L10n.subtitlesDisclaimer.text
                 }
-
-                Section(L10n.playback) {
-                    Toggle(L10n.pauseOnBackground, isOn: $pauseOnBackground)
-                    Toggle(L10n.playOnActive, isOn: $playOnActive)
-                }
-                .blurredFullScreenCover(isPresented: $isPresentingResumeOffsetStepper) {
-                    StepperView(
-                        title: L10n.resumeOffsetTitle,
-                        description: L10n.resumeOffsetDescription,
-                        value: $resumeOffset,
-                        range: 0 ... 30,
-                        step: 1
-                    )
-                    .valueFormatter {
-                        $0.secondLabel
-                    }
-                    .onCloseSelected {
-                        isPresentingResumeOffsetStepper = false
-                    }
-                }
             }
             .navigationTitle(L10n.videoPlayer)
+            .blurredFullScreenCover(isPresented: $isPresentingResumeOffsetStepper) {
+                StepperView(
+                    title: L10n.resumeOffsetTitle,
+                    description: L10n.resumeOffsetDescription,
+                    value: $resumeOffset,
+                    range: 0 ... 30,
+                    step: 1
+                )
+                .valueFormatter {
+                    $0.secondLabel
+                }
+                .onCloseSelected {
+                    isPresentingResumeOffsetStepper = false
+                }
+            }
     }
 }

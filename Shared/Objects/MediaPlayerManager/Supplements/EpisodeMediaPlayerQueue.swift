@@ -22,15 +22,13 @@ import SwiftUI
 @MainActor
 class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 
-    nonisolated weak var manager: MediaPlayerManager? {
+    weak var manager: MediaPlayerManager? {
         didSet {
             cancellables = []
             guard let manager else { return }
             manager.$playbackItem
-                .sink { newItem in
-                    Task { @MainActor in
-                        self.didReceive(newItem: newItem)
-                    }
+                .sink { [weak self] newItem in
+                    self?.didReceive(newItem: newItem)
                 }
                 .store(in: &cancellables)
         }
@@ -48,6 +46,11 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     var hasNextItem: Bool = false
     @Published
     var hasPreviousItem: Bool = false
+
+    lazy var hasNextItemPublisher: Published<Bool>.Publisher = $hasNextItem
+    lazy var hasPreviousItemPublisher: Published<Bool>.Publisher = $hasPreviousItem
+    lazy var nextItemPublisher: Published<MediaPlayerItemProvider?>.Publisher = $nextItem
+    lazy var previousItemPublisher: Published<MediaPlayerItemProvider?>.Publisher = $previousItem
 
     private var currentAdjacentEpisodesTask: AnyCancellable?
     private let seriesViewModel: SeriesItemViewModel
@@ -176,7 +179,7 @@ extension EpisodeMediaPlayerQueue {
                 )
             }
 
-            manager.send(.playNewItem(provider: provider))
+            manager.playNewItem(provider: provider)
         }
 
         var tvOSView: some View { EmptyView() }
@@ -230,22 +233,35 @@ extension EpisodeMediaPlayerQueue {
             self.action = action
         }
 
+        private struct _Body: View {
+
+            @ObservedObject
+            var selectionViewModel: SeasonItemViewModel
+
+            let action: (BaseItemDto) -> Void
+
+            var body: some View {
+                CollectionVGrid(
+                    uniqueElements: selectionViewModel.elements,
+                    layout: .columns(
+                        1,
+                        insets: .init(top: 0, leading: 0, bottom: EdgeInsets.edgePadding, trailing: 0)
+                    )
+                ) { item in
+                    EpisodeRow(episode: item) {
+                        action(item)
+                    }
+                    .edgePadding(.horizontal)
+                }
+            }
+        }
+
         var body: some View {
             if let selectionViewModel {
-                WithObservedObject(selectionViewModel) { selectionViewModel in
-                    CollectionVGrid(
-                        uniqueElements: selectionViewModel.elements,
-                        layout: .columns(
-                            1,
-                            insets: .init(top: 0, leading: 0, bottom: EdgeInsets.edgePadding, trailing: 0)
-                        )
-                    ) { item in
-                        EpisodeRow(episode: item) {
-                            action(item)
-                        }
-                        .edgePadding(.horizontal)
-                    }
-                }
+                _Body(
+                    selectionViewModel: selectionViewModel,
+                    action: action
+                )
             }
         }
     }
@@ -274,20 +290,36 @@ extension EpisodeMediaPlayerQueue {
             self.action = action
         }
 
+        private struct _Body: View {
+
+            @Environment(\.safeAreaInsets)
+            private var safeAreaInsets: EdgeInsets
+
+            @ObservedObject
+            var selectionViewModel: SeasonItemViewModel
+
+            let action: (BaseItemDto) -> Void
+
+            var body: some View {
+                CollectionHStack(
+                    uniqueElements: selectionViewModel.elements,
+                    id: \.unwrappedIDHashOrZero
+                ) { item in
+                    EpisodeButton(episode: item) {
+                        action(item)
+                    }
+                    .frame(height: 150)
+                }
+                .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
+            }
+        }
+
         var body: some View {
             if let selectionViewModel {
-                WithObservedObject(selectionViewModel) { selectionViewModel in
-                    CollectionHStack(
-                        uniqueElements: selectionViewModel.elements,
-                        id: \.unwrappedIDHashOrZero
-                    ) { item in
-                        EpisodeButton(episode: item) {
-                            action(item)
-                        }
-                        .frame(height: 150)
-                    }
-                    .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
-                }
+                _Body(
+                    selectionViewModel: selectionViewModel,
+                    action: action
+                )
                 .frame(height: 150)
             }
         }
@@ -344,8 +376,8 @@ extension EpisodeMediaPlayerQueue {
 
                     Button {
                         guard let nextItem = manager.queue?.nextItem else { return }
-                        manager.send(.playNewItem(provider: nextItem))
-                        manager.set(playbackRequestStatus: .playing)
+                        manager.playNewItem(provider: nextItem)
+                        manager.setPlaybackRequestStatus(status: .playing)
                         containerState.select(supplement: nil)
                     } label: {
                         ZStack {
@@ -361,8 +393,8 @@ extension EpisodeMediaPlayerQueue {
 
                     Button {
                         guard let previousItem = manager.queue?.previousItem else { return }
-                        manager.send(.playNewItem(provider: previousItem))
-                        manager.set(playbackRequestStatus: .playing)
+                        manager.playNewItem(provider: previousItem)
+                        manager.setPlaybackRequestStatus(status: .playing)
                         containerState.select(supplement: nil)
                     } label: {
                         ZStack {

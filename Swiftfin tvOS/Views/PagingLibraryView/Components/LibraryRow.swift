@@ -31,12 +31,14 @@ extension PagingLibraryView {
             self.posterType = posterType
         }
 
-        private func imageView(from element: Element) -> ImageView {
+        private func imageSources(from element: Element) -> [ImageSource] {
             switch posterType {
             case .landscape:
-                ImageView(element.landscapeImageSources(maxWidth: 110, quality: 90))
+                element.landscapeImageSources(maxWidth: landscapeMaxWidth, quality: 90)
             case .portrait:
-                ImageView(element.portraitImageSources(maxWidth: 60, quality: 90))
+                element.portraitImageSources(maxWidth: portraitMaxWidth, quality: 90)
+            case .square:
+                element.squareImageSources(maxWidth: portraitMaxWidth, quality: 90)
             }
         }
 
@@ -102,7 +104,7 @@ extension PagingLibraryView {
             ZStack {
                 Color.clear
 
-                imageView(from: item)
+                ImageView(imageSources(from: item))
                     .failure {
                         SystemImageContentView(systemName: item.systemImage)
                     }
