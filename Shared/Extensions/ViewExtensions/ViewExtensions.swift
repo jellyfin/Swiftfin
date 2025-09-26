@@ -100,23 +100,38 @@ extension View {
     ) -> some View {
         switch type {
         case .landscape:
-            aspectRatio(1.77, contentMode: contentMode)
+            posterAspectRatio(type, contentMode: contentMode)
             #if !os(tvOS)
                 .posterBorder()
                 .posterCornerRadius(type)
             #endif
         case .portrait:
-            aspectRatio(2 / 3, contentMode: contentMode)
+            posterAspectRatio(type, contentMode: contentMode)
             #if !os(tvOS)
                 .posterBorder()
                 .posterCornerRadius(type)
             #endif
         case .square:
-            aspectRatio(1.0, contentMode: contentMode)
+            posterAspectRatio(type, contentMode: contentMode)
             #if os(iOS)
                 .posterBorder()
                 .posterCornerRadius(type)
             #endif
+        }
+    }
+
+    @ViewBuilder
+    func posterAspectRatio(
+        _ type: PosterDisplayType,
+        contentMode: ContentMode = .fill
+    ) -> some View {
+        switch type {
+        case .landscape:
+            aspectRatio(1.77, contentMode: contentMode)
+        case .portrait:
+            aspectRatio(2 / 3, contentMode: contentMode)
+        case .square:
+            aspectRatio(1.0, contentMode: contentMode)
         }
     }
 

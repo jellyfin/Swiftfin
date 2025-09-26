@@ -8,8 +8,6 @@
 
 import SwiftUI
 
-// TODO: custom image sizes
-
 /// Retrieving images by exact pixel dimensions is a bit
 /// intense for normal usage and eases cache usage and modifications.
 private let landscapeMaxWidth: CGFloat = 300
@@ -21,27 +19,30 @@ struct PosterImage<Item: Poster>: View {
     private var isOverComplexContent
 
     private let contentMode: ContentMode
+    private let imageMaxWidth: CGFloat
     private let item: Item
     private let type: PosterDisplayType
 
     init(
         item: Item,
         type: PosterDisplayType,
-        contentMode: ContentMode = .fill
+        contentMode: ContentMode = .fill,
+        maxWidth: CGFloat? = nil
     ) {
+        self.contentMode = contentMode
+        self.imageMaxWidth = maxWidth ?? (type == .landscape ? landscapeMaxWidth : portraitMaxWidth)
         self.item = item
         self.type = type
-        self.contentMode = contentMode
     }
 
     private var imageSources: [ImageSource] {
         switch type {
         case .landscape:
-            item.landscapeImageSources(maxWidth: landscapeMaxWidth, quality: 90)
+            item.landscapeImageSources(maxWidth: imageMaxWidth, quality: 90)
         case .portrait:
-            item.portraitImageSources(maxWidth: portraitMaxWidth, quality: 90)
+            item.portraitImageSources(maxWidth: imageMaxWidth, quality: 90)
         case .square:
-            item.squareImageSources(maxWidth: portraitMaxWidth, quality: 90)
+            item.squareImageSources(maxWidth: imageMaxWidth, quality: 90)
         }
     }
 

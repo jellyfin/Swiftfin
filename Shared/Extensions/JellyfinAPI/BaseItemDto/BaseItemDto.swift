@@ -12,7 +12,8 @@ import Factory
 import Foundation
 import JellyfinAPI
 import MediaPlayer
-import UIKit
+import Nuke
+import SwiftUI
 
 // TODO: clean up
 
@@ -166,6 +167,36 @@ extension BaseItemDto {
         default:
             true
         }
+    }
+
+    /// The primary image handler for building the
+    /// image used in the now playing system.
+    @MainActor
+    func getNowPlayingImage() async -> UIImage? {
+        let imageSources = thumbImageSources()
+
+        guard let firstImage = await ImagePipeline.Swiftfin.other.loadFirstImage(from: imageSources) else {
+            let failedSystemContentView = SystemImageContentView(
+                systemName: systemImage
+            )
+            .posterStyle(preferredPosterDisplayType)
+            .frame(width: 400)
+
+            return ImageRenderer(content: failedSystemContentView).uiImage
+        }
+
+        let image = Image(uiImage: firstImage)
+            .resizable()
+        let transformedImage = ZStack {
+            Rectangle()
+                .fill(Color.secondarySystemFill)
+
+            transform(image: image)
+        }
+        .posterAspectRatio(preferredPosterDisplayType, contentMode: .fit)
+        .frame(width: 400)
+
+        return ImageRenderer(content: transformedImage).uiImage
     }
 
     func getPlaybackItemProvider(

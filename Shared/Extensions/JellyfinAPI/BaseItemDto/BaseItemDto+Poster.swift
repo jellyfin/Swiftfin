@@ -127,11 +127,13 @@ extension BaseItemDto: Poster {
     }
 
     func thumbImageSources() -> [ImageSource] {
-        switch type {
-        case .musicVideo, .video:
-            landscapeImageSources(maxWidth: 200, quality: 90)
-        default:
+        switch preferredPosterDisplayType {
+        case .portrait:
             portraitImageSources(maxWidth: 200, quality: 90)
+        case .landscape:
+            landscapeImageSources(maxWidth: 200, quality: 90)
+        case .square:
+            squareImageSources(maxWidth: 200, quality: 90)
         }
     }
 

@@ -14,7 +14,7 @@ import SwiftUI
 extension BaseItemPerson: Poster {
 
     var preferredPosterDisplayType: PosterDisplayType {
-        .landscape
+        .portrait
     }
 
     var unwrappedIDHashOrZero: Int {

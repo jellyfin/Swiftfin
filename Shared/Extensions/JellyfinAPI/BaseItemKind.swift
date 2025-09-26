@@ -193,7 +193,7 @@ extension BaseItemKind {
 
     var preferredPosterDisplayType: PosterDisplayType {
         switch self {
-        case .audio, .musicAlbum:
+        case .audio, .channel, .musicAlbum, .tvChannel:
             .square
         case .folder, .program, .musicVideo, .video, .userView:
             .landscape

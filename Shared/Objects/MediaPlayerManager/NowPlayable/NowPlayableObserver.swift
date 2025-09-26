@@ -12,10 +12,10 @@ import Logging
 import MediaPlayer
 import Nuke
 
-// TODO: interruptions
 // TODO: ensure proper state handling
 //       - manager states
 //       - playback request states
+// TODO: have MediaPlayerItem report supported commands
 
 @MainActor
 class NowPlayableObserver: ViewModel, MediaPlayerObserver {
