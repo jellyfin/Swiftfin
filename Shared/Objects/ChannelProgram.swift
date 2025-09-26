@@ -11,6 +11,7 @@ import JellyfinAPI
 import SwiftUI
 
 // Note: assumes programs are sorted by start date
+// TODO: rethink implementation
 
 /// Structure that has a channel and associated programs.
 struct ChannelProgram: Hashable, Identifiable {
@@ -40,6 +41,8 @@ struct ChannelProgram: Hashable, Identifiable {
         channel.id
     }
 }
+
+// TODO: implement all protocols, pass from channel
 
 extension ChannelProgram: Poster {
 

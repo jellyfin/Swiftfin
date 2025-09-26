@@ -139,9 +139,13 @@ extension BaseItemDto: Poster {
     func transform(image: Image) -> some View {
         switch type {
         case .channel, .tvChannel:
-            image
-                .aspectRatio(contentMode: .fit)
-                .padding(5)
+            ContainerRelativeView(ratio: 0.95) {
+                image
+                    .aspectRatio(contentMode: .fit)
+            }
+//            image
+//                .aspectRatio(contentMode: .fit)
+//                .padding(5)
         default:
             image
         }
