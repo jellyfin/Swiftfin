@@ -66,6 +66,17 @@ struct VideoPlayer: View {
         .onSceneDidEnterBackground {
             manager.set(playbackRequestStatus: .paused)
         }
+        .overlay {
+            Rectangle()
+                .hidden()
+                .accessibilityRepresentation {
+                    Button {
+                        containerState.accessibilityToggleOverlay()
+                    } label: {
+                        Text("Toggle Overlay")
+                    }
+                }
+        }
     }
 
     var body: some View {

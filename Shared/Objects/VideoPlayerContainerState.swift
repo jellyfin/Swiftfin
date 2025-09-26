@@ -68,6 +68,11 @@ class VideoPlayerContainerState: ObservableObject {
     @Published
     var isGuestSupplement: Bool = false
 
+    func accessibilityToggleOverlay() {
+        isPresentingOverlay.toggle()
+        timer.stop()
+    }
+
     // TODO: rename isPresentingPlaybackControls
     @Published
     var isPresentingOverlay: Bool = false {
