@@ -143,9 +143,6 @@ extension BaseItemDto: Poster {
                 image
                     .aspectRatio(contentMode: .fit)
             }
-//            image
-//                .aspectRatio(contentMode: .fit)
-//                .padding(5)
         default:
             image
         }
