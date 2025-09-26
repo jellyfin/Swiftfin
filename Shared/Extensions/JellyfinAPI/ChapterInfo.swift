@@ -8,6 +8,7 @@
 
 import Foundation
 import JellyfinAPI
+import SwiftUI
 
 extension ChapterInfo: Displayable {
 
@@ -29,20 +30,12 @@ extension ChapterInfo {
     struct FullInfo: Poster {
 
         let chapterInfo: ChapterInfo
+        let displayTitle: String
+        let id: Int
         let imageSource: ImageSource
+        let preferredPosterDisplayType: PosterDisplayType = .landscape
         let systemImage: String = "film"
-
-        var displayTitle: String {
-            chapterInfo.displayTitle
-        }
-
-        var id: Int {
-            chapterInfo.hashValue
-        }
-
-        var unwrappedIDHashOrZero: Int {
-            id
-        }
+        let unwrappedIDHashOrZero: Int
 
         var subtitle: String?
         var showTitle: Bool = true
@@ -57,6 +50,10 @@ extension ChapterInfo {
 
         func landscapeImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
             [imageSource]
+        }
+
+        func transform(image: Image) -> some View {
+            image
         }
     }
 }

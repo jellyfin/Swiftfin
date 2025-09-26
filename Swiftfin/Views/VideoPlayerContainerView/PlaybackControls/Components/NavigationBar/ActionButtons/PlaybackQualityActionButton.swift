@@ -53,7 +53,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
                 Button {
                     guard playbackItem.requestedBitrate != bitrate else { return }
                     let provider = makeProvider(with: bitrate, for: playbackItem)
-                    manager.send(.playNewItem(provider: provider))
+                    manager.playNewItem(provider: provider)
                 } label: {
                     if playbackItem.requestedBitrate == bitrate {
                         Label(bitrate.displayTitle, systemImage: "checkmark")

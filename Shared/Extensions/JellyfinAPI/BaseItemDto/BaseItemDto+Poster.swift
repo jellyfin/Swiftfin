@@ -9,11 +9,15 @@
 import Defaults
 import Foundation
 import JellyfinAPI
-import UIKit
+import SwiftUI
 
 // MARK: Poster
 
 extension BaseItemDto: Poster {
+
+    var preferredPosterDisplayType: PosterDisplayType {
+        type?.preferredPosterDisplayType ?? .portrait
+    }
 
     var subtitle: String? {
         switch type {
@@ -43,10 +47,12 @@ extension BaseItemDto: Poster {
             "film.stack"
         case .channel, .tvChannel, .liveTvChannel, .program:
             "tv"
-        case .episode, .movie, .series:
+        case .episode, .movie, .series, .video:
             "film"
         case .folder:
             "folder.fill"
+        case .musicVideo:
+            "music.note.tv.fill"
         case .person:
             "person.fill"
         default:
@@ -92,7 +98,7 @@ extension BaseItemDto: Poster {
             } else {
                 [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
             }
-        case .folder, .program, .video:
+        case .folder, .program, .musicVideo, .video:
             [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
         default:
             [
@@ -113,10 +119,34 @@ extension BaseItemDto: Poster {
 
     func squareImageSources(maxWidth: CGFloat?, quality: Int? = nil) -> [ImageSource] {
         switch type {
-        case .audio, .musicAlbum:
+        case .audio, .channel, .musicAlbum, .tvChannel:
             [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
         default:
             []
+        }
+    }
+
+    func thumbImageSources() -> [ImageSource] {
+        switch preferredPosterDisplayType {
+        case .portrait:
+            portraitImageSources(maxWidth: 200, quality: 90)
+        case .landscape:
+            landscapeImageSources(maxWidth: 200, quality: 90)
+        case .square:
+            squareImageSources(maxWidth: 200, quality: 90)
+        }
+    }
+
+    @ViewBuilder
+    func transform(image: Image) -> some View {
+        switch type {
+        case .channel, .tvChannel:
+            ContainerRelativeView(ratio: 0.95) {
+                image
+                    .aspectRatio(contentMode: .fit)
+            }
+        default:
+            image
         }
     }
 }

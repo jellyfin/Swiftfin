@@ -98,7 +98,7 @@ extension ItemView {
         // MARK: - Play Content
 
         private func play(fromBeginning: Bool = false) {
-            guard var playButtonItem = viewModel.playButtonItem,
+            guard let playButtonItem = viewModel.playButtonItem,
                   let selectedMediaSource = viewModel.selectedMediaSource
             else {
                 logger.error("Play selected with no item or media source")

@@ -44,6 +44,7 @@ extension NavigationRoute {
     }
     #endif
 
+    @MainActor
     static func videoPlayer(
         item: BaseItemDto,
         mediaSource: MediaSourceInfo? = nil,
@@ -55,6 +56,7 @@ extension NavigationRoute {
         return Self.videoPlayer(provider: provider, queue: queue)
     }
 
+    @MainActor
     static func videoPlayer(
         provider: MediaPlayerItemProvider,
         queue: (any MediaPlayerQueue)? = nil
@@ -68,6 +70,7 @@ extension NavigationRoute {
         return Self.videoPlayer(manager: manager)
     }
 
+    @MainActor
     static func videoPlayer(manager: MediaPlayerManager) -> NavigationRoute {
 
         Container.shared.mediaPlayerManager.register {

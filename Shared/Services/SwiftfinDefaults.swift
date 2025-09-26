@@ -237,8 +237,7 @@ extension Defaults.Keys {
         }
 
         enum Transition {
-            static let pauseOnBackground: Key<Bool> = UserKey("pauseOnBackground", default: false)
-            static let playOnActive: Key<Bool> = UserKey("playOnActive", default: false)
+            static let pauseOnBackground: Key<Bool> = UserKey("playInBackground", default: true)
         }
     }
 

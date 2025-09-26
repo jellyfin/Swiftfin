@@ -79,7 +79,7 @@ struct ActiveSessionsView: View {
         .navigationTitle(L10n.sessions)
         .navigationBarTitleDisplayMode(.inline)
         .topBarTrailing {
-            if viewModel.backgroundStates.contains(.refreshing) {
+            if viewModel.background.is(.refreshing) {
                 ProgressView()
             }
 

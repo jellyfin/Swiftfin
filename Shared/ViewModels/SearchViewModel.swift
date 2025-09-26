@@ -12,194 +12,135 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-final class SearchViewModel: ViewModel, Stateful {
+@MainActor
+@Stateful
+final class SearchViewModel: ViewModel {
 
-    // MARK: Action
-
-    enum Action: Equatable {
-        case error(JellyfinAPIError)
+    @CasePathable
+    enum Action {
         case getSuggestions
         case search(query: String)
+        case actuallySearch(query: String)
+
+        var transition: Transition {
+            switch self {
+            case .getSuggestions:
+                .none
+            case let .search(query):
+                query.isEmpty ? .to(.initial) : .to(.searching)
+            case .actuallySearch:
+                .to(.searching, then: .initial)
+                    .onRepeat(.cancel)
+            }
+        }
     }
 
-    // MARK: State
-
-    enum State: Hashable {
-        case content
-        case error(JellyfinAPIError)
+    enum State {
+        case error
         case initial
         case searching
     }
 
     @Published
-    private(set) var channels: [BaseItemDto] = []
-    @Published
-    private(set) var collections: [BaseItemDto] = []
-    @Published
-    private(set) var episodes: [BaseItemDto] = []
-    @Published
-    private(set) var movies: [BaseItemDto] = []
-    @Published
-    private(set) var people: [BaseItemDto] = []
-    @Published
-    private(set) var programs: [BaseItemDto] = []
-    @Published
-    private(set) var series: [BaseItemDto] = []
+    private(set) var items: [BaseItemKind: [BaseItemDto]] = [:]
     @Published
     private(set) var suggestions: [BaseItemDto] = []
 
-    @Published
-    var state: State = .initial
-
-    private var searchTask: AnyCancellable?
     private var searchQuery: CurrentValueSubject<String, Never> = .init("")
 
     let filterViewModel: FilterViewModel
 
     var hasNoResults: Bool {
-        [
-            collections,
-            channels,
-            episodes,
-            movies,
-            people,
-            programs,
-            series,
-        ].allSatisfy(\.isEmpty)
+        items.values.allSatisfy(\.isEmpty)
     }
 
     // MARK: init
 
-    override init() {
-        self.filterViewModel = .init()
+    init(filterViewModel: FilterViewModel = .init()) {
+        self.filterViewModel = filterViewModel
         super.init()
 
         searchQuery
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] query in
-                guard let self, query.isNotEmpty else { return }
-
-                self.searchTask?.cancel()
-                self.search(query: query)
+                guard let self else { return }
+                guard query.isNotEmpty else { return }
+                actuallySearch(query: query)
             }
             .store(in: &cancellables)
 
         filterViewModel.$currentFilters
             .debounce(for: 0.5, scheduler: RunLoop.main)
-            .filter { _ in self.searchQuery.value.isNotEmpty }
             .sink { [weak self] _ in
                 guard let self else { return }
-
                 guard searchQuery.value.isNotEmpty else { return }
-
-                self.searchTask?.cancel()
-                self.search(query: searchQuery.value)
+                search(query: searchQuery.value)
             }
             .store(in: &cancellables)
     }
 
-    // MARK: respond
+    @Function(\Action.Cases.search)
+    private func _search(_ query: String) async throws {
+        searchQuery.value = query
 
-    func respond(to action: Action) -> State {
-        switch action {
-        case let .error(error):
-            return .error(error)
-        case let .search(query):
-            if query.isEmpty {
-                searchTask?.cancel()
-                searchTask = nil
-                searchQuery.send(query)
-                return .initial
-            } else {
-                searchQuery.send(query)
-                return .searching
-            }
-        case .getSuggestions:
-            filterViewModel.send(.getQueryFilters)
-
-            Task {
-                let suggestions = try await getSuggestions()
-
-                await MainActor.run {
-                    self.suggestions = suggestions
-                }
-            }
-            .store(in: &cancellables)
-
-            return state
-        }
+        await cancel()
+        items.removeAll()
     }
 
-    // MARK: search
+    @Function(\Action.Cases.actuallySearch)
+    private func _actuallySearch(_ query: String) async throws {
 
-    private func search(query: String) {
-        searchTask = Task {
+        guard query.isNotEmpty else {
+            return
+        }
 
-            do {
+        let newItems = try await withThrowingTaskGroup(
+            of: (BaseItemKind, [BaseItemDto]).self,
+            returning: [BaseItemKind: [BaseItemDto]].self
+        ) { group in
 
-                let items = try await withThrowingTaskGroup(
-                    of: (BaseItemKind, [BaseItemDto]).self,
-                    returning: [BaseItemKind: [BaseItemDto]].self
-                ) { group in
+            // Base items
+            let retrievingItemTypes: [BaseItemKind] = [
+                .boxSet,
+                .episode,
+                .movie,
+                .musicArtist,
+                .musicVideo,
+                .liveTvProgram,
+                .series,
+                .tvChannel,
+                .video,
+            ]
 
-                    // Base items
-                    let retrievingItemTypes: [BaseItemKind] = [
-                        .boxSet,
-                        .episode,
-                        .movie,
-                        .liveTvProgram,
-                        .series,
-                        .tvChannel,
-                    ]
-
-                    for type in retrievingItemTypes {
-                        group.addTask {
-                            let items = try await self.getItems(query: query, itemType: type)
-                            return (type, items)
-                        }
-                    }
-
-                    // People
-                    group.addTask {
-                        let items = try await self.getPeople(query: query)
-                        return (BaseItemKind.person, items)
-                    }
-
-                    var result: [BaseItemKind: [BaseItemDto]] = [:]
-
-                    while let items = try await group.next() {
-                        result[items.0] = items.1
-                    }
-
-                    return result
-                }
-
-                guard !Task.isCancelled else { return }
-
-                await MainActor.run {
-                    self.collections = items[.boxSet] ?? []
-                    self.channels = items[.tvChannel] ?? []
-                    self.episodes = items[.episode] ?? []
-                    self.movies = items[.movie] ?? []
-                    self.people = items[.person] ?? []
-                    self.programs = items[.liveTvProgram] ?? []
-                    self.series = items[.series] ?? []
-
-                    self.state = .content
-                }
-            } catch {
-
-                guard !Task.isCancelled else { return }
-
-                await MainActor.run {
-                    self.send(.error(.init(error.localizedDescription)))
+            for type in retrievingItemTypes {
+                group.addTask {
+                    let items = try await self._getItems(query: query, itemType: type)
+                    return (type, items)
                 }
             }
+
+            // People
+            group.addTask {
+                let items = try await self._getPeople(query: query)
+                return (BaseItemKind.person, items)
+            }
+
+            var result: [BaseItemKind: [BaseItemDto]] = [:]
+
+            while let items = try await group.next() {
+                if items.1.isNotEmpty {
+                    result[items.0] = items.1
+                }
+            }
+
+            return result
         }
-        .asAnyCancellable()
+
+        guard !Task.isCancelled else { return }
+        self.items = newItems
     }
 
-    private func getItems(query: String, itemType: BaseItemKind) async throws -> [BaseItemDto] {
+    private func _getItems(query: String, itemType: BaseItemKind) async throws -> [BaseItemDto] {
 
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.enableUserData = true
@@ -233,7 +174,7 @@ final class SearchViewModel: ViewModel, Stateful {
         return response.value.items ?? []
     }
 
-    private func getPeople(query: String) async throws -> [BaseItemDto] {
+    private func _getPeople(query: String) async throws -> [BaseItemDto] {
 
         var parameters = Paths.GetPersonsParameters()
         parameters.limit = 20
@@ -247,7 +188,10 @@ final class SearchViewModel: ViewModel, Stateful {
 
     // MARK: suggestions
 
-    private func getSuggestions() async throws -> [BaseItemDto] {
+    @Function(\Action.Cases.getSuggestions)
+    private func _getSuggestions() async throws {
+
+        filterViewModel.send(.getQueryFilters)
 
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.includeItemTypes = [.movie, .series]
@@ -258,6 +202,6 @@ final class SearchViewModel: ViewModel, Stateful {
         let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
         let response = try await userSession.client.send(request)
 
-        return response.value.items ?? []
+        self.suggestions = response.value.items ?? []
     }
 }

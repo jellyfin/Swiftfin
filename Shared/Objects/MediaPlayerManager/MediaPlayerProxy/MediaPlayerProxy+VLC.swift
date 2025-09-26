@@ -175,19 +175,23 @@ extension VLCMediaPlayerProxy {
                              .opening:
                             // TODO: figure out when to properly set to false
                             manager.proxy?.isBuffering.value = true
-                        case .ended, .stopped:
+                        case .ended:
                             // Live streams will send stopped/ended events
                             guard !playbackItem.baseItem.isLiveStream else { return }
                             manager.proxy?.isBuffering.value = false
-                            manager.send(.ended)
+                            manager.ended()
+                        case .stopped: ()
+                        // Stopped is ignored as the `MediaPlayerManager`
+                        // should instead call this to be stopped, rather
+                        // than react to the event.
                         case .error:
                             manager.proxy?.isBuffering.value = false
-                            manager.send(.error(.init("VLC player is unable to perform playback")))
+                            manager.error(JellyfinAPIError("VLC player is unable to perform playback"))
                         case .playing:
                             manager.proxy?.isBuffering.value = false
-                            manager.set(playbackRequestStatus: .playing, notifyProxy: false)
+                            manager.setPlaybackRequestStatus(status: .playing)
                         case .paused:
-                            manager.set(playbackRequestStatus: .paused, notifyProxy: false)
+                            manager.setPlaybackRequestStatus(status: .paused)
                         }
 
                         if let proxy = manager.proxy as? any VideoMediaPlayerProxy {

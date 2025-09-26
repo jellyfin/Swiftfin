@@ -10,6 +10,11 @@ import JellyfinAPI
 import SwiftUI
 
 extension ActivityLogEntry: Poster {
+
+    var preferredPosterDisplayType: PosterDisplayType {
+        .square
+    }
+
     var displayTitle: String {
         name ?? L10n.unknown
     }
@@ -20,5 +25,9 @@ extension ActivityLogEntry: Poster {
 
     var systemImage: String {
         "text.document"
+    }
+
+    func transform(image: Image) -> some View {
+        image
     }
 }

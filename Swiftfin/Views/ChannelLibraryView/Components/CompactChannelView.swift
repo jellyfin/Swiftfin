@@ -13,39 +13,16 @@ extension ChannelLibraryView {
 
     struct CompactChannelView: View {
 
-        @Environment(\.colorScheme)
-        private var colorScheme
-
         let channel: BaseItemDto
-
-        private var onSelect: () -> Void
+        let action: () -> Void
 
         var body: some View {
-            Button {
-                onSelect()
-            } label: {
+            Button(action: action) {
                 VStack(alignment: .leading) {
-                    ZStack {
-                        Color.secondarySystemFill
-                            .opacity(colorScheme == .dark ? 0.5 : 1)
-                            .posterShadow()
-
-                        ImageView(channel.imageSource(.primary, maxWidth: 120))
-                            .image {
-                                $0.aspectRatio(contentMode: .fit)
-                            }
-                            .failure {
-                                SystemImageContentView(systemName: channel.systemImage, ratio: 0.5)
-                                    .background(color: .clear)
-                            }
-                            .placeholder { _ in
-                                EmptyView()
-                            }
-                            .padding(5)
-                    }
-                    .aspectRatio(1.0, contentMode: .fill)
-                    .posterBorder()
-                    .cornerRadius(ratio: 0.0375, of: \.width)
+                    PosterImage(
+                        item: channel,
+                        type: .square
+                    )
 
                     Text(channel.displayTitle)
                         .font(.footnote.weight(.regular))
@@ -56,19 +33,5 @@ extension ChannelLibraryView {
             }
             .buttonStyle(.plain)
         }
-    }
-}
-
-extension ChannelLibraryView.CompactChannelView {
-
-    init(channel: BaseItemDto) {
-        self.init(
-            channel: channel,
-            onSelect: {}
-        )
-    }
-
-    func onSelect(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
     }
 }

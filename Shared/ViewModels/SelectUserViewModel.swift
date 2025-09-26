@@ -20,6 +20,7 @@ final class SelectUserViewModel: ViewModel {
     @CasePathable
     enum Action {
         case deleteUsers(Set<UserState>)
+        case error
         case getServers
         case signIn(UserState, pin: String)
     }

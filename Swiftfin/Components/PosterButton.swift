@@ -12,11 +12,6 @@ import SwiftUI
 
 // TODO: expose `ImageView.image` modifier for image aspect fill/fit
 
-/// Retrieving images by exact pixel dimensions is a bit
-/// intense for normal usage and eases cache usage and modifications.
-private let landscapeMaxWidth: CGFloat = 300
-private let portraitMaxWidth: CGFloat = 200
-
 struct PosterButton<Item: Poster>: View {
 
     @EnvironmentTypeValue<Item>(\.posterOverlayRegistry)
@@ -33,33 +28,14 @@ struct PosterButton<Item: Poster>: View {
     private let label: any View
     private let action: (Namespace.ID) -> Void
 
-    private func imageSources(from item: Item) -> [ImageSource] {
-        switch type {
-        case .landscape:
-            item.landscapeImageSources(maxWidth: landscapeMaxWidth, quality: 90)
-        case .portrait:
-            item.portraitImageSources(maxWidth: portraitMaxWidth, quality: 90)
-        }
-    }
-
     @ViewBuilder
     private func posterView(overlay: some View = EmptyView()) -> some View {
         VStack(alignment: .leading) {
-            ImageView(imageSources(from: item))
-                .failure {
-                    if item.showTitle {
-                        SystemImageContentView(systemName: item.systemImage)
-                    } else {
-                        SystemImageContentView(
-                            title: item.displayTitle,
-                            systemName: item.systemImage
-                        )
-                    }
-                }
+            PosterImage(item: item, type: type)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .overlay { overlay }
                 .contentShape(.contextMenuPreview, Rectangle())
-                .posterStyle(type)
+                .posterCornerRadius(type)
                 .backport
                 .matchedTransitionSource(id: "item", in: namespace)
                 .posterShadow()
@@ -183,7 +159,7 @@ extension PosterButton {
                             .lineLimit(1, reservesSpace: true)
                     }
 
-                    SeparatorHStack {
+                    DotHStack(padding: 3) {
                         Text(item.seasonEpisodeLabel ?? .emptyDash)
 
                         if item.showTitle || useSeriesLandscapeBackdrop {
@@ -191,11 +167,6 @@ extension PosterButton {
                         } else if let seriesName = item.seriesName {
                             Text(seriesName)
                         }
-                    }
-                    .separator {
-                        Circle()
-                            .frame(width: 2, height: 2)
-                            .padding(.horizontal, 3)
                     }
                     .font(.caption)
                     .foregroundColor(.secondary)
@@ -225,21 +196,21 @@ extension PosterButton {
         var body: some View {
             ZStack {
                 if let item = item as? BaseItemDto {
-                    if item.userData?.isPlayed ?? false {
+                    if item.canBePlayed, !item.isLiveStream, item.userData?.isPlayed == true {
                         WatchedIndicator(size: 25)
                             .isVisible(showPlayed)
                     } else {
                         if (item.userData?.playbackPositionTicks ?? 0) > 0 {
                             ProgressIndicator(progress: (item.userData?.playedPercentage ?? 0) / 100, height: 5)
                                 .isVisible(showProgress)
-                        } else {
+                        } else if item.canBePlayed, !item.isLiveStream {
                             UnwatchedIndicator(size: 25)
                                 .foregroundColor(accentColor)
                                 .isVisible(showUnplayed)
                         }
                     }
 
-                    if item.userData?.isFavorite ?? false {
+                    if item.userData?.isFavorite == true {
                         FavoriteIndicator(size: 25)
                             .isVisible(showFavorited)
                     }

@@ -149,7 +149,7 @@ struct SelectUserView: View {
 
         guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &policyError) else {
             viewModel.logger.critical("\(policyError!.localizedDescription)")
-            viewModel.error(JellyfinAPIError(L10n.unableToPerformDeviceAuthFaceID))
+            await viewModel.error(JellyfinAPIError(L10n.unableToPerformDeviceAuthFaceID))
             throw JellyfinAPIError(L10n.deviceAuthFailed)
         }
 
@@ -157,7 +157,7 @@ struct SelectUserView: View {
             try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason)
         } catch {
             viewModel.logger.critical("\(error.localizedDescription)")
-            viewModel.error(JellyfinAPIError(L10n.unableToPerformDeviceAuth))
+            await viewModel.error(JellyfinAPIError(L10n.unableToPerformDeviceAuth))
             throw JellyfinAPIError(L10n.deviceAuthFailed)
         }
     }
