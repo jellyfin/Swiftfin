@@ -27,6 +27,9 @@ extension ChapterInfo {
 
 extension ChapterInfo {
 
+    // TODO: possibly remove
+    //       - have ChapterInfo: Poster
+    //       - build info, ImageSource pairs where required
     struct FullInfo: Poster {
 
         let chapterInfo: ChapterInfo
