@@ -379,6 +379,7 @@ extension BaseItemDto {
 
         let afterRuntime = (runtime ?? .zero) + .seconds(1)
 
+        // TODO: Protect against building invalid ranges
         let ranges: [Range<Duration>] = chapters
             .map { $0.startSeconds ?? .zero }
             .appending(afterRuntime)

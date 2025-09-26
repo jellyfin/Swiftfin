@@ -47,7 +47,7 @@ struct ChannelProgram: Hashable, Identifiable {
 extension ChannelProgram: Poster {
 
     var preferredPosterDisplayType: PosterDisplayType {
-        .landscape
+        .square
     }
 
     var unwrappedIDHashOrZero: Int {

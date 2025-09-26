@@ -13,7 +13,7 @@ import SwiftUI
 extension RemoteImageInfo: @retroactive Identifiable, Poster {
 
     var preferredPosterDisplayType: PosterDisplayType {
-        .landscape
+        .portrait
     }
 
     var displayTitle: String {

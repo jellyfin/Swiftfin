@@ -9,7 +9,7 @@ For details on current library support and what is required for future expansion
 | Shows                | ✅         |
 | Collections          | 🟡         | Only video media in Collections are viewable. |
 | Movies               | ✅         | |
-| Playlists            | 🟡         | Not currently supported, but under review in [PR #1428](https://github.com/jellyfin/Swiftfin/pull/1428) for potential release in 1.4. |
+| Playlists            | ❌         | Not currently supported, but under review in [PR #1428](https://github.com/jellyfin/Swiftfin/pull/1428) for potential release in 1.4. |
 | Mixed Libraries      | ❌         | Not supported due to their folder-like structure, requiring a different implementation approach. Also in review as a [Meta Jellyfin discussion topic.](https://github.com/jellyfin/jellyfin-meta/discussions/46) |
 | Music               | ❌         | Not yet supported. Music would need to come after Playlist support as this is a common requirement. Music requires an Artist > Album > Song structure, different from other media. Additionally needs a lightweight, *(potentially native)* iOS player and a dedicated playback manager. |
 | Music Videos        | ✅         | |
