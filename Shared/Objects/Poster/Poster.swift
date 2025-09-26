@@ -9,11 +9,6 @@
 import Foundation
 import SwiftUI
 
-// TODO: preferred poster display type value
-//       - used in contexts that can be dynamic based on image availability for type
-//       - help with collection-type-based poster display
-//       - ie: movies/series: portrait, music/channel: square, music videos: landscape
-
 /// A type that is displayed as a poster
 protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
 
