@@ -67,7 +67,11 @@ extension NavigationRoute {
             id: "userSignIn",
             style: .sheet
         ) {
-            UserSignInView(server: server)
+            WithUserAuthentication {
+                WithQuickConnect {
+                    UserSignInView(server: server)
+                }
+            }
         }
     }
 }

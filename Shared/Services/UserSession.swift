@@ -39,6 +39,8 @@ final class UserSession {
 }
 
 extension Container {
+
+    // TODO: be parameterized, take user id
     var currentUserSession: Factory<UserSession?> {
         self {
             guard case let .signedIn(userId) = Defaults[.lastSignedInUserID] else { return nil }

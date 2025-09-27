@@ -45,11 +45,9 @@ struct QuickConnectView: View {
     }
 
     var body: some View {
-        WrappedView {
+        ZStack {
             switch viewModel.state {
-            case .idle, .authenticated:
-                Color.clear
-            case .retrievingCode:
+            case .authenticated, .idle, .retrievingCode:
                 ProgressView()
             case let .polling(code):
                 pollingView(code: code)
