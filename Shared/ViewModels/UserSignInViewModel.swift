@@ -26,59 +26,56 @@ import SwiftUI
 // Note: UserDto in StoredValues so that it doesn't need to be passed
 //       around along with the user UserState. Was just easy
 
-final class UserSignInViewModel: ViewModel, Eventful, Stateful {
+@MainActor
+@Stateful
+final class UserSignInViewModel: ViewModel {
 
-    // MARK: Event
-
-    enum Event {
-        case duplicateUser(UserState)
-        case error(JellyfinAPIError)
-        case signedIn(UserState)
-    }
-
-    // MARK: Action
-
-    enum Action: Equatable {
+    @CasePathable
+    enum Action {
+        case cancel
+        case error
         case getPublicData
         case signIn(username: String, password: String, policy: UserAccessPolicy)
-        case signInDuplicate(UserState, replace: Bool)
+        case signInDuplicate(user: UserState, replace: Bool)
         case signInQuickConnect(secret: String, policy: UserAccessPolicy)
-        case cancel
+
+        var transition: Transition {
+            switch self {
+            case .cancel:
+                .to(.initial)
+            case .error, .signInDuplicate, .signInQuickConnect:
+                .none
+            case .getPublicData:
+                .background(.gettingPublicData)
+            case .signIn:
+                .loop(.signingIn)
+            }
+        }
     }
 
-    enum BackgroundState: Hashable {
+    enum BackgroundState {
         case gettingPublicData
     }
 
-    // MARK: State
+    enum Event {
+        case duplicateUser(UserState)
+        case signedIn(UserState)
+    }
 
-    enum State: Hashable {
+    enum State {
         case initial
         case signingIn
     }
 
-    @Published
-    var backgroundStates: Set<BackgroundState> = []
     @Published
     var isQuickConnectEnabled = false
     @Published
     var publicUsers: [UserDto] = []
     @Published
     var serverDisclaimer: String? = nil
-    @Published
-    var state: State = .initial
-
-    var events: AnyPublisher<Event, Never> {
-        eventSubject
-            .receive(on: RunLoop.main)
-            .eraseToAnyPublisher()
-    }
 
     let quickConnect: QuickConnect
     let server: ServerState
-
-    private var eventSubject: PassthroughSubject<Event, Never> = .init()
-    private var signInTask: AnyCancellable?
 
     init(server: ServerState) {
         self.server = server
@@ -91,131 +88,70 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
                 if case let QuickConnect.State.authenticated(secret: secret) = state {
                     guard let self else { return }
 
-                    Task {
-                        await self.send(.signInQuickConnect(secret: secret, policy: StoredValues[.Temp.userAccessPolicy]))
-                    }
+//                    Task {
+//                        await self.send(.signInQuickConnect(secret: secret, policy: StoredValues[.Temp.userAccessPolicy]))
+//                    }
                 }
             }
             .store(in: &cancellables)
     }
 
-    func respond(to action: Action) -> State {
-        switch action {
-        case .getPublicData:
-            Task { [weak self] in
-                do {
+//    func respond(to action: Action) -> State {
+//        case let .signInQuickConnect(secret, policy):
+//            signInTask?.cancel()
+//
+//            signInTask = Task {
+//                do {
+//                    let user = try await signIn(secret: secret, policy: policy)
+//
+//                    if isDuplicate(user: user) {
+//                        await MainActor.run {
+//                            // user has same id, but new access token
+//                            self.eventSubject.send(.duplicateUser(user))
+//                        }
+//                    } else {
+//                        try await save(user: user)
+//
+//                        await MainActor.run {
+//                            self.eventSubject.send(.signedIn(user))
+//                        }
+//                    }
+//
+//                    await MainActor.run {
+//                        self.state = .initial
+//                    }
+//                } catch is CancellationError {
+//                    // cancel doesn't matter
+//                } catch {
+//                    await MainActor.run {
+//                        self.eventSubject.send(.error(.init(error.localizedDescription)))
+//                        self.state = .initial
+//                    }
+//                }
+//            }
+//            .asAnyCancellable()
+//
+//            return .signingIn
+//        case .cancel:
+//            signInTask?.cancel()
+//
+//            return .initial
+//        }
+//    }
 
-                    await MainActor.run {
-                        let _ = self?.backgroundStates.insert(.gettingPublicData)
-                    }
+    @Function(\Action.Cases.getPublicData)
+    private func _getPublicData() async throws {
+        async let isQuickConnectEnabled = try retrieveQuickConnectEnabled()
+        async let publicUsers = try retrievePublicUsers()
+        async let serverMessage = try retrieveServerDisclaimer()
 
-                    let isQuickConnectEnabled = try await self?.retrieveQuickConnectEnabled()
-                    let publicUsers = try await self?.retrievePublicUsers()
-                    let serverMessage = try await self?.retrieveServerDisclaimer()
-
-                    guard let self else { return }
-
-                    await MainActor.run {
-                        self.backgroundStates.remove(.gettingPublicData)
-                        self.isQuickConnectEnabled = isQuickConnectEnabled ?? false
-                        self.publicUsers = publicUsers ?? []
-                        self.serverDisclaimer = serverMessage
-                    }
-                } catch {
-                    self?.backgroundStates.remove(.gettingPublicData)
-                }
-            }
-            .store(in: &cancellables)
-
-            return state
-        case let .signIn(username, password, policy):
-            signInTask?.cancel()
-
-            signInTask = Task {
-                do {
-                    let user = try await signIn(username: username, password: password, policy: policy)
-
-                    if isDuplicate(user: user) {
-                        await MainActor.run {
-                            // user has same id, but new access token
-                            self.eventSubject.send(.duplicateUser(user))
-                        }
-                    } else {
-                        try await save(user: user)
-
-                        await MainActor.run {
-                            self.eventSubject.send(.signedIn(user))
-                        }
-                    }
-
-                    await MainActor.run {
-                        self.state = .initial
-                    }
-                } catch is CancellationError {
-                    // cancel doesn't matter
-                } catch {
-                    await MainActor.run {
-                        self.eventSubject.send(.error(.init(error.localizedDescription)))
-                        self.state = .initial
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return .signingIn
-        case let .signInDuplicate(duplicateUser, replace):
-            if replace {
-                setNewAccessToken(user: duplicateUser)
-            } else {
-                // just need the id, even though this has a different
-                // access token than stored
-                eventSubject.send(.signedIn(duplicateUser))
-            }
-
-            return state
-        case let .signInQuickConnect(secret, policy):
-            signInTask?.cancel()
-
-            signInTask = Task {
-                do {
-                    let user = try await signIn(secret: secret, policy: policy)
-
-                    if isDuplicate(user: user) {
-                        await MainActor.run {
-                            // user has same id, but new access token
-                            self.eventSubject.send(.duplicateUser(user))
-                        }
-                    } else {
-                        try await save(user: user)
-
-                        await MainActor.run {
-                            self.eventSubject.send(.signedIn(user))
-                        }
-                    }
-
-                    await MainActor.run {
-                        self.state = .initial
-                    }
-                } catch is CancellationError {
-                    // cancel doesn't matter
-                } catch {
-                    await MainActor.run {
-                        self.eventSubject.send(.error(.init(error.localizedDescription)))
-                        self.state = .initial
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return .signingIn
-        case .cancel:
-            signInTask?.cancel()
-
-            return .initial
-        }
+        self.isQuickConnectEnabled = try await isQuickConnectEnabled
+        self.publicUsers = try await publicUsers
+        self.serverDisclaimer = try await serverMessage
     }
 
-    private func signIn(username: String, password: String, policy: UserAccessPolicy) async throws -> UserState {
+    @Function(\Action.Cases.signIn)
+    private func _signIn(_ username: String, _ password: String, _ policy: UserAccessPolicy) async throws {
         let username = username
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
@@ -232,24 +168,63 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
               let username = userData.name
         else {
             logger.critical("Missing user data from network call")
-            throw JellyfinAPIError("An internal error has occurred")
+            throw JellyfinAPIError(L10n.unknownError)
         }
 
-        StoredValues[.Temp.userData] = userData
-        StoredValues[.Temp.userAccessPolicy] = policy
-
-        let newState = UserState(
+        let userState = UserState(
             id: id,
             serverID: server.id,
             username: username
         )
 
-        newState.accessToken = accessToken
+        userState.accessToken = accessToken
 
-        return newState
+        guard !isDuplicate(user: userState) else {
+            events.send(.duplicateUser(userState))
+            return
+        }
+
+        try await save(
+            user: userState,
+            policy: policy
+        )
+
+        events.send(.signedIn(userState))
     }
 
-    private func signIn(secret: String, policy: UserAccessPolicy) async throws -> UserState {
+    @Function(\Action.Cases.signInDuplicate)
+    private func _signInDuplicate(_ userState: UserState, _ replace: Bool) async throws {
+        if replace {
+
+//            existingUser.state.accessToken = user.accessToken
+
+            let newState = try dataStack.perform { transaction in
+                let existingUser = try dataStack.fetchOne(From<UserModel>().where(\.$id == userState.id))
+                guard let existingUser = transaction.edit(existingUser) else {
+                    logger.critical("Could not find user to update access token")
+                    throw JellyfinAPIError(L10n.unknownError)
+                }
+
+                existingUser.state = userState
+
+//                let existingServer = try self.dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id))
+//                guard let editServer = transaction.edit(existingServer) else {
+//                    logger.critical("Could not find server to add new url")
+//                    throw JellyfinAPIError("An internal error has occurred")
+//                }
+//
+//                editServer.urls.insert(server.currentURL)
+//                editServer.currentURL = server.currentURL
+//
+//                return editServer.state
+            }
+        }
+
+        events.send(.signedIn(userState))
+    }
+
+    @Function(\Action.Cases.signInQuickConnect)
+    private func _signInQuickConnect(_ secret: String, _ policy: UserAccessPolicy) async throws {
 
         let response = try await server.client.signIn(quickConnectSecret: secret)
 
@@ -262,8 +237,8 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
             throw JellyfinAPIError("An internal error has occurred")
         }
 
-        StoredValues[.Temp.userData] = userData
-        StoredValues[.Temp.userAccessPolicy] = policy
+//        StoredValues[.Temp.userData] = userData
+//        StoredValues[.Temp.userAccessPolicy] = policy
 
         let newState = UserState(
             id: id,
@@ -273,8 +248,10 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
 
         newState.accessToken = accessToken
 
-        return newState
+//        return newState
     }
+
+    private func actuallSignIn(user: UserState) async throws {}
 
     private func isDuplicate(user: UserState) -> Bool {
         let existingUser = try? SwiftfinStore
@@ -283,8 +260,10 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         return existingUser != nil
     }
 
-    @MainActor
-    private func save(user: UserState) async throws {
+    private func save(
+        user: UserState,
+        policy: UserAccessPolicy
+    ) async throws {
 
         guard let serverModel = try? dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id)) else {
             logger.critical("Unable to find server to save user")
@@ -303,16 +282,16 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
             return newUser.state
         }
 
-        user.data = StoredValues[.Temp.userData]
-        user.accessPolicy = StoredValues[.Temp.userAccessPolicy]
-
-        keychain.set(StoredValues[.Temp.userLocalPin], forKey: "\(user.id)-pin")
-        user.pinHint = StoredValues[.Temp.userLocalPinHint]
+//        user.data = StoredValues[.Temp.userData]
+//        user.accessPolicy = StoredValues[.Temp.userAccessPolicy]
+//
+//        keychain.set(StoredValues[.Temp.userLocalPin], forKey: "\(user.id)-pin")
+//        user.pinHint = StoredValues[.Temp.userLocalPinHint]
 
         // TODO: remove when implemented periodic cleanup elsewhere
-        StoredValues[.Temp.userAccessPolicy] = .none
-        StoredValues[.Temp.userLocalPin] = ""
-        StoredValues[.Temp.userLocalPinHint] = ""
+//        StoredValues[.Temp.userAccessPolicy] = .none
+//        StoredValues[.Temp.userLocalPin] = ""
+//        StoredValues[.Temp.userLocalPinHint] = ""
     }
 
     private func retrievePublicUsers() async throws -> [UserDto] {
@@ -337,17 +316,5 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
 
         let isEnabled = try? JSONDecoder().decode(Bool.self, from: response.value)
         return isEnabled ?? false
-    }
-
-    // server has same id, but new access token
-    private func setNewAccessToken(user: UserState) {
-        do {
-            guard let existingUser = try dataStack.fetchOne(From<UserModel>().where(\.$id == user.id)) else { return }
-            existingUser.state.accessToken = user.accessToken
-
-            eventSubject.send(.signedIn(existingUser.state))
-        } catch {
-            logger.critical("\(error.localizedDescription)")
-        }
     }
 }

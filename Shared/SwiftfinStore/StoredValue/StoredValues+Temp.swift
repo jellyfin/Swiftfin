@@ -38,36 +38,36 @@ extension StoredValues.Keys {
 
 // MARK: values
 
-extension StoredValues.Keys {
-
-    enum Temp {
-
-        static let userAccessPolicy: Key<UserAccessPolicy> = TempKey(
-            "userSignInPolicy",
-            ownerID: "temporary",
-            domain: "userSignInPolicy",
-            default: .none
-        )
-
-        static let userLocalPin: Key<String> = TempKey(
-            "userLocalPin",
-            ownerID: "temporary",
-            domain: "userLocalPin",
-            default: ""
-        )
-
-        static let userLocalPinHint: Key<String> = TempKey(
-            "userLocalPinHint",
-            ownerID: "temporary",
-            domain: "userLocalPinHint",
-            default: ""
-        )
-
-        static let userData: Key<UserDto> = TempKey(
-            "tempUserData",
-            ownerID: "temporary",
-            domain: "tempUserData",
-            default: .init()
-        )
-    }
-}
+// extension StoredValues.Keys {
+//
+//    enum Temp {
+//
+//        static let userAccessPolicy: Key<UserAccessPolicy> = TempKey(
+//            "userSignInPolicy",
+//            ownerID: "temporary",
+//            domain: "userSignInPolicy",
+//            default: .none
+//        )
+//
+//        static let userLocalPin: Key<String> = TempKey(
+//            "userLocalPin",
+//            ownerID: "temporary",
+//            domain: "userLocalPin",
+//            default: ""
+//        )
+//
+//        static let userLocalPinHint: Key<String> = TempKey(
+//            "userLocalPinHint",
+//            ownerID: "temporary",
+//            domain: "userLocalPinHint",
+//            default: ""
+//        )
+//
+//        static let userData: Key<UserDto> = TempKey(
+//            "tempUserData",
+//            ownerID: "temporary",
+//            domain: "tempUserData",
+//            default: .init()
+//        )
+//    }
+// }

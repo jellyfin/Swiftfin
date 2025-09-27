@@ -72,7 +72,7 @@ final class UserLocalSecurityViewModel: ViewModel, Eventful {
         if newPolicy == .requirePin {
             keychain.set(newPin, forKey: "\(userSession.user.id)-pin")
         } else {
-            keychain.delete(StoredValues[.Temp.userLocalPin])
+//            keychain.delete(StoredValues[.Temp.userLocalPin])
         }
 
         userSession.user.accessPolicy = newPolicy

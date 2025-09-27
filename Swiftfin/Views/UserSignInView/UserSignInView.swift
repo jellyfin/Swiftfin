@@ -54,17 +54,10 @@ struct UserSignInView: View {
     @State
     private var username: String = ""
 
-    // MARK: - Error State
-
     @State
     private var isPresentingDuplicateUser: Bool = false
     @State
     private var isPresentingLocalPin: Bool = false
-
-    // MARK: - Error State
-
-    @State
-    private var error: Error? = nil
 
     // MARK: - Initializer
 
@@ -81,9 +74,9 @@ struct UserSignInView: View {
 
             self.duplicateUser = duplicateUser
             isPresentingDuplicateUser = true
-        case let .error(eventError):
-            UIDevice.feedback(.error)
-            error = eventError
+//        case let .error(eventError):
+//            UIDevice.feedback(.error)
+//            error = eventError
         case let .signedIn(user):
             UIDevice.feedback(.success)
 
@@ -128,14 +121,14 @@ struct UserSignInView: View {
             case .requirePin:
                 if needsPin {
                     onPinCompletion = {
-                        viewModel.send(.signIn(username: username, password: password, policy: accessPolicy))
+//                        viewModel.send(.signIn(username: username, password: password, policy: accessPolicy))
                     }
                     isPresentingLocalPin = true
                     return
                 }
             }
 
-            viewModel.send(.signIn(username: username, password: password, policy: accessPolicy))
+//            viewModel.send(.signIn(username: username, password: password, policy: accessPolicy))
         }
     }
 
@@ -149,13 +142,13 @@ struct UserSignInView: View {
                 try await performDeviceAuthentication(reason: L10n.userRequiresDeviceAuthentication(user.username))
             case .requirePin:
                 onPinCompletion = {
-                    viewModel.send(.signInDuplicate(user, replace: replace))
+//                    viewModel.send(.signInDuplicate(user, replace: replace))
                 }
                 isPresentingLocalPin = true
                 return
             }
 
-            viewModel.send(.signInDuplicate(user, replace: replace))
+//            viewModel.send(.signInDuplicate(user, replace: replace))
         }
     }
 
@@ -180,11 +173,11 @@ struct UserSignInView: View {
         guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &policyError) else {
             viewModel.logger.critical("\(policyError!.localizedDescription)")
 
-            await MainActor.run {
-                self
-                    .error =
-                    JellyfinAPIError(L10n.unableToPerformDeviceAuthFaceID)
-            }
+//            await MainActor.run {
+//                self
+//                    .error =
+//                    JellyfinAPIError(L10n.unableToPerformDeviceAuthFaceID)
+//            }
 
             throw JellyfinAPIError(L10n.deviceAuthFailed)
         }
@@ -194,9 +187,9 @@ struct UserSignInView: View {
         } catch {
             viewModel.logger.critical("\(error.localizedDescription)")
 
-            await MainActor.run {
-                self.error = JellyfinAPIError(L10n.unableToPerformDeviceAuth)
-            }
+//            await MainActor.run {
+//                self.error = JellyfinAPIError(L10n.unableToPerformDeviceAuth)
+//            }
 
             throw JellyfinAPIError(L10n.deviceAuthFailed)
         }
@@ -240,7 +233,7 @@ struct UserSignInView: View {
 
         if case .signingIn = viewModel.state {
             ListRowButton(L10n.cancel) {
-                viewModel.send(.cancel)
+//                viewModel.send(.cancel)
             }
             .foregroundStyle(.red, .red.opacity(0.2))
         } else {
@@ -312,12 +305,12 @@ struct UserSignInView: View {
             publicUsersSection
         }
         .animation(.linear, value: viewModel.isQuickConnectEnabled)
-        .interactiveDismissDisabled(viewModel.state == .signingIn)
+//        .interactiveDismissDisabled(viewModel.state == .signingIn)
         .navigationTitle(L10n.signIn)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarCloseButton(disabled: viewModel.state == .signingIn) {
-            router.dismiss()
-        }
+//        .navigationBarCloseButton(disabled: viewModel.state == .signingIn) {
+//            router.dismiss()
+//        }
         .onChange(of: isPresentingLocalPin) { newValue in
             if newValue {
                 pin = ""
@@ -325,28 +318,26 @@ struct UserSignInView: View {
                 onPinCompletion = nil
             }
         }
-        .onChange(of: pin) { newValue in
-            StoredValues[.Temp.userLocalPin] = newValue
-        }
-        .onChange(of: pinHint) { newValue in
-            StoredValues[.Temp.userLocalPinHint] = newValue
-        }
-        .onChange(of: accessPolicy) { newValue in
-            // necessary for Quick Connect sign in, but could
-            // just use for general sign in
-            StoredValues[.Temp.userAccessPolicy] = newValue
-        }
-        .onReceive(viewModel.events) { event in
-            handleSignIn(event)
-        }
+//        .onChange(of: pin) { newValue in
+//            StoredValues[.Temp.userLocalPin] = newValue
+//        }
+//        .onChange(of: pinHint) { newValue in
+//            StoredValues[.Temp.userLocalPinHint] = newValue
+//        }
+//        .onChange(of: accessPolicy) { newValue in
+//            // necessary for Quick Connect sign in, but could
+//            // just use for general sign in
+//            StoredValues[.Temp.userAccessPolicy] = newValue
+//        }
+//        .onReceive(viewModel.events, perform: handleSignIn)
         .onFirstAppear {
             focusedTextField = 0
-            viewModel.send(.getPublicData)
+//            viewModel.send(.getPublicData)
         }
         .topBarTrailing {
-            if viewModel.state == .signingIn || viewModel.backgroundStates.contains(.gettingPublicData) {
-                ProgressView()
-            }
+//            if viewModel.state == .signingIn || viewModel.backgroundStates.contains(.gettingPublicData) {
+//                ProgressView()
+//            }
 
             Button(L10n.security, systemImage: "gearshape.fill") {
                 router.route(
@@ -395,6 +386,6 @@ struct UserSignInView: View {
         } message: { _ in
             Text(L10n.setPinForNewUser)
         }
-        .errorMessage($error)
+//        .errorMessage()
     }
 }
