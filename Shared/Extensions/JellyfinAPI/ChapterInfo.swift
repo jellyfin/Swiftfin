@@ -27,6 +27,9 @@ extension ChapterInfo {
 
 extension ChapterInfo {
 
+    // TODO: possibly remove
+    //       - have ChapterInfo: Poster
+    //       - build info, ImageSource pairs where required
     struct FullInfo: Poster {
 
         let chapterInfo: ChapterInfo
@@ -34,9 +37,7 @@ extension ChapterInfo {
         let id: Int
         let imageSource: ImageSource
         let preferredPosterDisplayType: PosterDisplayType = .landscape
-        let secondsRange: Range<Duration>
         let systemImage: String = "film"
-        let unitRange: Range<Double>
         let unwrappedIDHashOrZero: Int
 
         var subtitle: String?
@@ -44,22 +45,13 @@ extension ChapterInfo {
 
         init(
             chapterInfo: ChapterInfo,
-            imageSource: ImageSource,
-            secondsRange: Range<Duration>,
-            runtime: Duration
+            imageSource: ImageSource
         ) {
             self.chapterInfo = chapterInfo
-            self.imageSource = imageSource
-            self.secondsRange = secondsRange
-            self.unitRange = secondsRange.lowerBound / runtime ..< secondsRange.upperBound / runtime
-
             self.displayTitle = chapterInfo.displayTitle
             self.id = chapterInfo.hashValue
-            self.unwrappedIDHashOrZero = id
-        }
-
-        func contains(seconds: Duration) -> Bool {
-            secondsRange.contains(seconds)
+            self.imageSource = imageSource
+            self.unwrappedIDHashOrZero = chapterInfo.hashValue
         }
 
         func landscapeImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {

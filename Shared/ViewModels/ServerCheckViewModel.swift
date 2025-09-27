@@ -18,6 +18,10 @@ final class ServerCheckViewModel: ViewModel {
     @CasePathable
     enum Action {
         case checkServer
+
+        var transition: Transition {
+            .to(.initial)
+        }
     }
 
     enum Event {
