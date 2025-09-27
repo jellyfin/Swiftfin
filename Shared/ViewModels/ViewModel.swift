@@ -10,6 +10,7 @@ import Combine
 import Factory
 import Foundation
 import KeychainSwift
+import Logging
 
 class ViewModel: ObservableObject {
 
@@ -19,8 +20,7 @@ class ViewModel: ObservableObject {
     @Injected(\.keychainService)
     var keychain
 
-    @Injected(\.logService)
-    var logger
+    let logger = Logger.swiftfin()
 
     /// The current *signed in* user session
     @Injected(\.currentUserSession)
