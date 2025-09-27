@@ -10,6 +10,7 @@ import Combine
 import CoreStore
 import Factory
 import Foundation
+import Logging
 import SwiftUI
 
 // TODO: typealias to `Setting`?
@@ -51,6 +52,8 @@ struct StoredValue<Value: Codable>: DynamicProperty {
 extension StoredValue {
 
     final class Observable: ObservableObject {
+
+        private let logger = Logger.swiftfin()
 
         let key: StoredValues.Key<Value>
 
@@ -134,7 +137,7 @@ extension StoredValue {
                         domain: key.domain
                     )
                 } catch {
-                    Container.shared.logService().error("Unable to store and create publisher for: \(key)")
+                    logger.error("Unable to store and create publisher for: \(key)")
 
                     return nil
                 }
