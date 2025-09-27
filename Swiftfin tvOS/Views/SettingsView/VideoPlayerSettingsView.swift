@@ -27,6 +27,7 @@ struct VideoPlayerSettingsView: View {
     @State
     private var isPresentingResumeOffsetStepper: Bool = false
 
+    // TODO: Update with correct settings once the tvOS PlayerUI is complete
     var body: some View {
         SplitFormWindowView()
             .descriptionView {
@@ -38,7 +39,6 @@ struct VideoPlayerSettingsView: View {
             .contentView {
 
                 Section {
-
                     ChevronButton(
                         L10n.offset,
                         subtitle: resumeOffset.secondLabel

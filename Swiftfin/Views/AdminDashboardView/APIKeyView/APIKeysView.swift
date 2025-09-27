@@ -25,7 +25,7 @@ struct APIKeysView: View {
     private var contentView: some View {
         List {
             ListTitleSection(
-                L10n.apiKeysTitle,
+                L10n.apiKeysCapitalized,
                 description: L10n.apiKeysDescription
             )
 
@@ -68,7 +68,7 @@ struct APIKeysView: View {
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .animation(.linear(duration: 0.1), value: viewModel.apiKeys)
-        .navigationTitle(L10n.apiKeys)
+        .navigationTitle(L10n.apiKeysCapitalized)
         .onFirstAppear {
             viewModel.refresh()
         }
@@ -87,7 +87,7 @@ struct APIKeysView: View {
             }
         }
         .alert(
-            L10n.createAPIKey,
+            L10n.createAPIKeyCapitalized,
             isPresented: $showCreateAPIAlert
         ) {
             TextField(L10n.applicationName, text: $appName)

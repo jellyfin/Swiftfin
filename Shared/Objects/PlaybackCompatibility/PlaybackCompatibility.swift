@@ -23,7 +23,7 @@ enum PlaybackCompatibility: String, CaseIterable, Defaults.Serializable, Display
         case .mostCompatible:
             return L10n.compatible
         case .directPlay:
-            return L10n.direct
+            return L10n.directPlay
         case .custom:
             return L10n.custom
         }

@@ -47,7 +47,7 @@ struct AppIconSelectorView: View {
                 }
             }
         }
-        .navigationTitle(L10n.appIcon)
+        .navigationTitle(L10n.appIcon.localizedCapitalized)
     }
 }
 

@@ -46,7 +46,7 @@ struct ServerUserMediaAccessView: View {
 
     var body: some View {
         contentView
-            .navigationTitle(L10n.mediaAccess)
+            .navigationTitle(L10n.mediaAccess.localizedCapitalized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.dismiss()

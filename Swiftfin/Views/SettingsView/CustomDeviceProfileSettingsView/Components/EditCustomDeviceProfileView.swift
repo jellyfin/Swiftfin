@@ -121,7 +121,7 @@ extension CustomDeviceProfileSettingsView {
             .navigationBarCloseButton {
                 isPresentingNotSaved = true
             }
-            .navigationTitle(L10n.customProfile)
+            .navigationTitle(L10n.customProfile.localizedCapitalized)
             .topBarTrailing {
                 Button(L10n.save) {
                     if createProfile {

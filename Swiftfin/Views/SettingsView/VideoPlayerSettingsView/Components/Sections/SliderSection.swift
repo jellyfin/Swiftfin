@@ -24,7 +24,7 @@ extension VideoPlayerSettingsView {
                 Toggle(L10n.chapterSlider, isOn: $chapterSlider)
 
                 CaseIterablePicker(
-                    "Preview Image",
+                    L10n.previewImage,
                     selection: $previewImageScrubbing
                 )
             }
