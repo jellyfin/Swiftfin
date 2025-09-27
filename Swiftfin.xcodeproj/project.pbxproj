@@ -122,6 +122,23 @@
 		E1FADDF12E84B63600FB310E /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E1FADDF02E84B63600FB310E /* StatefulMacros */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		5E8A31062E72277E00964879 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5377CBE9263B596A003A4E83 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5377CBF0263B596A003A4E83;
+			remoteInfo = "Swiftfin iOS";
+		};
+		5E91B8612E6259900061D4F0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5377CBE9263B596A003A4E83 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5358705F2669D21600D05A09;
+			remoteInfo = "Swiftfin tvOS";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		62666DF927E5012C00EC0ECD /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -169,6 +186,8 @@
 		5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Swiftfin iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		53ABFDDB267972BF00886593 /* TVServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.0.sdk/System/Library/Frameworks/TVServices.framework; sourceTree = DEVELOPER_DIR; };
 		53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MobileVLCKit.xcframework; path = Carthage/Build/MobileVLCKit.xcframework; sourceTree = "<group>"; };
+		5E8B619E2E4EF4DB00BE6AB5 /* Swiftfin Screenshots.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Swiftfin Screenshots.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5E91B8562E6259560061D4F0 /* Swiftfin tvOS Screenshots.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Swiftfin tvOS Screenshots.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		625CB57D2678E81E00530A6E /* TVVLCKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = TVVLCKit.xcframework; path = Carthage/Build/TVVLCKit.xcframework; sourceTree = "<group>"; };
 		62666E0027E5016900EC0ECD /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		62666E0527E5017A00EC0ECD /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
@@ -204,6 +223,45 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5E8A30FA2E72207900964879 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				iOS/iOS_Screenshots.swift,
+				output/screenshots.html,
+				process.sh,
+				resources,
+				SnapshotHelper.swift,
+				tvOS/tvOS_Screenshots.swift,
+			);
+			target = 5377CBF0263B596A003A4E83 /* Swiftfin iOS */;
+		};
+		5E8A30FB2E72207900964879 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				iOS/iOS_Screenshots.swift,
+				process.sh,
+				resources,
+				SnapshotHelper.swift,
+				tvOS/tvOS_Screenshots.swift,
+			);
+			target = 5358705F2669D21600D05A09 /* Swiftfin tvOS */;
+		};
+		5E8A30FC2E72207900964879 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				iOS/iOS_Screenshots.swift,
+				SnapshotHelper.swift,
+			);
+			target = 5E8B619D2E4EF4DB00BE6AB5 /* Swiftfin Screenshots */;
+		};
+		5E8A31022E72207D00964879 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				SnapshotHelper.swift,
+				tvOS/tvOS_Screenshots.swift,
+			);
+			target = 5E91B8552E6259560061D4F0 /* Swiftfin tvOS Screenshots */;
+		};
 		E14561A22DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -257,6 +315,7 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		5E8A30F22E72206C00964879 /* Screenshots */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5E8A30FA2E72207900964879 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 5E8A30FB2E72207900964879 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 5E8A30FC2E72207900964879 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 5E8A31022E72207D00964879 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (resources, ); path = Screenshots; sourceTree = "<group>"; };
 		E14560852DFCAE51008FF700 /* Swiftfin */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14561A22DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E14561A32DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Swiftfin; sourceTree = "<group>"; };
 		E14563272DFCAE6E008FF700 /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14565D92DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
 		E14565DD2DFCAE78008FF700 /* Scripts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Scripts; sourceTree = "<group>"; };
@@ -391,12 +450,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5E8B619B2E4EF4DB00BE6AB5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E91B8532E6259560061D4F0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		5377CBE8263B596A003A4E83 = {
 			isa = PBXGroup;
 			children = (
+				5E8A30F22E72206C00964879 /* Screenshots */,
 				E14560852DFCAE51008FF700 /* Swiftfin */,
 				E145669F2DFCAEFD008FF700 /* Swiftfin tvOS */,
 				E14563272DFCAE6E008FF700 /* Shared */,
@@ -413,6 +487,8 @@
 			children = (
 				5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */,
 				535870602669D21600D05A09 /* Swiftfin tvOS.app */,
+				5E8B619E2E4EF4DB00BE6AB5 /* Swiftfin Screenshots.xctest */,
+				5E91B8562E6259560061D4F0 /* Swiftfin tvOS Screenshots.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -495,6 +571,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				5E8A30F22E72206C00964879 /* Screenshots */,
 				E14563272DFCAE6E008FF700 /* Shared */,
 				E145669F2DFCAEFD008FF700 /* Swiftfin tvOS */,
 				E1456FC82DFCB323008FF700 /* Translations */,
@@ -551,6 +628,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				5E8A30F22E72206C00964879 /* Screenshots */,
 				E14560852DFCAE51008FF700 /* Swiftfin */,
 				E14563272DFCAE6E008FF700 /* Shared */,
 				E1456FC82DFCB323008FF700 /* Translations */,
@@ -611,6 +689,46 @@
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
+		5E8B619D2E4EF4DB00BE6AB5 /* Swiftfin Screenshots */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5E8B61A82E4EF4DB00BE6AB5 /* Build configuration list for PBXNativeTarget "Swiftfin Screenshots" */;
+			buildPhases = (
+				5E8B619A2E4EF4DB00BE6AB5 /* Sources */,
+				5E8B619B2E4EF4DB00BE6AB5 /* Frameworks */,
+				5E8B619C2E4EF4DB00BE6AB5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5E8A31072E72277E00964879 /* PBXTargetDependency */,
+			);
+			name = "Swiftfin Screenshots";
+			packageProductDependencies = (
+			);
+			productName = "Swiftfin Screenshots";
+			productReference = 5E8B619E2E4EF4DB00BE6AB5 /* Swiftfin Screenshots.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		5E91B8552E6259560061D4F0 /* Swiftfin tvOS Screenshots */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5E91B8602E6259560061D4F0 /* Build configuration list for PBXNativeTarget "Swiftfin tvOS Screenshots" */;
+			buildPhases = (
+				5E91B8522E6259560061D4F0 /* Sources */,
+				5E91B8532E6259560061D4F0 /* Frameworks */,
+				5E91B8542E6259560061D4F0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5E91B8622E6259900061D4F0 /* PBXTargetDependency */,
+			);
+			name = "Swiftfin tvOS Screenshots";
+			packageProductDependencies = (
+			);
+			productName = "Swiftfin tvOS Screenshots";
+			productReference = 5E91B8562E6259560061D4F0 /* Swiftfin tvOS Screenshots.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -621,7 +739,7 @@
 				KnownAssetTags = (
 					New,
 				);
-				LastSwiftUpdateCheck = 1250;
+				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1610;
 				TargetAttributes = {
 					5358705F2669D21600D05A09 = {
@@ -629,6 +747,14 @@
 					};
 					5377CBF0263B596A003A4E83 = {
 						CreatedOnToolsVersion = 12.5;
+					};
+					5E8B619D2E4EF4DB00BE6AB5 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 5377CBF0263B596A003A4E83;
+					};
+					5E91B8552E6259560061D4F0 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 5358705F2669D21600D05A09;
 					};
 				};
 			};
@@ -720,6 +846,8 @@
 			targets = (
 				5377CBF0263B596A003A4E83 /* Swiftfin iOS */,
 				5358705F2669D21600D05A09 /* Swiftfin tvOS */,
+				5E8B619D2E4EF4DB00BE6AB5 /* Swiftfin Screenshots */,
+				5E91B8552E6259560061D4F0 /* Swiftfin tvOS Screenshots */,
 			);
 		};
 /* End PBXProject section */
@@ -733,6 +861,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5377CBEF263B596A003A4E83 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E8B619C2E4EF4DB00BE6AB5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E91B8542E6259560061D4F0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -875,7 +1017,34 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5E8B619A2E4EF4DB00BE6AB5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E91B8522E6259560061D4F0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5E8A31072E72277E00964879 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5377CBF0263B596A003A4E83 /* Swiftfin iOS */;
+			targetProxy = 5E8A31062E72277E00964879 /* PBXContainerItemProxy */;
+		};
+		5E91B8622E6259900061D4F0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5358705F2669D21600D05A09 /* Swiftfin tvOS */;
+			targetProxy = 5E91B8612E6259900061D4F0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		535870722669D21700D05A09 /* Debug */ = {
@@ -1077,6 +1246,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 78;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -1092,6 +1262,7 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_CFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
@@ -1115,6 +1286,7 @@
 				CURRENT_PROJECT_VERSION = 78;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -1138,6 +1310,102 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		5E8B61A62E4EF4DB00BE6AB5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.jellyfin.swiftfin.Swiftfin-Screenshots";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Swiftfin iOS";
+			};
+			name = Debug;
+		};
+		5E8B61A72E4EF4DB00BE6AB5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.jellyfin.swiftfin.Swiftfin-Screenshots";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Swiftfin iOS";
+			};
+			name = Release;
+		};
+		5E91B85E2E6259560061D4F0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.jellyfin.swiftfin.Swiftfin-tvOS-Screenshots";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_TARGET_NAME = "Swiftfin tvOS";
+				TVOS_DEPLOYMENT_TARGET = 18.0;
+			};
+			name = Debug;
+		};
+		5E91B85F2E6259560061D4F0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.jellyfin.swiftfin.Swiftfin-tvOS-Screenshots";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_TARGET_NAME = "Swiftfin tvOS";
+				TVOS_DEPLOYMENT_TARGET = 18.0;
 			};
 			name = Release;
 		};
@@ -1167,6 +1435,24 @@
 			buildConfigurations = (
 				5377CC1C263B596B003A4E83 /* Debug */,
 				5377CC1D263B596B003A4E83 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5E8B61A82E4EF4DB00BE6AB5 /* Build configuration list for PBXNativeTarget "Swiftfin Screenshots" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5E8B61A62E4EF4DB00BE6AB5 /* Debug */,
+				5E8B61A72E4EF4DB00BE6AB5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5E91B8602E6259560061D4F0 /* Build configuration list for PBXNativeTarget "Swiftfin tvOS Screenshots" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5E91B85E2E6259560061D4F0 /* Debug */,
+				5E91B85F2E6259560061D4F0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
