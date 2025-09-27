@@ -15,34 +15,30 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
-        @State
-        private var previousItem: MediaPlayerItemProvider? = nil
-
-        @ViewBuilder
-        private func content<Q: MediaPlayerQueue>(_ queue: Q) -> some View {
-            WithObservedObject(queue) { queue in
-                Button(
-                    L10n.playPreviousItem,
-                    systemImage: VideoPlayerActionButton.playNextItem.systemImage
-                ) {
-                    guard let previousItem else { return }
-                    manager.send(.playNewItem(provider: previousItem))
-                }
-                .disabled(previousItem == nil)
-                .onAppear {
-                    self.previousItem = queue.previousItem
-                }
-                .onChange(of: queue.previousItem) { newValue in
-                    self.previousItem = newValue
-                }
-            }
-        }
-
         var body: some View {
             if let queue = manager.queue {
-                content(queue)
-                    .eraseToAnyView()
+                _PlayPreviousItem(queue: queue)
             }
+        }
+    }
+
+    private struct _PlayPreviousItem: View {
+
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
+
+        @ObservedObject
+        var queue: AnyMediaPlayerQueue
+
+        var body: some View {
+            Button(
+                L10n.playPreviousItem,
+                systemImage: VideoPlayerActionButton.playPreviousItem.systemImage
+            ) {
+                guard let previousItem = queue.previousItem else { return }
+                manager.playNewItem(provider: previousItem)
+            }
+            .disabled(queue.previousItem == nil)
         }
     }
 }

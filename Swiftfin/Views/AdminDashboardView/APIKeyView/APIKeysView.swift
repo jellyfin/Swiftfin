@@ -74,7 +74,7 @@ struct APIKeysView: View {
         }
         .topBarTrailing {
 
-            if viewModel.backgroundStates.contains(.updating) {
+            if viewModel.background.is(.updating) {
                 ProgressView()
             }
 

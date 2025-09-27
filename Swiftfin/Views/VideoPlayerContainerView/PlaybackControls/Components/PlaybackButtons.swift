@@ -43,9 +43,9 @@ extension VideoPlayer.PlaybackControls {
             Button {
                 switch manager.playbackRequestStatus {
                 case .playing:
-                    manager.set(playbackRequestStatus: .paused)
+                    manager.setPlaybackRequestStatus(status: .paused)
                 case .paused:
-                    manager.set(playbackRequestStatus: .playing)
+                    manager.setPlaybackRequestStatus(status: .playing)
                 }
             } label: {
                 Group {

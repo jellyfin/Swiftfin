@@ -62,7 +62,7 @@ extension MediaInfoSupplement {
         private var fromBeginningButton: some View {
             Button("From Beginning", systemImage: "play.fill") {
                 manager.proxy?.setSeconds(.zero)
-                manager.set(playbackRequestStatus: .playing)
+                manager.setPlaybackRequestStatus(status: .playing)
                 containerState.select(supplement: nil)
             }
             #if os(iOS)
@@ -113,7 +113,7 @@ extension MediaInfoSupplement {
                 if !item.isLiveStream {
                     Button {
                         manager.proxy?.setSeconds(.zero)
-                        manager.set(playbackRequestStatus: .playing)
+                        manager.setPlaybackRequestStatus(status: .playing)
                         containerState.select(supplement: nil)
                     } label: {
                         ZStack {
@@ -135,19 +135,14 @@ extension MediaInfoSupplement {
         @ViewBuilder
         private var iOSRegularView: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
-                // TODO: determine what to do with non-portrait (channel) images
+                // TODO: determine what to do with non-portrait (channel, home video) images
                 //       - use aspect ratio?
-                ZStack {
-                    Rectangle()
-                        .fill(Material.ultraThinMaterial)
-
-                    ImageView(item.portraitImageSources(maxWidth: 60))
-                        .failure {
-                            SystemImageContentView(systemName: item.systemImage)
-                        }
-                }
-                .posterStyle(.portrait, contentMode: .fit)
-                .posterShadow()
+                PosterImage(
+                    item: item,
+                    type: item.preferredPosterDisplayType,
+                    contentMode: .fit
+                )
+                .environment(\.isOverComplexContent, true)
 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(item.displayTitle)

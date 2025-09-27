@@ -90,10 +90,11 @@ extension ItemView {
         }
 
         private var imageType: ImageType {
-            if viewModel.item.type == .episode {
-                return .primary
-            } else {
-                return .backdrop
+            switch viewModel.item.type {
+            case .episode, .musicVideo, .video:
+                .primary
+            default:
+                .backdrop
             }
         }
 

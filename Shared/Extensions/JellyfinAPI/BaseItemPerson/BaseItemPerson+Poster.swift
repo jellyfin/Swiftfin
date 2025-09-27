@@ -9,9 +9,13 @@
 import Factory
 import Foundation
 import JellyfinAPI
-import UIKit
+import SwiftUI
 
 extension BaseItemPerson: Poster {
+
+    var preferredPosterDisplayType: PosterDisplayType {
+        .portrait
+    }
 
     var unwrappedIDHashOrZero: Int {
         id?.hashValue ?? 0
@@ -52,5 +56,9 @@ extension BaseItemPerson: Poster {
             url: url,
             blurHash: blurHash
         )]
+    }
+
+    func transform(image: Image) -> some View {
+        image
     }
 }

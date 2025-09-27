@@ -127,7 +127,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         switch (posterType, viewType) {
         case (.landscape, .grid):
             return .columns(5, insets: .init(50), itemSpacing: 50, lineSpacing: 50)
-        case (.portrait, .grid):
+        case (.portrait, .grid), (.square, .grid):
             return .columns(7, insets: .init(50), itemSpacing: 50, lineSpacing: 50)
         case (_, .list):
             return .columns(listColumnCount, insets: .init(50), itemSpacing: 50, lineSpacing: 50)
@@ -252,7 +252,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             switch (posterType, displayType) {
             case (.landscape, .grid):
                 landscapeGridItemView(item: item)
-            case (.portrait, .grid):
+            case (.portrait, .grid), (.square, .grid):
                 portraitGridItemView(item: item)
             case (_, .list):
                 listItemView(item: item, posterType: posterType)

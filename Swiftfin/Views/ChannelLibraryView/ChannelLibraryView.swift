@@ -12,6 +12,8 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
+// TODO: remove and flatten to `PagingLibraryView`
+
 // TODO: sorting by number/filtering
 //       - see if can use normal filter view model?
 //       - how to add custom filters for data context?
@@ -74,19 +76,27 @@ struct ChannelLibraryView: View {
     // MARK: item view
 
     private func compactChannelView(channel: ChannelProgram) -> some View {
-        CompactChannelView(channel: channel.channel)
-            .onSelect {
-                guard let mediaSource = channel.channel.mediaSources?.first else { return }
-                router.route(to: .videoPlayer(item: channel.channel, mediaSource: mediaSource))
-            }
+        CompactChannelView(channel: channel.channel) {
+            router.route(
+                to: .videoPlayer(
+                    provider: channel.channel.getPlaybackItemProvider(
+                        userSession: viewModel.userSession
+                    )
+                )
+            )
+        }
     }
 
     private func detailedChannelView(channel: ChannelProgram) -> some View {
-        DetailedChannelView(channel: channel)
-            .onSelect {
-                guard let mediaSource = channel.channel.mediaSources?.first else { return }
-                router.route(to: .videoPlayer(item: channel.channel, mediaSource: mediaSource))
-            }
+        DetailedChannelView(channel: channel) {
+            router.route(
+                to: .videoPlayer(
+                    provider: channel.channel.getPlaybackItemProvider(
+                        userSession: viewModel.userSession
+                    )
+                )
+            )
+        }
     }
 
     @ViewBuilder
@@ -115,7 +125,9 @@ struct ChannelLibraryView: View {
     }
 
     var body: some View {
-        WrappedView {
+        ZStack {
+            Color.clear
+
             switch viewModel.state {
             case .content:
                 if viewModel.elements.isEmpty {

@@ -14,6 +14,7 @@ import SwiftUI
 // TODO: fix leaks
 //       - made from publishers of observers not being cancelled
 
+@MainActor
 class MediaPlayerItem: ViewModel, MediaPlayerObserver {
 
     typealias ThumbnailProvider = () async -> UIImage?

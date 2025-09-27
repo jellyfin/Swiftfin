@@ -8,17 +8,15 @@
 
 import SwiftUI
 
-struct DotHStack<Content: View>: View {
-
-    @ViewBuilder
-    var content: () -> Content
-
-    var body: some View {
-        SeparatorHStack(content)
-            .separator {
-                Circle()
-                    .frame(width: 5, height: 5)
-                    .padding(.horizontal, 10)
-            }
+func DotHStack<Content: View>(
+    padding: CGFloat = 10,
+    @ViewBuilder content: @escaping () -> Content
+) -> some View {
+    SeparatorHStack {
+        Circle()
+            .frame(width: 5, height: 5)
+            .padding(.horizontal, 10)
+    } content: {
+        content()
     }
 }

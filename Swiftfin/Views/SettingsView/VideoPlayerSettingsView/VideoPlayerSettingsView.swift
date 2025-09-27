@@ -32,15 +32,13 @@ struct VideoPlayerSettingsView: View {
 
             // MARK: Player Controls
 
-            if isVLC {
-                Section(L10n.controls) {
-                    ChevronButton(L10n.gestures) {
-                        router.route(to: .gestureSettings)
-                    }
-
-                    //            CaseIterablePicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
-                    //            CaseIterablePicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
+            Section(L10n.controls) {
+                ChevronButton(L10n.gestures) {
+                    router.route(to: .gestureSettings)
                 }
+            // TODO: custom view for custom interval creation
+            // CaseIterablePicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
+            // CaseIterablePicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
             }
 
             // MARK: Resume Offset Customization (Shared)
@@ -61,13 +59,12 @@ struct VideoPlayerSettingsView: View {
 
             // MARK: Player Customizations
 
-            if isVLC {
-                ButtonSection()
-                SliderSection()
-                SubtitleSection()
-                TimestampSection()
-                TransitionSection()
-            }
+            ButtonSection()
+            SliderSection()
+            SubtitleSection()
+            TimestampSection()
+            TransitionSection()
+            TimestampSection()
         }
         .navigationTitle(L10n.videoPlayer.localizedCapitalized)
     }

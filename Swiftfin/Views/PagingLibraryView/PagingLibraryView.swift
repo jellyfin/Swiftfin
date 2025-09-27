@@ -152,7 +152,7 @@ struct PagingLibraryView<Element: Poster>: View {
         switch (posterType, viewType) {
         case (.landscape, .grid):
             .minWidth(200)
-        case (.portrait, .grid):
+        case (.portrait, .grid), (.square, .grid):
             .minWidth(150)
         case (_, .list):
             .columns(listColumnCount, insets: .zero, itemSpacing: 0, lineSpacing: 0)
@@ -167,6 +167,8 @@ struct PagingLibraryView<Element: Poster>: View {
         case (.landscape, .grid):
             .columns(2)
         case (.portrait, .grid):
+            .columns(3)
+        case (.square, .grid):
             .columns(3)
         case (_, .list):
             .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)

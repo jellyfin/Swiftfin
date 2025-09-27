@@ -1,5 +1,5 @@
 {
-  "originHash" : "38a493503cb22432e1bf1b0b812569bb2bdd51f821207a74b6b78ff16a049011",
+  "originHash" : "abe579933f26fdd2002cef8e1ff2e7818b91cd310e939ae8a6ac74c2ca880847",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -187,7 +187,7 @@
       "location" : "https://github.com/LePips/StatefulMacro",
       "state" : {
         "branch" : "main",
-        "revision" : "e0472fdc6092db79db102d58aa716440b98376f3"
+        "revision" : "32b16829fc39fe33fdcead7086cd3f4e249d6433"
       }
     },
     {

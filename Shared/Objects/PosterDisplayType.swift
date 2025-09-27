@@ -11,6 +11,7 @@ enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImage
 
     case landscape
     case portrait
+    case square
 
     var displayTitle: String {
         switch self {
@@ -18,6 +19,8 @@ enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImage
             L10n.landscape
         case .portrait:
             L10n.portrait
+        case .square:
+            "Square"
         }
     }
 
@@ -27,6 +30,8 @@ enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImage
             "rectangle.fill"
         case .portrait:
             "rectangle.portrait.fill"
+        case .square:
+            "square.fill"
         }
     }
 }

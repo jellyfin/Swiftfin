@@ -19,7 +19,8 @@ final class ActiveSessionsViewModel: ViewModel {
         case refresh
 
         var transition: Transition {
-            .loop(.refreshing, whenBackground: .refreshing)
+            .loop(.refreshing)
+                .whenBackground(.refreshing)
         }
     }
 

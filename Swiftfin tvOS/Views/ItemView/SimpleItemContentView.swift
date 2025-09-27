@@ -10,10 +10,10 @@ import SwiftUI
 
 extension ItemView {
 
-    struct EpisodeItemContentView: View {
+    struct SimpleItemContentView: View {
 
         @ObservedObject
-        var viewModel: EpisodeItemViewModel
+        var viewModel: ItemViewModel
 
         var body: some View {
             VStack(spacing: 0) {
