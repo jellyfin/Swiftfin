@@ -12,6 +12,8 @@ import SwiftUI
 // TODO: create environment for image sources
 //       - for when to have episode use series
 //       - pass in folder context
+//       - thumb
+//       - could remove cinematic, just use landscape
 
 /// A type that is displayed as a poster
 protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {

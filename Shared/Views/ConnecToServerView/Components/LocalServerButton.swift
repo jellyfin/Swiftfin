@@ -37,10 +37,12 @@ extension ConnectToServerView {
                         .fontWeight(.regular)
                         .foregroundStyle(.secondary)
                 }
+                #if os(tvOS)
                 .padding()
+                #endif
             }
-            .buttonStyle(.card)
             .foregroundStyle(.primary, .secondary)
+            .buttonStyle(.card)
         }
     }
 }

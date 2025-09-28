@@ -123,9 +123,7 @@ extension MediaView {
             .onChange(of: useRandomImage) { _, _ in
                 setImageSources()
             }
-            .if(UIDevice.isTV) { view in
-                view.buttonStyle(.card)
-            }
+            .buttonStyle(.card)
         }
     }
 }
