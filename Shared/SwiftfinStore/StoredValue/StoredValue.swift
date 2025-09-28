@@ -53,12 +53,10 @@ extension StoredValue {
 
     final class Observable: ObservableObject {
 
-        private let logger = Logger.swiftfin()
-
         let key: StoredValues.Key<Value>
-        let logger = Logger.swiftfin()
-
         let objectWillChange = ObservableObjectPublisher()
+
+        private let logger = Logger.swiftfin()
         private var objectPublisher: ObjectPublisher<AnyStoredData>?
         private var shouldListenToPublish: Bool = true
 
