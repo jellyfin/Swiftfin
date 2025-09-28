@@ -89,7 +89,7 @@ struct PlaybackQualitySettingsView: View {
                             value: L10n.compatibleDescription
                         )
                         LabeledContent(
-                            L10n.direct,
+                            L10n.directPlay,
                             value: L10n.directDescription
                         )
                         LabeledContent(
@@ -102,6 +102,6 @@ struct PlaybackQualitySettingsView: View {
         }
         .animation(.linear, value: appMaximumBitrate)
         .animation(.linear, value: compatibilityMode)
-        .navigationTitle(L10n.playbackQuality)
+        .navigationTitle(L10n.playbackQuality.localizedCapitalized)
     }
 }

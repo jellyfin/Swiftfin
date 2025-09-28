@@ -31,7 +31,7 @@ extension AddTaskTriggerView {
         var body: some View {
             Section {
                 ChevronButton(
-                    L10n.timeLimit,
+                    L10n.timeLimit.localizedCapitalized,
                     subtitle: subtitleString,
                     description: L10n.taskTriggerTimeLimit
                 ) {

@@ -27,7 +27,7 @@ struct MainTabView: View {
     private var tabCoordinator = TabCoordinator {
         TabItem.home
         TabItem.library(
-            title: L10n.tvShows,
+            title: L10n.tvShowsCapitalized,
             systemName: "tv",
             filters: .init(itemTypes: [.series])
         )
