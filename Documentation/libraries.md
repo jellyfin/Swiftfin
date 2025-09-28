@@ -9,10 +9,10 @@ For details on current library support and what is required for future expansion
 | Shows                | ✅         |
 | Collections          | 🟡         | Only video media in Collections are viewable. |
 | Movies               | ✅         | |
-| Playlists            | ❌         | Not currently supported, but under review in [PR #1428](https://github.com/jellyfin/Swiftfin/pull/1428) for potential release in 1.4. |
-| Mixed Libraries      | ❌         | Not supported due to their folder-like structure, requiring a different implementation approach. Also in review as a [Meta Jellyfin discussion topic.](https://github.com/jellyfin/jellyfin-meta/discussions/46) |
-| Music               | ❌         | Not yet supported. Music would need to come after Playlist support as this is a common requirement. Music requires an Artist > Album > Song structure, different from other media. Additionally needs a lightweight, *(potentially native)* iOS player and a dedicated playback manager. |
-| Music Videos        | ✅         | |
-| Home Videos         | ✅         | |
-| Photos              | ❌         | Not supported. Viewing photos requires dedicated logic and potentially a photo view package. Current photo viewing packages are most geared towards posters. |
-| Books               | ❌         | Not supported. Requires a book viewer. Lower priority since book reading is not planned for tvOS so this feature would only be usable for mobile clients. |
+| Playlists            | ❌         | Not supported. Under review in [PR #1428](https://github.com/jellyfin/Swiftfin/pull/1428). |
+| Mixed      		   | ✅         | This library type is [officially deprecated](https://jellyfin.org/docs/general/server/media/mixed-movies-and-shows) by the Jellyfin server and [may be removed in the future](https://github.com/jellyfin/jellyfin-meta/discussions/46). |
+| Music                | ❌         | Not supported. Music would need to come after Playlist support as this is a common requirement. Music requires an Artist > Album > Song structure, different from other media. Additionally needs a lightweight, *(potentially native)* iOS player and a dedicated playback manager. |
+| Music Videos         | ✅         | |
+| Home Videos          | ✅         | |
+| Photos               | ❌         | Not supported. Viewing photos requires dedicated logic and potentially a photo view package. Current photo viewing packages are most geared towards posters. |
+| Books                | ❌         | Not supported. Requires a book viewer. Lower priority since book reading is not planned for tvOS so this feature would only be usable for mobile clients. |
