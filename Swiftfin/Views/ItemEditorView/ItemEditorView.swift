@@ -51,7 +51,7 @@ struct ItemEditorView: View {
                 errorView(with: error)
             }
         }
-        .navigationBarTitle(L10n.metadata)
+        .navigationTitle(L10n.metadata)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()

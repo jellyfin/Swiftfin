@@ -102,7 +102,7 @@ extension MediaView {
                         }
                     }
                     .placeholder { imageSource in
-                        titleLabelOverlay(with: ImageView.DefaultPlaceholderView(blurHash: imageSource.blurHash))
+                        titleLabelOverlay(with: DefaultPlaceholderView(blurHash: imageSource.blurHash))
                     }
                     .failure {
                         Color.secondarySystemFill
