@@ -151,15 +151,11 @@ extension MediaChaptersSupplement {
         let chapter: ChapterInfo.FullInfo
 
         var body: some View {
-            ZStack {
-                Rectangle()
-                    .fill(.complexSecondary)
-
-                ImageView(chapter.imageSource)
-                    .failure {
-                        SystemImageContentView(systemName: chapter.systemImage)
-                    }
-            }
+            PosterImage(
+                item: chapter,
+                type: .landscape,
+                contentMode: .fill
+            )
             .overlay {
                 if isSelected {
                     ContainerRelativeShape()

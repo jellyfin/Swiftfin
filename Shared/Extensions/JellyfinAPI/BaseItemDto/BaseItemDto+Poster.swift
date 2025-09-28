@@ -147,6 +147,7 @@ extension BaseItemDto: Poster {
             }
         default:
             image
+                .aspectRatio(contentMode: .fill)
         }
     }
 }

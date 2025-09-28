@@ -8,6 +8,10 @@
 
 import SwiftUI
 
+/// A `VStack` that displays subviews with a marker on the top leading edge.
+///
+/// In a marker view, ensure that views that are only used for layout are
+/// tagged with `hidden` to avoid them being read by accessibility features.
 struct MarkedList<Content: View, Marker: View>: View {
 
     private let content: Content

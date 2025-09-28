@@ -14,8 +14,9 @@ func BulletedList(
 ) -> some View {
     MarkedList(spacing: spacing) { _ in
         ZStack {
-            // Capture local font
+            // Capture local font line height
             Text(" ")
+                .hidden()
 
             Circle()
                 .frame(width: 8)

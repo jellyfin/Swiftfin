@@ -48,20 +48,24 @@ struct PosterImage<Item: Poster>: View {
             Rectangle()
                 .fill(.complexSecondary)
 
-            ImageView(imageSources)
-                .image(item.transform)
-                .failure {
-                    if item.showTitle {
-                        SystemImageContentView(
-                            systemName: item.systemImage
-                        )
-                    } else {
-                        SystemImageContentView(
-                            title: item.displayTitle,
-                            systemName: item.systemImage
-                        )
+            AlternateLayoutView {
+                Color.clear
+            } content: {
+                ImageView(imageSources)
+                    .image(item.transform)
+                    .failure {
+                        if item.showTitle {
+                            SystemImageContentView(
+                                systemName: item.systemImage
+                            )
+                        } else {
+                            SystemImageContentView(
+                                title: item.displayTitle,
+                                systemName: item.systemImage
+                            )
+                        }
                     }
-                }
+            }
         }
         .posterStyle(
             type,
