@@ -19,6 +19,7 @@ struct ComplexSecondaryShapeStyle: ShapeStyle {
 
     func resolve(in environment: EnvironmentValues) -> some ShapeStyle {
         if environment.isOverComplexContent {
+            // TODO: different on tvOS
             AnyShapeStyle(Material.ultraThinMaterial)
         } else {
             // TODO: change to a solid color
