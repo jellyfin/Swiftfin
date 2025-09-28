@@ -132,18 +132,23 @@ struct CustomizeViewsSettings: View {
                 Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 
                 CaseIterablePicker(L10n.next, selection: $nextUpPosterType)
+                    .onlySupportedCases(true)
 
                 CaseIterablePicker(L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType)
+                    .onlySupportedCases(true)
 
                 CaseIterablePicker(L10n.recommended, selection: $similarPosterType)
+                    .onlySupportedCases(true)
 
                 CaseIterablePicker(L10n.search, selection: $searchPosterType)
+                    .onlySupportedCases(true)
             }
 
             Section(L10n.libraries) {
                 CaseIterablePicker(L10n.library, selection: $libraryDisplayType)
 
                 CaseIterablePicker(L10n.posters, selection: $libraryPosterType)
+                    .onlySupportedCases(true)
 
                 if libraryDisplayType == .list, UIDevice.isPad {
                     BasicStepper(

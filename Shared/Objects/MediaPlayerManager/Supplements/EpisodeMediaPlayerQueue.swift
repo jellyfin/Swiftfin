@@ -426,18 +426,13 @@ extension EpisodeMediaPlayerQueue {
         let episode: BaseItemDto
 
         var body: some View {
-            AlternateLayoutView {
-                Color.clear
-            } content: {
+            ZStack {
+                Rectangle()
+                    .fill(.complexSecondary)
+
                 ImageView(episode.imageSource(.primary, maxWidth: 200))
                     .failure {
-                        ZStack {
-                            Rectangle()
-                                .fill(Material.ultraThinMaterial)
-
-                            SystemImageContentView(systemName: episode.systemImage)
-                                .background(color: Color.clear)
-                        }
+                        SystemImageContentView(systemName: episode.systemImage)
                     }
             }
             .overlay {

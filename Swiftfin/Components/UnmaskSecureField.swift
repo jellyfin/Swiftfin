@@ -11,22 +11,21 @@ import SwiftUI
 // TODO: use _UIHostingView for button animation workaround?
 //       - have a nice animation for toggle
 
-struct UnmaskSecureField: UIViewRepresentable {
+/// - Note: Do not use this view directly.
+/// Use `SecureField.init(_:text:maskToggle)` instead
+struct _UnmaskSecureField: UIViewRepresentable {
 
-    @Binding
-    private var text: String
-
-    private let onReturn: () -> Void
+    private var submitAction: () -> Void
+    private let text: Binding<String>
     private let title: String
 
     init(
         _ title: String,
-        text: Binding<String>,
-        onReturn: @escaping () -> Void = {}
+        text: Binding<String>
     ) {
-        self._text = text
+        self.text = text
         self.title = title
-        self.onReturn = onReturn
+        self.submitAction = {}
     }
 
     func makeUIView(context: Context) -> UITextField {
@@ -37,7 +36,7 @@ struct UnmaskSecureField: UIViewRepresentable {
         textField.isSecureTextEntry = true
         textField.keyboardType = .asciiCapable
         textField.placeholder = title
-        textField.text = text
+        textField.text = text.wrappedValue
         textField.addTarget(
             context.coordinator,
             action: #selector(Coordinator.textDidChange),
@@ -65,10 +64,10 @@ struct UnmaskSecureField: UIViewRepresentable {
         textField.rightViewMode = .always
 
         context.coordinator.button = button
-        context.coordinator.onReturn = onReturn
+        context.coordinator.submitAction = submitAction
         context.coordinator.textField = textField
         context.coordinator.textDidChange()
-        context.coordinator.textBinding = _text
+        context.coordinator.textBinding = text
 
         textField.delegate = context.coordinator
 
@@ -76,9 +75,11 @@ struct UnmaskSecureField: UIViewRepresentable {
     }
 
     func updateUIView(_ textField: UITextField, context: Context) {
-        if text != textField.text {
-            textField.text = text
+        if text.wrappedValue != textField.text {
+            textField.text = text.wrappedValue
         }
+
+        context.coordinator.submitAction = submitAction
     }
 
     func makeCoordinator() -> Coordinator {
@@ -90,7 +91,7 @@ struct UnmaskSecureField: UIViewRepresentable {
         weak var button: UIButton?
         weak var textField: UITextField?
         var textBinding: Binding<String> = .constant("")
-        var onReturn: () -> Void = {}
+        var submitAction: () -> Void = {}
 
         @objc
         func buttonPressed() {
@@ -109,9 +110,16 @@ struct UnmaskSecureField: UIViewRepresentable {
         }
 
         func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-            onReturn()
+            submitAction()
             return true
         }
+    }
+}
+
+extension _UnmaskSecureField {
+
+    func onSubmit(_ action: @escaping () -> Void) -> some View {
+        copy(modifying: \.submitAction, with: action)
     }
 }
 

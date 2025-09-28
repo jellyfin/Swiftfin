@@ -102,7 +102,7 @@ extension MediaView {
                         }
                     }
                     .placeholder { imageSource in
-                        titleLabelOverlay(with: ImageView.DefaultPlaceholderView(blurHash: imageSource.blurHash))
+                        titleLabelOverlay(with: DefaultPlaceholderView(blurHash: imageSource.blurHash))
                     }
                     .failure {
                         Color.secondarySystemFill
@@ -123,9 +123,7 @@ extension MediaView {
             .onChange(of: useRandomImage) { _, _ in
                 setImageSources()
             }
-            .if(UIDevice.isTV) { view in
-                view.buttonStyle(.card)
-            }
+            .buttonStyle(.card)
         }
     }
 }

@@ -72,6 +72,7 @@ extension SeriesEpisodeSelector {
                         .backport
                         .matchedTransitionSource(id: "item", in: namespace)
                         .posterStyle(.landscape)
+                        .posterShadow()
                 }
 
                 SeriesEpisodeSelector.EpisodeContent(
