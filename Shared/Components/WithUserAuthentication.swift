@@ -6,7 +6,9 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+#if canImport(LocalAuthentication)
 import LocalAuthentication
+#endif
 import SwiftUI
 
 struct LocalUserAuthenticationAction {
