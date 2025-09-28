@@ -59,7 +59,12 @@ extension ChapterInfo {
         }
 
         func transform(image: Image) -> some View {
-            image
+            ZStack {
+                Color.black
+
+                image
+                    .aspectRatio(contentMode: .fit)
+            }
         }
     }
 }

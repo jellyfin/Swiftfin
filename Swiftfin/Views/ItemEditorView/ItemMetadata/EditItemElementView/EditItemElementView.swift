@@ -83,7 +83,7 @@ struct EditItemElementView<Element: Hashable>: View {
                 errorView(with: error)
             }
         }
-        .navigationBarTitle(type.displayTitle)
+        .navigationTitle(type.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(isEditing || isReordering)
         .toolbar {

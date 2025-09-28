@@ -219,6 +219,7 @@ struct SelectUserView: View {
             .focusSection()
         }
         .animation(.linear(duration: 0.1), value: scrollViewOffset)
+        .environment(\.isOverComplexContent, true)
         .background {
             if selectUserUseSplashscreen, splashScreenImageSources.isNotEmpty {
                 ZStack {

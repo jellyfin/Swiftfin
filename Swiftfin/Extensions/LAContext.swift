@@ -6,12 +6,17 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import SwiftUI
+import Foundation
+import LocalAuthentication
 
-extension Text {
+extension LAContext {
 
-    @available(*, deprecated, message: "Just use `.displayTitle` manually instead")
-    init(_ content: some Displayable) {
-        self.init(verbatim: "\(content.displayTitle)")
+    func canEvaluatePolicy(_ policy: LAPolicy) throws {
+        var error: NSError?
+        _ = canEvaluatePolicy(policy, error: &error)
+
+        if let error {
+            throw error
+        }
     }
 }

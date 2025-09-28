@@ -8,9 +8,9 @@
 
 import SwiftUI
 
-func DotHStack<Content: View>(
+func DotHStack(
     padding: CGFloat = 5,
-    @ViewBuilder content: @escaping () -> Content
+    @ViewBuilder content: @escaping () -> some View
 ) -> some View {
     SeparatorHStack {
         Circle()

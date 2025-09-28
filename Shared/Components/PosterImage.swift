@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import BlurHashKit
 import SwiftUI
 
 /// Retrieving images by exact pixel dimensions is a bit
@@ -14,9 +15,6 @@ private let landscapeMaxWidth: CGFloat = 300
 private let portraitMaxWidth: CGFloat = 200
 
 struct PosterImage<Item: Poster>: View {
-
-    @Environment(\.isOverComplexContent)
-    private var isOverComplexContent
 
     private let contentMode: ContentMode
     private let imageMaxWidth: CGFloat
@@ -48,30 +46,41 @@ struct PosterImage<Item: Poster>: View {
 
     var body: some View {
         ZStack {
-            if isOverComplexContent {
-                Rectangle()
-                    .fill(Material.ultraThinMaterial)
-            } else {
-                Rectangle()
-                    .fill(Color.secondarySystemFill)
-            }
+            Rectangle()
+                .fill(.complexSecondary)
 
-            ImageView(imageSources)
-                .image(item.transform)
-                .failure {
-                    if item.showTitle {
-                        SystemImageContentView(
-                            systemName: item.systemImage
-                        )
-                        .background(color: .clear)
-                    } else {
-                        SystemImageContentView(
-                            title: item.displayTitle,
-                            systemName: item.systemImage
-                        )
-                        .background(color: .clear)
+            AlternateLayoutView {
+                Color.clear
+            } content: {
+                ImageView(imageSources)
+                    .image(item.transform)
+                    .placeholder { imageSource in
+                        if let blurHash = imageSource.blurHash {
+                            BlurHashView(blurHash: blurHash)
+                        } else if item.showTitle {
+                            SystemImageContentView(
+                                systemName: item.systemImage
+                            )
+                        } else {
+                            SystemImageContentView(
+                                title: item.displayTitle,
+                                systemName: item.systemImage
+                            )
+                        }
                     }
-                }
+                    .failure {
+                        if item.showTitle {
+                            SystemImageContentView(
+                                systemName: item.systemImage
+                            )
+                        } else {
+                            SystemImageContentView(
+                                title: item.displayTitle,
+                                systemName: item.systemImage
+                            )
+                        }
+                    }
+            }
         }
         .posterStyle(
             type,
