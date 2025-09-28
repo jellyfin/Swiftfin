@@ -45,9 +45,11 @@ struct WithUserAuthentication<Content: View>: View {
     }
 
     private func handleDeviceAuthentication(reason: String?) async throws {
+        #if os(iOS)
         let context = LAContext()
         try context.canEvaluatePolicy(.deviceOwnerAuthentication)
         try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason ?? "")
+        #endif
     }
 
     private func handlePinAuthentication() async throws {

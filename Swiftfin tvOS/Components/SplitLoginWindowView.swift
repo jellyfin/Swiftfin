@@ -30,7 +30,7 @@ struct SplitLoginWindowView<Leading: View, Trailing: View>: View {
 
     var body: some View {
         HStack(alignment: .top) {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 10) {
                 Section(leadingTitle) {
                     VStack(alignment: .leading) {
                         leadingContentView()

@@ -71,7 +71,12 @@ struct ResetUserPasswordView: View {
         List {
             if requiresCurrentPassword {
                 Section(L10n.currentPassword) {
-                    UnmaskSecureField(L10n.currentPassword, text: $currentPassword) {
+                    SecureField(
+                        L10n.currentPassword,
+                        text: $currentPassword,
+                        maskToggleBehavior: .enabled
+                    )
+                    .onSubmit {
                         focusedField = .newPassword
                     }
                     .autocorrectionDisabled()
@@ -82,7 +87,12 @@ struct ResetUserPasswordView: View {
             }
 
             Section(L10n.newPassword) {
-                UnmaskSecureField(L10n.newPassword, text: $newPassword) {
+                SecureField(
+                    L10n.newPassword,
+                    text: $newPassword,
+                    maskToggleBehavior: .enabled
+                )
+                .onSubmit {
                     focusedField = .confirmNewPassword
                 }
                 .autocorrectionDisabled()
@@ -92,7 +102,12 @@ struct ResetUserPasswordView: View {
             }
 
             Section {
-                UnmaskSecureField(L10n.confirmNewPassword, text: $confirmNewPassword) {
+                SecureField(
+                    L10n.confirmNewPassword,
+                    text: $confirmNewPassword,
+                    maskToggleBehavior: .enabled
+                )
+                .onSubmit {
                     viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))
                 }
                 .autocorrectionDisabled()

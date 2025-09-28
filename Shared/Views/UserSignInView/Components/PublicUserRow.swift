@@ -13,27 +13,12 @@ extension UserSignInView {
 
     struct PublicUserRow: View {
 
-        @Environment(\.colorScheme)
-        private var colorScheme
-
-        private let user: UserDto
-        private let client: JellyfinClient
-        private let action: () -> Void
-
-        init(
-            user: UserDto,
-            client: JellyfinClient,
-            action: @escaping () -> Void
-        ) {
-            self.user = user
-            self.client = client
-            self.action = action
-        }
+        let user: UserDto
+        let client: JellyfinClient
+        let action: () -> Void
 
         var body: some View {
-            Button {
-                action()
-            } label: {
+            Button(action: action) {
                 HStack {
                     ZStack {
                         Color.clear
@@ -56,11 +41,12 @@ extension UserSignInView {
                     Spacer()
 
                     Image(systemName: "chevron.right")
-                        .font(.body.weight(.regular))
-                        .foregroundColor(.secondary)
+                        .font(.body)
+                        .fontWeight(.regular)
+                        .foregroundStyle(.secondary)
                 }
             }
-            .foregroundStyle(.primary)
+            .foregroundStyle(.primary, .secondary)
         }
     }
 }

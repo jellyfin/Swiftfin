@@ -68,6 +68,9 @@ struct RelativeSystemImageView: View {
 // TODO: cleanup and become the failure view for poster buttons
 struct SystemImageContentView: View {
 
+    @Environment(\.isOverComplexContent)
+    private var isOverComplexContent
+
     @State
     private var labelSize: CGSize = .zero
 
@@ -97,7 +100,13 @@ struct SystemImageContentView: View {
 
     var body: some View {
         ZStack {
-            backgroundColor
+            if isOverComplexContent {
+                Rectangle()
+                    .fill(Material.ultraThinMaterial)
+            } else {
+                Rectangle()
+                    .fill(backgroundColor)
+            }
 
             ContainerRelativeView(ratio: ratio) {
                 Image(systemName: systemName)

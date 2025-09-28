@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionVGrid
 import Defaults
 import Factory
 import JellyfinAPI
@@ -14,7 +15,7 @@ import SwiftUI
 
 struct UserSignInView: View {
 
-    enum Field: Hashable {
+    private enum Field: Hashable {
         case username
         case password
     }
@@ -127,7 +128,12 @@ struct UserSignInView: View {
                     focusedTextField = .password
                 }
 
-            UnmaskSecureField(L10n.password, text: $password) {
+            SecureField(
+                L10n.password,
+                text: $password,
+                maskToggleBehavior: .enabled
+            )
+            .onSubmit {
                 focusedTextField = nil
 
                 viewModel.signIn(
@@ -159,8 +165,6 @@ struct UserSignInView: View {
             }
         } else {
             ListRowButton(L10n.signIn) {
-                focusedTextField = nil
-
                 viewModel.signIn(
                     username: username,
                     password: password
@@ -205,8 +209,10 @@ struct UserSignInView: View {
                 L10n.noPublicUsers.text
                     .font(.callout)
                     .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(maxHeight: .infinity, alignment: .center)
             } else {
+                #if os(iOS)
                 ForEach(viewModel.publicUsers, id: \.id) { user in
                     PublicUserRow(
                         user: user,
@@ -216,30 +222,42 @@ struct UserSignInView: View {
                         password = ""
                         focusedTextField = .password
                     }
+                    .disabled(viewModel.state == .signingIn)
                 }
+                #else
+                LazyVGrid(
+                    columns: Array(repeating: GridItem(.flexible()), count: 4),
+                    spacing: 30
+                ) {
+                    ForEach(viewModel.publicUsers, id: \.id) { user in
+                        PublicUserButton(
+                            user: user,
+                            client: viewModel.server.client
+                        ) {
+                            username = user.name ?? ""
+                            password = ""
+                            focusedTextField = .password
+                        }
+                        .disabled(viewModel.state == .signingIn)
+                    }
+                }
+                #endif
             }
         }
     }
 
-    // MARK: - Body
-
-    var body: some View {
+    @ViewBuilder
+    private var contentView: some View {
+        #if os(iOS)
         List {
             signInSection
 
             publicUsersSection
         }
-        .animation(.linear, value: viewModel.isQuickConnectEnabled)
         .interactiveDismissDisabled(viewModel.state == .signingIn)
-        .navigationTitle(L10n.signIn)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton(disabled: viewModel.state == .signingIn) {
             router.dismiss()
-        }
-        .onReceive(viewModel.events, perform: handleEvent)
-        .onFirstAppear {
-            focusedTextField = .username
-            viewModel.getPublicData()
         }
         .topBarTrailing {
             if viewModel.state == .signingIn || viewModel.background.is(.gettingPublicData) {
@@ -255,49 +273,97 @@ struct UserSignInView: View {
                 )
             }
         }
-        .alert(
-            L10n.duplicateUser,
-            isPresented: $isPresentingExistingUser,
-            presenting: existingUser
-        ) { existingUser in
-
-            let userState = existingUser.state.state
-            let existingUserAccessPolicy = userState.accessPolicy
-
-            Button(L10n.signIn) {
-                viewModel.saveExisting(
-                    user: existingUser,
-                    replaceForAccessToken: false,
-                    authenticationAction: (
-                        authenticationAction!,
-                        existingUserAccessPolicy,
-                        existingUserAccessPolicy.authenticateReason(
-                            user: userState
-                        )
-                    ),
-                    evaluatedPolicyMap: .init(action: processEvaluatedPolicy)
-                )
-            }
-
-            Button(L10n.replace) {
-                viewModel.saveExisting(
-                    user: existingUser,
-                    replaceForAccessToken: true,
-                    authenticationAction: (
-                        authenticationAction!,
-                        existingUserAccessPolicy,
-                        existingUserAccessPolicy.authenticateReason(
-                            user: userState
-                        )
-                    ),
-                    evaluatedPolicyMap: .init(action: processEvaluatedPolicy)
-                )
-            }
-
-            Button(L10n.dismiss, role: .cancel)
-        } message: { existingUser in
-            Text(L10n.duplicateUserSaved(existingUser.state.state.username))
+        #else
+        SplitLoginWindowView(
+            isLoading: viewModel.state == .signingIn,
+            leadingTitle: L10n.signInToServer(viewModel.server.name),
+            trailingTitle: L10n.publicUsers,
+            backgroundImageSource: viewModel.server.splashScreenImageSource
+        ) {
+            signInSection
+        } trailingContentView: {
+            publicUsersSection
         }
-        .errorMessage($viewModel.error)
+        #endif
+    }
+
+    // MARK: - Body
+
+    var body: some View {
+        contentView
+            .navigationTitle(L10n.signIn)
+            .onReceive(viewModel.events, perform: handleEvent)
+            .onFirstAppear {
+                focusedTextField = .username
+                viewModel.getPublicData()
+            }
+            .alert(
+                L10n.duplicateUser,
+                isPresented: $isPresentingExistingUser,
+                presenting: existingUser
+            ) { existingUser in
+
+                let userState = existingUser.state.state
+                let existingUserAccessPolicy = userState.accessPolicy
+
+                Button(L10n.signIn) {
+                    viewModel.saveExisting(
+                        user: existingUser,
+                        replaceForAccessToken: false,
+                        authenticationAction: (
+                            authenticationAction!,
+                            existingUserAccessPolicy,
+                            existingUserAccessPolicy.authenticateReason(
+                                user: userState
+                            )
+                        ),
+                        evaluatedPolicyMap: .init(action: processEvaluatedPolicy)
+                    )
+                }
+
+                Button(L10n.replace) {
+                    viewModel.saveExisting(
+                        user: existingUser,
+                        replaceForAccessToken: true,
+                        authenticationAction: (
+                            authenticationAction!,
+                            existingUserAccessPolicy,
+                            existingUserAccessPolicy.authenticateReason(
+                                user: userState
+                            )
+                        ),
+                        evaluatedPolicyMap: .init(action: processEvaluatedPolicy)
+                    )
+                }
+
+                Button(L10n.dismiss, role: .cancel)
+            } message: { existingUser in
+                Text(L10n.duplicateUserSaved(existingUser.state.state.username))
+            }
+            .errorMessage($viewModel.error)
+    }
+}
+
+// TODO: rename as not only used in section footers
+
+extension LabelStyle where Self == SectionFooterWithImageLabelStyle<AnyShapeStyle> {
+
+    static func sectionFooterWithImage<ImageStyle: ShapeStyle>(imageStyle: ImageStyle) -> SectionFooterWithImageLabelStyle<ImageStyle> {
+        SectionFooterWithImageLabelStyle(imageStyle: imageStyle)
+    }
+}
+
+struct SectionFooterWithImageLabelStyle<ImageStyle: ShapeStyle>: LabelStyle {
+
+    let imageStyle: ImageStyle
+
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            configuration.icon
+                .foregroundStyle(imageStyle)
+                .fontWeight(.bold)
+
+            configuration.title
+        }
     }
 }
