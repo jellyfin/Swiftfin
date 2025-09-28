@@ -53,6 +53,8 @@ extension StoredValue {
 
     final class Observable: ObservableObject {
 
+        private let logger = Logger.swiftfin()
+
         let key: StoredValues.Key<Value>
         let logger = Logger.swiftfin()
 
