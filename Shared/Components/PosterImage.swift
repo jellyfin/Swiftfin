@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import BlurHashKit
 import SwiftUI
 
 /// Retrieving images by exact pixel dimensions is a bit
@@ -53,6 +54,20 @@ struct PosterImage<Item: Poster>: View {
             } content: {
                 ImageView(imageSources)
                     .image(item.transform)
+                    .placeholder { imageSource in
+                        if let blurHash = imageSource.blurHash {
+                            BlurHashView(blurHash: blurHash)
+                        } else if item.showTitle {
+                            SystemImageContentView(
+                                systemName: item.systemImage
+                            )
+                        } else {
+                            SystemImageContentView(
+                                title: item.displayTitle,
+                                systemName: item.systemImage
+                            )
+                        }
+                    }
                     .failure {
                         if item.showTitle {
                             SystemImageContentView(
