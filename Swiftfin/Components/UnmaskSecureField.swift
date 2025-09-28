@@ -11,7 +11,9 @@ import SwiftUI
 // TODO: use _UIHostingView for button animation workaround?
 //       - have a nice animation for toggle
 
-struct UnmaskSecureField: UIViewRepresentable {
+/// - Note: Do not use this view directly.
+/// Use `SecureField.init(_:text:maskToggle)` instead
+struct _UnmaskSecureField: UIViewRepresentable {
 
     private var submitAction: () -> Void
     private let text: Binding<String>
@@ -114,9 +116,9 @@ struct UnmaskSecureField: UIViewRepresentable {
     }
 }
 
-extension UnmaskSecureField {
+extension _UnmaskSecureField {
 
-    func onSubmit(_ action: @escaping () -> Void) -> UnmaskSecureField {
+    func onSubmit(_ action: @escaping () -> Void) -> some View {
         copy(modifying: \.submitAction, with: action)
     }
 }

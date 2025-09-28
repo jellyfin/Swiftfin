@@ -16,7 +16,7 @@ func SecureField(
 ) -> some View {
     #if os(iOS)
     if maskToggle == .enabled {
-        UnmaskSecureField(
+        _UnmaskSecureField(
             title,
             text: text
         )
