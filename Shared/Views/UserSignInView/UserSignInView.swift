@@ -131,7 +131,7 @@ struct UserSignInView: View {
             SecureField(
                 L10n.password,
                 text: $password,
-                maskToggleBehavior: .enabled
+                maskToggle: .enabled
             )
             .onSubmit {
                 focusedTextField = nil
@@ -209,11 +209,10 @@ struct UserSignInView: View {
                 L10n.noPublicUsers.text
                     .font(.callout)
                     .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .frame(maxHeight: .infinity, alignment: .center)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             } else {
                 #if os(iOS)
-                ForEach(viewModel.publicUsers, id: \.id) { user in
+                ForEach(viewModel.publicUsers) { user in
                     PublicUserRow(
                         user: user,
                         client: viewModel.server.client
@@ -222,14 +221,13 @@ struct UserSignInView: View {
                         password = ""
                         focusedTextField = .password
                     }
-                    .disabled(viewModel.state == .signingIn)
                 }
                 #else
                 LazyVGrid(
                     columns: Array(repeating: GridItem(.flexible()), count: 4),
                     spacing: 30
                 ) {
-                    ForEach(viewModel.publicUsers, id: \.id) { user in
+                    ForEach(viewModel.publicUsers) { user in
                         PublicUserButton(
                             user: user,
                             client: viewModel.server.client
@@ -238,12 +236,13 @@ struct UserSignInView: View {
                             password = ""
                             focusedTextField = .password
                         }
-                        .disabled(viewModel.state == .signingIn)
+                        .environment(\.isOverComplexContent, true)
                     }
                 }
                 #endif
             }
         }
+        .disabled(viewModel.state == .signingIn)
     }
 
     @ViewBuilder
@@ -254,7 +253,6 @@ struct UserSignInView: View {
 
             publicUsersSection
         }
-        .interactiveDismissDisabled(viewModel.state == .signingIn)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton(disabled: viewModel.state == .signingIn) {
             router.dismiss()
@@ -276,8 +274,6 @@ struct UserSignInView: View {
         #else
         SplitLoginWindowView(
             isLoading: viewModel.state == .signingIn,
-            leadingTitle: L10n.signInToServer(viewModel.server.name),
-            trailingTitle: L10n.publicUsers,
             backgroundImageSource: viewModel.server.splashScreenImageSource
         ) {
             signInSection
@@ -292,6 +288,7 @@ struct UserSignInView: View {
     var body: some View {
         contentView
             .navigationTitle(L10n.signIn)
+            .interactiveDismissDisabled(viewModel.state == .signingIn)
             .onReceive(viewModel.events, perform: handleEvent)
             .onFirstAppear {
                 focusedTextField = .username
@@ -341,29 +338,5 @@ struct UserSignInView: View {
                 Text(L10n.duplicateUserSaved(existingUser.state.state.username))
             }
             .errorMessage($viewModel.error)
-    }
-}
-
-// TODO: rename as not only used in section footers
-
-extension LabelStyle where Self == SectionFooterWithImageLabelStyle<AnyShapeStyle> {
-
-    static func sectionFooterWithImage<ImageStyle: ShapeStyle>(imageStyle: ImageStyle) -> SectionFooterWithImageLabelStyle<ImageStyle> {
-        SectionFooterWithImageLabelStyle(imageStyle: imageStyle)
-    }
-}
-
-struct SectionFooterWithImageLabelStyle<ImageStyle: ShapeStyle>: LabelStyle {
-
-    let imageStyle: ImageStyle
-
-    func makeBody(configuration: Configuration) -> some View {
-        HStack {
-            configuration.icon
-                .foregroundStyle(imageStyle)
-                .fontWeight(.bold)
-
-            configuration.title
-        }
     }
 }

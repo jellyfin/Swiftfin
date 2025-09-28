@@ -11,23 +11,19 @@ import SwiftUI
 
 struct UserProfileImage<Placeholder: View>: View {
 
-    // MARK: - Environment Variables
-
-    @Environment(\.isEnabled)
-    private var isEnabled
     @Environment(\.isEditing)
     private var isEditing
+    @Environment(\.isEnabled)
+    private var isEnabled
+    @Environment(\.isOverComplexContent)
+    private var isOverComplexContent
     @Environment(\.isSelected)
     private var isSelected
-
-    // MARK: - User Variables
 
     private let userID: String?
     private let source: ImageSource
     private let pipeline: ImagePipeline
     private let placeholder: Placeholder
-
-    // MARK: - Overlay Opacity
 
     private var overlayOpacity: Double {
         /// Dim the Profile Image if Editing & Unselected or if Disabled
@@ -38,39 +34,50 @@ struct UserProfileImage<Placeholder: View>: View {
         }
     }
 
-    // MARK: - Body
-
     var body: some View {
-        RedrawOnNotificationView(
-            .didChangeUserProfile,
-            filter: {
-                $0 == userID
+        ZStack {
+            if isOverComplexContent {
+                Rectangle()
+                    .fill(Material.ultraThinMaterial)
+            } else {
+                Rectangle()
+                    .fill(Color.secondarySystemFill)
             }
-        ) {
-            ImageView(source)
-                .pipeline(pipeline)
-                .image {
-                    $0.posterBorder()
-                        .containerShape(.circle)
+
+            RedrawOnNotificationView(
+                .didChangeUserProfile,
+                filter: {
+                    $0 == userID
                 }
-                .placeholder { _ in
-                    placeholder
+            ) {
+                AlternateLayoutView {
+                    Color.clear
+                } content: {
+                    ImageView(source)
+                        .pipeline(pipeline)
+                        .image { image in
+                            image.aspectRatio(contentMode: .fill)
+                        }
+                        .placeholder { _ in
+                            placeholder
+                        }
+                        .failure {
+                            placeholder
+                        }
+                        .overlay {
+                            Color.black
+                                .opacity(overlayOpacity)
+                        }
                 }
-                .failure {
-                    placeholder
-                }
-                .overlay {
-                    Color.black
-                        .opacity(overlayOpacity)
-                }
-                .aspectRatio(1, contentMode: .fill)
-                .clipShape(.circle)
-                .shadow(radius: 5)
+            }
         }
+        .posterBorder()
+        .containerShape(.circle)
+        .clipShape(.circle)
+        .aspectRatio(1, contentMode: .fit)
+        .shadow(radius: 5)
     }
 }
-
-// MARK: - Initializer
 
 extension UserProfileImage {
 
@@ -87,7 +94,7 @@ extension UserProfileImage {
     }
 }
 
-extension UserProfileImage where Placeholder == SystemImageContentView {
+extension UserProfileImage where Placeholder == AnyView {
 
     init(
         userID: String?,
@@ -97,6 +104,12 @@ extension UserProfileImage where Placeholder == SystemImageContentView {
         self.userID = userID
         self.source = source
         self.pipeline = pipeline
-        self.placeholder = SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+        self.placeholder = SystemImageContentView(
+            systemName: "person.fill",
+            ratio: 0.5
+        )
+        .background(color: .clear)
+        .environment(\.isOverComplexContent, false)
+        .eraseToAnyView()
     }
 }

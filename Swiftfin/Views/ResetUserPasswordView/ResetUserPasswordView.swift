@@ -74,7 +74,7 @@ struct ResetUserPasswordView: View {
                     SecureField(
                         L10n.currentPassword,
                         text: $currentPassword,
-                        maskToggleBehavior: .enabled
+                        maskToggle: .enabled
                     )
                     .onSubmit {
                         focusedField = .newPassword
@@ -90,7 +90,7 @@ struct ResetUserPasswordView: View {
                 SecureField(
                     L10n.newPassword,
                     text: $newPassword,
-                    maskToggleBehavior: .enabled
+                    maskToggle: .enabled
                 )
                 .onSubmit {
                     focusedField = .confirmNewPassword
@@ -105,7 +105,7 @@ struct ResetUserPasswordView: View {
                 SecureField(
                     L10n.confirmNewPassword,
                     text: $confirmNewPassword,
-                    maskToggleBehavior: .enabled
+                    maskToggle: .enabled
                 )
                 .onSubmit {
                     viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))

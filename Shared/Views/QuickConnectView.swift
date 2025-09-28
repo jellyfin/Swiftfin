@@ -22,25 +22,26 @@ struct QuickConnectView: View {
     }
 
     private func pollingView(code: String) -> some View {
-        VStack(alignment: .leading, spacing: 20) {
-            BulletedList {
+        VStack(spacing: 20) {
+            BulletedList(spacing: 16) {
                 L10n.quickConnectStep1.text
-                    .padding(.bottom)
+
                 L10n.quickConnectStep2.text
-                    .padding(.bottom)
+
                 L10n.quickConnectStep3.text
-                    .padding(.bottom)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             Text(code)
                 .tracking(10)
                 .font(.largeTitle)
                 .monospacedDigit()
-                .frame(maxWidth: .infinity)
-
-            Spacer()
         }
-        .frame(maxWidth: .infinity)
+        .frame(
+            maxWidth: .infinity,
+            maxHeight: .infinity,
+            alignment: .top
+        )
         .edgePadding()
     }
 
@@ -53,19 +54,25 @@ struct QuickConnectView: View {
                 pollingView(code: code)
             case let .error(error):
                 ErrorView(error: error)
+                    .onRetry {
+                        viewModel.start()
+                    }
             }
         }
+        .animation(.linear(duration: 0.2), value: viewModel.state)
         .edgePadding()
         .navigationTitle(L10n.quickConnect)
-        .navigationBarTitleDisplayMode(.inline)
-        .onFirstAppear {
-            viewModel.start()
-        }
-        .onDisappear {
-            viewModel.stop()
-        }
-        .navigationBarCloseButton {
-            router.dismiss()
-        }
+        #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarCloseButton {
+                router.dismiss()
+            }
+        #endif
+            .onFirstAppear {
+                    viewModel.start()
+                }
+                .onDisappear {
+                    viewModel.stop()
+                }
     }
 }

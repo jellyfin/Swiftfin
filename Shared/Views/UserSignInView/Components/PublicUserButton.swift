@@ -19,20 +19,13 @@ extension UserSignInView {
 
         var body: some View {
             Button(action: action) {
-                ZStack {
-                    Color.clear
-
-                    UserProfileImage(
-                        userID: user.id,
-                        source: user.profileImageSource(
-                            client: client,
-                            maxWidth: 120
-                        )
+                UserProfileImage(
+                    userID: user.id,
+                    source: user.profileImageSource(
+                        client: client,
+                        maxWidth: 240
                     )
-                }
-                .aspectRatio(1, contentMode: .fill)
-                .posterShadow()
-                .clipShape(.circle)
+                )
                 .frame(width: 150, height: 150)
                 .hoverEffect(.highlight)
 
@@ -40,8 +33,8 @@ extension UserSignInView {
                     .fontWeight(.semibold)
                     .foregroundStyle(.primary)
                     .lineLimit(1)
-                    .padding(.bottom)
             }
+            .backport
             .buttonBorderShape(.circle)
             .buttonStyle(.borderless)
             .foregroundStyle(.primary, .secondary)

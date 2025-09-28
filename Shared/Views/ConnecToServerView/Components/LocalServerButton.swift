@@ -14,24 +14,8 @@ extension ConnectToServerView {
 
     struct LocalServerButton: View {
 
-        // MARK: - Environment Variables
-
-        @Environment(\.isEnabled)
-        private var isEnabled: Bool
-
-        // MARK: - Local Server Variables
-
-        private let server: ServerState
-        private let action: () -> Void
-
-        // MARK: - Initializer
-
-        init(server: ServerState, action: @escaping () -> Void) {
-            self.server = server
-            self.action = action
-        }
-
-        // MARK: - Local Server Button
+        let server: ServerState
+        let action: () -> Void
 
         var body: some View {
             Button(action: action) {
@@ -49,14 +33,14 @@ extension ConnectToServerView {
                     Spacer()
 
                     Image(systemName: "chevron.right")
-                        .font(.body.weight(.regular))
+                        .font(.body)
+                        .fontWeight(.regular)
                         .foregroundStyle(.secondary)
                 }
                 .padding()
             }
-            .disabled(!isEnabled)
             .buttonStyle(.card)
-            .foregroundStyle(.primary)
+            .foregroundStyle(.primary, .secondary)
         }
     }
 }

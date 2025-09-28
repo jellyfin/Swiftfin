@@ -12,10 +12,10 @@ import SwiftUI
 func SecureField(
     _ title: String,
     text: Binding<String>,
-    maskToggleBehavior: SwiftUI.SecureField<EmptyView>.MaskToggleBehavior
+    maskToggle: SwiftUI.SecureField<EmptyView>.MaskToggleBehavior
 ) -> some View {
     #if os(iOS)
-    if maskToggleBehavior == .enabled {
+    if maskToggle == .enabled {
         UnmaskSecureField(
             title,
             text: text

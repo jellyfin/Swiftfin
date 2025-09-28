@@ -20,17 +20,13 @@ extension UserSignInView {
         var body: some View {
             Button(action: action) {
                 HStack {
-                    ZStack {
-                        Color.clear
-
-                        UserProfileImage(
-                            userID: user.id,
-                            source: user.profileImageSource(
-                                client: client,
-                                maxWidth: 120
-                            )
+                    UserProfileImage(
+                        userID: user.id,
+                        source: user.profileImageSource(
+                            client: client,
+                            maxWidth: 120
                         )
-                    }
+                    )
                     .frame(width: 50, height: 50)
 
                     Text(user.name ?? .emptyDash)

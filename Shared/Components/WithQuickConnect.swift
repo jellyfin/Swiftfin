@@ -70,7 +70,7 @@ struct WithQuickConnect<Content: View>: View {
             throw JellyfinAPIError(L10n.unknownError)
         }
 
-        let newQuickConnect = QuickConnect(client: client, pollInterval: 5, maxPolls: 1)
+        let newQuickConnect = QuickConnect(client: client)
         self.quickConnect = newQuickConnect
 
         router.route(to: .quickConnect(quickConnect: newQuickConnect))
