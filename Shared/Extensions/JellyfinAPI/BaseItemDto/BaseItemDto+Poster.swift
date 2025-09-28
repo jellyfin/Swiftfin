@@ -64,7 +64,7 @@ extension BaseItemDto: Poster {
         switch type {
         case .episode:
             [seriesImageSource(.primary, maxWidth: maxWidth, quality: quality)]
-        case .boxSet, .channel, .tvChannel, .liveTvChannel, .movie, .series, .person:
+        case .boxSet, .channel, .liveTvChannel, .movie, .musicArtist, .person, .series, .tvChannel:
             [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
         default:
             // TODO: cleanup

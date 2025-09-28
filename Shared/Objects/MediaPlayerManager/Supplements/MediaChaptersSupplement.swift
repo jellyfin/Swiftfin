@@ -151,18 +151,13 @@ extension MediaChaptersSupplement {
         let chapter: ChapterInfo.FullInfo
 
         var body: some View {
-            AlternateLayoutView {
-                Color.clear
-            } content: {
+            ZStack {
+                Rectangle()
+                    .fill(.complexSecondary)
+
                 ImageView(chapter.imageSource)
                     .failure {
-                        ZStack {
-                            Rectangle()
-                                .fill(Material.ultraThinMaterial)
-
-                            SystemImageContentView(systemName: chapter.systemImage)
-                                .background(color: Color.clear)
-                        }
+                        SystemImageContentView(systemName: chapter.systemImage)
                     }
             }
             .overlay {

@@ -15,9 +15,6 @@ private let portraitMaxWidth: CGFloat = 200
 
 struct PosterImage<Item: Poster>: View {
 
-    @Environment(\.isOverComplexContent)
-    private var isOverComplexContent
-
     private let contentMode: ContentMode
     private let imageMaxWidth: CGFloat
     private let item: Item
@@ -48,13 +45,8 @@ struct PosterImage<Item: Poster>: View {
 
     var body: some View {
         ZStack {
-            if isOverComplexContent {
-                Rectangle()
-                    .fill(Material.ultraThinMaterial)
-            } else {
-                Rectangle()
-                    .fill(Color.secondarySystemFill)
-            }
+            Rectangle()
+                .fill(.complexSecondary)
 
             ImageView(imageSources)
                 .image(item.transform)
@@ -63,13 +55,11 @@ struct PosterImage<Item: Poster>: View {
                         SystemImageContentView(
                             systemName: item.systemImage
                         )
-                        .background(color: .clear)
                     } else {
                         SystemImageContentView(
                             title: item.displayTitle,
                             systemName: item.systemImage
                         )
-                        .background(color: .clear)
                     }
                 }
         }

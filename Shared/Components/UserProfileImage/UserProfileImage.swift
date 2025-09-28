@@ -15,8 +15,6 @@ struct UserProfileImage<Placeholder: View>: View {
     private var isEditing
     @Environment(\.isEnabled)
     private var isEnabled
-    @Environment(\.isOverComplexContent)
-    private var isOverComplexContent
     @Environment(\.isSelected)
     private var isSelected
 
@@ -36,13 +34,8 @@ struct UserProfileImage<Placeholder: View>: View {
 
     var body: some View {
         ZStack {
-            if isOverComplexContent {
-                Rectangle()
-                    .fill(Material.ultraThinMaterial)
-            } else {
-                Rectangle()
-                    .fill(Color.secondarySystemFill)
-            }
+            Rectangle()
+                .fill(.complexSecondary)
 
             RedrawOnNotificationView(
                 .didChangeUserProfile,
@@ -94,7 +87,7 @@ extension UserProfileImage {
     }
 }
 
-extension UserProfileImage where Placeholder == AnyView {
+extension UserProfileImage where Placeholder == SystemImageContentView {
 
     init(
         userID: String?,
@@ -108,8 +101,5 @@ extension UserProfileImage where Placeholder == AnyView {
             systemName: "person.fill",
             ratio: 0.5
         )
-        .background(color: .clear)
-        .environment(\.isOverComplexContent, false)
-        .eraseToAnyView()
     }
 }
