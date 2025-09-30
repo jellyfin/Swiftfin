@@ -511,10 +511,6 @@ extension BaseItemDto {
         let response = try await userSession.client.send(request)
         let newItem = response.value
 
-        guard newItem.id == id else {
-            throw JellyfinAPIError("Mismatching item IDs")
-        }
-
         return newItem
     }
 }
