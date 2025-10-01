@@ -39,11 +39,11 @@ struct MediaView: View {
             MediaItem(viewModel: viewModel, type: mediaType) { namespace in
                 switch mediaType {
                 case let .collectionFolder(item):
-                    let viewModel = ItemLibraryViewModel(
+                    let pagingLibrary = _PagingItemLibrary(
                         parent: item,
-                        filters: .default
+                        filters: .init(parent: item, currentFilters: .init())
                     )
-                    router.route(to: .library(viewModel: viewModel), in: namespace)
+                    router.route(to: ._library(library: pagingLibrary), in: namespace)
                 case .downloads:
                     router.route(to: .downloadList)
                 case .favorites:

@@ -32,9 +32,9 @@ extension LetterPickerBar {
         var body: some View {
             Button {
                 if viewModel.currentFilters.letter.contains(letter) {
-                    viewModel.send(.update(.letter, []))
+                    viewModel.update(.letter, [])
                 } else {
-                    viewModel.send(.update(.letter, [ItemLetter(stringLiteral: letter.value).asAnyItemFilter]))
+                    viewModel.update(.letter, [ItemLetter(stringLiteral: letter.value).asAnyItemFilter])
                 }
             } label: {
                 ZStack {

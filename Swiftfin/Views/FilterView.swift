@@ -47,7 +47,7 @@ struct FilterView: View {
             }
             .topBarTrailing {
                 Button(L10n.reset) {
-                    viewModel.send(.reset(type))
+                    viewModel.reset(filterType: type)
                 }
                 .environment(
                     \.isEnabled,
@@ -83,7 +83,7 @@ extension FilterView {
         let selectionBinding: Binding<[AnyItemFilter]> = Binding {
             viewModel.currentFilters[keyPath: type.collectionAnyKeyPath]
         } set: { newValue in
-            viewModel.send(.update(type, newValue))
+            viewModel.update(type, newValue)
         }
 
         self.init(

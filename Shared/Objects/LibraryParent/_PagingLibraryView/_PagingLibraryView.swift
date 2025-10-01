@@ -1,0 +1,342 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+//
+
+import CollectionVGrid
+import Defaults
+import JellyfinAPI
+import SwiftUI
+
+struct _PagingLibraryView<Library: PagingLibrary>: View {
+
+    typealias Element = Library.Element
+
+    @Default(.Customization.Library.enabledDrawerFilters)
+    private var enabledDrawerFilters
+    @Default(.Customization.Library.rememberLayout)
+    private var rememberIndividualLibraryStyle
+
+    @StoredValue(.User.libraryStyle(id: nil))
+    private var defaultLibraryStyle: LibraryStyle
+    @StoredValue
+    private var parentLibraryStyle: LibraryStyle
+
+    @ForTypeInEnvironment<Element.Type, (Any) -> (LibraryStyle, Binding<LibraryStyle>?)>(\.libraryStyleRegistry)
+    private var libraryStyleRegistry
+
+    @Namespace
+    private var namespace
+
+    @Router
+    private var router
+
+    @State
+    private var currentGrouping: LibraryGrouping? = nil
+
+    @StateObject
+    private var viewModel: _PagingLibraryViewModel<Library>
+
+    private var libraryStyle: LibraryStyle {
+        libraryStyleRegistry?(Element.self).0 ?? .default
+    }
+
+    init(library: Library) {
+        self._parentLibraryStyle = StoredValue(.User.libraryStyle(id: library.id))
+        self._viewModel = StateObject(wrappedValue: _PagingLibraryViewModel(library: library))
+    }
+
+    @ViewBuilder
+    private func errorView(with error: some Error) -> some View {
+        ErrorView(error: error)
+            .onRetry {
+                viewModel.refresh(.init(filters: .init(), grouping: nil))
+            }
+    }
+
+    @ViewBuilder
+    private func WithFiltersIfSet(
+        @ViewBuilder content: () -> some View
+    ) -> some View {
+        if let filterViewModel = viewModel.library.filterViewModel {
+            content()
+                .navigationBarFilterDrawer(
+                    viewModel: filterViewModel,
+                    types: enabledDrawerFilters
+                ) { parameters in
+                    router.route(to: .filter(type: parameters.type, viewModel: parameters.viewModel))
+                }
+                .onReceive(filterViewModel.currentFiltersDebounced) { newValue in
+                    print(newValue)
+                    viewModel.refresh(.init(filters: newValue, grouping: currentGrouping))
+                }
+        } else {
+            content()
+        }
+    }
+
+    var body: some View {
+        ZStack {
+            Color.clear
+
+            WithFiltersIfSet {
+                switch viewModel.state {
+                case .initial, .refreshing:
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                case .content:
+                    if viewModel.elements.isEmpty {
+                        Text(L10n.noResults)
+                    } else {
+                        ElementsView(
+                            groupingBinding: $currentGrouping,
+                            viewModel: viewModel
+                        )
+                        .ignoresSafeArea()
+                        .libraryStyle(for: Element.self) { environment, _ in
+                            if rememberIndividualLibraryStyle {
+                                return (parentLibraryStyle, $parentLibraryStyle)
+                            } else {
+                                return environment
+                            }
+                        }
+                    }
+                case .error:
+                    viewModel.error.map(errorView)
+                }
+            }
+        }
+        .animation(.linear(duration: 0.1), value: viewModel.state)
+        .ignoresSafeArea()
+        .navigationTitle(viewModel.library.displayTitle)
+        .navigationBarTitleDisplayMode(.inline)
+        .onFirstAppear {
+            if viewModel.state == .initial {
+                viewModel.refresh(.init(filters: .init(), grouping: nil))
+            }
+        }
+        .navigationBarMenuButton(
+            isLoading: viewModel.background.is(.retrievingNextPage)
+        ) {}
+    }
+}
+
+extension _PagingLibraryView {
+
+    struct ElementsView: View {
+
+        @ForTypeInEnvironment<Element.Type, (Any) -> (LibraryStyle, Binding<LibraryStyle>?)>(\.libraryStyleRegistry)
+        private var libraryStyleRegistry
+
+        @Namespace
+        private var namespace
+
+        @ObservedObject
+        private var viewModel: _PagingLibraryViewModel<Library>
+
+        @Router
+        private var router
+
+        @StateObject
+        private var collectionVGridProxy: CollectionVGridProxy = .init()
+
+        private var groupingBinding: Binding<LibraryGrouping?>?
+        private var libraryStyleBinding: Binding<LibraryStyle>?
+
+        init(
+            groupingBinding: Binding<LibraryGrouping?>?,
+            viewModel: _PagingLibraryViewModel<Library>
+        ) {
+            self._libraryStyleRegistry = ForTypeInEnvironment(\.libraryStyleRegistry)
+            self.viewModel = viewModel
+
+            if let groupingBinding {
+                self.groupingBinding = groupingBinding
+            }
+
+            if let libraryStyleBinding {
+                self.libraryStyleBinding = libraryStyleBinding
+            }
+        }
+
+        private var layout: CollectionVGridLayout {
+            if UIDevice.isPhone {
+                phoneLayout
+            } else {
+                padLayout
+            }
+        }
+
+        private var padLayout: CollectionVGridLayout {
+            switch (libraryStyle.posterDisplayType, libraryStyle.displayType) {
+            case (.landscape, .grid):
+                .minWidth(200)
+            case (.portrait, .grid), (.square, .grid):
+                .minWidth(150)
+            case (_, .list):
+                .columns(libraryStyle.listColumnCount, insets: .zero, itemSpacing: 0, lineSpacing: 0)
+            }
+        }
+
+        private var phoneLayout: CollectionVGridLayout {
+            switch (libraryStyle.posterDisplayType, libraryStyle.displayType) {
+            case (.landscape, .grid):
+                .columns(2)
+            case (.portrait, .grid):
+                .columns(3)
+            case (.square, .grid):
+                .columns(3)
+            case (_, .list):
+                .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
+            }
+        }
+
+        private var evaluatedStyle: (LibraryStyle, Binding<LibraryStyle>?) {
+            libraryStyleRegistry?(Element.self) ?? (.default, nil)
+        }
+
+        private var libraryStyle: LibraryStyle {
+            evaluatedStyle.0
+        }
+
+        private func select(element: Element, in namespace: Namespace.ID) {
+            switch element {
+            case let element as BaseItemDto:
+                select(item: element, in: namespace)
+            case let element as BaseItemPerson:
+                select(item: BaseItemDto(person: element), in: namespace)
+            default:
+                assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
+            }
+        }
+
+        private func select(item: BaseItemDto, in namespace: Namespace.ID) {
+            switch item.type {
+            case .collectionFolder, .folder:
+                let library = _PagingItemLibrary(parent: item, filters: .init(parent: item, currentFilters: .init()))
+                router.route(to: ._library(library: library), in: namespace)
+            default:
+                router.route(to: .item(item: item), in: namespace)
+            }
+        }
+
+        @ViewBuilder
+        private func gridItemView(
+            element: Element
+        ) -> some View {
+            PosterButton(
+                item: element,
+                type: libraryStyle.posterDisplayType
+            ) { namespace in
+                select(element: element, in: namespace)
+            }
+            //        } label: {
+            //            if item.showTitle {
+            //                PosterButton<Element>.TitleContentView(title: item.displayTitle)
+            //                    .lineLimit(1, reservesSpace: true)
+            //            } else if viewModel.parent?.libraryType == .folder {
+            //                PosterButton<Element>.TitleContentView(title: item.displayTitle)
+            //                    .lineLimit(1, reservesSpace: true)
+            //                    .hidden()
+            //            }
+            //        }
+        }
+
+        @ViewBuilder
+        private func listItemView(
+            element: Element
+        ) -> some View {
+            LibraryRow(
+                item: element,
+                posterType: libraryStyle.posterDisplayType
+            ) { namespace in
+                select(element: element, in: namespace)
+            }
+        }
+
+        var body: some View {
+            CollectionVGrid(
+                uniqueElements: viewModel.elements,
+                id: \.unwrappedIDHashOrZero,
+                layout: layout
+            ) { element, _ in
+                switch libraryStyle.displayType {
+                case .grid:
+                    gridItemView(element: element)
+                case .list:
+                    listItemView(element: element)
+                }
+            }
+            .onReachedBottomEdge(offset: .offset(100)) {
+                viewModel.retrieveNextPage(
+                    .init(
+                        filters: .init(),
+                        grouping: groupingBinding?.wrappedValue
+                    )
+                )
+            }
+            .proxy(collectionVGridProxy)
+            .scrollIndicators(.hidden)
+            .posterStyle(for: Element.self) { environment, _ in
+                var environment = environment
+                environment.displayType = libraryStyle.posterDisplayType
+                return environment
+            }
+            .onReceive(viewModel.events) { event in
+                switch event {
+                case let .retrivedRandomItem(item):
+                    switch item {
+                    case let item as BaseItemDto:
+                        select(item: item, in: namespace)
+                    case let item as BaseItemPerson:
+                        select(item: BaseItemDto(person: item), in: namespace)
+                    default:
+                        assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
+                    }
+                }
+            }
+            .preference(key: MenuContentKey.self) {
+                if let libraryStyleBinding = evaluatedStyle.1 {
+                    MenuContentGroup(
+                        id: "library-style"
+                    ) {
+                        LibraryStyleSection(libraryStyle: libraryStyleBinding)
+                    }
+                }
+
+                if let groupings = viewModel.library.parent._groupings,
+                   groupings.isNotEmpty,
+                   let groupingBinding
+                {
+                    MenuContentGroup(
+                        id: "group-by"
+                    ) {
+                        Picker("Grouping", selection: groupingBinding) {
+                            ForEach(groupings) { grouping in
+                                Text(grouping.displayTitle)
+                                    .tag(grouping as LibraryGrouping?)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                    }
+                }
+
+                MenuContentGroup(
+                    id: "retrieve-random-element"
+                ) {
+                    Button(L10n.random, systemImage: "dice.fill") {
+                        viewModel.retrieveRandomItem(
+                            .init(
+                                filters: .init(),
+                                grouping: nil
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+}

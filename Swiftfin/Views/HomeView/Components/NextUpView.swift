@@ -32,7 +32,7 @@ extension HomeView {
         ) -> some View {
             if item.type == .episode {
 //                EpisodeContentSubtitleContent(item: item)
-                EmptyView()
+                existingLabel
             } else {
                 existingLabel
             }
@@ -60,15 +60,15 @@ extension HomeView {
                         Label(L10n.played, systemImage: "checkmark.circle")
                     }
                 }
-                .posterStyle(for: BaseItemDto.self) { value, item in
-                    var value = value
-                    value.label = posterLabel(
-                        for: item,
-                        existingLabel: value.label
-                    )
-                    .eraseToAnyView()
-                    return value
-                }
+//                .posterStyle(for: BaseItemDto.self) { value, item in
+//                    var value = value
+//                    value.label = posterLabel(
+//                        for: item,
+//                        existingLabel: value.label
+//                    )
+//                    .eraseToAnyView()
+//                    return value
+//                }
             }
         }
     }

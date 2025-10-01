@@ -8,6 +8,7 @@
 
 import CollectionHStack
 import Defaults
+import JellyfinAPI
 import SwiftUI
 
 // TODO: check accessibility
@@ -19,8 +20,11 @@ struct PosterHStack<
     Label: View
 >: View where Data.Element == Element, Data.Index == Int {
 
-    @EnvironmentTypeValue<Element, (Any) -> PosterStyleEnvironment>(\.posterStyleRegistry)
+    @ForTypeInEnvironment<Element, (Any) -> PosterStyleEnvironment>(\.posterStyleRegistry)
     private var posterStyleRegistry
+
+    @Router
+    private var router
 
     private var data: Data
     private var header: Header

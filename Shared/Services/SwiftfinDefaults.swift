@@ -158,6 +158,8 @@ extension Defaults.Keys {
 
             static let rememberLayout: Key<Bool> = UserKey("libraryRememberLayout", default: false)
             static let rememberSort: Key<Bool> = UserKey("libraryRememberSort", default: false)
+
+            static let _libraryStyle: Key<LibraryStyle> = UserKey("libraryStyle", default: .default)
         }
 
         enum Home {

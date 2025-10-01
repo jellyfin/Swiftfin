@@ -29,7 +29,7 @@ struct NavigationBarFilterDrawer: View {
                 if viewModel.currentFilters.hasFilters {
                     Menu {
                         Button(L10n.reset, role: .destructive) {
-                            viewModel.send(.reset())
+                            viewModel.reset(filterType: nil)
                         }
                     } label: {
                         FilterDrawerButton(systemName: "line.3.horizontal.decrease.circle.fill")

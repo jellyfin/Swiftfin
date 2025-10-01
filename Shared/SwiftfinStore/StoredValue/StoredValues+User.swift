@@ -97,6 +97,22 @@ extension StoredValues.Keys {
             )
         }
 
+        static func libraryStyle(id: String?) -> Key<LibraryStyle> {
+            if let id {
+                CurrentUserKey(
+                    id,
+                    domain: "setting-libraryStyle",
+                    default: .default
+                )
+            } else {
+                CurrentUserKey(
+                    "swiftfin-default",
+                    domain: "setting-libraryStyle",
+                    default: .default
+                )
+            }
+        }
+
         static func libraryDisplayType(parentID: String?) -> Key<LibraryDisplayType> {
             CurrentUserKey(
                 parentID,

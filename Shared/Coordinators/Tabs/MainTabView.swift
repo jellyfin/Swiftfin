@@ -24,6 +24,12 @@ struct MainTabView: View {
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
     private var useSeriesLandscapeBackdrop
 
+    @Default(.Customization.Library._libraryStyle)
+    private var defaultLibraryStyle
+
+//    @StoredValue(.User.libraryStyle(id: nil))
+//    private var defaultLibraryStyle: LibraryStyle
+
     #if os(iOS)
     @StateObject
     private var tabCoordinator = TabCoordinator {
@@ -74,17 +80,19 @@ struct MainTabView: View {
                 .tag(tab.item.id)
             }
         }
+        .libraryStyle(for: BaseItemDto.self) { _, _ in
+            (defaultLibraryStyle, $defaultLibraryStyle)
+        }
         .posterStyle(for: BaseItemDto.self) { item in
 
             @ViewBuilder
-            func v() -> some View {
+            func _label() -> some View {
                 if item.type == .program {
                     ProgramsView.ProgramButtonContent(
                         program: item
                     )
                 } else {
                     TitleSubtitleContentView(
-                        //                        title: item.displayTitle,
                         title: showPosterLabels ? item.displayTitle : nil,
                         subtitle: item.subtitle
                     )
@@ -94,7 +102,7 @@ struct MainTabView: View {
             return .init(
                 displayType: latestInLibraryPosterType,
                 indicators: [],
-                label: v(),
+                label: _label(),
                 overlay: EmptyView(),
                 useParentImages: useSeriesLandscapeBackdrop,
                 size: .medium

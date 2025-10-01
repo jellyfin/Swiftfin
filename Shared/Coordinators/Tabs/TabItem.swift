@@ -50,6 +50,7 @@ extension TabItem {
         HomeView()
     }
 
+    @MainActor
     static func library(
         title: String,
         systemName: String,

@@ -37,14 +37,6 @@ import SwiftUI
        should be applied.
  */
 
-struct LibraryStyleEnvironment {
-
-    let displayType: LibraryDisplayType
-    let posterDisplayType: PosterDisplayType
-
-    let layout: CollectionVGridLayout
-}
-
 struct PagingLibraryView<Element: Poster>: View {
 
     @Default(.Customization.Library.enabledDrawerFilters)
@@ -64,7 +56,7 @@ struct PagingLibraryView<Element: Poster>: View {
     @Default(.Customization.Library.letterPickerOrientation)
     private var letterPickerOrientation
 
-    @EnvironmentTypeValue<Element, (Any) -> PosterStyleEnvironment>(\.posterStyleRegistry)
+    @ForTypeInEnvironment<Element, (Any) -> PosterStyleEnvironment>(\.posterStyleRegistry)
     private var posterStyleRegistry
 
     @Namespace
@@ -249,7 +241,6 @@ struct PagingLibraryView<Element: Poster>: View {
                 listItemView(item: item, posterType: posterType)
             }
         }
-        ._refreshLastRowOnDataChange(true)
         .onReachedBottomEdge(offset: .offset(100)) {
             viewModel.send(.getNextPage)
         }

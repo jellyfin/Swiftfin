@@ -88,8 +88,12 @@ extension PagingLibraryView {
                 switch viewType {
                 case .grid:
                     Label(L10n.layout, systemImage: "square.grid.2x2.fill")
+
+                    Text(L10n.grid)
                 case .list:
                     Label(L10n.layout, systemImage: "square.fill.text.grid.1x2")
+
+                    Text(L10n.layout)
                 }
             }
         }

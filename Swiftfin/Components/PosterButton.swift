@@ -12,7 +12,7 @@ import SwiftUI
 
 struct PosterButton<Item: Poster, Label: View>: View {
 
-    @EnvironmentTypeValue<Item, (Any) -> PosterStyleEnvironment>(\.posterStyleRegistry)
+    @ForTypeInEnvironment<Item, (Any) -> PosterStyleEnvironment>(\.posterStyleRegistry)
     private var posterStyleRegistry
 
     @Namespace

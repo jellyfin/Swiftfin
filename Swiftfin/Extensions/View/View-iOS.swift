@@ -60,14 +60,13 @@ extension View {
     func navigationBarMenuButton<Content: View>(
         isLoading: Bool = false,
         isHidden: Bool = false,
-        @ViewBuilder
-        _ items: @escaping () -> Content
+        @ViewBuilder _ content: @escaping () -> Content
     ) -> some View {
         modifier(
             NavigationBarMenuButtonModifier(
                 isLoading: isLoading,
                 isHidden: isHidden,
-                items: items
+                menuContent: content
             )
         )
     }
