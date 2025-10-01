@@ -108,7 +108,7 @@ extension ItemView {
 
         var body: some View {
             VStack(alignment: .leading) {
-                L10n.about.text
+                Text(L10n.about)
                     .font(.title2)
                     .fontWeight(.bold)
                     .accessibility(addTraits: [.isHeader])
@@ -122,6 +122,7 @@ extension ItemView {
                     case .image:
                         ImageCard(viewModel: viewModel)
                             .frame(width: UIDevice.isPad ? padImageWidth : phoneImageWidth)
+//                    default: EmptyView()
                     case .overview:
                         OverviewCard(item: viewModel.item)
                             .frame(width: cardSize.width, height: cardSize.height)

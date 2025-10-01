@@ -11,7 +11,7 @@ import SwiftUI
 typealias TypeViewRegistry = TypeValueRegistry<(Any) -> AnyView>
 
 @propertyWrapper
-struct EnvironmentTypeValue<Value>: DynamicProperty {
+struct EnvironmentTypeViewValue<Value>: DynamicProperty {
 
     @Environment
     private var registry: TypeViewRegistry
@@ -52,7 +52,13 @@ enum EnvironmentView<Value> {
 
         func body(content: Content) -> some View {
             content
-                .environment(keyPath, environmentRegistry.insertOrReplace(self.content, for: Value.self))
+                .environment(
+                    keyPath,
+                    environmentRegistry.insertOrReplace(
+                        self.content,
+                        for: Value.self
+                    )
+                )
         }
     }
 }

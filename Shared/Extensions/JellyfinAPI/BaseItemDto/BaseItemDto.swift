@@ -173,7 +173,11 @@ extension BaseItemDto {
     /// image used in the now playing system.
     @MainActor
     func getNowPlayingImage() async -> UIImage? {
-        let imageSources = thumbImageSources()
+        let imageSources = imageSources(
+            for: preferredPosterDisplayType,
+            size: .medium,
+            useParent: true
+        )
 
         guard let firstImage = await ImagePipeline.Swiftfin.other.loadFirstImage(from: imageSources) else {
             let failedSystemContentView = SystemImageContentView(
@@ -244,9 +248,14 @@ extension BaseItemDto {
         return response.value.items?.first
     }
 
+    var progress: Double? {
+        guard let startSeconds, let runtime, startSeconds > .zero, startSeconds < runtime else { return nil }
+        return startSeconds / runtime
+    }
+
     var runtime: Duration? {
-        guard let ticks = runTimeTicks else { return nil }
-        return Duration.ticks(ticks)
+        guard let runTimeTicks else { return nil }
+        return Duration.ticks(runTimeTicks)
     }
 
     var startSeconds: Duration? {
@@ -275,6 +284,7 @@ extension BaseItemDto {
         return text
     }
 
+    @available(*, deprecated, message: "remove, use a formatter instead")
     var progressLabel: String? {
         guard let playbackPositionTicks = userData?.playbackPositionTicks,
               let totalTicks = runTimeTicks,

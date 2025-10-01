@@ -9,6 +9,8 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: move to where poster overlay is injected into environment
+
 // TODO: item-type dependent views may be more appropriate near/on
 //       the `PosterButton` object instead of on these larger views
 extension ProgramsView {
@@ -22,16 +24,16 @@ extension ProgramsView {
         private let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
         var body: some View {
-            WrappedView {
+            ZStack {
                 if let startDate = program.startDate, startDate < Date.now {
-                    LandscapePosterProgressBar(
-                        progress: program.programProgress ?? 0
-                    )
+//                    LandscapePosterProgressBar(
+//                        progress: program.programProgress ?? 0
+//                    )
                 }
             }
             .onReceive(timer) { newValue in
                 if let startDate = program.startDate, startDate < newValue, let duration = program.programDuration {
-                    programProgress = newValue.timeIntervalSince(startDate) / duration
+                    programProgress = clamp(newValue.timeIntervalSince(startDate) / duration, min: 0, max: 1)
                 }
             }
         }

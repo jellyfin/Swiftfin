@@ -37,6 +37,14 @@ import SwiftUI
        should be applied.
  */
 
+struct LibraryStyleEnvironment {
+
+    let displayType: LibraryDisplayType
+    let posterDisplayType: PosterDisplayType
+
+    let layout: CollectionVGridLayout
+}
+
 struct PagingLibraryView<Element: Poster>: View {
 
     @Default(.Customization.Library.enabledDrawerFilters)
@@ -55,6 +63,9 @@ struct PagingLibraryView<Element: Poster>: View {
     private var letterPickerEnabled
     @Default(.Customization.Library.letterPickerOrientation)
     private var letterPickerOrientation
+
+    @EnvironmentTypeValue<Element, (Any) -> PosterStyleEnvironment>(\.posterStyleRegistry)
+    private var posterStyleRegistry
 
     @Namespace
     private var namespace
@@ -187,20 +198,24 @@ struct PagingLibraryView<Element: Poster>: View {
             type: posterType
         ) { namespace in
             onSelect(item, in: namespace)
-        } label: {
-            if item.showTitle {
-                PosterButton<Element>.TitleContentView(title: item.displayTitle)
-                    .lineLimit(1, reservesSpace: true)
-            } else if viewModel.parent?.libraryType == .folder {
-                PosterButton<Element>.TitleContentView(title: item.displayTitle)
-                    .lineLimit(1, reservesSpace: true)
-                    .hidden()
-            }
         }
+//        } label: {
+//            if item.showTitle {
+//                PosterButton<Element>.TitleContentView(title: item.displayTitle)
+//                    .lineLimit(1, reservesSpace: true)
+//            } else if viewModel.parent?.libraryType == .folder {
+//                PosterButton<Element>.TitleContentView(title: item.displayTitle)
+//                    .lineLimit(1, reservesSpace: true)
+//                    .hidden()
+//            }
+//        }
     }
 
     @ViewBuilder
-    private func listItemView(item: Element, posterType: PosterDisplayType) -> some View {
+    private func listItemView(
+        item: Element,
+        posterType: PosterDisplayType
+    ) -> some View {
         LibraryRow(
             item: item,
             posterType: posterType
@@ -223,7 +238,7 @@ struct PagingLibraryView<Element: Poster>: View {
             uniqueElements: viewModel.elements,
             id: \.unwrappedIDHashOrZero,
             layout: layout
-        ) { item in
+        ) { item, _ in
             let displayType = Defaults[.Customization.Library.rememberLayout] ? displayType : defaultDisplayType
             let posterType = Defaults[.Customization.Library.rememberLayout] ? posterType : defaultPosterType
 
@@ -234,11 +249,17 @@ struct PagingLibraryView<Element: Poster>: View {
                 listItemView(item: item, posterType: posterType)
             }
         }
-        .onReachedBottomEdge(offset: .offset(300)) {
+        ._refreshLastRowOnDataChange(true)
+        .onReachedBottomEdge(offset: .offset(100)) {
             viewModel.send(.getNextPage)
         }
         .proxy(collectionVGridProxy)
         .scrollIndicators(.hidden)
+        .posterStyle(for: Element.self) { environment, _ in
+            var environment = environment
+            environment.displayType = defaultPosterType
+            return environment
+        }
     }
 
     @ViewBuilder
@@ -246,7 +267,7 @@ struct PagingLibraryView<Element: Poster>: View {
         switch viewModel.state {
         case .content:
             if viewModel.elements.isEmpty {
-                L10n.noResults.text
+                Text(L10n.noResults)
             } else {
                 elementsView
             }

@@ -9,6 +9,8 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: move to where poster overlay is injected into environment
+
 extension ProgramsView {
 
     struct ProgramButtonContent: View {

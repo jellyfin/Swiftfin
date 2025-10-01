@@ -137,7 +137,6 @@ extension ServerUsersView {
                 rowContent
             }
             .onSelect(perform: onSelect)
-            .isSeparatorVisible(false)
             .swipeActions {
                 Button(
                     L10n.delete,

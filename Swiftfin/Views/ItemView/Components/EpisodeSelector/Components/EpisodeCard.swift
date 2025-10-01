@@ -23,23 +23,43 @@ extension SeriesEpisodeSelector {
 
         @ViewBuilder
         private var overlayView: some View {
-            if let progressLabel = episode.progressLabel {
-                LandscapePosterProgressBar(
-                    title: progressLabel,
-                    progress: (episode.userData?.playedPercentage ?? 0) / 100
+            if let progress = episode.progress {
+                PosterProgressBar(
+                    title: "Test",
+                    progress: progress,
+                    posterDisplayType: .landscape
                 )
-            } else if episode.userData?.isPlayed ?? false {
-                ZStack(alignment: .bottomTrailing) {
-                    Color.clear
-
-                    Image(systemName: "checkmark.circle.fill")
-                        .resizable()
-                        .frame(width: 30, height: 30, alignment: .bottomTrailing)
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(.white, .black)
-                        .padding()
-                }
+            } else if episode.userData?.isPlayed == true {
+                Image(systemName: "checkmark.circle.fill")
+                    .resizable()
+                    .frame(width: 30, height: 30)
+                    .symbolRenderingMode(.palette)
+                    .foregroundStyle(.white, .black)
+                    .padding()
+                    .frame(
+                        maxWidth: .infinity,
+                        maxHeight: .infinity,
+                        alignment: .bottomTrailing
+                    )
             }
+
+//            if let progressLabel = episode.progressLabel {
+//                LandscapePosterProgressBar(
+//                    title: progressLabel,
+//                    progress: (episode.userData?.playedPercentage ?? 0) / 100
+//                )
+//            } else if episode.userData?.isPlayed ?? false {
+//                ZStack(alignment: .bottomTrailing) {
+//                    Color.clear
+//
+//                    Image(systemName: "checkmark.circle.fill")
+//                        .resizable()
+//                        .frame(width: 30, height: 30, alignment: .bottomTrailing)
+//                        .symbolRenderingMode(.palette)
+//                        .foregroundStyle(.white, .black)
+//                        .padding()
+//                }
+//            }
         }
 
         private var episodeContent: String {
@@ -74,6 +94,7 @@ extension SeriesEpisodeSelector {
                         .posterStyle(.landscape)
                         .posterShadow()
                 }
+                .foregroundStyle(.primary, .secondary)
 
                 SeriesEpisodeSelector.EpisodeContent(
                     header: episode.displayTitle,

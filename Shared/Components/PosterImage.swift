@@ -16,10 +16,17 @@ private let portraitMaxWidth: CGFloat = 200
 
 struct PosterImage<Item: Poster>: View {
 
+    @EnvironmentTypeValue<Item, (Any) -> PosterStyleEnvironment>(\.posterStyleRegistry)
+    private var posterStyleRegistry
+
     private let contentMode: ContentMode
     private let imageMaxWidth: CGFloat
     private let item: Item
     private let type: PosterDisplayType
+
+    private var posterStyle: PosterStyleEnvironment {
+        posterStyleRegistry?(item) ?? .default
+    }
 
     init(
         item: Item,
@@ -34,14 +41,11 @@ struct PosterImage<Item: Poster>: View {
     }
 
     private var imageSources: [ImageSource] {
-        switch type {
-        case .landscape:
-            item.landscapeImageSources(maxWidth: imageMaxWidth, quality: 90)
-        case .portrait:
-            item.portraitImageSources(maxWidth: imageMaxWidth, quality: 90)
-        case .square:
-            item.squareImageSources(maxWidth: imageMaxWidth, quality: 90)
-        }
+        item.imageSources(
+            for: type,
+            size: .medium,
+            useParent: posterStyle.useParentImages
+        )
     }
 
     var body: some View {
@@ -57,28 +61,29 @@ struct PosterImage<Item: Poster>: View {
                     .placeholder { imageSource in
                         if let blurHash = imageSource.blurHash {
                             BlurHashView(blurHash: blurHash)
-                        } else if item.showTitle {
-                            SystemImageContentView(
-                                systemName: item.systemImage
-                            )
+//                        } else if item.showTitle {
                         } else {
                             SystemImageContentView(
-                                title: item.displayTitle,
                                 systemName: item.systemImage
                             )
+//                        } else {
+//                            SystemImageContentView(
+//                                title: item.displayTitle,
+//                                systemName: item.systemImage
+//                            )
                         }
                     }
                     .failure {
-                        if item.showTitle {
-                            SystemImageContentView(
-                                systemName: item.systemImage
-                            )
-                        } else {
-                            SystemImageContentView(
-                                title: item.displayTitle,
-                                systemName: item.systemImage
-                            )
-                        }
+//                        if item.showTitle {
+                        SystemImageContentView(
+                            systemName: item.systemImage
+                        )
+//                        } else {
+//                            SystemImageContentView(
+//                                title: item.displayTitle,
+//                                systemName: item.systemImage
+//                            )
+//                        }
                     }
             }
         }

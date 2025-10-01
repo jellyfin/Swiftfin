@@ -13,8 +13,8 @@ extension HomeView {
 
     struct LatestInLibraryView: View {
 
-        @Default(.Customization.latestInLibraryPosterType)
-        private var latestInLibraryPosterType
+//        @Default(.Customization.latestInLibraryPosterType)
+//        private var latestInLibraryPosterType
 
         @Router
         private var router
@@ -26,7 +26,7 @@ extension HomeView {
             if viewModel.elements.isNotEmpty {
                 PosterHStack(
                     title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
-                    type: latestInLibraryPosterType,
+                    type: .landscape,
                     items: viewModel.elements
                 ) { item, namespace in
                     router.route(to: .item(item: item), in: namespace)

@@ -14,7 +14,8 @@ extension ItemView.AboutView {
 
     struct ImageCard: View {
 
-        // MARK: - Environment & Observed Objects
+        @Namespace
+        private var namespace
 
         @Router
         private var router
@@ -22,23 +23,7 @@ extension ItemView.AboutView {
         @ObservedObject
         var viewModel: ItemViewModel
 
-        // MARK: - Body
-
-        var body: some View {
-            PosterButton(
-                item: viewModel.item,
-                type: .portrait,
-                action: action
-            ) {
-                EmptyView()
-            }
-            .posterOverlay(for: BaseItemDto.self) { _ in
-                EmptyView()
-            }
-        }
-
-        // Switch case to allow other funcitonality if we need to expand this beyond episode > series
-        private func action(namespace: Namespace.ID) {
+        private func action() {
             switch viewModel.item.type {
             case .episode:
                 if let episodeViewModel = viewModel as? EpisodeItemViewModel,
@@ -48,6 +33,18 @@ extension ItemView.AboutView {
                 }
             default:
                 break
+            }
+        }
+
+        var body: some View {
+            Button(action: action) {
+                PosterImage(
+                    item: viewModel.item,
+                    type: .portrait
+                )
+                .backport
+                .matchedTransitionSource(id: "item", in: namespace)
+                .posterShadow()
             }
         }
     }

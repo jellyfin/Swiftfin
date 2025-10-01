@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+// TODO: remove, make title a buttom with chevron
 struct SeeAllButton: View {
 
     private var action: () -> Void

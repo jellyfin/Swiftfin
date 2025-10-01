@@ -6,7 +6,9 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Factory
+import JellyfinAPI
 import SwiftUI
 
 // TODO: move popup to router
@@ -14,6 +16,13 @@ import SwiftUI
 
 // TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
+
+    @Default(.Customization.latestInLibraryPosterType)
+    private var latestInLibraryPosterType
+    @Default(.Customization.showPosterLabels)
+    private var showPosterLabels
+    @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
+    private var useSeriesLandscapeBackdrop
 
     #if os(iOS)
     @StateObject
@@ -65,5 +74,57 @@ struct MainTabView: View {
                 .tag(tab.item.id)
             }
         }
+        .posterStyle(for: BaseItemDto.self) { item in
+
+            @ViewBuilder
+            func v() -> some View {
+                if item.type == .program {
+                    ProgramsView.ProgramButtonContent(
+                        program: item
+                    )
+                } else {
+                    TitleSubtitleContentView(
+                        //                        title: item.displayTitle,
+                        title: showPosterLabels ? item.displayTitle : nil,
+                        subtitle: item.subtitle
+                    )
+                }
+            }
+
+            return .init(
+                displayType: latestInLibraryPosterType,
+                indicators: [],
+                label: v(),
+                overlay: EmptyView(),
+                useParentImages: useSeriesLandscapeBackdrop,
+                size: .medium
+            )
+        }
+        .posterStyle(for: BaseItemPerson.self) { person in
+            .init(
+                displayType: .portrait,
+                indicators: [],
+                label: person.posterLabel,
+                overlay: EmptyView(),
+                useParentImages: false,
+                size: .medium
+            )
+        }
+    }
+}
+
+extension BaseItemDto {
+
+    @ViewBuilder
+    var posterLabel: some View {}
+}
+
+extension BaseItemPerson {
+
+    var posterLabel: some View {
+        TitleSubtitleContentView(
+            title: displayTitle,
+            subtitle: role
+        )
     }
 }

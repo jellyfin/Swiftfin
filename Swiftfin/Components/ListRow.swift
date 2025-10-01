@@ -16,58 +16,77 @@ struct ListRow<Leading: View, Content: View>: View {
     @State
     private var contentSize: CGSize = .zero
 
-    private let leading: Leading
-    private let content: Content
     private var action: () -> Void
+    private let content: Content
     private var insets: EdgeInsets
-    private var isSeparatorVisible: Bool
+    private let leading: Leading
+
+    init(
+        insets: EdgeInsets = .zero,
+        action: @escaping () -> Void,
+        @ViewBuilder leading: @escaping () -> Leading,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.action = action
+        self.content = content()
+        self.insets = insets
+        self.leading = leading()
+    }
 
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
+        Button(action: action) {
+            HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
 
-            Button(action: action) {
-                HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
+                leading
 
-                    leading
-
-                    content
-                        .frame(maxHeight: .infinity)
-                        .trackingSize($contentSize)
-                }
-                .padding(insets)
+                content
+                    .frame(
+                        maxWidth: .infinity,
+                        maxHeight: .infinity,
+                        alignment: .leading
+                    )
+                    .trackingSize($contentSize)
             }
-            .foregroundStyle(.primary, .secondary)
-            .contentShape(.contextMenuPreview, Rectangle())
-
+            .padding(insets)
+        }
+        .foregroundStyle(.primary, .secondary)
+        .contentShape(.contextMenuPreview, Rectangle())
+        .listRowSeparator(.hidden)
+        .overlay(alignment: .bottomTrailing) {
             Color.secondarySystemFill
-                .frame(width: contentSize.width, height: 1)
-                .padding(.trailing, insets.trailing)
-                .isVisible(isSeparatorVisible)
+                .frame(
+                    width: contentSize.width + insets.trailing,
+                    height: 1
+                )
         }
     }
 }
 
 extension ListRow {
 
+    @available(*, deprecated, message: "removed")
     init(
         insets: EdgeInsets = .zero,
         @ViewBuilder leading: @escaping () -> Leading,
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.init(
-            leading: leading(),
-            content: content(),
-            action: {},
             insets: insets,
-            isSeparatorVisible: true
+            action: {},
+            leading: leading,
+            content: content
         )
     }
 
+    @available(*, deprecated, message: "removed")
     func isSeparatorVisible(_ isVisible: Bool) -> Self {
-        copy(modifying: \.isSeparatorVisible, with: isVisible)
+        self
+//        copy(modifying: \.isSeparatorVisible, with: isVisible)
     }
 
+    @available(*, deprecated, message: "removed")
     func onSelect(perform action: @escaping () -> Void) -> Self {
-        copy(modifying: \.action, with: action)
+        self
+//        copy(modifying: \.action, with: action)
     }
 }

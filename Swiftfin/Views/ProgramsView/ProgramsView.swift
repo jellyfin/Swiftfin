@@ -114,16 +114,17 @@ struct ProgramsView: View {
             // router.route(
             //     to: .liveVideoPlayer(manager: LiveVideoPlayerManager(program: item))
             // )
-        } label: {
-            ProgramButtonContent(program: $0)
         }
-        .posterOverlay(for: BaseItemDto.self) {
-            ProgramProgressOverlay(program: $0)
-        }
+//        } label: {
+//            ProgramButtonContent(program: $0)
+//        }
+//        .posterOverlay(for: BaseItemDto.self) {
+//            ProgramProgressOverlay(program: $0)
+//        }
     }
 
     var body: some View {
-        WrappedView {
+        ZStack {
             switch programsViewModel.state {
             case .content:
                 contentView

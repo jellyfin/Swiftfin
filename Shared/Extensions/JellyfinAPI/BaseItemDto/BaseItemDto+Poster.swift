@@ -86,10 +86,39 @@ extension BaseItemDto: Poster {
         }
     }
 
-    func landscapeImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
+    func landscapeImageSources(
+        maxWidth: CGFloat? = nil,
+        quality: Int? = nil
+    ) -> [ImageSource] {
         switch type {
         case .episode:
-            if Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
+//            if Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
+//                [
+//                    seriesImageSource(.thumb, maxWidth: maxWidth, quality: quality),
+//                    seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality),
+//                    imageSource(.primary, maxWidth: maxWidth, quality: quality),
+//                ]
+//            } else {
+            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
+//            }
+        case .folder, .program, .musicVideo, .video:
+            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
+        default:
+            [
+                imageSource(.thumb, maxWidth: maxWidth, quality: quality),
+                imageSource(.backdrop, maxWidth: maxWidth, quality: quality),
+            ]
+        }
+    }
+
+    func _landscapeImageSources(
+        useParent: Bool,
+        maxWidth: CGFloat?,
+        quality: Int?
+    ) -> [ImageSource] {
+        switch type {
+        case .episode:
+            if useParent {
                 [
                     seriesImageSource(.thumb, maxWidth: maxWidth, quality: quality),
                     seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality),

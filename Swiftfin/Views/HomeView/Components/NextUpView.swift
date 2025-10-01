@@ -25,6 +25,19 @@ extension HomeView {
 
         private var onSetPlayed: (BaseItemDto) -> Void
 
+        @ViewBuilder
+        private func posterLabel(
+            for item: BaseItemDto,
+            existingLabel: AnyView
+        ) -> some View {
+            if item.type == .episode {
+//                EpisodeContentSubtitleContent(item: item)
+                EmptyView()
+            } else {
+                existingLabel
+            }
+        }
+
         var body: some View {
             if viewModel.elements.isNotEmpty {
                 PosterHStack(
@@ -33,12 +46,6 @@ extension HomeView {
                     items: viewModel.elements
                 ) { item, namespace in
                     router.route(to: .item(item: item), in: namespace)
-                } label: { item in
-                    if item.type == .episode {
-                        PosterButton.EpisodeContentSubtitleContent(item: item)
-                    } else {
-                        PosterButton.TitleSubtitleContentView(item: item)
-                    }
                 }
                 .trailing {
                     SeeAllButton()
@@ -52,6 +59,15 @@ extension HomeView {
                     } label: {
                         Label(L10n.played, systemImage: "checkmark.circle")
                     }
+                }
+                .posterStyle(for: BaseItemDto.self) { value, item in
+                    var value = value
+                    value.label = posterLabel(
+                        for: item,
+                        existingLabel: value.label
+                    )
+                    .eraseToAnyView()
+                    return value
                 }
             }
         }

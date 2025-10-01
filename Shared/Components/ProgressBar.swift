@@ -9,6 +9,7 @@
 import SwiftUI
 
 // TODO: remove and replace with `PlaybackProgressViewStyle`
+@available(*, deprecated, message: "Use ProgressView and PlaybackProgressViewStyle instead")
 struct ProgressBar: View {
 
     @State

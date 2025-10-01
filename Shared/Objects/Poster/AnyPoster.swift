@@ -29,10 +29,6 @@ struct AnyPoster: Poster {
         _poster.unwrappedIDHashOrZero
     }
 
-    var subtitle: String? {
-        _poster.subtitle
-    }
-
     var systemImage: String {
         _poster.systemImage
     }
@@ -44,13 +40,12 @@ struct AnyPoster: Poster {
     func hash(into hasher: inout Hasher) {
         hasher.combine(_poster.unwrappedIDHashOrZero)
         hasher.combine(_poster.displayTitle)
-        hasher.combine(_poster.subtitle)
         hasher.combine(_poster.systemImage)
     }
 
-    var showTitle: Bool {
-        _poster.showTitle
-    }
+//    var showTitle: Bool {
+//        _poster.showTitle
+//    }
 
     func portraitImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
         _poster.portraitImageSources(maxWidth: maxWidth, quality: quality)

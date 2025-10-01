@@ -9,8 +9,8 @@
 import JellyfinAPI
 import SwiftUI
 
-private let landscapeMaxWidth: CGFloat = 110
-private let portraitMaxWidth: CGFloat = 60
+private let landscapeWidth: CGFloat = 110
+private let portraitWidth: CGFloat = 60
 
 extension PagingLibraryView {
 
@@ -73,21 +73,17 @@ extension PagingLibraryView {
 
         @ViewBuilder
         private var rowContent: some View {
-            HStack {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(item.displayTitle)
-                        .font(posterType == .landscape ? .subheadline : .callout)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
+            VStack(alignment: .leading, spacing: 5) {
+                Text(item.displayTitle)
+                    .font(.callout)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.primary)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
 
-                    accessoryView
-                        .font(.caption)
-                        .foregroundColor(Color(UIColor.lightGray))
-                }
-
-                Spacer()
+                accessoryView
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
 
@@ -99,7 +95,7 @@ extension PagingLibraryView {
                 contentMode: .fill
             )
             .posterShadow()
-            .frame(width: posterType == .landscape ? landscapeMaxWidth : portraitMaxWidth)
+            .frame(width: posterType == .landscape ? landscapeWidth : portraitWidth)
             .padding(.vertical, 8)
         }
 
@@ -107,12 +103,11 @@ extension PagingLibraryView {
 
         var body: some View {
             ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
+                action(namespace)
+            } leading: {
                 rowLeading
             } content: {
                 rowContent
-            }
-            .onSelect {
-                action(namespace)
             }
             .backport
             .matchedTransitionSource(id: "item", in: namespace)
