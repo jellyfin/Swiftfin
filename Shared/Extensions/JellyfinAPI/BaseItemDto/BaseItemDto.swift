@@ -509,12 +509,11 @@ extension BaseItemDto {
 
         let request = Paths.getItem(itemID: id, userID: userSession.user.id)
         let response = try await userSession.client.send(request)
-        let newItem = response.value
+        
+        // A check against `id` would typically be done, but a plugin
+        // may have provided `self` or the response item and may not
+        // be invariant over `id`.
 
-        guard newItem.id == id else {
-            throw JellyfinAPIError("Mismatching item IDs")
-        }
-
-        return newItem
+        return response.value
     }
 }
