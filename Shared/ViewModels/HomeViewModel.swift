@@ -13,6 +13,7 @@ import Get
 import JellyfinAPI
 import OrderedCollections
 
+@MainActor
 final class HomeViewModel: ViewModel, Stateful {
 
     // MARK: Action

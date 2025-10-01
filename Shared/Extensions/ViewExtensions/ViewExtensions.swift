@@ -426,6 +426,14 @@ extension View {
         onNotification(.sceneWillEnterForeground, perform: action)
     }
 
+    @ViewBuilder
+    func preference<Key: PreferenceKey, V>(
+        key: Key.Type,
+        @ArrayBuilder<V> value: () -> [V]
+    ) -> some View where Key.Value == [V] {
+        preference(key: Key.self, value: value())
+    }
+
     func scrollIfLargerThanContainer(padding: CGFloat = 0) -> some View {
         modifier(ScrollIfLargerThanContainerModifier(padding: padding))
     }

@@ -13,9 +13,6 @@ extension HomeView {
 
     struct LatestInLibraryView: View {
 
-//        @Default(.Customization.latestInLibraryPosterType)
-//        private var latestInLibraryPosterType
-
         @Router
         private var router
 

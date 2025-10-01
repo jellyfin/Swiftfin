@@ -10,6 +10,7 @@ import Combine
 import JellyfinAPI
 import OrderedCollections
 
+@MainActor
 final class ItemTypeCollection: ViewModel, Stateful {
 
     enum Action {

@@ -63,6 +63,7 @@ extension NavigationRoute {
     }
     #endif
 
+    @MainActor
     static func castAndCrew(people: [BaseItemPerson], itemID: String?) -> NavigationRoute {
         let id: String? = itemID == nil ? nil : "castAndCrew-\(itemID!)"
         let viewModel = PagingLibraryViewModel(

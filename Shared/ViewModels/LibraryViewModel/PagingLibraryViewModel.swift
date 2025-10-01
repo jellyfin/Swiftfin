@@ -60,6 +60,7 @@ protocol LibraryIdentifiable: Identifiable {
        on remembering other filters.
  */
 
+@MainActor
 class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     // MARK: Event
@@ -253,7 +254,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             pagingTask?.cancel()
             randomItemTask?.cancel()
 
-            filterViewModel?.send(.getQueryFilters)
+            filterViewModel?.getQueryFilters()
 
             pagingTask = Task { [weak self] in
                 guard let self else { return }

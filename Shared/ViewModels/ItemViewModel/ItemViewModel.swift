@@ -16,6 +16,7 @@ import UIKit
 
 // TODO: come up with a cleaner, more defined way for item update notifications
 
+@MainActor
 class ItemViewModel: ViewModel, Stateful {
 
     // MARK: Action

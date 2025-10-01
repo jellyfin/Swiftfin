@@ -16,7 +16,7 @@ private let portraitMaxWidth: CGFloat = 200
 
 struct PosterImage<Item: Poster>: View {
 
-    @EnvironmentTypeValue<Item, (Any) -> PosterStyleEnvironment>(\.posterStyleRegistry)
+    @ForTypeInEnvironment<Item, (Any) -> PosterStyleEnvironment>(\.posterStyleRegistry)
     private var posterStyleRegistry
 
     private let contentMode: ContentMode
