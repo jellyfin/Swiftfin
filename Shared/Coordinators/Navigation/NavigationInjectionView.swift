@@ -55,18 +55,17 @@ struct NavigationInjectionView: View {
                 rootCoordinator: rootCoordinator
             )
         )
-        .sheet(
+        #if os(tvOS)
+        .fullScreenCover(
             item: $coordinator.presentedSheet
-        ) {
-            coordinator.presentedSheet = nil
-        } content: { route in
+        ) { route in
             let newCoordinator = NavigationCoordinator()
 
             NavigationInjectionView(coordinator: newCoordinator) {
                 route.destination
             }
+            .background(Material.thick, ignoresSafeAreaEdges: .all)
         }
-        #if os(tvOS)
         .fullScreenCover(
             item: $coordinator.presentedFullScreen
         ) { route in
@@ -77,30 +76,41 @@ struct NavigationInjectionView: View {
             }
         }
         #else
-        .presentation(
-                $coordinator.presentedFullScreen,
-                transition: .zoomIfAvailable(
-                    options: .init(
-                        dimmingVisualEffect: .systemThickMaterialDark,
-                        options: .init(
-                            isInteractive: isPresentationInteractive
-                        )
-                    ),
-                    otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: isPresentationInteractive))
-                )
-            ) { routeBinding, _ in
-                let vc = UIPreferencesHostingController {
-                    NavigationInjectionView(coordinator: .init()) {
-                        routeBinding.wrappedValue.destination
-                            .environment(\.presentationControllerShouldDismiss, $isPresentationInteractive)
-                    }
+        .sheet(
+                item: $coordinator.presentedSheet
+            ) {
+                coordinator.presentedSheet = nil
+            } content: { route in
+                let newCoordinator = NavigationCoordinator()
+
+                NavigationInjectionView(coordinator: newCoordinator) {
+                    route.destination
                 }
-
-                // TODO: presentation options for customizing background color, dimming effect, etc.
-                vc.view.backgroundColor = .black
-
-                return vc
             }
+        .presentation(
+            $coordinator.presentedFullScreen,
+            transition: .zoomIfAvailable(
+                options: .init(
+                    dimmingVisualEffect: .systemThickMaterialDark,
+                    options: .init(
+                        isInteractive: isPresentationInteractive
+                    )
+                ),
+                otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: isPresentationInteractive))
+            )
+        ) { routeBinding, _ in
+            let vc = UIPreferencesHostingController {
+                NavigationInjectionView(coordinator: .init()) {
+                    routeBinding.wrappedValue.destination
+                        .environment(\.presentationControllerShouldDismiss, $isPresentationInteractive)
+                }
+            }
+
+            // TODO: presentation options for customizing background color, dimming effect, etc.
+            vc.view.backgroundColor = .black
+
+            return vc
+        }
         #endif
     }
 }
