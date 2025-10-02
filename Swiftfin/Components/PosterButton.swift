@@ -10,12 +10,10 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: expose `ImageView.image` modifier for image aspect fill/fit
+struct PosterButton<Item: Poster, Label: View>: View {
 
-struct PosterButton<Item: Poster>: View {
-
-    @EnvironmentTypeValue<Item>(\.posterOverlayRegistry)
-    private var posterOverlayRegistry
+    @EnvironmentTypeValue<Item, (Any) -> PosterStyleEnvironment>(\.posterStyleRegistry)
+    private var posterStyleRegistry
 
     @Namespace
     private var namespace
@@ -25,24 +23,48 @@ struct PosterButton<Item: Poster>: View {
 
     private let item: Item
     private let type: PosterDisplayType
-    private let label: any View
+    private let label: Label
     private let action: (Namespace.ID) -> Void
+
+    private var posterStyle: PosterStyleEnvironment {
+        posterStyleRegistry?(item) ?? .default
+    }
+
+    init(
+        item: Item,
+        type: PosterDisplayType,
+        action: @escaping (Namespace.ID) -> Void,
+        @ViewBuilder label: @escaping () -> Label
+    ) {
+        self.item = item
+        self.type = type
+        self.action = action
+        self.label = label()
+    }
 
     @ViewBuilder
     private func posterView(overlay: some View = EmptyView()) -> some View {
         VStack(alignment: .leading) {
-            PosterImage(item: item, type: type)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .overlay { overlay }
-                .contentShape(.contextMenuPreview, Rectangle())
-                .posterCornerRadius(type)
-                .backport
-                .matchedTransitionSource(id: "item", in: namespace)
-                .posterShadow()
+            PosterImage(
+                item: item,
+                type: posterStyle.displayType
+            )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .overlay { overlay }
+            .contentShape(.contextMenuPreview, Rectangle())
+            .posterCornerRadius(posterStyle.displayType)
+            .backport
+            .matchedTransitionSource(id: "item", in: namespace)
+            .posterShadow()
 
-            label
-                .eraseToAnyView()
-                .allowsHitTesting(false)
+            Group {
+                if Label.self != EmptyView.self {
+                    label
+                } else {
+                    posterStyle.label
+                }
+            }
+            .allowsHitTesting(false)
         }
     }
 
@@ -50,11 +72,7 @@ struct PosterButton<Item: Poster>: View {
         Button {
             action(namespace)
         } label: {
-            let overlay = posterOverlayRegistry?(item) ??
-                PosterButton.DefaultOverlay(item: item)
-                .eraseToAnyView()
-
-            posterView(overlay: overlay)
+            posterView(overlay: posterStyle.overlay)
                 .trackingSize($posterSize)
         }
         .foregroundStyle(.primary, .secondary)
@@ -76,145 +94,44 @@ struct PosterButton<Item: Poster>: View {
     }
 }
 
-extension PosterButton {
+extension PosterButton where Label == EmptyView {
 
     init(
         item: Item,
         type: PosterDisplayType,
-        action: @escaping (Namespace.ID) -> Void,
-        @ViewBuilder label: @escaping () -> any View
+        action: @escaping (Namespace.ID) -> Void
     ) {
-        self.item = item
-        self.type = type
-        self.action = action
-        self.label = label()
+        self.init(
+            item: item,
+            type: type,
+            action: action
+        ) {
+            EmptyView()
+        }
     }
 }
 
-// TODO: remove these and replace with `TextStyle`
+struct TitleSubtitleContentView: View {
 
-extension PosterButton {
+    let title: String?
+    let subtitle: String?
 
-    // MARK: Default Content
-
-    struct TitleContentView: View {
-
-        let title: String
-
-        var body: some View {
-            Text(title)
-                .font(.footnote)
-                .fontWeight(.regular)
-                .foregroundStyle(.primary)
-        }
-    }
-
-    struct SubtitleContentView: View {
-
-        let subtitle: String?
-
-        var body: some View {
-            Text(subtitle ?? " ")
-                .font(.caption)
-                .fontWeight(.medium)
-                .foregroundStyle(.secondary)
-        }
-    }
-
-    struct TitleSubtitleContentView: View {
-
-        let item: Item
-
-        var body: some View {
-            VStack(alignment: .leading, spacing: 0) {
-                if item.showTitle {
-                    TitleContentView(title: item.displayTitle)
-                        .lineLimit(1, reservesSpace: true)
-                }
-
-                SubtitleContentView(subtitle: item.subtitle)
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if let title {
+                Text(title)
+                    .font(.footnote)
+                    .fontWeight(.regular)
+                    .foregroundStyle(.primary)
                     .lineLimit(1, reservesSpace: true)
             }
-        }
-    }
 
-    // Content specific for BaseItemDto episode items
-    struct EpisodeContentSubtitleContent: View {
-
-        @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
-        private var useSeriesLandscapeBackdrop
-
-        let item: Item
-
-        var body: some View {
-            if let item = item as? BaseItemDto {
-                // Unsure why this needs 0 spacing
-                // compared to other default content
-                VStack(alignment: .leading, spacing: 0) {
-                    if item.showTitle, let seriesName = item.seriesName {
-                        Text(seriesName)
-                            .font(.footnote)
-                            .fontWeight(.regular)
-                            .foregroundColor(.primary)
-                            .lineLimit(1, reservesSpace: true)
-                    }
-
-                    DotHStack(padding: 3) {
-                        Text(item.seasonEpisodeLabel ?? .emptyDash)
-
-                        if item.showTitle || useSeriesLandscapeBackdrop {
-                            Text(item.displayTitle)
-                        } else if let seriesName = item.seriesName {
-                            Text(seriesName)
-                        }
-                    }
+            if let subtitle {
+                Text(subtitle)
                     .font(.caption)
-                    .foregroundColor(.secondary)
-                    .lineLimit(1)
-                }
-            }
-        }
-    }
-
-    // MARK: Default Overlay
-
-    struct DefaultOverlay: View {
-
-        @Default(.accentColor)
-        private var accentColor
-        @Default(.Customization.Indicators.showFavorited)
-        private var showFavorited
-        @Default(.Customization.Indicators.showProgress)
-        private var showProgress
-        @Default(.Customization.Indicators.showUnplayed)
-        private var showUnplayed
-        @Default(.Customization.Indicators.showPlayed)
-        private var showPlayed
-
-        let item: Item
-
-        var body: some View {
-            ZStack {
-                if let item = item as? BaseItemDto {
-                    if item.canBePlayed, !item.isLiveStream, item.userData?.isPlayed == true {
-                        WatchedIndicator(size: 25)
-                            .isVisible(showPlayed)
-                    } else {
-                        if (item.userData?.playbackPositionTicks ?? 0) > 0 {
-                            ProgressIndicator(progress: (item.userData?.playedPercentage ?? 0) / 100, height: 5)
-                                .isVisible(showProgress)
-                        } else if item.canBePlayed, !item.isLiveStream {
-                            UnwatchedIndicator(size: 25)
-                                .foregroundColor(accentColor)
-                                .isVisible(showUnplayed)
-                        }
-                    }
-
-                    if item.userData?.isFavorite == true {
-                        FavoriteIndicator(size: 25)
-                            .isVisible(showFavorited)
-                    }
-                }
+                    .fontWeight(.medium)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1, reservesSpace: true)
             }
         }
     }
