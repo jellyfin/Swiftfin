@@ -43,17 +43,20 @@ struct MediaView: View {
                         parent: item,
                         filters: .init(parent: item, currentFilters: .init())
                     )
-                    router.route(to: ._library(library: pagingLibrary), in: namespace)
+                    router.route(to: .library(library: pagingLibrary), in: namespace)
                 case .downloads:
                     router.route(to: .downloadList)
                 case .favorites:
                     // TODO: favorites should have its own view instead of a library
-                    let viewModel = ItemLibraryViewModel(
+                    let favoritesLibrary = _PagingItemLibrary(
                         title: L10n.favorites,
                         id: "favorites",
-                        filters: .favorites
+                        filters: .init(
+                            parent: nil,
+                            currentFilters: .favorites
+                        )
                     )
-                    router.route(to: .library(viewModel: viewModel), in: namespace)
+                    router.route(to: .library(library: favoritesLibrary), in: namespace)
                 case .liveTV:
                     router.route(to: .liveTV)
                 }
