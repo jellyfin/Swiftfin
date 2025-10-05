@@ -27,8 +27,9 @@ struct LibraryPageState {
     let userSession: UserSession
 }
 
-protocol _LibraryParent: Displayable {
+protocol _LibraryParent: Displayable, Identifiable<String?> {
 
+    var libraryType: BaseItemKind? { get }
     var _supportedItemTypes: [BaseItemKind] { get }
     var _isRecursiveCollection: Bool { get }
     var _groupings: [LibraryGrouping]? { get }
@@ -39,9 +40,10 @@ extension _LibraryParent {
     var _groupings: [LibraryGrouping]? { nil }
 }
 
-struct _TitledLibraryParent: _LibraryParent, Displayable, Identifiable {
+struct _TitledLibraryParent: _LibraryParent {
+    let libraryType: BaseItemKind? = .collectionFolder
     let displayTitle: String
-    let id: String
+    let id: String?
     let _supportedItemTypes: [BaseItemKind]
     let _isRecursiveCollection: Bool = false
 }
@@ -114,7 +116,7 @@ struct _StaticLibrary<Element: Poster>: PagingLibrary {
     }
 
     var id: String {
-        parent.id
+        parent.id ?? "unknown"
     }
 
     init(
@@ -145,10 +147,9 @@ struct _StaticLibrary<Element: Poster>: PagingLibrary {
     }
 }
 
-struct _PagingItemLibrary: PagingLibrary {
+struct _PagingItemLibrary<Parent: _LibraryParent>: PagingLibrary {
 
     typealias Element = BaseItemDto
-    typealias Parent = BaseItemDto
 
     var displayTitle: String {
         parent.displayTitle
@@ -173,10 +174,10 @@ struct _PagingItemLibrary: PagingLibrary {
         environment: LibraryValueEnvironment,
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
-        let parameters = attachPage(
+        let parameters = await attachPage(
             to: attachFilters(
                 to: makeBaseItemParameters(),
-                using: environment.filters
+                using: filterViewModel?.currentFilters ?? .init()
             ),
             page: pageState.page,
             pageSize: pageState.pageSize
@@ -219,20 +220,22 @@ struct _PagingItemLibrary: PagingLibrary {
         parameters.sortBy = [ItemSortBy.name.rawValue]
 
         /// Recursive should only apply to parents/folders and not to baseItems
-        parameters.isRecursive = parent.isRecursiveCollection
+        parameters.isRecursive = parent._isRecursiveCollection
         parameters.includeItemTypes = parent._supportedItemTypes
 
-        switch parent.libraryType {
-        case .boxSet, .collectionFolder, .userView:
-            parameters.parentID = id
-        case .folder:
-            parameters.parentID = id
-            parameters.isRecursive = nil
-        case .person:
-            parameters.personIDs = [id]
-        case .studio:
-            parameters.studioIDs = [id]
-        default: ()
+        if let parentID = parent.id {
+            switch parent.libraryType {
+            case .boxSet, .collectionFolder, .userView:
+                parameters.parentID = parentID
+            case .folder:
+                parameters.parentID = parentID
+                parameters.isRecursive = nil
+            case .person:
+                parameters.personIDs = [parentID]
+            case .studio:
+                parameters.studioIDs = [parentID]
+            default: ()
+            }
         }
 
         return parameters
@@ -306,6 +309,22 @@ struct _PagingItemLibrary: PagingLibrary {
     }
 }
 
+extension _PagingItemLibrary where Parent == _TitledLibraryParent {
+
+    init(
+        title: String,
+        id: String,
+        filters: FilterViewModel? = nil
+    ) {
+        self.parent = .init(
+            displayTitle: title,
+            id: id,
+            _supportedItemTypes: BaseItemKind.supportedCases
+        )
+        self.filterViewModel = filters
+    }
+}
+
 struct _PagingNextUpLibrary: PagingLibrary {
 
     typealias Element = BaseItemDto
@@ -316,7 +335,7 @@ struct _PagingNextUpLibrary: PagingLibrary {
     }
 
     var id: String {
-        parent.id
+        parent.id ?? "unknown"
     }
 
     let parent: _TitledLibraryParent

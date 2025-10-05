@@ -23,13 +23,30 @@ extension ItemView {
                 title: L10n.genres,
                 items: genres
             ).onSelect { genre in
-                let viewModel = ItemLibraryViewModel(
-                    title: genre.displayTitle,
-                    id: genre.value,
-                    filters: .init(genres: [genre])
+                let library = _PagingItemLibrary(
+                    parent: genre,
+                    filters: .init(parent: nil, currentFilters: .init(genres: [genre]))
                 )
-                router.route(to: .library(viewModel: viewModel))
+
+                router.route(to: .library(library: library))
             }
         }
+    }
+}
+
+extension ItemGenre: _LibraryParent, Identifiable {
+
+    var libraryType: BaseItemKind? {
+        .collectionFolder
+    }
+
+    var id: String? { nil }
+
+    var _supportedItemTypes: [JellyfinAPI.BaseItemKind] {
+        BaseItemKind.supportedCases
+    }
+
+    var _isRecursiveCollection: Bool {
+        true
     }
 }

@@ -217,7 +217,7 @@ extension _PagingLibraryView {
             switch item.type {
             case .collectionFolder, .folder:
                 let library = _PagingItemLibrary(parent: item, filters: .init(parent: item, currentFilters: .init()))
-                router.route(to: ._library(library: library), in: namespace)
+                router.route(to: .library(library: library), in: namespace)
             default:
                 router.route(to: .item(item: item), in: namespace)
             }

@@ -56,16 +56,21 @@ extension TabItem {
         systemName: String,
         filters: ItemFilterCollection
     ) -> TabItem {
-        TabItem(
-            id: "library-\(UUID().uuidString)",
+
+        let id = "library-\(UUID().uuidString)"
+
+        return TabItem(
+            id: id,
             title: title,
             systemImage: systemName
         ) {
-            let viewModel = ItemLibraryViewModel(
-                filters: filters
+            let library = _PagingItemLibrary(
+                title: title,
+                id: id,
+                filters: .init(parent: nil, currentFilters: filters)
             )
 
-            PagingLibraryView(viewModel: viewModel)
+            return _PagingLibraryView(library: library)
         }
     }
 

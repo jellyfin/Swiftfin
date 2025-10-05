@@ -184,7 +184,7 @@ struct SearchView: View {
                         id: "search-\(type.hashValue)",
                         items
                     )
-                    router.route(to: .library(viewModel: viewModel))
+//                    router.route(to: .library(viewModel: viewModel))
                 }
         }
     }
