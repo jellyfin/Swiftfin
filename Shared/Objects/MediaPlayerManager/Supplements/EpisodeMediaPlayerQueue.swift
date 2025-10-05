@@ -162,9 +162,9 @@ extension EpisodeMediaPlayerQueue {
         var viewModel: SeriesItemViewModel
 
         @State
-        private var selection: SeasonItemViewModel.ID?
+        private var selection: PagingSeasonViewModel.ID?
 
-        private var selectionViewModel: SeasonItemViewModel? {
+        private var selectionViewModel: PagingSeasonViewModel? {
             guard let selection else { return nil }
             return viewModel.seasons[id: selection]
         }
@@ -202,7 +202,7 @@ extension EpisodeMediaPlayerQueue {
             .onAppear {
                 if let seasonID = manager.item.seasonID, let season = viewModel.seasons[id: seasonID] {
                     if season.elements.isEmpty {
-                        season.send(.refresh)
+                        season.refresh()
                     }
                     selection = season.id
                 } else {
@@ -217,16 +217,16 @@ extension EpisodeMediaPlayerQueue {
         @EnvironmentObject
         private var seriesViewModel: SeriesItemViewModel
 
-        private let selection: Binding<SeasonItemViewModel.ID?>
+        private let selection: Binding<PagingSeasonViewModel.ID?>
         private let action: (BaseItemDto) -> Void
 
-        private var selectionViewModel: SeasonItemViewModel? {
+        private var selectionViewModel: PagingSeasonViewModel? {
             guard let id = selection.wrappedValue else { return nil }
             return seriesViewModel.seasons[id: id]
         }
 
         init(
-            selection: Binding<SeasonItemViewModel.ID?>,
+            selection: Binding<PagingSeasonViewModel.ID?>,
             action: @escaping (BaseItemDto) -> Void
         ) {
             self.selection = selection
@@ -236,7 +236,7 @@ extension EpisodeMediaPlayerQueue {
         private struct _Body: View {
 
             @ObservedObject
-            var selectionViewModel: SeasonItemViewModel
+            var selectionViewModel: PagingSeasonViewModel
 
             let action: (BaseItemDto) -> Void
 
@@ -274,16 +274,16 @@ extension EpisodeMediaPlayerQueue {
         @EnvironmentObject
         private var seriesViewModel: SeriesItemViewModel
 
-        private let selection: Binding<SeasonItemViewModel.ID?>
+        private let selection: Binding<PagingSeasonViewModel.ID?>
         private let action: (BaseItemDto) -> Void
 
-        private var selectionViewModel: SeasonItemViewModel? {
+        private var selectionViewModel: PagingSeasonViewModel? {
             guard let id = selection.wrappedValue else { return nil }
             return seriesViewModel.seasons[id: id]
         }
 
         init(
-            selection: Binding<SeasonItemViewModel.ID?>,
+            selection: Binding<PagingSeasonViewModel.ID?>,
             action: @escaping (BaseItemDto) -> Void
         ) {
             self.selection = selection
@@ -296,7 +296,7 @@ extension EpisodeMediaPlayerQueue {
             private var safeAreaInsets: EdgeInsets
 
             @ObservedObject
-            var selectionViewModel: SeasonItemViewModel
+            var selectionViewModel: PagingSeasonViewModel
 
             let action: (BaseItemDto) -> Void
 
@@ -347,32 +347,32 @@ extension EpisodeMediaPlayerQueue {
 
             var body: some View {
                 VStack {
-                    Menu {
-                        ForEach(seriesViewModel.seasons, id: \.season.id) { season in
-                            Button {
-                                selection.wrappedValue = season.id
-                                if season.elements.isEmpty {
-                                    season.send(.refresh)
-                                }
-                            } label: {
-                                if season.id == selection.wrappedValue {
-                                    Label(season.season.displayTitle, systemImage: "checkmark")
-                                } else {
-                                    Text(season.season.displayTitle)
-                                }
-                            }
-                        }
-                    } label: {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 7)
-                                .foregroundStyle(.white)
-
-                            Label(selectionViewModel.season.displayTitle, systemImage: "chevron.down")
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.black)
-                        }
-                    }
-                    .frame(maxHeight: .infinity)
+//                    Menu {
+//                        ForEach(seriesViewModel.seasons, id: \.season.id) { season in
+//                            Button {
+//                                selection.wrappedValue = season.id
+//                                if season.elements.isEmpty {
+//                                    season.send(.refresh)
+//                                }
+//                            } label: {
+//                                if season.id == selection.wrappedValue {
+//                                    Label(season.season.displayTitle, systemImage: "checkmark")
+//                                } else {
+//                                    Text(season.season.displayTitle)
+//                                }
+//                            }
+//                        }
+//                    } label: {
+//                        ZStack {
+//                            RoundedRectangle(cornerRadius: 7)
+//                                .foregroundStyle(.white)
+//
+//                            Label(selectionViewModel.season.displayTitle, systemImage: "chevron.down")
+//                                .fontWeight(.semibold)
+//                                .foregroundStyle(.black)
+//                        }
+//                    }
+//                    .frame(maxHeight: .infinity)
 
                     Button {
                         guard let nextItem = manager.queue?.nextItem else { return }
@@ -484,7 +484,7 @@ extension EpisodeMediaPlayerQueue {
         }
 
         var body: some View {
-            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
+            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding), action: action) {
                 EpisodePreview(episode: episode)
                     .frame(width: 110)
                     .padding(.vertical, 8)
@@ -501,7 +501,6 @@ extension EpisodeMediaPlayerQueue {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .onSelect(perform: action)
             .isSelected(isCurrentEpisode)
         }
     }

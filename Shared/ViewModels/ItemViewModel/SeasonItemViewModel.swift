@@ -47,3 +47,56 @@ final class SeasonItemViewModel: PagingLibraryViewModel<BaseItemDto>, Identifiab
         return response.value.items ?? []
     }
 }
+
+typealias PagingSeasonViewModel = _PagingLibraryViewModel<_PagingSeasonLibrary>
+
+struct _PagingSeasonLibrary: PagingLibrary {
+
+    typealias Element = BaseItemDto
+    typealias Parent = BaseItemDto
+
+    var displayTitle: String {
+        parent.displayTitle
+    }
+
+    var id: String {
+        parent.id ?? "unknown"
+    }
+
+    let parent: BaseItemDto
+
+    init(season: BaseItemDto) {
+        self.parent = season
+    }
+
+    func retrievePage(
+        environment: LibraryValueEnvironment,
+        pageState: LibraryPageState
+    ) async throws -> [Element] {
+
+        var parameters = Paths.GetEpisodesParameters()
+        parameters.enableUserData = true
+        parameters.fields = .MinimumFields
+        parameters.isMissing = Defaults[.Customization.shouldShowMissingEpisodes] ? nil : false
+
+        parameters.seasonID = parent.id
+
+//        parameters.limit = pageState.pageSize
+//        parameters.startIndex = pageState.page * pageState.pageSize
+
+        let request = Paths.getEpisodes(
+            seriesID: parent.id!,
+            parameters: parameters
+        )
+        let response = try await pageState.userSession.client.send(request)
+
+        return response.value.items ?? []
+    }
+
+    func retrieveRandomElement(
+        environment: LibraryValueEnvironment,
+        pageState: LibraryPageState
+    ) async throws -> Element? {
+        nil
+    }
+}

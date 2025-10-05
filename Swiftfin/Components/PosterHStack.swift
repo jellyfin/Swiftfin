@@ -55,7 +55,7 @@ struct PosterHStack<
         let columnCount: CGFloat = {
             switch posterStyle.displayType {
             case .landscape:
-                1.5
+                2
             case .portrait:
                 3
             case .square:

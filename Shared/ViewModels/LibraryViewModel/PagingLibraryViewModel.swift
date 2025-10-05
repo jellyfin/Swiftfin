@@ -183,10 +183,11 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
                 filters.sortOrder = storedFilters.sortOrder
             }
 
-            self.filterViewModel = .init(
-                parent: parent,
-                currentFilters: filters
-            )
+            self.filterViewModel = nil
+//            self.filterViewModel = .init(
+//                parent: parent,
+//                currentFilters: filters
+//            )
         } else {
             self.filterViewModel = nil
         }

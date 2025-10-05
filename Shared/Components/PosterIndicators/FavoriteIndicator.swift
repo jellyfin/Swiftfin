@@ -11,10 +11,16 @@ import SwiftUI
 struct FavoriteIndicator: View {
 
     var body: some View {
-        Image(systemName: "heart.circle.fill")
-            .resizable()
-            .symbolRenderingMode(.palette)
-            .foregroundStyle(.white, .pink)
-            .padding(3)
+        ContainerRelativeView(
+            alignment: .bottomLeading,
+            ratio: 0.2
+        ) {
+            Image(systemName: "heart.circle.fill")
+                .resizable()
+                .symbolRenderingMode(.palette)
+                .aspectRatio(1, contentMode: .fit)
+                .foregroundStyle(.white, .pink)
+        }
+        .padding(5)
     }
 }

@@ -123,7 +123,11 @@ struct CustomizeViewsSettings: View {
                 L10n.missingItems.text
             }
 
-            Section(L10n.posters) {
+            ChevronButton(L10n.posters) {
+                router.route(to: .posterSettings)
+            }
+
+            Section("Old posters") {
 
                 ChevronButton(L10n.indicators) {
                     router.route(to: .indicatorSettings)

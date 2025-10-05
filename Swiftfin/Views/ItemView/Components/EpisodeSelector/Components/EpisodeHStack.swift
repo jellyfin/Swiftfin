@@ -17,7 +17,7 @@ extension SeriesEpisodeSelector {
     struct EpisodeHStack: View {
 
         @ObservedObject
-        var viewModel: SeasonItemViewModel
+        var viewModel: _PagingLibraryViewModel<_PagingSeasonLibrary>
 
         @State
         private var didScrollToPlayButtonItem = false
@@ -27,7 +27,8 @@ extension SeriesEpisodeSelector {
 
         let playButtonItem: BaseItemDto?
 
-        private func contentView(viewModel: SeasonItemViewModel) -> some View {
+        @ViewBuilder
+        private var contentView: some View {
             CollectionHStack(
                 uniqueElements: viewModel.elements,
                 id: \.unwrappedIDHashOrZero,
@@ -58,10 +59,10 @@ extension SeriesEpisodeSelector {
                 if viewModel.elements.isEmpty {
                     EmptyHStack()
                 } else {
-                    contentView(viewModel: viewModel)
+                    contentView
                 }
-            case let .error(error):
-                ErrorHStack(viewModel: viewModel, error: error)
+            case .error:
+                ErrorHStack(viewModel: viewModel)
             case .initial, .refreshing:
                 LoadingHStack()
             }
@@ -87,17 +88,15 @@ extension SeriesEpisodeSelector {
     struct ErrorHStack: View {
 
         @ObservedObject
-        var viewModel: SeasonItemViewModel
-
-        let error: JellyfinAPIError
+        var viewModel: _PagingLibraryViewModel<_PagingSeasonLibrary>
 
         var body: some View {
             CollectionHStack(
                 count: 1,
                 columns: UIDevice.isPhone ? 1.5 : 3.5
             ) { _ in
-                SeriesEpisodeSelector.ErrorCard(error: error) {
-                    viewModel.send(.refresh)
+                SeriesEpisodeSelector.ErrorCard(error: viewModel.error ?? JellyfinAPIError(L10n.unknownError)) {
+                    viewModel.refresh()
                 }
             }
             .insets(horizontal: EdgeInsets.edgePadding)
