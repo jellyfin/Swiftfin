@@ -13,15 +13,15 @@ import SwiftUI
 
 @MainActor
 @Stateful
-class _PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel {
+class _PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, @preconcurrency Identifiable {
 
     typealias Element = _PagingLibrary.Element
 
     @CasePathable
     enum Action {
-        case refresh(LibraryValueEnvironment)
-        case retrieveNextPage(LibraryValueEnvironment)
-        case retrieveRandomItem(LibraryValueEnvironment)
+        case refresh
+        case retrieveNextPage
+        case retrieveRandomItem
 
         var transition: Transition {
             switch self {
@@ -41,7 +41,7 @@ class _PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel {
     }
 
     enum Event {
-        case retrivedRandomItem(Element)
+        case retrievedRandomItem(Element)
     }
 
     enum State {
@@ -52,6 +52,8 @@ class _PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel {
     }
 
     @Published
+    var grouping: LibraryGrouping? = nil
+    @Published
     private(set) var elements: IdentifiedArray<Int, Element>
 
     private var currentPage = 0
@@ -59,7 +61,12 @@ class _PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel {
 
     let library: _PagingLibrary
 
+    var id: String {
+        library.id
+    }
+
     init(library: _PagingLibrary) {
+        self.grouping = library.parent._groupings?.defaultSelection
         self.library = library
         self.elements = IdentifiedArray(
             [],
@@ -71,21 +78,21 @@ class _PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel {
     }
 
     @Function(\Action.Cases.refresh)
-    private func _refresh(_ environment: LibraryValueEnvironment) async throws {
+    private func _refresh() async throws {
         currentPage = -1
         hasNextPage = true
 
         elements.removeAll()
-        try await _retrieveNextPage(environment)
+        try await _retrieveNextPage()
     }
 
     @Function(\Action.Cases.refresh)
-    private func _getQueryFilters(_ environment: LibraryValueEnvironment) async throws {
+    private func _getQueryFilters() async throws {
         await library.filterViewModel?.getQueryFilters()
     }
 
     @Function(\Action.Cases.retrieveNextPage)
-    private func _retrieveNextPage(_ environment: LibraryValueEnvironment) async throws {
+    private func _retrieveNextPage() async throws {
         guard hasNextPage else { return }
 
         currentPage += 1
@@ -97,7 +104,10 @@ class _PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel {
         )
 
         let nextPageElements = try await library.retrievePage(
-            environment: environment,
+            environment: .init(
+                filters: library.filterViewModel?.currentFilters ?? .default,
+                grouping: grouping
+            ),
             pageState: pageState
         )
 
@@ -109,7 +119,7 @@ class _PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel {
     }
 
     @Function(\Action.Cases.retrieveRandomItem)
-    private func _retrieveRandomItem(_ environment: LibraryValueEnvironment) async throws {
+    private func _retrieveRandomItem() async throws {
 
         let pageState = LibraryPageState(
             page: 0,
@@ -118,7 +128,10 @@ class _PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel {
         )
 
         guard let randomItem = try await library.retrieveRandomElement(
-            environment: environment,
+            environment: .init(
+                filters: library.filterViewModel?.currentFilters ?? .default,
+                grouping: grouping
+            ),
             pageState: pageState
         ) else {
             return
@@ -126,6 +139,6 @@ class _PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel {
 
         guard !Task.isCancelled else { return }
 
-        events.send(.retrivedRandomItem(randomItem))
+        events.send(.retrievedRandomItem(randomItem))
     }
 }

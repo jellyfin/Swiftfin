@@ -24,24 +24,22 @@ extension _PagingLibraryView {
         }
 
         var body: some View {
-            Section(L10n.layout) {
-//                Menu(L10n.library) {
-                Picker(selection: libraryStyle.displayType) {
-                    ForEach(LibraryDisplayType.allCases, id: \.self) { displayType in
-                        Label(
-                            displayType.displayTitle,
-                            systemImage: displayType.systemImage
-                        )
-                        .tag(displayType)
-                    }
-                } label: {
-                    Text(L10n.layout)
-
-                    Text(libraryStyle.wrappedValue.displayType.displayTitle)
-
-                    Image(systemName: libraryStyle.wrappedValue.displayType.systemImage)
+            Picker(selection: libraryStyle.displayType) {
+                ForEach(LibraryDisplayType.allCases, id: \.self) { displayType in
+                    Label(
+                        displayType.displayTitle,
+                        systemImage: displayType.systemImage
+                    )
+                    .tag(displayType)
                 }
-                .pickerStyle(.menu)
+            } label: {
+                Text(L10n.layout)
+
+                Text(libraryStyle.wrappedValue.displayType.displayTitle)
+
+                Image(systemName: libraryStyle.wrappedValue.displayType.systemImage)
+            }
+            .pickerStyle(.menu)
 
 //                    if libraryStyle.wrappedValue.displayType == .list, UIDevice.isPad {
 //                        Divider()
@@ -54,23 +52,22 @@ extension _PagingLibraryView {
 //                    }
 //                }
 
-                Picker(selection: libraryStyle.posterDisplayType) {
-                    ForEach(PosterDisplayType.allCases, id: \.self) { displayType in
-                        Label(
-                            displayType.displayTitle,
-                            systemImage: displayType.systemImage
-                        )
-                        .tag(displayType)
-                    }
-                } label: {
-                    Text(L10n.posters)
-
-                    Text(libraryStyle.wrappedValue.posterDisplayType.displayTitle)
-
-                    Image(systemName: libraryStyle.wrappedValue.posterDisplayType.systemImage)
+            Picker(selection: libraryStyle.posterDisplayType) {
+                ForEach(PosterDisplayType.allCases, id: \.self) { displayType in
+                    Label(
+                        displayType.displayTitle,
+                        systemImage: displayType.systemImage
+                    )
+                    .tag(displayType)
                 }
-                .pickerStyle(.menu)
+            } label: {
+                Text(L10n.posters)
+
+                Text(libraryStyle.wrappedValue.posterDisplayType.displayTitle)
+
+                Image(systemName: libraryStyle.wrappedValue.posterDisplayType.systemImage)
             }
+            .pickerStyle(.menu)
         }
     }
 }

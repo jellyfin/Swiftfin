@@ -118,6 +118,12 @@ extension NavigationRoute {
         IndicatorSettingsView()
     }
 
+    static let posterSettings = NavigationRoute(
+        id: "posterSettings"
+    ) {
+        CustomizeViewsSettings.PosterSection()
+    }
+
     static func itemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> NavigationRoute {
         NavigationRoute(id: "itemFilterDrawerSelector") {
             OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)

@@ -10,6 +10,7 @@ import Defaults
 import SwiftUI
 
 // TODO: make icon-based indicators relative container size based
+// TODO: remove favorited
 
 enum PosterOverlayIndicator: String, CaseIterable, Storable {
 

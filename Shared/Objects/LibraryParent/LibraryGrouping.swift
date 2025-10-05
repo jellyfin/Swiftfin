@@ -30,14 +30,15 @@ struct LibraryPageState {
 protocol _LibraryParent: Displayable, Identifiable<String?> {
 
     var libraryType: BaseItemKind? { get }
-    var _supportedItemTypes: [BaseItemKind] { get }
-    var _isRecursiveCollection: Bool { get }
-    var _groupings: [LibraryGrouping]? { get }
+    var _groupings: (defaultSelection: LibraryGrouping, elements: [LibraryGrouping])? { get }
+
+    func _supportedItemTypes(for grouping: LibraryGrouping?) -> [BaseItemKind]
+    func _isRecursiveCollection(for grouping: LibraryGrouping?) -> Bool
 }
 
 extension _LibraryParent {
 
-    var _groupings: [LibraryGrouping]? { nil }
+    var _groupings: (defaultSelection: LibraryGrouping, elements: [LibraryGrouping])? { nil }
 }
 
 struct _TitledLibraryParent: _LibraryParent {
@@ -45,7 +46,14 @@ struct _TitledLibraryParent: _LibraryParent {
     let displayTitle: String
     let id: String?
     let _supportedItemTypes: [BaseItemKind]
-    let _isRecursiveCollection: Bool = false
+
+    func _supportedItemTypes(for grouping: LibraryGrouping?) -> [BaseItemKind] {
+        _supportedItemTypes
+    }
+
+    func _isRecursiveCollection(for grouping: LibraryGrouping?) -> Bool {
+        false
+    }
 }
 
 protocol PagingLibrary<Element>: Displayable, Identifiable<String> {
@@ -77,29 +85,41 @@ extension PagingLibrary {
 
 extension BaseItemDto: _LibraryParent {
 
-    var _groupings: [LibraryGrouping]? {
+    var _groupings: (defaultSelection: LibraryGrouping, elements: [LibraryGrouping])? {
         switch collectionType {
         case .tvshows:
-            [
-                .init(displayTitle: L10n.episodes, id: "episodes"),
-                .init(displayTitle: L10n.series, id: "series"),
-            ]
-        default: nil
+            let episodes = LibraryGrouping(displayTitle: L10n.episodes, id: "episodes")
+            let series = LibraryGrouping(displayTitle: L10n.series, id: "series")
+            return (series, [episodes, series])
+        default:
+            return nil
         }
     }
 
-    var _supportedItemTypes: [BaseItemKind] {
+    func _supportedItemTypes(for grouping: LibraryGrouping?) -> [BaseItemKind] {
         switch self.type {
         case .folder:
-            BaseItemKind.supportedCases
+            return BaseItemKind.supportedCases
                 .appending([.folder, .collectionFolder])
         default:
-            BaseItemKind.supportedCases
+            if collectionType == .tvshows {
+                if let grouping, grouping.id == "episodes" {
+                    return [.episode]
+                } else {
+                    return [.series]
+                }
+            } else {
+                return BaseItemKind.supportedCases
+            }
         }
     }
 
-    var _isRecursiveCollection: Bool {
+    func _isRecursiveCollection(for grouping: LibraryGrouping?) -> Bool {
         guard let collectionType, libraryType != .userView else { return true }
+
+        if let grouping, grouping.id == "episodes" {
+            return true
+        }
 
         return ![.tvshows, .boxsets].contains(collectionType)
     }
@@ -176,7 +196,7 @@ struct _PagingItemLibrary<Parent: _LibraryParent>: PagingLibrary {
     ) async throws -> [BaseItemDto] {
         let parameters = await attachPage(
             to: attachFilters(
-                to: makeBaseItemParameters(),
+                to: makeBaseItemParameters(environment: environment),
                 using: filterViewModel?.currentFilters ?? .init()
             ),
             page: pageState.page,
@@ -208,7 +228,7 @@ struct _PagingItemLibrary<Parent: _LibraryParent>: PagingLibrary {
         return items
     }
 
-    private func makeBaseItemParameters() -> Paths.GetItemsByUserIDParameters {
+    private func makeBaseItemParameters(environment: LibraryValueEnvironment) -> Paths.GetItemsByUserIDParameters {
 
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.enableUserData = true
@@ -220,8 +240,8 @@ struct _PagingItemLibrary<Parent: _LibraryParent>: PagingLibrary {
         parameters.sortBy = [ItemSortBy.name.rawValue]
 
         /// Recursive should only apply to parents/folders and not to baseItems
-        parameters.isRecursive = parent._isRecursiveCollection
-        parameters.includeItemTypes = parent._supportedItemTypes
+        parameters.isRecursive = parent._isRecursiveCollection(for: environment.grouping)
+        parameters.includeItemTypes = parent._supportedItemTypes(for: environment.grouping)
 
         if let parentID = parent.id {
             switch parent.libraryType {
@@ -295,7 +315,7 @@ struct _PagingItemLibrary<Parent: _LibraryParent>: PagingLibrary {
         pageState: LibraryPageState
     ) async throws -> BaseItemDto? {
         var parameters = attachFilters(
-            to: makeBaseItemParameters(),
+            to: makeBaseItemParameters(environment: environment),
             using: environment.filters
         )
 

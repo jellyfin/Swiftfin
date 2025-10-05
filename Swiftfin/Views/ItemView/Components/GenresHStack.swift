@@ -42,11 +42,11 @@ extension ItemGenre: _LibraryParent, Identifiable {
 
     var id: String? { nil }
 
-    var _supportedItemTypes: [JellyfinAPI.BaseItemKind] {
+    func _supportedItemTypes(for grouping: LibraryGrouping?) -> [BaseItemKind] {
         BaseItemKind.supportedCases
     }
 
-    var _isRecursiveCollection: Bool {
-        true
+    func _isRecursiveCollection(for grouping: LibraryGrouping?) -> Bool {
+        false
     }
 }

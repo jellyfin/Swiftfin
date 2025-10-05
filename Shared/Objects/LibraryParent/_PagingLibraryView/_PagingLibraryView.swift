@@ -34,9 +34,6 @@ struct _PagingLibraryView<Library: PagingLibrary>: View {
     @Router
     private var router
 
-    @State
-    private var currentGrouping: LibraryGrouping? = nil
-
     @StateObject
     private var viewModel: _PagingLibraryViewModel<Library>
 
@@ -53,12 +50,12 @@ struct _PagingLibraryView<Library: PagingLibrary>: View {
     private func errorView(with error: some Error) -> some View {
         ErrorView(error: error)
             .onRetry {
-                viewModel.refresh(.init(filters: .init(), grouping: nil))
+                viewModel.refresh()
             }
     }
 
     @ViewBuilder
-    private func WithFiltersIfSet(
+    private func WithFilters(
         @ViewBuilder content: () -> some View
     ) -> some View {
         if let filterViewModel = viewModel.library.filterViewModel {
@@ -69,9 +66,8 @@ struct _PagingLibraryView<Library: PagingLibrary>: View {
                 ) { parameters in
                     router.route(to: .filter(type: parameters.type, viewModel: parameters.viewModel))
                 }
-                .onReceive(filterViewModel.currentFiltersDebounced) { newValue in
-                    print(newValue)
-                    viewModel.refresh(.init(filters: newValue, grouping: currentGrouping))
+                .onReceive(filterViewModel.currentFiltersDebounced) { _ in
+                    viewModel.refresh()
                 }
         } else {
             content()
@@ -82,7 +78,7 @@ struct _PagingLibraryView<Library: PagingLibrary>: View {
         ZStack {
             Color.clear
 
-            WithFiltersIfSet {
+            WithFilters {
                 switch viewModel.state {
                 case .initial, .refreshing:
                     ProgressView()
@@ -92,7 +88,7 @@ struct _PagingLibraryView<Library: PagingLibrary>: View {
                         Text(L10n.noResults)
                     } else {
                         ElementsView(
-                            groupingBinding: $currentGrouping,
+                            groupingBinding: viewModel.library.parent._groupings != nil ? $viewModel.grouping : nil,
                             viewModel: viewModel
                         )
                         .ignoresSafeArea()
@@ -113,9 +109,13 @@ struct _PagingLibraryView<Library: PagingLibrary>: View {
         .ignoresSafeArea()
         .navigationTitle(viewModel.library.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .onChange(of: viewModel.grouping) { _, _ in
+            viewModel.refresh()
+        }
         .onFirstAppear {
             if viewModel.state == .initial {
-                viewModel.refresh(.init(filters: .init(), grouping: nil))
+                viewModel.refresh()
             }
         }
         .navigationBarMenuButton(
@@ -233,6 +233,11 @@ extension _PagingLibraryView {
             ) { namespace in
                 select(element: element, in: namespace)
             }
+            .posterStyle(for: BaseItemDto.self) { environment, _ in
+                var environment = environment
+                environment.useParentImages = false
+                return environment
+            }
             //        } label: {
             //            if item.showTitle {
             //                PosterButton<Element>.TitleContentView(title: item.displayTitle)
@@ -271,12 +276,7 @@ extension _PagingLibraryView {
                 }
             }
             .onReachedBottomEdge(offset: .offset(100)) {
-                viewModel.retrieveNextPage(
-                    .init(
-                        filters: .init(),
-                        grouping: groupingBinding?.wrappedValue
-                    )
-                )
+                viewModel.retrieveNextPage()
             }
             .proxy(collectionVGridProxy)
             .scrollIndicators(.hidden)
@@ -287,7 +287,7 @@ extension _PagingLibraryView {
             }
             .onReceive(viewModel.events) { event in
                 switch event {
-                case let .retrivedRandomItem(item):
+                case let .retrievedRandomItem(item):
                     switch item {
                     case let item as BaseItemDto:
                         select(item: item, in: namespace)
@@ -307,18 +307,22 @@ extension _PagingLibraryView {
                     }
                 }
 
-                if let groupings = viewModel.library.parent._groupings,
+                if let groupings = viewModel.library.parent._groupings?.elements,
                    groupings.isNotEmpty,
                    let groupingBinding
                 {
                     MenuContentGroup(
                         id: "group-by"
                     ) {
-                        Picker("Grouping", selection: groupingBinding) {
+                        Picker(selection: groupingBinding) {
                             ForEach(groupings) { grouping in
                                 Text(grouping.displayTitle)
                                     .tag(grouping as LibraryGrouping?)
                             }
+                        } label: {
+                            Text("Grouping")
+
+                            Text(groupingBinding.wrappedValue?.displayTitle ?? L10n.unknown)
                         }
                         .pickerStyle(.menu)
                     }
@@ -328,12 +332,7 @@ extension _PagingLibraryView {
                     id: "retrieve-random-element"
                 ) {
                     Button(L10n.random, systemImage: "dice.fill") {
-                        viewModel.retrieveRandomItem(
-                            .init(
-                                filters: .init(),
-                                grouping: nil
-                            )
-                        )
+                        viewModel.retrieveRandomItem()
                     }
                 }
             }

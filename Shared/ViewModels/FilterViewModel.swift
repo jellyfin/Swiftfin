@@ -54,10 +54,10 @@ final class FilterViewModel: ViewModel {
 
     private var currentFiltersSubject: PassthroughSubject<ItemFilterCollection, Never> = .init()
 
-    private let parent: (any LibraryParent)?
+    private let parent: (any _LibraryParent)?
 
     init(
-        parent: (any LibraryParent)? = nil,
+        parent: (any _LibraryParent)? = nil,
         currentFilters: ItemFilterCollection = .default
     ) {
         self.parent = parent
@@ -66,7 +66,9 @@ final class FilterViewModel: ViewModel {
         super.init()
 
         if let parent {
-            self.allFilters.itemTypes = parent.supportedItemTypes
+            self.allFilters.itemTypes = parent._supportedItemTypes(
+                for: parent._groupings?.defaultSelection
+            )
         }
     }
 

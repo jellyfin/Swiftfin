@@ -17,39 +17,34 @@ struct SeriesEpisodeSelector: View {
     @State
     private var didSelectPlayButtonSeason = false
     @State
-    private var selection: SeasonItemViewModel.ID?
+    private var selection: PagingSeasonViewModel.ID?
 
-    private var selectionViewModel: SeasonItemViewModel? {
-        viewModel.seasons.first(where: { $0.id == selection })
+    private var selectionViewModel: PagingSeasonViewModel? {
+        viewModel.seasons.first(where: { $0.id == selection }) ?? viewModel.seasons.first
     }
 
     @ViewBuilder
     private var seasonSelectorMenu: some View {
-        if let seasonDisplayName = selectionViewModel?.season.displayTitle,
-           viewModel.seasons.count <= 1
-        {
-            Text(seasonDisplayName)
-                .font(.title2)
-                .fontWeight(.semibold)
-        } else {
-            Menu {
-                ForEach(viewModel.seasons, id: \.season.id) { seasonViewModel in
-                    Button {
-                        selection = seasonViewModel.id
-                    } label: {
-                        if seasonViewModel.id == selection {
-                            Label(seasonViewModel.season.displayTitle, systemImage: "checkmark")
-                        } else {
-                            Text(seasonViewModel.season.displayTitle)
+        if let selectionViewModel {
+            if viewModel.seasons.count > 1 {
+                Menu {
+                    Picker(L10n.seasons, selection: $selection) {
+                        ForEach(viewModel.seasons) { season in
+                            Text(season.library.displayTitle)
+                                .tag(season.id as PagingSeasonViewModel.ID?)
                         }
                     }
+                } label: {
+                    Label(
+                        selectionViewModel.library.displayTitle,
+                        systemImage: "chevron.down"
+                    )
+                    .labelStyle(.episodeSelector)
                 }
-            } label: {
-                Label(
-                    selectionViewModel?.season.displayTitle ?? .emptyDash,
-                    systemImage: "chevron.down"
-                )
-                .labelStyle(.episodeSelector)
+            } else {
+                Text(selectionViewModel.library.displayTitle)
+                    .font(.title2)
+                    .fontWeight(.semibold)
             }
         }
     }
@@ -62,7 +57,10 @@ struct SeriesEpisodeSelector: View {
 
             Group {
                 if let selectionViewModel {
-                    EpisodeHStack(viewModel: selectionViewModel, playButtonItem: viewModel.playButtonItem)
+                    EpisodeHStack(
+                        viewModel: selectionViewModel,
+                        playButtonItem: viewModel.playButtonItem
+                    )
                 } else {
                     LoadingHStack()
                 }
@@ -80,11 +78,12 @@ struct SeriesEpisodeSelector: View {
                 selection = viewModel.seasons.first?.id
             }
         }
-        .onChange(of: selection) { _ in
+        .backport
+        .onChange(of: selection) { _, _ in
             guard let selectionViewModel else { return }
 
             if selectionViewModel.state == .initial {
-                selectionViewModel.send(.refresh)
+                selectionViewModel.refresh()
             }
         }
     }

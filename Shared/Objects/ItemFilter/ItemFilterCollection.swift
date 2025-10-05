@@ -12,6 +12,7 @@ import JellyfinAPI
 struct ItemFilterCollection: Hashable, Storable {
 
     var genres: [ItemGenre] = []
+    var grouping: LibraryGrouping?
     var itemTypes: [BaseItemKind] = []
     var letter: [ItemLetter] = []
     var sortBy: [ItemSortBy] = [ItemSortBy.sortName]

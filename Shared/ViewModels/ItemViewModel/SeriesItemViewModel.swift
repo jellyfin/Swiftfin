@@ -16,10 +16,11 @@ import JellyfinAPI
 // TODO: care for one long episodes list?
 //       - after SeasonItemViewModel is bidirectional
 //       - would have to see if server returns right amount of episodes/season
+@MainActor
 final class SeriesItemViewModel: ItemViewModel {
 
     @Published
-    var seasons: IdentifiedArrayOf<SeasonItemViewModel> = []
+    var seasons: IdentifiedArrayOf<_PagingLibraryViewModel<_PagingSeasonLibrary>> = []
 
     // MARK: - Task
 
@@ -28,7 +29,6 @@ final class SeriesItemViewModel: ItemViewModel {
     // MARK: - Override Response
 
     override func respond(to action: ItemViewModel.Action) -> ItemViewModel.State {
-
         switch action {
         case .backgroundRefresh, .refresh:
             let parentState = super.respond(to: action)
@@ -50,7 +50,8 @@ final class SeriesItemViewModel: ItemViewModel {
 
                     let newSeasons = try await seasons
                         .sorted { ($0.indexNumber ?? -1) < ($1.indexNumber ?? -1) }
-                        .map(SeasonItemViewModel.init)
+                        .map(_PagingSeasonLibrary.init)
+                        .map(PagingSeasonViewModel.init)
 
                     await MainActor.run {
                         self.seasons.append(contentsOf: newSeasons)
