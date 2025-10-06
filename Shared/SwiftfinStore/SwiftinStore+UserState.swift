@@ -68,6 +68,20 @@ extension UserState {
         UserPermissions(data.policy)
     }
 
+    var pin: String {
+        get {
+            guard let pin = Container.shared.keychainService().get("\(id)-pin") else {
+                assertionFailure("pin missing in keychain")
+                return ""
+            }
+
+            return pin
+        }
+        nonmutating set {
+            Container.shared.keychainService().set(newValue, forKey: "\(id)-pin")
+        }
+    }
+
     var pinHint: String {
         get {
             StoredValues[.User.pinHint(id: id)]

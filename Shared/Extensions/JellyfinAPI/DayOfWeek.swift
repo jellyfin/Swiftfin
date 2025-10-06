@@ -11,11 +11,16 @@ import JellyfinAPI
 
 extension DayOfWeek {
 
-    var displayTitle: String? {
+    var displayTitle: String {
         let newLineRemoved = rawValue.replacingOccurrences(of: "\n", with: "")
 
-        guard let index = DateFormatter().weekdaySymbols.firstIndex(of: newLineRemoved) else {
-            return nil
+        /// The enum is in English so validation must be done against a calendar in English
+        let englishCalendar = DateFormatter()
+        englishCalendar.locale = Locale(identifier: "en_US_POSIX")
+
+        guard let index = englishCalendar.weekdaySymbols.firstIndex(of: newLineRemoved) else {
+            return rawValue
+                .localizedCapitalized
         }
 
         return Calendar.current

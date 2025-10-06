@@ -32,7 +32,7 @@ extension ItemView {
 
         let localTrailers: [BaseItemDto]
         let externalTrailers: [MediaURL]
-        let logger = Logger.swiftfin()
+        private let logger = Logger.swiftfin()
 
         private var showLocalTrailers: Bool {
             enabledTrailers.contains(.local) && localTrailers.isNotEmpty

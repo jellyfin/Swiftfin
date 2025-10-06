@@ -27,7 +27,8 @@ class JumpProgressObserver: ObservableObject {
         )
 
         timerCancellable = timer
-            .sink { _ in
+            .sink { [weak self] _ in
+                guard let self else { return }
                 self.jumps = 0
             }
     }

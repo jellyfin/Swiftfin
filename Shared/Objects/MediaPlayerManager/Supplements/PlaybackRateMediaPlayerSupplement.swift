@@ -36,7 +36,7 @@ struct PlaybackRateMediaPlayerSupplement: MediaPlayerSupplement {
 
                 HStack {
                     Button {
-                        manager.set(rate: manager.rate + 0.05)
+                        manager.setRate(rate: manager.rate + 0.05)
                     } label: {
                         ZStack {
                             RoundedRectangle(cornerRadius: 7)
@@ -50,7 +50,7 @@ struct PlaybackRateMediaPlayerSupplement: MediaPlayerSupplement {
                     .frame(maxWidth: .infinity)
 
                     Button {
-                        manager.set(rate: manager.rate - 0.05)
+                        manager.setRate(rate: manager.rate - 0.05)
                     } label: {
                         ZStack {
                             RoundedRectangle(cornerRadius: 7)

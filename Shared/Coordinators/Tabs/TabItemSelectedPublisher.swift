@@ -10,7 +10,7 @@ import SwiftUI
 
 extension TabCoordinator {
 
-    typealias TabItemSelectedPublisher = EventPublisher<TabCoordinator.SelectedEvent>
+    typealias TabItemSelectedPublisher = LegacyEventPublisher<TabCoordinator.SelectedEvent>
 }
 
 @propertyWrapper

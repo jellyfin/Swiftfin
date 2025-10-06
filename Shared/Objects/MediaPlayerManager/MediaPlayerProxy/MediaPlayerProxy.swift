@@ -30,6 +30,7 @@ protocol MediaPlayerProxy: ObservableObject, MediaPlayerObserver {
     func setSeconds(_ seconds: Duration)
 }
 
+@MainActor
 protocol VideoMediaPlayerProxy: MediaPlayerProxy {
 
     associatedtype VideoPlayerBody: View

@@ -55,7 +55,7 @@ class TrickplayPreviewImageProvider: PreviewImageProvider {
         self.runtime = runtime
     }
 
-    func imageIndex(for seconds: Duration) -> Int {
+    func imageIndex(for seconds: Duration) -> Int? {
         let intervalIndex = Int(seconds / Duration.milliseconds(info.interval ?? 1000))
         return intervalIndex
     }

@@ -19,43 +19,23 @@ extension ChannelLibraryView {
         @Default(.accentColor)
         private var accentColor
 
-        @Environment(\.colorScheme)
-        private var colorScheme
-
         @State
         private var contentSize: CGSize = .zero
         @State
         private var now: Date = .now
 
         let channel: ChannelProgram
+        let action: () -> Void
 
-        private var onSelect: () -> Void
         private let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
         @ViewBuilder
         private var channelLogo: some View {
             VStack {
-                ZStack {
-                    Color.secondarySystemFill
-                        .opacity(colorScheme == .dark ? 0.5 : 1)
-                        .posterShadow()
-
-                    ImageView(channel.channel.imageSource(.primary, maxWidth: 120))
-                        .image {
-                            $0.aspectRatio(contentMode: .fit)
-                        }
-                        .failure {
-                            SystemImageContentView(systemName: channel.systemImage, ratio: 0.5)
-                                .background(color: .clear)
-                        }
-                        .placeholder { _ in
-                            EmptyView()
-                        }
-                        .padding(5)
-                }
-                .aspectRatio(1.0, contentMode: .fill)
-                .posterBorder()
-                .cornerRadius(ratio: 0.0375, of: \.width)
+                PosterImage(
+                    item: channel.channel,
+                    type: .square
+                )
 
                 Text(channel.channel.number ?? "")
                     .font(.body)
@@ -114,9 +94,7 @@ extension ChannelLibraryView {
 
         var body: some View {
             ZStack(alignment: .bottomTrailing) {
-                Button {
-                    onSelect()
-                } label: {
+                Button(action: action) {
                     HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
 
                         channelLogo
@@ -152,19 +130,5 @@ extension ChannelLibraryView {
             }
             .animation(.linear(duration: 0.2), value: channel.currentProgram)
         }
-    }
-}
-
-extension ChannelLibraryView.DetailedChannelView {
-
-    init(channel: ChannelProgram) {
-        self.init(
-            channel: channel,
-            onSelect: {}
-        )
-    }
-
-    func onSelect(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
     }
 }

@@ -49,12 +49,13 @@ extension NavigationRoute {
         }
     }
 
+    // TODO: rename to `localUserAccessPolicy`
     static func userSecurity(pinHint: Binding<String>, accessPolicy: Binding<UserAccessPolicy>) -> NavigationRoute {
         NavigationRoute(
             id: "userSecurity",
             style: .sheet
         ) {
-            UserSignInView.SecurityView(
+            LocalUserAccessPolicyView(
                 pinHint: pinHint,
                 accessPolicy: accessPolicy
             )
@@ -67,7 +68,11 @@ extension NavigationRoute {
             id: "userSignIn",
             style: .sheet
         ) {
-            UserSignInView(server: server)
+            WithUserAuthentication {
+                WithQuickConnect {
+                    UserSignInView(server: server)
+                }
+            }
         }
     }
 }

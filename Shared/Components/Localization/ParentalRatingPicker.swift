@@ -68,7 +68,7 @@ struct ParentalRatingPicker: View {
             #endif
         }
         .onFirstAppear {
-            viewModel.send(.refresh)
+            viewModel.refresh()
         }
     }
 

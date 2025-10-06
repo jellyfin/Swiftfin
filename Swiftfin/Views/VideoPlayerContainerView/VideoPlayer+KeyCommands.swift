@@ -79,7 +79,7 @@ extension VideoPlayer {
                             max: 4
                         )
 
-                        manager.set(rate: newRate)
+                        manager.setRate(rate: newRate)
 
                         toaster.present(
                             Text(newRate, format: .playbackRate),
@@ -100,7 +100,7 @@ extension VideoPlayer {
                             max: 4
                         )
 
-                        manager.set(rate: newRate)
+                        manager.setRate(rate: newRate)
 
                         toaster.present(
                             Text(newRate, format: .playbackRate),
@@ -115,7 +115,7 @@ extension VideoPlayer {
                         input: "\\",
                         modifierFlags: .command
                     ) {
-                        manager.set(rate: 1)
+                        manager.setRate(rate: 1)
                         toaster.present(
                             Text(1, format: .playbackRate),
                             systemName: VideoPlayerActionButton.playbackSpeed.systemImage
@@ -130,7 +130,7 @@ extension VideoPlayer {
                         modifierFlags: .command
                     ) {
                         guard let nextItem = manager.queue?.nextItem else { return }
-                        manager.send(.playNewItem(provider: nextItem))
+                        manager.playNewItem(provider: nextItem)
                     }
 
                     // MARK: Play Previous Item
@@ -141,7 +141,7 @@ extension VideoPlayer {
                         modifierFlags: .command
                     ) {
                         guard let previousItem = manager.queue?.previousItem else { return }
-                        manager.send(.playNewItem(provider: previousItem))
+                        manager.playNewItem(provider: previousItem)
                     }
 
                     // MARK: - Jump Backward

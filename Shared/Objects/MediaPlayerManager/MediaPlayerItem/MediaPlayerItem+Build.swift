@@ -11,8 +11,6 @@ import Factory
 import Foundation
 import JellyfinAPI
 import Logging
-import Nuke
-import UIKit
 
 // TODO: build report of determined values for playback information
 //       - transcode, video stream, path
@@ -123,11 +121,6 @@ extension MediaPlayerItem {
             logger: logger
         )
 
-        func getNowPlayingImage() async -> UIImage? {
-            let imageRequests = item.portraitImageSources(maxWidth: 100, quality: 90)
-            return await ImagePipeline.Swiftfin.other.loadFirstImage(from: imageRequests)
-        }
-
         let previewImageProvider: (any PreviewImageProvider)? = {
             let previewImageScrubbingSetting = StoredValues[.User.previewImageScrubbing]
             lazy var chapterPreviewImageProvider: ChapterPreviewImageProvider? = {
@@ -166,7 +159,7 @@ extension MediaPlayerItem {
             url: playbackURL,
             requestedBitrate: requestedBitrate,
             previewImageProvider: previewImageProvider,
-            thumbnailProvider: getNowPlayingImage
+            thumbnailProvider: item.getNowPlayingImage
         )
     }
 

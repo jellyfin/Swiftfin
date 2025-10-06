@@ -14,25 +14,29 @@ extension VideoPlayer.PlaybackControls.PlaybackProgress {
     struct ChapterTrackMask: View {
 
         let chapters: [ChapterInfo.FullInfo]
+        let runtime: Duration
+
+        private var unitPoints: [Double] {
+            chapters.map { chapter in
+                guard let startSeconds = chapter.chapterInfo.startSeconds,
+                      startSeconds < runtime
+                else {
+                    return 0
+                }
+
+                return startSeconds / runtime
+            }
+        }
 
         var body: some View {
-            AlternateLayoutView {
-                Color.clear
-            } content: { contentSize in
-                HStack(spacing: 0) {
-                    ForEach(chapters) { chapter in
-                        HStack(spacing: 0) {
-
-                            if chapter.secondsRange.lowerBound != .zero {
-                                Color.clear
-                                    .frame(width: 1.5)
-                            }
-
-                            Color.white
+            GeometryReader { proxy in
+                ZStack(alignment: .leading) {
+                    ForEach(unitPoints, id: \.self) { unitPoint in
+                        if unitPoint > 0 {
+                            Color.black
+                                .frame(width: 1.5)
+                                .offset(x: proxy.size.width * unitPoint - 0.75)
                         }
-                        .frame(
-                            maxWidth: contentSize.width * (chapter.unitRange.upperBound - chapter.unitRange.lowerBound)
-                        )
                     }
                 }
             }

@@ -8,7 +8,9 @@
 
 import Combine
 
-struct EventPublisher<T>: Publisher {
+// TODO: remove
+
+struct LegacyEventPublisher<T>: Publisher {
     typealias Output = T
     typealias Failure = Never
 

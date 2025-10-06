@@ -77,10 +77,6 @@ extension Defaults.Keys {
     /// depending on the current app state.
     static let appearance: Key<AppAppearance> = AppKey("appearance", default: .system)
 
-    /// The accent color default for non-user contexts.
-    /// Only use for `set`, use `accentColor` for `get`.
-    static let appAccentColor: Key<Color> = AppKey("appAccentColor", default: .jellyfinPurple)
-
     /// The appearance default for non-user contexts.
     /// /// Only use for `set`, use `appearance` for `get`.
     static let appAppearance: Key<AppAppearance> = AppKey("appAppearance", default: .system)
@@ -237,8 +233,7 @@ extension Defaults.Keys {
         }
 
         enum Transition {
-            static let pauseOnBackground: Key<Bool> = UserKey("pauseOnBackground", default: false)
-            static let playOnActive: Key<Bool> = UserKey("playOnActive", default: false)
+            static let pauseOnBackground: Key<Bool> = UserKey("playInBackground", default: true)
         }
     }
 

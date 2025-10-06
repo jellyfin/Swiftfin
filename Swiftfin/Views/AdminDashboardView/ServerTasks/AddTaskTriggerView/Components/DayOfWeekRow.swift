@@ -27,7 +27,7 @@ extension AddTaskTriggerView {
                 )
             ) {
                 ForEach(DayOfWeek.allCases, id: \.self) { day in
-                    Text(day.displayTitle ?? L10n.unknown)
+                    Text(day.displayTitle)
                         .tag(day)
                 }
             }
