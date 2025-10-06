@@ -35,10 +35,16 @@ struct PlayedIndicator: View {
     private var accentColor
 
     var body: some View {
-        Image(systemName: "checkmark.circle.fill")
-            .resizable()
-            .symbolRenderingMode(.palette)
-            .foregroundStyle(.white, accentColor)
-            .padding(3)
+        ContainerRelativeView(
+            alignment: .bottomTrailing,
+            ratio: 0.2
+        ) {
+            Image(systemName: "checkmark.circle.fill")
+                .resizable()
+                .symbolRenderingMode(.palette)
+                .aspectRatio(1, contentMode: .fit)
+                .foregroundStyle(.white, accentColor)
+        }
+        .padding(5)
     }
 }

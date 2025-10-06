@@ -86,7 +86,6 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 
         let parameters = Paths.GetEpisodesParameters(
             userID: userSession.user.id,
-            fields: .MinimumFields,
             adjacentTo: item.id!,
             limit: 3
         )

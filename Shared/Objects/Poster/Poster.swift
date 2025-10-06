@@ -104,7 +104,7 @@ extension Poster {
         useParent: Bool
     ) -> [ImageSource] {
 
-        let maxWidth = displayType.width(for: size)
+        let maxWidth = size.width(for: displayType)
         let quality = size.quality
 
         return switch displayType {

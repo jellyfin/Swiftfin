@@ -19,7 +19,6 @@ struct UnplayedIndicator: View {
             Q3RightTriangle()
                 .aspectRatio(1, contentMode: .fill)
         }
-        .debugBackground()
     }
 }
 

@@ -13,17 +13,41 @@ extension CustomizeViewsSettings {
 
     struct PosterSection: View {
 
+        enum PreviewItemState: CaseIterable, Displayable {
+            case inProgress
+            case played
+            case unplayed
+
+            var displayTitle: String {
+                switch self {
+                case .inProgress:
+                    return "In progress"
+                case .played:
+                    return L10n.played
+                case .unplayed:
+                    return L10n.unplayed
+                }
+            }
+        }
+
         @Default(.Customization.showPosterLabels)
         private var showPosterLabels
 
         @Default(.Customization.Indicators.showFavorited)
         private var showFavorited
+
+        @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
+        private var useSeriesLandscapeBackdrop
+
+        @Default(.Customization.Indicators.showPlayed)
+        private var showPlayed
         @Default(.Customization.Indicators.showProgress)
         private var showProgress
         @Default(.Customization.Indicators.showUnplayed)
         private var showUnplayed
-        @Default(.Customization.Indicators.showPlayed)
-        private var showPlayed
+
+        @State
+        private var previewItemState: PreviewItemState = .unplayed
 
         @ViewBuilder
         private func posterPreview(type: PosterDisplayType) -> some View {
@@ -34,16 +58,23 @@ extension CustomizeViewsSettings {
                     contentMode: .fit
                 )
                 .overlay {
-                    if showFavorited {
-                        FavoriteIndicator()
+                    if showProgress, previewItemState == .inProgress {
+                        PosterProgressBar(
+                            title: Duration.seconds(1800).formatted(.runtime),
+                            progress: 0.33,
+                            posterDisplayType: type
+                        )
                     }
 
-                    if showProgress {}
+                    if showPlayed, previewItemState == .played {
+                        PlayedIndicator()
+                    }
 
-                    if showUnplayed {}
-
-                    if showPlayed {}
+                    if showUnplayed, previewItemState == .unplayed {
+                        UnplayedIndicator()
+                    }
                 }
+                .posterCornerRadius(type)
 
                 AlternateLayoutView(alignment: .topLeading) {
                     TitleSubtitleContentView(
@@ -57,6 +88,10 @@ extension CustomizeViewsSettings {
                     )
                 }
             }
+            .animation(.linear(duration: 0.1), value: showPlayed)
+            .animation(.linear(duration: 0.1), value: showProgress)
+            .animation(.linear(duration: 0.1), value: showUnplayed)
+            .animation(.linear(duration: 0.1), value: previewItemState)
         }
 
         var body: some View {
@@ -76,6 +111,9 @@ extension CustomizeViewsSettings {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical)
                     }
+                    .scrollIndicators(.hidden)
+
+                    CaseIterablePicker("Status", selection: $previewItemState)
                 }
 
                 Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
@@ -86,6 +124,13 @@ extension CustomizeViewsSettings {
                     Toggle(L10n.unplayed, isOn: $showUnplayed)
 
                     Toggle(L10n.played, isOn: $showPlayed)
+                }
+
+                Section {
+                    Toggle(L10n.seriesBackdrop, isOn: $useSeriesLandscapeBackdrop)
+                } header: {
+                    // TODO: think of a better name
+                    Text(L10n.episodeLandscapePoster)
                 }
             }
             .navigationTitle(L10n.posters)

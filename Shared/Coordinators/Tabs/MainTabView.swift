@@ -17,8 +17,8 @@ import SwiftUI
 // TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
 
-    @Default(.Customization.latestInLibraryPosterType)
-    private var latestInLibraryPosterType
+//    @Default(.Customization.latestInLibraryPosterType)
+//    private var latestInLibraryPosterType
     @Default(.Customization.showPosterLabels)
     private var showPosterLabels
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
@@ -100,12 +100,12 @@ struct MainTabView: View {
             }
 
             return .init(
-                displayType: latestInLibraryPosterType,
+                displayType: .landscape,
                 indicators: [],
                 label: _label(),
                 overlay: EmptyView(),
                 useParentImages: useSeriesLandscapeBackdrop,
-                size: .medium
+                size: .small
             )
         }
         .posterStyle(for: BaseItemPerson.self) { person in
@@ -115,7 +115,7 @@ struct MainTabView: View {
                 label: person.posterLabel,
                 overlay: EmptyView(),
                 useParentImages: false,
-                size: .medium
+                size: .small
             )
         }
     }

@@ -13,12 +13,29 @@ enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImage
     enum Size {
         case small
         case medium
-        case original
 
         var quality: Int? {
             switch self {
-            case .original: nil
             default: 90
+            }
+        }
+
+        func width(for displayType: PosterDisplayType) -> CGFloat? {
+            switch displayType {
+            case .landscape:
+                switch self {
+                case .small:
+                    200
+                case .medium:
+                    300
+                }
+            case .portrait, .square:
+                switch self {
+                case .small:
+                    200
+                case .medium:
+                    400
+                }
             }
         }
     }
@@ -26,29 +43,6 @@ enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImage
     case landscape
     case portrait
     case square
-
-    func width(for size: Size) -> CGFloat? {
-        switch self {
-        case .landscape:
-            switch size {
-            case .small:
-                200
-            case .medium:
-                300
-            case .original:
-                nil
-            }
-        case .portrait, .square:
-            switch size {
-            case .small:
-                200
-            case .medium:
-                400
-            case .original:
-                nil
-            }
-        }
-    }
 
     var displayTitle: String {
         switch self {

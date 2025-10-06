@@ -15,7 +15,7 @@ final class ChannelLibraryViewModel: PagingLibraryViewModel<ChannelProgram> {
     override func get(page: Int) async throws -> [ChannelProgram] {
 
         var parameters = Paths.GetLiveTvChannelsParameters()
-        parameters.fields = .MinimumFields
+//        parameters.fields = .MinimumFields
         parameters.userID = userSession.user.id
         parameters.sortBy = [ItemSortBy.name]
 

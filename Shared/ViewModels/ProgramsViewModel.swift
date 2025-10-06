@@ -138,8 +138,8 @@ final class ProgramsViewModel: ViewModel, Stateful {
     private func getRecommendedPrograms() async throws -> [BaseItemDto] {
 
         var parameters = Paths.GetRecommendedProgramsParameters()
-        parameters.fields = .MinimumFields
-            .appending(.channelInfo)
+//        parameters.fields = .MinimumFields
+//            .appending(.channelInfo)
         parameters.isAiring = true
         parameters.limit = 20
         parameters.userID = userSession.user.id
@@ -153,8 +153,8 @@ final class ProgramsViewModel: ViewModel, Stateful {
     private func getPrograms(for section: ProgramSection) async throws -> [BaseItemDto] {
 
         var parameters = Paths.GetLiveTvProgramsParameters()
-        parameters.fields = .MinimumFields
-            .appending(.channelInfo)
+//        parameters.fields = .MinimumFields
+//            .appending(.channelInfo)
         parameters.hasAired = false
         parameters.limit = 20
         parameters.userID = userSession.user.id

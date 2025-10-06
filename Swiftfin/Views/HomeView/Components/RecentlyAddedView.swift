@@ -20,28 +20,29 @@ extension HomeView {
         @Router
         private var router
 
-        @ObservedObject
-        var viewModel: RecentlyAddedLibraryViewModel
+//        @ObservedObject
+//        var viewModel: RecentlyAddedLibraryViewModel
 
         var body: some View {
-            if viewModel.elements.isNotEmpty {
-                PosterHStack(
-                    title: L10n.recentlyAdded,
-                    type: recentlyAddedPosterType,
-                    items: viewModel.elements
-                ) { item, namespace in
-                    router.route(to: .item(item: item), in: namespace)
-                }
-                .trailing {
-                    SeeAllButton()
-                        .onSelect {
-                            // Give a new view model becaues we don't want to
-                            // keep paginated items on the home view model
-//                            let viewModel = RecentlyAddedLibraryViewModel()
-//                            router.route(to: .library(viewModel: viewModel))
-                        }
-                }
-            }
+            EmptyView()
+//            if viewModel.elements.isNotEmpty {
+//                PosterHStack(
+//                    title: L10n.recentlyAdded,
+//                    type: recentlyAddedPosterType,
+//                    items: viewModel.elements
+//                ) { item, namespace in
+//                    router.route(to: .item(item: item), in: namespace)
+//                }
+//                .trailing {
+//                    SeeAllButton()
+//                        .onSelect {
+//                            // Give a new view model becaues we don't want to
+//                            // keep paginated items on the home view model
+////                            let viewModel = RecentlyAddedLibraryViewModel()
+////                            router.route(to: .library(viewModel: viewModel))
+//                        }
+//                }
+//            }
         }
     }
 }

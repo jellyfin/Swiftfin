@@ -16,25 +16,26 @@ extension HomeView {
         @Router
         private var router
 
-        @ObservedObject
-        var viewModel: LatestInLibraryViewModel
+//        @ObservedObject
+//        var viewModel: LatestInLibraryViewModel
 
         var body: some View {
-            if viewModel.elements.isNotEmpty {
-                PosterHStack(
-                    title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
-                    type: .landscape,
-                    items: viewModel.elements
-                ) { item, namespace in
-                    router.route(to: .item(item: item), in: namespace)
-                }
-                .trailing {
-                    SeeAllButton()
-                        .onSelect {
-//                            router.route(to: .library(viewModel: viewModel))
-                        }
-                }
-            }
+            EmptyView()
+//            if viewModel.elements.isNotEmpty {
+//                PosterHStack(
+//                    title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
+//                    type: .landscape,
+//                    items: viewModel.elements
+//                ) { item, namespace in
+//                    router.route(to: .item(item: item), in: namespace)
+//                }
+//                .trailing {
+//                    SeeAllButton()
+//                        .onSelect {
+////                            router.route(to: .library(viewModel: viewModel))
+//                        }
+//                }
+//            }
         }
     }
 }
