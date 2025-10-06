@@ -212,19 +212,15 @@ extension BaseItemDto {
                 guard let channel = try? await self.getChannel(
                     for: program,
                     userSession: userSession
-                ),
-                    let mediaSource = channel.mediaSources?.first
+                )
                 else {
                     throw JellyfinAPIError(L10n.unknownError)
                 }
-                return try await MediaPlayerItem.build(for: program, mediaSource: mediaSource)
+                return try await MediaPlayerItem.build(for: channel)
             }
         default:
             MediaPlayerItemProvider(item: self) { item in
-                guard let mediaSource = item.mediaSources?.first else {
-                    throw JellyfinAPIError(L10n.unknownError)
-                }
-                return try await MediaPlayerItem.build(for: item, mediaSource: mediaSource)
+                try await MediaPlayerItem.build(for: item)
             }
         }
     }
@@ -236,7 +232,6 @@ extension BaseItemDto {
         guard type == .program else { return nil }
 
         var parameters = Paths.GetItemsByUserIDParameters()
-        parameters.fields = .MinimumFields
         parameters.ids = [program.channelID ?? ""]
 
         let request = Paths.getItemsByUserID(

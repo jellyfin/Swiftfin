@@ -25,15 +25,17 @@ struct HomeView: View {
 
     @ViewBuilder
     private func posterHStack<L: __PagingLibaryViewModel>(library: L) -> some View {
-        PosterHStack(
-            title: library.library.displayTitle,
-            type: .portrait,
-            items: library.elements
-        ) { element, namespace in
-            switch element {
-            case let element as BaseItemDto:
-                router.route(to: .item(item: element), in: namespace)
-            default: ()
+        if library.elements.isNotEmpty {
+            PosterHStack(
+                title: library.library.displayTitle,
+                type: .portrait,
+                items: library.elements
+            ) { element, namespace in
+                switch element {
+                case let element as BaseItemDto:
+                    router.route(to: .item(item: element), in: namespace)
+                default: ()
+                }
             }
         }
     }
