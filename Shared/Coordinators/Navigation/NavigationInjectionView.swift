@@ -56,27 +56,23 @@ struct NavigationInjectionView: View {
             )
         )
         #if os(tvOS)
+        // TODO: Workaround for sheet presentation issue on tvOS
+        // https://developer.apple.com/documentation/tvos-release-notes/tvos-26_1-release-notes
+        // Remove this tvOS section when resolved
         .fullScreenCover(
-            item: $coordinator.presentedSheet
-        ) { route in
-            let newCoordinator = NavigationCoordinator()
+                item: $coordinator.presentedSheet
+            ) {
+                coordinator.presentedSheet = nil
+            } content: { route in
+                let newCoordinator = NavigationCoordinator()
 
-            NavigationInjectionView(coordinator: newCoordinator) {
-                route.destination
+                NavigationInjectionView(coordinator: newCoordinator) {
+                    route.destination
+                }
+                .background(.regularMaterial)
             }
-            .background(Material.thick, ignoresSafeAreaEdges: .all)
-        }
-        .fullScreenCover(
-            item: $coordinator.presentedFullScreen
-        ) { route in
-            let newCoordinator = NavigationCoordinator()
-
-            NavigationInjectionView(coordinator: newCoordinator) {
-                route.destination
-            }
-        }
-        #else
-        .sheet(
+        #else // <- Start: Use this for both OS when fixed
+            .sheet(
                 item: $coordinator.presentedSheet
             ) {
                 coordinator.presentedSheet = nil
@@ -87,30 +83,42 @@ struct NavigationInjectionView: View {
                     route.destination
                 }
             }
-        .presentation(
-            $coordinator.presentedFullScreen,
-            transition: .zoomIfAvailable(
-                options: .init(
-                    dimmingVisualEffect: .systemThickMaterialDark,
-                    options: .init(
-                        isInteractive: isPresentationInteractive
-                    )
-                ),
-                otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: isPresentationInteractive))
-            )
-        ) { routeBinding, _ in
-            let vc = UIPreferencesHostingController {
-                NavigationInjectionView(coordinator: .init()) {
-                    routeBinding.wrappedValue.destination
-                        .environment(\.presentationControllerShouldDismiss, $isPresentationInteractive)
-                }
+        #endif // <- End
+        #if os(tvOS)
+        .fullScreenCover(
+            item: $coordinator.presentedFullScreen
+        ) { route in
+            let newCoordinator = NavigationCoordinator()
+
+            NavigationInjectionView(coordinator: newCoordinator) {
+                route.destination
             }
-
-            // TODO: presentation options for customizing background color, dimming effect, etc.
-            vc.view.backgroundColor = .black
-
-            return vc
         }
+        #else
+        .presentation(
+                $coordinator.presentedFullScreen,
+                transition: .zoomIfAvailable(
+                    options: .init(
+                        dimmingVisualEffect: .systemThickMaterialDark,
+                        options: .init(
+                            isInteractive: isPresentationInteractive
+                        )
+                    ),
+                    otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: isPresentationInteractive))
+                )
+            ) { routeBinding, _ in
+                let vc = UIPreferencesHostingController {
+                    NavigationInjectionView(coordinator: .init()) {
+                        routeBinding.wrappedValue.destination
+                            .environment(\.presentationControllerShouldDismiss, $isPresentationInteractive)
+                    }
+                }
+
+                // TODO: presentation options for customizing background color, dimming effect, etc.
+                vc.view.backgroundColor = .black
+
+                return vc
+            }
         #endif
-    }
+        }
 }
