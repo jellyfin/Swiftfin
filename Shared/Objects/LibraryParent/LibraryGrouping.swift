@@ -576,6 +576,7 @@ struct RecentlyAddedLibrary: PagingLibrary {
     }
 }
 
+// TODO: rename to something more general
 enum PosterSection: Storable {
 
     case continueWatching

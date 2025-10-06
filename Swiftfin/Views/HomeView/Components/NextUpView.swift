@@ -51,7 +51,7 @@ extension HomeView {
 //                .trailing {
 //                    SeeAllButton()
 //                        .onSelect {
-////                            router.route(to: .library(viewModel: viewModel))
+            ////                            router.route(to: .library(viewModel: viewModel))
 //                        }
 //                }
 //                .contextMenu(for: BaseItemDto.self) { item in
@@ -61,15 +61,15 @@ extension HomeView {
 //                        Label(L10n.played, systemImage: "checkmark.circle")
 //                    }
 //                }
-////                .posterStyle(for: BaseItemDto.self) { value, item in
-////                    var value = value
-////                    value.label = posterLabel(
-////                        for: item,
-////                        existingLabel: value.label
-////                    )
-////                    .eraseToAnyView()
-////                    return value
-////                }
+            ////                .posterStyle(for: BaseItemDto.self) { value, item in
+            ////                    var value = value
+            ////                    value.label = posterLabel(
+            ////                        for: item,
+            ////                        existingLabel: value.label
+            ////                    )
+            ////                    .eraseToAnyView()
+            ////                    return value
+            ////                }
 //            }
         }
     }

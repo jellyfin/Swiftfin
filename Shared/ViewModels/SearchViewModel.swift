@@ -151,6 +151,10 @@ final class SearchViewModel: ViewModel {
         parameters.limit = 20
         parameters.searchTerm = query
 
+        if itemType == .tvChannel {
+            parameters.fields = [.channelInfo]
+        }
+
         // Filters
         let filters = filterViewModel.currentFilters
         parameters.filters = filters.traits

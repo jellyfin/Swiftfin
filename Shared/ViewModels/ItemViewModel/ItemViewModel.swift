@@ -311,7 +311,7 @@ class ItemViewModel: ViewModel, Stateful {
     private func getSimilarItems() async -> [BaseItemDto] {
 
         var parameters = Paths.GetSimilarItemsParameters()
-        parameters.fields = .MinimumFields
+//        parameters.fields = .MinimumFields
         parameters.limit = 20
         parameters.userID = userSession.user.id
 

@@ -80,7 +80,7 @@ final class SeriesItemViewModel: ItemViewModel {
     private func getNextUp() async throws -> BaseItemDto? {
 
         var parameters = Paths.GetNextUpParameters()
-        parameters.fields = .MinimumFields
+//        parameters.fields = .MinimumFields
         parameters.seriesID = item.id
         parameters.userID = userSession.user.id
 
@@ -100,7 +100,7 @@ final class SeriesItemViewModel: ItemViewModel {
 
         var parameters = Paths.GetResumeItemsParameters()
         parameters.userID = userSession.user.id
-        parameters.fields = .MinimumFields
+//        parameters.fields = .MinimumFields
         parameters.limit = 1
         parameters.parentID = item.id
 
@@ -115,7 +115,7 @@ final class SeriesItemViewModel: ItemViewModel {
     private func getFirstAvailableItem() async throws -> BaseItemDto? {
 
         var parameters = Paths.GetItemsByUserIDParameters()
-        parameters.fields = .MinimumFields
+//        parameters.fields = .MinimumFields
         parameters.includeItemTypes = [.episode]
         parameters.isRecursive = true
         parameters.limit = 1
