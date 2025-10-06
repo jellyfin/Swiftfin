@@ -120,5 +120,5 @@ struct NavigationInjectionView: View {
                 return vc
             }
         #endif
-        }
+    }
 }
