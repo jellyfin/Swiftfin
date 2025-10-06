@@ -14,6 +14,10 @@ extension Array {
         self + [element]
     }
 
+    func appending(elementsOf contents: [Element]) -> [Element] {
+        self + contents
+    }
+
     func appending(_ element: @autoclosure () -> Element, if condition: Bool) -> [Element] {
         if condition {
             return self + [element()]

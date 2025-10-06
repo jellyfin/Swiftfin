@@ -53,7 +53,7 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         var parameters = Paths.GetItemsByUserIDParameters()
 
         parameters.enableUserData = true
-        parameters.fields = .MinimumFields
+//        parameters.fields = .MinimumFields
 
         // Default values, expected to be overridden
         // by parent or filters

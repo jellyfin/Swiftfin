@@ -12,8 +12,21 @@ import IdentifiedCollections
 import SwiftUI
 
 @MainActor
+protocol __PagingLibaryViewModel: Identifiable {
+
+    associatedtype _PagingLibrary: PagingLibrary
+
+    var elements: IdentifiedArray<Int, _PagingLibrary.Element> { get set }
+    var id: String { get }
+    var library: _PagingLibrary { get }
+
+    func refresh()
+    func refresh() async
+}
+
+@MainActor
 @Stateful
-class _PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, @preconcurrency Identifiable {
+class _PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __PagingLibaryViewModel, @preconcurrency Identifiable {
 
     typealias Element = _PagingLibrary.Element
 
@@ -54,7 +67,7 @@ class _PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, @precon
     @Published
     var grouping: LibraryGrouping? = nil
     @Published
-    private(set) var elements: IdentifiedArray<Int, Element>
+    var elements: IdentifiedArray<Int, Element>
 
     private var currentPage = 0
     private var hasNextPage = true

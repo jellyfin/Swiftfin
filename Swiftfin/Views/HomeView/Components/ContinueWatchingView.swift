@@ -67,46 +67,49 @@ extension HomeView {
         }
 
         var body: some View {
-            PosterHStack(
-                title: "Continue Watching",
-                type: .landscape,
-                items: viewModel.resumeItems
-            ) { item, namespace in
-                router.route(to: .item(item: item), in: namespace)
-            }
-            .contextMenu(for: BaseItemDto.self) { item in
-                Button {
-                    viewModel.send(.setIsPlayed(true, item))
-                } label: {
-                    Label(L10n.played, systemImage: "checkmark.circle")
-                }
-
-                Button(role: .destructive) {
-                    viewModel.send(.setIsPlayed(false, item))
-                } label: {
-                    Label(L10n.unplayed, systemImage: "minus.circle")
-                }
-            }
-            .posterStyle(for: BaseItemDto.self) { value, item in
-                var value = value
-//                value.displayType = .landscape
-                value.label = posterLabel(for: item)
-                    .eraseToAnyView()
-//                value.overlay = LandscapePosterProgressBar(
-//                    title: item.progressLabel ?? L10n.continue,
-//                    progress: (item.userData?.playedPercentage ?? 0) / 100
-//                )
-                if let progress = item.progress, let startSeconds = item.startSeconds {
-                    value.overlay = PosterProgressBar(
-                        title: startSeconds.formatted(.runtime),
-                        progress: progress,
-                        posterDisplayType: value.displayType
-                    )
-                    .eraseToAnyView()
-                }
-
-                return value
-            }
+            EmptyView()
+//            PosterHStack(
+//                title: "Continue Watching",
+//                type: .landscape,
+//                items: viewModel.resumeItems
+//            ) { item, namespace in
+//                router.route(to: .item(item: item), in: namespace)
+//            }
+//            .contextMenu(for: BaseItemDto.self) { item in
+//                Button {
+//                    viewModel.send(.setIsPlayed(true, item))
+//                } label: {
+//                    Label(L10n.played, systemImage: "checkmark.circle")
+//                }
+//
+//                Button(role: .destructive) {
+//                    viewModel.send(.setIsPlayed(false, item))
+//                } label: {
+//                    Label(L10n.unplayed, systemImage: "minus.circle")
+//                }
+//            }
+//            .posterStyle(for: BaseItemDto.self) { value, item in
+//                var value = value
+            ////                value.displayType = .landscape
+//                value.label = posterLabel(for: item)
+//                    .eraseToAnyView()
+            ////                value.overlay = LandscapePosterProgressBar(
+            ////                    title: item.progressLabel ?? L10n.continue,
+            ////                    progress: (item.userData?.playedPercentage ?? 0) / 100
+            ////                )
+//                if let progress = item.progress, let startSeconds = item.startSeconds {
+//                    value.overlay = PosterProgressBar(
+//                        title: startSeconds.formatted(.runtime),
+//                        progress: progress,
+//                        posterDisplayType: value.displayType
+//                    )
+//                    .eraseToAnyView()
+//                }
+//
+//                value.size = .medium
+//
+//                return value
+//            }
         }
     }
 }

@@ -9,19 +9,13 @@
 import Defaults
 import Factory
 import Foundation
+import JellyfinAPI
 import SwiftUI
 
 // TODO: seems to redraw view when popped to sometimes?
 //       - similar to MediaView TODO bug?
 //       - indicated by snapping to the top
 struct HomeView: View {
-
-    @Default(.Customization.nextUpPosterType)
-    private var nextUpPosterType
-    @Default(.Customization.Home.showRecentlyAdded)
-    private var showRecentlyAdded
-    @Default(.Customization.recentlyAddedPosterType)
-    private var recentlyAddedPosterType
 
     @Router
     private var router
@@ -30,36 +24,40 @@ struct HomeView: View {
     private var viewModel = HomeViewModel()
 
     @ViewBuilder
+    private func posterHStack<L: __PagingLibaryViewModel>(library: L) -> some View {
+        PosterHStack(
+            title: library.library.displayTitle,
+            type: .portrait,
+            items: library.elements
+        ) { element, namespace in
+            switch element {
+            case let element as BaseItemDto:
+                router.route(to: .item(item: element), in: namespace)
+            default: ()
+            }
+        }
+    }
+
+    @ViewBuilder
     private var contentView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
-
-                ContinueWatchingView(viewModel: viewModel)
-
-                NextUpView(viewModel: viewModel.nextUpViewModel)
-                    .onSetPlayed { item in
-                        viewModel.send(.setIsPlayed(true, item))
-                    }
-
-                if showRecentlyAdded {
-                    RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
-                }
-
-                ForEach(viewModel.libraries) { viewModel in
-                    LatestInLibraryView(viewModel: viewModel)
+                ForEach(viewModel.sections, id: \.id) { section in
+                    posterHStack(library: section)
+                        .eraseToAnyView()
                 }
             }
             .edgePadding(.vertical)
         }
         .refreshable {
-            viewModel.send(.refresh)
+            await viewModel.refresh()
         }
     }
 
     private func errorView(with error: some Error) -> some View {
         ErrorView(error: error)
             .onRetry {
-                viewModel.send(.refresh)
+                viewModel.refresh()
             }
     }
 
@@ -68,20 +66,20 @@ struct HomeView: View {
             switch viewModel.state {
             case .content:
                 contentView
-            case let .error(error):
-                errorView(with: error)
+            case .error:
+                viewModel.error.map { errorView(with: $0) }
             case .initial, .refreshing:
                 DelayedProgressView()
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .onFirstAppear {
-            viewModel.send(.refresh)
+            viewModel.refresh()
         }
         .navigationTitle(L10n.home)
         .topBarTrailing {
 
-            if viewModel.backgroundStates.contains(.refresh) {
+            if viewModel.background.is(.refreshing) {
                 ProgressView()
             }
 
@@ -92,11 +90,11 @@ struct HomeView: View {
                 router.route(to: .settings)
             }
         }
-        .sinceLastDisappear { interval in
-            if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {
-                viewModel.send(.backgroundRefresh)
-                viewModel.notificationsReceived.remove(.itemMetadataDidChange)
-            }
-        }
+//        .sinceLastDisappear { interval in
+//            if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {
+//                viewModel.send(.backgroundRefresh)
+//                viewModel.notificationsReceived.remove(.itemMetadataDidChange)
+//            }
+//        }
     }
 }

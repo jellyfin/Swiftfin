@@ -23,41 +23,13 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.shouldShowMissingEpisodes)
     private var shouldShowMissingEpisodes
 
-    @Default(.Customization.Library.letterPickerEnabled)
-    var letterPickerEnabled
-    @Default(.Customization.Library.letterPickerOrientation)
-    var letterPickerOrientation
     @Default(.Customization.Library.enabledDrawerFilters)
     private var libraryEnabledDrawerFilters
     @Default(.Customization.Search.enabledDrawerFilters)
     private var searchEnabledDrawerFilters
 
-    @Default(.Customization.showPosterLabels)
-    private var showPosterLabels
-    @Default(.Customization.nextUpPosterType)
-    private var nextUpPosterType
     @Default(.Customization.recentlyAddedPosterType)
     private var showRecentlyAdded
-    @Default(.Customization.latestInLibraryPosterType)
-    private var latestInLibraryPosterType
-    @Default(.Customization.similarPosterType)
-    private var similarPosterType
-    @Default(.Customization.searchPosterType)
-    private var searchPosterType
-    @Default(.Customization.Library.displayType)
-    private var libraryDisplayType
-    @Default(.Customization.Library.posterType)
-    private var libraryPosterType
-    @Default(.Customization.Library.listColumnCount)
-    private var listColumnCount
-
-    @Default(.Customization.Library.rememberLayout)
-    private var rememberLibraryLayout
-    @Default(.Customization.Library.rememberSort)
-    private var rememberLibrarySort
-
-    @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
-    private var useSeriesLandscapeBackdrop
 
     @Default(.Customization.Library.showFavorites)
     private var showFavorites
@@ -94,16 +66,6 @@ struct CustomizeViewsSettings: View {
             }
 
             Section {
-
-                Toggle(L10n.letterPicker, isOn: $letterPickerEnabled)
-
-                if letterPickerEnabled {
-                    CaseIterablePicker(
-                        L10n.orientation,
-                        selection: $letterPickerOrientation
-                    )
-                }
-
                 ChevronButton(L10n.library) {
                     router.route(to: .itemFilterDrawerSelector(selection: $libraryEnabledDrawerFilters))
                 }
@@ -123,69 +85,17 @@ struct CustomizeViewsSettings: View {
                 L10n.missingItems.text
             }
 
+            ChevronButton(L10n.libraries) {
+                router.route(to: .librarySettings)
+            }
+
             ChevronButton(L10n.posters) {
                 router.route(to: .posterSettings)
-            }
-
-            Section("Old posters") {
-
-                ChevronButton(L10n.indicators) {
-                    router.route(to: .indicatorSettings)
-                }
-
-                Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
-
-                CaseIterablePicker(L10n.next, selection: $nextUpPosterType)
-                    .onlySupportedCases(true)
-
-                CaseIterablePicker(L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType)
-                    .onlySupportedCases(true)
-
-                CaseIterablePicker(L10n.recommended, selection: $similarPosterType)
-                    .onlySupportedCases(true)
-
-                CaseIterablePicker(L10n.search, selection: $searchPosterType)
-                    .onlySupportedCases(true)
-            }
-
-            Section(L10n.libraries) {
-                CaseIterablePicker(L10n.library, selection: $libraryDisplayType)
-
-                CaseIterablePicker(L10n.posters, selection: $libraryPosterType)
-                    .onlySupportedCases(true)
-
-                if libraryDisplayType == .list, UIDevice.isPad {
-                    BasicStepper(
-                        L10n.columns,
-                        value: $listColumnCount,
-                        range: 1 ... 4,
-                        step: 1
-                    )
-                }
             }
 
             ItemSection()
 
             HomeSection()
-
-            Section {
-                Toggle(L10n.rememberLayout, isOn: $rememberLibraryLayout)
-            } footer: {
-                Text(L10n.rememberLayoutFooter)
-            }
-
-            Section {
-                Toggle(L10n.rememberSorting, isOn: $rememberLibrarySort)
-            } footer: {
-                Text(L10n.rememberSortingFooter)
-            }
-
-            Section {
-                Toggle(L10n.seriesBackdrop, isOn: $useSeriesLandscapeBackdrop)
-            } header: {
-                // TODO: think of a better name
-                L10n.episodeLandscapePoster.text
-            }
         }
         .navigationTitle(L10n.customize)
     }

@@ -51,7 +51,6 @@ final class EpisodeItemViewModel: ItemViewModel {
 
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.enableUserData = true
-        parameters.fields = .MinimumFields
         parameters.ids = [seriesID]
         parameters.limit = 1
 

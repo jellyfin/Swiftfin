@@ -418,3 +418,195 @@ struct _PagingNextUpLibrary: PagingLibrary {
         nil
     }
 }
+
+struct ContinueWatchingLibrary: PagingLibrary {
+
+    typealias Element = BaseItemDto
+    typealias Parent = _TitledLibraryParent
+
+    var displayTitle: String {
+        parent.displayTitle
+    }
+
+    var id: String {
+        parent.id ?? "unknown"
+    }
+
+    let parent: _TitledLibraryParent
+
+    init() {
+        self.parent = _TitledLibraryParent(
+            displayTitle: "Continue Watching",
+            id: "continue-watching",
+            _supportedItemTypes: BaseItemKind.allCases
+        )
+    }
+
+    func retrievePage(
+        environment: LibraryValueEnvironment,
+        pageState: LibraryPageState
+    ) async throws -> [BaseItemDto] {
+        var parameters = Paths.GetResumeItemsParameters()
+        parameters.userID = pageState.userSession.user.id
+        parameters.enableUserData = true
+        parameters.mediaTypes = [.video]
+        parameters.limit = 20
+
+        let request = Paths.getResumeItems(parameters: parameters)
+        let response = try await pageState.userSession.client.send(request)
+
+        return response.value.items ?? []
+    }
+
+    func retrieveRandomElement(
+        environment: LibraryValueEnvironment,
+        pageState: LibraryPageState
+    ) async throws -> BaseItemDto? {
+        nil
+    }
+}
+
+struct LatestInLibrary: PagingLibrary {
+
+    typealias Element = BaseItemDto
+    typealias Parent = _TitledLibraryParent
+
+    var displayTitle: String {
+        parent.displayTitle
+    }
+
+    var id: String {
+        parent.id ?? "unknown"
+    }
+
+    let parent: _TitledLibraryParent
+
+    init(library: BaseItemDto) {
+        self.parent = _TitledLibraryParent(
+            displayTitle: L10n.latestWithString(library.displayTitle),
+            id: library.id ?? "unknown",
+            _supportedItemTypes: BaseItemKind.allCases
+        )
+    }
+
+    func retrievePage(
+        environment: LibraryValueEnvironment,
+        pageState: LibraryPageState
+    ) async throws -> [BaseItemDto] {
+        guard let parentID = parent.id else {
+            // TODO: log error
+            throw JellyfinAPIError(L10n.unknownError)
+        }
+
+        var parameters = Paths.GetLatestMediaParameters()
+        parameters.userID = pageState.userSession.user.id
+        parameters.parentID = parentID
+        parameters.enableUserData = true
+        parameters.limit = 20
+
+        let request = Paths.getLatestMedia(parameters: parameters)
+        let response = try await pageState.userSession.client.send(request)
+        return response.value
+    }
+
+    func retrieveRandomElement(
+        environment: LibraryValueEnvironment,
+        pageState: LibraryPageState
+    ) async throws -> BaseItemDto? {
+        nil
+    }
+}
+
+struct RecentlyAddedLibrary: PagingLibrary {
+
+    typealias Element = BaseItemDto
+    typealias Parent = _TitledLibraryParent
+
+    var displayTitle: String {
+        parent.displayTitle
+    }
+
+    var id: String {
+        parent.id ?? "unknown"
+    }
+
+    let parent: _TitledLibraryParent
+
+    init(library: BaseItemDto) {
+        self.parent = _TitledLibraryParent(
+            displayTitle: L10n.latestWithString(library.displayTitle),
+            id: "latest-in-\(library.id ?? "unknown")",
+            _supportedItemTypes: BaseItemKind.allCases
+        )
+    }
+
+    func retrievePage(
+        environment: LibraryValueEnvironment,
+        pageState: LibraryPageState
+    ) async throws -> [BaseItemDto] {
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.enableUserData = true
+        parameters.includeItemTypes = [.movie, .series]
+        parameters.isRecursive = true
+        parameters.sortBy = [ItemSortBy.dateCreated.rawValue]
+        parameters.sortOrder = [.descending]
+
+//        parameters.limit = pageSize
+//        parameters.startIndex = page
+
+        // Necessary to get an actual "next page" with this endpoint.
+        // Could be a performance issue for lots of items, but there's
+        // nothing we can do about it.
+//        parameters.excludeItemIDs = elements.compactMap(\.id)
+
+        let request = Paths.getItemsByUserID(
+            userID: pageState.userSession.user.id,
+            parameters: parameters
+        )
+        let response = try await pageState.userSession.client.send(request)
+
+        return response.value.items ?? []
+    }
+
+    func retrieveRandomElement(
+        environment: LibraryValueEnvironment,
+        pageState: LibraryPageState
+    ) async throws -> BaseItemDto? {
+        nil
+    }
+}
+
+enum PosterSection: Storable {
+
+    case continueWatching
+    case latestInLibrary(id: String, name: String)
+    case nextUp
+    case recentlyAdded
+
+    @MainActor
+    var library: any PagingLibrary {
+        switch self {
+        case .continueWatching:
+            ContinueWatchingLibrary()
+        case let .latestInLibrary(id, name):
+            LatestInLibrary(library: .init(
+                id: id,
+                name: name,
+                type: .collectionFolder
+            ))
+        case .nextUp:
+            _PagingNextUpLibrary()
+        case .recentlyAdded:
+            _PagingItemLibrary(
+                parent: BaseItemDto(),
+                filters: .init(
+                    parent: nil,
+                    currentFilters: .init(
+                        sortBy: [.dateCreated],
+                        sortOrder: [.descending]
+                    )
+                )
+            )
+        }
+    }
+}

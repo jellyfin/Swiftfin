@@ -19,7 +19,7 @@ struct PosterProgressBar: View {
     let posterDisplayType: PosterDisplayType
 
     @ViewBuilder
-    private var compact: some View {
+    private var compactView: some View {
         ContainerRelativeView(
             alignment: .bottomLeading,
             ratio: .init(width: progress, height: 1)
@@ -36,7 +36,7 @@ struct PosterProgressBar: View {
     }
 
     @ViewBuilder
-    private var regular: some View {
+    private var regularView: some View {
         ContainerRelativeView(
             ratio: .init(width: 0.95, height: 0.9)
         ) {
@@ -70,11 +70,12 @@ struct PosterProgressBar: View {
     }
 
     var body: some View {
-        switch posterDisplayType {
-        case .landscape:
-            regular
-        case .portrait, .square:
-            compact
+        CompactOrRegularView(
+            isCompact: posterDisplayType != .landscape
+        ) {
+            compactView
+        } regularView: {
+            regularView
         }
     }
 }

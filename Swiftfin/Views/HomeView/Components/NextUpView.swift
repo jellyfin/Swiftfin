@@ -20,8 +20,8 @@ extension HomeView {
         @Router
         private var router
 
-        @ObservedObject
-        var viewModel: NextUpLibraryViewModel
+//        @ObservedObject
+//        var viewModel: NextUpLibraryViewModel
 
         private var onSetPlayed: (BaseItemDto) -> Void
 
@@ -39,51 +39,52 @@ extension HomeView {
         }
 
         var body: some View {
-            if viewModel.elements.isNotEmpty {
-                PosterHStack(
-                    title: L10n.nextUp,
-                    type: nextUpPosterType,
-                    items: viewModel.elements
-                ) { item, namespace in
-                    router.route(to: .item(item: item), in: namespace)
-                }
-                .trailing {
-                    SeeAllButton()
-                        .onSelect {
-//                            router.route(to: .library(viewModel: viewModel))
-                        }
-                }
-                .contextMenu(for: BaseItemDto.self) { item in
-                    Button {
-                        onSetPlayed(item)
-                    } label: {
-                        Label(L10n.played, systemImage: "checkmark.circle")
-                    }
-                }
-//                .posterStyle(for: BaseItemDto.self) { value, item in
-//                    var value = value
-//                    value.label = posterLabel(
-//                        for: item,
-//                        existingLabel: value.label
-//                    )
-//                    .eraseToAnyView()
-//                    return value
+            EmptyView()
+//            if viewModel.elements.isNotEmpty {
+//                PosterHStack(
+//                    title: L10n.nextUp,
+//                    type: nextUpPosterType,
+//                    items: viewModel.elements
+//                ) { item, namespace in
+//                    router.route(to: .item(item: item), in: namespace)
 //                }
-            }
+//                .trailing {
+//                    SeeAllButton()
+//                        .onSelect {
+////                            router.route(to: .library(viewModel: viewModel))
+//                        }
+//                }
+//                .contextMenu(for: BaseItemDto.self) { item in
+//                    Button {
+//                        onSetPlayed(item)
+//                    } label: {
+//                        Label(L10n.played, systemImage: "checkmark.circle")
+//                    }
+//                }
+////                .posterStyle(for: BaseItemDto.self) { value, item in
+////                    var value = value
+////                    value.label = posterLabel(
+////                        for: item,
+////                        existingLabel: value.label
+////                    )
+////                    .eraseToAnyView()
+////                    return value
+////                }
+//            }
         }
     }
 }
 
 extension HomeView.NextUpView {
 
-    init(viewModel: NextUpLibraryViewModel) {
-        self.init(
-            viewModel: viewModel,
-            onSetPlayed: { _ in }
-        )
-    }
-
-    func onSetPlayed(perform action: @escaping (BaseItemDto) -> Void) -> Self {
-        copy(modifying: \.onSetPlayed, with: action)
-    }
+//    init(viewModel: NextUpLibraryViewModel) {
+//        self.init(
+//            viewModel: viewModel,
+//            onSetPlayed: { _ in }
+//        )
+//    }
+//
+//    func onSetPlayed(perform action: @escaping (BaseItemDto) -> Void) -> Self {
+//        copy(modifying: \.onSetPlayed, with: action)
+//    }
 }

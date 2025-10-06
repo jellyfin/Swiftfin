@@ -135,14 +135,13 @@ extension MediaInfoSupplement {
         @ViewBuilder
         private var iOSRegularView: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
-                // TODO: determine what to do with non-portrait (channel, home video) images
-                //       - use aspect ratio?
                 PosterImage(
                     item: item,
                     type: item.preferredPosterDisplayType,
                     contentMode: .fit
                 )
                 .environment(\.isOverComplexContent, true)
+                .frame(maxWidth: 170)
 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(item.displayTitle)
@@ -170,6 +169,7 @@ extension MediaInfoSupplement {
                     }
                 }
             }
+            .frame(maxHeight: .infinity, alignment: .bottom)
         }
 
         var tvOSView: some View { EmptyView() }

@@ -30,7 +30,6 @@ final class SeasonItemViewModel: PagingLibraryViewModel<BaseItemDto>, Identifiab
 
         var parameters = Paths.GetEpisodesParameters()
         parameters.enableUserData = true
-        parameters.fields = .MinimumFields
         parameters.isMissing = Defaults[.Customization.shouldShowMissingEpisodes] ? nil : false
         parameters.seasonID = parent!.id
         parameters.userID = userSession.user.id
@@ -76,7 +75,6 @@ struct _PagingSeasonLibrary: PagingLibrary {
 
         var parameters = Paths.GetEpisodesParameters()
         parameters.enableUserData = true
-        parameters.fields = .MinimumFields
         parameters.isMissing = Defaults[.Customization.shouldShowMissingEpisodes] ? nil : false
 
         parameters.seasonID = parent.id

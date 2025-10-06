@@ -146,7 +146,6 @@ final class SearchViewModel: ViewModel {
 
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.enableUserData = true
-        parameters.fields = .MinimumFields
         parameters.includeItemTypes = [itemType]
         parameters.isRecursive = true
         parameters.limit = 20
