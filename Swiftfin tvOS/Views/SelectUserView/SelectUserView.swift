@@ -48,11 +48,6 @@ struct SelectUserView: View {
     @State
     private var isPresentingLocalPin: Bool = false
 
-    // MARK: - Error State
-
-    @State
-    private var error: Error? = nil
-
     @StateObject
     private var viewModel = SelectUserViewModel()
 
@@ -128,7 +123,7 @@ struct SelectUserView: View {
         case .none: ()
         }
 
-        viewModel.send(.signIn(user, pin: pin))
+        viewModel.signIn(user, pin: pin)
     }
 
     // MARK: - Grid Content View
@@ -224,6 +219,7 @@ struct SelectUserView: View {
             .focusSection()
         }
         .animation(.linear(duration: 0.1), value: scrollViewOffset)
+        .environment(\.isOverComplexContent, true)
         .background {
             if selectUserUseSplashscreen, splashScreenImageSources.isNotEmpty {
                 ZStack {
@@ -268,7 +264,7 @@ struct SelectUserView: View {
     // MARK: - Functions
 
     private func didDelete(_ server: ServerState) {
-        viewModel.send(.getServers)
+        viewModel.getServers()
 
         if case let SelectUserServerSelection.server(id: id) = serverSelection, server.id == id {
             if viewModel.servers.keys.count == 1, let first = viewModel.servers.keys.first {
@@ -292,7 +288,7 @@ struct SelectUserView: View {
         .ignoresSafeArea()
         .navigationBarBranding()
         .onAppear {
-            viewModel.send(.getServers)
+            viewModel.getServers()
         }
         .onChange(of: isEditingUsers) {
             guard !isEditingUsers else { return }
@@ -323,8 +319,6 @@ struct SelectUserView: View {
         }
         .onReceive(viewModel.events) { event in
             switch event {
-            case let .error(eventError):
-                self.error = eventError
             case let .signedIn(user):
                 Defaults[.lastSignedInUserID] = .signedIn(userID: user.id)
                 Container.shared.currentUserSession.reset()
@@ -332,22 +326,21 @@ struct SelectUserView: View {
             }
         }
         .onNotification(.didConnectToServer) { server in
-            viewModel.send(.getServers)
+            viewModel.getServers()
             serverSelection = .server(id: server.id)
         }
-        .onNotification(.didChangeCurrentServerURL) { server in
-            viewModel.send(.getServers)
-            serverSelection = .server(id: server.id)
+        .onNotification(.didChangeCurrentServerURL) { _ in
+            viewModel.getServers()
         }
-        .onNotification(.didDeleteServer) { server in
-            didDelete(server)
+        .onNotification(.didDeleteServer) { _ in
+            viewModel.getServers()
         }
         .confirmationDialog(
             Text(L10n.deleteUser),
             isPresented: $isPresentingConfirmDeleteUsers
         ) {
             Button(L10n.delete, role: .destructive) {
-                viewModel.send(.deleteUsers(selectedUsers))
+                viewModel.deleteUsers(selectedUsers)
             }
         } message: {
             if selectedUsers.count == 1, let first = selectedUsers.first {
@@ -382,6 +375,6 @@ struct SelectUserView: View {
                 Text(L10n.enterPinForUser(username))
             }
         }
-        .errorMessage($error)
+        .errorMessage($viewModel.error)
     }
 }

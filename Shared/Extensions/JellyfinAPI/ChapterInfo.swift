@@ -8,6 +8,7 @@
 
 import Foundation
 import JellyfinAPI
+import SwiftUI
 
 extension ChapterInfo: Displayable {
 
@@ -26,47 +27,44 @@ extension ChapterInfo {
 
 extension ChapterInfo {
 
+    // TODO: possibly remove
+    //       - have ChapterInfo: Poster
+    //       - build info, ImageSource pairs where required
     struct FullInfo: Poster {
 
         let chapterInfo: ChapterInfo
+        let displayTitle: String
+        let id: Int
         let imageSource: ImageSource
-        let secondsRange: Range<Duration>
+        let preferredPosterDisplayType: PosterDisplayType = .landscape
         let systemImage: String = "film"
-        let unitRange: Range<Double>
-
-        var displayTitle: String {
-            chapterInfo.displayTitle
-        }
-
-        var id: Int {
-            chapterInfo.hashValue
-        }
-
-        var unwrappedIDHashOrZero: Int {
-            id
-        }
+        let unwrappedIDHashOrZero: Int
 
         var subtitle: String?
         var showTitle: Bool = true
 
         init(
             chapterInfo: ChapterInfo,
-            imageSource: ImageSource,
-            secondsRange: Range<Duration>,
-            runtime: Duration
+            imageSource: ImageSource
         ) {
             self.chapterInfo = chapterInfo
+            self.displayTitle = chapterInfo.displayTitle
+            self.id = chapterInfo.hashValue
             self.imageSource = imageSource
-            self.secondsRange = secondsRange
-            self.unitRange = secondsRange.lowerBound / runtime ..< secondsRange.upperBound / runtime
-        }
-
-        func contains(seconds: Duration) -> Bool {
-            secondsRange.contains(seconds)
+            self.unwrappedIDHashOrZero = chapterInfo.hashValue
         }
 
         func landscapeImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
             [imageSource]
+        }
+
+        func transform(image: Image) -> some View {
+            ZStack {
+                Color.black
+
+                image
+                    .aspectRatio(contentMode: .fit)
+            }
         }
     }
 }

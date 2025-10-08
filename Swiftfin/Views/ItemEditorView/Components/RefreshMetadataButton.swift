@@ -23,11 +23,6 @@ extension ItemEditorView {
         @StateObject
         private var viewModel: RefreshMetadataViewModel
 
-        // MARK: - Error State
-
-        @State
-        private var error: Error?
-
         // MARK: - Initializer
 
         init(item: BaseItemDto) {
@@ -40,46 +35,38 @@ extension ItemEditorView {
             Menu {
                 Group {
                     Button(L10n.findMissing, systemImage: "magnifyingglass") {
-                        viewModel.send(
-                            .refreshMetadata(
-                                metadataRefreshMode: .fullRefresh,
-                                imageRefreshMode: .fullRefresh,
-                                replaceMetadata: false,
-                                replaceImages: false
-                            )
+                        viewModel.refreshMetadata(
+                            metadataRefreshMode: .fullRefresh,
+                            imageRefreshMode: .fullRefresh,
+                            replaceMetadata: false,
+                            replaceImages: false
                         )
                     }
 
                     Button(L10n.replaceMetadata, systemImage: "arrow.clockwise") {
-                        viewModel.send(
-                            .refreshMetadata(
-                                metadataRefreshMode: .fullRefresh,
-                                imageRefreshMode: .none,
-                                replaceMetadata: true,
-                                replaceImages: false
-                            )
+                        viewModel.refreshMetadata(
+                            metadataRefreshMode: .fullRefresh,
+                            imageRefreshMode: .none,
+                            replaceMetadata: true,
+                            replaceImages: false
                         )
                     }
 
                     Button(L10n.replaceImages, systemImage: "photo") {
-                        viewModel.send(
-                            .refreshMetadata(
-                                metadataRefreshMode: .none,
-                                imageRefreshMode: .fullRefresh,
-                                replaceMetadata: false,
-                                replaceImages: true
-                            )
+                        viewModel.refreshMetadata(
+                            metadataRefreshMode: .none,
+                            imageRefreshMode: .fullRefresh,
+                            replaceMetadata: false,
+                            replaceImages: true
                         )
                     }
 
                     Button(L10n.replaceAll, systemImage: "staroflife") {
-                        viewModel.send(
-                            .refreshMetadata(
-                                metadataRefreshMode: .fullRefresh,
-                                imageRefreshMode: .fullRefresh,
-                                replaceMetadata: true,
-                                replaceImages: true
-                            )
+                        viewModel.refreshMetadata(
+                            metadataRefreshMode: .fullRefresh,
+                            imageRefreshMode: .fullRefresh,
+                            replaceMetadata: true,
+                            replaceImages: true
                         )
                     }
                 }
@@ -104,14 +91,8 @@ extension ItemEditorView {
                 }
             }
             .foregroundStyle(.primary, .secondary)
-            .disabled(viewModel.state == .refreshing || error != nil)
-            .onReceive(viewModel.events) { event in
-                switch event {
-                case let .error(eventError):
-                    error = eventError
-                }
-            }
-            .errorMessage($error)
+            .disabled(viewModel.state == .refreshing)
+            .errorMessage($viewModel.error)
         }
     }
 }

@@ -13,10 +13,11 @@ import JellyfinAPI
 final class ServerConnectionViewModel: ViewModel {
 
     @Published
-    var server: ServerState
+    private(set) var server: ServerState
 
     init(server: ServerState) {
         self.server = server
+        super.init()
     }
 
     // TODO: this could probably be cleaner

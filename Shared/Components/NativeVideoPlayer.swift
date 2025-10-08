@@ -46,14 +46,14 @@ struct NativeVideoPlayer: View {
         }
         .onAppear {
             manager.proxy = proxy
-            manager.send(.start)
+            manager.start()
         }
         .preference(key: IsStatusBarHiddenKey.self, value: true)
         .backport
         .onChange(of: presentationCoordinator.isPresented) { _, isPresented in
             Container.shared.mediaPlayerManager.reset()
             guard !isPresented else { return }
-            manager.send(.stop)
+            manager.stop()
         }
         .alert(
             L10n.error,

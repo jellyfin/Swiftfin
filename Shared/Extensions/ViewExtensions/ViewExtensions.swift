@@ -100,18 +100,55 @@ extension View {
     ) -> some View {
         switch type {
         case .landscape:
-            aspectRatio(1.77, contentMode: contentMode)
+            posterAspectRatio(type, contentMode: contentMode)
             #if !os(tvOS)
                 .posterBorder()
-                .cornerRadius(ratio: 1 / 30, of: \.width)
+                .posterCornerRadius(type)
             #endif
         case .portrait:
-            aspectRatio(2 / 3, contentMode: contentMode)
+            posterAspectRatio(type, contentMode: contentMode)
             #if !os(tvOS)
                 .posterBorder()
-                .cornerRadius(ratio: 0.0375, of: \.width)
+                .posterCornerRadius(type)
+            #endif
+        case .square:
+            posterAspectRatio(type, contentMode: contentMode)
+            #if os(iOS)
+                .posterBorder()
+                .posterCornerRadius(type)
             #endif
         }
+    }
+
+    @ViewBuilder
+    func posterAspectRatio(
+        _ type: PosterDisplayType,
+        contentMode: ContentMode = .fill
+    ) -> some View {
+        switch type {
+        case .landscape:
+            aspectRatio(1.77, contentMode: contentMode)
+        case .portrait:
+            aspectRatio(2 / 3, contentMode: contentMode)
+        case .square:
+            aspectRatio(1.0, contentMode: contentMode)
+        }
+    }
+
+    @ViewBuilder
+    func posterCornerRadius(
+        _ type: PosterDisplayType
+    ) -> some View {
+        #if !os(tvOS)
+        switch type {
+        case .landscape:
+            cornerRadius(ratio: 1 / 30, of: \.width)
+        case .portrait, .square:
+            cornerRadius(ratio: 0.0375, of: \.width)
+        }
+        #else
+        self
+        #endif
     }
 
     func posterBorder() -> some View {
@@ -123,17 +160,6 @@ extension View {
                 )
                 .clipped()
         }
-    }
-
-    // TODO: consolidate handling
-    @ViewBuilder
-    func squarePosterStyle(contentMode: ContentMode = .fill) -> some View {
-        aspectRatio(1.0, contentMode: contentMode)
-        #if os(iOS)
-            .posterBorder()
-            .cornerRadius(ratio: 0.0375, of: \.width)
-            .posterShadow()
-        #endif
     }
 
     func posterShadow() -> some View {
@@ -157,12 +183,30 @@ extension View {
         modifier(BottomEdgeGradientModifier(bottomColor: bottomColor))
     }
 
+    // TODO: rename `errorAlert`
+
     /// Error Message Alert
     func errorMessage(
         _ error: Binding<Error?>,
-        dismissActions: (() -> Void)? = nil
+        dismissAction: @escaping () -> Void = {}
     ) -> some View {
-        modifier(ErrorMessageModifier(error: error, dismissActions: dismissActions))
+        alert(
+            L10n.error.text,
+            isPresented: .constant(error.wrappedValue != nil),
+            presenting: error.wrappedValue
+        ) { _ in
+            Button(L10n.dismiss, role: .cancel) {
+                error.wrappedValue = nil
+                dismissAction()
+            }
+        } message: { error in
+            Text(error.localizedDescription)
+        }
+        .backport
+        .onChange(of: error.wrappedValue != nil) { _, hasError in
+            guard hasError else { return }
+            UIDevice.feedback(.error)
+        }
     }
 
     @ViewBuilder

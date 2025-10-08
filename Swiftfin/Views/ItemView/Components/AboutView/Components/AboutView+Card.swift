@@ -10,20 +10,31 @@ import SwiftUI
 
 extension ItemView.AboutView {
 
-    struct Card: View {
+    struct Card<Content: View>: View {
 
-        private var content: () -> any View
-        private var onSelect: () -> Void
+        private var action: () -> Void
+        private var content: Content
         private let title: String
         private let subtitle: String?
 
+        init(
+            title: String,
+            subtitle: String? = nil,
+            action: @escaping () -> Void,
+            @ViewBuilder content: @escaping () -> Content
+        ) {
+            self.title = title
+            self.subtitle = subtitle
+            self.action = action
+            self.content = content()
+        }
+
         var body: some View {
-            Button {
-                onSelect()
-            } label: {
+            Button(action: action) {
                 ZStack(alignment: .leading) {
 
-                    Color.systemFill
+                    Rectangle()
+                        .fill(Color.systemFill)
                         .cornerRadius(ratio: 1 / 45, of: \.height)
 
                     VStack(alignment: .leading, spacing: 5) {
@@ -41,35 +52,13 @@ extension ItemView.AboutView {
                                 .fixedSize(horizontal: false, vertical: true)
                         }
 
-                        Spacer()
-
-                        content()
-                            .eraseToAnyView()
+                        content
+                            .frame(maxHeight: .infinity, alignment: .bottomLeading)
                     }
                     .padding()
                 }
             }
             .buttonStyle(.plain)
         }
-    }
-}
-
-extension ItemView.AboutView.Card {
-
-    init(title: String, subtitle: String? = nil) {
-        self.init(
-            content: { EmptyView() },
-            onSelect: {},
-            title: title,
-            subtitle: subtitle
-        )
-    }
-
-    func content(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.content, with: content)
-    }
-
-    func onSelect(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
     }
 }

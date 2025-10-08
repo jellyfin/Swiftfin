@@ -9,61 +9,35 @@
 import Combine
 import Foundation
 
-class BaseFetchViewModel<Value: Codable>: ViewModel, Stateful {
+@MainActor
+@Stateful
+class BaseFetchViewModel<Value: Codable>: ViewModel {
 
-    enum Action: Equatable {
+    @CasePathable
+    enum Action {
         case refresh
+
+        var transition: Transition {
+            .loop(.refreshing)
+        }
     }
 
-    // MARK: State
-
-    enum State: Hashable {
-        case content
-        case error(JellyfinAPIError)
+    enum State {
         case initial
         case refreshing
     }
 
     @Published
-    var state: State = .initial
-    @Published
-    var value: Value
+    private(set) var value: Value
 
     init(initialValue: Value) {
         self.value = initialValue
+        super.init()
     }
 
-    private var currentRefreshTask: AnyCancellable?
-
-    func respond(to action: Action) -> State {
-        switch action {
-        case .refresh:
-            currentRefreshTask?.cancel()
-
-            currentRefreshTask = Task { [weak self] in
-                guard let self else { return }
-
-                do {
-                    let newValue = try await getValue()
-
-                    guard !Task.isCancelled else { return }
-
-                    await MainActor.run {
-                        self.value = newValue
-                        self.state = .content
-                    }
-                } catch {
-                    guard !Task.isCancelled else { return }
-
-                    await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return state
-        }
+    @Function(\Action.Cases.refresh)
+    private func _refresh() async throws {
+        self.value = try await getValue()
     }
 
     func getValue() async throws -> Value {

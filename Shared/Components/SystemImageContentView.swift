@@ -12,10 +12,38 @@ import SwiftUI
 //       usages to use local background views
 // TODO: use heirarchical styles instead of explicit color
 
-struct RelativeSystemImageView: View {
+struct ContainerRelativeView<Content: View>: View {
 
-    @State
-    private var contentSize: CGSize = .zero
+    private let content: Content
+    private let ratio: CGSize
+
+    init(
+        ratio: CGFloat,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.content = content()
+        self.ratio = CGSize(width: ratio, height: ratio)
+    }
+
+    init(
+        ratio: CGSize = CGSize(width: 1, height: 1),
+        @ViewBuilder content: () -> Content
+    ) {
+        self.content = content()
+        self.ratio = ratio
+    }
+
+    var body: some View {
+        AlternateLayoutView {
+            Color.clear
+        } content: { size in
+            content
+                .frame(width: size.width * ratio.width, height: size.height * ratio.height)
+        }
+    }
+}
+
+struct RelativeSystemImageView: View {
 
     private let systemName: String
     private let ratio: CGFloat
@@ -29,45 +57,31 @@ struct RelativeSystemImageView: View {
     }
 
     var body: some View {
-        AlternateLayoutView {
-            Color.clear
-                .trackingSize($contentSize)
-        } content: {
+        ContainerRelativeView(ratio: ratio) {
             Image(systemName: systemName)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: contentSize.width * ratio, height: contentSize.height * ratio)
         }
     }
 }
 
-// TODO: cleanup and become the failure view for poster buttons
 struct SystemImageContentView: View {
 
     @State
-    private var contentSize: CGSize = .zero
-    @State
     private var labelSize: CGSize = .zero
 
-    private var backgroundColor: Color
     private var ratio: CGFloat
     private let systemName: String
     private let title: String?
 
-    init(title: String? = nil, systemName: String?, ratio: CGFloat = 0.3) {
-        self.backgroundColor = Color.secondarySystemFill
+    init(
+        title: String? = nil,
+        systemName: String?,
+        ratio: CGFloat = 0.3
+    ) {
         self.ratio = ratio
         self.systemName = systemName ?? "circle"
         self.title = title
-    }
-
-    @ViewBuilder
-    private var imageView: some View {
-        Image(systemName: systemName)
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .foregroundColor(.secondary)
-            .frame(width: contentSize.width * ratio, height: contentSize.height * ratio)
     }
 
     @ViewBuilder
@@ -83,24 +97,16 @@ struct SystemImageContentView: View {
     }
 
     var body: some View {
-        ZStack {
-            backgroundColor
-
-            imageView
-                .frame(width: contentSize.width)
-                .overlay(alignment: .bottom) {
-                    label
-                        .padding(.horizontal, 4)
-                        .offset(y: labelSize.height)
-                }
+        ContainerRelativeView(ratio: ratio) {
+            Image(systemName: systemName)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .foregroundColor(.secondary)
         }
-        .trackingSize($contentSize)
-    }
-}
-
-extension SystemImageContentView {
-
-    func background(color: Color) -> Self {
-        copy(modifying: \.backgroundColor, with: color)
+        .overlay(alignment: .bottom) {
+            label
+                .padding(.horizontal, 4)
+                .offset(y: labelSize.height)
+        }
     }
 }

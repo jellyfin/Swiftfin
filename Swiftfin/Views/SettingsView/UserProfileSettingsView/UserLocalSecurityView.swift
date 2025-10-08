@@ -134,7 +134,6 @@ struct UserLocalSecurityView: View {
 
                             Text(L10n.requireDeviceAuthDescription)
                         }
-                        .padding(.bottom, 15)
 
                         VStack(alignment: .leading, spacing: 5) {
                             Text(UserAccessPolicy.requirePin.displayTitle)
@@ -142,7 +141,6 @@ struct UserLocalSecurityView: View {
 
                             Text(L10n.requirePinDescription)
                         }
-                        .padding(.bottom, 15)
 
                         VStack(alignment: .leading, spacing: 5) {
                             Text(UserAccessPolicy.none.displayTitle)

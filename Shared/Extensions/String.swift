@@ -11,14 +11,6 @@ import CryptoKit
 import Foundation
 import SwiftUI
 
-// TODO: Remove this and strongly type instances if it makes sense.
-extension String: Displayable {
-
-    var displayTitle: String {
-        self
-    }
-}
-
 extension String {
 
     static let alphanumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -80,6 +72,7 @@ extension String {
         return padding + self
     }
 
+    @available(*, deprecated, message: "Use self in a Text instead")
     var text: Text {
         Text(self)
     }
