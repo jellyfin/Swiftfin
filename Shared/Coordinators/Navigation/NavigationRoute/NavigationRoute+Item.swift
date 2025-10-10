@@ -177,7 +177,7 @@ extension NavigationRoute {
         ) {
             IdentifyItemView.RemoteSearchResultView(
                 viewModel: viewModel,
-                result: result,
+                result: result
             )
         }
     }

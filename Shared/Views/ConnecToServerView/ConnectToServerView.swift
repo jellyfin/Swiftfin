@@ -110,7 +110,7 @@ struct ConnectToServerView: View {
         }
         #else
         SplitLoginWindowView(
-            isLoading: viewModel.state == .connecting,
+            isLoading: viewModel.state == .connecting
         ) {
             connectSection
         } trailingContentView: {

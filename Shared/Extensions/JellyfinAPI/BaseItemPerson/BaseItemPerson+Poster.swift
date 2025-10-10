@@ -40,7 +40,7 @@ extension BaseItemPerson: Poster {
         let imageRequestParameters = Paths.GetItemImageParameters(
             maxWidth: scaleWidth ?? Int(maxWidth),
             quality: quality,
-            tag: primaryImageTag,
+            tag: primaryImageTag
         )
 
         let imageRequest = Paths.getItemImage(

@@ -287,7 +287,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
 
     private static var SupplementPanHandlingAction: PanHandlingAction<CGFloat> {
         PanHandlingAction<CGFloat>(
-            startValue: 0,
+            startValue: 0
         ) { _, handlingState, containerState in
             containerState.containerView?.handleSupplementPanAction(
                 translation: handlingState.translation,
