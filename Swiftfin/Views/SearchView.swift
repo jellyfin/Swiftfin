@@ -179,12 +179,12 @@ struct SearchView: View {
         .trailing {
             SeeAllButton()
                 .onSelect {
-                    let viewModel = PagingLibraryViewModel(
-                        title: title,
-                        id: "search-\(type.hashValue)",
-                        items
-                    )
-                    router.route(to: .library(viewModel: viewModel))
+//                    let viewModel = PagingLibraryViewModel(
+//                        title: title,
+//                        id: "search-\(type.hashValue)",
+//                        items
+//                    )
+//                    router.route(to: .library(viewModel: viewModel))
                 }
         }
     }

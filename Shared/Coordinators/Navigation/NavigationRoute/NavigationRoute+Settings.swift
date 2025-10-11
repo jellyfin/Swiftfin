@@ -112,10 +112,16 @@ extension NavigationRoute {
     }
     #endif
 
-    static let indicatorSettings = NavigationRoute(
-        id: "indicatorSettings"
+    static let librarySettings = NavigationRoute(
+        id: "librarySettings"
     ) {
-        IndicatorSettingsView()
+        CustomizeViewsSettings.LibrarySection()
+    }
+
+    static let posterSettings = NavigationRoute(
+        id: "posterSettings"
+    ) {
+        CustomizeViewsSettings.PosterSection()
     }
 
     static func itemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> NavigationRoute {

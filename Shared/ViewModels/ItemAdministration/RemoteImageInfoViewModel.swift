@@ -9,56 +9,103 @@
 import Foundation
 import JellyfinAPI
 
-final class RemoteImageInfoViewModel: PagingLibraryViewModel<RemoteImageInfo> {
+struct RemoteImageLibrary: PagingLibrary {
 
-    // Image providers come from the paging call
-    @Published
-    private(set) var providers: [String] = []
+    struct Environment: WithDefaultValue {
+        var includeAllLanguages: Bool = false
+        var provider: String?
 
-    @Published
-    var includeAllLanguages: Bool = false {
-        didSet {
-            DispatchQueue.main.async {
-                self.send(.refresh)
-            }
-        }
+        static var `default`: Self { .init() }
     }
 
-    @Published
-    var provider: String? = nil {
-        didSet {
-            DispatchQueue.main.async {
-                self.send(.refresh)
-            }
-        }
-    }
+    typealias Element = RemoteImageInfo
+    typealias Parent = _TitledLibraryParent
 
     let imageType: ImageType
+    let parent: _TitledLibraryParent
 
-    init(imageType: ImageType, parent: BaseItemDto) {
-
+    // TODO: wrong ids
+    init(imageType: ImageType, itemID: String) {
         self.imageType = imageType
-
-        super.init(parent: parent)
+        self.parent = .init(
+            displayTitle: imageType.displayTitle,
+            libraryID: itemID
+        )
     }
 
-    override func get(page: Int) async throws -> [RemoteImageInfo] {
-        guard let itemID = parent?.id else { return [] }
-
+    func retrievePage(
+        environment: Environment,
+        pageState: LibraryPageState
+    ) async throws -> [RemoteImageInfo] {
         var parameters = Paths.GetRemoteImagesParameters()
-        parameters.isIncludeAllLanguages = includeAllLanguages
-        parameters.limit = pageSize
-        parameters.providerName = provider
-        parameters.startIndex = page * pageSize
+        parameters.isIncludeAllLanguages = environment.includeAllLanguages
+        parameters.providerName = environment.provider
         parameters.type = imageType
 
-        let request = Paths.getRemoteImages(itemID: itemID, parameters: parameters)
-        let response = try await userSession.client.send(request)
+        parameters.limit = pageState.pageSize
+        parameters.startIndex = pageState.pageOffset
 
-        await MainActor.run {
-            providers = response.value.providers ?? []
-        }
+        let request = Paths.getRemoteImages(itemID: parent.libraryID, parameters: parameters)
+        let response = try await pageState.userSession.client.send(request)
+
+//        await MainActor.run {
+//            providers = response.value.providers ?? []
+//        }
 
         return response.value.images ?? []
     }
 }
+
+// final class RemoteImageInfoViewModel: PagingLibraryViewModel<RemoteImageInfo> {
+//
+//    // Image providers come from the paging call
+//    @Published
+//    private(set) var providers: [String] = []
+//
+//    @Published
+//    var includeAllLanguages: Bool = false {
+//        didSet {
+//            DispatchQueue.main.async {
+//                self.send(.refresh)
+//            }
+//        }
+//    }
+//
+//    @Published
+//    var provider: String? = nil {
+//        didSet {
+//            DispatchQueue.main.async {
+//                self.send(.refresh)
+//            }
+//        }
+//    }
+//
+//    let imageType: ImageType
+//
+//    init(imageType: ImageType, parent: BaseItemDto) {
+//
+//        self.imageType = imageType
+//
+//        super.init(parent: parent)
+//    }
+//
+//    override func get(page: Int) async throws -> [RemoteImageInfo] {
+//        guard let itemID = parent?.id else { return [] }
+//
+//        var parameters = Paths.GetRemoteImagesParameters()
+//        parameters.isIncludeAllLanguages = includeAllLanguages
+//        parameters.limit = pageSize
+//        parameters.providerName = provider
+//        parameters.startIndex = page * pageSize
+//        parameters.type = imageType
+//
+//        let request = Paths.getRemoteImages(itemID: itemID, parameters: parameters)
+//        let response = try await userSession.client.send(request)
+//
+//        await MainActor.run {
+//            providers = response.value.providers ?? []
+//        }
+//
+//        return response.value.images ?? []
+//    }
+// }

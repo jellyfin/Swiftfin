@@ -22,14 +22,34 @@ extension NavigationRoute {
     }
     #endif
 
-    static func library(
-        viewModel: PagingLibraryViewModel<some Poster>
-    ) -> NavigationRoute {
+//    static func library(
+//        viewModel: PagingLibraryViewModel<some Poster>
+//    ) -> NavigationRoute {
+//        NavigationRoute(
+//            id: "library-(\(viewModel.parent?.id ?? "Unparented"))",
+//            withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
+//        ) {
+//            PagingLibraryView(viewModel: viewModel)
+//        }
+//    }
+
+    static func library<Library: PagingLibrary>(
+        library: Library
+    ) -> NavigationRoute where Library.Element: Poster {
         NavigationRoute(
-            id: "library-(\(viewModel.parent?.id ?? "Unparented"))",
+            id: "library-\(library.parent.libraryID)",
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
-            PagingLibraryView(viewModel: viewModel)
+            _PagingLibraryView(library: library)
+        }
+    }
+
+    static func posterGroupPosterButtonStyle(id: String) -> NavigationRoute {
+        NavigationRoute(
+            id: "poster-group-poster-button-style-\(id)",
+            style: .sheet
+        ) {
+            CustomizePosterGroupSettings(id: id)
         }
     }
 }

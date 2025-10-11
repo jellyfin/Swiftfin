@@ -6,7 +6,9 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Factory
+import JellyfinAPI
 import SwiftUI
 
 // TODO: move popup to router
@@ -15,10 +17,23 @@ import SwiftUI
 // TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
 
+//    @Default(.Customization.latestInLibraryPosterType)
+//    private var latestInLibraryPosterType
+    @Default(.Customization.showPosterLabels)
+    private var showPosterLabels
+    @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
+    private var useSeriesLandscapeBackdrop
+
+    @Default(.Customization.Library._libraryStyle)
+    private var defaultLibraryStyle
+
+//    @StoredValue(.User.libraryStyle(id: nil))
+//    private var defaultLibraryStyle: LibraryStyle
+
     #if os(iOS)
     @StateObject
     private var tabCoordinator = TabCoordinator {
-        TabItem.home
+        TabItem.contentGroup(provider: DefaultContentGroupProvider())
         TabItem.search
         TabItem.media
     }
@@ -65,5 +80,62 @@ struct MainTabView: View {
                 .tag(tab.item.id)
             }
         }
+        .libraryStyle(for: BaseItemDto.self) { _, _ in
+            (defaultLibraryStyle, $defaultLibraryStyle)
+        }
+        .posterStyle(for: BaseItemDto.self) { item in
+
+            @ViewBuilder
+            func _label() -> some View {
+                if item.type == .program {
+                    ProgramsView.ProgramButtonContent(
+                        program: item
+                    )
+                } else {
+                    TitleSubtitleContentView(
+                        title: showPosterLabels ? item.displayTitle : nil,
+                        subtitle: item.subtitle
+                    )
+                }
+            }
+
+            return .init(
+                displayType: .landscape,
+                label: _label(),
+                overlay: {
+                    PosterIndicatorsOverlay(
+                        item: item,
+                        indicators: [.progress],
+                        posterDisplayType: $0
+                    )
+                },
+                useParentImages: useSeriesLandscapeBackdrop,
+                size: .small
+            )
+        }
+        .posterStyle(for: BaseItemPerson.self) { person in
+            .init(
+                displayType: .portrait,
+                label: person.posterLabel,
+                useParentImages: false,
+                size: .small
+            )
+        }
+    }
+}
+
+extension BaseItemDto {
+
+    @ViewBuilder
+    var posterLabel: some View {}
+}
+
+extension BaseItemPerson {
+
+    var posterLabel: some View {
+        TitleSubtitleContentView(
+            title: displayTitle,
+            subtitle: role
+        )
     }
 }

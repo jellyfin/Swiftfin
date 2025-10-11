@@ -31,6 +31,13 @@ struct ErrorView<ErrorType: Error>: View {
                     .frame(height: 50)
             }
         }
+        .preference(key: MenuContentKey.self, value: [
+            .init(id: "test") {
+                Button("Test") {}
+                Button("Test") {}
+                Button("Test") {}
+            },
+        ])
     }
 }
 

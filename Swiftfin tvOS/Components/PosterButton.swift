@@ -15,7 +15,7 @@ private let portraitMaxWidth: CGFloat = 500
 
 struct PosterButton<Item: Poster>: View {
 
-    @EnvironmentTypeValue<Item>(\.posterOverlayRegistry)
+    @ForTypeInEnvironment<Item>(\.posterOverlayRegistry)
     private var posterOverlayRegistry
 
     @State

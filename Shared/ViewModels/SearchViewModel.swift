@@ -56,7 +56,9 @@ final class SearchViewModel: ViewModel {
 
     // MARK: init
 
-    init(filterViewModel: FilterViewModel = .init()) {
+    init(filterViewModel: FilterViewModel? = nil) {
+        let filterViewModel = filterViewModel ?? .init()
+
         self.filterViewModel = filterViewModel
         super.init()
 
@@ -144,11 +146,14 @@ final class SearchViewModel: ViewModel {
 
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.enableUserData = true
-        parameters.fields = .MinimumFields
         parameters.includeItemTypes = [itemType]
         parameters.isRecursive = true
         parameters.limit = 20
         parameters.searchTerm = query
+
+        if itemType == .tvChannel {
+            parameters.fields = [.channelInfo]
+        }
 
         // Filters
         let filters = filterViewModel.currentFilters
@@ -191,7 +196,7 @@ final class SearchViewModel: ViewModel {
     @Function(\Action.Cases.getSuggestions)
     private func _getSuggestions() async throws {
 
-        filterViewModel.send(.getQueryFilters)
+        async let _ = filterViewModel.getQueryFilters()
 
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.includeItemTypes = [.movie, .series]

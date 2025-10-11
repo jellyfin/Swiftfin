@@ -1,5 +1,5 @@
 {
-  "originHash" : "38a493503cb22432e1bf1b0b812569bb2bdd51f821207a74b6b78ff16a049011",
+  "originHash" : "3ee34861e4137de27b04df73d2ff06e2380dc8f3596072844407c3d608e1114e",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -17,24 +17,6 @@
       "state" : {
         "revision" : "a9ed4b6f9bdedce7d77046f43adfb8ce1fd54114",
         "version" : "3.9.0"
-      }
-    },
-    {
-      "identity" : "collectionhstack",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/CollectionHStack",
-      "state" : {
-        "branch" : "main",
-        "revision" : "ce86c82ae46ba958d6e7f8459d592a77e1e299c5"
-      }
-    },
-    {
-      "identity" : "collectionvgrid",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/CollectionVGrid",
-      "state" : {
-        "branch" : "main",
-        "revision" : "09b979a3d25bc21e8da0fe6a2500dfca1c74334f"
       }
     },
     {
@@ -182,15 +164,6 @@
       }
     },
     {
-      "identity" : "statefulmacro",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/StatefulMacro",
-      "state" : {
-        "branch" : "main",
-        "revision" : "7f56ed3f2297ba86c126e33d40af8b1f908e3a53"
-      }
-    },
-    {
       "identity" : "svgkit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SVGKit/SVGKit",
@@ -330,8 +303,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
       "state" : {
-        "revision" : "b2ed9eabefe56202ee4939dd9fc46b6241c88317",
-        "version" : "1.6.1"
+        "revision" : "4c27acf5394b645b70d8ba19dc249c0472d5f618",
+        "version" : "1.7.0"
       }
     }
   ],
