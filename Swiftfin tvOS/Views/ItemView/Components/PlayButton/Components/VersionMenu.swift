@@ -39,7 +39,7 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            ActionButton(L10n.version, icon: "list.dash") {
+            Menu(L10n.version, systemImage: "list.dash") {
                 Picker(L10n.version, selection: selectedMediaSource) {
                     ForEach(mediaSources, id: \.hashValue) { mediaSource in
                         Text(mediaSource.displayTitle)
@@ -47,6 +47,8 @@ extension ItemView {
                     }
                 }
             }
+            .labelStyle(.iconOnly)
+            .buttonStyle(.material)
         }
     }
 }
