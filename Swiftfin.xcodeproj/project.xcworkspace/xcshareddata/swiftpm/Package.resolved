@@ -1,5 +1,5 @@
 {
-  "originHash" : "9222a7233a23e1fe4f52429ce4515688efb636cc37d684f7d274004e4714e763",
+  "originHash" : "3ee34861e4137de27b04df73d2ff06e2380dc8f3596072844407c3d608e1114e",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -161,15 +161,6 @@
       "state" : {
         "revision" : "477e9ef76615f0b76b43bb502af432fe6750b704",
         "version" : "5.1.0"
-      }
-    },
-    {
-      "identity" : "statefulmacro",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/StatefulMacro",
-      "state" : {
-        "branch" : "main",
-        "revision" : "7f56ed3f2297ba86c126e33d40af8b1f908e3a53"
       }
     },
     {

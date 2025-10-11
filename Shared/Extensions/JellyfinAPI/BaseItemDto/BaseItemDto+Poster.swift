@@ -49,7 +49,7 @@ extension BaseItemDto: Poster {
             "tv"
         case .episode, .movie, .series, .video:
             "film"
-        case .folder:
+        case .collectionFolder, .folder, .userView:
             "folder.fill"
         case .musicVideo:
             "music.note.tv.fill"
@@ -101,7 +101,7 @@ extension BaseItemDto: Poster {
 //            } else {
             [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
 //            }
-        case .folder, .program, .musicVideo, .video:
+        case .folder, .musicVideo, .program, .userView, .video:
             [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
         default:
             [
@@ -127,7 +127,7 @@ extension BaseItemDto: Poster {
             } else {
                 [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
             }
-        case .folder, .program, .musicVideo, .video:
+        case .collectionFolder, .folder, .musicVideo, .program, .userView, .video:
             [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
         default:
             [

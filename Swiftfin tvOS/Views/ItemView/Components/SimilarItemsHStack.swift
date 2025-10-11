@@ -20,18 +20,13 @@ extension ItemView {
         @Router
         private var router
 
-        @StateObject
-        private var viewModel: PagingLibraryViewModel<BaseItemDto>
-
-        init(items: [BaseItemDto]) {
-            self._viewModel = StateObject(wrappedValue: PagingLibraryViewModel(items, parent: BaseItemDto(name: L10n.recommended)))
-        }
+        let items: [BaseItemDto]
 
         var body: some View {
             PosterHStack(
                 title: L10n.recommended,
                 type: similarPosterType,
-                items: viewModel.elements
+                items: items
             ) { item in
                 router.route(to: .item(item: item))
             }

@@ -232,7 +232,7 @@ final class MediaPlayerManager: ViewModel {
         }
 
         if let nextItem = queue?.nextItem, Defaults[.VideoPlayer.autoPlayEnabled] {
-            await self.playNewItem(provider: nextItem)
+            try await self.playNewItem(provider: nextItem)
         }
     }
 
@@ -303,7 +303,7 @@ final class MediaPlayerManager: ViewModel {
     }
 
     @Function(\Action.Cases.stop)
-    private func _stop() async throws {
+    private func _stop() async {
         await self.cancel()
 
         // TODO: remove playback item?

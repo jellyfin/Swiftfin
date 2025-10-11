@@ -137,6 +137,14 @@ extension StoredValues.Keys {
             )
         }
 
+        static func posterButtonStyle(parentID: String?) -> Key<PosterStyleEnvironment> {
+            CurrentUserKey(
+                parentID,
+                domain: "setting-posterButtonStyle",
+                default: .default
+            )
+        }
+
         // TODO: for now, only used for `sortBy` and `sortOrder`. Need to come up with
         //       rules for how stored filters work with libraries that should init
         //       with non-default filters (atow ex: favorites)

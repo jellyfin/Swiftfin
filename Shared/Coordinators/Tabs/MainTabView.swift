@@ -33,7 +33,7 @@ struct MainTabView: View {
     #if os(iOS)
     @StateObject
     private var tabCoordinator = TabCoordinator {
-        TabItem.home
+        TabItem.contentGroup(provider: DefaultContentGroupProvider())
         TabItem.search
         TabItem.media
     }
@@ -101,9 +101,14 @@ struct MainTabView: View {
 
             return .init(
                 displayType: .landscape,
-                indicators: [],
                 label: _label(),
-                overlay: EmptyView(),
+                overlay: {
+                    PosterIndicatorsOverlay(
+                        item: item,
+                        indicators: [.progress],
+                        posterDisplayType: $0
+                    )
+                },
                 useParentImages: useSeriesLandscapeBackdrop,
                 size: .small
             )
@@ -111,9 +116,7 @@ struct MainTabView: View {
         .posterStyle(for: BaseItemPerson.self) { person in
             .init(
                 displayType: .portrait,
-                indicators: [],
                 label: person.posterLabel,
-                overlay: EmptyView(),
                 useParentImages: false,
                 size: .small
             )

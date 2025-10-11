@@ -37,7 +37,14 @@ struct ChannelLibraryView: View {
     private var layout: CollectionVGridLayout
 
     @StateObject
-    private var viewModel = ChannelLibraryViewModel()
+    private var viewModel = PagingLibraryViewModel(
+        library: ChannelProgramLibrary(
+            parent: .init(
+                displayTitle: L10n.channels,
+                libraryID: "channels"
+            )
+        )
+    )
 
     // MARK: init
 
@@ -113,14 +120,14 @@ struct ChannelLibraryView: View {
             }
         }
         .onReachedBottomEdge(offset: .offset(300)) {
-            viewModel.send(.getNextPage)
+            viewModel.retrieveNextPage()
         }
     }
 
     private func errorView(with error: some Error) -> some View {
         ErrorView(error: error)
             .onRetry {
-                viewModel.send(.refresh)
+                viewModel.refresh()
             }
     }
 
@@ -131,12 +138,12 @@ struct ChannelLibraryView: View {
             switch viewModel.state {
             case .content:
                 if viewModel.elements.isEmpty {
-                    L10n.noResults.text
+                    Text(L10n.noResults)
                 } else {
                     contentView
                 }
-            case let .error(error):
-                errorView(with: error)
+            case .error:
+                viewModel.error.map { errorView(with: $0) }
             case .initial, .refreshing:
                 DelayedProgressView()
             }
@@ -152,18 +159,18 @@ struct ChannelLibraryView: View {
         }
         .onFirstAppear {
             if viewModel.state == .initial {
-                viewModel.send(.refresh)
+                viewModel.refresh()
             }
         }
         .sinceLastDisappear { interval in
             // refresh after 3 hours
             if interval >= 10800 {
-                viewModel.send(.refresh)
+                viewModel.refresh()
             }
         }
         .topBarTrailing {
 
-            if viewModel.backgroundStates.contains(.gettingNextPage) {
+            if viewModel.background.is(.retrievingNextPage) {
                 ProgressView()
             }
 

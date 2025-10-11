@@ -33,14 +33,23 @@ extension NavigationRoute {
 //        }
 //    }
 
-    static func library<L: PagingLibrary>(
-        library: L
-    ) -> NavigationRoute {
+    static func library<Library: PagingLibrary>(
+        library: Library
+    ) -> NavigationRoute where Library.Element: Poster {
         NavigationRoute(
-            id: "library-\(library.id)",
+            id: "library-\(library.parent.libraryID)",
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
             _PagingLibraryView(library: library)
+        }
+    }
+
+    static func posterGroupPosterButtonStyle(id: String) -> NavigationRoute {
+        NavigationRoute(
+            id: "poster-group-poster-button-style-\(id)",
+            style: .sheet
+        ) {
+            CustomizePosterGroupSettings(id: id)
         }
     }
 }

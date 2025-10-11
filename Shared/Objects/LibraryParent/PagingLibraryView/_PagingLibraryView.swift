@@ -11,7 +11,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct _PagingLibraryView<Library: PagingLibrary>: View {
+struct _PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Poster {
 
     typealias Element = Library.Element
 
@@ -35,15 +35,15 @@ struct _PagingLibraryView<Library: PagingLibrary>: View {
     private var router
 
     @StateObject
-    private var viewModel: _PagingLibraryViewModel<Library>
+    private var viewModel: PagingLibraryViewModel<Library>
 
     private var libraryStyle: LibraryStyle {
         libraryStyleRegistry?(Element.self).0 ?? .default
     }
 
     init(library: Library) {
-        self._parentLibraryStyle = StoredValue(.User.libraryStyle(id: library.id))
-        self._viewModel = StateObject(wrappedValue: _PagingLibraryViewModel(library: library))
+        self._parentLibraryStyle = StoredValue(.User.libraryStyle(id: library.parent.libraryID))
+        self._viewModel = StateObject(wrappedValue: PagingLibraryViewModel(library: library))
     }
 
     @ViewBuilder
@@ -58,20 +58,20 @@ struct _PagingLibraryView<Library: PagingLibrary>: View {
     private func WithFilters(
         @ViewBuilder content: () -> some View
     ) -> some View {
-        if let filterViewModel = viewModel.library.filterViewModel {
-            content()
-                .navigationBarFilterDrawer(
-                    viewModel: filterViewModel,
-                    types: enabledDrawerFilters
-                ) { parameters in
-                    router.route(to: .filter(type: parameters.type, viewModel: parameters.viewModel))
-                }
-                .onReceive(filterViewModel.currentFiltersDebounced) { _ in
-                    viewModel.refresh()
-                }
-        } else {
-            content()
-        }
+//        if let filterViewModel = viewModel.library.filterViewModel {
+//            content()
+//                .navigationBarFilterDrawer(
+//                    viewModel: filterViewModel,
+//                    types: enabledDrawerFilters
+//                ) { parameters in
+//                    router.route(to: .filter(type: parameters.type, viewModel: parameters.viewModel))
+//                }
+//                .onReceive(filterViewModel.currentFiltersDebounced) { _ in
+//                    viewModel.refresh()
+//                }
+//        } else {
+        content()
+//        }
     }
 
     var body: some View {
@@ -88,7 +88,8 @@ struct _PagingLibraryView<Library: PagingLibrary>: View {
                         Text(L10n.noResults)
                     } else {
                         ElementsView(
-                            groupingBinding: viewModel.library.parent._groupings != nil ? $viewModel.grouping : nil,
+                            //                            groupingBinding: viewModel.library.parent._groupings != nil ? $viewModel.grouping : nil,
+                            groupingBinding: nil,
                             viewModel: viewModel
                         )
                         .ignoresSafeArea()
@@ -107,12 +108,12 @@ struct _PagingLibraryView<Library: PagingLibrary>: View {
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
-        .navigationTitle(viewModel.library.displayTitle)
+        .navigationTitle(viewModel.library.parent.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
-        .backport
-        .onChange(of: viewModel.grouping) { _, _ in
-            viewModel.refresh()
-        }
+//        .backport
+//        .onChange(of: viewModel.grouping) { _, _ in
+//            viewModel.refresh()
+//        }
         .onFirstAppear {
             if viewModel.state == .initial {
                 viewModel.refresh()
@@ -126,6 +127,7 @@ struct _PagingLibraryView<Library: PagingLibrary>: View {
 
 extension _PagingLibraryView {
 
+    // TODO: breakout into own content view?
     struct ElementsView: View {
 
         @ForTypeInEnvironment<Element.Type, (Any) -> (LibraryStyle, Binding<LibraryStyle>?)>(\.libraryStyleRegistry)
@@ -135,7 +137,7 @@ extension _PagingLibraryView {
         private var namespace
 
         @ObservedObject
-        private var viewModel: _PagingLibraryViewModel<Library>
+        private var viewModel: PagingLibraryViewModel<Library>
 
         @Router
         private var router
@@ -143,12 +145,12 @@ extension _PagingLibraryView {
         @StateObject
         private var collectionVGridProxy: CollectionVGridProxy = .init()
 
-        private var groupingBinding: Binding<LibraryGrouping?>?
+        private var groupingBinding: Binding<BasicLibraryGrouping?>?
         private var libraryStyleBinding: Binding<LibraryStyle>?
 
         init(
-            groupingBinding: Binding<LibraryGrouping?>?,
-            viewModel: _PagingLibraryViewModel<Library>
+            groupingBinding: Binding<BasicLibraryGrouping?>?,
+            viewModel: PagingLibraryViewModel<Library>
         ) {
             self._libraryStyleRegistry = ForTypeInEnvironment(\.libraryStyleRegistry)
             self.viewModel = viewModel
@@ -215,8 +217,8 @@ extension _PagingLibraryView {
 
         private func select(item: BaseItemDto, in namespace: Namespace.ID) {
             switch item.type {
-            case .collectionFolder, .folder:
-                let library = _PagingItemLibrary(parent: item, filters: .init(parent: item, currentFilters: .init()))
+            case .collectionFolder, .folder, .userView:
+                let library = PagingItemLibrary(parent: item, filters: .init(parent: item, currentFilters: .init()))
                 router.route(to: .library(library: library), in: namespace)
             default:
                 router.route(to: .item(item: item), in: namespace)
@@ -238,16 +240,16 @@ extension _PagingLibraryView {
                 environment.useParentImages = false
                 return environment
             }
-            //        } label: {
-            //            if item.showTitle {
-            //                PosterButton<Element>.TitleContentView(title: item.displayTitle)
-            //                    .lineLimit(1, reservesSpace: true)
-            //            } else if viewModel.parent?.libraryType == .folder {
-            //                PosterButton<Element>.TitleContentView(title: item.displayTitle)
-            //                    .lineLimit(1, reservesSpace: true)
-            //                    .hidden()
-            //            }
-            //        }
+//        } label: {
+//            if item.showTitle {
+//                PosterButton<Element>.TitleContentView(title: item.displayTitle)
+//                    .lineLimit(1, reservesSpace: true)
+//            } else if viewModel.parent?.libraryType == .folder {
+//                PosterButton<Element>.TitleContentView(title: item.displayTitle)
+//                    .lineLimit(1, reservesSpace: true)
+//                    .hidden()
+//            }
+//        }
         }
 
         @ViewBuilder
@@ -275,7 +277,7 @@ extension _PagingLibraryView {
                     listItemView(element: element)
                 }
             }
-            .onReachedBottomEdge(offset: .offset(100)) {
+            .onReachedBottomEdge(offset: .offset(300)) {
                 viewModel.retrieveNextPage()
             }
             .proxy(collectionVGridProxy)
@@ -287,7 +289,7 @@ extension _PagingLibraryView {
             }
             .onReceive(viewModel.events) { event in
                 switch event {
-                case let .retrievedRandomItem(item):
+                case let .retrievedRandomElement(item):
                     switch item {
                     case let item as BaseItemDto:
                         select(item: item, in: namespace)
@@ -307,32 +309,32 @@ extension _PagingLibraryView {
                     }
                 }
 
-                if let groupings = viewModel.library.parent._groupings?.elements,
-                   groupings.isNotEmpty,
-                   let groupingBinding
-                {
-                    MenuContentGroup(
-                        id: "group-by"
-                    ) {
-                        Picker(selection: groupingBinding) {
-                            ForEach(groupings) { grouping in
-                                Text(grouping.displayTitle)
-                                    .tag(grouping as LibraryGrouping?)
-                            }
-                        } label: {
-                            Text("Grouping")
-
-                            Text(groupingBinding.wrappedValue?.displayTitle ?? L10n.unknown)
-                        }
-                        .pickerStyle(.menu)
-                    }
-                }
+//                if let groupings = viewModel.library.parent._groupings?.elements,
+//                   groupings.isNotEmpty,
+//                   let groupingBinding
+//                {
+//                    MenuContentGroup(
+//                        id: "group-by"
+//                    ) {
+//                        Picker(selection: groupingBinding) {
+//                            ForEach(groupings) { grouping in
+//                                Text(grouping.displayTitle)
+//                                    .tag(grouping as LibraryGrouping?)
+//                            }
+//                        } label: {
+//                            Text("Grouping")
+//
+//                            Text(groupingBinding.wrappedValue?.displayTitle ?? L10n.unknown)
+//                        }
+//                        .pickerStyle(.menu)
+//                    }
+//                }
 
                 MenuContentGroup(
                     id: "retrieve-random-element"
                 ) {
                     Button(L10n.random, systemImage: "dice.fill") {
-                        viewModel.retrieveRandomItem()
+                        viewModel.retrieveRandomElement()
                     }
                 }
             }

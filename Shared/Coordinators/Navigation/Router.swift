@@ -16,6 +16,7 @@ extension NavigationCoordinator {
         let navigationCoordinator: NavigationCoordinator?
         let rootCoordinator: RootCoordinator?
 
+        // TODO: on navigation route dismissed
         func route(
             to route: NavigationRoute,
             transition: NavigationRoute.TransitionType? = nil,

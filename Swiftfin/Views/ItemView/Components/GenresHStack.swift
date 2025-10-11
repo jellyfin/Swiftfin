@@ -22,31 +22,18 @@ extension ItemView {
             PillHStack(
                 title: L10n.genres,
                 items: genres
-            ).onSelect { genre in
-                let library = _PagingItemLibrary(
-                    parent: genre,
-                    filters: .init(parent: nil, currentFilters: .init(genres: [genre]))
-                )
-
-                router.route(to: .library(library: library))
+            ).onSelect { _ in
+//                let library = PagingItemLibrary(
+//                    parent: genre,
+//                    filters: .init(parent: nil, currentFilters: .init(genres: [genre]))
+//                )
+//
+//                router.route(to: .library(library: library))
             }
         }
     }
 }
 
-extension ItemGenre: _LibraryParent, Identifiable {
-
-    var libraryType: BaseItemKind? {
-        .collectionFolder
-    }
-
-    var id: String? { nil }
-
-    func _supportedItemTypes(for grouping: LibraryGrouping?) -> [BaseItemKind] {
-        BaseItemKind.supportedCases
-    }
-
-    func _isRecursiveCollection(for grouping: LibraryGrouping?) -> Bool {
-        false
-    }
-}
+// extension ItemGenre: _LibraryParent {
+//    var libraryID: String { value }
+// }

@@ -123,3 +123,42 @@ final class MediaViewModel: ViewModel {
             .map { $0.imageSource(.backdrop, maxWidth: 200) }
     }
 }
+
+struct MediaLibrary: PagingLibrary {
+
+    typealias Element = BaseItemDto
+    typealias Parent = _TitledLibraryParent
+
+    let displayTitle: String
+    let id: String
+    let pages: Bool = false
+
+    var parent: _TitledLibraryParent
+
+    init() {
+        self.displayTitle = L10n.media
+        self.id = "media-library"
+
+        self.parent = _TitledLibraryParent(
+            displayTitle: L10n.media,
+            libraryID: "media-library"
+        )
+    }
+
+    func retrievePage(
+        environment: Environment,
+        pageState: LibraryPageState
+    ) async throws -> [BaseItemDto] {
+        let parameters = Paths.GetUserViewsParameters(userID: pageState.userSession.user.id)
+        let userViewsPath = Paths.getUserViews(parameters: parameters)
+        let userViews = try await pageState.userSession.client.send(userViewsPath)
+        let excludedLibraryIDs = pageState.userSession.user.data.configuration?.latestItemsExcludes ?? []
+
+        let supportedUserViews = (userViews.value.items ?? [])
+            .coalesced(property: \.collectionType, with: .folders)
+            .intersection(CollectionType.supportedCases, using: \.collectionType)
+            .subtracting(excludedLibraryIDs, using: \.id)
+
+        return supportedUserViews
+    }
+}

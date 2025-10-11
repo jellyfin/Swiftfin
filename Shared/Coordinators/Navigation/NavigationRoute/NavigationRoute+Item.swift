@@ -65,7 +65,7 @@ extension NavigationRoute {
 
     @MainActor
     static func castAndCrew(people: [BaseItemPerson], itemID: String?) -> NavigationRoute {
-        let library = _StaticLibrary(
+        let library = StaticLibrary(
             title: L10n.castAndCrew,
             id: "castAndCrew",
             elements: people

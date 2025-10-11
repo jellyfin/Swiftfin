@@ -72,7 +72,7 @@ struct PosterButton<Item: Poster, Label: View>: View {
         Button {
             action(namespace)
         } label: {
-            posterView(overlay: posterStyle.overlay)
+            posterView(overlay: posterStyle.overlay(posterStyle.displayType))
                 .trackingSize($posterSize)
         }
         .foregroundStyle(.primary, .secondary)
@@ -90,6 +90,37 @@ struct PosterButton<Item: Poster, Label: View>: View {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(Color(uiColor: UIColor.secondarySystemGroupedBackground))
                 }
+        }
+    }
+}
+
+struct PosterIndicatorsOverlay: View {
+
+    let item: BaseItemDto
+    let indicators: [PosterOverlayIndicator]
+    let posterDisplayType: PosterDisplayType
+
+    var body: some View {
+        ZStack {
+            if indicators.contains(.favorited) {
+                FavoriteIndicator()
+            }
+
+            if indicators.contains(.unplayed) {
+                UnplayedIndicator()
+            }
+
+            if indicators.contains(.played) {
+                PlayedIndicator()
+            }
+
+            if indicators.contains(.progress), let progress = item.progress, let startSeconds = item.startSeconds {
+                PosterProgressBar(
+                    title: startSeconds.formatted(.runtime),
+                    progress: progress,
+                    posterDisplayType: posterDisplayType
+                )
+            }
         }
     }
 }

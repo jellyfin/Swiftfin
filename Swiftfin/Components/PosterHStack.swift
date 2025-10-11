@@ -29,6 +29,7 @@ struct PosterHStack<
     private var data: Data
     private var header: Header
     private var title: String
+    // TODO: remove?
     private var type: PosterDisplayType
     private var trailingContent: () -> any View
     private var action: (Element, Namespace.ID) -> Void

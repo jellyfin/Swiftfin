@@ -16,39 +16,44 @@ protocol WithDefaultValue {
 //       - or be based on size/poster display value?
 
 // TODO: rename `PosterButtonStyle`
-struct PosterStyleEnvironment: WithDefaultValue {
+struct PosterStyleEnvironment: WithDefaultValue, Storable {
 
     var displayType: PosterDisplayType
-    var indicators: [PosterOverlayIndicator]
     var label: AnyView
-    var overlay: AnyView
+    var overlay: (PosterDisplayType) -> AnyView
     var useParentImages: Bool
     var size: PosterDisplayType.Size
 
+    enum CodingKeys: String, CodingKey {
+        case displayType
+        case size
+    }
+
     init(
         displayType: PosterDisplayType = .portrait,
-        indicators: [PosterOverlayIndicator] = [],
         label: some View = EmptyView(),
-        overlay: some View = EmptyView(),
+        @ViewBuilder overlay: @escaping (PosterDisplayType) -> some View = { _ in EmptyView() },
         useParentImages: Bool = false,
-        size: PosterDisplayType.Size = .medium
+        size: PosterDisplayType.Size = .small
     ) {
         self.displayType = displayType
-        self.indicators = indicators
         self.label = label.eraseToAnyView()
-        self.overlay = overlay.eraseToAnyView()
+        self.overlay = { overlay($0).eraseToAnyView() }
         self.useParentImages = useParentImages
         self.size = size
     }
 
-    static let `default` = PosterStyleEnvironment(
-        displayType: .portrait,
-        indicators: [],
-        label: EmptyView(),
-        overlay: EmptyView(),
-        useParentImages: false,
-        size: .medium
-    )
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.displayType = try container.decode(PosterDisplayType.self, forKey: .displayType)
+        self.size = try container.decode(PosterDisplayType.Size.self, forKey: .size)
+
+        self.label = EmptyView().eraseToAnyView()
+        self.overlay = { _ in EmptyView().eraseToAnyView() }
+        self.useParentImages = false
+    }
+
+    static let `default`: PosterStyleEnvironment = .init()
 }
 
 extension EnvironmentValues {

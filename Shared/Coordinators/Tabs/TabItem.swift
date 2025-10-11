@@ -8,8 +8,8 @@
 
 import SwiftUI
 
-// TODO: selected icon
-struct TabItem: Identifiable, Hashable {
+@MainActor
+struct TabItem: Identifiable, @preconcurrency Hashable, SystemImageable {
 
     let content: AnyView
     let id: String
@@ -42,15 +42,18 @@ struct TabItem: Identifiable, Hashable {
 
 extension TabItem {
 
-    static let home = TabItem(
-        id: "home",
-        title: L10n.home,
-        systemImage: "house"
-    ) {
-        HomeView()
+    static func contentGroup(
+        provider: some _ContentGroupProvider
+    ) -> TabItem {
+        TabItem(
+            id: "contentgroup-\(provider.id)",
+            title: provider.displayTitle,
+            systemImage: provider.systemImage
+        ) {
+            ContentGroupView(provider: provider)
+        }
     }
 
-    @MainActor
     static func library(
         title: String,
         systemName: String,
@@ -64,13 +67,14 @@ extension TabItem {
             title: title,
             systemImage: systemName
         ) {
-            let library = _PagingItemLibrary(
-                title: title,
-                id: id,
-                filters: .init(parent: nil, currentFilters: filters)
-            )
-
-            return _PagingLibraryView(library: library)
+            EmptyView()
+//            let library = PagingItemLibrary(
+//                title: title,
+//                id: id,
+//                filters: .init(parent: nil, currentFilters: filters)
+//            )
+//
+//            return _PagingLibraryView(library: library)
         }
     }
 
@@ -79,7 +83,7 @@ extension TabItem {
         title: L10n.media,
         systemImage: "rectangle.stack.fill"
     ) {
-        MediaView()
+        _PagingLibraryView(library: MediaLibrary())
     }
 
     static let search = TabItem(

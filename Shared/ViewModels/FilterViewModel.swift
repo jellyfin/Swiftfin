@@ -21,11 +21,11 @@ final class FilterViewModel: ViewModel {
         case cancel
         case getQueryFilters
         case reset(filterType: ItemFilterType?)
-        case update(ItemFilterType, [AnyItemFilter])
+//        case update(ItemFilterType, [AnyItemFilter])
 
         var transition: Transition {
             switch self {
-            case .cancel, .reset, .update: .none
+            case .cancel, .reset: .none
             case .getQueryFilters:
                 .background(.retrievingQueryFilters)
             }
@@ -39,7 +39,7 @@ final class FilterViewModel: ViewModel {
     @Published
     private(set) var allFilters: ItemFilterCollection = .all
     @Published
-    private(set) var currentFilters: ItemFilterCollection {
+    var currentFilters: ItemFilterCollection {
         didSet {
             currentFiltersSubject.send(currentFilters)
         }
@@ -65,11 +65,11 @@ final class FilterViewModel: ViewModel {
 
         super.init()
 
-        if let parent {
-            self.allFilters.itemTypes = parent._supportedItemTypes(
-                for: parent._groupings?.defaultSelection
-            )
-        }
+//        if let parent {
+//            self.allFilters.itemTypes = parent._supportedItemTypes(
+//                for: parent._groupings?.defaultSelection
+//            )
+//        }
     }
 
     func isFilterSelected(type: ItemFilterType) -> Bool {
@@ -102,35 +102,12 @@ final class FilterViewModel: ViewModel {
         }
     }
 
-    @Function(\Action.Cases.update)
-    private func updateCurrentFilters(
-        _ type: ItemFilterType,
-        _ newValue: [AnyItemFilter]
-    ) {
-        switch type {
-        case .genres:
-            currentFilters.genres = newValue.map(ItemGenre.init)
-        case .letter:
-            currentFilters.letter = newValue.map(ItemLetter.init)
-        case .sortBy:
-            currentFilters.sortBy = newValue.map(ItemSortBy.init)
-        case .sortOrder:
-            currentFilters.sortOrder = newValue.map(ItemSortOrder.init)
-        case .tags:
-            currentFilters.tags = newValue.map(ItemTag.init)
-        case .traits:
-            currentFilters.traits = newValue.map(ItemTrait.init)
-        case .years:
-            currentFilters.years = newValue.map(ItemYear.init)
-        }
-    }
-
     @Function(\Action.Cases.getQueryFilters)
     private func _getQueryFilters() async throws {
 
         let parameters = Paths.GetQueryFiltersLegacyParameters(
             userID: userSession.user.id,
-            parentID: parent?.id
+            parentID: parent?.libraryID
         )
 
         let request = Paths.getQueryFiltersLegacy(parameters: parameters)

@@ -6,26 +6,21 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
-import CoreStore
-import Factory
-import Get
+import Foundation
 import JellyfinAPI
-import OrderedCollections
 
 @MainActor
 @Stateful
-final class HomeViewModel: ViewModel {
+final class ContentGroupViewModel<Provider: _ContentGroupProvider>: ViewModel {
 
     @CasePathable
     enum Action {
         case error
-        case setIsPlayed(played: Bool, item: BaseItemDto)
         case refresh
 
         var transition: Transition {
             switch self {
-            case .error, .setIsPlayed:
+            case .error:
                 .none
             case .refresh:
                 .to(.refreshing, then: .content)
@@ -45,25 +40,18 @@ final class HomeViewModel: ViewModel {
     }
 
     @Published
-    private(set) var sections: [any __PagingLibaryViewModel] = []
+    private(set) var sections: [(viewModel: any RefreshableViewModel, group: any _ContentGroup)] = []
 
-//    @Published
-//    private(set) var libraries: [LatestInLibraryViewModel] = []
-//    @Published
-//    var resumeItems: OrderedSet<BaseItemDto> = []
+    let provider: Provider
 
     // TODO: replace with views checking what notifications were
     //       posted since last disappear
     @Published
     var notificationsReceived: NotificationSet = .init()
 
-    private var backgroundRefreshTask: AnyCancellable?
-    private var refreshTask: AnyCancellable?
+    init(provider: Provider) {
+        self.provider = provider
 
-//    var nextUpViewModel: NextUpLibraryViewModel = .init()
-//    var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
-
-    override init() {
         super.init()
 
 //        Notifications[.itemMetadataDidChange]
@@ -79,165 +67,50 @@ final class HomeViewModel: ViewModel {
 //            .store(in: &cancellables)
     }
 
-//    func respond(to action: Action) -> State {
-//        switch action {
-//        case .backgroundRefresh:
-//
-//            backgroundRefreshTask?.cancel()
-//            backgroundStates.insert(.refresh)
-//
-//            backgroundRefreshTask = Task { [weak self] in
-//                do {
-//                    self?.nextUpViewModel.send(.refresh)
-//                    self?.recentlyAddedViewModel.send(.refresh)
-//
-//                    let resumeItems = try await self?.getResumeItems() ?? []
-//
-//                    guard !Task.isCancelled else { return }
-//
-//                    await MainActor.run {
-//                        guard let self else { return }
-//                        self.resumeItems.elements = resumeItems
-//                        self.backgroundStates.remove(.refresh)
-//                    }
-//                } catch is CancellationError {
-//                    // cancelled
-//                } catch {
-//                    guard !Task.isCancelled else { return }
-//
-//                    await MainActor.run {
-//                        guard let self else { return }
-//                        self.backgroundStates.remove(.refresh)
-//                        self.send(.error(.init(error.localizedDescription)))
-//                    }
-//                }
-//            }
-//            .asAnyCancellable()
-//
-//            return state
-//        case let .error(error):
-//            return .error(error)
-//        case let .setIsPlayed(isPlayed, item): ()
-//            Task {
-//                try await setIsPlayed(isPlayed, for: item)
-//
-//                self.send(.backgroundRefresh)
-//            }
-//            .store(in: &cancellables)
-//
-//            return state
-//        case .refresh:
-//            backgroundRefreshTask?.cancel()
-//            refreshTask?.cancel()
-//
-//            refreshTask = Task { [weak self] in
-//                do {
-//                    try await self?.refresh()
-//
-//                    guard !Task.isCancelled else { return }
-//
-//                    await MainActor.run {
-//                        guard let self else { return }
-//                        self.state = .content
-//                    }
-//                } catch is CancellationError {
-//                    // cancelled
-//                } catch {
-//                    guard !Task.isCancelled else { return }
-//
-//                    await MainActor.run {
-//                        guard let self else { return }
-//                        self.send(.error(.init(error.localizedDescription)))
-//                    }
-//                }
-//            }
-//            .asAnyCancellable()
-//
-//            return .refreshing
-//        }
-//    }
-
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
 
-        func _library(for section: PosterSection) -> any __PagingLibaryViewModel {
-            switch section {
-            case .continueWatching:
-                _PagingLibraryViewModel(library: ContinueWatchingLibrary())
-            case let .latestInLibrary(id, name):
-                _PagingLibraryViewModel(library: LatestInLibrary(library: .init(
-                    id: id,
-                    name: name,
-                    type: .userView
-                )))
-            case .nextUp:
-                _PagingLibraryViewModel(library: _PagingNextUpLibrary())
-            case .recentlyAdded:
-                _PagingLibraryViewModel(library: _PagingItemLibrary(
-                    parent: BaseItemDto(name: L10n.recentlyAdded),
-                    filters: .init(
-                        parent: nil,
-                        currentFilters: .init(
-                            sortBy: [.dateCreated],
-                            sortOrder: [.descending]
-                        )
-                    )
-                ))
+        func makePair(for group: any _ContentGroup) -> (viewModel: any RefreshableViewModel, group: any _ContentGroup) {
+            func _makePair(for group: some _ContentGroup) -> (viewModel: any RefreshableViewModel, group: any _ContentGroup) {
+                (viewModel: group.makeViewModel(), group: group)
             }
+            return _makePair(for: group)
         }
 
-        let latestLibraries = try await getLibraries()
-            .compactMap { item -> (id: String, title: String)? in
-                guard let id = item.id else { return nil }
-                return (id: id, title: item.displayTitle)
+        let newGroups = try await provider.makeGroups()
+            .map(makePair)
+
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for vm in newGroups.map(\.viewModel) {
+                group.addTask {
+                    try await vm.refresh()
+                }
             }
-            .map { PosterSection.latestInLibrary(id: $0.id, name: $0.title) }
-
-        let sections: [any __PagingLibaryViewModel] = [
-            PosterSection.continueWatching,
-            .nextUp,
-            .recentlyAdded,
-        ]
-            .appending(elementsOf: latestLibraries)
-            .map { _library(for: $0) }
-
-//        let sections: [any __PagingLibaryViewModel] = latestLibraries
-//            .map(_library(for:))
-
-        for library in sections {
-            await library.refresh()
+            try await group.waitForAll()
         }
 
-        self.sections = sections
+        self.sections = newGroups
     }
+}
 
-    private func _setIsPlayed(_ isPlayed: Bool, _ item: BaseItemDto) async throws {
-        let request: Request<UserItemDataDto>
+import Factory
 
-        if isPlayed {
-            request = Paths.markPlayedItem(
-                itemID: item.id!,
-                userID: userSession.user.id
-            )
-        } else {
-            request = Paths.markUnplayedItem(
-                itemID: item.id!,
-                userID: userSession.user.id
-            )
-        }
+struct DefaultContentGroupProvider: _ContentGroupProvider {
 
-        _ = try await userSession.client.send(request)
-    }
+    @Injected(\.currentUserSession)
+    var userSession: UserSession!
 
-    private func getLibraries() async throws -> [BaseItemDto] {
+    let displayTitle: String = L10n.home
+    let id: String = "home-\(UUID().uuidString)"
+    let systemImage: String = "house.fill"
 
+    func makeGroups() async throws -> [any _ContentGroup] {
         let parameters = Paths.GetUserViewsParameters(userID: userSession.user.id)
         let userViewsPath = Paths.getUserViews(parameters: parameters)
-        async let userViews = userSession.client.send(userViewsPath)
-
+        let userViews = try await userSession.client.send(userViewsPath)
         let excludedLibraryIDs = userSession.user.data.configuration?.latestItemsExcludes ?? []
 
-        return try await (userViews.value.items ?? [])
+        let latestInLibraries = (userViews.value.items ?? [])
             .intersection(
                 [
                     .homevideos,
@@ -248,5 +121,15 @@ final class HomeViewModel: ViewModel {
                 using: \.collectionType
             )
             .subtracting(excludedLibraryIDs, using: \.id)
+            .map(LatestInLibrary.init)
+            .map(PosterGroup.init)
+
+        let newGroups: [any _ContentGroup] = [
+            PosterGroup(library: ContinueWatchingLibrary()),
+            PosterGroup(library: NextUpLibrary()),
+        ]
+            .appending(latestInLibraries)
+
+        return newGroups
     }
 }

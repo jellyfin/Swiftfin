@@ -40,12 +40,14 @@ extension NavigationRoute {
         }
     }
 
+    // TODO: remove, make date selection popover
     static func activityFilters(viewModel: ServerActivityViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "activityFilters",
             style: .sheet
         ) {
-            ServerActivityFilterView(viewModel: viewModel)
+            EmptyView()
+//            ServerActivityFilterView(viewModel: viewModel)
         }
     }
 

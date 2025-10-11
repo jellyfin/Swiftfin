@@ -29,20 +29,20 @@ struct SeriesEpisodeSelector: View {
             if viewModel.seasons.count > 1 {
                 Menu {
                     Picker(L10n.seasons, selection: $selection) {
-                        ForEach(viewModel.seasons) { season in
-                            Text(season.library.displayTitle)
+                        ForEach(viewModel.seasons, id: \.library.parent.libraryID) { season in
+                            Text(season.library.parent.displayTitle)
                                 .tag(season.id as PagingSeasonViewModel.ID?)
                         }
                     }
                 } label: {
                     Label(
-                        selectionViewModel.library.displayTitle,
+                        selectionViewModel.library.parent.displayTitle,
                         systemImage: "chevron.down"
                     )
                     .labelStyle(.episodeSelector)
                 }
             } else {
-                Text(selectionViewModel.library.displayTitle)
+                Text(selectionViewModel.library.parent.displayTitle)
                     .font(.title2)
                     .fontWeight(.semibold)
             }
