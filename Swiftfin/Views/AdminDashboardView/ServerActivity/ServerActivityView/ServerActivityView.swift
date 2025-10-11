@@ -13,28 +13,22 @@ import SwiftUI
 // TODO: WebSocket
 struct ServerActivityView: View {
 
-    // MARK: - Router
-
     @Router
     private var router
 
-    // MARK: - State Objects
+    @State
+    private var libraryEnvironment: ServerActivityLibrary.Environment = .default
 
     @StateObject
-    private var viewModel = ServerActivityViewModel()
-
-    // MARK: - Body
+    private var viewModel: ServerActivityViewModel = .init()
 
     var body: some View {
         ZStack {
             switch viewModel.state {
             case .content:
                 contentView
-            case let .error(error):
-                ErrorView(error: error)
-                    .onRetry {
-                        viewModel.send(.refresh)
-                    }
+            case .error:
+                viewModel.error.map { errorView(with: $0) }
             case .initial, .refreshing:
                 DelayedProgressView()
             }
@@ -43,18 +37,29 @@ struct ServerActivityView: View {
         .navigationTitle(L10n.activity)
         .navigationBarTitleDisplayMode(.inline)
         .topBarTrailing {
-            if viewModel.backgroundStates.contains(.gettingNextPage) {
+            if viewModel.background.is(.retrievingNextPage) {
                 ProgressView()
             }
 
-            Menu(L10n.filters, systemImage: "line.3.horizontal.decrease.circle") {
+            Menu(
+                L10n.filters,
+                systemImage: "line.3.horizontal.decrease.circle"
+            ) {
                 startDateButton
                 userFilterButton
             }
         }
         .onFirstAppear {
-            viewModel.send(.refresh)
+            viewModel.refresh()
         }
+    }
+
+    @ViewBuilder
+    private func errorView(with error: some Error) -> some View {
+        ErrorView(error: error)
+            .onRetry {
+                viewModel.refresh()
+            }
     }
 
     // MARK: - Content View
@@ -88,9 +93,8 @@ struct ServerActivityView: View {
                 }
             }
             .onReachedBottomEdge(offset: .offset(300)) {
-                viewModel.send(.getNextPage)
+                viewModel.retrieveNextPage()
             }
-            .frame(maxWidth: .infinity)
         }
     }
 
@@ -98,7 +102,7 @@ struct ServerActivityView: View {
 
     @ViewBuilder
     private var userFilterButton: some View {
-        Picker(selection: $viewModel.hasUserId) {
+        Picker(selection: $libraryEnvironment.hasUserID) {
             Label(
                 L10n.all,
                 systemImage: "line.3.horizontal"
@@ -119,7 +123,7 @@ struct ServerActivityView: View {
         } label: {
             Text(L10n.type)
 
-            if let hasUserID = viewModel.hasUserId {
+            if let hasUserID = libraryEnvironment.hasUserID {
                 Text(hasUserID ? L10n.users : L10n.system)
                 Image(systemName: hasUserID ? "person" : "gearshape")
 
@@ -140,7 +144,7 @@ struct ServerActivityView: View {
         } label: {
             Text(L10n.startDate)
 
-            if let startDate = viewModel.minDate {
+            if let startDate = libraryEnvironment.minDate {
                 Text(startDate.formatted(date: .numeric, time: .omitted))
             } else {
                 Text(verbatim: .emptyDash)

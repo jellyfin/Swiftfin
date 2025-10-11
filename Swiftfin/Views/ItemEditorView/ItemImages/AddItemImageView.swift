@@ -25,7 +25,7 @@ struct AddItemImageView: View {
     private var viewModel: ItemImagesViewModel
 
     @StateObject
-    private var remoteImageInfoViewModel: RemoteImageInfoViewModel
+    private var remoteImageInfoViewModel: PagingLibraryViewModel<RemoteImageLibrary>
 
     // MARK: - Dialog State
 
@@ -42,14 +42,22 @@ struct AddItemImageView: View {
     init(viewModel: ItemImagesViewModel, imageType: ImageType) {
         self.viewModel = viewModel
         self._remoteImageInfoViewModel = StateObject(
-            wrappedValue: RemoteImageInfoViewModel(
-                imageType: imageType,
-                parent: viewModel.item
+            wrappedValue: PagingLibraryViewModel<RemoteImageLibrary>(
+                library: RemoteImageLibrary(
+                    imageType: imageType,
+                    itemID: viewModel.item.id ?? "unknown"
+                )
             )
         )
     }
 
-    // MARK: - Body
+    @ViewBuilder
+    private func errorView(with error: some Error) -> some View {
+        ErrorView(error: error)
+            .onRetry {
+                remoteImageInfoViewModel.refresh()
+            }
+    }
 
     var body: some View {
         ZStack {
@@ -58,60 +66,57 @@ struct AddItemImageView: View {
                 DelayedProgressView()
             case .content:
                 gridView
-            case let .error(error):
-                ErrorView(error: error)
-                    .onRetry {
-                        viewModel.send(.refresh)
-                    }
+            case .error:
+                remoteImageInfoViewModel.error.map { errorView(with: $0) }
             }
         }
         .animation(.linear(duration: 0.1), value: remoteImageInfoViewModel.state)
-        .navigationTitle(remoteImageInfoViewModel.imageType.displayTitle)
+        .navigationTitle(remoteImageInfoViewModel.library.imageType.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(viewModel.backgroundStates.contains(.updating))
         .navigationBarMenuButton(isLoading: viewModel.backgroundStates.contains(.updating)) {
-            Button {
-                remoteImageInfoViewModel.includeAllLanguages.toggle()
-            } label: {
-                if remoteImageInfoViewModel.includeAllLanguages {
-                    Label(L10n.allLanguages, systemImage: "checkmark")
-                } else {
-                    Text(L10n.allLanguages)
-                }
-            }
+//            Button {
+//                remoteImageInfoViewModel.includeAllLanguages.toggle()
+//            } label: {
+//                if remoteImageInfoViewModel.includeAllLanguages {
+//                    Label(L10n.allLanguages, systemImage: "checkmark")
+//                } else {
+//                    Text(L10n.allLanguages)
+//                }
+//            }
 
-            if remoteImageInfoViewModel.providers.isNotEmpty {
-                Menu {
-                    Button {
-                        remoteImageInfoViewModel.provider = nil
-                    } label: {
-                        if remoteImageInfoViewModel.provider == nil {
-                            Label(L10n.all, systemImage: "checkmark")
-                        } else {
-                            Text(L10n.all)
-                        }
-                    }
-
-                    ForEach(remoteImageInfoViewModel.providers, id: \.self) { provider in
-                        Button {
-                            remoteImageInfoViewModel.provider = provider
-                        } label: {
-                            if remoteImageInfoViewModel.provider == provider {
-                                Label(provider, systemImage: "checkmark")
-                            } else {
-                                Text(provider)
-                            }
-                        }
-                    }
-                } label: {
-                    Text(L10n.provider)
-
-                    Text(remoteImageInfoViewModel.provider ?? L10n.all)
-                }
-            }
+//            if remoteImageInfoViewModel.providers.isNotEmpty {
+//                Menu {
+//                    Button {
+//                        remoteImageInfoViewModel.provider = nil
+//                    } label: {
+//                        if remoteImageInfoViewModel.provider == nil {
+//                            Label(L10n.all, systemImage: "checkmark")
+//                        } else {
+//                            Text(L10n.all)
+//                        }
+//                    }
+//
+//                    ForEach(remoteImageInfoViewModel.providers, id: \.self) { provider in
+//                        Button {
+//                            remoteImageInfoViewModel.provider = provider
+//                        } label: {
+//                            if remoteImageInfoViewModel.provider == provider {
+//                                Label(provider, systemImage: "checkmark")
+//                            } else {
+//                                Text(provider)
+//                            }
+//                        }
+//                    }
+//                } label: {
+//                    Text(L10n.provider)
+//
+//                    Text(remoteImageInfoViewModel.provider ?? L10n.all)
+//                }
+//            }
         }
         .onFirstAppear {
-            remoteImageInfoViewModel.send(.refresh)
+            remoteImageInfoViewModel.refresh()
         }
         .onReceive(viewModel.events) { event in
             switch event {
@@ -140,7 +145,7 @@ struct AddItemImageView: View {
                 imageButton(image)
             }
             .onReachedBottomEdge(offset: .offset(300)) {
-                remoteImageInfoViewModel.send(.getNextPage)
+                remoteImageInfoViewModel.retrieveNextPage()
             }
         }
     }

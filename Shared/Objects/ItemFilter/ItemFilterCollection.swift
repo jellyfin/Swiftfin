@@ -6,13 +6,13 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Foundation
 import JellyfinAPI
 
 /// A structure representing a collection of item filters
 struct ItemFilterCollection: Hashable, Storable {
 
     var genres: [ItemGenre] = []
-    var grouping: LibraryGrouping?
     var itemTypes: [BaseItemKind] = []
     var letter: [ItemLetter] = []
     var sortBy: [ItemSortBy] = [ItemSortBy.sortName]

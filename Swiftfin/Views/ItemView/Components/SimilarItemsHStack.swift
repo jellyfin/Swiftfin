@@ -15,32 +15,31 @@ extension ItemView {
 
     struct SimilarItemsHStack: View {
 
-        @Default(.Customization.similarPosterType)
-        private var similarPosterType
-
         @Router
         private var router
 
         let items: [BaseItemDto]
 
         var body: some View {
-            PosterHStack(
-                title: L10n.recommended,
-                type: similarPosterType,
-                items: items
-            ) { item, namespace in
-                router.route(to: .item(item: item), in: namespace)
-            }
-            .trailing {
-                SeeAllButton()
-                    .onSelect {
-                        let library = _StaticLibrary(
-                            title: L10n.recommended,
-                            id: "recommended",
-                            elements: items
-                        )
-                        router.route(to: .library(library: library))
-                    }
+            WithPosterButtonStyle(id: "recommended") {
+                PosterHStack(
+                    title: L10n.recommended,
+                    type: .portrait,
+                    items: items
+                ) { item, namespace in
+                    router.route(to: .item(item: item), in: namespace)
+                }
+                .trailing {
+                    SeeAllButton()
+                        .onSelect {
+                            let library = StaticLibrary(
+                                title: L10n.recommended,
+                                id: "recommended",
+                                elements: items
+                            )
+                            router.route(to: .library(library: library))
+                        }
+                }
             }
         }
     }

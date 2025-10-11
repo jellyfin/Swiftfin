@@ -333,12 +333,12 @@ extension EpisodeMediaPlayerQueue {
             @EnvironmentObject
             private var seriesViewModel: SeriesItemViewModel
 
-            let selection: Binding<SeasonItemViewModel.ID?>
-            let selectionViewModel: SeasonItemViewModel
+            let selection: Binding<PagingSeasonViewModel.ID?>
+            let selectionViewModel: PagingSeasonViewModel
 
             init(
-                selection: Binding<SeasonItemViewModel.ID?>,
-                selectionViewModel: SeasonItemViewModel
+                selection: Binding<PagingSeasonViewModel.ID?>,
+                selectionViewModel: PagingSeasonViewModel
             ) {
                 self.selection = selection
                 self.selectionViewModel = selectionViewModel

@@ -13,12 +13,8 @@ import SwiftUI
 //       - for sort order and sort by combined
 struct FilterView: View {
 
-    // MARK: - Binded Variable
-
     @Binding
     private var selection: [AnyItemFilter]
-
-    // MARK: - Environment & Observed Objects
 
     @Router
     private var router
@@ -26,17 +22,25 @@ struct FilterView: View {
     @ObservedObject
     private var viewModel: FilterViewModel
 
-    // MARK: - Filter Type
-
     private let type: ItemFilterType
-
-    // MARK: - Filter Sources
 
     private var filterSource: [AnyItemFilter] {
         viewModel.allFilters[keyPath: type.collectionAnyKeyPath]
     }
 
-    // MARK: - Body
+    @ViewBuilder
+    private var contentView: some View {
+        if filterSource.isEmpty {
+            Text(L10n.none)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        } else {
+            SelectorView(
+                selection: $selection,
+                sources: filterSource,
+                type: type.selectorType
+            )
+        }
+    }
 
     var body: some View {
         contentView
@@ -55,22 +59,6 @@ struct FilterView: View {
                 )
             }
     }
-
-    // MARK: - Filter Content
-
-    @ViewBuilder
-    private var contentView: some View {
-        if filterSource.isEmpty {
-            Text(L10n.none)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-        } else {
-            SelectorView(
-                selection: $selection,
-                sources: filterSource,
-                type: type.selectorType
-            )
-        }
-    }
 }
 
 extension FilterView {
@@ -83,7 +71,22 @@ extension FilterView {
         let selectionBinding: Binding<[AnyItemFilter]> = Binding {
             viewModel.currentFilters[keyPath: type.collectionAnyKeyPath]
         } set: { newValue in
-            viewModel.update(type, newValue)
+            switch type {
+            case .genres:
+                viewModel.currentFilters.genres = newValue.map(ItemGenre.init)
+            case .letter:
+                viewModel.currentFilters.letter = newValue.map(ItemLetter.init)
+            case .sortBy:
+                viewModel.currentFilters.sortBy = newValue.map(ItemSortBy.init)
+            case .sortOrder:
+                viewModel.currentFilters.sortOrder = newValue.map(ItemSortOrder.init)
+            case .tags:
+                viewModel.currentFilters.tags = newValue.map(ItemTag.init)
+            case .traits:
+                viewModel.currentFilters.traits = newValue.map(ItemTrait.init)
+            case .years:
+                viewModel.currentFilters.years = newValue.map(ItemYear.init)
+            }
         }
 
         self.init(

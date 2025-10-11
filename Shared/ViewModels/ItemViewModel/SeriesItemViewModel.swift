@@ -20,7 +20,7 @@ import JellyfinAPI
 final class SeriesItemViewModel: ItemViewModel {
 
     @Published
-    var seasons: IdentifiedArrayOf<_PagingLibraryViewModel<_PagingSeasonLibrary>> = []
+    var seasons: IdentifiedArrayOf<PagingSeasonViewModel> = []
 
     // MARK: - Task
 

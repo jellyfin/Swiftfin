@@ -10,9 +10,19 @@ import Foundation
 
 enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImageable {
 
-    enum Size {
+    enum Size: CaseIterable, Displayable, Storable {
+
         case small
         case medium
+
+        var displayTitle: String {
+            switch self {
+            case .small:
+                "Small"
+            case .medium:
+                "Medium"
+            }
+        }
 
         var quality: Int? {
             switch self {

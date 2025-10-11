@@ -10,27 +10,38 @@ import Factory
 import Foundation
 import JellyfinAPI
 
-final class ChannelLibraryViewModel: PagingLibraryViewModel<ChannelProgram> {
+struct ChannelProgramLibrary: PagingLibrary {
 
-    override func get(page: Int) async throws -> [ChannelProgram] {
+    var parent: _TitledLibraryParent
 
+    func retrievePage(
+        environment: Void,
+        pageState: LibraryPageState
+    ) async throws -> [ChannelProgram] {
         var parameters = Paths.GetLiveTvChannelsParameters()
 //        parameters.fields = .MinimumFields
-        parameters.userID = userSession.user.id
+        parameters.userID = pageState.userSession.user.id
         parameters.sortBy = [ItemSortBy.name]
 
-        parameters.limit = pageSize
-        parameters.startIndex = page * pageSize
+        parameters.limit = pageState.pageSize
+        parameters.startIndex = pageState.page * pageState.pageSize
 
         let request = Paths.getLiveTvChannels(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await pageState.userSession.client.send(request)
 
-        let processedChannels = try await getPrograms(for: response.value.items ?? [])
+        guard let channels = response.value.items, channels.isNotEmpty else {
+            return []
+        }
+
+        let processedChannels = try await getPrograms(
+            for: channels,
+            userSession: pageState.userSession
+        )
 
         return processedChannels
     }
 
-    private func getPrograms(for channels: [BaseItemDto]) async throws -> [ChannelProgram] {
+    private func getPrograms(for channels: [BaseItemDto], userSession: UserSession) async throws -> [ChannelProgram] {
 
         guard let minEndDate = Calendar.current.date(byAdding: .hour, value: -1, to: .now),
               let maxStartDate = Calendar.current.date(byAdding: .hour, value: 6, to: .now) else { return [] }

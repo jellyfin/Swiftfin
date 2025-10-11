@@ -17,7 +17,7 @@ extension SeriesEpisodeSelector {
     struct EpisodeHStack: View {
 
         @ObservedObject
-        var viewModel: _PagingLibraryViewModel<_PagingSeasonLibrary>
+        var viewModel: PagingSeasonViewModel
 
         @State
         private var didScrollToPlayButtonItem = false
@@ -88,7 +88,7 @@ extension SeriesEpisodeSelector {
     struct ErrorHStack: View {
 
         @ObservedObject
-        var viewModel: _PagingLibraryViewModel<_PagingSeasonLibrary>
+        var viewModel: PagingSeasonViewModel
 
         var body: some View {
             CollectionHStack(
