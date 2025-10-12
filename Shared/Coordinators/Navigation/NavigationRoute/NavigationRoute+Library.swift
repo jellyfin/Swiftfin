@@ -40,7 +40,7 @@ extension NavigationRoute {
             id: "library-\(library.parent.libraryID)",
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
-            _PagingLibraryView(library: library)
+            PagingLibraryView(library: library)
         }
     }
 

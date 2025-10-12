@@ -38,14 +38,14 @@ struct _PosterSection<Library: PagingLibrary>: View where Library.Element: Poste
                 title: viewModel.library.parent.displayTitle,
                 type: .portrait,
                 items: viewModel.elements
-            ) { _, _ in
-                router.route(to: .posterGroupPosterButtonStyle(id: viewModel.library.parent.libraryID))
+            ) { element, namespace in
+//                router.route(to: .posterGroupPosterButtonStyle(id: viewModel.library.parent.libraryID))
 
-//                switch element {
-//                case let element as BaseItemDto:
-//                    router.route(to: .item(item: element), in: namespace)
-//                default: ()
-//                }
+                switch element {
+                case let element as BaseItemDto:
+                    router.route(to: .item(item: element), in: namespace)
+                default: ()
+                }
             }
 //                .posterStyle(for: BaseItemDto.self) { environment, _ in
 //                    var environment = environment
@@ -61,6 +61,36 @@ struct _PosterSection<Library: PagingLibrary>: View where Library.Element: Poste
 //                    }
 //                    return environment
 //                }
+        }
+    }
+}
+
+struct ContentGroupContentView<Provider: _ContentGroupProvider>: View {
+
+    private func makeSection(
+        with libraryViewModel: any RefreshableViewModel,
+        group: any _ContentGroup
+    ) -> some View {
+
+        @ViewBuilder
+        func _makeSection<PG: _ContentGroup>(_ group: PG) -> some View {
+            if let castedLibrary = libraryViewModel as? PG.ViewModel {
+                group.body(with: castedLibrary)
+            } else {
+                AssertionFailureView("Mismatched library casting")
+            }
+        }
+
+        return _makeSection(group)
+            .eraseToAnyView()
+    }
+
+    @ObservedObject
+    var viewModel: ContentGroupViewModel<Provider>
+
+    var body: some View {
+        ForEach(viewModel.sections, id: \.group.id) { section in
+            makeSection(with: section.viewModel, group: section.group)
         }
     }
 }
@@ -99,9 +129,7 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
     private var contentView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
-                ForEach(viewModel.sections, id: \.group.id) { section in
-                    makeSection(with: section.viewModel, group: section.group)
-                }
+                ContentGroupContentView(viewModel: viewModel)
             }
             .edgePadding(.vertical)
         }

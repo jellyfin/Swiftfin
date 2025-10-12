@@ -74,7 +74,7 @@ extension TabItem {
 //                filters: .init(parent: nil, currentFilters: filters)
 //            )
 //
-//            return _PagingLibraryView(library: library)
+//            return PagingLibraryView(library: library)
         }
     }
 
@@ -83,7 +83,7 @@ extension TabItem {
         title: L10n.media,
         systemImage: "rectangle.stack.fill"
     ) {
-        _PagingLibraryView(library: MediaLibrary())
+        PagingLibraryView(library: MediaLibrary())
     }
 
     static let search = TabItem(

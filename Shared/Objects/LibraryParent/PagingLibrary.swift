@@ -6,6 +6,21 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+struct LibraryPageState {
+    let page: Int
+    let pageSize: Int
+    let userSession: UserSession
+    let elementIDs: [Int]
+
+    var pageOffset: Int {
+        page * pageSize
+    }
+}
+
+protocol _LibraryParent: Displayable {
+    var libraryID: String { get }
+}
+
 protocol PagingLibrary<Element> {
 
     associatedtype Environment = Void
@@ -34,4 +49,12 @@ extension PagingLibrary where Environment == Void {
 
 extension PagingLibrary where Environment: WithDefaultValue {
     var environment: Environment { .default }
+}
+
+protocol WithRandomElementLibrary<Element, Environment>: PagingLibrary {
+
+    func retrieveRandomElement(
+        environment: Environment,
+        pageState: LibraryPageState
+    ) async throws -> Element?
 }

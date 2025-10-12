@@ -39,45 +39,30 @@ final class ContentGroupViewModel<Provider: _ContentGroupProvider>: ViewModel {
         case refreshing
     }
 
+    var environment: Provider.Environment
+
     @Published
-    private(set) var sections: [(viewModel: any RefreshableViewModel, group: any _ContentGroup)] = []
+    private(set) var sections: [(viewModel: any __PagingLibaryViewModel, group: any _ContentGroup)] = []
 
     let provider: Provider
 
-    // TODO: replace with views checking what notifications were
-    //       posted since last disappear
-    @Published
-    var notificationsReceived: NotificationSet = .init()
-
     init(provider: Provider) {
         self.provider = provider
-
+        self.environment = provider.environment
         super.init()
-
-//        Notifications[.itemMetadataDidChange]
-//            .publisher
-//            .sink { _ in
-//                // Necessary because when this notification is posted, even with asyncAfter,
-//                // the view will cause layout issues since it will redraw while in landscape.
-//                // TODO: look for better solution
-//                DispatchQueue.main.async {
-//                    self.notificationsReceived.insert(.itemMetadataDidChange)
-//                }
-//            }
-//            .store(in: &cancellables)
     }
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
 
-        func makePair(for group: any _ContentGroup) -> (viewModel: any RefreshableViewModel, group: any _ContentGroup) {
-            func _makePair(for group: some _ContentGroup) -> (viewModel: any RefreshableViewModel, group: any _ContentGroup) {
+        func makePair(for group: any _ContentGroup) -> (viewModel: any __PagingLibaryViewModel, group: any _ContentGroup) {
+            func _makePair(for group: some _ContentGroup) -> (viewModel: any __PagingLibaryViewModel, group: any _ContentGroup) {
                 (viewModel: group.makeViewModel(), group: group)
             }
             return _makePair(for: group)
         }
 
-        let newGroups = try await provider.makeGroups()
+        let newGroups = try await provider.makeGroups(environment: environment)
             .map(makePair)
 
         try await withThrowingTaskGroup(of: Void.self) { group in
@@ -104,7 +89,7 @@ struct DefaultContentGroupProvider: _ContentGroupProvider {
     let id: String = "home-\(UUID().uuidString)"
     let systemImage: String = "house.fill"
 
-    func makeGroups() async throws -> [any _ContentGroup] {
+    func makeGroups(environment: Void) async throws -> [any _ContentGroup] {
         let parameters = Paths.GetUserViewsParameters(userID: userSession.user.id)
         let userViewsPath = Paths.getUserViews(parameters: parameters)
         let userViews = try await userSession.client.send(userViewsPath)

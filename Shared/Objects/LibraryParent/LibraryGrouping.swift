@@ -17,33 +17,10 @@ struct BasicLibraryGrouping: Displayable, Hashable, Identifiable, Storable {
     let id: String
 }
 
-// TODO: elements
-struct LibraryPageState {
-    let page: Int
-    let pageSize: Int
-    let userSession: UserSession
-
-    var pageOffset: Int {
-        page * pageSize
-    }
-}
-
-protocol _LibraryParent: Displayable {
-    var libraryID: String { get }
-}
-
 struct _TitledLibraryParent: _LibraryParent {
 
     let displayTitle: String
     let libraryID: String
-}
-
-protocol WithRandomElementLibrary<Element, Environment>: PagingLibrary {
-
-    func retrieveRandomElement(
-        environment: Environment,
-        pageState: LibraryPageState
-    ) async throws -> Element?
 }
 
 // protocol WithGroupingLibrary {
@@ -115,7 +92,7 @@ extension BaseItemDto: _LibraryParent {
 protocol _ContentGroup: Displayable, Identifiable {
 
     associatedtype Body: View
-    associatedtype ViewModel: RefreshableViewModel
+    associatedtype ViewModel: __PagingLibaryViewModel
 
     var id: String { get }
 
@@ -127,9 +104,26 @@ protocol _ContentGroup: Displayable, Identifiable {
 @MainActor
 protocol _ContentGroupProvider: Displayable, SystemImageable {
 
-    var id: String { get }
+    associatedtype Environment = Void
 
-    func makeGroups() async throws -> [any _ContentGroup]
+    var id: String { get }
+    var environment: Environment { get }
+
+    func makeGroups(environment: Environment) async throws -> [any _ContentGroup]
+}
+
+extension _ContentGroupProvider where Environment == Void {
+    var environment: Void { () }
+}
+
+extension _ContentGroupProvider where Environment: WithDefaultValue {
+    var environment: Environment { .default }
+}
+
+extension _ContentGroupProvider where Environment == Void {
+    func makeGroups() async throws -> [any _ContentGroup] {
+        try await makeGroups(environment: ())
+    }
 }
 
 struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element: Poster {
@@ -138,15 +132,23 @@ struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element:
         library.parent.displayTitle
     }
 
-    var id: String {
-        library.parent.libraryID
-    }
+    let id: String
 
     let library: Library
 
+    init(id: String, library: Library) {
+        self.id = id
+        self.library = library
+    }
+
+    init(library: Library) {
+        self.id = library.parent.libraryID
+        self.library = library
+    }
+
     @ViewBuilder
     func body(with viewModel: PagingLibraryViewModel<Library>) -> some View {
-        WithPosterButtonStyle(id: library.parent.libraryID) {
+        WithPosterButtonStyle(id: id) {
             _PosterSection(viewModel: viewModel, group: self)
         }
     }

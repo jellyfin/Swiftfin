@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension _PagingLibraryView {
+extension PagingLibraryView {
 
     struct LibraryStyleSection: View {
 

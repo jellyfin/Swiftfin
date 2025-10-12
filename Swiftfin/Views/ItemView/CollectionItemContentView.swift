@@ -82,6 +82,10 @@ extension ItemView {
 //                    }
 //                }
 
+                ContentGroupContentView(
+                    viewModel: viewModel.itemContentGroupViewModel
+                )
+
                 // MARK: Genres
 
                 if let genres = viewModel.item.itemGenres, genres.isNotEmpty {

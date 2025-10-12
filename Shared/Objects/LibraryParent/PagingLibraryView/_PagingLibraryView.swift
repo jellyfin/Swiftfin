@@ -11,7 +11,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct _PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Poster {
+struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Poster {
 
     typealias Element = Library.Element
 
@@ -125,7 +125,7 @@ struct _PagingLibraryView<Library: PagingLibrary>: View where Library.Element: P
     }
 }
 
-extension _PagingLibraryView {
+extension PagingLibraryView {
 
     // TODO: breakout into own content view?
     struct ElementsView: View {

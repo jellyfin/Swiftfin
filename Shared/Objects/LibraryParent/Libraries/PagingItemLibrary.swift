@@ -11,15 +11,9 @@ import JellyfinAPI
 struct PagingItemLibrary: PagingLibrary, WithRandomElementLibrary {
 
     let parent: BaseItemDto
+
+    // TODO: remove, as provider should pass in data through environment
     let filterViewModel: FilterViewModel?
-
-    var displayTitle: String {
-        parent.displayTitle
-    }
-
-    var id: String {
-        parent.id ?? "unknown"
-    }
 
     init(
         parent: Parent,
@@ -38,10 +32,11 @@ struct PagingItemLibrary: PagingLibrary, WithRandomElementLibrary {
             async let _ = try? filterViewModel?.getQueryFilters()
         }
 
-        let parameters = attachPage(
+        let parameters = await attachPage(
             to: attachFilters(
                 to: makeBaseItemParameters(environment: environment),
-                using: environment.filters
+                using: filterViewModel?.currentFilters ?? environment.filters,
+                pageState: pageState
             ),
             pageState: pageState
         )
@@ -111,12 +106,14 @@ struct PagingItemLibrary: PagingLibrary, WithRandomElementLibrary {
 
     func attachFilters(
         to parameters: Paths.GetItemsByUserIDParameters,
-        using filters: ItemFilterCollection
+        using filters: ItemFilterCollection,
+        pageState: LibraryPageState
     ) -> Paths.GetItemsByUserIDParameters {
 
         var parameters = parameters
         parameters.filters = filters.traits.nilIfEmpty
         parameters.genres = filters.genres.map(\.value).nilIfEmpty
+        parameters.searchTerm = filters.query
         parameters.sortBy = filters.sortBy.map(\.rawValue).nilIfEmpty
         parameters.sortOrder = filters.sortOrder.nilIfEmpty
         parameters.tags = filters.tags.map(\.value).nilIfEmpty
@@ -135,14 +132,6 @@ struct PagingItemLibrary: PagingLibrary, WithRandomElementLibrary {
                 .filter { $0 != "#" }
                 .first
         }
-
-        // Random sort won't take into account previous items, so
-        // manual exclusion is necessary. This could possibly be
-        // a performance issue for loading pages after already loading
-        // many items, but there's nothing we can do about that.
-//        if filters.sortBy.first == ItemSortBy.random {
-//            parameters.excludeItemIDs = elements.compactMap(\.id)
-//        }
 
         return parameters
     }
@@ -163,7 +152,8 @@ struct PagingItemLibrary: PagingLibrary, WithRandomElementLibrary {
     ) async throws -> BaseItemDto? {
         var parameters = attachFilters(
             to: makeBaseItemParameters(environment: environment),
-            using: environment.filters
+            using: environment.filters,
+            pageState: pageState
         )
 
         parameters.limit = 1

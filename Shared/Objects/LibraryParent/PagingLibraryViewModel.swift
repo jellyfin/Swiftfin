@@ -22,12 +22,15 @@ protocol RefreshableViewModel {
 }
 
 @MainActor
-protocol __PagingLibaryViewModel: Identifiable, RefreshableViewModel {
+protocol __PagingLibaryViewModel<_PagingLibrary>: AnyObject, Identifiable,
+RefreshableViewModel where Environment == _PagingLibrary.Environment {
 
     associatedtype _PagingLibrary: PagingLibrary
+    associatedtype Environment
 
-    var elements: IdentifiedArray<Int, _PagingLibrary.Element> { get set }
     var id: String { get }
+    var elements: IdentifiedArray<Int, _PagingLibrary.Element> { get set }
+    var environment: Environment { get set }
     var library: _PagingLibrary { get }
 }
 
@@ -127,7 +130,8 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
         let pageState = LibraryPageState(
             page: currentPage,
             pageSize: DefaultPageSize,
-            userSession: userSession
+            userSession: userSession,
+            elementIDs: elements.map(\.unwrappedIDHashOrZero)
         )
 
         let nextPageElements = try await library.retrievePage(
@@ -151,7 +155,8 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
             let pageState = LibraryPageState(
                 page: 0,
                 pageSize: 0,
-                userSession: userSession
+                userSession: userSession,
+                elementIDs: elements.map(\.unwrappedIDHashOrZero)
             )
 
             func inner(

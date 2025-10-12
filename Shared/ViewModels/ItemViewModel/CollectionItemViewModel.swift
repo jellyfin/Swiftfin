@@ -13,38 +13,31 @@ import OrderedCollections
 
 final class CollectionItemViewModel: ItemViewModel {
 
-//    @ObservedPublisher
-//    var sections: OrderedDictionary<BaseItemKind, ItemLibraryViewModel>
-
-//    private let itemCollection: ItemTypeCollection
+    let itemContentGroupViewModel: ContentGroupViewModel<ItemTypeContentGroupProvider>
 
     override init(item: BaseItemDto) {
-//        self.itemCollection = ItemTypeCollection(
-//            parent: item,
-//            itemTypes: BaseItemKind.supportedCases
-//                .appending(.episode)
-//                .appending(.person)
-//        )
-//        self._sections = ObservedPublisher(
-//            wrappedValue: [:],
-//            observing: itemCollection.$elements
-//        )
+        self.itemContentGroupViewModel = .init(
+            provider: .init(
+                itemTypes: BaseItemKind.supportedCases
+                    .appending(.episode)
+                    .appending(.person),
+                parent: item
+            )
+        )
 
         super.init(item: item)
     }
 
-    // MARK: - Override Response
+    override func respond(to action: ItemViewModel.Action) -> ItemViewModel.State {
 
-//    override func respond(to action: ItemViewModel.Action) -> ItemViewModel.State {
-//
-//        switch action {
-//        case .refresh, .backgroundRefresh:
-//            itemCollection.send(.refresh)
-//        default: ()
-//        }
-//
-//        return super.respond(to: action)
-//    }
+        switch action {
+        case .refresh, .backgroundRefresh:
+            itemContentGroupViewModel.refresh()
+        default: ()
+        }
+
+        return super.respond(to: action)
+    }
 
     // TODO: possibly multiple items, for image source fallbacks
     func randomItem() -> BaseItemDto? {

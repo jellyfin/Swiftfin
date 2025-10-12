@@ -42,16 +42,24 @@ final class SearchViewModel: ViewModel {
     }
 
     @Published
-    private(set) var items: [BaseItemKind: [BaseItemDto]] = [:]
-    @Published
     private(set) var suggestions: [BaseItemDto] = []
+
+    let itemContentGroupViewModel: ContentGroupViewModel<SearchContentGroupProvider>
 
     private var searchQuery: CurrentValueSubject<String, Never> = .init("")
 
     let filterViewModel: FilterViewModel
 
     var hasNoResults: Bool {
-        items.values.allSatisfy(\.isEmpty)
+        itemContentGroupViewModel.sections
+            .allSatisfy { viewModel, _ in
+                @MainActor
+                func isEmpty(_ vm: some __PagingLibaryViewModel) -> Bool {
+                    vm.elements.isEmpty
+                }
+
+                return isEmpty(viewModel)
+            }
     }
 
     // MARK: init
@@ -60,6 +68,9 @@ final class SearchViewModel: ViewModel {
         let filterViewModel = filterViewModel ?? .init()
 
         self.filterViewModel = filterViewModel
+
+        self.itemContentGroupViewModel = .init(provider: .init())
+
         super.init()
 
         searchQuery
@@ -86,7 +97,7 @@ final class SearchViewModel: ViewModel {
         searchQuery.value = query
 
         await cancel()
-        items.removeAll()
+//        items.removeAll()
     }
 
     @Function(\Action.Cases.actuallySearch)
@@ -96,99 +107,30 @@ final class SearchViewModel: ViewModel {
             return
         }
 
-        let newItems = try await withThrowingTaskGroup(
-            of: (BaseItemKind, [BaseItemDto]).self,
-            returning: [BaseItemKind: [BaseItemDto]].self
-        ) { group in
+        func inner<VM: __PagingLibaryViewModel>(_ vm: VM) where VM._PagingLibrary == PagingItemLibrary {
+            var filters = vm.environment.filters
+            filters.query = query
 
-            // Base items
-            let retrievingItemTypes: [BaseItemKind] = [
-                .boxSet,
-                .episode,
-                .movie,
-                .musicArtist,
-                .musicVideo,
-                .liveTvProgram,
-                .series,
-                .tvChannel,
-                .video,
-            ]
+            vm.environment = BaseItemLibraryEnvironment(
+                grouping: vm.environment.grouping,
+                filters: filters
+            )
 
-            for type in retrievingItemTypes {
-                group.addTask {
-                    let items = try await self._getItems(query: query, itemType: type)
-                    return (type, items)
-                }
-            }
-
-            // People
-            group.addTask {
-                let items = try await self._getPeople(query: query)
-                return (BaseItemKind.person, items)
-            }
-
-            var result: [BaseItemKind: [BaseItemDto]] = [:]
-
-            while let items = try await group.next() {
-                if items.1.isNotEmpty {
-                    result[items.0] = items.1
-                }
-            }
-
-            return result
+            print(vm.environment)
         }
 
-        guard !Task.isCancelled else { return }
-        self.items = newItems
-    }
+//        for (viewModel, _) in itemContentGroupViewModel.sections {
+//            if let library = viewModel.library as? PagingItemLibrary {
+//                library.filterViewModel?.currentFilters.query = query
+//            }
+//        }
 
-    private func _getItems(query: String, itemType: BaseItemKind) async throws -> [BaseItemDto] {
+        var filters = filterViewModel.currentFilters
+        filters.query = query
 
-        var parameters = Paths.GetItemsByUserIDParameters()
-        parameters.enableUserData = true
-        parameters.includeItemTypes = [itemType]
-        parameters.isRecursive = true
-        parameters.limit = 20
-        parameters.searchTerm = query
+        itemContentGroupViewModel.environment.filters = filters
 
-        if itemType == .tvChannel {
-            parameters.fields = [.channelInfo]
-        }
-
-        // Filters
-        let filters = filterViewModel.currentFilters
-        parameters.filters = filters.traits
-        parameters.genres = filters.genres.map(\.value)
-        parameters.sortBy = filters.sortBy.map(\.rawValue)
-        parameters.sortOrder = filters.sortOrder
-        parameters.tags = filters.tags.map(\.value)
-        parameters.years = filters.years.map(\.intValue)
-
-        if filters.letter.first?.value == "#" {
-            parameters.nameLessThan = "A"
-        } else {
-            parameters.nameStartsWith = filters.letter
-                .map(\.value)
-                .filter { $0 != "#" }
-                .first
-        }
-
-        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
-        let response = try await userSession.client.send(request)
-
-        return response.value.items ?? []
-    }
-
-    private func _getPeople(query: String) async throws -> [BaseItemDto] {
-
-        var parameters = Paths.GetPersonsParameters()
-        parameters.limit = 20
-        parameters.searchTerm = query
-
-        let request = Paths.getPersons(parameters: parameters)
-        let response = try await userSession.client.send(request)
-
-        return response.value.items ?? []
+        try await itemContentGroupViewModel.refresh()
     }
 
     // MARK: suggestions

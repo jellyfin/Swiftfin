@@ -21,6 +21,8 @@ struct ItemFilterCollection: Hashable, Storable {
     var traits: [ItemTrait] = []
     var years: [ItemYear] = []
 
+    var query: String?
+
     /// The default collection of filters
     static let `default`: ItemFilterCollection = .init()
 
