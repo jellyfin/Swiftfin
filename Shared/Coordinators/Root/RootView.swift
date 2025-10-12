@@ -28,6 +28,10 @@ struct RootView: View {
                 RootItem.mainTab.content
             }
 
+            if rootCoordinator.root.id == RootItem.sessionRestore.id {
+                RootItem.sessionRestore.content
+            }
+
             if rootCoordinator.root.id == RootItem.selectUser.id {
                 RootItem.selectUser.content
             }

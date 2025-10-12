@@ -175,6 +175,7 @@ final class ConnectToServerViewModel: ViewModel {
             return editServer.state
         }
 
+        Container.shared.sessionSeedStore().upsertAllUsers(of: newState)
         Notifications[.didChangeCurrentServerURL].post(newState)
     }
 

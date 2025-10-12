@@ -24,20 +24,25 @@ final class RootCoordinator: ObservableObject {
             do {
                 try await SwiftfinStore.setupDataStack()
 
-                if Container.shared.currentUserSession() != nil, !Defaults[.signOutOnClose] {
-                    #if os(tvOS)
+                let restorationService = Container.shared.sessionRestorationService()
+                await restorationService.migrateExistingSeeds()
+
+                if await restorationService.needsRestoration() {
                     await MainActor.run {
-                        root(.mainTab)
+                        root(.sessionRestore)
                     }
-                    #else
-                    await MainActor.run {
-                        root(.serverCheck)
+
+                    let summary = await restorationService.restoreSessions()
+
+                    if !summary.failedUserIDs.isEmpty {
+                        logger.error("Failed to restore sessions for users: \(summary.failedUserIDs.joined(separator: ", "))")
                     }
-                    #endif
-                } else {
-                    await MainActor.run {
-                        root(.selectUser)
-                    }
+
+                    Container.shared.currentUserSession.reset()
+                }
+
+                await MainActor.run {
+                    resolveInitialRoot()
                 }
 
             } catch {
@@ -55,6 +60,18 @@ final class RootCoordinator: ObservableObject {
 
     func root(_ newRoot: RootItem) {
         root = newRoot
+    }
+
+    private func resolveInitialRoot() {
+        if Container.shared.currentUserSession() != nil, !Defaults[.signOutOnClose] {
+            #if os(tvOS)
+            root(.mainTab)
+            #else
+            root(.serverCheck)
+            #endif
+        } else {
+            root(.selectUser)
+        }
     }
 
     @objc

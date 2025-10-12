@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Factory
 import Foundation
 import KeychainSwift
 
@@ -27,6 +28,8 @@ final class UserLocalSecurityViewModel: ViewModel, Eventful {
     }
 
     private var eventSubject: PassthroughSubject<Event, Never> = .init()
+    @Injected(\.sessionSeedStore)
+    private var sessionSeedStore
 
     // Will throw and send event if needing to prompt for old auth.
     func checkForOldPolicy() throws {
@@ -77,5 +80,6 @@ final class UserLocalSecurityViewModel: ViewModel, Eventful {
 
         userSession.user.accessPolicy = newPolicy
         userSession.user.pinHint = newPinHint
+        sessionSeedStore.upsert(user: userSession.user, server: userSession.server)
     }
 }

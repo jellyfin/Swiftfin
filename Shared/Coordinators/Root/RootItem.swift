@@ -32,6 +32,10 @@ struct RootItem: Identifiable {
         MainTabView()
     }
 
+    static let sessionRestore = RootItem(id: "sessionRestore") {
+        SessionRestoreView()
+    }
+
     static let selectUser = RootItem(id: "selectUser") {
         NavigationInjectionView(coordinator: .init()) {
             SelectUserView()

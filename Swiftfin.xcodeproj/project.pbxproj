@@ -118,9 +118,22 @@
 		E1B974402E86F802008CED48 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E1B9743F2E86F802008CED48 /* StatefulMacros */; };
 		E1DC9814296DC06200982F06 /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E1DC9813296DC06200982F06 /* PulseLogHandler */; };
 		E1E2D7BF2E3FD936004E2E5F /* Transmission in Frameworks */ = {isa = PBXBuildFile; productRef = E1E2D7BE2E3FD936004E2E5F /* Transmission */; };
+		E1F100032F5AB5A500000004 /* SessionSeedStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F100022F5AB5A500000003 /* SessionSeedStoreTests.swift */; };
+		E1F100052F5AB5A500000006 /* MockKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F100042F5AB5A500000005 /* MockKeychain.swift */; };
+		E1F100122F5AB5A500000012 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1F100112F5AB5A500000011 /* XCTest.framework */; };
 		E1FAD1C62A0375BA007F5521 /* UDPBroadcast in Frameworks */ = {isa = PBXBuildFile; productRef = E1FAD1C52A0375BA007F5521 /* UDPBroadcast */; };
 		E1FADDF12E84B63600FB310E /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E1FADDF02E84B63600FB310E /* StatefulMacros */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E1F1000C2F5AB5A50000000C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5377CBE9263B596A003A4E83 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5377CBF0263B596A003A4E83;
+			remoteInfo = "Swiftfin iOS";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		62666DF927E5012C00EC0ECD /* Embed Frameworks */ = {
@@ -199,6 +212,10 @@
 		62666E3A27E503E400EC0ECD /* GoogleCastSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoogleCastSDK.xcframework; path = Frameworks/GoogleCastSDK.xcframework; sourceTree = "<group>"; };
 		628B95212670CABD0091AF3B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		628B95232670CABD0091AF3B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		E1F100022F5AB5A500000003 /* SessionSeedStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionSeedStoreTests.swift; sourceTree = "<group>"; };
+		E1F100042F5AB5A500000005 /* MockKeychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockKeychain.swift; sourceTree = "<group>"; };
+		E1F1000B2F5AB5A50000000B /* SwiftfinSharedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftfinSharedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E1F100112F5AB5A500000011 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = UDPBroadcast.xcframework; path = Carthage/Build/UDPBroadcast.xcframework; sourceTree = "<group>"; };
 		E1B2AB9628808CDF0072B3B9 /* GoogleCast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoogleCast.xcframework; path = Carthage/Build/GoogleCast.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -391,6 +408,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E1F100082F5AB5A500000008 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E1F100122F5AB5A500000012 /* XCTest.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -401,6 +426,7 @@
 				E145669F2DFCAEFD008FF700 /* Swiftfin tvOS */,
 				E14563272DFCAE6E008FF700 /* Shared */,
 				E1456FC82DFCB323008FF700 /* Translations */,
+				E1F100002F5AB5A500000001 /* SharedTests */,
 				5377CBF2263B596A003A4E83 /* Products */,
 				53D5E3DB264B47EE00BADDC8 /* Frameworks */,
 				E14565DD2DFCAE78008FF700 /* Scripts */,
@@ -413,6 +439,7 @@
 			children = (
 				5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */,
 				535870602669D21600D05A09 /* Swiftfin tvOS.app */,
+				E1F1000B2F5AB5A50000000B /* SwiftfinSharedTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -420,6 +447,7 @@
 		53D5E3DB264B47EE00BADDC8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E1F100112F5AB5A500000011 /* XCTest.framework */,
 				E1B2AB9628808CDF0072B3B9 /* GoogleCast.xcframework */,
 				637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */,
 				62666E3A27E503E400EC0ECD /* GoogleCastSDK.xcframework */,
@@ -473,6 +501,23 @@
 				628B95232670CABD0091AF3B /* SwiftUI.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E1F100002F5AB5A500000001 /* SharedTests */ = {
+			isa = PBXGroup;
+			children = (
+				E1F100022F5AB5A500000003 /* SessionSeedStoreTests.swift */,
+				E1F100012F5AB5A500000002 /* Mocks */,
+			);
+			path = SharedTests;
+			sourceTree = "<group>";
+		};
+		E1F100012F5AB5A500000002 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				E1F100042F5AB5A500000005 /* MockKeychain.swift */,
+			);
+			path = Mocks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -611,6 +656,29 @@
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
+		E1F1000A2F5AB5A50000000A /* SwiftfinSharedTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E1F1000E2F5AB5A50000000E /* Build configuration list for PBXNativeTarget "SwiftfinSharedTests" */;
+			buildPhases = (
+				E1F100072F5AB5A500000007 /* Sources */,
+				E1F100082F5AB5A500000008 /* Frameworks */,
+				E1F100092F5AB5A500000009 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E1F1000D2F5AB5A50000000D /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E1F100002F5AB5A500000001 /* SharedTests */,
+			);
+			name = SwiftfinSharedTests;
+			packageProductDependencies = (
+			);
+			productName = SwiftfinSharedTests;
+			productReference = E1F1000B2F5AB5A50000000B /* SwiftfinSharedTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -623,14 +691,17 @@
 				);
 				LastSwiftUpdateCheck = 1250;
 				LastUpgradeCheck = 1610;
-				TargetAttributes = {
-					5358705F2669D21600D05A09 = {
-						CreatedOnToolsVersion = 12.5;
-					};
-					5377CBF0263B596A003A4E83 = {
-						CreatedOnToolsVersion = 12.5;
-					};
+			TargetAttributes = {
+				5358705F2669D21600D05A09 = {
+					CreatedOnToolsVersion = 12.5;
 				};
+				5377CBF0263B596A003A4E83 = {
+					CreatedOnToolsVersion = 12.5;
+				};
+				E1F1000A2F5AB5A50000000A = {
+					CreatedOnToolsVersion = 15.3;
+				};
+			};
 			};
 			buildConfigurationList = 5377CBEC263B596A003A4E83 /* Build configuration list for PBXProject "Swiftfin" */;
 			compatibilityVersion = "Xcode 9.3";
@@ -720,6 +791,7 @@
 			targets = (
 				5377CBF0263B596A003A4E83 /* Swiftfin iOS */,
 				5358705F2669D21600D05A09 /* Swiftfin tvOS */,
+				E1F1000A2F5AB5A50000000A /* SwiftfinSharedTests */,
 			);
 		};
 /* End PBXProject section */
@@ -733,6 +805,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5377CBEF263B596A003A4E83 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E1F100092F5AB5A500000009 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -875,7 +954,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E1F100072F5AB5A500000007 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E1F100032F5AB5A500000004 /* SessionSeedStoreTests.swift in Sources */,
+				E1F100052F5AB5A500000006 /* MockKeychain.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E1F1000D2F5AB5A50000000D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5377CBF0263B596A003A4E83 /* Swiftfin iOS */;
+			targetProxy = E1F1000C2F5AB5A50000000C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		535870722669D21700D05A09 /* Debug */ = {
@@ -1141,6 +1237,56 @@
 			};
 			name = Release;
 		};
+\t\tE1F1000F2F5AB5A50000000F /* Debug */ = {
+\t\t\tisa = XCBuildConfiguration;
+\t\t\tbuildSettings = {
+\t\t\t\tALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+\t\t\t\tBUNDLE_LOADER = \"$(BUILT_PRODUCTS_DIR)/Swiftfin iOS.app/Swiftfin iOS\";
+\t\t\t\tCODE_SIGN_STYLE = Automatic;
+\t\t\t\tCURRENT_PROJECT_VERSION = 78;
+\t\t\t\tDEVELOPMENT_TEAM = \"\";
+\t\t\t\tGENERATE_INFOPLIST_FILE = YES;
+\t\t\t\tIPHONEOS_DEPLOYMENT_TARGET = 16.6;
+\t\t\t\tLD_RUNPATH_SEARCH_PATHS = (
+\t\t\t\t\t\"$(inherited)\",
+\t\t\t\t\t\"@executable_path/Frameworks\",
+\t\t\t\t\t\"@loader_path/Frameworks\",
+\t\t\t\t);
+\t\t\t\tPRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin.sharedtests;
+\t\t\t\tPRODUCT_NAME = \"$(TARGET_NAME)\";
+\t\t\t\tSKIP_INSTALL = YES;
+\t\t\t\tSWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+\t\t\t\tSWIFT_VERSION = 5.0;
+\t\t\t\tTARGETED_DEVICE_FAMILY = \"1,2\";
+\t\t\t\tTEST_HOST = \"$(BUNDLE_LOADER)\";
+\t\t\t};
+\t\t\tname = Debug;
+\t\t};
+\t\tE1F100102F5AB5A500000010 /* Release */ = {
+\t\t\tisa = XCBuildConfiguration;
+\t\t\tbuildSettings = {
+\t\t\t\tALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+\t\t\t\tBUNDLE_LOADER = \"$(BUILT_PRODUCTS_DIR)/Swiftfin iOS.app/Swiftfin iOS\";
+\t\t\t\tCODE_SIGN_STYLE = Automatic;
+\t\t\t\tCURRENT_PROJECT_VERSION = 78;
+\t\t\t\tDEVELOPMENT_TEAM = \"\";
+\t\t\t\tGENERATE_INFOPLIST_FILE = YES;
+\t\t\t\tIPHONEOS_DEPLOYMENT_TARGET = 16.6;
+\t\t\t\tLD_RUNPATH_SEARCH_PATHS = (
+\t\t\t\t\t\"$(inherited)\",
+\t\t\t\t\t\"@executable_path/Frameworks\",
+\t\t\t\t\t\"@loader_path/Frameworks\",
+\t\t\t\t);
+\t\t\t\tPRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin.sharedtests;
+\t\t\t\tPRODUCT_NAME = \"$(TARGET_NAME)\";
+\t\t\t\tSKIP_INSTALL = YES;
+\t\t\t\tSWIFT_OPTIMIZATION_LEVEL = \"-Owholemodule\";
+\t\t\t\tSWIFT_VERSION = 5.0;
+\t\t\t\tTARGETED_DEVICE_FAMILY = \"1,2\";
+\t\t\t\tTEST_HOST = \"$(BUNDLE_LOADER)\";
+\t\t\t};
+\t\t\tname = Release;
+\t\t};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1170,6 +1316,15 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		E1F1000E2F5AB5A50000000E /* Build configuration list for PBXNativeTarget "SwiftfinSharedTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E1F1000F2F5AB5A50000000F /* Debug */,
+				E1F100102F5AB5A500000010 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 

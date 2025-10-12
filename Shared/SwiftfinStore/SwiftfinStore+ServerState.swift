@@ -53,6 +53,9 @@ extension ServerState {
     /// Deletes the model that this state represents and
     /// all settings from `StoredValues`.
     func delete() throws {
+        let seedStore = Container.shared.sessionSeedStore()
+        userIDs.forEach { seedStore.delete(userID: $0) }
+
         try SwiftfinStore.dataStack.perform { transaction in
             guard let storedServer = try transaction.fetchOne(From<ServerModel>().where(\.$id == id)) else {
                 throw JellyfinAPIError("Unable to find server to delete")
@@ -94,7 +97,12 @@ extension ServerState {
             newServer.id = publicInfo.id ?? newServer.id
         }
 
-        StoredValues[.Server.publicInfo(id: server.id)] = publicInfo
+        let updatedID = publicInfo.id ?? server.id
+        StoredValues[.Server.publicInfo(id: updatedID)] = publicInfo
+
+        if let updatedServer = try? SwiftfinStore.dataStack.fetchOne(From<ServerModel>().where(\.$id == updatedID)) {
+            Container.shared.sessionSeedStore().upsertAllUsers(of: updatedServer.state)
+        }
     }
 
     var isVersionCompatible: Bool {

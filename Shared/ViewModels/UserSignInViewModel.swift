@@ -99,6 +99,9 @@ final class UserSignInViewModel: ViewModel {
 
     let server: ServerState
 
+    @Injected(\.sessionSeedStore)
+    private var sessionSeedStore
+
     init(server: ServerState) {
         self.server = server
         super.init()
@@ -234,6 +237,8 @@ final class UserSignInViewModel: ViewModel {
             savedUserState.pin = evaluatedPinPolicy.pin
         }
 
+        sessionSeedStore.upsert(user: savedUserState, server: server)
+
         events.send(.saved(savedUserState))
     }
 
@@ -263,6 +268,8 @@ final class UserSignInViewModel: ViewModel {
         if replaceForAccessToken {
             user.state.state.accessToken = user.state.accessToken
         }
+
+        sessionSeedStore.upsert(user: user.state.state, server: server)
 
         events.send(.saved(user.state.state))
     }
