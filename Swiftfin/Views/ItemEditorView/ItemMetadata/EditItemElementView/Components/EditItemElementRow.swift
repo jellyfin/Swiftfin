@@ -34,7 +34,10 @@ extension EditItemElementView {
         // MARK: - Body
 
         var body: some View {
-            ListRow(action: onSelect) {
+            ListRow(
+                insets: .init(horizontal: EdgeInsets.edgePadding),
+                action: onSelect
+            ) {
                 if type == .people {
                     personImage
                 }
@@ -96,20 +99,13 @@ extension EditItemElementView {
 
         @ViewBuilder
         private var personImage: some View {
-            let person = (item as! BaseItemPerson)
-
-            ZStack {
-                Color.clear
-
-                ImageView(person.portraitImageSources(maxWidth: 30, quality: 90))
-                    .failure {
-                        SystemImageContentView(systemName: "person.fill")
-                    }
-            }
-            .posterStyle(.portrait)
-            .frame(width: 30, height: 90)
+            PosterImage(
+                item: (item as! BaseItemPerson),
+                type: .portrait
+            )
             .posterShadow()
-            .padding(.horizontal)
+            .frame(width: 60)
+            .padding(.vertical, 8)
         }
     }
 }

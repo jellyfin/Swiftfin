@@ -43,24 +43,49 @@ struct AnyPoster: Poster {
         hasher.combine(_poster.systemImage)
     }
 
-//    var showTitle: Bool {
-//        _poster.showTitle
-//    }
-
-    func portraitImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
-        _poster.portraitImageSources(maxWidth: maxWidth, quality: quality)
+    func landscapeImageSources(
+        maxWidth: CGFloat?,
+        quality: Int?
+    ) -> [ImageSource] {
+        []
+//        _poster.landscapeImageSources(
+//            maxWidth: maxWidth,
+//            quality: quality,
+//            environment: <#T##Any#>
+//        )
     }
 
-    func landscapeImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
-        _poster.landscapeImageSources(maxWidth: maxWidth, quality: quality)
+    func portraitImageSources(
+        maxWidth: CGFloat?,
+        quality: Int?
+    ) -> [ImageSource] {
+        []
+//        _poster.portraitImageSources(
+//            maxWidth: maxWidth,
+//            quality: quality
+//        )
     }
 
-    func cinematicImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
-        _poster.cinematicImageSources(maxWidth: maxWidth, quality: quality)
+    func squareImageSources(
+        maxWidth: CGFloat?,
+        quality: Int?
+    ) -> [ImageSource] {
+        []
+//        _poster.squareImageSources(
+//            maxWidth: maxWidth,
+//            quality: quality
+//        )
     }
 
-    func squareImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
-        _poster.squareImageSources(maxWidth: maxWidth, quality: quality)
+    func cinematicImageSources(
+        maxWidth: CGFloat?,
+        quality: Int?
+    ) -> [ImageSource] {
+        []
+//        _poster.cinematicImageSources(
+//            maxWidth: maxWidth,
+//            quality: quality
+//        )
     }
 
     func transform(image: Image) -> some View {

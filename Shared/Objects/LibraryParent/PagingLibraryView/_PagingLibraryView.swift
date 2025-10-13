@@ -11,7 +11,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Poster, Library.Element.Environment == Void {
+struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Poster {
 
     typealias Element = Library.Element
 
@@ -218,7 +218,7 @@ extension PagingLibraryView {
         private func select(item: BaseItemDto, in namespace: Namespace.ID) {
             switch item.type {
             case .collectionFolder, .folder, .userView:
-                let library = PagingItemLibrary(parent: item, filters: .init(parent: item, currentFilters: .init()))
+                let library = PagingItemLibrary(parent: item)
                 router.route(to: .library(library: library), in: namespace)
             default:
                 router.route(to: .item(item: item), in: namespace)
@@ -235,11 +235,11 @@ extension PagingLibraryView {
             ) { namespace in
                 select(element: element, in: namespace)
             }
-            .posterStyle(for: BaseItemDto.self) { environment, _ in
-                var environment = environment
-                environment.useParentImages = false
-                return environment
-            }
+//            .posterStyle(for: BaseItemDto.self) { environment, _ in
+//                var environment = environment
+//                environment.useParentImages = false
+//                return environment
+//            }
 //        } label: {
 //            if item.showTitle {
 //                PosterButton<Element>.TitleContentView(title: item.displayTitle)

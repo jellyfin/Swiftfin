@@ -35,7 +35,7 @@ extension NavigationRoute {
 
     static func library<Library: PagingLibrary>(
         library: Library
-    ) -> NavigationRoute where Library.Element: Poster, Library.Element.Environment == Void {
+    ) -> NavigationRoute where Library.Element: Poster {
         NavigationRoute(
             id: "library-\(library.parent.libraryID)",
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }

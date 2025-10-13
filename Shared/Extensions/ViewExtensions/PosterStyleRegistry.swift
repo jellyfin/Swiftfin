@@ -21,7 +21,7 @@ struct PosterStyleEnvironment: WithDefaultValue, Storable {
     var displayType: PosterDisplayType
     var label: AnyView
     var overlay: (PosterDisplayType) -> AnyView
-    var useParentImages: Bool
+//    var useParentImages: Bool
     var size: PosterDisplayType.Size
 
     enum CodingKeys: String, CodingKey {
@@ -33,13 +33,13 @@ struct PosterStyleEnvironment: WithDefaultValue, Storable {
         displayType: PosterDisplayType = .portrait,
         label: some View = EmptyView(),
         @ViewBuilder overlay: @escaping (PosterDisplayType) -> some View = { _ in EmptyView() },
-        useParentImages: Bool = false,
+//        useParentImages: Bool = false,
         size: PosterDisplayType.Size = .small
     ) {
         self.displayType = displayType
         self.label = label.eraseToAnyView()
         self.overlay = { overlay($0).eraseToAnyView() }
-        self.useParentImages = useParentImages
+//        self.useParentImages = useParentImages
         self.size = size
     }
 
@@ -50,7 +50,7 @@ struct PosterStyleEnvironment: WithDefaultValue, Storable {
 
         self.label = EmptyView().eraseToAnyView()
         self.overlay = { _ in EmptyView().eraseToAnyView() }
-        self.useParentImages = false
+//        self.useParentImages = false
     }
 
     static let `default`: PosterStyleEnvironment = .init()
@@ -93,6 +93,30 @@ extension View {
             ForTypeInEnvironment<P, (Any) -> PosterStyleEnvironment>.SetValue(
                 { existing in { p in style(existing?(p as! P) ?? .default, p as! P) } },
                 for: \.posterStyleRegistry
+            )
+        )
+    }
+}
+
+protocol CustomEnvironmentValue: WithDefaultValue {}
+
+extension EnvironmentValues {
+
+    @Entry
+    var customEnvironmentValueRegistry: TypeKeyedDictionary<(Any) -> any CustomEnvironmentValue> = .init()
+}
+
+extension View {
+
+    @ViewBuilder
+    func customEnvironment<P: Poster>(
+        for type: P.Type,
+        value: P.Environment
+    ) -> some View where P.Environment: CustomEnvironmentValue {
+        modifier(
+            ForTypeInEnvironment<P, (Any) -> any CustomEnvironmentValue>.SetValue(
+                { _ in { _ in value } },
+                for: \.customEnvironmentValueRegistry
             )
         )
     }

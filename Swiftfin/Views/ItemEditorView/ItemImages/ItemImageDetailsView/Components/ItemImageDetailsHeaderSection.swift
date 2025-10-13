@@ -24,7 +24,7 @@ extension ItemImageDetailsView {
         var body: some View {
             Section {
                 PosterImage(
-                    item: BasicPosterItem(
+                    item: BasicImagePosterItem(
                         displayTitle: L10n.image,
                         id: 0,
                         imageSource: imageSource,
@@ -48,7 +48,7 @@ extension ItemImageDetailsView {
 
 // TODO: have ImageInfo and RemoteImageInfo conform to a shared protocol
 
-private struct BasicPosterItem: Poster {
+private struct BasicImagePosterItem: Poster {
 
     let displayTitle: String
     let id: Int
@@ -64,8 +64,7 @@ private struct BasicPosterItem: Poster {
     func imageSources(
         for displayType: PosterDisplayType,
         size: PosterDisplayType.Size,
-        useParent: Bool,
-        environment: Void
+        environment: VoidButWithDefaultValue
     ) -> [ImageSource] {
         [imageSource]
     }

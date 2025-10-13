@@ -134,14 +134,16 @@ extension MediaInfoSupplement {
 
         @ViewBuilder
         private var iOSRegularView: some View {
-            HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
+            HStack(spacing: EdgeInsets.edgePadding) {
                 PosterImage(
                     item: item,
                     type: item.preferredPosterDisplayType,
                     contentMode: .fit
                 )
                 .environment(\.isOverComplexContent, true)
-                .frame(maxWidth: 170)
+                .frame(
+                    maxWidth: item.preferredPosterDisplayType == .portrait ? nil : 170
+                )
 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(item.displayTitle)
@@ -161,12 +163,20 @@ extension MediaInfoSupplement {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(
+                    maxWidth: .infinity,
+                    maxHeight: .infinity,
+                    alignment: .bottomLeading
+                )
 
                 if !item.isLiveStream {
                     VStack {
                         fromBeginningButton
                     }
+                    .frame(
+                        maxHeight: .infinity,
+                        alignment: .bottomLeading
+                    )
                 }
             }
             .frame(maxHeight: .infinity, alignment: .bottom)

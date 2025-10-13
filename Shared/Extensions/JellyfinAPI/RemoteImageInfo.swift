@@ -43,8 +43,7 @@ extension RemoteImageInfo: @retroactive Identifiable, Poster {
     func imageSources(
         for displayType: PosterDisplayType,
         size: PosterDisplayType.Size,
-        useParent: Bool,
-        environment: Void
+        environment: VoidButWithDefaultValue
     ) -> [ImageSource] {
         [.init(url: url?.url)]
     }

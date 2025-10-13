@@ -12,6 +12,14 @@ import OrderedCollections
 
 struct ItemTypeContentGroupProvider: _ContentGroupProvider {
 
+    struct Environment: WithDefaultValue {
+        var filters: ItemFilterCollection
+
+        static var `default`: Self {
+            .init(filters: .init())
+        }
+    }
+
     let id: String = ""
     let displayTitle: String = ""
     let systemImage: String = "heart.fill"
@@ -27,10 +35,13 @@ struct ItemTypeContentGroupProvider: _ContentGroupProvider {
         self.parent = parent
     }
 
-    func makeGroups(environment: Void) async throws -> [any _ContentGroup] {
+    func makeGroups(environment: Environment) async throws -> [any _ContentGroup] {
         itemTypes.map { itemType in
             /// Server will edit filters if only boxset, add userView as workaround.
             let itemTypes = (itemType == .boxSet ? [.boxSet, .userView] : [itemType])
+
+            var filters = environment.filters
+            filters.itemTypes = itemTypes
 
             return PosterGroup(
                 id: "\(parent?.id ?? "unknown")-\(itemType.rawValue)",
@@ -38,9 +49,9 @@ struct ItemTypeContentGroupProvider: _ContentGroupProvider {
                     parent: .init(
                         id: parent?.id,
                         name: itemType.pluralDisplayTitle,
-                        type: .boxSet
+                        type: parent?.type
                     ),
-                    filters: .init(currentFilters: .init(itemTypes: itemTypes))
+                    filters: filters
                 )
             )
         }
@@ -62,39 +73,56 @@ struct SearchContentGroupProvider: _ContentGroupProvider {
     let systemImage: String = "heart.fill"
 
     func makeGroups(environment: Environment) async throws -> [any _ContentGroup] {
-        let itemTypes: [any _ContentGroup] = [
-            BaseItemKind.movie,
-            .series,
-            .boxSet,
-            .episode,
-            .musicVideo,
-            .video,
-            .liveTvProgram,
-            .tvChannel,
-            .musicArtist,
-        ]
-            .map { itemType in
+        let itemTypes = try await ItemTypeContentGroupProvider(
+            itemTypes: [
+                BaseItemKind.movie,
+                .series,
+                .boxSet,
+                .episode,
+                .musicVideo,
+                .video,
+                .liveTvProgram,
+                .tvChannel,
+                .musicArtist,
+                .person,
+            ]
+        )
+        .makeGroups(environment: .init(filters: environment.filters))
 
-                var filters = environment.filters
-                filters.itemTypes = [itemType]
-
-                return PosterGroup(
-                    id: "search-\(itemType.rawValue)",
-                    library: PagingItemLibrary(
-                        parent: .init(
-                            id: nil,
-                            name: itemType.pluralDisplayTitle,
-                            type: itemType
-                        ),
-                        filters: .init(
-                            currentFilters: filters
-                        )
-                    )
-                )
-            }
+//        let itemTypes: [any _ContentGroup] = [
+//            BaseItemKind.movie,
+//            .series,
+//            .boxSet,
+//            .episode,
+//            .musicVideo,
+//            .video,
+//            .liveTvProgram,
+//            .tvChannel,
+//            .musicArtist,
+//            .person,
+//        ]
+//            .map { itemType in
+//
+//                var filters = environment.filters
+//                filters.itemTypes = [itemType]
+//
+//                return PosterGroup(
+//                    id: "search-\(itemType.rawValue)",
+//                    library: PagingItemLibrary(
+//                        parent: .init(
+//                            id: nil,
+//                            name: itemType.pluralDisplayTitle,
+//                            type: itemType
+//                        ),
+//                        filters: filters
+//                    )
+//                )
+//            }
 
         let people = PosterGroup(
-            library: PeopleLibrary(environment: .init(query: environment.filters.query))
+            library: PeopleLibrary(
+                environment: .init(query: environment.filters.query)
+            )
         )
 
         return itemTypes + [people]

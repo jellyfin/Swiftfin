@@ -15,29 +15,47 @@ import SwiftUI
 private let landscapeMaxWidth: CGFloat = 300
 private let portraitMaxWidth: CGFloat = 200
 
-struct PosterImage<Item: Poster>: View {
+struct PosterImage<Element: Poster>: View {
 
-    @ForTypeInEnvironment<Item, (Any) -> PosterStyleEnvironment>(\.posterStyleRegistry)
+    @ForTypeInEnvironment<Element, (Any) -> PosterStyleEnvironment>(\.posterStyleRegistry)
     private var posterStyleRegistry
 
+    @ForTypeInEnvironment<Element, (Any) -> any CustomEnvironmentValue>(\.customEnvironmentValueRegistry)
+    private var customEnvironmentValueRegistry
+
     private let contentMode: ContentMode
-    private let environment: Item.Environment
+    private let element: Element
     private let imageMaxWidth: CGFloat
-    private let item: Item
     private var pipeline: ImagePipeline
     private let type: PosterDisplayType
 
+    private var customEnvironmentValue: Element.Environment {
+        (customEnvironmentValueRegistry?(element) as? Element.Environment) ?? .default
+    }
+
     private var posterStyle: PosterStyleEnvironment {
-        posterStyleRegistry?(item) ?? .default
+        posterStyleRegistry?(element) ?? .default
     }
 
     private var imageSources: [ImageSource] {
-        item.imageSources(
+        element.imageSources(
             for: type,
             size: posterStyle.size,
-            useParent: posterStyle.useParentImages,
-            environment: environment
+            environment: customEnvironmentValue
         )
+    }
+
+    init(
+        item: Element,
+        type: PosterDisplayType,
+        contentMode: ContentMode = .fill,
+        maxWidth: CGFloat? = nil
+    ) {
+        self.contentMode = contentMode
+        self.element = item
+        self.imageMaxWidth = maxWidth ?? (type == .landscape ? landscapeMaxWidth : portraitMaxWidth)
+        self.pipeline = .shared
+        self.type = type
     }
 
     var body: some View {
@@ -49,14 +67,14 @@ struct PosterImage<Item: Poster>: View {
                 Color.clear
             } content: {
                 ImageView(imageSources)
-                    .image(item.transform)
+                    .image(element.transform)
                     .placeholder { imageSource in
                         if let blurHash = imageSource.blurHash {
                             BlurHashView(blurHash: blurHash)
 //                        } else if item.showTitle {
                         } else {
                             SystemImageContentView(
-                                systemName: item.systemImage
+                                systemName: element.systemImage
                             )
 //                        } else {
 //                            SystemImageContentView(
@@ -68,7 +86,7 @@ struct PosterImage<Item: Poster>: View {
                     .failure {
 //                        if item.showTitle {
                         SystemImageContentView(
-                            systemName: item.systemImage
+                            systemName: element.systemImage
                         )
 //                        } else {
 //                            SystemImageContentView(
@@ -83,41 +101,6 @@ struct PosterImage<Item: Poster>: View {
             type,
             contentMode: contentMode
         )
-    }
-}
-
-extension PosterImage where Item.Environment == Void {
-
-    init(
-        item: Item,
-        type: PosterDisplayType,
-        contentMode: ContentMode = .fill,
-        maxWidth: CGFloat? = nil
-    ) {
-        self.contentMode = contentMode
-        self.environment = ()
-        self.imageMaxWidth = maxWidth ?? (type == .landscape ? landscapeMaxWidth : portraitMaxWidth)
-        self.item = item
-        self.pipeline = .shared
-        self.type = type
-    }
-}
-
-extension PosterImage {
-
-    init(
-        item: Item,
-        type: PosterDisplayType,
-        environment: Item.Environment,
-        contentMode: ContentMode = .fill,
-        maxWidth: CGFloat? = nil
-    ) {
-        self.contentMode = contentMode
-        self.environment = environment
-        self.imageMaxWidth = maxWidth ?? (type == .landscape ? landscapeMaxWidth : portraitMaxWidth)
-        self.item = item
-        self.pipeline = .shared
-        self.type = type
     }
 }
 

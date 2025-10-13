@@ -111,23 +111,45 @@ struct ItemImagesView: View {
     private func imageScrollView(for imageType: ImageType) -> some View {
         let images = viewModel.images[imageType] ?? []
 
-        if images.isNotEmpty {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(images, id: \.self) { imageInfo in
-                        imageButton(imageInfo: imageInfo) {
-                            router.route(
-                                to: .itemImageDetails(
-                                    viewModel: viewModel,
-                                    imageInfo: imageInfo
-                                )
-                            )
-                        }
-                    }
-                }
-                .frame(height: 150)
-                .edgePadding(.horizontal)
+        if let firstImageInfo = images.first {
+            PosterHStack(
+                title: "asdf",
+                type: firstImageInfo.preferredPosterDisplayType,
+                items: images
+            ) { imageInfo, _ in
+                router.route(
+                    to: .itemImageDetails(
+                        viewModel: viewModel,
+                        imageInfo: imageInfo
+                    )
+                )
             }
+            .posterStyle(for: ImageInfo.self) { environment, image in
+                var environment = environment
+                environment.displayType = image.preferredPosterDisplayType
+                return environment
+            }
+            .customEnvironment(
+                for: ImageInfo.self,
+                value: .init(itemID: viewModel.item.id!, client: viewModel.userSession.client)
+            )
+
+//            ScrollView(.horizontal, showsIndicators: false) {
+//                HStack {
+//                    ForEach(images, id: \.self) { imageInfo in
+//                        imageButton(imageInfo: imageInfo) {
+//                            router.route(
+//                                to: .itemImageDetails(
+//                                    viewModel: viewModel,
+//                                    imageInfo: imageInfo
+//                                )
+//                            )
+//                        }
+//                    }
+//                }
+//                .frame(height: 150)
+//                .edgePadding(.horizontal)
+//            }
         }
     }
 
@@ -176,12 +198,13 @@ struct ItemImagesView: View {
             PosterImage(
                 item: imageInfo,
                 type: imageInfo.preferredPosterDisplayType,
-                environment: .init(
-                    itemID: viewModel.item.id!,
-                    client: viewModel.userSession.client
-                )
             )
             .pipeline(.Swiftfin.other)
+            .posterShadow()
+            .customEnvironment(
+                for: ImageInfo.self,
+                value: .init(itemID: viewModel.item.id!, client: viewModel.userSession.client)
+            )
         }
     }
 }

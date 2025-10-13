@@ -123,10 +123,14 @@ extension ItemImageDetailsView {
         imageInfo: ImageInfo
     ) {
         self.viewModel = viewModel
-        self.imageSource = imageInfo.itemImageSource(
-            itemID: viewModel.item.id!,
-            client: viewModel.userSession.client
-        )
+        self.imageSource = {
+            guard let itemID = viewModel.item.id, let imageSource = imageInfo.itemImageSource(
+                itemID: itemID,
+                client: viewModel.userSession.client
+            ) else { return .init() }
+
+            return imageSource
+        }()
         self.index = imageInfo.imageIndex
         self.width = imageInfo.width
         self.height = imageInfo.height

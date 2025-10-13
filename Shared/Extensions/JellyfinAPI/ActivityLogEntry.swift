@@ -26,8 +26,4 @@ extension ActivityLogEntry: Poster {
     var systemImage: String {
         "text.document"
     }
-
-    func transform(image: Image) -> some View {
-        image
-    }
 }

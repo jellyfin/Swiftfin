@@ -11,16 +11,14 @@ import JellyfinAPI
 struct PagingItemLibrary: PagingLibrary, WithRandomElementLibrary {
 
     let parent: BaseItemDto
-
-    // TODO: remove, as provider should pass in data through environment
-    let filterViewModel: FilterViewModel?
+    let forcedFilters: ItemFilterCollection?
 
     init(
         parent: Parent,
-        filters: FilterViewModel?
+        filters: ItemFilterCollection? = nil
     ) {
         self.parent = parent
-        self.filterViewModel = filters
+        self.forcedFilters = filters
     }
 
     func retrievePage(
@@ -28,14 +26,10 @@ struct PagingItemLibrary: PagingLibrary, WithRandomElementLibrary {
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
 
-        if pageState.page == 0 {
-            async let _ = try? filterViewModel?.getQueryFilters()
-        }
-
-        let parameters = await attachPage(
+        let parameters = attachPage(
             to: attachFilters(
                 to: makeBaseItemParameters(environment: environment),
-                using: filterViewModel?.currentFilters ?? environment.filters,
+                using: forcedFilters ?? environment.filters,
                 pageState: pageState
             ),
             pageState: pageState

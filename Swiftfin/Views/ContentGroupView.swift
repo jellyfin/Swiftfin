@@ -12,7 +12,7 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-struct _PosterSection<Library: PagingLibrary>: View where Library.Element: Poster, Library.Element.Environment == Void {
+struct _PosterSection<Library: PagingLibrary>: View where Library.Element: Poster {
 
     @Router
     private var router

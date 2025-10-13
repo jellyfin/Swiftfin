@@ -175,8 +175,8 @@ extension BaseItemDto {
     func getNowPlayingImage() async -> UIImage? {
         let imageSources = imageSources(
             for: preferredPosterDisplayType,
-            size: .medium,
-            useParent: true
+            size: .small,
+            environment: .init(useParent: true)
         )
 
         guard let firstImage = await ImagePipeline.Swiftfin.other.loadFirstImage(from: imageSources) else {

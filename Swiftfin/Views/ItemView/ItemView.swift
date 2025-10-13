@@ -60,7 +60,7 @@ struct ItemView: View {
 
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
         switch item.type {
-        case .boxSet, .person, .musicArtist:
+        case .boxSet, .person, .musicArtist, .tvChannel:
             return CollectionItemViewModel(item: item)
         case .episode:
             return EpisodeItemViewModel(item: item)

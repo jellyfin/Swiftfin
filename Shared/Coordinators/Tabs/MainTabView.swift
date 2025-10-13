@@ -109,7 +109,7 @@ struct MainTabView: View {
                         posterDisplayType: $0
                     )
                 },
-                useParentImages: useSeriesLandscapeBackdrop,
+//                useParentImages: useSeriesLandscapeBackdrop,
                 size: .small
             )
         }
@@ -117,10 +117,14 @@ struct MainTabView: View {
             .init(
                 displayType: .portrait,
                 label: person.posterLabel,
-                useParentImages: false,
+//                useParentImages: false,
                 size: .small
             )
         }
+        .customEnvironment(
+            for: BaseItemDto.self,
+            value: .init(useParent: useSeriesLandscapeBackdrop)
+        )
     }
 }
 

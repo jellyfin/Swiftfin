@@ -126,7 +126,7 @@ extension _ContentGroupProvider where Environment == Void {
     }
 }
 
-struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element: Poster, Library.Element.Environment == Void {
+struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element: Poster {
 
     var displayTitle: String {
         library.parent.displayTitle

@@ -15,6 +15,12 @@ import SwiftUI
 
 extension BaseItemDto: Poster {
 
+    struct Environment: CustomEnvironmentValue {
+        let useParent: Bool
+
+        static let `default` = Environment(useParent: false)
+    }
+
     var preferredPosterDisplayType: PosterDisplayType {
         type?.preferredPosterDisplayType ?? .portrait
     }
@@ -60,7 +66,11 @@ extension BaseItemDto: Poster {
         }
     }
 
-    func portraitImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
+    func portraitImageSources(
+        maxWidth: CGFloat? = nil,
+        quality: Int? = nil,
+        environment: Environment
+    ) -> [ImageSource] {
         switch type {
         case .episode:
             [seriesImageSource(.primary, maxWidth: maxWidth, quality: quality)]
@@ -88,37 +98,12 @@ extension BaseItemDto: Poster {
 
     func landscapeImageSources(
         maxWidth: CGFloat? = nil,
-        quality: Int? = nil
+        quality: Int? = nil,
+        environment: Environment
     ) -> [ImageSource] {
         switch type {
         case .episode:
-//            if Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
-//                [
-//                    seriesImageSource(.thumb, maxWidth: maxWidth, quality: quality),
-//                    seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality),
-//                    imageSource(.primary, maxWidth: maxWidth, quality: quality),
-//                ]
-//            } else {
-            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
-//            }
-        case .folder, .musicVideo, .program, .userView, .video:
-            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
-        default:
-            [
-                imageSource(.thumb, maxWidth: maxWidth, quality: quality),
-                imageSource(.backdrop, maxWidth: maxWidth, quality: quality),
-            ]
-        }
-    }
-
-    func _landscapeImageSources(
-        useParent: Bool,
-        maxWidth: CGFloat?,
-        quality: Int?
-    ) -> [ImageSource] {
-        switch type {
-        case .episode:
-            if useParent {
+            if environment.useParent {
                 [
                     seriesImageSource(.thumb, maxWidth: maxWidth, quality: quality),
                     seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality),
@@ -137,7 +122,37 @@ extension BaseItemDto: Poster {
         }
     }
 
-    func cinematicImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
+//    func _landscapeImageSources(
+//        useParent: Bool,
+//        maxWidth: CGFloat?,
+//        quality: Int?
+//    ) -> [ImageSource] {
+//        switch type {
+//        case .episode:
+//            if useParent {
+//                [
+//                    seriesImageSource(.thumb, maxWidth: maxWidth, quality: quality),
+//                    seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality),
+//                    imageSource(.primary, maxWidth: maxWidth, quality: quality),
+//                ]
+//            } else {
+//                [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
+//            }
+//        case .collectionFolder, .folder, .musicVideo, .program, .userView, .video:
+//            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
+//        default:
+//            [
+//                imageSource(.thumb, maxWidth: maxWidth, quality: quality),
+//                imageSource(.backdrop, maxWidth: maxWidth, quality: quality),
+//            ]
+//        }
+//    }
+
+    func cinematicImageSources(
+        maxWidth: CGFloat? = nil,
+        quality: Int? = nil,
+        environment: Environment
+    ) -> [ImageSource] {
         switch type {
         case .episode:
             [seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality)]
@@ -146,7 +161,11 @@ extension BaseItemDto: Poster {
         }
     }
 
-    func squareImageSources(maxWidth: CGFloat?, quality: Int? = nil) -> [ImageSource] {
+    func squareImageSources(
+        maxWidth: CGFloat?,
+        quality: Int? = nil,
+        environment: Environment
+    ) -> [ImageSource] {
         switch type {
         case .audio, .channel, .musicAlbum, .tvChannel:
             [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
@@ -155,16 +174,16 @@ extension BaseItemDto: Poster {
         }
     }
 
-    func thumbImageSources() -> [ImageSource] {
-        switch preferredPosterDisplayType {
-        case .portrait:
-            portraitImageSources(maxWidth: 200, quality: 90)
-        case .landscape:
-            landscapeImageSources(maxWidth: 200, quality: 90)
-        case .square:
-            squareImageSources(maxWidth: 200, quality: 90)
-        }
-    }
+//    func thumbImageSources() -> [ImageSource] {
+//        switch preferredPosterDisplayType {
+//        case .portrait:
+//            portraitImageSources(maxWidth: 200, quality: 90)
+//        case .landscape:
+//            landscapeImageSources(maxWidth: 200, quality: 90)
+//        case .square:
+//            squareImageSources(maxWidth: 200, quality: 90)
+//        }
+//    }
 
     @ViewBuilder
     func transform(image: Image) -> some View {

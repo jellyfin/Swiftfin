@@ -19,9 +19,22 @@ extension ImageInfo: @retroactive Identifiable {
 
 extension ImageInfo: Poster {
 
-    struct Environment {
+    struct Environment: CustomEnvironmentValue {
         let itemID: String
         let client: JellyfinClient
+
+        static let `default` = Environment(
+            itemID: "",
+            client: .init(
+                configuration: .init(
+                    url: URL(string: "/")!,
+                    client: "unknown",
+                    deviceName: "unknown",
+                    deviceID: "unknown",
+                    version: "unknown"
+                )
+            )
+        )
     }
 
     var preferredPosterDisplayType: PosterDisplayType {
@@ -47,15 +60,16 @@ extension ImageInfo: Poster {
     func imageSources(
         for displayType: PosterDisplayType,
         size: PosterDisplayType.Size,
-        useParent: Bool,
         environment: Environment
     ) -> [ImageSource] {
-        [
-            itemImageSource(
-                itemID: environment.itemID,
-                client: environment.client
-            ),
-        ]
+        guard let imageSource = itemImageSource(
+            itemID: environment.itemID,
+            client: environment.client
+        ) else {
+            return []
+        }
+
+        return [imageSource]
     }
 
     @ViewBuilder
@@ -75,14 +89,18 @@ extension ImageInfo: Poster {
 
 extension ImageInfo {
 
-    func itemImageSource(itemID: String, client: JellyfinClient) -> ImageSource {
+    func itemImageSource(itemID: String, client: JellyfinClient) -> ImageSource? {
+        guard let imageType else {
+            return nil
+        }
+
         let parameters = Paths.GetItemImageParameters(
             tag: imageTag,
             imageIndex: imageIndex
         )
         let request = Paths.getItemImage(
             itemID: itemID,
-            imageType: imageType?.rawValue ?? "",
+            imageType: imageType.rawValue,
             parameters: parameters
         )
 
