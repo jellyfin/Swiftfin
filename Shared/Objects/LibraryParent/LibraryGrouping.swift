@@ -12,6 +12,8 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
+// TODO: break out, cleanup
+
 struct BasicLibraryGrouping: Displayable, Hashable, Identifiable, Storable {
     let displayTitle: String
     let id: String

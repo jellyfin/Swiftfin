@@ -191,7 +191,7 @@ extension View {
         dismissAction: @escaping () -> Void = {}
     ) -> some View {
         alert(
-            L10n.error.text,
+            Text(L10n.error),
             isPresented: .constant(error.wrappedValue != nil),
             presenting: error.wrappedValue
         ) { _ in

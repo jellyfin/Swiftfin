@@ -13,7 +13,10 @@ import SwiftUI
 // TODO: make new protocol for cinematic view image provider
 // TODO: better name
 
-struct CinematicItemSelector<Item: Poster>: View {
+struct CinematicItemSelector<
+    Element: Poster,
+    Data: Collection
+>: View where Data.Element == Element, Data.Index == Int {
 
     @FocusState
     private var isSectionFocused
@@ -24,22 +27,31 @@ struct CinematicItemSelector<Item: Poster>: View {
     @StateObject
     private var viewModel: CinematicBackgroundView.Proxy = .init()
 
-    private var topContent: (Item) -> any View
-    private var itemContent: (Item) -> any View
+    private let elements: Data
+    private var topContent: (Element) -> any View
+    private var itemContent: (Element) -> any View
     private var trailingContent: () -> any View
-    private var onSelect: (Item) -> Void
-
-    let items: [Item]
+    private var onSelect: (Element) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
 
-            if let focusedPoster, let focusedItem = focusedPoster._poster as? Item {
+            if let focusedPoster, let focusedItem = focusedPoster._poster as? Element {
                 topContent(focusedItem)
                     .eraseToAnyView()
                     .id(focusedItem.hashValue)
                     .transition(.opacity)
             }
+
+            PosterHStack(
+                elements: elements,
+                type: .landscape
+            ) { element, _ in
+                onSelect(element)
+            } header: {
+                EmptyView()
+            }
+            .frame(height: 400)
 
             // TODO: fix intrinsic content sizing without frame
 //            PosterHStack(
@@ -55,7 +67,7 @@ struct CinematicItemSelector<Item: Poster>: View {
         .background(alignment: .top) {
             CinematicBackgroundView(
                 viewModel: viewModel,
-                initialItem: items.first
+                initialItem: elements.first
             )
             .overlay {
                 Color.black
@@ -82,24 +94,24 @@ struct CinematicItemSelector<Item: Poster>: View {
 
 extension CinematicItemSelector {
 
-    init(items: [Item]) {
+    init(items: Data) {
         self.init(
+            elements: items,
             topContent: { _ in EmptyView() },
             itemContent: { _ in EmptyView() },
             trailingContent: { EmptyView() },
-            onSelect: { _ in },
-            items: items
+            onSelect: { _ in }
         )
     }
 }
 
 extension CinematicItemSelector {
 
-    func topContent(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
+    func topContent(@ViewBuilder _ content: @escaping (Element) -> any View) -> Self {
         copy(modifying: \.topContent, with: content)
     }
 
-    func content(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
+    func content(@ViewBuilder _ content: @escaping (Element) -> any View) -> Self {
         copy(modifying: \.itemContent, with: content)
     }
 
@@ -107,7 +119,7 @@ extension CinematicItemSelector {
         copy(modifying: \.trailingContent, with: content)
     }
 
-    func onSelect(_ action: @escaping (Item) -> Void) -> Self {
+    func onSelect(_ action: @escaping (Element) -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)
     }
 }

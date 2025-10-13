@@ -206,7 +206,7 @@ struct UserSignInView: View {
     private var publicUsersSection: some View {
         Section(L10n.publicUsers) {
             if viewModel.publicUsers.isEmpty {
-                L10n.noPublicUsers.text
+                Text(L10n.noPublicUsers)
                     .font(.callout)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)

@@ -10,17 +10,27 @@ import SwiftUI
 
 extension ItemView.AboutView {
 
-    struct Card: View {
+    struct Card<Content: View>: View {
 
-        private var content: () -> any View
-        private var onSelect: () -> Void
+        private var action: () -> Void
+        private var content: Content
         private let title: String
         private let subtitle: String?
 
+        init(
+            title: String,
+            subtitle: String? = nil,
+            action: @escaping () -> Void,
+            @ViewBuilder content: @escaping () -> Content
+        ) {
+            self.title = title
+            self.subtitle = subtitle
+            self.action = action
+            self.content = content()
+        }
+
         var body: some View {
-            Button {
-                onSelect()
-            } label: {
+            Button(action: action) {
                 VStack(alignment: .leading) {
                     Text(title)
                         .font(.title3)
@@ -35,33 +45,12 @@ extension ItemView.AboutView {
                     Spacer()
                         .frame(maxWidth: .infinity)
 
-                    content()
-                        .eraseToAnyView()
+                    content
                 }
                 .padding()
                 .frame(width: 700, height: 405)
             }
             .buttonStyle(.card)
         }
-    }
-}
-
-extension ItemView.AboutView.Card {
-
-    init(title: String, subtitle: String? = nil) {
-        self.init(
-            content: { EmptyView() },
-            onSelect: {},
-            title: title,
-            subtitle: subtitle
-        )
-    }
-
-    func content(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.content, with: content)
-    }
-
-    func onSelect(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
     }
 }

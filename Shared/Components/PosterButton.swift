@@ -93,7 +93,10 @@ struct PosterButton<Item: Poster, Label: View>: View {
             #endif
         }
         .foregroundStyle(.primary, .secondary)
+        .accessibilityLabel(item.displayTitle)
         .buttonStyle(.borderless)
+        .focusedValue(\.focusedPoster, .init(item))
+//        .focusedValue(\.focusedPosterID, item.unwrappedIDHashOrZero)
         .matchedContextMenu(for: item) {
             let frameScale = 1.3
 

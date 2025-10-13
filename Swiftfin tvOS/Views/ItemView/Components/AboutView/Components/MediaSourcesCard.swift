@@ -20,23 +20,21 @@ extension ItemView.AboutView {
         let source: MediaSourceInfo
 
         var body: some View {
-            Card(title: L10n.media, subtitle: subtitle)
-                .content {
-                    if let mediaStreams = source.mediaStreams {
-                        VStack(alignment: .leading) {
-                            Text(mediaStreams.compactMap(\.displayTitle).prefix(4).joined(separator: "\n"))
-                                .font(.footnote)
+            Card(title: L10n.media, subtitle: subtitle) {
+                router.route(to: .mediaSourceInfo(source: source))
+            } content: {
+                if let mediaStreams = source.mediaStreams {
+                    VStack(alignment: .leading) {
+                        Text(mediaStreams.compactMap(\.displayTitle).prefix(4).joined(separator: "\n"))
+                            .font(.footnote)
 
-                            if mediaStreams.count > 4 {
-                                L10n.seeMore.text
-                                    .font(.footnote)
-                            }
+                        if mediaStreams.count > 4 {
+                            Text(L10n.seeMore)
+                                .font(.footnote)
                         }
                     }
                 }
-                .onSelect {
-                    router.route(to: .mediaSourceInfo(source: source))
-                }
+            }
         }
     }
 }

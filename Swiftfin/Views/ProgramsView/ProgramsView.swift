@@ -71,7 +71,7 @@ struct ProgramsView: View {
 
                 if programsViewModel.hasNoResults {
                     // TODO: probably change to "No Programs"
-                    L10n.noResults.text
+                    Text(L10n.noResults)
                 }
 
                 if programsViewModel.recommended.isNotEmpty {

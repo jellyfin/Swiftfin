@@ -429,7 +429,7 @@ struct SelectUserView: View {
     @ViewBuilder
     private var connectToServerView: some View {
         VStack(spacing: 10) {
-            L10n.connectToJellyfinServerStart.text
+            Text(L10n.connectToJellyfinServerStart)
                 .frame(minWidth: 50, maxWidth: 240)
                 .multilineTextAlignment(.center)
 

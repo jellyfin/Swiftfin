@@ -37,7 +37,7 @@ struct PosterHStack<
     private var layout: CollectionHStackLayout {
         #if os(tvOS)
         .grid(
-            columns: posterStyle.displayType == .landscape ? 4 : 7,
+            columns: posterStyle.displayType == .landscape ? 5 : 7,
             rows: 1,
             columnTrailingInset: 0
         )
@@ -78,7 +78,7 @@ struct PosterHStack<
 
     private var itemSpacing: CGFloat {
         #if os(tvOS)
-        EdgeInsets.edgePadding
+        EdgeInsets.edgePadding - 10
         #else
         EdgeInsets.edgePadding / 2
         #endif

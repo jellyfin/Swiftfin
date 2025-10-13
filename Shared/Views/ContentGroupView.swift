@@ -95,6 +95,82 @@ struct ContentGroupContentView<Provider: _ContentGroupProvider>: View {
     }
 }
 
+struct WithCinematicFirstItemGroupContentView<Provider: _ContentGroupProvider>: View {
+
+    @ObservedObject
+    var viewModel: ContentGroupViewModel<Provider>
+
+    private func makeGroupBody(
+        with libraryViewModel: any RefreshableViewModel,
+        group: any _ContentGroup
+    ) -> some View {
+
+        @ViewBuilder
+        func _makeSection<Group: _ContentGroup>(_ group: Group) -> some View {
+            if let castedLibrary = libraryViewModel as? Group.ViewModel {
+                group.body(with: castedLibrary)
+            } else {
+                AssertionFailureView("Mismatched library casting")
+            }
+        }
+
+        return _makeSection(group)
+            .eraseToAnyView()
+    }
+
+    private func makeCinematicBody(
+        with libraryViewModel: any __PagingLibaryViewModel,
+        group: any _ContentGroup
+    ) -> some View {
+
+        @ViewBuilder
+        func _withPosterElements<Data: Collection>(_ elements: Data) -> some View where Data.Element: Poster, Data.Index == Int {
+//            CinematicItemSelector(items: elements)
+        }
+
+        @ViewBuilder
+        func _withLibrary<Library: PagingLibrary>(_ library: Library) -> some View where Library.Element: Poster {
+            EmptyView()
+        }
+
+        @ViewBuilder
+        func _makeSection<ViewModel: __PagingLibaryViewModel>(_ viewModel: ViewModel) -> some View {
+
+//            _withLibrary(viewModel.library)
+
+//            if ViewModel._PagingLibrary.Element.self is any Poster.Type,
+//               let posterElements = viewModel.elements.elements as? [any Poster]
+//            {
+//                _withPosterElements(posterElements.map { AnyPoster($0) })
+//            } else {
+//                AssertionFailureView("Mismatched library element type")
+//            }
+
+            if let posterElements = viewModel.elements.elements as? [any Poster] {
+                _withPosterElements(posterElements.map { AnyPoster($0) })
+            }
+        }
+
+        return _makeSection(libraryViewModel)
+            .eraseToAnyView()
+    }
+
+    var body: some View {
+        ForEach(
+            Array(
+                viewModel.sections.enumerated()
+            ),
+            id: \.element.group.id
+        ) { offset, section in
+            if offset == 0 {
+                makeCinematicBody(with: section.viewModel, group: section.group)
+            } else {
+                makeGroupBody(with: section.viewModel, group: section.group)
+            }
+        }
+    }
+}
+
 struct ContentGroupView<Provider: _ContentGroupProvider>: View {
 
     @Router
@@ -112,11 +188,13 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
                 ContentGroupContentView(viewModel: viewModel)
+
+//                WithCinematicFirstItemGroupContentView(viewModel: viewModel)
             }
             .edgePadding(.vertical)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .ignoresSafeArea(.container, edges: .horizontal)
+        .ignoresSafeArea(.container, edges: [.horizontal])
         .scrollIndicators(.hidden)
         .refreshable {
             try? await viewModel.refresh()

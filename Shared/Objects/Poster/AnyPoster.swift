@@ -45,47 +45,18 @@ struct AnyPoster: Poster {
 
     func landscapeImageSources(
         maxWidth: CGFloat?,
-        quality: Int?
+        quality: Int?,
+        environment: VoidButWithDefaultValue
     ) -> [ImageSource] {
-        []
-//        _poster.landscapeImageSources(
-//            maxWidth: maxWidth,
-//            quality: quality,
-//            environment: <#T##Any#>
-//        )
-    }
+        func inner(_ poster: some Poster) -> [ImageSource] {
+            poster.landscapeImageSources(
+                maxWidth: maxWidth,
+                quality: quality,
+                environment: .default
+            )
+        }
 
-    func portraitImageSources(
-        maxWidth: CGFloat?,
-        quality: Int?
-    ) -> [ImageSource] {
-        []
-//        _poster.portraitImageSources(
-//            maxWidth: maxWidth,
-//            quality: quality
-//        )
-    }
-
-    func squareImageSources(
-        maxWidth: CGFloat?,
-        quality: Int?
-    ) -> [ImageSource] {
-        []
-//        _poster.squareImageSources(
-//            maxWidth: maxWidth,
-//            quality: quality
-//        )
-    }
-
-    func cinematicImageSources(
-        maxWidth: CGFloat?,
-        quality: Int?
-    ) -> [ImageSource] {
-        []
-//        _poster.cinematicImageSources(
-//            maxWidth: maxWidth,
-//            quality: quality
-//        )
+        return inner(_poster)
     }
 
     func transform(image: Image) -> some View {
