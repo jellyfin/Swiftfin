@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct PosterButton<Item: Poster, Label: View>: View {
+struct PosterButton<Item: Poster, Label: View>: View where Item.Environment == Void {
 
     @ForTypeInEnvironment<Item, (Any) -> PosterStyleEnvironment>(\.posterStyleRegistry)
     private var posterStyleRegistry

@@ -18,7 +18,7 @@ struct PosterHStack<
     Data: Collection,
     Header: View,
     Label: View
->: View where Data.Element == Element, Data.Index == Int {
+>: View where Data.Element == Element, Data.Index == Int, Element.Environment == Void {
 
     @ForTypeInEnvironment<Element, (Any) -> PosterStyleEnvironment>(\.posterStyleRegistry)
     private var posterStyleRegistry

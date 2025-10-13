@@ -12,7 +12,7 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-struct _PosterSection<Library: PagingLibrary>: View where Library.Element: Poster {
+struct _PosterSection<Library: PagingLibrary>: View where Library.Element: Poster, Library.Element.Environment == Void {
 
     @Router
     private var router
@@ -67,14 +67,17 @@ struct _PosterSection<Library: PagingLibrary>: View where Library.Element: Poste
 
 struct ContentGroupContentView<Provider: _ContentGroupProvider>: View {
 
-    private func makeSection(
+    @ObservedObject
+    var viewModel: ContentGroupViewModel<Provider>
+
+    private func makeGroupBody(
         with libraryViewModel: any RefreshableViewModel,
         group: any _ContentGroup
     ) -> some View {
 
         @ViewBuilder
-        func _makeSection<PG: _ContentGroup>(_ group: PG) -> some View {
-            if let castedLibrary = libraryViewModel as? PG.ViewModel {
+        func _makeSection<Group: _ContentGroup>(_ group: Group) -> some View {
+            if let castedLibrary = libraryViewModel as? Group.ViewModel {
                 group.body(with: castedLibrary)
             } else {
                 AssertionFailureView("Mismatched library casting")
@@ -85,12 +88,9 @@ struct ContentGroupContentView<Provider: _ContentGroupProvider>: View {
             .eraseToAnyView()
     }
 
-    @ObservedObject
-    var viewModel: ContentGroupViewModel<Provider>
-
     var body: some View {
         ForEach(viewModel.sections, id: \.group.id) { section in
-            makeSection(with: section.viewModel, group: section.group)
+            makeGroupBody(with: section.viewModel, group: section.group)
         }
     }
 }
@@ -105,24 +105,6 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
 
     init(provider: Provider) {
         _viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
-    }
-
-    private func makeSection(
-        with libraryViewModel: any RefreshableViewModel,
-        group: any _ContentGroup
-    ) -> some View {
-
-        @ViewBuilder
-        func _makeSection<PG: _ContentGroup>(_ group: PG) -> some View {
-            if let castedLibrary = libraryViewModel as? PG.ViewModel {
-                group.body(with: castedLibrary)
-            } else {
-                AssertionFailureView("Mismatched library casting")
-            }
-        }
-
-        return _makeSection(group)
-            .eraseToAnyView()
     }
 
     @ViewBuilder

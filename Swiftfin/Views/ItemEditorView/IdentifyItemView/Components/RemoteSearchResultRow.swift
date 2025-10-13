@@ -32,7 +32,7 @@ extension IdentifyItemView {
         // MARK: - Body
 
         var body: some View {
-            ListRow {
+            ListRow(action: onSelect) {
                 IdentifyItemView.resultImage(URL(string: result.imageURL))
                     .frame(width: 60)
             } content: {
@@ -49,8 +49,6 @@ extension IdentifyItemView {
                     }
                 }
             }
-            .onSelect(perform: onSelect)
-            .isSeparatorVisible(false)
         }
     }
 }

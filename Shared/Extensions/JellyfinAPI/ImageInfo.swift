@@ -8,11 +8,68 @@
 
 import Foundation
 import JellyfinAPI
+import SwiftUI
 
 extension ImageInfo: @retroactive Identifiable {
 
     public var id: Int {
         hashValue
+    }
+}
+
+extension ImageInfo: Poster {
+
+    struct Environment {
+        let itemID: String
+        let client: JellyfinClient
+    }
+
+    var preferredPosterDisplayType: PosterDisplayType {
+        guard let height, let width else {
+            return .square
+        }
+
+        return width > height ? .landscape : .portrait
+    }
+
+    var displayTitle: String {
+        imageType?.displayTitle ?? L10n.unknown
+    }
+
+    var unwrappedIDHashOrZero: Int {
+        id
+    }
+
+    var systemImage: String {
+        "photo"
+    }
+
+    func imageSources(
+        for displayType: PosterDisplayType,
+        size: PosterDisplayType.Size,
+        useParent: Bool,
+        environment: Environment
+    ) -> [ImageSource] {
+        [
+            itemImageSource(
+                itemID: environment.itemID,
+                client: environment.client
+            ),
+        ]
+    }
+
+    @ViewBuilder
+    func transform(image: Image) -> some View {
+        switch imageType {
+        case .logo:
+            ContainerRelativeView(ratio: 0.95) {
+                image
+                    .aspectRatio(contentMode: .fit)
+            }
+        default:
+            image
+                .aspectRatio(contentMode: .fill)
+        }
     }
 }
 

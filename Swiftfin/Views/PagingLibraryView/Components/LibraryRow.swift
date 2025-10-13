@@ -12,7 +12,7 @@ import SwiftUI
 private let landscapeWidth: CGFloat = 110
 private let portraitWidth: CGFloat = 60
 
-struct LibraryRow<Element: Poster>: View {
+struct LibraryRow<Element: Poster>: View where Element.Environment == Void {
 
     @Namespace
     private var namespace

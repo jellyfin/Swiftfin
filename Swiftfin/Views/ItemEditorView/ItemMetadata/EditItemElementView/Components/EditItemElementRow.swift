@@ -34,18 +34,20 @@ extension EditItemElementView {
         // MARK: - Body
 
         var body: some View {
-            ListRow {
+            ListRow(action: onSelect) {
                 if type == .people {
                     personImage
                 }
             } content: {
                 rowContent
             }
-            .onSelect(perform: onSelect)
-            .isSeparatorVisible(false)
             .swipeActions {
-                Button(L10n.delete, systemImage: "trash", action: onDelete)
-                    .tint(.red)
+                Button(
+                    L10n.delete,
+                    systemImage: "trash",
+                    action: onDelete
+                )
+                .tint(.red)
             }
         }
 

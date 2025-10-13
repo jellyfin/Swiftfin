@@ -16,109 +16,48 @@ import SwiftUI
 
 struct AddItemImageView: View {
 
-    // MARK: - Observed, & Environment Objects
+    @ObservedObject
+    private var itemImagesViewModel: ItemImagesViewModel
 
     @Router
     private var router
 
-    @ObservedObject
-    private var viewModel: ItemImagesViewModel
-
-    @StateObject
-    private var remoteImageInfoViewModel: PagingLibraryViewModel<RemoteImageLibrary>
-
-    // MARK: - Dialog State
-
     @State
     private var error: Error?
 
-    // MARK: - Collection Layout
-
-    @State
-    private var layout: CollectionVGridLayout = .minWidth(150)
-
-    // MARK: - Initializer
+    @StateObject
+    private var remoteImageInfoViewModel: RemoteImageInfoViewModel
 
     init(viewModel: ItemImagesViewModel, imageType: ImageType) {
-        self.viewModel = viewModel
+        self.itemImagesViewModel = viewModel
         self._remoteImageInfoViewModel = StateObject(
-            wrappedValue: PagingLibraryViewModel<RemoteImageLibrary>(
-                library: RemoteImageLibrary(
-                    imageType: imageType,
-                    itemID: viewModel.item.id ?? "unknown"
-                )
+            wrappedValue: .init(
+                itemID: viewModel.item.id ?? "unknown",
+                imageType: imageType
             )
         )
     }
 
-    @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                remoteImageInfoViewModel.refresh()
-            }
-    }
-
     var body: some View {
         ZStack {
-            switch remoteImageInfoViewModel.state {
-            case .initial, .refreshing:
-                DelayedProgressView()
-            case .content:
-                gridView
-            case .error:
-                remoteImageInfoViewModel.error.map { errorView(with: $0) }
-            }
+            ImageElementsView(
+                viewModel: remoteImageInfoViewModel.remoteImageLibrary,
+                itemImagesViewModel: itemImagesViewModel,
+                remoteImageInfoViewModel: remoteImageInfoViewModel
+            )
         }
-        .animation(.linear(duration: 0.1), value: remoteImageInfoViewModel.state)
-        .navigationTitle(remoteImageInfoViewModel.library.imageType.displayTitle)
+        .navigationTitle(remoteImageInfoViewModel.remoteImageLibrary.library.imageType.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(viewModel.backgroundStates.contains(.updating))
-        .navigationBarMenuButton(isLoading: viewModel.backgroundStates.contains(.updating)) {
-//            Button {
-//                remoteImageInfoViewModel.includeAllLanguages.toggle()
-//            } label: {
-//                if remoteImageInfoViewModel.includeAllLanguages {
-//                    Label(L10n.allLanguages, systemImage: "checkmark")
-//                } else {
-//                    Text(L10n.allLanguages)
-//                }
-//            }
-
-//            if remoteImageInfoViewModel.providers.isNotEmpty {
-//                Menu {
-//                    Button {
-//                        remoteImageInfoViewModel.provider = nil
-//                    } label: {
-//                        if remoteImageInfoViewModel.provider == nil {
-//                            Label(L10n.all, systemImage: "checkmark")
-//                        } else {
-//                            Text(L10n.all)
-//                        }
-//                    }
-//
-//                    ForEach(remoteImageInfoViewModel.providers, id: \.self) { provider in
-//                        Button {
-//                            remoteImageInfoViewModel.provider = provider
-//                        } label: {
-//                            if remoteImageInfoViewModel.provider == provider {
-//                                Label(provider, systemImage: "checkmark")
-//                            } else {
-//                                Text(provider)
-//                            }
-//                        }
-//                    }
-//                } label: {
-//                    Text(L10n.provider)
-//
-//                    Text(remoteImageInfoViewModel.provider ?? L10n.all)
-//                }
-//            }
+        .navigationBarBackButtonHidden(itemImagesViewModel.backgroundStates.contains(.updating))
+        .navigationBarMenuButton(isLoading: itemImagesViewModel.backgroundStates.contains(.updating)) {
+            ImageProvidersMenuContent(
+                viewModel: remoteImageInfoViewModel
+            )
         }
         .onFirstAppear {
             remoteImageInfoViewModel.refresh()
         }
-        .onReceive(viewModel.events) { event in
+        .onReceive(itemImagesViewModel.events) { event in
             switch event {
             case .updated:
                 UIDevice.feedback(.success)
@@ -130,72 +69,131 @@ struct AddItemImageView: View {
         }
         .errorMessage($error)
     }
+}
 
-    // MARK: - Content Grid View
+extension AddItemImageView {
 
-    @ViewBuilder
-    private var gridView: some View {
-        if remoteImageInfoViewModel.elements.isEmpty {
-            Text(L10n.none)
-        } else {
-            CollectionVGrid(
-                uniqueElements: remoteImageInfoViewModel.elements,
-                layout: layout
-            ) { image in
-                imageButton(image)
-            }
-            .onReachedBottomEdge(offset: .offset(300)) {
-                remoteImageInfoViewModel.retrieveNextPage()
-            }
+    struct ImageElementsView: View {
+
+        @ObservedObject
+        private var viewModel: PagingLibraryViewModel<RemoteImageLibrary>
+
+        @Router
+        private var router
+
+        private let itemImagesViewModel: ItemImagesViewModel
+        private let layout: CollectionVGridLayout = .minWidth(150)
+        private let remoteImageInfoViewModel: RemoteImageInfoViewModel
+
+        init(
+            viewModel: PagingLibraryViewModel<RemoteImageLibrary>,
+            itemImagesViewModel: ItemImagesViewModel,
+            remoteImageInfoViewModel: RemoteImageInfoViewModel
+        ) {
+            self.viewModel = viewModel
+            self.itemImagesViewModel = itemImagesViewModel
+            self.remoteImageInfoViewModel = remoteImageInfoViewModel
         }
-    }
 
-    // MARK: - Poster Image Button
-
-    @ViewBuilder
-    private func imageButton(_ image: RemoteImageInfo) -> some View {
-        Button {
-            router.route(
-                to: .itemSearchImageDetails(
-                    viewModel: viewModel,
-                    remoteImageInfo: image
+        @ViewBuilder
+        private var gridView: some View {
+            if viewModel.elements.isEmpty {
+                Text(L10n.none)
+            } else {
+                CollectionVGrid(
+                    uniqueElements: viewModel.elements,
+                    layout: layout,
+                    viewProvider: imageButton
                 )
-            )
-        } label: {
-            posterImage(
-                image,
-                posterStyle: (image.height ?? 0) > (image.width ?? 0) ? .portrait : .landscape
-            )
+                .onReachedBottomEdge(offset: .offset(300)) {
+                    viewModel.retrieveNextPage()
+                }
+            }
+        }
+
+        @ViewBuilder
+        private func imageButton(_ image: RemoteImageInfo) -> some View {
+            Button {
+                router.route(
+                    to: .itemSearchImageDetails(
+                        viewModel: itemImagesViewModel,
+                        remoteImageInfo: image
+                    )
+                )
+            } label: {
+                PosterImage(
+                    item: image,
+                    type: image.preferredPosterDisplayType
+                )
+                .pipeline(.Swiftfin.other)
+            }
+        }
+
+        @ViewBuilder
+        private func errorView(with error: some Error) -> some View {
+            ErrorView(error: error)
+                .onRetry {
+                    remoteImageInfoViewModel.refresh()
+                }
+        }
+
+        var body: some View {
+            ZStack {
+                switch viewModel.state {
+                case .content:
+                    gridView
+                case .initial, .refreshing:
+                    DelayedProgressView()
+                case .error:
+                    viewModel.error.map { errorView(with: $0) }
+                }
+            }
+            .animation(.linear(duration: 0.1), value: viewModel.state)
         }
     }
 
-    // MARK: - Poster Image
+    struct ImageProvidersMenuContent: View {
 
-    @ViewBuilder
-    private func posterImage(
-        _ posterImageInfo: RemoteImageInfo?,
-        posterStyle: PosterDisplayType
-    ) -> some View {
-        ZStack {
-            Color.secondarySystemFill
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        @ObservedObject
+        private var remoteImagesViewModel: PagingLibraryViewModel<RemoteImageLibrary>
+        @ObservedObject
+        private var providersViewModel: PagingLibraryViewModel<RemoteImageProvidersLibrary>
 
-            ImageView(posterImageInfo?.url?.url)
-                .placeholder { source in
-                    if let blurHash = source.blurHash {
-                        BlurHashView(blurHash: blurHash)
-                            .scaledToFit()
-                    } else {
-                        Image(systemName: "photo")
-                    }
-                }
-                .failure {
-                    Image(systemName: "photo")
-                }
-                .pipeline(.Swiftfin.other)
-                .foregroundStyle(.secondary)
-                .font(.headline)
+        init(viewModel: RemoteImageInfoViewModel) {
+            self.remoteImagesViewModel = viewModel.remoteImageLibrary
+            self.providersViewModel = viewModel.remoteImageProvidersLibrary
         }
-        .posterStyle(posterStyle)
+
+        var body: some View {
+            Group {
+                Toggle(
+                    L10n.allLanguages,
+                    isOn: $remoteImagesViewModel.environment.includeAllLanguages
+                )
+
+                if providersViewModel.elements.isNotEmpty {
+                    Picker(selection: $remoteImagesViewModel.environment.provider) {
+                        Text(L10n.all)
+                            .tag(nil as String?)
+
+                        ForEach(
+                            providersViewModel.elements,
+                        ) { provider in
+                            Text(provider.name ?? L10n.unknown)
+                                .tag(provider.name)
+                        }
+                    } label: {
+                        Text(L10n.provider)
+
+                        Text(remoteImagesViewModel.environment.provider ?? L10n.all)
+                    }
+                    .pickerStyle(.menu)
+                }
+            }
+            .backport
+            .onChange(of: remoteImagesViewModel.environment) { _, _ in
+                remoteImagesViewModel.refresh()
+            }
+        }
     }
 }

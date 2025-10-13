@@ -37,6 +37,7 @@ struct ItemImageDetailsView: View {
     private let provider: String?
     private let rating: Double?
     private let ratingVotes: Int?
+    private let type: ImageType?
 
     // MARK: - Image Actions
 
@@ -89,7 +90,8 @@ struct ItemImageDetailsView: View {
         List {
             HeaderSection(
                 imageSource: imageSource,
-                posterType: height ?? 0 > width ?? 0 ? .portrait : .landscape
+                imageType: type,
+                posterType: width ?? 0 > height ?? 0 ? .landscape : .portrait
             )
 
             DetailsSection(
@@ -132,6 +134,7 @@ extension ItemImageDetailsView {
         self.provider = nil
         self.rating = nil
         self.ratingVotes = nil
+        self.type = imageInfo.imageType
         self.onSave = nil
         self.onDelete = {
             viewModel.send(.deleteImage(imageInfo))
@@ -153,6 +156,7 @@ extension ItemImageDetailsView {
         self.provider = remoteImageInfo.providerName
         self.rating = remoteImageInfo.communityRating
         self.ratingVotes = remoteImageInfo.voteCount
+        self.type = remoteImageInfo.type
         self.onSave = {
             viewModel.send(.setImage(remoteImageInfo))
         }

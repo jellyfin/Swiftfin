@@ -7,6 +7,7 @@
 //
 
 import BlurHashKit
+import Nuke
 import SwiftUI
 
 /// Retrieving images by exact pixel dimensions is a bit
@@ -20,31 +21,22 @@ struct PosterImage<Item: Poster>: View {
     private var posterStyleRegistry
 
     private let contentMode: ContentMode
+    private let environment: Item.Environment
     private let imageMaxWidth: CGFloat
     private let item: Item
+    private var pipeline: ImagePipeline
     private let type: PosterDisplayType
 
     private var posterStyle: PosterStyleEnvironment {
         posterStyleRegistry?(item) ?? .default
     }
 
-    init(
-        item: Item,
-        type: PosterDisplayType,
-        contentMode: ContentMode = .fill,
-        maxWidth: CGFloat? = nil
-    ) {
-        self.contentMode = contentMode
-        self.imageMaxWidth = maxWidth ?? (type == .landscape ? landscapeMaxWidth : portraitMaxWidth)
-        self.item = item
-        self.type = type
-    }
-
     private var imageSources: [ImageSource] {
         item.imageSources(
             for: type,
-            size: .medium,
-            useParent: posterStyle.useParentImages
+            size: posterStyle.size,
+            useParent: posterStyle.useParentImages,
+            environment: environment
         )
     }
 
@@ -91,5 +83,47 @@ struct PosterImage<Item: Poster>: View {
             type,
             contentMode: contentMode
         )
+    }
+}
+
+extension PosterImage where Item.Environment == Void {
+
+    init(
+        item: Item,
+        type: PosterDisplayType,
+        contentMode: ContentMode = .fill,
+        maxWidth: CGFloat? = nil
+    ) {
+        self.contentMode = contentMode
+        self.environment = ()
+        self.imageMaxWidth = maxWidth ?? (type == .landscape ? landscapeMaxWidth : portraitMaxWidth)
+        self.item = item
+        self.pipeline = .shared
+        self.type = type
+    }
+}
+
+extension PosterImage {
+
+    init(
+        item: Item,
+        type: PosterDisplayType,
+        environment: Item.Environment,
+        contentMode: ContentMode = .fill,
+        maxWidth: CGFloat? = nil
+    ) {
+        self.contentMode = contentMode
+        self.environment = environment
+        self.imageMaxWidth = maxWidth ?? (type == .landscape ? landscapeMaxWidth : portraitMaxWidth)
+        self.item = item
+        self.pipeline = .shared
+        self.type = type
+    }
+}
+
+extension PosterImage {
+
+    func pipeline(_ pipeline: ImagePipeline) -> Self {
+        copy(modifying: \.pipeline, with: pipeline)
     }
 }

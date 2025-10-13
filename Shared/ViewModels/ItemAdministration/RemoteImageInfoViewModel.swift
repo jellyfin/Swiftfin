@@ -11,15 +11,12 @@ import JellyfinAPI
 
 struct RemoteImageLibrary: PagingLibrary {
 
-    struct Environment: WithDefaultValue {
+    struct Environment: Equatable, WithDefaultValue {
         var includeAllLanguages: Bool = false
         var provider: String?
 
         static var `default`: Self { .init() }
     }
-
-    typealias Element = RemoteImageInfo
-    typealias Parent = _TitledLibraryParent
 
     let imageType: ImageType
     let parent: _TitledLibraryParent
@@ -48,64 +45,65 @@ struct RemoteImageLibrary: PagingLibrary {
         let request = Paths.getRemoteImages(itemID: parent.libraryID, parameters: parameters)
         let response = try await pageState.userSession.client.send(request)
 
-//        await MainActor.run {
-//            providers = response.value.providers ?? []
-//        }
-
         return response.value.images ?? []
     }
 }
 
-// final class RemoteImageInfoViewModel: PagingLibraryViewModel<RemoteImageInfo> {
-//
-//    // Image providers come from the paging call
-//    @Published
-//    private(set) var providers: [String] = []
-//
-//    @Published
-//    var includeAllLanguages: Bool = false {
-//        didSet {
-//            DispatchQueue.main.async {
-//                self.send(.refresh)
-//            }
-//        }
-//    }
-//
-//    @Published
-//    var provider: String? = nil {
-//        didSet {
-//            DispatchQueue.main.async {
-//                self.send(.refresh)
-//            }
-//        }
-//    }
-//
-//    let imageType: ImageType
-//
-//    init(imageType: ImageType, parent: BaseItemDto) {
-//
-//        self.imageType = imageType
-//
-//        super.init(parent: parent)
-//    }
-//
-//    override func get(page: Int) async throws -> [RemoteImageInfo] {
-//        guard let itemID = parent?.id else { return [] }
-//
-//        var parameters = Paths.GetRemoteImagesParameters()
-//        parameters.isIncludeAllLanguages = includeAllLanguages
-//        parameters.limit = pageSize
-//        parameters.providerName = provider
-//        parameters.startIndex = page * pageSize
-//        parameters.type = imageType
-//
-//        let request = Paths.getRemoteImages(itemID: itemID, parameters: parameters)
-//        let response = try await userSession.client.send(request)
-//
-//        await MainActor.run {
-//            providers = response.value.providers ?? []
-//        }
-//
-//        return response.value.images ?? []
-//    }
-// }
+struct RemoteImageProvidersLibrary: PagingLibrary {
+
+    let pages: Bool = false
+    let parent: _TitledLibraryParent
+
+    // TODO: wrong ids
+    init(itemID: String) {
+        self.parent = .init(
+            displayTitle: "Providers",
+            libraryID: itemID
+        )
+    }
+
+    func retrievePage(
+        environment: Void,
+        pageState: LibraryPageState
+    ) async throws -> [ImageProviderInfo] {
+        let request = Paths.getRemoteImageProviders(itemID: parent.libraryID)
+        let response = try await pageState.userSession.client.send(request)
+        return response.value
+    }
+}
+
+extension ImageProviderInfo: @retroactive Identifiable, LibraryIdentifiable {
+
+    public var id: String? { name }
+
+    var unwrappedIDHashOrZero: Int {
+        name?.hashValue ?? 0
+    }
+}
+
+// TODO: Good example of a multi-library view model, find way to generalize
+//       - variadic generics when available?
+
+@MainActor
+final class RemoteImageInfoViewModel: ObservableObject {
+
+    var remoteImageLibrary: PagingLibraryViewModel<RemoteImageLibrary>
+    let remoteImageProvidersLibrary: PagingLibraryViewModel<RemoteImageProvidersLibrary>
+
+    init(itemID: String, imageType: ImageType) {
+        self.remoteImageLibrary = .init(
+            library: .init(
+                imageType: imageType,
+                itemID: itemID
+            )
+        )
+        self.remoteImageProvidersLibrary = .init(
+            library: .init(itemID: itemID)
+        )
+    }
+
+    func refresh() {
+        remoteImageLibrary.refresh()
+        remoteImageProvidersLibrary.refresh()
+    }
+}

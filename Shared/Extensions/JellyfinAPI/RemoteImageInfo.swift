@@ -13,7 +13,11 @@ import SwiftUI
 extension RemoteImageInfo: @retroactive Identifiable, Poster {
 
     var preferredPosterDisplayType: PosterDisplayType {
-        .portrait
+        guard let height, let width else {
+            return .square
+        }
+
+        return width > height ? .landscape : .portrait
     }
 
     var displayTitle: String {
@@ -36,7 +40,26 @@ extension RemoteImageInfo: @retroactive Identifiable, Poster {
         hashValue
     }
 
+    func imageSources(
+        for displayType: PosterDisplayType,
+        size: PosterDisplayType.Size,
+        useParent: Bool,
+        environment: Void
+    ) -> [ImageSource] {
+        [.init(url: url?.url)]
+    }
+
+    @ViewBuilder
     func transform(image: Image) -> some View {
-        image
+        switch type {
+        case .logo:
+            ContainerRelativeView(ratio: 0.95) {
+                image
+                    .aspectRatio(contentMode: .fit)
+            }
+        default:
+            image
+                .aspectRatio(contentMode: .fill)
+        }
     }
 }

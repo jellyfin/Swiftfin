@@ -125,6 +125,7 @@ struct ItemImagesView: View {
                         }
                     }
                 }
+                .frame(height: 150)
                 .edgePadding(.horizontal)
             }
         }
@@ -166,34 +167,21 @@ struct ItemImagesView: View {
 
     // MARK: - Image Button
 
-    // TODO: instead of using `posterStyle`, should be sized based on
-    //       the image type and just ignore and poster styling
     @ViewBuilder
     private func imageButton(
         imageInfo: ImageInfo,
         onSelect: @escaping () -> Void
     ) -> some View {
         Button(action: onSelect) {
-            ZStack {
-                Color.secondarySystemFill
-
-                ImageView(
-                    imageInfo.itemImageSource(
-                        itemID: viewModel.item.id!,
-                        client: viewModel.userSession.client
-                    )
+            PosterImage(
+                item: imageInfo,
+                type: imageInfo.preferredPosterDisplayType,
+                environment: .init(
+                    itemID: viewModel.item.id!,
+                    client: viewModel.userSession.client
                 )
-                .placeholder { _ in
-                    Image(systemName: "photo")
-                }
-                .failure {
-                    Image(systemName: "photo")
-                }
-                .pipeline(.Swiftfin.other)
-            }
-            .posterStyle(imageInfo.height ?? 0 > imageInfo.width ?? 0 ? .portrait : .landscape)
-            .frame(maxHeight: 150)
-            .posterShadow()
+            )
+            .pipeline(.Swiftfin.other)
         }
     }
 }

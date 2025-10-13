@@ -61,32 +61,3 @@ struct ListRow<Leading: View, Content: View>: View {
         }
     }
 }
-
-extension ListRow {
-
-    @available(*, deprecated, message: "removed")
-    init(
-        insets: EdgeInsets = .zero,
-        @ViewBuilder leading: @escaping () -> Leading,
-        @ViewBuilder content: @escaping () -> Content
-    ) {
-        self.init(
-            insets: insets,
-            action: {},
-            leading: leading,
-            content: content
-        )
-    }
-
-    @available(*, deprecated, message: "removed")
-    func isSeparatorVisible(_ isVisible: Bool) -> Self {
-        self
-//        copy(modifying: \.isSeparatorVisible, with: isVisible)
-    }
-
-    @available(*, deprecated, message: "removed")
-    func onSelect(perform action: @escaping () -> Void) -> Self {
-        self
-//        copy(modifying: \.action, with: action)
-    }
-}

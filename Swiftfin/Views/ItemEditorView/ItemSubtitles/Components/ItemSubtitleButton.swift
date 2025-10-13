@@ -32,21 +32,18 @@ extension ItemSubtitlesView {
         // MARK: - Body
 
         var body: some View {
-            ListRow {} content: {
+            ListRow(action: action) {} content: {
                 rowContent
             }
-            .onSelect(perform: action)
-            .isSeparatorVisible(false)
-            .ifLet(deleteAction) { button, deleteAction in
-                button
-                    .swipeActions {
-                        Button(
-                            L10n.delete,
-                            systemImage: "trash",
-                            action: deleteAction
-                        )
-                        .tint(.red)
-                    }
+            .swipeActions {
+                if let deleteAction {
+                    Button(
+                        L10n.delete,
+                        systemImage: "trash",
+                        action: deleteAction
+                    )
+                    .tint(.red)
+                }
             }
         }
 

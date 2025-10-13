@@ -17,6 +17,7 @@ import SwiftUI
 /// A type that is displayed as a poster
 protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
 
+    associatedtype Environment = Void
     associatedtype ImageBody: View
 
     var preferredPosterDisplayType: PosterDisplayType { get }
@@ -50,7 +51,8 @@ protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
     func imageSources(
         for displayType: PosterDisplayType,
         size: PosterDisplayType.Size,
-        useParent: Bool
+        useParent: Bool,
+        environment: Environment
     ) -> [ImageSource]
 
     func thumbImageSources() -> [ImageSource]
@@ -61,7 +63,6 @@ protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
 }
 
 extension Poster {
-
     func portraitImageSources(
         maxWidth: CGFloat? = nil,
         quality: Int? = nil
@@ -98,10 +99,32 @@ extension Poster {
         []
     }
 
+    // TODO: change to observe preferred poster display type
+    func thumbImageSources() -> [ImageSource] {
+        []
+    }
+}
+
+extension Poster where Environment == Void {
+
     func imageSources(
         for displayType: PosterDisplayType,
         size: PosterDisplayType.Size,
         useParent: Bool
+    ) -> [ImageSource] {
+        imageSources(
+            for: displayType,
+            size: size,
+            useParent: useParent,
+            environment: ()
+        )
+    }
+
+    func imageSources(
+        for displayType: PosterDisplayType,
+        size: PosterDisplayType.Size,
+        useParent: Bool,
+        environment: Void
     ) -> [ImageSource] {
 
         let maxWidth = size.width(for: displayType)
@@ -119,10 +142,5 @@ extension Poster {
         case .square:
             squareImageSources(maxWidth: maxWidth, quality: quality)
         }
-    }
-
-    // TODO: change to observe preferred poster display type
-    func thumbImageSources() -> [ImageSource] {
-        []
     }
 }

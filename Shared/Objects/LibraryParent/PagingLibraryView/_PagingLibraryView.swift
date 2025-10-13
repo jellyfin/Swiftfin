@@ -11,7 +11,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Poster {
+struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Poster, Library.Element.Environment == Void {
 
     typealias Element = Library.Element
 
