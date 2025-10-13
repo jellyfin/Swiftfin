@@ -15,6 +15,7 @@ struct ItemFilterCollection: Hashable, Storable {
     var genres: [ItemGenre] = []
     var itemTypes: [BaseItemKind] = []
     var letter: [ItemLetter] = []
+    var mediaTypes: [MediaType] = []
     var sortBy: [ItemSortBy] = [ItemSortBy.sortName]
     var sortOrder: [ItemSortOrder] = [ItemSortOrder.ascending]
     var tags: [ItemTag] = []

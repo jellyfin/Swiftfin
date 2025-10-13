@@ -13,6 +13,9 @@ extension CustomizeViewsSettings {
 
     struct LibrarySection: View {
 
+        @Default(.Customization.Library.enabledDrawerFilters)
+        private var libraryEnabledDrawerFilters
+
         @Default(.Customization.Library.displayType)
         private var libraryDisplayType
         @Default(.Customization.Library.posterType)
@@ -30,8 +33,25 @@ extension CustomizeViewsSettings {
         @Default(.Customization.Library.rememberSort)
         private var rememberLibrarySort
 
+        @Router
+        private var router
+
         var body: some View {
             Form {
+                Section(L10n.filters) {
+                    ChevronButton(L10n.filters) {
+                        router.route(
+                            to: .itemFilterDrawerSelector(selection: $libraryEnabledDrawerFilters)
+                        )
+                    }
+                }
+
+                Section {
+                    Toggle(L10n.rememberSorting, isOn: $rememberLibrarySort)
+                } footer: {
+                    Text(L10n.rememberSortingFooter)
+                }
+
                 Section(L10n.layout) {
                     CaseIterablePicker(L10n.layout, selection: $libraryDisplayType)
 
@@ -62,12 +82,6 @@ extension CustomizeViewsSettings {
                             selection: $letterPickerOrientation
                         )
                     }
-                }
-
-                Section {
-                    Toggle(L10n.rememberSorting, isOn: $rememberLibrarySort)
-                } footer: {
-                    Text(L10n.rememberSortingFooter)
                 }
             }
             .navigationTitle(L10n.libraries)

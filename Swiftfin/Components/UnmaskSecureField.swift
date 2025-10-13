@@ -12,7 +12,7 @@ import SwiftUI
 //       - have a nice animation for toggle
 
 /// - Note: Do not use this view directly.
-/// Use `SecureField.init(_:text:maskToggle)` instead
+/// Use `SecureField.init(_:text:maskToggle:)` instead
 struct _UnmaskSecureField: UIViewRepresentable {
 
     private var submitAction: () -> Void

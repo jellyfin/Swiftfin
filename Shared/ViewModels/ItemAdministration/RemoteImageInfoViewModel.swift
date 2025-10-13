@@ -83,6 +83,8 @@ extension ImageProviderInfo: @retroactive Identifiable, LibraryIdentifiable {
 
 // TODO: Good example of a multi-library view model, find way to generalize
 //       - variadic generics when available?
+//       - be like server activity that just subclasses and then encapsulates multiple libraries?
+//       - need way to wait for initial results of all libraries
 
 @MainActor
 final class RemoteImageInfoViewModel: ObservableObject {

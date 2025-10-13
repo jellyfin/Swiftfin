@@ -56,10 +56,24 @@ struct PosterStyleEnvironment: WithDefaultValue, Storable {
     static let `default`: PosterStyleEnvironment = .init()
 }
 
+struct AnyForPosterStyleEnvironment: Equatable, Identifiable {
+
+    let action: (Any) -> PosterStyleEnvironment
+    let id: String = UUID().uuidString
+
+    func callAsFunction(_ value: Any) -> PosterStyleEnvironment {
+        action(value)
+    }
+
+    static func == (lhs: AnyForPosterStyleEnvironment, rhs: AnyForPosterStyleEnvironment) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
 extension EnvironmentValues {
 
     @Entry
-    var posterStyleRegistry: TypeKeyedDictionary<(Any) -> PosterStyleEnvironment> = .init()
+    var posterStyleRegistry: TypeKeyedDictionary<AnyForPosterStyleEnvironment> = .init()
 }
 
 extension View {
@@ -90,8 +104,8 @@ extension View {
         style: @escaping (PosterStyleEnvironment, P) -> PosterStyleEnvironment
     ) -> some View {
         modifier(
-            ForTypeInEnvironment<P, (Any) -> PosterStyleEnvironment>.SetValue(
-                { existing in { p in style(existing?(p as! P) ?? .default, p as! P) } },
+            ForTypeInEnvironment<P, AnyForPosterStyleEnvironment>.SetValue(
+                { existing in .init(action: { p in style(existing?(p as! P) ?? .default, p as! P) }) },
                 for: \.posterStyleRegistry
             )
         )

@@ -59,30 +59,3 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
             }
     }
 }
-
-struct MenuContentGroup: Identifiable, Equatable {
-
-    let id: String
-    let content: AnyView
-
-    init(
-        id: String = UUID().uuidString,
-        @ViewBuilder content: () -> some View
-    ) {
-        self.id = id
-        self.content = AnyView(content())
-    }
-
-    static func == (lhs: MenuContentGroup, rhs: MenuContentGroup) -> Bool {
-        lhs.id == rhs.id
-    }
-}
-
-struct MenuContentKey: PreferenceKey {
-
-    static var defaultValue: [MenuContentGroup] = []
-
-    static func reduce(value: inout [MenuContentGroup], nextValue: () -> [MenuContentGroup]) {
-        value.append(contentsOf: nextValue())
-    }
-}

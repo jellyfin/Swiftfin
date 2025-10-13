@@ -46,6 +46,9 @@
 		BD88CB422D77E6A0006BB5E3 /* TVOSPicker in Frameworks */ = {isa = PBXBuildFile; productRef = BD88CB412D77E6A0006BB5E3 /* TVOSPicker */; };
 		E1002B682793CFBA00E47059 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = E1002B672793CFBA00E47059 /* Algorithms */; };
 		E1002B6B2793E36600E47059 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = E1002B6A2793E36600E47059 /* Algorithms */; };
+		E10477722E9D84600059AB5A /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E10477712E9D84600059AB5A /* CollectionHStack */; };
+		E10477742E9D84C00059AB5A /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E10477732E9D84C00059AB5A /* CollectionVGrid */; };
+		E10477762E9D85390059AB5A /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E10477752E9D85390059AB5A /* StatefulMacros */; };
 		E10706102942F57D00646DAF /* Pulse in Frameworks */ = {isa = PBXBuildFile; productRef = E107060F2942F57D00646DAF /* Pulse */; };
 		E10706122942F57D00646DAF /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E10706112942F57D00646DAF /* PulseLogHandler */; };
 		E10706142942F57D00646DAF /* PulseUI in Frameworks */ = {isa = PBXBuildFile; productRef = E10706132942F57D00646DAF /* PulseUI */; };
@@ -268,6 +271,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E1137D312E090C230091EB60 /* VLCUI in Frameworks */,
+				E10477742E9D84C00059AB5A /* CollectionVGrid in Frameworks */,
 				62666E1727E501CC00EC0ECD /* CFNetwork.framework in Frameworks */,
 				62666DFA27E5013700EC0ECD /* TVVLCKit.xcframework in Frameworks */,
 				62666E3227E5021E00EC0ECD /* UIKit.framework in Frameworks */,
@@ -282,11 +286,13 @@
 				E13AF3B828A0C598009093AB /* NukeExtensions in Frameworks */,
 				E1575E58293E7685001665B1 /* Files in Frameworks */,
 				E1B5F7A729577BCE004B26CF /* Pulse in Frameworks */,
+				E10477722E9D84600059AB5A /* CollectionHStack in Frameworks */,
 				E13AF3BA28A0C598009093AB /* NukeUI in Frameworks */,
 				E1B5F7AB29577BCE004B26CF /* PulseUI in Frameworks */,
 				E1B5F7A929577BCE004B26CF /* PulseLogHandler in Frameworks */,
 				62666E1B27E501D400EC0ECD /* CoreGraphics.framework in Frameworks */,
 				E1388A46293F0ABA009721B1 /* SwizzleSwift in Frameworks */,
+				E10477762E9D85390059AB5A /* StatefulMacros in Frameworks */,
 				62666E2C27E5021000EC0ECD /* QuartzCore.framework in Frameworks */,
 				62666E1927E501D000EC0ECD /* CoreFoundation.framework in Frameworks */,
 				E19D41B22BF2BFA50082B8B2 /* KeychainSwift in Frameworks */,
@@ -520,6 +526,9 @@
 				BD88CB412D77E6A0006BB5E3 /* TVOSPicker */,
 				E1137D302E090C230091EB60 /* VLCUI */,
 				E1E2D7BE2E3FD936004E2E5F /* Transmission */,
+				E10477712E9D84600059AB5A /* CollectionHStack */,
+				E10477732E9D84C00059AB5A /* CollectionVGrid */,
+				E10477752E9D85390059AB5A /* StatefulMacros */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -1391,6 +1400,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E1002B662793CFBA00E47059 /* XCRemoteSwiftPackageReference "swift-algorithms" */;
 			productName = Algorithms;
+		};
+		E10477712E9D84600059AB5A /* CollectionHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1CBA43D2E8B5E8200967419 /* XCLocalSwiftPackageReference "../CollectionHStack" */;
+			productName = CollectionHStack;
+		};
+		E10477732E9D84C00059AB5A /* CollectionVGrid */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1CBA4402E8B88D800967419 /* XCLocalSwiftPackageReference "../CollectionVGrid" */;
+			productName = CollectionVGrid;
+		};
+		E10477752E9D85390059AB5A /* StatefulMacros */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E156B9862E9877C700EE7984 /* XCLocalSwiftPackageReference "../../XcodeProjects/StatefulMacros" */;
+			productName = StatefulMacros;
 		};
 		E107060F2942F57D00646DAF /* Pulse */ = {
 			isa = XCSwiftPackageProductDependency;

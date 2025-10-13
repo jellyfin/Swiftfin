@@ -28,11 +28,11 @@ extension ItemView.AboutView {
             PosterButton(
                 item: viewModel.item,
                 type: .portrait,
-                action: onSelect
+                action: { _ in () }
             ) {
                 EmptyView()
             }
-            .posterOverlay(for: BaseItemDto.self) { _ in EmptyView() }
+//            .posterOverlay(for: BaseItemDto.self) { _ in EmptyView() }
             .frame(height: 405)
         }
 

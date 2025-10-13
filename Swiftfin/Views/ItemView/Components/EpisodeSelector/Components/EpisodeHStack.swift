@@ -95,7 +95,9 @@ extension SeriesEpisodeSelector {
                 count: 1,
                 columns: UIDevice.isPhone ? 1.5 : 3.5
             ) { _ in
-                SeriesEpisodeSelector.ErrorCard(error: viewModel.error ?? JellyfinAPIError(L10n.unknownError)) {
+                SeriesEpisodeSelector.ErrorCard(
+                    error: viewModel.error ?? JellyfinAPIError(L10n.unknownError)
+                ) {
                     viewModel.refresh()
                 }
             }

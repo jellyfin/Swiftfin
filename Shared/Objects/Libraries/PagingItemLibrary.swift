@@ -118,6 +118,10 @@ struct PagingItemLibrary: PagingLibrary, WithRandomElementLibrary {
             parameters.includeItemTypes = filters.itemTypes.nilIfEmpty
         }
 
+        if filters.mediaTypes.isNotEmpty {
+            parameters.mediaTypes = filters.mediaTypes.map(\.rawValue).nilIfEmpty
+        }
+
         if filters.letter.first?.value == "#" {
             parameters.nameLessThan = "A"
         } else if filters.letter.isNotEmpty {
@@ -146,7 +150,7 @@ struct PagingItemLibrary: PagingLibrary, WithRandomElementLibrary {
     ) async throws -> BaseItemDto? {
         var parameters = attachFilters(
             to: makeBaseItemParameters(environment: environment),
-            using: environment.filters,
+            using: forcedFilters ?? environment.filters,
             pageState: pageState
         )
 

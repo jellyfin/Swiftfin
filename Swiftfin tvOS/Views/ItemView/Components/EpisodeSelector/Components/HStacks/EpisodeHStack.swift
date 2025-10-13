@@ -22,7 +22,7 @@ extension SeriesEpisodeSelector {
         private var focusedEpisodeID: String?
 
         @ObservedObject
-        var viewModel: SeasonItemViewModel
+        var viewModel: PagingSeasonViewModel
 
         @State
         private var didScrollToPlayButtonItem = false
@@ -36,7 +36,8 @@ extension SeriesEpisodeSelector {
 
         // MARK: - Content View
 
-        private func contentView(viewModel: SeasonItemViewModel) -> some View {
+        @ViewBuilder
+        private var contentView: some View {
             CollectionHStack(
                 uniqueElements: viewModel.elements,
                 id: \.unwrappedIDHashOrZero,
@@ -100,10 +101,10 @@ extension SeriesEpisodeSelector {
                     if viewModel.elements.isEmpty {
                         EmptyHStack(focusedEpisodeID: $focusedEpisodeID)
                     } else {
-                        contentView(viewModel: viewModel)
+                        contentView
                     }
-                case let .error(error):
-                    ErrorHStack(viewModel: viewModel, error: error, focusedEpisodeID: $focusedEpisodeID)
+                case .error:
+                    ErrorHStack(viewModel: viewModel, focusedEpisodeID: $focusedEpisodeID)
                 case .initial, .refreshing:
                     LoadingHStack(focusedEpisodeID: $focusedEpisodeID)
                 }
@@ -159,9 +160,8 @@ extension SeriesEpisodeSelector {
     struct ErrorHStack: View {
 
         @ObservedObject
-        var viewModel: SeasonItemViewModel
+        var viewModel: PagingSeasonViewModel
 
-        let error: JellyfinAPIError
         let focusedEpisodeID: FocusState<String?>.Binding
 
         var body: some View {
@@ -169,12 +169,13 @@ extension SeriesEpisodeSelector {
                 count: 1,
                 columns: 3.5
             ) { _ in
-                SeriesEpisodeSelector.ErrorCard(error: error)
-                    .onSelect {
-                        viewModel.send(.refresh)
-                    }
-                    .focused(focusedEpisodeID, equals: "errorCard")
-                    .padding(.horizontal, 4)
+                SeriesEpisodeSelector.ErrorCard(
+                    error: viewModel.error ?? JellyfinAPIError(L10n.unknownError)
+                ) {
+                    viewModel.refresh()
+                }
+                .focused(focusedEpisodeID, equals: "errorCard")
+                .padding(.horizontal, 4)
             }
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)

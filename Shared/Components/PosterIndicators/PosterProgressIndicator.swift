@@ -45,7 +45,8 @@ struct PosterProgressBar: View {
                 Text(title)
                     .font(.system(.body, design: .rounded))
                     .fontWeight(.medium)
-                    .foregroundStyle(Color(uiColor: UIColor.lightText))
+                    .foregroundStyle(.secondary)
+//                    .foregroundStyle(Color(uiColor: UIColor.lightText))
 
                 ProgressView(value: progress)
                     .progressViewStyle(.playback)

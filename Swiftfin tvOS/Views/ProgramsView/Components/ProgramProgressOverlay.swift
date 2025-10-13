@@ -20,11 +20,11 @@ extension ProgramsView {
         private let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
         var body: some View {
-            WrappedView {
+            ZStack {
                 if let startDate = program.startDate, startDate < Date.now {
-                    LandscapePosterProgressBar(
-                        progress: program.programProgress ?? 0
-                    )
+//                    LandscapePosterProgressBar(
+//                        progress: program.programProgress ?? 0
+//                    )
                 }
             }
             .onReceive(timer) { newValue in

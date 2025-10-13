@@ -114,7 +114,9 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
                 ContentGroupContentView(viewModel: viewModel)
             }
             .edgePadding(.vertical)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .ignoresSafeArea(.container, edges: .horizontal)
         .scrollIndicators(.hidden)
         .refreshable {
             try? await viewModel.refresh()
@@ -151,12 +153,14 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
                 ProgressView()
             }
 
+            #if os(iOS)
             SettingsBarButton(
                 server: viewModel.userSession.server,
                 user: viewModel.userSession.user
             ) {
                 router.route(to: .settings)
             }
+            #endif
         }
 //        .sinceLastDisappear { interval in
 //            if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {

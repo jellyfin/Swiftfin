@@ -25,12 +25,12 @@ struct SeriesEpisodeSelector: View {
     @State
     private var didSelectPlayButtonSeason = false
     @State
-    private var selection: SeasonItemViewModel.ID?
+    private var selection: PagingSeasonViewModel.ID?
 
     // MARK: - Calculated Variables
 
-    private var selectionViewModel: SeasonItemViewModel? {
-        viewModel.seasons.first(where: { $0.id == selection })
+    private var selectionViewModel: PagingSeasonViewModel? {
+        viewModel.seasons.first(where: { $0.id == selection }) ?? viewModel.seasons.first
     }
 
     // MARK: - Body
@@ -60,7 +60,7 @@ struct SeriesEpisodeSelector: View {
             guard let selectionViewModel else { return }
 
             if selectionViewModel.state == .initial {
-                selectionViewModel.send(.refresh)
+                selectionViewModel.refresh()
             }
         }
     }

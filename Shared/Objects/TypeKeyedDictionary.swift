@@ -44,3 +44,20 @@ struct TypeKeyedDictionary<Value> {
         }
     }
 }
+
+extension TypeKeyedDictionary: Equatable where Value: Equatable {
+
+    static func == (lhs: TypeKeyedDictionary<Value>, rhs: TypeKeyedDictionary<Value>) -> Bool {
+        guard lhs.elements.count == rhs.elements.count else { return false }
+
+        for (key, value) in lhs.elements {
+            guard let matchingRHS = rhs.elements.first(where: { $0.key == key }) else { return false }
+
+            if matchingRHS.value != value {
+                return false
+            }
+        }
+
+        return true
+    }
+}

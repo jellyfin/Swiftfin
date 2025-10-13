@@ -20,6 +20,11 @@ extension CustomizeViewsSettings {
         @Router
         private var router
 
+        @Default(.Customization.itemViewType)
+        private var itemViewType
+        @Default(.Customization.CinematicItemViewType.usePrimaryImage)
+        private var cinematicItemViewTypeUsePrimaryImage
+
         @StoredValue(.User.itemViewAttributes)
         private var itemViewAttributes
         @StoredValue(.User.enabledTrailers)
@@ -32,8 +37,26 @@ extension CustomizeViewsSettings {
         @StoredValue(.User.enableCollectionManagement)
         private var enableCollectionManagement
 
+        @Default(.Customization.shouldShowMissingSeasons)
+        private var shouldShowMissingSeasons
+        @Default(.Customization.shouldShowMissingEpisodes)
+        private var shouldShowMissingEpisodes
+
         var body: some View {
-            Section(L10n.items) {
+            Form {
+                if UIDevice.isPhone {
+                    Section {
+                        CaseIterablePicker(L10n.items, selection: $itemViewType)
+                    }
+
+                    if itemViewType == .cinematic {
+                        Section {
+                            Toggle(L10n.usePrimaryImage, isOn: $cinematicItemViewTypeUsePrimaryImage)
+                        } footer: {
+                            Text(L10n.usePrimaryImageDescription)
+                        }
+                    }
+                }
 
                 ChevronButton(L10n.mediaAttributes) {
                     router.route(to: .itemViewAttributes(selection: $itemViewAttributes))
@@ -44,22 +67,33 @@ extension CustomizeViewsSettings {
                     selection: $enabledTrailers
                 )
 
-                /// Enabled Collection Management for collection managers
-                if userSession?.user.permissions.items.canManageCollections == true {
-                    Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
+                Section(L10n.management) {
+
+                    /// Enabled Collection Management for collection managers
+                    if userSession?.user.permissions.items.canManageCollections == true {
+                        Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
+                    }
+                    /// Enabled Media Management when there are media elements that can be managed
+                    if userSession?.user.permissions.items.canEditMetadata == true ||
+                        userSession?.user.permissions.items.canManageLyrics == true ||
+                        userSession?.user.permissions.items.canManageSubtitles == true
+                    {
+                        Toggle(L10n.editMedia, isOn: $enableItemEditing)
+                    }
+                    /// Enabled Media Deletion for valid deletion users
+                    if userSession?.user.permissions.items.canDelete == true {
+                        Toggle(L10n.deleteMedia, isOn: $enableItemDeletion)
+                    }
                 }
-                /// Enabled Media Management when there are media elements that can be managed
-                if userSession?.user.permissions.items.canEditMetadata == true ||
-                    userSession?.user.permissions.items.canManageLyrics == true ||
-                    userSession?.user.permissions.items.canManageSubtitles == true
-                {
-                    Toggle(L10n.editMedia, isOn: $enableItemEditing)
-                }
-                /// Enabled Media Deletion for valid deletion users
-                if userSession?.user.permissions.items.canDelete == true {
-                    Toggle(L10n.deleteMedia, isOn: $enableItemDeletion)
+
+                Section {
+                    Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
+                    Toggle(L10n.showMissingEpisodes, isOn: $shouldShowMissingEpisodes)
+                } header: {
+                    Text(L10n.missingItems)
                 }
             }
+            .navigationTitle(L10n.items)
         }
     }
 }

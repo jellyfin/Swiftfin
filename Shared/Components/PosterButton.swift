@@ -12,7 +12,7 @@ import SwiftUI
 
 struct PosterButton<Item: Poster, Label: View>: View {
 
-    @ForTypeInEnvironment<Item, (Any) -> PosterStyleEnvironment>(\.posterStyleRegistry)
+    @ForTypeInEnvironment<Item, AnyForPosterStyleEnvironment>(\.posterStyleRegistry)
     private var posterStyleRegistry
 
     @Namespace
@@ -43,28 +43,38 @@ struct PosterButton<Item: Poster, Label: View>: View {
     }
 
     @ViewBuilder
-    private func posterView(overlay: some View = EmptyView()) -> some View {
-        VStack(alignment: .leading) {
-            PosterImage(
-                item: item,
-                type: posterStyle.displayType
-            )
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .overlay { overlay }
-            .contentShape(.contextMenuPreview, Rectangle())
-            .posterCornerRadius(posterStyle.displayType)
-            .backport
-            .matchedTransitionSource(id: "item", in: namespace)
-            .posterShadow()
+    private func posterImage(overlay: some View = EmptyView()) -> some View {
+        PosterImage(
+            item: item,
+            type: posterStyle.displayType
+        )
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .overlay { overlay }
+        .contentShape(.contextMenuPreview, Rectangle())
+        .posterCornerRadius(posterStyle.displayType)
+        .backport
+        .matchedTransitionSource(id: "item", in: namespace)
+        .posterShadow()
+        .hoverEffect(.highlight)
+    }
 
-            Group {
-                if Label.self != EmptyView.self {
-                    label
-                } else {
-                    posterStyle.label
-                }
+    @ViewBuilder
+    private var resolvedLabel: some View {
+        Group {
+            if Label.self != EmptyView.self {
+                label
+            } else {
+                posterStyle.label
             }
-            .allowsHitTesting(false)
+        }
+        .allowsHitTesting(false)
+    }
+
+    @ViewBuilder
+    private func buttonLabel(overlay: some View = EmptyView()) -> some View {
+        VStack(alignment: .leading) {
+            posterImage(overlay: overlay)
+            resolvedLabel
         }
     }
 
@@ -72,15 +82,22 @@ struct PosterButton<Item: Poster, Label: View>: View {
         Button {
             action(namespace)
         } label: {
-            posterView(overlay: posterStyle.overlay(posterStyle.displayType))
+            // For focused offset label behavior on tvOS, this layout is required
+            #if os(tvOS)
+            posterImage(overlay: posterStyle.overlay(posterStyle.displayType))
+            resolvedLabel
+                .frame(maxWidth: .infinity, alignment: .leading)
+            #else
+            buttonLabel(overlay: posterStyle.overlay(posterStyle.displayType))
                 .trackingSize($posterSize)
+            #endif
         }
         .foregroundStyle(.primary, .secondary)
-        .buttonStyle(.plain)
+        .buttonStyle(.borderless)
         .matchedContextMenu(for: item) {
             let frameScale = 1.3
 
-            posterView()
+            buttonLabel()
                 .frame(
                     width: posterSize.width * frameScale,
                     height: posterSize.height * frameScale
@@ -88,7 +105,7 @@ struct PosterButton<Item: Poster, Label: View>: View {
                 .padding(20)
                 .background {
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Color(uiColor: UIColor.secondarySystemGroupedBackground))
+                        .fill(.complexSecondary)
                 }
         }
     }

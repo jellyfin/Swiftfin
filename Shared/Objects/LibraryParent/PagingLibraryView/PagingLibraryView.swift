@@ -109,7 +109,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Po
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
         .navigationTitle(viewModel.library.parent.displayTitle)
-        .navigationBarTitleDisplayMode(.inline)
+//        .navigationBarTitleDisplayMode(.inline)
 //        .backport
 //        .onChange(of: viewModel.grouping) { _, _ in
 //            viewModel.refresh()
@@ -119,9 +119,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Po
                 viewModel.refresh()
             }
         }
-        .navigationBarMenuButton(
-            isLoading: viewModel.background.is(.retrievingNextPage)
-        ) {}
+//        .navigationBarMenuButton(
+//            isLoading: viewModel.background.is(.retrievingNextPage)
+//        ) {}
     }
 }
 
@@ -164,6 +164,7 @@ extension PagingLibraryView {
             }
         }
 
+        #if os(iOS)
         private var layout: CollectionVGridLayout {
             if UIDevice.isPhone {
                 phoneLayout
@@ -195,6 +196,33 @@ extension PagingLibraryView {
                 .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
             }
         }
+        #else
+        private var layout: CollectionVGridLayout {
+            switch (libraryStyle.posterDisplayType, libraryStyle.displayType) {
+            case (.landscape, .grid):
+                return .columns(
+                    5,
+                    insets: EdgeInsets.edgeInsets,
+                    itemSpacing: EdgeInsets.edgePadding,
+                    lineSpacing: EdgeInsets.edgePadding
+                )
+            case (.portrait, .grid), (.square, .grid):
+                return .columns(
+                    7,
+                    insets: EdgeInsets.edgeInsets,
+                    itemSpacing: EdgeInsets.edgePadding,
+                    lineSpacing: EdgeInsets.edgePadding
+                )
+            case (_, .list):
+                return .columns(
+                    libraryStyle.listColumnCount,
+                    insets: EdgeInsets.edgeInsets,
+                    itemSpacing: EdgeInsets.edgePadding,
+                    lineSpacing: EdgeInsets.edgePadding
+                )
+            }
+        }
+        #endif
 
         private var evaluatedStyle: (LibraryStyle, Binding<LibraryStyle>?) {
             libraryStyleRegistry?(Element.self) ?? (.default, nil)

@@ -10,6 +10,8 @@ import Foundation
 import IdentifiedCollections
 import JellyfinAPI
 
+// TODO: use `ServerUsersLibrary`
+
 final class ServerActivityViewModel: PagingLibraryViewModel<ServerActivityLibrary> {
 
     private(set) var users: IdentifiedArrayOf<UserDto> = []

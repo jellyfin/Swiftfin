@@ -92,14 +92,15 @@ struct ItemImagesView: View {
     @ViewBuilder
     private var imageView: some View {
         ScrollView {
-            ForEach(ImageType.allCases.sorted(using: \.rawValue), id: \.self) { imageType in
-                Section {
-                    imageScrollView(for: imageType)
-
-                    RowDivider()
-                        .padding(.vertical, 16)
-                } header: {
-                    sectionHeader(for: imageType)
+            SeparatorVStack(alignment: .leading) {
+                RowDivider()
+                    .padding(.vertical, 10)
+            } content: {
+                ForEach(
+                    ImageType.allCases.sorted(using: \.rawValue),
+                    id: \.self
+                ) { imageType in
+                    imageSection(for: imageType)
                 }
             }
         }
@@ -108,49 +109,34 @@ struct ItemImagesView: View {
     // MARK: - Image Scroll View
 
     @ViewBuilder
-    private func imageScrollView(for imageType: ImageType) -> some View {
+    private func imageSection(for imageType: ImageType) -> some View {
         let images = viewModel.images[imageType] ?? []
 
-        if let firstImageInfo = images.first {
-            PosterHStack(
-                title: "asdf",
-                type: firstImageInfo.preferredPosterDisplayType,
-                items: images
-            ) { imageInfo, _ in
-                router.route(
-                    to: .itemImageDetails(
-                        viewModel: viewModel,
-                        imageInfo: imageInfo
-                    )
+        PosterHStack(
+            elements: images,
+            type: images.first?.preferredPosterDisplayType ?? .portrait,
+        ) { imageInfo, _ in
+            router.route(
+                to: .itemImageDetails(
+                    viewModel: viewModel,
+                    imageInfo: imageInfo
                 )
-            }
-            .posterStyle(for: ImageInfo.self) { environment, image in
-                var environment = environment
-                environment.displayType = image.preferredPosterDisplayType
-                return environment
-            }
-            .customEnvironment(
-                for: ImageInfo.self,
-                value: .init(itemID: viewModel.item.id!, client: viewModel.userSession.client)
             )
-
-//            ScrollView(.horizontal, showsIndicators: false) {
-//                HStack {
-//                    ForEach(images, id: \.self) { imageInfo in
-//                        imageButton(imageInfo: imageInfo) {
-//                            router.route(
-//                                to: .itemImageDetails(
-//                                    viewModel: viewModel,
-//                                    imageInfo: imageInfo
-//                                )
-//                            )
-//                        }
-//                    }
-//                }
-//                .frame(height: 150)
-//                .edgePadding(.horizontal)
-//            }
+        } header: {
+            sectionHeader(for: imageType)
         }
+        .posterStyle(for: ImageInfo.self) { environment, image in
+            var environment = environment
+            environment.displayType = image.preferredPosterDisplayType
+            return environment
+        }
+        .customEnvironment(
+            for: ImageInfo.self,
+            value: .init(
+                itemID: viewModel.item.id!,
+                client: viewModel.userSession.client
+            )
+        )
     }
 
     // MARK: - Section Header
@@ -159,7 +145,7 @@ struct ItemImagesView: View {
     private func sectionHeader(for imageType: ImageType) -> some View {
         HStack {
             Text(imageType.displayTitle)
-                .font(.headline)
+                .accessibilityAddTraits(.isHeader)
 
             Spacer()
 
@@ -179,11 +165,11 @@ struct ItemImagesView: View {
                     router.route(to: .itemImageSelector(viewModel: viewModel, imageType: imageType))
                 }
             }
-            .font(.body)
             .labelStyle(.iconOnly)
-            .fontWeight(.semibold)
             .foregroundStyle(accentColor)
         }
+        .font(.title2)
+        .fontWeight(.semibold)
         .edgePadding(.horizontal)
     }
 

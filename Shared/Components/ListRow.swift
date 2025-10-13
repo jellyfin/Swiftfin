@@ -51,7 +51,7 @@ struct ListRow<Leading: View, Content: View>: View {
         }
         .foregroundStyle(.primary, .secondary)
         .contentShape(.contextMenuPreview, Rectangle())
-        .listRowSeparator(.hidden)
+//        .listRowSeparator(.hidden)
         .overlay(alignment: .bottomTrailing) {
             Color.secondarySystemFill
                 .frame(

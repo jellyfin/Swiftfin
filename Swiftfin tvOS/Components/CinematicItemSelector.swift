@@ -42,13 +42,13 @@ struct CinematicItemSelector<Item: Poster>: View {
             }
 
             // TODO: fix intrinsic content sizing without frame
-            PosterHStack(
-                type: .landscape,
-                items: items,
-                action: onSelect,
-                label: itemContent
-            )
-            .frame(height: 400)
+//            PosterHStack(
+//                type: .landscape,
+//                items: items,
+//                action: onSelect,
+//                label: itemContent
+//            )
+//            .frame(height: 400)
         }
         .frame(height: UIScreen.main.bounds.height - 75, alignment: .bottomLeading)
         .frame(maxWidth: .infinity)

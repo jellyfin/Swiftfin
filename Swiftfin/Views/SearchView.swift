@@ -37,11 +37,24 @@ struct SearchView: View {
     @StateObject
     private var viewModel = SearchViewModel()
 
+    @ViewBuilder
     private func errorView(with error: some Error) -> some View {
         ErrorView(error: error)
             .onRetry {
                 viewModel.search(query: searchQuery)
             }
+    }
+
+    @ViewBuilder
+    private var resultsView: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 10) {
+                ContentGroupContentView(
+                    viewModel: viewModel.itemContentGroupViewModel
+                )
+            }
+            .edgePadding(.vertical)
+        }
     }
 
     @ViewBuilder
@@ -52,42 +65,6 @@ struct SearchView: View {
                     searchQuery = item.displayTitle
                 }
             }
-        }
-    }
-
-    private func select(_ item: BaseItemDto, in namespace: Namespace.ID) {
-        switch item.type {
-        case .program, .tvChannel:
-            let provider = item.getPlaybackItemProvider(userSession: viewModel.userSession)
-            router.route(to: .videoPlayer(provider: provider))
-        default:
-            router.route(to: .item(item: item), in: namespace)
-        }
-    }
-
-    @ViewBuilder
-    private func itemsSection(
-        title: String,
-        type: BaseItemKind,
-        items: [BaseItemDto],
-        posterType: PosterDisplayType
-    ) -> some View {
-        PosterHStack(
-            title: title,
-            type: posterType,
-            items: items,
-            action: select
-        )
-        .trailing {
-            SeeAllButton()
-                .onSelect {
-//                    let viewModel = PagingLibraryViewModel(
-//                        title: title,
-//                        id: "search-\(type.hashValue)",
-//                        items
-//                    )
-//                    router.route(to: .library(viewModel: viewModel))
-                }
         }
     }
 
@@ -102,14 +79,7 @@ struct SearchView: View {
                         Text(L10n.noResults)
                     }
                 } else {
-                    ScrollView(showsIndicators: false) {
-                        VStack(alignment: .leading, spacing: 10) {
-                            ContentGroupContentView(
-                                viewModel: viewModel.itemContentGroupViewModel
-                            )
-                        }
-                        .edgePadding(.vertical)
-                    }
+                    resultsView
                 }
             case .error:
                 viewModel.error.map { errorView(with: $0) }

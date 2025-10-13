@@ -42,6 +42,16 @@ struct TabItem: Identifiable, @preconcurrency Hashable, SystemImageable {
 
 extension TabItem {
 
+    #if os(iOS)
+    static let adminDashboard = TabItem(
+        id: "admin-dashboard",
+        title: L10n.dashboard,
+        systemImage: "server.rack"
+    ) {
+        AdminDashboardView()
+    }
+    #endif
+
     static func contentGroup(
         provider: some _ContentGroupProvider
     ) -> TabItem {
@@ -67,14 +77,12 @@ extension TabItem {
             title: title,
             systemImage: systemName
         ) {
-            EmptyView()
-//            let library = PagingItemLibrary(
-//                title: title,
-//                id: id,
-//                filters: .init(parent: nil, currentFilters: filters)
-//            )
-//
-//            return PagingLibraryView(library: library)
+            let library = PagingItemLibrary(
+                parent: .init(name: title),
+                filters: filters
+            )
+
+            PagingLibraryView(library: library)
         }
     }
 

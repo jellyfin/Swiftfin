@@ -29,17 +29,17 @@ extension ItemView {
                 ) { item, namespace in
                     router.route(to: .item(item: item), in: namespace)
                 }
-                .trailing {
-                    SeeAllButton()
-                        .onSelect {
-                            let library = StaticLibrary(
-                                title: L10n.recommended,
-                                id: "recommended",
-                                elements: items
-                            )
-                            router.route(to: .library(library: library))
-                        }
-                }
+//                .trailing {
+//                    SeeAllButton()
+//                        .onSelect {
+//                            let library = StaticLibrary(
+//                                title: L10n.recommended,
+//                                id: "recommended",
+//                                elements: items
+//                            )
+//                            router.route(to: .library(library: library))
+//                        }
+//                }
             }
         }
     }

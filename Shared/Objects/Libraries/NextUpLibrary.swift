@@ -6,11 +6,22 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import Foundation
 import JellyfinAPI
 
 struct NextUpLibrary: PagingLibrary {
+
+    struct Environment: WithDefaultValue {
+        let enableRewatching: Bool
+        let maxNextUp: TimeInterval
+
+        static var `default`: Self {
+            .init(
+                enableRewatching: false,
+                maxNextUp: 0
+            )
+        }
+    }
 
     let parent: _TitledLibraryParent
 
@@ -22,16 +33,15 @@ struct NextUpLibrary: PagingLibrary {
     }
 
     func retrievePage(
-        environment: Void,
+        environment: Environment,
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
         var parameters = Paths.GetNextUpParameters()
-        parameters.enableRewatching = Defaults[.Customization.Home.resumeNextUp]
+        parameters.enableRewatching = environment.enableRewatching
         parameters.enableUserData = true
 
-        let maxNextUp = Defaults[.Customization.Home.maxNextUp]
-        if maxNextUp > 0 {
-            parameters.nextUpDateCutoff = Date.now.addingTimeInterval(-maxNextUp)
+        if environment.maxNextUp > 0 {
+            parameters.nextUpDateCutoff = Date.now.addingTimeInterval(-environment.maxNextUp)
         }
 
         parameters.limit = pageState.pageSize

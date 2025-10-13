@@ -183,33 +183,32 @@ struct WithPosterButtonStyle<Content: View>: View {
     }
 }
 
-// @MainActor
-// struct PosterGroup: Identifiable, Storable {
-//
-//    @MainActor
-//    enum Library: Storable {
-//
-//        case continueWatching(ContinueWatchingPosterGroup)
-//        case latestInLibrary(LatestInLibraryPosterGroup)
-//        case nextUp(NextUpPosterGroup)
-//        case recentlyAdded
-//        case library(id: String, name: String, filters: ItemFilterCollection)
-//        case `static`(id: String, name: String, elements: [any Poster])
-//    }
-//
-//    enum RowStyle: Storable {
-//        case carousel
-//        case scroll
-//    }
+@MainActor
+struct PosterGroupSetting: Identifiable, Storable {
 
-//    let library: Library
-//    let rowStyle: RowStyle
-//
-//    let posterDisplayType: PosterDisplayType
-//    let posterSize: PosterDisplayType.Size
-//
-//    let id = UUID().uuidString
-// }
+    @MainActor
+    enum Library: Storable {
+
+        case continueWatching
+        case latestInLibrary
+        case nextUp
+        case recentlyAdded
+        case library(id: String, name: String, filters: ItemFilterCollection)
+    }
+
+    enum RowStyle: Storable {
+        case carousel
+        case scroll
+    }
+
+    let library: Library
+    let rowStyle: RowStyle
+
+    let posterDisplayType: PosterDisplayType
+    let posterSize: PosterDisplayType.Size
+
+    let id = UUID().uuidString
+}
 
 // struct GenresContentGroup: _ContentGroup {
 //

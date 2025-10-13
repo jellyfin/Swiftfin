@@ -115,6 +115,36 @@ extension BaseItemDto {
         )
     }
 
+    func imageSource(
+        id: String?,
+        blurHash: String? = nil,
+        _ type: ImageType,
+        maxWidth: CGFloat? = nil,
+        maxHeight: CGFloat? = nil,
+        quality: Int? = nil
+    ) -> ImageSource {
+        guard let id else {
+            return ImageSource(
+                url: nil,
+                blurHash: nil
+            )
+        }
+
+        let url = _imageURL(
+            type,
+            maxWidth: maxWidth,
+            maxHeight: maxHeight,
+            quality: quality,
+            itemID: id,
+            requireTag: false
+        )
+
+        return ImageSource(
+            url: url,
+            blurHash: blurHash
+        )
+    }
+
     // MARK: private
 
     func _imageURL(

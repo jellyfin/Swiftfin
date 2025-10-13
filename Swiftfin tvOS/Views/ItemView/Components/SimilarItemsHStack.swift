@@ -27,7 +27,7 @@ extension ItemView {
                 title: L10n.recommended,
                 type: similarPosterType,
                 items: items
-            ) { item in
+            ) { item, _ in
                 router.route(to: .item(item: item))
             }
         }

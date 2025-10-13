@@ -8,6 +8,14 @@
 
 import Foundation
 
+#if os(iOS)
+private let landscapeMaxWidth: CGFloat = 300
+private let portraitMaxWidth: CGFloat = 200
+#else
+private let landscapeMaxWidth: CGFloat = 500
+private let portraitMaxWidth: CGFloat = 500
+#endif
+
 enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImageable {
 
     enum Size: CaseIterable, Displayable, Storable {
@@ -33,19 +41,21 @@ enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImage
         func width(for displayType: PosterDisplayType) -> CGFloat? {
             switch displayType {
             case .landscape:
-                switch self {
-                case .small:
-                    200
-                case .medium:
-                    300
-                }
+                landscapeMaxWidth
+//                switch self {
+//                case .small:
+//                    200
+//                case .medium:
+//                    300
+//                }
             case .portrait, .square:
-                switch self {
-                case .small:
-                    200
-                case .medium:
-                    400
-                }
+                portraitMaxWidth
+//                switch self {
+//                case .small:
+//                    200
+//                case .medium:
+//                    400
+//                }
             }
         }
     }

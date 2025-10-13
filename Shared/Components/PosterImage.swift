@@ -12,12 +12,17 @@ import SwiftUI
 
 /// Retrieving images by exact pixel dimensions is a bit
 /// intense for normal usage and eases cache usage and modifications.
+#if os(iOS)
 private let landscapeMaxWidth: CGFloat = 300
 private let portraitMaxWidth: CGFloat = 200
+#else
+private let landscapeMaxWidth: CGFloat = 500
+private let portraitMaxWidth: CGFloat = 500
+#endif
 
 struct PosterImage<Element: Poster>: View {
 
-    @ForTypeInEnvironment<Element, (Any) -> PosterStyleEnvironment>(\.posterStyleRegistry)
+    @ForTypeInEnvironment<Element, AnyForPosterStyleEnvironment>(\.posterStyleRegistry)
     private var posterStyleRegistry
 
     @ForTypeInEnvironment<Element, (Any) -> any CustomEnvironmentValue>(\.customEnvironmentValueRegistry)
@@ -25,6 +30,7 @@ struct PosterImage<Element: Poster>: View {
 
     private let contentMode: ContentMode
     private let element: Element
+    // TODO: figure out what to do with this
     private let imageMaxWidth: CGFloat
     private var pipeline: ImagePipeline
     private let type: PosterDisplayType

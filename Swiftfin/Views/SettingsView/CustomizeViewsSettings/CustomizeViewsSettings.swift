@@ -13,18 +13,6 @@ import SwiftUI
 
 struct CustomizeViewsSettings: View {
 
-    @Default(.Customization.itemViewType)
-    private var itemViewType
-    @Default(.Customization.CinematicItemViewType.usePrimaryImage)
-    private var cinematicItemViewTypeUsePrimaryImage
-
-    @Default(.Customization.shouldShowMissingSeasons)
-    private var shouldShowMissingSeasons
-    @Default(.Customization.shouldShowMissingEpisodes)
-    private var shouldShowMissingEpisodes
-
-    @Default(.Customization.Library.enabledDrawerFilters)
-    private var libraryEnabledDrawerFilters
     @Default(.Customization.Search.enabledDrawerFilters)
     private var searchEnabledDrawerFilters
 
@@ -42,47 +30,26 @@ struct CustomizeViewsSettings: View {
     var body: some View {
         List {
 
-            if UIDevice.isPhone {
-                Section {
-                    CaseIterablePicker(L10n.items, selection: $itemViewType)
-                }
-
-                if itemViewType == .cinematic {
-                    Section {
-                        Toggle(L10n.usePrimaryImage, isOn: $cinematicItemViewTypeUsePrimaryImage)
-                    } footer: {
-                        L10n.usePrimaryImageDescription.text
-                    }
-                }
-            }
-
             Section {
 
                 Toggle(L10n.favorites, isOn: $showFavorites)
                 Toggle(L10n.randomImage, isOn: $libraryRandomImage)
 
             } header: {
-                L10n.library.text
+                Text(L10n.library)
             }
 
             Section {
-                ChevronButton(L10n.library) {
-                    router.route(to: .itemFilterDrawerSelector(selection: $libraryEnabledDrawerFilters))
-                }
-
                 ChevronButton(L10n.search) {
                     router.route(to: .itemFilterDrawerSelector(selection: $searchEnabledDrawerFilters))
                 }
 
             } header: {
-                L10n.filters.text
+                Text(L10n.filters)
             }
 
-            Section {
-                Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
-                Toggle(L10n.showMissingEpisodes, isOn: $shouldShowMissingEpisodes)
-            } header: {
-                L10n.missingItems.text
+            ChevronButton(L10n.items) {
+                router.route(to: .itemSettings)
             }
 
             ChevronButton(L10n.libraries) {
@@ -92,8 +59,6 @@ struct CustomizeViewsSettings: View {
             ChevronButton(L10n.posters) {
                 router.route(to: .posterSettings)
             }
-
-            ItemSection()
 
             HomeSection()
         }

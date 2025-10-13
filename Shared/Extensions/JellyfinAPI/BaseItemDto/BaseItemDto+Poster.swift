@@ -122,32 +122,6 @@ extension BaseItemDto: Poster {
         }
     }
 
-//    func _landscapeImageSources(
-//        useParent: Bool,
-//        maxWidth: CGFloat?,
-//        quality: Int?
-//    ) -> [ImageSource] {
-//        switch type {
-//        case .episode:
-//            if useParent {
-//                [
-//                    seriesImageSource(.thumb, maxWidth: maxWidth, quality: quality),
-//                    seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality),
-//                    imageSource(.primary, maxWidth: maxWidth, quality: quality),
-//                ]
-//            } else {
-//                [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
-//            }
-//        case .collectionFolder, .folder, .musicVideo, .program, .userView, .video:
-//            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
-//        default:
-//            [
-//                imageSource(.thumb, maxWidth: maxWidth, quality: quality),
-//                imageSource(.backdrop, maxWidth: maxWidth, quality: quality),
-//            ]
-//        }
-//    }
-
     func cinematicImageSources(
         maxWidth: CGFloat? = nil,
         quality: Int? = nil,
@@ -168,22 +142,21 @@ extension BaseItemDto: Poster {
     ) -> [ImageSource] {
         switch type {
         case .audio, .channel, .musicAlbum, .tvChannel:
-            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
+            [
+                // TODO: generalize blurhash retrieval
+                imageSource(.primary, maxWidth: maxWidth, quality: quality),
+                imageSource(
+                    id: albumID,
+                    blurHash: imageBlurHashes?.primary?.first?.value,
+                    .primary,
+                    maxWidth: maxWidth,
+                    quality: quality
+                ),
+            ]
         default:
             []
         }
     }
-
-//    func thumbImageSources() -> [ImageSource] {
-//        switch preferredPosterDisplayType {
-//        case .portrait:
-//            portraitImageSources(maxWidth: 200, quality: 90)
-//        case .landscape:
-//            landscapeImageSources(maxWidth: 200, quality: 90)
-//        case .square:
-//            squareImageSources(maxWidth: 200, quality: 90)
-//        }
-//    }
 
     @ViewBuilder
     func transform(image: Image) -> some View {
