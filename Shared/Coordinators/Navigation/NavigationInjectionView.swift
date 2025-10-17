@@ -55,18 +55,20 @@ struct NavigationInjectionView: View {
                 rootCoordinator: rootCoordinator
             )
         )
-        .sheet(
-            item: $coordinator.presentedSheet
-        ) {
-            coordinator.presentedSheet = nil
-        } content: { route in
+        #if os(tvOS)
+        .fullScreenCover(
+            item: $coordinator.presentedSheet,
+            onDismiss: {
+                coordinator.presentedSheet = nil
+            }
+        ) { route in
             let newCoordinator = NavigationCoordinator()
 
             NavigationInjectionView(coordinator: newCoordinator) {
                 route.destination
+                    .background(.ultraThinMaterial)
             }
         }
-        #if os(tvOS)
         .fullScreenCover(
             item: $coordinator.presentedFullScreen
         ) { route in
@@ -77,7 +79,18 @@ struct NavigationInjectionView: View {
             }
         }
         #else
-        .presentation(
+        .sheet(
+                item: $coordinator.presentedSheet
+            ) {
+                coordinator.presentedSheet = nil
+            } content: { route in
+                let newCoordinator = NavigationCoordinator()
+
+                NavigationInjectionView(coordinator: newCoordinator) {
+                    route.destination
+                }
+            }
+            .presentation(
                 $coordinator.presentedFullScreen,
                 transition: .zoomIfAvailable(
                     options: .init(

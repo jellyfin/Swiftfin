@@ -35,9 +35,16 @@ struct LearnMoreButton: View {
         .foregroundStyle(Color.accentColor)
         .buttonStyle(.plain)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .sheet(isPresented: $isPresented) {
-            learnMoreView
-        }
+        #if os(tvOS)
+            .fullScreenCover(isPresented: $isPresented) {
+                learnMoreView
+                    .background(.ultraThinMaterial)
+            }
+        #else
+            .sheet(isPresented: $isPresented) {
+                learnMoreView
+            }
+        #endif
     }
 
     // MARK: - Learn More View
