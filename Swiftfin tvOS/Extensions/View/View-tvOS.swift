@@ -34,6 +34,42 @@ extension View {
     func prefersStatusBarHidden(_ hidden: Bool) -> some View {
         self
     }
+
+    @ViewBuilder
+    func navigationBarCloseButton(
+        disabled: Bool = false,
+        _ action: @escaping () -> Void
+    ) -> some View {
+        toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(L10n.close) {
+                    action()
+                }
+                .disabled(disabled)
+            }
+        }
+    }
+
+    @ViewBuilder
+    func tvFilterDrawer(
+        viewModel: FilterViewModel,
+        types: [ItemFilterType],
+        onSelect: @escaping (TVFilterDrawer.Parameters) -> Void
+    ) -> some View {
+        if types.isEmpty {
+            self
+        } else {
+            VStack(spacing: 0) {
+                self
+
+                TVFilterDrawer(
+                    viewModel: viewModel,
+                    types: types
+                )
+                .onSelect(onSelect)
+            }
+        }
+    }
 }
 
 extension EnvironmentValues {

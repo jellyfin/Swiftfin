@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Defaults
 import Foundation
 import JellyfinAPI
 import OrderedCollections
@@ -110,6 +111,40 @@ final class FilterViewModel: ViewModel, Stateful {
                 resetCurrentFilters(for: type)
             } else {
                 currentFilters = .default
+            }
+
+            // Clear stored filters when rememberFiltering is enabled
+            if let id = parent?.id, Defaults[.Customization.Library.rememberFiltering] {
+                var storedFilters = StoredValues[.User.libraryFilters(parentID: id)]
+
+                if let type {
+                    // Reset specific filter type in stored filters
+                    switch type {
+                    case .genres:
+                        storedFilters.genres = ItemFilterCollection.default.genres
+                    case .letter:
+                        storedFilters.letter = ItemFilterCollection.default.letter
+                    case .sortBy:
+                        storedFilters.sortBy = ItemFilterCollection.default.sortBy
+                    case .sortOrder:
+                        storedFilters.sortOrder = ItemFilterCollection.default.sortOrder
+                    case .tags:
+                        storedFilters.tags = ItemFilterCollection.default.tags
+                    case .traits:
+                        storedFilters.traits = ItemFilterCollection.default.traits
+                    case .years:
+                        storedFilters.years = ItemFilterCollection.default.years
+                    }
+                } else {
+                    // Reset all filtering filters (not sorting)
+                    storedFilters.genres = ItemFilterCollection.default.genres
+                    storedFilters.letter = ItemFilterCollection.default.letter
+                    storedFilters.tags = ItemFilterCollection.default.tags
+                    storedFilters.traits = ItemFilterCollection.default.traits
+                    storedFilters.years = ItemFilterCollection.default.years
+                }
+
+                StoredValues[.User.libraryFilters(parentID: id)] = storedFilters
             }
 
         case let .update(type, filters):
