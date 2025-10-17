@@ -1222,6 +1222,10 @@ internal enum L10n {
   internal static let regular = L10n.tr("Localizable", "regular", fallback: "Regular")
   /// Release Date
   internal static let releaseDate = L10n.tr("Localizable", "releaseDate", fallback: "Release Date")
+  /// Remember filtering
+  internal static let rememberFiltering = L10n.tr("Localizable", "rememberFiltering", fallback: "Remember filtering")
+  /// Remember filtering for individual libraries
+  internal static let rememberFilteringFooter = L10n.tr("Localizable", "rememberFilteringFooter", fallback: "Remember filtering for individual libraries")
   /// Remember layout
   internal static let rememberLayout = L10n.tr("Localizable", "rememberLayout", fallback: "Remember layout")
   /// Remember layout for individual libraries

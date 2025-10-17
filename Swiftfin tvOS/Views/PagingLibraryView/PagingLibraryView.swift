@@ -289,16 +289,17 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     private var contentView: some View {
 
         innerContent
+            .padding(.top, 115) // Account for header height with consistent spacing
             // These exist here to alleviate type-checker issues
-                .onChange(of: posterType) {
-                    setCustomLayout()
-                }
-                .onChange(of: displayType) {
-                    setCustomLayout()
-                }
-                .onChange(of: listColumnCount) {
-                    setCustomLayout()
-                }
+            .onChange(of: posterType) {
+                setCustomLayout()
+            }
+            .onChange(of: displayType) {
+                setCustomLayout()
+            }
+            .onChange(of: listColumnCount) {
+                setCustomLayout()
+            }
 
         // Logic for LetterPicker. Enable when ready
 
@@ -328,6 +329,83 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
          }*/
     }
 
+    // MARK: - tvOS Library Header
+
+    private func iconForFilterType(_ type: ItemFilterType) -> String {
+        switch type {
+        case .sortBy:
+            return "arrow.up.arrow.down"
+        case .traits:
+            return "line.3.horizontal.decrease"
+        default:
+            return "circle"
+        }
+    }
+
+    @ViewBuilder
+    private func tvOSLibraryHeader(
+        title: String,
+        filterViewModel: FilterViewModel,
+        filterTypes: [ItemFilterType]
+    ) -> some View {
+        HStack {
+            // Library title on the left
+            Text(title)
+                .font(.title2)
+                .fontWeight(.semibold)
+                .foregroundColor(.primary)
+
+            Spacer()
+
+            // Filter buttons on the right
+            HStack(spacing: 10) {
+                if filterViewModel.currentFilters.hasFilters {
+                    Button(action: {
+                        filterViewModel.send(.reset())
+                    }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "xmark.circle")
+                            Text(L10n.reset)
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 8)
+                    }
+                    .buttonStyle(.plain)
+                    .background(Color.jellyfinPurple)
+                    .foregroundColor(.white)
+                    .cornerRadius(35)
+                }
+
+                ForEach(filterTypes, id: \.self) { type in
+                    Button(action: {
+                        router.route(to: .filter(type: type, viewModel: filterViewModel))
+                    }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: iconForFilterType(type))
+                            Text(type.displayTitle)
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 8)
+                    }
+                    .buttonStyle(.plain)
+                    .background(
+                        Color.clear // transparent by default
+                    )
+                    .foregroundColor(
+                        filterViewModel.isFilterSelected(type: type)
+                            ? Color.jellyfinPurple
+                            : .primary
+                    )
+                    .cornerRadius(35)
+                }
+            }
+        }
+        .frame(height: 80)
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 0)
+        .background(.ultraThinMaterial)
+    }
+
     // MARK: Body
 
     var body: some View {
@@ -349,7 +427,20 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
-        .navigationTitle(viewModel.parent?.displayTitle ?? "")
+        .overlay(alignment: .top) {
+            if let filterViewModel = viewModel.filterViewModel, !enabledDrawerFilters.isEmpty {
+                let filteredTypes = enabledDrawerFilters.filter { type in
+                    type != .letter && type != .tags && type != .years && type != .sortOrder && type != .genres
+                }
+                if !filteredTypes.isEmpty {
+                    tvOSLibraryHeader(
+                        title: viewModel.parent?.displayTitle ?? "",
+                        filterViewModel: filterViewModel,
+                        filterTypes: filteredTypes
+                    )
+                }
+            }
+        }
         .onChange(of: focusedPoster) {
             setCinematicBackground()
         }
@@ -375,11 +466,24 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         .onChange(of: viewModel.filterViewModel?.currentFilters) { _, newValue in
             guard let newValue, let id = viewModel.parent?.id else { return }
 
+            var newStoredFilters = StoredValues[.User.libraryFilters(parentID: id)]
+
             if Defaults[.Customization.Library.rememberSort] {
-                let newStoredFilters = StoredValues[.User.libraryFilters(parentID: id)]
+                newStoredFilters = newStoredFilters
                     .mutating(\.sortBy, with: newValue.sortBy)
                     .mutating(\.sortOrder, with: newValue.sortOrder)
+            }
 
+            if Defaults[.Customization.Library.rememberFiltering] {
+                newStoredFilters = newStoredFilters
+                    .mutating(\.genres, with: newValue.genres)
+                    .mutating(\.letter, with: newValue.letter)
+                    .mutating(\.tags, with: newValue.tags)
+                    .mutating(\.traits, with: newValue.traits)
+                    .mutating(\.years, with: newValue.years)
+            }
+
+            if Defaults[.Customization.Library.rememberSort] || Defaults[.Customization.Library.rememberFiltering] {
                 StoredValues[.User.libraryFilters(parentID: id)] = newStoredFilters
             }
         }

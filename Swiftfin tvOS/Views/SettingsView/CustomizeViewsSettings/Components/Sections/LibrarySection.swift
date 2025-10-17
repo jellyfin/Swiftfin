@@ -31,6 +31,8 @@ extension CustomizeViewsSettings {
         private var rememberLibraryLayout
         @Default(.Customization.Library.rememberSort)
         private var rememberLibrarySort
+        @Default(.Customization.Library.rememberFiltering)
+        private var rememberLibraryFiltering
 
         @Router
         private var router
@@ -74,6 +76,12 @@ extension CustomizeViewsSettings {
                 Toggle(L10n.rememberSorting, isOn: $rememberLibrarySort)
             } footer: {
                 Text(L10n.rememberSortingFooter)
+            }
+
+            Section {
+                Toggle(L10n.rememberFiltering, isOn: $rememberLibraryFiltering)
+            } footer: {
+                Text(L10n.rememberFilteringFooter)
             }
         }
     }

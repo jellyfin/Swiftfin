@@ -172,14 +172,21 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         self.parent = parent
 
         if var filters {
-            if let id = parent?.id, Defaults[.Customization.Library.rememberSort] {
-                // TODO: see `StoredValues.User.libraryFilters` for TODO
-                //       on remembering other filters
-
+            if let id = parent?.id {
                 let storedFilters = StoredValues[.User.libraryFilters(parentID: id)]
 
-                filters.sortBy = storedFilters.sortBy
-                filters.sortOrder = storedFilters.sortOrder
+                if Defaults[.Customization.Library.rememberSort] {
+                    filters.sortBy = storedFilters.sortBy
+                    filters.sortOrder = storedFilters.sortOrder
+                }
+
+                if Defaults[.Customization.Library.rememberFiltering] {
+                    filters.genres = storedFilters.genres
+                    filters.letter = storedFilters.letter
+                    filters.tags = storedFilters.tags
+                    filters.traits = storedFilters.traits
+                    filters.years = storedFilters.years
+                }
             }
 
             self.filterViewModel = .init(
