@@ -66,13 +66,18 @@ extension TranscodeReason: Displayable, SystemImageable {
             return L10n.videoRangeTypeNotSupported
         case .videoCodecTagNotSupported:
             return L10n.videoCodecTagNotSupported
+        case .streamCountExceedsLimit:
+            return L10n.streamCountExceedsLimit
+        @unknown default:
+            return L10n.unknown
         }
     }
 
     var systemImage: String {
         switch self {
         case .containerNotSupported,
-             .containerBitrateExceedsLimit:
+             .containerBitrateExceedsLimit,
+             .directPlayError:
             return "shippingbox"
         case .audioCodecNotSupported,
              .audioIsExternal,
@@ -100,7 +105,9 @@ extension TranscodeReason: Displayable, SystemImageable {
             return "photo.tv"
         case .subtitleCodecNotSupported:
             return "captions.bubble"
-        default:
+        case .streamCountExceedsLimit:
+            return "number.circle"
+        @unknown default:
             return "questionmark.app"
         }
     }

@@ -684,6 +684,7 @@
 				uk,
 				"zh-Hant",
 				mn,
+				km,
 			);
 			mainGroup = 5377CBE8263B596A003A4E83;
 			packageReferences = (
@@ -1279,10 +1280,10 @@
 		};
 		E150C0BF2BFD62FD00944FFA /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/jellyfin/jellyfin-sdk-swift.git";
+			repositoryURL = "https://github.com/Jpkribs/jellyfin-sdk-swift.git";
 			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 0.5.2;
+				kind = revision;
+				revision = 0eb8751ef7e5551d8fd6eb17b4d89aa8d34ec1e8;
 			};
 		};
 		E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */ = {
