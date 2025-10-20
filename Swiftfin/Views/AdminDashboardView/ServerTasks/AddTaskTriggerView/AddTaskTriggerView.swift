@@ -45,7 +45,7 @@ struct AddTaskTriggerView: View {
             intervalTicks: nil,
             maxRuntimeTicks: nil,
             timeOfDayTicks: nil,
-            type: TaskTriggerInfoType.startup
+            type: TaskTriggerInfoType.startupTrigger
         )
 
         _taskTriggerInfo = State(initialValue: newTrigger)

@@ -42,7 +42,7 @@ extension EditServerTaskView {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                Image(systemName: (taskTriggerInfo.type ?? .startup).systemImage)
+                Image(systemName: (taskTriggerInfo.type ?? .startupTrigger).systemImage)
                     .fontWeight(.bold)
                     .foregroundStyle(.secondary)
             }

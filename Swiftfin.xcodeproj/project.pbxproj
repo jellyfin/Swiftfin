@@ -1283,7 +1283,7 @@
 			repositoryURL = "https://github.com/Jpkribs/jellyfin-sdk-swift.git";
 			requirement = {
 				kind = revision;
-				revision = 0eb8751ef7e5551d8fd6eb17b4d89aa8d34ec1e8;
+				revision = 491f67503bfc76dde0556327f7140b1d1f856b39;
 			};
 		};
 		E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */ = {
