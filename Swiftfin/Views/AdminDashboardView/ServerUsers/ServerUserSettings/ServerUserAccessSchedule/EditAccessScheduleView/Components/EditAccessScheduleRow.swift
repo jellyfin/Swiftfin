@@ -50,7 +50,7 @@ extension EditAccessScheduleView {
             HStack {
                 VStack(alignment: .leading) {
                     if let dayOfWeek = schedule.dayOfWeek {
-                        Text(dayOfWeek.rawValue)
+                        Text(dayOfWeek.displayTitle)
                             .fontWeight(.semibold)
                     }
 

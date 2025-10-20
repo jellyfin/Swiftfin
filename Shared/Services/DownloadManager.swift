@@ -10,6 +10,7 @@ import Factory
 import Files
 import Foundation
 import JellyfinAPI
+import Logging
 
 extension Container {
     var downloadManager: Factory<DownloadManager> { self { DownloadManager() }.shared }
@@ -17,8 +18,7 @@ extension Container {
 
 class DownloadManager: ObservableObject {
 
-    @Injected(\.logService)
-    private var logger
+    private let logger = Logger.swiftfin()
 
     @Published
     private(set) var downloads: [DownloadTask] = []

@@ -8,14 +8,14 @@
 
 import Factory
 import JellyfinAPI
+import Logging
 import SwiftUI
 
 extension ItemView {
 
     struct TrailerMenu: View {
 
-        @Injected(\.logService)
-        private var logger
+        private let logger = Logger.swiftfin()
 
         // MARK: - Stored Value
 

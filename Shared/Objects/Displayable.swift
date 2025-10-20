@@ -18,3 +18,7 @@ extension Displayable where Self: CustomStringConvertible {
         displayTitle
     }
 }
+
+struct DisplayableBox<Wrapped>: Displayable, Hashable {
+    let displayTitle: String
+}

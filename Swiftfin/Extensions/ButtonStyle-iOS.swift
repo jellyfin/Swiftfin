@@ -9,6 +9,12 @@
 import Defaults
 import SwiftUI
 
+/// - Important: On iOS, this is a `BorderlessButtonStyle` instead.
+/// This is only used to allow platform shared views.
+extension PrimitiveButtonStyle where Self == BorderlessButtonStyle {
+    static var card: BorderlessButtonStyle { .init() }
+}
+
 extension ButtonStyle where Self == ToolbarPillButtonStyle {
 
     static var toolbarPill: ToolbarPillButtonStyle {

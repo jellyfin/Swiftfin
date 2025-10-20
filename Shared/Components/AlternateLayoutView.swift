@@ -8,9 +8,6 @@
 
 import SwiftUI
 
-// TODO: pass in laid out size
-//       - but only if given closure that takes it
-
 /// A view that takes a view to affect layout while overlaying the content.
 struct AlternateLayoutView<Content: View, Layout: View>: View {
 
@@ -49,6 +46,7 @@ struct AlternateLayoutView<Content: View, Layout: View>: View {
 
     var body: some View {
         layout
+            .hidden()
             .trackingSize($layoutSize)
             .overlay(alignment: alignment) {
                 if passLayoutSize {

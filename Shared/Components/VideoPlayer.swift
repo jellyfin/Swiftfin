@@ -55,16 +55,9 @@ struct VideoPlayer: View {
         } playbackControls: {
             PlaybackControls()
         }
-        .environment(\.audioOffset, $audioOffset)
         .onAppear {
             manager.proxy = proxy
-            manager.send(.start)
-        }
-        .onSceneWillEnterForeground {
-            manager.set(playbackRequestStatus: .playing)
-        }
-        .onSceneDidEnterBackground {
-            manager.set(playbackRequestStatus: .paused)
+            manager.start()
         }
     }
 
@@ -111,7 +104,7 @@ struct VideoPlayer: View {
             .onChange(of: presentationCoordinator.isPresented) { _, isPresented in
                 guard !isPresented else { return }
                 isBeingDismissedByTransition = true
-                manager.send(.stop)
+                manager.stop()
             }
             .onReceive(manager.$playbackItem) { newItem in
                 containerState.isAspectFilled = false

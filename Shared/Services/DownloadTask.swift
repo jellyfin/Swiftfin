@@ -11,6 +11,7 @@ import Files
 import Foundation
 import Get
 import JellyfinAPI
+import Logging
 
 // TODO: Only move items if entire download successful
 // TODO: Better state for which stage of downloading
@@ -38,8 +39,7 @@ class DownloadTask: NSObject, ObservableObject {
         case ready
     }
 
-    @Injected(\.logService)
-    private var logger
+    private let logger = Logger.swiftfin()
     @Injected(\.currentUserSession)
     private var userSession: UserSession!
 

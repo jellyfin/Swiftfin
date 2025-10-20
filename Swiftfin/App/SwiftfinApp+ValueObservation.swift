@@ -83,11 +83,9 @@ extension SwiftfinApp {
             splashScreenCancellable?.cancel()
 
             accentColorCancellable = Task {
-                for await newValue in Defaults.updates(.appAccentColor) {
-                    await MainActor.run {
-                        Defaults[.accentColor] = newValue
-                        UIApplication.shared.setAccentColor(newValue.uiColor)
-                    }
+                await MainActor.run {
+                    Defaults[.accentColor] = .jellyfinPurple
+                    UIApplication.shared.setAccentColor(Color.jellyfinPurple.uiColor)
                 }
             }
             .asAnyCancellable()

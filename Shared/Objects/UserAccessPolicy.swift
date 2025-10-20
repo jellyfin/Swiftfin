@@ -26,4 +26,33 @@ enum UserAccessPolicy: String, CaseIterable, Codable, Displayable {
             L10n.pin
         }
     }
+
+    func createReason(user: UserState) -> String? {
+        switch self {
+        case .none: nil
+        case .requireDeviceAuthentication:
+            L10n.requireDeviceAuthForUser(user.username)
+        case .requirePin:
+            L10n.createPinForUser(user.username)
+        }
+    }
+
+    func authenticateReason(user: UserState) -> String? {
+        switch self {
+        case .none: nil
+        case .requireDeviceAuthentication:
+            L10n.requireDeviceAuthForUser(user.username)
+        case .requirePin:
+            L10n.enterPinForUser(user.username)
+        }
+    }
+}
+
+protocol EvaluatedLocalUserAccessPolicy {}
+
+struct EmptyEvaluatedUserAccessPolicy: EvaluatedLocalUserAccessPolicy {}
+
+struct PinEvaluatedUserAccessPolicy: EvaluatedLocalUserAccessPolicy {
+    let pin: String
+    let pinHint: String?
 }

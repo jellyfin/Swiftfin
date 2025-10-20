@@ -43,7 +43,15 @@ extension ItemView {
                 item = viewModel.item
             }
 
-            let imageType: ImageType = item.type == .episode ? .primary : .backdrop
+            let imageType: ImageType = {
+                switch item.type {
+                case .episode, .musicVideo, .video:
+                    .primary
+                default:
+                    .backdrop
+                }
+            }()
+
             let imageSource = item.imageSource(imageType, maxWidth: 1920)
 
             return content(imageSource)

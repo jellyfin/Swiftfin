@@ -27,28 +27,9 @@ struct PosterButton<Item: Poster>: View {
     private let label: any View
     private let action: () -> Void
 
-    private func imageSources(from item: Item) -> [ImageSource] {
-        switch type {
-        case .landscape:
-            item.landscapeImageSources(maxWidth: landscapeMaxWidth, quality: 90)
-        case .portrait:
-            item.portraitImageSources(maxWidth: portraitMaxWidth, quality: 90)
-        }
-    }
-
     @ViewBuilder
     private func poster(overlay: some View) -> some View {
-        ImageView(imageSources(from: item))
-            .failure {
-                if item.showTitle {
-                    SystemImageContentView(systemName: item.systemImage)
-                } else {
-                    SystemImageContentView(
-                        title: item.displayTitle,
-                        systemName: item.systemImage
-                    )
-                }
-            }
+        PosterImage(item: item, type: type)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .overlay { overlay }
             .contentShape(.contextMenuPreview, Rectangle())
@@ -175,20 +156,22 @@ extension PosterButton {
             let item: BaseItemDto
 
             var body: some View {
+
                 SeparatorHStack {
-                    Text(item.seasonEpisodeLabel ?? .emptyDash)
-
-                    if item.showTitle {
-                        Text(item.displayTitle)
-
-                    } else if let seriesName = item.seriesName {
-                        Text(seriesName)
-                    }
-                }
-                .separator {
                     Circle()
                         .frame(width: 2, height: 2)
                         .padding(.horizontal, 3)
+                } content: {
+                    SeparatorHStack {
+                        Text(item.seasonEpisodeLabel ?? .emptyDash)
+
+                        if item.showTitle {
+                            Text(item.displayTitle)
+
+                        } else if let seriesName = item.seriesName {
+                            Text(seriesName)
+                        }
+                    }
                 }
                 .font(.caption)
                 .foregroundColor(.secondary)
@@ -214,21 +197,21 @@ extension PosterButton {
         var body: some View {
             ZStack {
                 if let item = item as? BaseItemDto {
-                    if item.userData?.isPlayed ?? false {
+                    if item.canBePlayed, !item.isLiveStream, item.userData?.isPlayed == true {
                         WatchedIndicator(size: 45)
                             .isVisible(showPlayed)
                     } else {
                         if (item.userData?.playbackPositionTicks ?? 0) > 0 {
                             ProgressIndicator(progress: (item.userData?.playedPercentage ?? 0) / 100, height: 10)
                                 .isVisible(showProgress)
-                        } else {
+                        } else if item.canBePlayed, !item.isLiveStream {
                             UnwatchedIndicator(size: 45)
                                 .foregroundColor(.jellyfinPurple)
                                 .isVisible(showUnplayed)
                         }
                     }
 
-                    if item.userData?.isFavorite ?? false {
+                    if item.userData?.isFavorite == true {
                         FavoriteIndicator(size: 45)
                             .isVisible(showFavorited)
                     }

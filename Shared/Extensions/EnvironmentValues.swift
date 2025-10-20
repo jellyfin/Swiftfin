@@ -20,6 +20,9 @@ extension EnvironmentValues {
     var isInMenu: Bool = false
 
     @Entry
+    var isOverComplexContent: Bool = false
+
+    @Entry
     var isSelected: Bool = false
 
     @Entry

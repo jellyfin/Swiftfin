@@ -9,8 +9,6 @@
 import JellyfinAPI
 import SwiftUI
 
-// TODO: change to a fullscreen alert-like view instead of a plain modal
-
 struct QuickConnectView: View {
 
     @Router
@@ -24,34 +22,33 @@ struct QuickConnectView: View {
     }
 
     private func pollingView(code: String) -> some View {
-        VStack(alignment: .leading, spacing: 20) {
-            BulletedList {
+        VStack(spacing: 20) {
+            BulletedList(spacing: 16) {
                 L10n.quickConnectStep1.text
-                    .padding(.bottom)
+
                 L10n.quickConnectStep2.text
-                    .padding(.bottom)
+
                 L10n.quickConnectStep3.text
-                    .padding(.bottom)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             Text(code)
                 .tracking(10)
                 .font(.largeTitle)
                 .monospacedDigit()
-                .frame(maxWidth: .infinity)
-
-            Spacer()
         }
-        .frame(maxWidth: .infinity)
+        .frame(
+            maxWidth: .infinity,
+            maxHeight: .infinity,
+            alignment: .top
+        )
         .edgePadding()
     }
 
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .idle, .authenticated:
-                Color.clear
-            case .retrievingCode:
+            case .authenticated, .idle, .retrievingCode:
                 ProgressView()
             case let .polling(code):
                 pollingView(code: code)
@@ -62,14 +59,20 @@ struct QuickConnectView: View {
                     }
             }
         }
-        .animation(.linear(duration: 0.1), value: viewModel.state)
+        .animation(.linear(duration: 0.2), value: viewModel.state)
         .edgePadding()
         .navigationTitle(L10n.quickConnect)
-        .onFirstAppear {
-            viewModel.start()
-        }
-        .onDisappear {
-            viewModel.stop()
-        }
+        #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarCloseButton {
+                router.dismiss()
+            }
+        #endif
+            .onFirstAppear {
+                    viewModel.start()
+                }
+                .onDisappear {
+                    viewModel.stop()
+                }
     }
 }

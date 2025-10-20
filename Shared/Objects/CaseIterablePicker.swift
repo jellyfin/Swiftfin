@@ -8,11 +8,13 @@
 
 import SwiftUI
 
+// typealias SupportedCaseIterablePicker = CaseIterablePicker<SupportedCaseIterable
+
 /// A `View` that automatically generates a SwiftUI `Picker` if `Element` conforms to `CaseIterable`.
 ///
 /// If `Element` is optional, an additional `none` value is added to select `nil` that can be customized
 /// by `.noneStyle()`.
-struct CaseIterablePicker<Element: CaseIterable & Displayable & Hashable>: View {
+struct CaseIterablePicker<Element: CaseIterable & Displayable & Hashable, Label: View>: View {
 
     enum NoneStyle: Displayable {
 
@@ -34,27 +36,22 @@ struct CaseIterablePicker<Element: CaseIterable & Displayable & Hashable>: View 
         }
     }
 
-    @Binding
-    private var selection: Element?
-
-    @ViewBuilder
-    private var label: (Element) -> any View
-
+    private var elements: [Element]
+    private let label: (Element) -> Label
+    private var noneStyle: NoneStyle?
+    private let selection: Binding<Element?>
     private let title: String
-    private let hasNone: Bool
-    private var noneStyle: NoneStyle
 
     var body: some View {
-        Picker(title, selection: $selection) {
+        Picker(title, selection: selection) {
 
-            if hasNone {
+            if let noneStyle {
                 Text(noneStyle.displayTitle)
                     .tag(nil as Element?)
             }
 
-            ForEach(Element.allCases.asArray, id: \.hashValue) {
+            ForEach(elements, id: \.hashValue) {
                 label($0)
-                    .eraseToAnyView()
                     .tag($0 as Element?)
             }
         }
@@ -63,20 +60,20 @@ struct CaseIterablePicker<Element: CaseIterable & Displayable & Hashable>: View 
 
 // MARK: Text
 
-extension CaseIterablePicker {
+extension CaseIterablePicker where Label == Text {
 
     init(_ title: String, selection: Binding<Element?>) {
         self.init(
-            selection: selection,
+            elements: Element.allCases.asArray,
             label: { Text($0.displayTitle) },
-            title: title,
-            hasNone: true,
-            noneStyle: .text
+            noneStyle: .text,
+            selection: selection,
+            title: title
         )
     }
 
     init(_ title: String, selection: Binding<Element>) {
-        let binding = Binding<Element?> {
+        let newSelection = Binding<Element?> {
             selection.wrappedValue
         } set: { newValue, _ in
             precondition(newValue != nil, "Should not have nil new value with non-optional binding")
@@ -84,11 +81,11 @@ extension CaseIterablePicker {
         }
 
         self.init(
-            selection: binding,
+            elements: Element.allCases.asArray,
             label: { Text($0.displayTitle) },
-            title: title,
-            hasNone: false,
-            noneStyle: .text
+            noneStyle: nil,
+            selection: newSelection,
+            title: title
         )
     }
 
@@ -97,37 +94,16 @@ extension CaseIterablePicker {
     }
 }
 
-// MARK: Label
+extension CaseIterablePicker where Element: SupportedCaseIterable, Label == Text {
 
-// TODO: I didn't entirely like the forced label design that this
-//       uses, decide whether to actually keep
-
-// extension CaseIterablePicker where Element: SystemImageable {
-//
-//    init(title: String, selection: Binding<Element?>) {
-//        self.init(
-//            selection: selection,
-//            label: { Label($0.displayTitle, systemImage: $0.systemImage) },
-//            title: title,
-//            hasNone: true,
-//            noneStyle: .text
-//        )
-//    }
-//
-//    init(title: String, selection: Binding<Element>) {
-//        let binding = Binding<Element?> {
-//            selection.wrappedValue
-//        } set: { newValue, _ in
-//            precondition(newValue != nil, "Should not have nil new value with non-optional binding")
-//            selection.wrappedValue = newValue!
-//        }
-//
-//        self.init(
-//            selection: binding,
-//            label: { Label($0.displayTitle, systemImage: $0.systemImage) },
-//            title: title,
-//            hasNone: false,
-//            noneStyle: .text
-//        )
-//    }
-// }
+    // TODO: only used for poster settings, remove after conformance is removed
+    //       - or, keep and be used for for options that have an "enabled/none" case
+    //         when they should be a toggle + picker
+    func onlySupportedCases(_ value: Bool) -> Self {
+        if value {
+            return copy(modifying: \.elements, with: Element.supportedCases.asArray)
+        } else {
+            return self
+        }
+    }
+}

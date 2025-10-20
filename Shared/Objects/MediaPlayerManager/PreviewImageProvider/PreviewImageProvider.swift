@@ -11,5 +11,5 @@ import UIKit
 
 protocol PreviewImageProvider: ObservableObject {
     func image(for seconds: Duration) async -> UIImage?
-    func imageIndex(for seconds: Duration) -> Int
+    func imageIndex(for seconds: Duration) -> Int?
 }

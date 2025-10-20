@@ -12,6 +12,7 @@ import SwiftUI
 
 // TODO: fullscreen supplement styles
 
+@MainActor
 protocol MediaPlayerSupplement: Displayable, Identifiable {
 
     associatedtype VideoPlayerBody: PlatformView

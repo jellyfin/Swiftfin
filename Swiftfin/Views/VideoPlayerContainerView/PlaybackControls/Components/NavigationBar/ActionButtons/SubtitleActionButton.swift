@@ -23,9 +23,9 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
         private var systemImage: String {
             if selectedSubtitleStreamIndex == nil {
-                VideoPlayerActionButton.audio.secondarySystemImage
+                VideoPlayerActionButton.subtitles.secondarySystemImage
             } else {
-                VideoPlayerActionButton.audio.systemImage
+                VideoPlayerActionButton.subtitles.systemImage
             }
         }
 

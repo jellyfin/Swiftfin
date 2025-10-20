@@ -34,8 +34,9 @@ extension VideoPlayer.PlaybackControls {
             currentImageTask = nil
 
             let initialTask = Task(priority: .userInitiated) {
-                if let image = await previewImageProvider.image(for: seconds) {
-                    let index = previewImageProvider.imageIndex(for: seconds)
+                if let image = await previewImageProvider.image(for: seconds),
+                   let index = previewImageProvider.imageIndex(for: seconds)
+                {
                     self.image = (index: index, image: image)
                 } else {
                     self.image = nil

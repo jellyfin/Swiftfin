@@ -12,7 +12,8 @@ import Factory
 import Foundation
 import JellyfinAPI
 import MediaPlayer
-import UIKit
+import Nuke
+import SwiftUI
 
 // TODO: clean up
 
@@ -152,6 +153,97 @@ extension BaseItemDto {
         channelType == .tv
     }
 
+    /// Whether the item has independent playable content, similar
+    /// to if an item can provide its own media sources.
+    ///
+    /// ie: A movie and an episode can be directly played,
+    ///     but a series is not as its episodes are playable.
+    var isPlayable: Bool {
+        guard !isMissing else { return false }
+
+        return switch type {
+        case .series:
+            false
+        default:
+            true
+        }
+    }
+
+    /// The primary image handler for building the
+    /// image used in the now playing system.
+    @MainActor
+    func getNowPlayingImage() async -> UIImage? {
+        let imageSources = thumbImageSources()
+
+        guard let firstImage = await ImagePipeline.Swiftfin.other.loadFirstImage(from: imageSources) else {
+            let failedSystemContentView = SystemImageContentView(
+                systemName: systemImage
+            )
+            .posterStyle(preferredPosterDisplayType)
+            .frame(width: 400)
+
+            return ImageRenderer(content: failedSystemContentView).uiImage
+        }
+
+        let image = Image(uiImage: firstImage)
+            .resizable()
+        let transformedImage = ZStack {
+            Rectangle()
+                .fill(Color.secondarySystemFill)
+
+            transform(image: image)
+        }
+        .posterAspectRatio(preferredPosterDisplayType, contentMode: .fit)
+        .frame(width: 400)
+
+        return ImageRenderer(content: transformedImage).uiImage
+    }
+
+    func getPlaybackItemProvider(
+        userSession: UserSession
+    ) -> MediaPlayerItemProvider {
+        switch type {
+        case .program:
+            MediaPlayerItemProvider(item: self) { program in
+                guard let channel = try? await self.getChannel(
+                    for: program,
+                    userSession: userSession
+                ),
+                    let mediaSource = channel.mediaSources?.first
+                else {
+                    throw JellyfinAPIError(L10n.unknownError)
+                }
+                return try await MediaPlayerItem.build(for: program, mediaSource: mediaSource)
+            }
+        default:
+            MediaPlayerItemProvider(item: self) { item in
+                guard let mediaSource = item.mediaSources?.first else {
+                    throw JellyfinAPIError(L10n.unknownError)
+                }
+                return try await MediaPlayerItem.build(for: item, mediaSource: mediaSource)
+            }
+        }
+    }
+
+    func getChannel(
+        for program: BaseItemDto,
+        userSession: UserSession
+    ) async throws -> BaseItemDto? {
+        guard type == .program else { return nil }
+
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.fields = .MinimumFields
+        parameters.ids = [program.channelID ?? ""]
+
+        let request = Paths.getItemsByUserID(
+            userID: userSession.user.id,
+            parameters: parameters
+        )
+        let response = try await userSession.client.send(request)
+
+        return response.value.items?.first
+    }
+
     var runtime: Duration? {
         guard let ticks = runTimeTicks else { return nil }
         return Duration.ticks(ticks)
@@ -281,21 +373,15 @@ extension BaseItemDto {
 
     // MARK: Chapter Images
 
-    // TODO: move to whatever listener for chapters
     var fullChapterInfo: [ChapterInfo.FullInfo]? {
-        guard let chapters else { return nil }
 
-        let afterRuntime = (runtime ?? .zero) + .seconds(1)
+        guard let chapters = chapters?
+            .sorted(using: \.startPositionTicks)
+            .compacted(using: \.startPositionTicks) else { return nil }
 
-        let ranges: [Range<Duration>] = chapters
-            .map { $0.startSeconds ?? .zero }
-            .appending(afterRuntime)
-            .adjacentPairs()
-            .map { $0 ..< $1 }
-
-        return zip(chapters, ranges)
+        return chapters
             .enumerated()
-            .map { i, zip in
+            .map { i, chapter in
 
                 let parameters = Paths.GetItemImageParameters(
                     maxWidth: 500,
@@ -314,10 +400,8 @@ extension BaseItemDto {
                     .fullURL(with: request)
 
                 return .init(
-                    chapterInfo: zip.0,
-                    imageSource: .init(url: imageURL),
-                    secondsRange: zip.1,
-                    runtime: runtime ?? .zero
+                    chapterInfo: chapter,
+                    imageSource: .init(url: imageURL)
                 )
             }
     }
@@ -425,12 +509,11 @@ extension BaseItemDto {
 
         let request = Paths.getItem(itemID: id, userID: userSession.user.id)
         let response = try await userSession.client.send(request)
-        let newItem = response.value
+        
+        // A check against `id` would typically be done, but a plugin
+        // may have provided `self` or the response item and may not
+        // be invariant over `id`.
 
-        guard newItem.id == id else {
-            throw JellyfinAPIError("Mismatching item IDs")
-        }
-
-        return newItem
+        return response.value
     }
 }
