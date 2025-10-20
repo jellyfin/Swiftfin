@@ -400,18 +400,15 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 }
             }
         }
-        .frame(height: 80)
+        .frame(height: 115)
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 0)
-        .background(.ultraThinMaterial)
     }
 
     // MARK: Body
 
     var body: some View {
         ZStack {
-            Color.clear
-
             if cinematicBackground {
                 CinematicBackgroundView(viewModel: cinematicBackgroundProxy)
                     .isVisible(presentBackground)
@@ -441,6 +438,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 }
             }
         }
+        .background(.ultraThinMaterial)
         .onChange(of: focusedPoster) {
             setCinematicBackground()
         }

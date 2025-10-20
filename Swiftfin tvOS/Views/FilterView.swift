@@ -54,7 +54,7 @@ struct FilterView: View {
         case .sortBy:
             return "arrow.up.arrow.down"
         case .traits:
-            return "line.3.horizontal.decrease"
+            return "line.3.horizontal.decrease.circle"
         default:
             return "circle"
         }
