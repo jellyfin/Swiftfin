@@ -125,4 +125,30 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
         return response?.value.items?.first
     }
+
+    // MARK: getShuffledItems
+
+    override func getShuffledItems() async throws -> [BaseItemDto] {
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.enableUserData = true
+        parameters.fields = .MinimumFields
+        parameters.isRecursive = true
+        parameters.sortBy = [ItemSortBy.sortName.rawValue]
+        parameters.sortOrder = [.ascending]
+
+        // Set the parent if we're in a specific library/folder
+        if let parent {
+            parameters = parent.setParentParameters(parameters)
+        }
+
+        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
+        let response = try await userSession.client.send(request)
+
+        let allItems = response.value.items ?? []
+
+        // Use shared helper to expand containers (series, boxSets) into playable content
+        let playableItems = try await ShuffleActionHelper.collectPlayableItems(from: allItems)
+
+        return playableItems.shuffled()
+    }
 }

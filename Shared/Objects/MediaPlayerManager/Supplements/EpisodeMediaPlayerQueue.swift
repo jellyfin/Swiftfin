@@ -415,7 +415,7 @@ extension EpisodeMediaPlayerQueue {
         }
     }
 
-    private struct EpisodePreview: View {
+    struct EpisodePreview: View {
 
         @Default(.accentColor)
         private var accentColor
@@ -449,7 +449,7 @@ extension EpisodeMediaPlayerQueue {
         }
     }
 
-    private struct EpisodeDescription: View {
+    struct EpisodeDescription: View {
 
         let episode: BaseItemDto
 
@@ -468,7 +468,8 @@ extension EpisodeMediaPlayerQueue {
         }
     }
 
-    private struct EpisodeRow: View {
+    // Shared episode UI components (used by other queue types like ShuffleMediaPlayerQueue)
+    struct EpisodeRow: View {
 
         @Default(.accentColor)
         private var accentColor
@@ -506,7 +507,7 @@ extension EpisodeMediaPlayerQueue {
         }
     }
 
-    private struct EpisodeButton: View {
+    struct EpisodeButton: View {
 
         @Default(.accentColor)
         private var accentColor

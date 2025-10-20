@@ -8,6 +8,7 @@
 
 import CollectionVGrid
 import Defaults
+import Factory
 import JellyfinAPI
 import Nuke
 import SwiftUI
@@ -441,6 +442,8 @@ struct PagingLibraryView<Element: Poster>: View {
                 default:
                     assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
                 }
+            case let .gotShuffledItems(items):
+                handleShuffledItems(items, in: namespace)
             }
         }
         .onFirstAppear {
@@ -469,6 +472,59 @@ struct PagingLibraryView<Element: Poster>: View {
                 viewModel.send(.getRandomItem)
             }
             .disabled(viewModel.elements.isEmpty)
+
+            Button(L10n.shuffle, systemImage: "shuffle") {
+                viewModel.send(.getShuffledItems)
+            }
+            .disabled(viewModel.elements.isEmpty)
+        }
+    }
+}
+
+// MARK: - Shuffle
+
+private extension PagingLibraryView {
+    func handleShuffledItems(_ items: [Element], in namespace: Namespace.ID) {
+        let baseItems = items.compactMap { $0 as? BaseItemDto }
+
+        Task {
+            await playShuffledItems(baseItems, in: namespace)
+        }
+    }
+
+    func playShuffledItems(_ items: [BaseItemDto], in namespace: Namespace.ID) async {
+        do {
+            let playableItems = try await ShuffleActionHelper.collectPlayableItems(from: items)
+            let shuffledItems = playableItems.shuffled()
+
+            guard let firstItem = shuffledItems.first else { return }
+
+            await routeToVideoPlayer(withFirst: firstItem, queue: shuffledItems, in: namespace)
+        } catch {
+            // TODO: Handle error properly with user-visible error message
+        }
+    }
+
+    func routeToVideoPlayer(
+        withFirst firstItem: BaseItemDto,
+        queue items: [BaseItemDto],
+        in namespace: Namespace.ID
+    ) async {
+        let queue = ShuffleMediaPlayerQueue(items: items)
+        let provider = MediaPlayerItemProvider(item: firstItem) { item in
+            try await MediaPlayerItem.build(for: item) {
+                $0.userData?.playbackPositionTicks = 0
+            }
+        }
+
+        await MainActor.run {
+            router.route(
+                to: .videoPlayer(
+                    provider: provider,
+                    queue: queue
+                ),
+                in: namespace
+            )
         }
     }
 }

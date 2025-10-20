@@ -112,6 +112,17 @@ extension ItemView {
                         view.aspectRatio(1, contentMode: .fit)
                     }
                 }
+
+                // MARK: - Options Menu
+
+                if viewModel.item.canShuffle {
+                    OptionsMenu(viewModel: viewModel)
+                        .menuStyle(.button)
+                        .frame(maxWidth: .infinity)
+                        .if(!equalSpacing) { view in
+                            view.aspectRatio(1, contentMode: .fit)
+                        }
+                }
             }
             .font(.title3)
             .fontWeight(.semibold)

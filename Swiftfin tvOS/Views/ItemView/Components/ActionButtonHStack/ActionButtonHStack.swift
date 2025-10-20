@@ -135,6 +135,12 @@ extension ItemView {
                     )
                 }
 
+                // MARK: Shuffle
+
+                if viewModel.item.canShuffle {
+                    OptionsMenu(viewModel: viewModel)
+                }
+
                 // MARK: Advanced Options
 
                 if enableMenu {

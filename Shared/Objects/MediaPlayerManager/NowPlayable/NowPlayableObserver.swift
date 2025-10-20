@@ -28,9 +28,15 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
             .skipBackward,
             .skipForward,
             .changePlaybackPosition,
-            // TODO: only register next/previous if there is a queue
-//            .nextTrack,
-//            .previousTrack,
+            .nextTrack,
+            .previousTrack,
+        ]
+    }
+
+    private var queueCommands: [NowPlayableCommand] {
+        [
+            .nextTrack,
+            .previousTrack,
         ]
     }
 
@@ -69,6 +75,10 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
             .sink { [weak self] newValue in self?.secondsDidChange(newValue) }
             .store(in: &cancellables)
 
+        manager.$queue
+            .sink { [weak self] newValue in self?.queueDidChange(newValue) }
+            .store(in: &cancellables)
+
         Notifications[.avAudioSessionInterruption]
             .publisher
             .sink { i in
@@ -104,6 +114,35 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
                 duration: manager?.item.runtime ?? .zero
             )
         )
+    }
+
+    private func queueDidChange(_ newQueue: AnyMediaPlayerQueue?) {
+        // Update next/previous command availability based on queue state
+        if let queue = newQueue {
+            // Subscribe to queue changes
+            queue.$hasNextItem
+                .sink { [weak self] hasNext in
+                    self?.updateQueueCommandAvailability(hasNext: hasNext, hasPrevious: queue.hasPreviousItem)
+                }
+                .store(in: &cancellables)
+
+            queue.$hasPreviousItem
+                .sink { [weak self] hasPrevious in
+                    self?.updateQueueCommandAvailability(hasNext: queue.hasNextItem, hasPrevious: hasPrevious)
+                }
+                .store(in: &cancellables)
+
+            // Initial update
+            updateQueueCommandAvailability(hasNext: queue.hasNextItem, hasPrevious: queue.hasPreviousItem)
+        } else {
+            // No queue, disable commands
+            updateQueueCommandAvailability(hasNext: false, hasPrevious: false)
+        }
+    }
+
+    private func updateQueueCommandAvailability(hasNext: Bool, hasPrevious: Bool) {
+        NowPlayableCommand.nextTrack.isEnabled(hasNext)
+        NowPlayableCommand.previousTrack.isEnabled(hasPrevious)
     }
 
     private func actionDidChange(_ newAction: MediaPlayerManager._Action) {

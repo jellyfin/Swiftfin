@@ -31,7 +31,7 @@ final class SeriesItemViewModel: ItemViewModel {
 
         switch action {
         case .backgroundRefresh, .refresh:
-            let parentState = super.respond(to: action)
+            _ = super.respond(to: action)
 
             seriesItemTask?.cancel()
 
@@ -145,5 +145,27 @@ final class SeriesItemViewModel: ItemViewModel {
         let response = try await userSession.client.send(request)
 
         return response.value.items ?? []
+    }
+
+    // MARK: - Get Shuffled Items
+
+    func getShuffledItems() async throws -> [BaseItemDto] {
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.enableUserData = true
+        parameters.fields = .MinimumFields
+        parameters.includeItemTypes = [.episode]
+        parameters.isRecursive = true
+        parameters.isMissing = Defaults[.Customization.shouldShowMissingEpisodes] ? nil : false
+        parameters.parentID = item.id
+        parameters.sortBy = [ItemSortBy.sortName.rawValue]
+        parameters.sortOrder = [.ascending]
+
+        let request = Paths.getItemsByUserID(
+            userID: userSession.user.id,
+            parameters: parameters
+        )
+        let response = try await userSession.client.send(request)
+
+        return (response.value.items ?? []).shuffled()
     }
 }

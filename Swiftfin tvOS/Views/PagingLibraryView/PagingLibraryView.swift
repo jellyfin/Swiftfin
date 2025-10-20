@@ -117,6 +117,49 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         router.route(to: .library(viewModel: viewModel))
     }
 
+    // MARK: - Shuffle Handling
+
+    private func handleShuffledItems(_ items: [Element]) {
+        let baseItems = items.compactMap { $0 as? BaseItemDto }
+
+        Task {
+            await playShuffledItems(baseItems)
+        }
+    }
+
+    private func playShuffledItems(_ items: [BaseItemDto]) async {
+        do {
+            let playableItems = try await ShuffleActionHelper.collectPlayableItems(from: items)
+            let shuffledItems = playableItems.shuffled()
+
+            guard let firstItem = shuffledItems.first else { return }
+
+            await routeToVideoPlayer(withFirst: firstItem, queue: shuffledItems)
+        } catch {
+            // TODO: Handle error properly with user-visible error message
+        }
+    }
+
+    private func routeToVideoPlayer(
+        withFirst firstItem: BaseItemDto,
+        queue items: [BaseItemDto]
+    ) async {
+        var mutableFirstItem = firstItem
+        mutableFirstItem.userData?.playbackPositionTicks = 0
+
+        let queue = ShuffleMediaPlayerQueue(items: items)
+        let manager = MediaPlayerManager(
+            item: mutableFirstItem,
+            queue: queue
+        ) { item in
+            try await MediaPlayerItem.build(for: item)
+        }
+
+        await MainActor.run {
+            router.route(to: .videoPlayer(manager: manager))
+        }
+    }
+
     // MARK: Make Layout
 
     private static func makeLayout(
@@ -394,6 +437,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 default:
                     assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
                 }
+            case let .gotShuffledItems(items):
+                handleShuffledItems(items)
             }
         }
         .onFirstAppear {
