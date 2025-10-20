@@ -50,12 +50,12 @@ extension EditServerTaskView {
 
         // MARK: - Trigger Display Text
 
-        private func triggerDisplayText(for triggerType: TaskTriggerType?) -> String {
+        private func triggerDisplayText(for triggerType: TaskTriggerInfoType?) -> String {
 
             guard let triggerType else { return L10n.unknown }
 
             switch triggerType {
-            case .daily:
+            case .dailyTrigger:
                 if let timeOfDayTicks = taskTriggerInfo.timeOfDayTicks {
                     return L10n.itemAtItem(
                         triggerType.displayTitle,
@@ -63,7 +63,7 @@ extension EditServerTaskView {
                             .date.formatted(date: .omitted, time: .shortened)
                     )
                 }
-            case .weekly:
+            case .weeklyTrigger:
                 if let dayOfWeek = taskTriggerInfo.dayOfWeek,
                    let timeOfDayTicks = taskTriggerInfo.timeOfDayTicks
                 {
@@ -73,14 +73,14 @@ extension EditServerTaskView {
                             .date.formatted(date: .omitted, time: .shortened)
                     )
                 }
-            case .interval:
+            case .intervalTrigger:
                 if let intervalTicks = taskTriggerInfo.intervalTicks {
                     return L10n.everyInterval(
                         ServerTicks(intervalTicks)
                             .seconds.formatted(.hourMinute)
                     )
                 }
-            case .startup:
+            case .startupTrigger:
                 return triggerType.displayTitle
             }
 
