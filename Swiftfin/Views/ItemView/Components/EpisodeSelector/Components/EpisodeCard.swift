@@ -29,16 +29,12 @@ extension SeriesEpisodeSelector {
                     progress: (episode.userData?.playedPercentage ?? 0) / 100
                 )
             } else if episode.userData?.isPlayed ?? false {
-                ZStack(alignment: .bottomTrailing) {
-                    Color.clear
-
-                    Image(systemName: "checkmark.circle.fill")
-                        .resizable()
-                        .frame(width: 30, height: 30, alignment: .bottomTrailing)
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(.white, .black)
-                        .padding()
-                }
+                // Use the same WatchedIndicator as library view for consistency
+                WatchedIndicator(size: 25)
+            } else if episode.canBePlayed && !episode.isLiveStream {
+                // Use the same UnwatchedIndicator as library view for consistency
+                UnwatchedIndicator(size: 25)
+                    .foregroundColor(.jellyfinPurple)
             }
         }
 
