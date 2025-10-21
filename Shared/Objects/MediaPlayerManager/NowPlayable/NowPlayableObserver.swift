@@ -117,9 +117,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
     }
 
     private func queueDidChange(_ newQueue: AnyMediaPlayerQueue?) {
-        // Update next/previous command availability based on queue state
         if let queue = newQueue {
-            // Subscribe to queue changes
             queue.$hasNextItem
                 .sink { [weak self] hasNext in
                     self?.updateQueueCommandAvailability(hasNext: hasNext, hasPrevious: queue.hasPreviousItem)
@@ -132,10 +130,8 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
                 }
                 .store(in: &cancellables)
 
-            // Initial update
             updateQueueCommandAvailability(hasNext: queue.hasNextItem, hasPrevious: queue.hasPreviousItem)
         } else {
-            // No queue, disable commands
             updateQueueCommandAvailability(hasNext: false, hasPrevious: false)
         }
     }

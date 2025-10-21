@@ -30,7 +30,6 @@ class ShuffleMediaPlayerQueue: ViewModel, MediaPlayerQueue {
         }
     }
 
-    // Use "Episodes" as display title for consistency with regular queue
     let displayTitle: String = L10n.episodes
     let id: String = "ShuffleMediaPlayerQueue"
 
@@ -53,10 +52,8 @@ class ShuffleMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     private var currentIndex: Int = 0
 
     init(items: [BaseItemDto]) {
-        // Items are already shuffled by the caller, don't shuffle again
         self.shuffledItems = items
         super.init()
-        // Initialize the queue with adjacent items
         updateAdjacentItems()
     }
 
@@ -70,7 +67,6 @@ class ShuffleMediaPlayerQueue: ViewModel, MediaPlayerQueue {
             return
         }
 
-        // Find the current item in our shuffled list
         if let index = shuffledItems.firstIndex(where: { $0.id == newItem.baseItem.id }) {
             currentIndex = index
         }
@@ -147,16 +143,13 @@ extension ShuffleMediaPlayerQueue {
 
         var body: some View {
             CompactOrRegularView(isCompact: containerState.isCompact) {
-                // Compact (Portrait) - Vertical list
                 CompactShuffleView(items: items, currentIndex: currentIndex)
             } regularView: {
-                // Regular (Landscape) - Horizontal row
                 RegularShuffleView(items: items, currentIndex: currentIndex)
             }
         }
     }
 
-    // Compact view - Vertical scrolling list
     private struct CompactShuffleView: View {
 
         @EnvironmentObject
@@ -195,7 +188,6 @@ extension ShuffleMediaPlayerQueue {
         }
     }
 
-    // Regular view - Horizontal scrolling row
     private struct RegularShuffleView: View {
 
         @Environment(\.safeAreaInsets)

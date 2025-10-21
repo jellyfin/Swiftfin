@@ -11,18 +11,11 @@ import Foundation
 import JellyfinAPI
 import Logging
 
-/// Helper for performing shuffle actions on items
 @MainActor
 struct ShuffleActionHelper {
 
     private let logger = Logger.swiftfin()
 
-    /// Initiates shuffle playback for the given item with the specified media source
-    /// - Parameters:
-    ///   - item: The item to shuffle (Series, Season, Collection, etc.)
-    ///   - mediaSource: The media source to use for playback
-    ///   - viewModel: The ItemViewModel for the item
-    /// - Returns: A tuple containing the first item and the shuffle queue, or nil if shuffle is not supported
     func shuffleItem(
         _ item: BaseItemDto,
         mediaSource: MediaSourceInfo,
@@ -35,7 +28,6 @@ struct ShuffleActionHelper {
 
         let shuffledItems: [BaseItemDto]
 
-        // Get shuffled items based on item type
         if let seriesViewModel = viewModel as? SeriesItemViewModel {
             shuffledItems = try await seriesViewModel.getShuffledItems()
         } else if let collectionViewModel = viewModel as? CollectionItemViewModel {
@@ -55,7 +47,6 @@ struct ShuffleActionHelper {
             return nil
         }
 
-        // Reset playback position for the first item
         firstItem.userData?.playbackPositionTicks = 0
 
         let queue = ShuffleMediaPlayerQueue(items: shuffledItems)
@@ -63,12 +54,6 @@ struct ShuffleActionHelper {
         return (firstItem, queue)
     }
 
-    /// Initiates shuffle playback and routes to the video player (tvOS/fixed media source)
-    /// - Parameters:
-    ///   - item: The item to shuffle
-    ///   - mediaSource: The media source to use for playback
-    ///   - viewModel: The ItemViewModel for the item
-    ///   - router: The router to use for navigation
     func shuffleAndPlay(
         _ item: BaseItemDto,
         mediaSource: MediaSourceInfo,
@@ -91,47 +76,59 @@ struct ShuffleActionHelper {
         }
     }
 
-    /// Initiates shuffle playback and routes to the video player (iOS/auto-select media source)
-    /// - Parameters:
-    ///   - item: The item to shuffle
-    ///   - viewModel: The ItemViewModel for the item
-    ///   - router: The router to use for navigation
-    func shuffleAndPlayWithAutoSource(
+    func shuffleAndPlay(
         _ item: BaseItemDto,
         viewModel: ItemViewModel,
-        router: NavigationCoordinator.Router
+        router: NavigationCoordinator.Router,
+        autoSelectMediaSource: Bool = false
     ) async throws {
-        guard let result = try await shuffleItem(item, mediaSource: MediaSourceInfo(), viewModel: viewModel) else {
-            return
-        }
-
-        // iOS: Let each item auto-select its media source
-        let provider = MediaPlayerItemProvider(item: result.firstItem) { item in
-            try await MediaPlayerItem.build(for: item) {
-                $0.userData?.playbackPositionTicks = 0
+        if autoSelectMediaSource {
+            guard let result = try await shuffleItem(item, mediaSource: MediaSourceInfo(), viewModel: viewModel) else {
+                return
             }
-        }
 
-        await MainActor.run {
-            router.route(
-                to: .videoPlayer(
-                    provider: provider,
-                    queue: result.queue
+            let provider = MediaPlayerItemProvider(item: result.firstItem) { item in
+                try await MediaPlayerItem.build(for: item) {
+                    $0.userData?.playbackPositionTicks = 0
+                }
+            }
+
+            await MainActor.run {
+                router.route(
+                    to: .videoPlayer(
+                        provider: provider,
+                        queue: result.queue
+                    )
                 )
+            }
+        } else {
+            let containerTypes: Set<BaseItemKind> = [.series, .boxSet, .collectionFolder, .folder, .playlist]
+
+            let mediaSource: MediaSourceInfo
+            if let itemType = item.type, containerTypes.contains(itemType) {
+                mediaSource = MediaSourceInfo()
+            } else {
+                guard let selectedMediaSource = viewModel.selectedMediaSource else {
+                    logger.error("Shuffle selected with no media source for playable item")
+                    return
+                }
+                mediaSource = selectedMediaSource
+            }
+
+            try await shuffleAndPlay(
+                item,
+                mediaSource: mediaSource,
+                viewModel: viewModel,
+                router: router
             )
         }
     }
-
-    // MARK: - Library Shuffle Utilities
 
     /// Collects playable items from a mixed collection, expanding containers into their playable content.
     ///
     /// Containers (series, boxSets) cannot be played directly and are expanded into their playable content.
     /// BoxSets may contain series, which are recursively expanded into episodes.
     /// Other items (movies, episodes, etc.) are included as-is if playable and have media sources.
-    ///
-    /// - Parameter items: The items to process (may include series, collections, movies, episodes, etc.)
-    /// - Returns: A flat list of playable items with containers expanded into their playable content
     static func collectPlayableItems(from items: [BaseItemDto]) async throws -> [BaseItemDto] {
         guard let userSession = Container.shared.currentUserSession() else {
             throw JellyfinAPIError("No user session")
@@ -142,16 +139,13 @@ struct ShuffleActionHelper {
         for item in items {
             switch item.type {
             case .series:
-                // Series are containers - fetch and include all their episodes
                 let episodes = try await fetchEpisodes(for: item, userSession: userSession)
                 playableItems.append(contentsOf: episodes)
             case .boxSet:
-                // BoxSets are containers - fetch contents and recursively expand any series
                 let contents = try await fetchBoxSetContents(for: item, userSession: userSession)
                 let expandedContents = try await collectPlayableItems(from: contents)
                 playableItems.append(contentsOf: expandedContents)
             default:
-                // Include directly playable items (movies, episodes, etc.) that have media sources
                 if item.isPlayable && item.mediaSources?.isNotEmpty == true {
                     playableItems.append(item)
                 }
@@ -161,11 +155,6 @@ struct ShuffleActionHelper {
         return playableItems
     }
 
-    /// Fetches all episodes for a given series
-    /// - Parameters:
-    ///   - series: The series to fetch episodes for
-    ///   - userSession: The current user session
-    /// - Returns: Array of episodes with media sources
     private static func fetchEpisodes(for series: BaseItemDto, userSession: UserSession) async throws -> [BaseItemDto] {
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.fields = .MinimumFields
@@ -185,11 +174,6 @@ struct ShuffleActionHelper {
         return episodes.filter { $0.mediaSources?.isNotEmpty ?? false }
     }
 
-    /// Fetches all contents for a given boxSet/collection
-    /// - Parameters:
-    ///   - boxSet: The boxSet to fetch contents for
-    ///   - userSession: The current user session
-    /// - Returns: Array of items in the collection (may include series, movies, etc.)
     private static func fetchBoxSetContents(for boxSet: BaseItemDto, userSession: UserSession) async throws -> [BaseItemDto] {
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.fields = .MinimumFields

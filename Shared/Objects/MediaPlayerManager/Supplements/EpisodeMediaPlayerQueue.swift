@@ -468,7 +468,6 @@ extension EpisodeMediaPlayerQueue {
         }
     }
 
-    // Shared episode UI components (used by other queue types like ShuffleMediaPlayerQueue)
     struct EpisodeRow: View {
 
         @Default(.accentColor)
