@@ -42,30 +42,6 @@ struct EpisodeSelectorLabelStyle: LabelStyle {
 
 // MARK: SectionFooterWithImageLabelStyle
 
-// TODO: rename as not only used in section footers
-
-extension LabelStyle where Self == SectionFooterWithImageLabelStyle<AnyShapeStyle> {
-
-    static func sectionFooterWithImage<ImageStyle: ShapeStyle>(imageStyle: ImageStyle) -> SectionFooterWithImageLabelStyle<ImageStyle> {
-        SectionFooterWithImageLabelStyle(imageStyle: imageStyle)
-    }
-}
-
-struct SectionFooterWithImageLabelStyle<ImageStyle: ShapeStyle>: LabelStyle {
-
-    let imageStyle: ImageStyle
-
-    func makeBody(configuration: Configuration) -> some View {
-        HStack {
-            configuration.icon
-                .foregroundStyle(imageStyle)
-                .fontWeight(.bold)
-
-            configuration.title
-        }
-    }
-}
-
 extension TitleAndIconLabelStyle {
 
     var trailingIcon: TrailingIconReversedButtonStyle {

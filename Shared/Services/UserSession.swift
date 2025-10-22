@@ -39,6 +39,11 @@ final class UserSession {
 }
 
 extension Container {
+
+    // TODO: be parameterized, take user id
+    //       - don't be optional
+    //       - in `ViewModel`, don't be implicitly unwrapped
+    //         and have idempotent default value
     var currentUserSession: Factory<UserSession?> {
         self {
             guard case let .signedIn(userId) = Defaults[.lastSignedInUserID] else { return nil }

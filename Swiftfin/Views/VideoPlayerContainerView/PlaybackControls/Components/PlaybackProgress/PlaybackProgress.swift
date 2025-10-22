@@ -129,7 +129,7 @@ extension VideoPlayer.PlaybackControls {
                         if chapters.isEmpty {
                             view
                         } else {
-                            view.mask(ChapterTrackMask(chapters: chapters))
+                            view.inverseMask { ChapterTrackMask(chapters: chapters, runtime: manager.item.runtime ?? .zero) }
                         }
                     }
                 }

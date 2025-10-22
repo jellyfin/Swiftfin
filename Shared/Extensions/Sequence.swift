@@ -10,6 +10,14 @@ import Foundation
 
 extension Sequence {
 
+    func coalesced<Value>(property keyPath: WritableKeyPath<Element, Value?>, with value: Value) -> [Element] {
+        map { element in
+            var element = element
+            element[keyPath: keyPath] = element[keyPath: keyPath] ?? value
+            return element
+        }
+    }
+
     func compacted<Value>(using keyPath: KeyPath<Element, Value?>) -> [Element] {
         filter { $0[keyPath: keyPath] != nil }
     }

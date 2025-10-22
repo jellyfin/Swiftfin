@@ -56,7 +56,7 @@ struct EditMetadataView: View {
                 errorView(with: error)
             }
         }
-        .navigationBarTitle(L10n.metadata)
+        .navigationTitle(L10n.metadata)
         .navigationBarTitleDisplayMode(.inline)
         .topBarTrailing {
             Button(L10n.save) {

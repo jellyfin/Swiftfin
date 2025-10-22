@@ -373,22 +373,15 @@ extension BaseItemDto {
 
     // MARK: Chapter Images
 
-    // TODO: move to whatever listener for chapters
     var fullChapterInfo: [ChapterInfo.FullInfo]? {
-        guard let chapters else { return nil }
 
-        let afterRuntime = (runtime ?? .zero) + .seconds(1)
+        guard let chapters = chapters?
+            .sorted(using: \.startPositionTicks)
+            .compacted(using: \.startPositionTicks) else { return nil }
 
-        // TODO: Protect against building invalid ranges
-        let ranges: [Range<Duration>] = chapters
-            .map { $0.startSeconds ?? .zero }
-            .appending(afterRuntime)
-            .adjacentPairs()
-            .map { $0 ..< $1 }
-
-        return zip(chapters, ranges)
+        return chapters
             .enumerated()
-            .map { i, zip in
+            .map { i, chapter in
 
                 let parameters = Paths.GetItemImageParameters(
                     maxWidth: 500,
@@ -407,10 +400,8 @@ extension BaseItemDto {
                     .fullURL(with: request)
 
                 return .init(
-                    chapterInfo: zip.0,
-                    imageSource: .init(url: imageURL),
-                    secondsRange: zip.1,
-                    runtime: runtime ?? .zero
+                    chapterInfo: chapter,
+                    imageSource: .init(url: imageURL)
                 )
             }
     }
@@ -518,12 +509,11 @@ extension BaseItemDto {
 
         let request = Paths.getItem(itemID: id, userID: userSession.user.id)
         let response = try await userSession.client.send(request)
-        let newItem = response.value
+        
+        // A check against `id` would typically be done, but a plugin
+        // may have provided `self` or the response item and may not
+        // be invariant over `id`.
 
-        guard newItem.id == id else {
-            throw JellyfinAPIError("Mismatching item IDs")
-        }
-
-        return newItem
+        return response.value
     }
 }

@@ -16,17 +16,6 @@ extension Logger {
     }
 }
 
-extension Container {
-
-    @available(*, deprecated, message: "Use `Logger.swiftfin()` instances instead")
-    var logService: Factory<Logger> {
-        self {
-            Logger(label: "org.jellyfin.swiftfin")
-        }
-        .unique
-    }
-}
-
 struct SwiftfinConsoleHandler: LogHandler {
 
     var logLevel: Logger.Level = .trace

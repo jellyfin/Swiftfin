@@ -10,6 +10,7 @@ import SwiftUI
 
 extension Text {
 
+    @available(*, deprecated, message: "Just use `.displayTitle` manually instead")
     init(_ content: some Displayable) {
         self.init(verbatim: "\(content.displayTitle)")
     }

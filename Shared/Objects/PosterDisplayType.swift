@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-// TODO: think about what to do for square (music)
 enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImageable {
 
     case landscape
@@ -33,5 +32,13 @@ enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImage
         case .square:
             "square.fill"
         }
+    }
+}
+
+// TODO: remove after library views support all types
+extension PosterDisplayType: SupportedCaseIterable {
+
+    static var supportedCases: [PosterDisplayType] {
+        [.landscape, .portrait]
     }
 }

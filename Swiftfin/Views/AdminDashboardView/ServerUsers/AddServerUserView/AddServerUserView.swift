@@ -59,7 +59,12 @@ struct AddServerUserView: View {
             }
 
             Section(L10n.password) {
-                UnmaskSecureField(L10n.password, text: $password) {
+                SecureField(
+                    L10n.password,
+                    text: $password,
+                    maskToggle: .enabled
+                )
+                .onSubmit {
                     focusedfield = .confirmPassword
                 }
                 .autocorrectionDisabled()
@@ -69,11 +74,15 @@ struct AddServerUserView: View {
             }
 
             Section {
-                UnmaskSecureField(L10n.confirmPassword, text: $confirmPassword)
-                    .autocorrectionDisabled()
-                    .textInputAutocapitalization(.none)
-                    .focused($focusedfield, equals: .confirmPassword)
-                    .disabled(viewModel.state == .addingUser)
+                SecureField(
+                    L10n.confirmPassword,
+                    text: $confirmPassword,
+                    maskToggle: .enabled
+                )
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.none)
+                .focused($focusedfield, equals: .confirmPassword)
+                .disabled(viewModel.state == .addingUser)
             } header: {
                 Text(L10n.confirmPassword)
             } footer: {
