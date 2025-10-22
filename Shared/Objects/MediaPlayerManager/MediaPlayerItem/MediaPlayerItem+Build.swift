@@ -75,6 +75,7 @@ extension MediaPlayerItem {
         playbackInfo.liveStreamID = initialMediaSource.liveStreamID
         playbackInfo.maxStreamingBitrate = maxBitrate
         playbackInfo.userID = userSession.user.id
+        playbackInfo.mediaSourceID = initialMediaSource.id
 
         let request = Paths.getPostedPlaybackInfo(
             itemID: itemID,
