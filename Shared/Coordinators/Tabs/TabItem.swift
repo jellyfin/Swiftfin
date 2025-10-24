@@ -40,6 +40,56 @@ struct TabItem: Identifiable, @preconcurrency Hashable, SystemImageable {
     }
 }
 
+@MainActor
+enum TabItemSetting: @preconcurrency Identifiable {
+
+    #if os(iOS)
+    case adminDashboard
+    #endif
+
+    case contentGroup(ContentGroupProviderSetting)
+    case item(String)
+    case media
+    case search
+    case settings
+
+    var id: String {
+        switch self {
+        case .adminDashboard:
+            "admin-dashboard"
+        case let .contentGroup(provider):
+            provider.provider.id
+        case let .item(id):
+            id
+        case .media:
+            "media"
+        case .search:
+            "search"
+        case .settings:
+            "settings"
+        }
+    }
+
+    var item: TabItem {
+        switch self {
+        case .adminDashboard:
+            #if os(iOS)
+            .adminDashboard
+            #endif
+        case let .contentGroup(provider):
+            .contentGroup(provider: provider.provider)
+        case let .item(id):
+            .item(id: id)
+        case .media:
+            .media
+        case .search:
+            .search
+        case .settings:
+            .settings
+        }
+    }
+}
+
 extension TabItem {
 
     #if os(iOS)
@@ -56,11 +106,29 @@ extension TabItem {
         provider: some _ContentGroupProvider
     ) -> TabItem {
         TabItem(
-            id: "contentgroup-\(provider.id)",
+            id: provider.id,
             title: provider.displayTitle,
             systemImage: provider.systemImage
         ) {
             ContentGroupView(provider: provider)
+//            ContentGroupShimView(id: provider.id)
+        }
+    }
+
+    static func item(
+        id: String
+    ) -> TabItem {
+        TabItem(
+            id: id,
+            title: "Test",
+            systemImage: "figure.walk"
+        ) {
+            ItemView(
+                item: .init(
+                    id: id,
+                    type: .movie
+                )
+            )
         }
     }
 
@@ -91,7 +159,8 @@ extension TabItem {
         title: L10n.media,
         systemImage: "rectangle.stack.fill"
     ) {
-        PagingLibraryView(library: MediaLibrary())
+//        PagingLibraryView(library: MediaLibrary())
+        MediaView()
     }
 
     static let search = TabItem(

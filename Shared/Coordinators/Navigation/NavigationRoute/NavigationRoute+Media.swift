@@ -22,7 +22,8 @@ extension NavigationRoute {
     }
 
     static let liveTV = NavigationRoute(
-        id: "liveTV"
+        id: "liveTV",
+        withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
     ) {
         ProgramsView()
     }

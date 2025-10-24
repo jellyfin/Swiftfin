@@ -33,35 +33,38 @@ struct _PosterSection<Library: PagingLibrary>: View where Library.Element: Poste
 //    }
 
     var body: some View {
-        if viewModel.elements.isNotEmpty {
-            PosterHStack(
-                title: viewModel.library.parent.displayTitle,
-                type: .portrait,
-                items: viewModel.elements
-            ) { element, namespace in
-//                router.route(to: .posterGroupPosterButtonStyle(id: viewModel.library.parent.libraryID))
+        ZStack {
+            if viewModel.elements.isNotEmpty {
+                PosterHStack(
+                    title: viewModel.library.parent.displayTitle,
+                    type: .portrait,
+                    items: viewModel.elements
+                ) { element, namespace in
+                    //                router.route(to: .posterGroupPosterButtonStyle(id: viewModel.library.parent.libraryID))
 
-                switch element {
-                case let element as BaseItemDto:
-                    router.route(to: .item(item: element), in: namespace)
-                default: ()
+                    switch element {
+                    case let element as BaseItemDto:
+                        router.route(to: .item(item: element), in: namespace)
+                    default: ()
+                    }
                 }
+                //                .posterStyle(for: BaseItemDto.self) { environment, _ in
+                //                    var environment = environment
+                //                    environment.displayType = group.posterDisplayType
+                //                    environment.size = group.posterSize
+                //                    if let progress = item.progress, let startSeconds = item.startSeconds {
+                //                        environment.overlay = PosterProgressBar(
+                //                            title: startSeconds.formatted(.runtime),
+                //                            progress: progress,
+                //                            posterDisplayType: environment.displayType
+                //                        )
+                //                        .eraseToAnyView()
+                //                    }
+                //                    return environment
+                //                }
             }
-//                .posterStyle(for: BaseItemDto.self) { environment, _ in
-//                    var environment = environment
-//                    environment.displayType = group.posterDisplayType
-//                    environment.size = group.posterSize
-//                    if let progress = item.progress, let startSeconds = item.startSeconds {
-//                        environment.overlay = PosterProgressBar(
-//                            title: startSeconds.formatted(.runtime),
-//                            progress: progress,
-//                            posterDisplayType: environment.displayType
-//                        )
-//                        .eraseToAnyView()
-//                    }
-//                    return environment
-//                }
         }
+        .animation(.linear(duration: 0.2), value: viewModel.elements)
     }
 }
 
@@ -71,7 +74,7 @@ struct ContentGroupContentView<Provider: _ContentGroupProvider>: View {
     var viewModel: ContentGroupViewModel<Provider>
 
     private func makeGroupBody(
-        with libraryViewModel: any RefreshableViewModel,
+        with libraryViewModel: any WithRefresh,
         group: any _ContentGroup
     ) -> some View {
 
@@ -95,79 +98,30 @@ struct ContentGroupContentView<Provider: _ContentGroupProvider>: View {
     }
 }
 
-struct WithCinematicFirstItemGroupContentView<Provider: _ContentGroupProvider>: View {
+struct ContentGroupShimView: View {
 
-    @ObservedObject
-    var viewModel: ContentGroupViewModel<Provider>
+    @StoredValue
+    private var customContentGroup: ContentGroupProviderSetting
 
-    private func makeGroupBody(
-        with libraryViewModel: any RefreshableViewModel,
-        group: any _ContentGroup
-    ) -> some View {
-
-        @ViewBuilder
-        func _makeSection<Group: _ContentGroup>(_ group: Group) -> some View {
-            if let castedLibrary = libraryViewModel as? Group.ViewModel {
-                group.body(with: castedLibrary)
-            } else {
-                AssertionFailureView("Mismatched library casting")
-            }
-        }
-
-        return _makeSection(group)
-            .eraseToAnyView()
+    init(id: String) {
+        self._customContentGroup = StoredValue(
+            .User.customContentGroup(id: id)
+        )
     }
 
-    private func makeCinematicBody(
-        with libraryViewModel: any __PagingLibaryViewModel,
-        group: any _ContentGroup
-    ) -> some View {
-
-        @ViewBuilder
-        func _withPosterElements<Data: Collection>(_ elements: Data) -> some View where Data.Element: Poster, Data.Index == Int {
-//            CinematicItemSelector(items: elements)
-        }
-
-        @ViewBuilder
-        func _withLibrary<Library: PagingLibrary>(_ library: Library) -> some View where Library.Element: Poster {
-            EmptyView()
-        }
-
-        @ViewBuilder
-        func _makeSection<ViewModel: __PagingLibaryViewModel>(_ viewModel: ViewModel) -> some View {
-
-//            _withLibrary(viewModel.library)
-
-//            if ViewModel._PagingLibrary.Element.self is any Poster.Type,
-//               let posterElements = viewModel.elements.elements as? [any Poster]
-//            {
-//                _withPosterElements(posterElements.map { AnyPoster($0) })
-//            } else {
-//                AssertionFailureView("Mismatched library element type")
-//            }
-
-            if let posterElements = viewModel.elements.elements as? [any Poster] {
-                _withPosterElements(posterElements.map { AnyPoster($0) })
-            }
-        }
-
-        return _makeSection(libraryViewModel)
-            .eraseToAnyView()
+    @ViewBuilder
+    private func unpack(_ provider: some _ContentGroupProvider) -> some View {
+        ContentGroupView(provider: provider)
     }
 
     var body: some View {
-        ForEach(
-            Array(
-                viewModel.sections.enumerated()
-            ),
-            id: \.element.group.id
-        ) { offset, section in
-            if offset == 0 {
-                makeCinematicBody(with: section.viewModel, group: section.group)
-            } else {
-                makeGroupBody(with: section.viewModel, group: section.group)
+        unpack(customContentGroup.provider)
+            .eraseToAnyView()
+            .id(customContentGroup.hashValue)
+            .backport
+            .onChange(of: customContentGroup) { oldValue, newValue in
+                print("ContentGroupShimView: customContentGroup changed from \(oldValue) to \(newValue)")
             }
-        }
     }
 }
 
@@ -188,8 +142,6 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
                 ContentGroupContentView(viewModel: viewModel)
-
-//                WithCinematicFirstItemGroupContentView(viewModel: viewModel)
             }
             .edgePadding(.vertical)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -197,7 +149,8 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
         .ignoresSafeArea(.container, edges: [.horizontal])
         .scrollIndicators(.hidden)
         .refreshable {
-            try? await viewModel.refresh()
+//            try? await viewModel.refresh()
+            try? await viewModel.background.refresh()
         }
     }
 
@@ -220,7 +173,16 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
                 ProgressView()
             }
         }
-        .animation(.linear(duration: 0.1), value: viewModel.state)
+        .backport
+        .onChange(of: viewModel.state) { _, newValue in
+            print("ContentGroupView: state changed to \(newValue)")
+        }
+        .backport
+        .onChange(of: viewModel.background.states) { oldValue, newValue in
+            print("ContentGroupView: background states changed from \(oldValue) to \(newValue)")
+        }
+        .animation(.linear(duration: 0.2), value: viewModel.state)
+        .animation(.linear(duration: 0.2), value: viewModel.background.states)
         .navigationTitle(viewModel.provider.displayTitle)
         .onFirstAppear {
             viewModel.refresh()
@@ -231,13 +193,29 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
                 ProgressView()
             }
 
-            #if os(iOS)
-            SettingsBarButton(
-                server: viewModel.userSession.server,
-                user: viewModel.userSession.user
-            ) {
-                router.route(to: .settings)
+            Button("Refresh", systemImage: "arrow.clockwise.circle") {
+                viewModel.background.refresh()
             }
+
+            Button("Content") {
+                router.route(
+                    to: .init(
+                        id: "test-content",
+                        style: .sheet,
+                        content: {
+                            CustomContentGroupSettingsView(id: "asdf")
+                        }
+                    )
+                )
+            }
+
+            #if os(iOS)
+//            SettingsBarButton(
+//                server: viewModel.userSession.server,
+//                user: viewModel.userSession.user
+//            ) {
+//                router.route(to: .settings)
+//            }
             #endif
         }
 //        .sinceLastDisappear { interval in

@@ -77,10 +77,10 @@ extension ItemSortBy: Displayable, SupportedCaseIterable {
 
     static var supportedCases: [ItemSortBy] {
         [
-            .premiereDate,
-            .name,
-            .sortName,
             .dateLastContentAdded,
+            .name,
+            .premiereDate,
+            .sortName,
             .random,
         ]
     }

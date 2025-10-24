@@ -42,6 +42,10 @@ extension ImageInfo: Poster {
             return .square
         }
 
+        if height == width {
+            return .square
+        }
+
         return width > height ? .landscape : .portrait
     }
 

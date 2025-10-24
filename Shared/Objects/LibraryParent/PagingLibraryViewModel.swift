@@ -15,15 +15,32 @@ import SwiftUI
 private let DefaultPageSize = 50
 
 @MainActor
-protocol RefreshableViewModel {
+protocol WithRefresh {
+
+    associatedtype Background: WithRefresh = VoidWithRefresh
 
     func refresh()
     func refresh() async throws
+
+    var background: Background { get set }
+}
+
+extension WithRefresh where Background == VoidWithRefresh {
+
+    var background: VoidWithRefresh {
+        get { .init() }
+        set {}
+    }
+}
+
+struct VoidWithRefresh: WithRefresh {
+    func refresh() {}
+    func refresh() async throws {}
 }
 
 @MainActor
 protocol __PagingLibaryViewModel<_PagingLibrary>: AnyObject, Identifiable,
-RefreshableViewModel where Environment == _PagingLibrary.Environment {
+_ContentGroupViewModel where Environment == _PagingLibrary.Environment {
 
     associatedtype _PagingLibrary: PagingLibrary
     associatedtype Environment
@@ -35,9 +52,10 @@ RefreshableViewModel where Environment == _PagingLibrary.Environment {
 }
 
 @MainActor
-@Stateful
+@Stateful(conformances: [WithRefresh.self])
 class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __PagingLibaryViewModel {
 
+    typealias Background = _BackgroundActions
     typealias Element = _PagingLibrary.Element
     typealias Environment = _PagingLibrary.Environment
 
@@ -53,6 +71,7 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
             switch self {
             case .refresh:
                 .to(.refreshing, then: .content)
+                    .whenBackground(.refreshing)
             case .retrieveNextPage:
                 .none
             case ._actuallyRetrieveNextPage:
@@ -64,6 +83,7 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
     }
 
     enum BackgroundState {
+        case refreshing
         case retrievingNextPage
         case retrievingRandomElement
     }

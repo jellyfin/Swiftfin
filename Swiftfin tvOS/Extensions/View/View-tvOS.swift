@@ -12,6 +12,12 @@ import SwiftUIIntrospect
 
 extension View {
 
+    /// - Important: This does nothing on tvOS.
+    @ViewBuilder
+    func listRowSeparator(_ visiblity: Visibility) -> some View {
+        self
+    }
+
     @ViewBuilder
     func navigationBarBranding(
         isLoading: Bool = false
@@ -25,13 +31,13 @@ extension View {
 
     /// - Important: This does nothing on tvOS.
     @ViewBuilder
-    func statusBarHidden() -> some View {
+    func prefersStatusBarHidden(_ hidden: Bool) -> some View {
         self
     }
 
     /// - Important: This does nothing on tvOS.
     @ViewBuilder
-    func prefersStatusBarHidden(_ hidden: Bool) -> some View {
+    func statusBarHidden() -> some View {
         self
     }
 }

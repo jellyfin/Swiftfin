@@ -46,5 +46,18 @@ final class TabCoordinator: ObservableObject {
             let event = TabItemSelectedPublisher()
             return (tab, coordinator, event)
         }
+
+        self.selectedTabID = tabs.first?.id
+    }
+
+    init(@ArrayBuilder<TabItemSetting> tabs: () -> [TabItemSetting]) {
+        let tabs = tabs()
+        self.tabs = tabs.map { tab in
+            let coordinator = NavigationCoordinator()
+            let event = TabItemSelectedPublisher()
+            return (tab.item, coordinator, event)
+        }
+
+        self.selectedTabID = tabs.first?.item.id
     }
 }

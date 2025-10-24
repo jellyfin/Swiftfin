@@ -28,9 +28,10 @@ struct MainTabView: View {
     #if os(iOS)
     @StateObject
     private var tabCoordinator = TabCoordinator {
-        TabItem.contentGroup(provider: DefaultContentGroupProvider())
-        TabItem.search
-        TabItem.media
+        TabItemSetting.contentGroup(.default)
+        TabItemSetting.search
+        TabItemSetting.media
+//        TabItemSetting.contentGroup(StoredValues[.User.customContentGroup(id: "asdf")])
     }
     #else
     @StateObject
@@ -60,6 +61,11 @@ struct MainTabView: View {
                     coordinator: tab.coordinator
                 ) {
                     tab.item.content
+                        .topBarTrailing {
+                            if tab.item.id != "settings" {
+                                SettingsBarButton()
+                            }
+                        }
                 }
                 .environmentObject(tabCoordinator)
                 .environment(\.tabItemSelected, tab.publisher)

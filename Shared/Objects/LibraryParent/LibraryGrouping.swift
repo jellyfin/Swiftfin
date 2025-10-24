@@ -91,16 +91,24 @@ extension BaseItemDto: _LibraryParent {
 }
 
 @MainActor
-protocol _ContentGroup: Displayable, Identifiable {
+protocol _ContentGroup<ViewModel>: Displayable, Identifiable {
 
     associatedtype Body: View
-    associatedtype ViewModel: __PagingLibaryViewModel
+    associatedtype ViewModel: _ContentGroupViewModel
 
     var id: String { get }
 
-    func body(with viewModel: ViewModel) -> Body
-
     func makeViewModel() -> ViewModel
+
+    @ViewBuilder
+    func body(with viewModel: ViewModel) -> Body
+}
+
+protocol _ContentGroupViewModel: WithRefresh {}
+
+struct VoidContentGroupViewModel: _ContentGroupViewModel {
+    func refresh() {}
+    func refresh() async throws {}
 }
 
 @MainActor
@@ -128,6 +136,20 @@ extension _ContentGroupProvider where Environment == Void {
     }
 }
 
+struct EmptyContentGroup: _ContentGroup {
+
+    let displayTitle: String = "Empty"
+    let id: String = UUID().uuidString
+
+    func makeViewModel() -> VoidContentGroupViewModel {
+        .init()
+    }
+
+    func body(with viewModel: VoidContentGroupViewModel) -> some View {
+        EmptyView()
+    }
+}
+
 struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element: Poster {
 
     var displayTitle: String {
@@ -136,22 +158,37 @@ struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element:
 
     let id: String
     let library: Library
+    let posterDisplayType: PosterDisplayType
+    let posterSize: PosterDisplayType.Size
 
-    init(id: String, library: Library) {
+    init(
+        id: String,
+        library: Library,
+        posterDisplayType: PosterDisplayType = .portrait,
+        posterSize: PosterDisplayType.Size = .small
+    ) {
         self.id = id
         self.library = library
+        self.posterDisplayType = posterDisplayType
+        self.posterSize = posterSize
     }
 
-    init(library: Library) {
-        self.id = library.parent.libraryID
-        self.library = library
-    }
+//    init(library: Library) {
+//        self.id = library.parent.libraryID
+//        self.library = library
+//    }
 
     @ViewBuilder
     func body(with viewModel: PagingLibraryViewModel<Library>) -> some View {
-        WithPosterButtonStyle(id: id) {
-            _PosterSection(viewModel: viewModel, group: self)
-        }
+//        WithPosterButtonStyle(id: id) {
+        _PosterSection(viewModel: viewModel, group: self)
+            .posterStyle(for: BaseItemDto.self) { environment, _ in
+                var environment = environment
+                environment.displayType = posterDisplayType
+                environment.size = posterSize
+                return environment
+            }
+//        }
     }
 
     func makeViewModel() -> PagingLibraryViewModel<Library> {
@@ -186,56 +223,193 @@ struct WithPosterButtonStyle<Content: View>: View {
 }
 
 @MainActor
-struct PosterGroupSetting: Identifiable, Storable {
+enum ContentGroupProviderSetting: Equatable, Hashable, Storable {
 
-    @MainActor
-    enum Library: Storable {
+    case `default`
+    case custom(StoredContentGroupProvider)
 
-        case continueWatching
-        case latestInLibrary
-        case nextUp
-        case recentlyAdded
-        case library(id: String, name: String, filters: ItemFilterCollection)
+    var provider: any _ContentGroupProvider {
+        switch self {
+        case .default:
+            DefaultContentGroupProvider()
+        case let .custom(provider):
+            provider
+        }
     }
-
-    enum RowStyle: Storable {
-        case carousel
-        case scroll
-    }
-
-    let library: Library
-    let rowStyle: RowStyle
-
-    let posterDisplayType: PosterDisplayType
-    let posterSize: PosterDisplayType.Size
-
-    let id = UUID().uuidString
 }
 
-// struct GenresContentGroup: _ContentGroup {
-//
-//    let id = "genres"
-//    let displayTitle: String = L10n.genres
-//
-//    let genres: [BaseItemDto]
-//
-//    func makeViewModel() -> PagingLibraryViewModel<StaticLibrary<BaseItemDto>> {
-//        .init(library: .init(title: displayTitle, id: id, elements: genres))
-//    }
-//
-//    func body(with viewModel: PagingLibraryViewModel<StaticLibrary<BaseItemDto>>) -> some View {
-//        ScrollView(.horizontal) {
-//            HStack {
-//                ForEach(genres, id: \.displayTitle) { genre in
-//                    Text(genre.displayTitle)
-//                        .padding()
-//                        .background {
-//                            RoundedRectangle(cornerRadius: 10)
-//                                .fill(Color.accentColor.opacity(0.2))
-//                        }
-//                }
-//            }
-//        }
-//        .frame(height: 100)
-//    }
-// }
+@MainActor
+enum ContentGroupSetting: Equatable, Hashable, Storable {
+
+    case continueWatching(
+        id: String,
+        posterDisplayType: PosterDisplayType = .landscape,
+        posterSize: PosterDisplayType.Size = .medium
+    )
+
+    case nextUp(
+        id: String,
+        posterDisplayType: PosterDisplayType = .portrait,
+        posterSize: PosterDisplayType.Size = .medium
+    )
+
+    case library(
+        id: String,
+        displayTitle: String,
+        libraryID: String,
+        filters: ItemFilterCollection = .init(),
+        posterDisplayType: PosterDisplayType = .portrait,
+        posterSize: PosterDisplayType.Size = .medium
+    )
+
+    var group: any _ContentGroup {
+        switch self {
+        case let .continueWatching(
+            id: id,
+            posterDisplayType: posterDisplayType,
+            posterSize: posterSize
+        ):
+            PosterGroup(
+                id: id,
+                library: ContinueWatchingLibrary(),
+                posterDisplayType: posterDisplayType,
+                posterSize: posterSize
+            )
+        case let .nextUp(
+            id: id,
+            posterDisplayType: posterDisplayType,
+            posterSize: posterSize
+        ):
+            PosterGroup(
+                id: id,
+                library: NextUpLibrary(),
+                posterDisplayType: posterDisplayType,
+                posterSize: posterSize
+            )
+        case let .library(
+            id: id,
+            displayTitle: displayTitle,
+            libraryID: libraryID,
+            filters: filters,
+            posterDisplayType: posterDisplayType,
+            posterSize: posterSize
+        ):
+            PosterGroup(
+                id: id,
+                library: PagingItemLibrary(
+                    parent: .init(id: libraryID, name: displayTitle),
+                    filters: filters
+                ),
+                posterDisplayType: posterDisplayType,
+                posterSize: posterSize
+            )
+        }
+    }
+}
+
+struct StoredContentGroupProvider: _ContentGroupProvider, Equatable, Hashable, Storable {
+
+    var displayTitle: String
+    var id: String
+    var systemImage: String
+    var groups: [ContentGroupSetting]
+
+    func makeGroups(environment: ()) async throws -> [any _ContentGroup] {
+        groups.map(\.group)
+    }
+}
+
+struct CustomContentGroupSettingsView: View {
+
+    @StoredValue
+    private var customContentGroup: ContentGroupProviderSetting
+
+    @State
+    private var temporaryCustomContentGroup: StoredContentGroupProvider = .init(
+        displayTitle: "Custom",
+        id: "custom_\(UUID().uuidString)",
+        systemImage: "heart.fill",
+        groups: [.nextUp(
+            id: UUID().uuidString,
+            posterDisplayType: .portrait,
+            posterSize: .small
+        )]
+    )
+
+    @State
+    private var displayTitle: String = ""
+
+    init(id: String) {
+        self._customContentGroup = StoredValue(
+            .User.customContentGroup(id: id)
+        )
+
+        if case let .custom(provider) = customContentGroup {
+            self._temporaryCustomContentGroup = State(
+                initialValue: provider
+            )
+        }
+    }
+
+    var body: some View {
+        Form {
+
+            TextField(L10n.title, text: $temporaryCustomContentGroup.displayTitle)
+
+            ForEach(temporaryCustomContentGroup.groups, id: \.hashValue) { groupSetting in
+                Button(groupSetting.group.displayTitle) {
+                    temporaryCustomContentGroup.groups
+                        .removeAll(where: { $0 == groupSetting })
+                }
+            }
+        }
+        .navigationTitle("Custom")
+        .topBarTrailing {
+            Button("Add") {
+                temporaryCustomContentGroup.groups.append(
+                    .library(
+                        id: UUID().uuidString,
+                        displayTitle: "Movies",
+                        libraryID: "f137a2dd21bbc1b99aa5c0f6bf02a805",
+                        filters: .init(),
+                        posterDisplayType: PosterDisplayType.allCases.randomElement()!,
+                        posterSize: PosterDisplayType.Size.allCases.randomElement()!
+                    )
+//                    .nextUp(
+//                        posterDisplayType: PosterDisplayType.allCases.randomElement()!,
+//                        posterSize: PosterDisplayType.Size.allCases.randomElement()!
+//                    )
+                )
+            }
+
+            Button("Save") {
+                customContentGroup = .custom(
+                    temporaryCustomContentGroup
+                )
+            }
+            .buttonStyle(.toolbarPill)
+        }
+    }
+}
+
+extension StoredValues.Keys.User {
+
+    static func customContentGroup(id: String) -> StoredValues.Key<ContentGroupProviderSetting> {
+        StoredValues.Keys.CurrentUserKey(
+            "__customContentGroup_\(id)",
+            domain: "__customContentGroup_\(id)",
+            default: .custom(
+                .init(
+                    displayTitle: "Custom \(id)",
+                    id: id,
+                    systemImage: "heart.fill",
+                    groups: [.nextUp(
+                        id: UUID().uuidString,
+                        posterDisplayType: .portrait,
+                        posterSize: .small
+                    )]
+                )
+            )
+        )
+    }
+}

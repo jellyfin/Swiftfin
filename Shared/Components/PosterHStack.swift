@@ -101,13 +101,13 @@ struct PosterHStack<
             .clipsToBounds(false)
             .dataPrefix(20)
             .insets(horizontal: EdgeInsets.edgePadding)
-            .itemSpacing(itemSpacing)
+            .itemSpacing(EdgeInsets.edgePadding / 2)
             .scrollBehavior(.continuousLeadingEdge)
         }
     }
 
     var body: some View {
-        let _ = Self._printChanges()
+//        let _ = Self._printChanges()
 
         VStack(alignment: .leading) {
 

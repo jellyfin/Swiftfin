@@ -24,6 +24,7 @@ final class ContentGroupViewModel<Provider: _ContentGroupProvider>: ViewModel {
                 .none
             case .refresh:
                 .to(.refreshing, then: .content)
+                    .whenBackground(.refreshing)
             }
         }
     }
@@ -42,9 +43,9 @@ final class ContentGroupViewModel<Provider: _ContentGroupProvider>: ViewModel {
     var environment: Provider.Environment
 
     @Published
-    private(set) var sections: [(viewModel: any __PagingLibaryViewModel, group: any _ContentGroup)] = []
+    private(set) var sections: [(viewModel: any _ContentGroupViewModel, group: any _ContentGroup)] = []
 
-    let provider: Provider
+    var provider: Provider
 
     init(provider: Provider) {
         self.provider = provider
@@ -52,11 +53,26 @@ final class ContentGroupViewModel<Provider: _ContentGroupProvider>: ViewModel {
         super.init()
     }
 
+    func _overrideProvider(_ provider: Provider) {
+        self.provider = provider
+        self.environment = provider.environment
+
+        self.refresh()
+    }
+
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
 
-        func makePair(for group: any _ContentGroup) -> (viewModel: any __PagingLibaryViewModel, group: any _ContentGroup) {
-            func _makePair(for group: some _ContentGroup) -> (viewModel: any __PagingLibaryViewModel, group: any _ContentGroup) {
+        if sections.isNotEmpty {
+            for s in sections {
+                try? await s.viewModel.background.refresh()
+            }
+
+            return
+        }
+
+        func makePair(for group: any _ContentGroup) -> (viewModel: any _ContentGroupViewModel, group: any _ContentGroup) {
+            func _makePair(for group: some _ContentGroup) -> (viewModel: any _ContentGroupViewModel, group: any _ContentGroup) {
                 (viewModel: group.makeViewModel(), group: group)
             }
             return _makePair(for: group)
@@ -86,8 +102,8 @@ struct DefaultContentGroupProvider: _ContentGroupProvider {
     var userSession: UserSession!
 
     let displayTitle: String = L10n.home
-    let id: String = "home-\(UUID().uuidString)"
-    let systemImage: String = "house.fill"
+    let id: String = "default-content-group-provider"
+    let systemImage: String = "house"
 
     func makeGroups(environment: Void) async throws -> [any _ContentGroup] {
         let parameters = Paths.GetUserViewsParameters(userID: userSession.user.id)
@@ -107,11 +123,34 @@ struct DefaultContentGroupProvider: _ContentGroupProvider {
             )
             .subtracting(excludedLibraryIDs, using: \.id)
             .map(LatestInLibrary.init)
-            .map(PosterGroup.init)
+            .map { PosterGroup(id: UUID().uuidString, library: $0) }
 
         let newGroups: [any _ContentGroup] = [
-            PosterGroup(library: ContinueWatchingLibrary()),
-            PosterGroup(library: NextUpLibrary()),
+            PosterGroup(
+                id: UUID().uuidString,
+                library: ContinueWatchingLibrary(),
+                posterDisplayType: .landscape,
+                posterSize: .medium
+            ),
+
+            PosterGroup(
+                id: UUID().uuidString,
+                library: NextUpLibrary()
+            ),
+
+            PosterGroup(
+                id: UUID().uuidString,
+                library: PagingItemLibrary(
+                    parent: .init(
+                        name: L10n.recentlyAdded
+                    ),
+                    filters: .init(
+                        itemTypes: [.movie, .series],
+                        sortBy: [.dateCreated],
+                        sortOrder: [.descending]
+                    )
+                )
+            ),
         ]
             .appending(latestInLibraries)
 

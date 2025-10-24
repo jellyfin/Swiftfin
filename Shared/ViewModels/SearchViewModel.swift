@@ -52,13 +52,14 @@ final class SearchViewModel: ViewModel {
 
     var hasNoResults: Bool {
         itemContentGroupViewModel.sections
-            .allSatisfy { viewModel, _ in
+            .allSatisfy { _, _ in
                 @MainActor
                 func isEmpty(_ vm: some __PagingLibaryViewModel) -> Bool {
                     vm.elements.isEmpty
                 }
 
-                return isEmpty(viewModel)
+//                return isEmpty(viewModel)
+                return false
             }
     }
 

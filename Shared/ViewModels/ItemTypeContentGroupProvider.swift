@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Foundation
 import JellyfinAPI
 import OrderedCollections
 
@@ -120,6 +121,7 @@ struct SearchContentGroupProvider: _ContentGroupProvider {
 //            }
 
         let people = PosterGroup(
+            id: UUID().uuidString,
             library: PeopleLibrary(
                 environment: .init(query: environment.filters.query)
             )
