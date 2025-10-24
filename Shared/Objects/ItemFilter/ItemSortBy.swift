@@ -72,10 +72,6 @@ extension ItemSortBy: Displayable, SupportedCaseIterable {
             return L10n.parentIndexNumber
         case .indexNumber:
             return L10n.indexNumber
-        case .similarityScore:
-            return L10n.similarityScore
-        case .searchScore:
-            return L10n.searchScore
         }
     }
 
