@@ -1,60 +1,120 @@
 name: Bug report
 description: Create a bug report
+type: Bug
 labels: [ bug ]
 body:
+  - type: markdown
+    id: introduction
+    attributes:
+      value: |
+        ### Thank you for taking the time to report an issue!
+
+  - type: checkboxes
+    id: before-posting
+    attributes:
+      label: "This issue respects the following points:"
+      description: Please help us by ensuring that you meet all the following conditions.
+      options:
+        - label: This is a **bug**, not a question or a configuration issue; Please visit our [forum or chat rooms](https://jellyfin.org/contact/) first to troubleshoot with volunteers, before creating a report.
+          required: true
+        - label: This issue is **not** already reported on [GitHub](https://github.com/jellyfin/Swiftfin/issues?q=is%3Aopen+is%3Aissue).
+          required: true
+        - label: I'm using an up to date version of Swiftfin; We generally do not support previous older versions. If possible, please update to the latest version before opening an issue.
+          required: true
+        - label: I agree to follow Jellyfin's [Code of Conduct](https://jellyfin.org/docs/general/community-standards.html#code-of-conduct).
+          required: true
+
   - type: textarea
     id: description
     attributes:
-      label: Describe the bug
-      description: |
-        A clear and concise description of the bug, including steps to reproduce it and the normally expected behavior.
-        You can also attach screenshots or screen recordings to help explain your issue.
+      label: Description of the bug
+      description: Please provide a detailed description of the bug you encountered, in a readable and comprehensible way.
       placeholder: |
-        1. Go to …
-        2. Click on …
-        3. Scroll down to …
-        4. See error / the app crashes
-
-        Instead, I expect …
+        After updating to version 1.3.1, the playback controls disappear when playing certain video files. The issue seems to occur specifically with files that have multiple audio tracks. I have tested this on both my iPhone and iPad with the same results.
     validations:
       required: true
+
+  - type: textarea
+    id: repro-steps
+    attributes:
+      label: Reproduction steps
+      description: Provide clear, step-by-step instructions that anyone can follow to reproduce this issue.
+      placeholder: |
+        1. Open Swiftfin and navigate to your library
+        2. Select a video file with multiple audio tracks
+        3. Start playback
+        4. Attempt to access playback controls by tapping the screen
+        5. Observe that controls do not appear
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Select the platform(s) where this bug occurs
+      multiple: true
+      options:
+        - iOS
+        - tvOS
+    validations:
+      required: true
+
   - type: input
     id: app-version
     attributes:
       label: Application version
       description: The version of the installed Swiftfin app.
-      placeholder: 1.0.0(58)
+      placeholder: 1.3.1, 1.0.1
     validations:
       required: true
+
   - type: dropdown
     id: installation-source
     attributes:
       label: Where did you install the app from?
       description: Choose the appropriate app store or installation method.
       options:
-        - TestFlight
         - App Store
+        - TestFlight
+        - GitHub
+
   - type: input
     id: device-info
     attributes:
       label: Device information
-      description: model
-      placeholder: iPhone 12 Pro, 12.9-in. iPad Pro (4th generations) 
+      description: Device model
+      placeholder: iPhone 18 Pro, 12.9-in. iPad Pro (6th gen), Apple TV 4K (2nd gen)
     validations:
       required: true
+
   - type: input
     id: os-version
     attributes:
       label: OS version
-      description: Version of the OS and other information
-      placeholder: iOS 14.7, iOS 15 beta 4 (19A5307g), iPadOS 14.7
+      description: Version of the operating system
+      placeholder: iOS 18.1, iPadOS 18.1, tvOS 18.1
     validations:
       required: true
+
   - type: input
     id: server-version
     attributes:
       label: Jellyfin server version
-      description: If on unstable, please specify the commit hash.
-      placeholder: 10.7.6
+      description: The version of your Jellyfin server. If on unstable, please specify the commit hash.
+      placeholder: 10.11.0
     validations:
       required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or videos
+      description: Attach relevant screenshots or videos that demonstrate the issue.
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output if available. This can help diagnose the issue faster.
+      render: shell
