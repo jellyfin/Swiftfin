@@ -19,13 +19,6 @@ body:
         - label: I agree to follow Jellyfin's [Code of Conduct](https://jellyfin.org/docs/general/community-standards.html#code-of-conduct).
           required: true
 
-  - type: checkboxes
-    id: contribution
-    attributes:
-      label: Contribution
-      options:
-        - label: I am interested in working on this feature myself
-
   - type: dropdown
     id: platform
     attributes:
