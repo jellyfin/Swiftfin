@@ -34,8 +34,7 @@ struct UserProfileSettingsView: View {
             UserProfileHeroImage(
                 user: profileImageViewModel.user,
                 source: viewModel.userSession.user.profileImageSource(
-                    client: viewModel.userSession.client,
-                    maxWidth: 150
+                    client: viewModel.userSession.client
                 )
             ) {
                 router.route(to: .userProfileImage(viewModel: profileImageViewModel))

@@ -21,9 +21,9 @@ extension AddTaskTriggerView {
                 L10n.type,
                 selection: $taskTriggerInfo.type
             ) {
-                ForEach(TaskTriggerType.allCases, id: \.self) { type in
+                ForEach(TaskTriggerInfoType.allCases, id: \.self) { type in
                     Text(type.displayTitle)
-                        .tag(type as TaskTriggerType?)
+                        .tag(type as TaskTriggerInfoType?)
                 }
             }
             .onChange(of: taskTriggerInfo.type) { newType in
@@ -31,24 +31,24 @@ extension AddTaskTriggerView {
             }
         }
 
-        private func resetValuesForNewType(newType: TaskTriggerType?) {
+        private func resetValuesForNewType(newType: TaskTriggerInfoType?) {
             taskTriggerInfo.type = newType
             let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks
 
             switch newType {
-            case .daily:
+            case .dailyTrigger:
                 taskTriggerInfo.timeOfDayTicks = defaultTimeOfDayTicks
                 taskTriggerInfo.dayOfWeek = nil
                 taskTriggerInfo.intervalTicks = nil
-            case .weekly:
+            case .weeklyTrigger:
                 taskTriggerInfo.timeOfDayTicks = defaultTimeOfDayTicks
                 taskTriggerInfo.dayOfWeek = defaultDayOfWeek
                 taskTriggerInfo.intervalTicks = nil
-            case .interval:
+            case .intervalTrigger:
                 taskTriggerInfo.intervalTicks = defaultIntervalTicks
                 taskTriggerInfo.timeOfDayTicks = nil
                 taskTriggerInfo.dayOfWeek = nil
-            case .startup:
+            case .startupTrigger:
                 taskTriggerInfo.timeOfDayTicks = nil
                 taskTriggerInfo.dayOfWeek = nil
                 taskTriggerInfo.intervalTicks = nil
