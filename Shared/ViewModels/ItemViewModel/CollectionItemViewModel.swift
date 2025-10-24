@@ -63,4 +63,25 @@ final class CollectionItemViewModel: ItemViewModel {
             .elements
             .randomElement()
     }
+
+    // MARK: - Get Shuffled Items
+
+    func getShuffledItems() async throws -> [BaseItemDto] {
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.fields = .MinimumFields
+        parameters.isRecursive = true
+        parameters.parentID = item.id
+        parameters.sortBy = [ItemSortBy.sortName.rawValue]
+        parameters.sortOrder = [.ascending]
+
+        let request = Paths.getItemsByUserID(
+            userID: userSession.user.id,
+            parameters: parameters
+        )
+        let response = try await userSession.client.send(request)
+
+        return (response.value.items ?? [])
+            .filter(\.isPlayable)
+            .shuffled()
+    }
 }
