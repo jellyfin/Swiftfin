@@ -118,9 +118,3 @@ body:
       label: Relevant log output
       description: Please copy and paste any relevant log output if available. This can help diagnose the issue faster.
       render: shell
-
-  - type: textarea
-    id: additional-information
-    attributes:
-      label: Additional information
-      description: Any additional information that might be useful for resolving this issue.
