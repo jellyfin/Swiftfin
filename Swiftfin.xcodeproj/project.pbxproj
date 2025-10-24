@@ -221,7 +221,7 @@
 		E14565D92DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Extensions/JellyfinAPI/TaskTriggerType.swift,
+				Extensions/JellyfinAPI/TaskTriggerInfoType.swift,
 				Objects/ItemArrayElements.swift,
 				ViewModels/AdminDashboard/ActiveSessionsViewModel.swift,
 				ViewModels/AdminDashboard/AddServerUserViewModel.swift,
@@ -684,6 +684,7 @@
 				uk,
 				"zh-Hant",
 				mn,
+				km,
 			);
 			mainGroup = 5377CBE8263B596A003A4E83;
 			packageReferences = (
@@ -1282,7 +1283,7 @@
 			repositoryURL = "https://github.com/jellyfin/jellyfin-sdk-swift.git";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 0.5.2;
+				minimumVersion = 0.6.0;
 			};
 		};
 		E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */ = {

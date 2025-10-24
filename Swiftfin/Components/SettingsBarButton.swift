@@ -24,8 +24,7 @@ struct SettingsBarButton: View {
                 UserProfileImage(
                     userID: user.id,
                     source: user.profileImageSource(
-                        client: server.client,
-                        maxWidth: 120
+                        client: server.client
                     ),
                     pipeline: .Swiftfin.local
                 )
