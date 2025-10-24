@@ -68,8 +68,6 @@ extension TranscodeReason: Displayable, SystemImageable {
             return L10n.videoCodecTagNotSupported
         case .streamCountExceedsLimit:
             return L10n.streamCountExceedsLimit
-        default:
-            return L10n.unknown
         }
     }
 
@@ -107,8 +105,6 @@ extension TranscodeReason: Displayable, SystemImageable {
             return "captions.bubble"
         case .streamCountExceedsLimit:
             return "number.circle"
-        default:
-            return "questionmark.app"
         }
     }
 }
