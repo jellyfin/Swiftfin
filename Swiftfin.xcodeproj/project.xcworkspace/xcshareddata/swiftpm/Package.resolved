@@ -1,5 +1,5 @@
 {
-  "originHash" : "38a493503cb22432e1bf1b0b812569bb2bdd51f821207a74b6b78ff16a049011",
+  "originHash" : "9f0e08bb88053f1755b6990979179b0cb8026e2fc1829d595a4cc6714de0b6ed",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -105,8 +105,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jellyfin/jellyfin-sdk-swift.git",
       "state" : {
-        "revision" : "3033d73e05d9e03571a67d579583b7d15377d0d3",
-        "version" : "0.5.3"
+        "revision" : "e7bb3b79aed86dfc6b20e12fa847a5e738aa0f91",
+        "version" : "0.6.0"
       }
     },
     {
@@ -330,8 +330,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
       "state" : {
-        "revision" : "b2ed9eabefe56202ee4939dd9fc46b6241c88317",
-        "version" : "1.6.1"
+        "revision" : "4c27acf5394b645b70d8ba19dc249c0472d5f618",
+        "version" : "1.7.0"
       }
     }
   ],
