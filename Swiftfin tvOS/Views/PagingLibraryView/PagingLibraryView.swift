@@ -244,10 +244,10 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             uniqueElements: viewModel.elements,
             layout: layout
         ) { item in
-
             let displayType = Defaults[.Customization.Library.rememberLayout] ? _displayType.wrappedValue : _defaultDisplayType
                 .wrappedValue
-            let posterType = Defaults[.Customization.Library.rememberLayout] ? _posterType.wrappedValue : _defaultPosterType.wrappedValue
+            let posterType = Defaults[.Customization.Library.rememberLayout] ? _posterType.wrappedValue : _defaultPosterType
+                .wrappedValue
 
             switch (posterType, displayType) {
             case (.landscape, .grid):
@@ -272,7 +272,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         switch viewModel.state {
         case .content:
             if viewModel.elements.isEmpty {
-                L10n.noResults.text
+                Text(L10n.noResults)
             } else {
                 gridView
             }
@@ -289,7 +289,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     private var contentView: some View {
 
         innerContent
-            .padding(.top, 115) // Account for header height with consistent spacing
+            .padding(.top, 90) // Account for header height with consistent spacing
             // These exist here to alleviate type-checker issues
             .onChange(of: posterType) {
                 setCustomLayout()
@@ -329,80 +329,16 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
          }*/
     }
 
-    // MARK: - tvOS Library Header
-
-    private func iconForFilterType(_ type: ItemFilterType) -> String {
-        switch type {
-        case .sortBy:
-            return "arrow.up.arrow.down"
-        case .traits:
-            return "line.3.horizontal.decrease"
-        default:
-            return "circle"
-        }
-    }
-
     @ViewBuilder
     private func tvOSLibraryHeader(
         title: String,
-        filterViewModel: FilterViewModel,
-        filterTypes: [ItemFilterType]
+        filterViewModel: FilterViewModel
     ) -> some View {
-        HStack {
-            // Library title on the left
-            Text(title)
-                .font(.title2)
-                .fontWeight(.semibold)
-                .foregroundColor(.primary)
-
-            Spacer()
-
-            // Filter buttons on the right
-            HStack(spacing: 10) {
-                if filterViewModel.currentFilters.hasFilters {
-                    Button(action: {
-                        filterViewModel.send(.reset())
-                    }) {
-                        HStack(spacing: 8) {
-                            Image(systemName: "xmark.circle")
-                            Text(L10n.reset)
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 8)
-                    }
-                    .buttonStyle(.plain)
-                    .background(Color.jellyfinPurple)
-                    .foregroundColor(.white)
-                    .cornerRadius(35)
-                }
-
-                ForEach(filterTypes, id: \.self) { type in
-                    Button(action: {
-                        router.route(to: .filter(type: type, viewModel: filterViewModel))
-                    }) {
-                        HStack(spacing: 8) {
-                            Image(systemName: iconForFilterType(type))
-                            Text(type.displayTitle)
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 8)
-                    }
-                    .buttonStyle(.plain)
-                    .background(
-                        Color.clear // transparent by default
-                    )
-                    .foregroundColor(
-                        filterViewModel.isFilterSelected(type: type)
-                            ? Color.jellyfinPurple
-                            : .primary
-                    )
-                    .cornerRadius(35)
-                }
-            }
-        }
-        .frame(height: 115)
-        .frame(maxWidth: .infinity)
-        .padding(.horizontal, 0)
+        LibraryHeader(
+            title: title,
+            totalCount: viewModel.totalCount,
+            filterViewModel: filterViewModel
+        )
     }
 
     // MARK: Body
@@ -425,15 +361,11 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
         .overlay(alignment: .top) {
-            if let filterViewModel = viewModel.filterViewModel, !enabledDrawerFilters.isEmpty {
-                let filteredTypes = enabledDrawerFilters.filter { type in
-                    type != .letter && type != .tags && type != .years && type != .sortOrder && type != .genres
-                }
-                if !filteredTypes.isEmpty {
+            if let title = viewModel.parent?.displayTitle, title.isNotEmpty {
+                if let filterViewModel = viewModel.filterViewModel, !enabledDrawerFilters.isEmpty {
                     tvOSLibraryHeader(
                         title: viewModel.parent?.displayTitle ?? "",
-                        filterViewModel: filterViewModel,
-                        filterTypes: filteredTypes
+                        filterViewModel: filterViewModel
                     )
                 }
             }

@@ -99,6 +99,8 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     var elements: IdentifiedArray<Int, Element>
     @Published
     var state: State = .initial
+    @Published
+    var totalCount: Int = 0
 
     final let filterViewModel: FilterViewModel?
     final let parent: (any LibraryParent)?

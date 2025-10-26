@@ -11,22 +11,14 @@ import SwiftUI
 
 struct FilterView: View {
 
-    // MARK: - Binded Variable
-
-    @Binding
-    private var selection: [AnyItemFilter]
-
-    // MARK: - Environment & Observed Objects
-
-    @Router
-    private var router
+    // MARK: - Observed Objects
 
     @ObservedObject
-    private var viewModel: FilterViewModel
+    var viewModel: FilterViewModel
 
     // MARK: - Filter Type
 
-    private let type: ItemFilterType
+    let type: ItemFilterType
 
     // MARK: - Filter Sources
 
@@ -47,58 +39,30 @@ struct FilterView: View {
         }
     }
 
-    // MARK: - Icon Helper
-
-    private func iconForFilterType(_ type: ItemFilterType) -> String {
-        switch type {
-        case .sortBy:
-            return "arrow.up.arrow.down"
-        case .traits:
-            return "line.3.horizontal.decrease.circle"
-        default:
-            return "circle"
+    private var selectedYearsSubtitle: String {
+        let selectedYears = viewModel.currentFilters.years.map(\.asAnyItemFilter)
+        if selectedYears.isEmpty {
+            return L10n.none
+        } else if selectedYears.count == 1 {
+            return selectedYears.first?.displayTitle ?? L10n.none
+        } else {
+            return "\(selectedYears.count) selected"
         }
     }
 
     // MARK: - Body
 
     var body: some View {
-        SplitFormWindowView()
-            .descriptionView {
-                Image(systemName: iconForFilterType(type))
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: 400)
-            }
-            .contentView {
+        HStack {
+            Spacer()
+            VStack {
                 contentView
             }
-            .navigationTitle(type.displayTitle)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button(L10n.close) {
-                        router.dismiss()
-                    }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(L10n.reset) {
-                        if type == .sortBy {
-                            // Reset both sortBy and sortOrder
-                            viewModel.send(.reset(.sortBy))
-                            viewModel.send(.reset(.sortOrder))
-                        } else if type == .traits {
-                            // Reset both traits and genres
-                            viewModel.send(.reset(.traits))
-                            viewModel.send(.reset(.genres))
-                        } else {
-                            viewModel.send(.reset(type))
-                        }
-                    }
-                    .disabled(!viewModel.isFilterSelected(type: type) &&
-                        !(type == .sortBy && viewModel.isFilterSelected(type: .sortOrder)) &&
-                        !(type == .traits && viewModel.isFilterSelected(type: .genres)))
-                }
-            }
+            .frame(maxWidth: .infinity)
+            .frame(width: UIScreen.main.bounds.width * 0.5)
+            Spacer()
+        }
+        .navigationTitle(type.displayTitle)
     }
 
     // MARK: - Filter Content
@@ -111,49 +75,10 @@ struct FilterView: View {
         } else if type == .traits {
             // Special case for filters: show both traits and genres
             filtersContentView
-        } else if filterSource.isEmpty {
+        } else {
             Section {
                 Text(L10n.none)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-            }
-        } else {
-            Section {
-                ForEach(filterSource, id: \.hashValue) { item in
-                    Button(action: {
-                        if type.selectorType == .single {
-                            viewModel.send(.update(type, [item]))
-                        } else {
-                            // Multi-select: toggle item
-                            let currentSelection = viewModel.currentFilters[keyPath: type.collectionAnyKeyPath]
-                            if currentSelection.contains(where: { $0.hashValue == item.hashValue }) {
-                                // Remove item
-                                let newSelection = currentSelection.filter { $0.hashValue != item.hashValue }
-                                viewModel.send(.update(type, newSelection))
-                            } else {
-                                // Add item
-                                let newSelection = currentSelection + [item]
-                                viewModel.send(.update(type, newSelection))
-                            }
-                        }
-                    }) {
-                        HStack {
-                            Text(item.displayTitle)
-                            Spacer()
-                            if viewModel.currentFilters[keyPath: type.collectionAnyKeyPath]
-                                .contains(where: { $0.hashValue == item.hashValue })
-                            {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(.accentColor)
-                            } else {
-                                Image(systemName: "circle")
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                        .padding(.horizontal, 16)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-                    }
-                    .buttonStyle(.plain)
-                }
             }
         }
     }
@@ -162,7 +87,24 @@ struct FilterView: View {
 
     @ViewBuilder
     private var sortContentView: some View {
-        Section(L10n.sort) {
+
+        Button(action: {
+            viewModel.send(.reset(.sortBy))
+            viewModel.send(.reset(.sortOrder))
+        }) {
+            HStack {
+                Image(systemName: "arrow.clockwise")
+                Text(L10n.reset)
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        }
+        .disabled(!viewModel.isFilterSelected(type: .sortBy) && !viewModel.isFilterSelected(type: .sortOrder))
+
+        Divider()
+
+        Section {
             ForEach(viewModel.allFilters.sortBy.map(\.asAnyItemFilter), id: \.hashValue) { item in
                 Button(action: {
                     viewModel.send(.update(.sortBy, [item]))
@@ -181,11 +123,10 @@ struct FilterView: View {
                     .padding(.horizontal, 16)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                 }
-                .buttonStyle(.plain)
             }
         }
 
-        Section(L10n.order) {
+        Section {
             ForEach(viewModel.allFilters.sortOrder.map(\.asAnyItemFilter), id: \.hashValue) { item in
                 Button(action: {
                     viewModel.send(.update(.sortOrder, [item]))
@@ -204,7 +145,13 @@ struct FilterView: View {
                     .padding(.horizontal, 16)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                 }
-                .buttonStyle(.plain)
+            }
+        } header: {
+            HStack {
+                Text(L10n.order.uppercased())
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                Spacer()
             }
         }
     }
@@ -213,7 +160,26 @@ struct FilterView: View {
 
     @ViewBuilder
     private var filtersContentView: some View {
-        Section(L10n.filters) {
+
+        Button(action: {
+            viewModel.send(.reset(.traits))
+            viewModel.send(.reset(.genres))
+            viewModel.send(.reset(.years))
+        }) {
+            HStack {
+                Image(systemName: "arrow.clockwise")
+                Text(L10n.reset)
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        }
+        .disabled(!viewModel.isFilterSelected(type: .traits) && !viewModel.isFilterSelected(type: .genres) && !viewModel
+            .isFilterSelected(type: .years))
+
+        Divider()
+
+        Section {
             ForEach(filterSource, id: \.hashValue) { item in
                 Button(action: {
                     if type.selectorType == .single {
@@ -248,11 +214,12 @@ struct FilterView: View {
                     .padding(.horizontal, 16)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                 }
-                .buttonStyle(.plain)
             }
         }
 
-        Section(L10n.genres) {
+        Divider()
+
+        Section {
             MultiSelectListRowMenu(
                 L10n.genres,
                 subtitle: selectedGenresSubtitle,
@@ -268,23 +235,23 @@ struct FilterView: View {
                 )
             )
         }
-    }
-}
 
-extension FilterView {
-
-    init(
-        viewModel: FilterViewModel,
-        type: ItemFilterType
-    ) {
-        self.viewModel = viewModel
-        self.type = type
-        self._selection = Binding(
-            get: { viewModel.currentFilters[keyPath: type.collectionAnyKeyPath] },
-            set: { newValue in
-                viewModel.send(.update(type, newValue))
-            }
-        )
+        Section {
+            MultiSelectListRowMenu(
+                L10n.years,
+                subtitle: selectedYearsSubtitle,
+                items: viewModel.allFilters.years.map(\.asAnyItemFilter),
+                selectedItems: Binding(
+                    get: { viewModel.currentFilters.years.map(\.asAnyItemFilter) },
+                    set: { newYears in
+                        let yearValues = newYears.compactMap { filter in
+                            ItemYear(from: filter)
+                        }
+                        viewModel.send(.update(.years, yearValues.map(\.asAnyItemFilter)))
+                    }
+                )
+            )
+        }
     }
 }
 
@@ -318,7 +285,6 @@ struct MultiSelectListRowMenu<Item: Hashable>: View {
                         Spacer()
                         if selectedItems.wrappedValue.contains(item) {
                             Image(systemName: "checkmark")
-                                .foregroundColor(.jellyfinPurple)
                         }
                     }
                 }
@@ -332,24 +298,17 @@ struct MultiSelectListRowMenu<Item: Hashable>: View {
                 Spacer()
 
                 Text(subtitle)
-                    .foregroundStyle(isFocused ? .black : .secondary)
-                    .brightness(isFocused ? 0.4 : 0)
+                    .foregroundStyle(isFocused ? .black : .white)
 
                 Image(systemName: "chevron.up.chevron.down")
                     .font(.body.weight(.regular))
-                    .foregroundStyle(isFocused ? .black : .secondary)
-                    .brightness(isFocused ? 0.4 : 0)
+                    .foregroundStyle(isFocused ? .black : .white)
             }
             .padding(.horizontal)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(isFocused ? Color.white : Color.clear)
-            )
             .scaleEffect(isFocused ? 1.04 : 1.0)
             .animation(.easeInOut(duration: 0.125), value: isFocused)
         }
-        .menuStyle(.borderlessButton)
         .listRowInsets(.zero)
         .focused($isFocused)
     }

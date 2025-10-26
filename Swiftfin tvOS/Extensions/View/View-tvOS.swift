@@ -49,27 +49,6 @@ extension View {
             }
         }
     }
-
-    @ViewBuilder
-    func tvFilterDrawer(
-        viewModel: FilterViewModel,
-        types: [ItemFilterType],
-        onSelect: @escaping (TVFilterDrawer.Parameters) -> Void
-    ) -> some View {
-        if types.isEmpty {
-            self
-        } else {
-            VStack(spacing: 0) {
-                self
-
-                TVFilterDrawer(
-                    viewModel: viewModel,
-                    types: types
-                )
-                .onSelect(onSelect)
-            }
-        }
-    }
 }
 
 extension EnvironmentValues {

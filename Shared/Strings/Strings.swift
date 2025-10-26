@@ -268,6 +268,8 @@ internal enum L10n {
   internal static let bugsAndFeatures = L10n.tr("Localizable", "bugsAndFeatures", fallback: "Bugs and Features")
   /// Buttons
   internal static let buttons = L10n.tr("Localizable", "buttons", fallback: "Buttons")
+  /// By
+  internal static let by = L10n.tr("Localizable", "by", fallback: "By")
   /// Cancel
   internal static let cancel = L10n.tr("Localizable", "cancel", fallback: "Cancel")
   /// Cancelling...
