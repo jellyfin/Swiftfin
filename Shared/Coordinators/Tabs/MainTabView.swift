@@ -26,18 +26,18 @@ struct MainTabView: View {
     @StateObject
     private var tabCoordinator = TabCoordinator {
         TabItem.home
-//        TabItem.library(
-//            title: L10n.tvShows,
-//            systemName: "tv",
-//            filters: .init(itemTypes: [.series])
-//        )
-//        TabItem.library(
-//            title: L10n.movies,
-//            systemName: "film",
-//            filters: .init(itemTypes: [.movie])
-//        )
-        TabItem.media
+        TabItem.library(
+            title: L10n.tvShows,
+            systemName: "tv",
+            filters: .init(itemTypes: [.series])
+        )
+        TabItem.library(
+            title: L10n.movies,
+            systemName: "film",
+            filters: .init(itemTypes: [.movie])
+        )
         TabItem.search
+        TabItem.media
         TabItem.settings
     }
     #endif

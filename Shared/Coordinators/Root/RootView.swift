@@ -40,11 +40,9 @@ struct RootView: View {
         }
         .animation(.linear(duration: 0.1), value: rootCoordinator.root.id)
         .environmentObject(rootCoordinator)
-        #if !os(tvOS)
-            .prefersStatusBarHidden(isStatusBarHidden)
-        #endif
-            .onPreferenceChange(IsStatusBarHiddenKey.self) { newValue in
-                isStatusBarHidden = newValue
-            }
+        .prefersStatusBarHidden(isStatusBarHidden)
+        .onPreferenceChange(IsStatusBarHiddenKey.self) { newValue in
+            isStatusBarHidden = newValue
+        }
     }
 }

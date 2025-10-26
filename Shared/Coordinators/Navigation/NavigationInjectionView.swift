@@ -56,30 +56,23 @@ struct NavigationInjectionView: View {
             )
         )
         #if os(tvOS)
+        // TODO: Workaround for sheet presentation issue on tvOS
+        // https://developer.apple.com/documentation/tvos-release-notes/tvos-26_1-release-notes
+        // Remove this tvOS section when resolved
         .fullScreenCover(
-            item: $coordinator.presentedSheet,
-            onDismiss: {
+                item: $coordinator.presentedSheet
+            ) {
                 coordinator.presentedSheet = nil
-            }
-        ) { route in
-            let newCoordinator = NavigationCoordinator()
+            } content: { route in
+                let newCoordinator = NavigationCoordinator()
 
-            NavigationInjectionView(coordinator: newCoordinator) {
-                route.destination
-                    .background(.ultraThinMaterial)
+                NavigationInjectionView(coordinator: newCoordinator) {
+                    route.destination
+                }
+                .background(.regularMaterial)
             }
-        }
-        .fullScreenCover(
-            item: $coordinator.presentedFullScreen
-        ) { route in
-            let newCoordinator = NavigationCoordinator()
-
-            NavigationInjectionView(coordinator: newCoordinator) {
-                route.destination
-            }
-        }
-        #else
-        .sheet(
+        #else // <- Start: Use this for both OS when fixed
+            .sheet(
                 item: $coordinator.presentedSheet
             ) {
                 coordinator.presentedSheet = nil
@@ -90,7 +83,19 @@ struct NavigationInjectionView: View {
                     route.destination
                 }
             }
-            .presentation(
+        #endif // <- End
+        #if os(tvOS)
+        .fullScreenCover(
+            item: $coordinator.presentedFullScreen
+        ) { route in
+            let newCoordinator = NavigationCoordinator()
+
+            NavigationInjectionView(coordinator: newCoordinator) {
+                route.destination
+            }
+        }
+        #else
+        .presentation(
                 $coordinator.presentedFullScreen,
                 transition: .zoomIfAvailable(
                     options: .init(
