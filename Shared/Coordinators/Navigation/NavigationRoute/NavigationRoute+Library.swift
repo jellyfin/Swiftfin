@@ -11,7 +11,6 @@ import SwiftUI
 
 extension NavigationRoute {
 
-    #if os(iOS)
     static func filter(type: ItemFilterType, viewModel: FilterViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "filter",
@@ -20,7 +19,6 @@ extension NavigationRoute {
             FilterView(viewModel: viewModel, type: type)
         }
     }
-    #endif
 
     #if os(tvOS)
     static func filter(type: ItemFilterType, viewModel: FilterViewModel) -> NavigationRoute {

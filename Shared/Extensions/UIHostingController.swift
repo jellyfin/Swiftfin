@@ -34,7 +34,7 @@ extension UIHostingController {
                 }
                 class_addMethod(
                     viewSubclass,
-                    #selector(getter: UIView.safeAreaInsets),
+                        #selector(getter: UIView.safeAreaInsets),
                     imp_implementationWithBlock(safeAreaInsets),
                     method_getTypeEncoding(method)
                 )
