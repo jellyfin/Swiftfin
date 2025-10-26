@@ -45,21 +45,21 @@ struct AddTaskTriggerView: View {
             intervalTicks: nil,
             maxRuntimeTicks: nil,
             timeOfDayTicks: nil,
-            type: TaskTriggerType.startup
+            type: TaskTriggerInfoType.startupTrigger
         )
 
         _taskTriggerInfo = State(initialValue: newTrigger)
         self.emptyTaskTriggerInfo = newTrigger
     }
 
-    // MARK: - View for TaskTriggerType.daily
+    // MARK: - View for TaskTriggerInfoType.daily
 
     @ViewBuilder
     private var dailyView: some View {
         TimeRow(taskTriggerInfo: $taskTriggerInfo)
     }
 
-    // MARK: - View for TaskTriggerType.weekly
+    // MARK: - View for TaskTriggerInfoType.weekly
 
     @ViewBuilder
     private var weeklyView: some View {
@@ -67,7 +67,7 @@ struct AddTaskTriggerView: View {
         TimeRow(taskTriggerInfo: $taskTriggerInfo)
     }
 
-    // MARK: - View for TaskTriggerType.interval
+    // MARK: - View for TaskTriggerInfoType.interval
 
     @ViewBuilder
     private var intervalView: some View {
@@ -82,11 +82,11 @@ struct AddTaskTriggerView: View {
                 TriggerTypeRow(taskTriggerInfo: $taskTriggerInfo)
 
                 if let taskType = taskTriggerInfo.type {
-                    if taskType == TaskTriggerType.daily {
+                    if taskType == TaskTriggerInfoType.dailyTrigger {
                         dailyView
-                    } else if taskType == TaskTriggerType.weekly {
+                    } else if taskType == TaskTriggerInfoType.weeklyTrigger {
                         weeklyView
-                    } else if taskType == TaskTriggerType.interval {
+                    } else if taskType == TaskTriggerInfoType.intervalTrigger {
                         intervalView
                     }
                 }

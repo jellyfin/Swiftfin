@@ -21,8 +21,7 @@ extension UserDto {
             username: ""
         )
         .profileImageSource(
-            client: client,
-            maxWidth: maxWidth
+            client: client
         )
     }
 }
