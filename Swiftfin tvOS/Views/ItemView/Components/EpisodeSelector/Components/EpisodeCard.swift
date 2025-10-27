@@ -6,12 +6,16 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
 extension SeriesEpisodeSelector {
 
     struct EpisodeCard: View {
+
+        @Default(.accentColor)
+        private var accentColor
 
         @Router
         private var router
@@ -30,12 +34,10 @@ extension SeriesEpisodeSelector {
                         progress: (episode.userData?.playedPercentage ?? 0) / 100
                     )
                 } else if episode.userData?.isPlayed ?? false {
-                    // Use the same WatchedIndicator as library view for consistency
                     WatchedIndicator(size: 45)
                 } else if episode.canBePlayed && !episode.isLiveStream {
-                    // Use the same UnwatchedIndicator as library view for consistency
                     UnwatchedIndicator(size: 45)
-                        .foregroundColor(.jellyfinPurple)
+                        .foregroundColor(accentColor)
                 }
 
                 if isFocused {
