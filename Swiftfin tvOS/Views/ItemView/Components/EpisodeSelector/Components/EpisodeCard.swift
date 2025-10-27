@@ -16,6 +16,10 @@ extension SeriesEpisodeSelector {
 
         @Default(.accentColor)
         private var accentColor
+        @Default(.Customization.Indicators.showUnplayed)
+        private var showUnplayed
+        @Default(.Customization.Indicators.showPlayed)
+        private var showPlayed
 
         @Router
         private var router
@@ -35,9 +39,11 @@ extension SeriesEpisodeSelector {
                     )
                 } else if episode.userData?.isPlayed ?? false {
                     WatchedIndicator(size: 45)
+                        .isVisible(showPlayed)
                 } else if episode.canBePlayed && !episode.isLiveStream {
                     UnwatchedIndicator(size: 45)
                         .foregroundColor(accentColor)
+                        .isVisible(showUnplayed)
                 }
 
                 if isFocused {
