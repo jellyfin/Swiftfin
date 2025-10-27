@@ -49,8 +49,8 @@ final class ServerActivityDetailViewModel: ViewModel {
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async {
-        async let fetchedItem: BaseItemDto? = getItem(for: log.itemID!)
-        async let fetchedUser: UserDto? = getUser(for: log.userID!)
+        async let fetchedItem: BaseItemDto? = getItem(for: log.itemID)
+        async let fetchedUser: UserDto? = getUser(for: log.userID)
 
         let results = try? await (fetchedItem, fetchedUser)
         item = results?.0
