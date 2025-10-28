@@ -90,14 +90,14 @@ struct UserSignInView: View {
                     logger.critical("QuickConnect called without necessary action!")
                     throw JellyfinAPIError(L10n.unknownError)
                 }
-                try await viewModel.signInQuickConnect(
+                await viewModel.signInQuickConnect(
                     secret: secret
                 )
             } catch is CancellationError {
                 // ignore
             } catch {
                 logger.error("QuickConnect failed with error: \(error.localizedDescription)")
-                try await viewModel.error(JellyfinAPIError(L10n.taskFailed))
+                await viewModel.error(JellyfinAPIError(L10n.taskFailed))
             }
         }
     }
