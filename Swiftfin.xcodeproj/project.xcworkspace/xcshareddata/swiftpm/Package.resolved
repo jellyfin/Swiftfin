@@ -69,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nathantannar4/Engine",
       "state" : {
-        "revision" : "67feb196f7fd0f3c6666036dbb9f248831352bb2",
-        "version" : "2.2.10"
+        "revision" : "fe8ecdcfd7b82a431d5cd1400649b2cfc798cc9f",
+        "version" : "2.2.7"
       }
     },
     {
@@ -187,7 +187,7 @@
       "location" : "https://github.com/LePips/StatefulMacro",
       "state" : {
         "branch" : "main",
-        "revision" : "ceb4c705c9dc7e76159440c93e1f8102f69bf8e1"
+        "revision" : "7f56ed3f2297ba86c126e33d40af8b1f908e3a53"
       }
     },
     {
@@ -256,7 +256,7 @@
     {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "location" : "https://github.com/swiftlang/swift-syntax",
       "state" : {
         "revision" : "0687f71944021d616d34d922343dcef086855920",
         "version" : "600.0.1"
