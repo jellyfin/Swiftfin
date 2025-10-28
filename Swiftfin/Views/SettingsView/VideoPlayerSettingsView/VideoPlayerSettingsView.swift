@@ -17,12 +17,6 @@ struct VideoPlayerSettingsView: View {
     private var jumpForwardLength
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
-    @Default(.VideoPlayer.videoPlayerType)
-    private var videoPlayerType
-
-    private var isVLC: Bool {
-        videoPlayerType == .swiftfin
-    }
 
     @Router
     private var router
@@ -30,20 +24,17 @@ struct VideoPlayerSettingsView: View {
     var body: some View {
         Form {
 
-            // MARK: Player Controls
-
-            Section(L10n.controls) {
-                ChevronButton(L10n.gestures) {
-                    router.route(to: .gestureSettings)
-                }
-            // TODO: custom view for custom interval creation
-            // CaseIterablePicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
-            // CaseIterablePicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
+            ChevronButton(L10n.gestures) {
+                router.route(to: .gestureSettings)
             }
 
-            // MARK: Resume Offset Customization (Shared)
+            // TODO: custom view for custom interval creation
+//            CaseIterablePicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
+
+//            CaseIterablePicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
 
             Section {
+
                 BasicStepper(
                     L10n.resumeOffset,
                     value: $resumeOffset,
@@ -51,21 +42,18 @@ struct VideoPlayerSettingsView: View {
                     step: 1,
                     formatter: SecondFormatter()
                 )
-            } header: {
-                Text(L10n.resumeOffset)
             } footer: {
                 Text(L10n.resumeOffsetDescription)
             }
 
-            // MARK: Player Customizations
-
             ButtonSection()
+
             SliderSection()
+
             SubtitleSection()
-            TimestampSection()
-            TransitionSection()
+
             TimestampSection()
         }
-        .navigationTitle(L10n.videoPlayer.localizedCapitalized)
+        .navigationTitle(L10n.videoPlayer)
     }
 }
