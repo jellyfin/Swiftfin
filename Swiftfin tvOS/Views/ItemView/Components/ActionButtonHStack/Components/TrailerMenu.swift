@@ -17,27 +17,17 @@ extension ItemView {
 
         private let logger = Logger.swiftfin()
 
-        // MARK: - Stored Value
-
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers: TrailerSelection
-
-        // MARK: - Focus State
 
         @FocusState
         private var isFocused: Bool
 
-        // MARK: - Observed & Envirnoment Objects
-
         @Router
         private var router
 
-        // MARK: - Error State
-
         @State
         private var error: Error?
-
-        // MARK: - Notification State
 
         @State
         private var selectedRemoteURL: MediaURL?
@@ -53,8 +43,6 @@ extension ItemView {
             enabledTrailers.contains(.external) && externalTrailers.isNotEmpty
         }
 
-        // MARK: - Body
-
         var body: some View {
             Group {
                 switch localTrailers.count + externalTrailers.count {
@@ -66,8 +54,6 @@ extension ItemView {
             }
             .errorMessage($error)
         }
-
-        // MARK: - Single Trailer Button
 
         private var trailerButton: some View {
             ActionButton(
@@ -84,8 +70,6 @@ extension ItemView {
                 }
             }
         }
-
-        // MARK: - Multiple Trailers Menu Button
 
         @ViewBuilder
         private var trailerMenu: some View {
@@ -119,23 +103,23 @@ extension ItemView {
             }
         }
 
-        // MARK: - Play: Local Trailer
+        // MARK: playLocalTrailer(_:)
 
         private func playLocalTrailer(_ trailer: BaseItemDto) {
-            if let selectedMediaSource = trailer.mediaSources?.first {
-//                router.route(
-//                    to: .videoPlayer(manager: OnlineVideoPlayerManager(
-//                        item: trailer,
-//                        mediaSource: selectedMediaSource
-//                    ))
-//                )
-            } else {
+            guard let selectedMediaSource = trailer.mediaSources?.first else {
                 logger.log(level: .error, "No media sources found")
                 error = JellyfinAPIError(L10n.unknownError)
+                return
             }
+
+            let manager = MediaPlayerManager(item: trailer) { item in
+                try await MediaPlayerItem.build(for: item, mediaSource: selectedMediaSource)
+            }
+
+            router.route(to: .videoPlayer(manager: manager))
         }
 
-        // MARK: - Play: External Trailer
+        // MARK: playExternalTrailer(_:)
 
         private func playExternalTrailer(_ trailer: MediaURL) {
             guard let urlString = trailer.url else {
@@ -143,12 +127,12 @@ extension ItemView {
                 return
             }
 
-            let deepLink = DeepLinkURL(urlString)
+            let external = ExternalTrailerSource(urlString)
 
-            if let deepLinkURL = deepLink.url, deepLink.isValid {
-                UIApplication.shared.open(deepLinkURL) { success in
+            if let applicationURL = external.url, external.isValid {
+                UIApplication.shared.open(applicationURL) { success in
                     if !success {
-                        self.error = JellyfinAPIError(L10n.unableToOpenTrailerApp(deepLink.type.displayTitle))
+                        self.error = JellyfinAPIError(L10n.unableToOpenTrailerApp(external.type.displayTitle))
                     }
                 }
             } else {
