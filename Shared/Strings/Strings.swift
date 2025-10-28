@@ -1304,8 +1304,6 @@ internal enum L10n {
   internal static let scrub = L10n.tr("Localizable", "scrub", fallback: "Scrub")
   /// Search
   internal static let search = L10n.tr("Localizable", "search", fallback: "Search")
-  /// Search score
-  internal static let searchScore = L10n.tr("Localizable", "searchScore", fallback: "Search score")
   /// Season
   internal static let season = L10n.tr("Localizable", "season", fallback: "Season")
   /// S%1$@:E%2$@
@@ -1410,6 +1408,8 @@ internal enum L10n {
   internal static let signoutCloseFooter = L10n.tr("Localizable", "signoutCloseFooter", fallback: "Signs out the last user when Swiftfin has been force closed.")
   /// Similarity score
   internal static let similarityScore = L10n.tr("Localizable", "similarityScore", fallback: "Similarity score")
+  /// Signs out the last user when Swiftfin has been force closed
+  internal static let signoutCloseFooter = L10n.tr("Localizable", "signoutCloseFooter", fallback: "Signs out the last user when Swiftfin has been force closed")
   /// Slider
   internal static let slider = L10n.tr("Localizable", "slider", fallback: "Slider")
   /// Slow scrub
@@ -1444,8 +1444,10 @@ internal enum L10n {
   internal static let status = L10n.tr("Localizable", "status", fallback: "Status")
   /// Stop
   internal static let stop = L10n.tr("Localizable", "stop", fallback: "Stop")
-  /// Story arc
-  internal static let storyArc = L10n.tr("Localizable", "storyArc", fallback: "Story arc")
+  /// Story Arc
+  internal static let storyArc = L10n.tr("Localizable", "storyArc", fallback: "Story Arc")
+  /// The stream count exceeds the allowed limit
+  internal static let streamCountExceedsLimit = L10n.tr("Localizable", "streamCountExceedsLimit", fallback: "The stream count exceeds the allowed limit")
   /// Streams
   internal static let streams = L10n.tr("Localizable", "streams", fallback: "Streams")
   /// Studio

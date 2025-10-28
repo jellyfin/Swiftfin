@@ -9,29 +9,29 @@
 import Foundation
 import JellyfinAPI
 
-extension TaskTriggerType: Displayable, SystemImageable {
+extension TaskTriggerInfoType: Displayable, SystemImageable {
     var displayTitle: String {
         switch self {
-        case .daily:
+        case .dailyTrigger:
             return L10n.daily
-        case .weekly:
+        case .weeklyTrigger:
             return L10n.weekly
-        case .interval:
+        case .intervalTrigger:
             return L10n.interval
-        case .startup:
+        case .startupTrigger:
             return L10n.onApplicationStartup
         }
     }
 
     var systemImage: String {
         switch self {
-        case .daily:
+        case .dailyTrigger:
             return "clock"
-        case .weekly:
+        case .weeklyTrigger:
             return "calendar"
-        case .interval:
+        case .intervalTrigger:
             return "timer"
-        case .startup:
+        case .startupTrigger:
             return "power"
         }
     }
