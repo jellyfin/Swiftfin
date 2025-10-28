@@ -370,8 +370,6 @@ internal enum L10n {
   internal static let continuing = L10n.tr("Localizable", "continuing", fallback: "Continuing")
   /// Control other users
   internal static let controlOtherUsers = L10n.tr("Localizable", "controlOtherUsers", fallback: "Control other users")
-  /// Controls
-  internal static let controls = L10n.tr("Localizable", "controls", fallback: "Controls")
   /// Control shared devices
   internal static let controlSharedDevices = L10n.tr("Localizable", "controlSharedDevices", fallback: "Control shared devices")
   /// Country
@@ -772,6 +770,8 @@ internal enum L10n {
   }
   /// Items
   internal static let items = L10n.tr("Localizable", "items", fallback: "Items")
+  /// Jellyfin
+  internal static let jellyfin = L10n.tr("Localizable", "jellyfin", fallback: "Jellyfin")
   /// Join groups
   internal static let joinGroups = L10n.tr("Localizable", "joinGroups", fallback: "Join groups")
   /// Jump
@@ -958,6 +958,8 @@ internal enum L10n {
   internal static let name = L10n.tr("Localizable", "name", fallback: "Name")
   /// Native
   internal static let native = L10n.tr("Localizable", "native", fallback: "Native")
+  /// Native Player
+  internal static let nativePlayer = L10n.tr("Localizable", "nativePlayer", fallback: "Native Player")
   /// Network timed out
   internal static let networkTimedOut = L10n.tr("Localizable", "networkTimedOut", fallback: "Network timed out")
   /// Never
@@ -1056,8 +1058,6 @@ internal enum L10n {
   internal static let passwordsDoNotMatch = L10n.tr("Localizable", "passwordsDoNotMatch", fallback: "New passwords do not match.")
   /// Pause
   internal static let pause = L10n.tr("Localizable", "pause", fallback: "Pause")
-  /// Pause on background
-  internal static let pauseOnBackground = L10n.tr("Localizable", "pauseOnBackground", fallback: "Pause on background")
   /// Penciller
   internal static let penciller = L10n.tr("Localizable", "penciller", fallback: "Penciller")
   /// People
@@ -1086,8 +1086,6 @@ internal enum L10n {
   internal static let play = L10n.tr("Localizable", "play", fallback: "Play")
   /// Play / Pause
   internal static let playAndPause = L10n.tr("Localizable", "playAndPause", fallback: "Play / Pause")
-  /// Playback
-  internal static let playback = L10n.tr("Localizable", "playback", fallback: "Playback")
   /// Playback quality
   internal static let playbackQuality = L10n.tr("Localizable", "playbackQuality", fallback: "Playback quality")
   /// Playback speed
@@ -1108,8 +1106,6 @@ internal enum L10n {
   internal static let playlistsFolders = L10n.tr("Localizable", "playlistsFolders", fallback: "Playlists folders")
   /// Play next item
   internal static let playNextItem = L10n.tr("Localizable", "playNextItem", fallback: "Play next item")
-  /// Play on active
-  internal static let playOnActive = L10n.tr("Localizable", "playOnActive", fallback: "Play on active")
   /// Play previous item
   internal static let playPreviousItem = L10n.tr("Localizable", "playPreviousItem", fallback: "Play previous item")
   /// Portrait
@@ -1238,8 +1234,6 @@ internal enum L10n {
   internal static let `required` = L10n.tr("Localizable", "required", fallback: "Required")
   /// Require device authentication when signing in to the user.
   internal static let requireDeviceAuthDescription = L10n.tr("Localizable", "requireDeviceAuthDescription", fallback: "Require device authentication when signing in to the user.")
-  /// Require device authentication to sign in to the Quick Connect user on this device.
-  internal static let requireDeviceAuthForQuickConnectUser = L10n.tr("Localizable", "requireDeviceAuthForQuickConnectUser", fallback: "Require device authentication to sign in to the Quick Connect user on this device.")
   /// Require device authentication to sign in to %@ on this device.
   internal static func requireDeviceAuthForUser(_ p1: Any) -> String {
     return L10n.tr("Localizable", "requireDeviceAuthForUser", String(describing: p1), fallback: "Require device authentication to sign in to %@ on this device.")
@@ -1266,6 +1260,8 @@ internal enum L10n {
   internal static let resumeOffset = L10n.tr("Localizable", "resumeOffset", fallback: "Resume offset")
   /// Resume content seconds before the recorded resume time.
   internal static let resumeOffsetDescription = L10n.tr("Localizable", "resumeOffsetDescription", fallback: "Resume content seconds before the recorded resume time.")
+  /// Resume Offset
+  internal static let resumeOffsetTitle = L10n.tr("Localizable", "resumeOffsetTitle", fallback: "Resume Offset")
   /// Retrieving media information
   internal static let retrievingMediaInformation = L10n.tr("Localizable", "retrievingMediaInformation", fallback: "Retrieving media information")
   /// Retry
@@ -1336,10 +1332,6 @@ internal enum L10n {
   internal static let seriesName = L10n.tr("Localizable", "seriesName", fallback: "Series name")
   /// Server
   internal static let server = L10n.tr("Localizable", "server", fallback: "Server")
-  /// %@ is already connected.
-  internal static func serverAlreadyConnected(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "serverAlreadyConnected", String(describing: p1), fallback: "%@ is already connected.")
-  }
   /// Server %s already exists. Add new URL?
   internal static func serverAlreadyExistsPrompt(_ p1: UnsafePointer<CChar>) -> String {
     return L10n.tr("Localizable", "serverAlreadyExistsPrompt", p1, fallback: "Server %s already exists. Add new URL?")
@@ -1362,8 +1354,6 @@ internal enum L10n {
   internal static let `set` = L10n.tr("Localizable", "set", fallback: "Set")
   /// Set PIN
   internal static let setPin = L10n.tr("Localizable", "setPin", fallback: "Set PIN")
-  /// Set PIN for new user.
-  internal static let setPinForNewUser = L10n.tr("Localizable", "setPinForNewUser", fallback: "Set PIN for new user.")
   /// Set a hint when prompting for the PIN.
   internal static let setPinHintDescription = L10n.tr("Localizable", "setPinHintDescription", fallback: "Set a hint when prompting for the PIN.")
   /// Settings
@@ -1406,10 +1396,6 @@ internal enum L10n {
   internal static let signoutClose = L10n.tr("Localizable", "signoutClose", fallback: "Sign out on close")
   /// Signs out the last user when Swiftfin has been force closed.
   internal static let signoutCloseFooter = L10n.tr("Localizable", "signoutCloseFooter", fallback: "Signs out the last user when Swiftfin has been force closed.")
-  /// Similarity score
-  internal static let similarityScore = L10n.tr("Localizable", "similarityScore", fallback: "Similarity score")
-  /// Signs out the last user when Swiftfin has been force closed
-  internal static let signoutCloseFooter = L10n.tr("Localizable", "signoutCloseFooter", fallback: "Signs out the last user when Swiftfin has been force closed")
   /// Slider
   internal static let slider = L10n.tr("Localizable", "slider", fallback: "Slider")
   /// Slow scrub
@@ -1444,8 +1430,8 @@ internal enum L10n {
   internal static let status = L10n.tr("Localizable", "status", fallback: "Status")
   /// Stop
   internal static let stop = L10n.tr("Localizable", "stop", fallback: "Stop")
-  /// Story Arc
-  internal static let storyArc = L10n.tr("Localizable", "storyArc", fallback: "Story Arc")
+  /// Story arc
+  internal static let storyArc = L10n.tr("Localizable", "storyArc", fallback: "Story arc")
   /// The stream count exceeds the allowed limit
   internal static let streamCountExceedsLimit = L10n.tr("Localizable", "streamCountExceedsLimit", fallback: "The stream count exceeds the allowed limit")
   /// Streams
@@ -1544,8 +1530,6 @@ internal enum L10n {
   internal static let transcode = L10n.tr("Localizable", "transcode", fallback: "Transcode")
   /// Transcode reason(s)
   internal static let transcodeReasons = L10n.tr("Localizable", "transcodeReasons", fallback: "Transcode reason(s)")
-  /// Transition
-  internal static let transition = L10n.tr("Localizable", "transition", fallback: "Transition")
   /// Translator
   internal static let translator = L10n.tr("Localizable", "translator", fallback: "Translator")
   /// Trigger already exists
