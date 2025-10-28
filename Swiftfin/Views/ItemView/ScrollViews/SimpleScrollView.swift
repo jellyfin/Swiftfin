@@ -77,46 +77,45 @@ extension ItemView {
                         alignment: .center
                     )
 
-                    if viewModel.presentPlayButton {
+                    if viewModel.item.presentPlayButton {
                         ItemView.PlayButton(viewModel: viewModel)
                             .frame(height: 50)
                     }
 
                     ItemView.ActionButtonHStack(viewModel: viewModel)
-                        .font(.title)
-                        .foregroundStyle(.primary)
+                        .frame(height: 50)
                 }
                 .frame(maxWidth: 300)
             }
         }
 
+        // TODO: remove and just use `PosterImage` with landscape
+        //       after poster environment implemented
         private var imageType: ImageType {
-            if viewModel.item.type == .episode {
-                return .primary
-            } else {
-                return .backdrop
+            switch viewModel.item.type {
+            case .episode, .musicVideo, .video:
+                .primary
+            default:
+                .backdrop
             }
         }
 
         @ViewBuilder
         private var header: some View {
             VStack(alignment: .center) {
-                ImageView(viewModel.item.imageSource(imageType, maxWidth: 600))
-                    .placeholder { source in
-                        if let blurHash = source.blurHash {
-                            BlurHashView(blurHash: blurHash, size: .Square(length: 8))
-                        } else {
-                            Color.secondarySystemFill
-                                .opacity(0.75)
+                ZStack {
+                    Rectangle()
+                        .fill(.complexSecondary)
+
+                    ImageView(viewModel.item.imageSource(imageType, maxWidth: 600))
+                        .failure {
+                            SystemImageContentView(systemName: viewModel.item.systemImage)
                         }
-                    }
-                    .failure {
-                        SystemImageContentView(systemName: viewModel.item.systemImage)
-                    }
-                    .frame(maxHeight: 300)
-                    .posterStyle(.landscape)
-                    .posterShadow()
-                    .padding(.horizontal)
+                }
+                .frame(maxHeight: 300)
+                .posterStyle(.landscape)
+                .posterShadow()
+                .padding(.horizontal)
 
                 shelfView
             }

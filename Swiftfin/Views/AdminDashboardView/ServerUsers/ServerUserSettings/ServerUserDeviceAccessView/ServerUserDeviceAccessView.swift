@@ -81,7 +81,7 @@ struct ServerUserDeviceAccessView: View {
                 }
             }
             .onFirstAppear {
-                devicesViewModel.send(.refresh)
+                devicesViewModel.refresh()
             }
             .errorMessage($error)
     }
@@ -114,8 +114,8 @@ struct ServerUserDeviceAccessView: View {
                                 tempPolicy.enabledDevices?.append(device.id!)
                             }
                         }
-                        .environment(\.isEditing, true)
-                        .environment(\.isSelected, tempPolicy.enabledDevices?.contains(device.id ?? "") == true)
+                        .isEditing(true)
+                        .isSelected(tempPolicy.enabledDevices?.contains(device.id ?? "") == true)
                     }
                 }
             }

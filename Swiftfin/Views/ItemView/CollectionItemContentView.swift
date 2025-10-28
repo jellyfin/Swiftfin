@@ -11,9 +11,7 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-// TODO: consolidate `ItemTypCollection` stacks
-//       - Show show name in episode subheader
-//       - PersonItemContentView
+// TODO: Show show name in episode subheader
 
 extension ItemView {
 
@@ -52,7 +50,7 @@ extension ItemView {
         private func posterHStack(element: Element) -> some View {
             PosterHStack(
                 title: element.key.pluralDisplayTitle,
-                type: .portrait,
+                type: element.key.preferredPosterDisplayType,
                 items: element.value.elements
             ) { item, namespace in
                 router.route(to: .item(item: item), in: namespace)

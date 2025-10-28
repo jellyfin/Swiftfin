@@ -50,7 +50,7 @@ extension EditAccessScheduleView {
             HStack {
                 VStack(alignment: .leading) {
                     if let dayOfWeek = schedule.dayOfWeek {
-                        Text(dayOfWeek.rawValue)
+                        Text(dayOfWeek.displayTitle)
                             .fontWeight(.semibold)
                     }
 
@@ -96,7 +96,7 @@ extension EditAccessScheduleView {
             let calendar = Calendar.current
 
             guard let date = calendar.date(from: dateComponents) else {
-                return .emptyTime
+                return .emptyRuntime
             }
 
             let formatter = DateFormatter()

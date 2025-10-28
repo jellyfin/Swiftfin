@@ -9,12 +9,12 @@
 import Combine
 import Factory
 import Foundation
+import Logging
 import UDPBroadcast
 
 class ServerDiscovery {
 
-    @Injected(\.logService)
-    private var logger
+    private let logger = Logger.swiftfin()
 
     private var connection: UDPBroadcastConnection?
 

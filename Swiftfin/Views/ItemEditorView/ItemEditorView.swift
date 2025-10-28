@@ -12,8 +12,12 @@ import SwiftUI
 
 struct ItemEditorView: View {
 
+    // MARK: - Router
+
     @Router
     private var router
+
+    // MARK: - ViewModel
 
     @ObservedObject
     var viewModel: ItemViewModel
@@ -47,7 +51,7 @@ struct ItemEditorView: View {
                 errorView(with: error)
             }
         }
-        .navigationBarTitle(L10n.metadata)
+        .navigationTitle(L10n.metadata)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
@@ -73,8 +77,7 @@ struct ItemEditorView: View {
                     editTextView
                 }
 
-                // TODO: add `BaseItemDto.hasComponenets`
-                if viewModel.item.type != .person {
+                if viewModel.item.hasComponents {
                     editComponentsView
                 }
             } /*  else if canManageSubtitles || canManageLyrics {
@@ -149,14 +152,14 @@ struct ItemEditorView: View {
 
     @ViewBuilder
     private var editTextView: some View {
+        if canManageSubtitles {
+            ChevronButton(L10n.subtitles) {
+                router.route(to: .editSubtitles(item: viewModel.item))
+            }
+        }
         if canManageLyrics {
 //          ChevronButton(L10n.lyrics) {
-//              router.route(to: \.editImages, ItemImagesViewModel(item: viewModel.item))
-//          }
-        }
-        if canManageSubtitles {
-//          ChevronButton(L10n.subtitles) {
-//              router.route(to: \.editImages, ItemImagesViewModel(item: viewModel.item))
+//              router.route(to: \.editLyrics, viewModel.item)
 //          }
         }
     }

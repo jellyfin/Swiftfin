@@ -7,9 +7,20 @@
 //
 
 import Foundation
+import SwiftUI
+
+// TODO: create environment for image sources
+//       - for when to have episode use series
+//       - pass in folder context
+//       - thumb
+//       - could remove cinematic, just use landscape
 
 /// A type that is displayed as a poster
 protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
+
+    associatedtype ImageBody: View
+
+    var preferredPosterDisplayType: PosterDisplayType { get }
 
     /// Optional subtitle when used as a poster
     var subtitle: String? { get }
@@ -18,20 +29,30 @@ protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
     var showTitle: Bool { get }
 
     func portraitImageSources(
-        maxWidth: CGFloat?
+        maxWidth: CGFloat?,
+        quality: Int?
     ) -> [ImageSource]
 
     func landscapeImageSources(
-        maxWidth: CGFloat?
+        maxWidth: CGFloat?,
+        quality: Int?
     ) -> [ImageSource]
 
     func cinematicImageSources(
-        maxWidth: CGFloat?
+        maxWidth: CGFloat?,
+        quality: Int?
     ) -> [ImageSource]
 
     func squareImageSources(
-        maxWidth: CGFloat?
+        maxWidth: CGFloat?,
+        quality: Int?
     ) -> [ImageSource]
+
+    func thumbImageSources() -> [ImageSource]
+
+    @MainActor
+    @ViewBuilder
+    func transform(image: Image) -> ImageBody
 }
 
 extension Poster {
@@ -45,26 +66,35 @@ extension Poster {
     }
 
     func portraitImageSources(
-        maxWidth: CGFloat? = nil
+        maxWidth: CGFloat? = nil,
+        quality: Int? = nil
     ) -> [ImageSource] {
         []
     }
 
     func landscapeImageSources(
-        maxWidth: CGFloat? = nil
+        maxWidth: CGFloat? = nil,
+        quality: Int? = nil
     ) -> [ImageSource] {
         []
     }
 
     func cinematicImageSources(
-        maxWidth: CGFloat?
+        maxWidth: CGFloat?,
+        quality: Int? = nil
     ) -> [ImageSource] {
         []
     }
 
     func squareImageSources(
-        maxWidth: CGFloat?
+        maxWidth: CGFloat?,
+        quality: Int? = nil
     ) -> [ImageSource] {
+        []
+    }
+
+    // TODO: change to observe preferred poster display type
+    func thumbImageSources() -> [ImageSource] {
         []
     }
 }

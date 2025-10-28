@@ -53,8 +53,12 @@ extension SeriesEpisodeSelector {
         var body: some View {
             VStack(alignment: .leading) {
                 Button {
-                    guard let mediaSource = episode.mediaSources?.first else { return }
-                    router.route(to: .videoPlayer(manager: OnlineVideoPlayerManager(item: episode, mediaSource: mediaSource)))
+                    router.route(
+                        to: .videoPlayer(
+                            item: episode,
+                            queue: EpisodeMediaPlayerQueue(episode: episode)
+                        )
+                    )
                 } label: {
                     ImageView(episode.imageSource(.primary, maxWidth: 250))
                         .failure {
@@ -68,6 +72,7 @@ extension SeriesEpisodeSelector {
                         .backport
                         .matchedTransitionSource(id: "item", in: namespace)
                         .posterStyle(.landscape)
+                        .posterShadow()
                 }
 
                 SeriesEpisodeSelector.EpisodeContent(

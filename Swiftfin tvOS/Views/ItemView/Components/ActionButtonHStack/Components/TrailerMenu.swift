@@ -8,14 +8,14 @@
 
 import Factory
 import JellyfinAPI
+import Logging
 import SwiftUI
 
 extension ItemView {
 
     struct TrailerMenu: View {
 
-        @Injected(\.logService)
-        private var logger
+        private let logger = Logger.swiftfin()
 
         // MARK: - Stored Value
 
@@ -123,12 +123,12 @@ extension ItemView {
 
         private func playLocalTrailer(_ trailer: BaseItemDto) {
             if let selectedMediaSource = trailer.mediaSources?.first {
-                router.route(
-                    to: .videoPlayer(manager: OnlineVideoPlayerManager(
-                        item: trailer,
-                        mediaSource: selectedMediaSource
-                    ))
-                )
+//                router.route(
+//                    to: .videoPlayer(manager: OnlineVideoPlayerManager(
+//                        item: trailer,
+//                        mediaSource: selectedMediaSource
+//                    ))
+//                )
             } else {
                 logger.log(level: .error, "No media sources found")
                 error = JellyfinAPIError(L10n.unknownError)

@@ -16,17 +16,6 @@ extension Logger {
     }
 }
 
-extension Container {
-
-    @available(*, deprecated, message: "Use `Logger.swiftfin()` instances instead")
-    var logService: Factory<Logger> {
-        self {
-            Logger(label: "org.jellyfin.swiftfin")
-        }
-        .unique
-    }
-}
-
 struct SwiftfinConsoleHandler: LogHandler {
 
     var logLevel: Logger.Level = .trace
@@ -50,7 +39,15 @@ struct SwiftfinConsoleHandler: LogHandler {
         function: String,
         line: UInt
     ) {
-        print("[\(level.emoji) \(level.rawValue.capitalized)] \(file.shortFileName)#\(line):\(function) \(message)")
+        let line = "[\(level.emoji) \(level.rawValue.capitalized)] \(file.shortFileName)#\(line):\(function) \(message)"
+        let meta = (metadata ?? [:]).merging(self.metadata) { _, new in new }
+        let metadataString = meta.map { "\t- \($0): \($1)" }.joined(separator: "\n")
+
+        print(line)
+
+        if metadataString.isNotEmpty {
+            print(metadataString)
+        }
     }
 }
 

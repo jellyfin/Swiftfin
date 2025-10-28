@@ -9,9 +9,13 @@
 import Factory
 import Foundation
 import JellyfinAPI
-import UIKit
+import SwiftUI
 
 extension BaseItemPerson: Poster {
+
+    var preferredPosterDisplayType: PosterDisplayType {
+        .portrait
+    }
 
     var unwrappedIDHashOrZero: Int {
         id?.hashValue ?? 0
@@ -25,7 +29,7 @@ extension BaseItemPerson: Poster {
         "person.fill"
     }
 
-    func portraitImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
+    func portraitImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
 
         guard let client = Container.shared.currentUserSession()?.client else { return [] }
 
@@ -35,6 +39,7 @@ extension BaseItemPerson: Poster {
 
         let imageRequestParameters = Paths.GetItemImageParameters(
             maxWidth: scaleWidth ?? Int(maxWidth),
+            quality: quality,
             tag: primaryImageTag
         )
 
@@ -51,5 +56,9 @@ extension BaseItemPerson: Poster {
             url: url,
             blurHash: blurHash
         )]
+    }
+
+    func transform(image: Image) -> some View {
+        image
     }
 }

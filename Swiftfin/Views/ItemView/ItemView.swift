@@ -60,16 +60,16 @@ struct ItemView: View {
 
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
         switch item.type {
-        case .boxSet:
+        case .boxSet, .person, .musicArtist:
             return CollectionItemViewModel(item: item)
         case .episode:
             return EpisodeItemViewModel(item: item)
         case .movie:
             return MovieItemViewModel(item: item)
+        case .musicVideo, .video:
+            return ItemViewModel(item: item)
         case .series:
             return SeriesItemViewModel(item: item)
-        case .person, .musicArtist:
-            return PersonItemViewModel(item: item)
         default:
             assertionFailure("Unsupported item")
             return ItemViewModel(item: item)
@@ -84,16 +84,14 @@ struct ItemView: View {
     @ViewBuilder
     private var scrollContentView: some View {
         switch viewModel.item.type {
-        case .boxSet:
+        case .boxSet, .person, .musicArtist:
             CollectionItemContentView(viewModel: viewModel as! CollectionItemViewModel)
-        case .episode:
-            EpisodeItemContentView(viewModel: viewModel as! EpisodeItemViewModel)
+        case .episode, .musicVideo, .video:
+            SimpleItemContentView(viewModel: viewModel)
         case .movie:
             MovieItemContentView(viewModel: viewModel as! MovieItemViewModel)
         case .series:
             SeriesItemContentView(viewModel: viewModel as! SeriesItemViewModel)
-        case .person, .musicArtist:
-            PersonItemContentView(viewModel: viewModel as! PersonItemViewModel)
         default:
             Text(L10n.notImplementedYetWithType(viewModel.item.type ?? "--"))
         }

@@ -63,25 +63,25 @@ struct ServerLogsView: View {
     private func errorView(with error: some Error) -> some View {
         ErrorView(error: error)
             .onRetry {
-                viewModel.send(.getLogs)
+                viewModel.getLogs()
             }
     }
 
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .content:
-                contentView
-            case let .error(error):
-                errorView(with: error)
+            case .error:
+                viewModel.error.map { errorView(with: $0) }
             case .initial:
+                contentView
+            case .refreshing:
                 DelayedProgressView()
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
-        .navigationBarTitle(L10n.serverLogs)
+        .navigationTitle(L10n.serverLogs)
         .onFirstAppear {
-            viewModel.send(.getLogs)
+            viewModel.getLogs()
         }
     }
 }

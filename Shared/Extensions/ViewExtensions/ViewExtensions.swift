@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Defaults
 import Foundation
 import SwiftUI
@@ -99,18 +100,55 @@ extension View {
     ) -> some View {
         switch type {
         case .landscape:
-            aspectRatio(1.77, contentMode: contentMode)
+            posterAspectRatio(type, contentMode: contentMode)
             #if !os(tvOS)
                 .posterBorder()
-                .cornerRadius(ratio: 1 / 30, of: \.width)
+                .posterCornerRadius(type)
             #endif
         case .portrait:
-            aspectRatio(2 / 3, contentMode: contentMode)
+            posterAspectRatio(type, contentMode: contentMode)
             #if !os(tvOS)
                 .posterBorder()
-                .cornerRadius(ratio: 0.0375, of: \.width)
+                .posterCornerRadius(type)
+            #endif
+        case .square:
+            posterAspectRatio(type, contentMode: contentMode)
+            #if os(iOS)
+                .posterBorder()
+                .posterCornerRadius(type)
             #endif
         }
+    }
+
+    @ViewBuilder
+    func posterAspectRatio(
+        _ type: PosterDisplayType,
+        contentMode: ContentMode = .fill
+    ) -> some View {
+        switch type {
+        case .landscape:
+            aspectRatio(1.77, contentMode: contentMode)
+        case .portrait:
+            aspectRatio(2 / 3, contentMode: contentMode)
+        case .square:
+            aspectRatio(1.0, contentMode: contentMode)
+        }
+    }
+
+    @ViewBuilder
+    func posterCornerRadius(
+        _ type: PosterDisplayType
+    ) -> some View {
+        #if !os(tvOS)
+        switch type {
+        case .landscape:
+            cornerRadius(ratio: 1 / 30, of: \.width)
+        case .portrait, .square:
+            cornerRadius(ratio: 0.0375, of: \.width)
+        }
+        #else
+        self
+        #endif
     }
 
     func posterBorder() -> some View {
@@ -122,17 +160,6 @@ extension View {
                 )
                 .clipped()
         }
-    }
-
-    // TODO: consolidate handling
-    @ViewBuilder
-    func squarePosterStyle(contentMode: ContentMode = .fill) -> some View {
-        aspectRatio(1.0, contentMode: contentMode)
-        #if os(iOS)
-            .posterBorder()
-            .cornerRadius(ratio: 0.0375, of: \.width)
-            .posterShadow()
-        #endif
     }
 
     func posterShadow() -> some View {
@@ -156,29 +183,58 @@ extension View {
         modifier(BottomEdgeGradientModifier(bottomColor: bottomColor))
     }
 
+    // TODO: rename `errorAlert`
+
     /// Error Message Alert
     func errorMessage(
         _ error: Binding<Error?>,
-        dismissActions: (() -> Void)? = nil
+        dismissAction: @escaping () -> Void = {}
     ) -> some View {
-        modifier(ErrorMessageModifier(error: error, dismissActions: dismissActions))
+        alert(
+            L10n.error.text,
+            isPresented: .constant(error.wrappedValue != nil),
+            presenting: error.wrappedValue
+        ) { _ in
+            Button(L10n.dismiss, role: .cancel) {
+                error.wrappedValue = nil
+                dismissAction()
+            }
+        } message: { error in
+            Text(error.localizedDescription)
+        }
+        .backport
+        .onChange(of: error.wrappedValue != nil) { _, hasError in
+            guard hasError else { return }
+            UIDevice.feedback(.error)
+        }
     }
 
     @ViewBuilder
     func cornerRadius(
         _ radius: CGFloat,
         corners: RectangleCorner = .allCorners,
-        style: RoundedCornerStyle = .circular
+        style: RoundedCornerStyle = .circular,
+        container: Bool = false
     ) -> some View {
-        let shape = UnevenRoundedRectangle(
-            topLeadingRadius: corners.contains(.topLeft) ? radius : 0,
-            bottomLeadingRadius: corners.contains(.bottomLeft) ? radius : 0,
-            bottomTrailingRadius: corners.contains(.bottomRight) ? radius : 0,
-            topTrailingRadius: corners.contains(.topRight) ? radius : 0,
-            style: style
-        )
+        // Note: UnevenRoundedRectangle with all equal radii has
+        // been found to perform worse than RoundedRectangle
+        if corners == .allCorners {
+            let shape = RoundedRectangle(cornerRadius: radius, style: style)
 
-        clipShape(shape)
+            clipShape(shape)
+                .if(container) { $0.containerShape(shape) }
+        } else {
+            let shape = UnevenRoundedRectangle(
+                topLeadingRadius: corners.contains(.topLeft) ? radius : 0,
+                bottomLeadingRadius: corners.contains(.bottomLeft) ? radius : 0,
+                bottomTrailingRadius: corners.contains(.bottomRight) ? radius : 0,
+                topTrailingRadius: corners.contains(.topRight) ? radius : 0,
+                style: style
+            )
+
+            clipShape(shape)
+                .if(container) { $0.containerShape(shape) }
+        }
     }
 
     /// Apply a corner radius as a ratio of a view's side
@@ -192,17 +248,7 @@ extension View {
         modifier(
             OnSizeChangedModifier { size in
                 let radius = size[keyPath: side] * ratio
-
-                let shape = UnevenRoundedRectangle(
-                    topLeadingRadius: corners.contains(.topLeft) ? radius : 0,
-                    bottomLeadingRadius: corners.contains(.bottomLeft) ? radius : 0,
-                    bottomTrailingRadius: corners.contains(.bottomRight) ? radius : 0,
-                    topTrailingRadius: corners.contains(.topRight) ? radius : 0,
-                    style: style
-                )
-
-                self.clipShape(shape)
-                    .containerShape(shape)
+                self.cornerRadius(radius, corners: corners, style: style, container: true)
             }
         )
     }
@@ -255,6 +301,14 @@ extension View {
         var copy = self
         copy[keyPath: keyPath] = newValue
         return copy
+    }
+
+    func isEditing(_ isEditing: Bool) -> some View {
+        environment(\.isEditing, isEditing)
+    }
+
+    func isSelected(_ isSelected: Bool) -> some View {
+        environment(\.isSelected, isSelected)
     }
 
     /// - Important: Do not use this to add or remove a view from the view heirarchy.
@@ -333,6 +387,12 @@ extension View {
         }
     }
 
+    func assign<P>(_ publisher: P, to binding: Binding<P.Output>) -> some View where P: Publisher, P.Failure == Never {
+        onReceive(publisher) { output in
+            binding.wrappedValue = output
+        }
+    }
+
     func onNotification<P>(_ key: Notifications.Key<P>, perform action: @escaping (P) -> Void) -> some View {
         modifier(
             OnReceiveNotificationModifier(
@@ -340,6 +400,30 @@ extension View {
                 onReceive: action
             )
         )
+    }
+
+    func onAppDidEnterBackground(_ action: @escaping () -> Void) -> some View {
+        onNotification(.applicationDidEnterBackground, perform: action)
+    }
+
+    func onAppWillResignActive(_ action: @escaping () -> Void) -> some View {
+        onNotification(.applicationWillResignActive, perform: action)
+    }
+
+    func onAppWillEnterForeground(_ action: @escaping () -> Void) -> some View {
+        onNotification(.applicationWillEnterForeground, perform: action)
+    }
+
+    func onAppWillTerminate(_ action: @escaping () -> Void) -> some View {
+        onNotification(.applicationWillTerminate, perform: action)
+    }
+
+    func onSceneDidEnterBackground(_ action: @escaping () -> Void) -> some View {
+        onNotification(.sceneDidEnterBackground, perform: action)
+    }
+
+    func onSceneWillEnterForeground(_ action: @escaping () -> Void) -> some View {
+        onNotification(.sceneWillEnterForeground, perform: action)
     }
 
     func scrollIfLargerThanContainer(padding: CGFloat = 0) -> some View {
@@ -350,6 +434,11 @@ extension View {
         @ArrayBuilder<OpacityLinearGradientModifier.Stop> stops: () -> [OpacityLinearGradientModifier.Stop]
     ) -> some View {
         modifier(OpacityLinearGradientModifier(stops: stops()))
+    }
+
+    // TODO: look at changing to symbolEffect
+    func videoPlayerActionButtonTransition() -> some View {
+        transition(.opacity.combined(with: .scale).animation(.snappy))
     }
 
     // MARK: debug

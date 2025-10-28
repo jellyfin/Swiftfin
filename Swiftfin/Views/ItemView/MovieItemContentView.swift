@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -34,6 +33,13 @@ extension ItemView {
                 if let studios = viewModel.item.studios, studios.isNotEmpty {
                     ItemView.StudiosHStack(studios: studios)
                 }
+
+                // MARK: - Parts
+
+                // TODO: Implement after part queue made
+//                if viewModel.additionalParts.isNotEmpty {
+//                    AdditionalPartsHStack(items: viewModel.additionalParts)
+//                }
 
                 // MARK: Cast and Crew
 

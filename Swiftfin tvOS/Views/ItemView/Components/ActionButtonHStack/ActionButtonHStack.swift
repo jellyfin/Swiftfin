@@ -56,6 +56,12 @@ extension ItemView {
             viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item)
         }
 
+        // MARK: - Can Manage Subtitles
+
+        private var canManageSubtitles: Bool {
+            viewModel.userSession.user.permissions.items.canManageSubtitles(item: viewModel.item)
+        }
+
         // MARK: - Deletion or Refreshing is Enabled
 
         private var enableMenu: Bool {
@@ -90,18 +96,20 @@ extension ItemView {
 
                 // MARK: Toggle Played
 
-                let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
+                if viewModel.item.canBePlayed {
+                    let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
 
-                ActionButton(
-                    L10n.played,
-                    icon: "checkmark.circle",
-                    selectedIcon: "checkmark.circle.fill"
-                ) {
-                    viewModel.send(.toggleIsPlayed)
+                    ActionButton(
+                        L10n.played,
+                        icon: "checkmark.circle",
+                        selectedIcon: "checkmark.circle.fill"
+                    ) {
+                        viewModel.send(.toggleIsPlayed)
+                    }
+                    .foregroundStyle(Color.jellyfinPurple)
+                    .isSelected(isCheckmarkSelected)
+                    .frame(minWidth: 100, maxWidth: .infinity)
                 }
-                .foregroundStyle(.purple)
-                .environment(\.isSelected, isCheckmarkSelected)
-                .frame(minWidth: 100, maxWidth: .infinity)
 
                 // MARK: Toggle Favorite
 
@@ -115,7 +123,7 @@ extension ItemView {
                     viewModel.send(.toggleIsFavorite)
                 }
                 .foregroundStyle(.pink)
-                .environment(\.isSelected, isHeartSelected)
+                .isSelected(isHeartSelected)
                 .frame(minWidth: 100, maxWidth: .infinity)
 
                 // MARK: Watch a Trailer
@@ -131,8 +139,22 @@ extension ItemView {
 
                 if enableMenu {
                     ActionButton(L10n.advanced, icon: "ellipsis", isCompact: true) {
-                        if canRefresh {
-                            RefreshMetadataButton(item: viewModel.item)
+                        if canRefresh || canManageSubtitles {
+                            Section(L10n.manage) {
+                                if canRefresh {
+                                    RefreshMetadataButton(item: viewModel.item)
+                                }
+
+                                if canManageSubtitles {
+                                    Button(L10n.subtitles, systemImage: "textformat") {
+                                        router.route(
+                                            to: .searchSubtitle(
+                                                viewModel: .init(item: viewModel.item)
+                                            )
+                                        )
+                                    }
+                                }
+                            }
                         }
 
                         if canDelete {

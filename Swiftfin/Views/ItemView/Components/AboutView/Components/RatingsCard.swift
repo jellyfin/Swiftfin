@@ -16,40 +16,39 @@ extension ItemView.AboutView {
         let item: BaseItemDto
 
         var body: some View {
-            Card(title: L10n.ratings)
-                .content {
-                    HStack(alignment: .bottom, spacing: 20) {
-                        if let criticRating = item.criticRating {
-                            VStack {
-                                Group {
-                                    if criticRating >= 60 {
-                                        Image(.tomatoFresh)
-                                            .symbolRenderingMode(.multicolor)
-                                            .foregroundStyle(.green, .red)
-                                    } else {
-                                        Image(.tomatoRotten)
-                                            .symbolRenderingMode(.monochrome)
-                                            .foregroundColor(.green)
-                                    }
+            Card(title: L10n.ratings, action: {}) {
+                HStack(alignment: .bottom, spacing: 20) {
+                    if let criticRating = item.criticRating {
+                        VStack {
+                            Group {
+                                if criticRating >= 60 {
+                                    Image(.tomatoFresh)
+                                        .symbolRenderingMode(.multicolor)
+                                        .foregroundStyle(.green, .red)
+                                } else {
+                                    Image(.tomatoRotten)
+                                        .symbolRenderingMode(.monochrome)
+                                        .foregroundColor(.green)
                                 }
+                            }
+                            .font(.largeTitle)
+
+                            Text("\(criticRating, specifier: "%.0f")")
+                        }
+                    }
+
+                    if let communityRating = item.communityRating {
+                        VStack {
+                            Image(systemName: "star.fill")
+                                .symbolRenderingMode(.multicolor)
+                                .foregroundStyle(.yellow)
                                 .font(.largeTitle)
 
-                                Text("\(criticRating, specifier: "%.0f")")
-                            }
-                        }
-
-                        if let communityRating = item.communityRating {
-                            VStack {
-                                Image(systemName: "star.fill")
-                                    .symbolRenderingMode(.multicolor)
-                                    .foregroundStyle(.yellow)
-                                    .font(.largeTitle)
-
-                                Text("\(communityRating, specifier: "%.1f")")
-                            }
+                            Text("\(communityRating, specifier: "%.1f")")
                         }
                     }
                 }
+            }
         }
     }
 }

@@ -22,6 +22,10 @@ extension UIDevice {
         current.userInterfaceIdiom == .phone
     }
 
+    static var isTV: Bool {
+        current.userInterfaceIdiom == .tv
+    }
+
     static var hasNotch: Bool {
         (UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0) > 0 &&
             isPhone
@@ -39,6 +43,22 @@ extension UIDevice {
         #endif
     }
 
+    /// - Important: Does nothing on non-iOS platforms.
+    static func feedback(_ type: UINotificationFeedbackGenerator.FeedbackType) {
+        #if os(iOS)
+        UINotificationFeedbackGenerator().notificationOccurred(type)
+        #endif
+    }
+
+    // TODO: make more custom feedback types with Core Haptics
+    //       - soft with intensity
+    /// - Important: Does nothing on non-iOS platforms.
+    static func impact(_ type: UIImpactFeedbackGenerator.FeedbackStyle) {
+        #if os(iOS)
+        UIImpactFeedbackGenerator(style: type).impactOccurred()
+        #endif
+    }
+
     #if os(iOS)
     static var isPortrait: Bool {
         current.orientation.isPortrait
@@ -47,17 +67,23 @@ extension UIDevice {
     static var isLandscape: Bool {
         isPad || current.orientation.isLandscape
     }
-
-    static func feedback(_ type: UINotificationFeedbackGenerator.FeedbackType) {
-        #if os(iOS)
-        UINotificationFeedbackGenerator().notificationOccurred(type)
-        #endif
-    }
-
-    static func impact(_ type: UIImpactFeedbackGenerator.FeedbackStyle) {
-        #if os(iOS)
-        UIImpactFeedbackGenerator(style: type).impactOccurred()
-        #endif
-    }
     #endif
 }
+
+#if os(tvOS)
+enum UINotificationFeedbackGenerator {
+    enum FeedbackType {
+        case success
+        case warning
+        case error
+    }
+}
+
+enum UIImpactFeedbackGenerator {
+    enum FeedbackStyle {
+        case light
+        case medium
+        case heavy
+    }
+}
+#endif

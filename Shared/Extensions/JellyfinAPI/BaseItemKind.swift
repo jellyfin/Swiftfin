@@ -18,7 +18,13 @@ extension BaseItemKind: SupportedCaseIterable {
     /// like `LibararyParent` may have additional supported
     /// cases for querying a library.
     static var supportedCases: [BaseItemKind] {
-        [.movie, .series, .boxSet]
+        [
+            .boxSet,
+            .movie,
+            .musicVideo,
+            .series,
+            .video,
+        ]
     }
 }
 
@@ -182,6 +188,17 @@ extension BaseItemKind {
             return L10n.videos
         case .year:
             return L10n.years
+        }
+    }
+
+    var preferredPosterDisplayType: PosterDisplayType {
+        switch self {
+        case .audio, .channel, .musicAlbum, .tvChannel:
+            .square
+        case .folder, .program, .musicVideo, .video, .userView:
+            .landscape
+        default:
+            .portrait
         }
     }
 }

@@ -55,11 +55,6 @@ struct SelectUserView: View {
     @State
     private var isPresentingLocalPin: Bool = false
 
-    // MARK: - Error State
-
-    @State
-    private var error: Error? = nil
-
     @StateObject
     private var viewModel = SelectUserViewModel()
 
@@ -121,6 +116,8 @@ struct SelectUserView: View {
 
     // MARK: - Select User(s)
 
+    // TODO: refactor errors thrown/handling
+
     private func select(user: UserState, needsPin: Bool = true) {
         Task { @MainActor in
             selectedUsers.insert(user)
@@ -136,11 +133,13 @@ struct SelectUserView: View {
             case .none: ()
             }
 
-            viewModel.send(.signIn(user, pin: pin))
+            await viewModel.signIn(user, pin: pin)
         }
     }
 
     // MARK: - Perform Device Authentication
+
+    // TODO: move to view model
 
     // error logging/presentation is handled within here, just
     // use try+thrown error in local Task for early return
@@ -150,13 +149,7 @@ struct SelectUserView: View {
 
         guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &policyError) else {
             viewModel.logger.critical("\(policyError!.localizedDescription)")
-
-            await MainActor.run {
-                self
-                    .error =
-                    JellyfinAPIError(L10n.unableToPerformDeviceAuthFaceID)
-            }
-
+            await viewModel.error(JellyfinAPIError(L10n.unableToPerformDeviceAuthFaceID))
             throw JellyfinAPIError(L10n.deviceAuthFailed)
         }
 
@@ -164,11 +157,7 @@ struct SelectUserView: View {
             try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason)
         } catch {
             viewModel.logger.critical("\(error.localizedDescription)")
-
-            await MainActor.run {
-                self.error = JellyfinAPIError(L10n.unableToPerformDeviceAuth)
-            }
-
+            await viewModel.error(JellyfinAPIError(L10n.unableToPerformDeviceAuth))
             throw JellyfinAPIError(L10n.deviceAuthFailed)
         }
     }
@@ -259,7 +248,7 @@ struct SelectUserView: View {
         } onDelete: {
             delete(user: user)
         }
-        .environment(\.isSelected, selectedUsers.contains(user))
+        .isSelected(selectedUsers.contains(user))
     }
 
     // MARK: - iPad Grid Content View
@@ -347,7 +336,7 @@ struct SelectUserView: View {
                 } onDelete: {
                     delete(user: user)
                 }
-                .environment(\.isSelected, selectedUsers.contains(user))
+                .isSelected(selectedUsers.contains(user))
                 .swipeActions {
                     if !isEditingUsers {
                         Button(
@@ -388,7 +377,8 @@ struct SelectUserView: View {
                 }
             }
             .animation(.linear(duration: 0.1), value: userListDisplayType)
-            .environment(\.isEditing, isEditingUsers)
+            .environment(\.isOverComplexContent, true)
+            .isEditing(isEditingUsers)
             .frame(maxHeight: .infinity)
             .mask {
                 VStack(spacing: 0) {
@@ -517,7 +507,7 @@ struct SelectUserView: View {
             }
         }
         .onAppear {
-            viewModel.send(.getServers)
+            viewModel.getServers()
         }
         .onChange(of: isEditingUsers) { newValue in
             guard !newValue else { return }
@@ -546,11 +536,12 @@ struct SelectUserView: View {
                 }
             }
         }
+        .onReceive(viewModel.$error) { error in
+            guard error != nil else { return }
+            UIDevice.feedback(.error)
+        }
         .onReceive(viewModel.events) { event in
             switch event {
-            case let .error(eventError):
-                UIDevice.feedback(.error)
-                self.error = eventError
             case let .signedIn(user):
                 UIDevice.feedback(.success)
 
@@ -560,21 +551,21 @@ struct SelectUserView: View {
             }
         }
         .onNotification(.didConnectToServer) { server in
-            viewModel.send(.getServers)
+            viewModel.getServers()
             serverSelection = .server(id: server.id)
         }
         .onNotification(.didChangeCurrentServerURL) { _ in
-            viewModel.send(.getServers)
+            viewModel.getServers()
         }
         .onNotification(.didDeleteServer) { _ in
-            viewModel.send(.getServers)
+            viewModel.getServers()
         }
         .alert(
             L10n.delete,
             isPresented: $isPresentingConfirmDeleteUsers
         ) {
             Button(L10n.delete, role: .destructive) {
-                viewModel.send(.deleteUsers(selectedUsers))
+                viewModel.deleteUsers(selectedUsers)
             }
         } message: {
             if selectedUsers.count == 1, let first = selectedUsers.first {
@@ -609,6 +600,6 @@ struct SelectUserView: View {
                 Text(L10n.enterPinForUser(username))
             }
         }
-        .errorMessage($error)
+        .errorMessage($viewModel.error)
     }
 }

@@ -9,15 +9,19 @@
 import JellyfinAPI
 import SwiftUI
 
-#if os(iOS)
 extension NavigationRoute {
 
     static let downloadList = NavigationRoute(
         id: "downloadList"
     ) {
+        #if os(iOS)
         DownloadListView(viewModel: .init())
+        #else
+        EmptyView()
+        #endif
     }
 
+    #if os(iOS)
     static func downloadTask(downloadTask: DownloadTask) -> NavigationRoute {
         NavigationRoute(
             id: "downloadTask",
@@ -26,5 +30,5 @@ extension NavigationRoute {
             DownloadTaskView(downloadTask: downloadTask)
         }
     }
+    #endif
 }
-#endif

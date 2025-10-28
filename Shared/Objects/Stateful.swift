@@ -6,11 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-// TODO: documentation
-// TODO: find a better way to handle backgroundStates on action/state transitions
-//       so that conformers don't have to manually insert/remove them
-// TODO: official way for a cleaner `respond` method so it doesn't have all Task
-//       construction and get bloated
+// TODO: remove, apply the Stateful macro
 
 protocol Stateful: AnyObject {
 

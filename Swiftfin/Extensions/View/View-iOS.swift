@@ -43,24 +43,6 @@ extension View {
         }
     }
 
-    func onAppDidEnterBackground(_ action: @escaping () -> Void) -> some View {
-        onNotification(.applicationDidEnterBackground) {
-            action()
-        }
-    }
-
-    func onAppWillResignActive(_ action: @escaping () -> Void) -> some View {
-        onNotification(.applicationWillResignActive) { _ in
-            action()
-        }
-    }
-
-    func onAppWillTerminate(_ action: @escaping () -> Void) -> some View {
-        onNotification(.applicationWillTerminate) { _ in
-            action()
-        }
-    }
-
     @ViewBuilder
     func navigationBarCloseButton(
         disabled: Bool = false,

@@ -8,6 +8,8 @@
 
 import Combine
 
+// TODO: remove, apply the Stateful macro
+
 protocol Eventful {
 
     associatedtype Event

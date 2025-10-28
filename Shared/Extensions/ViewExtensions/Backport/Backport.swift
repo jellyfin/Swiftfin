@@ -16,6 +16,11 @@ struct Backport<Content> {
 extension Backport where Content: View {
 
     @ViewBuilder
+    func buttonBorderShape(_ shape: ButtonBorderShape) -> some View {
+        content.buttonBorderShape(shape.swiftUIValue)
+    }
+
+    @ViewBuilder
     func matchedTransitionSource(id: String, in namespace: Namespace.ID) -> some View {
         if #available(iOS 18.0, tvOS 18.0, *) {
             content.matchedTransitionSource(
@@ -38,6 +43,21 @@ extension Backport where Content: View {
         }
     }
 
+    @ViewBuilder
+    func onChange<V: Equatable>(
+        of value: V,
+        _ action: @escaping (_ oldValue: V, _ newValue: V) -> Void
+    ) -> some View {
+        if #available(iOS 17, tvOS 17, *) {
+            content.onChange(of: value, action)
+        } else {
+            content.onChange(of: value) { [value] newValue in
+                action(value, newValue)
+            }
+        }
+    }
+
+    @MainActor
     @ViewBuilder
     func scrollClipDisabled(_ disabled: Bool = true) -> some View {
         if #available(iOS 17, *) {
@@ -64,15 +84,25 @@ extension Backport where Content: View {
 
 // MARK: ButtonBorderShape
 
-extension ButtonBorderShape {
+enum ButtonBorderShape {
+    case automatic
+    case capsule
+    case roundedRectangle
+    case circle
 
-    static let circleBackport: ButtonBorderShape = {
-        if #available(iOS 17, *) {
-            return ButtonBorderShape.circle
-        } else {
-            return ButtonBorderShape.roundedRectangle
+    var swiftUIValue: SwiftUI.ButtonBorderShape {
+        switch self {
+        case .automatic: .automatic
+        case .capsule: .capsule
+        case .roundedRectangle: .roundedRectangle
+        case .circle:
+            if #available(iOS 17, *) {
+                .circle
+            } else {
+                .roundedRectangle
+            }
         }
-    }()
+    }
 }
 
 enum NavigationTransition: Hashable {

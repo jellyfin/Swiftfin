@@ -10,8 +10,6 @@ import CoreStore
 import Foundation
 import UIKit
 
-// TODO: complete and make migration
-
 extension SwiftfinStore.V2 {
 
     final class StoredUser: CoreStoreObject {

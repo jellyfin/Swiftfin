@@ -18,16 +18,6 @@ extension NavigationRoute {
         ConnectToServerView()
     }
 
-    static func editServerFromSelectUser(server: ServerState) -> NavigationRoute {
-        NavigationRoute(
-            id: "editServerFromSelectUser",
-            style: .sheet
-        ) {
-            EditServerView(server: server)
-                .environment(\.isEditing, true)
-        }
-    }
-
     static func quickConnect(quickConnect: QuickConnect) -> NavigationRoute {
         NavigationRoute(
             id: "quickConnectView",
@@ -59,12 +49,13 @@ extension NavigationRoute {
         }
     }
 
+    // TODO: rename to `localUserAccessPolicy`
     static func userSecurity(pinHint: Binding<String>, accessPolicy: Binding<UserAccessPolicy>) -> NavigationRoute {
         NavigationRoute(
             id: "userSecurity",
             style: .sheet
         ) {
-            UserSignInView.SecurityView(
+            LocalUserAccessPolicyView(
                 pinHint: pinHint,
                 accessPolicy: accessPolicy
             )
@@ -77,7 +68,11 @@ extension NavigationRoute {
             id: "userSignIn",
             style: .sheet
         ) {
-            UserSignInView(server: server)
+            WithUserAuthentication {
+                WithQuickConnect {
+                    UserSignInView(server: server)
+                }
+            }
         }
     }
 }

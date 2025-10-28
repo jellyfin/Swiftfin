@@ -41,11 +41,6 @@ struct QuickConnectAuthorizeView: View {
     @State
     private var isPresentingSuccess: Bool = false
 
-    // MARK: - Error State
-
-    @State
-    private var error: Error? = nil
-
     // MARK: - Initialize
 
     init(user: UserDto) {
@@ -97,12 +92,12 @@ struct QuickConnectAuthorizeView: View {
 
             if viewModel.state == .authorizing {
                 ListRowButton(L10n.cancel, role: .cancel) {
-                    viewModel.send(.cancel)
+                    viewModel.cancel()
                     isCodeFocused = true
                 }
             } else {
                 ListRowButton(L10n.authorize) {
-                    viewModel.send(.authorize(code: code))
+                    viewModel.authorize(code: code)
                 }
                 .disabled(code.count != 6 || viewModel.state == .authorizing)
                 .foregroundStyle(
@@ -121,16 +116,15 @@ struct QuickConnectAuthorizeView: View {
         .onChange(of: code) { newValue in
             code = String(newValue.prefix(6))
         }
+        .onReceive(viewModel.$error) { error in
+            guard error != nil else { return }
+            UIDevice.feedback(.error)
+        }
         .onReceive(viewModel.events) { event in
             switch event {
             case .authorized:
                 UIDevice.feedback(.success)
-
                 isPresentingSuccess = true
-            case let .error(eventError):
-                UIDevice.feedback(.error)
-
-                error = eventError
             }
         }
         .topBarTrailing {
@@ -148,7 +142,7 @@ struct QuickConnectAuthorizeView: View {
         } message: {
             L10n.quickConnectSuccessMessage.text
         }
-        .errorMessage($error) {
+        .errorMessage($viewModel.error) {
             isCodeFocused = true
         }
     }

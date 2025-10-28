@@ -6,16 +6,13 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Factory
 import JellyfinAPI
+import Logging
 import SwiftUI
 
 extension ItemView {
 
     struct PlayButton: View {
-
-        @Injected(\.logService)
-        private var logger
 
         @Router
         private var router
@@ -25,6 +22,8 @@ extension ItemView {
 
         @FocusState
         private var isFocused: Bool
+
+        private let logger = Logger.swiftfin()
 
         // MARK: - Media Sources
 
@@ -38,14 +37,41 @@ extension ItemView {
             mediaSources.count > 1
         }
 
+        // MARK: - Validation
+
+        private var isEnabled: Bool {
+            viewModel.selectedMediaSource != nil
+        }
+
         // MARK: - Title
 
         private var title: String {
-            if let seriesViewModel = viewModel as? SeriesItemViewModel {
-                return seriesViewModel.playButtonItem?.seasonEpisodeLabel ?? L10n.play
+            /// Use the Season/Episode label for the Series ItemView
+            if let seriesViewModel = viewModel as? SeriesItemViewModel,
+               let seasonEpisodeLabel = seriesViewModel.playButtonItem?.seasonEpisodeLabel
+            {
+                return seasonEpisodeLabel
+
+                /// Use a Play/Resume label for single Media Source items that are not Series
+            } else if let playButtonLabel = viewModel.playButtonItem?.playButtonLabel {
+                return playButtonLabel
+
+                /// Fallback to a generic `Play` label
             } else {
-                return viewModel.playButtonItem?.playButtonLabel ?? L10n.play
+                return L10n.play
             }
+        }
+
+        // MARK: - Media Source
+
+        private var source: String? {
+            guard let sourceLabel = viewModel.selectedMediaSource?.displayTitle,
+                  viewModel.item.mediaSources?.count ?? 0 > 1
+            else {
+                return nil
+            }
+
+            return sourceLabel
         }
 
         // MARK: - Body
@@ -65,33 +91,30 @@ extension ItemView {
 
         private var playButton: some View {
             Button {
-                if let playButtonItem = viewModel.playButtonItem,
-                   let selectedMediaSource = viewModel.selectedMediaSource
-                {
-                    router.route(
-                        to: .videoPlayer(manager: OnlineVideoPlayerManager(
-                            item: playButtonItem,
-                            mediaSource: selectedMediaSource
-                        ))
-                    )
-                } else {
-                    logger.error("No media source available")
-                }
+                play()
             } label: {
                 HStack(spacing: 15) {
                     Image(systemName: "play.fill")
-                        .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
                         .font(.title3)
+                        .padding(.trailing, 4)
 
-                    Text(title)
-                        .foregroundStyle(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
-                        .fontWeight(.semibold)
+                    VStack(alignment: .leading) {
+                        Text(title)
+                            .fontWeight(.semibold)
+
+                        if let source {
+                            Marquee(source, animateWhenFocused: true)
+                                .font(.caption)
+                                .frame(maxWidth: 250)
+                        }
+                    }
                 }
+                .foregroundStyle(isEnabled ? .black : Color(UIColor.secondaryLabel))
                 .padding(20)
                 .frame(width: multipleVersions ? 320 : 440, height: 100, alignment: .center)
                 .background {
                     if isFocused {
-                        viewModel.playButtonItem == nil ? Color.secondarySystemFill : Color.white
+                        isEnabled ? Color.white : Color.secondarySystemFill
                     } else {
                         Color.white
                             .opacity(0.5)
@@ -99,33 +122,40 @@ extension ItemView {
                 }
                 .cornerRadius(10)
             }
-            .focused($isFocused)
             .buttonStyle(.card)
             .contextMenu {
-                if viewModel.playButtonItem != nil,
-                   viewModel.item.userData?.playbackPositionTicks ?? 0 > 0
-                {
-                    Button {
-                        if var playButtonItem = viewModel.playButtonItem,
-                           let selectedMediaSource = viewModel.selectedMediaSource
-                        {
-                            /// Reset playback to the beginning
-                            playButtonItem.userData?.playbackPositionTicks = 0
-
-                            router.route(
-                                to: .videoPlayer(manager: OnlineVideoPlayerManager(
-                                    item: playButtonItem,
-                                    mediaSource: selectedMediaSource
-                                ))
-                            )
-                        } else {
-                            logger.error("No media source available")
-                        }
-                    } label: {
-                        Label(L10n.playFromBeginning, systemImage: "gobackward")
+                if viewModel.playButtonItem?.userData?.playbackPositionTicks != 0 {
+                    Button(L10n.playFromBeginning, systemImage: "gobackward") {
+                        play(fromBeginning: true)
                     }
                 }
             }
+            .disabled(!isEnabled)
+            .focused($isFocused)
+        }
+
+        // MARK: - Play Content
+
+        private func play(fromBeginning: Bool = false) {
+            guard var playButtonItem = viewModel.playButtonItem,
+                  let selectedMediaSource = viewModel.selectedMediaSource
+            else {
+                logger.error("Play selected with no item or media source")
+                return
+            }
+
+            if fromBeginning {
+                playButtonItem.userData?.playbackPositionTicks = 0
+            }
+
+            let manager = MediaPlayerManager(
+                item: playButtonItem
+//                        queue: EpisodeMediaPlayerQueue(episode: playButtonItem)
+            ) { item in
+                try await MediaPlayerItem.build(for: item, mediaSource: selectedMediaSource)
+            }
+
+            router.route(to: .videoPlayer(manager: manager))
         }
     }
 }

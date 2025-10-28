@@ -83,7 +83,7 @@ struct EditItemElementView<Element: Hashable>: View {
                 errorView(with: error)
             }
         }
-        .navigationBarTitle(type.displayTitle)
+        .navigationTitle(type.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(isEditing || isReordering)
         .toolbar {
@@ -226,8 +226,8 @@ struct EditItemElementView<Element: Hashable>: View {
                             isPresentingDeleteConfirmation = true
                         }
                     )
-                    .environment(\.isEditing, isEditing)
-                    .environment(\.isSelected, selectedElements.contains(element))
+                    .isEditing(isEditing)
+                    .isSelected(selectedElements.contains(element))
                     .listRowInsets(.edgeInsets)
                 }
                 .onMove { source, destination in

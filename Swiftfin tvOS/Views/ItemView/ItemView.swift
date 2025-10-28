@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -26,12 +25,14 @@ struct ItemView: View {
 
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
         switch item.type {
-        case .boxSet:
+        case .boxSet, .person, .musicArtist:
             return CollectionItemViewModel(item: item)
         case .episode:
             return EpisodeItemViewModel(item: item)
         case .movie:
             return MovieItemViewModel(item: item)
+        case .musicVideo, .video:
+            return ItemViewModel(item: item)
         case .series:
             return SeriesItemViewModel(item: item)
         default:
@@ -47,10 +48,10 @@ struct ItemView: View {
     @ViewBuilder
     private var scrollContentView: some View {
         switch viewModel.item.type {
-        case .boxSet:
+        case .boxSet, .person, .musicArtist:
             CollectionItemContentView(viewModel: viewModel as! CollectionItemViewModel)
-        case .episode:
-            EpisodeItemContentView(viewModel: viewModel as! EpisodeItemViewModel)
+        case .episode, .musicVideo, .video:
+            SimpleItemContentView(viewModel: viewModel)
         case .movie:
             MovieItemContentView(viewModel: viewModel as! MovieItemViewModel)
         case .series:

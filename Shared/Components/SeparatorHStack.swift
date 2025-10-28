@@ -14,29 +14,44 @@ import SwiftUI
 ///
 /// - Note: Default spacing is removed. The separator view is responsible
 ///         for spacing.
-struct SeparatorHStack<Content: View>: View {
+struct SeparatorHStack<Content: View, Separator: View>: View {
 
-    private var content: () -> Content
-    private var separator: () -> any View
+    private var content: Content
+    private var separator: Separator
 
     var body: some View {
-        _VariadicView.Tree(SeparatorHStackLayout(separator: separator)) {
-            content()
+        _VariadicView.Tree(
+            SeparatorHStackLayout(
+                separator: separator
+            )
+        ) {
+            content
         }
+    }
+}
+
+extension SeparatorHStack where Separator == RowDivider {
+
+    init(
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.init(
+            content: content(),
+            separator: RowDivider()
+        )
     }
 }
 
 extension SeparatorHStack {
 
-    init(@ViewBuilder _ content: @escaping () -> Content) {
+    init(
+        @ViewBuilder separator: @escaping () -> Separator,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.init(
-            content: content,
-            separator: { RowDivider() }
+            content: content(),
+            separator: separator()
         )
-    }
-
-    func separator(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.separator, with: content)
     }
 }
 
@@ -44,7 +59,7 @@ extension SeparatorHStack {
 
     struct SeparatorHStackLayout: _VariadicView_UnaryViewRoot {
 
-        var separator: () -> any View
+        var separator: Separator
 
         @ViewBuilder
         func body(children: _VariadicView.Children) -> some View {
@@ -56,8 +71,7 @@ extension SeparatorHStack {
                     child
 
                     if child.id != last {
-                        separator()
-                            .eraseToAnyView()
+                        separator
                     }
                 }
             }

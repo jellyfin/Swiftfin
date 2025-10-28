@@ -10,87 +10,57 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-final class QuickConnectAuthorizeViewModel: ViewModel, Eventful, Stateful {
+@MainActor
+@Stateful
+final class QuickConnectAuthorizeViewModel: ViewModel {
 
-    // MARK: Event
+    @CasePathable
+    enum Action {
+        case authorize(code: String)
+        case cancel
+
+        var transition: Transition {
+            switch self {
+            case .authorize: .loop(.authorizing)
+            case .cancel: .to(.initial)
+            }
+        }
+    }
 
     enum Event {
         case authorized
-        case error(JellyfinAPIError)
+        case error
     }
 
-    // MARK: Action
-
-    enum Action: Equatable {
-        case authorize(code: String)
-        case cancel
-    }
-
-    // MARK: State
-
-    enum State: Hashable {
+    enum State {
         case authorizing
         case initial
     }
-
-    @Published
-    var state: State = .initial
-
-    var events: AnyPublisher<Event, Never> {
-        eventSubject
-            .receive(on: RunLoop.main)
-            .eraseToAnyPublisher()
-    }
-
-    private var authorizeTask: AnyCancellable?
-    private var eventSubject: PassthroughSubject<Event, Never> = .init()
 
     let user: UserDto
 
     init(user: UserDto) {
         self.user = user
+        super.init()
     }
 
-    func respond(to action: Action) -> State {
-        switch action {
-        case let .authorize(code):
-            authorizeTask = Task {
-
-                try? await Task.sleep(nanoseconds: 10_000_000_000)
-
-                do {
-                    try await authorize(code: code, userID: user.id)
-
-                    await MainActor.run {
-                        self.eventSubject.send(.authorized)
-                        self.state = .initial
-                    }
-                } catch {
-                    await MainActor.run {
-                        self.eventSubject.send(.error(.init(error.localizedDescription)))
-                        self.state = .initial
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return .authorizing
-        case .cancel:
-            authorizeTask?.cancel()
-
-            return .initial
+    @Function(\Action.Cases.authorize)
+    private func _authorize(_ code: String) async throws {
+        guard let userID = user.id else {
+            logger.critical("User ID is nil")
+            throw JellyfinAPIError(L10n.unknownError)
         }
-    }
 
-    private func authorize(code: String, userID: String? = nil) async throws {
         let request = Paths.authorizeQuickConnect(code: code, userID: userID)
         let response = try await userSession.client.send(request)
 
         let decoder = JSONDecoder()
         let isAuthorized = (try? decoder.decode(Bool.self, from: response.value)) ?? false
 
-        if !isAuthorized {
+        guard isAuthorized else {
             throw JellyfinAPIError("Authorization unsuccessful")
         }
+
+        events.send(.authorized)
     }
 }
