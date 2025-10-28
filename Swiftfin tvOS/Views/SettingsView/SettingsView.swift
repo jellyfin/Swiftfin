@@ -31,7 +31,7 @@ struct SettingsView: View {
                     .frame(maxWidth: 400)
             }
             .contentView {
-                Section("Jellyfin") {
+                Section(L10n.jellyfin) {
 
                     UserProfileRow(user: viewModel.userSession.user.data) {
                         router.route(to: .userProfile(viewModel: viewModel))
