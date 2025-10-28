@@ -161,6 +161,14 @@ extension NavigationRoute {
         ConsoleView()
     }
 
+    #if os(iOS)
+    static let nativePlayerSettings = NavigationRoute(
+        id: "nativePlayerSettings"
+    ) {
+        NativeVideoPlayerSettingsView()
+    }
+    #endif
+
     static let playbackQualitySettings = NavigationRoute(
         id: "playbackQualitySettings"
     ) {
