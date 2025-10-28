@@ -132,11 +132,11 @@ extension ItemView {
             if let applicationURL = external.url, external.isValid {
                 UIApplication.shared.open(applicationURL) { success in
                     if !success {
-                        self.error = JellyfinAPIError(L10n.unableToOpenTrailerApp(external.type.displayTitle))
+                        error = JellyfinAPIError(L10n.unableToOpenTrailerApp(external.type.displayTitle))
                     }
                 }
             } else {
-                self.error = JellyfinAPIError(L10n.unableToOpenTrailer)
+                error = JellyfinAPIError(L10n.unableToOpenTrailer)
             }
         }
     }
