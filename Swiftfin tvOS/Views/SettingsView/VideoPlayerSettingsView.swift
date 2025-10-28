@@ -39,6 +39,7 @@ struct VideoPlayerSettingsView: View {
             .contentView {
 
                 Section {
+
                     ChevronButton(
                         L10n.offset,
                         subtitle: resumeOffset.secondLabel
