@@ -14,5 +14,7 @@ changelog:
         - crash
     - title: Other ⚙️
       labels:
+        - accessibility
         - developer
+        - documentation
         - external
