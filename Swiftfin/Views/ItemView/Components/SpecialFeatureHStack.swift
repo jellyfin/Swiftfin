@@ -22,8 +22,8 @@ extension ItemView {
         var body: some View {
             PosterHStack(
                 title: L10n.specialFeatures,
-                type: .landscape,
-                items: items
+                elements: items,
+                type: .landscape
             ) { item, _ in
                 guard let mediaSource = item.mediaSources?.first else { return }
                 router.route(to: .videoPlayer(item: item, mediaSource: mediaSource))

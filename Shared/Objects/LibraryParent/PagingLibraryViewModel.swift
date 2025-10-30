@@ -13,7 +13,9 @@ import SwiftUI
 
 /// Magic number for page sizes
 private let DefaultPageSize = 50
+private let SmallPageSize = 20
 
+// TODO: move to Stateful?
 @MainActor
 protocol WithRefresh {
 
@@ -114,7 +116,7 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
     }
 
     init(library: _PagingLibrary) {
-        self.environment = library.environment
+        self.environment = library.environment ?? .default
         self.library = library
         self.elements = IdentifiedArray(
             [],

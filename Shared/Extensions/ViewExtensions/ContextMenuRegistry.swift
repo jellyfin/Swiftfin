@@ -37,7 +37,7 @@ extension View {
     ) -> some View {
         contextMenu(
             for: type,
-            content: { _, v in content(v) },
+            content: { _, v in content(v) }
         )
     }
 
@@ -48,7 +48,7 @@ extension View {
         EnvironmentValueReader(\.router) { router in
             contextMenu(
                 for: type,
-                content: { _, v in content(v, router) },
+                content: { _, v in content(v, router) }
             )
         }
     }
@@ -123,7 +123,7 @@ extension View {
                 } else {
                     self
                         .contextMenu(
-                            menuItems: { evaluatedContextMenu.items },
+                            menuItems: { evaluatedContextMenu.items }
                         )
                 }
             }

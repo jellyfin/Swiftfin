@@ -105,13 +105,40 @@ struct DefaultContentGroupProvider: _ContentGroupProvider {
     let id: String = "default-content-group-provider"
     let systemImage: String = "house"
 
+    @ContentGroupBuilder
     func makeGroups(environment: Void) async throws -> [any _ContentGroup] {
         let parameters = Paths.GetUserViewsParameters(userID: userSession.user.id)
         let userViewsPath = Paths.getUserViews(parameters: parameters)
         let userViews = try await userSession.client.send(userViewsPath)
         let excludedLibraryIDs = userSession.user.data.configuration?.latestItemsExcludes ?? []
 
-        let latestInLibraries = (userViews.value.items ?? [])
+        PosterGroup(
+            id: UUID().uuidString,
+            library: ContinueWatchingLibrary(),
+            posterDisplayType: .landscape,
+            posterSize: .medium
+        )
+
+        PosterGroup(
+            id: UUID().uuidString,
+            library: NextUpLibrary()
+        )
+
+        PosterGroup(
+            id: UUID().uuidString,
+            library: PagingItemLibrary(
+                parent: .init(
+                    name: L10n.recentlyAdded
+                ),
+                filters: .init(
+                    itemTypes: [.movie, .series],
+                    sortBy: [.dateCreated],
+                    sortOrder: [.descending]
+                )
+            )
+        )
+
+        (userViews.value.items ?? [])
             .intersection(
                 [
                     .homevideos,
@@ -124,36 +151,5 @@ struct DefaultContentGroupProvider: _ContentGroupProvider {
             .subtracting(excludedLibraryIDs, using: \.id)
             .map(LatestInLibrary.init)
             .map { PosterGroup(id: UUID().uuidString, library: $0) }
-
-        let newGroups: [any _ContentGroup] = [
-            PosterGroup(
-                id: UUID().uuidString,
-                library: ContinueWatchingLibrary(),
-                posterDisplayType: .landscape,
-                posterSize: .medium
-            ),
-
-            PosterGroup(
-                id: UUID().uuidString,
-                library: NextUpLibrary()
-            ),
-
-            PosterGroup(
-                id: UUID().uuidString,
-                library: PagingItemLibrary(
-                    parent: .init(
-                        name: L10n.recentlyAdded
-                    ),
-                    filters: .init(
-                        itemTypes: [.movie, .series],
-                        sortBy: [.dateCreated],
-                        sortOrder: [.descending]
-                    )
-                )
-            ),
-        ]
-            .appending(latestInLibraries)
-
-        return newGroups
     }
 }

@@ -114,7 +114,7 @@ struct ItemImagesView: View {
 
         PosterHStack(
             elements: images,
-            type: images.first?.preferredPosterDisplayType ?? .portrait,
+            type: images.first?.preferredPosterDisplayType ?? .portrait
         ) { imageInfo, _ in
             router.route(
                 to: .itemImageDetails(
@@ -187,7 +187,7 @@ struct ItemImagesView: View {
         Button(action: onSelect) {
             PosterImage(
                 item: imageInfo,
-                type: imageInfo.preferredPosterDisplayType,
+                type: imageInfo.preferredPosterDisplayType
             )
             .pipeline(.Swiftfin.other)
             .posterShadow()

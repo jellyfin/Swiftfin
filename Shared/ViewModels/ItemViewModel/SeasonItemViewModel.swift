@@ -24,7 +24,7 @@ struct _PagingSeasonLibrary: PagingLibrary {
     }
 
     func retrievePage(
-        environment: Void,
+        environment: VoidWithDefaultValue,
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
 

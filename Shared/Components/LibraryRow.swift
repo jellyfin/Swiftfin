@@ -12,7 +12,24 @@ import SwiftUI
 private let landscapeWidth: CGFloat = 110
 private let portraitWidth: CGFloat = 60
 
-struct LibraryRow<Element: Poster>: View {
+// TODO: have body take library style (list, grid)
+// TODO: have a select with router+namespace parameters
+protocol LibraryElement: Displayable, LibraryIdentifiable, Poster {
+
+    associatedtype Body: View = EmptyView
+
+    func librarySelectAction(router: Router.Wrapper, in namespace: Namespace)
+
+    @MainActor
+    @ViewBuilder
+    func makeBody(libraryStyle: LibraryStyle) -> Body
+}
+
+extension LibraryElement {
+    func librarySelectAction(router: Router.Wrapper, in namespace: Namespace) {}
+}
+
+struct LibraryRow<Element: LibraryElement>: View {
 
     @Namespace
     private var namespace
@@ -105,7 +122,8 @@ struct LibraryRow<Element: Poster>: View {
         } leading: {
             rowLeading
         } content: {
-            rowContent
+//            rowContent
+            item.makeBody(libraryStyle: .default)
         }
         .backport
         .matchedTransitionSource(id: "item", in: namespace)

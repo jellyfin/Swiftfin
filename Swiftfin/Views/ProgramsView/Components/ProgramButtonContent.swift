@@ -11,43 +11,44 @@ import SwiftUI
 
 // TODO: move to where poster overlay is injected into environment
 
-extension ProgramsView {
+// extension ProgramsView {
 
-    struct ProgramButtonContent: View {
+struct ProgramButtonContent: View {
 
-        let program: BaseItemDto
+    let program: BaseItemDto
 
-        var body: some View {
-            VStack(alignment: .leading) {
+    var body: some View {
+        VStack(alignment: .leading) {
 
-                Text(program.channelName ?? .emptyDash)
-                    .font(.footnote.weight(.semibold))
-                    .foregroundColor(.primary)
-                    .lineLimit(1, reservesSpace: true)
+            Text(program.channelName ?? .emptyDash)
+                .font(.footnote.weight(.semibold))
+                .foregroundColor(.primary)
+                .lineLimit(1, reservesSpace: true)
 
-                Text(program.displayTitle)
-                    .font(.footnote.weight(.regular))
-                    .foregroundColor(.primary)
-                    .lineLimit(1, reservesSpace: true)
+            Text(program.displayTitle)
+                .font(.footnote.weight(.regular))
+                .foregroundColor(.primary)
+                .lineLimit(1, reservesSpace: true)
 
-                HStack(spacing: 2) {
-                    if let startDate = program.startDate {
-                        Text(startDate, style: .time)
-                    } else {
-                        Text(String.emptyDash)
-                    }
-
-                    Text("-")
-
-                    if let endDate = program.endDate {
-                        Text(endDate, style: .time)
-                    } else {
-                        Text(String.emptyDash)
-                    }
+            HStack(spacing: 2) {
+                if let startDate = program.startDate {
+                    Text(startDate, style: .time)
+                } else {
+                    Text(String.emptyDash)
                 }
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+
+                Text("-")
+
+                if let endDate = program.endDate {
+                    Text(endDate, style: .time)
+                } else {
+                    Text(String.emptyDash)
+                }
             }
+            .font(.footnote)
+            .foregroundStyle(.secondary)
         }
     }
 }
+
+// }

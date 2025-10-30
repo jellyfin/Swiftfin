@@ -49,6 +49,7 @@ enum TabItemSetting: @preconcurrency Identifiable {
 
     case contentGroup(ContentGroupProviderSetting)
     case item(String)
+    case liveTV
     case media
     case search
     case settings
@@ -61,6 +62,8 @@ enum TabItemSetting: @preconcurrency Identifiable {
             provider.provider.id
         case let .item(id):
             id
+        case .liveTV:
+            "live-tv"
         case .media:
             "media"
         case .search:
@@ -80,6 +83,8 @@ enum TabItemSetting: @preconcurrency Identifiable {
             .contentGroup(provider: provider.provider)
         case let .item(id):
             .item(id: id)
+        case .liveTV:
+            .liveTV
         case .media:
             .media
         case .search:
@@ -152,6 +157,14 @@ extension TabItem {
 
             PagingLibraryView(library: library)
         }
+    }
+
+    static let liveTV = TabItem(
+        id: "live-tv",
+        title: L10n.liveTV,
+        systemImage: "play.tv"
+    ) {
+        NavigationRoute.liveTV.destination
     }
 
     static let media = TabItem(

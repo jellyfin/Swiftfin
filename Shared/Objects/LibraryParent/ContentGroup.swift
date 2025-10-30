@@ -14,81 +14,7 @@ import SwiftUI
 
 // TODO: break out, cleanup
 
-struct BasicLibraryGrouping: Displayable, Hashable, Identifiable, Storable {
-    let displayTitle: String
-    let id: String
-}
-
-struct _TitledLibraryParent: _LibraryParent {
-
-    let displayTitle: String
-    let libraryID: String
-}
-
-// protocol WithGroupingLibrary {
-//
-//    associatedtype Grouping: Displayable & Identifiable
-//
-//    var groupings: (defaultSelection: Grouping, elements: [Grouping])? { get }
-// }
-
-struct BaseItemLibraryEnvironment: WithDefaultValue {
-
-    let grouping: BasicLibraryGrouping?
-    let filters: ItemFilterCollection
-
-    static var `default`: Self {
-        .init(
-            grouping: nil,
-            filters: .init()
-        )
-    }
-}
-
-extension BaseItemDto: _LibraryParent {
-
-    var libraryID: String {
-        id ?? "unknown"
-    }
-
-    var _groupings: (defaultSelection: BasicLibraryGrouping, elements: [BasicLibraryGrouping])? {
-        switch collectionType {
-        case .tvshows:
-            let episodes = BasicLibraryGrouping(displayTitle: L10n.episodes, id: "episodes")
-            let series = BasicLibraryGrouping(displayTitle: L10n.series, id: "series")
-            return (series, [episodes, series])
-        default:
-            return nil
-        }
-    }
-
-    func _supportedItemTypes(for grouping: BasicLibraryGrouping?) -> [BaseItemKind] {
-        if self.collectionType == .folders {
-            return BaseItemKind.supportedCases
-                .appending([.folder, .collectionFolder])
-        }
-
-        if collectionType == .tvshows {
-            if let grouping, grouping.id == "episodes" {
-                return [.episode]
-            } else {
-                return [.series]
-            }
-        }
-
-        return BaseItemKind.supportedCases
-    }
-
-    func _isRecursiveCollection(for grouping: BasicLibraryGrouping?) -> Bool {
-        guard let collectionType, type != .userView else { return true }
-
-        if let grouping, grouping.id == "episodes" {
-            return true
-        }
-
-        return ![.tvshows, .boxsets].contains(collectionType)
-    }
-}
+typealias ContentGroupBuilder = ArrayBuilder<any _ContentGroup>
 
 @MainActor
 protocol _ContentGroup<ViewModel>: Displayable, Identifiable {
@@ -102,6 +28,12 @@ protocol _ContentGroup<ViewModel>: Displayable, Identifiable {
 
     @ViewBuilder
     func body(with viewModel: ViewModel) -> Body
+}
+
+extension _ContentGroup where ViewModel == VoidContentGroupViewModel {
+    func makeViewModel() -> VoidContentGroupViewModel {
+        .init()
+    }
 }
 
 protocol _ContentGroupViewModel: WithRefresh {}
@@ -150,7 +82,7 @@ struct EmptyContentGroup: _ContentGroup {
     }
 }
 
-struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element: Poster {
+struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element: LibraryElement {
 
     var displayTitle: String {
         library.parent.displayTitle
@@ -181,7 +113,7 @@ struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element:
     @ViewBuilder
     func body(with viewModel: PagingLibraryViewModel<Library>) -> some View {
 //        WithPosterButtonStyle(id: id) {
-        _PosterSection(viewModel: viewModel, group: self)
+        PosterHStackLibrarySection(viewModel: viewModel, group: self)
             .posterStyle(for: BaseItemDto.self) { environment, _ in
                 var environment = environment
                 environment.displayType = posterDisplayType

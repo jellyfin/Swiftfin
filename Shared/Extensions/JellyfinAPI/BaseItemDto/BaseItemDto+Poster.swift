@@ -172,3 +172,13 @@ extension BaseItemDto: Poster {
         }
     }
 }
+
+extension BaseItemDto: LibraryElement {
+
+    func librarySelectAction(router: Router.Wrapper, in namespace: Namespace) {}
+
+    func makeBody(libraryStyle: LibraryStyle) -> some View {
+        Color.red
+            .frame(height: 50)
+    }
+}

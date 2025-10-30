@@ -22,7 +22,7 @@ struct ServerUsersLibrary: PagingLibrary {
     init() {
         self.parent = .init(
             displayTitle: L10n.users,
-            libraryID: "server-users",
+            libraryID: "server-users"
         )
     }
 

@@ -14,16 +14,10 @@ import SwiftUI
 //       - pass in folder context
 //       - remove cinematic/thumb
 
-struct VoidButWithDefaultValue: WithDefaultValue {
-    let value: Void
-
-    static var `default`: Self = .init(value: ())
-}
-
 /// A type that is displayed as a poster
 protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
 
-    associatedtype Environment: WithDefaultValue = VoidButWithDefaultValue
+    associatedtype Environment: WithDefaultValue = VoidWithDefaultValue
     associatedtype ImageBody: View = Image
 
     var preferredPosterDisplayType: PosterDisplayType { get }
@@ -138,7 +132,7 @@ extension Poster where ImageBody == Image {
     }
 }
 
-extension Poster where Environment == VoidButWithDefaultValue {
+extension Poster where Environment == VoidWithDefaultValue {
 
     func imageSources(
         for displayType: PosterDisplayType,

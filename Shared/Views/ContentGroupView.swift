@@ -12,7 +12,7 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-struct _PosterSection<Library: PagingLibrary>: View where Library.Element: Poster {
+struct PosterHStackLibrarySection<Library: PagingLibrary>: View where Library.Element: LibraryElement {
 
     @Router
     private var router
@@ -27,44 +27,79 @@ struct _PosterSection<Library: PagingLibrary>: View where Library.Element: Poste
         _viewModel = StateObject(wrappedValue: viewModel)
     }
 
-//    init(library: PagingLibraryViewModel<P>, group: PosterGroup) {
-//        _viewModel = StateObject(wrappedValue: library)
-//        self.group = group
-//    }
-
     var body: some View {
-        ZStack {
-            if viewModel.elements.isNotEmpty {
-                PosterHStack(
-                    title: viewModel.library.parent.displayTitle,
-                    type: .portrait,
-                    items: viewModel.elements
-                ) { element, namespace in
-                    //                router.route(to: .posterGroupPosterButtonStyle(id: viewModel.library.parent.libraryID))
+        if viewModel.elements.isNotEmpty {
+            PosterHStack(
+                elements: viewModel.elements,
+                type: .portrait
+            ) {
+                element,
+                    namespace in
+                //                router.route(to: .posterGroupPosterButtonStyle(id: viewModel.library.parent.libraryID))
 
-                    switch element {
-                    case let element as BaseItemDto:
+                switch element {
+                case let element as BaseItemDto:
+                    switch element.type {
+                    case .program, .liveTvChannel, .tvProgram, .tvChannel:
+                        router.route(
+                            to: .videoPlayer(
+                                provider: element.getPlaybackItemProvider(userSession: viewModel.userSession)
+                            )
+                        )
+                    default:
                         router.route(to: .item(item: element), in: namespace)
-                    default: ()
                     }
+                default: ()
                 }
-                //                .posterStyle(for: BaseItemDto.self) { environment, _ in
-                //                    var environment = environment
-                //                    environment.displayType = group.posterDisplayType
-                //                    environment.size = group.posterSize
-                //                    if let progress = item.progress, let startSeconds = item.startSeconds {
-                //                        environment.overlay = PosterProgressBar(
-                //                            title: startSeconds.formatted(.runtime),
-                //                            progress: progress,
-                //                            posterDisplayType: environment.displayType
-                //                        )
-                //                        .eraseToAnyView()
-                //                    }
-                //                    return environment
-                //                }
+            } header: {
+                Header(title: viewModel.library.parent.displayTitle) {
+                    router.route(to: .library(library: viewModel.library))
+                }
             }
+            .animation(.linear(duration: 0.2), value: viewModel.elements)
+            //                .posterStyle(for: BaseItemDto.self) { environment, _ in
+            //                    var environment = environment
+            //                    environment.displayType = group.posterDisplayType
+            //                    environment.size = group.posterSize
+            //                    if let progress = item.progress, let startSeconds = item.startSeconds {
+            //                        environment.overlay = PosterProgressBar(
+            //                            title: startSeconds.formatted(.runtime),
+            //                            progress: progress,
+            //                            posterDisplayType: environment.displayType
+            //                        )
+            //                        .eraseToAnyView()
+            //                    }
+            //                    return environment
+            //                }
         }
-        .animation(.linear(duration: 0.2), value: viewModel.elements)
+    }
+}
+
+extension PosterHStackLibrarySection {
+
+    struct Header: View {
+
+        let title: String
+        let action: () -> Void
+
+        var body: some View {
+            Button(action: action) {
+                HStack(spacing: 3) {
+                    Text(title)
+                        .foregroundStyle(.primary)
+                        .font(.title2)
+
+                    Image(systemName: "chevron.right")
+                        .foregroundStyle(.secondary)
+                        .font(.title3)
+                }
+                .fontWeight(.semibold)
+            }
+            .foregroundStyle(.primary, .secondary)
+            .accessibilityAddTraits(.isHeader)
+            .accessibilityAction(named: Text("Open library"), action)
+            .edgePadding(.horizontal)
+        }
     }
 }
 
@@ -184,6 +219,7 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .animation(.linear(duration: 0.2), value: viewModel.background.states)
         .navigationTitle(viewModel.provider.displayTitle)
+        .navigationBarTitleDisplayMode(router.isRootOfPath ? .automatic : .inline)
         .onFirstAppear {
             viewModel.refresh()
         }

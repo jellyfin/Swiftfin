@@ -28,7 +28,7 @@ struct NextUpLibrary: PagingLibrary {
     init() {
         self.parent = _TitledLibraryParent(
             displayTitle: L10n.nextUp,
-            libraryID: "next-up",
+            libraryID: "next-up"
         )
     }
 

@@ -18,16 +18,40 @@ struct LibraryPageState {
 }
 
 protocol _LibraryParent: Displayable {
+
+    associatedtype Grouping: LibraryGrouping = VoidWithLibraryGrouping
+
+    var groupings: (defaultSelection: Grouping, elements: [Grouping])? { get }
     var libraryID: String { get }
 }
 
+extension _LibraryParent where Grouping == VoidWithLibraryGrouping {
+    var groupings: (defaultSelection: Grouping, elements: [Grouping])? { nil }
+}
+
+protocol WithLibraryGrouping<Grouping> {
+    associatedtype Grouping: LibraryGrouping
+    var grouping: Grouping? { get set }
+}
+
+struct VoidWithLibraryGrouping: LibraryGrouping {
+    var displayTitle: String = ""
+    var id: String = ""
+}
+
+import SwiftUI
+
 protocol PagingLibrary<Element> {
 
-    associatedtype Environment = Void
     associatedtype Element: LibraryIdentifiable
+    associatedtype Environment: WithDefaultValue = VoidWithDefaultValue
+    associatedtype LibraryBody: View = AnyView
     associatedtype Parent: _LibraryParent = _TitledLibraryParent
 
-    var environment: Environment { get }
+    /// The initial environment configuration for the library.
+    /// This can be used to define a static environment, disallowing
+    /// mutating changes to a library's environment.
+    var environment: Environment? { get }
     var parent: Parent { get }
 
     // TODO: rename/refactor to something else
@@ -37,18 +61,24 @@ protocol PagingLibrary<Element> {
         environment: Environment,
         pageState: LibraryPageState
     ) async throws -> [Element]
+
+    func makeLibraryBody(content: some View) -> LibraryBody
+
+    @MenuContentGroupBuilder
+    func menuContent(environment: Binding<Environment>) -> [MenuContentGroup]
 }
 
 extension PagingLibrary {
+
+    var environment: Environment? { nil }
     var pages: Bool { true }
-}
 
-extension PagingLibrary where Environment == Void {
-    var environment: Void { () }
-}
+    func makeLibraryBody(content: some View) -> AnyView {
+        content.eraseToAnyView()
+    }
 
-extension PagingLibrary where Environment: WithDefaultValue {
-    var environment: Environment { .default }
+    @MenuContentGroupBuilder
+    func menuContent(environment: Binding<Environment>) -> [MenuContentGroup] {}
 }
 
 protocol WithRandomElementLibrary<Element, Environment>: PagingLibrary {

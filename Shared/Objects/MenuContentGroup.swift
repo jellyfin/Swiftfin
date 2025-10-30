@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+typealias MenuContentGroupBuilder = ArrayBuilder<MenuContentGroup>
+
 struct MenuContentGroup: Identifiable, Equatable {
 
     let id: String

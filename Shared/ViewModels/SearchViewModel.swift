@@ -112,7 +112,7 @@ final class SearchViewModel: ViewModel {
             var filters = vm.environment.filters
             filters.query = query
 
-            vm.environment = BaseItemLibraryEnvironment(
+            vm.environment = .init(
                 grouping: vm.environment.grouping,
                 filters: filters
             )

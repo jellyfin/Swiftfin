@@ -44,6 +44,14 @@ struct Router: DynamicProperty {
         let router: NavigationCoordinator.Router
         let dismiss: DismissAction
 
+        var isRootOfPath: Bool {
+            guard let router = router.navigationCoordinator else {
+                return false
+            }
+
+            return router.path.isEmpty
+        }
+
         func route(
             to route: NavigationRoute,
             in namespace: Namespace.ID? = nil

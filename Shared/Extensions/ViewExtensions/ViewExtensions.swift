@@ -449,6 +449,20 @@ extension View {
         transition(.opacity.combined(with: .scale).animation(.snappy))
     }
 
+    func overlay(
+        alignment: Alignment = .center,
+        ratio: CGFloat,
+        @ViewBuilder content: @escaping () -> some View
+    ) -> some View {
+        overlay {
+            ContainerRelativeView(
+                alignment: alignment,
+                ratio: ratio,
+                content: content
+            )
+        }
+    }
+
     // MARK: debug
 
     // Useful modifiers during development for layout without RocketSim

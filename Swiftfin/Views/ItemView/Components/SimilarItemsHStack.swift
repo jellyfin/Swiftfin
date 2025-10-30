@@ -24,8 +24,8 @@ extension ItemView {
             WithPosterButtonStyle(id: "recommended") {
                 PosterHStack(
                     title: L10n.recommended,
-                    type: .portrait,
-                    items: items
+                    elements: items,
+                    type: .portrait
                 ) { item, namespace in
                     router.route(to: .item(item: item), in: namespace)
                 }

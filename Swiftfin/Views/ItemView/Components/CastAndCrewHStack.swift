@@ -21,10 +21,10 @@ extension ItemView {
         var body: some View {
             PosterHStack(
                 title: L10n.castAndCrew,
-                type: .portrait,
-                items: people.filter { person in
-                    person.type?.isSupported ?? false
-                }
+                elements: people.filter { person in
+                    person.type?.isSupported == true
+                },
+                type: .portrait
             ) { person, namespace in
                 router.route(to: .item(item: .init(person: person)), in: namespace)
             }

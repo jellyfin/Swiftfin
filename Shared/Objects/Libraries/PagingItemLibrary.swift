@@ -7,29 +7,57 @@
 //
 
 import JellyfinAPI
+import SwiftUI
 
+@MainActor
 struct PagingItemLibrary: PagingLibrary, WithRandomElementLibrary {
 
+    struct Environment: WithDefaultValue {
+        let grouping: Parent.Grouping?
+        let filters: ItemFilterCollection
+
+        static var `default`: Self {
+            .init(
+                grouping: nil,
+                filters: .default
+            )
+        }
+    }
+
+    let environment: Environment?
+    let filterViewModel: FilterViewModel
     let parent: BaseItemDto
-    let forcedFilters: ItemFilterCollection?
 
     init(
         parent: Parent,
         filters: ItemFilterCollection? = nil
     ) {
+        if parent.groupings?.defaultSelection != nil || filters != nil {
+            environment = .init(
+                grouping: parent.groupings?.defaultSelection,
+                filters: filters ?? .default
+            )
+        } else {
+            environment = nil
+        }
+
+        self.filterViewModel = .init(
+            parent: parent,
+            currentFilters: environment?.filters ?? .default
+        )
+
         self.parent = parent
-        self.forcedFilters = filters
     }
 
     func retrievePage(
-        environment: BaseItemLibraryEnvironment,
+        environment: Environment,
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
 
         let parameters = attachPage(
             to: attachFilters(
                 to: makeBaseItemParameters(environment: environment),
-                using: forcedFilters ?? environment.filters,
+                using: self.environment?.filters ?? environment.filters,
                 pageState: pageState
             ),
             pageState: pageState
@@ -64,7 +92,7 @@ struct PagingItemLibrary: PagingLibrary, WithRandomElementLibrary {
     }
 
     private func makeBaseItemParameters(
-        environment: BaseItemLibraryEnvironment
+        environment: Environment
     ) -> Paths.GetItemsByUserIDParameters {
 
         var parameters = Paths.GetItemsByUserIDParameters()
@@ -145,12 +173,12 @@ struct PagingItemLibrary: PagingLibrary, WithRandomElementLibrary {
     }
 
     func retrieveRandomElement(
-        environment: BaseItemLibraryEnvironment,
+        environment: Environment,
         pageState: LibraryPageState
     ) async throws -> BaseItemDto? {
         var parameters = attachFilters(
             to: makeBaseItemParameters(environment: environment),
-            using: forcedFilters ?? environment.filters,
+            using: self.environment?.filters ?? environment.filters,
             pageState: pageState
         )
 
@@ -161,5 +189,45 @@ struct PagingItemLibrary: PagingLibrary, WithRandomElementLibrary {
         let response = try? await pageState.userSession.client.send(request)
 
         return response?.value.items?.first
+    }
+
+    func makeLibraryBody(content: some View) -> AnyView {
+        content
+            .navigationBarFilterDrawer(
+                viewModel: filterViewModel,
+                types: ItemFilterType.allCases
+            ) { _ in
+            }
+            .eraseToAnyView()
+    }
+
+    @MenuContentGroupBuilder
+    func menuContent(environment: Binding<Environment>) -> [MenuContentGroup] {
+        if let groupings = parent.groupings, groupings.elements.isNotEmpty {
+            MenuContentGroup(id: "grouping") {
+
+                let binding = Binding<Parent.Grouping?>(
+                    get: { environment.wrappedValue.grouping },
+                    set: { environment.wrappedValue = Environment(
+                        grouping: $0,
+                        filters: environment.wrappedValue.filters
+                    ) }
+                )
+
+                Picker(selection: binding) {
+                    ForEach(groupings.elements) { grouping in
+                        Text(grouping.displayTitle)
+                            .tag(grouping as Parent.Grouping?)
+                    }
+                } label: {
+                    Text("Grouping")
+
+                    if let grouping = environment.wrappedValue.grouping {
+                        Text(grouping.displayTitle)
+                    }
+                }
+                .pickerStyle(.menu)
+            }
+        }
     }
 }

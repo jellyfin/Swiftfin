@@ -63,7 +63,7 @@ struct RemoteImageProvidersLibrary: PagingLibrary {
     }
 
     func retrievePage(
-        environment: Void,
+        environment: VoidWithDefaultValue,
         pageState: LibraryPageState
     ) async throws -> [ImageProviderInfo] {
         let request = Paths.getRemoteImageProviders(itemID: parent.libraryID)

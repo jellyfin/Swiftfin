@@ -31,7 +31,6 @@ struct TypeKeyedDictionary<Value> {
         }
     }
 
-    // TODO: rename `withSetting`
     func withInsert<T>(type: T.Type, value: Value?) -> Self {
         if let value {
             var copy = self

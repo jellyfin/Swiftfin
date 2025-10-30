@@ -177,7 +177,7 @@ extension AddItemImageView {
                             .tag(nil as String?)
 
                         ForEach(
-                            providersViewModel.elements,
+                            providersViewModel.elements
                         ) { provider in
                             Text(provider.name ?? L10n.unknown)
                                 .tag(provider.name)

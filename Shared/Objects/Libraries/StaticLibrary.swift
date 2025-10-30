@@ -6,7 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-struct StaticLibrary<Element: Poster>: PagingLibrary {
+struct StaticLibrary<Element: LibraryElement>: PagingLibrary {
 
     let elements: [Element]
     let parent: _TitledLibraryParent
@@ -20,12 +20,12 @@ struct StaticLibrary<Element: Poster>: PagingLibrary {
         self.elements = elements
         self.parent = .init(
             displayTitle: title,
-            libraryID: id,
+            libraryID: id
         )
     }
 
     func retrievePage(
-        environment: Void,
+        environment: VoidWithDefaultValue,
         pageState: LibraryPageState
     ) async throws -> [Element] {
         elements

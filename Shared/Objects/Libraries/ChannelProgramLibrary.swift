@@ -15,7 +15,7 @@ struct ChannelProgramLibrary: PagingLibrary {
     var parent: _TitledLibraryParent
 
     func retrievePage(
-        environment: Void,
+        environment: VoidWithDefaultValue,
         pageState: LibraryPageState
     ) async throws -> [ChannelProgram] {
         var parameters = Paths.GetLiveTvChannelsParameters()
@@ -24,7 +24,7 @@ struct ChannelProgramLibrary: PagingLibrary {
         parameters.sortBy = [ItemSortBy.name]
 
         parameters.limit = pageState.pageSize
-        parameters.startIndex = pageState.page * pageState.pageSize
+        parameters.startIndex = pageState.pageOffset
 
         let request = Paths.getLiveTvChannels(parameters: parameters)
         let response = try await pageState.userSession.client.send(request)

@@ -20,7 +20,7 @@ struct GenresLibrary: PagingLibrary {
     }
 
     func retrievePage(
-        environment: Void,
+        environment: VoidWithDefaultValue,
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
         var parameters = Paths.GetGenresParameters()

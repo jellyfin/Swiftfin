@@ -32,7 +32,7 @@ extension BaseItemPerson: Poster {
     func portraitImageSources(
         maxWidth: CGFloat?,
         quality: Int?,
-        environment: VoidButWithDefaultValue
+        environment: VoidWithDefaultValue
     ) -> [ImageSource] {
         guard let client = Container.shared.currentUserSession()?.client else { return [] }
 
@@ -59,5 +59,15 @@ extension BaseItemPerson: Poster {
             url: url,
             blurHash: blurHash
         )]
+    }
+}
+
+extension BaseItemPerson: LibraryElement {
+
+    func librarySelectAction(router: Router.Wrapper, in namespace: Namespace) {}
+
+    func makeBody(libraryStyle: LibraryStyle) -> some View {
+        Color.red
+            .frame(height: 50)
     }
 }

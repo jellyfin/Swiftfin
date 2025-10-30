@@ -8,15 +8,19 @@
 
 import SwiftUI
 
-protocol WithDefaultValue {
+protocol WithDefaultValue: Equatable {
     static var `default`: Self { get }
+}
+
+struct VoidWithDefaultValue: WithDefaultValue {
+    static var `default`: Self = .init()
 }
 
 // TODO: have layout values for `PosterHStack`?
 //       - or be based on size/poster display value?
 
 // TODO: rename `PosterButtonStyle`
-struct PosterStyleEnvironment: WithDefaultValue, Storable {
+struct PosterStyleEnvironment: Equatable, WithDefaultValue, Storable {
 
     var displayType: PosterDisplayType
     var label: AnyView
@@ -54,6 +58,10 @@ struct PosterStyleEnvironment: WithDefaultValue, Storable {
     }
 
     static let `default`: PosterStyleEnvironment = .init()
+
+    static func == (lhs: PosterStyleEnvironment, rhs: PosterStyleEnvironment) -> Bool {
+        lhs.displayType == rhs.displayType && lhs.size == rhs.size
+    }
 }
 
 struct AnyForPosterStyleEnvironment: Equatable, Identifiable {

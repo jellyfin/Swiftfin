@@ -11,7 +11,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Poster {
+struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: LibraryElement {
 
     typealias Element = Library.Element
 
@@ -54,10 +54,10 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Po
             }
     }
 
-    @ViewBuilder
-    private func WithFilters(
-        @ViewBuilder content: () -> some View
-    ) -> some View {
+//    @ViewBuilder
+//    private func WithFilters(
+//        @ViewBuilder content: () -> some View
+//    ) -> some View {
 //        if let filterViewModel = viewModel.library.filterViewModel {
 //            content()
 //                .navigationBarFilterDrawer(
@@ -70,58 +70,57 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Po
 //                    viewModel.refresh()
 //                }
 //        } else {
-        content()
+//        content()
 //        }
+//    }
+
+    @ViewBuilder
+    private var contentView: some View {
+        switch viewModel.state {
+        case .initial, .refreshing:
+            ProgressView()
+                .progressViewStyle(.circular)
+        case .content:
+            if viewModel.elements.isEmpty {
+                Text(L10n.noResults)
+            } else {
+                ElementsView(viewModel: viewModel)
+                    .ignoresSafeArea()
+                    .libraryStyle(for: Element.self) { environment, _ in
+                        if rememberIndividualLibraryStyle {
+                            return (parentLibraryStyle, $parentLibraryStyle)
+                        } else {
+                            return environment
+                        }
+                    }
+            }
+        case .error:
+            viewModel.error.map(errorView)
+        }
     }
 
     var body: some View {
         ZStack {
             Color.clear
 
-            WithFilters {
-                switch viewModel.state {
-                case .initial, .refreshing:
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                case .content:
-                    if viewModel.elements.isEmpty {
-                        Text(L10n.noResults)
-                    } else {
-                        ElementsView(
-                            //                            groupingBinding: viewModel.library.parent._groupings != nil ? $viewModel.grouping : nil,
-                            groupingBinding: nil,
-                            viewModel: viewModel
-                        )
-                        .ignoresSafeArea()
-                        .libraryStyle(for: Element.self) { environment, _ in
-                            if rememberIndividualLibraryStyle {
-                                return (parentLibraryStyle, $parentLibraryStyle)
-                            } else {
-                                return environment
-                            }
-                        }
-                    }
-                case .error:
-                    viewModel.error.map(errorView)
-                }
-            }
+            viewModel.library.makeLibraryBody(content: contentView)
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
         .navigationTitle(viewModel.library.parent.displayTitle)
-//        .navigationBarTitleDisplayMode(.inline)
-//        .backport
-//        .onChange(of: viewModel.grouping) { _, _ in
-//            viewModel.refresh()
-//        }
+        .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .onChange(of: viewModel.environment) { _, _ in
+            viewModel.refresh()
+        }
         .onFirstAppear {
             if viewModel.state == .initial {
                 viewModel.refresh()
             }
         }
-//        .navigationBarMenuButton(
-//            isLoading: viewModel.background.is(.retrievingNextPage)
-//        ) {}
+        .navigationBarMenuButton(
+            isLoading: viewModel.background.is(.retrievingNextPage)
+        ) {}
     }
 }
 
@@ -145,19 +144,13 @@ extension PagingLibraryView {
         @StateObject
         private var collectionVGridProxy: CollectionVGridProxy = .init()
 
-        private var groupingBinding: Binding<BasicLibraryGrouping?>?
         private var libraryStyleBinding: Binding<LibraryStyle>?
 
         init(
-            groupingBinding: Binding<BasicLibraryGrouping?>?,
             viewModel: PagingLibraryViewModel<Library>
         ) {
             self._libraryStyleRegistry = ForTypeInEnvironment(\.libraryStyleRegistry)
             self.viewModel = viewModel
-
-            if let groupingBinding {
-                self.groupingBinding = groupingBinding
-            }
 
             if let libraryStyleBinding {
                 self.libraryStyleBinding = libraryStyleBinding
@@ -176,9 +169,9 @@ extension PagingLibraryView {
         private var padLayout: CollectionVGridLayout {
             switch (libraryStyle.posterDisplayType, libraryStyle.displayType) {
             case (.landscape, .grid):
-                .minWidth(200)
+                .minWidth(220)
             case (.portrait, .grid), (.square, .grid):
-                .minWidth(150)
+                .minWidth(140)
             case (_, .list):
                 .columns(libraryStyle.listColumnCount, insets: .zero, itemSpacing: 0, lineSpacing: 0)
             }
@@ -263,21 +256,21 @@ extension PagingLibraryView {
             ) { namespace in
                 select(element: element, in: namespace)
             }
-//            .posterStyle(for: BaseItemDto.self) { environment, _ in
-//                var environment = environment
-//                environment.useParentImages = false
-//                return environment
-//            }
-//        } label: {
-//            if item.showTitle {
-//                PosterButton<Element>.TitleContentView(title: item.displayTitle)
-//                    .lineLimit(1, reservesSpace: true)
-//            } else if viewModel.parent?.libraryType == .folder {
-//                PosterButton<Element>.TitleContentView(title: item.displayTitle)
-//                    .lineLimit(1, reservesSpace: true)
-//                    .hidden()
-//            }
-//        }
+            //            .posterStyle(for: BaseItemDto.self) { environment, _ in
+            //                var environment = environment
+            //                environment.useParentImages = false
+            //                return environment
+            //            }
+            //        } label: {
+            //            if item.showTitle {
+            //                PosterButton<Element>.TitleContentView(title: item.displayTitle)
+            //                    .lineLimit(1, reservesSpace: true)
+            //            } else if viewModel.parent?.libraryType == .folder {
+            //                PosterButton<Element>.TitleContentView(title: item.displayTitle)
+            //                    .lineLimit(1, reservesSpace: true)
+            //                    .hidden()
+            //            }
+            //        }
         }
 
         @ViewBuilder
@@ -337,26 +330,7 @@ extension PagingLibraryView {
                     }
                 }
 
-//                if let groupings = viewModel.library.parent._groupings?.elements,
-//                   groupings.isNotEmpty,
-//                   let groupingBinding
-//                {
-//                    MenuContentGroup(
-//                        id: "group-by"
-//                    ) {
-//                        Picker(selection: groupingBinding) {
-//                            ForEach(groupings) { grouping in
-//                                Text(grouping.displayTitle)
-//                                    .tag(grouping as LibraryGrouping?)
-//                            }
-//                        } label: {
-//                            Text("Grouping")
-//
-//                            Text(groupingBinding.wrappedValue?.displayTitle ?? L10n.unknown)
-//                        }
-//                        .pickerStyle(.menu)
-//                    }
-//                }
+                viewModel.library.menuContent(environment: $viewModel.environment)
 
                 MenuContentGroup(
                     id: "retrieve-random-element"

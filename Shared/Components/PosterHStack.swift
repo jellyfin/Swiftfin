@@ -12,12 +12,11 @@ import SwiftUI
 // TODO: check accessibility
 
 struct PosterHStack<
-    Element: Poster,
     Data: Collection,
     Header: View
->: View where Data.Element == Element, Data.Index == Int {
+>: View where Data.Element: Poster, Data.Index == Int {
 
-    @ForTypeInEnvironment<Element, AnyForPosterStyleEnvironment>(\.posterStyleRegistry)
+    @ForTypeInEnvironment<Data.Element, AnyForPosterStyleEnvironment>(\.posterStyleRegistry)
     private var posterStyleRegistry
 
     @Router
@@ -27,7 +26,7 @@ struct PosterHStack<
     private var header: Header
     // TODO: remove?
     private var type: PosterDisplayType
-    private var action: (Element, Namespace.ID) -> Void
+    private var action: (Data.Element, Namespace.ID) -> Void
 
     private var posterStyle: PosterStyleEnvironment {
         guard let first = elements.first else { return .default }
@@ -42,38 +41,45 @@ struct PosterHStack<
             columnTrailingInset: 0
         )
         #else
-        let columnCount: CGFloat = {
-            switch (posterStyle.displayType, posterStyle.size) {
-            case (.landscape, .small):
-                2
-            case (.landscape, .medium):
-                1.5
-            case (_, .small):
-                3
-            case (_, .medium):
-                2
-            }
-        }()
+        if UIDevice.isPad {
+            let minWidth: CGFloat = {
+                switch (posterStyle.displayType, posterStyle.size) {
+                case (.landscape, .small):
+                    220
+                case (.landscape, .medium):
+                    300
+                case (_, .small):
+                    140
+                case (_, .medium):
+                    200
+                }
+            }()
 
-        return .grid(
-            columns: columnCount,
-            rows: 1,
-            columnTrailingInset: 0
-        )
+            return .minimumWidth(
+                columnWidth: minWidth,
+                rows: 1
+            )
+        } else {
+            let columnCount: CGFloat = {
+                switch (posterStyle.displayType, posterStyle.size) {
+                case (.landscape, .small):
+                    2
+                case (.landscape, .medium):
+                    1.5
+                case (_, .small):
+                    3
+                case (_, .medium):
+                    2
+                }
+            }()
+
+            return .grid(
+                columns: columnCount,
+                rows: 1,
+                columnTrailingInset: 0
+            )
+        }
         #endif
-
-//        if UIDevice.isPhone {
-//            return .grid(
-//                columns: type == .landscape ? 2 : 3,
-//                rows: 1,
-//                columnTrailingInset: 0
-//            )
-//        } else {
-//            return .minimumWidth(
-//                columnWidth: type == .landscape ? 220 : 140,
-//                rows: 1
-//            )
-//        }
     }
 
     private var itemSpacing: CGFloat {
@@ -107,7 +113,7 @@ struct PosterHStack<
     }
 
     var body: some View {
-//        let _ = Self._printChanges()
+        let _ = Self._printChanges()
 
         VStack(alignment: .leading) {
 
@@ -123,7 +129,7 @@ extension PosterHStack {
     init(
         elements: Data,
         type: PosterDisplayType,
-        action: @escaping (Element, Namespace.ID) -> Void,
+        action: @escaping (Data.Element, Namespace.ID) -> Void,
         @ViewBuilder header: () -> Header
     ) {
         self.elements = elements
@@ -137,15 +143,15 @@ extension PosterHStack where Header == DefaultHeader {
 
     init(
         title: String,
+        elements: Data,
         type: PosterDisplayType,
-        items: Data,
-        action: @escaping (Element, Namespace.ID) -> Void
+        action: @escaping (Data.Element, Namespace.ID) -> Void
     ) {
         self.init(
-            elements: items,
-            header: DefaultHeader(title: title),
+            elements: elements,
             type: type,
-            action: action
+            action: action,
+            header: { DefaultHeader(title: title) }
         )
     }
 }

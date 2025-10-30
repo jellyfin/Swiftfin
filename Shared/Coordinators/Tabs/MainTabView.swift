@@ -31,6 +31,7 @@ struct MainTabView: View {
         TabItemSetting.contentGroup(.default)
         TabItemSetting.search
         TabItemSetting.media
+        TabItemSetting.liveTV
 //        TabItemSetting.contentGroup(StoredValues[.User.customContentGroup(id: "asdf")])
     }
     #else
@@ -53,7 +54,6 @@ struct MainTabView: View {
     }
     #endif
 
-    @ViewBuilder
     var body: some View {
         TabView(selection: $tabCoordinator.selectedTabID) {
             ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
@@ -92,7 +92,7 @@ struct MainTabView: View {
             @ViewBuilder
             func _label() -> some View {
                 if item.type == .program {
-                    ProgramsView.ProgramButtonContent(
+                    ProgramButtonContent(
                         program: item
                     )
                 } else {

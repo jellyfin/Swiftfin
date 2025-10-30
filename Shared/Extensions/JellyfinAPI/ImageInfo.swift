@@ -35,6 +35,10 @@ extension ImageInfo: Poster {
                 )
             )
         )
+
+        static func == (lhs: Environment, rhs: Environment) -> Bool {
+            lhs.itemID == rhs.itemID && lhs.client === rhs.client
+        }
     }
 
     var preferredPosterDisplayType: PosterDisplayType {

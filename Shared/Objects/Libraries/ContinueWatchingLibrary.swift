@@ -15,19 +15,21 @@ struct ContinueWatchingLibrary: PagingLibrary {
     init() {
         self.parent = _TitledLibraryParent(
             displayTitle: "Continue Watching",
-            libraryID: "continue-watching",
+            libraryID: "continue-watching"
         )
     }
 
     func retrievePage(
-        environment: Void,
+        environment: VoidWithDefaultValue,
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
         var parameters = Paths.GetResumeItemsParameters()
         parameters.userID = pageState.userSession.user.id
         parameters.enableUserData = true
         parameters.mediaTypes = [.video]
-        parameters.limit = 20
+
+        parameters.limit = pageState.pageSize
+        parameters.startIndex = pageState.pageOffset
 
         let request = Paths.getResumeItems(parameters: parameters)
         let response = try await pageState.userSession.client.send(request)
