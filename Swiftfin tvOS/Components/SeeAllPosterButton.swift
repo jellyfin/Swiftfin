@@ -25,7 +25,7 @@ struct SeeAllPosterButton: View {
                     Image(systemName: "chevron.right")
                         .font(.title)
 
-                    L10n.seeAll.text
+                    Text(L10n.seeAll)
                         .font(.title3)
                 }
             }

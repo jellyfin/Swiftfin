@@ -97,6 +97,22 @@ extension StoredValues.Keys {
             )
         }
 
+        static func libraryStyle(id: String?) -> Key<LibraryStyle> {
+            if let id {
+                CurrentUserKey(
+                    id,
+                    domain: "setting-libraryStyle",
+                    default: .default
+                )
+            } else {
+                CurrentUserKey(
+                    "swiftfin-default",
+                    domain: "setting-libraryStyle",
+                    default: .default
+                )
+            }
+        }
+
         static func libraryDisplayType(parentID: String?) -> Key<LibraryDisplayType> {
             CurrentUserKey(
                 parentID,
@@ -118,6 +134,14 @@ extension StoredValues.Keys {
                 parentID,
                 domain: "setting-libraryPosterType",
                 default: Defaults[.Customization.Library.posterType]
+            )
+        }
+
+        static func posterButtonStyle(parentID: String?) -> Key<PosterStyleEnvironment> {
+            CurrentUserKey(
+                parentID,
+                domain: "setting-posterButtonStyle",
+                default: .default
             )
         }
 

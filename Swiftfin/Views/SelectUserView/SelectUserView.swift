@@ -133,7 +133,7 @@ struct SelectUserView: View {
             case .none: ()
             }
 
-            await viewModel.signIn(user, pin: pin)
+            try? await viewModel.signIn(user, pin: pin)
         }
     }
 
@@ -149,7 +149,7 @@ struct SelectUserView: View {
 
         guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &policyError) else {
             viewModel.logger.critical("\(policyError!.localizedDescription)")
-            await viewModel.error(JellyfinAPIError(L10n.unableToPerformDeviceAuthFaceID))
+            try? await viewModel.error(JellyfinAPIError(L10n.unableToPerformDeviceAuthFaceID))
             throw JellyfinAPIError(L10n.deviceAuthFailed)
         }
 
@@ -157,7 +157,7 @@ struct SelectUserView: View {
             try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason)
         } catch {
             viewModel.logger.critical("\(error.localizedDescription)")
-            await viewModel.error(JellyfinAPIError(L10n.unableToPerformDeviceAuth))
+            try? await viewModel.error(JellyfinAPIError(L10n.unableToPerformDeviceAuth))
             throw JellyfinAPIError(L10n.deviceAuthFailed)
         }
     }
@@ -429,7 +429,7 @@ struct SelectUserView: View {
     @ViewBuilder
     private var connectToServerView: some View {
         VStack(spacing: 10) {
-            L10n.connectToJellyfinServerStart.text
+            Text(L10n.connectToJellyfinServerStart)
                 .frame(minWidth: 50, maxWidth: 240)
                 .multilineTextAlignment(.center)
 

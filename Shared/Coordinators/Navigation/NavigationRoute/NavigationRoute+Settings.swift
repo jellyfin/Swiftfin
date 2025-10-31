@@ -110,13 +110,25 @@ extension NavigationRoute {
     ) {
         GestureSettingsView()
     }
-    #endif
 
-    static let indicatorSettings = NavigationRoute(
-        id: "indicatorSettings"
+    static let itemSettings = NavigationRoute(
+        id: "itemSettings"
     ) {
-        IndicatorSettingsView()
+        CustomizeViewsSettings.ItemSection()
     }
+
+    static let librarySettings = NavigationRoute(
+        id: "librarySettings"
+    ) {
+        CustomizeViewsSettings.LibrarySection()
+    }
+
+    static let posterSettings = NavigationRoute(
+        id: "posterSettings"
+    ) {
+        CustomizeViewsSettings.PosterSection()
+    }
+    #endif
 
     static func itemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> NavigationRoute {
         NavigationRoute(id: "itemFilterDrawerSelector") {

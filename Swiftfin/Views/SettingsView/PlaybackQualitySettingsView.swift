@@ -29,7 +29,7 @@ struct PlaybackQualitySettingsView: View {
                     selection: $appMaximumBitrate
                 )
             } header: {
-                L10n.bitrateDefault.text
+                Text(L10n.bitrateDefault)
             } footer: {
                 VStack(alignment: .leading) {
                     Text(L10n.bitrateDefaultDescription)
@@ -54,10 +54,10 @@ struct PlaybackQualitySettingsView: View {
                         selection: $appMaximumBitrateTest
                     )
                 } header: {
-                    L10n.bitrateTest.text
+                    Text(L10n.bitrateTest)
                 } footer: {
                     VStack(alignment: .leading) {
-                        L10n.bitrateTestDisclaimer.text
+                        Text(L10n.bitrateTestDisclaimer)
                     }
                 }
             }

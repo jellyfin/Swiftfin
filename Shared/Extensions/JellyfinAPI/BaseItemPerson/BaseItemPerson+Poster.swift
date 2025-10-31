@@ -29,8 +29,11 @@ extension BaseItemPerson: Poster {
         "person.fill"
     }
 
-    func portraitImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
-
+    func portraitImageSources(
+        maxWidth: CGFloat?,
+        quality: Int?,
+        environment: VoidButWithDefaultValue
+    ) -> [ImageSource] {
         guard let client = Container.shared.currentUserSession()?.client else { return [] }
 
         // TODO: figure out what to do about screen scaling with .main being deprecated
@@ -56,9 +59,5 @@ extension BaseItemPerson: Poster {
             url: url,
             blurHash: blurHash
         )]
-    }
-
-    func transform(image: Image) -> some View {
-        image
     }
 }

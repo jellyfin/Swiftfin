@@ -39,23 +39,19 @@ struct MediaView: View {
             MediaItem(viewModel: viewModel, type: mediaType) { namespace in
                 switch mediaType {
                 case let .collectionFolder(item):
-                    let viewModel = ItemLibraryViewModel(
-                        parent: item,
-                        filters: .default
-                    )
-                    router.route(to: .library(viewModel: viewModel), in: namespace)
+                    let pagingLibrary = PagingItemLibrary(parent: item)
+                    router.route(to: .library(library: pagingLibrary), in: namespace)
                 case .downloads:
                     router.route(to: .downloadList)
                 case .favorites:
-                    // TODO: favorites should have its own view instead of a library
-                    let viewModel = ItemLibraryViewModel(
-                        title: L10n.favorites,
-                        id: "favorites",
-                        filters: .favorites
+                    router.route(
+                        to: .contentGroup(
+                            provider: FavoritesContentGroupProvider()
+                        ),
+                        in: namespace
                     )
-                    router.route(to: .library(viewModel: viewModel), in: namespace)
                 case .liveTV:
-                    router.route(to: .liveTV)
+                    router.route(to: .liveTV, in: namespace)
                 }
             }
         }
@@ -91,5 +87,30 @@ struct MediaView: View {
         .if(UIDevice.isTV) { view in
             view.toolbar(.hidden, for: .navigationBar)
         }
+    }
+}
+
+struct FavoritesContentGroupProvider: _ContentGroupProvider {
+
+    let displayTitle: String = L10n.favorites
+    let id: String = "favorites-content-group-provider"
+    let systemImage: String = "heart.fill"
+
+    func makeGroups(environment: ()) async throws -> [any _ContentGroup] {
+        try await ItemTypeContentGroupProvider(
+            itemTypes: [
+                BaseItemKind.movie,
+                .series,
+                .boxSet,
+                .episode,
+                .musicVideo,
+                .video,
+                .liveTvProgram,
+                .tvChannel,
+                .musicArtist,
+                .person,
+            ]
+        )
+        .makeGroups(environment: .init(filters: .favorites))
     }
 }

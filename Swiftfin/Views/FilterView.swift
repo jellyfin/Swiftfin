@@ -13,12 +13,8 @@ import SwiftUI
 //       - for sort order and sort by combined
 struct FilterView: View {
 
-    // MARK: - Binded Variable
-
     @Binding
     private var selection: [AnyItemFilter]
-
-    // MARK: - Environment & Observed Objects
 
     @Router
     private var router
@@ -26,37 +22,11 @@ struct FilterView: View {
     @ObservedObject
     private var viewModel: FilterViewModel
 
-    // MARK: - Filter Type
-
     private let type: ItemFilterType
-
-    // MARK: - Filter Sources
 
     private var filterSource: [AnyItemFilter] {
         viewModel.allFilters[keyPath: type.collectionAnyKeyPath]
     }
-
-    // MARK: - Body
-
-    var body: some View {
-        contentView
-            .navigationTitle(type.displayTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarCloseButton {
-                router.dismiss()
-            }
-            .topBarTrailing {
-                Button(L10n.reset) {
-                    viewModel.send(.reset(type))
-                }
-                .environment(
-                    \.isEnabled,
-                    viewModel.isFilterSelected(type: type)
-                )
-            }
-    }
-
-    // MARK: - Filter Content
 
     @ViewBuilder
     private var contentView: some View {
@@ -71,6 +41,24 @@ struct FilterView: View {
             )
         }
     }
+
+    var body: some View {
+        contentView
+            .navigationTitle(type.displayTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarCloseButton {
+                router.dismiss()
+            }
+            .topBarTrailing {
+                Button(L10n.reset) {
+                    viewModel.reset(filterType: type)
+                }
+                .environment(
+                    \.isEnabled,
+                    viewModel.isFilterSelected(type: type)
+                )
+            }
+    }
 }
 
 extension FilterView {
@@ -83,7 +71,22 @@ extension FilterView {
         let selectionBinding: Binding<[AnyItemFilter]> = Binding {
             viewModel.currentFilters[keyPath: type.collectionAnyKeyPath]
         } set: { newValue in
-            viewModel.send(.update(type, newValue))
+            switch type {
+            case .genres:
+                viewModel.currentFilters.genres = newValue.map(ItemGenre.init)
+            case .letter:
+                viewModel.currentFilters.letter = newValue.map(ItemLetter.init)
+            case .sortBy:
+                viewModel.currentFilters.sortBy = newValue.map(ItemSortBy.init)
+            case .sortOrder:
+                viewModel.currentFilters.sortOrder = newValue.map(ItemSortOrder.init)
+            case .tags:
+                viewModel.currentFilters.tags = newValue.map(ItemTag.init)
+            case .traits:
+                viewModel.currentFilters.traits = newValue.map(ItemTrait.init)
+            case .years:
+                viewModel.currentFilters.years = newValue.map(ItemYear.init)
+            }
         }
 
         self.init(

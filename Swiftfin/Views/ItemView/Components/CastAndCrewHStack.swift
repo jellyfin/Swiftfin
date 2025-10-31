@@ -28,13 +28,13 @@ extension ItemView {
             ) { person, namespace in
                 router.route(to: .item(item: .init(person: person)), in: namespace)
             }
-            .trailing {
-                SeeAllButton()
-                    .onSelect {
-                        router.route(to: .castAndCrew(people: people, itemID: nil))
-                        router.route(to: .castAndCrew(people: people, itemID: nil))
-                    }
-            }
+//            .trailing {
+//                SeeAllButton()
+//                    .onSelect {
+//                        router.route(to: .castAndCrew(people: people, itemID: nil))
+//                        router.route(to: .castAndCrew(people: people, itemID: nil))
+//                    }
+//            }
         }
     }
 }

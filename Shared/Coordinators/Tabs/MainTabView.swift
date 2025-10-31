@@ -6,7 +6,9 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Factory
+import JellyfinAPI
 import SwiftUI
 
 // TODO: move popup to router
@@ -15,17 +17,26 @@ import SwiftUI
 // TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
 
+    @Default(.Customization.showPosterLabels)
+    private var showPosterLabels
+    @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
+    private var useSeriesLandscapeBackdrop
+
+    @Default(.Customization.Library._libraryStyle)
+    private var defaultLibraryStyle
+
     #if os(iOS)
     @StateObject
     private var tabCoordinator = TabCoordinator {
-        TabItem.home
-        TabItem.search
-        TabItem.media
+        TabItemSetting.contentGroup(.default)
+        TabItemSetting.search
+        TabItemSetting.media
+//        TabItemSetting.contentGroup(StoredValues[.User.customContentGroup(id: "asdf")])
     }
     #else
     @StateObject
     private var tabCoordinator = TabCoordinator {
-        TabItem.home
+        TabItem.contentGroup(provider: DefaultContentGroupProvider())
         TabItem.library(
             title: L10n.tvShows,
             systemName: "tv",
@@ -50,6 +61,11 @@ struct MainTabView: View {
                     coordinator: tab.coordinator
                 ) {
                     tab.item.content
+                        .topBarTrailing {
+                            if tab.item.id != "settings" {
+                                SettingsBarButton()
+                            }
+                        }
                 }
                 .environmentObject(tabCoordinator)
                 .environment(\.tabItemSelected, tab.publisher)
@@ -65,5 +81,67 @@ struct MainTabView: View {
                 .tag(tab.item.id)
             }
         }
+        .contextMenu(for: BaseItemDto.self) { item in
+            Button(item.displayTitle)
+        }
+        .libraryStyle(for: BaseItemDto.self) { _, _ in
+            (defaultLibraryStyle, $defaultLibraryStyle)
+        }
+        .posterStyle(for: BaseItemDto.self) { item in
+
+            @ViewBuilder
+            func _label() -> some View {
+                if item.type == .program {
+                    ProgramsView.ProgramButtonContent(
+                        program: item
+                    )
+                } else {
+                    TitleSubtitleContentView(
+                        title: showPosterLabels ? item.displayTitle : nil,
+                        subtitle: item.subtitle
+                    )
+                }
+            }
+
+            return .init(
+                displayType: .landscape,
+                label: _label(),
+                overlay: {
+                    PosterIndicatorsOverlay(
+                        item: item,
+                        indicators: [.progress],
+                        posterDisplayType: $0
+                    )
+                },
+                size: .small
+            )
+        }
+        .posterStyle(for: BaseItemPerson.self) { person in
+            .init(
+                displayType: .portrait,
+                label: person.posterLabel,
+                size: .small
+            )
+        }
+        .customEnvironment(
+            for: BaseItemDto.self,
+            value: .init(useParent: useSeriesLandscapeBackdrop)
+        )
+    }
+}
+
+extension BaseItemDto {
+
+    @ViewBuilder
+    var posterLabel: some View {}
+}
+
+extension BaseItemPerson {
+
+    var posterLabel: some View {
+        TitleSubtitleContentView(
+            title: displayTitle,
+            subtitle: role
+        )
     }
 }

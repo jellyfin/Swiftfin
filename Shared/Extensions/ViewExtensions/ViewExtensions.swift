@@ -90,6 +90,8 @@ extension View {
         }
     }
 
+    // TODO: rename `posterDisplayStyle`
+
     /// Applies the aspect ratio, corner radius, and border for the given `PosterType`
     ///
     /// Note: will not apply `posterShadow`
@@ -101,13 +103,13 @@ extension View {
         switch type {
         case .landscape:
             posterAspectRatio(type, contentMode: contentMode)
-            #if !os(tvOS)
+            #if os(iOS)
                 .posterBorder()
                 .posterCornerRadius(type)
             #endif
         case .portrait:
             posterAspectRatio(type, contentMode: contentMode)
-            #if !os(tvOS)
+            #if os(iOS)
                 .posterBorder()
                 .posterCornerRadius(type)
             #endif
@@ -139,18 +141,15 @@ extension View {
     func posterCornerRadius(
         _ type: PosterDisplayType
     ) -> some View {
-        #if !os(tvOS)
         switch type {
         case .landscape:
             cornerRadius(ratio: 1 / 30, of: \.width)
         case .portrait, .square:
             cornerRadius(ratio: 0.0375, of: \.width)
         }
-        #else
-        self
-        #endif
     }
 
+    @ViewBuilder
     func posterBorder() -> some View {
         overlay {
             ContainerRelativeShape()
@@ -162,6 +161,7 @@ extension View {
         }
     }
 
+    @ViewBuilder
     func posterShadow() -> some View {
         shadow(radius: 4, y: 2)
     }
@@ -191,7 +191,7 @@ extension View {
         dismissAction: @escaping () -> Void = {}
     ) -> some View {
         alert(
-            L10n.error.text,
+            Text(L10n.error),
             isPresented: .constant(error.wrappedValue != nil),
             presenting: error.wrappedValue
         ) { _ in
@@ -424,6 +424,14 @@ extension View {
 
     func onSceneWillEnterForeground(_ action: @escaping () -> Void) -> some View {
         onNotification(.sceneWillEnterForeground, perform: action)
+    }
+
+    @ViewBuilder
+    func preference<Key: PreferenceKey, V>(
+        key: Key.Type,
+        @ArrayBuilder<V> value: () -> [V]
+    ) -> some View where Key.Value == [V] {
+        preference(key: Key.self, value: value())
     }
 
     func scrollIfLargerThanContainer(padding: CGFloat = 0) -> some View {

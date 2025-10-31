@@ -81,7 +81,7 @@ struct ConnectToServerView: View {
     private var localServersSection: some View {
         Section(L10n.localServers) {
             if viewModel.localServers.isEmpty {
-                L10n.noLocalServersFound.text
+                Text(L10n.noLocalServersFound)
                     .font(.callout)
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity)
@@ -145,7 +145,7 @@ struct ConnectToServerView: View {
                 }
             }
             .alert(
-                L10n.server.text,
+                Text(L10n.server),
                 isPresented: $isPresentingDuplicateServer,
                 presenting: duplicateServer
             ) { server in
@@ -156,7 +156,7 @@ struct ConnectToServerView: View {
                     router.dismiss()
                 }
             } message: { server in
-                L10n.serverAlreadyExistsPrompt(server.name).text
+                Text(L10n.serverAlreadyExistsPrompt(server.name))
             }
             .errorMessage($viewModel.error)
     }

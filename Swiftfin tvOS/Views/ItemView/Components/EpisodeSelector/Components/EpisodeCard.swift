@@ -24,22 +24,24 @@ extension SeriesEpisodeSelector {
         @ViewBuilder
         private var overlayView: some View {
             ZStack {
-                if let progressLabel = episode.progressLabel {
-                    LandscapePosterProgressBar(
-                        title: progressLabel,
-                        progress: (episode.userData?.playedPercentage ?? 0) / 100
+                if let progress = episode.progress {
+                    PosterProgressBar(
+                        title: "Test",
+                        progress: progress,
+                        posterDisplayType: .landscape
                     )
-                } else if episode.userData?.isPlayed ?? false {
-                    ZStack(alignment: .bottomTrailing) {
-                        Color.clear
-
-                        Image(systemName: "checkmark.circle.fill")
-                            .resizable()
-                            .frame(width: 30, height: 30, alignment: .bottomTrailing)
-                            .symbolRenderingMode(.palette)
-                            .foregroundStyle(.white, .black)
-                            .padding()
-                    }
+                } else if episode.userData?.isPlayed == true {
+                    Image(systemName: "checkmark.circle.fill")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(.white, .black)
+                        .padding()
+                        .frame(
+                            maxWidth: .infinity,
+                            maxHeight: .infinity,
+                            alignment: .bottomTrailing
+                        )
                 }
 
                 if isFocused {
@@ -62,8 +64,12 @@ extension SeriesEpisodeSelector {
         var body: some View {
             VStack(alignment: .leading) {
                 Button {
-                    guard let mediaSource = episode.mediaSources?.first else { return }
-//                    router.route(to: .videoPlayer(manager: OnlineVideoPlayerManager(item: episode, mediaSource: mediaSource)))
+                    router.route(
+                        to: .videoPlayer(
+                            item: episode,
+                            queue: EpisodeMediaPlayerQueue(episode: episode)
+                        )
+                    )
                 } label: {
                     ZStack {
                         Color.clear

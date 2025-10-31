@@ -61,8 +61,4 @@ extension ChannelProgram: Poster {
     var systemImage: String {
         channel.systemImage
     }
-
-    func transform(image: Image) -> some View {
-        image
-    }
 }

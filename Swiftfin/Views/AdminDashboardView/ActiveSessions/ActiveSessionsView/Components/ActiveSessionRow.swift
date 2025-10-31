@@ -115,7 +115,10 @@ extension ActiveSessionsView {
         }
 
         var body: some View {
-            ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
+            ListRow(
+                insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding),
+                action: onSelect
+            ) {
                 rowLeading
             } content: {
                 if let nowPlayingItem = session.nowPlayingItem, let playState = session.playState {
@@ -124,7 +127,6 @@ extension ActiveSessionsView {
                     idleSessionDetails
                 }
             }
-            .onSelect(perform: onSelect)
         }
     }
 }

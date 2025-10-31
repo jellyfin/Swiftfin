@@ -41,7 +41,7 @@ struct StepperView<Value: CustomStringConvertible & Strideable>: View {
             }
             .frame(maxHeight: .infinity)
 
-            formatter(updatedValue).text
+            Text(formatter(updatedValue))
                 .font(.title)
                 .frame(height: 250)
 

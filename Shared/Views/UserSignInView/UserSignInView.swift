@@ -90,14 +90,14 @@ struct UserSignInView: View {
                     logger.critical("QuickConnect called without necessary action!")
                     throw JellyfinAPIError(L10n.unknownError)
                 }
-                await viewModel.signInQuickConnect(
+                try? await viewModel.signInQuickConnect(
                     secret: secret
                 )
             } catch is CancellationError {
                 // ignore
             } catch {
                 logger.error("QuickConnect failed with error: \(error.localizedDescription)")
-                await viewModel.error(JellyfinAPIError(L10n.taskFailed))
+                try? await viewModel.error(JellyfinAPIError(L10n.taskFailed))
             }
         }
     }
@@ -206,7 +206,7 @@ struct UserSignInView: View {
     private var publicUsersSection: some View {
         Section(L10n.publicUsers) {
             if viewModel.publicUsers.isEmpty {
-                L10n.noPublicUsers.text
+                Text(L10n.noPublicUsers)
                     .font(.callout)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
