@@ -81,7 +81,7 @@ struct ServerActivityDetailsView: View {
         )
         .navigationBarTitleDisplayMode(.inline)
         .onFirstAppear {
-            viewModel.send(.refresh)
+            viewModel.refresh()
         }
     }
 }
