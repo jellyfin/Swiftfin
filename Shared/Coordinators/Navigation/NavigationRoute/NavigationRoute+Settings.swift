@@ -13,9 +13,17 @@ import SwiftUI
 extension NavigationRoute {
 
     #if os(iOS)
-    static func actionButtonSelector(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>) -> NavigationRoute {
+    static func actionBarButtonSelector(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>) -> NavigationRoute {
         NavigationRoute(id: "actionButtonSelector") {
             ActionButtonSelectorView(selection: selectedButtonsBinding)
+                .navigationTitle(L10n.barButtons.localizedCapitalized)
+        }
+    }
+
+    static func actionMenuButtonSelector(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>) -> NavigationRoute {
+        NavigationRoute(id: "actionButtonSelector") {
+            ActionButtonSelectorView(selection: selectedButtonsBinding)
+                .navigationTitle(L10n.menuButtons.localizedCapitalized)
         }
     }
 
@@ -31,7 +39,7 @@ extension NavigationRoute {
         style: .sheet
     ) {
         CustomDeviceProfileSettingsView.EditCustomDeviceProfileView(profile: nil)
-            .navigationTitle(L10n.customProfile)
+            .navigationTitle(L10n.customProfile.localizedCapitalized)
     }
 
     static let customDeviceProfileSettings = NavigationRoute(
@@ -60,7 +68,7 @@ extension NavigationRoute {
             style: .sheet
         ) {
             CustomDeviceProfileSettingsView.EditCustomDeviceProfileView(profile: profile)
-                .navigationTitle(L10n.customProfile)
+                .navigationTitle(L10n.customProfile.localizedCapitalized)
         }
     }
 

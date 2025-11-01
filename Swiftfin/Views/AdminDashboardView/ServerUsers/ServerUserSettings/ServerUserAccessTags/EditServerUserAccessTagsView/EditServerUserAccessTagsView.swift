@@ -76,7 +76,7 @@ struct EditServerUserAccessTagsView: View {
                 errorView(with: error)
             }
         }
-        .navigationTitle(L10n.accessTags)
+        .navigationTitle(L10n.accessTags.localizedCapitalized)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(isEditing)
         .toolbar {
@@ -168,7 +168,7 @@ struct EditServerUserAccessTagsView: View {
     private var contentView: some View {
         List {
             ListTitleSection(
-                L10n.accessTags,
+                L10n.accessTags.localizedCapitalized,
                 description: L10n.accessTagsDescription
             ) {
                 UIApplication.shared.open(.jellyfinDocsManagingUsers)
