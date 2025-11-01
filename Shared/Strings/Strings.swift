@@ -274,8 +274,8 @@ internal enum L10n {
   internal static let castAndCrew = L10n.tr("Localizable", "castAndCrew", fallback: "Cast & crew")
   /// Category
   internal static let category = L10n.tr("Localizable", "category", fallback: "Category")
-  /// Change PIN
-  internal static let changePin = L10n.tr("Localizable", "changePin", fallback: "Change PIN")
+  /// Change pin
+  internal static let changePin = L10n.tr("Localizable", "changePin", fallback: "Change pin")
   /// Channel
   internal static let channel = L10n.tr("Localizable", "channel", fallback: "Channel")
   /// Channel display
@@ -382,9 +382,9 @@ internal enum L10n {
   internal static let createAPIKeyCapitalized = L10n.tr("Localizable", "createAPIKeyCapitalized", fallback: "Create API Key")
   /// Enter the application name for the new API key.
   internal static let createAPIKeyMessage = L10n.tr("Localizable", "createAPIKeyMessage", fallback: "Enter the application name for the new API key.")
-  /// Create a PIN to sign in to %@ on this device
+  /// Create a pin to sign in to %@ on this device
   internal static func createPinForUser(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "createPinForUser", String(describing: p1), fallback: "Create a PIN to sign in to %@ on this device")
+    return L10n.tr("Localizable", "createPinForUser", String(describing: p1), fallback: "Create a pin to sign in to %@ on this device")
   }
   /// Creator
   internal static let creator = L10n.tr("Localizable", "creator", fallback: "Creator")
@@ -602,11 +602,11 @@ internal enum L10n {
   internal static let enterCustomMaxSessions = L10n.tr("Localizable", "enterCustomMaxSessions", fallback: "Enter custom max sessions")
   /// Enter the episode number.
   internal static let enterEpisodeNumber = L10n.tr("Localizable", "enterEpisodeNumber", fallback: "Enter the episode number.")
-  /// Enter PIN
-  internal static let enterPin = L10n.tr("Localizable", "enterPin", fallback: "Enter PIN")
-  /// Enter PIN for %@
+  /// Enter pin
+  internal static let enterPin = L10n.tr("Localizable", "enterPin", fallback: "Enter pin")
+  /// Enter pin for %@
   internal static func enterPinForUser(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "enterPinForUser", String(describing: p1), fallback: "Enter PIN for %@")
+    return L10n.tr("Localizable", "enterPinForUser", String(describing: p1), fallback: "Enter pin for %@")
   }
   /// Enter the season number.
   internal static let enterSeasonNumber = L10n.tr("Localizable", "enterSeasonNumber", fallback: "Enter the season number.")
@@ -740,9 +740,9 @@ internal enum L10n {
   internal static let imageSource = L10n.tr("Localizable", "imageSource", fallback: "Image source")
   /// Inactive
   internal static let inactive = L10n.tr("Localizable", "inactive", fallback: "Inactive")
-  /// Incorrect PIN for %@
+  /// Incorrect pin for %@
   internal static func incorrectPinForUser(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "incorrectPinForUser", String(describing: p1), fallback: "Incorrect PIN for %@")
+    return L10n.tr("Localizable", "incorrectPinForUser", String(describing: p1), fallback: "Incorrect pin for %@")
   }
   /// Index
   internal static let index = L10n.tr("Localizable", "index", fallback: "Index")
@@ -1078,8 +1078,8 @@ internal enum L10n {
   internal static let photoAlbums = L10n.tr("Localizable", "photoAlbums", fallback: "Photo albums")
   /// Photos
   internal static let photos = L10n.tr("Localizable", "photos", fallback: "Photos")
-  /// PIN
-  internal static let pin = L10n.tr("Localizable", "pin", fallback: "PIN")
+  /// Pin
+  internal static let pin = L10n.tr("Localizable", "pin", fallback: "Pin")
   /// Pinch
   internal static let pinch = L10n.tr("Localizable", "pinch", fallback: "Pinch")
   /// Play
@@ -1238,8 +1238,8 @@ internal enum L10n {
   internal static func requireDeviceAuthForUser(_ p1: Any) -> String {
     return L10n.tr("Localizable", "requireDeviceAuthForUser", String(describing: p1), fallback: "Require device authentication to sign in to %@ on this device.")
   }
-  /// Require a local PIN when signing in to the user. This PIN is unrecoverable.
-  internal static let requirePinDescription = L10n.tr("Localizable", "requirePinDescription", fallback: "Require a local PIN when signing in to the user. This PIN is unrecoverable.")
+  /// Require a local pin when signing in to the user. This pin is unrecoverable.
+  internal static let requirePinDescription = L10n.tr("Localizable", "requirePinDescription", fallback: "Require a local pin when signing in to the user. This pin is unrecoverable.")
   /// Reset
   internal static let reset = L10n.tr("Localizable", "reset", fallback: "Reset")
   /// Reset the filter values to none.
@@ -1352,10 +1352,10 @@ internal enum L10n {
   internal static let sessions = L10n.tr("Localizable", "sessions", fallback: "Sessions")
   /// Set
   internal static let `set` = L10n.tr("Localizable", "set", fallback: "Set")
-  /// Set PIN
-  internal static let setPin = L10n.tr("Localizable", "setPin", fallback: "Set PIN")
-  /// Set a hint when prompting for the PIN.
-  internal static let setPinHintDescription = L10n.tr("Localizable", "setPinHintDescription", fallback: "Set a hint when prompting for the PIN.")
+  /// Set pin
+  internal static let setPin = L10n.tr("Localizable", "setPin", fallback: "Set pin")
+  /// Set a hint when prompting for the pin.
+  internal static let setPinHintDescription = L10n.tr("Localizable", "setPinHintDescription", fallback: "Set a hint when prompting for the pin.")
   /// Settings
   internal static let settings = L10n.tr("Localizable", "settings", fallback: "Settings")
   /// Short
@@ -1606,8 +1606,8 @@ internal enum L10n {
   internal static let username = L10n.tr("Localizable", "username", fallback: "Username")
   /// A username is required
   internal static let usernameRequired = L10n.tr("Localizable", "usernameRequired", fallback: "A username is required")
-  /// This user will require a PIN.
-  internal static let userPinRequiredDescription = L10n.tr("Localizable", "userPinRequiredDescription", fallback: "This user will require a PIN.")
+  /// This user will require a pin.
+  internal static let userPinRequiredDescription = L10n.tr("Localizable", "userPinRequiredDescription", fallback: "This user will require a pin.")
   /// User %@ requires device authentication
   internal static func userRequiresDeviceAuthentication(_ p1: Any) -> String {
     return L10n.tr("Localizable", "userRequiresDeviceAuthentication", String(describing: p1), fallback: "User %@ requires device authentication")
