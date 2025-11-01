@@ -103,7 +103,7 @@ extension ItemView {
             }
         }
 
-        // MARK: playLocalTrailer(_:)
+        // MARK: Play Local Trailer
 
         private func playLocalTrailer(_ trailer: BaseItemDto) {
             guard let selectedMediaSource = trailer.mediaSources?.first else {
@@ -119,7 +119,7 @@ extension ItemView {
             router.route(to: .videoPlayer(manager: manager))
         }
 
-        // MARK: playExternalTrailer(_:)
+        // MARK: Play External Trailer
 
         private func playExternalTrailer(_ trailer: MediaURL) {
             guard let urlString = trailer.url else {
