@@ -7,31 +7,32 @@
 //
 
 import Combine
+import Dispatch
 import JellyfinAPI
 
-final class ServerActivityDetailViewModel: ViewModel, Stateful {
+@MainActor
+@Stateful
+final class ServerActivityDetailViewModel: ViewModel {
 
-    // MARK: - Action
-
-    enum Action: Equatable {
+    @CasePathable
+    enum Action {
         case refresh
+
+        var transition: Transition {
+            .loop(.refreshing)
+                .whenBackground(.refreshing)
+        }
     }
 
-    // MARK: - State
+    enum BackgroundState {
+        case refreshing
+    }
 
-    enum State: Hashable {
-        case error(JellyfinAPIError)
+    enum State {
         case initial
+        case error
+        case refreshing
     }
-
-    // MARK: - Stateful Variables
-
-    @Published
-    var backgroundStates: Set<BackgroundState> = []
-    @Published
-    var state: State = .initial
-
-    // MARK: - Published Variables
 
     @Published
     var log: ActivityLogEntry
@@ -40,62 +41,34 @@ final class ServerActivityDetailViewModel: ViewModel, Stateful {
     @Published
     var item: BaseItemDto?
 
-    // MARK: - Cancellable
-
-    private var getActivityCancellable: AnyCancellable?
-
-    // MARK: - Initialize
-
     init(log: ActivityLogEntry, user: UserDto?) {
         self.log = log
         self.user = user
+        super.init()
     }
 
-    // MARK: - Respond
+    @Function(\Action.Cases.refresh)
+    private func _refresh() async {
+        async let fetchedItem: BaseItemDto? = getItem(for: log.itemID)
+        async let fetchedUser: UserDto? = getUser(for: log.userID)
 
-    func respond(to action: Action) -> State {
-        switch action {
-        case .refresh:
-            getActivityCancellable?.cancel()
-            getActivityCancellable = Task {
-                do {
-
-                    if let itemID = log.itemID {
-                        self.item = try await getItem(for: itemID)
-                    } else {
-                        self.item = nil
-                    }
-
-                    if let userID = log.userID {
-                        self.user = try await getUser(for: userID)
-                    } else {
-                        self.user = nil
-                    }
-
-                } catch {
-                    await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return .initial
-        }
+        let results = try? await (fetchedItem, fetchedUser)
+        item = results?.0
+        user = results?.1
     }
 
-    // MARK: - Get the Activity's Item
+    private func getItem(for itemID: String?) async throws -> BaseItemDto? {
+        guard let itemID else { return nil }
 
-    private func getItem(for itemID: String) async throws -> BaseItemDto? {
         let request = Paths.getItem(itemID: itemID)
         let response = try await userSession.client.send(request)
 
         return response.value
     }
 
-    // MARK: - Get the Activity's User
+    private func getUser(for userID: String?) async throws -> UserDto? {
+        guard let userID else { return nil }
 
-    private func getUser(for userID: String) async throws -> UserDto? {
         let request = Paths.getUserByID(userID: userID)
         let response = try await userSession.client.send(request)
 

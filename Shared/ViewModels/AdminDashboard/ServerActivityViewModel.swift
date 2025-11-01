@@ -11,6 +11,7 @@ import Foundation
 import IdentifiedCollections
 import JellyfinAPI
 
+// TODO: Change with PagingLibraryViewModel changes
 @MainActor
 final class ServerActivityViewModel: PagingLibraryViewModel<ActivityLogEntry> {
 
