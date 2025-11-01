@@ -422,11 +422,24 @@ struct PagingLibraryView<Element: Poster>: View {
         .onChange(of: viewModel.filterViewModel?.currentFilters) { newValue in
             guard let newValue, let id = viewModel.parent?.id else { return }
 
+            var newStoredFilters = StoredValues[.User.libraryFilters(parentID: id)]
+
             if Defaults[.Customization.Library.rememberSort] {
-                let newStoredFilters = StoredValues[.User.libraryFilters(parentID: id)]
+                newStoredFilters = newStoredFilters
                     .mutating(\.sortBy, with: newValue.sortBy)
                     .mutating(\.sortOrder, with: newValue.sortOrder)
+            }
 
+            if Defaults[.Customization.Library.rememberFiltering] {
+                newStoredFilters = newStoredFilters
+                    .mutating(\.genres, with: newValue.genres)
+                    .mutating(\.letter, with: newValue.letter)
+                    .mutating(\.tags, with: newValue.tags)
+                    .mutating(\.traits, with: newValue.traits)
+                    .mutating(\.years, with: newValue.years)
+            }
+
+            if Defaults[.Customization.Library.rememberSort] || Defaults[.Customization.Library.rememberFiltering] {
                 StoredValues[.User.libraryFilters(parentID: id)] = newStoredFilters
             }
         }
