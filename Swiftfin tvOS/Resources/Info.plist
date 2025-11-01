@@ -18,6 +18,12 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>CFBundledisplayTitle</key>
 	<string>Jellyfin</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>youtube</string>
+		<string>vimeo</string>
+		<string>com.apple.tv</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
