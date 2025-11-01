@@ -127,12 +127,15 @@ extension ItemView {
                 return
             }
 
-            let external = ExternalTrailerSource(urlString)
+            guard let externalURL = ExternalTrailerURL(string: urlString) else {
+                error = JellyfinAPIError(L10n.unableToOpenTrailer)
+                return
+            }
 
-            if let applicationURL = external.url, external.isValid {
-                UIApplication.shared.open(applicationURL) { success in
+            if externalURL.canBeOpened {
+                UIApplication.shared.open(externalURL.deepLink) { success in
                     if !success {
-                        error = JellyfinAPIError(L10n.unableToOpenTrailerApp(external.type.displayTitle))
+                        error = JellyfinAPIError(L10n.unableToOpenTrailerApp(externalURL.source.displayTitle))
                     }
                 }
             } else {

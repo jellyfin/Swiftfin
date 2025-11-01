@@ -9,191 +9,186 @@
 import Foundation
 import SwiftUI
 
-struct ExternalTrailerSource {
-    let type: SourceType
-    let url: URL?
+struct ExternalTrailerURL {
 
-    var isValid: Bool {
-        guard let url else { return false }
-        return UIApplication.shared.canOpenURL(url)
+    let source: Source
+    let deepLink: URL
+
+    var canBeOpened: Bool {
+        UIApplication.shared.canOpenURL(deepLink)
     }
 
-    init(_ urlString: String) {
-        guard let url = URL(string: urlString),
+    init?(string: String) {
+        guard let url = URL(string: string),
               let host = url.host?.lowercased()
         else {
-            self.type = .unknown
-            self.url = nil
+            return nil
+        }
+
+        for source in Source.allCases where source.hostPatterns.contains(where: { host.contains($0) }) {
+            if source.requiresPathValidation, !url.path.contains(source.requiredPathComponent) {
+                continue
+            }
+
+            guard let deepLink = source.buildDeepLink(from: url) else {
+                continue
+            }
+
+            self.source = source
+            self.deepLink = url
             return
         }
 
-        for source in SourceType.allCases where source != .unknown {
-            if source.hostPatterns.contains(where: { host.contains($0) }) {
-                if source.requiresPathValidation && !url.path.contains(source.requiredPathComponent) {
-                    continue
-                }
-                self.type = source
-                self.url = source.buildDeepLink(from: url)
-                return
-            }
-        }
-
-        self.type = .unknown
-        self.url = nil
+        return nil
     }
 }
 
-extension ExternalTrailerSource {
+extension ExternalTrailerURL {
 
-    enum SourceType: CaseIterable {
-        case youtube
-        case vimeo
-        case appleTV
-        case itunes
-        case netflix
-        case disneyPlus
-        case amazonPrime
-        case hbo
-        case hulu
-        case peacock
-        case paramountPlus
-        case dailymotion
-        case twitch
-        case imdb
-        case tmdb
-        case unknown
+    struct Source: Hashable, Identifiable {
 
-        var displayTitle: String {
-            switch self {
-            case .youtube:
-                return "YouTube"
-            case .vimeo:
-                return "Vimeo"
-            case .appleTV:
-                return "Apple TV"
-            case .itunes:
-                return "iTunes"
-            case .netflix:
-                return "Netflix"
-            case .disneyPlus:
-                return "Disney+"
-            case .amazonPrime:
-                return "Amazon Prime Video"
-            case .hbo:
-                return "HBO"
-            case .hulu:
-                return "Hulu"
-            case .peacock:
-                return "Peacock"
-            case .paramountPlus:
-                return "Paramount+"
-            case .dailymotion:
-                return "Dailymotion"
-            case .twitch:
-                return "Twitch"
-            case .imdb:
-                return "IMDb"
-            case .tmdb:
-                return "TMDb"
-            case .unknown:
-                return L10n.unknown
-            }
-        }
+        let id: String
 
-        var deepLinkScheme: String {
-            switch self {
-            case .youtube:
-                return "youtube://"
-            case .vimeo:
-                return "vimeo://"
-            case .appleTV:
-                return "com.apple.tv://"
-            case .itunes:
-                return "itms-apps://"
-            case .netflix:
-                return "netflix://"
-            case .disneyPlus:
-                return "disneyplus://"
-            case .amazonPrime:
-                return "primevideo://"
-            case .hbo:
-                return "hbomax://"
-            case .hulu:
-                return "hulu://"
-            case .peacock:
-                return "peacocktv://"
-            case .paramountPlus:
-                return "paramountplus://"
-            case .dailymotion:
-                return "dailymotion://"
-            case .twitch:
-                return "twitch://"
-            case .imdb:
-                return "imdb://"
-            case .tmdb:
-                return "tmdb://"
-            case .unknown:
-                return ""
-            }
-        }
+        let displayTitle: String
+        let deepLinkScheme: String
+        let hostPatterns: [String]
+        let requiresPathValidation: Bool
+        let requiredPathComponent: String
 
-        var hostPatterns: [String] {
-            switch self {
-            case .youtube:
-                return ["youtube.com", "youtu.be", "m.youtube.com"]
-            case .vimeo:
-                return ["vimeo.com"]
-            case .appleTV:
-                return ["apple.com"]
-            case .itunes:
-                return ["apple.com"]
-            case .netflix:
-                return ["netflix.com"]
-            case .disneyPlus:
-                return ["disneyplus.com"]
-            case .amazonPrime:
-                return ["amazon.com", "primevideo.com"]
-            case .hbo:
-                return ["hbomax.com", "max.com"]
-            case .hulu:
-                return ["hulu.com"]
-            case .peacock:
-                return ["peacocktv.com"]
-            case .paramountPlus:
-                return ["paramountplus.com"]
-            case .dailymotion:
-                return ["dailymotion.com"]
-            case .twitch:
-                return ["twitch.tv"]
-            case .imdb:
-                return ["imdb.com"]
-            case .tmdb:
-                return ["themoviedb.org"]
-            case .unknown:
-                return []
-            }
-        }
-
-        var requiresPathValidation: Bool {
-            switch self {
-            case .amazonPrime, .appleTV, .itunes:
-                return true
-            default:
-                return false
-            }
-        }
-
-        var requiredPathComponent: String {
-            switch self {
-            case .amazonPrime: return "/video"
-            case .appleTV: return "/tv-app/"
-            case .itunes: return "/itunes/"
-            default: return ""
-            }
+        fileprivate init(
+            displayTitle: String,
+            deepLinkScheme: String,
+            hostPatterns: [String],
+            requiresPathValidation: Bool = false,
+            requiredPathComponent: String = ""
+        ) {
+            self.id = displayTitle
+            self.displayTitle = displayTitle
+            self.deepLinkScheme = deepLinkScheme
+            self.hostPatterns = hostPatterns
+            self.requiresPathValidation = requiresPathValidation
+            self.requiredPathComponent = requiredPathComponent
         }
 
         func buildDeepLink(from url: URL) -> URL? {
             URL(string: "\(deepLinkScheme)\(url.absoluteString)")
         }
     }
+}
+
+extension ExternalTrailerURL.Source {
+
+    static let youtube = Self(
+        displayTitle: "YouTube",
+        deepLinkScheme: "youtube://",
+        hostPatterns: ["youtube.com", "youtu.be", "m.youtube.com"]
+    )
+
+    static let vimeo = Self(
+        displayTitle: "Vimeo",
+        deepLinkScheme: "vimeo://",
+        hostPatterns: ["vimeo.com"]
+    )
+
+    static let appleTV = Self(
+        displayTitle: "Apple TV",
+        deepLinkScheme: "com.apple.tv://",
+        hostPatterns: ["apple.com"],
+        requiresPathValidation: true,
+        requiredPathComponent: "/tv-app/"
+    )
+
+    static let itunes = Self(
+        displayTitle: "iTunes",
+        deepLinkScheme: "itms-apps://",
+        hostPatterns: ["apple.com"],
+        requiresPathValidation: true,
+        requiredPathComponent: "/itunes/"
+    )
+
+    static let netflix = Self(
+        displayTitle: "Netflix",
+        deepLinkScheme: "netflix://",
+        hostPatterns: ["netflix.com"]
+    )
+
+    static let disneyPlus = Self(
+        displayTitle: "Disney+",
+        deepLinkScheme: "disneyplus://",
+        hostPatterns: ["disneyplus.com"]
+    )
+
+    static let amazonPrime = Self(
+        displayTitle: "Amazon Prime Video",
+        deepLinkScheme: "primevideo://",
+        hostPatterns: ["amazon.com", "primevideo.com"],
+        requiresPathValidation: true,
+        requiredPathComponent: "/video"
+    )
+
+    static let hbo = Self(
+        displayTitle: "HBO",
+        deepLinkScheme: "hbomax://",
+        hostPatterns: ["hbomax.com", "max.com"]
+    )
+
+    static let hulu = Self(
+        displayTitle: "Hulu",
+        deepLinkScheme: "hulu://",
+        hostPatterns: ["hulu.com"]
+    )
+
+    static let peacock = Self(
+        displayTitle: "Peacock",
+        deepLinkScheme: "peacocktv://",
+        hostPatterns: ["peacocktv.com"]
+    )
+
+    static let paramountPlus = Self(
+        displayTitle: "Paramount+",
+        deepLinkScheme: "paramountplus://",
+        hostPatterns: ["paramountplus.com"]
+    )
+
+    static let dailymotion = Self(
+        displayTitle: "Dailymotion",
+        deepLinkScheme: "dailymotion://",
+        hostPatterns: ["dailymotion.com"]
+    )
+
+    static let twitch = Self(
+        displayTitle: "Twitch",
+        deepLinkScheme: "twitch://",
+        hostPatterns: ["twitch.tv"]
+    )
+
+    static let imdb = Self(
+        displayTitle: "IMDb",
+        deepLinkScheme: "imdb://",
+        hostPatterns: ["imdb.com"]
+    )
+
+    static let tmdb = Self(
+        displayTitle: "TMDb",
+        deepLinkScheme: "tmdb://",
+        hostPatterns: ["themoviedb.org"]
+    )
+
+    static var allCases: [Self] = [
+        .youtube,
+        .vimeo,
+        .appleTV,
+        .itunes,
+        .netflix,
+        .disneyPlus,
+        .amazonPrime,
+        .hbo,
+        .hulu,
+        .peacock,
+        .paramountPlus,
+        .dailymotion,
+        .twitch,
+        .imdb,
+        .tmdb,
+    ]
 }
