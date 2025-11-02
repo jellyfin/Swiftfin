@@ -133,7 +133,7 @@ extension CustomDeviceProfileSettingsView {
                         Label(L10n.replaceDeviceProfileWarning, systemImage: "exclamationmark.circle.fill")
                     }
                 }
-                .navigationTitle(L10n.customProfile)
+                .navigationTitle(L10n.customProfile.localizedCapitalized)
                 .alert(L10n.profileNotSaved, isPresented: $isPresentingNotSaved) {
                     Button(L10n.close, role: .destructive) {
                         router.dismiss()

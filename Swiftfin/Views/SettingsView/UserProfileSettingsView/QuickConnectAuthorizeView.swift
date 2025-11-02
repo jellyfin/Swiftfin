@@ -109,7 +109,7 @@ struct QuickConnectAuthorizeView: View {
         }
         .interactiveDismissDisabled(viewModel.state == .authorizing)
         .navigationBarBackButtonHidden(viewModel.state == .authorizing)
-        .navigationTitle(L10n.quickConnect.text)
+        .navigationTitle(L10n.quickConnect)
         .onFirstAppear {
             isCodeFocused = true
         }
