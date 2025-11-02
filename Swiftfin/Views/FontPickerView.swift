@@ -31,6 +31,6 @@ struct FontPickerView: View {
                 .foregroundColor(.primary)
                 .font(.custom(fontFamily.displayTitle, size: 18))
         }
-        .navigationTitle(L10n.subtitleFont)
+        .navigationTitle(L10n.subtitleFont.localizedCapitalized)
     }
 }

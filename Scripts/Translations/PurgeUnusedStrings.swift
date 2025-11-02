@@ -25,7 +25,7 @@ let localizationRegex = #/^\"(?<key>[^\"]+)\"\s*=\s*\"(?<value>[^\"]+)\";$/#
 let usageRegex = #/L10n\.(?<key>[a-zA-Z0-9_]+)/#
 
 // Attempt to load the localization file's content
-guard let localizationContent = try? String(contentsOfFile: localizationFile, encoding: .utf8) else {
+guard let localizationContent = try? String(contentsOfFile: localizationFile, encoding: .utf16) else {
     print("Unable to read localization file at \(localizationFile)")
     exit(1)
 }
@@ -103,7 +103,7 @@ let updatedContent = sortedKeys.map { "/// \(localizationEntries[$0]!)\n\"\($0)\
 
 // Attempt to write the updated content back to the localization file
 do {
-    try updatedContent.write(toFile: localizationFile, atomically: true, encoding: .utf8)
+    try updatedContent.write(toFile: localizationFile, atomically: true, encoding: .utf16)
     print("Localization file updated. Removed \(unusedKeys.count) unused keys.")
 } catch {
     print("Error: Failed to write updated localization file.")
