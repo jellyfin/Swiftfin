@@ -37,7 +37,16 @@ extension Color {
     static let tertiarySystemFill = Color(UIColor.tertiarySystemFill)
     #endif
 
-    func equals(_ other: Color) -> Bool {
-        self.uiColor.cgColor == other.uiColor.cgColor
+    func isEqual(to other: Color, tolerance: CGFloat = 0.001) -> Bool {
+        var r1: CGFloat = 0, g1: CGFloat = 0, b1: CGFloat = 0, a1: CGFloat = 0
+        var r2: CGFloat = 0, g2: CGFloat = 0, b2: CGFloat = 0, a2: CGFloat = 0
+
+        UIColor(self).getRed(&r1, green: &g1, blue: &b1, alpha: &a1)
+        UIColor(other).getRed(&r2, green: &g2, blue: &b2, alpha: &a2)
+
+        return abs(r1 - r2) < tolerance &&
+            abs(g1 - g2) < tolerance &&
+            abs(b1 - b2) < tolerance &&
+            abs(a1 - a2) < tolerance
     }
 }

@@ -84,11 +84,26 @@ struct SettingsView: View {
 //                        }
                 }
 
-                Section(L10n.appearance) {
-                    ChevronButton(L10n.accentColor)
-                        .onSelect {
-                            router.route(to: \.accentColorSettings)
+                Section {
+                    Button {
+                        router.route(to: \.accentColorSettings)
+                    } label: {
+                        HStack(spacing: 8) {
+                            Text(L10n.accentColor)
+                            Spacer()
+                            Circle()
+                                .fill(accentColor)
+                                .frame(width: 16, height: 16)
+                            Image(systemName: "chevron.right")
+                                .font(.body.weight(.regular))
+                                .foregroundStyle(.secondary)
                         }
+                    }
+                    .foregroundStyle(.primary, .secondary)
+                } header: {
+                    Text(L10n.appearance)
+                } footer: {
+                    Text(L10n.viewsMayRequireRestart)
                 }
 
                 Section {
