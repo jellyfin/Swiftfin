@@ -77,10 +77,6 @@ extension Defaults.Keys {
     /// depending on the current app state.
     static let appearance: Key<AppAppearance> = AppKey("appearance", default: .system)
 
-    /// The accent color default for non-user contexts.
-    /// Only use for `set`, use `accentColor` for `get`.
-    static let appAccentColor: Key<Color> = AppKey("appAccentColor", default: .jellyfinPurple)
-
     /// The appearance default for non-user contexts.
     /// /// Only use for `set`, use `appearance` for `get`.
     static let appAppearance: Key<AppAppearance> = AppKey("appAppearance", default: .system)
@@ -191,39 +187,33 @@ extension Defaults.Keys {
             "barActionButtons",
             default: VideoPlayerActionButton.defaultBarActionButtons
         )
-        static let jumpBackwardLength: Key<VideoPlayerJumpLength> = UserKey("jumpBackwardLength", default: .fifteen)
-        static let jumpForwardLength: Key<VideoPlayerJumpLength> = UserKey("jumpForwardLength", default: .fifteen)
+        static let jumpBackwardInterval: Key<MediaJumpInterval> = UserKey("jumpBackwardLength", default: .fifteen)
+        static let jumpForwardInterval: Key<MediaJumpInterval> = UserKey("jumpForwardLength", default: .fifteen)
         static let menuActionButtons: Key<[VideoPlayerActionButton]> = UserKey(
             "menuActionButtons",
             default: VideoPlayerActionButton.defaultMenuActionButtons
         )
         static let resumeOffset: Key<Int> = UserKey("resumeOffset", default: 0)
-        static let showJumpButtons: Key<Bool> = UserKey("showJumpButtons", default: true)
         static let videoPlayerType: Key<VideoPlayerType> = UserKey("videoPlayerType", default: .swiftfin)
 
         enum Gesture {
 
-            static let horizontalPanGesture: Key<PanAction> = UserKey("videoPlayerHorizontalPanGesture", default: .none)
-            static let horizontalSwipeGesture: Key<SwipeAction> = UserKey("videoPlayerHorizontalSwipeGesture", default: .none)
-            static let longPressGesture: Key<LongPressAction> = UserKey("videoPlayerLongPressGesture", default: .gestureLock)
-            static let multiTapGesture: Key<MultiTapAction> = UserKey("videoPlayerMultiTapGesture", default: .none)
-            static let doubleTouchGesture: Key<DoubleTouchAction> = UserKey("videoPlayerDoubleTouchGesture", default: .none)
-            static let pinchGesture: Key<PinchAction> = UserKey("videoPlayerSwipeGesture", default: .aspectFill)
-            static let verticalPanGestureLeft: Key<PanAction> = UserKey("videoPlayerVerticalPanGestureLeft", default: .none)
-            static let verticalPanGestureRight: Key<PanAction> = UserKey("videoPlayerVerticalPanGestureRight", default: .none)
+            static let horizontalPanAction: Key<PanGestureAction> = UserKey("videoPlayerHorizontalPanGesture", default: .none)
+            static let horizontalSwipeAction: Key<SwipeGestureAction> = UserKey("videoPlayerhorizontalSwipeAction", default: .none)
+            static let longPressAction: Key<LongPressGestureAction> = UserKey("videoPlayerLongPressGesture", default: .gestureLock)
+            static let multiTapGesture: Key<MultiTapGestureAction> = UserKey("videoPlayerMultiTapGesture", default: .none)
+            static let doubleTouchGesture: Key<DoubleTouchGestureAction> = UserKey("videoPlayerDoubleTouchGesture", default: .none)
+            static let pinchGesture: Key<PinchGestureAction> = UserKey("videoPlayerSwipeGesture", default: .aspectFill)
+            static let verticalPanLeftAction: Key<PanGestureAction> = UserKey("videoPlayerverticalPanLeftAction", default: .none)
+            static let verticalPanRightAction: Key<PanGestureAction> = UserKey("videoPlayerverticalPanRightAction", default: .none)
         }
 
         enum Overlay {
 
             static let chapterSlider: Key<Bool> = UserKey("chapterSlider", default: true)
-            static let playbackButtonType: Key<PlaybackButtonType> = UserKey("videoPlayerPlaybackButtonLocation", default: .large)
-            static let sliderColor: Key<Color> = UserKey("sliderColor", default: Color.white)
-            static let sliderType: Key<SliderType> = UserKey("sliderType", default: .capsule)
 
             // Timestamp
             static let trailingTimestampType: Key<TrailingTimestampType> = UserKey("trailingTimestamp", default: .timeLeft)
-            static let showCurrentTimeWhileScrubbing: Key<Bool> = UserKey("showCurrentTimeWhileScrubbing", default: true)
-            static let timestampType: Key<TimestampType> = UserKey("timestampType", default: .split)
         }
 
         enum Playback {
@@ -231,18 +221,19 @@ extension Defaults.Keys {
             static let appMaximumBitrateTest: Key<PlaybackBitrateTestSize> = UserKey("appMaximumBitrateTest", default: .regular)
             static let compatibilityMode: Key<PlaybackCompatibility> = UserKey("compatibilityMode", default: .auto)
             static let customDeviceProfileAction: Key<CustomDeviceProfileAction> = UserKey("customDeviceProfileAction", default: .add)
+            static let rates: Key<[Float]> = UserKey("videoPlayerPlaybackRates", default: [0.5, 1.0, 1.25, 1.5, 2.0])
         }
 
+        // TODO: transition into a SubtitleConfiguration instead of multiple types
         enum Subtitle {
 
             static let subtitleColor: Key<Color> = UserKey("subtitleColor", default: .white)
             static let subtitleFontName: Key<String> = UserKey("subtitleFontName", default: UIFont.systemFont(ofSize: 14).fontName)
-            static let subtitleSize: Key<Int> = UserKey("subtitleSize", default: 16)
+            static let subtitleSize: Key<Int> = UserKey("subtitleSize", default: 9)
         }
 
         enum Transition {
-            static let pauseOnBackground: Key<Bool> = UserKey("pauseOnBackground", default: false)
-            static let playOnActive: Key<Bool> = UserKey("playOnActive", default: false)
+            static let pauseOnBackground: Key<Bool> = UserKey("playInBackground", default: true)
         }
     }
 

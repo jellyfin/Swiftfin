@@ -7,7 +7,7 @@
 //
 
 import JellyfinAPI
-import Stinsen
+
 import SwiftUI
 
 extension EditServerTaskView {
@@ -16,23 +16,13 @@ extension EditServerTaskView {
 
         let taskTriggerInfo: TaskTriggerInfo
 
-        // TODO: remove after `TaskTriggerType` is provided by SDK
-
-        private var taskTriggerType: TaskTriggerType {
-            if let t = taskTriggerInfo.type, let type = TaskTriggerType(rawValue: t) {
-                return type
-            } else {
-                return .startup
-            }
-        }
-
         // MARK: - Body
 
         var body: some View {
             HStack {
                 VStack(alignment: .leading) {
 
-                    Text(triggerDisplayText)
+                    Text(triggerDisplayText(for: taskTriggerInfo.type))
                         .fontWeight(.semibold)
 
                     Group {
@@ -52,8 +42,7 @@ extension EditServerTaskView {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                Image(systemName: taskTriggerType.systemImage)
-                    .backport
+                Image(systemName: (taskTriggerInfo.type ?? .startupTrigger).systemImage)
                     .fontWeight(.bold)
                     .foregroundStyle(.secondary)
             }
@@ -61,17 +50,20 @@ extension EditServerTaskView {
 
         // MARK: - Trigger Display Text
 
-        private var triggerDisplayText: String {
-            switch taskTriggerType {
-            case .daily:
+        private func triggerDisplayText(for triggerType: TaskTriggerInfoType?) -> String {
+
+            guard let triggerType else { return L10n.unknown }
+
+            switch triggerType {
+            case .dailyTrigger:
                 if let timeOfDayTicks = taskTriggerInfo.timeOfDayTicks {
                     return L10n.itemAtItem(
-                        taskTriggerType.displayTitle,
+                        triggerType.displayTitle,
                         ServerTicks(timeOfDayTicks)
                             .date.formatted(date: .omitted, time: .shortened)
                     )
                 }
-            case .weekly:
+            case .weeklyTrigger:
                 if let dayOfWeek = taskTriggerInfo.dayOfWeek,
                    let timeOfDayTicks = taskTriggerInfo.timeOfDayTicks
                 {
@@ -81,15 +73,15 @@ extension EditServerTaskView {
                             .date.formatted(date: .omitted, time: .shortened)
                     )
                 }
-            case .interval:
+            case .intervalTrigger:
                 if let intervalTicks = taskTriggerInfo.intervalTicks {
                     return L10n.everyInterval(
                         ServerTicks(intervalTicks)
                             .seconds.formatted(.hourMinute)
                     )
                 }
-            case .startup:
-                return taskTriggerType.displayTitle
+            case .startupTrigger:
+                return triggerType.displayTitle
             }
 
             return L10n.unknown

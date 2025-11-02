@@ -19,8 +19,8 @@ extension CustomDeviceProfileSettingsView {
         @StoredValue(.User.customDeviceProfiles)
         private var customDeviceProfiles
 
-        @EnvironmentObject
-        private var router: EditCustomDeviceProfileCoordinator.Router
+        @Router
+        private var router
 
         @State
         private var isPresentingNotSaved = false
@@ -92,25 +92,25 @@ extension CustomDeviceProfileSettingsView {
                         title: L10n.audio,
                         content: profile.audio.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        router.route(to: \.customDeviceAudioEditor, $profile.audio)
+                        router.route(to: .editCustomDeviceProfileAudio(selection: $profile.audio))
                     }
 
                     codecSection(
                         title: L10n.video,
                         content: profile.video.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        router.route(to: \.customDeviceVideoEditor, $profile.video)
+                        router.route(to: .editCustomDeviceProfileVideo(selection: $profile.video))
                     }
 
                     codecSection(
                         title: L10n.containers,
                         content: profile.container.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        router.route(to: \.customDeviceContainerEditor, $profile.container)
+                        router.route(to: .editCustomDeviceProfileContainer(selection: $profile.container))
                     }
                 } footer: {
                     if !isValid {
-                        Label("Missing codec values", systemImage: "exclamationmark.circle.fill")
+                        Label(L10n.missingCodecValues, systemImage: "exclamationmark.circle.fill")
                             .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                     }
                 }
@@ -121,7 +121,7 @@ extension CustomDeviceProfileSettingsView {
             .navigationBarCloseButton {
                 isPresentingNotSaved = true
             }
-            .navigationTitle(L10n.customProfile)
+            .navigationTitle(L10n.customProfile.localizedCapitalized)
             .topBarTrailing {
                 Button(L10n.save) {
                     if createProfile {
@@ -131,14 +131,14 @@ extension CustomDeviceProfileSettingsView {
                     }
 
                     UIDevice.impact(.light)
-                    router.dismissCoordinator()
+                    router.dismiss()
                 }
                 .buttonStyle(.toolbarPill)
                 .disabled(!isValid)
             }
-            .alert("Profile not saved", isPresented: $isPresentingNotSaved) {
+            .alert(L10n.profileNotSaved, isPresented: $isPresentingNotSaved) {
                 Button(L10n.close, role: .destructive) {
-                    router.dismissCoordinator()
+                    router.dismiss()
                 }
             }
         }

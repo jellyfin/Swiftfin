@@ -65,9 +65,9 @@ extension EditItemElementView {
                     if type == .people {
                         let person = (item as! BaseItemPerson)
 
-                        TextPairView(
-                            leading: person.type ?? .emptyDash,
-                            trailing: person.role ?? .emptyDash
+                        LabeledContent(
+                            person.type?.displayTitle ?? .emptyDash,
+                            value: person.role ?? .emptyDash
                         )
                         .foregroundStyle(
                             isEditing ? (isSelected ? .primary : .secondary) : .primary,
@@ -99,14 +99,14 @@ extension EditItemElementView {
             ZStack {
                 Color.clear
 
-                ImageView(person.portraitImageSources(maxWidth: 30))
+                ImageView(person.portraitImageSources(maxWidth: 30, quality: 90))
                     .failure {
                         SystemImageContentView(systemName: "person.fill")
                     }
             }
             .posterStyle(.portrait)
-            .posterShadow()
             .frame(width: 30, height: 90)
+            .posterShadow()
             .padding(.horizontal)
         }
     }

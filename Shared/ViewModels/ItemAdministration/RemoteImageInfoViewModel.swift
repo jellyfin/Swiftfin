@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-class RemoteImageInfoViewModel: PagingLibraryViewModel<RemoteImageInfo> {
+final class RemoteImageInfoViewModel: PagingLibraryViewModel<RemoteImageInfo> {
 
     // Image providers come from the paging call
     @Published

@@ -29,6 +29,7 @@ extension UIApplication {
             }
     }
 
+    // TODO: change to all windows?
     func setAccentColor(_ newColor: UIColor) {
         keyWindow?.tintColor = newColor
     }

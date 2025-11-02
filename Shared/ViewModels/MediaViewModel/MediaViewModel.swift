@@ -11,70 +11,36 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-final class MediaViewModel: ViewModel, Stateful {
+@MainActor
+@Stateful
+final class MediaViewModel: ViewModel {
 
-    // TODO: remove once collection types become an enum
-    static let supportedCollectionTypes: [String] = ["boxsets", "folders", "movies", "tvshows", "livetv"]
-
-    // MARK: Action
-
-    enum Action: Equatable {
-        case error(JellyfinAPIError)
+    @CasePathable
+    enum Action {
         case refresh
+
+        var transition: Transition {
+            .loop(.refreshing)
+        }
     }
 
-    // MARK: State
-
-    enum State: Hashable {
-        case content
-        case error(JellyfinAPIError)
+    enum State {
+        case error
         case initial
         case refreshing
     }
 
     @Published
-    var mediaItems: OrderedSet<MediaType> = []
+    private(set) var mediaItems: OrderedSet<MediaType> = []
 
-    @Published
-    final var state: State = .initial
-    @Published
-    final var lastAction: Action? = nil
+    @Function(\Action.Cases.refresh)
+    private func _refresh() async throws {
 
-    func respond(to action: Action) -> State {
-        switch action {
-        case let .error(error):
-            return .error(error)
-        case .refresh:
-            cancellables.removeAll()
-
-            Task {
-                do {
-                    try await refresh()
-
-                    await MainActor.run {
-                        self.state = .content
-                    }
-                } catch {
-                    await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
-                    }
-                }
-            }
-            .store(in: &cancellables)
-
-            return .refreshing
-        }
-    }
-
-    private func refresh() async throws {
-
-        await MainActor.run {
-            mediaItems.removeAll()
-        }
+        mediaItems.removeAll()
 
         let media: [MediaType] = try await getUserViews()
             .compactMap { userView in
-                if userView.collectionType == "livetv" {
+                if userView.collectionType == .livetv {
                     return .liveTV(userView)
                 }
 
@@ -82,14 +48,13 @@ final class MediaViewModel: ViewModel, Stateful {
             }
             .prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
 
-        await MainActor.run {
-            mediaItems.elements = media
-        }
+        mediaItems.elements = media
     }
 
     private func getUserViews() async throws -> [BaseItemDto] {
 
-        let userViewsPath = Paths.getUserViews(userID: userSession.user.id)
+        let parameters = Paths.GetUserViewsParameters(userID: userSession.user.id)
+        let userViewsPath = Paths.getUserViews(parameters: parameters)
         async let userViews = userSession.client.send(userViewsPath)
 
         async let excludedLibraryIDs = getExcludedLibraries()
@@ -97,11 +62,12 @@ final class MediaViewModel: ViewModel, Stateful {
         // folders has `type = UserView`, but we manually
         // force it to `folders` for better view handling
         let supportedUserViews = try await (userViews.value.items ?? [])
-            .intersection(Self.supportedCollectionTypes, using: \.collectionType)
+            .coalesced(property: \.collectionType, with: .folders)
+            .intersection(CollectionType.supportedCases, using: \.collectionType)
             .subtracting(excludedLibraryIDs, using: \.id)
             .map { item in
 
-                if item.type == .userView, item.collectionType == "folders" {
+                if item.type == .userView, item.collectionType == .folders {
                     return item.mutating(\.type, with: .folder)
                 }
 

@@ -6,8 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-
 /// A type that provides a collection of a subset of all of its values.
 ///
 /// Using types that conform to `CaseIterable` may contain values that
@@ -17,4 +15,11 @@ protocol SupportedCaseIterable: CaseIterable {
     associatedtype SupportedCases: Collection = [Self] where Self == Self.SupportedCases.Element
 
     static var supportedCases: Self.SupportedCases { get }
+}
+
+extension SupportedCaseIterable where SupportedCases.Element: Equatable {
+
+    var isSupported: Bool {
+        Self.supportedCases.contains(self)
+    }
 }

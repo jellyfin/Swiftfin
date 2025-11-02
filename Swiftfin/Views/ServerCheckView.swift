@@ -11,13 +11,16 @@ import SwiftUI
 struct ServerCheckView: View {
 
     @EnvironmentObject
-    private var router: MainCoordinator.Router
+    private var rootCoordinator: RootCoordinator
+
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = ServerCheckViewModel()
 
     @ViewBuilder
-    private func errorView<E: Error>(_ error: E) -> some View {
+    private func errorView(_ error: some Error) -> some View {
         VStack(spacing: 10) {
             Image(systemName: "xmark.circle.fill")
                 .font(.system(size: 72))
@@ -33,7 +36,7 @@ struct ServerCheckView: View {
 
             PrimaryButton(title: L10n.retry)
                 .onSelect {
-                    viewModel.send(.checkServer)
+                    viewModel.checkServer()
                 }
                 .frame(maxWidth: 300)
                 .frame(height: 50)
@@ -43,25 +46,24 @@ struct ServerCheckView: View {
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .initial, .connecting, .connected:
+            case .initial:
                 ZStack {
                     Color.clear
 
                     ProgressView()
                 }
-            case let .error(error):
-                errorView(error)
+            case .error:
+                viewModel.error.map { errorView($0) }
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .onFirstAppear {
-            viewModel.send(.checkServer)
+            viewModel.checkServer()
         }
-        .onReceive(viewModel.$state) { newState in
-            if newState == .connected {
-                withAnimation(.linear(duration: 0.1)) {
-                    let _ = router.root(\.mainTab)
-                }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .connected:
+                rootCoordinator.root(.mainTab)
             }
         }
         .topBarTrailing {
@@ -70,7 +72,7 @@ struct ServerCheckView: View {
                 server: viewModel.userSession.server,
                 user: viewModel.userSession.user
             ) {
-                router.route(to: \.settings)
+                router.route(to: .settings)
             }
         }
     }

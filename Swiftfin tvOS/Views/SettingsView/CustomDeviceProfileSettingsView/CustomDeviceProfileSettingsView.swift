@@ -18,8 +18,8 @@ struct CustomDeviceProfileSettingsView: View {
     @StoredValue(.User.customDeviceProfiles)
     private var customProfiles: [CustomDeviceProfile]
 
-    @EnvironmentObject
-    private var router: CustomDeviceProfileCoordinator.Router
+    @Router
+    private var router
 
     private var isValid: Bool {
         customDeviceProfileAction == .add || customProfiles.isNotEmpty
@@ -45,10 +45,7 @@ struct CustomDeviceProfileSettingsView: View {
             }
             .contentView {
                 Section {
-                    InlineEnumToggle(
-                        title: L10n.behavior,
-                        selection: $customDeviceProfileAction
-                    )
+                    ListRowMenu(L10n.behavior, selection: $customDeviceProfileAction)
                 } header: {
                     L10n.behavior.text
                 } footer: {
@@ -61,22 +58,22 @@ struct CustomDeviceProfileSettingsView: View {
                         }
 
                         if !isValid {
-                            Label("No profiles defined. Playback issues may occur.", systemImage: "exclamationmark.circle.fill")
+                            Label(L10n.noDeviceProfileWarning, systemImage: "exclamationmark.circle.fill")
                         }
                     }
                 }
 
                 Section {
                     if customProfiles.isEmpty {
-                        Button("Add profile") {
-                            router.route(to: \.createCustomDeviceProfile)
+                        Button(L10n.add) {
+                            router.route(to: .createCustomDeviceProfile)
                         }
                     }
 
                     List {
                         ForEach($customProfiles, id: \.self) { $profile in
                             CustomProfileButton(profile: profile) {
-                                router.route(to: \.editCustomDeviceProfile, $profile)
+                                router.route(to: .editCustomDeviceProfile(profile: $profile))
                             }
                             .contextMenu {
                                 Button(role: .destructive) {
@@ -94,7 +91,7 @@ struct CustomDeviceProfileSettingsView: View {
                         Spacer()
                         if customProfiles.isNotEmpty {
                             Button(L10n.add) {
-                                router.route(to: \.createCustomDeviceProfile)
+                                router.route(to: .createCustomDeviceProfile)
                             }
                         }
                     }

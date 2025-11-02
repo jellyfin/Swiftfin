@@ -13,8 +13,8 @@ struct AddServerUserAccessTagsView: View {
 
     // MARK: - Observed & Environment Objects
 
-    @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     private var viewModel: ServerUserAdminViewModel
@@ -45,8 +45,7 @@ struct AddServerUserAccessTagsView: View {
     // MARK: - Tag is Already Blocked/Allowed
 
     private var tagIsDuplicate: Bool {
-        viewModel.user.policy!.blockedTags!.contains(tempTag) // &&
-        //! viewModel.user.policy!.allowedTags!.contains(tempTag)
+        viewModel.user.policy!.blockedTags!.contains(tempTag) || viewModel.user.policy!.allowedTags!.contains(tempTag)
     }
 
     // MARK: - Tag Already Exists on Jellyfin
@@ -70,7 +69,7 @@ struct AddServerUserAccessTagsView: View {
             .navigationTitle(L10n.addAccessTag.localizedCapitalized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
-                router.dismissCoordinator()
+                router.dismiss()
             }
             .topBarTrailing {
                 if viewModel.backgroundStates.contains(.refreshing) {
@@ -84,9 +83,8 @@ struct AddServerUserAccessTagsView: View {
                 } else {
                     Button(L10n.save) {
                         if access {
-                            // TODO: Enable on 10.10
-                            /* tempPolicy.allowedTags = tempPolicy.allowedTags
-                             .appendedOrInit(tempTag) */
+                            tempPolicy.allowedTags = tempPolicy.allowedTags
+                                .appendedOrInit(tempTag)
                         } else {
                             tempPolicy.blockedTags = tempPolicy.blockedTags
                                 .appendedOrInit(tempTag)
@@ -113,7 +111,7 @@ struct AddServerUserAccessTagsView: View {
                     error = eventError
                 case .updated:
                     UIDevice.feedback(.success)
-                    router.dismissCoordinator()
+                    router.dismiss()
                 }
             }
             .onReceive(tagViewModel.events) { event in

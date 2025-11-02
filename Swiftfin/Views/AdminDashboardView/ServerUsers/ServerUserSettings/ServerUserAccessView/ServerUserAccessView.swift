@@ -14,8 +14,8 @@ struct ServerUserMediaAccessView: View {
 
     // MARK: - Observed & Environment Objects
 
-    @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     private var viewModel: ServerUserAdminViewModel
@@ -34,17 +34,22 @@ struct ServerUserMediaAccessView: View {
 
     init(viewModel: ServerUserAdminViewModel) {
         self.viewModel = viewModel
-        self.tempPolicy = viewModel.user.policy ?? UserPolicy()
+
+        guard let policy = viewModel.user.policy else {
+            preconditionFailure("User policy cannot be empty.")
+        }
+
+        self.tempPolicy = policy
     }
 
     // MARK: - Body
 
     var body: some View {
         contentView
-            .navigationTitle(L10n.mediaAccess)
+            .navigationTitle(L10n.mediaAccess.localizedCapitalized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
-                router.dismissCoordinator()
+                router.dismiss()
             }
             .topBarTrailing {
                 if viewModel.backgroundStates.contains(.updating) {
@@ -68,7 +73,7 @@ struct ServerUserMediaAccessView: View {
                     error = eventError
                 case .updated:
                     UIDevice.feedback(.success)
-                    router.dismissCoordinator()
+                    router.dismiss()
                 }
             }
             .errorMessage($error)
@@ -123,7 +128,7 @@ struct ServerUserMediaAccessView: View {
         if tempPolicy.enableContentDeletion == false {
             Section {
                 ForEach(
-                    viewModel.libraries.filter { $0.collectionType != "boxsets" },
+                    viewModel.libraries.filter { $0.collectionType != .boxsets },
                     id: \.id
                 ) { library in
                     Toggle(

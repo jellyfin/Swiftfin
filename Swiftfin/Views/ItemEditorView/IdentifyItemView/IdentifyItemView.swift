@@ -33,16 +33,11 @@ struct IdentifyItemView: View {
 
     // MARK: - Observed & Environment Objects
 
-    @EnvironmentObject
-    private var router: ItemEditorCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel: IdentifyItemViewModel
-
-    // MARK: - Identity Variables
-
-    @State
-    private var selectedResult: RemoteSearchResult?
 
     // MARK: - Error State
 
@@ -74,28 +69,14 @@ struct IdentifyItemView: View {
         .navigationTitle(L10n.identify)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(viewModel.state == .updating)
-        .sheet(item: $selectedResult) {
-            selectedResult = nil
-        } content: { result in
-            RemoteSearchResultView(
-                result: result,
-                onSave: {
-                    selectedResult = nil
-                    viewModel.send(.update(result))
-                },
-                onClose: {
-                    selectedResult = nil
-                }
-            )
-        }
         .onReceive(viewModel.events) { events in
             switch events {
             case let .error(eventError):
                 error = eventError
             case .cancelled:
-                selectedResult = nil
+                break
             case .updated:
-                router.pop()
+                router.dismiss()
             }
         }
         .errorMessage($error)
@@ -109,6 +90,11 @@ struct IdentifyItemView: View {
     @ViewBuilder
     private var contentView: some View {
         Form {
+            ListTitleSection(
+                viewModel.item.name ?? L10n.unknown,
+                description: viewModel.item.path
+            )
+
             searchView
 
             resultsView
@@ -171,7 +157,12 @@ struct IdentifyItemView: View {
             Section(L10n.items) {
                 ForEach(viewModel.searchResults) { result in
                     RemoteSearchResultRow(result: result) {
-                        selectedResult = result
+                        router.route(
+                            to: .identifyItemResults(
+                                viewModel: viewModel,
+                                result: result
+                            )
+                        )
                     }
                 }
             }

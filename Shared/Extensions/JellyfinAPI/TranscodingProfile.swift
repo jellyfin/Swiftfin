@@ -21,7 +21,7 @@ extension TranscodingProfile {
         isEstimateContentLength: Bool? = nil,
         maxAudioChannels: String? = nil,
         minSegments: Int? = nil,
-        protocol: String? = nil,
+        protocol: MediaStreamProtocol? = nil,
         segmentLength: Int? = nil,
         transcodeSeekInfo: TranscodeSeekInfo? = nil,
         type: DlnaProfileType? = nil,

@@ -6,88 +6,48 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import Foundation
 import JellyfinAPI
-import OrderedCollections
-import SwiftUI
 
-final class AddServerUserViewModel: ViewModel, Eventful, Stateful, Identifiable {
+@MainActor
+@Stateful
+final class AddServerUserViewModel: ViewModel {
 
-    // MARK: Event
+    @CasePathable
+    enum Action {
+        case cancel
+        case add(username: String, password: String)
+
+        var transition: Transition {
+            switch self {
+            case .cancel:
+                .to(.initial)
+            case .add:
+                .to(.addingUser, then: .initial)
+            }
+        }
+    }
 
     enum Event {
-        case createdNewUser(UserDto)
-        case error(JellyfinAPIError)
+        case created(user: UserDto)
+        case error
     }
-
-    // MARK: Actions
-
-    enum Action: Equatable {
-        case cancel
-        case createUser(username: String, password: String)
-    }
-
-    // MARK: - State
 
     enum State: Hashable {
+        case addingUser
         case initial
-        case creatingUser
-        case error(JellyfinAPIError)
-    }
-
-    // MARK: Published Values
-
-    var events: AnyPublisher<Event, Never> {
-        eventSubject
-            .receive(on: RunLoop.main)
-            .eraseToAnyPublisher()
-    }
-
-    @Published
-    final var state: State = .initial
-
-    private var userTask: AnyCancellable?
-    private var eventSubject: PassthroughSubject<Event, Never> = .init()
-
-    // MARK: - Respond to Action
-
-    func respond(to action: Action) -> State {
-        switch action {
-        case .cancel:
-            userTask?.cancel()
-            return .initial
-        case let .createUser(username, password):
-            userTask?.cancel()
-
-            userTask = Task {
-                do {
-                    let newUser = try await createUser(username: username, password: password)
-
-                    await MainActor.run {
-                        state = .initial
-                        eventSubject.send(.createdNewUser(newUser))
-                    }
-                } catch {
-                    await MainActor.run {
-                        state = .error(.init(error.localizedDescription))
-                        eventSubject.send(.error(.init(error.localizedDescription)))
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return .creatingUser
-        }
     }
 
     // MARK: - Create User
 
-    private func createUser(username: String, password: String) async throws -> UserDto {
+    @Function(\Action.Cases.add)
+    private func _add(_ username: String, _ password: String) async throws {
         let parameters = CreateUserByName(name: username, password: password)
         let request = Paths.createUserByName(parameters)
         let response = try await userSession.client.send(request)
 
-        return response.value
+        try await Task.sleep(for: .seconds(5))
+
+        events.send(.created(user: response.value))
     }
 }

@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import AVFoundation
 import Combine
 import Factory
 import Foundation
@@ -26,23 +27,35 @@ enum Notifications {
         typealias Key = Notifications.Key
     }
 
-    final class Key<Payload>: _AnyKey {
+    class Key<Payload>: _AnyKey {
 
         @Injected(\.notificationCenter)
         private var notificationCenter
 
         let name: Notification.Name
+        let decodeStrategy: ([AnyHashable: Any]) -> Payload?
+
+        static func defaultDecodeStrategy(userInfo: [AnyHashable: Any]) -> Payload? {
+            if let payload = userInfo["payload"] as? Payload {
+                return payload
+            }
+            return nil
+        }
 
         var rawValue: String {
             name.rawValue
         }
 
-        init(_ string: String) {
-            self.name = Notification.Name(string)
+        convenience init(_ string: String) {
+            self.init(Notification.Name(string))
         }
 
-        init(_ name: Notification.Name) {
+        init(
+            _ name: Notification.Name,
+            decodeStrategy: (([AnyHashable: Any]) -> Payload?)? = nil
+        ) {
             self.name = name
+            self.decodeStrategy = decodeStrategy ?? Self.defaultDecodeStrategy
         }
 
         func post(_ payload: Payload) {
@@ -66,14 +79,26 @@ enum Notifications {
         var publisher: AnyPublisher<Payload, Never> {
             notificationCenter
                 .publisher(for: name)
-                .compactMap { notification in
-                    notification.userInfo?["payload"] as? Payload
+                .compactMap { output in
+                    if Payload.self == Void.self {
+                        return () as? Payload
+                    }
+
+                    guard let userInfo = output.userInfo else {
+                        return nil
+                    }
+
+                    return self.decodeStrategy(userInfo)
                 }
                 .eraseToAnyPublisher()
         }
 
         func subscribe(_ object: Any, selector: Selector) {
             notificationCenter.addObserver(object, selector: selector, name: name, object: nil)
+        }
+
+        func subscribe(_ object: Any, selector: Selector, observed: Any) {
+            notificationCenter.addObserver(object, selector: selector, name: name, object: observed)
         }
     }
 
@@ -168,6 +193,10 @@ extension Notifications.Key {
         Key("didStartPlayback")
     }
 
+    static var interruption: Key<Void> {
+        Key(AVAudioSession.interruptionNotification)
+    }
+
     // MARK: - UIApplication
 
     static var applicationDidEnterBackground: Key<Void> {
@@ -184,5 +213,31 @@ extension Notifications.Key {
 
     static var applicationWillTerminate: Key<Void> {
         Key(UIApplication.willTerminateNotification)
+    }
+
+    static var sceneDidEnterBackground: Key<Void> {
+        Key(UIScene.didEnterBackgroundNotification)
+    }
+
+    static var sceneWillEnterForeground: Key<Void> {
+        Key(UIScene.willEnterForegroundNotification)
+    }
+
+    static var avAudioSessionInterruption: Key<(AVAudioSession.InterruptionType, AVAudioSession.InterruptionOptions)> {
+        Key(AVAudioSession.interruptionNotification) { userInfo in
+            guard let rawValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+                  let type = AVAudioSession.InterruptionType(rawValue: rawValue)
+            else {
+                return nil
+            }
+            guard let optionsUInt = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt
+            else {
+                return nil
+            }
+
+            let options = AVAudioSession.InterruptionOptions(rawValue: optionsUInt)
+
+            return (type, options)
+        }
     }
 }

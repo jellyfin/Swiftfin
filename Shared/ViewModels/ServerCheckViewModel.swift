@@ -11,51 +11,38 @@ import Factory
 import Foundation
 import JellyfinAPI
 
-class ServerCheckViewModel: ViewModel, Stateful {
+@MainActor
+@Stateful
+final class ServerCheckViewModel: ViewModel {
 
-    enum Action: Equatable {
+    @CasePathable
+    enum Action {
         case checkServer
+
+        var transition: Transition {
+            .to(.initial)
+        }
     }
 
-    enum State: Hashable {
-        case connecting
+    enum Event {
         case connected
-        case error(JellyfinAPIError)
+    }
+
+    enum State {
+        case error
         case initial
     }
 
-    @Published
-    var state: State = .initial
+    @Function(\Action.Cases.checkServer)
+    private func _checkServer() async throws {
 
-    private var connectCancellable: AnyCancellable?
+        try await userSession.server.updateServerInfo()
 
-    func respond(to action: Action) -> State {
-        switch action {
-        case .checkServer:
-            connectCancellable?.cancel()
+        let request = Paths.getCurrentUser
+        let response = try await userSession.client.send(request)
 
-            // TODO: also server stuff
-            connectCancellable = Task {
-                do {
-                    try await userSession.server.updateServerInfo()
-
-                    let request = Paths.getCurrentUser
-                    let response = try await userSession.client.send(request)
-
-                    await MainActor.run {
-                        userSession.user.data = response.value
-                        self.state = .connected
-                        Container.shared.currentUserSession.reset()
-                    }
-                } catch {
-                    await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return .connecting
-        }
+        userSession.user.data = response.value
+        Container.shared.currentUserSession.reset()
+        events.send(.connected)
     }
 }

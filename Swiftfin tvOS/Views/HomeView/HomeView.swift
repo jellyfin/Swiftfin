@@ -13,8 +13,8 @@ import SwiftUI
 
 struct HomeView: View {
 
-    @EnvironmentObject
-    private var router: HomeCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = HomeViewModel()
@@ -39,7 +39,9 @@ struct HomeView: View {
                     if showRecentlyAdded {
                         CinematicRecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
                     }
+
                     NextUpView(viewModel: viewModel.nextUpViewModel)
+                        .safeAreaPadding(.top, 150)
                 }
 
                 ForEach(viewModel.libraries) { viewModel in

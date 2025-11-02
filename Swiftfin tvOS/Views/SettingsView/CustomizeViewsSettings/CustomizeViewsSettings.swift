@@ -31,8 +31,8 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.Library.displayType)
     private var libraryViewType
 
-    @EnvironmentObject
-    private var router: CustomizeSettingsCoordinator.Router
+    @Router
+    private var router
 
     var body: some View {
         SplitFormWindowView()
@@ -53,22 +53,21 @@ struct CustomizeViewsSettings: View {
 
                 Section(L10n.posters) {
 
-                    ChevronButton(L10n.indicators)
-                        .onSelect {
-                            router.route(to: \.indicatorSettings)
-                        }
+                    ChevronButton(L10n.indicators) {
+                        router.route(to: .indicatorSettings)
+                    }
 
                     Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 
-                    InlineEnumToggle(title: L10n.next, selection: $nextUpPosterType)
+                    ListRowMenu(L10n.next, selection: $nextUpPosterType)
 
-                    InlineEnumToggle(title: L10n.recentlyAdded, selection: $recentlyAddedPosterType)
+                    ListRowMenu(L10n.recentlyAdded, selection: $recentlyAddedPosterType)
 
-                    InlineEnumToggle(title: L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType)
+                    ListRowMenu(L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType)
 
-                    InlineEnumToggle(title: L10n.recommended, selection: $similarPosterType)
+                    ListRowMenu(L10n.recommended, selection: $similarPosterType)
 
-                    InlineEnumToggle(title: L10n.search, selection: $searchPosterType)
+                    ListRowMenu(L10n.search, selection: $searchPosterType)
                 }
 
                 LibrarySection()
@@ -77,7 +76,6 @@ struct CustomizeViewsSettings: View {
 
                 HomeSection()
             }
-            .withDescriptionTopPadding()
             .navigationTitle(L10n.customize)
     }
 }

@@ -32,14 +32,14 @@ extension DevicesView {
 
         // MARK: - Properties
 
-        let device: DeviceInfo
+        let device: DeviceInfoDto
         let onSelect: () -> Void
         let onDelete: (() -> Void)?
 
         // MARK: - Initializer
 
         init(
-            device: DeviceInfo,
+            device: DeviceInfoDto,
             onSelect: @escaping () -> Void,
             onDelete: (() -> Void)? = nil
         ) {
@@ -72,7 +72,7 @@ extension DevicesView {
                         .opacity(isSelected ? 0 : 0.5)
                 }
             }
-            .squarePosterStyle()
+            .posterStyle(.square)
             .posterShadow()
             .frame(width: 60, height: 60)
         }
@@ -83,30 +83,27 @@ extension DevicesView {
         private var rowContent: some View {
             HStack {
                 VStack(alignment: .leading) {
-                    Text(device.name ?? L10n.unknown)
+                    Text(device.customName ?? device.name ?? L10n.unknown)
                         .font(.headline)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
 
-                    TextPairView(
-                        leading: L10n.user,
-                        trailing: device.lastUserName ?? L10n.unknown
+                    LabeledContent(
+                        L10n.user,
+                        value: device.lastUserName ?? L10n.unknown
                     )
                     .lineLimit(1)
 
-                    TextPairView(
-                        leading: L10n.client,
-                        trailing: device.appName ?? L10n.unknown
+                    LabeledContent(
+                        L10n.client,
+                        value: device.appName ?? L10n.unknown
                     )
                     .lineLimit(1)
 
-                    TextPairView(
-                        L10n.lastSeen,
-                        value: Text(device.dateLastActivity, format: .lastSeen)
-                    )
-                    .id(currentDate)
-                    .lineLimit(1)
-                    .monospacedDigit()
+                    LabeledContent(L10n.lastSeen, value: device.dateLastActivity, format: .lastSeen)
+                        .id(currentDate)
+                        .lineLimit(1)
+                        .monospacedDigit()
                 }
                 .font(.subheadline)
                 .foregroundStyle(labelForegroundStyle, .secondary)

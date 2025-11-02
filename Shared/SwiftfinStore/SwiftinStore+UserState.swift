@@ -68,6 +68,20 @@ extension UserState {
         UserPermissions(data.policy)
     }
 
+    var pin: String {
+        get {
+            guard let pin = Container.shared.keychainService().get("\(id)-pin") else {
+                assertionFailure("pin missing in keychain")
+                return ""
+            }
+
+            return pin
+        }
+        nonmutating set {
+            Container.shared.keychainService().set(newValue, forKey: "\(id)-pin")
+        }
+    }
+
     var pinHint: String {
         get {
             StoredValues[.User.pinHint(id: id)]
@@ -134,7 +148,7 @@ extension UserState {
         let client = JellyfinClient(
             configuration: .swiftfinConfiguration(url: server.currentURL),
             sessionConfiguration: .swiftfin,
-            sessionDelegate: URLSessionProxyDelegate(logger: Container.shared.pulseNetworkLogger()),
+            sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin()),
             accessToken: accessToken
         )
 
@@ -146,19 +160,12 @@ extension UserState {
 
     // we will always crop to a square, so just use width
     func profileImageSource(
-        client: JellyfinClient,
-        maxWidth: CGFloat? = nil
+        client: JellyfinClient
     ) -> ImageSource {
-        let scaleWidth = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
-
         let parameters = Paths.GetUserImageParameters(
-            maxWidth: scaleWidth
+            userID: id
         )
-        let request = Paths.getUserImage(
-            userID: id,
-            imageType: "Primary",
-            parameters: parameters
-        )
+        let request = Paths.getUserImage(parameters: parameters)
 
         let profileImageURL = client.fullURL(with: request)
 

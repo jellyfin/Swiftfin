@@ -42,7 +42,7 @@ extension SwiftfinStore.State {
             JellyfinClient(
                 configuration: .swiftfinConfiguration(url: currentURL),
                 sessionConfiguration: .swiftfin,
-                sessionDelegate: URLSessionProxyDelegate(logger: Container.shared.pulseNetworkLogger())
+                sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin())
             )
         }
     }
@@ -74,14 +74,15 @@ extension ServerState {
         return response.value
     }
 
-    func splashScreenImageSource() -> ImageSource {
+    var splashScreenImageSource: ImageSource {
         let request = Paths.getSplashscreen()
         return ImageSource(url: client.fullURL(with: request))
     }
 
+    @MainActor
     func updateServerInfo() async throws {
         guard let server = try? SwiftfinStore.dataStack.fetchOne(
-            From<ServerModel>()
+            From<ServerModel>().where(Where(\.$id == id))
         ) else { return }
 
         let publicInfo = try await getPublicSystemInfo()
@@ -94,5 +95,15 @@ extension ServerState {
         }
 
         StoredValues[.Server.publicInfo(id: server.id)] = publicInfo
+    }
+
+    var isVersionCompatible: Bool {
+        let publicInfo = StoredValues[.Server.publicInfo(id: self.id)]
+
+        if let version = publicInfo.version {
+            return JellyfinClient.Version(stringLiteral: version).majorMinor >= JellyfinClient.sdkVersion.majorMinor
+        } else {
+            return false
+        }
     }
 }

@@ -14,24 +14,20 @@ struct VideoPlayerSettingsView: View {
     @Default(.VideoPlayer.Subtitle.subtitleFontName)
     private var subtitleFontName
 
-    @Default(.VideoPlayer.jumpBackwardLength)
+    @Default(.VideoPlayer.jumpBackwardInterval)
     private var jumpBackwardLength
-    @Default(.VideoPlayer.jumpForwardLength)
+    @Default(.VideoPlayer.jumpForwardInterval)
     private var jumpForwardLength
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
 
-    @Default(.VideoPlayer.Transition.pauseOnBackground)
-    private var pauseOnBackground
-    @Default(.VideoPlayer.Transition.playOnActive)
-    private var playOnActive
-
-    @EnvironmentObject
-    private var router: VideoPlayerSettingsCoordinator.Router
+    @Router
+    private var router
 
     @State
     private var isPresentingResumeOffsetStepper: Bool = false
 
+    // TODO: Update with correct settings once the tvOS PlayerUI is complete
     var body: some View {
         SplitFormWindowView()
             .descriptionView {
@@ -47,8 +43,7 @@ struct VideoPlayerSettingsView: View {
                     ChevronButton(
                         L10n.offset,
                         subtitle: resumeOffset.secondLabel
-                    )
-                    .onSelect {
+                    ) {
                         isPresentingResumeOffsetStepper = true
                     }
                 } header: {
@@ -59,35 +54,29 @@ struct VideoPlayerSettingsView: View {
 
                 Section {
 
-                    ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName)
-                        .onSelect {
-                            router.route(to: \.fontPicker, $subtitleFontName)
-                        }
+                    ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName) {
+                        router.route(to: .fontPicker(selection: $subtitleFontName))
+                    }
                 } header: {
                     L10n.subtitles.text
                 } footer: {
                     L10n.subtitlesDisclaimer.text
                 }
-
-                Section(L10n.playback) {
-                    Toggle(L10n.pauseOnBackground, isOn: $pauseOnBackground)
-                    Toggle(L10n.playOnActive, isOn: $playOnActive)
+            }
+            .navigationTitle(L10n.videoPlayer)
+            .blurredFullScreenCover(isPresented: $isPresentingResumeOffsetStepper) {
+                StepperView(
+                    title: L10n.resumeOffsetTitle,
+                    description: L10n.resumeOffsetDescription,
+                    value: $resumeOffset,
+                    range: 0 ... 30,
+                    step: 1
+                )
+                .valueFormatter {
+                    $0.secondLabel
                 }
-                .navigationTitle(L10n.videoPlayer.text)
-                .blurredFullScreenCover(isPresented: $isPresentingResumeOffsetStepper) {
-                    StepperView(
-                        title: L10n.resumeOffsetTitle,
-                        description: L10n.resumeOffsetDescription,
-                        value: $resumeOffset,
-                        range: 0 ... 30,
-                        step: 1
-                    )
-                    .valueFormatter {
-                        $0.secondLabel
-                    }
-                    .onCloseSelected {
-                        isPresentingResumeOffsetStepper = false
-                    }
+                .onCloseSelected {
+                    isPresentingResumeOffsetStepper = false
                 }
             }
     }

@@ -27,7 +27,7 @@ struct LetterPickerBar: View {
                     size: LetterPickerBar.size,
                     viewModel: viewModel
                 )
-                .environment(\.isSelected, viewModel.currentFilters.letter.contains(filterLetter))
+                .isSelected(viewModel.currentFilters.letter.contains(filterLetter))
             }
 
             Spacer()
@@ -39,11 +39,6 @@ struct LetterPickerBar: View {
     // MARK: - Letter Button Size
 
     static var size: CGFloat {
-        String().height(
-            withConstrainedWidth: CGFloat.greatestFiniteMagnitude,
-            font: UIFont.preferredFont(
-                forTextStyle: .headline
-            )
-        )
+        UIFont.preferredFont(forTextStyle: .headline).lineHeight
     }
 }

@@ -17,7 +17,7 @@ final class ChannelLibraryViewModel: PagingLibraryViewModel<ChannelProgram> {
         var parameters = Paths.GetLiveTvChannelsParameters()
         parameters.fields = .MinimumFields
         parameters.userID = userSession.user.id
-        parameters.sortBy = [ItemSortBy.name.rawValue]
+        parameters.sortBy = [ItemSortBy.name]
 
         parameters.limit = pageSize
         parameters.startIndex = page * pageSize
@@ -40,7 +40,7 @@ final class ChannelLibraryViewModel: PagingLibraryViewModel<ChannelProgram> {
         parameters.userID = userSession.user.id
         parameters.maxStartDate = maxStartDate
         parameters.minEndDate = minEndDate
-        parameters.sortBy = ["StartDate"]
+        parameters.sortBy = [ItemSortBy.startDate]
 
         let request = Paths.getLiveTvPrograms(parameters: parameters)
         let response = try await userSession.client.send(request)

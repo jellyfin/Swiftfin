@@ -11,12 +11,10 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-// TODO: Replace with CustomName when Available
-
 struct DevicesView: View {
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     @State
     private var isPresentingDeleteSelectionConfirmation = false
@@ -32,19 +30,22 @@ struct DevicesView: View {
     @StateObject
     private var viewModel = DevicesViewModel()
 
-    // MARK: - Body
+    @ViewBuilder
+    private func errorView(with error: some Error) -> some View {
+        ErrorView(error: error)
+            .onRetry {
+                viewModel.refresh()
+            }
+    }
 
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .content:
-                deviceListView
-            case let .error(error):
-                ErrorView(error: error)
-                    .onRetry {
-                        viewModel.send(.refresh)
-                    }
+            case .error:
+                viewModel.error.map { errorView(with: $0) }
             case .initial:
+                contentView
+            case .refreshing:
                 DelayedProgressView()
             }
         }
@@ -75,10 +76,10 @@ struct DevicesView: View {
             }
         }
         .onFirstAppear {
-            viewModel.send(.refresh)
+            viewModel.refresh()
         }
         .confirmationDialog(
-            L10n.deleteSelectedDevices,
+            L10n.delete,
             isPresented: $isPresentingDeleteSelectionConfirmation,
             titleVisibility: .visible
         ) {
@@ -87,7 +88,7 @@ struct DevicesView: View {
             Text(L10n.deleteSelectionDevicesWarning)
         }
         .confirmationDialog(
-            L10n.deleteDevice,
+            L10n.delete,
             isPresented: $isPresentingDeleteConfirmation,
             titleVisibility: .visible
         ) {
@@ -100,12 +101,13 @@ struct DevicesView: View {
         } message: {
             Text(L10n.deleteDeviceSelfDeletion(viewModel.userSession.client.configuration.deviceName))
         }
+        .errorMessage($viewModel.error)
     }
 
     // MARK: - Device List View
 
     @ViewBuilder
-    private var deviceListView: some View {
+    private var contentView: some View {
         List {
             InsetGroupedListHeader(
                 L10n.devices,
@@ -134,7 +136,7 @@ struct DevicesView: View {
                                 selectedDevices.insert(id)
                             }
                         } else {
-                            router.route(to: \.deviceDetails, device)
+                            router.route(to: .deviceDetails(device: device, viewModel: viewModel))
                         }
                     } onDelete: {
                         guard let id = device.id else { return }
@@ -143,8 +145,8 @@ struct DevicesView: View {
                         selectedDevices.insert(id)
                         isPresentingDeleteConfirmation = true
                     }
-                    .environment(\.isEditing, isEditing)
-                    .environment(\.isSelected, selectedDevices.contains(device.id ?? ""))
+                    .isEditing(isEditing)
+                    .isSelected(selectedDevices.contains(device.id ?? ""))
                     .listRowInsets(.edgeInsets)
                 }
             }
@@ -156,7 +158,7 @@ struct DevicesView: View {
 
     @ViewBuilder
     private var navigationBarEditView: some View {
-        if viewModel.backgroundStates.contains(.refreshing) {
+        if viewModel.background.is(.refreshing) {
             ProgressView()
         } else {
             Button(isEditing ? L10n.cancel : L10n.edit) {
@@ -194,7 +196,7 @@ struct DevicesView: View {
         Button(L10n.cancel, role: .cancel) {}
 
         Button(L10n.confirm, role: .destructive) {
-            viewModel.send(.delete(ids: Array(selectedDevices)))
+            viewModel.delete(ids: selectedDevices)
             isEditing = false
             selectedDevices.removeAll()
         }
@@ -211,7 +213,7 @@ struct DevicesView: View {
                 if deviceToDelete == viewModel.userSession.client.configuration.deviceID {
                     isPresentingSelfDeleteError = true
                 } else {
-                    viewModel.send(.delete(ids: [deviceToDelete]))
+                    viewModel.delete(ids: [deviceToDelete])
                     selectedDevices.removeAll()
                 }
             }

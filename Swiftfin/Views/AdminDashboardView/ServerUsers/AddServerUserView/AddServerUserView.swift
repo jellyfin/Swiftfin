@@ -6,21 +6,11 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
-import Defaults
-import JellyfinAPI
 import SwiftUI
 
 struct AddServerUserView: View {
 
-    // MARK: - Defaults
-
-    @Default(.accentColor)
-    private var accentColor
-
-    // MARK: - Focus Fields
-
-    private enum Field: Hashable {
+    private enum Field {
         case username
         case password
         case confirmPassword
@@ -29,29 +19,18 @@ struct AddServerUserView: View {
     @FocusState
     private var focusedfield: Field?
 
-    // MARK: - State & Environment Objects
-
-    @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
-
-    @StateObject
-    private var viewModel = AddServerUserViewModel()
-
-    // MARK: - Element Variables
+    @Router
+    private var router
 
     @State
-    private var username: String = ""
+    private var confirmPassword: String = ""
     @State
     private var password: String = ""
     @State
-    private var confirmPassword: String = ""
+    private var username: String = ""
 
-    // MARK: - Error State
-
-    @State
-    private var error: Error?
-
-    // MARK: - Username is Valid
+    @StateObject
+    private var viewModel = AddServerUserViewModel()
 
     private var isValid: Bool {
         username.isNotEmpty && password == confirmPassword
@@ -69,7 +48,7 @@ struct AddServerUserView: View {
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.none)
                 .focused($focusedfield, equals: .username)
-                .disabled(viewModel.state == .creatingUser)
+                .disabled(viewModel.state == .addingUser)
             } header: {
                 Text(L10n.username)
             } footer: {
@@ -80,21 +59,30 @@ struct AddServerUserView: View {
             }
 
             Section(L10n.password) {
-                UnmaskSecureField(L10n.password, text: $password) {
+                SecureField(
+                    L10n.password,
+                    text: $password,
+                    maskToggle: .enabled
+                )
+                .onSubmit {
                     focusedfield = .confirmPassword
                 }
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.none)
                 .focused($focusedfield, equals: .password)
-                .disabled(viewModel.state == .creatingUser)
+                .disabled(viewModel.state == .addingUser)
             }
 
             Section {
-                UnmaskSecureField(L10n.confirmPassword, text: $confirmPassword)
-                    .autocorrectionDisabled()
-                    .textInputAutocapitalization(.none)
-                    .focused($focusedfield, equals: .confirmPassword)
-                    .disabled(viewModel.state == .creatingUser)
+                SecureField(
+                    L10n.confirmPassword,
+                    text: $confirmPassword,
+                    maskToggle: .enabled
+                )
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.none)
+                .focused($focusedfield, equals: .confirmPassword)
+                .disabled(viewModel.state == .addingUser)
             } header: {
                 Text(L10n.confirmPassword)
             } footer: {
@@ -104,47 +92,40 @@ struct AddServerUserView: View {
                 }
             }
         }
-        .animation(.linear(duration: 0.2), value: isValid)
-        .interactiveDismissDisabled(viewModel.state == .creatingUser)
-        .navigationTitle(L10n.newUser)
+        .animation(.linear(duration: 0.1), value: isValid)
+        .interactiveDismissDisabled(viewModel.state == .addingUser)
+        .navigationTitle(L10n.newUser.localizedCapitalized)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarCloseButton {
-            router.dismissCoordinator()
+        .navigationBarCloseButton(disabled: viewModel.state != .initial) {
+            router.dismiss()
         }
         .onFirstAppear {
             focusedfield = .username
         }
         .onReceive(viewModel.events) { event in
             switch event {
-            case let .error(eventError):
-                UIDevice.feedback(.error)
-                error = eventError
-            case let .createdNewUser(newUser):
+            case let .created(newUser):
                 UIDevice.feedback(.success)
-                router.dismissCoordinator {
-                    Notifications[.didAddServerUser].post(newUser)
-                }
+                Notifications[.didAddServerUser].post(newUser)
+                router.dismiss()
             }
         }
         .topBarTrailing {
-            if viewModel.state == .creatingUser {
+            if viewModel.state == .addingUser {
                 ProgressView()
-            }
-
-            if viewModel.state == .creatingUser {
                 Button(L10n.cancel) {
-                    viewModel.send(.cancel)
+                    viewModel.cancel()
                 }
                 .buttonStyle(.toolbarPill(.red))
             } else {
                 Button(L10n.save) {
-                    viewModel.send(.createUser(username: username, password: password))
+                    viewModel.add(username: username, password: password)
                 }
                 .buttonStyle(.toolbarPill)
                 .disabled(!isValid)
             }
         }
-        .errorMessage($error) {
+        .errorMessage($viewModel.error) {
             focusedfield = .username
         }
     }

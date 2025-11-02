@@ -24,8 +24,6 @@ extension AddItemElementView {
 
         let type: ItemArrayElements
         let population: [Element]
-
-        // TODO: Why doesn't environment(\.isSearching) work?
         let isSearching: Bool
 
         // MARK: - Body
@@ -91,7 +89,7 @@ extension AddItemElementView {
                 HStack {
                     ZStack {
                         Color.clear
-                        ImageView(person.portraitImageSources(maxWidth: 30))
+                        ImageView(person.portraitImageSources(maxWidth: 30, quality: 90))
                             .failure {
                                 SystemImageContentView(systemName: "person.fill")
                             }

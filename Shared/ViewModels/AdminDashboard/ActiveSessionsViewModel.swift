@@ -6,120 +6,82 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import Foundation
 import JellyfinAPI
 import OrderedCollections
-import SwiftUI
 
-final class ActiveSessionsViewModel: ViewModel, Stateful {
+@MainActor
+@Stateful
+final class ActiveSessionsViewModel: ViewModel {
 
-    // MARK: - Action
+    @CasePathable
+    enum Action {
+        case refresh
 
-    enum Action: Equatable {
-        case getSessions
-        case refreshSessions
-    }
-
-    // MARK: - BackgroundState
-
-    enum BackgroundState: Hashable {
-        case gettingSessions
-    }
-
-    // MARK: - State
-
-    enum State: Hashable {
-        case content
-        case error(JellyfinAPIError)
-        case initial
-    }
-
-    @Published
-    final var backgroundStates: OrderedSet<BackgroundState> = []
-    @Published
-    final var sessions: OrderedDictionary<String, BindingBox<SessionInfo?>> = [:]
-    @Published
-    final var state: State = .initial
-
-    private let activeWithinSeconds: Int = 960
-    private var sessionTask: AnyCancellable?
-
-    func respond(to action: Action) -> State {
-        switch action {
-        case .getSessions:
-            sessionTask?.cancel()
-
-            sessionTask = Task { [weak self] in
-                await MainActor.run {
-                    let _ = self?.backgroundStates.append(.gettingSessions)
-                }
-
-                do {
-                    try await self?.updateSessions()
-                } catch {
-                    guard let self else { return }
-                    await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
-                    }
-                }
-
-                await MainActor.run {
-                    let _ = self?.backgroundStates.remove(.gettingSessions)
-                }
-            }
-            .asAnyCancellable()
-
-            return state
-        case .refreshSessions:
-            sessionTask?.cancel()
-
-            sessionTask = Task { [weak self] in
-                await MainActor.run {
-                    self?.state = .initial
-                }
-
-                do {
-                    try await self?.updateSessions()
-
-                    guard let self else { return }
-
-                    await MainActor.run {
-                        self.state = .content
-                    }
-                } catch {
-                    guard let self else { return }
-                    await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return .initial
+        var transition: Transition {
+            .loop(.refreshing)
+                .whenBackground(.refreshing)
         }
     }
 
-    private func updateSessions() async throws {
+    enum BackgroundState {
+        case refreshing
+    }
+
+    enum State {
+        case initial
+        case error
+        case refreshing
+    }
+
+    @Published
+    var activeWithinSeconds: Int? = 900 {
+        didSet {
+            refresh()
+        }
+    }
+
+    @Published
+    var showSessionType: ActiveSessionFilter = .all {
+        didSet {
+            refresh()
+        }
+    }
+
+    @Published
+    private(set) var sessions: OrderedDictionary<String, BindingBox<SessionInfoDto?>> = [:]
+
+    @Function(\Action.Cases.refresh)
+    private func _refresh() async throws {
         var parameters = Paths.GetSessionsParameters()
         parameters.activeWithinSeconds = activeWithinSeconds
 
         let request = Paths.getSessions(parameters: parameters)
         let response = try await userSession.client.send(request)
 
-        let removedSessionIDs = sessions.keys.filter { !response.value.map(\.id).contains($0) }
+        let filteredSessions: [SessionInfoDto]
+        switch showSessionType {
+        case .all:
+            filteredSessions = response.value
+        case .active:
+            filteredSessions = response.value.filter { $0.nowPlayingItem != nil }
+        case .inactive:
+            filteredSessions = response.value.filter { $0.nowPlayingItem == nil }
+        }
+
+        let removedSessionIDs = sessions.keys.filter { !filteredSessions.map(\.id).contains($0) }
 
         let existingIDs = sessions.keys
             .filter {
-                response.value.map(\.id).contains($0)
+                filteredSessions.map(\.id).contains($0)
             }
-        let newSessions = response.value
+        let newSessions = filteredSessions
             .filter {
                 guard let id = $0.id else { return false }
                 return !sessions.keys.contains(id)
             }
             .map { s in
-                BindingBox<SessionInfo?>(
+                BindingBox<SessionInfoDto?>(
                     source: .init(
                         get: { s },
                         set: { _ in }
@@ -127,45 +89,43 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
                 )
             }
 
-        await MainActor.run {
-            for id in removedSessionIDs {
-                let t = sessions[id]
-                sessions[id] = nil
-                t?.value = nil
+        for id in removedSessionIDs {
+            let t = sessions[id]
+            sessions[id] = nil
+            t?.value = nil
+        }
+
+        for id in existingIDs {
+            sessions[id]?.value = filteredSessions.first(where: { $0.id == id })
+        }
+
+        for session in newSessions {
+            guard let id = session.value?.id else { continue }
+
+            sessions[id] = session
+        }
+
+        sessions.sort { x, y in
+            let xs = x.value.value
+            let ys = y.value.value
+
+            let isPlaying0 = xs?.nowPlayingItem != nil
+            let isPlaying1 = ys?.nowPlayingItem != nil
+
+            if isPlaying0 && !isPlaying1 {
+                return true
+            } else if !isPlaying0 && isPlaying1 {
+                return false
             }
 
-            for id in existingIDs {
-                sessions[id]?.value = response.value.first(where: { $0.id == id })
+            if xs?.userName != ys?.userName {
+                return (xs?.userName ?? "") < (ys?.userName ?? "")
             }
 
-            for session in newSessions {
-                guard let id = session.value?.id else { continue }
-
-                sessions[id] = session
-            }
-
-            sessions.sort { x, y in
-                let xs = x.value.value
-                let ys = y.value.value
-
-                let isPlaying0 = xs?.nowPlayingItem != nil
-                let isPlaying1 = ys?.nowPlayingItem != nil
-
-                if isPlaying0 && !isPlaying1 {
-                    return true
-                } else if !isPlaying0 && isPlaying1 {
-                    return false
-                }
-
-                if xs?.userName != ys?.userName {
-                    return (xs?.userName ?? "") < (ys?.userName ?? "")
-                }
-
-                if isPlaying0 && isPlaying1 {
-                    return (xs?.nowPlayingItem?.name ?? "") < (ys?.nowPlayingItem?.name ?? "")
-                } else {
-                    return (xs?.lastActivityDate ?? Date.now) > (ys?.lastActivityDate ?? Date.now)
-                }
+            if isPlaying0 && isPlaying1 {
+                return (xs?.nowPlayingItem?.name ?? "") < (ys?.nowPlayingItem?.name ?? "")
+            } else {
+                return (xs?.lastActivityDate ?? Date.now) > (ys?.lastActivityDate ?? Date.now)
             }
         }
     }

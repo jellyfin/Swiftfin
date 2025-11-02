@@ -23,15 +23,19 @@ jobs:
 
     runs-on: macos-15
 
+    env:
+      XCODE_VERSION: "16.4"
+      IOS_VERSION: "18"
+      TVOS_VERSION: "18"
+      TVOS_SIMULATOR: "Apple TV 4K"
+      IPHONE_SIMULATOR: "iPhone 16 Pro"
+
     steps:    
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install SwiftGen
         run: brew install swiftgen
-
-      - name: Set Xcode Version
-        run: sudo xcode-select -s "/Applications/Xcode_16.app"
 
       - name: Cache Carthage
         uses: actions/cache@v4
@@ -59,8 +63,6 @@ jobs:
           max_attempts: 3
           retry_on: error
           timeout_minutes: 60
-          command: |
-            xcodebuild build -project "Swiftfin.xcodeproj" \
-            -scheme "${{ matrix.scheme }}" \
-            -clonedSourcePackagesDirPath PackageCache \
-            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+          command: sudo fastlane buildLane \
+            scheme:"\"${{ matrix.scheme }}\"" \
+            xcodeVersion:${{ env.XCODE_VERSION }}

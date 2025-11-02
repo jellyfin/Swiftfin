@@ -64,8 +64,8 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.Library.randomImage)
     private var libraryRandomImage
 
-    @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    @Router
+    private var router
 
     var body: some View {
         List {
@@ -104,15 +104,13 @@ struct CustomizeViewsSettings: View {
                     )
                 }
 
-                ChevronButton(L10n.library)
-                    .onSelect {
-                        router.route(to: \.itemFilterDrawerSelector, $libraryEnabledDrawerFilters)
-                    }
+                ChevronButton(L10n.library) {
+                    router.route(to: .itemFilterDrawerSelector(selection: $libraryEnabledDrawerFilters))
+                }
 
-                ChevronButton(L10n.search)
-                    .onSelect {
-                        router.route(to: \.itemFilterDrawerSelector, $searchEnabledDrawerFilters)
-                    }
+                ChevronButton(L10n.search) {
+                    router.route(to: .itemFilterDrawerSelector(selection: $searchEnabledDrawerFilters))
+                }
 
             } header: {
                 L10n.filters.text
@@ -127,30 +125,34 @@ struct CustomizeViewsSettings: View {
 
             Section(L10n.posters) {
 
-                ChevronButton(L10n.indicators)
-                    .onSelect {
-                        router.route(to: \.indicatorSettings)
-                    }
+                ChevronButton(L10n.indicators) {
+                    router.route(to: .indicatorSettings)
+                }
 
                 Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 
                 CaseIterablePicker(L10n.next, selection: $nextUpPosterType)
+                    .onlySupportedCases(true)
 
                 CaseIterablePicker(L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType)
+                    .onlySupportedCases(true)
 
                 CaseIterablePicker(L10n.recommended, selection: $similarPosterType)
+                    .onlySupportedCases(true)
 
                 CaseIterablePicker(L10n.search, selection: $searchPosterType)
+                    .onlySupportedCases(true)
             }
 
-            Section("Libraries") {
+            Section(L10n.libraries) {
                 CaseIterablePicker(L10n.library, selection: $libraryDisplayType)
 
                 CaseIterablePicker(L10n.posters, selection: $libraryPosterType)
+                    .onlySupportedCases(true)
 
                 if libraryDisplayType == .list, UIDevice.isPad {
                     BasicStepper(
-                        title: L10n.columns,
+                        L10n.columns,
                         value: $listColumnCount,
                         range: 1 ... 4,
                         step: 1

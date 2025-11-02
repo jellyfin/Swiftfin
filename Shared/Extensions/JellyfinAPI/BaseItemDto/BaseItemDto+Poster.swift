@@ -9,11 +9,15 @@
 import Defaults
 import Foundation
 import JellyfinAPI
-import UIKit
+import SwiftUI
 
-// MARK: PortraitPoster
+// MARK: Poster
 
 extension BaseItemDto: Poster {
+
+    var preferredPosterDisplayType: PosterDisplayType {
+        type?.preferredPosterDisplayType ?? .portrait
+    }
 
     var subtitle: String? {
         switch type {
@@ -43,10 +47,12 @@ extension BaseItemDto: Poster {
             "film.stack"
         case .channel, .tvChannel, .liveTvChannel, .program:
             "tv"
-        case .episode, .movie, .series:
+        case .episode, .movie, .series, .video:
             "film"
         case .folder:
             "folder.fill"
+        case .musicVideo:
+            "music.note.tv.fill"
         case .person:
             "person.fill"
         default:
@@ -54,54 +60,94 @@ extension BaseItemDto: Poster {
         }
     }
 
-    func portraitImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
+    func portraitImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
         switch type {
         case .episode:
-            [seriesImageSource(.primary, maxWidth: maxWidth)]
-        case .boxSet, .channel, .tvChannel, .liveTvChannel, .movie, .series:
-            [imageSource(.primary, maxWidth: maxWidth)]
+            [seriesImageSource(.primary, maxWidth: maxWidth, quality: quality)]
+        case .boxSet, .channel, .liveTvChannel, .movie, .musicArtist, .person, .series, .tvChannel:
+            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
         default:
-            []
+            // TODO: cleanup
+            // parentBackdropItemID seems good enough
+            if extraType != nil, let parentBackdropItemID {
+                [.init(
+                    url: _imageURL(
+                        .primary,
+                        maxWidth: maxWidth,
+                        maxHeight: nil,
+                        quality: quality,
+                        itemID: parentBackdropItemID,
+                        requireTag: false
+                    )
+                )]
+            } else {
+                []
+            }
         }
     }
 
-    func landscapeImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
+    func landscapeImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
         switch type {
         case .episode:
             if Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
                 [
-                    seriesImageSource(.thumb, maxWidth: maxWidth),
-                    seriesImageSource(.backdrop, maxWidth: maxWidth),
-                    imageSource(.primary, maxWidth: maxWidth),
+                    seriesImageSource(.thumb, maxWidth: maxWidth, quality: quality),
+                    seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality),
+                    imageSource(.primary, maxWidth: maxWidth, quality: quality),
                 ]
             } else {
-                [imageSource(.primary, maxWidth: maxWidth)]
+                [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
             }
-        case .folder, .program, .video:
-            [imageSource(.primary, maxWidth: maxWidth)]
+        case .folder, .program, .musicVideo, .video:
+            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
         default:
             [
-                imageSource(.thumb, maxWidth: maxWidth),
-                imageSource(.backdrop, maxWidth: maxWidth),
+                imageSource(.thumb, maxWidth: maxWidth, quality: quality),
+                imageSource(.backdrop, maxWidth: maxWidth, quality: quality),
             ]
         }
     }
 
-    func cinematicImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
+    func cinematicImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
         switch type {
         case .episode:
-            [seriesImageSource(.backdrop, maxWidth: maxWidth)]
+            [seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality)]
         default:
-            [imageSource(.backdrop, maxWidth: maxWidth)]
+            [imageSource(.backdrop, maxWidth: maxWidth, quality: quality)]
         }
     }
 
-    func squareImageSources(maxWidth: CGFloat?) -> [ImageSource] {
+    func squareImageSources(maxWidth: CGFloat?, quality: Int? = nil) -> [ImageSource] {
         switch type {
-        case .audio, .musicAlbum:
-            [imageSource(.primary, maxWidth: maxWidth)]
+        case .audio, .channel, .musicAlbum, .tvChannel:
+            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
         default:
             []
+        }
+    }
+
+    func thumbImageSources() -> [ImageSource] {
+        switch preferredPosterDisplayType {
+        case .portrait:
+            portraitImageSources(maxWidth: 200, quality: 90)
+        case .landscape:
+            landscapeImageSources(maxWidth: 200, quality: 90)
+        case .square:
+            squareImageSources(maxWidth: 200, quality: 90)
+        }
+    }
+
+    @ViewBuilder
+    func transform(image: Image) -> some View {
+        switch type {
+        case .channel, .tvChannel:
+            ContainerRelativeView(ratio: 0.95) {
+                image
+                    .aspectRatio(contentMode: .fit)
+            }
+        default:
+            image
+                .aspectRatio(contentMode: .fill)
         }
     }
 }

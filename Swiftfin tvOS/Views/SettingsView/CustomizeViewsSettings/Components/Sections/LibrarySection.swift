@@ -32,8 +32,8 @@ extension CustomizeViewsSettings {
         @Default(.Customization.Library.rememberSort)
         private var rememberLibrarySort
 
-        @EnvironmentObject
-        private var router: CustomizeSettingsCoordinator.Router
+        @Router
+        private var router
 
         @State
         private var isPresentingNextUpDays = false
@@ -49,17 +49,17 @@ extension CustomizeViewsSettings {
             Section(L10n.library) {
                 Toggle(L10n.cinematicBackground, isOn: $cinematicBackground)
 
-                InlineEnumToggle(title: L10n.posters, selection: $libraryPosterType)
+                ListRowMenu(L10n.posters, selection: $libraryPosterType)
 
-                InlineEnumToggle(title: L10n.library, selection: $libraryDisplayType)
+                ListRowMenu(L10n.library, selection: $libraryDisplayType)
 
                 if libraryDisplayType == .list {
                     ChevronButton(
                         L10n.columns,
                         subtitle: listColumnCount.description
-                    )
-                    .onSelect {
-                        router.route(to: \.listColumnSettings, $listColumnCount)
+                    ) {
+                        // TODO: Implement listColumnSettings route in new Router system
+//                        router.route(to: .listColumnSettings(columnCount: $listColumnCount))
                     }
                 }
             }

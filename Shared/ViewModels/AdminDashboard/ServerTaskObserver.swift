@@ -48,9 +48,9 @@ final class ServerTaskObserver: ViewModel, Stateful, Eventful, Identifiable {
     // MARK: Published Values
 
     @Published
-    final var backgroundStates: OrderedSet<BackgroundState> = []
+    var backgroundStates: Set<BackgroundState> = []
     @Published
-    final var state: State = .initial
+    var state: State = .initial
     @Published
     private(set) var task: TaskInfo
 
@@ -138,7 +138,7 @@ final class ServerTaskObserver: ViewModel, Stateful, Eventful, Identifiable {
                     .appending(trigger)
 
                 await MainActor.run {
-                    _ = self.backgroundStates.append(.updatingTriggers)
+                    _ = self.backgroundStates.insert(.updatingTriggers)
                 }
 
                 do {
@@ -165,7 +165,7 @@ final class ServerTaskObserver: ViewModel, Stateful, Eventful, Identifiable {
                 updatedTriggers.removeAll { $0 == trigger }
 
                 await MainActor.run {
-                    _ = self.backgroundStates.append(.updatingTriggers)
+                    _ = self.backgroundStates.insert(.updatingTriggers)
                 }
 
                 do {

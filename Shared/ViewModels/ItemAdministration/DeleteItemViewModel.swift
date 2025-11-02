@@ -10,7 +10,7 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-class DeleteItemViewModel: ViewModel, Stateful, Eventful {
+final class DeleteItemViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: - Events
 
@@ -33,7 +33,7 @@ class DeleteItemViewModel: ViewModel, Stateful, Eventful {
     }
 
     @Published
-    final var state: State = .initial
+    var state: State = .initial
 
     // MARK: - Published Item
 

@@ -10,8 +10,20 @@ import Foundation
 
 extension Sequence {
 
+    func coalesced<Value>(property keyPath: WritableKeyPath<Element, Value?>, with value: Value) -> [Element] {
+        map { element in
+            var element = element
+            element[keyPath: keyPath] = element[keyPath: keyPath] ?? value
+            return element
+        }
+    }
+
     func compacted<Value>(using keyPath: KeyPath<Element, Value?>) -> [Element] {
         filter { $0[keyPath: keyPath] != nil }
+    }
+
+    func first<V: Equatable>(property: (Element) -> V, equalTo value: V) -> Element? {
+        first { property($0) == value }
     }
 
     func intersection<Value: Equatable>(_ other: some Sequence<Value>, using keyPath: KeyPath<Element, Value>) -> [Element] {
@@ -58,6 +70,10 @@ extension Sequence {
 
 extension Sequence where Element: Equatable {
 
+    func first(equalTo other: Element) -> Element? {
+        first { $0 == other }
+    }
+
     /// Returns an array containing the elements of the sequence that
     /// are also within the given sequence.
     func intersection(_ other: some Sequence<Element>) -> [Element] {
@@ -66,5 +82,12 @@ extension Sequence where Element: Equatable {
 
     func subtracting(_ other: some Sequence<Element>) -> [Element] {
         filter { !other.contains($0) }
+    }
+}
+
+extension Sequence where Element: Collection {
+
+    func flattened() -> [Element.Element] {
+        flatMap(\.self)
     }
 }

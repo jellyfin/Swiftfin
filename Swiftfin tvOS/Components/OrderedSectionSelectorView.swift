@@ -42,7 +42,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             SplitFormWindowView()
                 .descriptionView {
                     Image(systemName: systemImage)
@@ -90,7 +90,6 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
                     }
                     .environment(\.editMode, editMode)
                 }
-                .withDescriptionTopPadding()
                 .animation(.linear(duration: 0.2), value: selection.value)
         }
     }

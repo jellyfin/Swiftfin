@@ -49,21 +49,21 @@ extension ServerUserPermissionsView {
                     Text(L10n.maximumFailedLoginPolicyDescription)
 
                     LearnMoreButton(L10n.maximumFailedLoginPolicy) {
-                        TextPair(
-                            title: L10n.lockedUsers,
-                            subtitle: L10n.maximumFailedLoginPolicyReenable
+                        LabeledContent(
+                            L10n.lockedUsers,
+                            value: L10n.maximumFailedLoginPolicyReenable
                         )
-                        TextPair(
-                            title: L10n.unlimited,
-                            subtitle: L10n.unlimitedFailedLoginDescription
+                        LabeledContent(
+                            L10n.unlimited,
+                            value: L10n.unlimitedFailedLoginDescription
                         )
-                        TextPair(
-                            title: L10n.default,
-                            subtitle: L10n.defaultFailedLoginDescription
+                        LabeledContent(
+                            L10n.default,
+                            value: L10n.defaultFailedLoginDescription
                         )
-                        TextPair(
-                            title: L10n.custom,
-                            subtitle: L10n.customFailedLoginDescription
+                        LabeledContent(
+                            L10n.custom,
+                            value: L10n.customFailedLoginDescription
                         )
                     }
                 }
@@ -74,7 +74,7 @@ extension ServerUserPermissionsView {
 
         @ViewBuilder
         private func MaxFailedLoginsButton() -> some View {
-            ChevronAlertButton(
+            ChevronButton(
                 L10n.customFailedLogins,
                 subtitle: Text(policy.loginAttemptsBeforeLockout ?? 1, format: .number),
                 description: L10n.enterCustomFailedLogins
@@ -112,13 +112,13 @@ extension ServerUserPermissionsView {
                     Text(L10n.maximumConnectionsDescription)
 
                     LearnMoreButton(L10n.maximumSessionsPolicy) {
-                        TextPair(
-                            title: L10n.unlimited,
-                            subtitle: L10n.unlimitedConnectionsDescription
+                        LabeledContent(
+                            L10n.unlimited,
+                            value: L10n.unlimitedConnectionsDescription
                         )
-                        TextPair(
-                            title: L10n.custom,
-                            subtitle: L10n.customConnectionsDescription
+                        LabeledContent(
+                            L10n.custom,
+                            value: L10n.customConnectionsDescription
                         )
                     }
                 }
@@ -127,7 +127,7 @@ extension ServerUserPermissionsView {
 
         @ViewBuilder
         private func MaxSessionsButton() -> some View {
-            ChevronAlertButton(
+            ChevronButton(
                 L10n.customSessions,
                 subtitle: Text(policy.maxActiveSessions ?? 1, format: .number),
                 description: L10n.enterCustomMaxSessions

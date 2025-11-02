@@ -58,7 +58,7 @@ extension SeriesEpisodeSelector {
 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     guard let playButtonItem else { return }
-                    proxy.scrollTo(element: playButtonItem, animated: false)
+                    proxy.scrollTo(id: playButtonItem.unwrappedIDHashOrZero, animated: false)
                 }
             }
         }
@@ -116,7 +116,7 @@ extension SeriesEpisodeSelector {
                 onContentFocus: {
                     getContentFocus()
                 },
-                top: "seasons"
+                top: "belowHeader"
             )
             .onChange(of: viewModel.id) {
                 lastFocusedEpisodeID = viewModel.elements.first?.id
@@ -148,9 +148,9 @@ extension SeriesEpisodeSelector {
                     .focused(focusedEpisodeID, equals: "emptyCard")
                     .padding(.horizontal, 4)
             }
-            .allowScrolling(false)
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
+            .scrollDisabled(true)
         }
     }
 
@@ -176,9 +176,9 @@ extension SeriesEpisodeSelector {
                     .focused(focusedEpisodeID, equals: "errorCard")
                     .padding(.horizontal, 4)
             }
-            .allowScrolling(false)
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
+            .scrollDisabled(true)
         }
     }
 
@@ -197,9 +197,9 @@ extension SeriesEpisodeSelector {
                     .focused(focusedEpisodeID, equals: "loadingCard")
                     .padding(.horizontal, 4)
             }
-            .allowScrolling(false)
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
+            .scrollDisabled(true)
         }
     }
 }

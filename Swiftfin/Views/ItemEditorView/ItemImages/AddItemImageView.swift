@@ -18,8 +18,8 @@ struct AddItemImageView: View {
 
     // MARK: - Observed, & Environment Objects
 
-    @EnvironmentObject
-    private var router: ItemImagesCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     private var viewModel: ItemImagesViewModel
@@ -29,8 +29,6 @@ struct AddItemImageView: View {
 
     // MARK: - Dialog State
 
-    @State
-    private var selectedImage: RemoteImageInfo?
     @State
     private var error: Error?
 
@@ -112,27 +110,6 @@ struct AddItemImageView: View {
                 }
             }
         }
-        .sheet(item: $selectedImage) {
-            selectedImage = nil
-        } content: { remoteImageInfo in
-            ItemImageDetailsView(
-                viewModel: viewModel,
-                imageSource: ImageSource(url: remoteImageInfo.url?.url),
-                width: remoteImageInfo.width,
-                height: remoteImageInfo.height,
-                language: remoteImageInfo.language,
-                provider: remoteImageInfo.providerName,
-                rating: remoteImageInfo.communityRating,
-                ratingVotes: remoteImageInfo.voteCount,
-                onClose: {
-                    selectedImage = nil
-                },
-                onSave: {
-                    viewModel.send(.setImage(remoteImageInfo))
-                    selectedImage = nil
-                }
-            )
-        }
         .onFirstAppear {
             remoteImageInfoViewModel.send(.refresh)
         }
@@ -140,7 +117,7 @@ struct AddItemImageView: View {
             switch event {
             case .updated:
                 UIDevice.feedback(.success)
-                router.pop()
+                router.dismiss()
             case let .error(eventError):
                 UIDevice.feedback(.error)
                 error = eventError
@@ -173,7 +150,12 @@ struct AddItemImageView: View {
     @ViewBuilder
     private func imageButton(_ image: RemoteImageInfo) -> some View {
         Button {
-            selectedImage = image
+            router.route(
+                to: .itemSearchImageDetails(
+                    viewModel: viewModel,
+                    remoteImageInfo: image
+                )
+            )
         } label: {
             posterImage(
                 image,

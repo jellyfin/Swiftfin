@@ -82,12 +82,9 @@ extension ServerUsersView {
                         maxWidth: 60
                     )
                 )
-                .grayscale(userActive ? 0.0 : 1.0)
-
-                if isEditing {
-                    Color.black
-                        .opacity(isSelected ? 0 : 0.5)
-                }
+                .environment(\.isEnabled, userActive)
+                .isEditing(isEditing)
+                .isSelected(isSelected)
             }
             .frame(width: 60, height: 60)
         }
@@ -104,22 +101,20 @@ extension ServerUsersView {
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
 
-                    TextPairView(
-                        L10n.role,
-                        value: {
-                            if let isAdministrator = user.policy?.isAdministrator,
-                               isAdministrator
-                            {
-                                Text(L10n.administrator)
-                            } else {
-                                Text(L10n.user)
-                            }
-                        }()
-                    )
+                    LabeledContent(L10n.role) {
+                        if let isAdministrator = user.policy?.isAdministrator,
+                           isAdministrator
+                        {
+                            Text(L10n.administrator)
+                        } else {
+                            Text(L10n.user)
+                        }
+                    }
 
-                    TextPairView(
+                    LabeledContent(
                         L10n.lastSeen,
-                        value: Text(user.lastActivityDate, format: .lastSeen)
+                        value: user.lastActivityDate,
+                        format: .lastSeen
                     )
                     .id(currentDate)
                     .monospacedDigit()

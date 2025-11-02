@@ -6,17 +6,15 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Foundation
 import JellyfinAPI
 
 /// A structure representing a collection of item filters
-struct ItemFilterCollection: Codable, Defaults.Serializable, Hashable {
+struct ItemFilterCollection: Hashable, Storable {
 
     var genres: [ItemGenre] = []
     var itemTypes: [BaseItemKind] = []
     var letter: [ItemLetter] = []
-    var sortBy: [ItemSortBy] = [ItemSortBy.name]
+    var sortBy: [ItemSortBy] = [ItemSortBy.sortName]
     var sortOrder: [ItemSortOrder] = [ItemSortOrder.ascending]
     var tags: [ItemTag] = []
     var traits: [ItemTrait] = []
@@ -29,7 +27,7 @@ struct ItemFilterCollection: Codable, Defaults.Serializable, Hashable {
         traits: [ItemTrait.isFavorite]
     )
     static let recent: ItemFilterCollection = .init(
-        sortBy: [ItemSortBy.dateAdded],
+        sortBy: [ItemSortBy.dateCreated],
         sortOrder: [ItemSortOrder.descending]
     )
 
@@ -39,7 +37,7 @@ struct ItemFilterCollection: Codable, Defaults.Serializable, Hashable {
     /// available values within the current context.
     static let all: ItemFilterCollection = .init(
         letter: ItemLetter.allCases,
-        sortBy: ItemSortBy.allCases,
+        sortBy: ItemSortBy.supportedCases,
         sortOrder: ItemSortOrder.allCases,
         traits: ItemTrait.supportedCases
     )

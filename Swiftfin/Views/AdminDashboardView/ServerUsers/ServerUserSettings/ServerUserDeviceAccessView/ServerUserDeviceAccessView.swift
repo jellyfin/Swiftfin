@@ -19,8 +19,8 @@ struct ServerUserDeviceAccessView: View {
 
     // MARK: - State & Environment Objects
 
-    @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel: ServerUserAdminViewModel
@@ -41,17 +41,22 @@ struct ServerUserDeviceAccessView: View {
 
     init(viewModel: ServerUserAdminViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self.tempPolicy = viewModel.user.policy ?? UserPolicy()
+
+        guard let policy = viewModel.user.policy else {
+            preconditionFailure("User policy cannot be empty.")
+        }
+
+        self.tempPolicy = policy
     }
 
     // MARK: - Body
 
     var body: some View {
         contentView
-            .navigationTitle(L10n.deviceAccess)
+            .navigationTitle(L10n.deviceAccess.localizedCapitalized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
-                router.dismissCoordinator()
+                router.dismiss()
             }
             .topBarTrailing {
                 if viewModel.backgroundStates.contains(.updating) {
@@ -72,11 +77,11 @@ struct ServerUserDeviceAccessView: View {
                     error = eventError
                 case .updated:
                     UIDevice.feedback(.success)
-                    router.dismissCoordinator()
+                    router.dismiss()
                 }
             }
             .onFirstAppear {
-                devicesViewModel.send(.refresh)
+                devicesViewModel.refresh()
             }
             .errorMessage($error)
     }
@@ -109,8 +114,8 @@ struct ServerUserDeviceAccessView: View {
                                 tempPolicy.enabledDevices?.append(device.id!)
                             }
                         }
-                        .environment(\.isEditing, true)
-                        .environment(\.isSelected, tempPolicy.enabledDevices?.contains(device.id ?? "") == true)
+                        .isEditing(true)
+                        .isSelected(tempPolicy.enabledDevices?.contains(device.id ?? "") == true)
                     }
                 }
             }

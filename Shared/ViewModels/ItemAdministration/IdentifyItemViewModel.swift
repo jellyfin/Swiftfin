@@ -12,7 +12,7 @@ import Get
 import JellyfinAPI
 import OrderedCollections
 
-class IdentifyItemViewModel: ViewModel, Stateful, Eventful {
+final class IdentifyItemViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: - Events
 
@@ -213,7 +213,10 @@ class IdentifyItemViewModel: ViewModel, Stateful, Eventful {
     private func refreshItem() async throws {
         guard let itemID = item.id else { return }
 
-        let request = Paths.getItem(userID: userSession.user.id, itemID: itemID)
+        let request = Paths.getItem(
+            itemID: itemID,
+            userID: userSession.user.id
+        )
         let response = try await userSession.client.send(request)
 
         await MainActor.run {

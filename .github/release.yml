@@ -7,8 +7,14 @@ changelog:
   categories:
     - title: New Features 🎉
       labels:
-        - *
+        - enhancement
     - title: Bug Fixes 🛠
       labels:
         - bug
         - crash
+    - title: Other ⚙️
+      labels:
+        - accessibility
+        - developer
+        - documentation
+        - external

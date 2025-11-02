@@ -50,22 +50,22 @@ extension EditAccessScheduleView {
             HStack {
                 VStack(alignment: .leading) {
                     if let dayOfWeek = schedule.dayOfWeek {
-                        Text(dayOfWeek.rawValue)
+                        Text(dayOfWeek.displayTitle)
                             .fontWeight(.semibold)
                     }
 
                     Group {
                         if let startHour = schedule.startHour {
-                            TextPairView(
-                                leading: L10n.startTime,
-                                trailing: doubleToTimeString(startHour)
+                            LabeledContent(
+                                L10n.startTime,
+                                value: doubleToTimeString(startHour)
                             )
                         }
 
                         if let endHour = schedule.endHour {
-                            TextPairView(
-                                leading: L10n.endTime,
-                                trailing: doubleToTimeString(endHour)
+                            LabeledContent(
+                                L10n.endTime,
+                                value: doubleToTimeString(endHour)
                             )
                         }
                     }
@@ -96,7 +96,7 @@ extension EditAccessScheduleView {
             let calendar = Calendar.current
 
             guard let date = calendar.date(from: dateComponents) else {
-                return .emptyTime
+                return .emptyRuntime
             }
 
             let formatter = DateFormatter()

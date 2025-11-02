@@ -30,7 +30,7 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         let items = (response.value.items ?? [])
             .filter { item in
                 if let collectionType = item.collectionType {
-                    return ["movies", "tvshows", "mixed", "boxsets"].contains(collectionType)
+                    return CollectionType.supportedCases.contains(collectionType)
                 }
 
                 return true
@@ -57,10 +57,12 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
         // Default values, expected to be overridden
         // by parent or filters
-        parameters.isRecursive = true
         parameters.includeItemTypes = BaseItemKind.supportedCases
         parameters.sortOrder = [.ascending]
         parameters.sortBy = [ItemSortBy.name.rawValue]
+
+        /// Recursive should only apply to parents/folders and not to baseItems
+        parameters.isRecursive = (parent as? BaseItemDto)?.isRecursiveCollection ?? true
 
         // Parent
         if let parent {

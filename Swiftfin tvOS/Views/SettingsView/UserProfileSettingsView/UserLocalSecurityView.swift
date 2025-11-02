@@ -25,8 +25,8 @@ struct UserLocalSecurityView: View {
 
     // MARK: - State & Environment Objects
 
-    @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = UserLocalSecurityViewModel()
@@ -109,7 +109,7 @@ struct UserLocalSecurityView: View {
         case .promptForNewPin:
             onPinCompletion = {
                 viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: pinHint)
-                router.popLast()
+                router.dismiss()
             }
 
             pin = ""
@@ -145,7 +145,7 @@ struct UserLocalSecurityView: View {
 
                 if signInPolicy == .requirePin {
                     Section {
-                        ChevronAlertButton(
+                        ChevronButton(
                             L10n.hint,
                             subtitle: pinHint,
                             description: L10n.setPinHintDescription
@@ -257,17 +257,17 @@ struct UserLocalSecurityView: View {
         switch focusedItem {
         case .security:
             LearnMoreModal {
-                TextPair(
-                    title: L10n.security,
-                    subtitle: L10n.additionalSecurityAccessDescription
+                LabeledContent(
+                    L10n.security,
+                    value: L10n.additionalSecurityAccessDescription
                 )
-                TextPair(
-                    title: UserAccessPolicy.requirePin.displayTitle,
-                    subtitle: L10n.requirePinDescription
+                LabeledContent(
+                    UserAccessPolicy.requirePin.displayTitle,
+                    value: L10n.requirePinDescription
                 )
-                TextPair(
-                    title: UserAccessPolicy.none.displayTitle,
-                    subtitle: L10n.saveUserWithoutAuthDescription
+                LabeledContent(
+                    UserAccessPolicy.none.displayTitle,
+                    value: L10n.saveUserWithoutAuthDescription
                 )
             }
 

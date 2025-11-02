@@ -10,122 +10,73 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: if no context menu defined, don't add context menu
+private let landscapeMaxWidth: CGFloat = 500
+private let portraitMaxWidth: CGFloat = 500
 
 struct PosterButton<Item: Poster>: View {
 
-    @FocusState
-    private var isFocused: Bool
+    @EnvironmentTypeValue<Item>(\.posterOverlayRegistry)
+    private var posterOverlayRegistry
 
-    private var item: Item
-    private var type: PosterDisplayType
+    @State
+    private var posterSize: CGSize = .zero
+
     private var horizontalAlignment: HorizontalAlignment
-    private var content: () -> any View
-    private var imageOverlay: () -> any View
-    private var contextMenu: () -> any View
-    private var onSelect: () -> Void
+    private let item: Item
+    private let type: PosterDisplayType
+    private let label: any View
+    private let action: () -> Void
 
-    // Setting the .focused() modifier causes significant performance issues.
-    // Only set if desiring focus changes
-    private var onFocusChanged: ((Bool) -> Void)?
-
-    private func imageView(from item: Item) -> ImageView {
-        switch type {
-        case .portrait:
-            ImageView(item.portraitImageSources(maxWidth: 500))
-        case .landscape:
-            ImageView(item.landscapeImageSources(maxWidth: 500))
-        }
+    @ViewBuilder
+    private func poster(overlay: some View) -> some View {
+        PosterImage(item: item, type: type)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .overlay { overlay }
+            .contentShape(.contextMenuPreview, Rectangle())
+            .posterStyle(type)
+            .posterShadow()
+            .hoverEffect(.highlight)
     }
 
     var body: some View {
-        VStack(alignment: horizontalAlignment) {
-            Button {
-                onSelect()
-            } label: {
-                ZStack {
-                    Color.clear
-
-                    imageView(from: item)
-                        .failure {
-                            if item.showTitle {
-                                SystemImageContentView(systemName: item.systemImage)
-                            } else {
-                                SystemImageContentView(
-                                    title: item.displayTitle,
-                                    systemName: item.systemImage
-                                )
-                            }
-                        }
-                        .accessibilityIgnoresInvertColors()
-
-                    imageOverlay()
-                        .eraseToAnyView()
-                }
-                .posterStyle(type)
-            }
-            .buttonStyle(.card)
-            .contextMenu(menuItems: {
-                contextMenu()
-                    .eraseToAnyView()
-            })
-            .posterShadow()
-            .ifLet(onFocusChanged) { view, onFocusChanged in
-                view
-                    .focused($isFocused)
-                    .onChange(of: isFocused) { _, newValue in
-                        onFocusChanged(newValue)
-                    }
-            }
-            .accessibilityLabel(item.displayTitle)
-
-            content()
+        Button(action: action) {
+            let overlay = posterOverlayRegistry?(item) ??
+                PosterButton.DefaultOverlay(item: item)
                 .eraseToAnyView()
-                .zIndex(-1)
+
+            poster(overlay: overlay)
+                .trackingSize($posterSize)
+
+            label
+                .eraseToAnyView()
+        }
+        .buttonStyle(.borderless)
+        .buttonBorderShape(.roundedRectangle)
+        .focusedValue(\.focusedPoster, AnyPoster(item))
+        .accessibilityLabel(item.displayTitle)
+        .matchedContextMenu(for: item) {
+            EmptyView()
         }
     }
 }
 
 extension PosterButton {
 
-    init(item: Item, type: PosterDisplayType) {
-        self.init(
-            item: item,
-            type: type,
-            horizontalAlignment: .leading,
-            content: { TitleSubtitleContentView(item: item) },
-            imageOverlay: { DefaultOverlay(item: item) },
-            contextMenu: { EmptyView() },
-            onSelect: {},
-            onFocusChanged: nil
-        )
+    init(
+        item: Item,
+        type: PosterDisplayType,
+        action: @escaping () -> Void,
+        @ViewBuilder label: @escaping () -> any View
+    ) {
+        self.item = item
+        self.type = type
+        self.action = action
+        self.label = label()
+        self.horizontalAlignment = .leading
     }
-}
-
-extension PosterButton {
 
     func horizontalAlignment(_ alignment: HorizontalAlignment) -> Self {
         copy(modifying: \.horizontalAlignment, with: alignment)
-    }
-
-    func content(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.content, with: content)
-    }
-
-    func imageOverlay(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.imageOverlay, with: content)
-    }
-
-    func contextMenu(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.contextMenu, with: content)
-    }
-
-    func onSelect(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
-    }
-
-    func onFocusChanged(_ action: @escaping (Bool) -> Void) -> Self {
-        copy(modifying: \.onFocusChanged, with: action)
     }
 }
 
@@ -167,12 +118,10 @@ extension PosterButton {
             VStack(alignment: .leading) {
                 if item.showTitle {
                     TitleContentView(item: item)
-                        .backport
                         .lineLimit(1, reservesSpace: true)
                 }
 
                 SubtitleContentView(item: item)
-                    .backport
                     .lineLimit(1, reservesSpace: true)
             }
         }
@@ -194,7 +143,6 @@ extension PosterButton {
                         Text(seriesName)
                             .font(.footnote.weight(.regular))
                             .foregroundColor(.primary)
-                            .backport
                             .lineLimit(1, reservesSpace: true)
                     }
 
@@ -208,20 +156,22 @@ extension PosterButton {
             let item: BaseItemDto
 
             var body: some View {
+
                 SeparatorHStack {
-                    Text(item.seasonEpisodeLabel ?? .emptyDash)
-
-                    if item.showTitle {
-                        Text(item.displayTitle)
-
-                    } else if let seriesName = item.seriesName {
-                        Text(seriesName)
-                    }
-                }
-                .separator {
                     Circle()
                         .frame(width: 2, height: 2)
                         .padding(.horizontal, 3)
+                } content: {
+                    SeparatorHStack {
+                        Text(item.seasonEpisodeLabel ?? .emptyDash)
+
+                        if item.showTitle {
+                            Text(item.displayTitle)
+
+                        } else if let seriesName = item.seriesName {
+                            Text(seriesName)
+                        }
+                    }
                 }
                 .font(.caption)
                 .foregroundColor(.secondary)
@@ -248,23 +198,23 @@ extension PosterButton {
         var body: some View {
             ZStack {
                 if let item = item as? BaseItemDto {
-                    if item.userData?.isPlayed ?? false {
+                    if item.canBePlayed, !item.isLiveStream, item.userData?.isPlayed == true {
                         WatchedIndicator(size: 45)
-                            .visible(showPlayed)
+                            .isVisible(showPlayed)
                     } else {
                         if (item.userData?.playbackPositionTicks ?? 0) > 0 {
                             ProgressIndicator(progress: (item.userData?.playedPercentage ?? 0) / 100, height: 10)
-                                .visible(showProgress)
-                        } else {
+                                .isVisible(showProgress)
+                        } else if item.canBePlayed, !item.isLiveStream {
                             UnwatchedIndicator(size: 45)
                                 .foregroundColor(accentColor)
-                                .visible(showUnplayed)
+                                .isVisible(showUnplayed)
                         }
                     }
 
-                    if item.userData?.isFavorite ?? false {
+                    if item.userData?.isFavorite == true {
                         FavoriteIndicator(size: 45)
-                            .visible(showFavorited)
+                            .isVisible(showFavorited)
                     }
                 }
             }

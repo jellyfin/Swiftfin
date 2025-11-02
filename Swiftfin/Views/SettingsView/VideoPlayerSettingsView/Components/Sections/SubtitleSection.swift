@@ -18,20 +18,19 @@ extension VideoPlayerSettingsView {
         @Default(.VideoPlayer.Subtitle.subtitleColor)
         private var subtitleColor
 
-        @EnvironmentObject
-        private var router: VideoPlayerSettingsCoordinator.Router
+        @Router
+        private var router
 
         var body: some View {
             Section {
-                ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName)
-                    .onSelect {
-                        router.route(to: \.fontPicker, $subtitleFontName)
-                    }
+                ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName) {
+                    router.route(to: .fontPicker(selection: $subtitleFontName))
+                }
 
                 BasicStepper(
-                    title: L10n.subtitleSize,
+                    L10n.subtitleSize,
                     value: $subtitleSize,
-                    range: 1 ... 24,
+                    range: 1 ... 20,
                     step: 1
                 )
 

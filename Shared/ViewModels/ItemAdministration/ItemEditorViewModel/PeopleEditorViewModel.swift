@@ -10,7 +10,7 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-class PeopleEditorViewModel: ItemEditorViewModel<BaseItemPerson> {
+final class PeopleEditorViewModel: ItemEditorViewModel<BaseItemPerson> {
 
     // MARK: - Populate the Trie
 

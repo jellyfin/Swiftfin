@@ -13,8 +13,8 @@ extension ItemView.AboutView {
 
     struct MediaSourcesCard: View {
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         let subtitle: String?
         let source: MediaSourceInfo
@@ -35,7 +35,7 @@ extension ItemView.AboutView {
                     }
                 }
                 .onSelect {
-                    router.route(to: \.mediaSourceInfo, source)
+                    router.route(to: .mediaSourceInfo(source: source))
                 }
         }
     }

@@ -6,17 +6,24 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: try to make views simpler so there isn't one per media type, but per view type
-//       - basic (episodes, collection) vs more fancy (rest)
-//       - think about future for other media types
-
 struct ItemView: View {
 
-    @EnvironmentObject
-    private var router: ItemCoordinator.Router
+    protocol ScrollContainerView: View {
+
+        associatedtype Content: View
+
+        init(viewModel: ItemViewModel, content: @escaping () -> Content)
+    }
+
+    @Default(.Customization.itemViewType)
+    private var itemViewType
+
+    @Router
+    private var router
 
     @StateObject
     private var viewModel: ItemViewModel
@@ -24,49 +31,43 @@ struct ItemView: View {
     private var deleteViewModel: DeleteItemViewModel
 
     @State
-    private var showConfirmationDialog = false
+    private var isPresentingConfirmationDialog = false
     @State
     private var isPresentingEventAlert = false
     @State
     private var error: JellyfinAPIError?
 
-    @StoredValue(.User.enableItemDeletion)
-    private var enableItemDeletion: Bool
-    @StoredValue(.User.enableItemEditing)
-    private var enableItemEditing: Bool
-    @StoredValue(.User.enableCollectionManagement)
-    private var enableCollectionManagement: Bool
+    // MARK: - Can Delete Item
 
     private var canDelete: Bool {
-        if viewModel.item.type == .boxSet {
-            return enableCollectionManagement && viewModel.item.canDelete ?? false
-        } else {
-            return enableItemDeletion && viewModel.item.canDelete ?? false
-        }
+        viewModel.userSession.user.permissions.items.canDelete(item: viewModel.item)
     }
+
+    // MARK: - Can Edit Item
 
     private var canEdit: Bool {
-        if viewModel.item.type == .boxSet {
-            return enableCollectionManagement
-        } else {
-            return enableItemEditing
-        }
+        viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item)
+        // TODO: Enable when Subtitle / Lyric Editing is added
+        // || viewModel.userSession.user.permissions.items.canManageLyrics(item: viewModel.item)
+        // || viewModel.userSession.user.permissions.items.canManageSubtitles(item: viewModel.item)
     }
 
-    // Use to hide the menu button when not needed.
-    // Add more checks as needed. For example, canDownload.
+    // MARK: - Deletion or Editing is Enabled
+
     private var enableMenu: Bool {
-        canDelete || canEdit
+        canEdit || canDelete
     }
 
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
         switch item.type {
-        case .boxSet:
+        case .boxSet, .person, .musicArtist:
             return CollectionItemViewModel(item: item)
         case .episode:
             return EpisodeItemViewModel(item: item)
         case .movie:
             return MovieItemViewModel(item: item)
+        case .musicVideo, .video:
+            return ItemViewModel(item: item)
         case .series:
             return SeriesItemViewModel(item: item)
         default:
@@ -81,51 +82,61 @@ struct ItemView: View {
     }
 
     @ViewBuilder
-    private var padView: some View {
+    private var scrollContentView: some View {
         switch viewModel.item.type {
-        case .boxSet:
-            iPadOSCollectionItemView(viewModel: viewModel as! CollectionItemViewModel)
-        case .episode:
-            iPadOSEpisodeItemView(viewModel: viewModel as! EpisodeItemViewModel)
+        case .boxSet, .person, .musicArtist:
+            CollectionItemContentView(viewModel: viewModel as! CollectionItemViewModel)
+        case .episode, .musicVideo, .video:
+            SimpleItemContentView(viewModel: viewModel)
         case .movie:
-            iPadOSMovieItemView(viewModel: viewModel as! MovieItemViewModel)
+            MovieItemContentView(viewModel: viewModel as! MovieItemViewModel)
         case .series:
-            iPadOSSeriesItemView(viewModel: viewModel as! SeriesItemViewModel)
+            SeriesItemContentView(viewModel: viewModel as! SeriesItemViewModel)
         default:
             Text(L10n.notImplementedYetWithType(viewModel.item.type ?? "--"))
         }
     }
 
-    @ViewBuilder
-    private var phoneView: some View {
-        switch viewModel.item.type {
-        case .boxSet:
-            CollectionItemView(viewModel: viewModel as! CollectionItemViewModel)
-        case .episode:
-            EpisodeItemView(viewModel: viewModel as! EpisodeItemViewModel)
-        case .movie:
-            MovieItemView(viewModel: viewModel as! MovieItemViewModel)
-        case .series:
-            SeriesItemView(viewModel: viewModel as! SeriesItemViewModel)
-        default:
-            Text(L10n.notImplementedYetWithType(viewModel.item.type ?? "--"))
-        }
-    }
+    // TODO: break out into pad vs phone views based on item type
+    private func scrollContainerView<Content: View>(
+        viewModel: ItemViewModel,
+        content: @escaping () -> Content
+    ) -> any ScrollContainerView {
 
-    @ViewBuilder
-    private var contentView: some View {
         if UIDevice.isPad {
-            padView
-        } else {
-            phoneView
+            return iPadOSCinematicScrollView(viewModel: viewModel, content: content)
         }
+
+        switch viewModel.item.type {
+        case .movie, .series:
+            switch itemViewType {
+            case .compactPoster:
+                return CompactPosterScrollView(viewModel: viewModel, content: content)
+            case .compactLogo:
+                return CompactLogoScrollView(viewModel: viewModel, content: content)
+            case .cinematic:
+                return CinematicScrollView(viewModel: viewModel, content: content)
+            }
+        case .person, .musicArtist:
+            return CompactPosterScrollView(viewModel: viewModel, content: content)
+        default:
+            return SimpleScrollView(viewModel: viewModel, content: content)
+        }
+    }
+
+    @ViewBuilder
+    private var innerBody: some View {
+        scrollContainerView(viewModel: viewModel) {
+            scrollContentView
+        }
+        .eraseToAnyView()
     }
 
     var body: some View {
         ZStack {
             switch viewModel.state {
             case .content:
-                contentView
+                innerBody
                     .navigationTitle(viewModel.item.displayTitle)
             case let .error(error):
                 ErrorView(error: error)
@@ -133,7 +144,7 @@ struct ItemView: View {
                 DelayedProgressView()
             }
         }
-        .transition(.opacity.animation(.linear(duration: 0.2)))
+        .animation(.linear(duration: 0.1), value: viewModel.state)
         .navigationBarTitleDisplayMode(.inline)
         .onFirstAppear {
             viewModel.send(.refresh)
@@ -144,20 +155,21 @@ struct ItemView: View {
         ) {
             if canEdit {
                 Button(L10n.edit, systemImage: "pencil") {
-                    router.route(to: \.itemEditor, viewModel)
+                    router.route(to: .itemEditor(viewModel: viewModel))
                 }
             }
 
             if canDelete {
-                Divider()
-                Button(L10n.delete, systemImage: "trash", role: .destructive) {
-                    showConfirmationDialog = true
+                Section {
+                    Button(L10n.delete, systemImage: "trash", role: .destructive) {
+                        isPresentingConfirmationDialog = true
+                    }
                 }
             }
         }
         .confirmationDialog(
             L10n.deleteItemConfirmationMessage,
-            isPresented: $showConfirmationDialog,
+            isPresented: $isPresentingConfirmationDialog,
             titleVisibility: .visible
         ) {
             Button(L10n.confirm, role: .destructive) {
@@ -171,7 +183,7 @@ struct ItemView: View {
                 error = eventError
                 isPresentingEventAlert = true
             case .deleted:
-                router.dismissCoordinator()
+                router.dismiss()
             }
         }
         .alert(

@@ -64,13 +64,18 @@ extension TranscodeReason: Displayable, SystemImageable {
             return L10n.directPlayError
         case .videoRangeTypeNotSupported:
             return L10n.videoRangeTypeNotSupported
+        case .videoCodecTagNotSupported:
+            return L10n.videoCodecTagNotSupported
+        case .streamCountExceedsLimit:
+            return L10n.streamCountExceedsLimit
         }
     }
 
     var systemImage: String {
         switch self {
         case .containerNotSupported,
-             .containerBitrateExceedsLimit:
+             .containerBitrateExceedsLimit,
+             .directPlayError:
             return "shippingbox"
         case .audioCodecNotSupported,
              .audioIsExternal,
@@ -93,12 +98,13 @@ extension TranscodeReason: Displayable, SystemImageable {
              .interlacedVideoNotSupported,
              .videoBitrateNotSupported,
              .unknownVideoStreamInfo,
+             .videoCodecTagNotSupported,
              .videoRangeTypeNotSupported:
             return "photo.tv"
         case .subtitleCodecNotSupported:
             return "captions.bubble"
-        default:
-            return "questionmark.app"
+        case .streamCountExceedsLimit:
+            return "number.circle"
         }
     }
 }

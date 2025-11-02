@@ -13,8 +13,8 @@ import SwiftUI
 
 struct UserProfileSettingsView: View {
 
-    @EnvironmentObject
-    private var router: UserProfileSettingsCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     private var viewModel: SettingsViewModel
@@ -35,28 +35,17 @@ struct UserProfileSettingsView: View {
                 UserProfileImage(
                     userID: viewModel.userSession.user.id,
                     source: viewModel.userSession.user.profileImageSource(
-                        client: viewModel.userSession.client,
-                        maxWidth: 400
+                        client: viewModel.userSession.client
                     )
                 )
                 .aspectRatio(contentMode: .fit)
                 .frame(maxWidth: 400)
             }
             .contentView {
-
-                // TODO: bring reset password to tvOS
-//            Section {
-//                ChevronButton(L10n.password)
-//                    .onSelect {
-//                        router.route(to: \.resetUserPassword, viewModel.userSession.user.id)
-//                    }
-//            }
-
                 Section {
-                    ChevronButton(L10n.security)
-                        .onSelect {
-                            router.route(to: \.localSecurity)
-                        }
+                    ChevronButton(L10n.security) {
+                        router.route(to: .localSecurity)
+                    }
                 }
 
                 // TODO: Do we want this option on tvOS?
@@ -71,7 +60,6 @@ struct UserProfileSettingsView: View {
 //                Text(L10n.resetSettingsDescription)
 //            }
             }
-            .withDescriptionTopPadding()
             .navigationTitle(L10n.user)
             .confirmationDialog(
                 L10n.resetSettings,

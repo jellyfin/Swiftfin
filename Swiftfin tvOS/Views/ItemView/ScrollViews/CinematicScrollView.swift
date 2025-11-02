@@ -6,28 +6,99 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
+import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
 
-    struct CinematicScrollView<Content: View>: View {
+    struct CinematicScrollView<Content: View>: ScrollContainerView {
 
         @ObservedObject
-        var viewModel: ItemViewModel
+        private var viewModel: ItemViewModel
 
-        let content: () -> Content
+        @StateObject
+        private var focusGuide = FocusGuide()
+
+        private let content: Content
+
+        init(
+            viewModel: ItemViewModel,
+            content: @escaping () -> Content
+        ) {
+            self.viewModel = viewModel
+            self.content = content()
+        }
+
+        private func withBackgroundImageSource(
+            @ViewBuilder content: @escaping (ImageSource) -> some View
+        ) -> some View {
+            let item: BaseItemDto
+
+            if viewModel.item.type == .person || viewModel.item.type == .musicArtist,
+               let typeViewModel = viewModel as? CollectionItemViewModel,
+               let randomItem = typeViewModel.randomItem()
+            {
+                item = randomItem
+            } else {
+                item = viewModel.item
+            }
+
+            let imageType: ImageType = {
+                switch item.type {
+                case .episode, .musicVideo, .video:
+                    .primary
+                default:
+                    .backdrop
+                }
+            }()
+
+            let imageSource = item.imageSource(imageType, maxWidth: 1920)
+
+            return content(imageSource)
+                .id(imageSource.url?.hashValue)
+                .animation(.linear(duration: 0.1), value: imageSource.url?.hashValue)
+        }
 
         var body: some View {
-            ZStack {
-                if viewModel.item.type == .episode {
-                    ImageView(viewModel.item.imageSource(.primary, maxWidth: 1920))
-                } else {
-                    ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1920))
-                }
+            GeometryReader { proxy in
+                ZStack {
+                    withBackgroundImageSource { imageSource in
+                        ImageView(imageSource)
+                    }
 
-                ScrollView(.vertical, showsIndicators: false) {
-                    content()
+                    ScrollView(.vertical, showsIndicators: false) {
+                        VStack(spacing: 0) {
+                            CinematicHeaderView(viewModel: viewModel)
+                                .ifLet(viewModel as? SeriesItemViewModel) { view, _ in
+                                    view
+                                        .focusGuide(
+                                            focusGuide,
+                                            tag: "header",
+                                            bottom: "belowHeader"
+                                        )
+                                }
+                                .frame(height: proxy.size.height - 150)
+                                .padding(.bottom, 50)
+
+                            content
+                        }
+                        .background {
+                            BlurView(style: .dark)
+                                .mask {
+                                    VStack(spacing: 0) {
+                                        LinearGradient(gradient: Gradient(stops: [
+                                            .init(color: .white, location: 0),
+                                            .init(color: .white.opacity(0.7), location: 0.4),
+                                            .init(color: .white.opacity(0), location: 1),
+                                        ]), startPoint: .bottom, endPoint: .top)
+                                            .frame(height: proxy.size.height - 150)
+
+                                        Color.white
+                                    }
+                                }
+                        }
+                        .environmentObject(focusGuide)
+                    }
                 }
             }
             .ignoresSafeArea()
@@ -42,10 +113,14 @@ extension ItemView {
         enum CinematicHeaderFocusLayer: Hashable {
             case top
             case playButton
+            case actionButtons
         }
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @StoredValue(.User.itemViewAttributes)
+        private var attributes
+
+        @Router
+        private var router
         @ObservedObject
         var viewModel: ItemViewModel
         @FocusState
@@ -64,66 +139,72 @@ extension ItemView {
 
                         ImageView(viewModel.item.imageSource(
                             .logo,
-                            maxWidth: UIScreen.main.bounds.width * 0.4,
                             maxHeight: 250
                         ))
                         .placeholder { _ in
                             EmptyView()
                         }
                         .failure {
-                            Text(viewModel.item.displayTitle)
+                            Marquee(viewModel.item.displayTitle)
                                 .font(.largeTitle)
                                 .fontWeight(.semibold)
-                                .lineLimit(2)
-                                .multilineTextAlignment(.leading)
-                                .foregroundColor(.white)
+                                .lineLimit(1)
+                                .foregroundStyle(.white)
                         }
                         .aspectRatio(contentMode: .fit)
                         .padding(.bottom)
-                        .frame(maxHeight: 250, alignment: .bottomLeading)
 
-                        if let tagline = viewModel.item.taglines?.first {
-                            Text(tagline)
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                                .multilineTextAlignment(.leading)
-                                .lineLimit(1)
-                        }
+                        OverviewView(item: viewModel.item)
+                            .taglineLineLimit(1)
+                            .overviewLineLimit(3)
 
-                        Text(viewModel.item.overview ?? L10n.noOverviewAvailable)
-                            .font(.subheadline)
-                            .lineLimit(3)
+                        if viewModel.item.type != .person {
+                            HStack {
 
-                        HStack {
+                                DotHStack {
+                                    if let firstGenre = viewModel.item.genres?.first {
+                                        Text(firstGenre)
+                                    }
 
-                            DotHStack {
-                                if let firstGenre = viewModel.item.genres?.first {
-                                    Text(firstGenre)
+                                    if let premiereYear = viewModel.item.premiereDateYear {
+                                        Text(premiereYear)
+                                    }
+
+                                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
+                                        Text(runtime)
+                                    }
                                 }
+                                .font(.caption)
+                                .foregroundColor(Color(UIColor.lightGray))
 
-                                if let premiereYear = viewModel.item.premiereDateYear {
-                                    Text(premiereYear)
-                                }
-
-                                if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
-                                    Text(runtime)
-                                }
+                                ItemView.AttributesHStack(
+                                    attributes: attributes,
+                                    viewModel: viewModel
+                                )
                             }
-                            .font(.caption)
-                            .foregroundColor(Color(UIColor.lightGray))
-
-                            ItemView.AttributesHStack(viewModel: viewModel)
                         }
                     }
 
                     Spacer()
 
                     VStack {
-                        ItemView.PlayButton(viewModel: viewModel)
-                            .focused($focusedLayer, equals: .playButton)
+                        if viewModel.item.type == .person || viewModel.item.type == .musicArtist {
+                            ImageView(viewModel.item.imageSource(.primary, maxWidth: 440))
+                                .failure {
+                                    SystemImageContentView(systemName: viewModel.item.systemImage)
+                                }
+                                .posterStyle(.portrait, contentMode: .fill)
+                                .frame(width: 440)
+                                .cornerRadius(10)
+                                .accessibilityIgnoresInvertColors()
+                        } else if viewModel.item.presentPlayButton {
+                            ItemView.PlayButton(viewModel: viewModel)
+                                .focused($focusedLayer, equals: .playButton)
+                        }
 
                         ItemView.ActionButtonHStack(viewModel: viewModel)
-                            .frame(width: 400)
+                            .focused($focusedLayer, equals: .actionButtons)
+                            .frame(width: 440)
                     }
                     .frame(width: 450)
                     .padding(.leading, 150)
@@ -132,7 +213,11 @@ extension ItemView {
             .padding(.horizontal, 50)
             .onChange(of: focusedLayer) { _, layer in
                 if layer == .top {
-                    focusedLayer = .playButton
+                    if viewModel.item.presentPlayButton {
+                        focusedLayer = .playButton
+                    } else {
+                        focusedLayer = .actionButtons
+                    }
                 }
             }
         }

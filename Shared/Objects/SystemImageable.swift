@@ -6,9 +6,15 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-
+/// A type that provides a `systemImage`
 protocol SystemImageable {
 
     var systemImage: String { get }
+    var secondarySystemImage: String { get }
+}
+
+extension SystemImageable {
+    var secondarySystemImage: String {
+        systemImage
+    }
 }

@@ -9,9 +9,6 @@
 import Defaults
 import SwiftUI
 
-// TODO: Label generic not really necessary if just restricting to `Text`
-//       - go back to `any View` implementation instead
-
 enum SelectorType {
     case single
     case multi
@@ -43,39 +40,6 @@ struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
         self.type = type
     }
 
-    var body: some View {
-        List(sources, id: \.hashValue) { element in
-            Button {
-                switch type {
-                case .single:
-                    handleSingleSelect(with: element)
-                case .multi:
-                    handleMultiSelect(with: element)
-                }
-            } label: {
-                HStack {
-                    label(element)
-
-                    Spacer()
-
-                    if selectedItems.contains(element) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .resizable()
-                            .backport
-                            .fontWeight(.bold)
-                            .aspectRatio(1, contentMode: .fit)
-                            .frame(width: 24, height: 24)
-                            .symbolRenderingMode(.palette)
-                            .foregroundStyle(accentColor.overlayColor, accentColor)
-                    }
-                }
-            }
-        }
-        .onChange(of: selectionBinding.wrappedValue) { newValue in
-            selectedItems = newValue
-        }
-    }
-
     private func handleSingleSelect(with element: Element) {
         selectedItems = [element]
         selectionBinding.wrappedValue = selectedItems
@@ -89,9 +53,42 @@ struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
         }
         selectionBinding.wrappedValue = selectedItems
     }
+
+    var body: some View {
+        List(sources, id: \.hashValue) { element in
+            Button {
+                switch type {
+                case .single:
+                    handleSingleSelect(with: element)
+                case .multi:
+                    handleMultiSelect(with: element)
+                }
+            } label: {
+                HStack {
+                    label(element)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    if selectedItems.contains(element) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .resizable()
+                            .fontWeight(.bold)
+                            .aspectRatio(1, contentMode: .fit)
+                            .frame(width: 24, height: 24)
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(accentColor.overlayColor, accentColor)
+                    }
+                }
+            }
+        }
+        .backport
+        .onChange(of: selectionBinding.wrappedValue) { _, newValue in
+            selectedItems = newValue
+        }
+    }
 }
 
 extension SelectorView where Label == Text {
+
     init(selection: Binding<[Element]>, sources: [Element], type: SelectorType) {
         let setBinding = Binding<Set<Element>>(
             get: { Set(selection.wrappedValue) },

@@ -16,8 +16,6 @@ struct AppLoadingView: View {
 
     var body: some View {
         ZStack {
-            Color.clear
-
             if !didFailMigration {
                 DelayedProgressView()
             }
@@ -30,7 +28,7 @@ struct AppLoadingView: View {
             Button(L10n.advanced, systemImage: "gearshape.fill") {}
                 .foregroundStyle(.secondary)
                 .disabled(true)
-                .opacity(didFailMigration ? 0 : 1)
+                .isVisible(!didFailMigration)
         }
         .onNotification(.didFailMigration) { _ in
             didFailMigration = true

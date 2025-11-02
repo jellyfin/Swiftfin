@@ -101,7 +101,7 @@ extension VideoPlayerType {
             enableSubtitlesInManifest: true,
             maxAudioChannels: "8",
             minSegments: 2,
-            protocol: "hls",
+            protocol: MediaStreamProtocol.hls,
             type: .video
         ) {
             AudioCodec.aac
@@ -110,8 +110,8 @@ extension VideoPlayerType {
             AudioCodec.eac3
             AudioCodec.flac
         } videoCodecs: {
-            VideoCodec.h264
             VideoCodec.hevc
+            VideoCodec.h264
             VideoCodec.mpeg4
         } containers: {
             MediaContainer.mp4

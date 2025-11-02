@@ -6,12 +6,11 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Foundation
 import JellyfinAPI
-import SwiftUI
 
-enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
+// TODO: remove, change to VLC, AVPlayer
+
+enum VideoPlayerType: String, CaseIterable, Displayable, Storable {
 
     case native
     case swiftfin
@@ -19,7 +18,7 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
     var displayTitle: String {
         switch self {
         case .native:
-            "Native"
+            L10n.native
         case .swiftfin:
             "Swiftfin"
         }

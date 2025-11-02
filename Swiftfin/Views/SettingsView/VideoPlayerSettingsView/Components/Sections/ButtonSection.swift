@@ -10,47 +10,33 @@ import Defaults
 import SwiftUI
 
 extension VideoPlayerSettingsView {
+
     struct ButtonSection: View {
-
-        @Default(.VideoPlayer.Overlay.playbackButtonType)
-        private var playbackButtonType
-
-        @Default(.VideoPlayer.showJumpButtons)
-        private var showJumpButtons
 
         @Default(.VideoPlayer.barActionButtons)
         private var barActionButtons
-
         @Default(.VideoPlayer.menuActionButtons)
         private var menuActionButtons
-
         @Default(.VideoPlayer.autoPlayEnabled)
         private var autoPlayEnabled
 
-        @EnvironmentObject
-        private var router: VideoPlayerSettingsCoordinator.Router
+        @Router
+        private var router
 
         var body: some View {
             Section(L10n.buttons) {
 
-                CaseIterablePicker(L10n.playbackButtons, selection: $playbackButtonType)
-
-                Toggle(isOn: $showJumpButtons) {
-                    HStack {
-                        Image(systemName: "goforward")
-                        Text(L10n.jump)
-                    }
+                ChevronButton(L10n.barButtons) {
+                    router.route(to: .actionBarButtonSelector(
+                        selectedButtonsBinding: $barActionButtons
+                    ))
                 }
 
-                ChevronButton(L10n.barButtons)
-                    .onSelect {
-                        router.route(to: \.actionButtonSelector, $barActionButtons)
-                    }
-
-                ChevronButton(L10n.menuButtons)
-                    .onSelect {
-                        router.route(to: \.actionButtonSelector, $menuActionButtons)
-                    }
+                ChevronButton(L10n.menuButtons) {
+                    router.route(to: .actionMenuButtonSelector(
+                        selectedButtonsBinding: $menuActionButtons
+                    ))
+                }
             }
             .onChange(of: barActionButtons) { newValue in
                 autoPlayEnabled = newValue.contains(.autoPlay) || menuActionButtons.contains(.autoPlay)

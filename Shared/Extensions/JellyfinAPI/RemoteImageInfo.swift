@@ -12,6 +12,10 @@ import SwiftUI
 
 extension RemoteImageInfo: @retroactive Identifiable, Poster {
 
+    var preferredPosterDisplayType: PosterDisplayType {
+        .portrait
+    }
+
     var displayTitle: String {
         providerName ?? L10n.unknown
     }
@@ -30,5 +34,9 @@ extension RemoteImageInfo: @retroactive Identifiable, Poster {
 
     public var id: Int {
         hashValue
+    }
+
+    func transform(image: Image) -> some View {
+        image
     }
 }

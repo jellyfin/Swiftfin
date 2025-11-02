@@ -12,7 +12,7 @@ import JellyfinAPI
 import Nuke
 import UIKit
 
-class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
+final class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
 
     // MARK: - Action
 
@@ -146,7 +146,6 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
 
         var request = Paths.postUserImage(
             userID: userID,
-            imageType: "Primary",
             imageData
         )
         request.headers = ["Content-Type": contentType]
@@ -157,7 +156,7 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
             )
         }
 
-        let _ = try await userSession.client.send(request)
+        _ = try await userSession.client.send(request)
 
         sweepProfileImageCache()
 
@@ -172,11 +171,8 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
 
         guard let userID = user.id else { return }
 
-        let request = Paths.deleteUserImage(
-            userID: userID,
-            imageType: "Primary"
-        )
-        let _ = try await userSession.client.send(request)
+        let request = Paths.deleteUserImage(userID: userID)
+        _ = try await userSession.client.send(request)
 
         sweepProfileImageCache()
 

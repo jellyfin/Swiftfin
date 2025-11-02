@@ -10,7 +10,7 @@ import Combine
 import Foundation
 import KeychainSwift
 
-class UserLocalSecurityViewModel: ViewModel, Eventful {
+final class UserLocalSecurityViewModel: ViewModel, Eventful {
 
     enum Event: Hashable {
         case error(JellyfinAPIError)
@@ -61,7 +61,7 @@ class UserLocalSecurityViewModel: ViewModel, Eventful {
 
         if let storedPin = keychain.get("\(userSession.user.id)-pin") {
             if oldPin != storedPin {
-                eventSubject.send(.error(.init("Incorrect pin for \(userSession.user.username)")))
+                eventSubject.send(.error(.init(L10n.incorrectPinForUser(userSession.user.username))))
                 throw JellyfinAPIError("invalid pin")
             }
         }
@@ -72,7 +72,7 @@ class UserLocalSecurityViewModel: ViewModel, Eventful {
         if newPolicy == .requirePin {
             keychain.set(newPin, forKey: "\(userSession.user.id)-pin")
         } else {
-            keychain.delete(StoredValues[.Temp.userLocalPin])
+            keychain.delete("\(userSession.user.id)-pin")
         }
 
         userSession.user.accessPolicy = newPolicy

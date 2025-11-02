@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionHStack
 import Defaults
 import JellyfinAPI
 import SwiftUI
@@ -18,8 +17,8 @@ extension HomeView {
         @Default(.Customization.nextUpPosterType)
         private var nextUpPosterType
 
-        @EnvironmentObject
-        private var router: HomeCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: NextUpLibraryViewModel
@@ -32,29 +31,27 @@ extension HomeView {
                     title: L10n.nextUp,
                     type: nextUpPosterType,
                     items: viewModel.elements
-                )
-                .content { item in
+                ) { item, namespace in
+                    router.route(to: .item(item: item), in: namespace)
+                } label: { item in
                     if item.type == .episode {
                         PosterButton.EpisodeContentSubtitleContent(item: item)
                     } else {
                         PosterButton.TitleSubtitleContentView(item: item)
                     }
                 }
-                .contextMenu { item in
+                .trailing {
+                    SeeAllButton()
+                        .onSelect {
+                            router.route(to: .library(viewModel: viewModel))
+                        }
+                }
+                .contextMenu(for: BaseItemDto.self) { item in
                     Button {
                         onSetPlayed(item)
                     } label: {
                         Label(L10n.played, systemImage: "checkmark.circle")
                     }
-                }
-                .onSelect { item in
-                    router.route(to: \.item, item)
-                }
-                .trailing {
-                    SeeAllButton()
-                        .onSelect {
-                            router.route(to: \.library, viewModel)
-                        }
                 }
             }
         }

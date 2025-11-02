@@ -35,7 +35,7 @@ extension ServerUserPermissionsView {
                 )
 
                 if policy.remoteClientBitrateLimit != MaxBitratePolicy.unlimited.rawValue {
-                    ChevronAlertButton(
+                    ChevronButton(
                         L10n.customBitrate,
                         subtitle: Text(policy.remoteClientBitrateLimit ?? 0, format: .bitRate),
                         description: L10n.enterCustomBitrate

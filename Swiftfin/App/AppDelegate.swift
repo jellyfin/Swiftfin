@@ -6,13 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import AVFAudio
-import CoreStore
-import Defaults
-import Logging
-import Pulse
-import PulseLogHandler
-import SwiftUI
+import PreferencesView
 import UIKit
 
 class AppDelegate: NSObject, UIApplicationDelegate {
@@ -21,14 +15,18 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
+        true
+    }
 
-        let audioSession = AVAudioSession.sharedInstance()
-        do {
-            try audioSession.setCategory(.playback)
-        } catch {
-            print("setting category AVAudioSessionCategoryPlayback failed")
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+           let topViewController = scene.keyWindow?.rootViewController,
+           let presentedViewController = topViewController.presentedViewController,
+           let preferencesHostingController = presentedViewController as? UIPreferencesHostingController
+        {
+            return preferencesHostingController.supportedInterfaceOrientations
         }
 
-        return true
+        return UIDevice.isPad ? .allButUpsideDown : .portrait
     }
 }

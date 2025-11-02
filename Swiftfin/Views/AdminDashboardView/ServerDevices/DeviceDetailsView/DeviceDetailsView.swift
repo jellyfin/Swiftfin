@@ -10,115 +10,86 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: Enable for CustomNames for Devices with SDK Changes
-
 struct DeviceDetailsView: View {
-
-    // MARK: - Current Date
 
     @CurrentDate
     private var currentDate: Date
 
-    // MARK: - State & Environment Objects
+    @Router
+    private var router
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
-
-    @StateObject
-    private var viewModel: DeviceDetailViewModel
-
-    // MARK: - Custom Name Variable
+    @ObservedObject
+    private var viewModel: DevicesViewModel
 
     @State
-    private var temporaryCustomName: String
+    private var temporaryCustomName: String?
 
-    // MARK: - Dialog State
+    private let device: DeviceInfoDto
 
-    @State
-    private var isPresentingSuccess: Bool = false
-
-    // MARK: - Error State
-
-    @State
-    private var error: Error?
-
-    // MARK: - Initializer
-
-    init(device: DeviceInfo) {
-        _viewModel = StateObject(wrappedValue: DeviceDetailViewModel(device: device))
-
-        // TODO: Enable with SDK Change
-        self.temporaryCustomName = device.name ?? "" // device.customName ?? device.name
+    init(device: DeviceInfoDto, viewModel: DevicesViewModel) {
+        self.device = device
+        self._temporaryCustomName = State(initialValue: device.customName)
+        self.viewModel = viewModel
     }
-
-    // MARK: - Body
 
     var body: some View {
         List {
-            if let userID = viewModel.device.lastUserID,
-               let userName = viewModel.device.lastUserName
+            if let userID = device.lastUserID,
+               let userName = device.lastUserName
             {
 
                 let user = UserDto(id: userID, name: userName)
 
                 AdminDashboardView.UserSection(
                     user: user,
-                    lastActivityDate: viewModel.device.dateLastActivity
+                    lastActivityDate: device.dateLastActivity
                 ) {
-                    router.route(to: \.userDetails, user)
+                    router.route(to: .userDetails(user: user))
                 }
             }
 
-            // TODO: Enable with SDK Change
-            // CustomDeviceNameSection(customName: $temporaryCustomName)
+            Section(L10n.name) {
+                TextField(
+                    L10n.customName,
+                    text: $temporaryCustomName.map(
+                        getter: { $0 ?? "" },
+                        setter: { $0.isEmpty ? nil : $0 }
+                    )
+                )
+            }
 
             AdminDashboardView.DeviceSection(
-                client: viewModel.device.appName,
-                device: viewModel.device.name,
-                version: viewModel.device.appVersion
+                client: device.appName,
+                device: device.name,
+                version: device.appVersion
             )
 
-            CapabilitiesSection(device: viewModel.device)
+            CapabilitiesSection(device: device)
         }
         .navigationTitle(L10n.device)
         .onReceive(viewModel.events) { event in
             switch event {
-            case let .error(eventError):
-                UIDevice.feedback(.error)
-                error = eventError
-            case .setCustomName:
+            case .updated:
                 UIDevice.feedback(.success)
-                isPresentingSuccess = true
             }
         }
         .topBarTrailing {
-            if viewModel.backgroundStates.contains(.updating) {
+            if viewModel.background.is(.updating) {
                 ProgressView()
-
-                // TODO: Enable with SDK Change
-                /*
-                 Button(L10n.save) {
-                     UIDevice.impact(.light)
-                     if device.id != nil {
-                         viewModel.send(.setCustomName(
-                             id: device.id ?? "",
-                             newName: temporaryCustomName
-                         ))
-                     }
-                 }
-                 .buttonStyle(.toolbarPill)
-                 .disabled(temporaryCustomName == device.customName)
-                  */
             }
+            Button(L10n.save) {
+                if let id = device.id {
+                    viewModel.update(
+                        id: id,
+                        options: .init(
+                            customName: temporaryCustomName
+                        )
+                    )
+                }
+            }
+            .buttonStyle(.toolbarPill)
+            .disabled(temporaryCustomName == device.customName)
         }
-        .alert(
-            L10n.success.text,
-            isPresented: $isPresentingSuccess
-        ) {
-            Button(L10n.dismiss, role: .cancel)
-        } message: {
-            Text(L10n.customDeviceNameSaved(temporaryCustomName))
-        }
-        .errorMessage($error)
+        .errorMessage($viewModel.error)
     }
 }

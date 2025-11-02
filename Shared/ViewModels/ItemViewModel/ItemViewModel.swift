@@ -45,14 +45,13 @@ class ItemViewModel: ViewModel, Stateful {
         case refreshing
     }
 
+    // TODO: create value on `BaseItemDto` whether an item
+    //       only has children as playable items
     @Published
     private(set) var item: BaseItemDto {
         willSet {
-            switch item.type {
-            case .episode, .movie:
-                guard !item.isMissing else { return }
+            if item.isPlayable {
                 playButtonItem = newValue
-            default: ()
             }
         }
     }
@@ -72,13 +71,25 @@ class ItemViewModel: ViewModel, Stateful {
     private(set) var similarItems: [BaseItemDto] = []
     @Published
     private(set) var specialFeatures: [BaseItemDto] = []
+    @Published
+    private(set) var localTrailers: [BaseItemDto] = []
+    @Published
+    private(set) var additionalParts: [BaseItemDto] = []
 
     @Published
-    final var backgroundStates: OrderedSet<BackgroundState> = []
+    var backgroundStates: Set<BackgroundState> = []
     @Published
-    final var lastAction: Action? = nil
-    @Published
-    final var state: State = .initial
+    var state: State = .initial
+
+    private var itemID: String {
+        get throws {
+            guard let id = item.id else {
+                logger.error("Item ID is nil")
+                throw JellyfinAPIError(L10n.unknownError)
+            }
+            return id
+        }
+    }
 
     // tasks
 
@@ -94,25 +105,30 @@ class ItemViewModel: ViewModel, Stateful {
 
         Notifications[.itemShouldRefreshMetadata]
             .publisher
-            .sink { itemID in
-                guard itemID == self.item.id else { return }
+            .sink { [weak self] itemID in
+                guard itemID == self?.item.id else { return }
 
                 Task {
-                    await self.send(.backgroundRefresh)
+                    await self?.send(.backgroundRefresh)
                 }
             }
             .store(in: &cancellables)
 
         Notifications[.itemMetadataDidChange]
             .publisher
-            .sink { newItem in
-                guard let newItemID = newItem.id, newItemID == self.item.id else { return }
+            .sink { [weak self] newItem in
+                guard let newItemID = newItem.id, newItemID == self?.item.id else { return }
 
                 Task {
-                    await self.send(.replace(newItem))
+                    await self?.send(.replace(newItem))
                 }
             }
             .store(in: &cancellables)
+    }
+
+    convenience init(episode: BaseItemDto) {
+        let shellSeriesItem = BaseItemDto(id: episode.seriesID, name: episode.seriesName)
+        self.init(item: shellSeriesItem)
     }
 
     // MARK: respond
@@ -121,7 +137,7 @@ class ItemViewModel: ViewModel, Stateful {
         switch action {
         case .backgroundRefresh:
 
-            backgroundStates.append(.refresh)
+            backgroundStates.insert(.refresh)
 
             Task { [weak self] in
                 guard let self else { return }
@@ -129,31 +145,34 @@ class ItemViewModel: ViewModel, Stateful {
                     async let fullItem = getFullItem()
                     async let similarItems = getSimilarItems()
                     async let specialFeatures = getSpecialFeatures()
+                    async let localTrailers = getLocalTrailers()
 
                     let results = try await (
                         fullItem: fullItem,
                         similarItems: similarItems,
-                        specialFeatures: specialFeatures
+                        specialFeatures: specialFeatures,
+                        localTrailers: localTrailers
                     )
-
-                    guard !Task.isCancelled else { return }
-
-                    try await onRefresh()
 
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run {
                         self.backgroundStates.remove(.refresh)
+                        if results.fullItem.id != self.item.id || results.fullItem != self.item {
+                            self.item = results.fullItem
+                        }
 
-                        // see TODO, as the item will be set in
-                        // itemMetadataDidChange notification but
-                        // is a bit redundant
-//                        self.item = results.fullItem
+                        if !results.similarItems.elementsEqual(self.similarItems, by: { $0.id == $1.id }) {
+                            self.similarItems = results.similarItems
+                        }
 
-                        self.similarItems = results.similarItems
-                        self.specialFeatures = results.specialFeatures
+                        if !results.specialFeatures.elementsEqual(self.specialFeatures, by: { $0.id == $1.id }) {
+                            self.specialFeatures = results.specialFeatures
+                        }
 
-                        Notifications[.itemMetadataDidChange].post(results.fullItem)
+                        if !results.localTrailers.elementsEqual(self.localTrailers, by: { $0.id == $1.id }) {
+                            self.localTrailers = results.localTrailers
+                        }
                     }
                 } catch {
                     guard !Task.isCancelled else { return }
@@ -179,16 +198,16 @@ class ItemViewModel: ViewModel, Stateful {
                     async let fullItem = getFullItem()
                     async let similarItems = getSimilarItems()
                     async let specialFeatures = getSpecialFeatures()
+                    async let localTrailers = getLocalTrailers()
+                    async let additionalParts = getAdditionalParts()
 
                     let results = try await (
                         fullItem: fullItem,
                         similarItems: similarItems,
-                        specialFeatures: specialFeatures
+                        specialFeatures: specialFeatures,
+                        localTrailers: localTrailers,
+                        additionalParts: additionalParts
                     )
-
-                    guard !Task.isCancelled else { return }
-
-                    try await onRefresh()
 
                     guard !Task.isCancelled else { return }
 
@@ -196,6 +215,8 @@ class ItemViewModel: ViewModel, Stateful {
                         self.item = results.fullItem
                         self.similarItems = results.similarItems
                         self.specialFeatures = results.specialFeatures
+                        self.localTrailers = results.localTrailers
+                        self.additionalParts = results.additionalParts
 
                         self.state = .content
                     }
@@ -212,7 +233,7 @@ class ItemViewModel: ViewModel, Stateful {
             return .refreshing
         case let .replace(newItem):
 
-            backgroundStates.append(.refresh)
+            backgroundStates.insert(.refresh)
 
             Task { [weak self] in
                 guard let self else { return }
@@ -282,21 +303,8 @@ class ItemViewModel: ViewModel, Stateful {
         }
     }
 
-    func onRefresh() async throws {}
-
     private func getFullItem() async throws -> BaseItemDto {
-
-        var parameters = Paths.GetItemsByUserIDParameters()
-        parameters.enableUserData = true
-        parameters.fields = ItemFields.allCases
-        parameters.ids = [item.id!]
-
-        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
-        let response = try await userSession.client.send(request)
-
-        guard let fullItem = response.value.items?.first else { throw JellyfinAPIError("Full item not in response") }
-
-        return fullItem
+        try await item.getFullItem(userSession: userSession)
     }
 
     private func getSimilarItems() async -> [BaseItemDto] {
@@ -319,13 +327,33 @@ class ItemViewModel: ViewModel, Stateful {
     private func getSpecialFeatures() async -> [BaseItemDto] {
 
         let request = Paths.getSpecialFeatures(
-            userID: userSession.user.id,
-            itemID: item.id!
+            itemID: item.id!,
+            userID: userSession.user.id
         )
         let response = try? await userSession.client.send(request)
 
         return (response?.value ?? [])
             .filter { $0.extraType?.isVideo ?? false }
+    }
+
+    private func getLocalTrailers() async throws -> [BaseItemDto] {
+
+        let request = try Paths.getLocalTrailers(itemID: itemID, userID: userSession.user.id)
+        let response = try? await userSession.client.send(request)
+
+        return response?.value ?? []
+    }
+
+    private func getAdditionalParts() async throws -> [BaseItemDto] {
+
+        guard let partCount = item.partCount,
+              partCount > 1,
+              let itemID = item.id else { return [] }
+
+        let request = Paths.getAdditionalPart(itemID: itemID)
+        let response = try? await userSession.client.send(request)
+
+        return response?.value.items ?? []
     }
 
     private func setIsPlayed(_ isPlayed: Bool) async throws {
@@ -336,36 +364,39 @@ class ItemViewModel: ViewModel, Stateful {
 
         if isPlayed {
             request = Paths.markPlayedItem(
-                userID: userSession.user.id,
-                itemID: item.id!
+                itemID: item.id!,
+                userID: userSession.user.id
             )
         } else {
             request = Paths.markUnplayedItem(
-                userID: userSession.user.id,
-                itemID: item.id!
+                itemID: item.id!,
+                userID: userSession.user.id
             )
         }
 
-        let _ = try await userSession.client.send(request)
+        _ = try await userSession.client.send(request)
         Notifications[.itemShouldRefreshMetadata].post(itemID)
     }
 
     private func setIsFavorite(_ isFavorite: Bool) async throws {
 
+        guard let itemID = item.id else { return }
+
         let request: Request<UserItemDataDto>
 
         if isFavorite {
             request = Paths.markFavoriteItem(
-                userID: userSession.user.id,
-                itemID: item.id!
+                itemID: item.id!,
+                userID: userSession.user.id
             )
         } else {
             request = Paths.unmarkFavoriteItem(
-                userID: userSession.user.id,
-                itemID: item.id!
+                itemID: item.id!,
+                userID: userSession.user.id
             )
         }
 
-        let _ = try await userSession.client.send(request)
+        _ = try await userSession.client.send(request)
+        Notifications[.itemShouldRefreshMetadata].post(itemID)
     }
 }

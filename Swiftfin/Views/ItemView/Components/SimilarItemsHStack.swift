@@ -18,8 +18,8 @@ extension ItemView {
         @Default(.Customization.similarPosterType)
         private var similarPosterType
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         @StateObject
         private var viewModel: PagingLibraryViewModel<BaseItemDto>
@@ -33,15 +33,14 @@ extension ItemView {
                 title: L10n.recommended,
                 type: similarPosterType,
                 items: viewModel.elements
-            )
+            ) { item, namespace in
+                router.route(to: .item(item: item), in: namespace)
+            }
             .trailing {
                 SeeAllButton()
                     .onSelect {
-                        router.route(to: \.library, viewModel)
+                        router.route(to: .library(viewModel: viewModel))
                     }
-            }
-            .onSelect { item in
-                router.route(to: \.item, item)
             }
         }
     }

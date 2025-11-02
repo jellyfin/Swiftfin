@@ -10,31 +10,35 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+private let landscapeMaxWidth: CGFloat = 110
+private let portraitMaxWidth: CGFloat = 60
+
 extension PagingLibraryView {
 
     struct LibraryRow: View {
 
-        @State
-        private var contentWidth: CGFloat = 0
-        @State
-        private var focusedItem: Element?
-
-        @FocusState
-        private var isFocused: Bool
-
         private let item: Element
         private var action: () -> Void
-        private var contextMenu: () -> any View
         private let posterType: PosterDisplayType
 
-        private var onFocusChanged: ((Bool) -> Void)?
+        init(
+            item: Element,
+            posterType: PosterDisplayType,
+            action: @escaping () -> Void
+        ) {
+            self.item = item
+            self.action = action
+            self.posterType = posterType
+        }
 
-        private func imageView(from element: Element) -> ImageView {
+        private func imageSources(from element: Element) -> [ImageSource] {
             switch posterType {
             case .landscape:
-                ImageView(element.landscapeImageSources(maxWidth: 110))
+                element.landscapeImageSources(maxWidth: landscapeMaxWidth, quality: 90)
             case .portrait:
-                ImageView(element.portraitImageSources(maxWidth: 60))
+                element.portraitImageSources(maxWidth: portraitMaxWidth, quality: 90)
+            case .square:
+                element.squareImageSources(maxWidth: portraitMaxWidth, quality: 90)
             }
         }
 
@@ -100,7 +104,7 @@ extension PagingLibraryView {
             ZStack {
                 Color.clear
 
-                imageView(from: item)
+                ImageView(imageSources(from: item))
                     .failure {
                         SystemImageContentView(systemName: item.systemImage)
                     }
@@ -120,46 +124,7 @@ extension PagingLibraryView {
                 rowContent
             }
             .onSelect(perform: action)
-            .contextMenu(menuItems: {
-                contextMenu()
-                    .eraseToAnyView()
-            })
-            .posterShadow()
-            .ifLet(onFocusChanged) { view, onFocusChanged in
-                view
-                    .focused($isFocused)
-                    .onChange(of: isFocused) { _, newValue in
-                        onFocusChanged(newValue)
-                    }
-            }
+            .focusedValue(\.focusedPoster, AnyPoster(item))
         }
-    }
-}
-
-extension PagingLibraryView.LibraryRow {
-
-    init(item: Element, posterType: PosterDisplayType) {
-        self.init(
-            item: item,
-            action: {},
-            contextMenu: { EmptyView() },
-            posterType: posterType,
-            onFocusChanged: nil
-        )
-    }
-}
-
-extension PagingLibraryView.LibraryRow {
-
-    func onSelect(perform action: @escaping () -> Void) -> Self {
-        copy(modifying: \.action, with: action)
-    }
-
-    func contextMenu(@ViewBuilder perform content: @escaping () -> any View) -> Self {
-        copy(modifying: \.contextMenu, with: content)
-    }
-
-    func onFocusChanged(perform action: @escaping (Bool) -> Void) -> Self {
-        copy(modifying: \.onFocusChanged, with: action)
     }
 }

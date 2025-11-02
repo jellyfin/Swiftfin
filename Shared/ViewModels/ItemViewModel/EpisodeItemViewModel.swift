@@ -9,37 +9,41 @@
 import Combine
 import Foundation
 import JellyfinAPI
-import Stinsen
 
 final class EpisodeItemViewModel: ItemViewModel {
+
+    // MARK: - Published Episode Items
 
     @Published
     private(set) var seriesItem: BaseItemDto?
 
+    // MARK: - Task
+
     private var seriesItemTask: AnyCancellable?
 
-    override init(item: BaseItemDto) {
-        super.init(item: item)
+    // MARK: - Override Response
 
-        $lastAction
-            .sink { [weak self] action in
-                guard let self else { return }
+    override func respond(to action: ItemViewModel.Action) -> ItemViewModel.State {
 
-                if action == .refresh {
-                    seriesItemTask?.cancel()
+        switch action {
+        case .refresh, .backgroundRefresh:
+            seriesItemTask?.cancel()
 
-                    seriesItemTask = Task {
-                        let seriesItem = try await self.getSeriesItem()
+            seriesItemTask = Task {
+                let seriesItem = try await self.getSeriesItem()
 
-                        await MainActor.run {
-                            self.seriesItem = seriesItem
-                        }
-                    }
-                    .asAnyCancellable()
+                await MainActor.run {
+                    self.seriesItem = seriesItem
                 }
             }
-            .store(in: &cancellables)
+            .asAnyCancellable()
+        default: ()
+        }
+
+        return super.respond(to: action)
     }
+
+    // MARK: - Get Series Items
 
     private func getSeriesItem() async throws -> BaseItemDto {
 

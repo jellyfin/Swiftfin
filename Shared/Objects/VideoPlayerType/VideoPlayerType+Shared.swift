@@ -83,15 +83,4 @@ extension VideoPlayerType {
             }
         )
     }
-
-    // MARK: - response profiles
-
-    @ArrayBuilder<ResponseProfile>
-    var responseProfiles: [ResponseProfile] {
-        ResponseProfile(
-            container: MediaContainer.m4v.rawValue,
-            mimeType: "video/mp4",
-            type: .video
-        )
-    }
 }

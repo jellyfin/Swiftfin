@@ -9,32 +9,58 @@
 import Combine
 import Foundation
 import JellyfinAPI
+import OrderedCollections
 
 final class CollectionItemViewModel: ItemViewModel {
 
-    @Published
-    private(set) var collectionItems: [BaseItemDto] = []
+    @ObservedPublisher
+    var sections: OrderedDictionary<BaseItemKind, ItemLibraryViewModel>
 
-    override func onRefresh() async throws {
-        let collectionItems = try await self.getCollectionItems()
+    private let itemCollection: ItemTypeCollection
 
-        await MainActor.run {
-            self.collectionItems = collectionItems
-        }
+    override init(item: BaseItemDto) {
+        self.itemCollection = ItemTypeCollection(
+            parent: item,
+            itemTypes: BaseItemKind.supportedCases
+                .appending(.episode)
+                .appending(.person)
+        )
+        self._sections = ObservedPublisher(
+            wrappedValue: [:],
+            observing: itemCollection.$elements
+        )
+
+        super.init(item: item)
     }
 
-    private func getCollectionItems() async throws -> [BaseItemDto] {
+    // MARK: - Override Response
 
-        var parameters = Paths.GetItemsByUserIDParameters()
-        parameters.fields = .MinimumFields
-        parameters.parentID = item.id
+    override func respond(to action: ItemViewModel.Action) -> ItemViewModel.State {
 
-        let request = Paths.getItemsByUserID(
-            userID: userSession.user.id,
-            parameters: parameters
-        )
-        let response = try await userSession.client.send(request)
+        switch action {
+        case .refresh, .backgroundRefresh:
+            itemCollection.send(.refresh)
+        default: ()
+        }
 
-        return response.value.items ?? []
+        return super.respond(to: action)
+    }
+
+    // TODO: possibly multiple items, for image source fallbacks
+    func randomItem() -> BaseItemDto? {
+        // Try to exclude episodes if possible
+
+        if itemCollection.elements.elements.count == 1 {
+            return itemCollection.elements.elements.first?.value.elements.first
+        }
+
+        return itemCollection.elements
+            .elements
+            .shuffled()
+            .filter { $0.key != .episode }
+            .randomElement()?
+            .value
+            .elements
+            .randomElement()
     }
 }

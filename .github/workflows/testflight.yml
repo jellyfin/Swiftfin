@@ -1,11 +1,12 @@
-name: "TestFlight ⚙️"
+name: "TestFlight ✈️"
 
 on:
   repository_dispatch:
     types: [testflight]
   
 jobs:
-  test_build:
+  build:
+    name: "TestFlight ✈️"
     runs-on: macos-15
 
     steps:
@@ -68,4 +69,5 @@ jobs:
         profileName64:${{ secrets.PROFILE_NAME_64 }} \
         xcodeVersion:${{ github.event.client_payload.xcodeVersion }} \
         build:${{ github.event.client_payload.build }} \
-        version:${{ github.event.client_payload.version }}
+        version:${{ github.event.client_payload.version }} \
+        branch:${{ github.event.client_payload.branch }}

@@ -11,39 +11,37 @@ import SwiftUI
 
 struct VideoPlayerSettingsView: View {
 
-    @Default(.VideoPlayer.jumpBackwardLength)
+    @Default(.VideoPlayer.jumpBackwardInterval)
     private var jumpBackwardLength
-    @Default(.VideoPlayer.jumpForwardLength)
+    @Default(.VideoPlayer.jumpForwardInterval)
     private var jumpForwardLength
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
 
-    @EnvironmentObject
-    private var router: VideoPlayerSettingsCoordinator.Router
+    @Router
+    private var router
 
     var body: some View {
         Form {
 
-            ChevronButton(L10n.gestures)
-                .onSelect {
-                    router.route(to: \.gestureSettings)
-                }
+            ChevronButton(L10n.gestures) {
+                router.route(to: .gestureSettings)
+            }
 
-            CaseIterablePicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
+            // TODO: custom view for custom interval creation
+//            CaseIterablePicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
 
-            CaseIterablePicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
+//            CaseIterablePicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
 
             Section {
 
                 BasicStepper(
-                    title: L10n.resumeOffset,
+                    L10n.resumeOffset,
                     value: $resumeOffset,
                     range: 0 ... 30,
-                    step: 1
+                    step: 1,
+                    formatter: SecondFormatter()
                 )
-                .valueFormatter {
-                    $0.secondLabel
-                }
             } footer: {
                 Text(L10n.resumeOffsetDescription)
             }
@@ -55,8 +53,6 @@ struct VideoPlayerSettingsView: View {
             SubtitleSection()
 
             TimestampSection()
-
-            TransitionSection()
         }
         .navigationTitle(L10n.videoPlayer)
     }

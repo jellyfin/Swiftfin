@@ -51,9 +51,7 @@ final class ProgramsViewModel: ViewModel, Stateful {
     private(set) var sports: [BaseItemDto] = []
 
     @Published
-    final var lastAction: Action? = nil
-    @Published
-    final var state: State = .initial
+    var state: State = .initial
 
     private var currentRefreshTask: AnyCancellable?
 

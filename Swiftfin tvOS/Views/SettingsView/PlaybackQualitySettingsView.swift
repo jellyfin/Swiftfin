@@ -17,8 +17,8 @@ struct PlaybackQualitySettingsView: View {
     @Default(.VideoPlayer.Playback.compatibilityMode)
     private var compatibilityMode
 
-    @EnvironmentObject
-    private var router: PlaybackQualitySettingsCoordinator.Router
+    @Router
+    private var router
 
     // MARK: - Focus Management
 
@@ -39,11 +39,8 @@ struct PlaybackQualitySettingsView: View {
             }
             .contentView {
                 Section {
-                    InlineEnumToggle(
-                        title: L10n.maximumBitrate,
-                        selection: $appMaximumBitrate
-                    )
-                    .focused($focusedItem, equals: .maximumBitrate)
+                    ListRowMenu(L10n.maximumBitrate, selection: $appMaximumBitrate)
+                        .focused($focusedItem, equals: .maximumBitrate)
                 } header: {
                     L10n.bitrateDefault.text
                 } footer: {
@@ -53,27 +50,20 @@ struct PlaybackQualitySettingsView: View {
 
                 if appMaximumBitrate == .auto {
                     Section {
-                        InlineEnumToggle(
-                            title: L10n.testSize,
-                            selection: $appMaximumBitrateTest
-                        )
+                        ListRowMenu(L10n.testSize, selection: $appMaximumBitrateTest)
                     } footer: {
                         L10n.bitrateTestDisclaimer.text
                     }
                 }
 
                 Section {
-                    InlineEnumToggle(
-                        title: L10n.compatibility,
-                        selection: $compatibilityMode
-                    )
-                    .focused($focusedItem, equals: .compatibility)
+                    ListRowMenu(L10n.compatibility, selection: $compatibilityMode)
+                        .focused($focusedItem, equals: .compatibility)
 
                     if compatibilityMode == .custom {
-                        ChevronButton(L10n.profiles)
-                            .onSelect {
-                                router.route(to: \.customDeviceProfileSettings)
-                            }
+                        ChevronButton(L10n.profiles) {
+                            router.route(to: .customDeviceProfileSettings)
+                        }
                     }
                 } header: {
                     L10n.deviceProfile.text
@@ -81,7 +71,7 @@ struct PlaybackQualitySettingsView: View {
                     L10n.deviceProfileDescription.text
                 }
             }
-            .navigationTitle(L10n.playbackQuality)
+            .navigationTitle(L10n.playbackQuality.localizedCapitalized)
     }
 
     // MARK: - Description View Icon
@@ -105,33 +95,33 @@ struct PlaybackQualitySettingsView: View {
         switch focusedItem {
         case .maximumBitrate:
             LearnMoreModal {
-                TextPair(
-                    title: L10n.auto,
-                    subtitle: L10n.birateAutoDescription
+                LabeledContent(
+                    L10n.auto,
+                    value: L10n.birateAutoDescription
                 )
-                TextPair(
-                    title: L10n.bitrateMax,
-                    subtitle: L10n.bitrateMaxDescription(PlaybackBitrate.max.rawValue.formatted(.bitRate))
+                LabeledContent(
+                    L10n.bitrateMax,
+                    value: L10n.bitrateMaxDescription(PlaybackBitrate.max.rawValue.formatted(.bitRate))
                 )
             }
 
         case .compatibility:
             LearnMoreModal {
-                TextPair(
-                    title: L10n.auto,
-                    subtitle: L10n.autoDescription
+                LabeledContent(
+                    L10n.auto,
+                    value: L10n.autoDescription
                 )
-                TextPair(
-                    title: L10n.compatible,
-                    subtitle: L10n.compatibleDescription
+                LabeledContent(
+                    L10n.compatible,
+                    value: L10n.compatibleDescription
                 )
-                TextPair(
-                    title: L10n.direct,
-                    subtitle: L10n.directDescription
+                LabeledContent(
+                    L10n.directPlay,
+                    value: L10n.directDescription
                 )
-                TextPair(
-                    title: L10n.custom,
-                    subtitle: L10n.customDescription
+                LabeledContent(
+                    L10n.custom,
+                    value: L10n.customDescription
                 )
             }
 

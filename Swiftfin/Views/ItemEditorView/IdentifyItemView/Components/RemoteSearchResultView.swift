@@ -13,14 +13,22 @@ extension IdentifyItemView {
 
     struct RemoteSearchResultView: View {
 
+        // MARK: - Router
+
+        @Router
+        private var router
+
         // MARK: - Item Info Variables
+
+        @StateObject
+        var viewModel: IdentifyItemViewModel
 
         let result: RemoteSearchResult
 
-        // MARK: - Item Info Actions
+        // MARK: - Error State
 
-        let onSave: () -> Void
-        let onClose: () -> Void
+        @State
+        private var error: Error?
 
         // MARK: - Body
 
@@ -50,30 +58,32 @@ extension IdentifyItemView {
             Section(L10n.details) {
 
                 if let premiereDate = result.premiereDate {
-                    TextPairView(
+                    LabeledContent(
                         L10n.premiereDate,
-                        value: Text(premiereDate.formatted(.dateTime.year().month().day()))
+                        value: premiereDate,
+                        format: .dateTime.year().month().day()
                     )
                 }
 
                 if let productionYear = result.productionYear {
-                    TextPairView(
+                    LabeledContent(
                         L10n.productionYear,
-                        value: Text(productionYear, format: .number.grouping(.never))
+                        value: productionYear,
+                        format: .number.grouping(.never)
                     )
                 }
 
                 if let provider = result.searchProviderName {
-                    TextPairView(
-                        leading: L10n.provider,
-                        trailing: provider
+                    LabeledContent(
+                        L10n.provider,
+                        value: provider
                     )
                 }
 
                 if let providerID = result.providerIDs?.values.first {
-                    TextPairView(
-                        leading: L10n.id,
-                        trailing: providerID
+                    LabeledContent(
+                        L10n.id,
+                        value: providerID
                     )
                 }
             }
@@ -86,22 +96,35 @@ extension IdentifyItemView {
         }
 
         var body: some View {
-            NavigationView {
-                List {
-                    header
+            List {
+                header
 
-                    resultDetails
+                resultDetails
+            }
+            .navigationTitle(L10n.identify)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarCloseButton {
+                router.dismiss()
+            }
+            .topBarTrailing {
+                Button(L10n.save) {
+                    viewModel.send(.update(result))
                 }
-                .navigationTitle(L10n.identify)
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationBarCloseButton {
-                    onClose()
-                }
-                .topBarTrailing {
-                    Button(L10n.save, action: onSave)
-                        .buttonStyle(.toolbarPill)
+                .buttonStyle(.toolbarPill)
+            }
+            .onReceive(viewModel.events) { event in
+                switch event {
+                case let .error(eventError):
+                    UIDevice.feedback(.error)
+                    error = eventError
+                case .cancelled:
+                    break
+                case .updated:
+                    UIDevice.feedback(.success)
+                    router.dismiss()
                 }
             }
+            .errorMessage($error)
         }
     }
 }

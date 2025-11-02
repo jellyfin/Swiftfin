@@ -6,9 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Foundation
-
 enum CustomDeviceProfileAction: String, CaseIterable, Displayable, Storable {
 
     case add
@@ -19,7 +16,7 @@ enum CustomDeviceProfileAction: String, CaseIterable, Displayable, Storable {
         case .add:
             return L10n.add
         case .replace:
-            return "Replace"
+            return L10n.replace
         }
     }
 }

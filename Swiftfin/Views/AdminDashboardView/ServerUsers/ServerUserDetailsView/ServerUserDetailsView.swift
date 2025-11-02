@@ -19,8 +19,8 @@ struct ServerUserDetailsView: View {
 
     // MARK: - State, Observed, & Environment Objects
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel: ServerUserAdminViewModel
@@ -59,68 +59,62 @@ struct ServerUserDetailsView: View {
                     maxWidth: 150
                 )
             ) {
-                router.route(to: \.userPhotoPicker, profileViewModel)
+                router.route(to: .userProfileImage(viewModel: profileViewModel))
             } onDelete: {
                 profileViewModel.send(.delete)
             }
 
             Section {
-                ChevronAlertButton(
+                ChevronButton(
                     L10n.username,
-                    subtitle: viewModel.user.name
+                    subtitle: viewModel.user.name,
+                    description: nil
                 ) {
                     TextField(L10n.username, text: $username)
-                    HStack {
-                        Button(L10n.cancel) {
-                            username = viewModel.user.name ?? ""
-                            isPresentingUsername = false
-                        }
-                        Button(L10n.save) {
-                            viewModel.send(.updateUsername(username))
-                            isPresentingUsername = false
-                        }
-                    }
+                } onSave: {
+                    viewModel.send(.updateUsername(username))
+                    isPresentingUsername = false
+                } onCancel: {
+                    username = viewModel.user.name ?? ""
+                    isPresentingUsername = false
                 }
+
+                ChevronButton(L10n.permissions) {
+                    router.route(to: .userPermissions(viewModel: viewModel))
+                }
+
                 if let userId = viewModel.user.id {
-                    ChevronButton(L10n.password)
-                        .onSelect {
-                            router.route(to: \.resetUserPassword, userId)
-                        }
-                }
-                ChevronButton(L10n.permissions)
-                    .onSelect {
-                        router.route(to: \.userPermissions, viewModel)
+                    ChevronButton(L10n.password) {
+                        router.route(to: .resetUserPasswordAdmin(userID: userId))
                     }
+                    ChevronButton(L10n.quickConnect) {
+                        router.route(to: .quickConnectAuthorize(user: viewModel.user))
+                    }
+                }
             }
 
             Section(L10n.access) {
-                ChevronButton(L10n.devices)
-                    .onSelect {
-                        router.route(to: \.userDeviceAccess, viewModel)
-                    }
-                ChevronButton(L10n.liveTV)
-                    .onSelect {
-                        router.route(to: \.userLiveTVAccess, viewModel)
-                    }
-                ChevronButton(L10n.media)
-                    .onSelect {
-                        router.route(to: \.userMediaAccess, viewModel)
-                    }
+                ChevronButton(L10n.devices) {
+                    router.route(to: .userDeviceAccess(viewModel: viewModel))
+                }
+                ChevronButton(L10n.liveTV) {
+                    router.route(to: .userLiveTVAccess(viewModel: viewModel))
+                }
+                ChevronButton(L10n.media) {
+                    router.route(to: .userMediaAccess(viewModel: viewModel))
+                }
             }
 
             Section(L10n.parentalControls) {
-                ChevronButton(L10n.ratings)
-                    .onSelect {
-                        router.route(to: \.userParentalRatings, viewModel)
-                    }
-                ChevronButton(L10n.accessSchedules)
-                    .onSelect {
-                        router.route(to: \.userEditAccessSchedules, viewModel)
-                    }
-                ChevronButton(L10n.accessTags)
-                    .onSelect {
-                        router.route(to: \.userEditAccessTags, viewModel)
-                    }
+                ChevronButton(L10n.parentalRatings) {
+                    router.route(to: .userParentalRatings(viewModel: viewModel))
+                }
+                ChevronButton(L10n.accessSchedules) {
+                    router.route(to: .userEditAccessSchedules(viewModel: viewModel))
+                }
+                ChevronButton(L10n.accessTags) {
+                    router.route(to: .userEditAccessTags(viewModel: viewModel))
+                }
             }
         }
         .navigationTitle(L10n.user)

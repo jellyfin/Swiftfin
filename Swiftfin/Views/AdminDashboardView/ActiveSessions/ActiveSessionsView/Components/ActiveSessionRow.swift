@@ -18,47 +18,29 @@ extension ActiveSessionsView {
         private var currentDate: Date
 
         @ObservedObject
-        private var box: BindingBox<SessionInfo?>
+        private var box: BindingBox<SessionInfoDto?>
 
         private let onSelect: () -> Void
 
-        private var session: SessionInfo {
+        private var session: SessionInfoDto {
             box.value ?? .init()
         }
 
-        init(box: BindingBox<SessionInfo?>, onSelect action: @escaping () -> Void) {
+        init(box: BindingBox<SessionInfoDto?>, onSelect action: @escaping () -> Void) {
             self.box = box
             self.onSelect = action
         }
 
         @ViewBuilder
         private var rowLeading: some View {
-            // TODO: better handling for different poster types
             Group {
                 if let nowPlayingItem = session.nowPlayingItem {
-                    if nowPlayingItem.type == .audio {
-                        ZStack {
-                            Color.clear
-
-                            ImageView(nowPlayingItem.squareImageSources(maxWidth: 60))
-                                .failure {
-                                    SystemImageContentView(systemName: nowPlayingItem.systemImage)
-                                }
-                        }
-                        .squarePosterStyle()
-                        .frame(width: 60, height: 60)
-                    } else {
-                        ZStack {
-                            Color.clear
-
-                            ImageView(nowPlayingItem.portraitImageSources(maxWidth: 60))
-                                .failure {
-                                    SystemImageContentView(systemName: nowPlayingItem.systemImage)
-                                }
-                        }
-                        .posterStyle(.portrait)
-                        .frame(width: 60, height: 90)
-                    }
+                    PosterImage(
+                        item: nowPlayingItem,
+                        type: nowPlayingItem.preferredPosterDisplayType,
+                        contentMode: .fit
+                    )
+                    .frame(width: 60)
                 } else {
                     ZStack {
                         session.device.clientColor
@@ -68,7 +50,7 @@ extension ActiveSessionsView {
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 40)
                     }
-                    .squarePosterStyle()
+                    .posterStyle(.square)
                     .frame(width: 60, height: 60)
                 }
             }
@@ -81,14 +63,18 @@ extension ActiveSessionsView {
         private func activeSessionDetails(_ nowPlayingItem: BaseItemDto, playState: PlayerStateInfo) -> some View {
             VStack(alignment: .leading) {
                 Text(session.userName ?? L10n.unknown)
+                    .multilineTextAlignment(.leading)
                     .font(.headline)
 
                 Text(nowPlayingItem.name ?? L10n.unknown)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(2)
 
                 ProgressSection(
                     item: nowPlayingItem,
                     playState: playState,
-                    transcodingInfo: session.transcodingInfo
+                    transcodingInfo: session.transcodingInfo,
+                    showTranscodeReason: true
                 )
             }
             .font(.subheadline)
@@ -102,17 +88,24 @@ extension ActiveSessionsView {
                     .font(.headline)
 
                 if let client = session.client {
-                    TextPairView(leading: L10n.client, trailing: client)
+                    LabeledContent(
+                        L10n.client,
+                        value: client
+                    )
                 }
 
                 if let device = session.deviceName {
-                    TextPairView(leading: L10n.device, trailing: device)
+                    LabeledContent(
+                        L10n.device,
+                        value: device
+                    )
                 }
 
                 if let lastActivityDate = session.lastActivityDate {
-                    TextPairView(
+                    LabeledContent(
                         L10n.lastSeen,
-                        value: Text(lastActivityDate, format: .lastSeen)
+                        value: lastActivityDate,
+                        format: .lastSeen
                     )
                     .id(currentDate)
                     .monospacedDigit()

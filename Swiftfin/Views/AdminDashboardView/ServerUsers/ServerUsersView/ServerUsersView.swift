@@ -16,8 +16,8 @@ struct ServerUsersView: View {
     @Default(.accentColor)
     private var accentColor
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    @Router
+    private var router
 
     @State
     private var isPresentingDeleteSelectionConfirmation = false
@@ -92,7 +92,7 @@ struct ServerUsersView: View {
             isHidden: isEditing
         ) {
             Button(L10n.addUser, systemImage: "plus") {
-                router.route(to: \.addServerUser)
+                router.route(to: .addServerUser())
             }
 
             if viewModel.users.isNotEmpty {
@@ -125,7 +125,7 @@ struct ServerUsersView: View {
             viewModel.send(.getUsers())
         }
         .confirmationDialog(
-            L10n.deleteSelectedUsers,
+            L10n.delete,
             isPresented: $isPresentingDeleteSelectionConfirmation,
             titleVisibility: .visible
         ) {
@@ -134,7 +134,7 @@ struct ServerUsersView: View {
             Text(L10n.deleteSelectionUsersWarning)
         }
         .confirmationDialog(
-            L10n.deleteUser,
+            L10n.delete,
             isPresented: $isPresentingDeleteConfirmation,
             titleVisibility: .visible
         ) {
@@ -149,7 +149,7 @@ struct ServerUsersView: View {
         }
         .onNotification(.didAddServerUser) { newUser in
             viewModel.send(.appendUser(newUser))
-            router.route(to: \.userDetails, newUser)
+            router.route(to: .userDetails(user: newUser))
         }
     }
 
@@ -180,15 +180,15 @@ struct ServerUsersView: View {
                             if isEditing {
                                 selectedUsers.toggle(value: userID)
                             } else {
-                                router.route(to: \.userDetails, user)
+                                router.route(to: .userDetails(user: user))
                             }
                         } onDelete: {
                             selectedUsers.removeAll()
                             selectedUsers.insert(userID)
                             isPresentingDeleteConfirmation = true
                         }
-                        .environment(\.isEditing, isEditing)
-                        .environment(\.isSelected, selectedUsers.contains(userID))
+                        .isEditing(isEditing)
+                        .isSelected(selectedUsers.contains(userID))
                         .listRowInsets(.edgeInsets)
                     }
                 }

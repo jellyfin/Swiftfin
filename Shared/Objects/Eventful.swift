@@ -7,7 +7,8 @@
 //
 
 import Combine
-import Foundation
+
+// TODO: remove, apply the Stateful macro
 
 protocol Eventful {
 

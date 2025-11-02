@@ -7,7 +7,6 @@
 //
 
 import Defaults
-import JellyfinAPI
 import SwiftUI
 
 extension SeriesEpisodeSelector {
@@ -17,11 +16,10 @@ extension SeriesEpisodeSelector {
         @Default(.accentColor)
         private var accentColor
 
-        private var onSelect: () -> Void
-
-        let subHeader: String
         let header: String
+        let subHeader: String
         let content: String
+        let action: () -> Void
 
         @ViewBuilder
         private var subHeaderView: some View {
@@ -44,56 +42,28 @@ extension SeriesEpisodeSelector {
         @ViewBuilder
         private var contentView: some View {
             Text(content)
-                .font(.caption.weight(.light))
+                .font(.caption)
+                .fontWeight(.light)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.leading)
-                .backport
                 .lineLimit(3, reservesSpace: true)
-                .font(.caption.weight(.light))
         }
 
         var body: some View {
-            Button {
-                onSelect()
-            } label: {
+            Button(action: action) {
                 VStack(alignment: .leading) {
                     subHeaderView
 
                     headerView
 
                     contentView
-                        .iOS15 { v in
-                            v.frame(
-                                height: "A\nA\nA".height(
-                                    withConstrainedWidth: 10,
-                                    font: Font.caption.uiFont ?? UIFont.preferredFont(forTextStyle: .body)
-                                )
-                            )
-                        }
 
                     L10n.seeMore.text
-                        .font(.caption.weight(.light))
+                        .font(.caption)
+                        .fontWeight(.light)
                         .foregroundStyle(accentColor)
                 }
             }
         }
-    }
-}
-
-extension SeriesEpisodeSelector.EpisodeContent {
-
-    init(
-        subHeader: String,
-        header: String,
-        content: String
-    ) {
-        self.subHeader = subHeader
-        self.header = header
-        self.content = content
-        self.onSelect = {}
-    }
-
-    func onSelect(perform action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
     }
 }

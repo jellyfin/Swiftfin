@@ -13,26 +13,27 @@ extension ItemView {
 
     struct CastAndCrewHStack: View {
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         let people: [BaseItemPerson]
 
         var body: some View {
             PosterHStack(
-                title: L10n.castAndCrew,
+                title: L10n.castAndCrew.localizedCapitalized,
                 type: .portrait,
-                items: people.filter(\.isDisplayed)
-            )
+                items: people.filter { person in
+                    person.type?.isSupported ?? false
+                }
+            ) { person, namespace in
+                router.route(to: .item(item: .init(person: person)), in: namespace)
+            }
             .trailing {
                 SeeAllButton()
                     .onSelect {
-                        router.route(to: \.castAndCrew, people)
+                        router.route(to: .castAndCrew(people: people, itemID: nil))
+                        router.route(to: .castAndCrew(people: people, itemID: nil))
                     }
-            }
-            .onSelect { person in
-                let viewModel = ItemLibraryViewModel(parent: person)
-                router.route(to: \.library, viewModel)
             }
         }
     }

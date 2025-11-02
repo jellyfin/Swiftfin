@@ -10,9 +10,6 @@ import SwiftUI
 
 struct AboutAppView: View {
 
-    @ObservedObject
-    var viewModel: SettingsViewModel
-
     var body: some View {
         List {
             Section {
@@ -33,17 +30,16 @@ struct AboutAppView: View {
 
             Section {
 
-                TextPairView(
-                    leading: L10n.version,
-                    trailing: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
+                LabeledContent(
+                    L10n.version,
+                    value: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
                 )
 
                 ChevronButton(
                     L10n.sourceCode,
-                    image: Image(.logoGithub),
+                    image: .logoGithub,
                     external: true
-                )
-                .onSelect {
+                ) {
                     UIApplication.shared.open(.swiftfinGithub)
                 }
 
@@ -51,8 +47,7 @@ struct AboutAppView: View {
                     L10n.bugsAndFeatures,
                     systemName: "plus.circle.fill",
                     external: true
-                )
-                .onSelect {
+                ) {
                     UIApplication.shared.open(.swiftfinGithubIssues)
                 }
                 .symbolRenderingMode(.monochrome)
@@ -61,8 +56,7 @@ struct AboutAppView: View {
                     L10n.settings,
                     systemName: "gearshape.fill",
                     external: true
-                )
-                .onSelect {
+                ) {
                     guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
                     UIApplication.shared.open(url)
                 }

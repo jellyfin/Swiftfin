@@ -7,10 +7,9 @@
 //
 
 import Defaults
-import Factory
+import JellyfinAPI
+import Logging
 import SwiftUI
-
-// TODO: fix play from beginning
 
 extension ItemView {
 
@@ -19,62 +18,117 @@ extension ItemView {
         @Default(.accentColor)
         private var accentColor
 
-        @Injected(\.logService)
-        private var logger
-
-        @EnvironmentObject
-        private var mainRouter: MainCoordinator.Router
+        @Router
+        private var router
 
         @ObservedObject
         var viewModel: ItemViewModel
 
+        private let logger = Logger.swiftfin()
+
+        // MARK: - Validation
+
+        private var isEnabled: Bool {
+            viewModel.selectedMediaSource != nil
+        }
+
+        // MARK: - Title
+
         private var title: String {
-            if let seriesViewModel = viewModel as? SeriesItemViewModel {
-                return seriesViewModel.playButtonItem?.seasonEpisodeLabel ?? L10n.play
+            /// Use the Season/Episode label for the Series ItemView
+            if let seriesViewModel = viewModel as? SeriesItemViewModel,
+               let seasonEpisodeLabel = seriesViewModel.playButtonItem?.seasonEpisodeLabel
+            {
+                return seasonEpisodeLabel
+
+                /// Use a Play/Resume label for single Media Source items that are not Series
+            } else if let playButtonLabel = viewModel.playButtonItem?.playButtonLabel {
+                return playButtonLabel
+
+                /// Fallback to a generic `Play` label
             } else {
-                return viewModel.playButtonItem?.playButtonLabel ?? L10n.play
+                return L10n.play
             }
         }
 
+        // MARK: - Media Source
+
+        private var source: String? {
+            guard let sourceLabel = viewModel.selectedMediaSource?.displayTitle,
+                  viewModel.item.mediaSources?.count ?? 0 > 1
+            else {
+                return nil
+            }
+
+            return sourceLabel
+        }
+
+        // MARK: - Body
+
         var body: some View {
             Button {
-                if let playButtonItem = viewModel.playButtonItem, let selectedMediaSource = viewModel.selectedMediaSource {
-                    mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: playButtonItem, mediaSource: selectedMediaSource))
-                } else {
-                    logger.error("No media source available")
-                }
+                play()
             } label: {
-                ZStack {
-                    Rectangle()
-                        .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : accentColor)
-                        .cornerRadius(10)
+                HStack {
+                    Label(title, systemImage: "play.fill")
+                        .font(.callout)
+                        .fontWeight(.semibold)
 
-                    HStack {
-                        Image(systemName: "play.fill")
-                            .font(.system(size: 20))
-
-                        Text(title)
-                            .font(.callout)
-                            .fontWeight(.semibold)
+                    if let source {
+                        Marquee(source, speed: 40, delay: 3, fade: 5)
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .frame(maxWidth: 175)
                     }
-                    .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : accentColor.overlayColor)
+                }
+                .padding(.horizontal, 5)
+            }
+            .buttonStyle(.tintedMaterial(tint: accentColor, foregroundColor: accentColor.overlayColor))
+            .isSelected(true)
+            .contextMenu {
+                if viewModel.playButtonItem?.userData?.playbackPositionTicks != 0 {
+                    Button(L10n.playFromBeginning, systemImage: "gobackward") {
+                        play(fromBeginning: true)
+                    }
                 }
             }
-            .disabled(viewModel.playButtonItem == nil)
-//            .contextMenu {
-//                if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
-//                    Button {
-//                        if let selectedVideoPlayerViewModel = viewModel.legacyselectedVideoPlayerViewModel {
-//                            selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
-//                            router.route(to: \.legacyVideoPlayer, selectedVideoPlayerViewModel)
-//                        } else {
-//                            logger.error("Attempted to play item but no playback information available")
-//                        }
-//                    } label: {
-//                        Label(L10n.playFromBeginning, systemImage: "gobackward")
-//                    }
-//                }
-//            }
+            .disabled(!isEnabled)
+        }
+
+        // MARK: - Play Content
+
+        private func play(fromBeginning: Bool = false) {
+            guard let playButtonItem = viewModel.playButtonItem,
+                  let selectedMediaSource = viewModel.selectedMediaSource
+            else {
+                logger.error("Play selected with no item or media source")
+                return
+            }
+
+            let queue: (any MediaPlayerQueue)? = {
+                if playButtonItem.type == .episode {
+                    return EpisodeMediaPlayerQueue(episode: playButtonItem)
+                }
+                return nil
+            }()
+
+            let provider = MediaPlayerItemProvider(item: playButtonItem) { item in
+                try await MediaPlayerItem.build(
+                    for: item,
+                    mediaSource: selectedMediaSource
+                ) {
+                    if fromBeginning {
+                        $0.userData?.playbackPositionTicks = 0
+                    }
+                }
+            }
+
+            router.route(
+                to: .videoPlayer(
+                    provider: provider,
+                    queue: queue
+                )
+            )
         }
     }
 }

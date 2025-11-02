@@ -12,6 +12,8 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
+// TODO: remove and flatten to `PagingLibraryView`
+
 // TODO: sorting by number/filtering
 //       - see if can use normal filter view model?
 //       - how to add custom filters for data context?
@@ -26,8 +28,8 @@ import SwiftUI
 
 struct ChannelLibraryView: View {
 
-    @EnvironmentObject
-    private var mainRouter: MainCoordinator.Router
+    @Router
+    private var router
 
     @State
     private var channelDisplayType: LibraryDisplayType = .list
@@ -74,25 +76,27 @@ struct ChannelLibraryView: View {
     // MARK: item view
 
     private func compactChannelView(channel: ChannelProgram) -> some View {
-        CompactChannelView(channel: channel.channel)
-            .onSelect {
-                guard let mediaSource = channel.channel.mediaSources?.first else { return }
-                mainRouter.route(
-                    to: \.liveVideoPlayer,
-                    LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource)
+        CompactChannelView(channel: channel.channel) {
+            router.route(
+                to: .videoPlayer(
+                    provider: channel.channel.getPlaybackItemProvider(
+                        userSession: viewModel.userSession
+                    )
                 )
-            }
+            )
+        }
     }
 
     private func detailedChannelView(channel: ChannelProgram) -> some View {
-        DetailedChannelView(channel: channel)
-            .onSelect {
-                guard let mediaSource = channel.channel.mediaSources?.first else { return }
-                mainRouter.route(
-                    to: \.liveVideoPlayer,
-                    LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource)
+        DetailedChannelView(channel: channel) {
+            router.route(
+                to: .videoPlayer(
+                    provider: channel.channel.getPlaybackItemProvider(
+                        userSession: viewModel.userSession
+                    )
                 )
-            }
+            )
+        }
     }
 
     @ViewBuilder
@@ -121,7 +125,9 @@ struct ChannelLibraryView: View {
     }
 
     var body: some View {
-        WrappedView {
+        ZStack {
+            Color.clear
+
             switch viewModel.state {
             case .content:
                 if viewModel.elements.isEmpty {
@@ -163,12 +169,12 @@ struct ChannelLibraryView: View {
 
             Menu {
                 // We repurposed `LibraryDisplayType` but want different labels
-                Picker("Channel Display", selection: $channelDisplayType) {
+                Picker(L10n.channelDisplay, selection: $channelDisplayType) {
 
                     Label(L10n.compact, systemImage: LibraryDisplayType.grid.systemImage)
                         .tag(LibraryDisplayType.grid)
 
-                    Label("Detailed", systemImage: LibraryDisplayType.list.systemImage)
+                    Label(L10n.detailed, systemImage: LibraryDisplayType.list.systemImage)
                         .tag(LibraryDisplayType.list)
                 }
             } label: {

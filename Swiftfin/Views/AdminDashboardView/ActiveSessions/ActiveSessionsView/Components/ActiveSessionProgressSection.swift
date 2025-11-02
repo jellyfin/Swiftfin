@@ -17,9 +17,10 @@ extension ActiveSessionsView {
         @Default(.accentColor)
         private var accentColor
 
-        let item: BaseItemDto
-        let playState: PlayerStateInfo
-        let transcodingInfo: TranscodingInfo?
+        private let item: BaseItemDto
+        private let playState: PlayerStateInfo
+        private let transcodingInfo: TranscodingInfo?
+        private let showTranscodeReason: Bool
 
         private var playbackPercentage: Double {
             clamp(Double(playState.positionTicks ?? 0) / Double(item.runTimeTicks ?? 1), min: 0, max: 1)
@@ -30,31 +31,63 @@ extension ActiveSessionsView {
             return clamp(c / 100.0, min: 0, max: 1)
         }
 
+        init(item: BaseItemDto, playState: PlayerStateInfo, transcodingInfo: TranscodingInfo?, showTranscodeReason: Bool = false) {
+            self.item = item
+            self.playState = playState
+            self.transcodingInfo = transcodingInfo
+            self.showTranscodeReason = showTranscodeReason
+        }
+
         @ViewBuilder
         private var playbackInformation: some View {
-            HStack {
-                if playState.isPaused ?? false {
-                    Image(systemName: "pause.fill")
-                        .transition(.opacity.combined(with: .scale).animation(.bouncy))
-                } else {
-                    Image(systemName: "play.fill")
-                        .transition(.opacity.combined(with: .scale).animation(.bouncy))
-                }
+            HStack(alignment: .top) {
+                FlowLayout(
+                    alignment: .leading,
+                    direction: .down,
+                    spacing: 4,
+                    lineSpacing: 4,
+                    minRowLength: 1
+                ) {
+                    if playState.isPaused ?? false {
+                        Image(systemName: "pause.fill")
+                            .transition(.opacity.combined(with: .scale).animation(.bouncy))
+                            .padding(.trailing, 8)
+                    } else {
+                        Image(systemName: "play.fill")
+                            .transition(.opacity.combined(with: .scale).animation(.bouncy))
+                            .padding(.trailing, 8)
+                    }
 
-                if let playMethod = playState.playMethod, playMethod == .transcode {
-                    Text(playMethod)
+                    if let playMethod = playState.playMethod,
+                       let transcodeReasons = transcodingInfo?.transcodeReasons,
+                       playMethod == .transcode
+                    {
+                        if showTranscodeReason {
+                            let transcodeIcons = Set(transcodeReasons.map(\.systemImage)).sorted()
+
+                            ForEach(transcodeIcons, id: \.self) { icon in
+                                Image(systemName: icon)
+                                    .foregroundStyle(.secondary)
+                                    .symbolRenderingMode(.monochrome)
+                            }
+                        }
+
+                        Text(playMethod)
+                            .foregroundStyle(.secondary)
+                    }
                 }
 
                 Spacer()
 
                 HStack(spacing: 2) {
-                    Text(playState.positionSeconds ?? 0, format: .runtime)
+                    Text(playState.position ?? .zero, format: .runtime)
 
                     Text("/")
 
-                    Text(item.runTimeSeconds, format: .runtime)
+                    Text(item.runtime ?? .zero, format: .runtime)
                 }
                 .monospacedDigit()
+                .fixedSize(horizontal: true, vertical: true)
             }
             .font(.subheadline)
         }
@@ -62,7 +95,7 @@ extension ActiveSessionsView {
         var body: some View {
             VStack {
                 ProgressView(value: playbackPercentage)
-                    .progressViewStyle(.playback(secondaryProgress: transcodingPercentage))
+                    .progressViewStyle(.playback.secondaryProgress(transcodingPercentage))
                     .frame(height: 5)
                     .foregroundStyle(.primary, .secondary, .orange)
 

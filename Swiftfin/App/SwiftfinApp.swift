@@ -12,7 +12,6 @@ import Factory
 import Logging
 import Nuke
 import PreferencesView
-import Pulse
 import PulseLogHandler
 import SwiftUI
 
@@ -27,22 +26,25 @@ struct SwiftfinApp: App {
 
     init() {
 
+        // Logging
+        LoggingSystem.bootstrap { label in
+
+            // TODO: have setting for log level
+            //       - default info, boolean to go down to trace
+            let handlers: [any LogHandler] = [PersistentLogHandler(label: label)]
+            #if DEBUG
+                .appending(SwiftfinConsoleHandler())
+            #endif
+
+            var multiplexHandler = MultiplexLogHandler(handlers)
+            multiplexHandler.logLevel = .trace
+            return multiplexHandler
+        }
+
         // CoreStore
 
         CoreStoreDefaults.dataStack = SwiftfinStore.dataStack
         CoreStoreDefaults.logger = SwiftfinCorestoreLogger()
-
-        // Logging
-        LoggingSystem.bootstrap { label in
-
-            var loggers: [LogHandler] = [PersistentLogHandler(label: label).withLogLevel(.trace)]
-
-            #if DEBUG
-            loggers.append(SwiftfinConsoleLogger())
-            #endif
-
-            return MultiplexLogHandler(loggers)
-        }
 
         // Nuke
 
@@ -71,47 +73,30 @@ struct SwiftfinApp: App {
         }
     }
 
-    // TODO: removed after iOS 15 support removed
-
-    @ViewBuilder
-    private var versionedView: some View {
-        if #available(iOS 16, *) {
-            PreferencesView {
-                MainCoordinator()
-                    .view()
-                    .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
-            }
-        } else {
-            PreferencesView {
-                PreferencesView {
-                    MainCoordinator()
-                        .view()
-                        .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
-                }
-                .ignoresSafeArea()
-            }
-        }
-    }
-
     var body: some Scene {
         WindowGroup {
-            versionedView
-                .ignoresSafeArea()
-                .onNotification(.applicationDidEnterBackground) {
-                    Defaults[.backgroundTimeStamp] = Date.now
+            OverlayToastView {
+                PreferencesView {
+                    RootView()
+                        .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
                 }
-                .onNotification(.applicationWillEnterForeground) {
+            }
+            .ignoresSafeArea()
+            .onAppDidEnterBackground {
+                Defaults[.backgroundTimeStamp] = Date.now
+            }
+            .onAppWillEnterForeground {
 
-                    // TODO: needs to check if any background playback is happening
-                    //       - atow, background video playback isn't officially supported
-                    let backgroundedInterval = Date.now.timeIntervalSince(Defaults[.backgroundTimeStamp])
+                // TODO: needs to check if any background playback is happening
+                //       - atow, background video playback isn't officially supported
+                let backgroundedInterval = Date.now.timeIntervalSince(Defaults[.backgroundTimeStamp])
 
-                    if Defaults[.signOutOnBackground], backgroundedInterval > Defaults[.backgroundSignOutInterval] {
-                        Defaults[.lastSignedInUserID] = .signedOut
-                        Container.shared.currentUserSession.reset()
-                        Notifications[.didSignOut].post()
-                    }
+                if Defaults[.signOutOnBackground], backgroundedInterval > Defaults[.backgroundSignOutInterval] {
+                    Defaults[.lastSignedInUserID] = .signedOut
+                    Container.shared.currentUserSession.reset()
+                    Notifications[.didSignOut].post()
                 }
+            }
         }
     }
 }

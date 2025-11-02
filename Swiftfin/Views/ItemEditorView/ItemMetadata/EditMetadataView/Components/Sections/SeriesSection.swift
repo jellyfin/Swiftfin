@@ -87,7 +87,7 @@ extension EditMetadataView {
         private var airDaysView: some View {
             ForEach(DayOfWeek.allCases, id: \.self) { field in
                 Toggle(
-                    field.displayTitle ?? L10n.unknown,
+                    field.displayTitle,
                     isOn: $item.airDays
                         .coalesce([])
                         .contains(field)
@@ -99,7 +99,7 @@ extension EditMetadataView {
 
         @ViewBuilder
         private var runTimeView: some View {
-            ChevronAlertButton(
+            ChevronButton(
                 L10n.runtime,
                 subtitle: ServerTicks(item.runTimeTicks ?? 0)
                     .seconds.formatted(.hourMinute),

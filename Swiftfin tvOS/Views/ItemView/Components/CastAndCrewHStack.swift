@@ -13,8 +13,8 @@ extension ItemView {
 
     struct CastAndCrewHStack: View {
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
+        @Router
+        private var router
 
         let people: [BaseItemPerson]
 
@@ -22,11 +22,11 @@ extension ItemView {
             PosterHStack(
                 title: L10n.castAndCrew,
                 type: .portrait,
-                items: people.filter(\.isDisplayed)
-            )
-            .onSelect { person in
-                let viewModel = ItemLibraryViewModel(parent: person)
-                router.route(to: \.library, viewModel)
+                items: people.filter { person in
+                    person.type?.isSupported ?? false
+                }
+            ) { person in
+                router.route(to: .item(item: .init(person: person)))
             }
         }
     }

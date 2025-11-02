@@ -9,15 +9,22 @@
 import Combine
 import SwiftUI
 
-/// Utility for views that are passed a `Binding` that
-/// may not be able to respond to view updates from
-/// the source
+// TODO: rename `PublishedBox`, remove other implementation
+
+/// Utility class to act as an intermediary for a `Binding` value or
+/// the source of a single value where `State` is not appropriate.
+///
+/// Useful when:
+/// - a view is passed a `Binding` that may not be able
+///   to respond to view updates from the source
+/// - the source of information that would typically be in a `State`
+///   variable, or other publishing source, cause view update issues
 class BindingBox<Wrapped>: ObservableObject {
 
     @Published
     var value: Wrapped
 
-    private let source: Binding<Wrapped>
+    private var source: Binding<Wrapped>?
     private var valueObserver: AnyCancellable!
 
     init(source: Binding<Wrapped>) {
@@ -25,8 +32,22 @@ class BindingBox<Wrapped>: ObservableObject {
         self.value = source.wrappedValue
         valueObserver = nil
 
-        valueObserver = $value.sink { [weak self] in
-            self?.source.wrappedValue = $0
+        valueObserver = $value
+            .assign(to: source)
+    }
+
+    init(initialValue: Wrapped) {
+        source = nil
+        value = initialValue
+        valueObserver = nil
+    }
+}
+
+extension Publisher where Failure == Never {
+
+    func assign(to binding: Binding<Output>) -> AnyCancellable {
+        self.sink { value in
+            binding.wrappedValue = value
         }
     }
 }

@@ -18,8 +18,8 @@ struct SettingsView: View {
     @Default(.accentColor)
     private var accentColor
 
-    @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    @Router
+    private var router
 
     @StateObject
     private var viewModel = SettingsViewModel()
@@ -36,16 +36,26 @@ struct SettingsView: View {
                 Section(L10n.jellyfin) {
 
                     UserProfileRow(user: viewModel.userSession.user.data) {
-                        router.route(to: \.userProfile, viewModel)
+                        router.route(to: .userProfile(viewModel: viewModel))
                     }
 
                     ChevronButton(
                         L10n.server,
-                        subtitle: viewModel.userSession.server.name
+                        action: {
+                            router.route(to: .editServer(server: viewModel.userSession.server))
+                        },
+                        icon: { EmptyView() },
+                        subtitle: {
+                            Label {
+                                Text(viewModel.userSession.server.name)
+                            } icon: {
+                                if !viewModel.userSession.server.isVersionCompatible {
+                                    Image(systemName: "exclamationmark.circle.fill")
+                                        .foregroundStyle(.orange)
+                                }
+                            }
+                        }
                     )
-                    .onSelect {
-                        router.route(to: \.serverDetail, viewModel.userSession.server)
-                    }
                 }
 
                 Section {
@@ -58,25 +68,22 @@ struct SettingsView: View {
 
                 Section(L10n.videoPlayer) {
 
-                    InlineEnumToggle(title: L10n.videoPlayerType, selection: $videoPlayerType)
+                    ListRowMenu(L10n.videoPlayerType, selection: $videoPlayerType)
 
-                    ChevronButton(L10n.videoPlayer)
-                        .onSelect {
-                            router.route(to: \.videoPlayerSettings)
-                        }
+                    ChevronButton(L10n.videoPlayer) {
+                        router.route(to: .videoPlayerSettings)
+                    }
 
-                    ChevronButton(L10n.playbackQuality)
-                        .onSelect {
-                            router.route(to: \.playbackQualitySettings)
-                        }
+                    ChevronButton(L10n.playbackQuality) {
+                        router.route(to: .playbackQualitySettings)
+                    }
                 }
 
                 Section(L10n.accessibility) {
 
-                    ChevronButton(L10n.customize)
-                        .onSelect {
-                            router.route(to: \.customizeViewsSettings)
-                        }
+                    ChevronButton(L10n.customize) {
+                        router.route(to: .customizeViewsSettings)
+                    }
 //
 //                    ChevronButton(L10n.experimental)
 //                        .onSelect {
@@ -86,7 +93,7 @@ struct SettingsView: View {
 
                 Section {
                     Button {
-                        router.route(to: \.accentColorSettings)
+                        router.route(to: .accentColorSettings)
                     } label: {
                         HStack(spacing: 8) {
                             Text(L10n.accentColor)
@@ -108,10 +115,9 @@ struct SettingsView: View {
 
                 Section {
 
-                    ChevronButton(L10n.logs)
-                        .onSelect {
-                            router.route(to: \.log)
-                        }
+                    ChevronButton(L10n.logs) {
+                        router.route(to: .log)
+                    }
                 }
             }
     }

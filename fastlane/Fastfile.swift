@@ -10,9 +10,13 @@ import Foundation
 
 class Fastfile: LaneFile {
     
+    private let swiftfinBundleIdentifier = "org.jellyfin.swiftfin"
+    private let swiftfinXcodeProject = "Swiftfin.xcodeproj"
+    
     // MARK: TestFlight
     
     // TODO: verify tvOS
+    /// - Important: Remember to pass in options from GitHub Actions
     func testFlightLane(withOptions options: [String: String]?) {
         
         guard let options,
@@ -37,6 +41,15 @@ class Fastfile: LaneFile {
             exit(1)
         }
         
+        if let branch = options["branch"] {
+            sh(
+                command: "git checkout \(branch)",
+                log: .userDefined(true)
+            ) { errorMessage in
+                puts(message: "ERROR: \(errorMessage)")
+            }
+        }
+        
         if let xcodeVersion = options["xcodeVersion"] {
             xcodes(version: xcodeVersion)
         }
@@ -51,38 +64,61 @@ class Fastfile: LaneFile {
         )
         
         updateCodeSigningSettings(
-            path: "Swiftfin.xcodeproj",
+            path: swiftfinXcodeProject,
             useAutomaticSigning: false,
             codeSignIdentity: .userDefined(decodedCodeSignIdentity),
-            profileName: .userDefined(profileName)
+            profileName: .userDefined(profileName),
+            bundleIdentifier: .userDefined(swiftfinBundleIdentifier)
         )
         
         if let version = options["version"] {
             incrementVersionNumber(
                 versionNumber: .userDefined(version),
-                xcodeproj: "Swiftfin.xcodeproj"
+                xcodeproj: .userDefined(swiftfinXcodeProject)
             )
         }
         
         if let build = options["build"] {
             incrementBuildNumber(
                 buildNumber: .userDefined(build),
-                xcodeproj: "Swiftfin.xcodeproj"
+                xcodeproj: .userDefined(swiftfinXcodeProject)
             )
         } else {
             incrementBuildNumber(
-                xcodeproj: "Swiftfin.xcodeproj"
+                xcodeproj: .userDefined(swiftfinXcodeProject)
             )
         }
         
         buildApp(
             scheme: .userDefined(scheme),
             skipArchive: .userDefined(false),
+            xcargs: .userDefined("-skipMacroValidation"),
             skipProfileDetection: false
         )
         
         uploadToTestflight(
             ipa: "Swiftfin iOS.ipa"
+        )
+    }
+    
+    func buildLane(withOptions options: [String: String]?) {
+        guard let options,
+              let scheme = options["scheme"]?.trimOption() else {
+            puts(message: "ERROR: missing or incorrect options")
+            exit(1)
+        }
+        
+        if let xcodeVersion = options["xcodeVersion"] {
+            xcodes(version: xcodeVersion)
+        }
+        
+        buildApp(
+            scheme: .userDefined(scheme),
+            exportMethod: .userDefined("development"),
+            skipArchive: .userDefined(true),
+            skipCodesigning: .userDefined(true),
+            xcargs: .userDefined("-skipMacroValidation"),
+            skipProfileDetection: true
         )
     }
     

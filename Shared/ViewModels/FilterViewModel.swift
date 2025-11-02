@@ -46,7 +46,7 @@ final class FilterViewModel: ViewModel, Stateful {
 
     /// ViewModel Background State(s)
     @Published
-    var backgroundStates: OrderedSet<BackgroundState> = []
+    var backgroundStates: Set<BackgroundState> = []
 
     /// ViewModel State
     @Published
@@ -89,13 +89,13 @@ final class FilterViewModel: ViewModel, Stateful {
             queryFiltersTask = Task {
                 do {
                     await MainActor.run {
-                        _ = self.backgroundStates.append(.gettingQueryFilters)
+                        _ = self.backgroundStates.insert(.gettingQueryFilters)
                     }
 
                     try await setQueryFilters()
                 } catch {
                     await MainActor.run {
-                        _ = self.backgroundStates.append(.failedToGetQueryFilters)
+                        _ = self.backgroundStates.insert(.failedToGetQueryFilters)
                     }
                 }
 

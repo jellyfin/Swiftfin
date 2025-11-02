@@ -13,8 +13,8 @@ import SwiftUI
 
 struct UserProfileSettingsView: View {
 
-    @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    @Router
+    private var router
 
     @ObservedObject
     private var viewModel: SettingsViewModel
@@ -34,32 +34,28 @@ struct UserProfileSettingsView: View {
             UserProfileHeroImage(
                 user: profileImageViewModel.user,
                 source: viewModel.userSession.user.profileImageSource(
-                    client: viewModel.userSession.client,
-                    maxWidth: 150
+                    client: viewModel.userSession.client
                 )
             ) {
-                router.route(to: \.photoPicker, profileImageViewModel)
+                router.route(to: .userProfileImage(viewModel: profileImageViewModel))
             } onDelete: {
                 profileImageViewModel.send(.delete)
             }
 
             Section {
-                ChevronButton(L10n.quickConnect)
-                    .onSelect {
-                        router.route(to: \.quickConnect)
-                    }
+                ChevronButton(L10n.quickConnect) {
+                    router.route(to: .quickConnectAuthorize(user: viewModel.userSession.user.data))
+                }
 
-                ChevronButton(L10n.password)
-                    .onSelect {
-                        router.route(to: \.resetUserPassword, viewModel.userSession.user.id)
-                    }
+                ChevronButton(L10n.password) {
+                    router.route(to: .resetUserPassword(userID: viewModel.userSession.user.id))
+                }
             }
 
             Section {
-                ChevronButton(L10n.security)
-                    .onSelect {
-                        router.route(to: \.localSecurity)
-                    }
+                ChevronButton(L10n.security) {
+                    router.route(to: .localSecurity)
+                }
             }
 
             Section {

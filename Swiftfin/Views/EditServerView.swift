@@ -7,18 +7,17 @@
 //
 
 import Factory
+import JellyfinAPI
 import SwiftUI
-
-// Note: uses environment `isEditing` for deletion button. This was done
-//       to just prevent having 2 views that looked/interacted the same
-//       except for a single button.
 
 // TODO: change URL picker from menu to list with network-url mapping
 
+/// - Note: Set the environment `isEditing` to `true` to
+///         allow server deletion
 struct EditServerView: View {
 
-    @EnvironmentObject
-    private var router: SelectUserCoordinator.Router
+    @Router
+    private var router
 
     @Environment(\.isEditing)
     private var isEditing
@@ -40,17 +39,32 @@ struct EditServerView: View {
         List {
             Section {
 
-                TextPairView(
-                    leading: L10n.name,
-                    trailing: viewModel.server.name
+                LabeledContent(
+                    L10n.name,
+                    value: viewModel.server.name
                 )
 
+                if let serverVerion = StoredValues[.Server.publicInfo(id: viewModel.server.id)].version {
+                    LabeledContent(
+                        L10n.version,
+                        value: serverVerion
+                    )
+                }
+
                 Picker(L10n.url, selection: $currentServerURL) {
-                    ForEach(viewModel.server.urls.sorted(using: \.absoluteString)) { url in
+                    ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
                         Text(url.absoluteString)
                             .tag(url)
                             .foregroundColor(.secondary)
                     }
+                }
+            } footer: {
+                if !viewModel.server.isVersionCompatible {
+                    Label(
+                        L10n.serverVersionWarning(JellyfinClient.sdkVersion.majorMinor.description),
+                        systemImage: "exclamationmark.circle.fill"
+                    )
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                 }
             }
 
@@ -69,10 +83,10 @@ struct EditServerView: View {
         .alert(L10n.deleteServer, isPresented: $isPresentingConfirmDeletion) {
             Button(L10n.delete, role: .destructive) {
                 viewModel.delete()
-                router.popLast()
+                router.dismiss()
             }
         } message: {
-            Text("Are you sure you want to delete \(viewModel.server.name) and all of its connected users?")
+            Text(L10n.confirmDeleteServerAndUsers(viewModel.server.name))
         }
     }
 }

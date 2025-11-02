@@ -15,104 +15,97 @@ struct Backport<Content> {
 
 extension Backport where Content: View {
 
-    /// Note: has no effect on iOS/tvOS 15
     @ViewBuilder
-    func fontWeight(_ weight: Font.Weight?) -> some View {
-        if #available(iOS 16, tvOS 16, *) {
-            content.fontWeight(weight)
+    func buttonBorderShape(_ shape: ButtonBorderShape) -> some View {
+        content.buttonBorderShape(shape.swiftUIValue)
+    }
+
+    @ViewBuilder
+    func matchedTransitionSource(id: String, in namespace: Namespace.ID) -> some View {
+        if #available(iOS 18.0, tvOS 18.0, *) {
+            content.matchedTransitionSource(
+                id: id,
+                in: namespace
+            )
         } else {
             content
         }
     }
 
     @ViewBuilder
-    func lineLimit(_ limit: Int, reservesSpace: Bool = false) -> some View {
-        if #available(iOS 16, tvOS 16, *) {
-            content
-                .lineLimit(limit, reservesSpace: reservesSpace)
+    func navigationTransition(_ style: NavigationTransition) -> some View {
+        if #available(iOS 18.0, tvOS 18.0, *), case let .zoom(sourceID, namespace) = style {
+            content.navigationTransition(
+                .zoom(sourceID: sourceID, in: namespace)
+            )
         } else {
-            // This may still not be enough and will probably have to
-            // use String.height in a frame as caller site
-            //
-            // The `.font` modifier must come after this modifier in
-            // order for the layout and content fonts to match
-            ZStack(alignment: .top) {
-                if reservesSpace {
-                    Text("A" + String(repeating: "A\nA", count: limit - 1))
-                        .hidden()
-                }
+            content
+        }
+    }
 
-                content
-                    .lineLimit(limit)
+    @ViewBuilder
+    func onChange<V: Equatable>(
+        of value: V,
+        _ action: @escaping (_ oldValue: V, _ newValue: V) -> Void
+    ) -> some View {
+        if #available(iOS 17, tvOS 17, *) {
+            content.onChange(of: value, action)
+        } else {
+            content.onChange(of: value) { [value] newValue in
+                action(value, newValue)
             }
         }
     }
 
+    @MainActor
     @ViewBuilder
-    func scrollDisabled(_ disabled: Bool) -> some View {
-        if #available(iOS 16, tvOS 16, *) {
-            content.scrollDisabled(disabled)
+    func scrollClipDisabled(_ disabled: Bool = true) -> some View {
+        if #available(iOS 17, *) {
+            content.scrollClipDisabled(disabled)
         } else {
-            content.introspect(.scrollView, on: .iOS(.v15), .tvOS(.v15)) { scrollView in
-                scrollView.isScrollEnabled = !disabled
+            content.introspect(.scrollView, on: .iOS(.v16), .tvOS(.v16)) { scrollView in
+                scrollView.clipsToBounds = !disabled
             }
         }
     }
 
+    @available(tvOS, unavailable)
     @ViewBuilder
-    func scrollIndicators(_ visibility: Backport.ScrollIndicatorVisibility) -> some View {
-        if #available(iOS 16, tvOS 16, *) {
-            content.scrollIndicators(visibility.supportedValue)
-        } else {
-            content.introspect(.scrollView, on: .iOS(.v15), .tvOS(.v15)) { scrollView in
-                scrollView.showsHorizontalScrollIndicator = visibility == .visible
-                scrollView.showsVerticalScrollIndicator = visibility == .visible
-            }
-        }
-    }
-
-    #if os(iOS)
-
-    // TODO: - remove comment when migrated away from Stinsen
-    //
-    // This doesn't seem to work on device, but does in the simulator.
-    // It is assumed that because Stinsen adds a lot of views that the
-    // PreferencesView isn't in the right place in the VC chain so that
-    // it can apply the settings, even SwiftUI's deferment.
-    @available(iOS 15.0, *)
-    @ViewBuilder
-    func defersSystemGestures(on edges: Edge.Set) -> some View {
-        if #available(iOS 16, *) {
-            content
-                .defersSystemGestures(on: edges)
+    func searchFocused(
+        _ isSearchFocused: FocusState<Bool>.Binding
+    ) -> some View {
+        if #available(iOS 18.0, *) {
+            content.searchFocused(isSearchFocused)
         } else {
             content
-                .preferredScreenEdgesDeferringSystemGestures(edges.asUIRectEdge)
         }
     }
-
-    @ViewBuilder
-    func persistentSystemOverlays(_ visibility: Visibility) -> some View {
-        if #available(iOS 16, *) {
-            content
-                .persistentSystemOverlays(visibility)
-        } else {
-            content
-                .prefersHomeIndicatorAutoHidden(visibility == .hidden ? true : false)
-        }
-    }
-    #endif
 }
 
 // MARK: ButtonBorderShape
 
-extension ButtonBorderShape {
+enum ButtonBorderShape {
+    case automatic
+    case capsule
+    case roundedRectangle
+    case circle
 
-    static let circleBackport: ButtonBorderShape = {
-        if #available(iOS 17, *) {
-            return ButtonBorderShape.circle
-        } else {
-            return ButtonBorderShape.roundedRectangle
+    var swiftUIValue: SwiftUI.ButtonBorderShape {
+        switch self {
+        case .automatic: .automatic
+        case .capsule: .capsule
+        case .roundedRectangle: .roundedRectangle
+        case .circle:
+            if #available(iOS 17, *) {
+                .circle
+            } else {
+                .roundedRectangle
+            }
         }
-    }()
+    }
+}
+
+enum NavigationTransition: Hashable {
+    case automatic
+    case zoom(sourceID: String, namespace: Namespace.ID)
 }

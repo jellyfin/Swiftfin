@@ -173,6 +173,14 @@ extension StoredValues.Keys {
             )
         }
 
+        static var enabledTrailers: Key<TrailerSelection> {
+            CurrentUserKey(
+                "enabledTrailers",
+                domain: "enabledTrailers",
+                default: .all
+            )
+        }
+
         static var itemViewAttributes: Key<[ItemViewAttribute]> {
             CurrentUserKey(
                 "itemViewAttributes",
@@ -180,5 +188,42 @@ extension StoredValues.Keys {
                 default: ItemViewAttribute.allCases
             )
         }
+
+        static var previewImageScrubbing: Key<PreviewImageScrubbingOption> {
+            CurrentUserKey(
+                "previewImageScrubbing",
+                domain: "previewImageScrubbing",
+                default: .trickplay(fallbackToChapters: false)
+            )
+        }
+    }
+}
+
+// TODO: chapters fallback
+enum PreviewImageScrubbingOption: CaseIterable, Displayable, Hashable, Storable {
+
+    case trickplay(fallbackToChapters: Bool = true)
+    case chapters
+    case disabled
+
+    var displayTitle: String {
+        switch self {
+        case .trickplay: "Trickplay"
+        case .disabled: L10n.disabled
+        case .chapters: "Chapters"
+        }
+    }
+
+    // TODO: enhance full screen determination
+    //       - allow checking against image size?
+    var supportsFullscreen: Bool {
+        switch self {
+        case .trickplay: true
+        case .disabled, .chapters: false
+        }
+    }
+
+    static var allCases: [PreviewImageScrubbingOption] {
+        [.trickplay(), .chapters, .disabled]
     }
 }

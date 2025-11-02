@@ -8,6 +8,7 @@
 
 import Foundation
 import JellyfinAPI
+import SwiftUI
 
 extension ChapterInfo: Displayable {
 
@@ -18,53 +19,52 @@ extension ChapterInfo: Displayable {
 
 extension ChapterInfo {
 
-    var timestampLabel: String {
-        let seconds = (startPositionTicks ?? 0) / 10_000_000
-        return seconds.timeLabel
-    }
-
-    var startTimeSeconds: Int {
-        let playbackPositionTicks = startPositionTicks ?? 0
-        return Int(playbackPositionTicks / 10_000_000)
+    var startSeconds: Duration? {
+        guard let startPositionTicks else { return nil }
+        return Duration.ticks(startPositionTicks)
     }
 }
 
 extension ChapterInfo {
 
-    struct FullInfo: Poster, Equatable {
-
-        var id: Int {
-            chapterInfo.hashValue
-        }
+    // TODO: possibly remove
+    //       - have ChapterInfo: Poster
+    //       - build info, ImageSource pairs where required
+    struct FullInfo: Poster {
 
         let chapterInfo: ChapterInfo
+        let displayTitle: String
+        let id: Int
         let imageSource: ImageSource
-        let secondsRange: Range<Int>
-
-        var displayTitle: String {
-            chapterInfo.displayTitle
-        }
-
-        var unwrappedIDHashOrZero: Int {
-            id
-        }
-
+        let preferredPosterDisplayType: PosterDisplayType = .landscape
         let systemImage: String = "film"
+        let unwrappedIDHashOrZero: Int
+
         var subtitle: String?
         var showTitle: Bool = true
 
         init(
             chapterInfo: ChapterInfo,
-            imageSource: ImageSource,
-            secondsRange: Range<Int>
+            imageSource: ImageSource
         ) {
             self.chapterInfo = chapterInfo
+            self.displayTitle = chapterInfo.displayTitle
+            self.id = chapterInfo.hashValue
             self.imageSource = imageSource
-            self.secondsRange = secondsRange
+            self.unwrappedIDHashOrZero = chapterInfo.hashValue
         }
 
-        func landscapeImageSources(maxWidth: CGFloat?) -> [ImageSource] {
+        func landscapeImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
             [imageSource]
+        }
+
+        func transform(image: Image) -> some View {
+            ZStack {
+                Color.black
+
+                image
+                    .aspectRatio(contentMode: .fit)
+            }
         }
     }
 }
