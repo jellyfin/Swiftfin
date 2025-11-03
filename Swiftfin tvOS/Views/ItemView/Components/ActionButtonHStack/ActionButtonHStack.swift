@@ -6,12 +6,15 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 extension ItemView {
 
     struct ActionButtonHStack: View {
 
+        @Default(.accentColor)
+        private var accentColor
         @StoredValue(.User.enableItemDeletion)
         private var enableItemDeletion: Bool
         @StoredValue(.User.enableItemEditing)
@@ -106,7 +109,7 @@ extension ItemView {
                     ) {
                         viewModel.send(.toggleIsPlayed)
                     }
-                    .foregroundStyle(Color.jellyfinPurple)
+                    .foregroundStyle(accentColor)
                     .isSelected(isCheckmarkSelected)
                     .frame(minWidth: 100, maxWidth: .infinity)
                 }

@@ -15,6 +15,8 @@ struct SettingsView: View {
 
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
+    @Default(.accentColor)
+    private var accentColor
 
     @Router
     private var router
@@ -60,7 +62,7 @@ struct SettingsView: View {
                     ListRowButton(L10n.switchUser) {
                         viewModel.signOut()
                     }
-                    .foregroundStyle(Color.jellyfinPurple.overlayColor, Color.jellyfinPurple)
+                    .foregroundStyle(accentColor.overlayColor, accentColor)
                     .listRowInsets(.zero)
                 }
 
@@ -87,6 +89,28 @@ struct SettingsView: View {
 //                        .onSelect {
 //                            router.route(to: \.experimentalSettings)
 //                        }
+                }
+
+                Section {
+                    Button {
+                        router.route(to: .accentColorSettings)
+                    } label: {
+                        HStack(spacing: 8) {
+                            Text(L10n.accentColor)
+                            Spacer()
+                            Circle()
+                                .fill(accentColor)
+                                .frame(width: 16, height: 16)
+                            Image(systemName: "chevron.right")
+                                .font(.body.weight(.regular))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .foregroundStyle(.primary, .secondary)
+                } header: {
+                    Text(L10n.appearance)
+                } footer: {
+                    Text(L10n.viewsMayRequireRestart)
                 }
 
                 Section {
