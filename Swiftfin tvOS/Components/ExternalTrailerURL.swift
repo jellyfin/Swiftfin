@@ -85,7 +85,7 @@ extension ExternalTrailerURL.Source {
         displayTitle: "Apple TV",
         hostPatterns: ["tv.apple.com"],
         requiresPathValidation: true,
-        requiredPathComponent: ["/clip/", "show/", "/movie/"]
+        requiredPathComponent: ["/clip/", "/show/", "/movie/"]
     ) { url in
         URL(string: "com.apple.tv://\(url.absoluteString)")
     }
