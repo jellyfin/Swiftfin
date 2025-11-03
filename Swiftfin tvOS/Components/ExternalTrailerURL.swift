@@ -30,7 +30,7 @@ struct ExternalTrailerURL {
                 continue
             }
 
-            guard let deepLink = source.buildDeepLink(from: url) else {
+            guard let deepLink = source.buildDeepLink(url) else {
                 continue
             }
 
@@ -48,55 +48,33 @@ extension ExternalTrailerURL {
     struct Source: Hashable, Identifiable {
 
         let id: String
-
         let displayTitle: String
-        let deepLinkScheme: String
         let hostPatterns: [String]
         let requiresPathValidation: Bool
         let requiredPathComponent: [String]
-        let parseRegex: String?
+        let buildDeepLink: (URL) -> URL?
 
         fileprivate init(
             displayTitle: String,
-            deepLinkScheme: String,
             hostPatterns: [String],
             requiresPathValidation: Bool = false,
             requiredPathComponent: [String] = [],
-            parseRegex: String? = nil
+            buildDeepLink: @escaping (URL) -> URL?
         ) {
             self.id = displayTitle
             self.displayTitle = displayTitle
-            self.deepLinkScheme = deepLinkScheme
             self.hostPatterns = hostPatterns
             self.requiresPathValidation = requiresPathValidation
             self.requiredPathComponent = requiredPathComponent
-            self.parseRegex = parseRegex
+            self.buildDeepLink = buildDeepLink
         }
 
-        func buildDeepLink(from url: URL) -> URL? {
-            if let parseRegex = parseRegex {
-                do {
-                    let regex = try NSRegularExpression(pattern: parseRegex, options: [])
-                    let urlString = url.absoluteString
-                    let range = NSRange(location: 0, length: urlString.utf16.count)
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
+        }
 
-                    if let match = regex.firstMatch(in: urlString, options: [], range: range),
-                       match.numberOfRanges > 1
-                    {
-                        let matchRange = match.range(at: 1)
-                        if let swiftRange = Range(matchRange, in: urlString) {
-                            let extractedID = String(urlString[swiftRange])
-                            return URL(string: "\(deepLinkScheme)\(extractedID)")
-                        }
-                    }
-                } catch {
-                    return nil
-                }
-
-                return nil
-            }
-
-            return URL(string: "\(deepLinkScheme)\(url.absoluteString)")
+        static func == (lhs: Source, rhs: Source) -> Bool {
+            lhs.id == rhs.id
         }
     }
 }
@@ -105,24 +83,31 @@ extension ExternalTrailerURL.Source {
 
     static let appleTV = Self(
         displayTitle: "Apple TV",
-        deepLinkScheme: "com.apple.tv://",
         hostPatterns: ["tv.apple.com"],
         requiresPathValidation: true,
         requiredPathComponent: ["/clip/", "show/", "/movie/"]
-    )
+    ) { url in
+        URL(string: "com.apple.tv://\(url.absoluteString)")
+    }
 
     static let vimeo = Self(
         displayTitle: "Vimeo",
-        deepLinkScheme: "vimeo://video/",
-        hostPatterns: ["vimeo.com"],
-        parseRegex: #"vimeo\.com/(?:video/)?(\d+)"#
-    )
+        hostPatterns: ["vimeo.com"]
+    ) { url in
+        let pattern = /vimeo\.com\/(?:video\/)?(\d+)/
+        guard let match = url.absoluteString.firstMatch(of: pattern) else {
+            return nil
+        }
+        let videoId = String(match.1)
+        return URL(string: "vimeo://video/\(videoId)")
+    }
 
     static let youtube = Self(
         displayTitle: "YouTube",
-        deepLinkScheme: "youtube://",
         hostPatterns: ["youtube.com", "youtu.be", "m.youtube.com"]
-    )
+    ) { url in
+        URL(string: "youtube://\(url.absoluteString)")
+    }
 
     static var allCases: [Self] = [
         .appleTV,
