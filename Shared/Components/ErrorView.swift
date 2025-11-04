@@ -53,14 +53,17 @@ struct ErrorView<ErrorType: Error>: View {
                 .font(.subheadline)
                 .multilineTextAlignment(.center)
 
-            if let networkError = error as? NetworkError,
-               let recoverySuggestion = networkError.recoverySuggestion
-            {
-                Text(recoverySuggestion)
-                    .frame(minWidth: minWidth, maxWidth: maxWidth)
-                    .font(.body)
-                    .multilineTextAlignment(.center)
-            }
+            // TODO: Provide recovery suggestions if it's a known network error
+            // Exampe: 401 - Replace Token
+            // Example: 503 - Wait X Seconds for Server to be ready
+            /* if let networkError = error as? NetworkError,
+                let recoverySuggestion = networkError.recoverySuggestion
+             {
+                 Text(recoverySuggestion)
+                     .frame(minWidth: minWidth, maxWidth: maxWidth)
+                     .font(.body)
+                     .multilineTextAlignment(.center)
+             }*/
 
             if let refresh {
                 ListRowButton(L10n.retry) {
@@ -75,11 +78,9 @@ struct ErrorView<ErrorType: Error>: View {
         }
     }
 
+    // TODO: Change the logo based on the error type
+    /// Example: A Network Error or No Internet should use something like "network.slash"
     private var errorImage: String {
-        if let networkError = error as? NetworkError {
-            return networkError.source.systemImage
-        } else {
-            return NetworkError.unknown.source.systemImage
-        }
+        "xmark.circle"
     }
 }
