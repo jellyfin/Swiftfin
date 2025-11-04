@@ -26,8 +26,10 @@ struct ExternalTrailerURL {
         }
 
         for source in Source.allCases where source.hostPatterns.contains(where: { host.contains($0) }) {
-            if source.requiresPathValidation, !source.requiredPathComponent.contains(where: { url.path.contains($0) }) {
-                continue
+            if let requiredPathComponents = source.requiredPathComponents {
+                if !requiredPathComponents.contains(where: { url.path.contains($0) }) {
+                    continue
+                }
             }
 
             guard let deepLink = source.buildDeepLink(url) else {
@@ -45,36 +47,23 @@ struct ExternalTrailerURL {
 
 extension ExternalTrailerURL {
 
-    struct Source: Hashable, Identifiable {
+    struct Source {
 
-        let id: String
         let displayTitle: String
         let hostPatterns: [String]
-        let requiresPathValidation: Bool
-        let requiredPathComponent: [String]
+        let requiredPathComponents: [String]?
         let buildDeepLink: (URL) -> URL?
 
         fileprivate init(
             displayTitle: String,
             hostPatterns: [String],
-            requiresPathValidation: Bool = false,
-            requiredPathComponent: [String] = [],
+            requiredPathComponents: [String]? = nil,
             buildDeepLink: @escaping (URL) -> URL?
         ) {
-            self.id = displayTitle
             self.displayTitle = displayTitle
             self.hostPatterns = hostPatterns
-            self.requiresPathValidation = requiresPathValidation
-            self.requiredPathComponent = requiredPathComponent
+            self.requiredPathComponents = requiredPathComponents
             self.buildDeepLink = buildDeepLink
-        }
-
-        func hash(into hasher: inout Hasher) {
-            hasher.combine(id)
-        }
-
-        static func == (lhs: Source, rhs: Source) -> Bool {
-            lhs.id == rhs.id
         }
     }
 }
@@ -84,8 +73,7 @@ extension ExternalTrailerURL.Source {
     static let appleTV = Self(
         displayTitle: "Apple TV",
         hostPatterns: ["tv.apple.com"],
-        requiresPathValidation: true,
-        requiredPathComponent: ["/clip/", "/show/", "/movie/"]
+        requiredPathComponents: ["/clip/", "/show/", "/movie/"]
     ) { url in
         URL(string: "com.apple.tv://\(url.absoluteString)")
     }
