@@ -60,17 +60,17 @@ struct ErrorView<ErrorType: Error>: View {
                     .frame(minWidth: minWidth, maxWidth: maxWidth)
                     .font(.body)
                     .multilineTextAlignment(.center)
+            }
 
-                if let refresh {
-                    ListRowButton(L10n.retry) {
-                        Task {
-                            await refresh()
-                        }
+            if let refresh {
+                ListRowButton(L10n.retry) {
+                    Task {
+                        await refresh()
                     }
-                    .foregroundStyle(accentColor.overlayColor, accentColor)
-                    .frame(maxWidth: maxWidth)
-                    .frame(height: height)
                 }
+                .foregroundStyle(accentColor.overlayColor, accentColor)
+                .frame(maxWidth: maxWidth)
+                .frame(height: height)
             }
         }
     }

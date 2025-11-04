@@ -53,7 +53,7 @@ private struct ListRowButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
-            Rectangle()
+            RoundedRectangle(cornerRadius: 10)
                 .fill(secondaryStyle(configuration: configuration))
 
             configuration.label
