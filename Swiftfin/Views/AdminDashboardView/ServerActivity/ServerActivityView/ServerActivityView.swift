@@ -32,9 +32,6 @@ struct ServerActivityView: View {
                 contentView
             case let .error(error):
                 ErrorView(error: error)
-                    .onRetry {
-                        viewModel.send(.refresh)
-                    }
             case .initial, .refreshing:
                 DelayedProgressView()
             }
@@ -42,6 +39,9 @@ struct ServerActivityView: View {
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.activity)
         .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            viewModel.send(.refresh)
+        }
         .topBarTrailing {
             if viewModel.backgroundStates.contains(.gettingNextPage) {
                 ProgressView()

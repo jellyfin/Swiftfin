@@ -59,19 +59,13 @@ struct ServerLogsView: View {
         }
     }
 
-    @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.getLogs()
-            }
-    }
-
     var body: some View {
         ZStack {
             switch viewModel.state {
             case .error:
-                viewModel.error.map { errorView(with: $0) }
+                viewModel.error.map {
+                    ErrorView(error: $0)
+                }
             case .initial:
                 contentView
             case .refreshing:
@@ -80,6 +74,9 @@ struct ServerLogsView: View {
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.serverLogs.localizedCapitalized)
+        .refreshable {
+            viewModel.getLogs()
+        }
         .onFirstAppear {
             viewModel.getLogs()
         }

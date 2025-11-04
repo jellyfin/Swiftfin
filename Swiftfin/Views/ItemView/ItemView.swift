@@ -35,7 +35,7 @@ struct ItemView: View {
     @State
     private var isPresentingEventAlert = false
     @State
-    private var error: JellyfinAPIError?
+    private var error: ErrorMessage?
 
     // MARK: - Can Delete Item
 

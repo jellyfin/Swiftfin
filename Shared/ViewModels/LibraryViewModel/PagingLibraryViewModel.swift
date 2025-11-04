@@ -71,7 +71,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     // MARK: Action
 
     enum Action: Equatable {
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
         case refresh
         case getNextPage
         case getRandomItem
@@ -87,7 +87,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     enum State: Hashable {
         case content
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
         case initial
         case refreshing
     }

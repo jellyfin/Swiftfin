@@ -19,30 +19,6 @@ struct ServerCheckView: View {
     @StateObject
     private var viewModel = ServerCheckViewModel()
 
-    @ViewBuilder
-    private func errorView(_ error: some Error) -> some View {
-        VStack(spacing: 10) {
-            Image(systemName: "xmark.circle.fill")
-                .font(.system(size: 72))
-                .foregroundColor(Color.red)
-
-            Text(viewModel.userSession.server.name)
-                .fontWeight(.semibold)
-                .foregroundStyle(.secondary)
-
-            Text(error.localizedDescription)
-                .frame(minWidth: 50, maxWidth: 240)
-                .multilineTextAlignment(.center)
-
-            PrimaryButton(title: L10n.retry)
-                .onSelect {
-                    viewModel.checkServer()
-                }
-                .frame(maxWidth: 300)
-                .frame(height: 50)
-        }
-    }
-
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -53,7 +29,9 @@ struct ServerCheckView: View {
                     ProgressView()
                 }
             case .error:
-                viewModel.error.map { errorView($0) }
+                viewModel.error.map {
+                    ErrorView(error: $0)
+                }
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)

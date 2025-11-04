@@ -46,7 +46,7 @@ struct ServerUsersView: View {
             case .content:
                 userListView
             case let .error(error):
-                errorView(with: error)
+                ErrorView(error: error)
             case .initial:
                 DelayedProgressView()
             }
@@ -55,6 +55,9 @@ struct ServerUsersView: View {
         .navigationTitle(L10n.users)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(isEditing)
+        .refreshable {
+            viewModel.send(.getUsers(isHidden: isHiddenFilterActive, isDisabled: isDisabledFilterActive))
+        }
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 if isEditing {
@@ -195,16 +198,6 @@ struct ServerUsersView: View {
             }
         }
         .listStyle(.plain)
-    }
-
-    // MARK: - Error View
-
-    @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.send(.getUsers(isHidden: isHiddenFilterActive, isDisabled: isDisabledFilterActive))
-            }
     }
 
     // MARK: - Navigation Bar Select/Remove All Content

@@ -21,7 +21,7 @@ struct AppLoadingView: View {
             }
 
             if didFailMigration {
-                ErrorView(error: JellyfinAPIError("An internal error occurred."))
+                ErrorView(error: ErrorMessage("An internal error occurred."))
             }
         }
         .topBarTrailing {

@@ -88,7 +88,7 @@ struct UserSignInView: View {
             do {
                 guard let secret = try await quickConnectAction?(client: viewModel.server.client) else {
                     logger.critical("QuickConnect called without necessary action!")
-                    throw JellyfinAPIError(L10n.unknownError)
+                    throw ErrorMessage(L10n.unknownError)
                 }
                 await viewModel.signInQuickConnect(
                     secret: secret
@@ -97,7 +97,7 @@ struct UserSignInView: View {
                 // ignore
             } catch {
                 logger.error("QuickConnect failed with error: \(error.localizedDescription)")
-                await viewModel.error(JellyfinAPIError(L10n.taskFailed))
+                await viewModel.error(ErrorMessage(L10n.taskFailed))
             }
         }
     }
