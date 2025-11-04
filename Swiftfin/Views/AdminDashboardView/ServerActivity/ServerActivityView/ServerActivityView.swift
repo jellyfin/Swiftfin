@@ -33,7 +33,7 @@ struct ServerActivityView: View {
             case let .error(error):
                 ErrorView(error: error)
             case .initial, .refreshing:
-                DelayedProgressView()
+                ProgressView()
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)

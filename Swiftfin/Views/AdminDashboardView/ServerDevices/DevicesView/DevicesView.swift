@@ -40,7 +40,7 @@ struct DevicesView: View {
             case .initial:
                 contentView
             case .refreshing:
-                DelayedProgressView()
+                ProgressView()
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)

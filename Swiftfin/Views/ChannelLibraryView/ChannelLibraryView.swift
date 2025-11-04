@@ -131,7 +131,7 @@ struct ChannelLibraryView: View {
             case let .error(error):
                 ErrorView(error: error)
             case .initial, .refreshing:
-                DelayedProgressView()
+                ProgressView()
             }
         }
         .navigationTitle(L10n.channels)

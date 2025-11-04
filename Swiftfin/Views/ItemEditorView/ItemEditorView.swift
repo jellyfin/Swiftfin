@@ -48,13 +48,16 @@ struct ItemEditorView: View {
             case .initial, .content, .refreshing:
                 contentView
             case let .error(error):
-                errorView(with: error)
+                ErrorView(error: error)
             }
         }
         .navigationTitle(L10n.metadata)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
+        }
+        .refreshable {
+            viewModel.send(.refresh)
         }
     }
 
@@ -88,16 +91,6 @@ struct ItemEditorView: View {
                  }
              }*/
         }
-    }
-
-    // MARK: - ErrorView
-
-    @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.send(.refresh)
-            }
     }
 
     // MARK: - Refresh Menu Button

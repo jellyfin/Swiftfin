@@ -19,18 +19,17 @@ struct AppLoadingView: View {
             Color.clear
 
             if !didFailMigration {
-                ProgressView()
-            }
-
-            if didFailMigration {
                 ErrorView(error: ErrorMessage("An internal error occurred."))
+            } else {
+                ProgressView()
             }
         }
         .topBarTrailing {
             Button(L10n.advanced, systemImage: "gearshape.fill") {}
                 .foregroundStyle(.secondary)
-                .disabled(true)
-                .opacity(didFailMigration ? 0 : 1)
+                .disabled(!didFailMigration)
+                .isVisible(didFailMigration)
+                .labelStyle(.iconOnly)
         }
         .onNotification(.didFailMigration) { _ in
             didFailMigration = true

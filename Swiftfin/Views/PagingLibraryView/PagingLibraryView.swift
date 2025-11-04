@@ -243,7 +243,7 @@ struct PagingLibraryView<Element: Poster>: View {
                 elementsView
             }
         case .initial, .refreshing:
-            DelayedProgressView()
+            ProgressView()
         default:
             AssertionFailureView("Expected view for unexpected state")
         }

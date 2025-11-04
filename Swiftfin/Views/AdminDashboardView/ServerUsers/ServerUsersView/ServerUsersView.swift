@@ -48,7 +48,7 @@ struct ServerUsersView: View {
             case let .error(error):
                 ErrorView(error: error)
             case .initial:
-                DelayedProgressView()
+                ProgressView()
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)

@@ -141,11 +141,14 @@ struct ItemView: View {
             case let .error(error):
                 ErrorView(error: error)
             case .initial, .refreshing:
-                DelayedProgressView()
+                ProgressView()
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            viewModel.send(.refresh)
+        }
         .onFirstAppear {
             viewModel.send(.refresh)
         }

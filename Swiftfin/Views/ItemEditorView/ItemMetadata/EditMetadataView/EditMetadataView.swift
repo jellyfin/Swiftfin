@@ -53,11 +53,14 @@ struct EditMetadataView: View {
             case .initial, .content, .updating:
                 contentView
             case let .error(error):
-                errorView(with: error)
+                ErrorView(error: error)
             }
         }
         .navigationTitle(L10n.metadata)
         .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            viewModel.send(.load)
+        }
         .topBarTrailing {
             Button(L10n.save) {
                 item = tempItem
@@ -79,16 +82,6 @@ struct EditMetadataView: View {
             }
         }
         .errorMessage($error)
-    }
-
-    // MARK: - ErrorView
-
-    @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.send(.load)
-            }
     }
 
     // MARK: - Content View

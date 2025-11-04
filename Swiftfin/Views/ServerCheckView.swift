@@ -35,6 +35,9 @@ struct ServerCheckView: View {
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
+        .refreshable {
+            viewModel.checkServer()
+        }
         .onFirstAppear {
             viewModel.checkServer()
         }
