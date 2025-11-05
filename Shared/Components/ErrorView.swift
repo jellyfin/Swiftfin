@@ -25,17 +25,19 @@ struct ErrorView<ErrorType: Error>: View {
     let error: ErrorType
 
     #if os(tvOS)
+    private let spacing: CGFloat = 20
     private let iconSize: CGFloat = 144
     private let contentMaxWidth: CGFloat = 600
     private let buttonHeight: CGFloat = 75
     #else
+    private let spacing: CGFloat = 10
     private let iconSize: CGFloat = 72
     private let contentMaxWidth: CGFloat = 300
     private let buttonHeight: CGFloat = 50
     #endif
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: spacing) {
             Spacer()
             iconView
             bodyView
@@ -47,7 +49,8 @@ struct ErrorView<ErrorType: Error>: View {
             .sheet(isPresented: $showServerInfo) {
                 serverInfoView
                     .frame(maxWidth: contentMaxWidth)
-                    .padding(60)
+                    .padding(spacing)
+                    .background(.ultraThickMaterial)
             }
         #endif
     }
@@ -57,15 +60,13 @@ struct ErrorView<ErrorType: Error>: View {
     private var iconView: some View {
         VStack {
             ZStack {
-                Color.red.opacity(0.2)
+                iconBackground
 
                 Image(systemName: errorImage)
                     .font(.system(size: iconSize, weight: .regular))
                     .foregroundStyle(Color.red)
                     .symbolRenderingMode(.monochrome)
             }
-            .frame(width: iconSize * 1.5, height: iconSize * 1.5)
-            .clipShape(RoundedRectangle(cornerRadius: 20))
 
             if let userSession {
                 Button(userSession.server.name, systemImage: "info.circle") {
@@ -74,9 +75,11 @@ struct ErrorView<ErrorType: Error>: View {
                 .buttonStyle(.plain)
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
+                .lineLimit(1)
                 .accessibilityLabel(userSession.server.name)
-                #if os(iOS)
+                #if os(tvOS)
+                    .focusSection()
+                #else
                     .popover(isPresented: $showServerInfo) {
                         serverInfoView
                             .presentationCompactAdaptation(.popover)
@@ -84,6 +87,20 @@ struct ErrorView<ErrorType: Error>: View {
                 #endif
             }
         }
+    }
+
+    // MARK: - Icon Background
+
+    private var iconBackground: some View {
+        #if os(tvOS)
+        Circle()
+            .fill(Color.red.opacity(0.2))
+            .frame(width: iconSize * 1.5, height: iconSize * 1.5)
+        #else
+        RoundedRectangle(cornerRadius: 10)
+            .fill(Color.red.opacity(0.2))
+            .frame(width: iconSize * 1.5, height: iconSize * 1.5)
+        #endif
     }
 
     // MARK: - Body View
@@ -103,6 +120,9 @@ struct ErrorView<ErrorType: Error>: View {
                 }
                 .foregroundStyle(accentColor.overlayColor, accentColor)
                 .frame(height: buttonHeight)
+                #if os(tvOS)
+                    .focusSection()
+                #endif
             }
 
             if let localizedError = error as? LocalizedError,
@@ -143,10 +163,7 @@ struct ErrorView<ErrorType: Error>: View {
                 )
             }
         }
-        #if os(iOS)
         .padding()
-        .frame(minWidth: 300, maxWidth: 400)
-        #endif
     }
 
     // MARK: - Error Image
