@@ -40,6 +40,6 @@ Older OS versions may still receive **limited support**:
 | **tvOS**     | 16        | -         | -         | -         | -         |
 | **Jellyfin** | 10.8      | 10.8      | 10.8      | 10.10     | 10.11     |
 
-### Questions, Comments, or Concerns
+## Questions, Comments, or Concerns
 
 Our discussion for this topic can be found at [Supported OS Versions](https://github.com/jellyfin/Swiftfin/discussions/1564).
