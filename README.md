@@ -38,6 +38,14 @@ Use the TestFlight version to test new features and bug fixes before being publi
   <img height=75 alt="Get the beta on TestFlight" src="./Resources/testflight.svg"/>
 </a>
 
+## 📖 Documentation
+
+Swiftfin provides detailed documentation to help you understand key aspects of the app and its development approach:
+
+- [🎬 Player Differences](https://github.com/jellyfin/Swiftfin/blob/main/Documentation/players.md) — Learn about Swiftfin's **Native** and **Swiftfin** players and how their features vary.
+- [🧩 OS Version Support](https://github.com/jellyfin/Swiftfin/blob/main/Documentation/version.md) — Read about how we determine the **minimum supported OS** and which versions of iOS & tvOS are supported.
+- [💜 Supporting Development](https://jellyfin.org/docs/general/contributing/direct-donations) — Learn how you can **support the project developers** and help keep Swiftfin improving.
+
 ## ⚙️ Development
 
 Thank you for your interest in Swiftfin! Please check out the [Contribution Guidelines](https://github.com/jellyfin/Swiftfin/blob/main/Documentation/contributing.md) to get started.
@@ -51,11 +59,3 @@ Check out our [Weblate instance](https://translate.jellyfin.org/projects/swiftfi
 <a href="https://translate.jellyfin.org/engage/swiftfin/">
 <img src="https://translate.jellyfin.org/widgets/swiftfin/-/multi-auto.svg"/>
 </a>
-
-## 📖 Documentation
-
-Swiftfin provides detailed documentation to help you understand key aspects of the app and its development approach:
-
-- [🎬 Player Differences](https://github.com/jellyfin/Swiftfin/blob/main/Documentation/players.md) — Learn about Swiftfin's **Native** and **Swiftfin** players and how their features vary.
-- [🧩 OS Version Support](https://github.com/jellyfin/Swiftfin/blob/main/Documentation/version.md) — Read about how we determine the **minimum supported OS** and which versions of iOS & tvOS are supported.
-- [💜 Supporting Development](https://jellyfin.org/docs/general/contributing/direct-donations) — Learn how you can **support the project developers** and help keep Swiftfin improving.
