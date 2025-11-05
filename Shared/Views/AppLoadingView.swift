@@ -25,13 +25,13 @@ struct AppLoadingView: View {
             }
         }
         // TODO: Implement failed migration recovery options
-        /*.topBarTrailing {
-            Button(L10n.advanced, systemImage: "gearshape.fill") {}
-                .foregroundStyle(.secondary)
-                .disabled(!didFailMigration)
-                .isVisible(didFailMigration)
-                .labelStyle(.iconOnly)
-        }*/
+        /* .topBarTrailing {
+             Button(L10n.advanced, systemImage: "gearshape.fill") {}
+                 .foregroundStyle(.secondary)
+                 .disabled(!didFailMigration)
+                 .isVisible(didFailMigration)
+                 .labelStyle(.iconOnly)
+         } */
         .onNotification(.didFailMigration) { _ in
             didFailMigration = true
         }
