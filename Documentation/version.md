@@ -38,7 +38,7 @@ Older OS versions may still receive **limited support**:
 | **iOS**      | **16**    | 14        | 14        | 15        | 15        | 16        |
 | **iPadOS**   | **16**    | 14        | 14        | 15        | 15        | 16        |
 | **tvOS**     | **17**    | 16        | -         | -         | -         | -         |
-| **Jellyfin** | **10.11** | 10.6      | 10.7      | 10.7      | 10.9      | 10.11     |
+| **Jellyfin** | **10.11** | 10.8      | 10.8      | 10.8      | 10.10     | 10.11     |
 
 ### Questions, Comments, or Concerns
 
