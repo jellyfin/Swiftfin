@@ -35,11 +35,10 @@ struct ErrorView<ErrorType: Error>: View {
     #endif
 
     var body: some View {
-        VStack {
+        VStack(spacing: 10) {
             Spacer()
             iconView
             bodyView
-                .padding(.top, 10)
             Spacer()
         }
         .frame(maxWidth: contentMaxWidth)
