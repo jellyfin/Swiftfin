@@ -53,7 +53,7 @@ struct ServerUserParentalRatingView: View {
 
             blockUnratedItemsView
         }
-        .navigationTitle(L10n.parentalRating.localizedCapitalized)
+        .navigationTitle(L10n.parentalRatings.localizedCapitalized)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()

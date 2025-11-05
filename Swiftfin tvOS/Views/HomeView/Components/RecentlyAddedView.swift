@@ -25,7 +25,7 @@ extension HomeView {
         var body: some View {
             if viewModel.elements.isNotEmpty {
                 PosterHStack(
-                    title: L10n.recentlyAdded,
+                    title: L10n.recentlyAdded.localizedCapitalized,
                     type: recentlyAddedPosterType,
                     items: viewModel.elements
                 ) { item in
