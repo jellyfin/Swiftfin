@@ -19,51 +19,82 @@ struct ErrorView<ErrorType: Error>: View {
     @Environment(\.refresh)
     private var refresh
 
+    @State
+    private var showServerInfo = false
+
     let error: ErrorType
 
     #if os(tvOS)
-    private let spacing: CGFloat = 40
-    private let fontSize: CGFloat = 150
-    private let minWidth: CGFloat = 100
-    private let maxWidth: CGFloat = 500
-    private let height: CGFloat = 75
+    private let iconSize: CGFloat = 144
+    private let contentMaxWidth: CGFloat = 600
+    private let buttonHeight: CGFloat = 75
     #else
-    private let spacing: CGFloat = 20
-    private let fontSize: CGFloat = 72
-    private let minWidth: CGFloat = 50
-    private let maxWidth: CGFloat = 300
-    private let height: CGFloat = 50
+    private let iconSize: CGFloat = 72
+    private let contentMaxWidth: CGFloat = 300
+    private let buttonHeight: CGFloat = 50
     #endif
 
     var body: some View {
-        VStack(spacing: spacing) {
-            Image(systemName: errorImage)
-                .font(.system(size: fontSize))
-                .foregroundColor(Color.red)
-
-            if let serverName = userSession?.server.name {
-                Text(serverName)
-                    .frame(minWidth: minWidth, maxWidth: maxWidth)
-                    .font(.title)
-                    .multilineTextAlignment(.center)
+        VStack {
+            Spacer()
+            iconView
+            bodyView
+                .padding(.top, 10)
+            Spacer()
+        }
+        .frame(maxWidth: contentMaxWidth)
+        .padding(.horizontal)
+        #if os(tvOS)
+            .sheet(isPresented: $showServerInfo) {
+                serverInfoView
+                    .frame(maxWidth: contentMaxWidth)
+                    .padding(60)
             }
+        #endif
+    }
 
-            Text(error.localizedDescription)
-                .frame(minWidth: minWidth, maxWidth: maxWidth)
-                .font(.subheadline)
+    // MARK: - Icon View
+
+    private var iconView: some View {
+        VStack {
+            ZStack {
+                Color.red.opacity(0.2)
+
+                Image(systemName: errorImage)
+                    .font(.system(size: iconSize, weight: .regular))
+                    .foregroundStyle(Color.red)
+                    .symbolRenderingMode(.monochrome)
+            }
+            .frame(width: iconSize * 1.5, height: iconSize * 1.5)
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+
+            if let userSession {
+                Button(userSession.server.name, systemImage: "info.circle") {
+                    showServerInfo = true
+                }
+                .buttonStyle(.plain)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
+                .accessibilityLabel(userSession.server.name)
+                #if os(iOS)
+                    .popover(isPresented: $showServerInfo) {
+                        serverInfoView
+                            .presentationCompactAdaptation(.popover)
+                    }
+                #endif
+            }
+        }
+    }
 
-            // TODO: Provide recovery suggestions if it's a known network error
-            // Exampe: 401 - Replace Token
-            // Example: 503 - Wait X Seconds for Server to be ready
-            /* if let networkError = error as? NetworkError,
-                let recoverySuggestion = networkError.recoverySuggestion
-             {
-                 Text(recoverySuggestion)
-                     .frame(minWidth: minWidth, maxWidth: maxWidth)
-                     .font(.body)
-                     .multilineTextAlignment(.center)
-             }*/
+    // MARK: - Body View
+
+    private var bodyView: some View {
+        VStack(spacing: 10) {
+            Text(error.localizedDescription)
+                .font(.headline.weight(.semibold))
+                .foregroundStyle(.primary)
+                .multilineTextAlignment(.center)
 
             if let refresh {
                 ListRowButton(L10n.retry) {
@@ -72,14 +103,55 @@ struct ErrorView<ErrorType: Error>: View {
                     }
                 }
                 .foregroundStyle(accentColor.overlayColor, accentColor)
-                .frame(maxWidth: maxWidth)
-                .frame(height: height)
+                .frame(height: buttonHeight)
+            }
+
+            if let localizedError = error as? LocalizedError,
+               let recoverySuggestion = localizedError.recoverySuggestion
+            {
+                Text(recoverySuggestion)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
             }
         }
     }
 
-    // TODO: Change the logo based on the error type
-    /// Example: A Network Error or No Internet should use something like "network.slash"
+    // MARK: - Server Info View
+
+    private var serverInfoView: some View {
+        VStack(alignment: .center) {
+            Text(L10n.server)
+                .font(.headline.weight(.semibold))
+                .foregroundStyle(.primary)
+
+            Divider()
+
+            if let userSession {
+                LabeledContent(
+                    L10n.name,
+                    value: userSession.server.name
+                )
+
+                LabeledContent(
+                    L10n.url,
+                    value: userSession.server.currentURL.absoluteString
+                )
+
+                LabeledContent(
+                    L10n.version,
+                    value: userSession.server.isVersionCompatible ? L10n.upToDate : L10n.outOfDate
+                )
+            }
+        }
+        #if os(iOS)
+        .padding()
+        .frame(minWidth: 300, maxWidth: 400)
+        #endif
+    }
+
+    // MARK: - Error Image
+
     private var errorImage: String {
         "xmark.circle"
     }
