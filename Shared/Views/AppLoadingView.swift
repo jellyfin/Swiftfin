@@ -18,19 +18,20 @@ struct AppLoadingView: View {
         ZStack {
             Color.clear
 
-            if !didFailMigration {
+            if didFailMigration {
                 ErrorView(error: ErrorMessage("An internal error occurred."))
             } else {
                 ProgressView()
             }
         }
-        .topBarTrailing {
+        // TODO: Implement failed migration recovery options
+        /*.topBarTrailing {
             Button(L10n.advanced, systemImage: "gearshape.fill") {}
                 .foregroundStyle(.secondary)
                 .disabled(!didFailMigration)
                 .isVisible(didFailMigration)
                 .labelStyle(.iconOnly)
-        }
+        }*/
         .onNotification(.didFailMigration) { _ in
             didFailMigration = true
         }
