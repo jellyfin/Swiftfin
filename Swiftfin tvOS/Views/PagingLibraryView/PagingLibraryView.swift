@@ -300,17 +300,16 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     private var contentView: some View {
 
         innerContent
-            .padding(.top, 90) // Account for header height with consistent spacing
             // These exist here to alleviate type-checker issues
-            .onChange(of: posterType) {
-                setCustomLayout()
-            }
-            .onChange(of: displayType) {
-                setCustomLayout()
-            }
-            .onChange(of: listColumnCount) {
-                setCustomLayout()
-            }
+                .onChange(of: posterType) {
+                    setCustomLayout()
+                }
+                .onChange(of: displayType) {
+                    setCustomLayout()
+                }
+                .onChange(of: listColumnCount) {
+                    setCustomLayout()
+                }
 
         // Logic for LetterPicker. Enable when ready
 

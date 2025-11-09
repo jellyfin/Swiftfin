@@ -82,7 +82,6 @@ struct LibraryHeader: View {
                 }
             }
         }
-        .frame(height: 80)
         .frame(maxWidth: .infinity)
         .padding(EdgeInsets(top: 10, leading: 60, bottom: 10, trailing: 60))
         .ignoresSafeArea()
