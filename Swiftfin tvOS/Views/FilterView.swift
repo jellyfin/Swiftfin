@@ -53,16 +53,18 @@ struct FilterView: View {
     // MARK: - Body
 
     var body: some View {
-        HStack {
-            Spacer()
-            VStack {
-                contentView
+        GeometryReader { geometry in
+            HStack {
+                Spacer()
+                VStack {
+                    contentView
+                }
+                .frame(maxWidth: .infinity)
+                .frame(width: geometry.size.width * 0.5)
+                Spacer()
             }
-            .frame(maxWidth: .infinity)
-            .frame(width: UIScreen.main.bounds.width * 0.5)
-            Spacer()
+            .navigationTitle(type.displayTitle)
         }
-        .navigationTitle(type.displayTitle)
     }
 
     // MARK: - Filter Content
@@ -185,14 +187,11 @@ struct FilterView: View {
                     if type.selectorType == .single {
                         viewModel.send(.update(type, [item]))
                     } else {
-                        // Multi-select: toggle item
                         let currentSelection = viewModel.currentFilters[keyPath: type.collectionAnyKeyPath]
                         if currentSelection.contains(where: { $0.hashValue == item.hashValue }) {
-                            // Remove item
                             let newSelection = currentSelection.filter { $0.hashValue != item.hashValue }
                             viewModel.send(.update(type, newSelection))
                         } else {
-                            // Add item
                             let newSelection = currentSelection + [item]
                             viewModel.send(.update(type, newSelection))
                         }
