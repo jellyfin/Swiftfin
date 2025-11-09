@@ -53,7 +53,7 @@ struct ServerUserDeviceAccessView: View {
 
     var body: some View {
         contentView
-            .navigationTitle(L10n.deviceAccess)
+            .navigationTitle(L10n.deviceAccess.localizedCapitalized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.dismiss()

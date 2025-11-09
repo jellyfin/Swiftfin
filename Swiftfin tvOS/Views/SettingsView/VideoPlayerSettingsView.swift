@@ -27,6 +27,7 @@ struct VideoPlayerSettingsView: View {
     @State
     private var isPresentingResumeOffsetStepper: Bool = false
 
+    // TODO: Update with correct settings once the tvOS PlayerUI is complete
     var body: some View {
         SplitFormWindowView()
             .descriptionView {

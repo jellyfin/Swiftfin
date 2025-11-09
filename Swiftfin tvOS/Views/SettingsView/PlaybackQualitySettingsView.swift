@@ -71,7 +71,7 @@ struct PlaybackQualitySettingsView: View {
                     L10n.deviceProfileDescription.text
                 }
             }
-            .navigationTitle(L10n.playbackQuality)
+            .navigationTitle(L10n.playbackQuality.localizedCapitalized)
     }
 
     // MARK: - Description View Icon
@@ -116,7 +116,7 @@ struct PlaybackQualitySettingsView: View {
                     value: L10n.compatibleDescription
                 )
                 LabeledContent(
-                    L10n.direct,
+                    L10n.directPlay,
                     value: L10n.directDescription
                 )
                 LabeledContent(
