@@ -258,6 +258,17 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 listItemView(item: item, posterType: posterType)
             }
         }
+        .header {
+            if let title = viewModel.parent?.displayTitle, title.isNotEmpty,
+               let filterViewModel = viewModel.filterViewModel, !enabledDrawerFilters.isEmpty
+            {
+                LibraryHeader(
+                    title: title,
+                    totalCount: viewModel.totalCount,
+                    filterViewModel: filterViewModel
+                )
+            }
+        }
         .onReachedBottomEdge(offset: .rows(3)) {
             viewModel.send(.getNextPage)
         }
@@ -329,17 +340,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
          }*/
     }
 
-    @ViewBuilder
-    private func tvOSLibraryHeader(
-        title: String,
-        filterViewModel: FilterViewModel
-    ) -> some View {
-        LibraryHeader(
-            title: title,
-            totalCount: viewModel.totalCount,
-            filterViewModel: filterViewModel
-        )
-    }
+    // tvOSLibraryHeader removed — using LibraryHeader directly in the header modifier.
 
     // MARK: Body
 
@@ -360,16 +361,6 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
-        .overlay(alignment: .top) {
-            if let title = viewModel.parent?.displayTitle, title.isNotEmpty {
-                if let filterViewModel = viewModel.filterViewModel, !enabledDrawerFilters.isEmpty {
-                    tvOSLibraryHeader(
-                        title: viewModel.parent?.displayTitle ?? "",
-                        filterViewModel: filterViewModel
-                    )
-                }
-            }
-        }
         .background(.ultraThinMaterial)
         .onChange(of: focusedPoster) {
             setCinematicBackground()
