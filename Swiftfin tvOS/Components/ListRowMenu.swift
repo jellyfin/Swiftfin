@@ -136,4 +136,80 @@ extension ListRowMenu where Subtitle == Text, Content == AnyView {
             .eraseToAnyView()
         }
     }
+
+    // multi-selection from a CaseIterable Enum
+    init<ItemType>(
+        _ title: String,
+        selection: Binding<[ItemType]>
+    ) where ItemType: CaseIterable & Displayable & Hashable,
+        ItemType.AllCases: RandomAccessCollection
+    {
+        let selectedCount = selection.wrappedValue.count
+        let subtitleText: String
+        if selectedCount == 0 {
+            subtitleText = L10n.none
+        } else if selectedCount == 1 {
+            subtitleText = selection.wrappedValue.first?.displayTitle ?? L10n.none
+        } else {
+            subtitleText = "\(selectedCount) selected"
+        }
+
+        self.title = Text(title)
+        self.subtitle = Text(subtitleText)
+        self.content = {
+            ForEach(Array(ItemType.allCases), id: \.self) { option in
+                Button(action: {
+                    var currentSelection = selection.wrappedValue
+                    if currentSelection.contains(option) {
+                        currentSelection.removeAll { $0 == option }
+                    } else {
+                        currentSelection.append(option)
+                    }
+                    selection.wrappedValue = currentSelection
+                }) {
+                    HStack {
+                        Text(option.displayTitle)
+                        Spacer()
+                        if selection.wrappedValue.contains(option) {
+                            Image(systemName: "checkmark")
+                        }
+                    }
+                }
+            }
+            .eraseToAnyView()
+        }
+    }
+
+    // multi-selection with dynamic items (for non-CaseIterable types)
+    init<Item: Hashable & Displayable>(
+        _ title: String,
+        subtitle: String,
+        items: [Item],
+        selection: Binding<[Item]>
+    ) {
+        self.title = Text(title)
+        self.subtitle = Text(subtitle)
+        self.content = {
+            ForEach(items, id: \.hashValue) { item in
+                Button(action: {
+                    var currentSelection = selection.wrappedValue
+                    if currentSelection.contains(item) {
+                        currentSelection.removeAll { $0.hashValue == item.hashValue }
+                    } else {
+                        currentSelection.append(item)
+                    }
+                    selection.wrappedValue = currentSelection
+                }) {
+                    HStack {
+                        Text(item.displayTitle)
+                        Spacer()
+                        if selection.wrappedValue.contains(item) {
+                            Image(systemName: "checkmark")
+                        }
+                    }
+                }
+            }
+            .eraseToAnyView()
+        }
+    }
 }
