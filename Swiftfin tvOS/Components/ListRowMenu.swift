@@ -119,6 +119,7 @@ extension ListRowMenu {
 // Initialize from a CaseIterable Enum
 extension ListRowMenu where Subtitle == Text, Content == AnyView {
 
+    // single-selection from a CaseIterable Enum
     init<ItemType>(
         _ title: String,
         selection: Binding<ItemType>
