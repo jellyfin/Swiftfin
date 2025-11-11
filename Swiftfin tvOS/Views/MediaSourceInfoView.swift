@@ -110,7 +110,7 @@ struct MediaSourceInfoView: View {
                             }
                         } else {
                             Button {
-                                L10n.none.text
+                                Text(L10n.none)
                             }
                         }
                     }

@@ -24,7 +24,7 @@ struct NonePosterButton: View {
                             .font(.title)
                             .foregroundColor(.secondary)
 
-                        L10n.none.text
+                        Text(L10n.none)
                             .font(.title3)
                             .foregroundColor(.secondary)
                     }
