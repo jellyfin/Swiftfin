@@ -93,13 +93,19 @@ struct LibraryHeader: View {
         let filters = filterViewModel.currentFilters
         var titles: [String] = []
 
-        // Add trait filters
-        if !filters.traits.isEmpty {
-            let traitNames = filters.traits.map(\.displayTitle)
-            titles.append(contentsOf: traitNames)
+        let traitOrder: [ItemTrait] = [.isUnplayed, .isPlayed, .isFavorite, .likes]
+
+        for trait in traitOrder {
+            if filters.traits.contains(trait) {
+                titles.append(trait.displayTitle)
+            }
         }
 
-        // Add genre filters
+        let orderedTraits = Set(traitOrder)
+        for trait in filters.traits where !orderedTraits.contains(trait) {
+            titles.append(trait.displayTitle)
+        }
+
         if !filters.genres.isEmpty {
             let genreNames = filters.genres.map(\.value)
             titles.append(contentsOf: genreNames)
