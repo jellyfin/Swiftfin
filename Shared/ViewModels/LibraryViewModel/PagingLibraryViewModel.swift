@@ -42,6 +42,11 @@ protocol LibraryIdentifiable: Identifiable {
     var unwrappedIDHashOrZero: Int { get }
 }
 
+/// Protocol for view models that provide a total count of items
+protocol HasTotalCount: AnyObject {
+    var totalCount: Int { get }
+}
+
 // TODO: fix how `hasNextPage` is determined
 //       - some subclasses might not have "paging" and only have one call. This can be solved with
 //         a check if elements were actually appended to the set but that requires a redundant get
@@ -59,6 +64,8 @@ protocol LibraryIdentifiable: Identifiable {
        `rememberSort` observation and `StoredValues.User.libraryFilters` for TODO
        on remembering other filters.
  */
+
+extension PagingLibraryViewModel: HasTotalCount {}
 
 class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
@@ -343,6 +350,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
         await MainActor.run {
             elements.removeAll()
+            totalCount = 0
         }
 
         try await getNextPage()

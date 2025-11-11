@@ -264,7 +264,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             {
                 LibraryHeader(
                     title: title,
-                    totalCount: viewModel.totalCount,
+                    viewModel: viewModel,
                     filterViewModel: filterViewModel
                 )
             }
