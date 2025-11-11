@@ -10,13 +10,20 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct LibraryHeader: View {
+struct LibraryHeader<ViewModel: ObservableObject>: View where ViewModel: AnyObject {
 
     // MARK: - Properties
 
     let title: String
-    let totalCount: Int
-    let filterViewModel: FilterViewModel
+    @ObservedObject
+    var viewModel: ViewModel
+    @ObservedObject
+    var filterViewModel: FilterViewModel
+
+    private var totalCount: Int {
+        // Access totalCount - PagingLibraryViewModel conforms to HasTotalCount
+        (viewModel as? HasTotalCount)?.totalCount ?? 0
+    }
 
     @Router
     private var router
