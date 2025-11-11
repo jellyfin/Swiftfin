@@ -282,13 +282,19 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     private var innerContent: some View {
         switch viewModel.state {
         case .content:
+            #if os(tvOS)
+            gridView
+            #else
             if viewModel.elements.isEmpty {
                 Text(L10n.noResults)
             } else {
                 gridView
             }
+            #endif
+
         case .initial, .refreshing:
             ProgressView()
+
         default:
             AssertionFailureView("Expected view for unexpected state")
         }
