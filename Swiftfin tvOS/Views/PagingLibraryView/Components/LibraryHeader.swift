@@ -32,14 +32,12 @@ struct LibraryHeader<ViewModel: ObservableObject>: View where ViewModel: AnyObje
 
     var body: some View {
         HStack {
-            // Library title
             HStack(alignment: .center, spacing: 8) {
                 Text(title)
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
 
-                // Items count
                 Text("(\(totalCount) \(L10n.items.lowercased()))")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
@@ -48,7 +46,6 @@ struct LibraryHeader<ViewModel: ObservableObject>: View where ViewModel: AnyObje
 
             Spacer()
 
-            // Filter buttons
             HStack(spacing: 30) {
 
                 Button(action: {
@@ -118,7 +115,6 @@ struct LibraryHeader<ViewModel: ObservableObject>: View where ViewModel: AnyObje
             titles.append(contentsOf: genreNames)
         }
 
-        // Add year filters
         if !filters.years.isEmpty {
             let yearNames = filters.years.map(\.value)
             titles.append(contentsOf: yearNames)
@@ -130,7 +126,6 @@ struct LibraryHeader<ViewModel: ObservableObject>: View where ViewModel: AnyObje
     private var sortButtonTitle: String {
         let filters = filterViewModel.currentFilters
         if let sortBy = filters.sortBy.first {
-            // Handle specific cases where displayTitle might be too verbose
             switch sortBy {
             case .name:
                 return L10n.name.capitalized
