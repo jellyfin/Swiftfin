@@ -192,7 +192,26 @@ final class FilterViewModel: ViewModel, Stateful {
         case .tags:
             currentFilters.tags = newValue.map(ItemTag.init)
         case .traits:
-            currentFilters.traits = newValue.map(ItemTrait.init)
+            var traits = newValue.map(ItemTrait.init)
+
+            let isPlayedSelected = traits.contains(.isPlayed)
+            let isUnplayedSelected = traits.contains(.isUnplayed)
+
+            if isPlayedSelected && isUnplayedSelected {
+                let oldTraits = currentFilters.traits
+                let oldHasPlayed = oldTraits.contains(.isPlayed)
+                let oldHasUnplayed = oldTraits.contains(.isUnplayed)
+
+                if oldHasUnplayed {
+                    traits.removeAll { $0 == .isUnplayed }
+                } else if oldHasPlayed {
+                    traits.removeAll { $0 == .isPlayed }
+                } else {
+                    traits.removeAll { $0 == .isUnplayed }
+                }
+            }
+
+            currentFilters.traits = traits
         case .years:
             currentFilters.years = newValue.map(ItemYear.init)
         }
