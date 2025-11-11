@@ -80,7 +80,7 @@ struct ProgramsView: View {
             switch programsViewModel.state {
             case .content:
                 if programsViewModel.hasNoResults {
-                    L10n.noResults.text
+                    Text(L10n.noResults)
                 } else {
                     contentView
                 }
