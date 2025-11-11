@@ -58,7 +58,7 @@ extension SeriesEpisodeSelector {
 
                     contentView
 
-                    L10n.seeMore.text
+                    Text(L10n.seeMore)
                         .font(.caption)
                         .fontWeight(.light)
                         .foregroundStyle(accentColor)
