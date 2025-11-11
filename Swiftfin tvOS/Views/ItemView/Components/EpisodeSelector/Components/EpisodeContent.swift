@@ -63,7 +63,7 @@ extension SeriesEpisodeSelector {
                     contentView
                         .frame(maxWidth: .infinity, alignment: .leading)
 
-                    L10n.seeMore.text
+                    Text(L10n.seeMore)
                         .font(.caption.weight(.light))
                         .foregroundStyle(accentColor)
                 }
