@@ -108,7 +108,7 @@ extension ItemView {
 
         var body: some View {
             VStack(alignment: .leading) {
-                L10n.about.text
+                Text(L10n.about)
                     .font(.title2)
                     .fontWeight(.bold)
                     .accessibility(addTraits: [.isHeader])

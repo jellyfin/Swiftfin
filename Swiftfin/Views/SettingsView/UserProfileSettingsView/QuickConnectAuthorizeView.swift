@@ -140,7 +140,7 @@ struct QuickConnectAuthorizeView: View {
                 router.dismiss()
             }
         } message: {
-            L10n.quickConnectSuccessMessage.text
+            Text(L10n.quickConnectSuccessMessage)
         }
         .errorMessage($viewModel.error) {
             isCodeFocused = true
