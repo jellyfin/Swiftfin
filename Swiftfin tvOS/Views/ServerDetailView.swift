@@ -76,7 +76,7 @@ struct EditServerView: View {
                         }
                     }
                 } header: {
-                    L10n.url.text
+                    Text(L10n.url)
                 } footer: {
                     if !viewModel.server.isVersionCompatible {
                         Label(
