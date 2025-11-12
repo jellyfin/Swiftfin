@@ -11,7 +11,6 @@ import Factory
 import SwiftUI
 
 struct ErrorView<ErrorType: Error>: PlatformView {
-
     @Default(.accentColor)
     private var accentColor
     @Injected(\.currentUserSession)
@@ -37,12 +36,6 @@ struct ErrorView<ErrorType: Error>: PlatformView {
         }
         .frame(maxWidth: 300)
         .padding(.horizontal)
-        #if !os(tvOS)
-            .popover(isPresented: $showServerInfo) {
-                serverInfoView
-                    .presentationCompactAdaptation(.popover)
-            }
-        #endif
     }
 
     // MARK: tvOS View
@@ -89,6 +82,11 @@ struct ErrorView<ErrorType: Error>: PlatformView {
                 .accessibilityLabel(userSession.server.name)
                 #if os(tvOS)
                     .focusSection()
+                #else
+                    .popover(isPresented: $showServerInfo) {
+                        serverInfoView
+                            .presentationCompactAdaptation(.popover)
+                    }
                 #endif
             }
         }
