@@ -131,7 +131,7 @@ struct ChannelLibraryView: View {
             switch viewModel.state {
             case .content:
                 if viewModel.elements.isEmpty {
-                    L10n.noResults.text
+                    Text(L10n.noResults)
                 } else {
                     contentView
                 }

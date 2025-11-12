@@ -28,7 +28,7 @@ extension ItemView.AboutView {
                         .font(.footnote)
                         .allowsHitTesting(false)
                 } else {
-                    L10n.noOverviewAvailable.text
+                    Text(L10n.noOverviewAvailable)
                         .font(.footnote)
                         .foregroundColor(.secondary)
                 }

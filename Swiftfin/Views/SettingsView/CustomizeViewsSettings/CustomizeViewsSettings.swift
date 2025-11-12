@@ -81,7 +81,7 @@ struct CustomizeViewsSettings: View {
                     Section {
                         Toggle(L10n.usePrimaryImage, isOn: $cinematicItemViewTypeUsePrimaryImage)
                     } footer: {
-                        L10n.usePrimaryImageDescription.text
+                        Text(L10n.usePrimaryImageDescription)
                     }
                 }
             }
@@ -92,7 +92,7 @@ struct CustomizeViewsSettings: View {
                 Toggle(L10n.randomImage, isOn: $libraryRandomImage)
 
             } header: {
-                L10n.library.text
+                Text(L10n.library)
             }
 
             Section {
@@ -115,14 +115,14 @@ struct CustomizeViewsSettings: View {
                 }
 
             } header: {
-                L10n.filters.text
+                Text(L10n.filters)
             }
 
             Section {
                 Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
                 Toggle(L10n.showMissingEpisodes, isOn: $shouldShowMissingEpisodes)
             } header: {
-                L10n.missingItems.text
+                Text(L10n.missingItems)
             }
 
             Section(L10n.posters) {
@@ -188,7 +188,7 @@ struct CustomizeViewsSettings: View {
                 Toggle(L10n.seriesBackdrop, isOn: $useSeriesLandscapeBackdrop)
             } header: {
                 // TODO: think of a better name
-                L10n.episodeLandscapePoster.text
+                Text(L10n.episodeLandscapePoster)
             }
         }
         .navigationTitle(L10n.customize)

@@ -243,7 +243,7 @@ struct SelectUserView: View {
     @ViewBuilder
     private var connectToServerView: some View {
         VStack(spacing: 50) {
-            L10n.connectToJellyfinServerStart.text
+            Text(L10n.connectToJellyfinServerStart)
                 .font(.body)
                 .frame(minWidth: 50, maxWidth: 500)
                 .multilineTextAlignment(.center)
@@ -251,7 +251,7 @@ struct SelectUserView: View {
             Button {
                 router.route(to: .connectToServer)
             } label: {
-                L10n.connect.text
+                Text(L10n.connect)
                     .font(.callout)
                     .fontWeight(.bold)
                     .frame(width: 400, height: 75)
