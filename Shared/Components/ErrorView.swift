@@ -10,7 +10,7 @@ import Defaults
 import Factory
 import SwiftUI
 
-struct ErrorView<ErrorType: Error>: View {
+struct ErrorView<ErrorType: Error>: PlatformView {
 
     @Default(.accentColor)
     private var accentColor
@@ -24,43 +24,53 @@ struct ErrorView<ErrorType: Error>: View {
 
     let error: ErrorType
 
-    #if os(tvOS)
-    private let spacing: CGFloat = 20
-    private let iconSize: CGFloat = 144
-    private let contentMaxWidth: CGFloat = 600
-    private let buttonHeight: CGFloat = 75
-    #else
-    private let spacing: CGFloat = 10
-    private let iconSize: CGFloat = 72
-    private let contentMaxWidth: CGFloat = 300
-    private let buttonHeight: CGFloat = 50
-    #endif
+    // MARK: iOS View
 
-    var body: some View {
-        VStack(spacing: spacing) {
+    var iOSView: some View {
+        VStack(spacing: 10) {
             Spacer()
-            iconView
-            bodyView
+
+            iconView(iconSize: 72)
+            bodyView(buttonHeight: 50)
+
             Spacer()
         }
-        .frame(maxWidth: contentMaxWidth)
+        .frame(maxWidth: 300)
         .padding(.horizontal)
-        #if os(tvOS)
-            .sheet(isPresented: $showServerInfo) {
+        #if !os(tvOS)
+            .popover(isPresented: $showServerInfo) {
                 serverInfoView
-                    .frame(maxWidth: contentMaxWidth)
-                    .padding(spacing)
-                    .background(.ultraThickMaterial)
+                    .presentationCompactAdaptation(.popover)
             }
         #endif
     }
 
-    // MARK: - Icon View
+    // MARK: tvOS View
 
-    private var iconView: some View {
+    var tvOSView: some View {
+        VStack(spacing: 20) {
+            Spacer()
+
+            iconView(iconSize: 144)
+            bodyView(buttonHeight: 75)
+
+            Spacer()
+        }
+        .frame(maxWidth: 600)
+        .padding(.horizontal)
+        .sheet(isPresented: $showServerInfo) {
+            serverInfoView
+                .frame(maxWidth: 600)
+                .padding(20)
+                .background(.ultraThickMaterial)
+        }
+    }
+
+    private func iconView(iconSize: CGFloat) -> some View {
         VStack {
             ZStack {
-                iconBackground
+                iconBackground(iconSize: iconSize)
+                    .frame(width: iconSize * 1.5, height: iconSize * 1.5)
 
                 Image(systemName: errorImage)
                     .font(.system(size: iconSize, weight: .regular))
@@ -79,33 +89,23 @@ struct ErrorView<ErrorType: Error>: View {
                 .accessibilityLabel(userSession.server.name)
                 #if os(tvOS)
                     .focusSection()
-                #else
-                    .popover(isPresented: $showServerInfo) {
-                        serverInfoView
-                            .presentationCompactAdaptation(.popover)
-                    }
                 #endif
             }
         }
     }
 
-    // MARK: - Icon Background
-
-    private var iconBackground: some View {
-        #if os(tvOS)
-        Circle()
-            .fill(Color.red.opacity(0.2))
-            .frame(width: iconSize * 1.5, height: iconSize * 1.5)
-        #else
-        RoundedRectangle(cornerRadius: 10)
-            .fill(Color.red.opacity(0.2))
-            .frame(width: iconSize * 1.5, height: iconSize * 1.5)
-        #endif
+    @ViewBuilder
+    private func iconBackground(iconSize: CGFloat) -> some View {
+        if UIDevice.isTV {
+            Circle()
+                .fill(Color.red.opacity(0.2))
+        } else {
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.red.opacity(0.2))
+        }
     }
 
-    // MARK: - Body View
-
-    private var bodyView: some View {
+    private func bodyView(buttonHeight: CGFloat) -> some View {
         VStack(spacing: 10) {
             Text(error.localizedDescription)
                 .font(.headline.weight(.semibold))
@@ -136,8 +136,6 @@ struct ErrorView<ErrorType: Error>: View {
         }
     }
 
-    // MARK: - Server Info View
-
     private var serverInfoView: some View {
         VStack(alignment: .center) {
             Text(L10n.server)
@@ -166,8 +164,7 @@ struct ErrorView<ErrorType: Error>: View {
         .padding()
     }
 
-    // MARK: - Error Image
-
+    // TODO: Different SystemImages based on Error Types
     private var errorImage: String {
         "xmark.circle"
     }
