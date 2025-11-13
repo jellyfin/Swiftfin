@@ -33,4 +33,7 @@ extension EnvironmentValues {
 
     @Entry
     var subtitleOffset: Binding<Duration> = .constant(.zero)
+
+    @Entry
+    var viewSize: CGSize = .zero
 }

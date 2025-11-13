@@ -31,6 +31,9 @@ struct CinematicItemSelector<Item: Poster>: View {
 
     let items: [Item]
 
+    @Environment(\.viewSize)
+    private var viewSize
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
 
@@ -50,7 +53,7 @@ struct CinematicItemSelector<Item: Poster>: View {
             )
             .frame(height: 400)
         }
-        .frame(height: UIScreen.main.bounds.height - 75, alignment: .bottomLeading)
+        .frame(height: viewSize.height - 75, alignment: .bottomLeading)
         .frame(maxWidth: .infinity)
         .background(alignment: .top) {
             CinematicBackgroundView(
@@ -65,7 +68,7 @@ struct CinematicItemSelector<Item: Poster>: View {
                         (location: 1, opacity: 1)
                     }
             }
-            .frame(height: UIScreen.main.bounds.height)
+            .frame(height: viewSize.height)
             .maskLinearGradient {
                 (location: 0.9, opacity: 1)
                 (location: 1, opacity: 0)

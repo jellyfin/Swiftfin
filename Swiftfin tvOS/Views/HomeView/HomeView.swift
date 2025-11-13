@@ -24,30 +24,33 @@ struct HomeView: View {
 
     @ViewBuilder
     private var contentView: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
+        GeometryReader { geometry in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
 
-                if viewModel.resumeItems.isNotEmpty {
-                    CinematicResumeView(viewModel: viewModel)
+                    if viewModel.resumeItems.isNotEmpty {
+                        CinematicResumeView(viewModel: viewModel)
 
-                    NextUpView(viewModel: viewModel.nextUpViewModel)
+                        NextUpView(viewModel: viewModel.nextUpViewModel)
 
-                    if showRecentlyAdded {
-                        RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+                        if showRecentlyAdded {
+                            RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+                        }
+                    } else {
+                        if showRecentlyAdded {
+                            CinematicRecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+                        }
+
+                        NextUpView(viewModel: viewModel.nextUpViewModel)
+                            .safeAreaPadding(.top, 150)
                     }
-                } else {
-                    if showRecentlyAdded {
-                        CinematicRecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+
+                    ForEach(viewModel.libraries) { viewModel in
+                        LatestInLibraryView(viewModel: viewModel)
                     }
-
-                    NextUpView(viewModel: viewModel.nextUpViewModel)
-                        .safeAreaPadding(.top, 150)
-                }
-
-                ForEach(viewModel.libraries) { viewModel in
-                    LatestInLibraryView(viewModel: viewModel)
                 }
             }
+            .environment(\.viewSize, geometry.size)
         }
     }
 

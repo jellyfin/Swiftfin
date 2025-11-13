@@ -16,6 +16,9 @@ extension HomeView {
         @Router
         private var router
 
+        @Environment(\.viewSize)
+        private var viewSize
+
         @ObservedObject
         var viewModel: HomeViewModel
 
@@ -23,13 +26,13 @@ extension HomeView {
             if item.type == .episode {
                 return item.seriesImageSource(
                     .logo,
-                    maxWidth: UIScreen.main.bounds.width * 0.4,
+                    maxWidth: viewSize.width * 0.4,
                     maxHeight: 200
                 )
             } else {
                 return item.imageSource(
                     .logo,
-                    maxWidth: UIScreen.main.bounds.width * 0.4,
+                    maxWidth: viewSize.width * 0.4,
                     maxHeight: 200
                 )
             }
