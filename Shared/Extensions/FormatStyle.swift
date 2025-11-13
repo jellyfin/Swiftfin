@@ -10,22 +10,6 @@ import SwiftUI
 
 // TODO: break into separate files
 
-struct HourMinuteFormatStyle: FormatStyle {
-
-    func format(_ value: TimeInterval) -> String {
-        let formatter = DateComponentsFormatter()
-        formatter.unitsStyle = .abbreviated
-        formatter.allowedUnits = [.hour, .minute]
-        return formatter.string(from: value) ?? .emptyDash
-    }
-}
-
-extension FormatStyle where Self == HourMinuteFormatStyle {
-
-    @available(*, deprecated, message: "Use `Duration` instead.")
-    static var hourMinute: HourMinuteFormatStyle { HourMinuteFormatStyle() }
-}
-
 struct MinuteSecondsFormatStyle: FormatStyle {
 
     func format(_ value: TimeInterval) -> String {
