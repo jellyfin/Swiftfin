@@ -30,16 +30,6 @@ Older OS versions may still receive **limited support**:
 - Only small bug fixes will be applied on separate branches.
 - **New features and backports will not be accepted**, even if minor.
 
-### Minimum Supported OS Table
-
-| **Swiftfin** | **1.0**   | **1.1**   | **1.2**   | **1.3**   | **1.4**   |
-|--------------|-----------|-----------|-----------|-----------|-----------|
-| **Release**  | Dec, 2022 | Jun, 2024 | Oct, 2024 | Jul, 2025 | TBD       |
-| **iOS**      | 14        | 14        | 15        | 15        | 16        |
-| **iPadOS**   | 14        | 14        | 15        | 15        | 16        |
-| **tvOS**     | 16        | -         | -         | -         | -         |
-| **Jellyfin** | 10.8      | 10.8      | 10.8      | 10.10     | 10.11     |
-
 ## Questions, Comments, or Concerns
 
 Our discussion for this topic can be found at [Supported OS Versions](https://github.com/jellyfin/Swiftfin/discussions/1564).
