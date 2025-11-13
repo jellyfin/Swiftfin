@@ -24,7 +24,6 @@ final class ServerTaskObserver: ViewModel, Identifiable {
     enum Action {
         case start
         case stop
-        case stopObserving
         case addTrigger(TaskTriggerInfo)
         case removeTrigger(TaskTriggerInfo)
 
@@ -35,8 +34,6 @@ final class ServerTaskObserver: ViewModel, Identifiable {
                     .whenBackground(.observing)
             case .stop:
                 .to(.initial)
-            case .stopObserving:
-                .background(.observing)
             case .addTrigger, .removeTrigger:
                 .background(.updating)
             }
