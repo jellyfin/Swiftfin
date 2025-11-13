@@ -32,7 +32,7 @@ struct ServerTasksView: View {
             systemName: "arrow.clockwise",
             message: L10n.restartWarning
         ) {
-            viewModel.send(.restartApplication)
+            viewModel.restartApplication()
         }
 
         DestructiveServerTask(
@@ -40,7 +40,7 @@ struct ServerTasksView: View {
             systemName: "power",
             message: L10n.shutdownWarning
         ) {
-            viewModel.send(.shutdownApplication)
+            viewModel.shutdownApplication()
         }
     }
 
@@ -71,14 +71,6 @@ struct ServerTasksView: View {
         }
     }
 
-    @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.send(.refreshTasks)
-            }
-    }
-
     var body: some View {
         ZStack {
             Color.clear
@@ -86,19 +78,24 @@ struct ServerTasksView: View {
             switch viewModel.state {
             case .content:
                 contentView
-            case let .error(error):
-                errorView(with: error)
+            case .error:
+                viewModel.error.map {
+                    ErrorView(error: $0)
+                        .onRetry {
+                            viewModel.refresh()
+                        }
+                }
             case .initial:
-                DelayedProgressView()
+                ProgressView()
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.tasks)
         .onFirstAppear {
-            viewModel.send(.refreshTasks)
+            viewModel.refresh()
         }
         .onReceive(timer) { _ in
-            viewModel.send(.getTasks)
+            viewModel.background.refresh()
         }
     }
 }
