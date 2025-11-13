@@ -31,7 +31,7 @@ extension AddTaskTriggerView {
         var body: some View {
             ChevronButton(
                 L10n.every,
-                subtitle: Duration.seconds(ServerTicks(taskTriggerInfo.intervalTicks).seconds).formatted(.hourMinuteAbbreviated),
+                subtitle: Text(Duration.ticks(taskTriggerInfo.intervalTicks ?? 0), format: .hourMinuteAbbreviated),
                 description: L10n.taskTriggerInterval
             ) {
                 TextField(

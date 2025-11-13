@@ -101,7 +101,7 @@ extension EditMetadataView {
         private var runTimeView: some View {
             ChevronButton(
                 L10n.runtime,
-                subtitle: Duration.seconds(ServerTicks(item.runTimeTicks ?? 0).seconds).formatted(.hourMinuteAbbreviated),
+                subtitle: Text(Duration.ticks(item.runTimeTicks ?? 0), format: .hourMinuteAbbreviated),
                 description: L10n.episodeRuntimeDescription
             ) {
                 TextField(
