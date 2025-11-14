@@ -7,14 +7,11 @@
 //
 
 struct LibraryPageState {
-    let page: Int
+
+    let pageOffset: Int
     let pageSize: Int
     let userSession: UserSession
     let elementIDs: [Int]
-
-    var pageOffset: Int {
-        page * pageSize
-    }
 }
 
 protocol _LibraryParent: Displayable {

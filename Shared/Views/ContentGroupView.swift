@@ -229,21 +229,21 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
                 ProgressView()
             }
 
-            Button("Refresh", systemImage: "arrow.clockwise.circle") {
-                viewModel.background.refresh()
-            }
-
-            Button("Content") {
-                router.route(
-                    to: .init(
-                        id: "test-content",
-                        style: .sheet,
-                        content: {
-                            CustomContentGroupSettingsView(id: "asdf")
-                        }
-                    )
-                )
-            }
+//            Button("Refresh", systemImage: "arrow.clockwise.circle") {
+//                viewModel.background.refresh()
+//            }
+//
+//            Button("Content") {
+//                router.route(
+//                    to: .init(
+//                        id: "test-content",
+//                        style: .sheet,
+//                        content: {
+//                            CustomContentGroupSettingsView(id: "asdf")
+//                        }
+//                    )
+//                )
+//            }
 
             #if os(iOS)
 //            SettingsBarButton(

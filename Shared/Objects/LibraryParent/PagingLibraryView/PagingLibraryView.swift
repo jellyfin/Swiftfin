@@ -54,26 +54,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             }
     }
 
-//    @ViewBuilder
-//    private func WithFilters(
-//        @ViewBuilder content: () -> some View
-//    ) -> some View {
-//        if let filterViewModel = viewModel.library.filterViewModel {
-//            content()
-//                .navigationBarFilterDrawer(
-//                    viewModel: filterViewModel,
-//                    types: enabledDrawerFilters
-//                ) { parameters in
-//                    router.route(to: .filter(type: parameters.type, viewModel: parameters.viewModel))
-//                }
-//                .onReceive(filterViewModel.currentFiltersDebounced) { _ in
-//                    viewModel.refresh()
-//                }
-//        } else {
-//        content()
-//        }
-//    }
-
     @ViewBuilder
     private var contentView: some View {
         switch viewModel.state {

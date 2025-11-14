@@ -177,13 +177,13 @@ struct LiveTVChannelsPillGroup: _ContentGroup {
                         )
                         .font(.callout)
                         .fontWeight(.semibold)
-                        .foregroundColor(.primary)
                         .padding(8)
                         .background {
                             Color.systemFill
                                 .cornerRadius(10)
                         }
                     }
+                    .foregroundStyle(.primary, .secondary)
                 }
                 .edgePadding(.horizontal)
             }

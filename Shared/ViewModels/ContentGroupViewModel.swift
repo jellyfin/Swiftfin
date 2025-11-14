@@ -103,6 +103,7 @@ struct DefaultContentGroupProvider: _ContentGroupProvider {
 
     let displayTitle: String = L10n.home
     let id: String = "default-content-group-provider"
+    let systemImage: String = "house.fill"
 
     @ContentGroupBuilder
     func makeGroups(environment: Void) async throws -> [any _ContentGroup] {

@@ -106,7 +106,7 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
     @Published
     var environment: Environment
 
-    private var currentPage = 0
+//    private var currentPage = 0
     private var hasNextPage = true
 
     let library: _PagingLibrary
@@ -130,9 +130,7 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
-        currentPage = -1
         hasNextPage = true
-
         elements.removeAll()
         try await __actuallyRetrieveNextPage()
     }
@@ -147,10 +145,8 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
     private func __actuallyRetrieveNextPage() async throws {
         guard hasNextPage else { return }
 
-        currentPage += 1
-
         let pageState = LibraryPageState(
-            page: currentPage,
+            pageOffset: elements.count,
             pageSize: DefaultPageSize,
             userSession: userSession,
             elementIDs: elements.map(\.unwrappedIDHashOrZero)
@@ -175,7 +171,7 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
 
         if let withRandomElementLibrary = library as? any WithRandomElementLibrary<Element, Environment> {
             let pageState = LibraryPageState(
-                page: 0,
+                pageOffset: 0,
                 pageSize: 0,
                 userSession: userSession,
                 elementIDs: elements.map(\.unwrappedIDHashOrZero)
