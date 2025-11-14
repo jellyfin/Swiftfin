@@ -20,7 +20,7 @@ extension ItemView {
 
         var body: some View {
             PosterHStack(
-                title: L10n.castAndCrew,
+                title: L10n.castAndCrew.localizedCapitalized,
                 elements: people.filter { person in
                     person.type?.isSupported == true
                 },

@@ -80,7 +80,7 @@ struct MediaView: View {
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
-        .navigationTitle(L10n.allMedia)
+        .navigationTitle(L10n.allMedia.localizedCapitalized)
         .onFirstAppear {
             viewModel.refresh()
         }

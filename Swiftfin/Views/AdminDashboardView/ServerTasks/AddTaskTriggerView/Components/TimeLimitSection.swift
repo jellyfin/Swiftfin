@@ -31,7 +31,7 @@ extension AddTaskTriggerView {
         var body: some View {
             Section {
                 ChevronButton(
-                    L10n.timeLimit,
+                    L10n.timeLimit.localizedCapitalized,
                     subtitle: subtitleString,
                     description: L10n.taskTriggerTimeLimit
                 ) {
@@ -61,7 +61,7 @@ extension AddTaskTriggerView {
 
         private var subtitleString: String {
             if let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks {
-                ServerTicks(maxRuntimeTicks).seconds.formatted(.hourMinute)
+                Duration.ticks(maxRuntimeTicks).formatted(.hourMinuteAbbreviated)
             } else {
                 L10n.none
             }

@@ -287,7 +287,7 @@ struct UserSignInView: View {
 
     var body: some View {
         contentView
-            .navigationTitle(L10n.signIn)
+            .navigationTitle(L10n.signIn.localizedCapitalized)
             .interactiveDismissDisabled(viewModel.state == .signingIn)
             .onReceive(viewModel.events, perform: handleEvent)
             .onFirstAppear {
