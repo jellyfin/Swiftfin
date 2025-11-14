@@ -54,6 +54,10 @@ protocol _ContentGroupProvider: Displayable, SystemImageable {
     func makeGroups(environment: Environment) async throws -> [any _ContentGroup]
 }
 
+extension _ContentGroupProvider {
+    var systemImage: String { "bird.fill" }
+}
+
 extension _ContentGroupProvider where Environment == Void {
     var environment: Void { () }
 }
@@ -94,7 +98,7 @@ struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element:
     let posterSize: PosterDisplayType.Size
 
     init(
-        id: String,
+        id: String = UUID().uuidString,
         library: Library,
         posterDisplayType: PosterDisplayType = .portrait,
         posterSize: PosterDisplayType.Size = .small

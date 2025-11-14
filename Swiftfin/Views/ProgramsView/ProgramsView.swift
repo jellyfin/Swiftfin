@@ -120,7 +120,6 @@ struct LiveTVGroupProvider: _ContentGroupProvider {
 
     let id: String = "live-tv"
     let displayTitle: String = L10n.liveTV
-    let systemImage: String = "heart.fill"
 
     @ArrayBuilder<any _ContentGroup>
     func makeGroups(environment: ()) async throws -> [any _ContentGroup] {

@@ -94,7 +94,6 @@ struct FavoritesContentGroupProvider: _ContentGroupProvider {
 
     let displayTitle: String = L10n.favorites
     let id: String = "favorites-content-group-provider"
-    let systemImage: String = "heart.fill"
 
     func makeGroups(environment: ()) async throws -> [any _ContentGroup] {
         try await ItemTypeContentGroupProvider(

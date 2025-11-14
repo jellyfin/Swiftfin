@@ -9,46 +9,11 @@
 import SwiftUI
 
 @MainActor
-struct TabItem: Identifiable, @preconcurrency Hashable, SystemImageable {
-
-    let content: AnyView
-    let id: String
-    let title: String
-    let systemImage: String
-    let labelStyle: any LabelStyle
-
-    init(
-        id: String,
-        title: String,
-        systemImage: String,
-        labelStyle: some LabelStyle = .titleAndIcon,
-        @ViewBuilder content: () -> some View
-    ) {
-        self.content = AnyView(content())
-        self.id = id
-        self.title = title
-        self.systemImage = systemImage
-        self.labelStyle = labelStyle
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-
-    static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.id == rhs.id
-    }
-}
-
-@MainActor
 enum TabItemSetting: @preconcurrency Identifiable {
 
-    #if os(iOS)
     case adminDashboard
-    #endif
-
     case contentGroup(ContentGroupProviderSetting)
-    case item(String)
+    case item(id: String)
     case liveTV
     case media
     case search
@@ -95,17 +60,43 @@ enum TabItemSetting: @preconcurrency Identifiable {
     }
 }
 
+@MainActor
+struct TabItem: Displayable, Identifiable, SystemImageable {
+
+    let content: AnyView
+    let displayTitle: String
+    let id: String
+    let systemImage: String
+    let labelStyle: any LabelStyle
+
+    init(
+        id: String,
+        title: String,
+        systemImage: String,
+        labelStyle: some LabelStyle = .titleAndIcon,
+        @ViewBuilder content: () -> some View
+    ) {
+        self.content = AnyView(content())
+        self.id = id
+        self.displayTitle = title
+        self.systemImage = systemImage
+        self.labelStyle = labelStyle
+    }
+}
+
 extension TabItem {
 
-    #if os(iOS)
     static let adminDashboard = TabItem(
         id: "admin-dashboard",
         title: L10n.dashboard,
         systemImage: "server.rack"
     ) {
+        #if os(iOS)
         AdminDashboardView()
+        #else
+        EmptyView()
+        #endif
     }
-    #endif
 
     static func contentGroup(
         provider: some _ContentGroupProvider

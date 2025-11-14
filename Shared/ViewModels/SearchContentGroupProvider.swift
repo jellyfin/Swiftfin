@@ -21,7 +21,6 @@ struct SearchContentGroupProvider: _ContentGroupProvider {
 
     let id: String = ""
     let displayTitle: String = ""
-    let systemImage: String = "heart.fill"
 
     @ContentGroupBuilder
     func makeGroups(environment: Environment) async throws -> [any _ContentGroup] {

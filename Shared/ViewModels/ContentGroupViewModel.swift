@@ -53,12 +53,12 @@ final class ContentGroupViewModel<Provider: _ContentGroupProvider>: ViewModel {
         super.init()
     }
 
-    func _overrideProvider(_ provider: Provider) {
-        self.provider = provider
-        self.environment = provider.environment
-
-        self.refresh()
-    }
+//    func _overrideProvider(_ provider: Provider) {
+//        self.provider = provider
+//        self.environment = provider.environment
+//
+//        self.refresh()
+//    }
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
@@ -103,7 +103,6 @@ struct DefaultContentGroupProvider: _ContentGroupProvider {
 
     let displayTitle: String = L10n.home
     let id: String = "default-content-group-provider"
-    let systemImage: String = "house"
 
     @ContentGroupBuilder
     func makeGroups(environment: Void) async throws -> [any _ContentGroup] {

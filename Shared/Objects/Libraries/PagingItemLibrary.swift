@@ -192,13 +192,28 @@ struct PagingItemLibrary: PagingLibrary, WithRandomElementLibrary {
     }
 
     func makeLibraryBody(content: some View) -> AnyView {
-        content
-            .navigationBarFilterDrawer(
-                viewModel: filterViewModel,
-                types: ItemFilterType.allCases
-            ) { _ in
-            }
+        MyLibraryBody(content: content, filterViewModel: filterViewModel)
             .eraseToAnyView()
+    }
+
+    struct MyLibraryBody<Content: View>: View {
+
+        @Router
+        private var router
+
+        let content: Content
+        let filterViewModel: FilterViewModel
+
+        var body: some View {
+            content
+                .navigationBarFilterDrawer(
+                    viewModel: filterViewModel,
+                    types: ItemFilterType.allCases
+                ) {
+                    router.route(to: .filter(type: $0.type, viewModel: $0.viewModel))
+                }
+                .eraseToAnyView()
+        }
     }
 
     @MenuContentGroupBuilder

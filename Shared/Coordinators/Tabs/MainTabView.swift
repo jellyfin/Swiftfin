@@ -14,7 +14,6 @@ import SwiftUI
 // TODO: move popup to router
 //       - or, make tab view environment object
 
-// TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
 
     @Default(.Customization.showPosterLabels)
@@ -71,7 +70,7 @@ struct MainTabView: View {
                 .environment(\.tabItemSelected, tab.publisher)
                 .tabItem {
                     Label(
-                        tab.item.title,
+                        tab.item.displayTitle,
                         systemImage: tab.item.systemImage
                     )
                     .labelStyle(tab.item.labelStyle)

@@ -23,7 +23,6 @@ struct ItemTypeContentGroupProvider: _ContentGroupProvider {
 
     let id: String = ""
     let displayTitle: String = ""
-    let systemImage: String = "heart.fill"
 
     let itemTypes: [BaseItemKind]
     let parent: BaseItemDto?
