@@ -53,26 +53,20 @@ struct ActiveSessionsView: View {
         }
     }
 
-    @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.refresh()
-            }
-    }
-
     // MARK: - Body
 
     @ViewBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .error:
-                viewModel.error.map { errorView(with: $0) }
-            case .initial:
+            case .content:
                 contentView
-            case .refreshing:
-                DelayedProgressView()
+            case .error:
+                viewModel.error.map {
+                    ErrorView(error: $0)
+                }
+            case .initial:
+                ProgressView()
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
