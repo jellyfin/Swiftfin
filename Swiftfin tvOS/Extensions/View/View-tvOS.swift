@@ -34,6 +34,21 @@ extension View {
     func prefersStatusBarHidden(_ hidden: Bool) -> some View {
         self
     }
+
+    @ViewBuilder
+    func navigationBarCloseButton(
+        disabled: Bool = false,
+        _ action: @escaping () -> Void
+    ) -> some View {
+        toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(L10n.close) {
+                    action()
+                }
+                .disabled(disabled)
+            }
+        }
+    }
 }
 
 extension EnvironmentValues {
