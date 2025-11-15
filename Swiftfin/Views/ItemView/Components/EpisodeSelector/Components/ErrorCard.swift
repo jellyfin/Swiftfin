@@ -12,7 +12,7 @@ extension SeriesEpisodeSelector {
 
     struct ErrorCard: View {
 
-        let error: JellyfinAPIError
+        let error: ErrorMessage
         let action: () -> Void
 
         var body: some View {

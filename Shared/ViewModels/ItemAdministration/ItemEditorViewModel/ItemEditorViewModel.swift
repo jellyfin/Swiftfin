@@ -18,7 +18,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
     enum Event: Equatable {
         case updated
         case loaded
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
     }
 
     // MARK: - Actions
@@ -46,7 +46,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
         case initial
         case content
         case updating
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
     }
 
     @Published
@@ -128,7 +128,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
                     populateTrie()
 
                 } catch {
-                    let apiError = JellyfinAPIError(error.localizedDescription)
+                    let apiError = ErrorMessage(error.localizedDescription)
                     await MainActor.run {
                         self.state = .error(apiError)
                         _ = self.backgroundStates.remove(.loading)
@@ -188,7 +188,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
                     _ = self.backgroundStates.remove(.searching)
                 }
             } catch {
-                let apiError = JellyfinAPIError(error.localizedDescription)
+                let apiError = ErrorMessage(error.localizedDescription)
                 await MainActor.run {
                     self.state = .error(apiError)
                     _ = self.backgroundStates.remove(.searching)
@@ -217,7 +217,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
                     self.eventSubject.send(.updated)
                 }
             } catch {
-                let apiError = JellyfinAPIError(error.localizedDescription)
+                let apiError = ErrorMessage(error.localizedDescription)
                 await MainActor.run {
                     self.state = .content
                     self.eventSubject.send(.error(apiError))

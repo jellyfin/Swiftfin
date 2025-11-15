@@ -73,12 +73,15 @@ struct EditServerUserAccessTagsView: View {
             case .initial, .content:
                 contentView
             case let .error(error):
-                errorView(with: error)
+                ErrorView(error: error)
             }
         }
         .navigationTitle(L10n.accessTags.localizedCapitalized)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(isEditing)
+        .refreshable {
+            viewModel.send(.refresh)
+        }
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 if isEditing {
@@ -136,16 +139,6 @@ struct EditServerUserAccessTagsView: View {
             Text(L10n.deleteSelectedConfirmation)
         }
         .errorMessage($error)
-    }
-
-    // MARK: - ErrorView
-
-    @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.send(.refresh)
-            }
     }
 
     @ViewBuilder

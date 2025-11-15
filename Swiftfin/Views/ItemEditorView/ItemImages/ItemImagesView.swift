@@ -45,16 +45,16 @@ struct ItemImagesView: View {
             case .content:
                 imageView
             case .initial:
-                DelayedProgressView()
+                ProgressView()
             case let .error(error):
                 ErrorView(error: error)
-                    .onRetry {
-                        viewModel.send(.refresh)
-                    }
             }
         }
         .navigationTitle(L10n.images)
         .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            viewModel.send(.refresh)
+        }
         .onFirstAppear {
             viewModel.send(.refresh)
         }

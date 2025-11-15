@@ -43,7 +43,7 @@ extension AddItemElementView {
                     HStack {
                         Text(L10n.existingItems)
                         if isSearching {
-                            DelayedProgressView()
+                            ProgressView()
                         } else {
                             Text("-")
                             Text(population.count.description)

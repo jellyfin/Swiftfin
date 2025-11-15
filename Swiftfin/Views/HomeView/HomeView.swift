@@ -56,22 +56,15 @@ struct HomeView: View {
         }
     }
 
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.send(.refresh)
-            }
-    }
-
     var body: some View {
         ZStack {
             switch viewModel.state {
             case .content:
                 contentView
             case let .error(error):
-                errorView(with: error)
+                ErrorView(error: error)
             case .initial, .refreshing:
-                DelayedProgressView()
+                ProgressView()
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
@@ -79,6 +72,9 @@ struct HomeView: View {
             viewModel.send(.refresh)
         }
         .navigationTitle(L10n.home)
+        .refreshable {
+            viewModel.send(.refresh)
+        }
         .topBarTrailing {
 
             if viewModel.backgroundStates.contains(.refresh) {

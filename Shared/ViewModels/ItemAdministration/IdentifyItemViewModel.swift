@@ -19,7 +19,7 @@ final class IdentifyItemViewModel: ViewModel, Stateful, Eventful {
     enum Event: Equatable {
         case updated
         case cancelled
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
     }
 
     // MARK: - Actions
@@ -90,7 +90,7 @@ final class IdentifyItemViewModel: ViewModel, Stateful, Eventful {
                         self.state = .content
                     }
                 } catch {
-                    let apiError = JellyfinAPIError(error.localizedDescription)
+                    let apiError = ErrorMessage(error.localizedDescription)
                     await MainActor.run {
                         self.state = .content
                         self.eventSubject.send(.error(apiError))
@@ -111,7 +111,7 @@ final class IdentifyItemViewModel: ViewModel, Stateful, Eventful {
                         self.eventSubject.send(.updated)
                     }
                 } catch {
-                    let apiError = JellyfinAPIError(error.localizedDescription)
+                    let apiError = ErrorMessage(error.localizedDescription)
                     await MainActor.run {
                         self.state = .content
                         self.eventSubject.send(.error(apiError))

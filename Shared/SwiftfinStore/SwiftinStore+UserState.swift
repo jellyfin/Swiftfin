@@ -108,7 +108,7 @@ extension UserState {
     func delete() throws {
         try SwiftfinStore.dataStack.perform { transaction in
             guard let storedUser = try transaction.fetchOne(From<UserModel>().where(\.$id == id)) else {
-                throw JellyfinAPIError("Unable to find user to delete")
+                throw ErrorMessage("Unable to find user to delete")
             }
 
             let storedDataClause = AnyStoredData.fetchClause(ownerID: id)

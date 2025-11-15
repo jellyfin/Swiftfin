@@ -80,11 +80,14 @@ struct EditItemElementView<Element: Hashable>: View {
             case .initial, .content, .updating:
                 contentView
             case let .error(error):
-                errorView(with: error)
+                ErrorView(error: error)
             }
         }
         .navigationTitle(type.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            viewModel.send(.load)
+        }
         .navigationBarBackButtonHidden(isEditing || isReordering)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
@@ -190,16 +193,6 @@ struct EditItemElementView<Element: Hashable>: View {
         .buttonStyle(.toolbarPill)
         .disabled(!isEditing)
         .foregroundStyle(accentColor)
-    }
-
-    // MARK: - ErrorView
-
-    @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.send(.load)
-            }
     }
 
     // MARK: - Content View

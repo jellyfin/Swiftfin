@@ -85,15 +85,15 @@ struct ItemView: View {
                 innerBody
             case let .error(error):
                 ErrorView(error: error)
-                    .onRetry {
-                        viewModel.send(.refresh)
-                    }
             case .initial, .refreshing:
                 ProgressView()
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .onFirstAppear {
+            viewModel.send(.refresh)
+        }
+        .refreshable {
             viewModel.send(.refresh)
         }
     }

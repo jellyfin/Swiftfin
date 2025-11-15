@@ -67,7 +67,7 @@ struct WithQuickConnect<Content: View>: View {
     private func handleQuickConnect(client: JellyfinClient) async throws -> String {
         guard quickConnect == nil else {
             logger.error("QuickConnect action called while one is already active")
-            throw JellyfinAPIError(L10n.unknownError)
+            throw ErrorMessage(L10n.unknownError)
         }
 
         let newQuickConnect = QuickConnect(client: client)

@@ -18,7 +18,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
     enum Event {
         case deleted
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
     }
 
     // MARK: Actions
@@ -42,7 +42,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
     enum State: Hashable {
         case content
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
         case initial
     }
 

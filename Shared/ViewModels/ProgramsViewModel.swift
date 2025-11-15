@@ -24,7 +24,7 @@ final class ProgramsViewModel: ViewModel, Stateful {
     // MARK: Action
 
     enum Action: Equatable {
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
         case refresh
     }
 
@@ -32,7 +32,7 @@ final class ProgramsViewModel: ViewModel, Stateful {
 
     enum State: Hashable {
         case content
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
         case initial
         case refreshing
     }

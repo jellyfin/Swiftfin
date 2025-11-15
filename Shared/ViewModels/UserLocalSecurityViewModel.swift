@@ -13,7 +13,7 @@ import KeychainSwift
 final class UserLocalSecurityViewModel: ViewModel, Eventful {
 
     enum Event: Hashable {
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
         case promptForOldDeviceAuth
         case promptForOldPin
         case promptForNewDeviceAuth
@@ -37,11 +37,11 @@ final class UserLocalSecurityViewModel: ViewModel, Eventful {
         case .requireDeviceAuthentication:
             eventSubject.send(.promptForOldDeviceAuth)
 
-            throw JellyfinAPIError("Prompt for old device auth")
+            throw ErrorMessage("Prompt for old device auth")
         case .requirePin:
             eventSubject.send(.promptForOldPin)
 
-            throw JellyfinAPIError("Prompt for old pin")
+            throw ErrorMessage("Prompt for old pin")
         case .none: ()
         }
     }
@@ -62,7 +62,7 @@ final class UserLocalSecurityViewModel: ViewModel, Eventful {
         if let storedPin = keychain.get("\(userSession.user.id)-pin") {
             if oldPin != storedPin {
                 eventSubject.send(.error(.init(L10n.incorrectPinForUser(userSession.user.username))))
-                throw JellyfinAPIError("invalid pin")
+                throw ErrorMessage("invalid pin")
             }
         }
     }

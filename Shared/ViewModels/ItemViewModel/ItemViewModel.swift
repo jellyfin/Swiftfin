@@ -22,7 +22,7 @@ class ItemViewModel: ViewModel, Stateful {
 
     enum Action: Equatable {
         case backgroundRefresh
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
         case refresh
         case replace(BaseItemDto)
         case toggleIsFavorite
@@ -40,7 +40,7 @@ class ItemViewModel: ViewModel, Stateful {
 
     enum State: Hashable {
         case content
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
         case initial
         case refreshing
     }
@@ -85,7 +85,7 @@ class ItemViewModel: ViewModel, Stateful {
         get throws {
             guard let id = item.id else {
                 logger.error("Item ID is nil")
-                throw JellyfinAPIError(L10n.unknownError)
+                throw ErrorMessage(L10n.unknownError)
             }
             return id
         }

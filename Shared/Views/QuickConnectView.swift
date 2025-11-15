@@ -54,25 +54,25 @@ struct QuickConnectView: View {
                 pollingView(code: code)
             case let .error(error):
                 ErrorView(error: error)
-                    .onRetry {
-                        viewModel.start()
-                    }
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .edgePadding()
         .navigationTitle(L10n.quickConnect)
+        .refreshable {
+            viewModel.start()
+        }
         #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarCloseButton {
-                router.dismiss()
-            }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarCloseButton {
+            router.dismiss()
+        }
         #endif
-            .onFirstAppear {
-                    viewModel.start()
-                }
-                .onDisappear {
-                    viewModel.stop()
-                }
+        .onFirstAppear {
+                viewModel.start()
+            }
+            .onDisappear {
+                viewModel.stop()
+            }
     }
 }

@@ -20,7 +20,7 @@ final class ServerTaskObserver: ViewModel, Stateful, Eventful, Identifiable {
     // MARK: Event
 
     enum Event {
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
     }
 
     enum BackgroundState {
@@ -40,7 +40,7 @@ final class ServerTaskObserver: ViewModel, Stateful, Eventful, Identifiable {
     // MARK: State
 
     enum State: Hashable {
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
         case initial
         case running
     }

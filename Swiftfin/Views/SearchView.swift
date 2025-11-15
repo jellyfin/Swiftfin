@@ -37,13 +37,6 @@ struct SearchView: View {
     @StateObject
     private var viewModel = SearchViewModel()
 
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.search(query: searchQuery)
-            }
-    }
-
     @ViewBuilder
     private var suggestionsView: some View {
         VStack(spacing: 20) {
@@ -193,7 +186,9 @@ struct SearchView: View {
         ZStack {
             switch viewModel.state {
             case .error:
-                viewModel.error.map { errorView(with: $0) }
+                viewModel.error.map {
+                    ErrorView(error: $0)
+                }
             case .initial:
                 if viewModel.hasNoResults {
                     if searchQuery.isEmpty {
@@ -213,6 +208,9 @@ struct SearchView: View {
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .navigationTitle(L10n.search)
         .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            viewModel.search(query: searchQuery)
+        }
         .navigationBarFilterDrawer(
             viewModel: viewModel.filterViewModel,
             types: enabledDrawerFilters

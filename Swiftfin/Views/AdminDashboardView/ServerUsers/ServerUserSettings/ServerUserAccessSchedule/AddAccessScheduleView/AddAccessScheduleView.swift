@@ -171,12 +171,12 @@ struct AddAccessScheduleView: View {
     private func saveSchedule() {
 
         guard isValidRange, let newSchedule else {
-            error = JellyfinAPIError(L10n.accessScheduleInvalidTime)
+            error = ErrorMessage(L10n.accessScheduleInvalidTime)
             return
         }
 
         guard !isDuplicateSchedule else {
-            error = JellyfinAPIError(L10n.scheduleAlreadyExists)
+            error = ErrorMessage(L10n.scheduleAlreadyExists)
             return
         }
 

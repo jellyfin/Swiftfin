@@ -8,13 +8,11 @@
 
 import Foundation
 
-// TODO: rename to `ErrorMessage` and remove other implementation
-
 /// A basic error that holds a message, useful for debugging.
 ///
 /// - Important: Only really use for debugging. For practical errors,
 ///              statically define errors for each domain/context.
-struct JellyfinAPIError: LocalizedError, Hashable {
+struct ErrorMessage: LocalizedError, Hashable {
 
     private let message: String
 
