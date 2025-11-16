@@ -92,21 +92,15 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    Button {
+                    ChevronButton(L10n.accentColor) {
                         router.route(to: .accentColorSettings)
-                    } label: {
-                        HStack(spacing: 8) {
-                            Text(L10n.accentColor)
-                            Spacer()
-                            Circle()
-                                .fill(accentColor)
-                                .frame(width: 16, height: 16)
-                            Image(systemName: "chevron.right")
-                                .font(.body.weight(.regular))
-                                .foregroundStyle(.secondary)
-                        }
+                    } icon: {
+                        EmptyView()
+                    } subtitle: {
+                        Circle()
+                            .fill(accentColor)
+                            .frame(width: 24, height: 24)
                     }
-                    .foregroundStyle(.primary, .secondary)
                 } header: {
                     Text(L10n.appearance)
                 } footer: {

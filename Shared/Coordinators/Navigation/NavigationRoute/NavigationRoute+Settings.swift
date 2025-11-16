@@ -216,6 +216,7 @@ extension NavigationRoute {
         id: "accentColorSettings"
     ) {
         AccentColorSettingsView()
+            .navigationTitle(L10n.accentColor)
     }
     #endif
 }

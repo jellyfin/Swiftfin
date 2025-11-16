@@ -34,35 +34,17 @@ struct ColorPickerView: View {
     private var isGreenFocused: Bool
     @FocusState
     private var isBlueFocused: Bool
+    @FocusState
+    private var isMenuFocused: Bool
 
     private static let sliderHeight: CGFloat = 48
     private static let sliderIndicatorWidth: CGFloat = 8
     private static let maximumWidth: CGFloat = 1000
 
-    private var title: String
-    private var colorSelector: [NamedColor]
-
     enum ColorComponent { case red, green, blue }
-
-    struct NamedColor: Hashable {
-        let name: String
-        let value: Color
-
-        static let defaultColors: [NamedColor] = [
-            NamedColor(name: L10n.jellyfin, value: .jellyfinPurple),
-            NamedColor(name: L10n.red, value: .red),
-            NamedColor(name: L10n.orange, value: .orange),
-            NamedColor(name: L10n.yellow, value: .yellow),
-            NamedColor(name: L10n.green, value: .green),
-            NamedColor(name: L10n.blue, value: .blue),
-        ]
-    }
 
     var body: some View {
         VStack(alignment: .center) {
-            Text(self.title)
-                .font(.title)
-
             colorSlider(label: L10n.red, value: $red, focusState: $isRedFocused, colorComponent: .red)
             colorSlider(label: L10n.green, value: $green, focusState: $isGreenFocused, colorComponent: .green)
             colorSlider(label: L10n.blue, value: $blue, focusState: $isBlueFocused, colorComponent: .blue)
@@ -75,43 +57,40 @@ struct ColorPickerView: View {
             .font(.title)
             .foregroundStyle(color.overlayColor, color)
 
-            KeyboardTextField(text: $tempHexString, isFirstResponder: $showHexInput) {
-                updateFromHex()
-            }.frame(width: 0, height: 0).opacity(0)
-
-            if !colorSelector.isEmpty {
-                Menu {
-                    ForEach(colorSelector, id: \.self) { color in
-                        Button {
-                            updateFromColor(color: color.value)
-                        } label: {
-                            Text(color.name)
-                        }
+            Form {
+                ListRowMenu(L10n.color, subtitle: {
+                    if let selected = ColorPickerDefaults.allCases.first(where: { $0.color.isEqual(to: color) }) {
+                        Circle()
+                            .fill(selected.color)
+                            .frame(width: 24, height: 24)
+                            .brightness(isMenuFocused ? -0.4 : 0)
                     }
-                } label: {
-                    HStack {
-                        Text(L10n.color)
-                        Spacer()
-                        if colorSelector.contains(where: { $0.value.isEqual(to: color) }) {
-                            Circle()
-                                .fill(color)
-                                .frame(width: 16, height: 16)
+                }) {
+                    ForEach(ColorPickerDefaults.allCases, id: \.self) { colorItem in
+                        Button {
+                            updateFromColor(color: colorItem.color)
+                        } label: {
+                            Text(colorItem.displayTitle)
                         }
                     }
                 }
-                .listRowBackground(Color.clear)
-                .listRowInsets(.zero)
-                .foregroundStyle(.primary, .secondary)
+                .focused($isMenuFocused)
             }
+            .padding(.top, -24)
+            .scrollClipDisabled()
         }
         .frame(maxWidth: ColorPickerView.maximumWidth)
         .alert(isPresented: $showHexError) {
             Alert(
-                title: Text("Invalid HEX input"),
-                message: Text("Format should be: #RRGGBB"),
+                title: Text(L10n.invalidFormat),
+                message: Text("#RRGGBB"),
                 dismissButton: .default(Text(L10n.ok))
             )
         }
+
+        KeyboardTextField(text: $tempHexString, isFirstResponder: $showHexInput) {
+            updateFromHex()
+        }.frame(width: 0, height: 0).opacity(0)
     }
 
     private func colorSlider(
@@ -223,7 +202,7 @@ struct ColorPickerView: View {
         self.tempHexString = self.hexString
     }
 
-    init(color: Binding<Color>, title: String? = nil, defaultColors: [NamedColor] = []) {
+    init(color: Binding<Color>) {
         var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0
         color.wrappedValue.uiColor.getRed(&r, green: &g, blue: &b, alpha: nil)
         let hexString = String(format: "#%02X%02X%02X", Int(255 * r), Int(255 * g), Int(255 * b))
@@ -233,8 +212,6 @@ struct ColorPickerView: View {
         self.blue = b
         self.hexString = hexString
         self.tempHexString = hexString
-        self.title = title ?? L10n.color
-        self.colorSelector = defaultColors
         self._color = color
     }
 }

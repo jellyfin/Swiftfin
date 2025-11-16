@@ -15,6 +15,6 @@ struct AccentColorSettingsView: View {
     private var accentColor
 
     var body: some View {
-        ColorPickerView(color: $accentColor, title: L10n.accentColor, defaultColors: ColorPickerView.NamedColor.defaultColors)
+        ColorPickerView(color: $accentColor)
     }
 }
