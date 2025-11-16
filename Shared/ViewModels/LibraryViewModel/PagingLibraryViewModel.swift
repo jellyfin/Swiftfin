@@ -42,6 +42,11 @@ protocol LibraryIdentifiable: Identifiable {
     var unwrappedIDHashOrZero: Int { get }
 }
 
+/// Protocol for view models that provide a total count of items
+protocol HasTotalCount: AnyObject {
+    var totalCount: Int { get }
+}
+
 // TODO: fix how `hasNextPage` is determined
 //       - some subclasses might not have "paging" and only have one call. This can be solved with
 //         a check if elements were actually appended to the set but that requires a redundant get
@@ -59,6 +64,8 @@ protocol LibraryIdentifiable: Identifiable {
        `rememberSort` observation and `StoredValues.User.libraryFilters` for TODO
        on remembering other filters.
  */
+
+extension PagingLibraryViewModel: HasTotalCount {}
 
 class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
@@ -99,6 +106,8 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     var elements: IdentifiedArray<Int, Element>
     @Published
     var state: State = .initial
+    @Published
+    var totalCount: Int = 0
 
     final let filterViewModel: FilterViewModel?
     final let parent: (any LibraryParent)?
@@ -172,14 +181,21 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         self.parent = parent
 
         if var filters {
-            if let id = parent?.id, Defaults[.Customization.Library.rememberSort] {
-                // TODO: see `StoredValues.User.libraryFilters` for TODO
-                //       on remembering other filters
-
+            if let id = parent?.id {
                 let storedFilters = StoredValues[.User.libraryFilters(parentID: id)]
 
-                filters.sortBy = storedFilters.sortBy
-                filters.sortOrder = storedFilters.sortOrder
+                if Defaults[.Customization.Library.rememberSort] {
+                    filters.sortBy = storedFilters.sortBy
+                    filters.sortOrder = storedFilters.sortOrder
+                }
+
+                if Defaults[.Customization.Library.rememberFiltering] {
+                    filters.genres = storedFilters.genres
+                    filters.letter = storedFilters.letter
+                    filters.tags = storedFilters.tags
+                    filters.traits = storedFilters.traits
+                    filters.years = storedFilters.years
+                }
             }
 
             self.filterViewModel = .init(
@@ -334,6 +350,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
         await MainActor.run {
             elements.removeAll()
+            totalCount = 0
         }
 
         try await getNextPage()

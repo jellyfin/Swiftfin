@@ -244,10 +244,10 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             uniqueElements: viewModel.elements,
             layout: layout
         ) { item in
-
             let displayType = Defaults[.Customization.Library.rememberLayout] ? _displayType.wrappedValue : _defaultDisplayType
                 .wrappedValue
-            let posterType = Defaults[.Customization.Library.rememberLayout] ? _posterType.wrappedValue : _defaultPosterType.wrappedValue
+            let posterType = Defaults[.Customization.Library.rememberLayout] ? _posterType.wrappedValue : _defaultPosterType
+                .wrappedValue
 
             switch (posterType, displayType) {
             case (.landscape, .grid):
@@ -256,6 +256,17 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 portraitGridItemView(item: item)
             case (_, .list):
                 listItemView(item: item, posterType: posterType)
+            }
+        }
+        .header {
+            if let title = viewModel.parent?.displayTitle, title.isNotEmpty,
+               let filterViewModel = viewModel.filterViewModel, !enabledDrawerFilters.isEmpty
+            {
+                LibraryHeader(
+                    title: title,
+                    viewModel: viewModel,
+                    filterViewModel: filterViewModel
+                )
             }
         }
         .onReachedBottomEdge(offset: .rows(3)) {
@@ -271,13 +282,19 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     private var innerContent: some View {
         switch viewModel.state {
         case .content:
+            #if os(tvOS)
+            gridView
+            #else
             if viewModel.elements.isEmpty {
                 Text(L10n.noResults)
             } else {
                 gridView
             }
+            #endif
+
         case .initial, .refreshing:
             ProgressView()
+
         default:
             AssertionFailureView("Expected view for unexpected state")
         }
@@ -328,12 +345,12 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
          }*/
     }
 
+    // tvOSLibraryHeader removed — using LibraryHeader directly in the header modifier.
+
     // MARK: Body
 
     var body: some View {
         ZStack {
-            Color.clear
-
             if cinematicBackground {
                 CinematicBackgroundView(viewModel: cinematicBackgroundProxy)
                     .isVisible(presentBackground)
@@ -349,7 +366,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
-        .navigationTitle(viewModel.parent?.displayTitle ?? "")
+        .background(.ultraThinMaterial)
         .onChange(of: focusedPoster) {
             setCinematicBackground()
         }
@@ -375,11 +392,24 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         .onChange(of: viewModel.filterViewModel?.currentFilters) { _, newValue in
             guard let newValue, let id = viewModel.parent?.id else { return }
 
+            var newStoredFilters = StoredValues[.User.libraryFilters(parentID: id)]
+
             if Defaults[.Customization.Library.rememberSort] {
-                let newStoredFilters = StoredValues[.User.libraryFilters(parentID: id)]
+                newStoredFilters = newStoredFilters
                     .mutating(\.sortBy, with: newValue.sortBy)
                     .mutating(\.sortOrder, with: newValue.sortOrder)
+            }
 
+            if Defaults[.Customization.Library.rememberFiltering] {
+                newStoredFilters = newStoredFilters
+                    .mutating(\.genres, with: newValue.genres)
+                    .mutating(\.letter, with: newValue.letter)
+                    .mutating(\.tags, with: newValue.tags)
+                    .mutating(\.traits, with: newValue.traits)
+                    .mutating(\.years, with: newValue.years)
+            }
+
+            if Defaults[.Customization.Library.rememberSort] || Defaults[.Customization.Library.rememberFiltering] {
                 StoredValues[.User.libraryFilters(parentID: id)] = newStoredFilters
             }
         }

@@ -262,6 +262,8 @@ internal enum L10n {
   internal static let bugsAndFeatures = L10n.tr("Localizable", "bugsAndFeatures", fallback: "Bugs and features")
   /// Buttons
   internal static let buttons = L10n.tr("Localizable", "buttons", fallback: "Buttons")
+  /// By
+  internal static let by = L10n.tr("Localizable", "by", fallback: "By")
   /// Cancel
   internal static let cancel = L10n.tr("Localizable", "cancel", fallback: "Cancel")
   /// Cancelling...
@@ -1190,6 +1192,10 @@ internal enum L10n {
   internal static let regular = L10n.tr("Localizable", "regular", fallback: "Regular")
   /// Release date
   internal static let releaseDate = L10n.tr("Localizable", "releaseDate", fallback: "Release date")
+  /// Remember filtering
+  internal static let rememberFiltering = L10n.tr("Localizable", "rememberFiltering", fallback: "Remember filtering")
+  /// Remember filtering for individual libraries.
+  internal static let rememberFilteringFooter = L10n.tr("Localizable", "rememberFilteringFooter", fallback: "Remember filtering for individual libraries.")
   /// Remember layout
   internal static let rememberLayout = L10n.tr("Localizable", "rememberLayout", fallback: "Remember layout")
   /// Remember layout for individual libraries.

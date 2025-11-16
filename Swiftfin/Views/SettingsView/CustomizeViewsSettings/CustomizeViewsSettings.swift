@@ -55,6 +55,8 @@ struct CustomizeViewsSettings: View {
     private var rememberLibraryLayout
     @Default(.Customization.Library.rememberSort)
     private var rememberLibrarySort
+    @Default(.Customization.Library.rememberFiltering)
+    private var rememberLibraryFiltering
 
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
     private var useSeriesLandscapeBackdrop
@@ -174,6 +176,12 @@ struct CustomizeViewsSettings: View {
                 Toggle(L10n.rememberSorting, isOn: $rememberLibrarySort)
             } footer: {
                 Text(L10n.rememberSortingFooter)
+            }
+
+            Section {
+                Toggle(L10n.rememberFiltering, isOn: $rememberLibraryFiltering)
+            } footer: {
+                Text(L10n.rememberFilteringFooter)
             }
 
             Section {

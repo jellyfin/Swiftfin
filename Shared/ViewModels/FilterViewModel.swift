@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Defaults
 import Foundation
 import JellyfinAPI
 import OrderedCollections
@@ -112,6 +113,40 @@ final class FilterViewModel: ViewModel, Stateful {
                 currentFilters = .default
             }
 
+            // Clear stored filters when rememberFiltering is enabled
+            if let id = parent?.id, Defaults[.Customization.Library.rememberFiltering] {
+                var storedFilters = StoredValues[.User.libraryFilters(parentID: id)]
+
+                if let type {
+                    // Reset specific filter type in stored filters
+                    switch type {
+                    case .genres:
+                        storedFilters.genres = ItemFilterCollection.default.genres
+                    case .letter:
+                        storedFilters.letter = ItemFilterCollection.default.letter
+                    case .sortBy:
+                        storedFilters.sortBy = ItemFilterCollection.default.sortBy
+                    case .sortOrder:
+                        storedFilters.sortOrder = ItemFilterCollection.default.sortOrder
+                    case .tags:
+                        storedFilters.tags = ItemFilterCollection.default.tags
+                    case .traits:
+                        storedFilters.traits = ItemFilterCollection.default.traits
+                    case .years:
+                        storedFilters.years = ItemFilterCollection.default.years
+                    }
+                } else {
+                    // Reset all filtering filters (not sorting)
+                    storedFilters.genres = ItemFilterCollection.default.genres
+                    storedFilters.letter = ItemFilterCollection.default.letter
+                    storedFilters.tags = ItemFilterCollection.default.tags
+                    storedFilters.traits = ItemFilterCollection.default.traits
+                    storedFilters.years = ItemFilterCollection.default.years
+                }
+
+                StoredValues[.User.libraryFilters(parentID: id)] = storedFilters
+            }
+
         case let .update(type, filters):
             updateCurrentFilters(for: type, with: filters)
         }
@@ -157,7 +192,26 @@ final class FilterViewModel: ViewModel, Stateful {
         case .tags:
             currentFilters.tags = newValue.map(ItemTag.init)
         case .traits:
-            currentFilters.traits = newValue.map(ItemTrait.init)
+            var traits = newValue.map(ItemTrait.init)
+
+            let isPlayedSelected = traits.contains(.isPlayed)
+            let isUnplayedSelected = traits.contains(.isUnplayed)
+
+            if isPlayedSelected && isUnplayedSelected {
+                let oldTraits = currentFilters.traits
+                let oldHasPlayed = oldTraits.contains(.isPlayed)
+                let oldHasUnplayed = oldTraits.contains(.isUnplayed)
+
+                if oldHasUnplayed {
+                    traits.removeAll { $0 == .isUnplayed }
+                } else if oldHasPlayed {
+                    traits.removeAll { $0 == .isPlayed }
+                } else {
+                    traits.removeAll { $0 == .isUnplayed }
+                }
+            }
+
+            currentFilters.traits = traits
         case .years:
             currentFilters.years = newValue.map(ItemYear.init)
         }
