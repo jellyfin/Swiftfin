@@ -163,6 +163,7 @@ struct UserSignInView: View {
             ListRowButton(L10n.cancel, role: .cancel) {
                 viewModel.cancel()
             }
+            .frame(maxHeight: 75)
         } else {
             ListRowButton(L10n.signIn) {
                 viewModel.signIn(
@@ -170,6 +171,7 @@ struct UserSignInView: View {
                     password: password
                 )
             }
+            .frame(maxHeight: 75)
             .disabled(username.isEmpty)
             .foregroundStyle(
                 Color.jellyfinPurple.overlayColor,
@@ -184,6 +186,7 @@ struct UserSignInView: View {
                     L10n.quickConnect,
                     action: runQuickConnect
                 )
+                .frame(maxHeight: 75)
                 .disabled(viewModel.state == .signingIn)
                 .foregroundStyle(
                     Color.jellyfinPurple.overlayColor,

@@ -433,11 +433,11 @@ struct SelectUserView: View {
                 .frame(minWidth: 50, maxWidth: 240)
                 .multilineTextAlignment(.center)
 
-            PrimaryButton(title: L10n.connect)
-                .onSelect {
-                    router.route(to: .connectToServer)
-                }
-                .frame(maxWidth: 300)
+            Button(L10n.connect) {
+                router.route(to: .connectToServer)
+            }
+            .frame(height: 50)
+            .frame(maxWidth: 300)
         }
     }
 

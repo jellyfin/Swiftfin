@@ -10,117 +10,58 @@ import Defaults
 import Factory
 import SwiftUI
 
-struct ErrorView<ErrorType: Error>: PlatformView {
+#if os(iOS)
+private let buttonHeight: CGFloat = 44
+private let buttonMaxSize: CGFloat = 300
+private let iconSize: CGFloat = 72
+#else
+private let buttonHeight: CGFloat = 75
+private let buttonMaxSize: CGFloat = 600
+private let iconSize: CGFloat = 144
+#endif
+
+struct ErrorView<ErrorType: Error>: View {
+
     @Default(.accentColor)
     private var accentColor
-    @Injected(\.currentUserSession)
-    private var userSession
+
     @Environment(\.refresh)
     private var refresh
 
-    @State
-    private var showServerInfo = false
-
     let error: ErrorType
 
-    // MARK: iOS View
-
-    var iOSView: some View {
-        VStack(spacing: 10) {
-            Spacer()
-
-            iconView(iconSize: 72)
-            bodyView(buttonHeight: 50)
-
-            Spacer()
-        }
-        .frame(maxWidth: 300)
-        .padding(.horizontal)
-    }
-
-    // MARK: tvOS View
-
-    var tvOSView: some View {
-        VStack(spacing: 20) {
-            Spacer()
-
-            iconView(iconSize: 144)
-            bodyView(buttonHeight: 75)
-
-            Spacer()
-        }
-        .frame(maxWidth: 600)
-        .padding(.horizontal)
-        .sheet(isPresented: $showServerInfo) {
-            serverInfoView
-                .frame(maxWidth: 600)
-                .padding(20)
-                .background(.ultraThickMaterial)
-        }
-    }
-
-    private func iconView(iconSize: CGFloat) -> some View {
-        VStack {
-            ZStack {
-                iconBackground(iconSize: iconSize)
-                    .frame(width: iconSize * 1.5, height: iconSize * 1.5)
-
-                Image(systemName: errorImage)
-                    .font(.system(size: iconSize, weight: .regular))
-                    .foregroundStyle(Color.red)
-                    .symbolRenderingMode(.monochrome)
-            }
-
-            if let userSession {
-                Button(userSession.server.name, systemImage: "info.circle") {
-                    showServerInfo = true
-                }
-                .buttonStyle(.plain)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-                .accessibilityLabel(userSession.server.name)
-                #if os(tvOS)
-                    .focusSection()
-                #else
-                    .popover(isPresented: $showServerInfo) {
-                        serverInfoView
-                            .presentationCompactAdaptation(.popover)
-                    }
-                #endif
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func iconBackground(iconSize: CGFloat) -> some View {
-        if UIDevice.isTV {
-            Circle()
-                .fill(Color.red.opacity(0.2))
+    private var systemImage: String {
+        if let error = error as? SystemImageable {
+            error.systemImage
         } else {
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Color.red.opacity(0.2))
+            "xmark.circle"
         }
     }
 
-    private func bodyView(buttonHeight: CGFloat) -> some View {
-        VStack(spacing: 10) {
+    var body: some View {
+        VStack {
+            Image(systemName: systemImage)
+                .font(.system(size: iconSize, weight: .regular))
+                .foregroundStyle(Color.red)
+                .symbolRenderingMode(.monochrome)
+
             Text(error.localizedDescription)
-                .font(.headline.weight(.semibold))
+                .font(.headline)
+                .fontWeight(.semibold)
                 .foregroundStyle(.primary)
+                .lineLimit(2)
                 .multilineTextAlignment(.center)
 
             if let refresh {
-                ListRowButton(L10n.retry) {
+                Button(L10n.retry) {
                     Task {
                         await refresh()
                     }
                 }
-                .foregroundStyle(accentColor.overlayColor, accentColor)
+                .buttonStyle(.primary)
                 .frame(height: buttonHeight)
-                #if os(tvOS)
-                    .focusSection()
-                #endif
+                .frame(maxWidth: buttonMaxSize)
+                .foregroundStyle(accentColor.overlayColor, accentColor)
             }
 
             if let localizedError = error as? LocalizedError,
@@ -129,41 +70,13 @@ struct ErrorView<ErrorType: Error>: PlatformView {
                 Text(recoverySuggestion)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                    .lineLimit(3)
                     .multilineTextAlignment(.center)
             }
         }
-    }
-
-    private var serverInfoView: some View {
-        VStack(alignment: .center) {
-            Text(L10n.server)
-                .font(.headline.weight(.semibold))
-                .foregroundStyle(.primary)
-
-            Divider()
-
-            if let userSession {
-                LabeledContent(
-                    L10n.name,
-                    value: userSession.server.name
-                )
-
-                LabeledContent(
-                    L10n.url,
-                    value: userSession.server.currentURL.absoluteString
-                )
-
-                LabeledContent(
-                    L10n.version,
-                    value: userSession.server.isVersionCompatible ? L10n.upToDate : L10n.outOfDate
-                )
-            }
-        }
-        .padding()
-    }
-
-    // TODO: Different SystemImages based on Error Types
-    private var errorImage: String {
-        "xmark.circle"
+        .frame(maxWidth: 600, maxHeight: .infinity)
+        .frame(maxWidth: .infinity)
+        .focusSection()
+        .edgePadding()
     }
 }
