@@ -7,7 +7,6 @@
 //
 
 import Defaults
-import Factory
 import SwiftUI
 
 #if os(iOS)
