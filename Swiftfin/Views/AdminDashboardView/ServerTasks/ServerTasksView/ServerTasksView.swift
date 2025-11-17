@@ -91,6 +91,9 @@ struct ServerTasksView: View {
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.tasks)
+        .refreshable {
+            viewModel.send(.refreshTasks)
+        }
         .onFirstAppear {
             viewModel.refresh()
         }

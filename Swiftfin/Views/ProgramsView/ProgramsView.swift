@@ -22,13 +22,6 @@ struct ProgramsView: View {
     @StateObject
     private var programsViewModel = ProgramsViewModel()
 
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                programsViewModel.send(.refresh)
-            }
-    }
-
     @ViewBuilder
     private var liveTVSectionScrollView: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -128,13 +121,16 @@ struct ProgramsView: View {
             case .content:
                 contentView
             case let .error(error):
-                errorView(with: error)
+                ErrorView(error: error)
             case .initial, .refreshing:
-                DelayedProgressView()
+                ProgressView()
             }
         }
         .navigationTitle(L10n.liveTV)
         .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            programsViewModel.send(.refresh)
+        }
         .onFirstAppear {
             if programsViewModel.state == .initial {
                 programsViewModel.send(.refresh)

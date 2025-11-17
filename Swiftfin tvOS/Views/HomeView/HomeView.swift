@@ -53,7 +53,6 @@ struct HomeView: View {
 
     var body: some View {
         ZStack {
-            // This keeps the ErrorView vertically aligned with the PagingLibraryView
             Color.clear
 
             switch viewModel.state {
@@ -61,14 +60,14 @@ struct HomeView: View {
                 contentView
             case let .error(error):
                 ErrorView(error: error)
-                    .onRetry {
-                        viewModel.send(.refresh)
-                    }
             case .initial, .refreshing:
                 ProgressView()
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
+        .refreshable {
+            viewModel.send(.refresh)
+        }
         .onFirstAppear {
             viewModel.send(.refresh)
         }

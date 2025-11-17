@@ -15,7 +15,7 @@ final class ResetUserPasswordViewModel: ViewModel, Eventful, Stateful {
     // MARK: - Event
 
     enum Event {
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
         case success
     }
 

@@ -72,6 +72,9 @@ struct ActiveSessionsView: View {
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.sessions)
         .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            viewModel.refresh()
+        }
         .topBarTrailing {
             if viewModel.background.is(.refreshing) {
                 ProgressView()
