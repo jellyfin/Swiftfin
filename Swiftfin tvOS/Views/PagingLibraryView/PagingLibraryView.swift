@@ -226,16 +226,6 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         }
     }
 
-    // MARK: Error View
-
-    @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.send(.refresh)
-            }
-    }
-
     // MARK: Grid View
 
     @ViewBuilder
@@ -344,12 +334,15 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             case .content, .initial, .refreshing:
                 contentView
             case let .error(error):
-                errorView(with: error)
+                ErrorView(error: error)
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
+        .refreshable {
+            viewModel.send(.refresh)
+        }
         .onChange(of: focusedPoster) {
             setCinematicBackground()
         }

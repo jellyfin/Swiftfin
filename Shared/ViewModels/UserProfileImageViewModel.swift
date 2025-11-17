@@ -25,7 +25,7 @@ final class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
     // MARK: - Event
 
     enum Event: Hashable {
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
         case deleted
         case uploaded
     }
@@ -141,7 +141,7 @@ final class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
             imageData = jpgData
         } else {
             logger.error("Unable to convert given profile image to png/jpg")
-            throw JellyfinAPIError("An internal error occurred")
+            throw ErrorMessage("An internal error occurred")
         }
 
         var request = Paths.postUserImage(
@@ -151,7 +151,7 @@ final class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
         request.headers = ["Content-Type": contentType]
 
         guard imageData.count <= 30_000_000 else {
-            throw JellyfinAPIError(
+            throw ErrorMessage(
                 "This profile image is too large (\(imageData.count.formatted(.byteCount(style: .file)))). The upload limit for images is 30 MB."
             )
         }

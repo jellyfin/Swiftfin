@@ -165,7 +165,7 @@ extension SeriesEpisodeSelector {
         @ObservedObject
         var viewModel: SeasonItemViewModel
 
-        let error: JellyfinAPIError
+        let error: ErrorMessage
         let focusedEpisodeID: FocusState<String?>.Binding
 
         var body: some View {
