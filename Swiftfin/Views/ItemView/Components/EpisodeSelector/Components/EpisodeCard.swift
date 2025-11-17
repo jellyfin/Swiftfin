@@ -20,6 +20,12 @@ extension SeriesEpisodeSelector {
         private var router
 
         let episode: BaseItemDto
+        let seriesViewModel: SeriesItemViewModel?
+
+        init(episode: BaseItemDto, seriesViewModel: SeriesItemViewModel? = nil) {
+            self.episode = episode
+            self.seriesViewModel = seriesViewModel
+        }
 
         @ViewBuilder
         private var overlayView: some View {
@@ -56,7 +62,10 @@ extension SeriesEpisodeSelector {
                     router.route(
                         to: .videoPlayer(
                             item: episode,
-                            queue: EpisodeMediaPlayerQueue(episode: episode)
+                            queue: EpisodeMediaPlayerQueue(
+                                episode: episode,
+                                seriesViewModel: seriesViewModel
+                            )
                         )
                     )
                 } label: {

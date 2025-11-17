@@ -107,6 +107,13 @@ extension ItemView {
 
             let queue: (any MediaPlayerQueue)? = {
                 if playButtonItem.type == .episode {
+                    if let seriesViewModel = viewModel as? SeriesItemViewModel {
+                        return EpisodeMediaPlayerQueue(
+                            episode: playButtonItem,
+                            seriesViewModel: seriesViewModel
+                        )
+                    }
+
                     return EpisodeMediaPlayerQueue(episode: playButtonItem)
                 }
                 return nil

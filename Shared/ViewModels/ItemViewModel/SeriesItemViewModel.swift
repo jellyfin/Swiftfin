@@ -21,15 +21,33 @@ final class SeriesItemViewModel: ItemViewModel {
     @Published
     var seasons: IdentifiedArrayOf<SeasonItemViewModel> = []
 
+    func refreshVisibleUserData() {
+        Task { [weak self] in
+            guard let self else { return }
+            await self.send(.refreshUserDataOnly)
+        }
+    }
+
     // MARK: - Task
 
     private var seriesItemTask: AnyCancellable?
+    private var userDataRefreshTask: AnyCancellable?
 
     // MARK: - Override Response
 
     override func respond(to action: ItemViewModel.Action) -> ItemViewModel.State {
 
         switch action {
+        case .refreshUserDataOnly:
+
+            userDataRefreshTask?.cancel()
+
+            userDataRefreshTask = Task { [weak self] in
+                guard let self else { return }
+
+                await self.refreshVisibleUserDataOnly()
+            }
+            .asAnyCancellable()
         case .backgroundRefresh, .refresh:
             let parentState = super.respond(to: action)
 
@@ -145,5 +163,45 @@ final class SeriesItemViewModel: ItemViewModel {
         let response = try await userSession.client.send(request)
 
         return response.value.items ?? []
+    }
+
+    private func refreshVisibleUserDataOnly() async {
+        async let playButtonRefresh = refreshPlayButtonItemUserData()
+        async let seasonRefresh = refreshSeasonEpisodesUserData()
+
+        _ = await (playButtonRefresh, seasonRefresh)
+    }
+
+    private func refreshPlayButtonItemUserData() async {
+        guard let playButtonItem else { return }
+
+        do {
+            let refreshedItem = try await playButtonItem.refreshUserData()
+
+            guard !Task.isCancelled else { return }
+
+            await MainActor.run {
+                self.playButtonItem = refreshedItem
+            }
+        } catch {
+            logger.error(
+                "Failed to refresh play button user data",
+                metadata: ["error": .stringConvertible(error.localizedDescription)]
+            )
+        }
+    }
+
+    private func refreshSeasonEpisodesUserData() async {
+        let seasonsSnapshot = await MainActor.run { seasons }
+
+        guard seasonsSnapshot.isNotEmpty else { return }
+
+        await withTaskGroup(of: Void.self) { group in
+            for season in seasonsSnapshot where season.elements.isNotEmpty {
+                group.addTask {
+                    await season.refreshVisibleEpisodesUserData()
+                }
+            }
+        }
     }
 }

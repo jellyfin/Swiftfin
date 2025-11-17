@@ -231,6 +231,8 @@ final class MediaPlayerManager: ViewModel {
             return
         }
 
+        await refreshPlayingItemUserData()
+
         if let nextItem = queue?.nextItem, Defaults[.VideoPlayer.autoPlayEnabled] {
             await self.playNewItem(provider: nextItem)
         }
@@ -320,6 +322,21 @@ final class MediaPlayerManager: ViewModel {
             setPlaybackRequestStatus(status: .paused)
         case .paused:
             setPlaybackRequestStatus(status: .playing)
+        }
+    }
+
+    private func refreshPlayingItemUserData() async {
+        do {
+            let refreshedItem = try await item.refreshUserData()
+
+            guard !Task.isCancelled else { return }
+
+            item = refreshedItem
+        } catch {
+            logger.error(
+                "Failed to refresh playback item user data",
+                metadata: ["error": .stringConvertible(error.localizedDescription)]
+            )
         }
     }
 }

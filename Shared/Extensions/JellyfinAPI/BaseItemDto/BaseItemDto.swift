@@ -516,4 +516,29 @@ extension BaseItemDto {
 
         return response.value
     }
+
+    func refresh() async throws -> BaseItemDto {
+        guard let userSession = Container.shared.currentUserSession() else {
+            throw ErrorMessage(L10n.unknownError)
+        }
+
+        return try await getFullItem(userSession: userSession)
+    }
+
+    func refreshUserData() async throws -> BaseItemDto {
+        guard let userSession = Container.shared.currentUserSession() else {
+            throw ErrorMessage(L10n.unknownError)
+        }
+        guard let id else {
+            throw ErrorMessage(L10n.unknownError)
+        }
+
+        let request = Paths.getItemUserData(itemID: id, userID: userSession.user.id)
+        let response = try await userSession.client.send(request)
+
+        var refreshedItem = self
+        refreshedItem.userData = response.value
+
+        return refreshedItem
+    }
 }

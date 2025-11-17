@@ -8,6 +8,7 @@
 
 import Defaults
 import Foundation
+import IdentifiedCollections
 import JellyfinAPI
 
 // Since we don't view care to view seasons directly, this doesn't subclass from `ItemViewModel`.
@@ -45,5 +46,32 @@ final class SeasonItemViewModel: PagingLibraryViewModel<BaseItemDto>, Identifiab
         let response = try await userSession.client.send(request)
 
         return response.value.items ?? []
+    }
+
+    func refreshVisibleEpisodesUserData() async {
+
+        let currentElements = await MainActor.run { elements }
+
+        guard currentElements.isNotEmpty else { return }
+
+        var refreshedEpisodes: [BaseItemDto] = []
+        refreshedEpisodes.reserveCapacity(currentElements.count)
+
+        for episode in currentElements {
+            do {
+                let refreshedEpisode = try await episode.refreshUserData()
+                refreshedEpisodes.append(refreshedEpisode)
+            } catch {
+                refreshedEpisodes.append(episode)
+            }
+        }
+
+        guard !Task.isCancelled else { return }
+
+        await MainActor.run {
+            for episode in refreshedEpisodes {
+                elements[id: episode.unwrappedIDHashOrZero] = episode
+            }
+        }
     }
 }

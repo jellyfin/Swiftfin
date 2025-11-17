@@ -31,6 +31,11 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
                     self?.didReceive(newItem: newItem)
                 }
                 .store(in: &cancellables)
+            manager.actions
+                .sink { [weak self] in
+                    self?.didReceive(action: $0)
+                }
+                .store(in: &cancellables)
         }
     }
 
@@ -55,11 +60,18 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     private var currentAdjacentEpisodesTask: AnyCancellable?
     private let seriesViewModel: SeriesItemViewModel
 
-    init(episode: BaseItemDto) {
-        self.seriesViewModel = SeriesItemViewModel(episode: episode)
-        super.init()
+    init(episode: BaseItemDto, seriesViewModel: SeriesItemViewModel? = nil) {
+        if let seriesViewModel {
+            self.seriesViewModel = seriesViewModel
 
-        seriesViewModel.send(.refresh)
+            if seriesViewModel.state == .initial {
+                seriesViewModel.send(.refresh)
+            }
+        } else {
+            self.seriesViewModel = SeriesItemViewModel(episode: episode)
+            self.seriesViewModel.send(.refresh)
+        }
+        super.init()
     }
 
     var videoPlayerBody: some PlatformView {
@@ -145,6 +157,15 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
             self.previousItem = previousProvider
             self.hasNextItem = nextProvider != nil
             self.hasPreviousItem = previousProvider != nil
+        }
+    }
+
+    private func didReceive(action: MediaPlayerManager._Action) {
+        switch action {
+        case .ended:
+            seriesViewModel.refreshVisibleUserData()
+        default:
+            break
         }
     }
 }
