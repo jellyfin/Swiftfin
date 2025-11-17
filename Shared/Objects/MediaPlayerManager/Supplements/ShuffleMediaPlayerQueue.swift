@@ -23,8 +23,11 @@ class ShuffleMediaPlayerQueue: ViewModel, MediaPlayerQueue {
             cancellables = []
             guard let manager else { return }
             manager.$playbackItem
+                .receive(on: DispatchQueue.main)
                 .sink { [weak self] newItem in
-                    self?.didReceive(newItem: newItem)
+                    Task { @MainActor [weak self] in
+                        self?.didReceive(newItem: newItem)
+                    }
                 }
                 .store(in: &cancellables)
         }
@@ -48,11 +51,16 @@ class ShuffleMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     lazy var nextItemPublisher: Published<MediaPlayerItemProvider?>.Publisher = $nextItem
     lazy var previousItemPublisher: Published<MediaPlayerItemProvider?>.Publisher = $previousItem
 
-    private var shuffledItems: [BaseItemDto]
+    private var shuffledItems: [BaseItemDto] = []
     private var currentIndex: Int = 0
+    private var fetchMoreItems: (() async throws -> [BaseItemDto])?
+    private var excludeItemIDs: Set<String> = []
+    private var isFetchingMore = false
 
-    init(items: [BaseItemDto]) {
+    init(items: [BaseItemDto], fetchMoreItems: (() async throws -> [BaseItemDto])? = nil) {
         self.shuffledItems = items
+        self.fetchMoreItems = fetchMoreItems
+        self.excludeItemIDs = Set(items.compactMap(\.id))
         super.init()
         updateAdjacentItems()
     }
@@ -76,9 +84,19 @@ class ShuffleMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 
     private func updateAdjacentItems() {
         let hasPrevious = currentIndex > 0
-        let hasNext = currentIndex < shuffledItems.count - 1
+        let remainingItems = shuffledItems.count - currentIndex - 1
+        let hasNext = remainingItems > 0
 
-        logger.info("Updating adjacent items: current index = \(currentIndex), hasNext = \(hasNext), hasPrevious = \(hasPrevious)")
+        logger
+            .info(
+                "Updating adjacent items: current index = \(currentIndex), hasNext = \(hasNext), hasPrevious = \(hasPrevious), remaining = \(remainingItems)"
+            )
+
+        if remainingItems <= ShuffleQueueConstants.fetchThreshold, let fetchMore = fetchMoreItems, !isFetchingMore {
+            Task { @MainActor [weak self] in
+                await self?.fetchMoreItemsIfNeeded()
+            }
+        }
 
         var nextProvider: MediaPlayerItemProvider?
         var previousProvider: MediaPlayerItemProvider?
@@ -114,6 +132,39 @@ class ShuffleMediaPlayerQueue: ViewModel, MediaPlayerQueue {
             .info(
                 "Updated: nextItem = \(nextProvider?.item.displayTitle ?? "nil"), previousItem = \(previousProvider?.item.displayTitle ?? "nil")"
             )
+    }
+
+    private func fetchMoreItemsIfNeeded() async {
+        guard let fetchMore = fetchMoreItems, !isFetchingMore else { return }
+
+        let remainingItems = shuffledItems.count - currentIndex - 1
+        guard remainingItems <= ShuffleQueueConstants.fetchThreshold else { return }
+
+        isFetchingMore = true
+        defer { isFetchingMore = false }
+
+        do {
+            let newItems = try await fetchMore()
+
+            let uniqueNewItems = newItems.filter { item in
+                guard let id = item.id else { return false }
+                return !excludeItemIDs.contains(id)
+            }
+
+            guard !uniqueNewItems.isEmpty else {
+                logger.info("No new unique items to add (all were duplicates)")
+                return
+            }
+
+            shuffledItems.append(contentsOf: uniqueNewItems)
+            excludeItemIDs.formUnion(uniqueNewItems.compactMap(\.id))
+
+            logger.info("Fetched \(uniqueNewItems.count) more items, queue size now: \(shuffledItems.count)")
+
+            updateAdjacentItems()
+        } catch {
+            logger.error("Error fetching more items: \(error)")
+        }
     }
 }
 
@@ -180,7 +231,7 @@ extension ShuffleMediaPlayerQueue {
                     insets: .init(top: 0, leading: 0, bottom: EdgeInsets.edgePadding, trailing: 0)
                 )
             ) { item in
-                EpisodeMediaPlayerQueue.EpisodeRow(episode: item) {
+                MediaPlayerQueueItemViews.ItemRow(item: item) {
                     selectItem(item)
                 }
                 .edgePadding(.horizontal)
@@ -189,9 +240,6 @@ extension ShuffleMediaPlayerQueue {
     }
 
     private struct RegularShuffleView: View {
-
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets: EdgeInsets
 
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
@@ -213,16 +261,26 @@ extension ShuffleMediaPlayerQueue {
         }
 
         var body: some View {
-            CollectionHStack(
-                uniqueElements: items,
-                id: \.unwrappedIDHashOrZero
-            ) { item in
-                EpisodeMediaPlayerQueue.EpisodeButton(episode: item) {
-                    selectItem(item)
-                }
-                .frame(height: 150)
-            }
-            .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
+            MediaPlayerQueueItemViews.QueueHStack(
+                items: items,
+                action: selectItem
+            )
         }
     }
+}
+
+// MARK: - Constants
+
+enum ShuffleQueueConstants {
+
+    /// Target number of items to maintain in the shuffle queue
+    static let targetQueueSize = 20
+
+    /// Number of items remaining before fetching more (half of target size)
+    static var fetchThreshold: Int {
+        targetQueueSize / 2
+    }
+
+    /// Page size for fetching items from the API
+    static let pageSize = 20
 }

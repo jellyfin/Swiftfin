@@ -83,6 +83,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     enum BackgroundState: Hashable {
         case gettingNextPage
+        case shuffling
     }
 
     // MARK: State
@@ -326,9 +327,12 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             return state
         case .getShuffledItems:
 
+            backgroundStates.insert(.shuffling)
+
             randomItemTask = Task { [weak self] in
                 do {
                     guard let shuffledItems = try await self?.getShuffledItems(), shuffledItems.isNotEmpty else {
+                        self?.logger.warning("No shuffled items returned")
                         return
                     }
 
@@ -398,7 +402,8 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     /// Gets all items shuffled. Override if items should
     /// come from another source instead.
-    func getShuffledItems() async throws -> [Element] {
+    @MainActor
+    func getShuffledItems(excluding excludeItemIDs: [String] = []) async throws -> [Element] {
         elements.shuffled()
     }
 }

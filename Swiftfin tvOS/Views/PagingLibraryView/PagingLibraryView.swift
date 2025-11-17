@@ -123,40 +123,11 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         let baseItems = items.compactMap { $0 as? BaseItemDto }
 
         Task {
-            await playShuffledItems(baseItems)
-        }
-    }
-
-    private func playShuffledItems(_ items: [BaseItemDto]) async {
-        do {
-            let playableItems = try await ShuffleActionHelper.collectPlayableItems(from: items)
-            let shuffledItems = playableItems.shuffled()
-
-            guard let firstItem = shuffledItems.first else { return }
-
-            await routeToVideoPlayer(withFirst: firstItem, queue: shuffledItems)
-        } catch {
-            // TODO: Handle error properly with user-visible error message
-        }
-    }
-
-    private func routeToVideoPlayer(
-        withFirst firstItem: BaseItemDto,
-        queue items: [BaseItemDto]
-    ) async {
-        var mutableFirstItem = firstItem
-        mutableFirstItem.userData?.playbackPositionTicks = 0
-
-        let queue = ShuffleMediaPlayerQueue(items: items)
-        let manager = MediaPlayerManager(
-            item: mutableFirstItem,
-            queue: queue
-        ) { item in
-            try await MediaPlayerItem.build(for: item)
-        }
-
-        await MainActor.run {
-            router.route(to: .videoPlayer(manager: manager))
+            await ShuffleActionHelper().playLibraryShuffle(
+                items: baseItems,
+                viewModel: viewModel,
+                router: router.router
+            )
         }
     }
 
@@ -315,7 +286,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         switch viewModel.state {
         case .content:
             if viewModel.elements.isEmpty {
-                L10n.noResults.text
+                Text(L10n.noResults)
             } else {
                 gridView
             }

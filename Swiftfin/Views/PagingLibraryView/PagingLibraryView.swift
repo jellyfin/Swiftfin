@@ -244,17 +244,34 @@ struct PagingLibraryView<Element: Poster>: View {
 
     @ViewBuilder
     private var innerContent: some View {
-        switch viewModel.state {
-        case .content:
-            if viewModel.elements.isEmpty {
-                L10n.noResults.text
-            } else {
-                elementsView
+        ZStack {
+            switch viewModel.state {
+            case .content:
+                if viewModel.elements.isEmpty {
+                    Text(L10n.noResults)
+                } else {
+                    elementsView
+                }
+            case .initial, .refreshing:
+                DelayedProgressView()
+            default:
+                AssertionFailureView("Expected view for unexpected state")
             }
-        case .initial, .refreshing:
-            DelayedProgressView()
-        default:
-            AssertionFailureView("Expected view for unexpected state")
+
+            // Show loading overlay when shuffling
+            if viewModel.backgroundStates.contains(.shuffling) {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+
+                VStack(spacing: 10) {
+                    ProgressView()
+                    Text(L10n.shuffling)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .padding()
+                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
+            }
         }
     }
 
@@ -476,7 +493,7 @@ struct PagingLibraryView<Element: Poster>: View {
             Button(L10n.shuffle, systemImage: "shuffle") {
                 viewModel.send(.getShuffledItems)
             }
-            .disabled(viewModel.elements.isEmpty)
+            .disabled(viewModel.elements.isEmpty || viewModel.backgroundStates.contains(.gettingNextPage))
         }
     }
 }
@@ -488,42 +505,11 @@ private extension PagingLibraryView {
         let baseItems = items.compactMap { $0 as? BaseItemDto }
 
         Task {
-            await playShuffledItems(baseItems, in: namespace)
-        }
-    }
-
-    func playShuffledItems(_ items: [BaseItemDto], in namespace: Namespace.ID) async {
-        do {
-            let playableItems = try await ShuffleActionHelper.collectPlayableItems(from: items)
-            let shuffledItems = playableItems.shuffled()
-
-            guard let firstItem = shuffledItems.first else { return }
-
-            await routeToVideoPlayer(withFirst: firstItem, queue: shuffledItems, in: namespace)
-        } catch {
-            // TODO: Handle error properly with user-visible error message
-        }
-    }
-
-    func routeToVideoPlayer(
-        withFirst firstItem: BaseItemDto,
-        queue items: [BaseItemDto],
-        in namespace: Namespace.ID
-    ) async {
-        let queue = ShuffleMediaPlayerQueue(items: items)
-        let provider = MediaPlayerItemProvider(item: firstItem) { item in
-            try await MediaPlayerItem.build(for: item) {
-                $0.userData?.playbackPositionTicks = 0
-            }
-        }
-
-        await MainActor.run {
-            router.route(
-                to: .videoPlayer(
-                    provider: provider,
-                    queue: queue
-                ),
-                in: namespace
+            await ShuffleActionHelper().playLibraryShuffle(
+                items: baseItems,
+                viewModel: viewModel,
+                router: router.router,
+                namespace: namespace
             )
         }
     }

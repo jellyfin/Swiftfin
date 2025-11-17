@@ -10,11 +10,22 @@ import Factory
 import Foundation
 import JellyfinAPI
 import Logging
+import SwiftUI
 
 @MainActor
 struct ShuffleActionHelper {
 
     private let logger = Logger.swiftfin()
+
+    final class FetchState {
+        var excludeItemIDs: Set<String>
+        var excludeLibraryItemIDs: Set<String>?
+
+        init(excludeItemIDs: Set<String>, excludeLibraryItemIDs: Set<String>? = nil) {
+            self.excludeItemIDs = excludeItemIDs
+            self.excludeLibraryItemIDs = excludeLibraryItemIDs
+        }
+    }
 
     func shuffleItem(
         _ item: BaseItemDto,
@@ -26,16 +37,7 @@ struct ShuffleActionHelper {
             return nil
         }
 
-        let shuffledItems: [BaseItemDto]
-
-        if let seriesViewModel = viewModel as? SeriesItemViewModel {
-            shuffledItems = try await seriesViewModel.getShuffledItems()
-        } else if let collectionViewModel = viewModel as? CollectionItemViewModel {
-            shuffledItems = try await collectionViewModel.getShuffledItems()
-        } else {
-            logger.error("No shuffle implementation for this ItemViewModel type")
-            return nil
-        }
+        let shuffledItems = try await viewModel.getShuffledItems()
 
         guard shuffledItems.isNotEmpty else {
             logger.error("No items to shuffle")
@@ -49,7 +51,15 @@ struct ShuffleActionHelper {
 
         firstItem.userData?.playbackPositionTicks = 0
 
-        let queue = ShuffleMediaPlayerQueue(items: shuffledItems)
+        let fetchState = FetchState(excludeItemIDs: Set(shuffledItems.compactMap(\.id)))
+        let fetchMoreItems: () async throws -> [BaseItemDto] = { [weak viewModel, fetchState] in
+            guard let viewModel else { return [] }
+            let newItems = try await viewModel.getShuffledItems(excluding: Array(fetchState.excludeItemIDs))
+            fetchState.excludeItemIDs.formUnion(newItems.compactMap(\.id))
+            return newItems
+        }
+
+        let queue = ShuffleMediaPlayerQueue(items: shuffledItems, fetchMoreItems: fetchMoreItems)
 
         return (firstItem, queue)
     }
@@ -124,11 +134,6 @@ struct ShuffleActionHelper {
         }
     }
 
-    /// Collects playable items from a mixed collection, expanding containers into their playable content.
-    ///
-    /// Containers (series, boxSets) cannot be played directly and are expanded into their playable content.
-    /// BoxSets may contain series, which are recursively expanded into episodes.
-    /// Other items (movies, episodes, etc.) are included as-is if playable and have media sources.
     static func collectPlayableItems(from items: [BaseItemDto]) async throws -> [BaseItemDto] {
         guard let userSession = Container.shared.currentUserSession() else {
             throw JellyfinAPIError("No user session")
@@ -137,57 +142,161 @@ struct ShuffleActionHelper {
         var playableItems: [BaseItemDto] = []
 
         for item in items {
-            switch item.type {
-            case .series:
-                let episodes = try await fetchEpisodes(for: item, userSession: userSession)
-                playableItems.append(contentsOf: episodes)
-            case .boxSet:
-                let contents = try await fetchBoxSetContents(for: item, userSession: userSession)
-                let expandedContents = try await collectPlayableItems(from: contents)
-                playableItems.append(contentsOf: expandedContents)
-            default:
-                if item.isPlayable && item.mediaSources?.isNotEmpty == true {
-                    playableItems.append(item)
-                }
+            if item.type == .series || item.type == .boxSet || item.type == .collectionFolder || item.type == .folder {
+                let contents = try await fetchVideoItemsPaginated(for: item, userSession: userSession)
+                playableItems.append(contentsOf: contents)
+            } else if item.isPlayable && item.mediaSources?.isNotEmpty == true {
+                playableItems.append(item)
             }
         }
 
-        return playableItems
+        // .shuffled() needed to break up grouping from sequential container expansion
+        return playableItems.shuffled()
     }
 
-    private static func fetchEpisodes(for series: BaseItemDto, userSession: UserSession) async throws -> [BaseItemDto] {
-        var parameters = Paths.GetItemsByUserIDParameters()
-        parameters.fields = .MinimumFields
-        parameters.includeItemTypes = [.episode]
-        parameters.isRecursive = true
-        parameters.parentID = series.id
-        parameters.sortBy = [ItemSortBy.sortName.rawValue]
-        parameters.sortOrder = [.ascending]
+    private static func fetchVideoItemsPaginated(
+        for parent: BaseItemDto,
+        userSession: UserSession
+    ) async throws -> [BaseItemDto] {
+        let pageSize = ShuffleQueueConstants.pageSize
+        let maxItems = ShuffleQueueConstants.targetQueueSize
+        var allItems: [BaseItemDto] = []
+        var startIndex = 0
+        var excludeItemIDs: [String] = []
 
-        let request = Paths.getItemsByUserID(
-            userID: userSession.user.id,
-            parameters: parameters
-        )
-        let response = try await userSession.client.send(request)
-        let episodes = response.value.items ?? []
+        while allItems.count < maxItems {
+            var parameters = Paths.GetItemsByUserIDParameters()
+            parameters.fields = .MinimumFields
+            parameters.isRecursive = true
+            parameters.parentID = parent.id
+            parameters.sortBy = [ItemSortBy.random.rawValue]
+            parameters.includeItemTypes = [.episode, .movie, .video, .musicVideo, .trailer]
+            parameters.limit = min(pageSize, maxItems - allItems.count)
+            parameters.startIndex = startIndex
 
-        return episodes.filter { $0.mediaSources?.isNotEmpty ?? false }
+            if excludeItemIDs.isNotEmpty {
+                parameters.excludeItemIDs = excludeItemIDs
+            }
+
+            let request = Paths.getItemsByUserID(
+                userID: userSession.user.id,
+                parameters: parameters
+            )
+            let response = try await userSession.client.send(request)
+
+            let pageItems = (response.value.items ?? [])
+                .filter { $0.isPlayable && $0.mediaSources?.isNotEmpty == true }
+
+            allItems.append(contentsOf: pageItems)
+            excludeItemIDs.append(contentsOf: pageItems.compactMap(\.id))
+
+            if pageItems.count < pageSize || allItems.count >= maxItems {
+                break
+            }
+
+            startIndex += pageSize
+        }
+
+        return allItems
     }
 
-    private static func fetchBoxSetContents(for boxSet: BaseItemDto, userSession: UserSession) async throws -> [BaseItemDto] {
-        var parameters = Paths.GetItemsByUserIDParameters()
-        parameters.fields = .MinimumFields
-        parameters.isRecursive = true
-        parameters.parentID = boxSet.id
-        parameters.sortBy = [ItemSortBy.sortName.rawValue]
-        parameters.sortOrder = [.ascending]
+    static func createLibraryShuffleManager<Element: Poster>(
+        firstItem: BaseItemDto,
+        playableItems: [BaseItemDto],
+        originalLibraryItems: [BaseItemDto],
+        viewModel: ItemLibraryViewModel,
+        backgroundStates: inout Set<PagingLibraryViewModel<Element>.BackgroundState>
+    ) -> MediaPlayerManager {
+        var mutableFirstItem = firstItem
+        mutableFirstItem.userData?.playbackPositionTicks = 0
 
-        let request = Paths.getItemsByUserID(
-            userID: userSession.user.id,
-            parameters: parameters
-        )
-        let response = try await userSession.client.send(request)
+        let excludeItemIDs = Set(playableItems.compactMap(\.id))
+        let excludeLibraryItemIDs = Set(originalLibraryItems.compactMap(\.id))
 
-        return response.value.items ?? []
+        let fetchState = FetchState(excludeItemIDs: excludeItemIDs, excludeLibraryItemIDs: excludeLibraryItemIDs)
+        let fetchMoreItems: () async throws -> [BaseItemDto] = { [weak viewModel, fetchState] in
+            guard let viewModel = viewModel as? ItemLibraryViewModel else { return [] }
+            guard let excludeLibraryItemIDs = fetchState.excludeLibraryItemIDs else { return [] }
+            let excludeArray = Array(excludeLibraryItemIDs)
+            let newLibraryItems = try await viewModel.getShuffledItems(excluding: excludeArray)
+            guard !newLibraryItems.isEmpty else { return [] }
+
+            fetchState.excludeLibraryItemIDs?.formUnion(newLibraryItems.compactMap(\.id))
+
+            let playableItems = try await Self.collectPlayableItems(from: newLibraryItems)
+
+            let uniquePlayableItems = playableItems.filter { item in
+                guard let id = item.id else { return false }
+                return !fetchState.excludeItemIDs.contains(id)
+            }
+
+            fetchState.excludeItemIDs.formUnion(uniquePlayableItems.compactMap(\.id))
+
+            return uniquePlayableItems
+        }
+
+        let queue = ShuffleMediaPlayerQueue(items: playableItems, fetchMoreItems: fetchMoreItems)
+        let manager = MediaPlayerManager(
+            item: mutableFirstItem,
+            queue: queue
+        ) { item in
+            try await MediaPlayerItem.build(for: item) {
+                $0.userData?.playbackPositionTicks = 0
+            }
+        }
+
+        manager.$state
+            .sink { [weak viewModel] state in
+                if state == .playback {
+                    viewModel?.backgroundStates.remove(.shuffling)
+                }
+            }
+            .store(in: &manager.cancellables)
+
+        manager.$playbackItem
+            .sink { [weak viewModel] playbackItem in
+                if playbackItem != nil {
+                    viewModel?.backgroundStates.remove(.shuffling)
+                }
+            }
+            .store(in: &manager.cancellables)
+
+        return manager
+    }
+
+    func playLibraryShuffle<Element: Poster>(
+        items: [BaseItemDto],
+        viewModel: PagingLibraryViewModel<Element>,
+        router: NavigationCoordinator.Router,
+        namespace: Namespace.ID? = nil
+    ) async {
+        do {
+            let originalLibraryItems = items
+            let playableItems = try await Self.collectPlayableItems(from: items)
+
+            guard let firstItem = playableItems.first else {
+                logger.warning("No playable items found after expanding containers")
+                return
+            }
+
+            guard let libraryViewModel = viewModel as? ItemLibraryViewModel else { return }
+
+            let manager = Self.createLibraryShuffleManager(
+                firstItem: firstItem,
+                playableItems: playableItems,
+                originalLibraryItems: originalLibraryItems,
+                viewModel: libraryViewModel,
+                backgroundStates: &viewModel.backgroundStates
+            )
+
+            await MainActor.run {
+                router.route(
+                    to: .videoPlayer(manager: manager),
+                    in: namespace
+                )
+            }
+        } catch {
+            logger.error("Error playing shuffled items: \(error)")
+        }
     }
 }

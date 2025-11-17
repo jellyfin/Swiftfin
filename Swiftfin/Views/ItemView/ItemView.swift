@@ -143,6 +143,21 @@ struct ItemView: View {
             case .initial, .refreshing:
                 DelayedProgressView()
             }
+
+            // Show loading overlay when shuffling
+            if viewModel.backgroundStates.contains(.shuffling) {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+
+                VStack(spacing: 10) {
+                    ProgressView()
+                    Text(L10n.shuffling)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .padding()
+                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
+            }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .navigationBarTitleDisplayMode(.inline)

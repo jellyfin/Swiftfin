@@ -149,23 +149,15 @@ final class SeriesItemViewModel: ItemViewModel {
 
     // MARK: - Get Shuffled Items
 
-    func getShuffledItems() async throws -> [BaseItemDto] {
-        var parameters = Paths.GetItemsByUserIDParameters()
-        parameters.enableUserData = true
-        parameters.fields = .MinimumFields
-        parameters.includeItemTypes = [.episode]
-        parameters.isRecursive = true
-        parameters.isMissing = Defaults[.Customization.shouldShowMissingEpisodes] ? nil : false
-        parameters.parentID = item.id
-        parameters.sortBy = [ItemSortBy.sortName.rawValue]
-        parameters.sortOrder = [.ascending]
-
-        let request = Paths.getItemsByUserID(
-            userID: userSession.user.id,
-            parameters: parameters
+    @MainActor
+    override func getShuffledItems(excluding excludeItemIDs: [String] = []) async throws -> [BaseItemDto] {
+        try await ItemViewModel.fetchShuffledItemsPaginated(
+            userSession: userSession,
+            parentID: item.id,
+            includeItemTypes: [.episode],
+            excludeItemIDs: excludeItemIDs,
+            enableUserData: true,
+            isMissing: Defaults[.Customization.shouldShowMissingEpisodes] ? nil : false
         )
-        let response = try await userSession.client.send(request)
-
-        return (response.value.items ?? []).shuffled()
     }
 }

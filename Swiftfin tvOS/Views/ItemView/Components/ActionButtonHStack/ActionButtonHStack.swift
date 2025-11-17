@@ -117,6 +117,7 @@ extension ItemView {
                                 Button(L10n.shuffle, systemImage: "shuffle") {
                                     viewModel.playShuffle(router: router.router)
                                 }
+                                .disabled(viewModel.backgroundStates.contains(.shuffling))
                             }
                         }
 

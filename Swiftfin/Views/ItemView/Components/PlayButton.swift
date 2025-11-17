@@ -85,9 +85,19 @@ extension ItemView {
                 }
 
                 if viewModel.item.canShuffle {
-                    Button(L10n.shuffle, systemImage: "shuffle") {
+                    Button {
                         viewModel.playShuffle(router: router.router)
+                    } label: {
+                        HStack {
+                            if viewModel.backgroundStates.contains(.shuffling) {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                                    .frame(width: 16, height: 16)
+                            }
+                            Label(L10n.shuffle, systemImage: "shuffle")
+                        }
                     }
+                    .disabled(viewModel.backgroundStates.contains(.shuffling))
                 }
             }
             .disabled(!isEnabled)
