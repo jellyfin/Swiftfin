@@ -145,7 +145,7 @@ struct ItemSubtitleUploadView: View {
                 self.subtitleFormat = format
                 self.subtitleData = try Data(contentsOf: fileURL)
             } else {
-                error = JellyfinAPIError(L10n.invalidFormat)
+                error = ErrorMessage(L10n.invalidFormat)
             }
         } catch {
             self.error = error
@@ -158,7 +158,7 @@ struct ItemSubtitleUploadView: View {
         guard let subtitleData = subtitleData,
               let subtitleFormat = subtitleFormat
         else {
-            error = JellyfinAPIError(L10n.noItemSelected)
+            error = ErrorMessage(L10n.noItemSelected)
             return
         }
 
@@ -175,7 +175,7 @@ struct ItemSubtitleUploadView: View {
 
             viewModel.send(.upload(subtitle))
         } else {
-            error = JellyfinAPIError(L10n.noItemSelected)
+            error = ErrorMessage(L10n.noItemSelected)
         }
     }
 }

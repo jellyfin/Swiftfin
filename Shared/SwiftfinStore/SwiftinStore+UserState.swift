@@ -108,7 +108,7 @@ extension UserState {
     func delete() throws {
         try SwiftfinStore.dataStack.perform { transaction in
             guard let storedUser = try transaction.fetchOne(From<UserModel>().where(\.$id == id)) else {
-                throw JellyfinAPIError("Unable to find user to delete")
+                throw ErrorMessage("Unable to find user to delete")
             }
 
             let storedDataClause = AnyStoredData.fetchClause(ownerID: id)
@@ -160,14 +160,10 @@ extension UserState {
 
     // we will always crop to a square, so just use width
     func profileImageSource(
-        client: JellyfinClient,
-        maxWidth: CGFloat? = nil
+        client: JellyfinClient
     ) -> ImageSource {
-        let scaleWidth = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
-
         let parameters = Paths.GetUserImageParameters(
-            userID: id,
-            maxWidth: scaleWidth
+            userID: id
         )
         let request = Paths.getUserImage(parameters: parameters)
 

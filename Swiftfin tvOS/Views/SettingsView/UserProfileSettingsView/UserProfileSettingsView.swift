@@ -35,23 +35,13 @@ struct UserProfileSettingsView: View {
                 UserProfileImage(
                     userID: viewModel.userSession.user.id,
                     source: viewModel.userSession.user.profileImageSource(
-                        client: viewModel.userSession.client,
-                        maxWidth: 400
+                        client: viewModel.userSession.client
                     )
                 )
                 .aspectRatio(contentMode: .fit)
                 .frame(maxWidth: 400)
             }
             .contentView {
-
-                // TODO: bring reset password to tvOS
-//            Section {
-//                ChevronButton(L10n.password)
-//                    .onSelect {
-//                        router.route(to: \.resetUserPassword, viewModel.userSession.user.id)
-//                    }
-//            }
-
                 Section {
                     ChevronButton(L10n.security) {
                         router.route(to: .localSecurity)

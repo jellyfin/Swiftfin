@@ -196,7 +196,7 @@ extension AVMediaPlayerProxy {
             case .failed:
                 if let error = self.player.error {
                     DispatchQueue.main.async {
-                        self.manager?.error(JellyfinAPIError("AVPlayer error: \(error.localizedDescription)"))
+                        self.manager?.error(ErrorMessage("AVPlayer error: \(error.localizedDescription)"))
                     }
                 }
             case .none, .readyToPlay, .unknown:

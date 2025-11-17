@@ -27,6 +27,7 @@ struct VideoPlayerSettingsView: View {
     @State
     private var isPresentingResumeOffsetStepper: Bool = false
 
+    // TODO: Update with correct settings once the tvOS PlayerUI is complete
     var body: some View {
         SplitFormWindowView()
             .descriptionView {
@@ -46,9 +47,9 @@ struct VideoPlayerSettingsView: View {
                         isPresentingResumeOffsetStepper = true
                     }
                 } header: {
-                    L10n.resume.text
+                    Text(L10n.resume)
                 } footer: {
-                    L10n.resumeOffsetDescription.text
+                    Text(L10n.resumeOffsetDescription)
                 }
 
                 Section {
@@ -57,9 +58,9 @@ struct VideoPlayerSettingsView: View {
                         router.route(to: .fontPicker(selection: $subtitleFontName))
                     }
                 } header: {
-                    L10n.subtitles.text
+                    Text(L10n.subtitles)
                 } footer: {
-                    L10n.subtitlesDisclaimer.text
+                    Text(L10n.subtitlesDisclaimer)
                 }
             }
             .navigationTitle(L10n.videoPlayer)

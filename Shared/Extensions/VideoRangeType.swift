@@ -23,10 +23,18 @@ extension VideoRangeType: Displayable {
             return "HLG"
         case .dovi:
             return "Dolby Vision"
+        case .doviWithEL:
+            return "Dolby Vision with Enhancement Layer"
+        case .doviWithELHDR10Plus:
+            return "Dolby Vision with Enhancement Layer / HDR10+"
         case .doviWithHDR10:
             return "Dolby Vision / HDR10"
+        case .doviWithHDR10Plus:
+            return "Dolby Vision / HDR10+"
         case .doviWithHLG:
             return "Dolby Vision / HLG"
+        case .doviInvalid:
+            return "Invalid Dobly Vision"
         case .doviWithSDR:
             return "Dolby Vision / SDR"
         case .hdr10Plus:

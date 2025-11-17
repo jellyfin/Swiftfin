@@ -17,7 +17,7 @@ final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
     enum Event: Equatable {
         case deleted
         case uploaded
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
     }
 
     // MARK: - Action
@@ -42,7 +42,7 @@ final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
     enum State: Hashable {
         case initial
         case content
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
     }
 
     @Published
@@ -107,7 +107,7 @@ final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
         case .cancel:
             subtitleTask?.cancel()
             backgroundStates.remove(.updating)
-            eventSubject.send(.error(JellyfinAPIError(L10n.taskCancelled)))
+            eventSubject.send(.error(ErrorMessage(L10n.taskCancelled)))
 
             return state
 
@@ -131,8 +131,8 @@ final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
                 } catch {
                     guard !Task.isCancelled else { return }
                     await MainActor.run {
-                        self.state = .error(JellyfinAPIError(error.localizedDescription))
-                        self.eventSubject.send(.error(JellyfinAPIError(error.localizedDescription)))
+                        self.state = .error(ErrorMessage(error.localizedDescription))
+                        self.eventSubject.send(.error(ErrorMessage(error.localizedDescription)))
                     }
                 }
             }
@@ -160,8 +160,8 @@ final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
                 } catch {
                     guard !Task.isCancelled else { return }
                     await MainActor.run {
-                        self.state = .error(JellyfinAPIError(error.localizedDescription))
-                        self.eventSubject.send(.error(JellyfinAPIError(error.localizedDescription)))
+                        self.state = .error(ErrorMessage(error.localizedDescription))
+                        self.eventSubject.send(.error(ErrorMessage(error.localizedDescription)))
                     }
                 }
             }
@@ -194,8 +194,8 @@ final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
                 } catch {
                     guard !Task.isCancelled else { return }
                     await MainActor.run {
-                        self.state = .error(JellyfinAPIError(error.localizedDescription))
-                        self.eventSubject.send(.error(JellyfinAPIError(error.localizedDescription)))
+                        self.state = .error(ErrorMessage(error.localizedDescription))
+                        self.eventSubject.send(.error(ErrorMessage(error.localizedDescription)))
                     }
                 }
             }
@@ -231,8 +231,8 @@ final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
                 guard !Task.isCancelled else { return }
 
                 await MainActor.run {
-                    self.state = .error(JellyfinAPIError(error.localizedDescription))
-                    self.eventSubject.send(.error(JellyfinAPIError(error.localizedDescription)))
+                    self.state = .error(ErrorMessage(error.localizedDescription))
+                    self.eventSubject.send(.error(ErrorMessage(error.localizedDescription)))
                 }
             }
         }
@@ -243,7 +243,7 @@ final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
 
     private func deleteSubtitles(mediaStreams: Set<MediaStream>) async throws {
         guard let itemID = item.id else {
-            throw JellyfinAPIError(L10n.unknownError)
+            throw ErrorMessage(L10n.unknownError)
         }
 
         /// Extract non-nil indexes from mediaStreams
@@ -259,7 +259,7 @@ final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
                 _ = try await userSession.client.send(request)
                 deletedIndices.insert(index)
             } catch {
-                throw JellyfinAPIError(L10n.failedDeletionAtIndexError(
+                throw ErrorMessage(L10n.failedDeletionAtIndexError(
                     index,
                     error
                 ))
@@ -271,7 +271,7 @@ final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
 
     private func searchSubtitles(language: String, isPerfectMatch: Bool? = nil) async throws -> [RemoteSubtitleInfo] {
         guard let itemID = item.id else {
-            throw JellyfinAPIError(L10n.unknownError)
+            throw ErrorMessage(L10n.unknownError)
         }
 
         let request = Paths.searchRemoteSubtitles(
@@ -288,7 +288,7 @@ final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
 
     private func setSubtitles(subtitles: Set<String>) async throws {
         guard let itemID = item.id else {
-            throw JellyfinAPIError(L10n.unknownError)
+            throw ErrorMessage(L10n.unknownError)
         }
 
         try await withThrowingTaskGroup(of: Void.self) { group in
@@ -307,7 +307,7 @@ final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
 
     private func uploadSubtitle(subtitle: UploadSubtitleDto) async throws {
         guard let itemID = item.id else {
-            throw JellyfinAPIError(L10n.unknownError)
+            throw ErrorMessage(L10n.unknownError)
         }
 
         let request = Paths.uploadSubtitle(itemID: itemID, subtitle)

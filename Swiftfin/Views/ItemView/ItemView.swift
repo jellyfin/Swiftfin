@@ -35,7 +35,7 @@ struct ItemView: View {
     @State
     private var isPresentingEventAlert = false
     @State
-    private var error: JellyfinAPIError?
+    private var error: ErrorMessage?
 
     // MARK: - Can Delete Item
 
@@ -141,7 +141,7 @@ struct ItemView: View {
             case let .error(error):
                 ErrorView(error: error)
             case .initial, .refreshing:
-                DelayedProgressView()
+                ProgressView()
             }
 
             // Show loading overlay when shuffling
@@ -161,6 +161,9 @@ struct ItemView: View {
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            viewModel.send(.refresh)
+        }
         .onFirstAppear {
             viewModel.send(.refresh)
         }

@@ -35,7 +35,7 @@ class TrickplayPreviewImageProvider: PreviewImageProvider {
         }
     }
 
-    private let info: TrickplayInfo
+    private let info: TrickplayInfoDto
     private let itemID: String
     private let mediaSourceID: String
     private let runtime: Duration
@@ -44,7 +44,7 @@ class TrickplayPreviewImageProvider: PreviewImageProvider {
     private var imageTasks: [Int: Task<TrickplayImage?, Never>] = [:]
 
     init(
-        info: TrickplayInfo,
+        info: TrickplayInfoDto,
         itemID: String,
         mediaSourceID: String,
         runtime: Duration

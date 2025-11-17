@@ -25,7 +25,7 @@ struct ServerLogsView: View {
     private var contentView: some View {
         List {
             ListTitleSection(
-                L10n.serverLogs,
+                L10n.serverLogs.localizedCapitalized,
                 description: L10n.logsDescription
             ) {
                 UIApplication.shared.open(URL(string: "https://jellyfin.org/docs/general/administration/troubleshooting")!)
@@ -59,27 +59,24 @@ struct ServerLogsView: View {
         }
     }
 
-    @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.getLogs()
-            }
-    }
-
     var body: some View {
         ZStack {
             switch viewModel.state {
             case .error:
-                viewModel.error.map { errorView(with: $0) }
+                viewModel.error.map {
+                    ErrorView(error: $0)
+                }
             case .initial:
                 contentView
             case .refreshing:
-                DelayedProgressView()
+                ProgressView()
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
-        .navigationTitle(L10n.serverLogs)
+        .navigationTitle(L10n.serverLogs.localizedCapitalized)
+        .refreshable {
+            viewModel.getLogs()
+        }
         .onFirstAppear {
             viewModel.getLogs()
         }

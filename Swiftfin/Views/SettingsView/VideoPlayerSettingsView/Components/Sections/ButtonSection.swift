@@ -27,11 +27,15 @@ extension VideoPlayerSettingsView {
             Section(L10n.buttons) {
 
                 ChevronButton(L10n.barButtons) {
-                    router.route(to: .actionButtonSelector(selectedButtonsBinding: $barActionButtons))
+                    router.route(to: .actionBarButtonSelector(
+                        selectedButtonsBinding: $barActionButtons
+                    ))
                 }
 
                 ChevronButton(L10n.menuButtons) {
-                    router.route(to: .actionButtonSelector(selectedButtonsBinding: $menuActionButtons))
+                    router.route(to: .actionMenuButtonSelector(
+                        selectedButtonsBinding: $menuActionButtons
+                    ))
                 }
             }
             .onChange(of: barActionButtons) { newValue in

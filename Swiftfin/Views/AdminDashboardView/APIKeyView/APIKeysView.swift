@@ -25,7 +25,7 @@ struct APIKeysView: View {
     private var contentView: some View {
         List {
             ListTitleSection(
-                L10n.apiKeysTitle,
+                L10n.apiKeysCapitalized,
                 description: L10n.apiKeysDescription
             )
 
@@ -47,28 +47,25 @@ struct APIKeysView: View {
         }
     }
 
-    @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.refresh()
-            }
-    }
-
     var body: some View {
         ZStack {
             switch viewModel.state {
             case .error:
-                viewModel.error.map { errorView(with: $0) }
+                viewModel.error.map {
+                    ErrorView(error: $0)
+                }
             case .initial:
                 contentView
             case .refreshing:
-                DelayedProgressView()
+                ProgressView()
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .animation(.linear(duration: 0.1), value: viewModel.apiKeys)
-        .navigationTitle(L10n.apiKeys)
+        .navigationTitle(L10n.apiKeysCapitalized)
+        .refreshable {
+            viewModel.refresh()
+        }
         .onFirstAppear {
             viewModel.refresh()
         }
@@ -87,7 +84,7 @@ struct APIKeysView: View {
             }
         }
         .alert(
-            L10n.createAPIKey,
+            L10n.createAPIKeyCapitalized,
             isPresented: $showCreateAPIAlert
         ) {
             TextField(L10n.applicationName, text: $appName)

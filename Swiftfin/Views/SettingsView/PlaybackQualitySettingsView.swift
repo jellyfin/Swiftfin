@@ -29,7 +29,7 @@ struct PlaybackQualitySettingsView: View {
                     selection: $appMaximumBitrate
                 )
             } header: {
-                L10n.bitrateDefault.text
+                Text(L10n.bitrateDefault)
             } footer: {
                 VStack(alignment: .leading) {
                     Text(L10n.bitrateDefaultDescription)
@@ -54,10 +54,10 @@ struct PlaybackQualitySettingsView: View {
                         selection: $appMaximumBitrateTest
                     )
                 } header: {
-                    L10n.bitrateTest.text
+                    Text(L10n.bitrateTest)
                 } footer: {
                     VStack(alignment: .leading) {
-                        L10n.bitrateTestDisclaimer.text
+                        Text(L10n.bitrateTestDisclaimer)
                     }
                 }
             }
@@ -89,7 +89,7 @@ struct PlaybackQualitySettingsView: View {
                             value: L10n.compatibleDescription
                         )
                         LabeledContent(
-                            L10n.direct,
+                            L10n.directPlay,
                             value: L10n.directDescription
                         )
                         LabeledContent(
@@ -102,6 +102,6 @@ struct PlaybackQualitySettingsView: View {
         }
         .animation(.linear, value: appMaximumBitrate)
         .animation(.linear, value: compatibilityMode)
-        .navigationTitle(L10n.playbackQuality)
+        .navigationTitle(L10n.playbackQuality.localizedCapitalized)
     }
 }

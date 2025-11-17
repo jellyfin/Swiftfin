@@ -211,14 +211,14 @@ extension BaseItemDto {
                 ),
                     let mediaSource = channel.mediaSources?.first
                 else {
-                    throw JellyfinAPIError(L10n.unknownError)
+                    throw ErrorMessage(L10n.unknownError)
                 }
                 return try await MediaPlayerItem.build(for: program, mediaSource: mediaSource)
             }
         default:
             MediaPlayerItemProvider(item: self) { item in
                 guard let mediaSource = item.mediaSources?.first else {
-                    throw JellyfinAPIError(L10n.unknownError)
+                    throw ErrorMessage(L10n.unknownError)
                 }
                 return try await MediaPlayerItem.build(for: item, mediaSource: mediaSource)
             }
@@ -504,7 +504,7 @@ extension BaseItemDto {
 
     func getFullItem(userSession: UserSession) async throws -> BaseItemDto {
         guard let id else {
-            throw JellyfinAPIError(L10n.unknownError)
+            throw ErrorMessage(L10n.unknownError)
         }
 
         let request = Paths.getItem(itemID: id, userID: userSession.user.id)

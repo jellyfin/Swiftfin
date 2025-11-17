@@ -211,14 +211,6 @@ struct PagingLibraryView<Element: Poster>: View {
     }
 
     @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.send(.refresh)
-            }
-    }
-
-    @ViewBuilder
     private var elementsView: some View {
         CollectionVGrid(
             uniqueElements: viewModel.elements,
@@ -253,7 +245,7 @@ struct PagingLibraryView<Element: Poster>: View {
                     elementsView
                 }
             case .initial, .refreshing:
-                DelayedProgressView()
+                ProgressView()
             default:
                 AssertionFailureView("Expected view for unexpected state")
             }
@@ -305,7 +297,7 @@ struct PagingLibraryView<Element: Poster>: View {
             case .content, .initial, .refreshing:
                 contentView
             case let .error(error):
-                errorView(with: error)
+                ErrorView(error: error)
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
@@ -315,6 +307,9 @@ struct PagingLibraryView<Element: Poster>: View {
         }
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
         .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            viewModel.send(.refresh)
+        }
         .ifLet(viewModel.filterViewModel) { view, filterViewModel in
             view.navigationBarFilterDrawer(
                 viewModel: filterViewModel,

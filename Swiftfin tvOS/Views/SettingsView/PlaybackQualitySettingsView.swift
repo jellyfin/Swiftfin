@@ -42,9 +42,9 @@ struct PlaybackQualitySettingsView: View {
                     ListRowMenu(L10n.maximumBitrate, selection: $appMaximumBitrate)
                         .focused($focusedItem, equals: .maximumBitrate)
                 } header: {
-                    L10n.bitrateDefault.text
+                    Text(L10n.bitrateDefault)
                 } footer: {
-                    L10n.bitrateDefaultDescription.text
+                    Text(L10n.bitrateDefaultDescription)
                 }
                 .animation(.none, value: appMaximumBitrate)
 
@@ -52,7 +52,7 @@ struct PlaybackQualitySettingsView: View {
                     Section {
                         ListRowMenu(L10n.testSize, selection: $appMaximumBitrateTest)
                     } footer: {
-                        L10n.bitrateTestDisclaimer.text
+                        Text(L10n.bitrateTestDisclaimer)
                     }
                 }
 
@@ -66,12 +66,12 @@ struct PlaybackQualitySettingsView: View {
                         }
                     }
                 } header: {
-                    L10n.deviceProfile.text
+                    Text(L10n.deviceProfile)
                 } footer: {
-                    L10n.deviceProfileDescription.text
+                    Text(L10n.deviceProfileDescription)
                 }
             }
-            .navigationTitle(L10n.playbackQuality)
+            .navigationTitle(L10n.playbackQuality.localizedCapitalized)
     }
 
     // MARK: - Description View Icon
@@ -116,7 +116,7 @@ struct PlaybackQualitySettingsView: View {
                     value: L10n.compatibleDescription
                 )
                 LabeledContent(
-                    L10n.direct,
+                    L10n.directPlay,
                     value: L10n.directDescription
                 )
                 LabeledContent(

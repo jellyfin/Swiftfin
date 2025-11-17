@@ -106,7 +106,7 @@ struct ServerUserDetailsView: View {
             }
 
             Section(L10n.parentalControls) {
-                ChevronButton(L10n.parentalRating) {
+                ChevronButton(L10n.parentalRatings) {
                     router.route(to: .userParentalRatings(viewModel: viewModel))
                 }
                 ChevronButton(L10n.accessSchedules) {
