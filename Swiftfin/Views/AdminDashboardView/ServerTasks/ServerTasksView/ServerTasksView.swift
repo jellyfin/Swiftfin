@@ -81,9 +81,6 @@ struct ServerTasksView: View {
             case .error:
                 viewModel.error.map {
                     ErrorView(error: $0)
-                        .onRetry {
-                            viewModel.refresh()
-                        }
                 }
             case .initial:
                 ProgressView()
@@ -92,7 +89,7 @@ struct ServerTasksView: View {
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.tasks)
         .refreshable {
-            viewModel.send(.refreshTasks)
+            viewModel.refresh()
         }
         .onFirstAppear {
             viewModel.refresh()
