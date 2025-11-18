@@ -92,15 +92,7 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    ChevronButton(L10n.accentColor) {
-                        router.route(to: .accentColorSettings)
-                    } icon: {
-                        EmptyView()
-                    } subtitle: {
-                        Circle()
-                            .fill(accentColor)
-                            .frame(width: 24, height: 24)
-                    }
+                    ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
                 } header: {
                     Text(L10n.appearance)
                 } footer: {

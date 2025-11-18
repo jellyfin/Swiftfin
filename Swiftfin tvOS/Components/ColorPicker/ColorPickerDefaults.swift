@@ -8,16 +8,14 @@
 
 import SwiftUI
 
-enum ColorPickerDefaults: String, CaseIterable {
+enum ColorPickerDefaults: String, CaseIterable, Displayable {
     case jellyfin
     case red
     case orange
     case yellow
     case green
     case blue
-}
 
-extension ColorPickerDefaults {
     var color: Color {
         switch self {
         case .jellyfin:
@@ -34,9 +32,7 @@ extension ColorPickerDefaults {
             return .blue
         }
     }
-}
 
-extension ColorPickerDefaults: Displayable {
     var displayTitle: String {
         switch self {
         case .jellyfin:

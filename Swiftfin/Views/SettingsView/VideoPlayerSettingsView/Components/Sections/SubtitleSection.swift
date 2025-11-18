@@ -34,9 +34,7 @@ extension VideoPlayerSettingsView {
                     step: 1
                 )
 
-                ColorPicker(selection: $subtitleColor, supportsOpacity: false) {
-                    Text(L10n.subtitleColor)
-                }
+                ColorPicker(L10n.subtitleColor, selection: $subtitleColor, supportsOpacity: false)
             } header: {
                 Text(L10n.subtitle)
             } footer: {

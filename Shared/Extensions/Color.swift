@@ -50,3 +50,49 @@ extension Color {
             abs(a1 - a2) < tolerance
     }
 }
+
+extension Color {
+
+    init?(hex: String) {
+        let hex = hex.hasPrefix("#") ? String(hex.dropFirst()) : hex
+
+        guard hex.count == 6 || hex.count == 8 else { return nil }
+        guard let value = UInt32(hex, radix: 16) else { return nil }
+
+        let red: CGFloat
+        let green: CGFloat
+        let blue: CGFloat
+        let opacity: CGFloat
+
+        if hex.count == 8 {
+            red = CGFloat((value & 0xFF00_0000) >> 24) / 255
+            green = CGFloat((value & 0x00FF_0000) >> 16) / 255
+            blue = CGFloat((value & 0x0000_FF00) >> 8) / 255
+            opacity = CGFloat(value & 0x0000_00FF) / 255
+        } else {
+            red = CGFloat((value & 0xFF0000) >> 16) / 255
+            green = CGFloat((value & 0x00FF00) >> 8) / 255
+            blue = CGFloat(value & 0x0000FF) / 255
+            opacity = 1
+        }
+
+        self.init(red: red, green: green, blue: blue, opacity: opacity)
+    }
+
+    func hexString(includeOpacity: Bool = false) -> String {
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+
+        uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+
+        let format = includeOpacity ? "#%02X%02X%02X%02X" : "#%02X%02X%02X"
+
+        let components = includeOpacity
+            ? [Int(255 * red), Int(255 * green), Int(255 * blue), Int(255 * alpha)]
+            : [Int(255 * red), Int(255 * green), Int(255 * blue)]
+
+        return String(format: format, arguments: components.map { $0 as CVarArg })
+    }
+}

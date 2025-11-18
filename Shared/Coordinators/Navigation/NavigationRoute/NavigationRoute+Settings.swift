@@ -212,11 +212,11 @@ extension NavigationRoute {
     }
 
     #if os(tvOS)
-    static let accentColorSettings = NavigationRoute(
-        id: "accentColorSettings"
-    ) {
-        AccentColorSettingsView()
-            .navigationTitle(L10n.accentColor)
+    static func colorPicker(title: String, selection: Binding<Color>, supportsOpacity: Bool) -> NavigationRoute {
+        NavigationRoute(id: "colorPicker") {
+            ColorPickerView(color: selection, supportsOpacity: supportsOpacity)
+                .navigationTitle(title.localizedCapitalized)
+        }
     }
     #endif
 }
