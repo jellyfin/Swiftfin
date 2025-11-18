@@ -109,7 +109,7 @@ extension ItemView {
                     ) {
                         viewModel.send(.toggleIsPlayed)
                     }
-                    .foregroundStyle(accentColor)
+                    .foregroundStyle(.jellyfinPurple)
                     .isSelected(isCheckmarkSelected)
                     .frame(minWidth: 100, maxWidth: .infinity)
                 }
