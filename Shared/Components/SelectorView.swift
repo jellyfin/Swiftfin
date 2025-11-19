@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 enum SelectorType {
@@ -15,9 +14,6 @@ enum SelectorType {
 }
 
 struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
-
-    @Default(.accentColor)
-    private var accentColor
 
     @State
     private var selectedItems: Set<Element>
@@ -68,15 +64,9 @@ struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
                     label(element)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
-                    if selectedItems.contains(element) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .resizable()
-                            .fontWeight(.bold)
-                            .aspectRatio(1, contentMode: .fit)
-                            .frame(width: 24, height: 24)
-                            .symbolRenderingMode(.palette)
-                            .foregroundStyle(accentColor.overlayColor, accentColor)
-                    }
+                    ListRowCheckbox(showDeselected: false)
+                        .isEditing(true)
+                        .isSelected(selectedItems.contains(element))
                 }
             }
         }

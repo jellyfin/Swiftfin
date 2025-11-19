@@ -23,11 +23,16 @@ struct NavigationBarCloseButtonModifier: ViewModifier {
                 Button {
                     action()
                 } label: {
+                    #if os(iOS)
                     Image(systemName: "xmark.circle.fill")
                         .fontWeight(.bold)
                         .symbolRenderingMode(.palette)
                         .foregroundStyle(accentColor.overlayColor, accentColor)
                         .opacity(disabled ? 0.75 : 1)
+                    #else
+                    /// tvOS ignores all styling for Toolbar Buttons
+                    Image(systemName: "xmark")
+                    #endif
                 }
                 .disabled(disabled)
             }
