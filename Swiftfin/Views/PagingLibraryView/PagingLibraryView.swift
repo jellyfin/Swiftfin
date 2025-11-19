@@ -297,11 +297,7 @@ struct PagingLibraryView<Element: Poster>: View {
                 viewModel: filterViewModel,
                 types: enabledDrawerFilters
             ) {
-                if $0.type == .sortBy || $0.type == .sortOrder {
-                    router.route(to: .filter(types: [.sortOrder, .sortBy], viewModel: $0.viewModel))
-                } else {
-                    router.route(to: .filter(types: [$0.type], viewModel: $0.viewModel))
-                }
+                router.route(to: .filter(types: [$0.type], viewModel: $0.viewModel))
             }
         }
         .onChange(of: defaultDisplayType) { newValue in
