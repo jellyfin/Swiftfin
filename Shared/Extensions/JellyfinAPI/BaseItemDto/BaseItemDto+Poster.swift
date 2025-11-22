@@ -15,6 +15,12 @@ import SwiftUI
 
 extension BaseItemDto: Poster {
 
+    struct Environment: CustomEnvironmentValue {
+        let useParent: Bool
+
+        static let `default` = Environment(useParent: false)
+    }
+
     var preferredPosterDisplayType: PosterDisplayType {
         type?.preferredPosterDisplayType ?? .portrait
     }
@@ -49,7 +55,7 @@ extension BaseItemDto: Poster {
             "tv"
         case .episode, .movie, .series, .video:
             "film"
-        case .folder:
+        case .collectionFolder, .folder, .userView:
             "folder.fill"
         case .musicVideo:
             "music.note.tv.fill"
@@ -60,7 +66,11 @@ extension BaseItemDto: Poster {
         }
     }
 
-    func portraitImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
+    func portraitImageSources(
+        maxWidth: CGFloat? = nil,
+        quality: Int? = nil,
+        environment: Environment
+    ) -> [ImageSource] {
         switch type {
         case .episode:
             [seriesImageSource(.primary, maxWidth: maxWidth, quality: quality)]
@@ -86,10 +96,14 @@ extension BaseItemDto: Poster {
         }
     }
 
-    func landscapeImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
+    func landscapeImageSources(
+        maxWidth: CGFloat? = nil,
+        quality: Int? = nil,
+        environment: Environment
+    ) -> [ImageSource] {
         switch type {
         case .episode:
-            if Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
+            if environment.useParent {
                 [
                     seriesImageSource(.thumb, maxWidth: maxWidth, quality: quality),
                     seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality),
@@ -98,7 +112,7 @@ extension BaseItemDto: Poster {
             } else {
                 [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
             }
-        case .folder, .program, .musicVideo, .video:
+        case .collectionFolder, .folder, .musicVideo, .program, .userView, .video:
             [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
         default:
             [
@@ -108,7 +122,11 @@ extension BaseItemDto: Poster {
         }
     }
 
-    func cinematicImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
+    func cinematicImageSources(
+        maxWidth: CGFloat? = nil,
+        quality: Int? = nil,
+        environment: Environment
+    ) -> [ImageSource] {
         switch type {
         case .episode:
             [seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality)]
@@ -117,23 +135,26 @@ extension BaseItemDto: Poster {
         }
     }
 
-    func squareImageSources(maxWidth: CGFloat?, quality: Int? = nil) -> [ImageSource] {
+    func squareImageSources(
+        maxWidth: CGFloat?,
+        quality: Int? = nil,
+        environment: Environment
+    ) -> [ImageSource] {
         switch type {
         case .audio, .channel, .musicAlbum, .tvChannel:
-            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
+            [
+                // TODO: generalize blurhash retrieval
+                imageSource(.primary, maxWidth: maxWidth, quality: quality),
+                imageSource(
+                    id: albumID,
+                    blurHash: imageBlurHashes?.primary?.first?.value,
+                    .primary,
+                    maxWidth: maxWidth,
+                    quality: quality
+                ),
+            ]
         default:
             []
-        }
-    }
-
-    func thumbImageSources() -> [ImageSource] {
-        switch preferredPosterDisplayType {
-        case .portrait:
-            portraitImageSources(maxWidth: 200, quality: 90)
-        case .landscape:
-            landscapeImageSources(maxWidth: 200, quality: 90)
-        case .square:
-            squareImageSources(maxWidth: 200, quality: 90)
         }
     }
 
@@ -149,5 +170,15 @@ extension BaseItemDto: Poster {
             image
                 .aspectRatio(contentMode: .fill)
         }
+    }
+}
+
+extension BaseItemDto: LibraryElement {
+
+    func librarySelectAction(router: Router.Wrapper, in namespace: Namespace) {}
+
+    func makeBody(libraryStyle: LibraryStyle) -> some View {
+        Color.red
+            .frame(height: 50)
     }
 }

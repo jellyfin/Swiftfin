@@ -19,15 +19,13 @@ extension ItemView.AboutView {
         let item: BaseItemDto
 
         var body: some View {
-            Card(title: item.displayTitle)
-                .content {
-                    TruncatedText(item.overview ?? L10n.noOverviewAvailable)
-                        .font(.subheadline)
-                        .lineLimit(4)
-                }
-                .onSelect {
-                    router.route(to: .itemOverview(item: item))
-                }
+            Card(title: item.displayTitle) {
+                router.route(to: .itemOverview(item: item))
+            } content: {
+                TruncatedText(item.overview ?? L10n.noOverviewAvailable)
+                    .font(.subheadline)
+                    .lineLimit(4)
+            }
         }
     }
 }

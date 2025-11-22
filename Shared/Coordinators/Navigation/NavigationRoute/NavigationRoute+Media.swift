@@ -21,10 +21,13 @@ extension NavigationRoute {
         ChannelLibraryView()
     }
 
+    @MainActor
     static let liveTV = NavigationRoute(
-        id: "liveTV"
+        id: "liveTV",
+        withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
     ) {
-        ProgramsView()
+//        ProgramsView()
+        ContentGroupView(provider: LiveTVGroupProvider())
     }
 
     static func mediaSourceInfo(source: MediaSourceInfo) -> NavigationRoute {

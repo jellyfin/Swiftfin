@@ -31,7 +31,7 @@ extension ChannelLibraryView {
                 ZStack {
                     Color.clear
 
-                    ImageView(channel.portraitImageSources(maxWidth: 110, quality: 90))
+                    ImageView(channel.imageSources(for: .portrait, size: .medium))
                         .image {
                             $0.aspectRatio(contentMode: .fit)
                         }
@@ -75,10 +75,10 @@ extension ChannelLibraryView {
         private var programListView: some View {
             VStack(alignment: .leading, spacing: 0) {
                 if let currentProgram = channel.currentProgram {
-                    ProgressBar(progress: currentProgram.programProgress(relativeTo: now) ?? 0)
-                        .frame(height: 8)
-                        .padding(.bottom, 8)
-                        .foregroundStyle(accentColor)
+//                    ProgressBar(progress: currentProgram.programProgress(relativeTo: now) ?? 0)
+//                        .frame(height: 8)
+//                        .padding(.bottom, 8)
+//                        .foregroundStyle(accentColor)
 
                     programLabel(for: currentProgram)
                         .font(.caption.weight(.bold))

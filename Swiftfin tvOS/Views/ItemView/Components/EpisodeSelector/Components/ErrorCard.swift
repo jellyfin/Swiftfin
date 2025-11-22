@@ -12,28 +12,17 @@ extension SeriesEpisodeSelector {
 
     struct ErrorCard: View {
 
-        let error: ErrorMessage
-        private var onSelect: () -> Void
-
-        init(error: ErrorMessage) {
-            self.error = error
-            self.onSelect = {}
-        }
-
-        func onSelect(perform action: @escaping () -> Void) -> Self {
-            copy(modifying: \.onSelect, with: action)
-        }
+        let error: Error
+        let action: () -> Void
 
         var body: some View {
             VStack(alignment: .leading) {
-                Button {
-                    onSelect()
-                } label: {
+                Button(action: action) {
                     Color.secondarySystemFill
                         .opacity(0.75)
                         .posterStyle(.landscape)
                         .overlay {
-                            Image(systemName: "arrow.clockwise")
+                            Image(systemName: "arrow.clockwise.circle.fill")
                                 .font(.system(size: 40))
                         }
                 }

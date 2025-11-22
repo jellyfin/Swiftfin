@@ -16,10 +16,11 @@ import JellyfinAPI
 // TODO: care for one long episodes list?
 //       - after SeasonItemViewModel is bidirectional
 //       - would have to see if server returns right amount of episodes/season
+@MainActor
 final class SeriesItemViewModel: ItemViewModel {
 
     @Published
-    var seasons: IdentifiedArrayOf<SeasonItemViewModel> = []
+    var seasons: IdentifiedArrayOf<PagingSeasonViewModel> = []
 
     // MARK: - Task
 
@@ -28,7 +29,6 @@ final class SeriesItemViewModel: ItemViewModel {
     // MARK: - Override Response
 
     override func respond(to action: ItemViewModel.Action) -> ItemViewModel.State {
-
         switch action {
         case .backgroundRefresh, .refresh:
             let parentState = super.respond(to: action)
@@ -50,7 +50,8 @@ final class SeriesItemViewModel: ItemViewModel {
 
                     let newSeasons = try await seasons
                         .sorted { ($0.indexNumber ?? -1) < ($1.indexNumber ?? -1) }
-                        .map(SeasonItemViewModel.init)
+                        .map(_PagingSeasonLibrary.init)
+                        .map(PagingSeasonViewModel.init)
 
                     await MainActor.run {
                         self.seasons.append(contentsOf: newSeasons)
@@ -79,7 +80,7 @@ final class SeriesItemViewModel: ItemViewModel {
     private func getNextUp() async throws -> BaseItemDto? {
 
         var parameters = Paths.GetNextUpParameters()
-        parameters.fields = .MinimumFields
+//        parameters.fields = .MinimumFields
         parameters.seriesID = item.id
         parameters.userID = userSession.user.id
 
@@ -99,7 +100,7 @@ final class SeriesItemViewModel: ItemViewModel {
 
         var parameters = Paths.GetResumeItemsParameters()
         parameters.userID = userSession.user.id
-        parameters.fields = .MinimumFields
+//        parameters.fields = .MinimumFields
         parameters.limit = 1
         parameters.parentID = item.id
 
@@ -114,7 +115,7 @@ final class SeriesItemViewModel: ItemViewModel {
     private func getFirstAvailableItem() async throws -> BaseItemDto? {
 
         var parameters = Paths.GetItemsByUserIDParameters()
-        parameters.fields = .MinimumFields
+//        parameters.fields = .MinimumFields
         parameters.includeItemTypes = [.episode]
         parameters.isRecursive = true
         parameters.limit = 1

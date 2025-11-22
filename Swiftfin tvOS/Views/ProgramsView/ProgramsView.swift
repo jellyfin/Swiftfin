@@ -61,18 +61,19 @@ struct ProgramsView: View {
             title: title,
             type: .landscape,
             items: programsViewModel[keyPath: keyPath]
-        ) { _ in
-//            guard let mediaSource = channelProgram.channel.mediaSources?.first else { return }
-//            router.route(
-//                to: \.liveVideoPlayer,
-//                LiveVideoPlayerManager(item: channelProgram.channel, mediaSource: mediaSource)
-//            )
-        } label: {
-            ProgramButtonContent(program: $0)
+        ) { _, _ in
+            //            guard let mediaSource = channelProgram.channel.mediaSources?.first else { return }
+            //            router.route(
+            //                to: \.liveVideoPlayer,
+            //                LiveVideoPlayerManager(item: channelProgram.channel, mediaSource: mediaSource)
+            //            )
         }
-        .posterOverlay(for: BaseItemDto.self) {
-            ProgramProgressOverlay(program: $0)
-        }
+//        } label: {
+//            ProgramButtonContent(program: $0)
+//        }
+//        .posterOverlay(for: BaseItemDto.self) {
+//            ProgramProgressOverlay(program: $0)
+//        }
     }
 
     var body: some View {

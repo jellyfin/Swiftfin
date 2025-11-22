@@ -8,12 +8,66 @@
 
 import SwiftUI
 
-// TODO: selected icon
-struct TabItem: Identifiable, Hashable {
+@MainActor
+enum TabItemSetting: @preconcurrency Identifiable {
+
+    case adminDashboard
+    case contentGroup(ContentGroupProviderSetting)
+    case item(id: String)
+    case liveTV
+    case media
+    case search
+    case settings
+
+    var id: String {
+        switch self {
+        case .adminDashboard:
+            "admin-dashboard"
+        case let .contentGroup(provider):
+            provider.provider.id
+        case let .item(id):
+            id
+        case .liveTV:
+            "live-tv"
+        case .media:
+            "media"
+        case .search:
+            "search"
+        case .settings:
+            "settings"
+        }
+    }
+
+    var item: TabItem {
+        switch self {
+        case .adminDashboard:
+            #if os(iOS)
+            .adminDashboard
+            #else
+            .settings
+            #endif
+        case let .contentGroup(provider):
+            .contentGroup(provider: provider.provider)
+        case let .item(id):
+            .item(id: id)
+        case .liveTV:
+            .liveTV
+        case .media:
+            .media
+        case .search:
+            .search
+        case .settings:
+            .settings
+        }
+    }
+}
+
+@MainActor
+struct TabItem: Displayable, Identifiable, SystemImageable {
 
     let content: AnyView
+    let displayTitle: String
     let id: String
-    let title: String
     let systemImage: String
     let labelStyle: any LabelStyle
 
@@ -26,28 +80,54 @@ struct TabItem: Identifiable, Hashable {
     ) {
         self.content = AnyView(content())
         self.id = id
-        self.title = title
+        self.displayTitle = title
         self.systemImage = systemImage
         self.labelStyle = labelStyle
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-
-    static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.id == rhs.id
     }
 }
 
 extension TabItem {
 
-    static let home = TabItem(
-        id: "home",
-        title: L10n.home,
-        systemImage: "house"
+    static let adminDashboard = TabItem(
+        id: "admin-dashboard",
+        title: L10n.dashboard,
+        systemImage: "server.rack"
     ) {
-        HomeView()
+        #if os(iOS)
+        AdminDashboardView()
+        #else
+        EmptyView()
+        #endif
+    }
+
+    static func contentGroup(
+        provider: some _ContentGroupProvider
+    ) -> TabItem {
+        TabItem(
+            id: provider.id,
+            title: provider.displayTitle,
+            systemImage: provider.systemImage
+        ) {
+            ContentGroupView(provider: provider)
+//            ContentGroupShimView(id: provider.id)
+        }
+    }
+
+    static func item(
+        id: String
+    ) -> TabItem {
+        TabItem(
+            id: id,
+            title: "Test",
+            systemImage: "figure.walk"
+        ) {
+            ItemView(
+                item: .init(
+                    id: id,
+                    type: .movie
+                )
+            )
+        }
     }
 
     static func library(
@@ -55,17 +135,29 @@ extension TabItem {
         systemName: String,
         filters: ItemFilterCollection
     ) -> TabItem {
-        TabItem(
-            id: "library-\(UUID().uuidString)",
+
+        let id = "library-\(UUID().uuidString)"
+
+        return TabItem(
+            id: id,
             title: title,
             systemImage: systemName
         ) {
-            let viewModel = ItemLibraryViewModel(
+            let library = PagingItemLibrary(
+                parent: .init(name: title),
                 filters: filters
             )
 
-            PagingLibraryView(viewModel: viewModel)
+            PagingLibraryView(library: library)
         }
+    }
+
+    static let liveTV = TabItem(
+        id: "live-tv",
+        title: L10n.liveTV,
+        systemImage: "play.tv"
+    ) {
+        NavigationRoute.liveTV.destination
     }
 
     static let media = TabItem(
@@ -73,6 +165,7 @@ extension TabItem {
         title: L10n.media,
         systemImage: "rectangle.stack.fill"
     ) {
+//        PagingLibraryView(library: MediaLibrary())
         MediaView()
     }
 
