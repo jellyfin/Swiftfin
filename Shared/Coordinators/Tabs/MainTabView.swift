@@ -11,9 +11,6 @@ import Factory
 import JellyfinAPI
 import SwiftUI
 
-// TODO: move popup to router
-//       - or, make tab view environment object
-
 struct MainTabView: View {
 
     @Default(.Customization.showPosterLabels)

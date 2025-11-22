@@ -98,9 +98,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                 viewModel.refresh()
             }
         }
-        .navigationBarMenuButton(
-            isLoading: viewModel.background.is(.retrievingNextPage)
-        ) {}
+//        .navigationBarMenuButton(
+//            isLoading: viewModel.background.is(.retrievingNextPage)
+//        ) {}
     }
 }
 

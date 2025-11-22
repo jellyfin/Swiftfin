@@ -43,6 +43,8 @@ enum TabItemSetting: @preconcurrency Identifiable {
         case .adminDashboard:
             #if os(iOS)
             .adminDashboard
+            #else
+            .settings
             #endif
         case let .contentGroup(provider):
             .contentGroup(provider: provider.provider)
