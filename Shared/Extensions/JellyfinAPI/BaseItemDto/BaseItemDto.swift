@@ -214,7 +214,7 @@ extension BaseItemDto {
                     userSession: userSession
                 )
                 else {
-                    throw JellyfinAPIError(L10n.unknownError)
+                    throw ErrorMessage(L10n.unknownError)
                 }
                 return try await MediaPlayerItem.build(for: channel)
             }
@@ -509,7 +509,7 @@ extension BaseItemDto {
 
     func getFullItem(userSession: UserSession) async throws -> BaseItemDto {
         guard let id else {
-            throw JellyfinAPIError(L10n.unknownError)
+            throw ErrorMessage(L10n.unknownError)
         }
 
         let request = Paths.getItem(itemID: id, userID: userSession.user.id)

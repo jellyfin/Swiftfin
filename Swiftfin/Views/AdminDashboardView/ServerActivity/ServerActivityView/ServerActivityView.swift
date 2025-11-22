@@ -27,15 +27,18 @@ struct ServerActivityView: View {
             switch viewModel.state {
             case .content:
                 contentView
-            case .error:
-                viewModel.error.map { errorView(with: $0) }
+            case let .error(error):
+                ErrorView(error: error)
             case .initial, .refreshing:
-                DelayedProgressView()
+                ProgressView()
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.activity)
         .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            viewModel.send(.refresh)
+        }
         .topBarTrailing {
             if viewModel.background.is(.retrievingNextPage) {
                 ProgressView()

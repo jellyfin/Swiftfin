@@ -25,11 +25,20 @@ struct SearchView: View {
     private var viewModel = SearchViewModel()
 
     @ViewBuilder
+    private var suggestionsView: some View {
+        VStack(spacing: 20) {
+            ForEach(viewModel.suggestions) { item in
+                Button(item.displayTitle) {
+                    searchQuery = item.displayTitle
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.secondary)
     private func errorView(with error: some Error) -> some View {
         ErrorView(error: error)
             .onRetry {
                 viewModel.search(query: searchQuery)
             }
+        }
     }
 
     @ViewBuilder
@@ -78,6 +87,9 @@ struct SearchView: View {
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea(edges: [.bottom, .horizontal])
+        .refreshable {
+            viewModel.search(query: searchQuery)
+        }
         .onFirstAppear {
             viewModel.getSuggestions()
         }

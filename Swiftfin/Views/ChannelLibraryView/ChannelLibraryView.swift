@@ -124,13 +124,6 @@ struct ChannelLibraryView: View {
         }
     }
 
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.refresh()
-            }
-    }
-
     var body: some View {
         ZStack {
             Color.clear
@@ -142,14 +135,17 @@ struct ChannelLibraryView: View {
                 } else {
                     contentView
                 }
-            case .error:
-                viewModel.error.map { errorView(with: $0) }
+            case let .error(error):
+                ErrorView(error: error)
             case .initial, .refreshing:
-                DelayedProgressView()
+                ProgressView()
             }
         }
         .navigationTitle(L10n.channels)
         .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            viewModel.send(.refresh)
+        }
         .onChange(of: channelDisplayType) { newValue in
             if UIDevice.isPhone {
                 layout = Self.phonelayout(channelDisplayType: newValue)

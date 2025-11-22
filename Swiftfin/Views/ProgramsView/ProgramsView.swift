@@ -147,14 +147,63 @@ struct LiveTVGroupProvider: _ContentGroupProvider {
                     posterSize: .small
                 )
             }
+            .edgePadding(.horizontal)
+        }
     }
 }
 
+    // TODO: probably make own pill view
+    //       - see if could merge with item view pills
+    @ViewBuilder
+    private func liveTVSectionPill(title: String, systemImage: String, onSelect: @escaping () -> Void) -> some View {
+        Button {
+            onSelect()
+        } label: {
+            Label(title, systemImage: systemImage)
+                .font(.callout.weight(.semibold))
+                .foregroundColor(.primary)
+                .padding(8)
+                .background {
+                    Color.systemFill
+                        .cornerRadius(10)
+                }
+        }
+    }
+
+    @ViewBuilder
+    private var contentView: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 20) {
+
+                liveTVSectionScrollView
+
+                if programsViewModel.hasNoResults {
+                    // TODO: probably change to "No Programs"
+                    Text(L10n.noResults)
+                }
+
+                if programsViewModel.recommended.isNotEmpty {
+                    programsSection(title: L10n.onNow, keyPath: \.recommended)
+                }
+
+                if programsViewModel.series.isNotEmpty {
+                    programsSection(title: L10n.series, keyPath: \.series)
+                }
+
+                if programsViewModel.movies.isNotEmpty {
+                    programsSection(title: L10n.movies, keyPath: \.movies)
+                }
 struct LiveTVChannelsPillGroup: _ContentGroup {
 
+                if programsViewModel.kids.isNotEmpty {
+                    programsSection(title: L10n.kids, keyPath: \.kids)
+                }
     let id: String = "asdf"
     let displayTitle: String = ""
 
+                if programsViewModel.sports.isNotEmpty {
+                    programsSection(title: L10n.sports, keyPath: \.sports)
+                }
     @ViewBuilder
     func body(with viewModel: VoidContentGroupViewModel) -> some View {
         _Body()

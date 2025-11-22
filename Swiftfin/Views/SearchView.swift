@@ -38,11 +38,18 @@ struct SearchView: View {
     private var viewModel = SearchViewModel()
 
     @ViewBuilder
+    private var suggestionsView: some View {
+        VStack(spacing: 20) {
+            ForEach(viewModel.suggestions) { item in
+                Button(item.displayTitle) {
+                    searchQuery = item.displayTitle
+                }
     private func errorView(with error: some Error) -> some View {
         ErrorView(error: error)
             .onRetry {
                 viewModel.search(query: searchQuery)
             }
+        }
     }
 
     @ViewBuilder
@@ -91,6 +98,9 @@ struct SearchView: View {
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .navigationTitle(L10n.search)
         .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            viewModel.search(query: searchQuery)
+        }
         .navigationBarFilterDrawer(
             viewModel: viewModel.filterViewModel,
             types: enabledDrawerFilters

@@ -96,18 +96,22 @@ extension SeriesEpisodeSelector {
 
         var body: some View {
             ZStack {
-                switch viewModel.state {
-                case .content:
-                    if viewModel.elements.isEmpty {
-                        EmptyHStack(focusedEpisodeID: $focusedEpisodeID)
-                    } else {
-                        contentView
+                PlaceholderHStack()
+
+                Group {
+                    switch viewModel.state {
+                    case .content:
+                        if viewModel.elements.isEmpty {
+                            EmptyHStack(focusedEpisodeID: $focusedEpisodeID)
+                        } else {
+                            contentView(viewModel: viewModel)
+                        }
+                    case let .error(error):
+                        ErrorHStack(viewModel: viewModel, error: error, focusedEpisodeID: $focusedEpisodeID)
+                    case .initial, .refreshing:
+                        LoadingHStack(focusedEpisodeID: $focusedEpisodeID)
                     }
-                case .error:
-                    ErrorHStack(viewModel: viewModel, focusedEpisodeID: $focusedEpisodeID)
-                case .initial, .refreshing:
-                    LoadingHStack(focusedEpisodeID: $focusedEpisodeID)
-                }
+                }.transition(.opacity.animation(.linear(duration: 0.1)))
             }
             .padding(.bottom, 45)
             .focusSection()
@@ -200,6 +204,26 @@ extension SeriesEpisodeSelector {
             }
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
+            .scrollDisabled(true)
+        }
+    }
+
+    // MARK: - Placeholder HStack
+
+    struct PlaceholderHStack: View {
+
+        var body: some View {
+            CollectionHStack(
+                count: 1,
+                columns: 3.5
+            ) { _ in
+                SeriesEpisodeSelector.EmptyCard()
+                    .padding(.horizontal, 4)
+            }
+            .insets(horizontal: EdgeInsets.edgePadding)
+            .itemSpacing(EdgeInsets.edgePadding / 2)
+            .opacity(0)
+            .allowsHitTesting(false)
             .scrollDisabled(true)
         }
     }

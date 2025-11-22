@@ -55,7 +55,7 @@ extension ServerState {
     func delete() throws {
         try SwiftfinStore.dataStack.perform { transaction in
             guard let storedServer = try transaction.fetchOne(From<ServerModel>().where(\.$id == id)) else {
-                throw JellyfinAPIError("Unable to find server to delete")
+                throw ErrorMessage("Unable to find server to delete")
             }
 
             let storedDataClause = AnyStoredData.fetchClause(ownerID: id)

@@ -36,7 +36,7 @@ final class ServerTasksViewModel: ViewModel, Stateful {
 
     enum State: Hashable {
         case content
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
         case initial
     }
 

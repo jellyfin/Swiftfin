@@ -51,12 +51,11 @@ extension DownloadTaskView {
                     // TODO: Break into subview
                     switch downloadTask.state {
                     case .ready, .cancelled:
-                        PrimaryButton(title: "Download")
-                            .onSelect {
-                                downloadManager.download(task: downloadTask)
-                            }
-                            .frame(maxWidth: 300)
-                            .frame(height: 50)
+                        Button("Download") {
+                            downloadManager.download(task: downloadTask)
+                        }
+                        .frame(maxWidth: 300)
+                        .frame(height: 50)
                     case let .downloading(progress):
                         HStack {
 //                            CircularProgressView(progress: progress)
@@ -78,28 +77,26 @@ extension DownloadTaskView {
                         .padding(.horizontal)
                     case let .error(error):
                         VStack {
-                            PrimaryButton(title: L10n.retry)
-                                .onSelect {
-                                    downloadManager.download(task: downloadTask)
-                                }
-                                .frame(maxWidth: 300)
-                                .frame(height: 50)
+                            Button(L10n.retry) {
+                                downloadManager.download(task: downloadTask)
+                            }
+                            .frame(maxWidth: 300)
+                            .frame(height: 50)
 
                             Text("Error: \(error.localizedDescription)")
                                 .padding(.horizontal)
                         }
                     case .complete:
-                        PrimaryButton(title: L10n.play)
-                            .onSelect {
-                                if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                                    router.dismiss()
+                        Button(L10n.play) {
+                            if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+                                router.dismiss()
 //                                    router.route(to: .videoPlayer(manager: DownloadVideoPlayerManager(downloadTask: downloadTask)))
-                                } else {
-                                    isPresentingVideoPlayerTypeError = true
-                                }
+                            } else {
+                                isPresentingVideoPlayerTypeError = true
                             }
-                            .frame(maxWidth: 300)
-                            .frame(height: 50)
+                        }
+                        .frame(maxWidth: 300)
+                        .frame(height: 50)
                     }
                 }
 

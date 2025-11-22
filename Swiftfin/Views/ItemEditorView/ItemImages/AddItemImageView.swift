@@ -48,6 +48,9 @@ struct AddItemImageView: View {
         }
         .navigationTitle(remoteImageInfoViewModel.remoteImageLibrary.library.imageType.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            remoteImageInfoViewModel.send(.refresh)
+        }
         .navigationBarBackButtonHidden(itemImagesViewModel.backgroundStates.contains(.updating))
         .navigationBarMenuButton(isLoading: itemImagesViewModel.backgroundStates.contains(.updating)) {
             ImageProvidersMenuContent(

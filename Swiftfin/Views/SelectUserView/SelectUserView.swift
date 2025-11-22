@@ -150,7 +150,7 @@ struct SelectUserView: View {
         guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &policyError) else {
             viewModel.logger.critical("\(policyError!.localizedDescription)")
             try? await viewModel.error(JellyfinAPIError(L10n.unableToPerformDeviceAuthFaceID))
-            throw JellyfinAPIError(L10n.deviceAuthFailed)
+            throw ErrorMessage(L10n.deviceAuthFailed)
         }
 
         do {
@@ -158,7 +158,7 @@ struct SelectUserView: View {
         } catch {
             viewModel.logger.critical("\(error.localizedDescription)")
             try? await viewModel.error(JellyfinAPIError(L10n.unableToPerformDeviceAuth))
-            throw JellyfinAPIError(L10n.deviceAuthFailed)
+            throw ErrorMessage(L10n.deviceAuthFailed)
         }
     }
 
@@ -433,11 +433,11 @@ struct SelectUserView: View {
                 .frame(minWidth: 50, maxWidth: 240)
                 .multilineTextAlignment(.center)
 
-            PrimaryButton(title: L10n.connect)
-                .onSelect {
-                    router.route(to: .connectToServer)
-                }
-                .frame(maxWidth: 300)
+            Button(L10n.connect) {
+                router.route(to: .connectToServer)
+            }
+            .frame(height: 50)
+            .frame(maxWidth: 300)
         }
     }
 

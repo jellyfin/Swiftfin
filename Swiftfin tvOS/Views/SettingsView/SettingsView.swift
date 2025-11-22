@@ -61,7 +61,6 @@ struct SettingsView: View {
                         viewModel.signOut()
                     }
                     .foregroundStyle(Color.jellyfinPurple.overlayColor, Color.jellyfinPurple)
-                    .listRowInsets(.zero)
                 }
 
                 Section(L10n.videoPlayer) {

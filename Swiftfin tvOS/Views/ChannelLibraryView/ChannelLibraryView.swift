@@ -72,6 +72,9 @@ struct ChannelLibraryView: View {
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
+        .refreshable {
+            viewModel.send(.refresh)
+        }
         .onFirstAppear {
             if viewModel.state == .initial {
                 viewModel.refresh()

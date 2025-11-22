@@ -87,15 +87,15 @@ struct ProgramsView: View {
                 }
             case let .error(error):
                 ErrorView(error: error)
-                    .onRetry {
-                        programsViewModel.send(.refresh)
-                    }
             case .initial, .refreshing:
                 ProgressView()
             }
         }
         .animation(.linear(duration: 0.1), value: programsViewModel.state)
         .ignoresSafeArea(edges: [.bottom, .horizontal])
+        .refreshable {
+            programsViewModel.send(.refresh)
+        }
         .onFirstAppear {
             if programsViewModel.state == .initial {
                 programsViewModel.send(.refresh)

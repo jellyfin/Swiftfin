@@ -31,12 +31,12 @@ extension MediaPlayerItem {
 
         guard let itemID = initialItem.id else {
             logger.critical("No item ID!")
-            throw JellyfinAPIError(L10n.unknownError)
+            throw ErrorMessage(L10n.unknownError)
         }
 
         guard let userSession = Container.shared.currentUserSession() else {
             logger.critical("No user session!")
-            throw JellyfinAPIError(L10n.unknownError)
+            throw ErrorMessage(L10n.unknownError)
         }
 
         var item = try await initialItem.getFullItem(userSession: userSession)
@@ -58,7 +58,7 @@ extension MediaPlayerItem {
             return nil
         }() else {
             logger.error("No media sources for item \(itemID)!")
-            throw JellyfinAPIError(L10n.unknownError)
+            throw ErrorMessage(L10n.unknownError)
         }
 
         let maxBitrate = try await requestedBitrate.getMaxBitrate()
@@ -118,11 +118,11 @@ extension MediaPlayerItem {
         }()
 
         guard let mediaSource else {
-            throw JellyfinAPIError("Unable to find media source for item")
+            throw ErrorMessage("Unable to find media source for item")
         }
 
         guard let playSessionID = response.value.playSessionID else {
-            throw JellyfinAPIError("No associated play session ID")
+            throw ErrorMessage("No associated play session ID")
         }
 
         let playbackURL = try Self.streamURL(
@@ -186,14 +186,14 @@ extension MediaPlayerItem {
     ) throws -> URL {
 
         guard let itemID = item.id else {
-            throw JellyfinAPIError("No item ID while building online media player item!")
+            throw ErrorMessage("No item ID while building online media player item!")
         }
 
         if let transcodingURL = mediaSource.transcodingURL {
             logger.trace("Using transcoding URL for item \(itemID)")
 
             guard let fullTranscodeURL = userSession.client.fullURL(with: transcodingURL)
-            else { throw JellyfinAPIError("Unable to make transcode URL") }
+            else { throw ErrorMessage("Unable to make transcode URL") }
             return fullTranscodeURL
         }
 
@@ -214,7 +214,7 @@ extension MediaPlayerItem {
             )
 
             guard let videoStreamURL = userSession.client.fullURL(with: videoStreamRequest)
-            else { throw JellyfinAPIError("Unable to make video stream URL") }
+            else { throw ErrorMessage("Unable to make video stream URL") }
 
             return videoStreamURL
         }
@@ -223,7 +223,7 @@ extension MediaPlayerItem {
 
         guard let path = mediaSource.path, let streamURL = URL(
             string: path
-        ) else { throw JellyfinAPIError("Unable to make stream URL") }
+        ) else { throw ErrorMessage("Unable to make stream URL") }
 
         return streamURL
     }

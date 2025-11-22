@@ -176,7 +176,7 @@ struct ItemSubtitleSearchView: View {
 
     private func setSubtitles() {
         guard selectedSubtitles.isNotEmpty else {
-            error = JellyfinAPIError(L10n.noItemSelected)
+            error = ErrorMessage(L10n.noItemSelected)
             return
         }
 

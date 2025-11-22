@@ -136,7 +136,7 @@ final class UserSignInViewModel: ViewModel {
               let username = userData.name
         else {
             logger.critical("Missing user data from network call")
-            throw JellyfinAPIError(L10n.unknownError)
+            throw ErrorMessage(L10n.unknownError)
         }
 
         if let existingUser = existingUser(id: id) {
@@ -164,7 +164,7 @@ final class UserSignInViewModel: ViewModel {
               let username = userData.name
         else {
             logger.error("Missing user data from network call")
-            throw JellyfinAPIError(L10n.unknownError)
+            throw ErrorMessage(L10n.unknownError)
         }
 
         if let existingUser = existingUser(id: id) {
@@ -207,7 +207,7 @@ final class UserSignInViewModel: ViewModel {
 
         guard let serverModel = try? dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id)) else {
             logger.critical("Unable to find server to save user")
-            throw JellyfinAPIError(L10n.unknownError)
+            throw ErrorMessage(L10n.unknownError)
         }
 
         let savedUserState = try dataStack.perform { transaction in
@@ -256,7 +256,7 @@ final class UserSignInViewModel: ViewModel {
 
         if let evaluatedPinPolicy = evaluatedPolicy as? PinEvaluatedUserAccessPolicy {
             guard user.state.state.pin == evaluatedPinPolicy.pin else {
-                throw JellyfinAPIError(L10n.incorrectPinForUser(user.state.state.username))
+                throw ErrorMessage(L10n.incorrectPinForUser(user.state.state.username))
             }
         }
 
