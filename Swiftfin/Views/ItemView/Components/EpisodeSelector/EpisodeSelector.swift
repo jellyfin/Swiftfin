@@ -62,7 +62,11 @@ struct SeriesEpisodeSelector: View {
 
             Group {
                 if let selectionViewModel {
-                    EpisodeHStack(viewModel: selectionViewModel, playButtonItem: viewModel.playButtonItem)
+                    EpisodeHStack(
+                        viewModel: selectionViewModel,
+                        seriesViewModel: viewModel,
+                        playButtonItem: viewModel.playButtonItem
+                    )
                 } else {
                     LoadingHStack()
                 }
