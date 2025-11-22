@@ -9,11 +9,72 @@
 import CollectionHStack
 import Foundation
 import JellyfinAPI
+import Logging
 import SwiftUI
+import UIKit
 
 extension SeriesEpisodeSelector {
 
     struct EpisodeHStack: View {
+
+        private enum Constants {
+            static let emptyCardID = "emptyCard"
+            static let errorCardID = "errorCard"
+            static let loadingCardID = "loadingCard"
+
+            static var playButtonScrollDelay: TimeInterval {
+                UIDevice.platformGeneration < 3 ? 0.35 : 0.1
+            }
+        }
+
+        private enum FocusUpdateReason: String {
+            case initial
+            case focusGuide
+            case pending
+            case seasonChange
+            case stateChange
+        }
+
+        private struct EpisodeFocusCoordinator {
+            var pendingEpisodeID: String?
+            var lastCommittedEpisodeID: String?
+            var isApplyingFocus = false
+
+            mutating func queuePendingEpisode(_ id: String?) {
+                pendingEpisodeID = id
+            }
+
+            mutating func registerCommit(for id: String) {
+                lastCommittedEpisodeID = id
+                if pendingEpisodeID == id {
+                    pendingEpisodeID = nil
+                }
+            }
+
+            mutating func dropPending(ifMatching id: String) {
+                if pendingEpisodeID == id {
+                    pendingEpisodeID = nil
+                }
+            }
+
+            mutating func reset() {
+                pendingEpisodeID = nil
+                lastCommittedEpisodeID = nil
+                isApplyingFocus = false
+            }
+
+            mutating func invalidate(using visibleIDs: Set<String>) {
+                if let last = lastCommittedEpisodeID, !visibleIDs.contains(last) {
+                    lastCommittedEpisodeID = nil
+                }
+
+                if let pending = pendingEpisodeID, !visibleIDs.contains(pending) {
+                    pendingEpisodeID = nil
+                }
+            }
+        }
+
+        private static let logger = Logger(label: "org.jellyfin.swiftfin.seriesEpisodeFocus")
 
         @EnvironmentObject
         private var focusGuide: FocusGuide
@@ -27,7 +88,7 @@ extension SeriesEpisodeSelector {
         @State
         private var didScrollToPlayButtonItem = false
         @State
-        private var lastFocusedEpisodeID: String?
+        private var focusCoordinator = EpisodeFocusCoordinator()
 
         @StateObject
         private var proxy = CollectionHStackProxy()
@@ -51,43 +112,7 @@ extension SeriesEpisodeSelector {
             .itemSpacing(EdgeInsets.edgePadding / 2)
             .proxy(proxy)
             .onFirstAppear {
-                guard !didScrollToPlayButtonItem else { return }
-                didScrollToPlayButtonItem = true
-
-                lastFocusedEpisodeID = playButtonItem?.id
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    guard let playButtonItem else { return }
-                    proxy.scrollTo(id: playButtonItem.unwrappedIDHashOrZero, animated: false)
-                }
-            }
-        }
-
-        // MARK: - Determine Which Episode should be Focused
-
-        private func getContentFocus() {
-            switch viewModel.state {
-            case .content:
-                if viewModel.elements.isEmpty {
-                    /// Focus the EmptyCard if the Season has no elements
-                    focusedEpisodeID = "emptyCard"
-                } else {
-                    if let lastFocusedEpisodeID,
-                       viewModel.elements.contains(where: { $0.id == lastFocusedEpisodeID })
-                    {
-                        /// Return focus to the Last Focused Episode if it exists in the current Season
-                        focusedEpisodeID = lastFocusedEpisodeID
-                    } else {
-                        /// Focus the First Episode in the season as a last resort
-                        focusedEpisodeID = viewModel.elements.first?.id
-                    }
-                }
-            case .error:
-                /// Focus the ErrorCard if the Season failed to load
-                focusedEpisodeID = "errorCard"
-            case .initial, .refreshing:
-                /// Focus the LoadingCard if the Season is currently loading
-                focusedEpisodeID = "loadingCard"
+                attemptScrollToPendingEpisodeIfNeeded()
             }
         }
 
@@ -118,22 +143,160 @@ extension SeriesEpisodeSelector {
                 focusGuide,
                 tag: "episodes",
                 onContentFocus: {
-                    getContentFocus()
+                    applyFocusIfNeeded(reason: .focusGuide)
                 },
                 top: "belowHeader"
             )
-            .onChange(of: viewModel.id) {
-                lastFocusedEpisodeID = viewModel.elements.first?.id
+            .onAppear {
+                configurePendingFocusIfNeeded()
+                applyFocusIfNeeded(reason: .initial)
             }
-            .onChange(of: focusedEpisodeID) { _, newValue in
-                guard let newValue else { return }
-                lastFocusedEpisodeID = newValue
+            .onChange(of: viewModel.id) { _, _ in
+                didScrollToPlayButtonItem = false
+                focusCoordinator.reset()
+                configurePendingFocusIfNeeded(force: true)
+                applyFocusIfNeeded(reason: .seasonChange)
             }
             .onChange(of: viewModel.state) { _, newValue in
                 if newValue == .content {
-                    lastFocusedEpisodeID = viewModel.elements.first?.id
+                    configurePendingFocusIfNeeded()
+                    attemptScrollToPendingEpisodeIfNeeded()
+                }
+                applyFocusIfNeeded(reason: .stateChange)
+            }
+            .onChange(of: focusedEpisodeID) { _, newValue in
+                guard let newValue else { return }
+                handleFocusedEpisodeChange(newValue)
+            }
+        }
+    }
+
+    private extension SeriesEpisodeSelector.EpisodeHStack {
+
+        var episodeIDs: Set<String> {
+            Set(viewModel.elements.compactMap(\.id))
+        }
+
+        var defaultEpisodeFocusID: String? {
+            if playButtonIsInSeason {
+                return playButtonItem?.id
+            }
+
+            return viewModel.elements.first?.id
+        }
+
+        var playButtonIsInSeason: Bool {
+            guard let playButtonItem else { return false }
+            return playButtonItem.seasonID == viewModel.id
+        }
+
+        func configurePendingFocusIfNeeded(force: Bool = false) {
+            if force {
+                let pendingID = playButtonIsInSeason ? playButtonItem?.id : nil
+                focusCoordinator.queuePendingEpisode(pendingID)
+                return
+            }
+
+            if focusCoordinator.pendingEpisodeID == nil,
+               focusCoordinator.lastCommittedEpisodeID == nil
+            {
+                focusCoordinator.queuePendingEpisode(defaultEpisodeFocusID)
+            }
+        }
+
+        func handleFocusedEpisodeChange(_ newValue: String) {
+            if isPlaceholder(newValue) {
+                focusCoordinator.dropPending(ifMatching: newValue)
+                return
+            }
+
+            if episodeIDs.contains(newValue) {
+                focusCoordinator.lastCommittedEpisodeID = newValue
+            }
+        }
+
+        func attemptScrollToPendingEpisodeIfNeeded() {
+            guard !didScrollToPlayButtonItem,
+                  playButtonIsInSeason,
+                  let pendingID = focusCoordinator.pendingEpisodeID,
+                  let playButtonItem,
+                  pendingID == playButtonItem.id
+            else {
+                return
+            }
+
+            didScrollToPlayButtonItem = true
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + Constants.playButtonScrollDelay) {
+                proxy.scrollTo(id: playButtonItem.unwrappedIDHashOrZero, animated: false)
+                applyFocusIfNeeded(reason: .pending)
+            }
+        }
+
+        func preferredFocusID() -> String? {
+            switch viewModel.state {
+            case .content:
+                guard !viewModel.elements.isEmpty else {
+                    focusCoordinator.lastCommittedEpisodeID = nil
+                    return Constants.emptyCardID
+                }
+
+                if let pending = focusCoordinator.pendingEpisodeID,
+                   episodeIDs.contains(pending)
+                {
+                    return pending
+                }
+
+                if let last = focusCoordinator.lastCommittedEpisodeID,
+                   episodeIDs.contains(last)
+                {
+                    return last
+                }
+
+                return viewModel.elements.first?.id ?? Constants.emptyCardID
+            case .error:
+                return Constants.errorCardID
+            case .initial, .refreshing:
+                return Constants.loadingCardID
+            }
+        }
+
+        func applyFocusIfNeeded(reason: FocusUpdateReason) {
+            focusCoordinator.invalidate(using: episodeIDs)
+
+            guard let targetID = preferredFocusID() else {
+                return
+            }
+
+            guard !focusCoordinator.isApplyingFocus else {
+                return
+            }
+
+            focusCoordinator.isApplyingFocus = true
+
+            var transaction = Transaction(animation: .none)
+            transaction.disablesAnimations = true
+
+            withTransaction(transaction) {
+                DispatchQueue.main.async {
+                    focusedEpisodeID = targetID
+
+                    if isPlaceholder(targetID) {
+                        focusCoordinator.dropPending(ifMatching: targetID)
+                    } else {
+                        focusCoordinator.registerCommit(for: targetID)
+                    }
+
+                    focusCoordinator.isApplyingFocus = false
+                    Self.logger.debug("Focused \(targetID) [reason: \(reason.rawValue)]")
                 }
             }
+        }
+
+        func isPlaceholder(_ id: String) -> Bool {
+            id == Constants.emptyCardID ||
+                id == Constants.errorCardID ||
+                id == Constants.loadingCardID
         }
     }
 
