@@ -189,21 +189,13 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
         }
     }
 
-    @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.refresh()
-            }
-    }
-
     var body: some View {
         ZStack {
             switch viewModel.state {
             case .content:
                 contentView
             case .error:
-                viewModel.error.map { errorView(with: $0) }
+                viewModel.error.map(ErrorView.init)
             case .initial, .refreshing:
                 ProgressView()
             }

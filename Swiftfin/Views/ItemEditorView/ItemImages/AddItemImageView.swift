@@ -49,7 +49,7 @@ struct AddItemImageView: View {
         .navigationTitle(remoteImageInfoViewModel.remoteImageLibrary.library.imageType.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
         .refreshable {
-            remoteImageInfoViewModel.send(.refresh)
+            remoteImageInfoViewModel.refresh()
         }
         .navigationBarBackButtonHidden(itemImagesViewModel.backgroundStates.contains(.updating))
         .navigationBarMenuButton(isLoading: itemImagesViewModel.backgroundStates.contains(.updating)) {
@@ -132,23 +132,15 @@ extension AddItemImageView {
             }
         }
 
-        @ViewBuilder
-        private func errorView(with error: some Error) -> some View {
-            ErrorView(error: error)
-                .onRetry {
-                    remoteImageInfoViewModel.refresh()
-                }
-        }
-
         var body: some View {
             ZStack {
                 switch viewModel.state {
                 case .content:
                     gridView
                 case .initial, .refreshing:
-                    DelayedProgressView()
+                    ProgressView()
                 case .error:
-                    viewModel.error.map { errorView(with: $0) }
+                    viewModel.error.map(ErrorView.init)
                 }
             }
             .animation(.linear(duration: 0.1), value: viewModel.state)

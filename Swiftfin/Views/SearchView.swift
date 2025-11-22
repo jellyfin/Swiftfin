@@ -10,9 +10,6 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: have a `SearchLibraryViewModel` that allows paging on searched items?
-// TODO: implement search view result type between `PosterHStack`
-//       and `ListHStack` (3 row list columns)? (iOS only)
 // TODO: have programs only pull recommended/current?
 //       - have progress overlay
 struct SearchView: View {
@@ -44,10 +41,6 @@ struct SearchView: View {
                 Button(item.displayTitle) {
                     searchQuery = item.displayTitle
                 }
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.search(query: searchQuery)
             }
         }
     }
@@ -61,17 +54,6 @@ struct SearchView: View {
                 )
             }
             .edgePadding(.vertical)
-        }
-    }
-
-    @ViewBuilder
-    private var suggestionsView: some View {
-        VStack(spacing: 20) {
-            ForEach(viewModel.suggestions) { item in
-                Button(item.displayTitle) {
-                    searchQuery = item.displayTitle
-                }
-            }
         }
     }
 
@@ -89,7 +71,7 @@ struct SearchView: View {
                     resultsView
                 }
             case .error:
-                viewModel.error.map { errorView(with: $0) }
+                viewModel.error.map(ErrorView.init)
             case .searching:
                 ProgressView()
             }

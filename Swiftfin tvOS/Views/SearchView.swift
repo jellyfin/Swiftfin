@@ -33,10 +33,6 @@ struct SearchView: View {
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(.secondary)
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.search(query: searchQuery)
             }
         }
     }
@@ -50,19 +46,6 @@ struct SearchView: View {
                 )
             }
             .edgePadding(.vertical)
-        }
-    }
-
-    @ViewBuilder
-    private var suggestionsView: some View {
-        VStack(spacing: 20) {
-            ForEach(viewModel.suggestions) { item in
-                Button(item.displayTitle) {
-                    searchQuery = item.displayTitle
-                }
-                .buttonStyle(.plain)
-                .foregroundStyle(.secondary)
-            }
         }
     }
 
@@ -80,7 +63,7 @@ struct SearchView: View {
                     resultsView
                 }
             case .error:
-                viewModel.error.map { errorView(with: $0) }
+                viewModel.error.map(ErrorView.init)
             case .searching:
                 ProgressView()
             }

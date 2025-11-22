@@ -47,14 +47,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     }
 
     @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.refresh()
-            }
-    }
-
-    @ViewBuilder
     private var contentView: some View {
         switch viewModel.state {
         case .initial, .refreshing:
@@ -75,7 +67,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                     }
             }
         case .error:
-            viewModel.error.map(errorView)
+            viewModel.error.map(ErrorView.init)
         }
     }
 

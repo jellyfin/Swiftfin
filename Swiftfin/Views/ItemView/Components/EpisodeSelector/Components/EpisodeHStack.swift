@@ -62,7 +62,11 @@ extension SeriesEpisodeSelector {
                     contentView
                 }
             case .error:
-                ErrorHStack(viewModel: viewModel)
+                viewModel.error.map { error in
+                    ErrorHStack(error: error) {
+                        viewModel.refresh()
+                    }
+                }
             case .initial, .refreshing:
                 LoadingHStack()
             }
@@ -85,10 +89,10 @@ extension SeriesEpisodeSelector {
     }
 
     // TODO: better refresh design
-    struct ErrorHStack: View {
+    struct ErrorHStack<_Error: Error>: View {
 
-        @ObservedObject
-        var viewModel: PagingSeasonViewModel
+        let error: _Error
+        let action: () -> Void
 
         var body: some View {
             CollectionHStack(
@@ -96,10 +100,9 @@ extension SeriesEpisodeSelector {
                 columns: UIDevice.isPhone ? 1.5 : 3.5
             ) { _ in
                 SeriesEpisodeSelector.ErrorCard(
-                    error: viewModel.error ?? JellyfinAPIError(L10n.unknownError)
-                ) {
-                    viewModel.refresh()
-                }
+                    error: error,
+                    action: action
+                )
             }
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)

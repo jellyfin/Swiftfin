@@ -27,8 +27,8 @@ struct ServerActivityView: View {
             switch viewModel.state {
             case .content:
                 contentView
-            case let .error(error):
-                ErrorView(error: error)
+            case .error:
+                viewModel.error.map(ErrorView.init)
             case .initial, .refreshing:
                 ProgressView()
             }
@@ -37,7 +37,7 @@ struct ServerActivityView: View {
         .navigationTitle(L10n.activity)
         .navigationBarTitleDisplayMode(.inline)
         .refreshable {
-            viewModel.send(.refresh)
+            try? await viewModel.refresh()
         }
         .topBarTrailing {
             if viewModel.background.is(.retrievingNextPage) {
@@ -55,14 +55,6 @@ struct ServerActivityView: View {
         .onFirstAppear {
             viewModel.refresh()
         }
-    }
-
-    @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.refresh()
-            }
     }
 
     // MARK: - Content View

@@ -135,8 +135,8 @@ struct ChannelLibraryView: View {
                 } else {
                     contentView
                 }
-            case let .error(error):
-                ErrorView(error: error)
+            case .error:
+                viewModel.error.map(ErrorView.init)
             case .initial, .refreshing:
                 ProgressView()
             }
@@ -144,7 +144,7 @@ struct ChannelLibraryView: View {
         .navigationTitle(L10n.channels)
         .navigationBarTitleDisplayMode(.inline)
         .refreshable {
-            viewModel.send(.refresh)
+            try? await viewModel.refresh()
         }
         .onChange(of: channelDisplayType) { newValue in
             if UIDevice.isPhone {
