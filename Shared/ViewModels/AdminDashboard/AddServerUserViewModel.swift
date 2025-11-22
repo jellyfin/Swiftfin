@@ -38,8 +38,6 @@ final class AddServerUserViewModel: ViewModel {
         case initial
     }
 
-    // MARK: - Create User
-
     @Function(\Action.Cases.add)
     private func _add(_ username: String, _ password: String) async throws {
         let parameters = CreateUserByName(name: username, password: password)
