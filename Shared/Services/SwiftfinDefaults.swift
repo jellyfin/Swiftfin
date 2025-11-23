@@ -12,26 +12,6 @@ import Foundation
 import SwiftUI
 import UIKit
 
-enum UnplayedIndicatorType: String, CaseIterable, Displayable, Identifiable, _DefaultsSerializable {
-
-    case hidden
-    case icon
-    case count
-
-    var id: String { rawValue }
-
-    var displayTitle: String {
-        switch self {
-        case .hidden:
-            return "None"
-        case .icon:
-            return "Triangle"
-        case .count:
-            return "Count"
-        }
-    }
-}
-
 // TODO: organize
 // TODO: all user settings could be moved to `StoredValues`?
 
