@@ -34,6 +34,7 @@ class ItemViewModel: ViewModel, Stateful {
 
     enum BackgroundState: Hashable {
         case refresh
+        case shuffling
     }
 
     // MARK: State
@@ -354,6 +355,187 @@ class ItemViewModel: ViewModel, Stateful {
         let response = try? await userSession.client.send(request)
 
         return response?.value.items ?? []
+    }
+
+    // MARK: - Get Shuffled Items
+
+    @MainActor
+    func getShuffledItems(excluding excludeItemIDs: [String] = []) async throws -> [BaseItemDto] {
+        []
+    }
+
+    @MainActor
+    static func fetchShuffledItemsPaginated(
+        userSession: UserSession,
+        parentID: String?,
+        includeItemTypes: [BaseItemKind],
+        excludeItemIDs: [String] = [],
+        enableUserData: Bool = false,
+        isMissing: Bool? = nil,
+        filterPlayable: Bool = false,
+        applyParentParameters: ((Paths.GetItemsByUserIDParameters) -> Paths.GetItemsByUserIDParameters)? = nil
+    ) async throws -> [BaseItemDto] {
+        let pageSize = ShuffleQueueConstants.pageSize
+        let maxItems = ShuffleQueueConstants.targetQueueSize
+        var allItems: [BaseItemDto] = []
+        var startIndex = 0
+        var currentExcludeIDs = excludeItemIDs
+
+        while allItems.count < maxItems {
+            var parameters = Paths.GetItemsByUserIDParameters()
+            parameters.enableUserData = enableUserData
+            parameters.fields = .MinimumFields
+            parameters.isRecursive = true
+            parameters.parentID = parentID
+            parameters.sortBy = [ItemSortBy.random.rawValue]
+            parameters.includeItemTypes = includeItemTypes
+            parameters.limit = min(pageSize, maxItems - allItems.count)
+            parameters.startIndex = startIndex
+
+            if let isMissing = isMissing {
+                parameters.isMissing = isMissing
+            }
+
+            if currentExcludeIDs.isNotEmpty {
+                parameters.excludeItemIDs = currentExcludeIDs
+            }
+
+            if let applyParentParameters = applyParentParameters {
+                parameters = applyParentParameters(parameters)
+            }
+
+            let request = Paths.getItemsByUserID(
+                userID: userSession.user.id,
+                parameters: parameters
+            )
+            let response = try await userSession.client.send(request)
+
+            var pageItems = response.value.items ?? []
+            if filterPlayable {
+                pageItems = pageItems.filter(\.isPlayable)
+            }
+            allItems.append(contentsOf: pageItems)
+
+            currentExcludeIDs.append(contentsOf: pageItems.compactMap(\.id))
+
+            if pageItems.count < pageSize || allItems.count >= maxItems {
+                break
+            }
+
+            startIndex += pageSize
+        }
+
+        return allItems
+    }
+
+    // MARK: - Play Shuffle
+
+    func playShuffle(router: NavigationCoordinator.Router) {
+        guard item.canShuffle else {
+            logger.error("Shuffle not supported for item type: \(String(describing: item.type))")
+            return
+        }
+
+        backgroundStates.insert(.shuffling)
+
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                let shuffledItems = try await self.getShuffledItems()
+
+                guard shuffledItems.isNotEmpty else {
+                    self.logger.error("No items to shuffle")
+                    self.backgroundStates.remove(.shuffling)
+                    return
+                }
+
+                guard var firstItem = shuffledItems.first else {
+                    self.logger.error("No first item in shuffled list")
+                    self.backgroundStates.remove(.shuffling)
+                    return
+                }
+
+                firstItem.userData?.playbackPositionTicks = 0
+
+                let fetchState = ShuffleActionHelper.FetchState(excludeItemIDs: Set(shuffledItems.compactMap(\.id)))
+                let fetchMoreItems: () async throws -> [BaseItemDto] = { [weak self, fetchState] in
+                    guard let self else { return [] }
+                    let newItems = try await self.getShuffledItems(excluding: Array(fetchState.excludeItemIDs))
+                    fetchState.excludeItemIDs.formUnion(newItems.compactMap(\.id))
+                    return newItems
+                }
+
+                let queue = ShuffleMediaPlayerQueue(items: shuffledItems, fetchMoreItems: fetchMoreItems)
+
+                let mediaSource: MediaSourceInfo?
+                #if os(tvOS)
+                let containerTypes: Set<BaseItemKind> = [.series, .boxSet, .collectionFolder, .folder, .playlist]
+                if let itemType = self.item.type, containerTypes.contains(itemType) {
+                    mediaSource = MediaSourceInfo()
+                } else {
+                    guard let selectedMediaSource = self.selectedMediaSource else {
+                        self.logger.error("Shuffle selected with no media source for playable item")
+                        self.backgroundStates.remove(.shuffling)
+                        return
+                    }
+                    mediaSource = selectedMediaSource
+                }
+                #else
+                mediaSource = nil
+                #endif
+
+                let manager = self.createShuffleManager(
+                    firstItem: firstItem,
+                    queue: queue,
+                    mediaSource: mediaSource
+                )
+
+                self.setupShuffleLoaderObservers(manager: manager)
+                router.route(to: .videoPlayer(manager: manager))
+            } catch {
+                self.logger.error("Error shuffling items: \(error)")
+                self.backgroundStates.remove(.shuffling)
+            }
+        }
+    }
+
+    @MainActor
+    private func createShuffleManager(
+        firstItem: BaseItemDto,
+        queue: ShuffleMediaPlayerQueue,
+        mediaSource: MediaSourceInfo?
+    ) -> MediaPlayerManager {
+        MediaPlayerManager(
+            item: firstItem,
+            queue: queue
+        ) { item in
+            if let mediaSource {
+                try await MediaPlayerItem.build(for: item, mediaSource: mediaSource)
+            } else {
+                try await MediaPlayerItem.build(for: item) {
+                    $0.userData?.playbackPositionTicks = 0
+                }
+            }
+        }
+    }
+
+    @MainActor
+    private func setupShuffleLoaderObservers(manager: MediaPlayerManager) {
+        manager.$state
+            .sink { [weak self] state in
+                if state == .playback {
+                    self?.backgroundStates.remove(.shuffling)
+                }
+            }
+            .store(in: &manager.cancellables)
+
+        manager.$playbackItem
+            .sink { [weak self] playbackItem in
+                if playbackItem != nil {
+                    self?.backgroundStates.remove(.shuffling)
+                }
+            }
+            .store(in: &manager.cancellables)
     }
 
     private func setIsPlayed(_ isPlayed: Bool) async throws {

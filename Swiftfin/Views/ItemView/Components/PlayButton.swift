@@ -26,13 +26,9 @@ extension ItemView {
 
         private let logger = Logger.swiftfin()
 
-        // MARK: - Validation
-
         private var isEnabled: Bool {
             viewModel.selectedMediaSource != nil
         }
-
-        // MARK: - Title
 
         private var title: String {
             /// Use the Season/Episode label for the Series ItemView
@@ -51,8 +47,6 @@ extension ItemView {
             }
         }
 
-        // MARK: - Media Source
-
         private var source: String? {
             guard let sourceLabel = viewModel.selectedMediaSource?.displayTitle,
                   viewModel.item.mediaSources?.count ?? 0 > 1
@@ -62,8 +56,6 @@ extension ItemView {
 
             return sourceLabel
         }
-
-        // MARK: - Body
 
         var body: some View {
             Button {
@@ -91,11 +83,25 @@ extension ItemView {
                         play(fromBeginning: true)
                     }
                 }
+
+                if viewModel.item.canShuffle {
+                    Button {
+                        viewModel.playShuffle(router: router.router)
+                    } label: {
+                        HStack {
+                            if viewModel.backgroundStates.contains(.shuffling) {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                                    .frame(width: 16, height: 16)
+                            }
+                            Label(L10n.shuffle, systemImage: "shuffle")
+                        }
+                    }
+                    .disabled(viewModel.backgroundStates.contains(.shuffling))
+                }
             }
             .disabled(!isEnabled)
         }
-
-        // MARK: - Play Content
 
         private func play(fromBeginning: Bool = false) {
             guard let playButtonItem = viewModel.playButtonItem,
