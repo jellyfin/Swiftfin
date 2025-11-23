@@ -50,7 +50,7 @@ struct IndicatorSettingsView: PlatformView {
             #if os(tvOS)
             ListRowMenu(L10n.showUnwatched, selection: $showUnplayed)
             #else
-            Picker(L10n.unplayed, selection: $showUnplayed) {
+            Picker(L10n.showUnwatched, selection: $showUnplayed) {
                 ForEach(UnplayedIndicatorType.allCases) { option in
                     Text(option.displayTitle).tag(option)
                 }
