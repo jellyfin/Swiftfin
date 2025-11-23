@@ -21,6 +21,8 @@ struct IndicatorSettingsView: View {
     private var showUnplayed
     @Default(.Customization.Indicators.showPlayed)
     private var showPlayed
+    @Default(.Customization.Indicators.showRemainingUnwatched)
+    private var showRemainingUnwatched
 
     var body: some View {
         Form {
@@ -33,6 +35,8 @@ struct IndicatorSettingsView: View {
                 Toggle(L10n.unplayed, isOn: $showUnplayed)
 
                 Toggle(L10n.played, isOn: $showPlayed)
+
+                Toggle(L10n.showRemainingUnwatched, isOn: $showRemainingUnwatched)
             }
         }
         .navigationTitle(L10n.indicators)
