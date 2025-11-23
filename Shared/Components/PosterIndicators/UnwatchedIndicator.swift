@@ -14,6 +14,14 @@ struct UnwatchedIndicator: View {
     private let size: CGFloat
     private let count: Int?
 
+    #if os(iOS)
+    private let padding: CGFloat = 4
+    private let bottomLeadingRadius: CGFloat = 5
+    #else
+    private let padding: CGFloat = 8
+    private let bottomLeadingRadius: CGFloat = 10
+    #endif
+
     init(size: CGFloat, count: Int? = nil) {
         self.size = size
         self.count = count
@@ -27,12 +35,12 @@ struct UnwatchedIndicator: View {
                 Text(count.description)
                     .fontWeight(.semibold)
                     .foregroundStyle(.primary)
-                    .padding(.horizontal, 4)
+                    .padding(.horizontal, padding)
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(height: size, alignment: .center)
                     .frame(minWidth: size)
                     .background {
-                        UnevenRoundedRectangle(bottomLeadingRadius: UIDevice.isTV ? 10 : 5)
+                        UnevenRoundedRectangle(bottomLeadingRadius: bottomLeadingRadius)
                             .foregroundStyle(.secondary)
                     }
             } else {
