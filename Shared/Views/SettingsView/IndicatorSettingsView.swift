@@ -9,8 +9,6 @@
 import Defaults
 import SwiftUI
 
-// TODO: show a sample poster to model indicators
-
 struct IndicatorSettingsView: PlatformView {
 
     @Default(.Customization.Indicators.showUnplayed)
@@ -33,6 +31,7 @@ struct IndicatorSettingsView: PlatformView {
         #if os(tvOS)
         SplitFormWindowView()
             .descriptionView {
+                // TODO: On tvOS - Show a sample poster to model indicators
                 Image(systemName: "checkmark.circle.fill")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
