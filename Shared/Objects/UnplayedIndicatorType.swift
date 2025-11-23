@@ -6,11 +6,14 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 
 enum UnplayedIndicatorType: String, CaseIterable, Displayable, Identifiable, _DefaultsSerializable {
 
-    case hidden, icon, count
+    case hidden
+    case icon
+    case count
 
     var id: String { rawValue }
 
