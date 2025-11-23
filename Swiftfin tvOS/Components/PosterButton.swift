@@ -210,7 +210,7 @@ extension PosterButton {
                                 .isVisible(showProgress)
                         } else if item.canBePlayed,
                                   !item.isLiveStream,
-                                  showUnplayed != .hidden
+                                  showUnplayed != .none
                         {
                             UnwatchedIndicator(
                                 size: 45,

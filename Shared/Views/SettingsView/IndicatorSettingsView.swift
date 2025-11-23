@@ -30,6 +30,7 @@ struct IndicatorSettingsView: PlatformView {
     }
 
     var tvOSView: some View {
+        #if os(tvOS)
         SplitFormWindowView()
             .descriptionView {
                 Image(systemName: "checkmark.circle.fill")
@@ -40,6 +41,7 @@ struct IndicatorSettingsView: PlatformView {
             .contentView {
                 contentView
             }
+        #endif
     }
 
     private var contentView: some View {

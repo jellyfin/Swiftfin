@@ -11,7 +11,7 @@ import Foundation
 
 enum UnplayedIndicatorType: String, CaseIterable, Displayable, Identifiable, _DefaultsSerializable {
 
-    case hidden
+    case none
     case indicator
     case count
 
@@ -19,8 +19,8 @@ enum UnplayedIndicatorType: String, CaseIterable, Displayable, Identifiable, _De
 
     var displayTitle: String {
         switch self {
-        case .hidden:
-            return L10n.none
+        case .none:
+            return L10n.off
         case .indicator:
             return L10n.indicator
         case .count:
