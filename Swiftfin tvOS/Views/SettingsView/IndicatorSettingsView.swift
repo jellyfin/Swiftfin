@@ -18,11 +18,9 @@ struct IndicatorSettingsView: View {
     @Default(.Customization.Indicators.showProgress)
     private var showProgress
     @Default(.Customization.Indicators.showUnplayed)
-    private var showUnwatched
+    private var showUnwatched: UnplayedIndicatorType
     @Default(.Customization.Indicators.showPlayed)
     private var showWatched
-    @Default(.Customization.Indicators.showRemaining)
-    private var showRemaining
 
     var body: some View {
         SplitFormWindowView()
@@ -40,11 +38,13 @@ struct IndicatorSettingsView: View {
 
                     Toggle(L10n.showProgress, isOn: $showProgress)
 
-                    Toggle(L10n.showUnwatched, isOn: $showUnwatched)
+                    Picker(L10n.showUnwatched, selection: $showUnwatched) {
+                        ForEach(UnplayedIndicatorType.allCases) { option in
+                            Text(option.displayTitle).tag(option)
+                        }
+                    }
 
                     Toggle(L10n.showWatched, isOn: $showWatched)
-
-                    Toggle(L10n.showRemaining, isOn: $showRemaining)
                 }
             }
             .navigationTitle(L10n.indicators)

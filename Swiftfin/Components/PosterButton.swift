@@ -187,7 +187,7 @@ extension PosterButton {
         @Default(.Customization.Indicators.showProgress)
         private var showProgress
         @Default(.Customization.Indicators.showUnplayed)
-        private var showUnplayed
+        private var showUnplayed: UnplayedIndicatorType
         @Default(.Customization.Indicators.showPlayed)
         private var showPlayed
 
@@ -204,9 +204,21 @@ extension PosterButton {
                             ProgressIndicator(progress: (item.userData?.playedPercentage ?? 0) / 100, height: 5)
                                 .isVisible(showProgress)
                         } else if item.canBePlayed, !item.isLiveStream {
-                            UnwatchedIndicator(size: 25)
-                                .foregroundColor(accentColor)
-                                .isVisible(showUnplayed)
+                            let unplayedCount = item.userData?.unplayedItemCount ?? 0
+                            switch showUnplayed {
+                            case .hidden:
+                                EmptyView()
+                            case .icon:
+                                UnwatchedIndicator(size: 25)
+                                    .foregroundColor(accentColor)
+                            case .count:
+                                if unplayedCount > 0 {
+                                    NumericBadge(content: "\(unplayedCount)")
+                                } else {
+                                    UnwatchedIndicator(size: 25)
+                                        .foregroundColor(accentColor)
+                                }
+                            }
                         }
                     }
 
@@ -214,7 +226,6 @@ extension PosterButton {
                         FavoriteIndicator(size: 25)
                             .isVisible(showFavorited)
                     }
-                    RemainingIndicator(item: item)
                 }
             }
         }

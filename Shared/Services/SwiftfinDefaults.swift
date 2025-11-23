@@ -12,6 +12,26 @@ import Foundation
 import SwiftUI
 import UIKit
 
+enum UnplayedIndicatorType: String, CaseIterable, Displayable, Identifiable, _DefaultsSerializable {
+
+    case hidden
+    case icon
+    case count
+
+    var id: String { rawValue }
+
+    var displayTitle: String {
+        switch self {
+        case .hidden:
+            return "None"
+        case .icon:
+            return "Triangle"
+        case .count:
+            return "Count"
+        }
+    }
+}
+
 // TODO: organize
 // TODO: all user settings could be moved to `StoredValues`?
 
@@ -135,9 +155,8 @@ extension Defaults.Keys {
 
             static let showFavorited: Key<Bool> = UserKey("showFavoritedIndicator", default: true)
             static let showProgress: Key<Bool> = UserKey("showProgressIndicator", default: true)
-            static let showUnplayed: Key<Bool> = UserKey("showUnplayedIndicator", default: true)
+            static let showUnplayed: Key<UnplayedIndicatorType> = UserKey("showUnplayedIndicator", default: .icon)
             static let showPlayed: Key<Bool> = UserKey("showPlayedIndicator", default: true)
-            static let showRemaining: Key<Bool> = UserKey("showRemainingIndicator", default: false)
         }
 
         enum Library {

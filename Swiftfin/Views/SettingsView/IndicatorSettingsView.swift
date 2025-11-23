@@ -18,11 +18,9 @@ struct IndicatorSettingsView: View {
     @Default(.Customization.Indicators.showProgress)
     private var showProgress
     @Default(.Customization.Indicators.showUnplayed)
-    private var showUnplayed
+    private var showUnplayed: UnplayedIndicatorType
     @Default(.Customization.Indicators.showPlayed)
     private var showPlayed
-    @Default(.Customization.Indicators.showRemaining)
-    private var showRemaining
 
     var body: some View {
         Form {
@@ -32,11 +30,13 @@ struct IndicatorSettingsView: View {
 
                 Toggle(L10n.progress, isOn: $showProgress)
 
-                Toggle(L10n.unplayed, isOn: $showUnplayed)
+                Picker(L10n.unplayed, selection: $showUnplayed) {
+                    ForEach(UnplayedIndicatorType.allCases) { option in
+                        Text(option.displayTitle).tag(option)
+                    }
+                }
 
                 Toggle(L10n.played, isOn: $showPlayed)
-
-                Toggle(L10n.showRemaining, isOn: $showRemaining)
             }
         }
         .navigationTitle(L10n.indicators)

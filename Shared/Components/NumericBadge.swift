@@ -36,10 +36,10 @@ struct NumericBadge: View {
             .font(.system(size: fontSize, weight: .bold))
             .foregroundStyle(.white)
             .frame(width: size, height: size)
-            .background(.black.opacity(0.8))
+            .background(Color.jellyfinPurple)
             .clipShape(.circle)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
             .padding(.top, 4)
-            .padding(.leading, 4)
+            .padding(.trailing, 4)
     }
 }
