@@ -13,22 +13,19 @@ import SwiftUI
 
 struct IndicatorSettingsView: View {
 
+    @Default(.Customization.Indicators.showUnplayed)
+    private var showUnplayed
+
     @Default(.Customization.Indicators.showFavorited)
     private var showFavorited
     @Default(.Customization.Indicators.showProgress)
     private var showProgress
-    @Default(.Customization.Indicators.showUnplayed)
-    private var showUnplayed: UnplayedIndicatorType
     @Default(.Customization.Indicators.showPlayed)
     private var showPlayed
 
     var body: some View {
         Form {
             Section {
-
-                Toggle(L10n.favorited, isOn: $showFavorited)
-
-                Toggle(L10n.progress, isOn: $showProgress)
 
                 Picker(L10n.unplayed, selection: $showUnplayed) {
                     ForEach(UnplayedIndicatorType.allCases) { option in
@@ -37,6 +34,10 @@ struct IndicatorSettingsView: View {
                 }
 
                 Toggle(L10n.played, isOn: $showPlayed)
+
+                Toggle(L10n.favorited, isOn: $showFavorited)
+
+                Toggle(L10n.progress, isOn: $showProgress)
             }
         }
         .navigationTitle(L10n.indicators)

@@ -12,7 +12,7 @@ import Foundation
 enum UnplayedIndicatorType: String, CaseIterable, Displayable, Identifiable, _DefaultsSerializable {
 
     case hidden
-    case icon
+    case indicator
     case count
 
     var id: String { rawValue }
@@ -20,11 +20,11 @@ enum UnplayedIndicatorType: String, CaseIterable, Displayable, Identifiable, _De
     var displayTitle: String {
         switch self {
         case .hidden:
-            return "None"
-        case .icon:
-            return "Triangle"
+            return L10n.none
+        case .indicator:
+            return L10n.indicator
         case .count:
-            return "Count"
+            return L10n.count
         }
     }
 }

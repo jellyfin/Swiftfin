@@ -187,7 +187,7 @@ extension PosterButton {
         @Default(.Customization.Indicators.showProgress)
         private var showProgress
         @Default(.Customization.Indicators.showUnplayed)
-        private var showUnplayed: UnplayedIndicatorType
+        private var showUnplayed
         @Default(.Customization.Indicators.showPlayed)
         private var showPlayed
 
@@ -203,22 +203,16 @@ extension PosterButton {
                         if (item.userData?.playbackPositionTicks ?? 0) > 0 {
                             ProgressIndicator(progress: (item.userData?.playedPercentage ?? 0) / 100, height: 5)
                                 .isVisible(showProgress)
-                        } else if item.canBePlayed, !item.isLiveStream {
-                            let unplayedCount = item.userData?.unplayedItemCount ?? 0
-                            switch showUnplayed {
-                            case .hidden:
-                                EmptyView()
-                            case .icon:
-                                UnwatchedIndicator(size: 25)
-                                    .foregroundColor(accentColor)
-                            case .count:
-                                if unplayedCount > 0 {
-                                    NumericBadge(content: "\(unplayedCount)", accentColor: accentColor)
-                                } else {
-                                    UnwatchedIndicator(size: 25)
-                                        .foregroundColor(accentColor)
-                                }
-                            }
+                        } else if item.canBePlayed,
+                                  !item.isLiveStream,
+                                  showUnplayed != .hidden
+                        {
+                            UnwatchedIndicator(
+                                size: 25,
+                                count:
+                                showUnplayed == .count ? item.userData?.unplayedItemCount : nil
+                            )
+                            .foregroundStyle(accentColor.overlayColor, accentColor)
                         }
                     }
 
