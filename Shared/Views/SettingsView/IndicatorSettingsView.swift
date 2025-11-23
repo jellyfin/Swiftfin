@@ -11,19 +11,25 @@ import SwiftUI
 
 // TODO: show a sample poster to model indicators
 
-struct IndicatorSettingsView: View {
+struct IndicatorSettingsView: PlatformView {
 
     @Default(.Customization.Indicators.showUnplayed)
     private var showUnplayed
+
     @Default(.Customization.Indicators.showPlayed)
     private var showPlayed
-
     @Default(.Customization.Indicators.showFavorited)
     private var showFavorited
     @Default(.Customization.Indicators.showProgress)
     private var showProgress
 
-    var body: some View {
+    var iOSView: some View {
+        Form {
+            contentView
+        }
+    }
+
+    var tvOSView: some View {
         SplitFormWindowView()
             .descriptionView {
                 Image(systemName: "checkmark.circle.fill")
@@ -32,18 +38,29 @@ struct IndicatorSettingsView: View {
                     .frame(maxWidth: 400)
             }
             .contentView {
+                contentView
+            }
+    }
 
-                Section(L10n.posters) {
+    private var contentView: some View {
+        Section(L10n.posters) {
 
-                    ListRowMenu(L10n.showUnwatched, selection: $showUnplayed)
-
-                    Toggle(L10n.showWatched, isOn: $showPlayed)
-
-                    Toggle(L10n.showFavorited, isOn: $showFavorited)
-
-                    Toggle(L10n.showProgress, isOn: $showProgress)
+            #if os(tvOS)
+            ListRowMenu(L10n.showUnwatched, selection: $showUnplayed)
+            #else
+            Picker(L10n.unplayed, selection: $showUnplayed) {
+                ForEach(UnplayedIndicatorType.allCases) { option in
+                    Text(option.displayTitle).tag(option)
                 }
             }
-            .navigationTitle(L10n.indicators)
+            #endif
+
+            Toggle(L10n.showWatched, isOn: $showPlayed)
+
+            Toggle(L10n.showFavorited, isOn: $showFavorited)
+
+            Toggle(L10n.showProgress, isOn: $showProgress)
+        }
+        .navigationTitle(L10n.indicators)
     }
 }

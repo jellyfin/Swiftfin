@@ -1380,8 +1380,6 @@ internal enum L10n {
   internal static let showProgress = L10n.tr("Localizable", "showProgress", fallback: "Show progress")
   /// Show Recently Added
   internal static let showRecentlyAdded = L10n.tr("Localizable", "showRecentlyAdded", fallback: "Show Recently Added")
-  /// Remaining
-  internal static let showRemaining = L10n.tr("Localizable", "showRemaining", fallback: "Remaining")
   /// Show unwatched
   internal static let showUnwatched = L10n.tr("Localizable", "showUnwatched", fallback: "Show unwatched")
   /// Show watched
