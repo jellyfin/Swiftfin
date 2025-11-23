@@ -137,7 +137,7 @@ extension Defaults.Keys {
             static let showProgress: Key<Bool> = UserKey("showProgressIndicator", default: true)
             static let showUnplayed: Key<Bool> = UserKey("showUnplayedIndicator", default: true)
             static let showPlayed: Key<Bool> = UserKey("showPlayedIndicator", default: true)
-            static let showRemainingUnwatched: Key<Bool> = UserKey("showRemainingUnwatchedIndicator", default: false)
+            static let showRemaining: Key<Bool> = UserKey("showRemainingIndicator", default: false)
         }
 
         enum Library {

@@ -10,15 +10,15 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct UnwatchedCountIndicator: View {
+struct RemainingIndicator: View {
 
-    @Default(.Customization.Indicators.showRemainingUnwatched)
-    private var showRemainingUnwatched
+    @Default(.Customization.Indicators.showRemaining)
+    private var showRemaining
 
     let item: BaseItemDto
 
     var body: some View {
-        if showRemainingUnwatched,
+        if showRemaining,
            item.type == .series,
            let count = item.userData?.unplayedItemCount,
            count > 0

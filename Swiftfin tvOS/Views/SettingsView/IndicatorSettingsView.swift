@@ -21,8 +21,8 @@ struct IndicatorSettingsView: View {
     private var showUnwatched
     @Default(.Customization.Indicators.showPlayed)
     private var showWatched
-    @Default(.Customization.Indicators.showRemainingUnwatched)
-    private var showRemainingUnwatched
+    @Default(.Customization.Indicators.showRemaining)
+    private var showRemaining
 
     var body: some View {
         SplitFormWindowView()
@@ -44,7 +44,7 @@ struct IndicatorSettingsView: View {
 
                     Toggle(L10n.showWatched, isOn: $showWatched)
 
-                    Toggle(L10n.showRemainingUnwatched, isOn: $showRemainingUnwatched)
+                    Toggle(L10n.showRemaining, isOn: $showRemaining)
                 }
             }
             .navigationTitle(L10n.indicators)

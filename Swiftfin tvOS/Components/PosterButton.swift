@@ -215,7 +215,7 @@ extension PosterButton {
                         FavoriteIndicator(size: 45)
                             .isVisible(showFavorited)
                     }
-                    UnwatchedCountIndicator(item: item)
+                    RemainingIndicator(item: item)
                 }
             }
         }

@@ -43,13 +43,3 @@ struct NumericBadge: View {
             .padding(.leading, 4)
     }
 }
-
-#Preview {
-    ZStack {
-        Color.gray.opacity(0.3)
-            .safeAreaInset(edge: .top) {
-                Text("Top text")
-            }
-        NumericBadge(content: "12")
-    }
-}
