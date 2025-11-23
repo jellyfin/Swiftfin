@@ -213,7 +213,7 @@ extension PosterButton {
                                     .foregroundColor(accentColor)
                             case .count:
                                 if unplayedCount > 0 {
-                                    NumericBadge(content: "\(unplayedCount)")
+                                    NumericBadge(content: "\(unplayedCount)", accentColor: accentColor)
                                 } else {
                                     UnwatchedIndicator(size: 25)
                                         .foregroundColor(accentColor)

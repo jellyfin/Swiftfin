@@ -183,6 +183,8 @@ extension PosterButton {
     // TODO: Find better way for these indicators, see EpisodeCard
     struct DefaultOverlay: View {
 
+        @Default(.accentColor)
+        private var accentColor
         @Default(.Customization.Indicators.showFavorited)
         private var showFavorited
         @Default(.Customization.Indicators.showProgress)
@@ -214,7 +216,7 @@ extension PosterButton {
                                     .foregroundColor(.jellyfinPurple)
                             case .count:
                                 if unplayedCount > 0 {
-                                    NumericBadge(content: "\(unplayedCount)")
+                                    NumericBadge(content: "\(unplayedCount)", accentColor: accentColor)
                                 } else {
                                     UnwatchedIndicator(size: 45)
                                         .foregroundColor(.jellyfinPurple)

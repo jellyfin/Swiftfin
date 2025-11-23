@@ -11,6 +11,7 @@ import SwiftUI
 struct NumericBadge: View {
 
     let content: String
+    let accentColor: Color
 
     private var size: CGFloat {
         let font = UIFont.systemFont(ofSize: 11, weight: .bold)
@@ -32,14 +33,16 @@ struct NumericBadge: View {
     }
 
     var body: some View {
-        Text(content)
-            .font(.system(size: fontSize, weight: .bold))
-            .foregroundStyle(.white)
-            .frame(width: size, height: size)
-            .background(Color.jellyfinPurple)
-            .clipShape(.circle)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-            .padding(.top, 4)
-            .padding(.trailing, 4)
+        ZStack(alignment: .topTrailing) {
+            Color.clear
+
+            Text(content)
+                .font(.body.weight(.semibold))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 4)
+                .padding(.vertical, 2)
+                .background(accentColor)
+                .clipShape(.capsule)
+        }
     }
 }
