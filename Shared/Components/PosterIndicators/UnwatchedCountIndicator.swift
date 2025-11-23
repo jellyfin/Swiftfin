@@ -23,25 +23,7 @@ struct UnwatchedCountIndicator: View {
            let count = item.userData?.unplayedItemCount,
            count > 0
         {
-            NumericBadge(count: count)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+            NumericBadge(content: "\(count)")
         }
-    }
-}
-
-struct NumericBadge: View {
-
-    let count: Int
-
-    var body: some View {
-        ZStack {
-            Circle()
-                .fill(.black.opacity(0.7))
-
-            Text("\(count)")
-                .font(.caption2)
-                .foregroundColor(.white)
-        }
-        .frame(width: 20, height: 20)
     }
 }
