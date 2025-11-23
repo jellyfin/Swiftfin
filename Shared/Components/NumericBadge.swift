@@ -16,7 +16,7 @@ struct NumericBadge: View {
     private var size: CGFloat {
         let font = UIFont.systemFont(ofSize: 11, weight: .bold)
         let textSize = content.size(withAttributes: [.font: font])
-        let baseSize = max(textSize.width + 8, textSize.height + 4)
+        let baseSize = max(textSize.width + 10, textSize.height + 6)
         #if os(tvOS)
         return baseSize * 2
         #else
@@ -37,7 +37,7 @@ struct NumericBadge: View {
             Color.clear
 
             Text(content)
-                .font(.body.weight(.semibold))
+                .font(.footnote.weight(.semibold))
                 .foregroundStyle(.white)
                 .padding(.horizontal, 4)
                 .padding(.vertical, 2)
