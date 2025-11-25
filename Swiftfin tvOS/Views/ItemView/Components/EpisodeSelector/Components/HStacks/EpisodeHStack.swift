@@ -122,7 +122,6 @@ extension SeriesEpisodeSelector {
             )
             .onChange(of: viewModel.id) {
                 lastFocusedEpisodeID = viewModel.elements.first?.id
-                didScrollToPlayButtonItem = false
             }
             .onChange(of: focusedEpisodeID) { _, newValue in
                 guard let newValue else { return }
