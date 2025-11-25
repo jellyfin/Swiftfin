@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Darwin
 import UIKit
 
 extension UIDevice {
@@ -70,37 +69,6 @@ extension UIDevice {
     }
     #endif
 }
-
-#if os(tvOS)
-extension UIDevice {
-
-    static var platformGeneration: Int {
-        let identifier = hardwareIdentifier()
-
-        switch identifier {
-        case "AppleTV14,1", "AppleTV14,2":
-            return 3
-        case "AppleTV11,1":
-            return 2
-        case "AppleTV6,2", "AppleTV5,3":
-            return 1
-        default:
-            return 3
-        }
-    }
-
-    private static func hardwareIdentifier() -> String {
-        var systemInfo = utsname()
-        uname(&systemInfo)
-
-        return withUnsafePointer(to: &systemInfo.machine.0) { ptr in
-            ptr.withMemoryRebound(to: CChar.self, capacity: 1) {
-                String(cString: $0)
-            }
-        }
-    }
-}
-#endif
 
 #if os(tvOS)
 enum UINotificationFeedbackGenerator {
