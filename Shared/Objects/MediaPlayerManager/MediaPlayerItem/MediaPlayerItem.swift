@@ -60,6 +60,8 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
 
     let requestedBitrate: PlaybackBitrate
 
+    var mediaSegments: [MediaSegmentDto] = []
+
     // MARK: init
 
     init(

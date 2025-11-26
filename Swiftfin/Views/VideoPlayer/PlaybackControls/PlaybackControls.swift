@@ -84,6 +84,13 @@ extension VideoPlayer {
 
                 PlaybackButtons()
                     .isVisible(!isScrubbing && containerState.isPresentingPlaybackControls)
+
+                if !isPresentingSupplement {
+                    SkipSegmentButton()
+                        .padding(.trailing, safeAreaInsets.leading + 60)
+                        .padding(.bottom, 100)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                }
             }
             .modifier(VideoPlayer.KeyCommandsModifier())
             .animation(.linear(duration: 0.1), value: isScrubbing)

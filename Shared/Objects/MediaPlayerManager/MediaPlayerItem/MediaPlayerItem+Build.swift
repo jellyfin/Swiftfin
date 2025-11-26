@@ -162,7 +162,7 @@ extension MediaPlayerItem {
             return nil
         }()
 
-        return .init(
+        let mediaPlayerItem = MediaPlayerItem(
             baseItem: item,
             mediaSource: mediaSource,
             playSessionID: playSessionID,
@@ -171,6 +171,22 @@ extension MediaPlayerItem {
             previewImageProvider: previewImageProvider,
             thumbnailProvider: item.getNowPlayingImage
         )
+
+        Task {
+            do {
+                let items = try await item.getMediaSegments(userSession: userSession)
+                if !items.isEmpty {
+                    await MainActor.run {
+                        mediaPlayerItem.mediaSegments = items
+                        logger.info("Media segments fetched: \(items)")
+                    }
+                }
+            } catch {
+                logger.error("Failed to fetch media segments: \(error)")
+            }
+        }
+
+        return mediaPlayerItem
     }
 
     // TODO: audio type stream

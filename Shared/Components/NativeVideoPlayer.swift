@@ -41,6 +41,11 @@ struct NativeVideoPlayer: View {
             switch manager.state {
             case .playback:
                 NativeVideoPlayerView(proxy: proxy)
+                    .overlay(alignment: .bottomTrailing) {
+                        SkipSegmentButton()
+                            .padding(.trailing, 80)
+                            .padding(.bottom, 120)
+                    }
             default:
                 ProgressView()
             }

@@ -57,6 +57,13 @@ extension VideoPlayer {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
             .edgePadding(.horizontal)
+            .overlay(alignment: .bottomTrailing) {
+                if !containerState.isPresentingSupplement {
+                    SkipSegmentButton()
+                        .padding(.trailing, 80)
+                        .padding(.bottom, 120)
+                }
+            }
             .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingSupplement)
             .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingOverlay)
             .animation(.linear(duration: 0.1), value: containerState.isScrubbing)
