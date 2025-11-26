@@ -168,7 +168,9 @@ extension MediaPlayerItem {
 
         Task {
             do {
-                let items = try await item.getMediaSegments(userSession: userSession)
+                let request = Paths.getItemSegments(itemID: itemID)
+                let response = try await userSession.client.send(request)
+                let items = response.value.items ?? []
                 if !items.isEmpty {
                     await MainActor.run {
                         mediaPlayerItem.mediaSegments = items
