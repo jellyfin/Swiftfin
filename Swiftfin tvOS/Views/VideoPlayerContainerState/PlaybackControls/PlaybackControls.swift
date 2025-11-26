@@ -78,6 +78,13 @@ extension VideoPlayer {
                             .isVisible(isScrubbing || isPresentingOverlay)
                             .animation(.linear(duration: 0.25), value: isPresentingOverlay)
                     }
+                    .overlay(alignment: .bottomTrailing) {
+                        if !isPresentingSupplement {
+                            SkipSegmentButton()
+                                .padding(.trailing, 80)
+                                .padding(.bottom, 120)
+                        }
+                    }
             }
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.bouncy(duration: 0.4), value: isPresentingSupplement)

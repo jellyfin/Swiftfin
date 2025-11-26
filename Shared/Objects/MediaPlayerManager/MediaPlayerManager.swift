@@ -126,6 +126,8 @@ final class MediaPlayerManager: ViewModel {
     var rate: Float = 1.0
     @Published
     var queue: AnyMediaPlayerQueue? = nil
+    @Published
+    var currentSegment: MediaSegmentDto?
 
     @Published
     var supplements: [any MediaPlayerSupplement] = []
@@ -156,7 +158,10 @@ final class MediaPlayerManager: ViewModel {
 
     var seconds: Duration {
         get { secondsBox.value }
-        set { secondsBox.value = newValue }
+        set {
+            secondsBox.value = newValue
+            updateCurrentSegment()
+        }
     }
 
     /// Holds a weak reference to the current media player proxy.
@@ -321,5 +326,39 @@ final class MediaPlayerManager: ViewModel {
         case .paused:
             setPlaybackRequestStatus(status: .playing)
         }
+    }
+
+    private func updateCurrentSegment() {
+        guard let segments = playbackItem?.mediaSegments, !segments.isEmpty else {
+            if currentSegment != nil { currentSegment = nil }
+            return
+        }
+
+        let currentTicks = Int(seconds.seconds * 10_000_000)
+        let found = segments.first { segment in
+            guard let start = segment.startTicks, let end = segment.endTicks else { return false }
+            guard let type = segment.type else { return false }
+
+            let isSkippableType: Bool = {
+                switch type {
+                case .intro, .outro, .recap, .commercial: return true
+                default: return false
+                }
+            }()
+
+            return isSkippableType && currentTicks >= start && currentTicks < end
+        }
+
+        if currentSegment != found {
+            currentSegment = found
+        }
+    }
+
+    func skipCurrentSegment() {
+        guard let currentSegment, let endTicks = currentSegment.endTicks else { return }
+        let endSeconds = Double(endTicks) / 10_000_000
+        let newDuration = Duration.seconds(endSeconds)
+        self.seconds = newDuration
+        self.proxy?.setSeconds(newDuration)
     }
 }
