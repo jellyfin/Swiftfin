@@ -23,6 +23,13 @@ extension PagingLibraryView {
             self._box = StateObject(wrappedValue: BindingBox(source: libraryStyle))
         }
 
+//        init(
+//            displayType: Binding<LibraryDisplayType>?,
+//            posterDisplayType: Binding<PosterDisplayType>?
+//        ) {
+//
+//        }
+
         var body: some View {
             Picker(selection: libraryStyle.displayType) {
                 ForEach(LibraryDisplayType.allCases, id: \.self) { displayType in

@@ -81,7 +81,7 @@ extension ImageInfo: Poster {
     }
 
     @ViewBuilder
-    func transform(image: Image) -> some View {
+    func transform(image: Image, displayType: PosterDisplayType) -> some View {
         switch imageType {
         case .logo:
             ContainerRelativeView(ratio: 0.95) {

@@ -64,10 +64,19 @@ extension BaseItemPerson: Poster {
 
 extension BaseItemPerson: LibraryElement {
 
-    func librarySelectAction(router: Router.Wrapper, in namespace: Namespace) {}
+    @MainActor
+    func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {
+        BaseItemDto(person: self)
+            .libraryDidSelectElement(router: router, in: namespace)
+    }
 
-    func makeBody(libraryStyle: LibraryStyle) -> some View {
-        Color.red
-            .frame(height: 50)
+    func makeGridBody(libraryStyle: LibraryStyle) -> some View {
+        BaseItemDto(person: self)
+            .makeGridBody(libraryStyle: libraryStyle)
+    }
+
+    func makeListBody(libraryStyle: LibraryStyle) -> some View {
+        BaseItemDto(person: self)
+            .makeListBody(libraryStyle: libraryStyle)
     }
 }

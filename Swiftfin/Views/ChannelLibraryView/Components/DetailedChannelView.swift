@@ -46,18 +46,17 @@ extension ChannelLibraryView {
 
         @ViewBuilder
         private func programLabel(for program: BaseItemDto) -> some View {
-            HStack(alignment: .top) {
+            HStack {
                 AlternateLayoutView(alignment: .leading) {
                     Text("00:00 AAA")
-                        .monospacedDigit()
                 } content: {
                     if let startDate = program.startDate {
                         Text(startDate, style: .time)
-                            .monospacedDigit()
                     } else {
                         Text(String.emptyRuntime)
                     }
                 }
+                .monospacedDigit()
 
                 Text(program.displayTitle)
             }
@@ -77,17 +76,17 @@ extension ChannelLibraryView {
                         .font(.footnote.weight(.bold))
                 }
 
-                if let nextProgram = channel.programAfterCurrent(offset: 0) {
-                    programLabel(for: nextProgram)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
-
-                if let futureProgram = channel.programAfterCurrent(offset: 1) {
-                    programLabel(for: futureProgram)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
+//                if let nextProgram = channel.programAfterCurrent(offset: 0) {
+//                    programLabel(for: nextProgram)
+//                        .font(.footnote)
+//                        .foregroundStyle(.secondary)
+//                }
+//
+//                if let futureProgram = channel.programAfterCurrent(offset: 1) {
+//                    programLabel(for: futureProgram)
+//                        .font(.footnote)
+//                        .foregroundStyle(.secondary)
+//                }
             }
             .id(channel.currentProgram)
         }

@@ -83,6 +83,9 @@ struct MainTabView: View {
         .libraryStyle(for: BaseItemDto.self) { _, _ in
             (defaultLibraryStyle, $defaultLibraryStyle)
         }
+        .libraryStyle(for: ChannelProgram.self) { _, _ in
+            (defaultLibraryStyle, $defaultLibraryStyle)
+        }
         .posterStyle(for: BaseItemDto.self) { item in
 
             @ViewBuilder

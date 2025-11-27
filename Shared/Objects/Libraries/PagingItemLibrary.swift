@@ -185,26 +185,17 @@ struct PagingItemLibrary: PagingLibrary, WithRandomElementLibrary {
         parameters.limit = 1
         parameters.sortBy = [ItemSortBy.random.rawValue]
 
-        let request = Paths.getItemsByUserID(userID: pageState.userSession.user.id, parameters: parameters)
+        let request = Paths.getItemsByUserID(
+            userID: pageState.userSession.user.id,
+            parameters: parameters
+        )
         let response = try? await pageState.userSession.client.send(request)
 
         return response?.value.items?.first
     }
 
     func makeLibraryBody(content: some View) -> AnyView {
-        MyLibraryBody(content: content, filterViewModel: filterViewModel)
-            .eraseToAnyView()
-    }
-
-    struct MyLibraryBody<Content: View>: View {
-
-        @Router
-        private var router
-
-        let content: Content
-        let filterViewModel: FilterViewModel
-
-        var body: some View {
+        WithRouter { router in
             content
                 .navigationBarFilterDrawer(
                     viewModel: filterViewModel,
@@ -212,8 +203,8 @@ struct PagingItemLibrary: PagingLibrary, WithRandomElementLibrary {
                 ) {
                     router.route(to: .filter(type: $0.type, viewModel: $0.viewModel))
                 }
-                .eraseToAnyView()
         }
+        .eraseToAnyView()
     }
 
     @MenuContentGroupBuilder

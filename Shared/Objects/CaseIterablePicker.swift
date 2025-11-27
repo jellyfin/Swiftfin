@@ -8,8 +8,6 @@
 
 import SwiftUI
 
-// typealias SupportedCaseIterablePicker = CaseIterablePicker<SupportedCaseIterable
-
 /// A `View` that automatically generates a SwiftUI `Picker` if `Element` conforms to `CaseIterable`.
 ///
 /// If `Element` is optional, an additional `none` value is added to select `nil` that can be customized

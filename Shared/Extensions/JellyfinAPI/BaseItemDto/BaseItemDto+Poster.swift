@@ -73,14 +73,14 @@ extension BaseItemDto: Poster {
     ) -> [ImageSource] {
         switch type {
         case .episode:
-            [seriesImageSource(.primary, maxWidth: maxWidth, quality: quality)]
+            seriesImageSource(.primary, maxWidth: maxWidth, quality: quality)
         case .boxSet, .channel, .liveTvChannel, .movie, .musicArtist, .person, .series, .tvChannel:
-            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
+            imageSource(.primary, maxWidth: maxWidth, quality: quality)
         default:
             // TODO: cleanup
             // parentBackdropItemID seems good enough
             if extraType != nil, let parentBackdropItemID {
-                [.init(
+                .init(
                     url: _imageURL(
                         .primary,
                         maxWidth: maxWidth,
@@ -89,9 +89,7 @@ extension BaseItemDto: Poster {
                         itemID: parentBackdropItemID,
                         requireTag: false
                     )
-                )]
-            } else {
-                []
+                )
             }
         }
     }
@@ -104,34 +102,17 @@ extension BaseItemDto: Poster {
         switch type {
         case .episode:
             if environment.useParent {
-                [
-                    seriesImageSource(.thumb, maxWidth: maxWidth, quality: quality),
-                    seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality),
-                    imageSource(.primary, maxWidth: maxWidth, quality: quality),
-                ]
+                seriesImageSource(.thumb, maxWidth: maxWidth, quality: quality)
+                seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality)
+                imageSource(.primary, maxWidth: maxWidth, quality: quality)
             } else {
-                [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
+                imageSource(.primary, maxWidth: maxWidth, quality: quality)
             }
         case .collectionFolder, .folder, .musicVideo, .program, .userView, .video:
-            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
+            imageSource(.primary, maxWidth: maxWidth, quality: quality)
         default:
-            [
-                imageSource(.thumb, maxWidth: maxWidth, quality: quality),
-                imageSource(.backdrop, maxWidth: maxWidth, quality: quality),
-            ]
-        }
-    }
-
-    func cinematicImageSources(
-        maxWidth: CGFloat? = nil,
-        quality: Int? = nil,
-        environment: Environment
-    ) -> [ImageSource] {
-        switch type {
-        case .episode:
-            [seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality)]
-        default:
-            [imageSource(.backdrop, maxWidth: maxWidth, quality: quality)]
+            imageSource(.thumb, maxWidth: maxWidth, quality: quality)
+            imageSource(.backdrop, maxWidth: maxWidth, quality: quality)
         }
     }
 
@@ -142,29 +123,47 @@ extension BaseItemDto: Poster {
     ) -> [ImageSource] {
         switch type {
         case .audio, .channel, .musicAlbum, .tvChannel:
-            [
-                // TODO: generalize blurhash retrieval
-                imageSource(.primary, maxWidth: maxWidth, quality: quality),
+            // TODO: generalize blurhash retrieval
+            imageSource(.primary, maxWidth: maxWidth, quality: quality)
+            imageSource(
+                id: albumID,
+                blurHash: imageBlurHashes?.primary?.first?.value,
+                .primary,
+                maxWidth: maxWidth,
+                quality: quality
+            )
+        case .program:
+            if let channelID {
                 imageSource(
-                    id: albumID,
-                    blurHash: imageBlurHashes?.primary?.first?.value,
+                    id: channelID,
                     .primary,
                     maxWidth: maxWidth,
                     quality: quality
-                ),
-            ]
+                )
+            }
         default:
             []
         }
     }
 
     @ViewBuilder
-    func transform(image: Image) -> some View {
+    func transform(image: Image, displayType: PosterDisplayType) -> some View {
         switch type {
         case .channel, .tvChannel:
             ContainerRelativeView(ratio: 0.95) {
                 image
                     .aspectRatio(contentMode: .fit)
+            }
+        case .program:
+            if displayType == .square {
+                // Using channel from above
+                ContainerRelativeView(ratio: 0.95) {
+                    image
+                        .aspectRatio(contentMode: .fit)
+                }
+            } else {
+                image
+                    .aspectRatio(contentMode: .fill)
             }
         default:
             image
@@ -173,12 +172,84 @@ extension BaseItemDto: Poster {
     }
 }
 
+private let landscapeWidth: CGFloat = 110
+private let portraitWidth: CGFloat = 60
+
 extension BaseItemDto: LibraryElement {
 
-    func librarySelectAction(router: Router.Wrapper, in namespace: Namespace) {}
+    @MainActor
+    func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {
+        switch type {
+        case .collectionFolder, .folder, .userView:
+            let library = PagingItemLibrary(parent: self)
+            router.route(to: .library(library: library), in: namespace)
+        default:
+            router.route(to: .item(item: self), in: namespace)
+        }
+    }
 
-    func makeBody(libraryStyle: LibraryStyle) -> some View {
-        Color.red
-            .frame(height: 50)
+    func makeGridBody(libraryStyle: LibraryStyle) -> some View {
+        WithRouter { router in
+            PosterButton(
+                item: self,
+                type: libraryStyle.posterDisplayType
+            ) { namespace in
+                libraryDidSelectElement(router: router, in: namespace)
+            } label: {
+                EmptyView()
+            }
+        }
+    }
+
+    func makeListBody(libraryStyle: LibraryStyle) -> some View {
+        WithNamespace { namespace in
+            WithRouter { router in
+                ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
+                    libraryDidSelectElement(router: router, in: namespace)
+                } leading: {
+                    PosterImage(
+                        item: self,
+                        type: libraryStyle.posterDisplayType,
+                        contentMode: .fill
+                    )
+                    .posterShadow()
+                    .frame(width: libraryStyle.posterDisplayType == .landscape ? landscapeWidth : portraitWidth)
+                } content: {
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(displayTitle)
+                            .font(.callout)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.primary)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
+
+                        accessoryView
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .backport
+                .matchedTransitionSource(id: "item", in: namespace)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var accessoryView: some View {
+        DotHStack {
+            if type == .episode, let seasonEpisodeLocator = seasonEpisodeLabel {
+                Text(seasonEpisodeLocator)
+            } else if let premiereYear = premiereDateYear {
+                Text(premiereYear)
+            }
+
+            if let runtime {
+                Text(runtime, format: .runtime)
+            }
+
+            if let officialRating {
+                Text(officialRating)
+            }
+        }
     }
 }

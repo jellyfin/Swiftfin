@@ -146,7 +146,7 @@ struct ExamplePosterItem: Poster {
     let systemImage: String = "film"
     let id: String = "example"
 
-//    func transform(image: Image) -> some View {
+//    func transform(image: Image, displayType: PosterDisplayType) -> some View {
 //        image
 //    }
 }

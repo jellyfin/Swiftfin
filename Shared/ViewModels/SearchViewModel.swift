@@ -129,7 +129,7 @@ final class SearchViewModel: ViewModel {
         var filters = filterViewModel.currentFilters
         filters.query = query
 
-        itemContentGroupViewModel.environment.filters = filters
+        itemContentGroupViewModel.provider.environment.filters = filters
 
         try await itemContentGroupViewModel.refresh()
     }

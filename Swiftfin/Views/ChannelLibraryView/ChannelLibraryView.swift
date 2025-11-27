@@ -12,19 +12,11 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-// TODO: remove and flatten to `PagingLibraryView`
-
 // TODO: sorting by number/filtering
 //       - see if can use normal filter view model?
 //       - how to add custom filters for data context?
 // TODO: saving item display type/detailed column count
 //       - wait until after user refactor
-
-// Note: Repurposes `LibraryDisplayType` to save from creating a new type.
-//       If there are other places where detailed/compact contextually differ
-//       from the library types, then create a new type and use it here.
-//       - list: detailed
-//       - grid: compact
 
 struct ChannelLibraryView: View {
 
@@ -38,12 +30,7 @@ struct ChannelLibraryView: View {
 
     @StateObject
     private var viewModel = PagingLibraryViewModel(
-        library: ChannelProgramLibrary(
-            parent: .init(
-                displayTitle: L10n.channels,
-                libraryID: "channels"
-            )
-        )
+        library: ChannelProgramLibrary()
     )
 
     // MARK: init

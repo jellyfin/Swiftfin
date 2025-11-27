@@ -73,7 +73,10 @@ struct PosterImage<Element: Poster>: View {
                 Color.clear
             } content: {
                 ImageView(imageSources)
-                    .image(element.transform)
+                    .image { image in
+                        element.transform(image: image, displayType: type)
+                    }
+//                    .image(element.transform)
                     .placeholder { imageSource in
                         if let blurHash = imageSource.blurHash {
                             BlurHashView(blurHash: blurHash)

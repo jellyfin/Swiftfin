@@ -74,6 +74,7 @@ struct PosterButton<Item: Poster, Label: View>: View {
     private func buttonLabel(overlay: some View = EmptyView()) -> some View {
         VStack(alignment: .leading) {
             posterImage(overlay: overlay)
+
             resolvedLabel
         }
     }
@@ -82,7 +83,7 @@ struct PosterButton<Item: Poster, Label: View>: View {
         Button {
             action(namespace)
         } label: {
-            // For focused offset label behavior on tvOS, this layout is required
+            // Layout required for tvOS focused offset label behavior
             #if os(tvOS)
             posterImage(overlay: posterStyle.overlay(posterStyle.displayType))
             resolvedLabel

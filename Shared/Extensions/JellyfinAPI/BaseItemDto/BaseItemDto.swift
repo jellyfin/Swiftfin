@@ -195,7 +195,7 @@ extension BaseItemDto {
             Rectangle()
                 .fill(Color.secondarySystemFill)
 
-            transform(image: image)
+            transform(image: image, displayType: preferredPosterDisplayType)
         }
         .posterAspectRatio(preferredPosterDisplayType, contentMode: .fit)
         .frame(width: 400)
@@ -265,6 +265,7 @@ extension BaseItemDto {
 
     // MARK: Calculations
 
+    @available(*, deprecated, message: "remove, use a formatter instead")
     var runTimeLabel: String? {
         let timeHMSFormatter: DateComponentsFormatter = {
             let formatter = DateComponentsFormatter()

@@ -12,7 +12,7 @@ struct FavoriteIndicator: View {
 
     var body: some View {
         ContainerRelativeView(
-            alignment: .bottomLeading,
+            alignment: .topLeading,
             ratio: 0.2
         ) {
             Image(systemName: "heart.circle.fill")

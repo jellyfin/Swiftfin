@@ -8,17 +8,15 @@
 
 import SwiftUI
 
-// TODO: come up with better name along with `ListRowButton`
-
-// Meant to be used when making a custom list without `List` or `Form`
+/// A view for usage in a plain `List` or a `CollectionVGrid`
 struct ListRow<Leading: View, Content: View>: View {
 
     @State
     private var contentSize: CGSize = .zero
 
-    private var action: () -> Void
+    private let action: () -> Void
     private let content: Content
-    private var insets: EdgeInsets
+    private let insets: EdgeInsets
     private let leading: Leading
 
     init(
@@ -35,7 +33,7 @@ struct ListRow<Leading: View, Content: View>: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
+            HStack(spacing: EdgeInsets.edgePadding) {
 
                 leading
 

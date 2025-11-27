@@ -89,9 +89,9 @@ extension SeriesEpisodeSelector {
                             overlayView
                         }
                         .contentShape(.contextMenuPreview, Rectangle())
+                        .posterStyle(.landscape)
                         .backport
                         .matchedTransitionSource(id: "item", in: namespace)
-                        .posterStyle(.landscape)
                         .posterShadow()
                 }
                 .foregroundStyle(.primary, .secondary)

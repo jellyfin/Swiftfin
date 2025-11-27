@@ -47,7 +47,7 @@ struct SearchView: View {
 
     @ViewBuilder
     private var resultsView: some View {
-        ScrollView(showsIndicators: false) {
+        ScrollView {
             VStack(alignment: .leading, spacing: 10) {
                 ContentGroupContentView(
                     viewModel: viewModel.itemContentGroupViewModel
@@ -55,6 +55,7 @@ struct SearchView: View {
             }
             .edgePadding(.vertical)
         }
+        .scrollIndicators(.hidden)
     }
 
     var body: some View {
@@ -92,7 +93,8 @@ struct SearchView: View {
         .onFirstAppear {
             viewModel.getSuggestions()
         }
-        .onChange(of: searchQuery) { newValue in
+        .backport
+        .onChange(of: searchQuery) { _, newValue in
             viewModel.search(query: newValue)
         }
         .searchable(

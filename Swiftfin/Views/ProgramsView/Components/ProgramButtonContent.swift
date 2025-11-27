@@ -30,23 +30,23 @@ struct ProgramButtonContent: View {
                 .foregroundColor(.primary)
                 .lineLimit(1, reservesSpace: true)
 
-            HStack(spacing: 2) {
-                if let startDate = program.startDate {
-                    Text(startDate, style: .time)
-                } else {
-                    Text(String.emptyDash)
-                }
-
-                Text("-")
-
-                if let endDate = program.endDate {
-                    Text(endDate, style: .time)
-                } else {
-                    Text(String.emptyDash)
-                }
-            }
-            .font(.footnote)
-            .foregroundStyle(.secondary)
+//            HStack(spacing: 2) {
+//                if let startDate = program.startDate {
+//                    Text(startDate, style: .time)
+//                } else {
+//                    Text(String.emptyDash)
+//                }
+//
+//                Text("-")
+//
+//                if let endDate = program.endDate {
+//                    Text(endDate, style: .time)
+//                } else {
+//                    Text(String.emptyDash)
+//                }
+//            }
+//            .font(.footnote)
+//            .foregroundStyle(.secondary)
         }
     }
 }

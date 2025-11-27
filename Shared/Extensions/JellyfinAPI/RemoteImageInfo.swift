@@ -49,7 +49,7 @@ extension RemoteImageInfo: @retroactive Identifiable, Poster {
     }
 
     @ViewBuilder
-    func transform(image: Image) -> some View {
+    func transform(image: Image, displayType: PosterDisplayType) -> some View {
         switch type {
         case .logo:
             ContainerRelativeView(ratio: 0.95) {

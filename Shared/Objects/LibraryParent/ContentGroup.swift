@@ -49,7 +49,7 @@ protocol _ContentGroupProvider: Displayable, SystemImageable {
     associatedtype Environment = Void
 
     var id: String { get }
-    var environment: Environment { get }
+    var environment: Environment { get set }
 
     func makeGroups(environment: Environment) async throws -> [any _ContentGroup]
 }
@@ -59,11 +59,18 @@ extension _ContentGroupProvider {
 }
 
 extension _ContentGroupProvider where Environment == Void {
-    var environment: Void { () }
+    var environment: Void {
+        get { () }
+        set {}
+    }
 }
 
+// TODO: remove
 extension _ContentGroupProvider where Environment: WithDefaultValue {
-    var environment: Environment { .default }
+    var environment: Environment {
+        get { .default }
+        set {}
+    }
 }
 
 extension _ContentGroupProvider where Environment == Void {

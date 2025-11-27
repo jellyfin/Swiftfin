@@ -90,9 +90,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                 viewModel.refresh()
             }
         }
-//        .navigationBarMenuButton(
-//            isLoading: viewModel.background.is(.retrievingNextPage)
-//        ) {}
+        .navigationBarMenuButton(
+            isLoading: viewModel.background.is(.retrievingNextPage)
+        ) {}
     }
 }
 
@@ -112,9 +112,6 @@ extension PagingLibraryView {
 
         @Router
         private var router
-
-        @StateObject
-        private var collectionVGridProxy: CollectionVGridProxy = .init()
 
         private var libraryStyleBinding: Binding<LibraryStyle>?
 
@@ -197,66 +194,6 @@ extension PagingLibraryView {
             evaluatedStyle.0
         }
 
-        private func select(element: Element, in namespace: Namespace.ID) {
-            switch element {
-            case let element as BaseItemDto:
-                select(item: element, in: namespace)
-            case let element as BaseItemPerson:
-                select(item: BaseItemDto(person: element), in: namespace)
-            default:
-                assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
-            }
-        }
-
-        private func select(item: BaseItemDto, in namespace: Namespace.ID) {
-            switch item.type {
-            case .collectionFolder, .folder, .userView:
-                let library = PagingItemLibrary(parent: item)
-                router.route(to: .library(library: library), in: namespace)
-            default:
-                router.route(to: .item(item: item), in: namespace)
-            }
-        }
-
-        @ViewBuilder
-        private func gridItemView(
-            element: Element
-        ) -> some View {
-            PosterButton(
-                item: element,
-                type: libraryStyle.posterDisplayType
-            ) { namespace in
-                select(element: element, in: namespace)
-            }
-            //            .posterStyle(for: BaseItemDto.self) { environment, _ in
-            //                var environment = environment
-            //                environment.useParentImages = false
-            //                return environment
-            //            }
-            //        } label: {
-            //            if item.showTitle {
-            //                PosterButton<Element>.TitleContentView(title: item.displayTitle)
-            //                    .lineLimit(1, reservesSpace: true)
-            //            } else if viewModel.parent?.libraryType == .folder {
-            //                PosterButton<Element>.TitleContentView(title: item.displayTitle)
-            //                    .lineLimit(1, reservesSpace: true)
-            //                    .hidden()
-            //            }
-            //        }
-        }
-
-        @ViewBuilder
-        private func listItemView(
-            element: Element
-        ) -> some View {
-            LibraryRow(
-                item: element,
-                posterType: libraryStyle.posterDisplayType
-            ) { namespace in
-                select(element: element, in: namespace)
-            }
-        }
-
         var body: some View {
             CollectionVGrid(
                 uniqueElements: viewModel.elements,
@@ -265,15 +202,16 @@ extension PagingLibraryView {
             ) { element, _ in
                 switch libraryStyle.displayType {
                 case .grid:
-                    gridItemView(element: element)
+                    element.makeGridBody(libraryStyle: libraryStyle)
+//                    gridItemView(element: element)
                 case .list:
-                    listItemView(element: element)
+                    element.makeListBody(libraryStyle: libraryStyle)
+//                    listItemView(element: element)
                 }
             }
             .onReachedBottomEdge(offset: .offset(300)) {
                 viewModel.retrieveNextPage()
             }
-            .proxy(collectionVGridProxy)
             .scrollIndicators(.hidden)
             .posterStyle(for: Element.self) { environment, _ in
                 var environment = environment
@@ -282,15 +220,8 @@ extension PagingLibraryView {
             }
             .onReceive(viewModel.events) { event in
                 switch event {
-                case let .retrievedRandomElement(item):
-                    switch item {
-                    case let item as BaseItemDto:
-                        select(item: item, in: namespace)
-                    case let item as BaseItemPerson:
-                        select(item: BaseItemDto(person: item), in: namespace)
-                    default:
-                        assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
-                    }
+                case let .retrievedRandomElement(element): ()
+//                    element.librarySelectAction(router: router, in: namespace)
                 }
             }
             .preference(key: MenuContentKey.self) {

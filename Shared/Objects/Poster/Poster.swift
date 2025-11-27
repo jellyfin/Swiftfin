@@ -14,6 +14,8 @@ import SwiftUI
 //       - pass in folder context
 //       - remove cinematic/thumb
 
+typealias ImageSourceBuilder = ArrayBuilder<ImageSource>
+
 /// A type that is displayed as a poster
 protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
 
@@ -22,31 +24,28 @@ protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
 
     var preferredPosterDisplayType: PosterDisplayType { get }
 
+    @ImageSourceBuilder
     func landscapeImageSources(
         maxWidth: CGFloat?,
         quality: Int?,
         environment: Environment
     ) -> [ImageSource]
 
+    @ImageSourceBuilder
     func portraitImageSources(
         maxWidth: CGFloat?,
         quality: Int?,
         environment: Environment
     ) -> [ImageSource]
 
+    @ImageSourceBuilder
     func squareImageSources(
         maxWidth: CGFloat?,
         quality: Int?,
         environment: Environment
     ) -> [ImageSource]
 
-    // TODO: remove and just have landscape with image size
-    func cinematicImageSources(
-        maxWidth: CGFloat?,
-        quality: Int?,
-        environment: Environment
-    ) -> [ImageSource]
-
+    @ImageSourceBuilder
     func imageSources(
         for displayType: PosterDisplayType,
         size: PosterDisplayType.Size,
@@ -55,7 +54,7 @@ protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
 
     @MainActor
     @ViewBuilder
-    func transform(image: Image) -> ImageBody
+    func transform(image: Image, displayType: PosterDisplayType) -> ImageBody
 }
 
 extension Poster {
@@ -127,7 +126,7 @@ extension Poster where ImageBody == Image {
 
     @MainActor
     @ViewBuilder
-    func transform(image: Image) -> ImageBody {
+    func transform(image: Image, displayType: PosterDisplayType) -> ImageBody {
         image
     }
 }

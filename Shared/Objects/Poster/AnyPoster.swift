@@ -59,8 +59,8 @@ struct AnyPoster: Poster {
         return inner(_poster)
     }
 
-    func transform(image: Image) -> some View {
-        _poster.transform(image: image)
+    func transform(image: Image, displayType: PosterDisplayType) -> some View {
+        _poster.transform(image: image, displayType: displayType)
             .eraseToAnyView()
     }
 
