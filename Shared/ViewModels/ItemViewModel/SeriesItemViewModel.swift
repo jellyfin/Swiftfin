@@ -31,7 +31,7 @@ final class SeriesItemViewModel: ItemViewModel {
 
         switch action {
         case .backgroundRefresh, .refresh:
-            let parentState = super.respond(to: action)
+            _ = super.respond(to: action)
 
             seriesItemTask?.cancel()
 
@@ -145,5 +145,19 @@ final class SeriesItemViewModel: ItemViewModel {
         let response = try await userSession.client.send(request)
 
         return response.value.items ?? []
+    }
+
+    // MARK: - Get Shuffled Items
+
+    @MainActor
+    override func getShuffledItems(excluding excludeItemIDs: [String] = []) async throws -> [BaseItemDto] {
+        try await ItemViewModel.fetchShuffledItemsPaginated(
+            userSession: userSession,
+            parentID: item.id,
+            includeItemTypes: [.episode],
+            excludeItemIDs: excludeItemIDs,
+            enableUserData: true,
+            isMissing: Defaults[.Customization.shouldShowMissingEpisodes] ? nil : false
+        )
     }
 }
