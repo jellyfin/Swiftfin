@@ -61,6 +61,11 @@ struct VideoPlayerSettingsView: View {
     @Default(.VideoPlayer.Overlay.trailingTimestampType)
     private var trailingTimestampType
 
+    // MARK: - Media Segment Defaults
+
+    @Default(.VideoPlayer.enableMediaSegments)
+    private var enableMediaSegments
+
     @Router
     private var router
 
@@ -96,6 +101,8 @@ struct VideoPlayerSettingsView: View {
             supplementSettings
 
             timestampSettings
+
+            mediaSegmentSettings
 
             audioSettings
 
@@ -221,6 +228,21 @@ struct VideoPlayerSettingsView: View {
     private var timestampSettings: some View {
         Section(L10n.timestamp) {
             PlatformPicker(L10n.trailingValue, selection: $trailingTimestampType)
+        }
+    }
+
+    // MARK: - Media Segment Settings
+
+    @ViewBuilder
+    private var mediaSegmentSettings: some View {
+        Section(L10n.mediaSegments) {
+            Toggle(L10n.enableMediaSegments, isOn: $enableMediaSegments)
+
+            if enableMediaSegments {
+                ChevronButton(L10n.configureMediaSegments) {
+                    router.route(to: .mediaSegmentSettings)
+                }
+            }
         }
     }
 

@@ -22,9 +22,22 @@ struct SkipSegmentButton: View {
             }) {
                 HStack(spacing: 8) {
                     Image(systemName: "forward.end.fill")
-                    Text("Skip \(type.rawValue)")
-                        .fontWeight(.semibold)
+                    switch type {
+                    case .unknown:
+                        Text("")
+                    case .commercial:
+                        Text(L10n.mediaSegmentSkipCommercial)
+                    case .preview:
+                        Text(L10n.mediaSegmentSkipPreview)
+                    case .recap:
+                        Text(L10n.mediaSegmentRecap)
+                    case .outro:
+                        Text(L10n.mediaSegmentSkipOutro)
+                    case .intro:
+                        Text(L10n.mediaSegmentSkipIntro)
+                    }
                 }
+                .fontWeight(.semibold)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
                 .background(.thinMaterial)

@@ -232,4 +232,10 @@ extension NavigationRoute {
             VideoPlayerSettingsView()
         }
     }
+
+    static let mediaSegmentSettings = NavigationRoute(
+        id: "mediaSegmentSettings"
+    ) {
+        MediaSegmentSettingsView()
+    }
 }
