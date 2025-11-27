@@ -169,6 +169,14 @@ extension NavigationRoute {
     }
     #endif
 
+    static func mediaSegmentSettings(selection: Binding<[MediaSegmentType]>) -> NavigationRoute {
+        NavigationRoute(id: "mediaSegmentSettings") {
+            OrderedSectionSelectorView(selection: selection, sources: MediaSegmentType.allCases)
+                // TODO: Localize
+                    .navigationTitle("Auto skipping")
+        }
+    }
+
     static let playbackQualitySettings = NavigationRoute(
         id: "playbackQualitySettings"
     ) {
@@ -210,12 +218,4 @@ extension NavigationRoute {
     ) {
         VideoPlayerSettingsView()
     }
-
-    #if os(tvOS)
-    static let mediaSegmentSettings = NavigationRoute(
-        id: "mediaSegmentSettings"
-    ) {
-        MediaSegmentSettingsView()
-    }
-    #endif
 }

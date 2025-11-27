@@ -343,22 +343,11 @@ final class MediaPlayerManager: ViewModel {
             guard let start = segment.startTicks, let end = segment.endTicks else { return false }
             guard let type = segment.type else { return false }
 
-            let action: MediaSegmentAction = {
-                switch type {
-                case .intro: return Defaults[.VideoPlayer.introAction]
-                case .outro: return Defaults[.VideoPlayer.outroAction]
-                case .preview: return Defaults[.VideoPlayer.previewAction]
-                case .recap: return Defaults[.VideoPlayer.recapAction]
-                case .commercial: return Defaults[.VideoPlayer.commercialAction]
-                default: return .ignore
-                }
-            }()
-
-            guard action != .ignore else { return false }
+            let autoSkip: Bool = Defaults[.VideoPlayer.skipMediaSegments].contains(segment.type ?? .unknown)
 
             let isWithinRange = currentTicks >= start && currentTicks < end
 
-            if isWithinRange && action == .skip {
+            if isWithinRange && autoSkip {
                 // Auto-skip
 
                 // TODO: autoskip doesn't work very well with Swiftfin player, only with native
@@ -366,7 +355,7 @@ final class MediaPlayerManager: ViewModel {
                 return false // Don't show button if auto-skipped
             }
 
-            return isWithinRange && action == .ask
+            return isWithinRange
         }
 
         if currentSegment != found {

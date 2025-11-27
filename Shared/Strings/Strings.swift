@@ -320,6 +320,8 @@ internal enum L10n {
   internal static func columnsWithCount(_ p1: Any) -> String {
     return L10n.tr("Localizable", "columnsWithCount", String(describing: p1), fallback: "Columns: %@")
   }
+  /// Commercial
+  internal static let commercial = L10n.tr("Localizable", "commercial", fallback: "Commercial")
   /// Community
   internal static let community = L10n.tr("Localizable", "community", fallback: "Community")
   /// Community rating
@@ -342,8 +344,6 @@ internal enum L10n {
   internal static let composer = L10n.tr("Localizable", "composer", fallback: "Composer")
   /// Conductor
   internal static let conductor = L10n.tr("Localizable", "conductor", fallback: "Conductor")
-  /// Configure media segments
-  internal static let configureMediaSegments = L10n.tr("Localizable", "configureMediaSegments", fallback: "Configure media segments")
   /// Confirm
   internal static let confirm = L10n.tr("Localizable", "confirm", fallback: "Confirm")
   /// Are you sure you want to delete %@ and all of its connected users?
@@ -762,6 +762,8 @@ internal enum L10n {
   internal static let interval = L10n.tr("Localizable", "interval", fallback: "Interval")
   /// Interview
   internal static let interview = L10n.tr("Localizable", "interview", fallback: "Interview")
+  /// Intro
+  internal static let intro = L10n.tr("Localizable", "intro", fallback: "Intro")
   /// Invalid format
   internal static let invalidFormat = L10n.tr("Localizable", "invalidFormat", fallback: "Invalid format")
   /// Inverted dark
@@ -922,34 +924,8 @@ internal enum L10n {
   internal static let mediaDownloads = L10n.tr("Localizable", "mediaDownloads", fallback: "Media downloads")
   /// Media playback
   internal static let mediaPlayback = L10n.tr("Localizable", "mediaPlayback", fallback: "Media playback")
-  /// Ask
-  internal static let mediaSegmentActionAsk = L10n.tr("Localizable", "mediaSegmentActionAsk", fallback: "Ask")
-  /// Ignore
-  internal static let mediaSegmentActionIgnore = L10n.tr("Localizable", "mediaSegmentActionIgnore", fallback: "Ignore")
-  /// Skip
-  internal static let mediaSegmentActionSkip = L10n.tr("Localizable", "mediaSegmentActionSkip", fallback: "Skip")
-  /// Ad
-  internal static let mediaSegmentCommercial = L10n.tr("Localizable", "mediaSegmentCommercial", fallback: "Ad")
-  /// Intro
-  internal static let mediaSegmentIntro = L10n.tr("Localizable", "mediaSegmentIntro", fallback: "Intro")
-  /// Outro
-  internal static let mediaSegmentOutro = L10n.tr("Localizable", "mediaSegmentOutro", fallback: "Outro")
-  /// Preview
-  internal static let mediaSegmentPreview = L10n.tr("Localizable", "mediaSegmentPreview", fallback: "Preview")
-  /// Recap
-  internal static let mediaSegmentRecap = L10n.tr("Localizable", "mediaSegmentRecap", fallback: "Recap")
   /// Media segments
   internal static let mediaSegments = L10n.tr("Localizable", "mediaSegments", fallback: "Media segments")
-  /// Skip Ad
-  internal static let mediaSegmentSkipCommercial = L10n.tr("Localizable", "mediaSegmentSkipCommercial", fallback: "Skip Ad")
-  /// Skip Intro
-  internal static let mediaSegmentSkipIntro = L10n.tr("Localizable", "mediaSegmentSkipIntro", fallback: "Skip Intro")
-  /// Skip Outro
-  internal static let mediaSegmentSkipOutro = L10n.tr("Localizable", "mediaSegmentSkipOutro", fallback: "Skip Outro")
-  /// Skip Preview
-  internal static let mediaSegmentSkipPreview = L10n.tr("Localizable", "mediaSegmentSkipPreview", fallback: "Skip Preview")
-  /// Skip Recap
-  internal static let mediaSegmentSkipRecap = L10n.tr("Localizable", "mediaSegmentSkipRecap", fallback: "Skip Recap")
   /// Mbps
   internal static let megabitsPerSecond = L10n.tr("Localizable", "megabitsPerSecond", fallback: "Mbps")
   /// Menu
@@ -1072,6 +1048,8 @@ internal enum L10n {
   internal static let other = L10n.tr("Localizable", "other", fallback: "Other")
   /// Out of date
   internal static let outOfDate = L10n.tr("Localizable", "outOfDate", fallback: "Out of date")
+  /// Outro
+  internal static let outro = L10n.tr("Localizable", "outro", fallback: "Outro")
   /// Overview
   internal static let overview = L10n.tr("Localizable", "overview", fallback: "Overview")
   /// Parental controls
@@ -1148,6 +1126,8 @@ internal enum L10n {
   internal static let posters = L10n.tr("Localizable", "posters", fallback: "Posters")
   /// Premiere date
   internal static let premiereDate = L10n.tr("Localizable", "premiereDate", fallback: "Premiere date")
+  /// Preview
+  internal static let preview = L10n.tr("Localizable", "preview", fallback: "Preview")
   /// Preview image
   internal static let previewImage = L10n.tr("Localizable", "previewImage", fallback: "Preview image")
   /// Previous item
@@ -1204,6 +1184,8 @@ internal enum L10n {
   internal static let rating = L10n.tr("Localizable", "rating", fallback: "Rating")
   /// Ratings
   internal static let ratings = L10n.tr("Localizable", "ratings", fallback: "Ratings")
+  /// Recap
+  internal static let recap = L10n.tr("Localizable", "recap", fallback: "Recap")
   /// Recently Added
   internal static let recentlyAdded = L10n.tr("Localizable", "recentlyAdded", fallback: "Recently Added")
   /// Recommended
@@ -1430,6 +1412,10 @@ internal enum L10n {
   internal static let signoutClose = L10n.tr("Localizable", "signoutClose", fallback: "Sign out on close")
   /// Signs out the last user when Swiftfin has been force closed.
   internal static let signoutCloseFooter = L10n.tr("Localizable", "signoutCloseFooter", fallback: "Signs out the last user when Swiftfin has been force closed.")
+  /// Skip %@
+  internal static func skipSegment(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "skipSegment", String(describing: p1), fallback: "Skip %@")
+  }
   /// Slider
   internal static let slider = L10n.tr("Localizable", "slider", fallback: "Slider")
   /// Slow scrub

@@ -20,8 +20,11 @@ struct VideoPlayerSettingsView: View {
     private var jumpForwardLength
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
+
     @Default(.VideoPlayer.enableMediaSegments)
     private var enableMediaSegments
+    @Default(.VideoPlayer.skipMediaSegments)
+    private var skipMediaSegments
 
     @Router
     private var router
@@ -65,17 +68,16 @@ struct VideoPlayerSettingsView: View {
                     Text(L10n.subtitlesDisclaimer)
                 }
 
-                Section {
+                Section(L10n.mediaSegments) {
 
                     Toggle(L10n.enableMediaSegments, isOn: $enableMediaSegments)
 
                     if enableMediaSegments {
-                        ChevronButton(L10n.configureMediaSegments) {
-                            router.route(to: .mediaSegmentSettings)
+                        // TODO: Localize
+                        ChevronButton("Auto skipping") {
+                            router.route(to: .mediaSegmentSettings(selection: $skipMediaSegments))
                         }
                     }
-                } header: {
-                    Text(L10n.mediaSegments)
                 }
             }
             .navigationTitle(L10n.videoPlayer)

@@ -12,21 +12,25 @@ import SwiftUI
 extension VideoPlayerSettingsView {
     struct MediaSegmentSection: View {
 
+        @Environment(\.router)
+        private var router
+
         @Default(.VideoPlayer.enableMediaSegments)
         private var enableMediaSegments
+        @Default(.VideoPlayer.skipMediaSegments)
+        private var skipMediaSegments
 
         var body: some View {
-            Section {
+            Section(L10n.mediaSegments) {
 
                 Toggle(L10n.enableMediaSegments, isOn: $enableMediaSegments)
 
                 if enableMediaSegments {
-                    NavigationLink(L10n.configureMediaSegments) {
-                        MediaSegmentSettingsView()
+                    // TODO: Localize
+                    ChevronButton("Auto skipping") {
+                        router.route(to: .mediaSegmentSettings(selection: $skipMediaSegments))
                     }
                 }
-            } header: {
-                Text(L10n.mediaSegments)
             }
         }
     }

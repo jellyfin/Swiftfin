@@ -9,6 +9,7 @@
 import Defaults
 import Factory
 import Foundation
+import JellyfinAPI
 import SwiftUI
 import UIKit
 
@@ -237,15 +238,7 @@ extension Defaults.Keys {
         }
 
         static let enableMediaSegments: Key<Bool> = UserKey("enableMediaSegments", default: true)
-        static let introAction: Key<MediaSegmentAction> = UserKey("introAction", default: .ask)
-        static let outroAction: Key<MediaSegmentAction> = UserKey("outroAction", default: .ask)
-        static let previewAction: Key<MediaSegmentAction> = UserKey(
-            "previewAction", default: .ignore
-        )
-        static let recapAction: Key<MediaSegmentAction> = UserKey("recapAction", default: .ignore)
-        static let commercialAction: Key<MediaSegmentAction> = UserKey(
-            "commercialAction", default: .ignore
-        )
+        static let skipMediaSegments: Key<[MediaSegmentType]> = UserKey("introAction", default: [])
     }
 
     // Experimental settings
