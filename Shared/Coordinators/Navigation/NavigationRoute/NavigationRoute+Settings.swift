@@ -210,4 +210,12 @@ extension NavigationRoute {
     ) {
         VideoPlayerSettingsView()
     }
+
+    #if os(tvOS)
+    static let mediaSegmentSettings = NavigationRoute(
+        id: "mediaSegmentSettings"
+    ) {
+        MediaSegmentSettingsView()
+    }
+    #endif
 }

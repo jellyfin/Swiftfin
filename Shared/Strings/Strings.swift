@@ -342,6 +342,8 @@ internal enum L10n {
   internal static let composer = L10n.tr("Localizable", "composer", fallback: "Composer")
   /// Conductor
   internal static let conductor = L10n.tr("Localizable", "conductor", fallback: "Conductor")
+  /// Configure media segments
+  internal static let configureMediaSegments = L10n.tr("Localizable", "configureMediaSegments", fallback: "Configure media segments")
   /// Confirm
   internal static let confirm = L10n.tr("Localizable", "confirm", fallback: "Confirm")
   /// Are you sure you want to delete %@ and all of its connected users?
@@ -586,6 +588,8 @@ internal enum L10n {
   internal static let enabled = L10n.tr("Localizable", "enabled", fallback: "Enabled")
   /// Enabled trailers
   internal static let enabledTrailers = L10n.tr("Localizable", "enabledTrailers", fallback: "Enabled trailers")
+  /// Enable media segments
+  internal static let enableMediaSegments = L10n.tr("Localizable", "enableMediaSegments", fallback: "Enable media segments")
   /// End date
   internal static let endDate = L10n.tr("Localizable", "endDate", fallback: "End date")
   /// Ended
@@ -918,6 +922,34 @@ internal enum L10n {
   internal static let mediaDownloads = L10n.tr("Localizable", "mediaDownloads", fallback: "Media downloads")
   /// Media playback
   internal static let mediaPlayback = L10n.tr("Localizable", "mediaPlayback", fallback: "Media playback")
+  /// Ask
+  internal static let mediaSegmentActionAsk = L10n.tr("Localizable", "mediaSegmentActionAsk", fallback: "Ask")
+  /// Ignore
+  internal static let mediaSegmentActionIgnore = L10n.tr("Localizable", "mediaSegmentActionIgnore", fallback: "Ignore")
+  /// Skip
+  internal static let mediaSegmentActionSkip = L10n.tr("Localizable", "mediaSegmentActionSkip", fallback: "Skip")
+  /// Ad
+  internal static let mediaSegmentCommercial = L10n.tr("Localizable", "mediaSegmentCommercial", fallback: "Ad")
+  /// Intro
+  internal static let mediaSegmentIntro = L10n.tr("Localizable", "mediaSegmentIntro", fallback: "Intro")
+  /// Outro
+  internal static let mediaSegmentOutro = L10n.tr("Localizable", "mediaSegmentOutro", fallback: "Outro")
+  /// Preview
+  internal static let mediaSegmentPreview = L10n.tr("Localizable", "mediaSegmentPreview", fallback: "Preview")
+  /// Recap
+  internal static let mediaSegmentRecap = L10n.tr("Localizable", "mediaSegmentRecap", fallback: "Recap")
+  /// Media segments
+  internal static let mediaSegments = L10n.tr("Localizable", "mediaSegments", fallback: "Media segments")
+  /// Skip Ad
+  internal static let mediaSegmentSkipCommercial = L10n.tr("Localizable", "mediaSegmentSkipCommercial", fallback: "Skip Ad")
+  /// Skip Intro
+  internal static let mediaSegmentSkipIntro = L10n.tr("Localizable", "mediaSegmentSkipIntro", fallback: "Skip Intro")
+  /// Skip Outro
+  internal static let mediaSegmentSkipOutro = L10n.tr("Localizable", "mediaSegmentSkipOutro", fallback: "Skip Outro")
+  /// Skip Preview
+  internal static let mediaSegmentSkipPreview = L10n.tr("Localizable", "mediaSegmentSkipPreview", fallback: "Skip Preview")
+  /// Skip Recap
+  internal static let mediaSegmentSkipRecap = L10n.tr("Localizable", "mediaSegmentSkipRecap", fallback: "Skip Recap")
   /// Mbps
   internal static let megabitsPerSecond = L10n.tr("Localizable", "megabitsPerSecond", fallback: "Mbps")
   /// Menu

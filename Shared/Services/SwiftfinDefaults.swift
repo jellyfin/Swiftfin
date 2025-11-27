@@ -235,6 +235,17 @@ extension Defaults.Keys {
         enum Transition {
             static let pauseOnBackground: Key<Bool> = UserKey("playInBackground", default: true)
         }
+
+        static let enableMediaSegments: Key<Bool> = UserKey("enableMediaSegments", default: true)
+        static let introAction: Key<MediaSegmentAction> = UserKey("introAction", default: .ask)
+        static let outroAction: Key<MediaSegmentAction> = UserKey("outroAction", default: .ask)
+        static let previewAction: Key<MediaSegmentAction> = UserKey(
+            "previewAction", default: .ignore
+        )
+        static let recapAction: Key<MediaSegmentAction> = UserKey("recapAction", default: .ignore)
+        static let commercialAction: Key<MediaSegmentAction> = UserKey(
+            "commercialAction", default: .ignore
+        )
     }
 
     // Experimental settings

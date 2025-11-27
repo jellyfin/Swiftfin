@@ -11,6 +11,7 @@ import Defaults
 import Factory
 import Foundation
 import JellyfinAPI
+import StatefulMacros
 import VLCUI
 
 // TODO: proper error catching
@@ -42,8 +43,6 @@ extension Container {
         .scope(.session)
     }
 }
-
-import StatefulMacros
 
 @MainActor
 @Stateful
@@ -179,13 +178,13 @@ final class MediaPlayerManager: ViewModel {
 
     // MARK: init
 
-//    static let empty: MediaPlayerManager = .init()
+    //    static let empty: MediaPlayerManager = .init()
 
-//    override private init() {
-//        self.item = .init()
-//        self.state = .stopped
-//        super.init()
-//    }
+    //    override private init() {
+    //        self.item = .init()
+    //        self.state = .stopped
+    //        super.init()
+    //    }
 
     init(
         item: BaseItemDto,
@@ -329,6 +328,11 @@ final class MediaPlayerManager: ViewModel {
     }
 
     private func updateCurrentSegment() {
+        guard Defaults[.VideoPlayer.enableMediaSegments] else {
+            if currentSegment != nil { currentSegment = nil }
+            return
+        }
+
         guard let segments = playbackItem?.mediaSegments, !segments.isEmpty else {
             if currentSegment != nil { currentSegment = nil }
             return
@@ -339,14 +343,30 @@ final class MediaPlayerManager: ViewModel {
             guard let start = segment.startTicks, let end = segment.endTicks else { return false }
             guard let type = segment.type else { return false }
 
-            let isSkippableType: Bool = {
+            let action: MediaSegmentAction = {
                 switch type {
-                case .intro, .outro, .recap, .commercial: return true
-                default: return false
+                case .intro: return Defaults[.VideoPlayer.introAction]
+                case .outro: return Defaults[.VideoPlayer.outroAction]
+                case .preview: return Defaults[.VideoPlayer.previewAction]
+                case .recap: return Defaults[.VideoPlayer.recapAction]
+                case .commercial: return Defaults[.VideoPlayer.commercialAction]
+                default: return .ignore
                 }
             }()
 
-            return isSkippableType && currentTicks >= start && currentTicks < end
+            guard action != .ignore else { return false }
+
+            let isWithinRange = currentTicks >= start && currentTicks < end
+
+            if isWithinRange && action == .skip {
+                // Auto-skip
+
+                // TODO: autoskip doesn't work very well with Swiftfin player, only with native
+                self.skipSegment(segment)
+                return false // Don't show button if auto-skipped
+            }
+
+            return isWithinRange && action == .ask
         }
 
         if currentSegment != found {
@@ -354,11 +374,16 @@ final class MediaPlayerManager: ViewModel {
         }
     }
 
-    func skipCurrentSegment() {
-        guard let currentSegment, let endTicks = currentSegment.endTicks else { return }
+    func skipSegment(_ segment: MediaSegmentDto) {
+        guard let endTicks = segment.endTicks else { return }
         let endSeconds = Double(endTicks) / 10_000_000
         let newDuration = Duration.seconds(endSeconds)
         self.seconds = newDuration
         self.proxy?.setSeconds(newDuration)
+    }
+
+    func skipCurrentSegment() {
+        guard let currentSegment else { return }
+        skipSegment(currentSegment)
     }
 }

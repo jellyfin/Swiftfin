@@ -20,6 +20,8 @@ struct VideoPlayerSettingsView: View {
     private var jumpForwardLength
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
+    @Default(.VideoPlayer.enableMediaSegments)
+    private var enableMediaSegments
 
     @Router
     private var router
@@ -61,6 +63,19 @@ struct VideoPlayerSettingsView: View {
                     Text(L10n.subtitles)
                 } footer: {
                     Text(L10n.subtitlesDisclaimer)
+                }
+
+                Section {
+
+                    Toggle(L10n.enableMediaSegments, isOn: $enableMediaSegments)
+
+                    if enableMediaSegments {
+                        ChevronButton(L10n.configureMediaSegments) {
+                            router.route(to: .mediaSegmentSettings)
+                        }
+                    }
+                } header: {
+                    Text(L10n.mediaSegments)
                 }
             }
             .navigationTitle(L10n.videoPlayer)
