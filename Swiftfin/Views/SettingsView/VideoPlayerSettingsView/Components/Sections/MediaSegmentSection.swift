@@ -7,31 +7,59 @@
 //
 
 import Defaults
+import JellyfinAPI
 import SwiftUI
 
 extension VideoPlayerSettingsView {
     struct MediaSegmentSection: View {
 
-        @Environment(\.router)
-        private var router
-
         @Default(.VideoPlayer.enableMediaSegments)
         private var enableMediaSegments
+
         @Default(.VideoPlayer.skipMediaSegments)
         private var skipMediaSegments
+        @Default(.VideoPlayer.askMediaSegments)
+        private var askMediaSegments
 
         var body: some View {
             Section(L10n.mediaSegments) {
-
                 Toggle(L10n.enableMediaSegments, isOn: $enableMediaSegments)
+            }
 
+            Section {
                 if enableMediaSegments {
-                    // TODO: Localize
-                    ChevronButton("Auto skipping") {
-                        router.route(to: .mediaSegmentSettings(selection: $skipMediaSegments))
+                    ForEach(MediaSegmentType.allCases.sorted(by: { $0.displayTitle < $1.displayTitle }), id: \.self) { segment in
+                        CaseIterablePicker(segment.displayTitle, selection: mediaSegmentBinding(segment))
                     }
                 }
             }
+        }
+
+        private func mediaSegmentBinding(_ segment: MediaSegmentType) -> Binding<MediaSegmentBehavior> {
+            Binding(
+                get: {
+                    if askMediaSegments.contains(segment) {
+                        return .ask
+                    } else if skipMediaSegments.contains(segment) {
+                        return .skip
+                    } else {
+                        return .off
+                    }
+                },
+                set: { newValue in
+                    switch newValue {
+                    case .off:
+                        askMediaSegments.removeAll { $0 == segment }
+                        skipMediaSegments.removeAll { $0 == segment }
+                    case .ask:
+                        askMediaSegments.append(segment)
+                        skipMediaSegments.removeAll { $0 == segment }
+                    case .skip:
+                        askMediaSegments.removeAll { $0 == segment }
+                        skipMediaSegments.append(segment)
+                    }
+                }
+            )
         }
     }
 }

@@ -338,24 +338,23 @@ final class MediaPlayerManager: ViewModel {
             return
         }
 
-        let currentTicks = Int(seconds.seconds * 10_000_000)
         let found = segments.first { segment in
-            guard let start = segment.startTicks, let end = segment.endTicks else { return false }
-            guard let type = segment.type else { return false }
-
-            let autoSkip: Bool = Defaults[.VideoPlayer.skipMediaSegments].contains(segment.type ?? .unknown)
-
-            let isWithinRange = currentTicks >= start && currentTicks < end
-
-            if isWithinRange && autoSkip {
-                // Auto-skip
-
-                // TODO: autoskip doesn't work very well with Swiftfin player, only with native
-                self.skipSegment(segment)
-                return false // Don't show button if auto-skipped
+            guard let start = segment.startTicks,
+                  let end = segment.endTicks,
+                  let type = segment.type
+            else {
+                return false
             }
 
-            return isWithinRange
+            let isWithinRange = seconds.ticks >= start && seconds.ticks < end
+
+            if isWithinRange && Defaults[.VideoPlayer.skipMediaSegments].contains(type) {
+                // TODO: autoskip doesn't work very well with Swiftfin player, only with native
+                self.skipSegment(segment)
+                return false
+            }
+
+            return isWithinRange && Defaults[.VideoPlayer.askMediaSegments].contains(type)
         }
 
         if currentSegment != found {

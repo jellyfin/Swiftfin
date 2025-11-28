@@ -238,7 +238,8 @@ extension Defaults.Keys {
         }
 
         static let enableMediaSegments: Key<Bool> = UserKey("enableMediaSegments", default: true)
-        static let skipMediaSegments: Key<[MediaSegmentType]> = UserKey("introAction", default: [])
+        static let askMediaSegments: Key<[MediaSegmentType]> = UserKey("askMediaSegments", default: [])
+        static let skipMediaSegments: Key<[MediaSegmentType]> = UserKey("skipMediaSegments", default: [])
     }
 
     // Experimental settings
