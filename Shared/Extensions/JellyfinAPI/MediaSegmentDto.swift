@@ -12,7 +12,6 @@ import JellyfinAPI
 
 extension MediaSegmentType: Displayable, _DefaultsSerializable {
 
-    // TODO: Localize
     var displayTitle: String {
         switch self {
         case .commercial:
