@@ -130,6 +130,9 @@ final class MediaPlayerManager: ViewModel {
     @Published
     var supplements: [any MediaPlayerSupplement] = []
 
+    @Published
+    var introSegment: MediaSegmentDto? = nil
+
     // TODO: replace with graph dependency package
     private func setSupplements() {
         var newSupplements: [any MediaPlayerSupplement] = []
@@ -149,6 +152,30 @@ final class MediaPlayerManager: ViewModel {
         }
 
         self.supplements = newSupplements
+
+        // Fetch media segments asynchronously without blocking
+        fetchMediaSegments()
+    }
+
+    private func fetchMediaSegments() {
+        guard let itemID = item.id else { return }
+
+        Task { @MainActor in
+            do {
+                // Use SDK's getItemSegments endpoint (requires SDK main/0.7+)
+                let request = Paths.getItemSegments(
+                    itemID: itemID,
+                    includeSegmentTypes: [.intro]
+                )
+                let response = try await userSession.client.send(request)
+
+                // Store the intro segment for the Skip Intro button overlay
+                self.introSegment = response.value.items?.first
+            } catch {
+                // Silently fail if media segments aren't available
+                logger.debug("Failed to fetch media segments: \(error.localizedDescription)")
+            }
+        }
     }
 
     /// The current seconds media playback is set to.
@@ -221,7 +248,7 @@ final class MediaPlayerManager: ViewModel {
         // is verifiable by given seconds being near item runtime.
         // VLC proxy will send ended early.
         guard let runtime = item.runtime else {
-            await self.stop()
+            try await self.stop()
             return
         }
         let isNearEnd = (runtime - seconds) <= .seconds(1)
@@ -232,7 +259,7 @@ final class MediaPlayerManager: ViewModel {
         }
 
         if let nextItem = queue?.nextItem, Defaults[.VideoPlayer.autoPlayEnabled] {
-            await self.playNewItem(provider: nextItem)
+            try await self.playNewItem(provider: nextItem)
         }
     }
 
@@ -295,7 +322,7 @@ final class MediaPlayerManager: ViewModel {
     @Function(\Action.Cases.start)
     private func _start() async throws {
         guard let initialMediaPlayerItemProvider else {
-            await self.stop()
+            try await self.stop()
             return
         }
         self.initialMediaPlayerItemProvider = nil

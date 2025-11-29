@@ -64,20 +64,25 @@ extension VideoPlayer {
         }
 
         var body: some View {
-            VStack {
-                Spacer()
+            ZStack {
+                VStack {
+                    Spacer()
 
-                bottomContent
-                    .edgePadding()
-                    .background(alignment: .bottom) {
-                        Color.black
-                            .maskLinearGradient {
-                                (location: 0, opacity: 0)
-                                (location: 1, opacity: 0.5)
-                            }
-                            .isVisible(isScrubbing || isPresentingOverlay)
-                            .animation(.linear(duration: 0.25), value: isPresentingOverlay)
-                    }
+                    bottomContent
+                        .edgePadding()
+                        .background(alignment: .bottom) {
+                            Color.black
+                                .maskLinearGradient {
+                                    (location: 0, opacity: 0)
+                                    (location: 1, opacity: 0.5)
+                                }
+                                .isVisible(isScrubbing || isPresentingOverlay)
+                                .animation(.linear(duration: 0.25), value: isPresentingOverlay)
+                        }
+                }
+
+                // Skip Intro button overlay
+                SkipIntroButton()
             }
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.bouncy(duration: 0.4), value: isPresentingSupplement)
