@@ -76,7 +76,6 @@ struct TintedMaterialButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
-            // TODO: use container relative shape instead of corner radius
             TintedMaterial(tint: buttonTint)
                 .cornerRadius(10)
                 .id(isSelected)
