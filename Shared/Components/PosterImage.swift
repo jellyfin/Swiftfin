@@ -7,41 +7,61 @@
 //
 
 import BlurHashKit
+import Nuke
 import SwiftUI
 
 /// Retrieving images by exact pixel dimensions is a bit
 /// intense for normal usage and eases cache usage and modifications.
+#if os(iOS)
 private let landscapeMaxWidth: CGFloat = 300
 private let portraitMaxWidth: CGFloat = 200
+#else
+private let landscapeMaxWidth: CGFloat = 500
+private let portraitMaxWidth: CGFloat = 500
+#endif
 
-struct PosterImage<Item: Poster>: View {
+struct PosterImage<Element: Poster>: View {
+
+    @ForTypeInEnvironment<Element, AnyForPosterStyleEnvironment>(\.posterStyleRegistry)
+    private var posterStyleRegistry
+
+    @ForTypeInEnvironment<Element, (Any) -> any CustomEnvironmentValue>(\.customEnvironmentValueRegistry)
+    private var customEnvironmentValueRegistry
 
     private let contentMode: ContentMode
+    private let element: Element
+    // TODO: figure out what to do with this
     private let imageMaxWidth: CGFloat
-    private let item: Item
+    private var pipeline: ImagePipeline
     private let type: PosterDisplayType
 
+    private var customEnvironmentValue: Element.Environment {
+        (customEnvironmentValueRegistry?(element) as? Element.Environment) ?? .default
+    }
+
+    private var posterStyle: PosterStyleEnvironment {
+        posterStyleRegistry?(element) ?? .default
+    }
+
+    private var imageSources: [ImageSource] {
+        element.imageSources(
+            for: type,
+            size: posterStyle.size,
+            environment: customEnvironmentValue
+        )
+    }
+
     init(
-        item: Item,
+        item: Element,
         type: PosterDisplayType,
         contentMode: ContentMode = .fill,
         maxWidth: CGFloat? = nil
     ) {
         self.contentMode = contentMode
+        self.element = item
         self.imageMaxWidth = maxWidth ?? (type == .landscape ? landscapeMaxWidth : portraitMaxWidth)
-        self.item = item
+        self.pipeline = .shared
         self.type = type
-    }
-
-    private var imageSources: [ImageSource] {
-        switch type {
-        case .landscape:
-            item.landscapeImageSources(maxWidth: imageMaxWidth, quality: 90)
-        case .portrait:
-            item.portraitImageSources(maxWidth: imageMaxWidth, quality: 90)
-        case .square:
-            item.squareImageSources(maxWidth: imageMaxWidth, quality: 90)
-        }
     }
 
     var body: some View {
@@ -53,32 +73,33 @@ struct PosterImage<Item: Poster>: View {
                 Color.clear
             } content: {
                 ImageView(imageSources)
-                    .image(item.transform)
+                    .image(element.transform)
                     .placeholder { imageSource in
                         if let blurHash = imageSource.blurHash {
                             BlurHashView(blurHash: blurHash)
-                        } else if item.showTitle {
-                            SystemImageContentView(
-                                systemName: item.systemImage
-                            )
+//                        } else if item.showTitle {
                         } else {
                             SystemImageContentView(
-                                title: item.displayTitle,
-                                systemName: item.systemImage
+                                systemName: element.systemImage
                             )
+//                        } else {
+//                            SystemImageContentView(
+//                                title: item.displayTitle,
+//                                systemName: item.systemImage
+//                            )
                         }
                     }
                     .failure {
-                        if item.showTitle {
-                            SystemImageContentView(
-                                systemName: item.systemImage
-                            )
-                        } else {
-                            SystemImageContentView(
-                                title: item.displayTitle,
-                                systemName: item.systemImage
-                            )
-                        }
+//                        if item.showTitle {
+                        SystemImageContentView(
+                            systemName: element.systemImage
+                        )
+//                        } else {
+//                            SystemImageContentView(
+//                                title: item.displayTitle,
+//                                systemName: item.systemImage
+//                            )
+//                        }
                     }
             }
         }
@@ -86,5 +107,12 @@ struct PosterImage<Item: Poster>: View {
             type,
             contentMode: contentMode
         )
+    }
+}
+
+extension PosterImage {
+
+    func pipeline(_ pipeline: ImagePipeline) -> Self {
+        copy(modifying: \.pipeline, with: pipeline)
     }
 }

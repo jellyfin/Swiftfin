@@ -61,8 +61,10 @@ extension ChannelProgram: Poster {
     var systemImage: String {
         channel.systemImage
     }
+}
 
-    func transform(image: Image) -> some View {
-        image
-    }
+extension ChannelProgram: LibraryElement {
+    func librarySelectAction(router: Router.Wrapper, in namespace: Namespace) {}
+
+    func makeBody(libraryStyle: LibraryStyle) -> EmptyView {}
 }

@@ -22,14 +22,18 @@ extension ItemView {
             PillHStack(
                 title: L10n.genres,
                 items: genres
-            ).onSelect { genre in
-                let viewModel = ItemLibraryViewModel(
-                    title: genre.displayTitle,
-                    id: genre.value,
-                    filters: .init(genres: [genre])
-                )
-                router.route(to: .library(viewModel: viewModel))
+            ).onSelect { _ in
+//                let library = PagingItemLibrary(
+//                    parent: genre,
+//                    filters: .init(parent: nil, currentFilters: .init(genres: [genre]))
+//                )
+//
+//                router.route(to: .library(library: library))
             }
         }
     }
 }
+
+// extension ItemGenre: _LibraryParent {
+//    var libraryID: String { value }
+// }

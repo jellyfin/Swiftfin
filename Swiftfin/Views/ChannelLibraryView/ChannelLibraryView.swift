@@ -37,7 +37,14 @@ struct ChannelLibraryView: View {
     private var layout: CollectionVGridLayout
 
     @StateObject
-    private var viewModel = ChannelLibraryViewModel()
+    private var viewModel = PagingLibraryViewModel(
+        library: ChannelProgramLibrary(
+            parent: .init(
+                displayTitle: L10n.channels,
+                libraryID: "channels"
+            )
+        )
+    )
 
     // MARK: init
 
@@ -113,7 +120,7 @@ struct ChannelLibraryView: View {
             }
         }
         .onReachedBottomEdge(offset: .offset(300)) {
-            viewModel.send(.getNextPage)
+            viewModel.retrieveNextPage()
         }
     }
 
@@ -128,8 +135,8 @@ struct ChannelLibraryView: View {
                 } else {
                     contentView
                 }
-            case let .error(error):
-                ErrorView(error: error)
+            case .error:
+                viewModel.error.map(ErrorView.init)
             case .initial, .refreshing:
                 ProgressView()
             }
@@ -137,7 +144,7 @@ struct ChannelLibraryView: View {
         .navigationTitle(L10n.channels)
         .navigationBarTitleDisplayMode(.inline)
         .refreshable {
-            viewModel.send(.refresh)
+            try? await viewModel.refresh()
         }
         .onChange(of: channelDisplayType) { newValue in
             if UIDevice.isPhone {
@@ -148,18 +155,18 @@ struct ChannelLibraryView: View {
         }
         .onFirstAppear {
             if viewModel.state == .initial {
-                viewModel.send(.refresh)
+                viewModel.refresh()
             }
         }
         .sinceLastDisappear { interval in
             // refresh after 3 hours
             if interval >= 10800 {
-                viewModel.send(.refresh)
+                viewModel.refresh()
             }
         }
         .topBarTrailing {
 
-            if viewModel.backgroundStates.contains(.gettingNextPage) {
+            if viewModel.background.is(.retrievingNextPage) {
                 ProgressView()
             }
 

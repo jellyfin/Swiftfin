@@ -22,7 +22,7 @@ extension SeriesEpisodeSelector {
         private var focusedEpisodeID: String?
 
         @ObservedObject
-        var viewModel: SeasonItemViewModel
+        var viewModel: PagingSeasonViewModel
 
         @State
         private var didScrollToPlayButtonItem = false
@@ -36,7 +36,8 @@ extension SeriesEpisodeSelector {
 
         // MARK: - Content View
 
-        private func contentView(viewModel: SeasonItemViewModel) -> some View {
+        @ViewBuilder
+        private var contentView: some View {
             CollectionHStack(
                 uniqueElements: viewModel.elements,
                 id: \.unwrappedIDHashOrZero,
@@ -163,9 +164,8 @@ extension SeriesEpisodeSelector {
     struct ErrorHStack: View {
 
         @ObservedObject
-        var viewModel: SeasonItemViewModel
+        var viewModel: PagingSeasonViewModel
 
-        let error: ErrorMessage
         let focusedEpisodeID: FocusState<String?>.Binding
 
         var body: some View {
@@ -173,12 +173,13 @@ extension SeriesEpisodeSelector {
                 count: 1,
                 columns: 3.5
             ) { _ in
-                SeriesEpisodeSelector.ErrorCard(error: error)
-                    .onSelect {
-                        viewModel.send(.refresh)
-                    }
-                    .focused(focusedEpisodeID, equals: "errorCard")
-                    .padding(.horizontal, 4)
+                SeriesEpisodeSelector.ErrorCard(
+                    error: viewModel.error ?? JellyfinAPIError(L10n.unknownError)
+                ) {
+                    viewModel.refresh()
+                }
+                .focused(focusedEpisodeID, equals: "errorCard")
+                .padding(.horizontal, 4)
             }
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)

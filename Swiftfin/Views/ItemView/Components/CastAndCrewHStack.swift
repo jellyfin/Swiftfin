@@ -21,20 +21,20 @@ extension ItemView {
         var body: some View {
             PosterHStack(
                 title: L10n.castAndCrew.localizedCapitalized,
-                type: .portrait,
-                items: people.filter { person in
-                    person.type?.isSupported ?? false
-                }
+                elements: people.filter { person in
+                    person.type?.isSupported == true
+                },
+                type: .portrait
             ) { person, namespace in
                 router.route(to: .item(item: .init(person: person)), in: namespace)
             }
-            .trailing {
-                SeeAllButton()
-                    .onSelect {
-                        router.route(to: .castAndCrew(people: people, itemID: nil))
-                        router.route(to: .castAndCrew(people: people, itemID: nil))
-                    }
-            }
+//            .trailing {
+//                SeeAllButton()
+//                    .onSelect {
+//                        router.route(to: .castAndCrew(people: people, itemID: nil))
+//                        router.route(to: .castAndCrew(people: people, itemID: nil))
+//                    }
+//            }
         }
     }
 }

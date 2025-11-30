@@ -122,6 +122,7 @@ extension ItemView {
                     case .image:
                         ImageCard(viewModel: viewModel)
                             .frame(width: UIDevice.isPad ? padImageWidth : phoneImageWidth)
+//                    default: EmptyView()
                     case .overview:
                         OverviewCard(item: viewModel.item)
                             .frame(width: cardSize.width, height: cardSize.height)

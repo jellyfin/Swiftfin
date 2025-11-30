@@ -12,43 +12,46 @@ import SwiftUI
 // TODO: create environment for image sources
 //       - for when to have episode use series
 //       - pass in folder context
-//       - thumb
-//       - could remove cinematic, just use landscape
+//       - remove cinematic/thumb
 
 /// A type that is displayed as a poster
 protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
 
-    associatedtype ImageBody: View
+    associatedtype Environment: WithDefaultValue = VoidWithDefaultValue
+    associatedtype ImageBody: View = Image
 
     var preferredPosterDisplayType: PosterDisplayType { get }
 
-    /// Optional subtitle when used as a poster
-    var subtitle: String? { get }
-
-    /// Show the title
-    var showTitle: Bool { get }
+    func landscapeImageSources(
+        maxWidth: CGFloat?,
+        quality: Int?,
+        environment: Environment
+    ) -> [ImageSource]
 
     func portraitImageSources(
         maxWidth: CGFloat?,
-        quality: Int?
-    ) -> [ImageSource]
-
-    func landscapeImageSources(
-        maxWidth: CGFloat?,
-        quality: Int?
-    ) -> [ImageSource]
-
-    func cinematicImageSources(
-        maxWidth: CGFloat?,
-        quality: Int?
+        quality: Int?,
+        environment: Environment
     ) -> [ImageSource]
 
     func squareImageSources(
         maxWidth: CGFloat?,
-        quality: Int?
+        quality: Int?,
+        environment: Environment
     ) -> [ImageSource]
 
-    func thumbImageSources() -> [ImageSource]
+    // TODO: remove and just have landscape with image size
+    func cinematicImageSources(
+        maxWidth: CGFloat?,
+        quality: Int?,
+        environment: Environment
+    ) -> [ImageSource]
+
+    func imageSources(
+        for displayType: PosterDisplayType,
+        size: PosterDisplayType.Size,
+        environment: Environment
+    ) -> [ImageSource]
 
     @MainActor
     @ViewBuilder
@@ -57,44 +60,88 @@ protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
 
 extension Poster {
 
-    var subtitle: String? {
-        nil
-    }
-
-    var showTitle: Bool {
-        true
+    func landscapeImageSources(
+        maxWidth: CGFloat? = nil,
+        quality: Int? = nil,
+        environment: Environment
+    ) -> [ImageSource] {
+        []
     }
 
     func portraitImageSources(
         maxWidth: CGFloat? = nil,
-        quality: Int? = nil
-    ) -> [ImageSource] {
-        []
-    }
-
-    func landscapeImageSources(
-        maxWidth: CGFloat? = nil,
-        quality: Int? = nil
-    ) -> [ImageSource] {
-        []
-    }
-
-    func cinematicImageSources(
-        maxWidth: CGFloat?,
-        quality: Int? = nil
+        quality: Int? = nil,
+        environment: Environment
     ) -> [ImageSource] {
         []
     }
 
     func squareImageSources(
         maxWidth: CGFloat?,
-        quality: Int? = nil
+        quality: Int? = nil,
+        environment: Environment
     ) -> [ImageSource] {
         []
     }
 
-    // TODO: change to observe preferred poster display type
-    func thumbImageSources() -> [ImageSource] {
+    func cinematicImageSources(
+        maxWidth: CGFloat?,
+        quality: Int? = nil,
+        environment: Environment
+    ) -> [ImageSource] {
         []
+    }
+
+    func imageSources(
+        for displayType: PosterDisplayType,
+        size: PosterDisplayType.Size,
+        environment: Environment
+    ) -> [ImageSource] {
+        let maxWidth = size.width(for: displayType)
+        let quality = size.quality
+
+        return switch displayType {
+        case .landscape:
+            landscapeImageSources(
+                maxWidth: maxWidth,
+                quality: quality,
+                environment: environment
+            )
+        case .portrait:
+            portraitImageSources(
+                maxWidth: maxWidth,
+                quality: quality,
+                environment: environment
+            )
+        case .square:
+            squareImageSources(
+                maxWidth: maxWidth,
+                quality: quality,
+                environment: environment
+            )
+        }
+    }
+}
+
+extension Poster where ImageBody == Image {
+
+    @MainActor
+    @ViewBuilder
+    func transform(image: Image) -> ImageBody {
+        image
+    }
+}
+
+extension Poster where Environment == VoidWithDefaultValue {
+
+    func imageSources(
+        for displayType: PosterDisplayType,
+        size: PosterDisplayType.Size
+    ) -> [ImageSource] {
+        imageSources(
+            for: displayType,
+            size: size,
+            environment: .default
+        )
     }
 }

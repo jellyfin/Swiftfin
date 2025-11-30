@@ -18,8 +18,6 @@ struct AlternateLayoutView<Content: View, Layout: View>: View {
     private let content: (CGSize) -> Content
     private let layout: Layout
 
-    private let passLayoutSize: Bool
-
     init(
         alignment: Alignment = .center,
         @ViewBuilder layout: @escaping () -> Layout,
@@ -28,8 +26,6 @@ struct AlternateLayoutView<Content: View, Layout: View>: View {
         self.alignment = alignment
         self.content = { _ in content() }
         self.layout = layout()
-
-        self.passLayoutSize = false
     }
 
     init(
@@ -40,8 +36,6 @@ struct AlternateLayoutView<Content: View, Layout: View>: View {
         self.alignment = alignment
         self.content = content
         self.layout = layout()
-
-        self.passLayoutSize = true
     }
 
     var body: some View {
@@ -49,11 +43,7 @@ struct AlternateLayoutView<Content: View, Layout: View>: View {
             .hidden()
             .trackingSize($layoutSize)
             .overlay(alignment: alignment) {
-                if passLayoutSize {
-                    content(layoutSize)
-                } else {
-                    content(.zero)
-                }
+                content(layoutSize)
             }
     }
 }

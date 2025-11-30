@@ -117,13 +117,11 @@ extension DevicesView {
         // MARK: - Body
 
         var body: some View {
-            ListRow {
+            ListRow(action: onSelect) {
                 deviceImage
             } content: {
                 rowContent
             }
-            .onSelect(perform: onSelect)
-            .isSeparatorVisible(false)
             .swipeActions {
                 if let onDelete = onDelete {
                     Button(
