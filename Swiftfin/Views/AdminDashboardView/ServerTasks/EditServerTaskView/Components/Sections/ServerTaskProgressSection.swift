@@ -46,7 +46,7 @@ extension EditServerTaskView {
                     }
 
                     Button {
-                        observer.send(.stop)
+                        observer.stop()
                     } label: {
                         HStack {
                             Text(L10n.stop)
@@ -60,7 +60,7 @@ extension EditServerTaskView {
                 }
             } else {
                 Button(L10n.run) {
-                    observer.send(.start)
+                    observer.start()
                 }
             }
         }
