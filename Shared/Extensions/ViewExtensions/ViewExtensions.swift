@@ -387,6 +387,19 @@ extension View {
         }
     }
 
+    @ViewBuilder
+    func navigationBarCloseButton(
+        disabled: Bool = false,
+        _ action: @escaping () -> Void
+    ) -> some View {
+        modifier(
+            NavigationBarCloseButtonModifier(
+                disabled: disabled,
+                action: action
+            )
+        )
+    }
+
     func assign<P>(_ publisher: P, to binding: Binding<P.Output>) -> some View where P: Publisher, P.Failure == Never {
         onReceive(publisher) { output in
             binding.wrappedValue = output
