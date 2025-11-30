@@ -183,14 +183,18 @@ extension PosterButton {
     // TODO: Find better way for these indicators, see EpisodeCard
     struct DefaultOverlay: View {
 
-        @Default(.Customization.Indicators.showFavorited)
-        private var showFavorited
-        @Default(.Customization.Indicators.showProgress)
-        private var showProgress
+        @Default(.accentColor)
+        private var accentColor
+
         @Default(.Customization.Indicators.showUnplayed)
         private var showUnplayed
         @Default(.Customization.Indicators.showPlayed)
         private var showPlayed
+
+        @Default(.Customization.Indicators.showFavorited)
+        private var showFavorited
+        @Default(.Customization.Indicators.showProgress)
+        private var showProgress
 
         let item: Item
 
@@ -204,10 +208,16 @@ extension PosterButton {
                         if (item.userData?.playbackPositionTicks ?? 0) > 0 {
                             ProgressIndicator(progress: (item.userData?.playedPercentage ?? 0) / 100, height: 10)
                                 .isVisible(showProgress)
-                        } else if item.canBePlayed, !item.isLiveStream {
-                            UnwatchedIndicator(size: 45)
-                                .foregroundColor(.jellyfinPurple)
-                                .isVisible(showUnplayed)
+                        } else if item.canBePlayed,
+                                  !item.isLiveStream,
+                                  showUnplayed != .none
+                        {
+                            UnwatchedIndicator(
+                                size: 45,
+                                count:
+                                showUnplayed == .count ? item.userData?.unplayedItemCount : nil
+                            )
+                            .foregroundStyle(accentColor.overlayColor, accentColor)
                         }
                     }
 
