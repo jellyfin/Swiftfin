@@ -280,7 +280,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
     }
 
     private func startSession() throws {
-
+        #if !os(tvOS)
         let audioSession = AVAudioSession.sharedInstance()
 
         do {
@@ -291,9 +291,13 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
             logger.critical("Unable to activate AVAudioSession instance: \(error.localizedDescription)")
             throw error
         }
+        #else
+        logger.trace("Audio session management not required on tvOS")
+        #endif
     }
 
     private func stopSession() throws {
+        #if !os(tvOS)
         do {
             try AVAudioSession.sharedInstance().setActive(false)
             logger.trace("Stopped AVAudioSession")
@@ -301,5 +305,8 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
             logger.critical("Unable to deactivate AVAudioSession instance: \(error.localizedDescription)")
             throw error
         }
+        #else
+        logger.trace("Audio session management not required on tvOS")
+        #endif
     }
 }
