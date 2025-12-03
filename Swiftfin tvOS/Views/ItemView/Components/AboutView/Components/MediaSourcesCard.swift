@@ -28,7 +28,7 @@ extension ItemView.AboutView {
                                 .font(.footnote)
 
                             if mediaStreams.count > 4 {
-                                L10n.seeMore.text
+                                Text(L10n.seeMore)
                                     .font(.footnote)
                             }
                         }

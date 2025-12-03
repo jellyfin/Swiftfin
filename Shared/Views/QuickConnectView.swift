@@ -24,11 +24,11 @@ struct QuickConnectView: View {
     private func pollingView(code: String) -> some View {
         VStack(spacing: 20) {
             BulletedList(spacing: 16) {
-                L10n.quickConnectStep1.text
+                Text(L10n.quickConnectStep1)
 
-                L10n.quickConnectStep2.text
+                Text(L10n.quickConnectStep2)
 
-                L10n.quickConnectStep3.text
+                Text(L10n.quickConnectStep3)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -54,25 +54,25 @@ struct QuickConnectView: View {
                 pollingView(code: code)
             case let .error(error):
                 ErrorView(error: error)
-                    .onRetry {
-                        viewModel.start()
-                    }
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .edgePadding()
         .navigationTitle(L10n.quickConnect)
+        .refreshable {
+            viewModel.start()
+        }
         #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarCloseButton {
-                router.dismiss()
-            }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarCloseButton {
+            router.dismiss()
+        }
         #endif
-            .onFirstAppear {
-                    viewModel.start()
-                }
-                .onDisappear {
-                    viewModel.stop()
-                }
+        .onFirstAppear {
+                viewModel.start()
+            }
+            .onDisappear {
+                viewModel.stop()
+            }
     }
 }

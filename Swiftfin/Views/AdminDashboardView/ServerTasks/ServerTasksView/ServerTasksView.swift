@@ -71,14 +71,6 @@ struct ServerTasksView: View {
         }
     }
 
-    @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.send(.refreshTasks)
-            }
-    }
-
     var body: some View {
         ZStack {
             Color.clear
@@ -87,13 +79,16 @@ struct ServerTasksView: View {
             case .content:
                 contentView
             case let .error(error):
-                errorView(with: error)
+                ErrorView(error: error)
             case .initial:
-                DelayedProgressView()
+                ProgressView()
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.tasks)
+        .refreshable {
+            viewModel.send(.refreshTasks)
+        }
         .onFirstAppear {
             viewModel.send(.refreshTasks)
         }

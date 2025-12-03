@@ -95,10 +95,10 @@ struct UserLocalSecurityView: View {
 
             await MainActor.run {
                 self
-                    .error = JellyfinAPIError(L10n.unableToPerformDeviceAuthFaceID)
+                    .error = ErrorMessage(L10n.unableToPerformDeviceAuthFaceID)
             }
 
-            throw JellyfinAPIError(L10n.deviceAuthFailed)
+            throw ErrorMessage(L10n.deviceAuthFailed)
         }
 
         do {
@@ -107,10 +107,10 @@ struct UserLocalSecurityView: View {
             viewModel.logger.critical("\(error.localizedDescription)")
 
             await MainActor.run {
-                self.error = JellyfinAPIError(L10n.unableToPerformDeviceAuth)
+                self.error = ErrorMessage(L10n.unableToPerformDeviceAuth)
             }
 
-            throw JellyfinAPIError(L10n.deviceAuthFailed)
+            throw ErrorMessage(L10n.deviceAuthFailed)
         }
     }
 

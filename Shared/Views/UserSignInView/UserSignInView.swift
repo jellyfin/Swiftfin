@@ -88,7 +88,7 @@ struct UserSignInView: View {
             do {
                 guard let secret = try await quickConnectAction?(client: viewModel.server.client) else {
                     logger.critical("QuickConnect called without necessary action!")
-                    throw JellyfinAPIError(L10n.unknownError)
+                    throw ErrorMessage(L10n.unknownError)
                 }
                 await viewModel.signInQuickConnect(
                     secret: secret
@@ -97,7 +97,7 @@ struct UserSignInView: View {
                 // ignore
             } catch {
                 logger.error("QuickConnect failed with error: \(error.localizedDescription)")
-                await viewModel.error(JellyfinAPIError(L10n.taskFailed))
+                await viewModel.error(ErrorMessage(L10n.taskFailed))
             }
         }
     }
@@ -163,6 +163,7 @@ struct UserSignInView: View {
             ListRowButton(L10n.cancel, role: .cancel) {
                 viewModel.cancel()
             }
+            .frame(maxHeight: 75)
         } else {
             ListRowButton(L10n.signIn) {
                 viewModel.signIn(
@@ -170,6 +171,7 @@ struct UserSignInView: View {
                     password: password
                 )
             }
+            .frame(maxHeight: 75)
             .disabled(username.isEmpty)
             .foregroundStyle(
                 Color.jellyfinPurple.overlayColor,
@@ -184,6 +186,7 @@ struct UserSignInView: View {
                     L10n.quickConnect,
                     action: runQuickConnect
                 )
+                .frame(maxHeight: 75)
                 .disabled(viewModel.state == .signingIn)
                 .foregroundStyle(
                     Color.jellyfinPurple.overlayColor,
@@ -206,7 +209,7 @@ struct UserSignInView: View {
     private var publicUsersSection: some View {
         Section(L10n.publicUsers) {
             if viewModel.publicUsers.isEmpty {
-                L10n.noPublicUsers.text
+                Text(L10n.noPublicUsers)
                     .font(.callout)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)

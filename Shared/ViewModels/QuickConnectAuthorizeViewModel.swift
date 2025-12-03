@@ -48,7 +48,7 @@ final class QuickConnectAuthorizeViewModel: ViewModel {
     private func _authorize(_ code: String) async throws {
         guard let userID = user.id else {
             logger.critical("User ID is nil")
-            throw JellyfinAPIError(L10n.unknownError)
+            throw ErrorMessage(L10n.unknownError)
         }
 
         let request = Paths.authorizeQuickConnect(code: code, userID: userID)
@@ -58,7 +58,7 @@ final class QuickConnectAuthorizeViewModel: ViewModel {
         let isAuthorized = (try? decoder.decode(Bool.self, from: response.value)) ?? false
 
         guard isAuthorized else {
-            throw JellyfinAPIError("Authorization unsuccessful")
+            throw ErrorMessage("Authorization unsuccessful")
         }
 
         events.send(.authorized)

@@ -55,19 +55,19 @@ struct AddItemImageView: View {
         ZStack {
             switch remoteImageInfoViewModel.state {
             case .initial, .refreshing:
-                DelayedProgressView()
+                ProgressView()
             case .content:
                 gridView
             case let .error(error):
                 ErrorView(error: error)
-                    .onRetry {
-                        viewModel.send(.refresh)
-                    }
             }
         }
         .animation(.linear(duration: 0.1), value: remoteImageInfoViewModel.state)
         .navigationTitle(remoteImageInfoViewModel.imageType.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            remoteImageInfoViewModel.send(.refresh)
+        }
         .navigationBarBackButtonHidden(viewModel.backgroundStates.contains(.updating))
         .navigationBarMenuButton(isLoading: viewModel.backgroundStates.contains(.updating)) {
             Button {

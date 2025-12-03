@@ -39,7 +39,7 @@ extension AppSettingsView {
                 if signOutOnBackground {
                     ChevronButton(
                         L10n.duration,
-                        subtitle: Text(backgroundSignOutInterval, format: .hourMinute)
+                        subtitle: Text(Duration.seconds(backgroundSignOutInterval), format: .hourMinuteAbbreviated)
                     ) {
                         router.route(to: .hourPicker)
                     }

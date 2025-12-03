@@ -72,11 +72,6 @@ extension String {
         return padding + self
     }
 
-    @available(*, deprecated, message: "Use self in a Text instead")
-    var text: Text {
-        Text(self)
-    }
-
     var initials: String {
         split(separator: " ")
             .compactMap(\.first)
