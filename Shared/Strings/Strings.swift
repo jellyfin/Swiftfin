@@ -662,10 +662,6 @@ internal enum L10n {
   internal static let file = L10n.tr("Localizable", "file", fallback: "File")
   /// Filters
   internal static let filters = L10n.tr("Localizable", "filters", fallback: "Filters")
-  /// Find missing
-  internal static let findMissing = L10n.tr("Localizable", "findMissing", fallback: "Find missing")
-  /// Find missing metadata and images.
-  internal static let findMissingDescription = L10n.tr("Localizable", "findMissingDescription", fallback: "Find missing metadata and images.")
   /// Folder
   internal static let folder = L10n.tr("Localizable", "folder", fallback: "Folder")
   /// Folders
@@ -678,6 +674,8 @@ internal enum L10n {
   internal static let format = L10n.tr("Localizable", "format", fallback: "Format")
   /// 3D format
   internal static let format3D = L10n.tr("Localizable", "format3D", fallback: "3D format")
+  /// Full refresh
+  internal static let fullRefresh = L10n.tr("Localizable", "fullRefresh", fallback: "Full refresh")
   /// Full side-by-side
   internal static let fullSideBySide = L10n.tr("Localizable", "fullSideBySide", fallback: "Full side-by-side")
   /// Full top and bottom
@@ -1186,6 +1184,8 @@ internal enum L10n {
   internal static let refFramesNotSupported = L10n.tr("Localizable", "refFramesNotSupported", fallback: "The number of reference frames is not supported")
   /// Refresh metadata
   internal static let refreshMetadata = L10n.tr("Localizable", "refreshMetadata", fallback: "Refresh metadata")
+  /// Refresh type
+  internal static let refreshType = L10n.tr("Localizable", "refreshType", fallback: "Refresh type")
   /// Regional
   internal static let regional = L10n.tr("Localizable", "regional", fallback: "Regional")
   /// Regular
@@ -1214,22 +1214,10 @@ internal enum L10n {
   internal static let reorder = L10n.tr("Localizable", "reorder", fallback: "Reorder")
   /// Replace
   internal static let replace = L10n.tr("Localizable", "replace", fallback: "Replace")
-  /// Replace all
-  internal static let replaceAll = L10n.tr("Localizable", "replaceAll", fallback: "Replace all")
-  /// Replace all unlocked metadata and images with new information.
-  internal static let replaceAllDescription = L10n.tr("Localizable", "replaceAllDescription", fallback: "Replace all unlocked metadata and images with new information.")
   /// Current profile values may cause playback issues
   internal static let replaceDeviceProfileWarning = L10n.tr("Localizable", "replaceDeviceProfileWarning", fallback: "Current profile values may cause playback issues")
-  /// Replace images
-  internal static let replaceImages = L10n.tr("Localizable", "replaceImages", fallback: "Replace images")
-  /// Replace all images with new images.
-  internal static let replaceImagesDescription = L10n.tr("Localizable", "replaceImagesDescription", fallback: "Replace all images with new images.")
   /// Are you sure you want to replace this item?
   internal static let replaceItemConfirmation = L10n.tr("Localizable", "replaceItemConfirmation", fallback: "Are you sure you want to replace this item?")
-  /// Replace metadata
-  internal static let replaceMetadata = L10n.tr("Localizable", "replaceMetadata", fallback: "Replace metadata")
-  /// Replace unlocked metadata with new information.
-  internal static let replaceMetadataDescription = L10n.tr("Localizable", "replaceMetadataDescription", fallback: "Replace unlocked metadata with new information.")
   /// Replace subtitle
   internal static let replaceSubtitle = L10n.tr("Localizable", "replaceSubtitle", fallback: "Replace subtitle")
   /// Required
@@ -1534,6 +1522,8 @@ internal enum L10n {
   internal static let transcodeReasons = L10n.tr("Localizable", "transcodeReasons", fallback: "Transcode reason(s)")
   /// Translator
   internal static let translator = L10n.tr("Localizable", "translator", fallback: "Translator")
+  /// Trickplays
+  internal static let trickplays = L10n.tr("Localizable", "trickplays", fallback: "Trickplays")
   /// Trigger already exists
   internal static let triggerAlreadyExists = L10n.tr("Localizable", "triggerAlreadyExists", fallback: "Trigger already exists")
   /// Triggers
@@ -1632,6 +1622,8 @@ internal enum L10n {
   internal static let userViews = L10n.tr("Localizable", "userViews", fallback: "User views")
   /// Use splashscreen
   internal static let useSplashscreen = L10n.tr("Localizable", "useSplashscreen", fallback: "Use splashscreen")
+  /// Validation only
+  internal static let validationOnly = L10n.tr("Localizable", "validationOnly", fallback: "Validation only")
   /// Version
   internal static let version = L10n.tr("Localizable", "version", fallback: "Version")
   /// Video

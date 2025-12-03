@@ -244,8 +244,17 @@ extension NavigationRoute {
             )
         }
     }
-
     #endif
+
+    static func itemMetadataRefresh(viewModel: RefreshMetadataViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemMetadataRefresh",
+            style: .sheet
+        ) {
+            ItemMetadataRefreshView(viewModel: viewModel)
+                .presentationDetents([.medium, .large])
+        }
+    }
 
     static func itemOverview(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(
