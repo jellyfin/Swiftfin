@@ -19,7 +19,7 @@ struct NavigationBarCloseButtonModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content.toolbar {
-            ToolbarItemGroup(placement: .topBarLeading) {
+            ToolbarItemGroup(placement: .cancellationAction) {
                 Button(L10n.close, systemImage: "xmark", action: action)
                     .labelStyle(.iconOnly)
                     .font(.caption)
