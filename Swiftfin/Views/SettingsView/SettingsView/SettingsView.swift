@@ -93,6 +93,10 @@ struct SettingsView: View {
                     router.route(to: .customizeViewsSettings)
                 }
 
+                ChevronButton("YouTube Libraries") {
+                    router.route(to: .youtubeLibrariesSettings)
+                }
+
                 // Note: uncomment if there are current
                 //       experimental settings
 

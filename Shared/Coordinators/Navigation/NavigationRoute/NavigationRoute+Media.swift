@@ -21,6 +21,15 @@ extension NavigationRoute {
         ChannelLibraryView()
     }
 
+    static func youtubeLibrary(viewModel: YouTubeLibraryViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "youtube-library-(\(viewModel.parent?.id ?? "Unparented"))",
+            withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
+        ) {
+            YouTubeLibraryView(viewModel: viewModel)
+        }
+    }
+
     static let liveTV = NavigationRoute(
         id: "liveTV"
     ) {

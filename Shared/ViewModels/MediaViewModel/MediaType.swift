@@ -16,6 +16,7 @@ extension MediaViewModel {
         case collectionFolder(BaseItemDto)
         case downloads
         case favorites
+        case youtube(BaseItemDto)
         case liveTV(BaseItemDto)
 
         var displayTitle: String {
@@ -26,6 +27,8 @@ extension MediaViewModel {
                 return L10n.downloads
             case .favorites:
                 return L10n.favorites
+            case .youtube:
+                return L10n.youtube
             case .liveTV:
                 return L10n.liveTV
             }
@@ -39,6 +42,8 @@ extension MediaViewModel {
                 return "downloads"
             case .favorites:
                 return "favorites"
+            case let .youtube(item):
+                return item.id
             case let .liveTV(item):
                 return item.id
             }

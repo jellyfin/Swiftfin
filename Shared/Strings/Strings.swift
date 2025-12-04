@@ -92,6 +92,8 @@ internal enum L10n {
   internal static let all = L10n.tr("Localizable", "all", fallback: "All")
   /// All audiences
   internal static let allAudiences = L10n.tr("Localizable", "allAudiences", fallback: "All audiences")
+  /// All Channels
+  internal static let allChannels = L10n.tr("Localizable", "allChannels", fallback: "All Channels")
   /// View all past and present devices that have connected.
   internal static let allDevicesDescription = L10n.tr("Localizable", "allDevicesDescription", fallback: "View all past and present devices that have connected.")
   /// All languages
@@ -986,6 +988,8 @@ internal enum L10n {
   internal static let nextUpRewatch = L10n.tr("Localizable", "nextUpRewatch", fallback: "Rewatching in Next Up")
   /// No
   internal static let no = L10n.tr("Localizable", "no", fallback: "No")
+  /// No channels found
+  internal static let noChannelsFound = L10n.tr("Localizable", "noChannelsFound", fallback: "No channels found")
   /// No profiles defined. Playback issues may occur.
   internal static let noDeviceProfileWarning = L10n.tr("Localizable", "noDeviceProfileWarning", fallback: "No profiles defined. Playback issues may occur.")
   /// No episodes available
@@ -1012,6 +1016,12 @@ internal enum L10n {
   internal static func notImplementedYetWithType(_ p1: Any) -> String {
     return L10n.tr("Localizable", "notImplementedYetWithType", String(describing: p1), fallback: "Type: %@ not implemented yet :(")
   }
+  /// No videos yet
+  internal static let noVideosYet = L10n.tr("Localizable", "noVideosYet", fallback: "No videos yet")
+  /// No TubeArchivist libraries detected
+  internal static let noYouTubeLibrariesDetected = L10n.tr("Localizable", "noYouTubeLibrariesDetected", fallback: "No TubeArchivist libraries detected")
+  /// Add the TubeArchivist metadata provider to a TV library, then reload.
+  internal static let noYouTubeLibrariesDetectedDescription = L10n.tr("Localizable", "noYouTubeLibrariesDetectedDescription", fallback: "Add the TubeArchivist metadata provider to a TV library, then reload.")
   /// Official rating
   internal static let officialRating = L10n.tr("Localizable", "officialRating", fallback: "Official rating")
   /// Offset
@@ -1694,6 +1704,14 @@ internal enum L10n {
   internal static let yellow = L10n.tr("Localizable", "yellow", fallback: "Yellow")
   /// Yes
   internal static let yes = L10n.tr("Localizable", "yes", fallback: "Yes")
+  /// YouTube
+  internal static let youtube = L10n.tr("Localizable", "youtube", fallback: "YouTube")
+  /// YouTube Libraries
+  internal static let youtubeLibraries = L10n.tr("Localizable", "youtubeLibraries", fallback: "YouTube Libraries")
+  /// Enabled libraries move their channels to the YouTube tab and hide them from Series.
+  internal static let youtubeLibrariesHelper = L10n.tr("Localizable", "youtubeLibrariesHelper", fallback: "Enabled libraries move their channels to the YouTube tab and hide them from Series.")
+  /// YouTube
+  internal static let youtubeTile = L10n.tr("Localizable", "youtubeTile", fallback: "YouTube")
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:enable nesting type_body_length type_name vertical_whitespace_opening_braces

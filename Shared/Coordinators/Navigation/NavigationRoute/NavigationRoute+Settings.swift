@@ -54,6 +54,12 @@ extension NavigationRoute {
         CustomizeViewsSettings()
     }
 
+    static let youtubeLibrariesSettings = NavigationRoute(
+        id: "youtubeLibrariesSettings"
+    ) {
+        YouTubeLibrariesSettingsView()
+    }
+
     #if DEBUG && !os(tvOS)
     static let debugSettings = NavigationRoute(
         id: "debugSettings"

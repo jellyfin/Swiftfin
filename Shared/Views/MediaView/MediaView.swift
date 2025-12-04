@@ -54,6 +54,9 @@ struct MediaView: View {
                         filters: .favorites
                     )
                     router.route(to: .library(viewModel: viewModel), in: namespace)
+                case let .youtube(item):
+                    let viewModel = YouTubeLibraryViewModel(library: item)
+                    router.route(to: .youtubeLibrary(viewModel: viewModel), in: namespace)
                 case .liveTV:
                     router.route(to: .liveTV)
                 }

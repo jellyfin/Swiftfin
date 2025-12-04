@@ -10,6 +10,7 @@ import Defaults
 import Foundation
 import JellyfinAPI
 import OrderedCollections
+import UIKit
 
 @MainActor
 @Stateful
@@ -33,6 +34,22 @@ final class MediaViewModel: ViewModel {
     @Published
     private(set) var mediaItems: OrderedSet<MediaType> = []
 
+    @Default(.Customization.Library.youtubeLibraryIDs)
+    private var youtubeLibraryIDs
+
+    override init() {
+        super.init()
+
+        Defaults.publisher(.Customization.Library.youtubeLibraryIDs)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                Task { [weak self] in
+                    await self?.refresh()
+                }
+            }
+            .store(in: &cancellables)
+    }
+
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
 
@@ -42,6 +59,14 @@ final class MediaViewModel: ViewModel {
             .compactMap { userView in
                 if userView.collectionType == .livetv {
                     return .liveTV(userView)
+                }
+
+                if !UIDevice.isPhone,
+                   let id = userView.id,
+                   userView.collectionType == .tvshows,
+                   youtubeLibraryIDs.contains(id)
+                {
+                    return .youtube(userView)
                 }
 
                 return .collectionFolder(userView)
@@ -94,6 +119,11 @@ final class MediaViewModel: ViewModel {
         // downloads doesn't have random
         if mediaType == .downloads {
             return []
+        }
+
+        // YouTube uses the library's own primary image as a fallback
+        if case let .youtube(item) = mediaType {
+            return [item.imageSource(.primary, maxWidth: 500)]
         }
 
         var parentID: String?

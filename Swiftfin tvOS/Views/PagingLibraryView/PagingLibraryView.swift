@@ -58,7 +58,20 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     @StateObject
     private var cinematicBackgroundProxy: CinematicBackgroundView.Proxy = .init()
 
-    init(viewModel: PagingLibraryViewModel<Element>) {
+    private let onSelectOverride: ((Element) -> Void)?
+    private let posterTypeOverride: PosterDisplayType?
+    private let displayTypeOverride: LibraryDisplayType?
+
+    init(
+        viewModel: PagingLibraryViewModel<Element>,
+        onSelect: ((Element) -> Void)? = nil,
+        posterTypeOverride: PosterDisplayType? = nil,
+        displayTypeOverride: LibraryDisplayType? = nil
+    ) {
+
+        self.onSelectOverride = onSelect
+        self.posterTypeOverride = posterTypeOverride
+        self.displayTypeOverride = displayTypeOverride
 
         self._displayType = StoredValue(.User.libraryDisplayType(parentID: viewModel.parent?.id))
         self._listColumnCount = StoredValue(.User.libraryListColumnCount(parentID: viewModel.parent?.id))
@@ -74,9 +87,19 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         let listColumnCount = StoredValues[.User.libraryListColumnCount(parentID: viewModel.parent?.id)]
         let posterType = StoredValues[.User.libraryPosterType(parentID: viewModel.parent?.id)]
 
-        let initialDisplayType = Defaults[.Customization.Library.rememberLayout] ? displayType : defaultDisplayType
-        let initialListColumnCount = Defaults[.Customization.Library.rememberLayout] ? listColumnCount : defaultListColumnCount
-        let initialPosterType = Defaults[.Customization.Library.rememberLayout] ? posterType : defaultPosterType
+        var initialDisplayType = Defaults[.Customization.Library.rememberLayout] ? displayType : defaultDisplayType
+        var initialListColumnCount = Defaults[.Customization.Library.rememberLayout] ? listColumnCount : defaultListColumnCount
+        var initialPosterType = Defaults[.Customization.Library.rememberLayout] ? posterType : defaultPosterType
+
+        if let displayTypeOverride {
+            initialDisplayType = displayTypeOverride
+            StoredValues[.User.libraryDisplayType(parentID: viewModel.parent?.id)] = displayTypeOverride
+        }
+
+        if let posterTypeOverride {
+            initialPosterType = posterTypeOverride
+            StoredValues[.User.libraryPosterType(parentID: viewModel.parent?.id)] = posterTypeOverride
+        }
 
         self._layout = State(
             initialValue: Self.makeLayout(
@@ -85,11 +108,20 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 listColumnCount: initialListColumnCount
             )
         )
+
+        // ensure state matches overrides/initials used for layout
+        self.displayType = initialDisplayType
+        self.posterType = initialPosterType
     }
 
     // MARK: On Select
 
     private func onSelect(_ element: Element) {
+        if let onSelectOverride {
+            onSelectOverride(element)
+            return
+        }
+
         switch element {
         case let element as BaseItemDto:
             select(item: element)
@@ -235,9 +267,12 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             layout: layout
         ) { item in
 
-            let displayType = Defaults[.Customization.Library.rememberLayout] ? _displayType.wrappedValue : _defaultDisplayType
-                .wrappedValue
-            let posterType = Defaults[.Customization.Library.rememberLayout] ? _posterType.wrappedValue : _defaultPosterType.wrappedValue
+            let displayType = displayTypeOverride
+                ?? (Defaults[.Customization.Library.rememberLayout] ? _displayType.wrappedValue : _defaultDisplayType
+                    .wrappedValue)
+            let posterType = posterTypeOverride
+                ?? (Defaults[.Customization.Library.rememberLayout] ? _posterType.wrappedValue : _defaultPosterType
+                    .wrappedValue)
 
             switch (posterType, displayType) {
             case (.landscape, .grid):
@@ -347,6 +382,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             setCinematicBackground()
         }
         .onChange(of: rememberLayout) {
+            guard displayTypeOverride == nil, posterTypeOverride == nil else { return }
             if rememberLayout {
                 setCustomLayout()
             } else {
@@ -354,14 +390,17 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             }
         }
         .onChange(of: defaultPosterType) {
+            guard displayTypeOverride == nil, posterTypeOverride == nil else { return }
             guard !Defaults[.Customization.Library.rememberLayout] else { return }
             setDefaultLayout()
         }
         .onChange(of: defaultDisplayType) {
+            guard displayTypeOverride == nil, posterTypeOverride == nil else { return }
             guard !Defaults[.Customization.Library.rememberLayout] else { return }
             setDefaultLayout()
         }
         .onChange(of: defaultListColumnCount) {
+            guard displayTypeOverride == nil, posterTypeOverride == nil else { return }
             guard !Defaults[.Customization.Library.rememberLayout] else { return }
             setDefaultLayout()
         }

@@ -89,19 +89,33 @@ extension BaseItemDto: Poster {
     func landscapeImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
         switch type {
         case .episode:
+            var sources: [ImageSource] = [
+                // TubeArchivist episodes carry the YouTube thumbnail in the thumb slot.
+                imageSource(.thumb, maxWidth: maxWidth, quality: quality),
+                imageSource(.primary, maxWidth: maxWidth, quality: quality),
+            ]
+
             if Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
-                [
+                sources.append(contentsOf: [
                     seriesImageSource(.thumb, maxWidth: maxWidth, quality: quality),
                     seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality),
-                    imageSource(.primary, maxWidth: maxWidth, quality: quality),
-                ]
-            } else {
-                [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
+                ])
             }
+
+            // If episode images are missing, fall back to channel art/backdrop so cards are never blank.
+            sources.append(contentsOf: [
+                seriesImageSource(.primary, maxWidth: maxWidth, quality: quality),
+                seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality),
+            ])
+
+            return sources
         case .folder, .program, .musicVideo, .video:
-            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
+            return [
+                imageSource(.thumb, maxWidth: maxWidth, quality: quality),
+                imageSource(.primary, maxWidth: maxWidth, quality: quality),
+            ]
         default:
-            [
+            return [
                 imageSource(.thumb, maxWidth: maxWidth, quality: quality),
                 imageSource(.backdrop, maxWidth: maxWidth, quality: quality),
             ]

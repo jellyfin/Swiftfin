@@ -81,6 +81,10 @@ struct SettingsView: View {
                     ChevronButton(L10n.customize) {
                         router.route(to: .customizeViewsSettings)
                     }
+
+                    ChevronButton("YouTube Libraries") {
+                        router.route(to: .youtubeLibrariesSettings)
+                    }
 //
 //                    ChevronButton(L10n.experimental)
 //                        .onSelect {

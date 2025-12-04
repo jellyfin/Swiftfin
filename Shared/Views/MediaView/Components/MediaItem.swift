@@ -47,9 +47,12 @@ extension MediaView {
         }
 
         private var useTitleLabel: Bool {
-            useRandomImage ||
-                mediaType == .downloads ||
-                mediaType == .favorites
+            switch mediaType {
+            case .downloads, .favorites, .youtube:
+                return true
+            default:
+                return useRandomImage
+            }
         }
 
         private func setImageSources() {
@@ -60,6 +63,8 @@ extension MediaView {
                 }
 
                 if case let MediaViewModel.MediaType.collectionFolder(item) = mediaType {
+                    self.imageSources = [item.imageSource(.primary, maxWidth: 500)]
+                } else if case let MediaViewModel.MediaType.youtube(item) = mediaType {
                     self.imageSources = [item.imageSource(.primary, maxWidth: 500)]
                 } else if case let MediaViewModel.MediaType.liveTV(item) = mediaType {
                     self.imageSources = [item.imageSource(.primary, maxWidth: 500)]

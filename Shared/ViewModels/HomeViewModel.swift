@@ -8,10 +8,12 @@
 
 import Combine
 import CoreStore
+import Defaults
 import Factory
 import Get
 import JellyfinAPI
 import OrderedCollections
+import UIKit
 
 final class HomeViewModel: ViewModel, Stateful {
 
@@ -60,8 +62,20 @@ final class HomeViewModel: ViewModel, Stateful {
     var nextUpViewModel: NextUpLibraryViewModel = .init()
     var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
 
+    @Default(.Customization.Library.youtubeLibraryIDs)
+    private var youtubeLibraryIDs
+
     override init() {
         super.init()
+
+        Defaults.publisher(.Customization.Library.youtubeLibraryIDs)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                Task { [weak self] in
+                    await self?.send(.refresh)
+                }
+            }
+            .store(in: &cancellables)
 
         Notifications[.itemMetadataDidChange]
             .publisher
@@ -203,6 +217,10 @@ final class HomeViewModel: ViewModel, Stateful {
                     .tvshows,
                 ],
                 using: \.collectionType
+            )
+            .subtracting(
+                UIDevice.isPhone ? [] : Array(youtubeLibraryIDs),
+                using: \.id
             )
             .subtracting(excludedLibraryIDs, using: \.id)
             .map { LatestInLibraryViewModel(parent: $0) }
