@@ -122,6 +122,7 @@ struct ItemEditorView: View {
                     }
                 }
             }
+            .disabled(metadataViewModel.state == .refreshing)
         }
     }
 

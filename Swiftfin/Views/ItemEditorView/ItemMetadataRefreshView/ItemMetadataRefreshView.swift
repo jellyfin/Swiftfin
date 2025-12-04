@@ -48,7 +48,7 @@ struct ItemMetadataRefreshView: View {
             } header: {
                 Text(L10n.refreshType)
             } footer: {
-                LearnMoreButton(L10n.none) {
+                LearnMoreButton(L10n.refreshType) {
                     // TODO: Confirm this is what these options mean and localize
                     LabeledContent(
                         L10n.none,
