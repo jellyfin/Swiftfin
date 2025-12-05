@@ -31,6 +31,8 @@ extension ItemView {
 
         @StateObject
         private var deleteViewModel: DeleteItemViewModel
+        @StateObject
+        private var metadataViewModel: RefreshMetadataViewModel
 
         // MARK: - Dialog States
 
@@ -87,6 +89,7 @@ extension ItemView {
         init(viewModel: ItemViewModel) {
             self.viewModel = viewModel
             self._deleteViewModel = StateObject(wrappedValue: .init(item: viewModel.item))
+            self._metadataViewModel = StateObject(wrappedValue: .init(item: viewModel.item))
         }
 
         // MARK: - Body
@@ -142,7 +145,9 @@ extension ItemView {
                         if canRefresh || canManageSubtitles {
                             Section(L10n.manage) {
                                 if canRefresh {
-                                    RefreshMetadataButton(item: viewModel.item)
+                                    Button(L10n.refreshMetadata, systemImage: "arrow.clockwise") {
+                                        router.route(to: .itemMetadataRefresh(viewModel: metadataViewModel))
+                                    }
                                 }
 
                                 if canManageSubtitles {
