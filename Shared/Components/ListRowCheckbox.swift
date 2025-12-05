@@ -27,7 +27,7 @@ struct ListRowCheckbox: View {
     private let size: CGFloat = 24
     #endif
 
-    init(showDeselected: Bool) {
+    init(showDeselected: Bool = true) {
         self.showDeselected = showDeselected
     }
 
@@ -50,12 +50,5 @@ struct ListRowCheckbox: View {
                 .frame(width: size, height: size)
                 .foregroundStyle(Color.secondary)
         }
-    }
-}
-
-extension ListRowCheckbox {
-
-    init() {
-        self.showDeselected = true
     }
 }
