@@ -6,6 +6,7 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
@@ -21,8 +22,6 @@ extension ItemView {
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers: TrailerSelection
 
-        // MARK: - Observed, State, & Environment Objects
-
         @Router
         private var router
 
@@ -32,43 +31,29 @@ extension ItemView {
         @StateObject
         private var deleteViewModel: DeleteItemViewModel
 
-        // MARK: - Dialog States
-
         @State
         private var showConfirmationDialog = false
         @State
         private var isPresentingEventAlert = false
 
-        // MARK: - Error State
-
         @State
         private var error: Error?
-
-        // MARK: - Can Delete Item
 
         private var canDelete: Bool {
             viewModel.userSession.user.permissions.items.canDelete(item: viewModel.item)
         }
 
-        // MARK: - Can Refresh Item
-
         private var canRefresh: Bool {
             viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item)
         }
-
-        // MARK: - Can Manage Subtitles
 
         private var canManageSubtitles: Bool {
             viewModel.userSession.user.permissions.items.canManageSubtitles(item: viewModel.item)
         }
 
-        // MARK: - Deletion or Refreshing is Enabled
-
         private var enableMenu: Bool {
-            canDelete || canRefresh
+            canDelete || canRefresh || viewModel.item.canShuffle
         }
-
-        // MARK: - Has Trailers
 
         private var hasTrailers: Bool {
             if enabledTrailers.contains(.local), viewModel.localTrailers.isNotEmpty {
@@ -82,19 +67,13 @@ extension ItemView {
             return false
         }
 
-        // MARK: - Initializer
-
         init(viewModel: ItemViewModel) {
             self.viewModel = viewModel
             self._deleteViewModel = StateObject(wrappedValue: .init(item: viewModel.item))
         }
 
-        // MARK: - Body
-
         var body: some View {
             HStack(alignment: .center, spacing: 20) {
-
-                // MARK: Toggle Played
 
                 if viewModel.item.canBePlayed {
                     let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
@@ -111,8 +90,6 @@ extension ItemView {
                     .frame(minWidth: 100, maxWidth: .infinity)
                 }
 
-                // MARK: Toggle Favorite
-
                 let isHeartSelected = viewModel.item.userData?.isFavorite == true
 
                 ActionButton(
@@ -126,8 +103,6 @@ extension ItemView {
                 .isSelected(isHeartSelected)
                 .frame(minWidth: 100, maxWidth: .infinity)
 
-                // MARK: Watch a Trailer
-
                 if hasTrailers {
                     TrailerMenu(
                         localTrailers: viewModel.localTrailers,
@@ -135,10 +110,17 @@ extension ItemView {
                     )
                 }
 
-                // MARK: Advanced Options
-
                 if enableMenu {
                     ActionButton(L10n.advanced, icon: "ellipsis", isCompact: true) {
+                        if viewModel.item.canShuffle {
+                            Section {
+                                Button(L10n.shuffle, systemImage: "shuffle") {
+                                    viewModel.playShuffle(router: router.router)
+                                }
+                                .disabled(viewModel.backgroundStates.contains(.shuffling))
+                            }
+                        }
+
                         if canRefresh || canManageSubtitles {
                             Section(L10n.manage) {
                                 if canRefresh {

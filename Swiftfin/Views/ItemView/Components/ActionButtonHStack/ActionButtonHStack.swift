@@ -26,8 +26,6 @@ extension ItemView {
 
         private let equalSpacing: Bool
 
-        // MARK: - Has Trailers
-
         private var hasTrailers: Bool {
             if enabledTrailers.contains(.local), viewModel.localTrailers.isNotEmpty {
                 return true
@@ -40,22 +38,15 @@ extension ItemView {
             return false
         }
 
-        // MARK: - Initializer
-
         init(viewModel: ItemViewModel, equalSpacing: Bool = true) {
             self.viewModel = viewModel
             self.equalSpacing = equalSpacing
         }
 
-        // MARK: - Body
-
         var body: some View {
             HStack(alignment: .center, spacing: 10) {
 
                 if viewModel.item.canBePlayed {
-
-                    // MARK: - Toggle Played
-
                     let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
 
                     Button(L10n.played, systemImage: "checkmark") {
@@ -69,8 +60,6 @@ extension ItemView {
                     }
                 }
 
-                // MARK: - Toggle Favorite
-
                 let isHeartSelected = viewModel.item.userData?.isFavorite == true
 
                 Button(L10n.favorite, systemImage: isHeartSelected ? "heart.fill" : "heart") {
@@ -82,8 +71,6 @@ extension ItemView {
                 .if(!equalSpacing) { view in
                     view.aspectRatio(1, contentMode: .fit)
                 }
-
-                // MARK: - Select a Version
 
                 if let mediaSources = viewModel.playButtonItem?.mediaSources,
                    mediaSources.count > 1
@@ -98,8 +85,6 @@ extension ItemView {
                         view.aspectRatio(1, contentMode: .fit)
                     }
                 }
-
-                // MARK: - Watch a Trailer
 
                 if hasTrailers {
                     TrailerMenu(

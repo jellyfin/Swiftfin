@@ -63,4 +63,17 @@ final class CollectionItemViewModel: ItemViewModel {
             .elements
             .randomElement()
     }
+
+    // MARK: - Get Shuffled Items
+
+    @MainActor
+    override func getShuffledItems(excluding excludeItemIDs: [String] = []) async throws -> [BaseItemDto] {
+        try await ItemViewModel.fetchShuffledItemsPaginated(
+            userSession: userSession,
+            parentID: item.id,
+            includeItemTypes: [.episode, .movie, .video, .musicVideo, .trailer],
+            excludeItemIDs: excludeItemIDs,
+            filterPlayable: true
+        )
+    }
 }

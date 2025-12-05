@@ -125,4 +125,18 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
         return response?.value.items?.first
     }
+
+    // MARK: getShuffledItems
+
+    @MainActor
+    override func getShuffledItems(excluding excludeItemIDs: [String] = []) async throws -> [BaseItemDto] {
+        try await ItemViewModel.fetchShuffledItemsPaginated(
+            userSession: userSession,
+            parentID: parent?.id,
+            includeItemTypes: [.series, .boxSet, .collectionFolder, .folder, .episode, .movie, .video, .musicVideo, .trailer],
+            excludeItemIDs: excludeItemIDs,
+            enableUserData: true,
+            applyParentParameters: parent?.setParentParameters
+        )
+    }
 }

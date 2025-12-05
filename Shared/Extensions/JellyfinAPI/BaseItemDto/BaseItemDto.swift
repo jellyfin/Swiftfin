@@ -517,3 +517,16 @@ extension BaseItemDto {
         return response.value
     }
 }
+
+extension BaseItemDto {
+
+    /// Determines if this item supports shuffle playback
+    var canShuffle: Bool {
+        switch type {
+        case .series, .boxSet, .collectionFolder, .folder, .playlist:
+            return true
+        default:
+            return false
+        }
+    }
+}

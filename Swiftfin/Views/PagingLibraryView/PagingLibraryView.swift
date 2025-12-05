@@ -8,6 +8,7 @@
 
 import CollectionVGrid
 import Defaults
+import Factory
 import JellyfinAPI
 import Nuke
 import SwiftUI
@@ -235,17 +236,34 @@ struct PagingLibraryView<Element: Poster>: View {
 
     @ViewBuilder
     private var innerContent: some View {
-        switch viewModel.state {
-        case .content:
-            if viewModel.elements.isEmpty {
-                Text(L10n.noResults)
-            } else {
-                elementsView
+        ZStack {
+            switch viewModel.state {
+            case .content:
+                if viewModel.elements.isEmpty {
+                    Text(L10n.noResults)
+                } else {
+                    elementsView
+                }
+            case .initial, .refreshing:
+                ProgressView()
+            default:
+                AssertionFailureView("Expected view for unexpected state")
             }
-        case .initial, .refreshing:
-            ProgressView()
-        default:
-            AssertionFailureView("Expected view for unexpected state")
+
+            // Show loading overlay when shuffling
+            if viewModel.backgroundStates.contains(.shuffling) {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+
+                VStack(spacing: 10) {
+                    ProgressView()
+                    Text(L10n.shuffling)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .padding()
+                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
+            }
         }
     }
 
@@ -436,6 +454,8 @@ struct PagingLibraryView<Element: Poster>: View {
                 default:
                     assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
                 }
+            case let .gotShuffledItems(items):
+                handleShuffledItems(items, in: namespace)
             }
         }
         .onFirstAppear {
@@ -464,6 +484,28 @@ struct PagingLibraryView<Element: Poster>: View {
                 viewModel.send(.getRandomItem)
             }
             .disabled(viewModel.elements.isEmpty)
+
+            Button(L10n.shuffle, systemImage: "shuffle") {
+                viewModel.send(.getShuffledItems)
+            }
+            .disabled(viewModel.elements.isEmpty || viewModel.backgroundStates.contains(.gettingNextPage))
+        }
+    }
+}
+
+// MARK: - Shuffle
+
+private extension PagingLibraryView {
+    func handleShuffledItems(_ items: [Element], in namespace: Namespace.ID) {
+        let baseItems = items.compactMap { $0 as? BaseItemDto }
+
+        Task {
+            await ShuffleActionHelper().playLibraryShuffle(
+                items: baseItems,
+                viewModel: viewModel,
+                router: router.router,
+                namespace: namespace
+            )
         }
     }
 }

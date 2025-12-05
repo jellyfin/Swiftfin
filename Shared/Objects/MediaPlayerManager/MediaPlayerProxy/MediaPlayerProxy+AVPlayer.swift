@@ -35,6 +35,7 @@ class AVMediaPlayerProxy: VideoMediaPlayerProxy {
     private var statusObserver: NSKeyValueObservation!
     private var timeControlStatusObserver: NSKeyValueObservation!
     private var timeObserver: Any!
+    private var playbackEndObserver: NSObjectProtocol?
     private var managerItemObserver: AnyCancellable?
     private var managerStateObserver: AnyCancellable?
 
@@ -129,6 +130,12 @@ extension AVMediaPlayerProxy {
 
     private func playbackStopped() {
         player.pause()
+
+        if let playbackEndObserver {
+            NotificationCenter.default.removeObserver(playbackEndObserver)
+            self.playbackEndObserver = nil
+        }
+
         guard let timeObserver else { return }
         player.removeTimeObserver(timeObserver)
 //        rateObserver.invalidate()
@@ -143,6 +150,21 @@ extension AVMediaPlayerProxy {
         newAVPlayerItem.externalMetadata = item.baseItem.avMetadata
 
         player.replaceCurrentItem(with: newAVPlayerItem)
+
+        // Remove previous observer if any
+        if let playbackEndObserver {
+            NotificationCenter.default.removeObserver(playbackEndObserver)
+        }
+
+        // Observe when playback ends naturally
+        playbackEndObserver = NotificationCenter.default.addObserver(
+            forName: .AVPlayerItemDidPlayToEndTime,
+            object: newAVPlayerItem,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            self.manager?.ended()
+        }
 
         // TODO: protect against paused
 //        rateObserver = player.observe(\.rate, options: [.new, .initial]) { _, value in

@@ -117,6 +117,20 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         router.route(to: .library(viewModel: viewModel))
     }
 
+    // MARK: - Shuffle Handling
+
+    private func handleShuffledItems(_ items: [Element]) {
+        let baseItems = items.compactMap { $0 as? BaseItemDto }
+
+        Task {
+            await ShuffleActionHelper().playLibraryShuffle(
+                items: baseItems,
+                viewModel: viewModel,
+                router: router.router
+            )
+        }
+    }
+
     // MARK: Make Layout
 
     private static func makeLayout(
@@ -387,6 +401,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 default:
                     assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
                 }
+            case let .gotShuffledItems(items):
+                handleShuffledItems(items)
             }
         }
         .onFirstAppear {

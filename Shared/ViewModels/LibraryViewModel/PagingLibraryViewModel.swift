@@ -66,6 +66,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     enum Event {
         case gotRandomItem(Element)
+        case gotShuffledItems([Element])
     }
 
     // MARK: Action
@@ -75,12 +76,14 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         case refresh
         case getNextPage
         case getRandomItem
+        case getShuffledItems
     }
 
     // MARK: BackgroundState
 
     enum BackgroundState: Hashable {
         case gettingNextPage
+        case shuffling
     }
 
     // MARK: State
@@ -322,6 +325,31 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             .asAnyCancellable()
 
             return state
+        case .getShuffledItems:
+
+            backgroundStates.insert(.shuffling)
+
+            randomItemTask = Task { [weak self] in
+                do {
+                    guard let shuffledItems = try await self?.getShuffledItems(), shuffledItems.isNotEmpty else {
+                        self?.logger.warning("No shuffled items returned")
+                        return
+                    }
+
+                    guard !Task.isCancelled else {
+                        return
+                    }
+
+                    self?.eventSubject.send(.gotShuffledItems(shuffledItems))
+                } catch {
+                    // TODO: when a general toasting mechanism is implemented, add
+                    //       background errors for errors from other background tasks
+                    self?.logger.error("Error getting shuffled items: \(error)")
+                }
+            }
+            .asAnyCancellable()
+
+            return state
         }
     }
 
@@ -370,5 +398,12 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     /// come from another source instead.
     func getRandomItem() async throws -> Element? {
         elements.randomElement()
+    }
+
+    /// Gets all items shuffled. Override if items should
+    /// come from another source instead.
+    @MainActor
+    func getShuffledItems(excluding excludeItemIDs: [String] = []) async throws -> [Element] {
+        elements.shuffled()
     }
 }

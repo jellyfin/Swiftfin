@@ -182,7 +182,10 @@ extension EpisodeMediaPlayerQueue {
             manager.playNewItem(provider: provider)
         }
 
-        var tvOSView: some View { EmptyView() }
+        var tvOSView: some View {
+            // TODO: Implement tvOS episodes row once player UI issues are resolved
+            EmptyView()
+        }
 
         var iOSView: some View {
             CompactOrRegularView(
@@ -248,7 +251,7 @@ extension EpisodeMediaPlayerQueue {
                         insets: .init(top: 0, leading: 0, bottom: EdgeInsets.edgePadding, trailing: 0)
                     )
                 ) { item in
-                    EpisodeRow(episode: item) {
+                    MediaPlayerQueueItemViews.ItemRow(item: item) {
                         action(item)
                     }
                     .edgePadding(.horizontal)
@@ -292,25 +295,16 @@ extension EpisodeMediaPlayerQueue {
 
         private struct _Body: View {
 
-            @Environment(\.safeAreaInsets)
-            private var safeAreaInsets: EdgeInsets
-
             @ObservedObject
             var selectionViewModel: SeasonItemViewModel
 
             let action: (BaseItemDto) -> Void
 
             var body: some View {
-                CollectionHStack(
-                    uniqueElements: selectionViewModel.elements,
-                    id: \.unwrappedIDHashOrZero
-                ) { item in
-                    EpisodeButton(episode: item) {
-                        action(item)
-                    }
-                    .frame(height: 150)
-                }
-                .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
+                MediaPlayerQueueItemViews.QueueHStack(
+                    items: selectionViewModel.elements,
+                    action: action
+                )
             }
         }
 
@@ -412,136 +406,6 @@ extension EpisodeMediaPlayerQueue {
                 .edgePadding(.horizontal)
 //                .padding(.trailing, safeAreaInsets.trailing)
             }
-        }
-    }
-
-    private struct EpisodePreview: View {
-
-        @Default(.accentColor)
-        private var accentColor
-
-        @Environment(\.isSelected)
-        private var isSelected: Bool
-
-        let episode: BaseItemDto
-
-        var body: some View {
-            ZStack {
-                Rectangle()
-                    .fill(.complexSecondary)
-
-                ImageView(episode.imageSource(.primary, maxWidth: 200))
-                    .failure {
-                        SystemImageContentView(systemName: episode.systemImage)
-                    }
-            }
-            .overlay {
-                if isSelected {
-                    ContainerRelativeShape()
-                        .stroke(
-                            accentColor,
-                            lineWidth: 8
-                        )
-                        .clipped()
-                }
-            }
-            .posterStyle(.landscape)
-        }
-    }
-
-    private struct EpisodeDescription: View {
-
-        let episode: BaseItemDto
-
-        var body: some View {
-            DotHStack {
-                if let seasonEpisodeLabel = episode.seasonEpisodeLabel {
-                    Text(seasonEpisodeLabel)
-                }
-
-                if let runtime = episode.runTimeLabel {
-                    Text(runtime)
-                }
-            }
-            .font(.caption)
-            .foregroundStyle(.secondary)
-        }
-    }
-
-    private struct EpisodeRow: View {
-
-        @Default(.accentColor)
-        private var accentColor
-
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
-
-        let episode: BaseItemDto
-        let action: () -> Void
-
-        private var isCurrentEpisode: Bool {
-            manager.item.id == episode.id
-        }
-
-        var body: some View {
-            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
-                EpisodePreview(episode: episode)
-                    .frame(width: 110)
-                    .padding(.vertical, 8)
-            } content: {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(episode.displayTitle)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.primary)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
-
-                    EpisodeDescription(episode: episode)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .onSelect(perform: action)
-            .isSelected(isCurrentEpisode)
-        }
-    }
-
-    private struct EpisodeButton: View {
-
-        @Default(.accentColor)
-        private var accentColor
-
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
-
-        let episode: BaseItemDto
-        let action: () -> Void
-
-        private var isCurrentEpisode: Bool {
-            manager.item.id == episode.id
-        }
-
-        var body: some View {
-            Button(action: action) {
-                VStack(alignment: .leading, spacing: 5) {
-                    EpisodePreview(episode: episode)
-
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text(episode.displayTitle)
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .lineLimit(1)
-                            .foregroundStyle(.primary)
-                            .frame(height: 15)
-
-                        EpisodeDescription(episode: episode)
-                            .frame(height: 20, alignment: .top)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                }
-            }
-            .foregroundStyle(.primary, .secondary)
-            .isSelected(isCurrentEpisode)
         }
     }
 }
