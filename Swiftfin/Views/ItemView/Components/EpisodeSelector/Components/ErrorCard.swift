@@ -10,9 +10,9 @@ import SwiftUI
 
 extension SeriesEpisodeSelector {
 
-    struct ErrorCard: View {
+    struct ErrorCard<_Error: Error>: View {
 
-        let error: ErrorMessage
+        let error: _Error
         let action: () -> Void
 
         var body: some View {

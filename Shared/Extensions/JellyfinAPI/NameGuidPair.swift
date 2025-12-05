@@ -17,9 +17,9 @@ extension NameGuidPair: Displayable {
 }
 
 // TODO: strong type studios and implement as `LibraryParent`
-extension NameGuidPair: LibraryParent {
-
-    var libraryType: BaseItemKind? {
-        .studio
-    }
-}
+// extension NameGuidPair: LibraryParent {
+//
+//    var libraryType: BaseItemKind? {
+//        .studio
+//    }
+// }

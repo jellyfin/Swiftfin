@@ -77,7 +77,7 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
 
     var body: some View {
         ProgressView(value: value, total: total)
-            .progressViewStyle(.playback)
+            .progressViewStyle(.playback.square)
             .overlay {
                 Color.clear
                     .frame(height: contentSize.height + gesturePadding)

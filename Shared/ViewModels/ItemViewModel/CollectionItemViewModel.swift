@@ -13,33 +13,26 @@ import OrderedCollections
 
 final class CollectionItemViewModel: ItemViewModel {
 
-    @ObservedPublisher
-    var sections: OrderedDictionary<BaseItemKind, ItemLibraryViewModel>
-
-    private let itemCollection: ItemTypeCollection
+    let itemContentGroupViewModel: ContentGroupViewModel<ItemTypeContentGroupProvider>
 
     override init(item: BaseItemDto) {
-        self.itemCollection = ItemTypeCollection(
-            parent: item,
-            itemTypes: BaseItemKind.supportedCases
-                .appending(.episode)
-                .appending(.person)
-        )
-        self._sections = ObservedPublisher(
-            wrappedValue: [:],
-            observing: itemCollection.$elements
+        self.itemContentGroupViewModel = .init(
+            provider: .init(
+                itemTypes: BaseItemKind.supportedCases
+                    .appending(.episode)
+                    .appending(.person),
+                parent: item
+            )
         )
 
         super.init(item: item)
     }
 
-    // MARK: - Override Response
-
     override func respond(to action: ItemViewModel.Action) -> ItemViewModel.State {
 
         switch action {
         case .refresh, .backgroundRefresh:
-            itemCollection.send(.refresh)
+            itemContentGroupViewModel.refresh()
         default: ()
         }
 
@@ -50,17 +43,19 @@ final class CollectionItemViewModel: ItemViewModel {
     func randomItem() -> BaseItemDto? {
         // Try to exclude episodes if possible
 
-        if itemCollection.elements.elements.count == 1 {
-            return itemCollection.elements.elements.first?.value.elements.first
-        }
+//        if itemCollection.elements.elements.count == 1 {
+//            return itemCollection.elements.elements.first?.value.elements.first
+//        }
 
-        return itemCollection.elements
-            .elements
-            .shuffled()
-            .filter { $0.key != .episode }
-            .randomElement()?
-            .value
-            .elements
-            .randomElement()
+        nil
+
+//        return itemCollection.elements
+//            .elements
+//            .shuffled()
+//            .filter { $0.key != .episode }
+//            .randomElement()?
+//            .value
+//            .elements
+//            .randomElement()
     }
 }
