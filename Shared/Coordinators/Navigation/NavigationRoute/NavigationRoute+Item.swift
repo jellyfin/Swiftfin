@@ -252,7 +252,6 @@ extension NavigationRoute {
             style: .sheet
         ) {
             ItemMetadataRefreshView(viewModel: viewModel)
-                .presentationDetents([.medium, .large])
         }
     }
 

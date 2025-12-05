@@ -76,7 +76,6 @@ struct ItemEditorView: View {
             if canEditMetadata {
 
                 refreshButtonView
-                    .foregroundStyle(.primary, .secondary)
 
                 Section(L10n.edit) {
                     editMetadataView
@@ -96,7 +95,7 @@ struct ItemEditorView: View {
         }
     }
 
-    // MARK: - Refresh Menu Button
+    // MARK: - Refresh Button
 
     @ViewBuilder
     private var refreshButtonView: some View {
@@ -106,9 +105,8 @@ struct ItemEditorView: View {
             } label: {
                 HStack {
                     Text(L10n.refreshMetadata)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .foregroundStyle(.primary)
-
-                    Spacer()
 
                     if metadataViewModel.state == .refreshing {
                         ProgressView(value: metadataViewModel.progress)
@@ -122,6 +120,7 @@ struct ItemEditorView: View {
                     }
                 }
             }
+            .foregroundStyle(.primary, .secondary)
             .disabled(metadataViewModel.state == .refreshing)
         }
     }
