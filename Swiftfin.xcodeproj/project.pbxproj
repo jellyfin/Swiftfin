@@ -215,7 +215,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Resources/Assets.xcassets,
-				Views/ItemEditorView/ItemMetadataRefreshView/ItemMetadataRefreshView.swift,
 			);
 			target = 5358705F2669D21600D05A09 /* Swiftfin tvOS */;
 		};
