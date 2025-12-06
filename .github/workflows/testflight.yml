@@ -60,7 +60,7 @@ jobs:
         sudo cp $PP_PATH /Library/MobileDevice/Provisioning\ Profiles
     
     - name: Build and Upload to TestFlight
-      run: sudo fastlane testFlightLane \
+      run: sudo bundle exec fastlane testFlightLane \
         keyID:${{ secrets.APP_STORE_KEY_ID }} \
         issuerID:${{ secrets.APP_STORE_ISSUER_ID }} \
         keyContents:${{ secrets.APP_STORE_KEY_CONTENTS }} \
