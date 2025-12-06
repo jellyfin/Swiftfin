@@ -35,6 +35,9 @@ extension PlatformForm {
             if let imageView {
                 imageView
                     .frame(maxWidth: .infinity)
+            } else {
+                EmptyView()
+                    .frame(maxWidth: .infinity)
             }
 
             formView
