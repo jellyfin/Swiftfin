@@ -21,12 +21,15 @@ jobs:
       run: |
         git checkout ${{ github.event.client_payload.commitSHA }}
 
+    - name: Bundle Install
+      run: sudo gem install bundler && sudo bundle install
+
     - name: Install SwiftGen
       run: brew install swiftgen
 
     - name: Update Carthage
       run: carthage update --use-xcframeworks --cache-builds
-    
+
     - name: Install the Apple certificate and provisioning profile
       env:
         BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
@@ -58,9 +61,9 @@ jobs:
         sudo mkdir -p /Library/MobileDevice/Provisioning\ Profiles
         cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
         sudo cp $PP_PATH /Library/MobileDevice/Provisioning\ Profiles
-    
+
     - name: Build and Upload to TestFlight
-      run: sudo fastlane testFlightLane \
+      run: sudo bundle exec fastlane testFlightLane \
         keyID:${{ secrets.APP_STORE_KEY_ID }} \
         issuerID:${{ secrets.APP_STORE_ISSUER_ID }} \
         keyContents:${{ secrets.APP_STORE_KEY_CONTENTS }} \

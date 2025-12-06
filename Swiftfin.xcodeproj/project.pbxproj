@@ -1371,8 +1371,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/LePips/StatefulMacro";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = exactVersion;
+				version = 0.0.1;
 			};
 		};
 		E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */ = {
