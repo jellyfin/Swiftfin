@@ -10,13 +10,17 @@ import SwiftUI
 
 protocol PlatformForm: PlatformView {
 
-    associatedtype Content: View
+    associatedtype content: View
+    associatedtype context: View
 
     var imageView: FormImage? { get }
 
+    @LabeledContentBuilder
+    var contextView: context? { get }
+
     @ViewBuilder
     @MainActor
-    var formView: Content { get }
+    var contentView: content { get }
 }
 
 extension PlatformForm {
@@ -25,26 +29,52 @@ extension PlatformForm {
 
     @MainActor
     var iOSView: some View {
-        formView
+        contentView
             .navigationBarTitleDisplayMode(.inline)
     }
 
     @MainActor
     var tvOSView: some View {
         HStack {
-            if let imageView {
-                imageView
-                    .frame(maxWidth: .infinity)
-            } else {
-                EmptyView()
-                    .frame(maxWidth: .infinity)
-            }
+            descriptionView
+                .frame(maxWidth: .infinity)
 
-            formView
+            contentView
                 .padding(.top)
             #if os(tvOS)
                 .scrollClipDisabled()
             #endif
         }
     }
+
+    private var descriptionView: some View {
+        ZStack {
+            if let imageView {
+                imageView
+            } else {
+                EmptyView()
+            }
+            if contextView != nil {
+                learnMoreModal
+            }
+        }
+    }
+
+    private var learnMoreModal: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            contextView
+                .labeledContentStyle(LearnMoreLabeledContentStyle())
+                .foregroundStyle(Color.primary, Color.secondary)
+        }
+        .padding(24)
+        .background {
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Material.thick)
+        }
+        .padding()
+    }
+}
+
+extension PlatformForm where context == EmptyView {
+    var contextView: EmptyView? { nil }
 }

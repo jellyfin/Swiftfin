@@ -36,9 +36,9 @@ struct SettingsView: PlatformForm {
         .init(.jellyfinBlobBlue)
     }
 
-    // MARK: - Form View
+    // MARK: - Content View
 
-    var formView: some View {
+    var contentView: some View {
         Form {
             serverSection
             videoPlayerSection
@@ -57,7 +57,7 @@ struct SettingsView: PlatformForm {
 
     @ViewBuilder
     private var serverSection: some View {
-        Section {
+        Section(L10n.jellyfin) {
             UserProfileRow(user: viewModel.userSession.user.data) {
                 router.route(to: .userProfile(viewModel: viewModel))
             }

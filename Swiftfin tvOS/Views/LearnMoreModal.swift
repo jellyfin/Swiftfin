@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+@available(*, deprecated, message: "Use the PlatformForm protocol instead")
 struct LearnMoreModal: View {
 
     private let content: AnyView
