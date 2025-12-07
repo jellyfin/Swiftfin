@@ -108,7 +108,7 @@ struct SettingsView: PlatformForm {
 
     @ViewBuilder
     private var videoPlayerSection: some View {
-        Section(L10n.videoPlayer) {
+        LearnMoreSection(L10n.videoPlayer) {
             #if os(iOS)
             CaseIterablePicker(L10n.videoPlayerType, selection: $videoPlayerType)
 
@@ -126,6 +126,15 @@ struct SettingsView: PlatformForm {
             ChevronButton(L10n.playbackQuality) {
                 router.route(to: .playbackQualitySettings)
             }
+        } learnMore: {
+            LabeledContent(
+                "Swiftfin",
+                value: L10n.playerSwiftfinDescription
+            )
+            LabeledContent(
+                L10n.native,
+                value: L10n.playerNativeDescription
+            )
         }
     }
 

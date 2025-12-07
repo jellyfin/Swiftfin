@@ -8,19 +8,21 @@
 
 import SwiftUI
 
+extension FocusedValues {
+
+    @Entry
+    var formLearnMore: AnyView? = nil
+}
+
 protocol PlatformForm: PlatformView {
 
-    associatedtype content: View
-    associatedtype context: View
+    associatedtype Content: View
 
     var imageView: FormImage? { get }
 
-    @LabeledContentBuilder
-    var contextView: context? { get }
-
     @ViewBuilder
     @MainActor
-    var contentView: content { get }
+    var contentView: Content { get }
 }
 
 extension PlatformForm {
@@ -35,46 +37,9 @@ extension PlatformForm {
 
     @MainActor
     var tvOSView: some View {
-        HStack {
-            descriptionView
-                .frame(maxWidth: .infinity)
-
-            contentView
-                .padding(.top)
-            #if os(tvOS)
-                .scrollClipDisabled()
-            #endif
-        }
+        PlatformFormContainer(
+            imageView: imageView,
+            content: contentView
+        )
     }
-
-    private var descriptionView: some View {
-        ZStack {
-            if let imageView {
-                imageView
-            } else {
-                EmptyView()
-            }
-            if contextView != nil {
-                learnMoreModal
-            }
-        }
-    }
-
-    private var learnMoreModal: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            contextView
-                .labeledContentStyle(LearnMoreLabeledContentStyle())
-                .foregroundStyle(Color.primary, Color.secondary)
-        }
-        .padding(24)
-        .background {
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Material.thick)
-        }
-        .padding()
-    }
-}
-
-extension PlatformForm where context == EmptyView {
-    var contextView: EmptyView? { nil }
 }
