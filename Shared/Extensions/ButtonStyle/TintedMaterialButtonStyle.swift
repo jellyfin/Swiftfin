@@ -8,10 +8,11 @@
 
 import SwiftUI
 
-// MARK: - TintedMaterialButtonStyle
+// TODO: on tvOS focus, find way to disable brightness effect
 
 extension ButtonStyle where Self == TintedMaterialButtonStyle {
 
+    // TODO: just be `Material` backed instead of `TintedMaterial`
     static var material: TintedMaterialButtonStyle {
         TintedMaterialButtonStyle(tint: Color.clear, foregroundColor: Color.primary)
     }
@@ -30,8 +31,6 @@ struct TintedMaterialButtonStyle: ButtonStyle {
     private var isSelected
     @Environment(\.isEnabled)
     private var isEnabled
-    @Environment(\.isFocused)
-    private var isFocused
 
     // Take tint instead of reading from view as
     // global accent color causes flashes of color
@@ -42,6 +41,9 @@ struct TintedMaterialButtonStyle: ButtonStyle {
         ZStack {
             TintedMaterial(tint: buttonTint)
                 .id(isSelected)
+            #if !os(tvOS)
+                .cornerRadius(10)
+            #endif
 
             configuration.label
                 .foregroundStyle(foregroundStyle)
@@ -54,6 +56,7 @@ struct TintedMaterialButtonStyle: ButtonStyle {
         if isEnabled && isSelected {
             tint
         } else {
+            // TODO: change to a full-opacity color
             Color.gray.opacity(0.3)
         }
     }
@@ -64,6 +67,7 @@ struct TintedMaterialButtonStyle: ButtonStyle {
         } else if isEnabled {
             AnyShapeStyle(HierarchicalShapeStyle.primary)
         } else {
+            // TODO: change to a full-opacity color
             AnyShapeStyle(Color.gray.opacity(0.3))
         }
     }

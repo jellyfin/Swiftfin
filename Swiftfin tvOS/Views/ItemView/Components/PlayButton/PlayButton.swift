@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import Logging
 import SwiftUI
@@ -15,17 +14,11 @@ extension ItemView {
 
     struct PlayButton: View {
 
-        @Default(.accentColor)
-        private var accentColor
-
         @Router
         private var router
 
         @ObservedObject
         var viewModel: ItemViewModel
-
-        @FocusState
-        private var isFocused: Bool
 
         private let logger = Logger.swiftfin()
 
@@ -89,7 +82,6 @@ extension ItemView {
                         .frame(width: 100, height: 100)
                 }
             }
-            .font(.title3)
             .fontWeight(.semibold)
         }
 
@@ -101,28 +93,25 @@ extension ItemView {
             } label: {
                 HStack(spacing: 15) {
                     Image(systemName: "play.fill")
-                        .padding(.trailing, 4)
 
-                    VStack(alignment: .leading) {
+                    VStack {
                         Text(title)
-                            .if(multipleVersions) { text in
-                                text
-                                    .font(.caption)
-                            }
 
                         if let source {
                             Marquee(source, animateWhenFocused: true)
                                 .font(.caption)
-                                .frame(maxWidth: 300, alignment: .leading)
+                                .fontWeight(.medium)
                         }
                     }
                 }
-                .foregroundStyle(isEnabled ? .black : Color(UIColor.secondaryLabel))
-                .padding(20)
-                .frame(width: multipleVersions ? 320 : 450, alignment: .center)
-                .cornerRadius(10)
+                .padding(.horizontal, 20)
             }
-            .buttonStyle(.tintedMaterial(tint: accentColor, foregroundColor: accentColor.overlayColor))
+            .buttonStyle(
+                .tintedMaterial(
+                    tint: .white,
+                    foregroundColor: .black
+                )
+            )
             .contextMenu {
                 if viewModel.playButtonItem?.userData?.playbackPositionTicks != 0 {
                     Button(L10n.playFromBeginning, systemImage: "gobackward") {
@@ -131,32 +120,43 @@ extension ItemView {
                 }
             }
             .isSelected(true)
-            .disabled(!isEnabled)
-            .focused($isFocused)
+            .enabled(isEnabled)
         }
 
         // MARK: - Play Content
 
         private func play(fromBeginning: Bool = false) {
-            guard var playButtonItem = viewModel.playButtonItem,
+            guard let playButtonItem = viewModel.playButtonItem,
                   let selectedMediaSource = viewModel.selectedMediaSource
             else {
                 logger.error("Play selected with no item or media source")
                 return
             }
 
-            if fromBeginning {
-                playButtonItem.userData?.playbackPositionTicks = 0
+            let queue: (any MediaPlayerQueue)? = {
+                if playButtonItem.type == .episode {
+                    return EpisodeMediaPlayerQueue(episode: playButtonItem)
+                }
+                return nil
+            }()
+
+            let provider = MediaPlayerItemProvider(item: playButtonItem) { item in
+                try await MediaPlayerItem.build(
+                    for: item,
+                    mediaSource: selectedMediaSource
+                ) {
+                    if fromBeginning {
+                        $0.userData?.playbackPositionTicks = 0
+                    }
+                }
             }
 
-            let manager = MediaPlayerManager(
-                item: playButtonItem
-//                        queue: EpisodeMediaPlayerQueue(episode: playButtonItem)
-            ) { item in
-                try await MediaPlayerItem.build(for: item, mediaSource: selectedMediaSource)
-            }
-
-            router.route(to: .videoPlayer(manager: manager))
+            router.route(
+                to: .videoPlayer(
+                    provider: provider,
+                    queue: queue
+                )
+            )
         }
     }
 }
