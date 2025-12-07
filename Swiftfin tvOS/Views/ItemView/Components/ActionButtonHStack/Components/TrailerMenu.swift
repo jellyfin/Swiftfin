@@ -107,7 +107,7 @@ extension ItemView {
         private func playLocalTrailer(_ trailer: BaseItemDto) {
             guard let selectedMediaSource = trailer.mediaSources?.first else {
                 logger.log(level: .error, "No media sources found")
-                error = JellyfinAPIError(L10n.unknownError)
+                error = ErrorMessage(L10n.unknownError)
                 return
             }
 
@@ -122,23 +122,23 @@ extension ItemView {
 
         private func playExternalTrailer(_ trailer: MediaURL) {
             guard let urlString = trailer.url else {
-                error = JellyfinAPIError(L10n.unableToOpenTrailer)
+                error = ErrorMessage(L10n.unableToOpenTrailer)
                 return
             }
 
             guard let externalURL = ExternalTrailerURL(string: urlString) else {
-                error = JellyfinAPIError(L10n.unableToOpenTrailer)
+                error = ErrorMessage(L10n.unableToOpenTrailer)
                 return
             }
 
             if externalURL.canBeOpened {
                 UIApplication.shared.open(externalURL.deepLink) { success in
                     if !success {
-                        error = JellyfinAPIError(L10n.unableToOpenTrailerApp(externalURL.source.displayTitle))
+                        error = ErrorMessage(L10n.unableToOpenTrailerApp(externalURL.source.displayTitle))
                     }
                 }
             } else {
-                error = JellyfinAPIError(L10n.unableToOpenTrailer)
+                error = ErrorMessage(L10n.unableToOpenTrailer)
             }
         }
     }

@@ -85,7 +85,7 @@ struct ServerUserPermissionsView: View {
         case let .error(error):
             ErrorView(error: error)
         case .initial:
-            ErrorView(error: JellyfinAPIError(L10n.loadingUserFailed))
+            ErrorView(error: ErrorMessage(L10n.loadingUserFailed))
         default:
             permissionsListView
         }

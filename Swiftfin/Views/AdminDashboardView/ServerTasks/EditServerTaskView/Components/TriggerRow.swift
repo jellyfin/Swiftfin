@@ -29,8 +29,7 @@ extension EditServerTaskView {
                         if let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks {
                             Text(
                                 L10n.timeLimitLabelWithValue(
-                                    ServerTicks(maxRuntimeTicks)
-                                        .seconds.formatted(.hourMinute)
+                                    Duration.ticks(maxRuntimeTicks).formatted(.hourMinuteAbbreviated)
                                 )
                             )
                         } else {
@@ -76,8 +75,7 @@ extension EditServerTaskView {
             case .intervalTrigger:
                 if let intervalTicks = taskTriggerInfo.intervalTicks {
                     return L10n.everyInterval(
-                        ServerTicks(intervalTicks)
-                            .seconds.formatted(.hourMinute)
+                        Duration.ticks(intervalTicks).formatted(.hourMinuteAbbreviated)
                     )
                 }
             case .startupTrigger:

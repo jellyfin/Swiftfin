@@ -61,7 +61,7 @@ extension AddTaskTriggerView {
 
         private var subtitleString: String {
             if let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks {
-                ServerTicks(maxRuntimeTicks).seconds.formatted(.hourMinute)
+                Duration.ticks(maxRuntimeTicks).formatted(.hourMinuteAbbreviated)
             } else {
                 L10n.none
             }
