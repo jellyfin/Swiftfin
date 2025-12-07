@@ -1,5 +1,5 @@
 {
-  "originHash" : "9f0e08bb88053f1755b6990979179b0cb8026e2fc1829d595a4cc6714de0b6ed",
+  "originHash" : "38a493503cb22432e1bf1b0b812569bb2bdd51f821207a74b6b78ff16a049011",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -186,8 +186,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/StatefulMacro",
       "state" : {
-        "branch" : "main",
-        "revision" : "7f56ed3f2297ba86c126e33d40af8b1f908e3a53"
+        "revision" : "7f56ed3f2297ba86c126e33d40af8b1f908e3a53",
+        "version" : "0.0.1"
       }
     },
     {
@@ -330,8 +330,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
       "state" : {
-        "revision" : "4c27acf5394b645b70d8ba19dc249c0472d5f618",
-        "version" : "1.7.0"
+        "revision" : "31073495cae9caf243c440eac94b3ab067e3d7bc",
+        "version" : "1.8.0"
       }
     }
   ],
