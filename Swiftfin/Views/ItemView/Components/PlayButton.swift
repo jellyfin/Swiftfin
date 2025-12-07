@@ -92,7 +92,6 @@ extension ItemView {
                     foregroundColor: accentColor.overlayColor
                 )
             )
-            .isSelected(true)
             .contextMenu {
                 if viewModel.playButtonItem?.userData?.playbackPositionTicks != 0 {
                     Button(L10n.playFromBeginning, systemImage: "gobackward") {
@@ -100,6 +99,7 @@ extension ItemView {
                     }
                 }
             }
+            .isSelected(true)
             .enabled(isEnabled)
         }
 
