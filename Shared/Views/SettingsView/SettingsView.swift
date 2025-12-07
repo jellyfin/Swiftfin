@@ -108,7 +108,7 @@ struct SettingsView: PlatformForm {
 
     @ViewBuilder
     private var videoPlayerSection: some View {
-        LearnMoreSection(L10n.videoPlayer) {
+        Section(L10n.videoPlayer) {
             #if os(iOS)
             CaseIterablePicker(L10n.videoPlayerType, selection: $videoPlayerType)
 
