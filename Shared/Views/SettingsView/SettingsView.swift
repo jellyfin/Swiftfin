@@ -57,7 +57,7 @@ struct SettingsView: PlatformForm {
 
     @ViewBuilder
     private var serverSection: some View {
-        Section(L10n.jellyfin) {
+        Section {
             UserProfileRow(user: viewModel.userSession.user.data) {
                 router.route(to: .userProfile(viewModel: viewModel))
             }
