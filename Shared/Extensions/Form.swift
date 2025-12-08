@@ -19,7 +19,7 @@ extension FocusedValues {
 func Form<Content: View>(
     @ViewBuilder content: @escaping () -> Content
 ) -> some View {
-    SplitViewForm(content: content) {
+    HStackForm(content: content) {
         EmptyView()
     }
 }
@@ -28,7 +28,7 @@ func Form<Content: View>(
     systemImage: String,
     @ViewBuilder content: @escaping () -> Content
 ) -> some View {
-    SplitViewForm(content: content) {
+    HStackForm(content: content) {
         Image(systemName: systemImage)
             .resizable()
             .aspectRatio(contentMode: .fit)
@@ -40,7 +40,7 @@ func Form<Content: View>(
     imageResource: ImageResource,
     @ViewBuilder content: @escaping () -> Content
 ) -> some View {
-    SplitViewForm(content: content) {
+    HStackForm(content: content) {
         Image(imageResource)
             .resizable()
             .aspectRatio(contentMode: .fit)
@@ -52,12 +52,12 @@ func Form<Image: View, Content: View>(
     @ViewBuilder content: @escaping () -> Content,
     @ViewBuilder image: @escaping () -> Image
 ) -> some View {
-    SplitViewForm(content: content, image: image)
+    HStackForm(content: content, image: image)
 }
 
-// MARK: - PlatformForm
+// MARK: - HStack Form
 
-private struct SplitViewForm<Image: View, Content: View>: View {
+private struct HStackForm<Image: View, Content: View>: View {
 
     #if os(tvOS)
     @FocusedValue(\.formLearnMore)
