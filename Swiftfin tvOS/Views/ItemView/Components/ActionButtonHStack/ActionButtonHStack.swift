@@ -92,21 +92,17 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            HStack(alignment: .center, spacing: 20) {
+            HStack(alignment: .center, spacing: 30) {
 
                 // MARK: Toggle Played
 
                 if viewModel.item.canBePlayed {
                     let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
 
-                    ActionButton(
-                        L10n.played,
-                        icon: "checkmark.circle",
-                        selectedIcon: "checkmark.circle.fill"
-                    ) {
+                    Button(L10n.played, systemImage: "checkmark") {
                         viewModel.send(.toggleIsPlayed)
                     }
-                    .foregroundStyle(Color.jellyfinPurple)
+                    .buttonStyle(.tintedMaterial(tint: Color.jellyfinPurple, foregroundColor: .primary))
                     .isSelected(isCheckmarkSelected)
                     .frame(minWidth: 100, maxWidth: .infinity)
                 }
@@ -115,14 +111,10 @@ extension ItemView {
 
                 let isHeartSelected = viewModel.item.userData?.isFavorite == true
 
-                ActionButton(
-                    L10n.favorited,
-                    icon: "heart.circle",
-                    selectedIcon: "heart.circle.fill"
-                ) {
+                Button(L10n.favorited, systemImage: isHeartSelected ? "heart.fill" : "heart") {
                     viewModel.send(.toggleIsFavorite)
                 }
-                .foregroundStyle(.pink)
+                .buttonStyle(.tintedMaterial(tint: .pink, foregroundColor: .primary))
                 .isSelected(isHeartSelected)
                 .frame(minWidth: 100, maxWidth: .infinity)
 
@@ -133,12 +125,14 @@ extension ItemView {
                         localTrailers: viewModel.localTrailers,
                         externalTrailers: viewModel.item.remoteTrailers ?? []
                     )
+                    .buttonStyle(.tintedMaterial(tint: .pink, foregroundColor: .primary))
+                    .frame(minWidth: 100, maxWidth: .infinity)
                 }
 
                 // MARK: Advanced Options
 
                 if enableMenu {
-                    ActionButton(L10n.advanced, icon: "ellipsis", isCompact: true) {
+                    Menu {
                         if canRefresh || canManageSubtitles {
                             Section(L10n.manage) {
                                 if canRefresh {
@@ -164,13 +158,18 @@ extension ItemView {
                                 }
                             }
                         }
+                    } label: {
+                        Label(L10n.advanced, systemImage: "ellipsis")
+                            .rotationEffect(.degrees(90))
                     }
-                    .frame(width: 60)
+                    .buttonStyle(.material)
+                    .frame(width: 60, height: 100)
                 }
             }
             .frame(height: 100)
-            .padding(.top, 1)
-            .padding(.bottom, 10)
+            .labelStyle(.iconOnly)
+            .font(.title3)
+            .fontWeight(.semibold)
             .confirmationDialog(
                 L10n.deleteItemConfirmationMessage,
                 isPresented: $showConfirmationDialog,
