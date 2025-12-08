@@ -11,7 +11,7 @@ import Factory
 import JellyfinAPI
 import SwiftUI
 
-struct SettingsView: PlatformForm {
+struct SettingsView: View {
 
     @Router
     var router
@@ -30,16 +30,10 @@ struct SettingsView: PlatformForm {
     @StateObject
     private var viewModel = SettingsViewModel()
 
-    // MARK: - Image View
+    // MARK: - Body
 
-    var imageView: FormImage? {
-        .init(.jellyfinBlobBlue)
-    }
-
-    // MARK: - Content View
-
-    var contentView: some View {
-        Form {
+    var body: some View {
+        Form(imageResource: .jellyfinBlobBlue) {
             serverSection
             videoPlayerSection
             customizationSection
