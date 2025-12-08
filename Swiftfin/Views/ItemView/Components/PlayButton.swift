@@ -70,22 +70,28 @@ extension ItemView {
                 play()
             } label: {
                 HStack {
-                    Label(title, systemImage: "play.fill")
-                        .font(.callout)
-                        .fontWeight(.semibold)
+                    Image(systemName: "play.fill")
 
-                    if let source {
-                        Marquee(source, speed: 40, delay: 3, fade: 5)
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .frame(maxWidth: 175)
+                    VStack {
+                        Text(title)
+
+                        if let source {
+                            Marquee(source, speed: 40, delay: 3, fade: 5)
+                                .font(.caption)
+                                .fontWeight(.medium)
+                        }
                     }
                 }
-                .padding(.horizontal, 5)
+                .padding(.horizontal, 20)
+                .font(.callout)
+                .fontWeight(.semibold)
             }
-            .buttonStyle(.tintedMaterial(tint: accentColor, foregroundColor: accentColor.overlayColor))
-            .cornerRadius(10)
-            .isSelected(true)
+            .buttonStyle(
+                .tintedMaterial(
+                    tint: accentColor,
+                    foregroundColor: accentColor.overlayColor
+                )
+            )
             .contextMenu {
                 if viewModel.playButtonItem?.userData?.playbackPositionTicks != 0 {
                     Button(L10n.playFromBeginning, systemImage: "gobackward") {
@@ -93,7 +99,9 @@ extension ItemView {
                     }
                 }
             }
-            .disabled(!isEnabled)
+            .cornerRadius(10)
+            .isSelected(true)
+            .enabled(isEnabled)
         }
 
         // MARK: - Play Content

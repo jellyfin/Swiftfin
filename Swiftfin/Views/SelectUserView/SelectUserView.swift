@@ -27,6 +27,8 @@ struct SelectUserView: View {
 
     // MARK: - Defaults
 
+    @Default(.userAccentColor)
+    private var accentColor
     @Default(.selectUserUseSplashscreen)
     private var selectUserUseSplashscreen
     @Default(.selectUserAllServersSplashscreen)
@@ -433,6 +435,11 @@ struct SelectUserView: View {
             Button(L10n.connect) {
                 router.route(to: .connectToServer)
             }
+            .foregroundStyle(
+                accentColor.overlayColor,
+                accentColor
+            )
+            .buttonStyle(.primary)
             .frame(height: 50)
             .frame(maxWidth: 300)
         }
