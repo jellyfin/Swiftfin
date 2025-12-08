@@ -92,13 +92,9 @@ struct ActiveSessionsView: View {
             }
             .labelStyle(.iconOnly)
             .menuStyle(.button)
-            .buttonStyle(
-                .tintedMaterial(
-                    tint: Color.gray.opacity(0.3), foregroundColor: accentColor
-                ) { isPressed in
-                    isFiltersPresented = isPressed
-                }
-            )
+            .buttonStyle(.tintedMaterial(tint: Color.gray.opacity(0.3), foregroundColor: accentColor) { isPressed in
+                isFiltersPresented = isPressed
+            })
             .clipShape(.circle)
             .foregroundStyle(accentColor)
         }
