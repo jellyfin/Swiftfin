@@ -17,7 +17,7 @@ extension Color {
     }
 
     var overlayColor: Color {
-        Color(uiColor: uiColor.overlayColor) // TODO: move from UIColor
+        Color(uiColor: uiColor.overlayColor)
     }
 
     // TODO: Correct and add colors
