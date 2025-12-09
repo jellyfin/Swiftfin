@@ -48,8 +48,6 @@ extension ItemView {
             (size.height + safeAreaInsets.vertical) * heightRatio
         }
 
-        // MARK: - iOS
-
         private var headerOpacity: CGFloat {
             let start = headerHeight - safeAreaInsets.top - 90
             let end = headerHeight - safeAreaInsets.top - 40
@@ -57,6 +55,8 @@ extension ItemView {
             let opacity = clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
             return opacity
         }
+
+        // MARK: - iOS View
 
         var iOSView: some View {
             ScrollView(showsIndicators: false) {
@@ -96,7 +96,7 @@ extension ItemView {
                     }
         }
 
-        // MARK: - tvOS
+        // MARK: - tvOS View
 
         var tvOSView: some View {
             GeometryReader { proxy in

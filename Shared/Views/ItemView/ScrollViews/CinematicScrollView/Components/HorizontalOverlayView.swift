@@ -23,32 +23,14 @@ extension ItemView.CinematicScrollView {
         private var focusedLayer: FocusLayer?
         #endif
 
-        private var buttonHeight: CGFloat {
-            #if os(tvOS)
-            100
-            #else
-            50
-            #endif
-        }
-
-        private var buttonSpacing: CGFloat {
-            #if os(tvOS)
-            30
-            #else
-            10
-            #endif
-        }
-
-        private var logoHeightRatio: CGFloat {
-            #if os(tvOS)
-            0.5
-            #else
-            0.25
-            #endif
-        }
+        private let buttonHeight: CGFloat = UIDevice.isTV ? 100 : 50
+        private let buttonSpacing: CGFloat = UIDevice.isTV ? 25 : 10
 
         private let buttonWidthRatio: CGFloat = 0.25
+
         private let logoWidthRatio: CGFloat = 0.35
+        private let logoHeightRatio: CGFloat = UIDevice.isTV ? 0.5 : 0.25
+
         private let personImageAspectRatio: CGFloat = 1.5
 
         @StoredValue(.User.itemViewAttributes)
