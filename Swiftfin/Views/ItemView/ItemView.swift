@@ -104,7 +104,7 @@ struct ItemView: View {
     ) -> any ScrollContainerView {
 
         if UIDevice.isPad {
-            return iPadOSCinematicScrollView(viewModel: viewModel, content: content)
+            return CinematicScrollView(viewModel: viewModel, content: content)
         }
 
         switch viewModel.item.type {
