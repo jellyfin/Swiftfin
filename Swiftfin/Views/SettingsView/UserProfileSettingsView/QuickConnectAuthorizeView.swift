@@ -91,14 +91,16 @@ struct QuickConnectAuthorizeView: View {
             }
 
             if viewModel.state == .authorizing {
-                ListRowButton(L10n.cancel, role: .cancel) {
+                Button(L10n.cancel, role: .cancel) {
                     viewModel.cancel()
                     isCodeFocused = true
                 }
+                .buttonStyle(.primary)
             } else {
-                ListRowButton(L10n.authorize) {
+                Button(L10n.authorize) {
                     viewModel.authorize(code: code)
                 }
+                .buttonStyle(.primary)
                 .disabled(code.count != 6 || viewModel.state == .authorizing)
                 .foregroundStyle(
                     accentColor.overlayColor,

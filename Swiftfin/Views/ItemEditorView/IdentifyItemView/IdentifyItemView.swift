@@ -129,18 +129,20 @@ struct IdentifyItemView: View {
         }
 
         if viewModel.state == .searching {
-            ListRowButton(L10n.cancel) {
+            Button(L10n.cancel) {
                 viewModel.send(.cancel)
             }
+            .buttonStyle(.primary)
             .foregroundStyle(.red, .red.opacity(0.2))
         } else {
-            ListRowButton(L10n.search) {
+            Button(L10n.search) {
                 viewModel.send(.search(
                     name: search.name,
                     originalTitle: search.originalTitle,
                     year: search.year
                 ))
             }
+            .buttonStyle(.primary)
             .disabled(search.isEmpty)
             .foregroundStyle(
                 accentColor.overlayColor,

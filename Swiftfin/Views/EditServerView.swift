@@ -69,9 +69,10 @@ struct EditServerView: View {
             }
 
             if isEditing {
-                ListRowButton(L10n.delete) {
+                Button(L10n.delete) {
                     isPresentingConfirmDeletion = true
                 }
+                .buttonStyle(.primary)
                 .foregroundStyle(.red, .red.opacity(0.2))
             }
         }
