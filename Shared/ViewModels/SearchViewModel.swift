@@ -19,15 +19,19 @@ final class SearchViewModel: ViewModel {
     @CasePathable
     enum Action {
         case getSuggestions
-        case search(query: String)
+        case search(query: String, hasFilters: Bool)
         case actuallySearch(query: String)
 
         var transition: Transition {
             switch self {
             case .getSuggestions:
                 .none
-            case let .search(query):
-                query.isEmpty ? .to(.initial) : .to(.searching)
+            case let .search(query, hasFilters):
+                if query.isEmpty && hasFilters == false {
+                    .to(.initial)
+                } else {
+                    .to(.searching)
+                }
             case .actuallySearch:
                 .to(.searching, then: .initial)
                     .onRepeat(.cancel)
@@ -64,7 +68,11 @@ final class SearchViewModel: ViewModel {
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] query in
                 guard let self else { return }
-                guard query.isNotEmpty else { return }
+
+                if query.isEmpty && !self.filterViewModel.currentFilters.hasFilters {
+                    return
+                }
+
                 actuallySearch(query: query)
             }
             .store(in: &cancellables)
@@ -73,14 +81,13 @@ final class SearchViewModel: ViewModel {
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] _ in
                 guard let self else { return }
-                guard searchQuery.value.isNotEmpty else { return }
-                search(query: searchQuery.value)
+                search(query: searchQuery.value, hasFilters: self.filterViewModel.currentFilters.hasFilters)
             }
             .store(in: &cancellables)
     }
 
     @Function(\Action.Cases.search)
-    private func _search(_ query: String) async throws {
+    private func _search(_ query: String, _ hasFilters: Bool) async throws {
         searchQuery.value = query
 
         await cancel()
@@ -90,7 +97,7 @@ final class SearchViewModel: ViewModel {
     @Function(\Action.Cases.actuallySearch)
     private func _actuallySearch(_ query: String) async throws {
 
-        guard query.isNotEmpty else {
+        guard query.isNotEmpty || filterViewModel.currentFilters.hasFilters else {
             return
         }
 
