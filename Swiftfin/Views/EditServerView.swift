@@ -69,11 +69,10 @@ struct EditServerView: View {
             }
 
             if isEditing {
-                Button(L10n.delete) {
+                Button(L10n.delete, role: .destructive) {
                     isPresentingConfirmDeletion = true
                 }
                 .buttonStyle(.primary)
-                .foregroundStyle(.red, .red.opacity(0.2))
             }
         }
         .navigationTitle(L10n.server)

@@ -129,11 +129,10 @@ struct IdentifyItemView: View {
         }
 
         if viewModel.state == .searching {
-            Button(L10n.cancel) {
+            Button(L10n.cancel, role: .destructive) {
                 viewModel.send(.cancel)
             }
             .buttonStyle(.primary)
-            .foregroundStyle(.red, .red.opacity(0.2))
         } else {
             Button(L10n.search) {
                 viewModel.send(.search(

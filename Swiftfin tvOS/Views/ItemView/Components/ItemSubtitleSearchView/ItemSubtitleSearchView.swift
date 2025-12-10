@@ -129,12 +129,11 @@ struct ItemSubtitleSearchView: View {
 
         Section {
             if viewModel.backgroundStates.contains(.updating) {
-                Button(L10n.cancel) {
+                Button(L10n.cancel, role: .destructive) {
                     viewModel.send(.cancel)
                 }
                 .buttonStyle(.primary)
                 .listRowInsets(.zero)
-                .foregroundStyle(.red, .red.opacity(0.2))
             } else {
                 Button(L10n.save) {
                     setSubtitles()
