@@ -61,6 +61,7 @@ extension ItemView {
                         .aspectRatio(1.77, contentMode: .fill)
                         .frame(width: proxy.size.width, height: proxy.size.height * 0.78, alignment: .top)
                         .bottomEdgeGradient(bottomColor: bottomColor)
+                        .accessibilityHidden(true)
                 }
             }
         }
@@ -125,6 +126,7 @@ extension ItemView.CompactPosterScrollView {
                     .lineLimit(2)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
+                    .accessibilityHidden(true)
 
                 DotHStack {
                     if viewModel.item.type == .person {
