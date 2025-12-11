@@ -106,7 +106,6 @@ struct QuickConnectAuthorizeView: View {
                     accentColor.overlayColor,
                     accentColor
                 )
-                .opacity(code.count != 6 ? 0.5 : 1)
             }
         }
         .interactiveDismissDisabled(viewModel.state == .authorizing)

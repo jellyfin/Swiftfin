@@ -125,7 +125,7 @@ struct ResetUserPasswordView: View {
 
             Section {
                 if viewModel.state == .resetting {
-                    Button(L10n.cancel) {
+                    Button(L10n.cancel, role: .destructive) {
                         viewModel.send(.cancel)
 
                         if requiresCurrentPassword {
@@ -135,7 +135,6 @@ struct ResetUserPasswordView: View {
                         }
                     }
                     .buttonStyle(.primary)
-                    .foregroundStyle(.red, .red.opacity(0.2))
                 } else {
                     Button(L10n.save) {
                         focusedField = nil
@@ -144,7 +143,6 @@ struct ResetUserPasswordView: View {
                     .buttonStyle(.primary)
                     .disabled(newPassword != confirmNewPassword || viewModel.state == .resetting)
                     .foregroundStyle(accentColor.overlayColor, accentColor)
-                    .opacity(newPassword != confirmNewPassword ? 0.5 : 1)
                 }
             } footer: {
                 Text(L10n.passwordChangeWarning)

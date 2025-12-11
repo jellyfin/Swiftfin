@@ -145,7 +145,6 @@ struct ItemSubtitleSearchView: View {
                 )
                 .listRowInsets(.zero)
                 .disabled(selectedSubtitles.isEmpty)
-                .opacity(selectedSubtitles.isEmpty ? 0.5 : 1)
             }
         }
     }
