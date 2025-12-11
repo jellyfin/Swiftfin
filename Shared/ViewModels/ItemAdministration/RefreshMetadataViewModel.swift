@@ -20,7 +20,8 @@ final class RefreshMetadataViewModel: ViewModel {
             metadataRefreshMode: MetadataRefreshMode,
             imageRefreshMode: MetadataRefreshMode,
             replaceMetadata: Bool,
-            replaceImages: Bool
+            replaceImages: Bool,
+            regenerateTrickplay: Bool
         )
 
         var transition: Transition {
@@ -30,6 +31,7 @@ final class RefreshMetadataViewModel: ViewModel {
 
     enum Event {
         case error
+        case refreshing
     }
 
     enum State {
@@ -58,7 +60,8 @@ final class RefreshMetadataViewModel: ViewModel {
         _ metadataRefreshMode: MetadataRefreshMode,
         _ imageRefreshMode: MetadataRefreshMode,
         _ replaceMetadata: Bool = false,
-        _ replaceImages: Bool = false
+        _ replaceImages: Bool = false,
+        _ regenerateTrickplay: Bool = false
     ) async throws {
         guard let itemId = item.id else { return }
 
@@ -67,6 +70,7 @@ final class RefreshMetadataViewModel: ViewModel {
         parameters.imageRefreshMode = imageRefreshMode
         parameters.isReplaceAllMetadata = replaceMetadata
         parameters.isReplaceAllImages = replaceImages
+        parameters.isRegenerateTrickplay = regenerateTrickplay
 
         let request = Paths.refreshItem(
             itemID: itemId,
@@ -74,14 +78,19 @@ final class RefreshMetadataViewModel: ViewModel {
         )
         _ = try await userSession.client.send(request)
 
+        events.send(.refreshing)
+        // TODO: Remove this call when we have a WebSocket
         try await self.refreshItem()
     }
 
     // MARK: - Refresh Item After Request Queued
 
+    // TODO: Remove this func when we have a WebSocket
     private func refreshItem() async throws {
         try await pollRefreshProgress()
 
+        // TODO: Call only this func via a Notification when we have a WebSocket
+        // - We might be able to just get the full item/changes from the WebSocket
         let newItem = try await item.getFullItem(userSession: userSession)
 
         self.item = newItem
@@ -92,8 +101,7 @@ final class RefreshMetadataViewModel: ViewModel {
 
     // MARK: - Poll Progress
 
-    // TODO: Find a way to actually check refresh progress.
-    // - Will require the WebSocket to be implemented first.
+    // TODO: Remove this func when we have a WebSocket
     private func pollRefreshProgress() async throws {
         let totalDuration: Double = 5.0
         let interval: Double = 0.05
