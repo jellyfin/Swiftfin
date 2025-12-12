@@ -33,7 +33,7 @@ func Form<Content: View>(
     @ViewBuilder content: @escaping () -> Content
 ) -> some View {
     PlatformForm(content: content) {
-        Image(imageResource)
+        Image(image)
             .resizable()
             .aspectRatio(contentMode: .fit)
             .frame(maxWidth: 400)

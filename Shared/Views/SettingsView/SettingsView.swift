@@ -33,7 +33,7 @@ struct SettingsView: View {
     // MARK: - Body
 
     var body: some View {
-        Form(imageResource: .jellyfinBlobBlue) {
+        Form(image: .jellyfinBlobBlue) {
             serverSection
             videoPlayerSection
             customizationSection
