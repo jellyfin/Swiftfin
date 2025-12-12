@@ -17,14 +17,6 @@ extension FocusedValues {
 // MARK: - Form Overloads
 
 func Form<Content: View>(
-    @ViewBuilder content: @escaping () -> Content
-) -> some View {
-    PlatformForm(content: content) {
-        EmptyView()
-    }
-}
-
-func Form<Content: View>(
     systemImage: String,
     @ViewBuilder content: @escaping () -> Content
 ) -> some View {
