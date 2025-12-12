@@ -25,7 +25,7 @@ func Form<Content: View>(
 }
 
 func Form<Content: View>(
-    systemImage: String,
+    systemName: String,
     @ViewBuilder content: @escaping () -> Content
 ) -> some View {
     PlatformForm(content: content) {
