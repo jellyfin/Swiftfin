@@ -37,7 +37,7 @@ func Form<Content: View>(
 }
 
 func Form<Content: View>(
-    imageResource: ImageResource,
+    image: ImageResource,
     @ViewBuilder content: @escaping () -> Content
 ) -> some View {
     PlatformForm(content: content) {
