@@ -67,9 +67,7 @@ final class SearchViewModel: ViewModel {
         searchQuery
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] query in
-                guard let self else { return }
-
-                if query.isEmpty && !self.filterViewModel.currentFilters.hasFilters {
+                guard let self, query.isEmpty && !self.filterViewModel.currentFilters.hasFilters else {
                     return
                 }
 
@@ -80,7 +78,9 @@ final class SearchViewModel: ViewModel {
         filterViewModel.$currentFilters
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] _ in
-                guard let self else { return }
+                guard let self, searchQuery.value.isEmpty && !self.filterViewModel.currentFilters.hasFilters else {
+                    return
+                }
                 search(query: searchQuery.value, hasFilters: self.filterViewModel.currentFilters.hasFilters)
             }
             .store(in: &cancellables)

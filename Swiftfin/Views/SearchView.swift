@@ -209,10 +209,7 @@ struct SearchView: View {
         .navigationTitle(L10n.search)
         .navigationBarTitleDisplayMode(.inline)
         .refreshable {
-            viewModel.search(
-                query: searchQuery,
-                hasFilters: viewModel.filterViewModel.currentFilters.hasFilters
-            )
+            viewModel.search(query: searchQuery)
         }
         .navigationBarFilterDrawer(
             viewModel: viewModel.filterViewModel,
@@ -224,10 +221,7 @@ struct SearchView: View {
             viewModel.getSuggestions()
         }
         .onChange(of: searchQuery) { newValue in
-            viewModel.search(
-                query: newValue,
-                hasFilters: viewModel.filterViewModel.currentFilters.hasFilters
-            )
+            viewModel.search(query: newValue)
         }
         .searchable(
             text: $searchQuery,

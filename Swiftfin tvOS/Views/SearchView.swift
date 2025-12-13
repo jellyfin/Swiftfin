@@ -184,19 +184,13 @@ struct SearchView: View {
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea(edges: [.bottom, .horizontal])
         .refreshable {
-            viewModel.search(
-                query: searchQuery,
-                hasFilters: viewModel.filterViewModel.currentFilters.hasFilters
-            )
+            viewModel.search(query: searchQuery)
         }
         .onFirstAppear {
             viewModel.getSuggestions()
         }
         .onChange(of: searchQuery) { _, newValue in
-            viewModel.search(
-                query: newValue,
-                hasFilters: viewModel.filterViewModel.currentFilters.hasFilters
-            )
+            viewModel.search(query: newValue)
         }
         .searchable(text: $searchQuery, prompt: L10n.search)
     }
