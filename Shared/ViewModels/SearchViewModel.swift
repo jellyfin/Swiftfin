@@ -19,19 +19,15 @@ final class SearchViewModel: ViewModel {
     @CasePathable
     enum Action {
         case getSuggestions
-        case search(query: String, hasFilters: Bool)
+        case search(query: String)
         case actuallySearch(query: String)
 
         var transition: Transition {
             switch self {
             case .getSuggestions:
                 .none
-            case let .search(query, hasFilters):
-                if query.isEmpty && hasFilters == false {
-                    .to(.initial)
-                } else {
-                    .to(.searching)
-                }
+            case let .search(query):
+                query.isEmpty ? .to(.initial) : .to(.searching)
             case .actuallySearch:
                 .to(.searching, then: .initial)
                     .onRepeat(.cancel)
@@ -67,9 +63,7 @@ final class SearchViewModel: ViewModel {
         searchQuery
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] query in
-                guard let self, query.isEmpty && !self.filterViewModel.currentFilters.hasFilters else {
-                    return
-                }
+                guard let self, query.isNotEmpty || !self.filterViewModel.currentFilters.hasFilters else { return }
 
                 actuallySearch(query: query)
             }
@@ -78,16 +72,15 @@ final class SearchViewModel: ViewModel {
         filterViewModel.$currentFilters
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] _ in
-                guard let self, searchQuery.value.isEmpty && !self.filterViewModel.currentFilters.hasFilters else {
-                    return
-                }
-                search(query: searchQuery.value, hasFilters: self.filterViewModel.currentFilters.hasFilters)
+                guard let self else { return }
+
+                actuallySearch(query: searchQuery.value)
             }
             .store(in: &cancellables)
     }
 
     @Function(\Action.Cases.search)
-    private func _search(_ query: String, _ hasFilters: Bool) async throws {
+    private func _search(_ query: String) async throws {
         searchQuery.value = query
 
         await cancel()
