@@ -59,12 +59,13 @@ struct SettingsView: View {
                 }
             }
 
-            ListRowButton(L10n.switchUser) {
+            Button(L10n.switchUser) {
                 UIDevice.impact(.medium)
 
                 viewModel.signOut()
                 router.dismiss()
             }
+            .buttonStyle(.primary)
             .foregroundStyle(accentColor.overlayColor, accentColor)
 
             Section(L10n.videoPlayer) {
