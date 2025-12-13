@@ -106,7 +106,7 @@ extension ItemView {
                 .animation(.linear(duration: 0.1), value: headerImageSource.url?.hashValue)
             #else
             iOSHeaderImage(source: headerImageSource, bottomColor: headerBottomColor)
-                .id(headerImageSource.url?.hashValue)
+                .id("\(globalSize.width)")
                 .animation(.linear(duration: 0.1), value: headerImageSource.url?.hashValue)
             #endif
         }
@@ -188,7 +188,7 @@ extension ItemView {
                 .frame(maxWidth: .infinity)
             #else
             overlayView
-                .id(globalSize)
+                .id("\(globalSize.width)")
                 .edgePadding(useHorizontalLayout ? .all : .horizontal)
                 .edgePadding(useHorizontalLayout ? .init() : .bottom)
                 .frame(maxWidth: .infinity)

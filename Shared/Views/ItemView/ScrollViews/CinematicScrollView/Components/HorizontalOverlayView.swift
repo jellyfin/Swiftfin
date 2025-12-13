@@ -47,7 +47,6 @@ extension ItemView.CinematicScrollView {
             #endif
         }
 
-        private let personWidthRatio: CGFloat = 0.20
         private let buttonWidthRatio: CGFloat = 0.30
         private let logoWidthRatio: CGFloat = 0.35
 
@@ -68,7 +67,6 @@ extension ItemView.CinematicScrollView {
                 let buttonWidth = geometry.size.width * buttonWidthRatio
                 let logoMaxWidth = geometry.size.width * logoWidthRatio
                 let logoMaxHeight = geometry.size.height * logoHeightRatio
-                let personWidth = geometry.size.width * personWidthRatio
 
                 VStack(alignment: .leading) {
                     #if os(tvOS)
@@ -83,10 +81,7 @@ extension ItemView.CinematicScrollView {
                             logoMaxHeight: logoMaxHeight
                         )
 
-                        trailingContent(
-                            buttonWidth: buttonWidth,
-                            personWidth: personWidth
-                        )
+                        trailingContent(buttonWidth: buttonWidth)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .bottom)
@@ -107,7 +102,21 @@ extension ItemView.CinematicScrollView {
             logoMaxHeight: CGFloat
         ) -> some View {
             VStack(alignment: .leading, spacing: 10) {
-                logoView(maxWidth: logoMaxWidth, maxHeight: logoMaxHeight)
+                ImageView(viewModel.item.imageSource(.logo, maxWidth: logoMaxWidth, maxHeight: logoMaxHeight))
+                    .image { image in
+                        image
+                            .aspectRatio(contentMode: .fit)
+                            .frame(maxWidth: logoMaxWidth, maxHeight: logoMaxHeight, alignment: .bottomLeading)
+                    }
+                    .placeholder { _ in
+                        EmptyView()
+                    }
+                    .failure {
+                        Marquee(viewModel.item.displayTitle)
+                            .font(.largeTitle)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.white)
+                    }
 
                 ItemView.OverviewView(item: viewModel.item)
                     .overviewLineLimit(3)
@@ -126,31 +135,10 @@ extension ItemView.CinematicScrollView {
         }
 
         @ViewBuilder
-        private func logoView(maxWidth: CGFloat, maxHeight: CGFloat) -> some View {
-            ImageView(viewModel.item.imageSource(.logo, maxWidth: maxWidth, maxHeight: maxHeight))
-                .image { image in
-                    image
-                        .aspectRatio(contentMode: .fit)
-                        .frame(maxWidth: maxWidth, maxHeight: maxHeight, alignment: .bottomLeading)
-                }
-                .placeholder { _ in
-                    EmptyView()
-                }
-                .failure {
-                    Marquee(viewModel.item.displayTitle)
-                        .font(.largeTitle)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.white)
-                }
-        }
+        private func trailingContent(buttonWidth: CGFloat) -> some View {
 
-        // MARK: - Trailing Content
+            let personWidth = buttonWidth * 2 / 3
 
-        @ViewBuilder
-        private func trailingContent(
-            buttonWidth: CGFloat,
-            personWidth: CGFloat
-        ) -> some View {
             VStack(spacing: buttonSpacing) {
                 if isPerson {
                     personContent(personImageWidth: personWidth)
