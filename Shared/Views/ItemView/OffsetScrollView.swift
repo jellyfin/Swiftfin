@@ -10,25 +10,30 @@ import SwiftUI
 
 extension ItemView {
 
-    struct OffsetScrollView<Header: View, Overlay: View, Content: View>: PlatformView {
+    struct OffsetScrollView<Header: View, Overlay: View, Content: View>: View {
 
         #if os(tvOS)
         @StateObject
         private var focusGuide = FocusGuide()
-        #else
+        #endif
+
         @State
         private var scrollViewOffset: CGFloat = 0
         @State
         private var size: CGSize = .zero
         @State
         private var safeAreaInsets: EdgeInsets = .zero
-        #endif
 
         private let header: Header
         private let overlay: Overlay
         private let content: Content
         private let heightRatio: CGFloat
-        private let overlayOffset: CGFloat
+
+        #if os(tvOS)
+        private let overlayColor: Color = .black
+        #else
+        private let overlayColor: Color = .systemFill
+        #endif
 
         init(
             heightRatio: CGFloat = 0,
@@ -41,10 +46,8 @@ extension ItemView {
             self.overlay = overlay()
             self.content = content()
             self.heightRatio = clamp(heightRatio, min: 0, max: 1)
-            self.overlayOffset = overlayOffset
         }
 
-        #if !os(tvOS)
         private var headerHeight: CGFloat {
             (size.height + safeAreaInsets.vertical) * heightRatio
         }
@@ -55,39 +58,22 @@ extension ItemView {
             let diff = end - start
             return clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
         }
-        #endif
 
-        // MARK: - iOS View
+        // MARK: - Body
 
-        var iOSView: some View {
-            #if os(tvOS)
-            EmptyView()
-            #else
-            ScrollView(showsIndicators: false) {
+        var body: some View {
+            ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 0) {
-                    AlternateLayoutView {
-                        Color.clear
-                            .frame(height: headerHeight, alignment: .bottom)
-                    } content: {
-                        overlay
-                            .frame(height: headerHeight, alignment: .bottom)
-                    }
-                    .overlay {
-                        Color.systemFill
-                            .opacity(headerOpacity)
-                    }
-
-                    content
+                    overlaySection
+                    contentSection
                 }
+                #if os(tvOS)
+                .environmentObject(focusGuide)
+                #endif
             }
-            .edgesIgnoringSafeArea(.top)
+            .ignoresSafeArea()
             .trackingSize($size, $safeAreaInsets)
             .scrollViewOffset($scrollViewOffset)
-            .navigationBarOffset(
-                $scrollViewOffset,
-                start: headerHeight - safeAreaInsets.top - 45,
-                end: headerHeight - safeAreaInsets.top - 5
-            )
             .backgroundParallaxHeader(
                 $scrollViewOffset,
                 height: headerHeight,
@@ -96,71 +82,80 @@ extension ItemView {
                 header
                     .frame(height: headerHeight)
             }
+            #if !os(tvOS)
+            .navigationBarOffset(
+                $scrollViewOffset,
+                start: headerHeight - safeAreaInsets.top - 45,
+                end: headerHeight - safeAreaInsets.top - 5
+            )
             #endif
         }
 
-        // MARK: - tvOS View
+        // MARK: - Overlay Section
 
-        var tvOSView: some View {
-            #if os(tvOS)
-            GeometryReader { proxy in
-                ZStack {
-                    header
-
-                    ScrollView(.vertical, showsIndicators: false) {
-                        VStack(spacing: 0) {
-                            overlay
-                                .focusGuide(
-                                    focusGuide,
-                                    tag: "header",
-                                    bottom: "belowHeader"
-                                )
-                                .edgePadding()
-                                .frame(height: proxy.size.height - overlayOffset)
-
-                            content
-                                .focusGuide(
-                                    focusGuide,
-                                    tag: "belowHeader",
-                                    top: "header"
-                                )
-                        }
-                        .background {
-                            tvOSBlurBackground(height: proxy.size.height - overlayOffset)
-                        }
-                        .environmentObject(focusGuide)
-                    }
-                }
-            }
-            .ignoresSafeArea()
-            #else
-            EmptyView()
-            #endif
-        }
-
-        // MARK: - tvOS Blur Background
-
-        #if os(tvOS)
         @ViewBuilder
-        private func tvOSBlurBackground(height: CGFloat) -> some View {
-            BlurView(style: .dark)
-                .mask {
-                    VStack(spacing: 0) {
-                        LinearGradient(
-                            stops: [
-                                .init(color: .white, location: 0),
-                                .init(color: .white.opacity(0.7), location: 0.4),
-                                .init(color: .white.opacity(0), location: 1),
-                            ],
-                            startPoint: .bottom,
-                            endPoint: .top
-                        )
-                        .frame(height: height)
-
-                        Color.white
-                    }
-                }
+        private var overlaySection: some View {
+            AlternateLayoutView {
+                Color.clear
+                    .frame(height: headerHeight, alignment: .bottom)
+            } content: {
+                overlay
+                    .frame(height: headerHeight, alignment: .bottom)
+                #if os(tvOS)
+                    .padding(.edgeInsets)
+                    .padding(.bottom, safeAreaInsets.trailing)
+                #endif
+            }
+            .background(alignment: .bottom) {
+                overlayBackground
+            }
+            .overlay {
+                overlayColor
+                    .opacity(headerOpacity)
+            }
+            #if os(tvOS)
+            .focusGuide(focusGuide, tag: "header", bottom: "belowHeader")
+            #endif
         }
-        #endif
+
+        // MARK: - Overlay Background
+
+        @ViewBuilder
+        private var overlayBackground: some View {
+            #if os(tvOS)
+            LinearGradient(
+                stops: [
+                    .init(color: .clear, location: 0),
+                    .init(color: .black, location: 1),
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: headerHeight * 0.6)
+            .padding(.horizontal, -safeAreaInsets.horizontal)
+            #else
+            BlurView(style: .systemThinMaterialDark)
+                .frame(height: headerHeight * 0.6)
+                .maskLinearGradient {
+                    (location: 0.5, opacity: 0)
+                    (location: 0.8, opacity: 1)
+                }
+            #endif
+        }
+
+        // MARK: - Content Section
+
+        @ViewBuilder
+        private var contentSection: some View {
+            content
+            #if os(tvOS)
+            .background {
+                Color.black
+                    /// Needed to prevent the background from clipping through when moving too quickly
+                        .padding(.top, -5)
+            }
+            .focusGuide(focusGuide, tag: "belowHeader", top: "header")
+            #endif
+        }
     }
 }

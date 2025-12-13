@@ -38,14 +38,7 @@ extension ItemView {
             self.viewModel = viewModel
         }
 
-        private var imageType: ImageType {
-            switch viewModel.item.type {
-            case .episode, .musicVideo, .video:
-                .primary
-            default:
-                usePrimaryImage ? .primary : .backdrop
-            }
-        }
+        // MARK: - Layout Properties
 
         private var isPerson: Bool {
             viewModel.item.type == .person || viewModel.item.type == .musicArtist
@@ -67,15 +60,7 @@ extension ItemView {
             #endif
         }
 
-        private var overlayOffset: CGFloat {
-            #if os(tvOS)
-            isPerson ? 50 : 150
-            #else
-            0
-            #endif
-        }
-
-        // MARK: - Header
+        // MARK: - Header Properties
 
         private var headerItem: BaseItemDto {
             if isPerson,
@@ -87,16 +72,49 @@ extension ItemView {
             return viewModel.item
         }
 
+        private var imageType: ImageType {
+            switch viewModel.item.type {
+            case .episode, .musicVideo, .video:
+                .primary
+            default:
+                usePrimaryImage ? .primary : .backdrop
+            }
+        }
+
         private var headerImageSource: ImageSource {
             headerItem.imageSource(
                 imageType,
-                maxWidth: min(CGFloat(UIScreen.main.nativeBounds.width), 2160)
+                maxWidth: 1920
             )
         }
 
+        #if !os(tvOS)
         private var headerBottomColor: Color {
             headerItem.blurHash(for: imageType)?.averageLinearColor ?? Color.secondarySystemFill
         }
+        #endif
+
+        // MARK: - Body
+
+        var body: some View {
+            OffsetScrollView(heightRatio: heightRatio) {
+                headerView
+            } overlay: {
+                overlayView
+                    .frame(maxWidth: .infinity)
+                #if !os(tvOS)
+                    .edgePadding(useHorizontalLayout ? .all : .horizontal)
+                    .edgePadding(useHorizontalLayout ? .init() : .bottom)
+                #endif
+            } content: {
+                content
+                    .padding(.top, 10)
+                    .edgePadding(.bottom)
+            }
+            .trackingSize($globalSize)
+        }
+
+        // MARK: - Header View
 
         @ViewBuilder
         private var headerView: some View {
@@ -105,19 +123,19 @@ extension ItemView {
                 .id(headerImageSource.url?.hashValue)
                 .animation(.linear(duration: 0.1), value: headerImageSource.url?.hashValue)
             #else
-            iOSHeaderImage(source: headerImageSource, bottomColor: headerBottomColor)
-                .id("\(globalSize.width)")
+            headerImage
+                .id(headerImageSource.url?.hashValue)
                 .animation(.linear(duration: 0.1), value: headerImageSource.url?.hashValue)
             #endif
         }
 
         #if !os(tvOS)
         @ViewBuilder
-        private func iOSHeaderImage(source: ImageSource, bottomColor: Color) -> some View {
+        private var headerImage: some View {
             if useHorizontalLayout {
-                ImageView(source)
+                ImageView(headerImageSource)
                     .aspectRatio(1.77, contentMode: .fill)
-                    .bottomEdgeGradient(bottomColor: bottomColor)
+                    .bottomEdgeGradient(bottomColor: headerBottomColor)
             } else {
                 GeometryReader { proxy in
                     if !proxy.size.height.isZero {
@@ -128,14 +146,14 @@ extension ItemView {
                         ))
                         .aspectRatio(usePrimaryImage ? (2 / 3) : 1.77, contentMode: .fill)
                         .frame(width: proxy.size.width, height: proxy.size.height * 0.6)
-                        .bottomEdgeGradient(bottomColor: bottomColor)
+                        .bottomEdgeGradient(bottomColor: headerBottomColor)
                     }
                 }
             }
         }
         #endif
 
-        // MARK: - Overlay
+        // MARK: - Overlay View
 
         @ViewBuilder
         private var overlayView: some View {
@@ -144,56 +162,6 @@ extension ItemView {
             } else {
                 VerticalOverlayView(viewModel: viewModel, usePrimaryImage: usePrimaryImage)
             }
-        }
-
-        #if !os(tvOS)
-        @ViewBuilder
-        private var overlayBackground: some View {
-            BlurView(style: .systemThinMaterialDark)
-                .maskLinearGradient {
-                    if useHorizontalLayout {
-                        (location: 0.4, opacity: 0)
-                        (location: 0.8, opacity: 1)
-                    } else {
-                        (location: 0, opacity: 0)
-                        (location: 0.3, opacity: 1)
-                        (location: 1, opacity: 1)
-                    }
-                }
-        }
-        #endif
-
-        // MARK: - Body
-
-        var body: some View {
-            OffsetScrollView(
-                heightRatio: heightRatio,
-                overlayOffset: overlayOffset
-            ) {
-                headerView
-            } overlay: {
-                overlayContent
-            } content: {
-                content
-                    .padding(.top, 10)
-                    .edgePadding(.bottom)
-            }
-            .trackingSize($globalSize)
-        }
-
-        @ViewBuilder
-        private var overlayContent: some View {
-            #if os(tvOS)
-            overlayView
-                .frame(maxWidth: .infinity)
-            #else
-            overlayView
-                .id("\(globalSize.width)")
-                .edgePadding(useHorizontalLayout ? .all : .horizontal)
-                .edgePadding(useHorizontalLayout ? .init() : .bottom)
-                .frame(maxWidth: .infinity)
-                .background { overlayBackground }
-            #endif
         }
     }
 }

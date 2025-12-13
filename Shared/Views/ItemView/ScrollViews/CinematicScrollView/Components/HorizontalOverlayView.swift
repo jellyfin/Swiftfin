@@ -31,32 +31,18 @@ extension ItemView.CinematicScrollView {
 
         // MARK: - Layout Constants
 
-        private var buttonHeight: CGFloat {
-            #if os(tvOS)
-            100
-            #else
-            50
-            #endif
-        }
-
-        private var buttonSpacing: CGFloat {
-            #if os(tvOS)
-            25
-            #else
-            10
-            #endif
-        }
+        #if os(tvOS)
+        private let buttonHeight: CGFloat = 100
+        private let buttonSpacing: CGFloat = 25
+        private let logoHeightRatio: CGFloat = 0.5
+        #else
+        private let buttonHeight: CGFloat = 50
+        private let buttonSpacing: CGFloat = 10
+        private let logoHeightRatio: CGFloat = 0.25
+        #endif
 
         private let buttonWidthRatio: CGFloat = 0.30
         private let logoWidthRatio: CGFloat = 0.35
-
-        private var logoHeightRatio: CGFloat {
-            #if os(tvOS)
-            0.5
-            #else
-            0.25
-            #endif
-        }
 
         private var isPerson: Bool {
             viewModel.item.type == .person || viewModel.item.type == .musicArtist
@@ -75,7 +61,7 @@ extension ItemView.CinematicScrollView {
                         .focused($focusedLayer, equals: .top)
                     #endif
 
-                    HStack(alignment: .bottom) {
+                    HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
                         leadingContent(
                             logoMaxWidth: logoMaxWidth,
                             logoMaxHeight: logoMaxHeight
@@ -131,7 +117,6 @@ extension ItemView.CinematicScrollView {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
-            .edgePadding(.trailing)
         }
 
         @ViewBuilder
