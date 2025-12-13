@@ -30,7 +30,7 @@ extension ItemView.CinematicScrollView {
                 }
             }
             .font(.caption)
-            .foregroundColor(Color(UIColor.lightGray))
+            .foregroundStyle(Color(UIColor.lightGray))
         }
     }
 }

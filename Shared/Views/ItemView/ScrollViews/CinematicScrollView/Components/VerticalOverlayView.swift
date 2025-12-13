@@ -12,10 +12,18 @@ extension ItemView.CinematicScrollView {
 
     struct VerticalOverlayView: View {
 
+        private let buttonHeight: CGFloat = 50
+        private let maxButtonWidth: CGFloat = 300
+
+        @StoredValue(.User.itemViewAttributes)
+        private var attributes
+
         @ObservedObject
         var viewModel: ItemViewModel
 
         let usePrimaryImage: Bool
+
+        // MARK: - Body
 
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
@@ -27,9 +35,10 @@ extension ItemView.CinematicScrollView {
                             }
                             .failure {
                                 Marquee(viewModel.item.displayTitle)
-                                    .font(.largeTitle.weight(.semibold))
+                                    .font(.largeTitle)
+                                    .fontWeight(.semibold)
                                     .lineLimit(1)
-                                    .foregroundColor(.white)
+                                    .foregroundStyle(.white)
                             }
                             .aspectRatio(contentMode: .fit)
                             .frame(height: 100, alignment: .bottom)
@@ -41,24 +50,24 @@ extension ItemView.CinematicScrollView {
                     Group {
                         if viewModel.item.presentPlayButton {
                             ItemView.PlayButton(viewModel: viewModel)
-                                .frame(height: 50)
+                                .frame(height: buttonHeight)
                         }
 
                         ItemView.ActionButtonHStack(viewModel: viewModel)
                             .foregroundStyle(.white)
-                            .frame(height: 50)
+                            .frame(height: buttonHeight)
                     }
-                    .frame(maxWidth: 300)
+                    .frame(maxWidth: maxButtonWidth)
                 }
                 .frame(maxWidth: .infinity)
 
                 ItemView.OverviewView(item: viewModel.item)
                     .overviewLineLimit(3)
                     .taglineLineLimit(2)
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
 
                 ItemView.AttributesHStack(
-                    attributes: StoredValues[.User.itemViewAttributes],
+                    attributes: attributes,
                     viewModel: viewModel,
                     alignment: .leading
                 )

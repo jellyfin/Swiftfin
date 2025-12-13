@@ -25,12 +25,9 @@ extension ItemView.CinematicScrollView {
 
         private let buttonHeight: CGFloat = UIDevice.isTV ? 100 : 50
         private let buttonSpacing: CGFloat = UIDevice.isTV ? 25 : 10
-
-        private let buttonWidthRatio: CGFloat = 0.25
-
+        private let buttonWidthRatio: CGFloat = 0.30
         private let logoWidthRatio: CGFloat = 0.35
         private let logoHeightRatio: CGFloat = UIDevice.isTV ? 0.5 : 0.25
-
         private let personImageAspectRatio: CGFloat = 1.5
 
         @StoredValue(.User.itemViewAttributes)
@@ -38,10 +35,6 @@ extension ItemView.CinematicScrollView {
 
         @ObservedObject
         var viewModel: ItemViewModel
-
-        init(viewModel: ItemViewModel) {
-            self.viewModel = viewModel
-        }
 
         private var isPerson: Bool {
             viewModel.item.type == .person || viewModel.item.type == .musicArtist
