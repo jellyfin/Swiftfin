@@ -136,6 +136,8 @@ internal enum L10n {
   internal static let artists = L10n.tr("Localizable", "artists", fallback: "Artists")
   /// Ascending
   internal static let ascending = L10n.tr("Localizable", "ascending", fallback: "Ascending")
+  /// Ask
+  internal static let ask = L10n.tr("Localizable", "ask", fallback: "Ask")
   /// Aspect fill
   internal static let aspectFill = L10n.tr("Localizable", "aspectFill", fallback: "Aspect fill")
   /// Audio
@@ -320,6 +322,8 @@ internal enum L10n {
   internal static func columnsWithCount(_ p1: Any) -> String {
     return L10n.tr("Localizable", "columnsWithCount", String(describing: p1), fallback: "Columns: %@")
   }
+  /// Commercial
+  internal static let commercial = L10n.tr("Localizable", "commercial", fallback: "Commercial")
   /// Community
   internal static let community = L10n.tr("Localizable", "community", fallback: "Community")
   /// Community rating
@@ -586,6 +590,8 @@ internal enum L10n {
   internal static let enabled = L10n.tr("Localizable", "enabled", fallback: "Enabled")
   /// Enabled trailers
   internal static let enabledTrailers = L10n.tr("Localizable", "enabledTrailers", fallback: "Enabled trailers")
+  /// Enable media segments
+  internal static let enableMediaSegments = L10n.tr("Localizable", "enableMediaSegments", fallback: "Enable media segments")
   /// End date
   internal static let endDate = L10n.tr("Localizable", "endDate", fallback: "End date")
   /// Ended
@@ -758,6 +764,8 @@ internal enum L10n {
   internal static let interval = L10n.tr("Localizable", "interval", fallback: "Interval")
   /// Interview
   internal static let interview = L10n.tr("Localizable", "interview", fallback: "Interview")
+  /// Intro
+  internal static let intro = L10n.tr("Localizable", "intro", fallback: "Intro")
   /// Invalid format
   internal static let invalidFormat = L10n.tr("Localizable", "invalidFormat", fallback: "Invalid format")
   /// Inverted dark
@@ -918,6 +926,8 @@ internal enum L10n {
   internal static let mediaDownloads = L10n.tr("Localizable", "mediaDownloads", fallback: "Media downloads")
   /// Media playback
   internal static let mediaPlayback = L10n.tr("Localizable", "mediaPlayback", fallback: "Media playback")
+  /// Media segments
+  internal static let mediaSegments = L10n.tr("Localizable", "mediaSegments", fallback: "Media segments")
   /// Mbps
   internal static let megabitsPerSecond = L10n.tr("Localizable", "megabitsPerSecond", fallback: "Mbps")
   /// Menu
@@ -1012,6 +1022,8 @@ internal enum L10n {
   internal static func notImplementedYetWithType(_ p1: Any) -> String {
     return L10n.tr("Localizable", "notImplementedYetWithType", String(describing: p1), fallback: "Type: %@ not implemented yet :(")
   }
+  /// Off
+  internal static let off = L10n.tr("Localizable", "off", fallback: "Off")
   /// Official rating
   internal static let officialRating = L10n.tr("Localizable", "officialRating", fallback: "Official rating")
   /// Offset
@@ -1040,6 +1052,8 @@ internal enum L10n {
   internal static let other = L10n.tr("Localizable", "other", fallback: "Other")
   /// Out of date
   internal static let outOfDate = L10n.tr("Localizable", "outOfDate", fallback: "Out of date")
+  /// Outro
+  internal static let outro = L10n.tr("Localizable", "outro", fallback: "Outro")
   /// Overview
   internal static let overview = L10n.tr("Localizable", "overview", fallback: "Overview")
   /// Parental controls
@@ -1116,6 +1130,8 @@ internal enum L10n {
   internal static let posters = L10n.tr("Localizable", "posters", fallback: "Posters")
   /// Premiere date
   internal static let premiereDate = L10n.tr("Localizable", "premiereDate", fallback: "Premiere date")
+  /// Preview
+  internal static let preview = L10n.tr("Localizable", "preview", fallback: "Preview")
   /// Preview image
   internal static let previewImage = L10n.tr("Localizable", "previewImage", fallback: "Preview image")
   /// Previous item
@@ -1172,6 +1188,8 @@ internal enum L10n {
   internal static let rating = L10n.tr("Localizable", "rating", fallback: "Rating")
   /// Ratings
   internal static let ratings = L10n.tr("Localizable", "ratings", fallback: "Ratings")
+  /// Recap
+  internal static let recap = L10n.tr("Localizable", "recap", fallback: "Recap")
   /// Recently Added
   internal static let recentlyAdded = L10n.tr("Localizable", "recentlyAdded", fallback: "Recently Added")
   /// Recommended
@@ -1398,6 +1416,12 @@ internal enum L10n {
   internal static let signoutClose = L10n.tr("Localizable", "signoutClose", fallback: "Sign out on close")
   /// Signs out the last user when Swiftfin has been force closed.
   internal static let signoutCloseFooter = L10n.tr("Localizable", "signoutCloseFooter", fallback: "Signs out the last user when Swiftfin has been force closed.")
+  /// Skip
+  internal static let skip = L10n.tr("Localizable", "skip", fallback: "Skip")
+  /// Skip %@
+  internal static func skipSegment(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "skipSegment", String(describing: p1), fallback: "Skip %@")
+  }
   /// Slider
   internal static let slider = L10n.tr("Localizable", "slider", fallback: "Slider")
   /// Slow scrub

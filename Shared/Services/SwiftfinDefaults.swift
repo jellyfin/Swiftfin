@@ -9,6 +9,7 @@
 import Defaults
 import Factory
 import Foundation
+import JellyfinAPI
 import SwiftUI
 import UIKit
 
@@ -235,6 +236,10 @@ extension Defaults.Keys {
         enum Transition {
             static let pauseOnBackground: Key<Bool> = UserKey("playInBackground", default: true)
         }
+
+        static let enableMediaSegments: Key<Bool> = UserKey("enableMediaSegments", default: true)
+        static let askMediaSegments: Key<[MediaSegmentType]> = UserKey("askMediaSegments", default: [])
+        static let skipMediaSegments: Key<[MediaSegmentType]> = UserKey("skipMediaSegments", default: [])
     }
 
     // Experimental settings
