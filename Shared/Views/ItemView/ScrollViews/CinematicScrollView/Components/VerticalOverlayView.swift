@@ -12,15 +12,12 @@ extension ItemView.CinematicScrollView {
 
     struct VerticalOverlayView: View {
 
-        private let buttonHeight: CGFloat = 50
-
-        @StoredValue(.User.itemViewAttributes)
-        private var attributes
-
         @ObservedObject
         var viewModel: ItemViewModel
 
         let usePrimaryImage: Bool
+
+        private let buttonHeight: CGFloat = 50
 
         // MARK: - Body
 
@@ -28,34 +25,20 @@ extension ItemView.CinematicScrollView {
             VStack(alignment: .leading, spacing: 10) {
                 VStack(alignment: .center, spacing: 10) {
                     if !usePrimaryImage {
-                        ImageView(viewModel.item.imageURL(.logo, maxHeight: 100))
-                            .placeholder { _ in
-                                EmptyView()
-                            }
-                            .failure {
-                                Marquee(viewModel.item.displayTitle)
-                                    .font(.largeTitle)
-                                    .fontWeight(.semibold)
-                                    .lineLimit(1)
-                                    .foregroundStyle(.white)
-                            }
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 100, alignment: .bottom)
+                        logoView
                     }
 
                     MetadataView(viewModel: viewModel)
                         .padding(.horizontal)
 
-                    Group {
-                        if viewModel.item.presentPlayButton {
-                            ItemView.PlayButton(viewModel: viewModel)
-                                .frame(height: buttonHeight)
-                        }
-
-                        ItemView.ActionButtonHStack(viewModel: viewModel)
-                            .foregroundStyle(.white)
+                    if viewModel.item.presentPlayButton {
+                        ItemView.PlayButton(viewModel: viewModel)
                             .frame(height: buttonHeight)
                     }
+
+                    ItemView.ActionButtonHStack(viewModel: viewModel)
+                        .foregroundStyle(.white)
+                        .frame(height: buttonHeight)
                 }
                 .frame(maxWidth: .infinity)
 
@@ -65,11 +48,30 @@ extension ItemView.CinematicScrollView {
                     .foregroundStyle(.white)
 
                 ItemView.AttributesHStack(
-                    attributes: attributes,
+                    attributes: StoredValues[.User.itemViewAttributes],
                     viewModel: viewModel,
                     alignment: .leading
                 )
             }
+        }
+
+        // MARK: - Logo View
+
+        @ViewBuilder
+        private var logoView: some View {
+            ImageView(viewModel.item.imageURL(.logo, maxHeight: 100))
+                .placeholder { _ in
+                    EmptyView()
+                }
+                .failure {
+                    Marquee(viewModel.item.displayTitle)
+                        .font(.largeTitle)
+                        .fontWeight(.semibold)
+                        .lineLimit(1)
+                        .foregroundStyle(.white)
+                }
+                .aspectRatio(contentMode: .fit)
+                .frame(height: 100, alignment: .bottom)
         }
     }
 }

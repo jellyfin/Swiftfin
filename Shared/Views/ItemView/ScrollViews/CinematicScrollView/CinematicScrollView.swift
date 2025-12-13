@@ -38,8 +38,6 @@ extension ItemView {
             self.viewModel = viewModel
         }
 
-        // MARK: - Computed Properties
-
         private var imageType: ImageType {
             switch viewModel.item.type {
             case .episode, .musicVideo, .video:
@@ -79,40 +77,38 @@ extension ItemView {
 
         // MARK: - Header
 
-        private func withHeaderImageItem<V: View>(
-            @ViewBuilder content: @escaping (ImageSource, Color) -> V
-        ) -> some View {
-            let item: BaseItemDto
-
+        private var headerItem: BaseItemDto {
             if isPerson,
                let typeViewModel = viewModel as? CollectionItemViewModel,
                let randomItem = typeViewModel.randomItem()
             {
-                item = randomItem
-            } else {
-                item = viewModel.item
+                return randomItem
             }
+            return viewModel.item
+        }
 
-            let bottomColor = item.blurHash(for: imageType)?.averageLinearColor ?? Color.secondarySystemFill
-            let imageSource = item.imageSource(
+        private var headerImageSource: ImageSource {
+            headerItem.imageSource(
                 imageType,
                 maxWidth: min(CGFloat(UIScreen.main.nativeBounds.width), 2160)
             )
+        }
 
-            return content(imageSource, bottomColor)
-                .id(imageSource.url?.hashValue)
-                .animation(.linear(duration: 0.1), value: imageSource.url?.hashValue)
+        private var headerBottomColor: Color {
+            headerItem.blurHash(for: imageType)?.averageLinearColor ?? Color.secondarySystemFill
         }
 
         @ViewBuilder
         private var headerView: some View {
-            withHeaderImageItem { imageSource, bottomColor in
-                #if os(tvOS)
-                ImageView(imageSource)
-                #else
-                iOSHeaderImage(source: imageSource, bottomColor: bottomColor)
-                #endif
-            }
+            #if os(tvOS)
+            ImageView(headerImageSource)
+                .id(headerImageSource.url?.hashValue)
+                .animation(.linear(duration: 0.1), value: headerImageSource.url?.hashValue)
+            #else
+            iOSHeaderImage(source: headerImageSource, bottomColor: headerBottomColor)
+                .id(headerImageSource.url?.hashValue)
+                .animation(.linear(duration: 0.1), value: headerImageSource.url?.hashValue)
+            #endif
         }
 
         #if !os(tvOS)

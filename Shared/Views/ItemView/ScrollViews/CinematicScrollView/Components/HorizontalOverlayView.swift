@@ -47,6 +47,7 @@ extension ItemView.CinematicScrollView {
             #endif
         }
 
+        private let personWidthRatio: CGFloat = 0.20
         private let buttonWidthRatio: CGFloat = 0.30
         private let logoWidthRatio: CGFloat = 0.35
 
@@ -58,15 +59,9 @@ extension ItemView.CinematicScrollView {
             #endif
         }
 
-        private let personWidthRatio: CGFloat = 0.20
-
-        // MARK: - Computed Properties
-
         private var isPerson: Bool {
             viewModel.item.type == .person || viewModel.item.type == .musicArtist
         }
-
-        // MARK: - Body
 
         var body: some View {
             GeometryReader { geometry in
@@ -186,9 +181,9 @@ extension ItemView.CinematicScrollView {
             ItemView.ActionButtonHStack(viewModel: viewModel)
                 .foregroundStyle(.white)
                 .frame(width: personImageWidth, height: buttonHeight)
-                #if os(tvOS)
+            #if os(tvOS)
                 .focused($focusedLayer, equals: .actionButtons)
-                #endif
+            #endif
         }
 
         // MARK: - Play Button Content
@@ -197,16 +192,16 @@ extension ItemView.CinematicScrollView {
         private func playButtonContent() -> some View {
             ItemView.PlayButton(viewModel: viewModel)
                 .frame(height: buttonHeight)
-                #if os(tvOS)
+            #if os(tvOS)
                 .focused($focusedLayer, equals: .playButton)
-                #endif
+            #endif
 
             ItemView.ActionButtonHStack(viewModel: viewModel)
                 .foregroundStyle(.white)
                 .frame(height: buttonHeight)
-                #if os(tvOS)
+            #if os(tvOS)
                 .focused($focusedLayer, equals: .actionButtons)
-                #endif
+            #endif
         }
 
         // MARK: - Action Buttons Content
@@ -216,9 +211,9 @@ extension ItemView.CinematicScrollView {
             ItemView.ActionButtonHStack(viewModel: viewModel)
                 .foregroundStyle(.white)
                 .frame(width: buttonWidth, height: buttonHeight)
-                #if os(tvOS)
+            #if os(tvOS)
                 .focused($focusedLayer, equals: .actionButtons)
-                #endif
+            #endif
         }
     }
 }
