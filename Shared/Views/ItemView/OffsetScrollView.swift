@@ -15,14 +15,14 @@ extension ItemView {
         #if os(tvOS)
         @StateObject
         private var focusGuide = FocusGuide()
-        #endif
-
+        #else
         @State
         private var scrollViewOffset: CGFloat = 0
         @State
         private var size: CGSize = .zero
         @State
         private var safeAreaInsets: EdgeInsets = .zero
+        #endif
 
         private let header: Header
         private let overlay: Overlay
@@ -44,6 +44,7 @@ extension ItemView {
             self.overlayOffset = overlayOffset
         }
 
+        #if !os(tvOS)
         private var headerHeight: CGFloat {
             (size.height + safeAreaInsets.vertical) * heightRatio
         }
@@ -52,13 +53,16 @@ extension ItemView {
             let start = headerHeight - safeAreaInsets.top - 90
             let end = headerHeight - safeAreaInsets.top - 40
             let diff = end - start
-            let opacity = clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
-            return opacity
+            return clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
         }
+        #endif
 
         // MARK: - iOS View
 
         var iOSView: some View {
+            #if os(tvOS)
+            EmptyView()
+            #else
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     AlternateLayoutView {
@@ -79,26 +83,26 @@ extension ItemView {
             .edgesIgnoringSafeArea(.top)
             .trackingSize($size, $safeAreaInsets)
             .scrollViewOffset($scrollViewOffset)
-            #if os(iOS)
-                .navigationBarOffset(
-                    $scrollViewOffset,
-                    start: headerHeight - safeAreaInsets.top - 45,
-                    end: headerHeight - safeAreaInsets.top - 5
-                )
+            .navigationBarOffset(
+                $scrollViewOffset,
+                start: headerHeight - safeAreaInsets.top - 45,
+                end: headerHeight - safeAreaInsets.top - 5
+            )
+            .backgroundParallaxHeader(
+                $scrollViewOffset,
+                height: headerHeight,
+                multiplier: 0.3
+            ) {
+                header
+                    .frame(height: headerHeight)
+            }
             #endif
-                .backgroundParallaxHeader(
-                        $scrollViewOffset,
-                        height: headerHeight,
-                        multiplier: 0.3
-                    ) {
-                        header
-                            .frame(height: headerHeight)
-                    }
         }
 
         // MARK: - tvOS View
 
         var tvOSView: some View {
+            #if os(tvOS)
             GeometryReader { proxy in
                 ZStack {
                     header
@@ -106,37 +110,58 @@ extension ItemView {
                     ScrollView(.vertical, showsIndicators: false) {
                         VStack(spacing: 0) {
                             overlay
+                                .focusGuide(
+                                    focusGuide,
+                                    tag: "header",
+                                    bottom: "belowHeader"
+                                )
                                 .edgePadding()
                                 .frame(height: proxy.size.height - overlayOffset)
                                 .padding(.bottom, 50)
 
                             content
-                            #if os(tvOS)
-                            .environmentObject(focusGuide)
-                            #endif
+                                .focusGuide(
+                                    focusGuide,
+                                    tag: "belowHeader",
+                                    top: "header"
+                                )
                         }
                         .background {
-                            BlurView(style: .dark)
-                                .mask {
-                                    VStack(spacing: 0) {
-                                        LinearGradient(gradient: Gradient(stops: [
-                                            .init(color: .white, location: 0),
-                                            .init(color: .white.opacity(0.7), location: 0.4),
-                                            .init(color: .white.opacity(0), location: 1),
-                                        ]), startPoint: .bottom, endPoint: .top)
-                                            .frame(height: proxy.size.height - overlayOffset)
-
-                                        Color.white
-                                    }
-                                }
+                            tvOSBlurBackground(height: proxy.size.height - overlayOffset)
                         }
-                        #if os(tvOS)
                         .environmentObject(focusGuide)
-                        #endif
                     }
                 }
             }
             .ignoresSafeArea()
+            #else
+            EmptyView()
+            #endif
         }
+
+        // MARK: - tvOS Blur Background
+
+        #if os(tvOS)
+        @ViewBuilder
+        private func tvOSBlurBackground(height: CGFloat) -> some View {
+            BlurView(style: .dark)
+                .mask {
+                    VStack(spacing: 0) {
+                        LinearGradient(
+                            stops: [
+                                .init(color: .white, location: 0),
+                                .init(color: .white.opacity(0.7), location: 0.4),
+                                .init(color: .white.opacity(0), location: 1),
+                            ],
+                            startPoint: .bottom,
+                            endPoint: .top
+                        )
+                        .frame(height: height)
+
+                        Color.white
+                    }
+                }
+        }
+        #endif
     }
 }
