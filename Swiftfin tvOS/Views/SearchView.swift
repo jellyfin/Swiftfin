@@ -169,10 +169,10 @@ struct SearchView: View {
                 }
             case .initial:
                 if viewModel.hasNoResults {
-                    if searchQuery.isEmpty {
-                        suggestionsView
-                    } else {
+                    if searchQuery.isNotEmpty || viewModel.filterViewModel.currentFilters.hasFilters {
                         Text(L10n.noResults)
+                    } else {
+                        suggestionsView
                     }
                 } else {
                     resultsView
@@ -181,6 +181,7 @@ struct SearchView: View {
                 ProgressView()
             }
         }
+        .animation(.linear(duration: 0.1), value: viewModel.filterViewModel.currentFilters.hasFilters)
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea(edges: [.bottom, .horizontal])
         .refreshable {
