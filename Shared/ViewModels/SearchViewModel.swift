@@ -90,7 +90,7 @@ final class SearchViewModel: ViewModel {
     @Function(\Action.Cases.actuallySearch)
     private func _actuallySearch(_ query: String) async throws {
 
-        guard query.isEmpty && !filterViewModel.currentFilters.hasFilters else {
+        guard query.isNotEmpty || filterViewModel.currentFilters.hasFilters else {
             self.items = [:]
             return
         }
