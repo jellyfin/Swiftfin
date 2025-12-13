@@ -10,7 +10,7 @@ import SwiftUI
 
 struct JumpIntervalPicker: View {
 
-    let title: String
+    private let title: String
 
     @Binding
     private var selection: MediaJumpInterval
@@ -25,13 +25,6 @@ struct JumpIntervalPicker: View {
         self._selection = selection
     }
 
-    private var isCustomSelected: Bool {
-        if case .custom = selection {
-            return true
-        }
-        return false
-    }
-
     private var pickerLabel: String {
         if case let .custom(interval) = selection {
             return interval.formatted(.minuteSecondsNarrow)
@@ -39,10 +32,8 @@ struct JumpIntervalPicker: View {
         return selection.rawValue.formatted(.minuteSecondsNarrow)
     }
 
-    // MARK: - Body
-
     var body: some View {
-        picker
+        pickerView
             .alert(L10n.custom, isPresented: $showCustomInput) {
                 TextField(L10n.duration, value: $customSeconds, format: .number)
                     .keyboardType(.numberPad)
@@ -55,10 +46,8 @@ struct JumpIntervalPicker: View {
             }
     }
 
-    // MARK: - Picker
-
     @ViewBuilder
-    private var picker: some View {
+    private var pickerView: some View {
         #if os(tvOS)
         ListRowMenu(title, subtitle: pickerLabel) {
             menuContent
@@ -82,8 +71,6 @@ struct JumpIntervalPicker: View {
         #endif
     }
 
-    // MARK: - Menu Content
-
     @ViewBuilder
     private var menuContent: some View {
         ForEach(MediaJumpInterval.supportedCases, id: \.rawValue) { interval in
@@ -106,7 +93,7 @@ struct JumpIntervalPicker: View {
             }
             showCustomInput = true
         } label: {
-            if isCustomSelected {
+            if case .custom = selection {
                 Label(L10n.custom, systemImage: "checkmark")
             } else {
                 Text(L10n.custom)
