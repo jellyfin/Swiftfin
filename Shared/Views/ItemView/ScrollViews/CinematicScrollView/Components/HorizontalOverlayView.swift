@@ -12,43 +12,68 @@ extension ItemView.CinematicScrollView {
 
     struct HorizontalOverlayView: View {
 
-        #if os(tvOS)
-        private enum FocusLayer: Hashable {
-            case top
-            case playButton
-            case actionButtons
-        }
-
-        @FocusState
-        private var focusedLayer: FocusLayer?
-        #endif
-
-        private let buttonHeight: CGFloat = UIDevice.isTV ? 100 : 50
-        private let buttonSpacing: CGFloat = UIDevice.isTV ? 25 : 10
-        private let buttonWidthRatio: CGFloat = 0.30
-        private let logoWidthRatio: CGFloat = 0.35
-        private let logoHeightRatio: CGFloat = UIDevice.isTV ? 0.5 : 0.25
-        private let personImageAspectRatio: CGFloat = 1.5
-
         @StoredValue(.User.itemViewAttributes)
         private var attributes
 
         @ObservedObject
         var viewModel: ItemViewModel
 
+        #if os(tvOS)
+        @FocusState
+        private var focusedLayer: FocusLayer?
+
+        private enum FocusLayer: Hashable {
+            case top
+            case playButton
+            case actionButtons
+        }
+        #endif
+
+        // MARK: - Layout Constants
+
+        private var buttonHeight: CGFloat {
+            #if os(tvOS)
+            100
+            #else
+            50
+            #endif
+        }
+
+        private var buttonSpacing: CGFloat {
+            #if os(tvOS)
+            25
+            #else
+            10
+            #endif
+        }
+
+        private let buttonWidthRatio: CGFloat = 0.30
+        private let logoWidthRatio: CGFloat = 0.35
+
+        private var logoHeightRatio: CGFloat {
+            #if os(tvOS)
+            0.5
+            #else
+            0.25
+            #endif
+        }
+
+        private let personWidthRatio: CGFloat = 0.20
+
+        // MARK: - Computed Properties
+
         private var isPerson: Bool {
             viewModel.item.type == .person || viewModel.item.type == .musicArtist
         }
+
+        // MARK: - Body
 
         var body: some View {
             GeometryReader { geometry in
                 let buttonWidth = geometry.size.width * buttonWidthRatio
                 let logoMaxWidth = geometry.size.width * logoWidthRatio
                 let logoMaxHeight = geometry.size.height * logoHeightRatio
-                let personImageHeight = min(
-                    buttonWidth * personImageAspectRatio,
-                    geometry.size.height - buttonHeight - buttonSpacing
-                )
+                let personWidth = geometry.size.width * personWidthRatio
 
                 VStack(alignment: .leading) {
                     #if os(tvOS)
@@ -65,21 +90,16 @@ extension ItemView.CinematicScrollView {
 
                         trailingContent(
                             buttonWidth: buttonWidth,
-                            personImageHeight: personImageHeight
+                            personWidth: personWidth
                         )
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                .frame(maxWidth: .infinity, alignment: .bottom)
             }
             #if os(tvOS)
             .onChange(of: focusedLayer) { _, layer in
-                if layer == .top {
-                    if viewModel.item.presentPlayButton && !isPerson {
-                        focusedLayer = .playButton
-                    } else {
-                        focusedLayer = .actionButtons
-                    }
-                }
+                guard layer == .top else { return }
+                focusedLayer = (viewModel.item.presentPlayButton && !isPerson) ? .playButton : .actionButtons
             }
             #endif
         }
@@ -92,16 +112,31 @@ extension ItemView.CinematicScrollView {
             logoMaxHeight: CGFloat
         ) -> some View {
             VStack(alignment: .leading, spacing: 10) {
+                logoView(maxWidth: logoMaxWidth, maxHeight: logoMaxHeight)
 
-                ImageView(viewModel.item.imageSource(
-                    .logo,
-                    maxWidth: logoMaxWidth,
-                    maxHeight: logoMaxHeight
-                ))
+                ItemView.OverviewView(item: viewModel.item)
+                    .overviewLineLimit(3)
+                    .taglineLineLimit(1)
+                    .foregroundStyle(.white)
+
+                if !isPerson {
+                    HStack {
+                        MetadataView(viewModel: viewModel)
+                        ItemView.AttributesHStack(attributes: attributes, viewModel: viewModel)
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+            .edgePadding(.trailing)
+        }
+
+        @ViewBuilder
+        private func logoView(maxWidth: CGFloat, maxHeight: CGFloat) -> some View {
+            ImageView(viewModel.item.imageSource(.logo, maxWidth: maxWidth, maxHeight: maxHeight))
                 .image { image in
                     image
                         .aspectRatio(contentMode: .fit)
-                        .frame(maxWidth: logoMaxWidth, maxHeight: logoMaxHeight, alignment: .bottomLeading)
+                        .frame(maxWidth: maxWidth, maxHeight: maxHeight, alignment: .bottomLeading)
                 }
                 .placeholder { _ in
                     EmptyView()
@@ -112,25 +147,6 @@ extension ItemView.CinematicScrollView {
                         .fontWeight(.semibold)
                         .foregroundStyle(.white)
                 }
-
-                ItemView.OverviewView(item: viewModel.item)
-                    .overviewLineLimit(3)
-                    .taglineLineLimit(1)
-                    .foregroundStyle(.white)
-
-                if !isPerson {
-                    HStack {
-                        MetadataView(viewModel: viewModel)
-
-                        ItemView.AttributesHStack(
-                            attributes: attributes,
-                            viewModel: viewModel
-                        )
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
-            .edgePadding(.trailing)
         }
 
         // MARK: - Trailing Content
@@ -138,66 +154,59 @@ extension ItemView.CinematicScrollView {
         @ViewBuilder
         private func trailingContent(
             buttonWidth: CGFloat,
-            personImageHeight: CGFloat
+            personWidth: CGFloat
         ) -> some View {
             VStack(spacing: buttonSpacing) {
                 if isPerson {
-                    personContent(
-                        personImageWidth: buttonWidth,
-                        personImageHeight: personImageHeight
-                    )
+                    personContent(personImageWidth: personWidth)
                 } else if viewModel.item.presentPlayButton {
-                    playButtonContent(buttonWidth: buttonWidth)
+                    playButtonContent()
                 } else {
                     actionButtonsContent(buttonWidth: buttonWidth)
                 }
             }
-            .frame(width: buttonWidth)
+            .frame(width: isPerson ? personWidth : buttonWidth)
         }
 
         // MARK: - Person Content
 
         @ViewBuilder
-        private func personContent(
-            personImageWidth: CGFloat,
-            personImageHeight: CGFloat
-        ) -> some View {
-            ImageView(viewModel.item.imageSource(
-                .primary,
+        private func personContent(personImageWidth: CGFloat) -> some View {
+            PosterImage(
+                item: viewModel.item,
+                type: .portrait,
+                contentMode: UIDevice.isTV ? .fill : .fit,
                 maxWidth: personImageWidth
-            ))
-            .failure {
-                SystemImageContentView(systemName: viewModel.item.systemImage)
-            }
-            .posterStyle(.portrait, contentMode: .fill)
-            .frame(width: personImageWidth, height: personImageHeight)
+            )
+            .posterCornerRadius(.portrait)
+            .posterShadow()
             .cornerRadius(10)
-            .accessibilityIgnoresInvertColors()
+            .frame(width: personImageWidth)
 
             ItemView.ActionButtonHStack(viewModel: viewModel)
                 .foregroundStyle(.white)
                 .frame(width: personImageWidth, height: buttonHeight)
-            #if os(tvOS)
+                #if os(tvOS)
                 .focused($focusedLayer, equals: .actionButtons)
-            #endif
+                #endif
         }
 
         // MARK: - Play Button Content
 
         @ViewBuilder
-        private func playButtonContent(buttonWidth: CGFloat) -> some View {
+        private func playButtonContent() -> some View {
             ItemView.PlayButton(viewModel: viewModel)
                 .frame(height: buttonHeight)
-            #if os(tvOS)
+                #if os(tvOS)
                 .focused($focusedLayer, equals: .playButton)
-            #endif
+                #endif
 
             ItemView.ActionButtonHStack(viewModel: viewModel)
                 .foregroundStyle(.white)
                 .frame(height: buttonHeight)
-            #if os(tvOS)
+                #if os(tvOS)
                 .focused($focusedLayer, equals: .actionButtons)
-            #endif
+                #endif
         }
 
         // MARK: - Action Buttons Content
@@ -207,9 +216,9 @@ extension ItemView.CinematicScrollView {
             ItemView.ActionButtonHStack(viewModel: viewModel)
                 .foregroundStyle(.white)
                 .frame(width: buttonWidth, height: buttonHeight)
-            #if os(tvOS)
+                #if os(tvOS)
                 .focused($focusedLayer, equals: .actionButtons)
-            #endif
+                #endif
         }
     }
 }

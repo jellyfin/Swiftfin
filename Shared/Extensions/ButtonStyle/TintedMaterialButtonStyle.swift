@@ -56,8 +56,7 @@ struct TintedMaterialButtonStyle: ButtonStyle {
         if isEnabled && isSelected {
             tint
         } else {
-            // TODO: change to a full-opacity color
-            Color.gray.opacity(0.3)
+            UIDevice.isTV ? Color.clear : Color.gray.opacity(0.3)
         }
     }
 
@@ -67,8 +66,7 @@ struct TintedMaterialButtonStyle: ButtonStyle {
         } else if isEnabled {
             AnyShapeStyle(HierarchicalShapeStyle.primary)
         } else {
-            // TODO: change to a full-opacity color
-            AnyShapeStyle(Color.gray.opacity(0.3))
+            AnyShapeStyle(buttonTint)
         }
     }
 }

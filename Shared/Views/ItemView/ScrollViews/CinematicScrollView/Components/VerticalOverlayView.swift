@@ -13,7 +13,6 @@ extension ItemView.CinematicScrollView {
     struct VerticalOverlayView: View {
 
         private let buttonHeight: CGFloat = 50
-        private let maxButtonWidth: CGFloat = 300
 
         @StoredValue(.User.itemViewAttributes)
         private var attributes
@@ -57,7 +56,6 @@ extension ItemView.CinematicScrollView {
                             .foregroundStyle(.white)
                             .frame(height: buttonHeight)
                     }
-                    .frame(maxWidth: maxButtonWidth)
                 }
                 .frame(maxWidth: .infinity)
 

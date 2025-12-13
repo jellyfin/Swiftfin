@@ -117,7 +117,6 @@ extension ItemView {
                                 )
                                 .edgePadding()
                                 .frame(height: proxy.size.height - overlayOffset)
-                                .padding(.bottom, 50)
 
                             content
                                 .focusGuide(
