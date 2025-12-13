@@ -9,9 +9,7 @@
 import Defaults
 import Foundation
 
-// TODO: conform to `SystemImageable`
-//       - forward to systemImage, backward to secondarySystemImage
-enum MediaJumpInterval: Storable, RawRepresentable {
+enum MediaJumpInterval: Storable, RawRepresentable, SystemImageable, Hashable {
 
     typealias RawValue = Duration
 
@@ -51,7 +49,11 @@ enum MediaJumpInterval: Storable, RawRepresentable {
         }
     }
 
-    var forwardSystemImage: String {
+    static var supportedCases: [MediaJumpInterval] {
+        [.five, .ten, .fifteen, .thirty]
+    }
+
+    var systemImage: String {
         switch self {
         case .thirty:
             "goforward.30"
@@ -66,7 +68,7 @@ enum MediaJumpInterval: Storable, RawRepresentable {
         }
     }
 
-    var backwardSystemImage: String {
+    var secondarySystemImage: String {
         switch self {
         case .thirty:
             "gobackward.30"
