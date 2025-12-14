@@ -9,7 +9,7 @@
 import Defaults
 import Foundation
 
-enum MediaJumpInterval: Storable, SystemImageable, CaseIterable, RawRepresentable, Hashable {
+enum MediaJumpInterval: Storable, SystemImageable, Displayable, CaseIterable, RawRepresentable, Hashable {
 
     typealias RawValue = Duration
 
@@ -80,6 +80,15 @@ enum MediaJumpInterval: Storable, SystemImageable, CaseIterable, RawRepresentabl
             "gobackward.5"
         case .custom:
             "gobackward"
+        }
+    }
+
+    var displayTitle: String {
+        switch self {
+        case let .custom(interval):
+            interval.formatted(.minuteSecondsNarrow)
+        default:
+            rawValue.formatted(.minuteSecondsNarrow)
         }
     }
 }
