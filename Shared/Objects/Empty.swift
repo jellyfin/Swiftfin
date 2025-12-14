@@ -6,12 +6,24 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-import JellyfinAPI
+struct Empty {}
 
-extension NameGuidPair: Displayable {
+extension Empty: WithDefaultValue {
+    static var `default`: Empty = .init()
+}
+
+extension Empty: WithRefresh {
+    func refresh() {}
+    func refresh() async throws {}
+}
+
+extension Empty: LibraryGrouping {
 
     var displayTitle: String {
-        name ?? .emptyDash
+        ""
+    }
+
+    var id: String {
+        ""
     }
 }

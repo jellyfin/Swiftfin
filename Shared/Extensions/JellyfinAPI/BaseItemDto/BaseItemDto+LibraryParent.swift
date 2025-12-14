@@ -39,11 +39,6 @@ import JellyfinAPI
 //    }
 // }
 
-// struct BasicLibraryGrouping: Displayable, Hashable, Identifiable, Storable {
-//    let displayTitle: String
-//    let id: String
-// }
-
 protocol LibraryGrouping: Displayable, Equatable, Hashable, Identifiable<String>, Storable {
     var id: String { get }
 }

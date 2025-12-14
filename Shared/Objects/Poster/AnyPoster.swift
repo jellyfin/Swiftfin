@@ -46,7 +46,7 @@ struct AnyPoster: Poster {
     func landscapeImageSources(
         maxWidth: CGFloat?,
         quality: Int?,
-        environment: VoidWithDefaultValue
+        environment: Empty
     ) -> [ImageSource] {
         func inner(_ poster: some Poster) -> [ImageSource] {
             poster.landscapeImageSources(

@@ -8,13 +8,6 @@
 
 import SwiftUI
 
-struct OnReceiveNotificationModifier<P, K: Notifications.Key<P>>: ViewModifier {
-
-    let key: K
-    let onReceive: (P) -> Void
-
-    func body(content: Content) -> some View {
-        content
-            .onReceive(key.publisher, perform: onReceive)
-    }
+extension LinearGradient {
+    typealias Stop = (location: CGFloat, opacity: CGFloat)
 }

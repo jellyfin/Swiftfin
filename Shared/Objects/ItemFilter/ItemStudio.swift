@@ -8,32 +8,42 @@
 
 import Foundation
 
-struct ItemGenre: Codable, ExpressibleByStringLiteral, Hashable, ItemFilter {
+struct ItemStudio: Codable, Hashable, ItemFilter {
 
+    let displayTitle: String
     let value: String
 
-    var displayTitle: String {
-        value
-    }
-
-    init(stringLiteral value: String) {
+    init(displayTitle: String, value: String) {
+        self.displayTitle = displayTitle
         self.value = value
     }
 
     init(from anyFilter: AnyItemFilter) {
+        self.displayTitle = anyFilter.displayTitle
         self.value = anyFilter.value
     }
 }
 
 import SwiftUI
 
-extension ItemGenre: LibraryElement {
+extension ItemStudio: LibraryElement {
 
-    func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {}
+    func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {
+//        router.route(
+//            to: .library(
+//                library: Pagingitemlibrar
+//            ),
+//            in: <#T##Namespace.ID?#>
+//        )
+    }
 
     func makeGridBody(libraryStyle: LibraryStyle) -> EmptyView {}
 
     func makeListBody(libraryStyle: LibraryStyle) -> EmptyView {}
+
+    func makeBody(libraryStyle: LibraryStyle) -> EmptyView {
+        EmptyView()
+    }
 
     var unwrappedIDHashOrZero: Int {
         value.hashValue

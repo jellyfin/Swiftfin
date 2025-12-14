@@ -19,17 +19,18 @@ extension ItemView {
         let genres: [ItemGenre]
 
         var body: some View {
-            PillHStack(
-                title: L10n.genres,
-                items: genres
-            ).onSelect { _ in
+//            PillHStack(
+//                title: L10n.genres,
+//                items: genres
+//            )
+//            .onSelect { _ in
 //                let library = PagingItemLibrary(
 //                    parent: genre,
 //                    filters: .init(parent: nil, currentFilters: .init(genres: [genre]))
 //                )
 //
 //                router.route(to: .library(library: library))
-            }
+//            }
         }
     }
 }

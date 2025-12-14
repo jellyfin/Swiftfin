@@ -147,6 +147,18 @@ extension BaseItemDto {
         return genres.map(ItemGenre.init)
     }
 
+    var itemStudios: [ItemStudio]? {
+        guard let studios else { return nil }
+        return studios.compactMap { pair in
+            guard let id = pair.id else { return nil }
+
+            return ItemStudio(
+                displayTitle: pair.displayTitle,
+                value: id
+            )
+        }
+    }
+
     /// Differs from `isLive` to indicate an item
     /// would be streaming from a live source.
     var isLiveStream: Bool {
@@ -513,7 +525,7 @@ extension BaseItemDto {
             throw ErrorMessage(L10n.unknownError)
         }
 
-        let request = Paths.getItem(itemID: id, userID: userSession.user.id)
+        let request = Paths.getItem(itemID: id)
         let response = try await userSession.client.send(request)
 
         // A check against `id` would typically be done, but a plugin
@@ -521,5 +533,10 @@ extension BaseItemDto {
         // be invariant over `id`.
 
         return response.value
+    }
+
+    static func getItem(id: String, userSession: UserSession) async throws -> BaseItemDto {
+        try await .init(id: id)
+            .getFullItem(userSession: userSession)
     }
 }

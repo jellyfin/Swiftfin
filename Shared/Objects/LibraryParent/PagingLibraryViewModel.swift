@@ -19,7 +19,7 @@ private let SmallPageSize = 20
 @MainActor
 protocol WithRefresh {
 
-    associatedtype Background: WithRefresh = VoidWithRefresh
+    associatedtype Background: WithRefresh = Empty
 
     func refresh()
     func refresh() async throws
@@ -27,17 +27,12 @@ protocol WithRefresh {
     var background: Background { get set }
 }
 
-extension WithRefresh where Background == VoidWithRefresh {
+extension WithRefresh where Background == Empty {
 
-    var background: VoidWithRefresh {
+    var background: Empty {
         get { .init() }
         set {}
     }
-}
-
-struct VoidWithRefresh: WithRefresh {
-    func refresh() {}
-    func refresh() async throws {}
 }
 
 @MainActor
@@ -106,7 +101,6 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
     @Published
     var environment: Environment
 
-//    private var currentPage = 0
     private var hasNextPage = true
 
     let library: _PagingLibrary
@@ -123,7 +117,7 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
             id: \.unwrappedIDHashOrZero,
             uniquingIDsWith: { x, _ in x }
         )
-        self.hasNextPage = library.pages
+        self.hasNextPage = library.hasNextPage
 
         super.init()
     }

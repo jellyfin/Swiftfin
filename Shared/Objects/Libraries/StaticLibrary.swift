@@ -10,7 +10,7 @@ struct StaticLibrary<Element: LibraryElement>: PagingLibrary {
 
     let elements: [Element]
     let parent: _TitledLibraryParent
-    let pages = false
+    let hasNextPage: Bool = false
 
     init(
         title: String,
@@ -25,7 +25,7 @@ struct StaticLibrary<Element: LibraryElement>: PagingLibrary {
     }
 
     func retrievePage(
-        environment: VoidWithDefaultValue,
+        environment: Empty,
         pageState: LibraryPageState
     ) async throws -> [Element] {
         elements

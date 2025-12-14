@@ -64,7 +64,7 @@ private struct BasicImagePosterItem: Poster {
     func imageSources(
         for displayType: PosterDisplayType,
         size: PosterDisplayType.Size,
-        environment: VoidWithDefaultValue
+        environment: Empty
     ) -> [ImageSource] {
         [imageSource]
     }

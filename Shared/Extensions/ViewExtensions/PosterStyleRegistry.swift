@@ -12,10 +12,6 @@ protocol WithDefaultValue: Equatable {
     static var `default`: Self { get }
 }
 
-struct VoidWithDefaultValue: WithDefaultValue {
-    static var `default`: Self = .init()
-}
-
 // TODO: have layout values for `PosterHStack`?
 //       - or be based on size/poster display value?
 

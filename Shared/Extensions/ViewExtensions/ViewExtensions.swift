@@ -394,12 +394,7 @@ extension View {
     }
 
     func onNotification<P>(_ key: Notifications.Key<P>, perform action: @escaping (P) -> Void) -> some View {
-        modifier(
-            OnReceiveNotificationModifier(
-                key: key,
-                onReceive: action
-            )
-        )
+        onReceive(key.publisher, perform: action)
     }
 
     func onAppDidEnterBackground(_ action: @escaping () -> Void) -> some View {
@@ -438,10 +433,24 @@ extension View {
         modifier(ScrollIfLargerThanContainerModifier(padding: padding))
     }
 
+    /// Masks the view with a linear gradient from top to bottom.
     func maskLinearGradient(
-        @ArrayBuilder<OpacityLinearGradientModifier.Stop> stops: () -> [OpacityLinearGradientModifier.Stop]
+        @ArrayBuilder<LinearGradient.Stop> stops: () -> [LinearGradient.Stop] = {
+            [(location: 0, opacity: 1), (location: 1, opacity: 0)]
+        }
     ) -> some View {
-        modifier(OpacityLinearGradientModifier(stops: stops()))
+        mask {
+            LinearGradient(
+                stops: stops().map {
+                    Gradient.Stop(
+                        color: Color.black.opacity($0.opacity),
+                        location: $0.location
+                    )
+                },
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        }
     }
 
     // TODO: look at changing to symbolEffect

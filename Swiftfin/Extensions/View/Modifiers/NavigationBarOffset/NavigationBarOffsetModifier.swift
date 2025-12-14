@@ -10,15 +10,13 @@ import SwiftUI
 
 struct NavigationBarOffsetModifier: ViewModifier {
 
-    @Binding
-    var scrollViewOffset: CGFloat
-
+    let scrollViewOffset: Binding<CGFloat>
     let start: CGFloat
     let end: CGFloat
 
     func body(content: Content) -> some View {
         NavigationBarOffsetView(
-            scrollViewOffset: $scrollViewOffset,
+            scrollViewOffset: scrollViewOffset,
             start: start,
             end: end
         ) {

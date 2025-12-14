@@ -20,26 +20,33 @@ extension ItemView.AboutView {
         @Router
         private var router
 
-        @ObservedObject
-        var viewModel: ItemViewModel
+        private let item: BaseItemDto
+
+        init(viewModel: ItemViewModel) {
+            self.item = viewModel.item
+        }
+
+        init(item: BaseItemDto) {
+            self.item = item
+        }
 
         private func action() {
-            switch viewModel.item.type {
-            case .episode:
-                if let episodeViewModel = viewModel as? EpisodeItemViewModel,
-                   let seriesItem = episodeViewModel.seriesItem
-                {
-                    router.route(to: .item(item: seriesItem), in: namespace)
-                }
-            default:
-                break
-            }
+//            switch item.type {
+//            case .episode:
+//                if let episodeViewModel = viewModel as? EpisodeItemViewModel,
+//                   let seriesItem = episodeViewModel.seriesItem
+//                {
+//                    router.route(to: .item(item: seriesItem), in: namespace)
+//                }
+//            default:
+//                break
+//            }
         }
 
         var body: some View {
             Button(action: action) {
                 PosterImage(
-                    item: viewModel.item,
+                    item: item,
                     type: .portrait
                 )
                 .backport

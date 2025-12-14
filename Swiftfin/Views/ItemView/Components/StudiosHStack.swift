@@ -19,13 +19,13 @@ extension ItemView {
         let studios: [NameGuidPair]
 
         var body: some View {
-            PillHStack(
-                title: L10n.studios,
-                items: studios
-            ).onSelect { _ in
+//            PillHStack(
+//                title: L10n.studios,
+//                items: studios
+//            ).onSelect { _ in
 //                let viewModel = ItemLibraryViewModel(parent: studio)
 //                router.route(to: .library(viewModel: viewModel))
-            }
+//            }
         }
     }
 }

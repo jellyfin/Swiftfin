@@ -12,12 +12,10 @@ import SwiftUI
 
 struct NavigationBarOffsetView<Content: View>: UIViewControllerRepresentable {
 
-    @Binding
-    private var scrollViewOffset: CGFloat
-
+    private let content: Content
+    private let scrollViewOffset: Binding<CGFloat>
     private let start: CGFloat
     private let end: CGFloat
-    private let content: () -> Content
 
     init(
         scrollViewOffset: Binding<CGFloat>,
@@ -25,18 +23,22 @@ struct NavigationBarOffsetView<Content: View>: UIViewControllerRepresentable {
         end: CGFloat,
         @ViewBuilder content: @escaping () -> Content
     ) {
-        self._scrollViewOffset = scrollViewOffset
+        self.content = content()
+        self.scrollViewOffset = scrollViewOffset
         self.start = start
         self.end = end
-        self.content = content
     }
 
     func makeUIViewController(context: Context) -> UINavigationBarOffsetHostingController<Content> {
-        UINavigationBarOffsetHostingController(rootView: content())
+        UINavigationBarOffsetHostingController<Content>(rootView: content)
     }
 
     func updateUIViewController(_ uiViewController: UINavigationBarOffsetHostingController<Content>, context: Context) {
-        uiViewController.scrollViewDidScroll(scrollViewOffset, start: start, end: end)
+        uiViewController.scrollViewDidScroll(
+            scrollViewOffset.wrappedValue,
+            start: start,
+            end: end
+        )
     }
 }
 

@@ -57,7 +57,7 @@ extension ChannelProgram: Poster {
     func squareImageSources(
         maxWidth: CGFloat?,
         quality: Int?,
-        environment: VoidWithDefaultValue
+        environment: Empty
     ) -> [ImageSource] {
         channel.squareImageSources(
             maxWidth: maxWidth,

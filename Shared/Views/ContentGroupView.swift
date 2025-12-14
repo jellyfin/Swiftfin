@@ -35,7 +35,6 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View where Library.El
             ) {
                 element,
                     namespace in
-                //                router.route(to: .posterGroupPosterButtonStyle(id: viewModel.library.parent.libraryID))
 
                 switch element {
                 case let element as BaseItemDto:
@@ -49,6 +48,10 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View where Library.El
                     default:
                         router.route(to: .item(item: element), in: namespace)
                     }
+                case let person as BaseItemPerson:
+                    if let itemID = person.id {
+                        router.route(to: .item(item: .init(person: person)), in: namespace)
+                    }
                 default: ()
                 }
             } header: {
@@ -57,20 +60,6 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View where Library.El
                 }
             }
             .animation(.linear(duration: 0.2), value: viewModel.elements)
-            //                .posterStyle(for: BaseItemDto.self) { environment, _ in
-            //                    var environment = environment
-            //                    environment.displayType = group.posterDisplayType
-            //                    environment.size = group.posterSize
-            //                    if let progress = item.progress, let startSeconds = item.startSeconds {
-            //                        environment.overlay = PosterProgressBar(
-            //                            title: startSeconds.formatted(.runtime),
-            //                            progress: progress,
-            //                            posterDisplayType: environment.displayType
-            //                        )
-            //                        .eraseToAnyView()
-            //                    }
-            //                    return environment
-            //                }
         }
     }
 }
@@ -89,7 +78,7 @@ extension PosterHStackLibrarySection {
                         .foregroundStyle(.primary)
                         .font(.title2)
 
-                    Image(systemName: "chevron.right")
+                    Image(systemName: "chevron.forward")
                         .foregroundStyle(.secondary)
                         .font(.title3)
                 }
@@ -109,7 +98,7 @@ struct ContentGroupContentView<Provider: _ContentGroupProvider>: View {
     var viewModel: ContentGroupViewModel<Provider>
 
     private func makeGroupBody(
-        with libraryViewModel: any WithRefresh,
+        with libraryViewModel: any _ContentGroupViewModel,
         group: any _ContentGroup
     ) -> some View {
 
@@ -160,7 +149,15 @@ struct ContentGroupShimView: View {
     }
 }
 
+struct HeaderedContentGroupView<Header: _ContentGroup, Provider: _ContentGroupProvider>: View {
+
+    var body: some View {}
+}
+
 struct ContentGroupView<Provider: _ContentGroupProvider>: View {
+
+    @Environment(\.safeAreaInsets)
+    private var safeAreaInsets
 
     @Router
     private var router
@@ -181,10 +178,9 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
             .edgePadding(.vertical)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .ignoresSafeArea(.container, edges: [.horizontal])
+        .ignoresSafeArea(edges: .horizontal)
         .scrollIndicators(.hidden)
         .refreshable {
-//            try? await viewModel.refresh()
             try? await viewModel.background.refresh()
         }
     }
@@ -236,15 +232,6 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
 //                    )
 //                )
 //            }
-
-            #if os(iOS)
-//            SettingsBarButton(
-//                server: viewModel.userSession.server,
-//                user: viewModel.userSession.user
-//            ) {
-//                router.route(to: .settings)
-//            }
-            #endif
         }
 //        .sinceLastDisappear { interval in
 //            if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {

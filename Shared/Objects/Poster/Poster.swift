@@ -19,7 +19,7 @@ typealias ImageSourceBuilder = ArrayBuilder<ImageSource>
 /// A type that is displayed as a poster
 protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
 
-    associatedtype Environment: WithDefaultValue = VoidWithDefaultValue
+    associatedtype Environment: WithDefaultValue = Empty
     associatedtype ImageBody: View = Image
 
     var preferredPosterDisplayType: PosterDisplayType { get }
@@ -131,7 +131,7 @@ extension Poster where ImageBody == Image {
     }
 }
 
-extension Poster where Environment == VoidWithDefaultValue {
+extension Poster where Environment == Empty {
 
     func imageSources(
         for displayType: PosterDisplayType,

@@ -22,7 +22,7 @@ struct ProgramsLibrary: PagingLibrary {
     }
 
     func retrievePage(
-        environment: VoidWithDefaultValue,
+        environment: Empty,
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
         var parameters = Paths.GetLiveTvProgramsParameters()

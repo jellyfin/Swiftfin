@@ -16,13 +16,13 @@ struct LibraryPageState {
 
 protocol _LibraryParent: Displayable {
 
-    associatedtype Grouping: LibraryGrouping = VoidWithLibraryGrouping
+    associatedtype Grouping: LibraryGrouping = Empty
 
     var groupings: (defaultSelection: Grouping, elements: [Grouping])? { get }
     var libraryID: String { get }
 }
 
-extension _LibraryParent where Grouping == VoidWithLibraryGrouping {
+extension _LibraryParent where Grouping == Empty {
     var groupings: (defaultSelection: Grouping, elements: [Grouping])? { nil }
 }
 
@@ -31,17 +31,12 @@ protocol WithLibraryGrouping<Grouping> {
     var grouping: Grouping? { get set }
 }
 
-struct VoidWithLibraryGrouping: LibraryGrouping {
-    var displayTitle: String = ""
-    var id: String = ""
-}
-
 import SwiftUI
 
 protocol PagingLibrary<Element> {
 
     associatedtype Element: LibraryIdentifiable
-    associatedtype Environment: WithDefaultValue = VoidWithDefaultValue
+    associatedtype Environment: WithDefaultValue = Empty
     associatedtype LibraryBody: View = AnyView
     associatedtype Parent: _LibraryParent = _TitledLibraryParent
 
@@ -51,8 +46,7 @@ protocol PagingLibrary<Element> {
     var environment: Environment? { get }
     var parent: Parent { get }
 
-    // TODO: rename/refactor to something else
-    var pages: Bool { get }
+    var hasNextPage: Bool { get }
 
     func retrievePage(
         environment: Environment,
@@ -68,7 +62,7 @@ protocol PagingLibrary<Element> {
 extension PagingLibrary {
 
     var environment: Environment? { nil }
-    var pages: Bool { true }
+    var hasNextPage: Bool { true }
 
     func makeLibraryBody(content: some View) -> AnyView {
         content.eraseToAnyView()

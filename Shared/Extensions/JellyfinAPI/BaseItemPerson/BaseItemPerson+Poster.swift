@@ -32,7 +32,7 @@ extension BaseItemPerson: Poster {
     func portraitImageSources(
         maxWidth: CGFloat?,
         quality: Int?,
-        environment: VoidWithDefaultValue
+        environment: Empty
     ) -> [ImageSource] {
         guard let client = Container.shared.currentUserSession()?.client else { return [] }
 

@@ -190,12 +190,30 @@ extension NavigationRoute {
         }
     }
 
+    static func person(_ person: BaseItemPerson) -> NavigationRoute {
+        .item(item: .init(person: person))
+    }
+
     static func item(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(
             id: "item-\(item.id ?? "Unknown")",
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
             ItemView(item: item)
+        }
+    }
+
+    static func item(displayTitle: String, id: String) -> NavigationRoute {
+        NavigationRoute(
+            id: "item-\(id)",
+            withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
+        ) {
+            ItemContentGroupView(
+                provider: ItemGroupProvider(
+                    displayTitle: displayTitle,
+                    id: id
+                )
+            )
         }
     }
 

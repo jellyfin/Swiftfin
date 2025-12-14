@@ -22,25 +22,17 @@ extension ItemView {
                     .padding(.vertical, 10)
             } content: {
 
-                // MARK: Episodes
-
                 if viewModel.seasons.isNotEmpty {
                     SeriesEpisodeSelector(viewModel: viewModel)
                 }
-
-                // MARK: Genres
 
                 if let genres = viewModel.item.itemGenres, genres.isNotEmpty {
                     ItemView.GenresHStack(genres: genres)
                 }
 
-                // MARK: Studios
-
                 if let studios = viewModel.item.studios, studios.isNotEmpty {
                     ItemView.StudiosHStack(studios: studios)
                 }
-
-                // MARK: Cast and Crew
 
                 if let castAndCrew = viewModel.item.people,
                    castAndCrew.isNotEmpty
@@ -48,13 +40,9 @@ extension ItemView {
                     ItemView.CastAndCrewHStack(people: castAndCrew)
                 }
 
-                // MARK: Special Features
-
                 if viewModel.specialFeatures.isNotEmpty {
                     ItemView.SpecialFeaturesHStack(items: viewModel.specialFeatures)
                 }
-
-                // MARK: Similar
 
                 if viewModel.similarItems.isNotEmpty {
                     ItemView.SimilarItemsHStack(items: viewModel.similarItems)

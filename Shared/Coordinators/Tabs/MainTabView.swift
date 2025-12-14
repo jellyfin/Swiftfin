@@ -86,35 +86,35 @@ struct MainTabView: View {
         .libraryStyle(for: ChannelProgram.self) { _, _ in
             (defaultLibraryStyle, $defaultLibraryStyle)
         }
-        .posterStyle(for: BaseItemDto.self) { item in
-
-            @ViewBuilder
-            func _label() -> some View {
-                if item.type == .program {
-                    ProgramButtonContent(
-                        program: item
-                    )
-                } else {
-                    TitleSubtitleContentView(
-                        title: showPosterLabels ? item.displayTitle : nil,
-                        subtitle: item.subtitle
-                    )
-                }
-            }
-
-            return .init(
-                displayType: .landscape,
-                label: _label(),
-                overlay: {
-                    PosterIndicatorsOverlay(
-                        item: item,
-                        indicators: [.progress],
-                        posterDisplayType: $0
-                    )
-                },
-                size: .small
-            )
-        }
+//        .posterStyle(for: BaseItemDto.self) { item in
+//
+//            @ViewBuilder
+//            func _label() -> some View {
+//                if item.type == .program {
+//                    ProgramButtonContent(
+//                        program: item
+//                    )
+//                } else {
+//                    TitleSubtitleContentView(
+//                        title: showPosterLabels ? item.displayTitle : nil,
+//                        subtitle: item.subtitle
+//                    )
+//                }
+//            }
+//
+//            return .init(
+//                displayType: .landscape,
+//                label: _label(),
+//                overlay: {
+//                    PosterIndicatorsOverlay(
+//                        item: item,
+//                        indicators: [.progress],
+//                        posterDisplayType: $0
+//                    )
+//                },
+//                size: .small
+//            )
+//        }
         .posterStyle(for: BaseItemPerson.self) { person in
             .init(
                 displayType: .portrait,

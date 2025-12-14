@@ -8,14 +8,16 @@
 
 import JellyfinAPI
 
-struct LatestInLibrary: PagingLibrary {
+struct SimilarItemsLibrary: PagingLibrary {
 
+    let itemID: String
     let parent: _TitledLibraryParent
 
-    init(library: BaseItemDto) {
-        self.parent = _TitledLibraryParent(
-            displayTitle: L10n.latestWithString(library.displayTitle),
-            libraryID: library.libraryID
+    init(itemID: String) {
+        self.itemID = itemID
+        self.parent = .init(
+            displayTitle: L10n.recommended,
+            libraryID: "similar-items"
         )
     }
 
@@ -23,14 +25,16 @@ struct LatestInLibrary: PagingLibrary {
         environment: Empty,
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
-        var parameters = Paths.GetLatestMediaParameters()
-        parameters.userID = pageState.userSession.user.id
-        parameters.parentID = parent.libraryID
-        parameters.enableUserData = true
+
+        var parameters = Paths.GetSimilarItemsParameters()
         parameters.limit = pageState.pageSize
 
-        let request = Paths.getLatestMedia(parameters: parameters)
+        let request = Paths.getSimilarItems(
+            itemID: itemID,
+            parameters: parameters
+        )
         let response = try await pageState.userSession.client.send(request)
-        return response.value
+
+        return response.value.items ?? []
     }
 }

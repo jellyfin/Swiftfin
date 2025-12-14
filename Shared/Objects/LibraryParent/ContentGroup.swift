@@ -17,7 +17,7 @@ import SwiftUI
 typealias ContentGroupBuilder = ArrayBuilder<any _ContentGroup>
 
 @MainActor
-protocol _ContentGroup<ViewModel>: Displayable, Identifiable {
+protocol _ContentGroup<ViewModel>: Identifiable {
 
     associatedtype Body: View
     associatedtype ViewModel: _ContentGroupViewModel
@@ -51,6 +51,7 @@ protocol _ContentGroupProvider: Displayable, SystemImageable {
     var id: String { get }
     var environment: Environment { get set }
 
+    @ContentGroupBuilder
     func makeGroups(environment: Environment) async throws -> [any _ContentGroup]
 }
 
@@ -90,6 +91,25 @@ struct EmptyContentGroup: _ContentGroup {
 
     func body(with viewModel: VoidContentGroupViewModel) -> some View {
         EmptyView()
+    }
+}
+
+struct PillGroup<Library: PagingLibrary>: _ContentGroup where Library.Element: Displayable {
+
+    let displayTitle: String
+    let id: String
+    let library: Library
+
+    func makeViewModel() -> PagingLibraryViewModel<Library> {
+        .init(library: library)
+    }
+
+    func body(with viewModel: PagingLibraryViewModel<Library>) -> some View {
+        PillHStack(
+            title: displayTitle,
+            data: viewModel.elements
+        ) { _ in
+        }
     }
 }
 
@@ -299,12 +319,12 @@ struct CustomContentGroupSettingsView: View {
 
             TextField(L10n.title, text: $temporaryCustomContentGroup.displayTitle)
 
-            ForEach(temporaryCustomContentGroup.groups, id: \.hashValue) { groupSetting in
-                Button(groupSetting.group.displayTitle) {
-                    temporaryCustomContentGroup.groups
-                        .removeAll(where: { $0 == groupSetting })
-                }
-            }
+//            ForEach(temporaryCustomContentGroup.groups, id: \.hashValue) { groupSetting in
+//                Button(groupSetting.group.displayTitle) {
+//                    temporaryCustomContentGroup.groups
+//                        .removeAll(where: { $0 == groupSetting })
+//                }
+//            }
         }
         .navigationTitle("Custom")
         .topBarTrailing {

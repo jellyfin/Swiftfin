@@ -22,10 +22,11 @@ struct PosterHStack<
     @Router
     private var router
 
-    private var elements: Data
-    private var header: Header
-    // TODO: remove?
-    private var type: PosterDisplayType
+    private let elements: Data
+    private let header: Header
+    private let displayType: PosterDisplayType
+    private let size: PosterDisplayType.Size
+
     private var action: (Data.Element, Namespace.ID) -> Void
 
     private var posterStyle: PosterStyleEnvironment {
@@ -99,7 +100,7 @@ struct PosterHStack<
             ) { item in
                 PosterButton(
                     item: item,
-                    type: type
+                    type: displayType
                 ) { namespace in
                     action(item, namespace)
                 }
@@ -129,12 +130,14 @@ extension PosterHStack {
     init(
         elements: Data,
         type: PosterDisplayType,
+        size: PosterDisplayType.Size = .medium,
         action: @escaping (Data.Element, Namespace.ID) -> Void,
         @ViewBuilder header: () -> Header
     ) {
         self.elements = elements
         self.header = header()
-        self.type = type
+        self.displayType = type
+        self.size = size
         self.action = action
     }
 }
@@ -145,11 +148,13 @@ extension PosterHStack where Header == DefaultHeader {
         title: String,
         elements: Data,
         type: PosterDisplayType,
+        size: PosterDisplayType.Size = .medium,
         action: @escaping (Data.Element, Namespace.ID) -> Void
     ) {
         self.init(
             elements: elements,
             type: type,
+            size: size,
             action: action,
             header: { DefaultHeader(title: title) }
         )
