@@ -79,6 +79,10 @@ final class SearchViewModel: ViewModel {
             .store(in: &cancellables)
     }
 
+    func hasSearchConstraints() -> Bool {
+        searchQuery.value.isNotEmpty || filterViewModel.currentFilters.hasQueryableFilters
+    }
+
     @Function(\Action.Cases.search)
     private func _search(_ query: String) async throws {
         searchQuery.value = query
@@ -90,8 +94,8 @@ final class SearchViewModel: ViewModel {
     @Function(\Action.Cases.actuallySearch)
     private func _actuallySearch(_ query: String) async throws {
 
-        guard query.isNotEmpty || filterViewModel.currentFilters.hasFilters else {
-            self.items = [:]
+        guard hasSearchConstraints() else {
+            items.removeAll()
             return
         }
 

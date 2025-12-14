@@ -169,7 +169,7 @@ struct SearchView: View {
                 }
             case .initial:
                 if viewModel.hasNoResults {
-                    if searchQuery.isNotEmpty || viewModel.filterViewModel.currentFilters.hasFilters {
+                    if viewModel.hasSearchConstraints() {
                         Text(L10n.noResults)
                     } else {
                         suggestionsView
