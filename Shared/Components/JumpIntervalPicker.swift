@@ -134,8 +134,8 @@ struct JumpIntervalPicker: View {
                     let clampedSeconds = max(1, customSeconds)
 
                     if let matchingStatic = MediaJumpInterval.allCases.first(where: {
-                            $0.rawValue == .seconds(clampedSeconds)
-                        }
+                        $0.rawValue == .seconds(clampedSeconds)
+                    }
                     ) {
                         selection.wrappedValue = matchingStatic
                     } else {
