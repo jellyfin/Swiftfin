@@ -49,7 +49,7 @@ struct JumpIntervalPicker: View {
 
     @ViewBuilder
     private var picker: some View {
-        if #available(iOS 18.0, *) {
+        if #available(iOS 18.0, tvOS 18.0, *) {
             Picker(title, selection: mappedSelection) {
                 pickerContent
             } currentValueLabel: {
