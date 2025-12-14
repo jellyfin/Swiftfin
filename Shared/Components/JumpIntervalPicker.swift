@@ -23,34 +23,77 @@ struct JumpIntervalPicker: View {
         self.selection = selection
     }
 
+    private var mappedSelection: Binding<Duration> {
+        selection.map(
+            getter: {
+                if case .custom = $0 { .zero } else { $0.rawValue }
+            },
+            setter: {
+                MediaJumpInterval(rawValue: $0)
+            }
+        )
+    }
+
+    @ViewBuilder
+    private var pickerContent: some View {
+        ForEach(MediaJumpInterval.allCases, id: \.hashValue) { interval in
+            Text(interval.rawValue, format: .minuteSecondsNarrow)
+                .tag(interval.rawValue)
+        }
+
+        Divider()
+
+        Text(L10n.custom)
+            .tag(Duration.zero)
+    }
+
     @ViewBuilder
     private var picker: some View {
-        Picker(
-            title,
-            selection: selection.map(
-                getter: {
-                    if case .custom = $0 {
-                        return .zero
-                    } else {
-                        return $0.rawValue
-                    }
-                },
-                setter: {
-                    MediaJumpInterval(rawValue: $0)
-                }
-            )
-        ) {
-            ForEach(MediaJumpInterval.allCases, id: \.hashValue) { interval in
-                Text(interval.rawValue, format: .minuteSecondsNarrow)
-                    .tag(interval.rawValue)
+        if #available(iOS 18.0, *) {
+            Picker(title, selection: mappedSelection) {
+                pickerContent
+            } currentValueLabel: {
+                Text(selection.wrappedValue.rawValue, format: .minuteSecondsNarrow)
             }
-
-            Divider()
-
-            Text(L10n.custom)
-                .tag(Duration.zero)
+        } else {
+            Picker(title, selection: mappedSelection) {
+                pickerContent
+            }
         }
     }
+
+    /* TODO: Remove the 3 var above this in favor of the picker below for iOS 18+
+     @ViewBuilder
+     private var picker: some View {
+         Picker(
+             title,
+             selection: selection.map(
+                 getter: {
+                     if case .custom = $0 {
+                         return .zero
+                     } else {
+                         return $0.rawValue
+                     }
+                 },
+                 setter: {
+                     MediaJumpInterval(rawValue: $0)
+                 }
+             )
+         ) {
+             ForEach(MediaJumpInterval.allCases, id: \.hashValue) { interval in
+                 Text(interval.rawValue, format: .minuteSecondsNarrow)
+                     .tag(interval.rawValue)
+             }
+
+             Divider()
+
+             Text(L10n.custom)
+                 .tag(Duration.zero)
+         } currentValueLabel: {
+             Text(selection.wrappedValue.rawValue, format: .minuteSecondsNarrow)
+         }
+     }
+     */
 
     @ViewBuilder
     private var content: some View {
