@@ -8,33 +8,6 @@
 
 import SwiftUI
 
-@available(*, deprecated, message: "Use Button with .buttonStyle(.primary) instead")
-struct ListRowButton: View {
-
-    private let action: () -> Void
-    private let role: ButtonRole?
-    private let title: String
-
-    init(
-        _ title: String,
-        role: ButtonRole? = nil,
-        action: @escaping () -> Void
-    ) {
-        self.title = title
-        self.role = role
-        self.action = action
-    }
-
-    var body: some View {
-        Button(
-            title,
-            role: role,
-            action: action
-        )
-        .buttonStyle(.primary)
-    }
-}
-
 extension PrimitiveButtonStyle where Self == PrimaryButtonStyle {
     static var primary: PrimaryButtonStyle {
         PrimaryButtonStyle()

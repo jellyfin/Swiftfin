@@ -160,17 +160,19 @@ struct UserSignInView: View {
         }
 
         if case .signingIn = viewModel.state {
-            ListRowButton(L10n.cancel, role: .cancel) {
+            Button(L10n.cancel, role: .cancel) {
                 viewModel.cancel()
             }
+            .buttonStyle(.primary)
             .frame(maxHeight: 75)
         } else {
-            ListRowButton(L10n.signIn) {
+            Button(L10n.signIn) {
                 viewModel.signIn(
                     username: username,
                     password: password
                 )
             }
+            .buttonStyle(.primary)
             .frame(maxHeight: 75)
             .disabled(username.isEmpty)
             .foregroundStyle(
@@ -182,10 +184,11 @@ struct UserSignInView: View {
 
         if viewModel.isQuickConnectEnabled {
             Section {
-                ListRowButton(
+                Button(
                     L10n.quickConnect,
                     action: runQuickConnect
                 )
+                .buttonStyle(.primary)
                 .frame(maxHeight: 75)
                 .disabled(viewModel.state == .signingIn)
                 .foregroundStyle(

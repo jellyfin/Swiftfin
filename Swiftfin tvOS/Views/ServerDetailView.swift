@@ -88,9 +88,10 @@ struct EditServerView: View {
 
                 if isEditing {
                     Section {
-                        ListRowButton(L10n.delete, role: .destructive) {
+                        Button(L10n.delete, role: .destructive) {
                             isPresentingConfirmDeletion = true
                         }
+                        .buttonStyle(.primary)
                         .listRowBackground(Color.clear)
                         .listRowInsets(.zero)
                     }

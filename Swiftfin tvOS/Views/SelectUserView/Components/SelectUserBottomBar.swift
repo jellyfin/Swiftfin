@@ -98,11 +98,12 @@ extension SelectUserView {
 
         @ViewBuilder
         private var deleteUsersButton: some View {
-            ListRowButton(
+            Button(
                 L10n.delete,
                 role: .destructive,
                 action: onDelete
             )
+            .buttonStyle(.primary)
             .frame(width: 400, height: 75)
             .disabled(!areUsersSelected)
         }
