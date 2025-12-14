@@ -96,8 +96,8 @@ func Picker<SelectionValue, Content, InputContent>(
 // MARK: - InputPicker
 
 private struct InputPicker<SelectionValue, Content, InputContent, CurrentValueLabel>: View
-where SelectionValue: Hashable & Equatable & Displayable, Content: View, InputContent: View, CurrentValueLabel: View {
-
+    where SelectionValue: Hashable & Equatable & Displayable, Content: View, InputContent: View, CurrentValueLabel: View
+{
     @Binding
     var selection: SelectionValue
 
