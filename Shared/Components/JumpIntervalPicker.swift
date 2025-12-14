@@ -109,9 +109,10 @@ struct JumpIntervalPicker: View {
     var body: some View {
         content
             .backport
-            .onChange(of: selection.wrappedValue) { _, newValue in
+            .onChange(of: selection.wrappedValue) { oldValue, newValue in
                 if case let .custom(interval) = newValue {
                     if interval == .zero {
+                        customSeconds = Int(oldValue.rawValue.components.seconds)
                         isPresentingCustomInterval = true
                     } else {
                         if let matchingStatic = MediaJumpInterval.allCases.first(where: { $0.rawValue == interval }) {
@@ -123,9 +124,23 @@ struct JumpIntervalPicker: View {
             .alert(L10n.jump, isPresented: $isPresentingCustomInterval) {
                 TextField(L10n.duration, value: $customSeconds, format: .number)
                     .keyboardType(.numberPad)
+                    .onChange(of: customSeconds) { newValue in
+                        if newValue < 1 {
+                            customSeconds = 1
+                        }
+                    }
 
                 Button(L10n.save) {
-                    selection.wrappedValue = .custom(interval: .seconds(customSeconds))
+                    let clampedSeconds = max(1, customSeconds)
+
+                    if let matchingStatic = MediaJumpInterval.allCases.first(where: {
+                            $0.rawValue == .seconds(clampedSeconds)
+                        }
+                    ) {
+                        selection.wrappedValue = matchingStatic
+                    } else {
+                        selection.wrappedValue = .custom(interval: .seconds(clampedSeconds))
+                    }
                 }
             } message: {
                 Text(L10n.customJumpIntervalDescription)
