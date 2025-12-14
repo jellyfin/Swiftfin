@@ -20,9 +20,6 @@ extension ItemView {
         @ObservedObject
         var viewModel: ItemViewModel
 
-        @FocusState
-        private var isFocused: Bool
-
         private let logger = Logger.swiftfin()
 
         // MARK: - Media Sources
@@ -77,7 +74,7 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            HStack(spacing: 20) {
+            HStack(spacing: 30) {
                 playButton
 
                 if multipleVersions {
@@ -85,6 +82,7 @@ extension ItemView {
                         .frame(width: 100, height: 100)
                 }
             }
+            .fontWeight(.semibold)
         }
 
         // MARK: - Play Button
@@ -95,34 +93,25 @@ extension ItemView {
             } label: {
                 HStack(spacing: 15) {
                     Image(systemName: "play.fill")
-                        .font(.title3)
-                        .padding(.trailing, 4)
 
-                    VStack(alignment: .leading) {
+                    VStack {
                         Text(title)
-                            .fontWeight(.semibold)
 
                         if let source {
                             Marquee(source, animateWhenFocused: true)
                                 .font(.caption)
-                                .frame(maxWidth: 250)
+                                .fontWeight(.medium)
                         }
                     }
                 }
-                .foregroundStyle(isEnabled ? .black : Color(UIColor.secondaryLabel))
-                .padding(20)
-                .frame(width: multipleVersions ? 320 : 440, height: 100, alignment: .center)
-                .background {
-                    if isFocused {
-                        isEnabled ? Color.white : Color.secondarySystemFill
-                    } else {
-                        Color.white
-                            .opacity(0.5)
-                    }
-                }
-                .cornerRadius(10)
+                .padding(.horizontal, 20)
             }
-            .buttonStyle(.card)
+            .buttonStyle(
+                .tintedMaterial(
+                    tint: .white,
+                    foregroundColor: .black
+                )
+            )
             .contextMenu {
                 if viewModel.playButtonItem?.userData?.playbackPositionTicks != 0 {
                     Button(L10n.playFromBeginning, systemImage: "gobackward") {
@@ -130,32 +119,44 @@ extension ItemView {
                     }
                 }
             }
-            .disabled(!isEnabled)
-            .focused($isFocused)
+            .isSelected(true)
+            .enabled(isEnabled)
         }
 
         // MARK: - Play Content
 
         private func play(fromBeginning: Bool = false) {
-            guard var playButtonItem = viewModel.playButtonItem,
+            guard let playButtonItem = viewModel.playButtonItem,
                   let selectedMediaSource = viewModel.selectedMediaSource
             else {
                 logger.error("Play selected with no item or media source")
                 return
             }
 
-            if fromBeginning {
-                playButtonItem.userData?.playbackPositionTicks = 0
+            let queue: (any MediaPlayerQueue)? = {
+                if playButtonItem.type == .episode {
+                    return EpisodeMediaPlayerQueue(episode: playButtonItem)
+                }
+                return nil
+            }()
+
+            let provider = MediaPlayerItemProvider(item: playButtonItem) { item in
+                try await MediaPlayerItem.build(
+                    for: item,
+                    mediaSource: selectedMediaSource
+                ) {
+                    if fromBeginning {
+                        $0.userData?.playbackPositionTicks = 0
+                    }
+                }
             }
 
-            let manager = MediaPlayerManager(
-                item: playButtonItem
-//                        queue: EpisodeMediaPlayerQueue(episode: playButtonItem)
-            ) { item in
-                try await MediaPlayerItem.build(for: item, mediaSource: selectedMediaSource)
-            }
-
-            router.route(to: .videoPlayer(manager: manager))
+            router.route(
+                to: .videoPlayer(
+                    provider: provider,
+                    queue: queue
+                )
+            )
         }
     }
 }

@@ -16,6 +16,11 @@ import SwiftUI
 extension View {
 
     @inlinable
+    func enabled(_ enabled: Bool) -> some View {
+        disabled(!enabled)
+    }
+
+    @inlinable
     func eraseToAnyView() -> AnyView {
         AnyView(self)
     }

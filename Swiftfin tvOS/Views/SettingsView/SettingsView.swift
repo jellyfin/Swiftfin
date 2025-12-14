@@ -57,9 +57,10 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    ListRowButton(L10n.switchUser) {
+                    Button(L10n.switchUser) {
                         viewModel.signOut()
                     }
+                    .buttonStyle(.primary)
                     .foregroundStyle(Color.jellyfinPurple.overlayColor, Color.jellyfinPurple)
                 }
 
