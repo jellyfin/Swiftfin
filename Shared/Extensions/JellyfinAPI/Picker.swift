@@ -20,7 +20,7 @@ func Picker<SelectionValue, Content, InputContent>(
     customDescription: String? = nil,
     onCancelValue: SelectionValue? = nil,
     @ViewBuilder content: @escaping () -> Content,
-    @ViewBuilder customInput: @escaping (Binding<SelectionValue>) -> InputContent,
+    @ViewBuilder customInput: @escaping (Binding<SelectionValue>) -> InputContent
 ) -> some View where SelectionValue: Hashable & Equatable & Displayable, Content: View, InputContent: View {
     InputPicker(
         title: title,
@@ -52,7 +52,7 @@ func Picker<SelectionValue, Content, InputContent, CurrentValueLabel>(
     onCancelValue: SelectionValue? = nil,
     @ViewBuilder content: @escaping () -> Content,
     @ViewBuilder currentValueLabel: @escaping () -> CurrentValueLabel,
-    @ViewBuilder customInput: @escaping (Binding<SelectionValue>) -> InputContent,
+    @ViewBuilder customInput: @escaping (Binding<SelectionValue>) -> InputContent
 ) -> some View where SelectionValue: Hashable & Equatable & Displayable, Content: View, InputContent: View, CurrentValueLabel: View {
     InputPicker(
         title: title,
@@ -89,7 +89,7 @@ func Picker<SelectionValue, Content, InputContent>(
         onCancelValue: onCancelValue,
         content: content,
         currentValueLabel: { EmptyView() },
-        customInput: customInput,
+        customInput: customInput
     )
 }
 
