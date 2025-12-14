@@ -9,7 +9,7 @@
 import Defaults
 import Foundation
 
-enum MediaJumpInterval: Storable, RawRepresentable, SystemImageable, Hashable {
+enum MediaJumpInterval: Storable, SystemImageable, CaseIterable, RawRepresentable, Hashable {
 
     typealias RawValue = Duration
 
@@ -19,7 +19,7 @@ enum MediaJumpInterval: Storable, RawRepresentable, SystemImageable, Hashable {
     case thirty
     case custom(interval: Duration)
 
-    init?(rawValue: Duration) {
+    init(rawValue: Duration) {
         switch rawValue {
         case .seconds(5):
             self = .five
@@ -49,7 +49,7 @@ enum MediaJumpInterval: Storable, RawRepresentable, SystemImageable, Hashable {
         }
     }
 
-    static var supportedCases: [MediaJumpInterval] {
+    static var allCases: [MediaJumpInterval] {
         [.five, .ten, .fifteen, .thirty]
     }
 

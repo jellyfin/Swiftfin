@@ -10,94 +10,82 @@ import SwiftUI
 
 struct JumpIntervalPicker: View {
 
-    private let title: String
-
-    @Binding
-    private var selection: MediaJumpInterval
-
     @State
-    private var showCustomInput = false
+    private var customSeconds: Int = 0
     @State
-    private var customSeconds: Int = 10
+    private var isPresentingCustomInterval = false
+
+    let title: String
+    let selection: Binding<MediaJumpInterval>
 
     init(_ title: String, selection: Binding<MediaJumpInterval>) {
         self.title = title
-        self._selection = selection
+        self.selection = selection
     }
 
-    private var pickerLabel: String {
-        if case let .custom(interval) = selection {
-            return interval.formatted(.minuteSecondsNarrow)
+    @ViewBuilder
+    private var picker: some View {
+        Picker(
+            title,
+            selection: selection.map(
+                getter: {
+                    if case .custom = $0 {
+                        return .zero
+                    } else {
+                        return $0.rawValue
+                    }
+                },
+                setter: {
+                    MediaJumpInterval(rawValue: $0)
+                }
+            )
+        ) {
+            ForEach(MediaJumpInterval.allCases, id: \.hashValue) { interval in
+                Text(interval.rawValue, format: .minuteSecondsNarrow)
+                    .tag(interval.rawValue)
+            }
+
+            Divider()
+
+            Text(L10n.custom)
+                .tag(Duration.zero)
         }
-        return selection.rawValue.formatted(.minuteSecondsNarrow)
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        #if os(tvOS)
+        ListRowMenu(title, subtitle: Text(selection.wrappedValue.rawValue, format: .minuteSecondsNarrow)) {
+            picker
+        }
+        #else
+        picker
+        #endif
     }
 
     var body: some View {
-        pickerView
-            .alert(L10n.custom, isPresented: $showCustomInput) {
+        content
+            .backport
+            .onChange(of: selection.wrappedValue) { _, newValue in
+                if case let .custom(interval) = newValue {
+                    if interval == .zero {
+                        isPresentingCustomInterval = true
+                    } else {
+                        if let matchingStatic = MediaJumpInterval.allCases.first(where: { $0.rawValue == interval }) {
+                            selection.wrappedValue = matchingStatic
+                        }
+                    }
+                }
+            }
+            .alert(L10n.jump, isPresented: $isPresentingCustomInterval) {
                 TextField(L10n.duration, value: $customSeconds, format: .number)
                     .keyboardType(.numberPad)
 
                 Button(L10n.save) {
-                    selection = .custom(interval: .seconds(customSeconds))
+                    selection.wrappedValue = .custom(interval: .seconds(customSeconds))
                 }
             } message: {
                 Text(L10n.customJumpIntervalDescription)
             }
-    }
-
-    @ViewBuilder
-    private var pickerView: some View {
-        #if os(tvOS)
-        ListRowMenu(title, subtitle: pickerLabel) {
-            menuContent
-        }
-        #else
-        HStack {
-            Text(title)
-
-            Spacer()
-
-            Menu {
-                menuContent
-            } label: {
-                HStack {
-                    Text(pickerLabel)
-                    Image(systemName: "chevron.up.chevron.down")
-                }
-                .foregroundStyle(Color.secondary)
-            }
-        }
-        #endif
-    }
-
-    @ViewBuilder
-    private var menuContent: some View {
-        ForEach(MediaJumpInterval.supportedCases, id: \.rawValue) { interval in
-            Button {
-                selection = interval
-            } label: {
-                if selection == interval {
-                    Label(interval.rawValue.formatted(.minuteSecondsNarrow), systemImage: "checkmark")
-                } else {
-                    Text(interval.rawValue.formatted(.minuteSecondsNarrow))
-                }
-            }
-        }
-
-        Divider()
-
-        Button {
-            if case let .custom(interval) = selection {
-                customSeconds = Int(interval.components.seconds)
-            }
-            showCustomInput = true
-        } label: {
-            if case .custom = selection {
-                Label(L10n.custom, systemImage: "checkmark")
-            } else {
-                Text(L10n.custom)
-            }
-        }
     }
 }
