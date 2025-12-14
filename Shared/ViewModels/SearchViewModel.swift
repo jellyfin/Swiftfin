@@ -88,7 +88,6 @@ final class SearchViewModel: ViewModel {
         searchQuery.value = query
 
         await cancel()
-        items.removeAll()
     }
 
     @Function(\Action.Cases.actuallySearch)
