@@ -191,7 +191,7 @@ struct SearchView: View {
                 }
             case .initial:
                 if viewModel.hasNoResults {
-                    if viewModel.hasSearchConstraints() {
+                    if viewModel.canSearch {
                         Text(L10n.noResults)
                     } else {
                         suggestionsView
