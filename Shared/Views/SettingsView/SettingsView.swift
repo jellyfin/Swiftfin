@@ -63,17 +63,11 @@ struct SettingsView: View {
                 },
                 icon: { EmptyView() },
                 subtitle: {
-                    Label {
+                    HStack {
+                        Image(systemName: "exclamationmark.circle.fill")
+                            .foregroundStyle(.orange)
+
                         Text(viewModel.userSession.server.name)
-                    } icon: {
-                        if !viewModel.userSession.server.isVersionCompatible {
-                            Image(systemName: "exclamationmark.circle.fill")
-                            #if os(iOS)
-                                .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
-                            #else
-                                .foregroundStyle(.orange)
-                            #endif
-                        }
                     }
                 }
             )
