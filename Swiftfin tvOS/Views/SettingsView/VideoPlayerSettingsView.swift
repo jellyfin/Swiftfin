@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import JellyfinAPI
 import SwiftUI
 
 struct VideoPlayerSettingsView: View {
@@ -20,6 +21,14 @@ struct VideoPlayerSettingsView: View {
     private var jumpForwardLength
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
+
+    @Default(.VideoPlayer.enableMediaSegments)
+    private var enableMediaSegments
+
+    @Default(.VideoPlayer.skipMediaSegments)
+    private var skipMediaSegments
+    @Default(.VideoPlayer.askMediaSegments)
+    private var askMediaSegments
 
     @Router
     private var router
@@ -62,6 +71,18 @@ struct VideoPlayerSettingsView: View {
                 } footer: {
                     Text(L10n.subtitlesDisclaimer)
                 }
+
+                Section(L10n.mediaSegments) {
+                    Toggle(L10n.enableMediaSegments, isOn: $enableMediaSegments)
+                }
+
+                if enableMediaSegments {
+                    Section {
+                        ForEach(MediaSegmentType.allCases.sorted(by: { $0.displayTitle < $1.displayTitle }), id: \.self) { segment in
+                            ListRowMenu(segment.displayTitle, selection: mediaSegmentBinding(segment))
+                        }
+                    }
+                }
             }
             .navigationTitle(L10n.videoPlayer)
             .blurredFullScreenCover(isPresented: $isPresentingResumeOffsetStepper) {
@@ -79,5 +100,32 @@ struct VideoPlayerSettingsView: View {
                     isPresentingResumeOffsetStepper = false
                 }
             }
+    }
+
+    private func mediaSegmentBinding(_ segment: MediaSegmentType) -> Binding<MediaSegmentBehavior> {
+        Binding(
+            get: {
+                if askMediaSegments.contains(segment) {
+                    return .ask
+                } else if skipMediaSegments.contains(segment) {
+                    return .skip
+                } else {
+                    return .off
+                }
+            },
+            set: { newValue in
+                switch newValue {
+                case .off:
+                    askMediaSegments.removeAll { $0 == segment }
+                    skipMediaSegments.removeAll { $0 == segment }
+                case .ask:
+                    askMediaSegments.append(segment)
+                    skipMediaSegments.removeAll { $0 == segment }
+                case .skip:
+                    askMediaSegments.removeAll { $0 == segment }
+                    skipMediaSegments.append(segment)
+                }
+            }
+        )
     }
 }

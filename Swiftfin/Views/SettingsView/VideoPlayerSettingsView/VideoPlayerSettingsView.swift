@@ -53,6 +53,8 @@ struct VideoPlayerSettingsView: View {
             SubtitleSection()
 
             TimestampSection()
+
+            MediaSegmentSection()
         }
         .navigationTitle(L10n.videoPlayer)
     }

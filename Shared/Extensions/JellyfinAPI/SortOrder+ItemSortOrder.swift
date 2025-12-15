@@ -13,7 +13,6 @@ import JellyfinAPI
 typealias ItemSortOrder = JellyfinAPI.SortOrder
 
 extension ItemSortOrder: Displayable {
-    // TODO: Localize
     var displayTitle: String {
         switch self {
         case .ascending:
