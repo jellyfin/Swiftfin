@@ -60,17 +60,19 @@ struct SettingsView: View {
                 L10n.server,
                 action: {
                     router.route(to: .editServer(server: viewModel.userSession.server))
-                },
-                icon: { EmptyView() },
-                subtitle: {
-                    HStack {
+                }
+            ) {
+                EmptyView()
+            } subtitle: {
+                Label {
+                    Text(viewModel.userSession.server.name)
+                } icon: {
+                    if !viewModel.userSession.server.isVersionCompatible {
                         Image(systemName: "exclamationmark.circle.fill")
-                            .foregroundStyle(.orange)
-
-                        Text(viewModel.userSession.server.name)
                     }
                 }
-            )
+                .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+            }
 
             #if os(iOS)
             if viewModel.userSession.user.permissions.isAdministrator {

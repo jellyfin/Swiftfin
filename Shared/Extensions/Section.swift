@@ -54,8 +54,8 @@ func Section(
                 footer()
 
                 _LearnMoreButton(
-                    title: title,
-                    learnMore: learnMore()
+                    title,
+                    learnMore: learnMore
                 )
             }
         }
@@ -74,13 +74,21 @@ func Section(
 // MARK: - LearnMoreButton
 
 // TODO: Rename to `LearnMoreButton` once the original `LearnMoreButton` is removed
-private struct _LearnMoreButton<LearnMore: View>: View {
+private struct _LearnMoreButton: View {
 
     @State
     private var isPresented = false
 
-    let title: String
-    let learnMore: LearnMore
+    private let content: AnyView
+    private let title: String
+
+    init(
+        _ title: String,
+        @LabeledContentBuilder learnMore: @escaping () -> AnyView
+    ) {
+        self.content = learnMore()
+        self.title = title
+    }
 
     var body: some View {
         Button(L10n.learnMore + "\u{2026}") {
@@ -88,7 +96,6 @@ private struct _LearnMoreButton<LearnMore: View>: View {
         }
         .foregroundStyle(Color.accentColor)
         .buttonStyle(.plain)
-        .frame(maxWidth: .infinity, alignment: .leading)
         .sheet(isPresented: $isPresented) {
             NavigationStack {
                 ScrollView {
@@ -96,7 +103,7 @@ private struct _LearnMoreButton<LearnMore: View>: View {
                         Divider()
                             .padding(.vertical, 8)
                     } content: {
-                        learnMore
+                        content
                             .labeledContentStyle(LearnMoreLabeledContentStyle())
                             .foregroundStyle(Color.primary, Color.secondary)
                     }
