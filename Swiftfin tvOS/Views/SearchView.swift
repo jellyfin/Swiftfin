@@ -181,7 +181,6 @@ struct SearchView: View {
                 ProgressView()
             }
         }
-        .animation(.linear(duration: 0.1), value: viewModel.filterViewModel.currentFilters.hasFilters)
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea(edges: [.bottom, .horizontal])
         .refreshable {

@@ -203,7 +203,6 @@ struct SearchView: View {
                 ProgressView()
             }
         }
-        .animation(.linear(duration: 0.2), value: viewModel.filterViewModel.currentFilters.hasQueryableFilters)
         .animation(.linear(duration: 0.2), value: viewModel.items)
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .ignoresSafeArea(.keyboard, edges: .bottom)
