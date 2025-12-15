@@ -49,20 +49,30 @@ func Form<Image: View, Content: View>(
 
 // MARK: - Platform Form
 
-private struct PlatformForm<Image: View, Content: View>: View {
+private struct PlatformForm<Image: View, Content: View>: PlatformView {
 
-    #if os(tvOS)
     @FocusedValue(\.formLearnMore)
     private var focusedLearnMore
-    #endif
 
-    @ViewBuilder
-    let content: Content
-    @ViewBuilder
-    let image: Image
+    private let content: Content
+    private let image: Image
 
-    var body: some View {
-        #if os(tvOS)
+    init(
+        @ViewBuilder content: @escaping () -> Content,
+        @ViewBuilder image: @escaping () -> Image
+    ) {
+        self.content = content()
+        self.image = image()
+    }
+
+    var iOSView: some View {
+        SwiftUI.Form {
+            content
+        }
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    var tvOSView: some View {
         HStack {
             descriptionView
                 .frame(maxWidth: .infinity)
@@ -73,42 +83,32 @@ private struct PlatformForm<Image: View, Content: View>: View {
             .padding(.top)
             .scrollClipDisabled()
         }
-        #else
-        SwiftUI.Form {
-            content
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        #endif
     }
 
-    #if os(tvOS)
     @ViewBuilder
     private var descriptionView: some View {
         ZStack {
-            if Image.self != EmptyView.self {
-                image
-            }
+            image
 
             if let focusedLearnMore {
                 learnMoreModal(focusedLearnMore)
-                    .transition(.opacity.combined(with: .scale(scale: 0.95)))
             }
         }
-        .animation(.easeInOut(duration: 0.2), value: focusedLearnMore == nil)
+        .animation(.linear(duration: 0.2), value: focusedLearnMore == nil)
     }
 
+    @ViewBuilder
     private func learnMoreModal(_ content: AnyView) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             content
                 .labeledContentStyle(LearnMoreLabeledContentStyle())
                 .foregroundStyle(Color.primary, Color.secondary)
         }
-        .padding(24)
+        .edgePadding()
         .background {
             RoundedRectangle(cornerRadius: 20)
                 .fill(Material.thick)
         }
         .padding()
     }
-    #endif
 }
