@@ -99,12 +99,12 @@ struct SettingsView: View {
     @ViewBuilder
     private var videoPlayerSection: some View {
         Section(L10n.videoPlayer) {
-            #if os(iOS)
-            Picker(L10n.videoPlayerType, selection: $videoPlayerType)
 
+            #if os(iOS)
             ChevronButton(L10n.nativePlayer) {
                 router.route(to: .nativePlayerSettings)
             }
+            Picker(L10n.videoPlayerType, selection: $videoPlayerType)
             #else
             ListRowMenu(L10n.videoPlayerType, selection: $videoPlayerType)
             #endif
@@ -132,13 +132,13 @@ struct SettingsView: View {
 
     @ViewBuilder
     private var customizationSection: some View {
-        Section(L10n.accessibility) {
+        Section(L10n.customization) {
             #if os(iOS)
             Picker(L10n.appearance, selection: $appearance)
             #endif
 
-            ChevronButton(L10n.customize) {
-                router.route(to: .customizeViewsSettings)
+            ChevronButton(L10n.advanced) {
+                router.route(to: .customizationSettingsView)
             }
         }
 

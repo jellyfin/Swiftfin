@@ -12,6 +12,9 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: Form
     Formatter.FormatOutput == String
 {
 
+    @FocusState
+    private var isFocused: Bool
+
     @Binding
     private var value: Value
 
@@ -28,6 +31,14 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: Form
     private var canIncrement: Bool {
         value.advanced(by: step) <= range.upperBound
     }
+
+    private func selectAction() {
+        if canIncrement {
+            value = value.advanced(by: step)
+        } else {
+            value = range.lowerBound
+        }
+    }
     #endif
 
     // MARK: - Body
@@ -35,32 +46,30 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: Form
     var body: some View {
         #if os(tvOS)
         Button {
-            if canIncrement {
-                value = value.advanced(by: step)
-            } else {
-                value = range.lowerBound
-            }
+            selectAction()
         } label: {
             HStack {
                 Text(title)
+                    .foregroundStyle(.primary)
 
                 Spacer()
 
                 Image(systemName: "minus")
-                    .font(.body)
-                    .fontWeight(.regular)
-                    .foregroundStyle(canDecrement ? .secondary : .tertiary)
+                    .font(.body.weight(.regular))
+                    .foregroundStyle(canDecrement && isFocused ? .primary : .secondary)
 
                 Text(value, format: formatter)
                     .foregroundStyle(.secondary)
+                    .contentTransition(.numericText())
+                    .animation(.default, value: value)
 
                 Image(systemName: "plus")
-                    .font(.body)
-                    .fontWeight(.regular)
-                    .foregroundStyle(canIncrement ? .secondary : .tertiary)
+                    .font(.body.weight(.regular))
+                    .foregroundStyle(canIncrement && isFocused ? .primary : .secondary)
             }
         }
-        .buttonStyle(StepperButtonStyle())
+        .buttonStyle(.form)
+        .focused($isFocused)
         .onMoveCommand { direction in
             switch direction {
             case .left:
@@ -89,35 +98,6 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: Form
         #endif
     }
 }
-
-// MARK: - tvOS Button Style
-
-#if os(tvOS)
-private struct StepperButtonStyle: PrimitiveButtonStyle {
-
-    @FocusState
-    private var isFocused: Bool
-
-    func makeBody(configuration: Configuration) -> some View {
-        Button {
-            configuration.trigger()
-        } label: {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(HierarchicalShapeStyle.secondary)
-                    .brightness(isFocused ? 0.15 : 0.0)
-
-                configuration.label
-                    .foregroundStyle(.primary)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 14)
-            }
-        }
-        .buttonStyle(.card)
-        .focused($isFocused)
-    }
-}
-#endif
 
 // MARK: - Initializers
 
@@ -151,5 +131,43 @@ extension BasicStepper where Formatter == VerbatimFormatStyle<Value> {
         self.range = range
         self.step = step
         self.formatter = VerbatimFormatStyle()
+    }
+}
+
+extension BasicStepper where Value == Int, Formatter == DurationFormatStyle {
+
+    init(
+        _ title: String,
+        value: Binding<Int>,
+        range: ClosedRange<Int>,
+        step: Int = 1,
+        displayAs units: Set<Duration.UnitsFormatStyle.Unit> = [.seconds],
+        width: Duration.UnitsFormatStyle.UnitWidth = .abbreviated
+    ) {
+        self._value = value
+        self.title = title
+        self.range = range
+        self.step = step
+        self.formatter = DurationFormatStyle(units: units, width: width)
+    }
+}
+
+// MARK: - Duration Format Style
+
+struct DurationFormatStyle: FormatStyle {
+
+    let units: Set<Duration.UnitsFormatStyle.Unit>
+    let width: Duration.UnitsFormatStyle.UnitWidth
+
+    init(
+        units: Set<Duration.UnitsFormatStyle.Unit> = [.seconds],
+        width: Duration.UnitsFormatStyle.UnitWidth = .abbreviated
+    ) {
+        self.units = units
+        self.width = width
+    }
+
+    func format(_ value: Int) -> String {
+        Duration.seconds(value).formatted(.units(allowed: units, width: width))
     }
 }
