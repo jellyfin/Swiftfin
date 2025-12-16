@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: FormatStyle>: View where Formatter.FormatInput == Value,
+struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: FormatStyle>: PlatformView where Formatter.FormatInput == Value,
     Formatter.FormatOutput == String
 {
 
@@ -41,10 +41,22 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: Form
     }
     #endif
 
-    // MARK: - Body
+    var iOSView: some View {
+        #if os(iOS)
+        Stepper(value: $value, in: range, step: step) {
+            HStack {
+                Text(title)
 
-    var body: some View {
-        #if os(tvOS)
+                Spacer()
+
+                Text(value, format: formatter)
+                    .foregroundColor(.secondary)
+            }
+        }
+        #endif
+    }
+
+    var tvOSView: some View {
         Button {
             selectAction()
         } label: {
@@ -68,7 +80,9 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: Form
                     .foregroundStyle(canIncrement && isFocused ? .primary : .secondary)
             }
         }
+        #if os(tvOS)
         .buttonStyle(.form)
+        #endif
         .focused($isFocused)
         .onMoveCommand { direction in
             switch direction {
@@ -84,18 +98,6 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: Form
                 break
             }
         }
-        #else
-        Stepper(value: $value, in: range, step: step) {
-            HStack {
-                Text(title)
-
-                Spacer()
-
-                Text(value, format: formatter)
-                    .foregroundColor(.secondary)
-            }
-        }
-        #endif
     }
 }
 
