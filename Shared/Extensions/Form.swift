@@ -66,7 +66,7 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
     }
 
     var iOSView: some View {
-        SwiftUI.Form {
+        Form {
             content
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -77,10 +77,11 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
             descriptionView
                 .frame(maxWidth: .infinity)
 
-            SwiftUI.Form {
+            Form {
                 content
             }
             .padding(.top)
+            .backport
             .scrollClipDisabled()
         }
     }
