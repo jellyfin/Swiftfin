@@ -80,6 +80,9 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
             Form {
                 content
             }
+            #if os(tvOS)
+            .buttonStyle(.form)
+            #endif
             .padding(.top)
             .backport
             .scrollClipDisabled()
