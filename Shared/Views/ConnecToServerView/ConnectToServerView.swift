@@ -57,15 +57,17 @@ struct ConnectToServerView: View {
         }
 
         if viewModel.state == .connecting {
-            ListRowButton(L10n.cancel, role: .cancel) {
+            Button(L10n.cancel, role: .cancel) {
                 viewModel.cancel()
             }
+            .buttonStyle(.primary)
             .frame(maxHeight: 75)
         } else {
-            ListRowButton(L10n.connect) {
+            Button(L10n.connect) {
                 isURLFocused = false
                 viewModel.connect(url: url)
             }
+            .buttonStyle(.primary)
             .frame(maxHeight: 75)
             .disabled(url.isEmpty)
             .foregroundStyle(
