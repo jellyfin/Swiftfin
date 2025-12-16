@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+@available(*, deprecated, message: "Use `Section(:content:learnMore:)` and a `Form` with an image instead")
 struct LearnMoreModal: View {
 
     private let content: AnyView

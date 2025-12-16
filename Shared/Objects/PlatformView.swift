@@ -37,3 +37,17 @@ extension PlatformView {
     }
     #endif
 }
+
+struct InlinePlatformView<iOSBody: View, tvOSBody: View>: PlatformView {
+
+    let iOSView: iOSBody
+    let tvOSView: tvOSBody
+
+    init(
+        @ViewBuilder iOSView: @escaping () -> iOSBody,
+        @ViewBuilder tvOSView: @escaping () -> tvOSBody
+    ) {
+        self.iOSView = iOSView()
+        self.tvOSView = tvOSView()
+    }
+}
