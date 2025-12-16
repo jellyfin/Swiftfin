@@ -8,12 +8,9 @@
 
 import SwiftUI
 
-struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: FormatStyle>: PlatformView where Formatter.FormatInput == Value,
-    Formatter.FormatOutput == String
+struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: FormatStyle>: View
+    where Formatter.FormatInput == Value, Formatter.FormatOutput == String
 {
-
-    @FocusState
-    private var isFocused: Bool
 
     @Binding
     private var value: Value
@@ -24,6 +21,9 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: Form
     private let formatter: Formatter
 
     #if os(tvOS)
+    @FocusState
+    private var isFocused: Bool
+
     private var canDecrement: Bool {
         value.advanced(by: -step) >= range.lowerBound
     }
@@ -41,7 +41,9 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: Form
     }
     #endif
 
-    var iOSView: some View {
+    // MARK: - Body
+
+    var body: some View {
         #if os(iOS)
         Stepper(value: $value, in: range, step: step) {
             HStack {
@@ -53,10 +55,7 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: Form
                     .foregroundColor(.secondary)
             }
         }
-        #endif
-    }
-
-    var tvOSView: some View {
+        #else
         Button {
             selectAction()
         } label: {
@@ -80,10 +79,8 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: Form
                     .foregroundStyle(canIncrement && isFocused ? .primary : .secondary)
             }
         }
-        #if os(tvOS)
-        .buttonStyle(.form)
-        #endif
         .focused($isFocused)
+        .buttonStyle(.form)
         .onMoveCommand { direction in
             switch direction {
             case .left:
@@ -98,6 +95,7 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: Form
                 break
             }
         }
+        #endif
     }
 }
 
@@ -133,43 +131,5 @@ extension BasicStepper where Formatter == VerbatimFormatStyle<Value> {
         self.range = range
         self.step = step
         self.formatter = VerbatimFormatStyle()
-    }
-}
-
-extension BasicStepper where Value == Int, Formatter == DurationFormatStyle {
-
-    init(
-        _ title: String,
-        value: Binding<Int>,
-        range: ClosedRange<Int>,
-        step: Int = 1,
-        displayAs units: Set<Duration.UnitsFormatStyle.Unit> = [.seconds],
-        width: Duration.UnitsFormatStyle.UnitWidth = .abbreviated
-    ) {
-        self._value = value
-        self.title = title
-        self.range = range
-        self.step = step
-        self.formatter = DurationFormatStyle(units: units, width: width)
-    }
-}
-
-// MARK: - Duration Format Style
-
-struct DurationFormatStyle: FormatStyle {
-
-    let units: Set<Duration.UnitsFormatStyle.Unit>
-    let width: Duration.UnitsFormatStyle.UnitWidth
-
-    init(
-        units: Set<Duration.UnitsFormatStyle.Unit> = [.seconds],
-        width: Duration.UnitsFormatStyle.UnitWidth = .abbreviated
-    ) {
-        self.units = units
-        self.width = width
-    }
-
-    func format(_ value: Int) -> String {
-        Duration.seconds(value).formatted(.units(allowed: units, width: width))
     }
 }

@@ -32,7 +32,8 @@ struct VideoPlayerSettingsView: View {
                     L10n.resumeOffset,
                     value: $resumeOffset,
                     range: 0 ... 30,
-                    step: 1
+                    step: 1,
+                    formatter: SecondFormatter()
                 )
             } header: {
                 Text(L10n.resume)
