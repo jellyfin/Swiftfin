@@ -49,9 +49,9 @@ extension NavigationRoute {
     }
 
     static let customizeViewsSettings = NavigationRoute(
-        id: "customizeViewsSettings"
+        id: "customizesettingsView"
     ) {
-        CustomizeViewsSettings()
+        CustomizeSettingsView()
     }
 
     #if DEBUG && !os(tvOS)

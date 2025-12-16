@@ -7,11 +7,10 @@
 //
 
 import Defaults
+import Factory
 import SwiftUI
 
-// TODO: will be entirely re-organized
-
-struct CustomizeViewsSettings: View {
+struct CustomizeSettingsView: View {
 
     @Default(.Customization.itemViewType)
     private var itemViewType
@@ -66,6 +65,8 @@ struct CustomizeViewsSettings: View {
 
     @Router
     private var router
+
+    // MARK: - Body
 
     var body: some View {
         List {
@@ -150,7 +151,7 @@ struct CustomizeViewsSettings: View {
                 CaseIterablePicker(L10n.posters, selection: $libraryPosterType)
                     .onlySupportedCases(true)
 
-                if libraryDisplayType == .list, UIDevice.isPad {
+                if libraryDisplayType == .list, !UIDevice.isPhone {
                     BasicStepper(
                         L10n.columns,
                         value: $listColumnCount,
@@ -184,5 +185,104 @@ struct CustomizeViewsSettings: View {
             }
         }
         .navigationTitle(L10n.customize)
+    }
+}
+
+// MARK: - HomeSection
+
+extension CustomizeSettingsView {
+
+    struct HomeSection: View {
+
+        @Default(.Customization.Home.showRecentlyAdded)
+        private var showRecentlyAdded
+        @Default(.Customization.Home.maxNextUp)
+        private var maxNextUp
+        @Default(.Customization.Home.resumeNextUp)
+        private var resumeNextUp
+
+        var body: some View {
+            Section(L10n.home) {
+
+                Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)
+
+                Toggle(L10n.nextUpRewatch, isOn: $resumeNextUp)
+
+                ChevronButton(
+                    L10n.nextUpDays,
+                    subtitle: {
+                        if maxNextUp > 0 {
+                            let duration = Duration.seconds(TimeInterval(maxNextUp))
+                            return Text(duration, format: .units(allowed: [.days], width: .abbreviated))
+                        } else {
+                            return Text(L10n.disabled)
+                        }
+                    }(),
+                    description: L10n.nextUpDaysDescription
+                ) {
+                    TextField(
+                        L10n.days,
+                        value: $maxNextUp,
+                        format: .dayInterval(range: 0 ... 1000)
+                    )
+                    .keyboardType(.numberPad)
+                }
+            }
+        }
+    }
+}
+
+// MARK: - ItemSection
+
+extension CustomizeSettingsView {
+
+    struct ItemSection: View {
+
+        @Injected(\.currentUserSession)
+        private var userSession
+
+        @Router
+        private var router
+
+        @StoredValue(.User.itemViewAttributes)
+        private var itemViewAttributes
+        @StoredValue(.User.enabledTrailers)
+        private var enabledTrailers
+
+        @StoredValue(.User.enableItemEditing)
+        private var enableItemEditing
+        @StoredValue(.User.enableItemDeletion)
+        private var enableItemDeletion
+        @StoredValue(.User.enableCollectionManagement)
+        private var enableCollectionManagement
+
+        var body: some View {
+            Section(L10n.items) {
+
+                ChevronButton(L10n.mediaAttributes) {
+                    router.route(to: .itemViewAttributes(selection: $itemViewAttributes))
+                }
+
+                CaseIterablePicker(
+                    L10n.enabledTrailers,
+                    selection: $enabledTrailers
+                )
+
+                if userSession?.user.permissions.items.canManageCollections == true {
+                    Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
+                }
+
+                if userSession?.user.permissions.items.canEditMetadata == true ||
+                    userSession?.user.permissions.items.canManageLyrics == true ||
+                    userSession?.user.permissions.items.canManageSubtitles == true
+                {
+                    Toggle(L10n.editMedia, isOn: $enableItemEditing)
+                }
+
+                if userSession?.user.permissions.items.canDelete == true {
+                    Toggle(L10n.deleteMedia, isOn: $enableItemDeletion)
+                }
+            }
+        }
     }
 }
