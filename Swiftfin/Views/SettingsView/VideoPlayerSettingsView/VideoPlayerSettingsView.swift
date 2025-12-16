@@ -34,7 +34,6 @@ struct VideoPlayerSettingsView: View {
 //            CaseIterablePicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
 
             Section {
-
                 BasicStepper(
                     L10n.resumeOffset,
                     value: $resumeOffset,
