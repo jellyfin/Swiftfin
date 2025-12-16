@@ -169,10 +169,10 @@ struct SearchView: View {
                 }
             case .initial:
                 if viewModel.hasNoResults {
-                    if searchQuery.isEmpty {
-                        suggestionsView
-                    } else {
+                    if viewModel.canSearch {
                         Text(L10n.noResults)
+                    } else {
+                        suggestionsView
                     }
                 } else {
                     resultsView
