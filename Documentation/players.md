@@ -146,19 +146,21 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVKit)
 | Format | Swiftfin (VLCKit) | Native (AVKit) |
 |--------|-------------------|----------------|
 | **Dolby Vision Profile 5** | ❌             | ✅             |
-| **Dolby Vision Profile 8** | ❌             | 🔶 [1]         |
-| **Dolby Vision Profile 10** | ❌            | 🔶 [2]         |
-| **HDR10** | ❌                              | ✅             |
-| **HDR10+** | ❌                             | 🔶 [3]         |
+| **Dolby Vision Profile 8** | ❌             | 🔶 [2]         |
+| **Dolby Vision Profile 10** | ❌            | 🔶 [3]         |
+| **HDR10** | 🔶 [1]                          | ✅             |
+| **HDR10+** | 🔶 [1]                         | 🔶 [4]         |
 | **HLG** | ❌                                | ❌             |
 
 **Notes**
 
-[1] Dolby Vision Profile 8 support is limited to compatible devices only.
+[1] Software Tone Mapping in player.
 
-[2] Dolby Vision Profile 10 requires AV1 to be enabled.
+[2] Dolby Vision Profile 8 support is limited to compatible devices only.
 
-[3] HDR10+ support is limited to certain devices, such as the Apple TV 4K (3rd Generation) and recent iPhones and iPads with compatible hardware.
+[3] Dolby Vision Profile 10 requires AV1 to be enabled.
+
+[4] HDR10+ support is limited to certain devices, such as the Apple TV 4K (3rd Generation) and recent iPhones and iPads with compatible hardware.
 
 - HLG (Hybrid Log-Gamma) support in Native (AVKit) is limited and not currently supported in Swiftin.
 - Swiftfin (VLCKit) does not support HDR playback natively. HDR content may play back without the intended high dynamic range effect.
