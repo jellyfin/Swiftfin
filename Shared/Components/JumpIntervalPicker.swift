@@ -112,7 +112,8 @@ struct JumpIntervalPicker: View {
             .onChange(of: selection.wrappedValue) { oldValue, newValue in
                 if case let .custom(interval) = newValue {
                     if interval == .zero {
-                        customSeconds = Int(oldValue.rawValue.seconds)
+                        customSeconds = max(1, Int(oldValue.rawValue.seconds))
+                        selection.wrappedValue = .init(rawValue: .seconds(customSeconds))
                         isPresentingCustomInterval = true
                     } else {
                         if let matchingStatic = MediaJumpInterval.allCases.first(where: { $0.rawValue == interval }) {
@@ -132,7 +133,7 @@ struct JumpIntervalPicker: View {
                     }
 
                 Button(L10n.save) {
-                    selection.wrappedValue = .custom(interval: .seconds(customSeconds))
+                    selection.wrappedValue = .custom(interval: Duration.seconds(max(1, customSeconds)))
                 }
             } message: {
                 Text(L10n.customJumpIntervalDescription)

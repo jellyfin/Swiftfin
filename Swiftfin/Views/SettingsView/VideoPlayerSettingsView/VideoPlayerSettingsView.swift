@@ -28,8 +28,10 @@ struct VideoPlayerSettingsView: View {
                 router.route(to: .gestureSettings)
             }
 
-            JumpIntervalPicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
-            JumpIntervalPicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
+            Section(L10n.buttons) {
+                JumpIntervalPicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
+                JumpIntervalPicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
+            }
 
             Section {
 
