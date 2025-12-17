@@ -251,7 +251,7 @@ extension NavigationRoute {
             id: "itemMetadataRefresh",
             style: .sheet
         ) {
-            ItemMetadataRefreshView(viewModel: viewModel)
+            RefreshMetadataView(viewModel: viewModel)
         }
     }
 
