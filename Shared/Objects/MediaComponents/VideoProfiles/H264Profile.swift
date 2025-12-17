@@ -7,10 +7,10 @@
 //
 
 enum H264Profile: String {
-    case baseline = "baseline"
+    case baseline
     case constrainedBaseline = "constrained baseline"
-    case main = "main"
-    case high = "high"
+    case main
+    case high
     case high10 = "high 10"
     case high422 = "high 422"
     case high444 = "high 444"
