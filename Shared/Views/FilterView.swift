@@ -55,11 +55,9 @@ struct FilterView: View {
                 }
             )
         }
-        #if os(iOS)
         .navigationBarCloseButton {
             router.dismiss()
         }
-        #endif
     }
 
     @ViewBuilder

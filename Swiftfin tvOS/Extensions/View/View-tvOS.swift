@@ -40,6 +40,15 @@ extension View {
     func prefersStatusBarHidden(_ hidden: Bool) -> some View {
         self
     }
+
+    /// - Important: This does nothing on tvOS.
+    @ViewBuilder
+    func navigationBarCloseButton(
+        disabled: Bool = false,
+        _ action: @escaping () -> Void
+    ) -> some View {
+        self
+    }
 }
 
 extension EnvironmentValues {
