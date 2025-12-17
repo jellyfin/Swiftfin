@@ -50,7 +50,7 @@ extension VideoPlayerType {
                 isRequired: false,
                 property: .isInterlaced,
                 value: "true"
-            )
+            ),
         ]
     }
 
@@ -79,7 +79,7 @@ extension VideoPlayerType {
                 isRequired: false,
                 property: .isInterlaced,
                 value: "true"
-            )
+            ),
         ]
     }
 }

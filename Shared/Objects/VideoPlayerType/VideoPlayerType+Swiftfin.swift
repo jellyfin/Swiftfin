@@ -45,29 +45,6 @@ extension VideoPlayerType {
             AudioCodec.wmapro
             AudioCodec.wmav1
             AudioCodec.wmav2
-        } videoCodecs: {
-            VideoCodec.av1
-            VideoCodec.h263
-            VideoCodec.h264
-            VideoCodec.hevc
-            VideoCodec.mjpeg
-            VideoCodec.mpeg1video
-            VideoCodec.mpeg2video
-            VideoCodec.mpeg4
-            VideoCodec.vc1
-            VideoCodec.vp9
-            VideoCodec.wmv1
-            VideoCodec.wmv2
-            VideoCodec.wmv3
-        } containers: {
-            MediaContainer.avi
-            MediaContainer.flv
-            MediaContainer.m4v
-            MediaContainer.mkv
-            MediaContainer.mov
-            MediaContainer.mp4
-            MediaContainer.mpegts
-            MediaContainer.webm
         }
     }
 
@@ -206,7 +183,7 @@ extension VideoPlayerType {
                     property: .videoRangeType
                 ) {
                     VideoRangeType.sdr
-                }
+                },
             ],
             type: .video
         )
@@ -232,7 +209,7 @@ extension VideoPlayerType {
                     property: .videoRangeType
                 ) {
                     VideoRangeType.sdr
-                }
+                },
             ],
             type: .video
         )
@@ -258,7 +235,7 @@ extension VideoPlayerType {
                     property: .videoRangeType
                 ) {
                     VideoRangeType.sdr
-                }
+                },
             ],
             type: .video
         )

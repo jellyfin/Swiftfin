@@ -174,7 +174,7 @@ extension VideoPlayerType {
                     VideoRangeType.doviWithHDR10
                     VideoRangeType.doviWithHDR10Plus
                     VideoRangeType.doviWithSDR
-                }
+                },
             ],
             type: .video
         )
@@ -206,7 +206,7 @@ extension VideoPlayerType {
                     VideoRangeType.doviWithHDR10
                     VideoRangeType.doviWithHDR10Plus
                     VideoRangeType.doviWithSDR
-                }
+                },
             ],
             type: .video
         )
