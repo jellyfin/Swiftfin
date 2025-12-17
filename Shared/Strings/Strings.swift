@@ -766,8 +766,6 @@ internal enum L10n {
   }
   /// Items
   internal static let items = L10n.tr("Localizable", "items", fallback: "Items")
-  /// Jellyfin
-  internal static let jellyfin = L10n.tr("Localizable", "jellyfin", fallback: "Jellyfin")
   /// Join groups
   internal static let joinGroups = L10n.tr("Localizable", "joinGroups", fallback: "Join groups")
   /// Jump
@@ -1036,8 +1034,6 @@ internal enum L10n {
   internal static let originalTitle = L10n.tr("Localizable", "originalTitle", fallback: "Original title")
   /// Other
   internal static let other = L10n.tr("Localizable", "other", fallback: "Other")
-  /// Out of date
-  internal static let outOfDate = L10n.tr("Localizable", "outOfDate", fallback: "Out of date")
   /// Overview
   internal static let overview = L10n.tr("Localizable", "overview", fallback: "Overview")
   /// Parental controls
@@ -1190,8 +1186,6 @@ internal enum L10n {
   internal static let refreshMetadata = L10n.tr("Localizable", "refreshMetadata", fallback: "Refresh metadata")
   /// Refresh mode
   internal static let refreshMode = L10n.tr("Localizable", "refreshMode", fallback: "Refresh mode")
-  /// Refresh type
-  internal static let refreshType = L10n.tr("Localizable", "refreshType", fallback: "Refresh type")
   /// Regional
   internal static let regional = L10n.tr("Localizable", "regional", fallback: "Regional")
   /// Regular
@@ -1598,8 +1592,6 @@ internal enum L10n {
   internal static let uploadFile = L10n.tr("Localizable", "uploadFile", fallback: "Upload file")
   /// Upload photo
   internal static let uploadPhoto = L10n.tr("Localizable", "uploadPhoto", fallback: "Upload photo")
-  /// Up to date
-  internal static let upToDate = L10n.tr("Localizable", "upToDate", fallback: "Up to date")
   /// URL
   internal static let url = L10n.tr("Localizable", "url", fallback: "URL")
   /// Use as transcoding profile
