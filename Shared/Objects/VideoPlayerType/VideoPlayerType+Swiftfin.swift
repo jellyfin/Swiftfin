@@ -185,6 +185,11 @@ extension VideoPlayerType {
                     property: .videoRangeType
                 ) {
                     VideoRangeType.sdr
+                    VideoRangeType.hdr10
+                    VideoRangeType.hdr10Plus
+                    VideoRangeType.doviWithSDR
+                    VideoRangeType.doviWithHDR10
+                    VideoRangeType.doviWithHDR10Plus
                 },
             ],
             type: .video
@@ -211,6 +216,11 @@ extension VideoPlayerType {
                     property: .videoRangeType
                 ) {
                     VideoRangeType.sdr
+                    VideoRangeType.hdr10
+                    VideoRangeType.hdr10Plus
+                    VideoRangeType.doviWithSDR
+                    VideoRangeType.doviWithHDR10
+                    VideoRangeType.doviWithHDR10Plus
                 },
             ],
             type: .video
@@ -237,6 +247,11 @@ extension VideoPlayerType {
                     property: .videoRangeType
                 ) {
                     VideoRangeType.sdr
+                    VideoRangeType.hdr10
+                    VideoRangeType.hdr10Plus
+                    VideoRangeType.doviWithSDR
+                    VideoRangeType.doviWithHDR10
+                    VideoRangeType.doviWithHDR10Plus
                 },
             ],
             type: .video
