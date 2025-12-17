@@ -49,6 +49,19 @@ extension View {
     }
 
     @ViewBuilder
+    func navigationBarCloseButton(
+        disabled: Bool = false,
+        _ action: @escaping () -> Void
+    ) -> some View {
+        modifier(
+            NavigationBarCloseButtonModifier(
+                disabled: disabled,
+                action: action
+            )
+        )
+    }
+
+    @ViewBuilder
     func navigationBarMenuButton<Content: View>(
         isLoading: Bool = false,
         isHidden: Bool = false,
