@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-struct FilterView: PlatformView {
+struct FilterView: View {
 
     @Router
     private var router
@@ -19,23 +19,13 @@ struct FilterView: PlatformView {
 
     private let types: [ItemFilterType]
 
-    private var isComposite: Bool {
-        types.count > 1
-    }
-
     private var title: String {
-        if isComposite {
+        if types.count > 1 {
             types.map(\.displayTitle).joined(separator: " & ")
         } else {
             types.first?.displayTitle ?? L10n.unknown
         }
     }
-
-    #if os(tvOS)
-    private var systemImage: String {
-        types.first?.systemImage ?? "line.3.horizontal.decrease"
-    }
-    #endif
 
     init(
         viewModel: FilterViewModel,
@@ -45,17 +35,13 @@ struct FilterView: PlatformView {
         self.types = types
     }
 
-    var iOSView: some View {
-        Form {
+    var body: some View {
+        Form(systemImage: types.first?.systemImage ?? "line.3.horizontal.decrease") {
             ForEach(types) { type in
                 selectorView(for: type)
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(title)
-        .navigationBarCloseButton {
-            router.dismiss()
-        }
         .topBarTrailing {
             Button(L10n.reset) {
                 for type in types {
@@ -69,72 +55,41 @@ struct FilterView: PlatformView {
                 }
             )
         }
-    }
-
-    var tvOSView: some View {
-        #if os(tvOS)
-        SplitFormWindowView()
-            .descriptionView {
-                Image(systemName: systemImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: 400)
-            }
-            .contentView {
-                ForEach(types) { type in
-                    selectorView(for: type)
-                }
-            }
-            .navigationTitle(title)
-            .topBarTrailing {
-                Button(L10n.reset) {
-                    for type in types {
-                        viewModel.send(.reset(type))
-                    }
-                }
-                .environment(
-                    \.isEnabled,
-                    types.contains {
-                        viewModel.isFilterSelected(type: $0)
-                    }
-                )
-            }
+        #if os(iOS)
+        .navigationBarCloseButton {
+            router.dismiss()
+        }
         #endif
     }
 
     @ViewBuilder
     private func selectorView(for type: ItemFilterType) -> some View {
 
-        let source = filterSource(type)
+        let source = viewModel.allFilters[keyPath: type.collectionAnyKeyPath]
 
-        let typeSelection = Binding<[AnyItemFilter]>(
-            get: {
-                viewModel.currentFilters[keyPath: type.collectionAnyKeyPath]
-            },
-            set: { newValue in
-                viewModel.send(.update(type, newValue))
-            }
-        )
-
-        if source.isEmpty {
-            Text(L10n.none)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-        } else {
+        if source.isNotEmpty {
             Section {
                 SelectorView(
-                    selection: typeSelection,
+                    selection: Binding<[AnyItemFilter]>(
+                        get: {
+                            viewModel.currentFilters[keyPath: type.collectionAnyKeyPath]
+                        },
+                        set: { newValue in
+                            viewModel.send(.update(type, newValue))
+                        }
+                    ),
                     sources: source,
                     type: type.selectorType
                 )
             } header: {
-                if isComposite {
+                if types.count > 1 {
                     Text(type.displayTitle)
                 }
             }
+        } else {
+            Text(L10n.none)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         }
-    }
-
-    private func filterSource(_ type: ItemFilterType) -> [AnyItemFilter] {
-        viewModel.allFilters[keyPath: type.collectionAnyKeyPath]
     }
 }
