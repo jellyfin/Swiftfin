@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+@available(*, deprecated, message: "Use `Section(:content:learnMore:)` instead")
 struct LearnMoreButton: View {
 
     @State
