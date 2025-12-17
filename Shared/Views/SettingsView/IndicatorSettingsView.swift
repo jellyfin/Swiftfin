@@ -18,21 +18,21 @@ struct IndicatorSettingsView: View {
     @Default(.Customization.Indicators.showProgress)
     private var showProgress
     @Default(.Customization.Indicators.showUnplayed)
-    private var showUnplayed
+    private var showUnwatched
     @Default(.Customization.Indicators.showPlayed)
-    private var showPlayed
+    private var showWatched
 
     var body: some View {
-        Form {
-            Section {
+        Form(systemImage: "checkmark.circle.fill") {
+            Section(L10n.posters) {
 
-                Toggle(L10n.favorited, isOn: $showFavorited)
+                Toggle(L10n.showFavorited, isOn: $showFavorited)
 
-                Toggle(L10n.progress, isOn: $showProgress)
+                Toggle(L10n.showProgress, isOn: $showProgress)
 
-                Toggle(L10n.unplayed, isOn: $showUnplayed)
+                Toggle(L10n.showUnwatched, isOn: $showUnwatched)
 
-                Toggle(L10n.played, isOn: $showPlayed)
+                Toggle(L10n.showWatched, isOn: $showWatched)
             }
         }
         .navigationTitle(L10n.indicators)
