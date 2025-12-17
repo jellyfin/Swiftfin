@@ -168,9 +168,11 @@ extension VideoPlayerType {
                 ProfileCondition(
                     condition: .equalsAny,
                     isRequired: false,
-                    property: .videoProfile,
-                    value: "high|main|main 10"
-                ),
+                    property: .videoProfile
+                ) {
+                    HEVCProfile.main
+                    HEVCProfile.main10
+                },
                 ProfileCondition(
                     condition: .notEquals,
                     isRequired: false,

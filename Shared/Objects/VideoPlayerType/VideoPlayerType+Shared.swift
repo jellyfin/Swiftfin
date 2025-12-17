@@ -36,9 +36,13 @@ extension VideoPlayerType {
             ProfileCondition(
                 condition: .equalsAny,
                 isRequired: false,
-                property: .videoProfile,
-                value: "high|main|baseline|constrained baseline"
-            ),
+                property: .videoProfile
+            ) {
+                H264Profile.high
+                H264Profile.main
+                H264Profile.baseline
+                H264Profile.constrainedBaseline
+            },
             ProfileCondition(
                 condition: .lessThanEqual,
                 isRequired: false,
@@ -65,9 +69,11 @@ extension VideoPlayerType {
             ProfileCondition(
                 condition: .equalsAny,
                 isRequired: false,
-                property: .videoProfile,
-                value: "high|main|main 10"
-            ),
+                property: .videoProfile
+            ) {
+                HEVCProfile.main
+                HEVCProfile.main10
+            },
             ProfileCondition(
                 condition: .lessThanEqual,
                 isRequired: false,
