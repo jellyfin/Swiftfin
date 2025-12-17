@@ -11,76 +11,75 @@ import JellyfinAPI
 
 extension VideoPlayerType {
 
-    // MARK: codec profiles
+    // MARK: - Codec Profiles
 
     @ArrayBuilder<CodecProfile>
     var codecProfiles: [CodecProfile] {
-        CodecProfile(
-            codec: VideoCodec.h264.rawValue,
-            type: .video,
-            applyConditions: {
-                ProfileCondition(
-                    condition: .notEquals,
-                    isRequired: false,
-                    property: .isAnamorphic,
-                    value: "true"
-                )
+        switch self {
+        case .native:
+            Self._nativeCodecProfiles
+        case .swiftfin:
+            Self._swiftfinCodecProfiles
+        }
+    }
 
-                ProfileCondition(
-                    condition: .equalsAny,
-                    isRequired: false,
-                    property: .videoProfile,
-                    value: "high|main|baseline|constrained baseline"
-                )
+    // MARK: - Shared Codec Profile Conditions
 
-                ProfileCondition(
-                    condition: .lessThanEqual,
-                    isRequired: false,
-                    property: .videoLevel,
-                    value: "80"
-                )
+    static var _h264BaseConditions: [ProfileCondition] {
+        [
+            ProfileCondition(
+                condition: .notEquals,
+                isRequired: false,
+                property: .isAnamorphic,
+                value: "true"
+            ),
+            ProfileCondition(
+                condition: .equalsAny,
+                isRequired: false,
+                property: .videoProfile,
+                value: "high|main|baseline|constrained baseline"
+            ),
+            ProfileCondition(
+                condition: .lessThanEqual,
+                isRequired: false,
+                property: .videoLevel,
+                value: "80"
+            ),
+            ProfileCondition(
+                condition: .notEquals,
+                isRequired: false,
+                property: .isInterlaced,
+                value: "true"
+            ),
+        ]
+    }
 
-                ProfileCondition(
-                    condition: .notEquals,
-                    isRequired: false,
-                    property: .isInterlaced,
-                    value: "true"
-                )
-            }
-        )
-
-        CodecProfile(
-            codec: VideoCodec.hevc.rawValue,
-            type: .video,
-            applyConditions: {
-                ProfileCondition(
-                    condition: .notEquals,
-                    isRequired: false,
-                    property: .isAnamorphic,
-                    value: "true"
-                )
-
-                ProfileCondition(
-                    condition: .equalsAny,
-                    isRequired: false,
-                    property: .videoProfile,
-                    value: "high|main|main 10"
-                )
-
-                ProfileCondition(
-                    condition: .lessThanEqual,
-                    isRequired: false,
-                    property: .videoLevel,
-                    value: "175"
-                )
-
-                ProfileCondition(
-                    condition: .notEquals,
-                    isRequired: false,
-                    property: .isInterlaced,
-                    value: "true"
-                )
-            }
-        )
+    static var _hevcBaseConditions: [ProfileCondition] {
+        [
+            ProfileCondition(
+                condition: .notEquals,
+                isRequired: false,
+                property: .isAnamorphic,
+                value: "true"
+            ),
+            ProfileCondition(
+                condition: .equalsAny,
+                isRequired: false,
+                property: .videoProfile,
+                value: "high|main|main 10"
+            ),
+            ProfileCondition(
+                condition: .lessThanEqual,
+                isRequired: false,
+                property: .videoLevel,
+                value: "175"
+            ),
+            ProfileCondition(
+                condition: .notEquals,
+                isRequired: false,
+                property: .isInterlaced,
+                value: "true"
+            ),
+        ]
     }
 }

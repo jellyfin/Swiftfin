@@ -11,7 +11,7 @@ import JellyfinAPI
 
 extension VideoPlayerType {
 
-    // MARK: direct play
+    // MARK: - Direct Play
 
     @ArrayBuilder<DirectPlayProfile>
     static var _nativeDirectPlayProfiles: [DirectPlayProfile] {
@@ -22,8 +22,8 @@ extension VideoPlayerType {
             AudioCodec.eac3
             AudioCodec.flac
         } videoCodecs: {
-            VideoCodec.h261
             VideoCodec.hevc
+            VideoCodec.h261
             VideoCodec.mpeg4
         } containers: {
             MediaContainer.mp4
@@ -33,6 +33,7 @@ extension VideoPlayerType {
             AudioCodec.aac
             AudioCodec.ac3
             AudioCodec.alac
+            AudioCodec.eac3
         } videoCodecs: {
             VideoCodec.h264
             VideoCodec.mpeg4
@@ -51,8 +52,8 @@ extension VideoPlayerType {
             AudioCodec.pcm_s24be
             AudioCodec.pcm_s24le
         } videoCodecs: {
-            VideoCodec.h264
             VideoCodec.hevc
+            VideoCodec.h264
             VideoCodec.mjpeg
             VideoCodec.mpeg4
         } containers: {
@@ -65,6 +66,7 @@ extension VideoPlayerType {
             AudioCodec.eac3
             AudioCodec.mp3
         } videoCodecs: {
+            VideoCodec.hevc
             VideoCodec.h264
         } containers: {
             MediaContainer.mpegts
@@ -91,7 +93,7 @@ extension VideoPlayerType {
         }
     }
 
-    // MARK: transcoding
+    // MARK: - Transcoding
 
     @ArrayBuilder<TranscodingProfile>
     static var _nativeTranscodingProfiles: [TranscodingProfile] {
@@ -110,15 +112,15 @@ extension VideoPlayerType {
             AudioCodec.eac3
             AudioCodec.flac
         } videoCodecs: {
-            VideoCodec.hevc
             VideoCodec.h264
+            VideoCodec.hevc
             VideoCodec.mpeg4
         } containers: {
             MediaContainer.mp4
         }
     }
 
-    // MARK: subtitle
+    // MARK: - Subtitle
 
     @ArrayBuilder<SubtitleProfile>
     static var _nativeSubtitleProfiles: [SubtitleProfile] {
@@ -137,5 +139,76 @@ extension VideoPlayerType {
         SubtitleProfile.build(method: .hls) {
             SubtitleFormat.vtt
         }
+    }
+
+    // MARK: - Codec Profiles
+
+    @ArrayBuilder<CodecProfile>
+    static var _nativeCodecProfiles: [CodecProfile] {
+        CodecProfile(
+            codec: VideoCodec.h264.rawValue,
+            conditions: _h264BaseConditions.appending(
+                ProfileCondition(
+                    condition: .equalsAny,
+                    isRequired: false,
+                    property: .videoRangeType
+                ) {
+                    VideoRangeType.sdr
+                }
+            ),
+            type: .video
+        )
+
+        CodecProfile(
+            codec: VideoCodec.hevc.rawValue,
+            conditions: _hevcBaseConditions + [
+                ProfileCondition(
+                    condition: .equalsAny,
+                    isRequired: false,
+                    property: .videoRangeType
+                ) {
+                    VideoRangeType.sdr
+                    VideoRangeType.hdr10
+                    VideoRangeType.hdr10Plus
+                    VideoRangeType.dovi
+                    VideoRangeType.doviWithHDR10
+                    VideoRangeType.doviWithHDR10Plus
+                    VideoRangeType.doviWithSDR
+                }
+            ],
+            type: .video
+        )
+
+        CodecProfile(
+            codec: VideoCodec.av1.rawValue,
+            conditions: [
+                ProfileCondition(
+                    condition: .notEquals,
+                    isRequired: false,
+                    property: .isAnamorphic,
+                    value: "true"
+                ),
+                ProfileCondition(
+                    condition: .notEquals,
+                    isRequired: false,
+                    property: .isInterlaced,
+                    value: "true"
+                ),
+                ProfileCondition(
+                    condition: .equalsAny,
+                    isRequired: false,
+                    property: .videoRangeType
+                ) {
+                    VideoRangeType.sdr
+                    VideoRangeType.hdr10
+                    VideoRangeType.hdr10Plus
+                    VideoRangeType.dovi
+                    VideoRangeType.doviWithHDR10
+                    VideoRangeType.doviWithHDR10Plus
+                    VideoRangeType.doviWithSDR
+                }
+            ],
+            type: .video
+        )
     }
 }

@@ -11,7 +11,7 @@ import JellyfinAPI
 
 extension VideoPlayerType {
 
-    // MARK: direct play
+    // MARK: - Direct Play
 
     @ArrayBuilder<DirectPlayProfile>
     static var _swiftfinDirectPlayProfiles: [DirectPlayProfile] {
@@ -45,10 +45,33 @@ extension VideoPlayerType {
             AudioCodec.wmapro
             AudioCodec.wmav1
             AudioCodec.wmav2
+        } videoCodecs: {
+            VideoCodec.av1
+            VideoCodec.h263
+            VideoCodec.h264
+            VideoCodec.hevc
+            VideoCodec.mjpeg
+            VideoCodec.mpeg1video
+            VideoCodec.mpeg2video
+            VideoCodec.mpeg4
+            VideoCodec.vc1
+            VideoCodec.vp9
+            VideoCodec.wmv1
+            VideoCodec.wmv2
+            VideoCodec.wmv3
+        } containers: {
+            MediaContainer.avi
+            MediaContainer.flv
+            MediaContainer.m4v
+            MediaContainer.mkv
+            MediaContainer.mov
+            MediaContainer.mp4
+            MediaContainer.mpegts
+            MediaContainer.webm
         }
     }
 
-    // MARK: transcoding
+    // MARK: - Transcoding
 
     @ArrayBuilder<TranscodingProfile>
     static var _swiftfinTranscodingProfiles: [TranscodingProfile] {
@@ -87,7 +110,7 @@ extension VideoPlayerType {
         }
     }
 
-    // MARK: subtitle
+    // MARK: - Subtitle
 
     @ArrayBuilder<SubtitleProfile>
     static var _swiftfinSubtitleProfiles: [SubtitleProfile] {
@@ -136,5 +159,108 @@ extension VideoPlayerType {
             SubtitleFormat.vtt
             SubtitleFormat.xsub
         }
+    }
+
+    // MARK: - Codec Profiles
+
+    @ArrayBuilder<CodecProfile>
+    static var _swiftfinCodecProfiles: [CodecProfile] {
+        CodecProfile(
+            codec: VideoCodec.h264.rawValue,
+            conditions: _h264BaseConditions.appending(
+                ProfileCondition(
+                    condition: .equalsAny,
+                    isRequired: true,
+                    property: .videoRangeType
+                ) {
+                    VideoRangeType.sdr
+                }
+            ),
+            type: .video
+        )
+
+        CodecProfile(
+            codec: VideoCodec.hevc.rawValue,
+            conditions: [
+                ProfileCondition(
+                    condition: .notEquals,
+                    isRequired: false,
+                    property: .isAnamorphic,
+                    value: "true"
+                ),
+                ProfileCondition(
+                    condition: .equalsAny,
+                    isRequired: false,
+                    property: .videoProfile,
+                    value: "high|main|main 10"
+                ),
+                ProfileCondition(
+                    condition: .notEquals,
+                    isRequired: false,
+                    property: .isInterlaced,
+                    value: "true"
+                ),
+                ProfileCondition(
+                    condition: .equalsAny,
+                    isRequired: true,
+                    property: .videoRangeType
+                ) {
+                    VideoRangeType.sdr
+                }
+            ],
+            type: .video
+        )
+
+        CodecProfile(
+            codec: VideoCodec.av1.rawValue,
+            conditions: [
+                ProfileCondition(
+                    condition: .notEquals,
+                    isRequired: false,
+                    property: .isAnamorphic,
+                    value: "true"
+                ),
+                ProfileCondition(
+                    condition: .notEquals,
+                    isRequired: false,
+                    property: .isInterlaced,
+                    value: "true"
+                ),
+                ProfileCondition(
+                    condition: .equalsAny,
+                    isRequired: true,
+                    property: .videoRangeType
+                ) {
+                    VideoRangeType.sdr
+                }
+            ],
+            type: .video
+        )
+
+        CodecProfile(
+            codec: VideoCodec.vp9.rawValue,
+            conditions: [
+                ProfileCondition(
+                    condition: .notEquals,
+                    isRequired: false,
+                    property: .isAnamorphic,
+                    value: "true"
+                ),
+                ProfileCondition(
+                    condition: .notEquals,
+                    isRequired: false,
+                    property: .isInterlaced,
+                    value: "true"
+                ),
+                ProfileCondition(
+                    condition: .equalsAny,
+                    isRequired: true,
+                    property: .videoRangeType
+                ) {
+                    VideoRangeType.sdr
+                }
+            ],
+            type: .video
+        )
     }
 }
