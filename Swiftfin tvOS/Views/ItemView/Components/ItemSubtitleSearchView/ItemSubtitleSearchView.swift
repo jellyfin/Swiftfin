@@ -129,22 +129,22 @@ struct ItemSubtitleSearchView: View {
 
         Section {
             if viewModel.backgroundStates.contains(.updating) {
-                ListRowButton(L10n.cancel) {
+                Button(L10n.cancel, role: .destructive) {
                     viewModel.send(.cancel)
                 }
+                .buttonStyle(.primary)
                 .listRowInsets(.zero)
-                .foregroundStyle(.red, .red.opacity(0.2))
             } else {
-                ListRowButton(L10n.save) {
+                Button(L10n.save) {
                     setSubtitles()
                 }
+                .buttonStyle(.primary)
                 .foregroundStyle(
                     accentColor.overlayColor,
                     accentColor
                 )
                 .listRowInsets(.zero)
                 .disabled(selectedSubtitles.isEmpty)
-                .opacity(selectedSubtitles.isEmpty ? 0.5 : 1)
             }
         }
     }

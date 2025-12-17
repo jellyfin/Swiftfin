@@ -126,9 +126,10 @@ struct ItemSubtitleUploadView: View {
             }
 
             Section {
-                ListRowButton(subtitleData == nil ? L10n.uploadFile : L10n.replaceSubtitle) {
+                Button(subtitleData == nil ? L10n.uploadFile : L10n.replaceSubtitle) {
                     isPresentingFileUpload = true
                 }
+                .buttonStyle(.primary)
                 .foregroundStyle(accentColor.overlayColor, accentColor)
             }
         }

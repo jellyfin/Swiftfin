@@ -24,7 +24,7 @@ struct SectionFooterWithImageLabelStyle<ImageStyle: ShapeStyle>: LabelStyle {
     let imageStyle: ImageStyle
 
     func makeBody(configuration: Configuration) -> some View {
-        HStack {
+        HStack(spacing: 8) {
             configuration.icon
                 .foregroundStyle(imageStyle)
                 .fontWeight(.bold)
