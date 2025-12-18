@@ -38,6 +38,11 @@ struct VideoPlayerSettingsView: View {
             }
             .contentView {
 
+                Section(L10n.buttons) {
+                    JumpIntervalPicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
+                    JumpIntervalPicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
+                }
+
                 Section {
 
                     ChevronButton(
@@ -63,7 +68,7 @@ struct VideoPlayerSettingsView: View {
                     Text(L10n.subtitlesDisclaimer)
                 }
             }
-            .navigationTitle(L10n.videoPlayer)
+            .navigationTitle(L10n.videoPlayer.localizedCapitalized)
             .blurredFullScreenCover(isPresented: $isPresentingResumeOffsetStepper) {
                 StepperView(
                     title: L10n.resumeOffsetTitle,
