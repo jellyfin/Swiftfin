@@ -148,13 +148,13 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVKit)
 | **Dolby Vision Profile 5** | ❌             | ✅             |
 | **Dolby Vision Profile 8** | ❌             | 🔶 [2]         |
 | **Dolby Vision Profile 10** | ❌            | 🔶 [3]         |
-| **HDR10** | 🔶 [1]                          | ✅             |
+| **HDR10** | ✅                              | ✅             |
 | **HDR10+** | 🔶 [1]                         | 🔶 [4]         |
 | **HLG** | ❌                                | ❌             |
 
 **Notes**
 
-[1] Software Tone Mapping in player.
+[1] Will fallback to HDR10 rendering, ignoring dynamic metadata.
 
 [2] Dolby Vision Profile 8 support is limited to compatible devices only.
 
