@@ -414,6 +414,8 @@ internal enum L10n {
   internal static let customFailedLogins = L10n.tr("Localizable", "customFailedLogins", fallback: "Custom failed logins")
   /// Customize
   internal static let customize = L10n.tr("Localizable", "customize", fallback: "Customize")
+  /// Provide a custom jump interval in seconds.
+  internal static let customJumpIntervalDescription = L10n.tr("Localizable", "customJumpIntervalDescription", fallback: "Provide a custom jump interval in seconds.")
   /// Custom name
   internal static let customName = L10n.tr("Localizable", "customName", fallback: "Custom name")
   /// Custom profile
