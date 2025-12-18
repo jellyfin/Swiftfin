@@ -9,7 +9,7 @@
 import Defaults
 import Foundation
 
-enum MediaJumpInterval: Storable, SystemImageable, Displayable, CaseIterable, RawRepresentable, Hashable {
+enum MediaJumpInterval: CaseIterable, Displayable, Hashable, RawRepresentable, Storable, SystemImageable {
 
     typealias RawValue = Duration
 
@@ -49,8 +49,8 @@ enum MediaJumpInterval: Storable, SystemImageable, Displayable, CaseIterable, Ra
         }
     }
 
-    static var allCases: [MediaJumpInterval] {
-        [.five, .ten, .fifteen, .thirty]
+    var displayTitle: String {
+        rawValue.formatted(.minuteSecondsNarrow)
     }
 
     var systemImage: String {
@@ -83,12 +83,7 @@ enum MediaJumpInterval: Storable, SystemImageable, Displayable, CaseIterable, Ra
         }
     }
 
-    var displayTitle: String {
-        switch self {
-        case let .custom(interval):
-            interval.formatted(.minuteSecondsNarrow)
-        default:
-            rawValue.formatted(.minuteSecondsNarrow)
-        }
+    static var allCases: [MediaJumpInterval] {
+        [.five, .ten, .fifteen, .thirty]
     }
 }
