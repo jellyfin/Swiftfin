@@ -664,10 +664,6 @@ internal enum L10n {
   internal static let file = L10n.tr("Localizable", "file", fallback: "File")
   /// Filters
   internal static let filters = L10n.tr("Localizable", "filters", fallback: "Filters")
-  /// Find missing
-  internal static let findMissing = L10n.tr("Localizable", "findMissing", fallback: "Find missing")
-  /// Find missing metadata and images.
-  internal static let findMissingDescription = L10n.tr("Localizable", "findMissingDescription", fallback: "Find missing metadata and images.")
   /// Folder
   internal static let folder = L10n.tr("Localizable", "folder", fallback: "Folder")
   /// Folders
@@ -928,6 +924,8 @@ internal enum L10n {
   internal static let metadata = L10n.tr("Localizable", "metadata", fallback: "Metadata")
   /// Metadata preferences
   internal static let metadataPreferences = L10n.tr("Localizable", "metadataPreferences", fallback: "Metadata preferences")
+  /// Metadata is refreshed based on settings and internet services that are enabled in Jellyfin.
+  internal static let metadataRefreshDescription = L10n.tr("Localizable", "metadataRefreshDescription", fallback: "Metadata is refreshed based on settings and internet services that are enabled in Jellyfin.")
   /// Method
   internal static let method = L10n.tr("Localizable", "method", fallback: "Method")
   /// Minutes
@@ -1188,6 +1186,8 @@ internal enum L10n {
   internal static let refFramesNotSupported = L10n.tr("Localizable", "refFramesNotSupported", fallback: "The number of reference frames is not supported")
   /// Refresh metadata
   internal static let refreshMetadata = L10n.tr("Localizable", "refreshMetadata", fallback: "Refresh metadata")
+  /// Refresh mode
+  internal static let refreshMode = L10n.tr("Localizable", "refreshMode", fallback: "Refresh mode")
   /// Regional
   internal static let regional = L10n.tr("Localizable", "regional", fallback: "Regional")
   /// Regular
@@ -1216,22 +1216,12 @@ internal enum L10n {
   internal static let reorder = L10n.tr("Localizable", "reorder", fallback: "Reorder")
   /// Replace
   internal static let replace = L10n.tr("Localizable", "replace", fallback: "Replace")
-  /// Replace all
-  internal static let replaceAll = L10n.tr("Localizable", "replaceAll", fallback: "Replace all")
-  /// Replace all unlocked metadata and images with new information.
-  internal static let replaceAllDescription = L10n.tr("Localizable", "replaceAllDescription", fallback: "Replace all unlocked metadata and images with new information.")
+  /// Replace all metadata
+  internal static let replaceAllMetadata = L10n.tr("Localizable", "replaceAllMetadata", fallback: "Replace all metadata")
   /// Current profile values may cause playback issues
   internal static let replaceDeviceProfileWarning = L10n.tr("Localizable", "replaceDeviceProfileWarning", fallback: "Current profile values may cause playback issues")
-  /// Replace images
-  internal static let replaceImages = L10n.tr("Localizable", "replaceImages", fallback: "Replace images")
-  /// Replace all images with new images.
-  internal static let replaceImagesDescription = L10n.tr("Localizable", "replaceImagesDescription", fallback: "Replace all images with new images.")
   /// Are you sure you want to replace this item?
   internal static let replaceItemConfirmation = L10n.tr("Localizable", "replaceItemConfirmation", fallback: "Are you sure you want to replace this item?")
-  /// Replace metadata
-  internal static let replaceMetadata = L10n.tr("Localizable", "replaceMetadata", fallback: "Replace metadata")
-  /// Replace unlocked metadata with new information.
-  internal static let replaceMetadataDescription = L10n.tr("Localizable", "replaceMetadataDescription", fallback: "Replace unlocked metadata with new information.")
   /// Replace subtitle
   internal static let replaceSubtitle = L10n.tr("Localizable", "replaceSubtitle", fallback: "Replace subtitle")
   /// Required
@@ -1292,6 +1282,8 @@ internal enum L10n {
   internal static let save = L10n.tr("Localizable", "save", fallback: "Save")
   /// Save the user to this device without any local authentication.
   internal static let saveUserWithoutAuthDescription = L10n.tr("Localizable", "saveUserWithoutAuthDescription", fallback: "Save the user to this device without any local authentication.")
+  /// Scan for new and update files
+  internal static let scanForNewAndUpdatedFiles = L10n.tr("Localizable", "scanForNewAndUpdatedFiles", fallback: "Scan for new and update files")
   /// Scene
   internal static let scene = L10n.tr("Localizable", "scene", fallback: "Scene")
   /// Schedule already exists
@@ -1304,6 +1296,8 @@ internal enum L10n {
   internal static let scrub = L10n.tr("Localizable", "scrub", fallback: "Scrub")
   /// Search
   internal static let search = L10n.tr("Localizable", "search", fallback: "Search")
+  /// Search for missing metadata
+  internal static let searchForMissingMetadata = L10n.tr("Localizable", "searchForMissingMetadata", fallback: "Search for missing metadata")
   /// Season
   internal static let season = L10n.tr("Localizable", "season", fallback: "Season")
   /// S%1$@:E%2$@
@@ -1536,6 +1530,8 @@ internal enum L10n {
   internal static let transcodeReasons = L10n.tr("Localizable", "transcodeReasons", fallback: "Transcode reason(s)")
   /// Translator
   internal static let translator = L10n.tr("Localizable", "translator", fallback: "Translator")
+  /// Trickplays
+  internal static let trickplays = L10n.tr("Localizable", "trickplays", fallback: "Trickplays")
   /// Trigger already exists
   internal static let triggerAlreadyExists = L10n.tr("Localizable", "triggerAlreadyExists", fallback: "Trigger already exists")
   /// Triggers
