@@ -10,38 +10,64 @@ import SwiftUI
 
 struct ListRowMenu<Content: View, Subtitle: View>: View {
 
+    // MARK: - Focus State
+
+    @FocusState
+    private var isFocused: Bool
+
+    // MARK: - Properties
+
     private let title: Text
     private let subtitle: Subtitle?
     private let content: () -> Content
+
+    // MARK: - Body
 
     var body: some View {
         Menu(content: content) {
             HStack {
                 title
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(isFocused ? .black : .white)
+                    .padding(.leading, 4)
 
                 Spacer()
 
                 if let subtitle {
                     subtitle
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(isFocused ? .black : .secondary)
+                        .brightness(isFocused ? 0.4 : 0)
                 }
 
                 Image(systemName: "chevron.up.chevron.down")
                     .font(.body.weight(.regular))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(isFocused ? .black : .secondary)
+                    .brightness(isFocused ? 0.4 : 0)
             }
-            .padding(.horizontal, -8)
+            .padding(.horizontal)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            .background(
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12.5)
+                        .fill(isFocused ? Color.white : Color.white.opacity(0.1))
+                    if isFocused {
+                        RoundedRectangle(cornerRadius: 12.5)
+                            .fill(Color.white.opacity(0.8))
+                            .scaleEffect(x: 1.0, y: isFocused ? 1.10 : 1.0, anchor: .center)
+                    }
+                }
+            )
+            .scaleEffect(x: isFocused ? 1.01 : 1.0, y: isFocused ? 1.05 : 1.0, anchor: .center)
+            .animation(.easeInOut(duration: 0.125), value: isFocused)
         }
-        .buttonStyle(.plain)
+        .menuStyle(.borderlessButton)
         .listRowInsets(.zero)
-        .listRowBackground(Color.clear)
+        .focused($isFocused)
     }
 }
 
 // MARK: - Initializers
 
+// Base initializer
 extension ListRowMenu where Subtitle == Text? {
 
     init(_ title: Text, @ViewBuilder content: @escaping () -> Content) {
@@ -81,8 +107,7 @@ extension ListRowMenu where Subtitle == Text? {
     }
 }
 
-// MARK: - Custom View Subtitles
-
+// Custom view subtitles
 extension ListRowMenu {
 
     init(_ title: String, @ViewBuilder subtitle: @escaping () -> Subtitle, @ViewBuilder content: @escaping () -> Content) {
@@ -98,8 +123,7 @@ extension ListRowMenu {
     }
 }
 
-// MARK: - CaseIterable Enum Initializer
-
+// Initialize from a CaseIterable Enum
 extension ListRowMenu where Subtitle == Text, Content == AnyView {
 
     init<ItemType>(

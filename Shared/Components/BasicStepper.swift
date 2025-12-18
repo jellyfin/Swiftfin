@@ -61,26 +61,47 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: Form
         } label: {
             HStack {
                 Text(title)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(isFocused ? .black : .white)
+                    .padding(.leading, 4)
 
                 Spacer()
 
-                Image(systemName: "minus")
-                    .font(.body.weight(.regular))
-                    .foregroundStyle(canDecrement && isFocused ? .primary : .secondary)
+                HStack {
+                    Image(systemName: "minus")
+                        .hoverEffectDisabled()
+                        .foregroundStyle(canDecrement && isFocused ? .black : .secondary)
 
-                Text(value, format: formatter)
-                    .foregroundStyle(.secondary)
-                    .contentTransition(.numericText())
-                    .animation(.default, value: value)
+                    Text(value, format: formatter)
+                        .foregroundStyle(isFocused ? .black : .secondary)
+                        .contentTransition(.numericText())
+                        .animation(.default, value: value)
 
-                Image(systemName: "plus")
-                    .font(.body.weight(.regular))
-                    .foregroundStyle(canIncrement && isFocused ? .primary : .secondary)
+                    Image(systemName: "plus")
+                        .hoverEffectDisabled()
+                        .foregroundStyle(canIncrement && isFocused ? .black : .secondary)
+                }
+                .font(.body.weight(.regular))
+                .brightness(isFocused ? 0.4 : 0)
             }
+            .padding(.horizontal)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            .background(
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12.5)
+                        .fill(isFocused ? Color.white : Color.white.opacity(0.1))
+                    if isFocused {
+                        RoundedRectangle(cornerRadius: 12.5)
+                            .fill(Color.white.opacity(0.8))
+                            .scaleEffect(x: 1.0, y: isFocused ? 1.10 : 1.0, anchor: .center)
+                    }
+                }
+            )
+            .scaleEffect(x: isFocused ? 1.01 : 1.0, y: isFocused ? 1.05 : 1.0, anchor: .center)
+            .animation(.easeInOut(duration: 0.125), value: isFocused)
         }
+        .buttonStyle(.borderless)
+        .listRowInsets(.zero)
         .focused($isFocused)
-        .buttonStyle(.plain)
         .onMoveCommand { direction in
             switch direction {
             case .left:
