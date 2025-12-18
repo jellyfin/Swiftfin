@@ -31,11 +31,10 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
                     .font(.body.weight(.regular))
                     .foregroundStyle(.secondary)
             }
-            .padding(.horizontal)
+            .padding(.horizontal, -8)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-            .hoverEffect(.lift)
         }
-        .menuStyle(.borderlessButton)
+        .buttonStyle(.plain)
         .listRowInsets(.zero)
         .listRowBackground(Color.clear)
     }
@@ -43,7 +42,6 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
 
 // MARK: - Initializers
 
-// Base initializer
 extension ListRowMenu where Subtitle == Text? {
 
     init(_ title: Text, @ViewBuilder content: @escaping () -> Content) {
@@ -83,7 +81,8 @@ extension ListRowMenu where Subtitle == Text? {
     }
 }
 
-// Custom view subtitles
+// MARK: - Custom View Subtitles
+
 extension ListRowMenu {
 
     init(_ title: String, @ViewBuilder subtitle: @escaping () -> Subtitle, @ViewBuilder content: @escaping () -> Content) {
@@ -99,7 +98,8 @@ extension ListRowMenu {
     }
 }
 
-// Initialize from a CaseIterable Enum
+// MARK: - CaseIterable Enum Initializer
+
 extension ListRowMenu where Subtitle == Text, Content == AnyView {
 
     init<ItemType>(

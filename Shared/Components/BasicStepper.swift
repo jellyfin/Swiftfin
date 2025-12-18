@@ -80,7 +80,7 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: Form
             }
         }
         .focused($isFocused)
-        .buttonStyle(.form)
+        .buttonStyle(.plain)
         .onMoveCommand { direction in
             switch direction {
             case .left:

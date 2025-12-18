@@ -107,6 +107,7 @@ struct SettingsView: View {
             }
             #else
             ListRowMenu(L10n.videoPlayerType, selection: $videoPlayerType)
+                .listRowBackground(Color.clear)
             #endif
 
             ChevronButton(L10n.videoPlayer) {
