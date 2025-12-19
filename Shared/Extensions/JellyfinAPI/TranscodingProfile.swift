@@ -25,13 +25,13 @@ extension TranscodingProfile {
         segmentLength: Int? = nil,
         transcodeSeekInfo: TranscodeSeekInfo? = nil,
         type: DlnaProfileType? = nil,
-        @CommaStringBuilder<AudioCodec> audioCodecs: () -> String = { "" },
-        @CommaStringBuilder<VideoCodec> videoCodecs: () -> String = { "" },
-        @CommaStringBuilder<MediaContainer> containers: () -> String = { "" }
+        @ArrayBuilder<AudioCodec> audioCodecs: () -> [AudioCodec] = { [] },
+        @ArrayBuilder<VideoCodec> videoCodecs: () -> [VideoCodec] = { [] },
+        @ArrayBuilder<MediaContainer> containers: () -> [MediaContainer] = { [] }
     ) {
-        let audioCodecs = audioCodecs()
-        let videoCodecs = videoCodecs()
-        let containers = containers()
+        let audioCodecs = audioCodecs().map(\.rawValue).joined(separator: ",")
+        let videoCodecs = videoCodecs().map(\.rawValue).joined(separator: ",")
+        let containers = containers().map(\.rawValue).joined(separator: ",")
 
         self.init(
             audioCodec: audioCodecs.isEmpty ? nil : audioCodecs,
