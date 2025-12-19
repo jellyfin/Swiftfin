@@ -40,6 +40,10 @@ class AVMediaPlayerProxy: VideoMediaPlayerProxy {
 
     weak var manager: MediaPlayerManager? {
         didSet {
+            for var o in observers {
+                o.manager = manager
+            }
+
             if let manager {
                 managerItemObserver = manager.$playbackItem
                     .sink { playbackItem in
@@ -62,6 +66,10 @@ class AVMediaPlayerProxy: VideoMediaPlayerProxy {
             }
         }
     }
+
+    var observers: [any MediaPlayerObserver] = [
+        NowPlayableObserver(),
+    ]
 
     init() {
         self.player = AVPlayer()
@@ -129,11 +137,23 @@ extension AVMediaPlayerProxy {
 
     private func playbackStopped() {
         player.pause()
-        guard let timeObserver else { return }
-        player.removeTimeObserver(timeObserver)
-//        rateObserver.invalidate()
-        statusObserver.invalidate()
-        timeControlStatusObserver.invalidate()
+
+        if let timeObserver {
+            DispatchQueue.main.async {
+                self.player.removeTimeObserver(timeObserver)
+                self.timeObserver = nil
+            }
+        }
+
+        if let statusObserver {
+            statusObserver.invalidate()
+            self.statusObserver = nil
+        }
+
+        if let timeControlStatusObserver {
+            timeControlStatusObserver.invalidate()
+            self.timeControlStatusObserver = nil
+        }
     }
 
     private func playNew(item: MediaPlayerItem) {

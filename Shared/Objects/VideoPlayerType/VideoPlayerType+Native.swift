@@ -11,7 +11,7 @@ import JellyfinAPI
 
 extension VideoPlayerType {
 
-    // MARK: direct play
+    // MARK: - Direct Play
 
     @ArrayBuilder<DirectPlayProfile>
     static var _nativeDirectPlayProfiles: [DirectPlayProfile] {
@@ -33,6 +33,7 @@ extension VideoPlayerType {
             AudioCodec.aac
             AudioCodec.ac3
             AudioCodec.alac
+            AudioCodec.eac3
         } videoCodecs: {
             VideoCodec.h264
             VideoCodec.mpeg4
@@ -91,7 +92,7 @@ extension VideoPlayerType {
         }
     }
 
-    // MARK: transcoding
+    // MARK: - Transcoding
 
     @ArrayBuilder<TranscodingProfile>
     static var _nativeTranscodingProfiles: [TranscodingProfile] {
@@ -118,7 +119,7 @@ extension VideoPlayerType {
         }
     }
 
-    // MARK: subtitle
+    // MARK: - Subtitle
 
     @ArrayBuilder<SubtitleProfile>
     static var _nativeSubtitleProfiles: [SubtitleProfile] {
@@ -137,5 +138,78 @@ extension VideoPlayerType {
         SubtitleProfile.build(method: .hls) {
             SubtitleFormat.vtt
         }
+    }
+
+    // MARK: - Codec Profiles
+
+    @ArrayBuilder<CodecProfile>
+    static var _nativeCodecProfiles: [CodecProfile] {
+        CodecProfile(
+            codec: VideoCodec.h264.rawValue,
+            type: .video,
+            conditions: {
+                _h264BaseConditions
+                ProfileCondition(
+                    condition: .equalsAny,
+                    isRequired: false,
+                    property: .videoRangeType
+                ) {
+                    VideoRangeType.sdr
+                }
+            }
+        )
+
+        CodecProfile(
+            codec: VideoCodec.hevc.rawValue,
+            type: .video,
+            conditions: {
+                _hevcBaseConditions
+                ProfileCondition(
+                    condition: .equalsAny,
+                    isRequired: false,
+                    property: .videoRangeType
+                ) {
+                    VideoRangeType.sdr
+                    VideoRangeType.hdr10
+                    VideoRangeType.hdr10Plus
+                    VideoRangeType.dovi
+                    VideoRangeType.doviWithHDR10
+                    VideoRangeType.doviWithHDR10Plus
+                    VideoRangeType.doviWithSDR
+                }
+            }
+        )
+
+        CodecProfile(
+            codec: VideoCodec.av1.rawValue,
+            type: .video,
+            conditions: {
+                ProfileCondition(
+                    condition: .notEquals,
+                    isRequired: false,
+                    property: .isAnamorphic,
+                    value: "true"
+                )
+                ProfileCondition(
+                    condition: .notEquals,
+                    isRequired: false,
+                    property: .isInterlaced,
+                    value: "true"
+                )
+                ProfileCondition(
+                    condition: .equalsAny,
+                    isRequired: false,
+                    property: .videoRangeType
+                ) {
+                    VideoRangeType.sdr
+                    VideoRangeType.hdr10
+                    VideoRangeType.hdr10Plus
+                    VideoRangeType.dovi
+                    VideoRangeType.doviWithHDR10
+                    VideoRangeType.doviWithHDR10Plus
+                    VideoRangeType.doviWithSDR
+                }
+            }
+        )
     }
 }
