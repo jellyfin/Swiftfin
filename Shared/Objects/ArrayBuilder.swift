@@ -38,4 +38,12 @@ public enum ArrayBuilder<Component> {
     public static func buildExpression(_ expression: [Component]) -> [Component] {
         expression
     }
+
+    static func buildExpression<T: RawRepresentable>(_ expression: T) -> [Component] where T.RawValue == Component {
+        [expression.rawValue]
+    }
+
+    static func buildExpression<T: RawRepresentable>(_ expression: [T]) -> [Component] where T.RawValue == Component {
+        expression.map(\.rawValue)
+    }
 }
