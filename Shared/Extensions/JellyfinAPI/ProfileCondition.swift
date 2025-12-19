@@ -15,15 +15,13 @@ extension ProfileCondition {
         condition: ProfileConditionType? = nil,
         isRequired: Bool? = nil,
         property: ProfileConditionValue? = nil,
-        @PipeStringBuilder value: () -> String
+        @ArrayBuilder<String> value: () -> [String]
     ) {
-        let value = value()
-
         self.init(
             condition: condition,
             isRequired: isRequired,
             property: property,
-            value: value
+            value: value().joined(separator: "|")
         )
     }
 }
