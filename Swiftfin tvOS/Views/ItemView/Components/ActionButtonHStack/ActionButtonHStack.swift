@@ -12,12 +12,6 @@ extension ItemView {
 
     struct ActionButtonHStack: View {
 
-        @StoredValue(.User.enableItemDeletion)
-        private var enableItemDeletion: Bool
-        @StoredValue(.User.enableItemEditing)
-        private var enableItemEditing: Bool
-        @StoredValue(.User.enableCollectionManagement)
-        private var enableCollectionManagement: Bool
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers: TrailerSelection
 
