@@ -49,19 +49,19 @@ extension ItemView {
         // MARK: - Can Delete Item
 
         private var canDelete: Bool {
-            viewModel.userSession.user.permissions.items.canDelete(item: viewModel.item)
+            viewModel.userSession?.user.permissions.items.canDelete(item: viewModel.item) == true
         }
 
         // MARK: - Can Refresh Item
 
         private var canRefresh: Bool {
-            viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item)
+            viewModel.userSession?.user.permissions.items.canEditMetadata(item: viewModel.item) == true
         }
 
         // MARK: - Can Manage Subtitles
 
         private var canManageSubtitles: Bool {
-            viewModel.userSession.user.permissions.items.canManageSubtitles(item: viewModel.item)
+            viewModel.userSession?.user.permissions.items.canManageSubtitles(item: viewModel.item) == true
         }
 
         // MARK: - Deletion or Refreshing is Enabled
