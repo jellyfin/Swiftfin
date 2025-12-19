@@ -146,7 +146,9 @@ extension VideoPlayerType {
     static var _nativeCodecProfiles: [CodecProfile] {
         CodecProfile(
             codec: VideoCodec.h264.rawValue,
-            conditions: _h264BaseConditions.appending(
+            type: .video,
+            conditions: {
+                _h264BaseConditions
                 ProfileCondition(
                     condition: .equalsAny,
                     isRequired: false,
@@ -154,13 +156,14 @@ extension VideoPlayerType {
                 ) {
                     VideoRangeType.sdr
                 }
-            ),
-            type: .video
+            }
         )
 
         CodecProfile(
             codec: VideoCodec.hevc.rawValue,
-            conditions: _hevcBaseConditions + [
+            type: .video,
+            conditions: {
+                _hevcBaseConditions
                 ProfileCondition(
                     condition: .equalsAny,
                     isRequired: false,
@@ -173,26 +176,26 @@ extension VideoPlayerType {
                     VideoRangeType.doviWithHDR10
                     VideoRangeType.doviWithHDR10Plus
                     VideoRangeType.doviWithSDR
-                },
-            ],
-            type: .video
+                }
+            }
         )
 
         CodecProfile(
             codec: VideoCodec.av1.rawValue,
-            conditions: [
+            type: .video,
+            conditions: {
                 ProfileCondition(
                     condition: .notEquals,
                     isRequired: false,
                     property: .isAnamorphic,
                     value: "true"
-                ),
+                )
                 ProfileCondition(
                     condition: .notEquals,
                     isRequired: false,
                     property: .isInterlaced,
                     value: "true"
-                ),
+                )
                 ProfileCondition(
                     condition: .equalsAny,
                     isRequired: false,
@@ -205,9 +208,8 @@ extension VideoPlayerType {
                     VideoRangeType.doviWithHDR10
                     VideoRangeType.doviWithHDR10Plus
                     VideoRangeType.doviWithSDR
-                },
-            ],
-            type: .video
+                }
+            }
         )
     }
 }

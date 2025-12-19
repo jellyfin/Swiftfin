@@ -144,7 +144,9 @@ extension VideoPlayerType {
     static var _swiftfinCodecProfiles: [CodecProfile] {
         CodecProfile(
             codec: VideoCodec.h264.rawValue,
-            conditions: _h264BaseConditions.appending(
+            type: .video,
+            conditions: {
+                _h264BaseConditions
                 ProfileCondition(
                     condition: .equalsAny,
                     isRequired: true,
@@ -152,19 +154,19 @@ extension VideoPlayerType {
                 ) {
                     VideoRangeType.sdr
                 }
-            ),
-            type: .video
+            }
         )
 
         CodecProfile(
             codec: VideoCodec.hevc.rawValue,
-            conditions: [
+            type: .video,
+            conditions: {
                 ProfileCondition(
                     condition: .notEquals,
                     isRequired: false,
                     property: .isAnamorphic,
                     value: "true"
-                ),
+                )
                 ProfileCondition(
                     condition: .equalsAny,
                     isRequired: false,
@@ -172,13 +174,13 @@ extension VideoPlayerType {
                 ) {
                     HEVCProfile.main
                     HEVCProfile.main10
-                },
+                }
                 ProfileCondition(
                     condition: .notEquals,
                     isRequired: false,
                     property: .isInterlaced,
                     value: "true"
-                ),
+                )
                 ProfileCondition(
                     condition: .equalsAny,
                     isRequired: true,
@@ -190,26 +192,26 @@ extension VideoPlayerType {
                     VideoRangeType.doviWithSDR
                     VideoRangeType.doviWithHDR10
                     VideoRangeType.doviWithHDR10Plus
-                },
-            ],
-            type: .video
+                }
+            }
         )
 
         CodecProfile(
             codec: VideoCodec.av1.rawValue,
-            conditions: [
+            type: .video,
+            conditions: {
                 ProfileCondition(
                     condition: .notEquals,
                     isRequired: false,
                     property: .isAnamorphic,
                     value: "true"
-                ),
+                )
                 ProfileCondition(
                     condition: .notEquals,
                     isRequired: false,
                     property: .isInterlaced,
                     value: "true"
-                ),
+                )
                 ProfileCondition(
                     condition: .equalsAny,
                     isRequired: true,
@@ -221,26 +223,26 @@ extension VideoPlayerType {
                     VideoRangeType.doviWithSDR
                     VideoRangeType.doviWithHDR10
                     VideoRangeType.doviWithHDR10Plus
-                },
-            ],
-            type: .video
+                }
+            }
         )
 
         CodecProfile(
             codec: VideoCodec.vp9.rawValue,
-            conditions: [
+            type: .video,
+            conditions: {
                 ProfileCondition(
                     condition: .notEquals,
                     isRequired: false,
                     property: .isAnamorphic,
                     value: "true"
-                ),
+                )
                 ProfileCondition(
                     condition: .notEquals,
                     isRequired: false,
                     property: .isInterlaced,
                     value: "true"
-                ),
+                )
                 ProfileCondition(
                     condition: .equalsAny,
                     isRequired: true,
@@ -252,9 +254,8 @@ extension VideoPlayerType {
                     VideoRangeType.doviWithSDR
                     VideoRangeType.doviWithHDR10
                     VideoRangeType.doviWithHDR10Plus
-                },
-            ],
-            type: .video
+                }
+            }
         )
     }
 }
