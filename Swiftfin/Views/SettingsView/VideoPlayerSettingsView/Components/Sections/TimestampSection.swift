@@ -18,7 +18,7 @@ extension VideoPlayerSettingsView {
         var body: some View {
             Section(L10n.timestamp) {
 
-                CaseIterablePicker(L10n.trailingValue, selection: $trailingTimestampType)
+                Picker(L10n.trailingValue, selection: $trailingTimestampType)
             }
         }
     }

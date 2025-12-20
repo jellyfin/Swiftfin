@@ -22,11 +22,15 @@ extension Sequence {
         filter { $0[keyPath: keyPath] != nil }
     }
 
+    func filtering(where isIncluded: (Element) throws -> Bool) rethrows -> [Element] {
+        try filter { try !isIncluded($0) }
+    }
+
     func first<V: Equatable>(property: (Element) -> V, equalTo value: V) -> Element? {
         first { property($0) == value }
     }
 
-    func intersection<Value: Equatable>(_ other: some Sequence<Value>, using keyPath: KeyPath<Element, Value>) -> [Element] {
+    func intersecting<Value: Equatable>(_ other: some Sequence<Value>, using keyPath: KeyPath<Element, Value>) -> [Element] {
         filter { other.contains($0[keyPath: keyPath]) }
     }
 

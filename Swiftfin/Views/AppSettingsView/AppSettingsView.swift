@@ -48,7 +48,7 @@ struct AppSettingsView: View {
                 }
 
                 if !selectUserUseSplashscreen {
-                    CaseIterablePicker(
+                    Picker(
                         L10n.appearance,
                         selection: $appearance
                     )

@@ -32,7 +32,7 @@ struct RefreshMetadataView: View {
 
             Section {
                 #if os(iOS)
-                CaseIterablePicker(L10n.type, selection: $refreshType)
+                Picker(L10n.type, selection: $refreshType)
                 #else
                 ListRowMenu(L10n.type, selection: $refreshType)
                 #endif
