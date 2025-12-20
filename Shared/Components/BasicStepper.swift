@@ -8,9 +8,15 @@
 
 import SwiftUI
 
-struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: FormatStyle>: View
-    where Formatter.FormatInput == Value, Formatter.FormatOutput == String
+struct BasicStepper<Value: CustomStringConvertible & Strideable & LosslessStringConvertible, Formatter: FormatStyle>: View
+    where Formatter.FormatInput == Value,
+    Formatter.FormatOutput == String
 {
+
+    #if os(tvOS)
+    @Router
+    private var router
+    #endif
 
     @Binding
     private var value: Value
@@ -19,29 +25,6 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: Form
     private let range: ClosedRange<Value>
     private let step: Value.Stride
     private let formatter: Formatter
-
-    #if os(tvOS)
-    @FocusState
-    private var isFocused: Bool
-
-    private var canDecrement: Bool {
-        value.advanced(by: -step) >= range.lowerBound
-    }
-
-    private var canIncrement: Bool {
-        value.advanced(by: step) <= range.upperBound
-    }
-
-    private func selectAction() {
-        if canIncrement {
-            value = value.advanced(by: step)
-        } else {
-            value = range.lowerBound
-        }
-    }
-    #endif
-
-    // MARK: - Body
 
     var body: some View {
         #if os(iOS)
@@ -56,71 +39,18 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: Form
             }
         }
         #else
-        Button {
-            selectAction()
-        } label: {
-            HStack {
-                Text(title)
-                    .foregroundStyle(isFocused ? .black : .white)
-                    .padding(.leading, 4)
-
-                Spacer()
-
-                HStack {
-                    Image(systemName: "minus")
-                        .hoverEffectDisabled()
-                        .foregroundStyle(canDecrement && isFocused ? .black : .secondary)
-
-                    Text(value, format: formatter)
-                        .foregroundStyle(isFocused ? .black : .secondary)
-                        .contentTransition(.numericText())
-                        .animation(.default, value: value)
-
-                    Image(systemName: "plus")
-                        .hoverEffectDisabled()
-                        .foregroundStyle(canIncrement && isFocused ? .black : .secondary)
-                }
-                .font(.body.weight(.regular))
-                .brightness(isFocused ? 0.4 : 0)
-            }
-            .padding(.horizontal)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-            .background(
-                ZStack {
-                    RoundedRectangle(cornerRadius: 12.5)
-                        .fill(isFocused ? Color.white : Color.white.opacity(0.1))
-                    if isFocused {
-                        RoundedRectangle(cornerRadius: 12.5)
-                            .fill(Color.white.opacity(0.8))
-                            .scaleEffect(x: 1.0, y: isFocused ? 1.10 : 1.0, anchor: .center)
-                    }
-                }
-            )
-            .scaleEffect(x: isFocused ? 1.01 : 1.0, y: isFocused ? 1.05 : 1.0, anchor: .center)
-            .animation(.easeInOut(duration: 0.125), value: isFocused)
-        }
-        .buttonStyle(.borderless)
-        .listRowInsets(.zero)
-        .focused($isFocused)
-        .onMoveCommand { direction in
-            switch direction {
-            case .left:
-                if canDecrement {
-                    value = value.advanced(by: -step)
-                }
-            case .right:
-                if canIncrement {
-                    value = value.advanced(by: step)
-                }
-            default:
-                break
-            }
+        ChevronButton(title, subtitle: Text(value, format: formatter)) {
+            router.route(to: .stepperView(
+                title: title,
+                value: $value,
+                range: range,
+                step: step,
+                formatter: formatter
+            ))
         }
         #endif
     }
 }
-
-// MARK: - Initializers
 
 extension BasicStepper {
 
@@ -131,26 +61,29 @@ extension BasicStepper {
         step: Value.Stride = 1,
         formatter: Formatter
     ) {
-        self._value = value
-        self.title = title
-        self.range = range
-        self.step = step
-        self.formatter = formatter
+        self.init(
+            value: value,
+            title: title,
+            range: range,
+            step: step,
+            formatter: formatter
+        )
     }
 }
 
 extension BasicStepper where Formatter == VerbatimFormatStyle<Value> {
-
     init(
         _ title: String,
         value: Binding<Value>,
         range: ClosedRange<Value>,
         step: Value.Stride = 1
     ) {
-        self._value = value
-        self.title = title
-        self.range = range
-        self.step = step
-        self.formatter = VerbatimFormatStyle()
+        self.init(
+            value: value,
+            title: title,
+            range: range,
+            step: step,
+            formatter: VerbatimFormatStyle()
+        )
     }
 }
