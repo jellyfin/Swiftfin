@@ -38,7 +38,7 @@ struct LocalUserAccessPolicyView: View {
     var body: some View {
         List {
             Section {
-                CaseIterablePicker(L10n.security, selection: $updateSignInPolicy)
+                Picker(L10n.security, selection: $updateSignInPolicy)
             } footer: {
                 VStack(alignment: .leading, spacing: 10) {
                     Text(
