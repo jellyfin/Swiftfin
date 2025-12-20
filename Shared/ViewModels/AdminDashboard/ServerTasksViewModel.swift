@@ -28,7 +28,7 @@ final class ServerTasksViewModel: ViewModel {
         var transition: Transition {
             switch self {
             case .restartApplication, .shutdownApplication:
-                .background(.updating)
+                .none
             case .refresh:
                 .to(.initial, then: .content)
                     .whenBackground(.refreshing)
@@ -38,7 +38,6 @@ final class ServerTasksViewModel: ViewModel {
 
     enum BackgroundState {
         case refreshing
-        case updating
     }
 
     enum State {
@@ -58,8 +57,8 @@ final class ServerTasksViewModel: ViewModel {
         let allTasks = response.value
         let allTaskIDs = allTasks.compactMap(\.id)
 
-        let existingTaskIDs = tasks.values.flatMap(\.self).compactMap(\.task.id)
-        let removedTaskIDs = existingTaskIDs.filter { !allTaskIDs.contains($0) }
+        let existingTaskIDs = tasks.values.flattened().compactMap(\.task.id)
+        let removedTaskIDs = existingTaskIDs.filtering { allTaskIDs.contains($0) }
 
         for category in tasks.keys {
             tasks[category]?.removeAll { observer in
@@ -79,7 +78,7 @@ final class ServerTasksViewModel: ViewModel {
 
         for id in existingIDs {
             if let observer = tasks.values
-                .flatMap(\.self)
+                .flattened()
                 .first(where: { $0.task.id == id }),
                 let updatedTask = allTasks.first(where: { $0.id == id })
             {
@@ -100,7 +99,7 @@ final class ServerTasksViewModel: ViewModel {
 
         for runningTask in allTasks where runningTask.state == .running {
             if let observer = tasks.values
-                .flatMap(\.self)
+                .flattened()
                 .first(where: { $0.task.id == runningTask.id })
             {
                 await observer.start()

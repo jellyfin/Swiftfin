@@ -69,12 +69,13 @@ struct ServerTasksView: View {
                 }
             }
         }
+        .onReceive(timer) { _ in
+            viewModel.background.refresh()
+        }
     }
 
     var body: some View {
         ZStack {
-            Color.clear
-
             switch viewModel.state {
             case .content:
                 contentView
@@ -93,9 +94,6 @@ struct ServerTasksView: View {
         }
         .onFirstAppear {
             viewModel.refresh()
-        }
-        .onReceive(timer) { _ in
-            viewModel.background.refresh()
         }
     }
 }

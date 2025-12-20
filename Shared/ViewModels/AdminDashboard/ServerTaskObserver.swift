@@ -11,7 +11,6 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-// TODO: Swift 6 & Identifiable
 // TODO: refactor with socket implementation
 // TODO: for trigger updating, could temp set new triggers
 //       and set back on failure
@@ -90,8 +89,8 @@ final class ServerTaskObserver: ViewModel, Identifiable {
 
     @Function(\Action.Cases.removeTrigger)
     private func _removeTrigger(_ trigger: TaskTriggerInfo) async throws {
-        var updatedTriggers = (task.triggers ?? [])
-        updatedTriggers.removeAll { $0 == trigger }
+        let updatedTriggers = (task.triggers ?? [])
+            .filtering { $0 == trigger }
 
         try await updateTriggers(updatedTriggers)
     }
@@ -107,7 +106,7 @@ final class ServerTaskObserver: ViewModel, Identifiable {
                 break
             }
 
-            try await Task.sleep(nanoseconds: 2_000_000_000)
+            try await Task.sleep(for: .seconds(2))
         }
     }
 
