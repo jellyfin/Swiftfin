@@ -6,7 +6,6 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import JellyfinAPI
 import SwiftUI
 
@@ -14,19 +13,18 @@ extension EditMetadataView {
 
     struct LocalizationSection: View {
 
-        @Binding
-        var item: BaseItemDto
+        let item: Binding<BaseItemDto>
 
         var body: some View {
             Section(L10n.metadataPreferences) {
                 CulturePicker(
                     L10n.language,
-                    twoLetterISOLanguageName: $item.preferredMetadataLanguage
+                    twoLetterISOLanguageName: item.preferredMetadataLanguage
                 )
 
                 CountryPicker(
                     L10n.country,
-                    twoLetterISORegion: $item.preferredMetadataCountryCode
+                    twoLetterISORegion: item.preferredMetadataCountryCode
                 )
             }
         }
