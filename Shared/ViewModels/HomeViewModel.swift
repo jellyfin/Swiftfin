@@ -195,7 +195,7 @@ final class HomeViewModel: ViewModel, Stateful {
         async let excludedLibraryIDs = getExcludedLibraries()
 
         return try await (userViews.value.items ?? [])
-            .intersection(
+            .intersecting(
                 [
                     .homevideos,
                     .movies,

@@ -25,6 +25,7 @@ struct AddTaskTriggerView: View {
     static let defaultTimeOfDayTicks = 0
     static let defaultDayOfWeek: DayOfWeek = .sunday
     static let defaultIntervalTicks = 36_000_000_000
+
     private let emptyTaskTriggerInfo: TaskTriggerInfo
 
     private var hasUnsavedChanges: Bool {
@@ -34,8 +35,6 @@ struct AddTaskTriggerView: View {
     private var isDuplicate: Bool {
         observer.task.triggers?.contains(where: { $0 == taskTriggerInfo }) ?? false
     }
-
-    // MARK: - Init
 
     init(observer: ServerTaskObserver) {
         self.observer = observer
@@ -63,7 +62,15 @@ struct AddTaskTriggerView: View {
 
     @ViewBuilder
     private var weeklyView: some View {
-        DayOfWeekRow(taskTriggerInfo: $taskTriggerInfo)
+        Picker(
+            L10n.dayOfWeek,
+            selection: $taskTriggerInfo.dayOfWeek.coalesce(AddTaskTriggerView.defaultDayOfWeek)
+        ) {
+            ForEach(DayOfWeek.allCases, id: \.self) { day in
+                Text(day.displayTitle)
+                    .tag(day)
+            }
+        }
         TimeRow(taskTriggerInfo: $taskTriggerInfo)
     }
 
@@ -116,7 +123,7 @@ struct AddTaskTriggerView: View {
 
                 UIDevice.impact(.light)
 
-                observer.send(.addTrigger(taskTriggerInfo))
+                observer.addTrigger(taskTriggerInfo)
                 router.dismiss()
             }
             .buttonStyle(.toolbarPill)
