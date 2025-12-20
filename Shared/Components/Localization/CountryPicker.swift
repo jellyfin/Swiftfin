@@ -20,20 +20,20 @@ struct CountryPicker: View {
     init(_ title: String, twoLetterISORegion: Binding<String?>) {
         self.selection = twoLetterISORegion
         self.title = title
-        self._viewModel = .init(wrappedValue: .init(initialValue: []))
+        self._viewModel = .init(wrappedValue: .init(library: .init()))
     }
 
     private var currentCountry: CountryInfo? {
-        viewModel.value.first(property: \.twoLetterISORegionName, equalTo: selection.wrappedValue)
+        viewModel.elements.first(property: \.twoLetterISORegionName, equalTo: selection.wrappedValue)
     }
 
     @ViewBuilder
     private var picker: some View {
         Picker(
             title,
-            sources: viewModel.value,
+            sources: viewModel.elements,
             selection: selection.map(
-                getter: { iso in viewModel.value.first(property: \.twoLetterISORegionName, equalTo: iso) },
+                getter: { iso in viewModel.elements.first(property: \.twoLetterISORegionName, equalTo: iso) },
                 setter: { info in info?.twoLetterISORegionName }
             )
         )
@@ -54,7 +54,7 @@ struct CountryPicker: View {
             picker
             #endif
         }
-        .enabled(viewModel.state == .initial)
+        .enabled(viewModel.state == .content)
         .onFirstAppear {
             viewModel.refresh()
         }

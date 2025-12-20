@@ -12,7 +12,7 @@ import SwiftUI
 struct CulturePicker: View {
 
     @StateObject
-    private var viewModel: CulturesViewModel
+    private var viewModel: PagingLibraryViewModel<CultureLibrary>
 
     private let selection: Binding<String?>
     private let title: String
@@ -21,22 +21,22 @@ struct CulturePicker: View {
     init(_ title: String, twoLetterISOLanguageName: Binding<String?>) {
         self.selection = twoLetterISOLanguageName
         self.title = title
-        self._viewModel = .init(wrappedValue: .init(initialValue: []))
+        self._viewModel = .init(wrappedValue: .init(library: .init()))
         self.isUsingTwoLetterISO = true
     }
 
     init(_ title: String, threeLetterISOLanguageName: Binding<String?>) {
         self.selection = threeLetterISOLanguageName
         self.title = title
-        self._viewModel = .init(wrappedValue: .init(initialValue: []))
+        self._viewModel = .init(wrappedValue: .init(library: .init()))
         self.isUsingTwoLetterISO = false
     }
 
     private var currentCulture: CultureDto? {
         if isUsingTwoLetterISO {
-            return viewModel.value.first(property: \.twoLetterISOLanguageName, equalTo: selection.wrappedValue)
+            return viewModel.elements.first(property: \.twoLetterISOLanguageName, equalTo: selection.wrappedValue)
         } else {
-            return viewModel.value.first(property: \.threeLetterISOLanguageName, equalTo: selection.wrappedValue)
+            return viewModel.elements.first(property: \.threeLetterISOLanguageName, equalTo: selection.wrappedValue)
         }
     }
 
@@ -45,12 +45,12 @@ struct CulturePicker: View {
         let _selection = {
             if isUsingTwoLetterISO {
                 selection.map(
-                    getter: { iso in viewModel.value.first(property: \.twoLetterISOLanguageName, equalTo: iso) },
+                    getter: { iso in viewModel.elements.first(property: \.twoLetterISOLanguageName, equalTo: iso) },
                     setter: { $0?.twoLetterISOLanguageName }
                 )
             } else {
                 selection.map(
-                    getter: { iso in viewModel.value.first(property: \.threeLetterISOLanguageName, equalTo: iso) },
+                    getter: { iso in viewModel.elements.first(property: \.threeLetterISOLanguageName, equalTo: iso) },
                     setter: { $0?.threeLetterISOLanguageName }
                 )
             }
@@ -58,7 +58,7 @@ struct CulturePicker: View {
 
         Picker(
             title,
-            sources: viewModel.value,
+            sources: viewModel.elements,
             selection: _selection
         )
     }
@@ -78,7 +78,7 @@ struct CulturePicker: View {
             picker
             #endif
         }
-        .enabled(viewModel.state == .initial)
+        .enabled(viewModel.state == .content)
         .onFirstAppear {
             viewModel.refresh()
         }

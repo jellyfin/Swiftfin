@@ -34,9 +34,3 @@ extension CultureDto: @retroactive Identifiable {
         hashValue
     }
 }
-
-extension CultureDto: @retroactive Identifiable {
-    public var id: Int {
-        hashValue
-    }
-}

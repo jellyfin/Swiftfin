@@ -16,12 +16,24 @@ import SwiftUI
 ///         for spacing.
 struct SeparatorHStack<Content: View, Separator: View>: View {
 
-    private var content: Content
-    private var separator: Separator
+    private let alignment: VerticalAlignment
+    private let content: Content
+    private let separator: Separator
+
+    init(
+        alignment: VerticalAlignment = .center,
+        @ViewBuilder separator: @escaping () -> Separator,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.alignment = alignment
+        self.content = content()
+        self.separator = separator()
+    }
 
     var body: some View {
         _VariadicView.Tree(
             SeparatorHStackLayout(
+                alignment: alignment,
                 separator: separator
             )
         ) {
@@ -30,43 +42,19 @@ struct SeparatorHStack<Content: View, Separator: View>: View {
     }
 }
 
-extension SeparatorHStack where Separator == RowDivider {
-
-    init(
-        @ViewBuilder content: @escaping () -> Content
-    ) {
-        self.init(
-            content: content(),
-            separator: RowDivider()
-        )
-    }
-}
-
-extension SeparatorHStack {
-
-    init(
-        @ViewBuilder separator: @escaping () -> Separator,
-        @ViewBuilder content: @escaping () -> Content
-    ) {
-        self.init(
-            content: content(),
-            separator: separator()
-        )
-    }
-}
-
 extension SeparatorHStack {
 
     struct SeparatorHStackLayout: _VariadicView_UnaryViewRoot {
 
-        var separator: Separator
+        let alignment: VerticalAlignment
+        let separator: Separator
 
         @ViewBuilder
         func body(children: _VariadicView.Children) -> some View {
 
             let last = children.last?.id
 
-            localHStack {
+            HStack(alignment: alignment, spacing: 0) {
                 ForEach(children) { child in
                     child
 
@@ -74,13 +62,6 @@ extension SeparatorHStack {
                         separator
                     }
                 }
-            }
-        }
-
-        @ViewBuilder
-        private func localHStack(@ViewBuilder content: @escaping () -> some View) -> some View {
-            HStack(spacing: 0) {
-                content()
             }
         }
     }
