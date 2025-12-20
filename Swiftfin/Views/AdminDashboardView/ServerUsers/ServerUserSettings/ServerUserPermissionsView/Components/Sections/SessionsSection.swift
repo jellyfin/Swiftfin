@@ -28,7 +28,7 @@ extension ServerUserPermissionsView {
         @ViewBuilder
         private var FailedLoginsView: some View {
             Section {
-                CaseIterablePicker(
+                Picker(
                     L10n.maximumFailedLoginPolicy,
                     selection: $policy.loginAttemptsBeforeLockout
                         .coalesce(0)
@@ -95,7 +95,7 @@ extension ServerUserPermissionsView {
         @ViewBuilder
         private var MaxSessionsView: some View {
             Section {
-                CaseIterablePicker(
+                Picker(
                     L10n.maximumSessionsPolicy,
                     selection: $policy.maxActiveSessions.map(
                         getter: { ActiveSessionsPolicy(rawValue: $0) ?? .custom },
