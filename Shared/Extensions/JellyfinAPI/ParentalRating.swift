@@ -23,6 +23,12 @@ extension ParentalRating: Displayable {
     }
 }
 
+extension ParentalRating: @retroactive Identifiable {
+    public var id: Int {
+        hashValue
+    }
+}
+
 // TODO: I don't think this is a ParentalRating?
 extension UnratedItem: Displayable {
 

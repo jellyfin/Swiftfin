@@ -27,10 +27,4 @@ extension CultureDto: Displayable {
 
         return displayName ?? L10n.unknown
     }
-
-    static var none: CultureDto {
-        CultureDto(
-            displayName: L10n.none
-        )
-    }
 }
