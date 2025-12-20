@@ -16,6 +16,9 @@ import UIKit
 
 // TODO: come up with a cleaner, more defined way for item update notifications
 
+typealias MovieItemViewModel = ItemViewModel
+typealias PagingSeasonViewModel = PagingLibraryViewModel<EpisodeLibrary>
+
 @MainActor
 class ItemViewModel: ViewModel, Stateful {
 

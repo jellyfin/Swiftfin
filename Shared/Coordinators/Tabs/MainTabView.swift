@@ -77,6 +77,8 @@ struct MainTabView: View {
                 .tag(tab.item.id)
             }
         }
+//        .backport
+//        .tabViewStyle(.sidebarAdaptable)
         .contextMenu(for: BaseItemDto.self) { item in
             Button(item.displayTitle)
         }
@@ -144,3 +146,41 @@ extension BaseItemPerson {
         )
     }
 }
+
+// struct ProgramButtonContent: View {
+//
+//    let program: BaseItemDto
+//
+//    var body: some View {
+//        VStack(alignment: .leading) {
+//
+//            Text(program.channelName ?? .emptyDash)
+//                .font(.footnote.weight(.semibold))
+//                .foregroundColor(.primary)
+//                .lineLimit(1, reservesSpace: true)
+//
+//            Text(program.displayTitle)
+//                .font(.footnote.weight(.regular))
+//                .foregroundColor(.primary)
+//                .lineLimit(1, reservesSpace: true)
+//
+////            HStack(spacing: 2) {
+////                if let startDate = program.startDate {
+////                    Text(startDate, style: .time)
+////                } else {
+////                    Text(String.emptyDash)
+////                }
+////
+////                Text("-")
+////
+////                if let endDate = program.endDate {
+////                    Text(endDate, style: .time)
+////                } else {
+////                    Text(String.emptyDash)
+////                }
+////            }
+////            .font(.footnote)
+////            .foregroundStyle(.secondary)
+//        }
+//    }
+// }

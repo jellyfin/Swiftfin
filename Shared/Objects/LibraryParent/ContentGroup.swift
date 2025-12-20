@@ -353,7 +353,7 @@ struct CustomContentGroupSettingsView: View {
                     temporaryCustomContentGroup
                 )
             }
-            .buttonStyle(.toolbarPill)
+//            .buttonStyle(.toolbarPill)
         }
     }
 }

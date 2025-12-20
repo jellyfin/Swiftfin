@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: use blurhash for extensions?
+
 struct MirrorExtensionView<Content: View>: View {
 
     @State

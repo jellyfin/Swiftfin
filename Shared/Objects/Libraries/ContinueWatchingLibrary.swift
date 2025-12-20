@@ -17,7 +17,8 @@ struct ContinueWatchingLibrary: PagingLibrary {
 
     init() {
         self.parent = _TitledLibraryParent(
-            displayTitle: L10n.continueWatching.localizedCapitalized,
+            //            displayTitle: L10n.continueWatching.localizedCapitalized,
+            displayTitle: "Continue Watching",
             libraryID: "continue-watching"
         )
     }

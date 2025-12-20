@@ -20,12 +20,10 @@ struct ItemEditorView: View {
     @Router
     private var router
 
-    // MARK: - ViewModel
-
-    let item: BaseItemDto
-
     @StateObject
     private var metadataViewModel: RefreshMetadataViewModel
+
+    let item: BaseItemDto
 
     private var canEditMetadata: Bool {
         userSession.user.permissions.items.canEditMetadata(item: item) == true
@@ -39,9 +37,9 @@ struct ItemEditorView: View {
         userSession.user.permissions.items.canManageLyrics(item: item) == true
     }
 
-    init(viewModel: ItemViewModel) {
-        self.viewModel = viewModel
-        _metadataViewModel = StateObject(wrappedValue: RefreshMetadataViewModel(item: viewModel.item))
+    init(item: BaseItemDto) {
+        self.item = item
+        _metadataViewModel = .init(wrappedValue: .init(item: item))
     }
 
     // MARK: - Body

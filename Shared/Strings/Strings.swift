@@ -366,8 +366,6 @@ internal enum L10n {
   internal static let containers = L10n.tr("Localizable", "containers", fallback: "Containers")
   /// Continue
   internal static let `continue` = L10n.tr("Localizable", "continue", fallback: "Continue")
-  /// Continue watching
-  internal static let continueWatching = L10n.tr("Localizable", "continueWatching", fallback: "Continue watching")
   /// Continuing
   internal static let continuing = L10n.tr("Localizable", "continuing", fallback: "Continuing")
   /// Control other users

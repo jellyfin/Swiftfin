@@ -89,6 +89,13 @@ extension Backport where Content: View {
             content
         }
     }
+
+    // TODO: don't use
+    @ViewBuilder
+    func tabViewStyle(_ style: TabViewStyle) -> some View {
+        content.tabViewStyle(style.swiftUIValue)
+            .eraseToAnyView()
+    }
 }
 
 // MARK: ButtonBorderShape
@@ -117,6 +124,33 @@ enum ButtonBorderShape {
 enum NavigationTransition: Hashable {
     case automatic
     case zoom(sourceID: String, namespace: Namespace.ID)
+}
+
+enum TabViewStyle {
+
+    case automatic
+    case page
+    case sidebarAdaptable
+    case tabBarOnly
+
+    var swiftUIValue: any SwiftUI.TabViewStyle {
+        switch self {
+        case .automatic: .automatic
+        case .page: .page
+        case .sidebarAdaptable:
+            if #available(iOS 18, tvOS 18, *) {
+                .sidebarAdaptable
+            } else {
+                .automatic
+            }
+        case .tabBarOnly:
+            if #available(iOS 18, tvOS 18, *) {
+                .tabBarOnly
+            } else {
+                .automatic
+            }
+        }
+    }
 }
 
 enum ToolbarTitleDisplayMode {

@@ -29,15 +29,12 @@ extension View {
         )
     }
 
-    /// - Important: This does nothing on tvOS.
-    @ViewBuilder
-    func navigationBarTitleDisplayMode(_ mode: NavigationBarItem.TitleDisplayMode) -> some View {
-        self
-    }
+    // TODO: mark availability to use `toolbarTitleDisplayMode` instead
+    //       - overload iOS for same
 
     /// - Important: This does nothing on tvOS.
     @ViewBuilder
-    func statusBarHidden() -> some View {
+    func navigationBarTitleDisplayMode(_ mode: NavigationBarItem.TitleDisplayMode) -> some View {
         self
     }
 

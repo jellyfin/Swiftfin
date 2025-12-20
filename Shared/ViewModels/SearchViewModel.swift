@@ -107,7 +107,7 @@ final class SearchViewModel: ViewModel {
     private func _actuallySearch(_ query: String) async throws {
 
         guard self.canSearch else {
-            items.removeAll()
+//            items.removeAll()
             return
         }
 

@@ -10,6 +10,8 @@ import Factory
 import Foundation
 import JellyfinAPI
 
+// TODO: rename `HomeContentGroupProvider`
+
 struct DefaultContentGroupProvider: _ContentGroupProvider {
 
     @Injected(\.currentUserSession)

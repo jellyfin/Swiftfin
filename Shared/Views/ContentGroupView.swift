@@ -156,9 +156,6 @@ struct HeaderedContentGroupView<Header: _ContentGroup, Provider: _ContentGroupPr
 
 struct ContentGroupView<Provider: _ContentGroupProvider>: View {
 
-    @Environment(\.safeAreaInsets)
-    private var safeAreaInsets
-
     @Router
     private var router
 

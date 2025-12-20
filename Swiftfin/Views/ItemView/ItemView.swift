@@ -399,6 +399,8 @@ extension View {
     }
 }
 
+// TODO: use `frameForParentView.scrollViewHeader`
+
 struct aBackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
 
     @Environment(\.frameForParentView)
