@@ -63,7 +63,7 @@ final class MediaViewModel: ViewModel {
         // force it to `folders` for better view handling
         let supportedUserViews = try await (userViews.value.items ?? [])
             .coalesced(property: \.collectionType, with: .folders)
-            .intersection(CollectionType.supportedCases, using: \.collectionType)
+            .intersecting(CollectionType.supportedCases, using: \.collectionType)
             .subtracting(excludedLibraryIDs, using: \.id)
             .map { item in
 

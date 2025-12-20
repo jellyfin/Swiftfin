@@ -22,7 +22,7 @@ extension Collection {
         indices.contains(index) ? self[index] : nil
     }
 
-    func keyed<Key>(using: KeyPath<Element, Key>) -> [Key: Element] {
-        Dictionary(uniqueKeysWithValues: map { ($0[keyPath: using], $0) })
+    func keyed<Key>(using keyPath: KeyPath<Element, Key>) -> [Key: Element] {
+        Dictionary(uniqueKeysWithValues: map { ($0[keyPath: keyPath], $0) })
     }
 }
