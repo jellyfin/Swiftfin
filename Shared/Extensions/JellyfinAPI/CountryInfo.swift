@@ -29,12 +29,3 @@ extension CountryInfo: @retroactive Identifiable {
         hashValue
     }
 }
-
-extension CountryInfo {
-
-    static var none: CountryInfo {
-        CountryInfo(
-            displayName: L10n.none
-        )
-    }
-}

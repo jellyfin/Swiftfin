@@ -11,58 +11,52 @@ import SwiftUI
 
 struct CountryPicker: View {
 
-    // MARK: - State Objects
-
     @StateObject
     private var viewModel: PagingLibraryViewModel<CountryLibrary>
-
-    // MARK: - Input Properties
 
     private let selection: Binding<String?>
     private let title: String
 
-    // MARK: - Body
+    init(_ title: String, twoLetterISORegion: Binding<String?>) {
+        self.selection = twoLetterISORegion
+        self.title = title
+        self._viewModel = .init(wrappedValue: .init(initialValue: []))
+    }
+
+    private var currentCountry: CountryInfo? {
+        viewModel.value.first(property: \.twoLetterISORegionName, equalTo: selection.wrappedValue)
+    }
+
+    @ViewBuilder
+    private var picker: some View {
+        Picker(
+            title,
+            sources: viewModel.value,
+            selection: selection.map(
+                getter: { iso in viewModel.value.first(property: \.twoLetterISORegionName, equalTo: iso) },
+                setter: { info in info?.twoLetterISORegionName }
+            )
+        )
+    }
 
     var body: some View {
         Group {
             #if os(tvOS)
-            ListRowMenu(title, subtitle: $selection.wrappedValue?.displayTitle) {
-                Picker(title, selection: $selection) {
-                    Text(CountryInfo.none.displayTitle)
-                        .tag(CountryInfo.none as CountryInfo?)
-
-                    ForEach(viewModel.value, id: \.self) { country in
-                        Text(country.displayTitle)
-                            .tag(country as CountryInfo?)
-                    }
-                }
+            ListRowMenu(
+                title,
+                subtitle: currentCountry?.displayTitle
+            ) {
+                picker
             }
             .menuStyle(.borderlessButton)
             .listRowInsets(.zero)
             #else
-            Picker(
-                title,
-                sources: viewModel.elements,
-                selection: selection.map(
-                    getter: { iso in viewModel.elements.first(property: \.twoLetterISORegionName, equalTo: iso) },
-                    setter: { info in info?.twoLetterISORegionName }
-                )
-            )
+            picker
             #endif
         }
-        .enabled(viewModel.state == .content)
+        .enabled(viewModel.state == .initial)
         .onFirstAppear {
             viewModel.refresh()
         }
-    }
-}
-
-extension CountryPicker {
-
-    init(_ title: String, twoLetterISORegion: Binding<String?>) {
-
-        self.selection = twoLetterISORegion
-        self.title = title
-        self._viewModel = .init(wrappedValue: .init(library: .init()))
     }
 }
