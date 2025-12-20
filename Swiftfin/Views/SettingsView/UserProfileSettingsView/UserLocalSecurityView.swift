@@ -120,7 +120,7 @@ struct UserLocalSecurityView: View {
         List {
 
             Section {
-                CaseIterablePicker(L10n.security, selection: $signInPolicy)
+                Picker(L10n.security, selection: $signInPolicy)
             } footer: {
                 VStack(alignment: .leading, spacing: 10) {
                     Text(L10n.additionalSecurityAccessDescription)

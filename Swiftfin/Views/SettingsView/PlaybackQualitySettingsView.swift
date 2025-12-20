@@ -24,7 +24,7 @@ struct PlaybackQualitySettingsView: View {
     var body: some View {
         Form {
             Section {
-                CaseIterablePicker(
+                Picker(
                     L10n.maximumBitrate,
                     selection: $appMaximumBitrate
                 )
@@ -49,7 +49,7 @@ struct PlaybackQualitySettingsView: View {
 
             if appMaximumBitrate == .auto {
                 Section {
-                    CaseIterablePicker(
+                    Picker(
                         L10n.testSize,
                         selection: $appMaximumBitrateTest
                     )
@@ -63,7 +63,7 @@ struct PlaybackQualitySettingsView: View {
             }
 
             Section {
-                CaseIterablePicker(
+                Picker(
                     L10n.compatibility,
                     selection: $compatibilityMode
                 )

@@ -39,7 +39,7 @@ extension CustomizeViewsSettings {
                     router.route(to: .itemViewAttributes(selection: $itemViewAttributes))
                 }
 
-                CaseIterablePicker(
+                Picker(
                     L10n.enabledTrailers,
                     selection: $enabledTrailers
                 )

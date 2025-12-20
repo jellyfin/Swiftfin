@@ -26,7 +26,7 @@ extension ServerUserPermissionsView {
                     isOn: $policy.enableRemoteAccess.coalesce(false)
                 )
 
-                CaseIterablePicker(
+                Picker(
                     L10n.maximumRemoteBitrate,
                     selection: $policy.remoteClientBitrateLimit.map(
                         getter: { MaxBitratePolicy(rawValue: $0) ?? .custom },
