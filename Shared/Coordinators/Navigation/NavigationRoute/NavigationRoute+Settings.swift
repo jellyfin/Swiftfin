@@ -217,7 +217,7 @@ extension NavigationRoute {
                 step: step,
                 formatter: formatter
             )
-            .navigationTitle(title)
+            .navigationTitle(title.localizedCapitalized)
         }
     }
     #endif
