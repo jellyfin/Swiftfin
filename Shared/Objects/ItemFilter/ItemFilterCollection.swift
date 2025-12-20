@@ -50,6 +50,10 @@ struct ItemFilterCollection: Hashable, Storable {
         self != Self.default
     }
 
+    var hasQueryableFilters: Bool {
+        genres.isNotEmpty || itemTypes.isNotEmpty || letter.isNotEmpty || tags.isNotEmpty || traits.isNotEmpty || years.isNotEmpty
+    }
+
     var activeFilterCount: Int {
         var count = 0
 
