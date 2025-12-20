@@ -64,10 +64,7 @@ struct AddTaskTriggerView: View {
     private var weeklyView: some View {
         Picker(
             L10n.dayOfWeek,
-            selection: Binding(
-                get: { taskTriggerInfo.dayOfWeek ?? AddTaskTriggerView.defaultDayOfWeek },
-                set: { taskTriggerInfo.dayOfWeek = $0 }
-            )
+            selection: $taskTriggerInfo.dayOfWeek.coalesce(AddTaskTriggerView.defaultDayOfWeek)
         ) {
             ForEach(DayOfWeek.allCases, id: \.self) { day in
                 Text(day.displayTitle)

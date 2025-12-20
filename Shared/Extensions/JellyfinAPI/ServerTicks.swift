@@ -8,7 +8,7 @@
 
 import Foundation
 
-// TODO: remove and have sdk use strong types instead
+@available(*, deprecated, message: "Use `Duration.ticks` instead.")
 typealias ServerTicks = Int
 
 extension ServerTicks {
@@ -22,30 +22,37 @@ extension ServerTicks {
 
     // MARK: - Initializers
 
+    @available(*, deprecated, message: "Use `Duration.ticks` instead.")
     init(_ ticks: Int? = nil) {
         self = ticks ?? 0
     }
 
+    @available(*, deprecated, message: "Use `Duration.ticks` instead.")
     init(seconds: Int? = nil) {
         self = (seconds ?? 0) * ServerTicks.ticksPerSecond
     }
 
+    @available(*, deprecated, message: "Use `Duration.ticks` instead.")
     init(minutes: Int? = nil) {
         self = (minutes ?? 0) * ServerTicks.ticksPerMinute
     }
 
+    @available(*, deprecated, message: "Use `Duration.ticks` instead.")
     init(hours: Int? = nil) {
         self = (hours ?? 0) * ServerTicks.ticksPerHour
     }
 
+    @available(*, deprecated, message: "Use `Duration.ticks` instead.")
     init(days: Int? = nil) {
         self = (days ?? 0) * ServerTicks.ticksPerDay
     }
 
+    @available(*, deprecated, message: "Use `Duration.ticks` instead.")
     init(timeInterval: TimeInterval? = nil) {
         self = Int((timeInterval ?? 0) * Double(ServerTicks.ticksPerSecond))
     }
 
+    @available(*, deprecated, message: "Use `Duration.ticks` instead.")
     init(date: Date) {
         let components = Calendar.current.dateComponents([.hour, .minute], from: date)
         let hour = components.hour ?? 0

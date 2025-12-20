@@ -74,6 +74,7 @@
 		E13DD3C62716499E009D4DAF /* CoreStore in Frameworks */ = {isa = PBXBuildFile; productRef = E13DD3C52716499E009D4DAF /* CoreStore */; };
 		E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */ = {isa = PBXBuildFile; productRef = E13DD3CC27164CA7009D4DAF /* CoreStore */; };
 		E13DD3D327168E65009D4DAF /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = E13DD3D227168E65009D4DAF /* Defaults */; };
+		E14000BD2EF622AC00354A3C /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E14000BC2EF622AC00354A3C /* StatefulMacros */; };
 		E145EB4B2BE16849003BF6F3 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E145EB4A2BE16849003BF6F3 /* KeychainSwift */; };
 		E14EA1652BF70A8E00DE757A /* Mantis in Frameworks */ = {isa = PBXBuildFile; productRef = E14EA1642BF70A8E00DE757A /* Mantis */; };
 		E150C0C12BFD62FD00944FFA /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E150C0C02BFD62FD00944FFA /* JellyfinAPI */; };
@@ -291,6 +292,7 @@
 				62666E1B27E501D400EC0ECD /* CoreGraphics.framework in Frameworks */,
 				E1388A46293F0ABA009721B1 /* SwizzleSwift in Frameworks */,
 				62666E2C27E5021000EC0ECD /* QuartzCore.framework in Frameworks */,
+				E14000BD2EF622AC00354A3C /* StatefulMacros in Frameworks */,
 				62666E1927E501D000EC0ECD /* CoreFoundation.framework in Frameworks */,
 				E19D41B22BF2BFA50082B8B2 /* KeychainSwift in Frameworks */,
 				E18443CB2A037773002DDDC8 /* UDPBroadcast in Frameworks */,
@@ -526,6 +528,7 @@
 				BD88CB412D77E6A0006BB5E3 /* TVOSPicker */,
 				E1137D302E090C230091EB60 /* VLCUI */,
 				E1E2D7BE2E3FD936004E2E5F /* Transmission */,
+				E14000BC2EF622AC00354A3C /* StatefulMacros */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -1537,6 +1540,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
+		};
+		E14000BC2EF622AC00354A3C /* StatefulMacros */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1C404CB2EF61D4C00959C4F /* XCRemoteSwiftPackageReference "StatefulMacro" */;
+			productName = StatefulMacros;
 		};
 		E145EB4A2BE16849003BF6F3 /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;
