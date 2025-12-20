@@ -19,7 +19,7 @@ final class ActiveSessionsViewModel: ViewModel {
         case refresh
 
         var transition: Transition {
-            .loop(.refreshing)
+            .to(.initial, then: .content)
                 .whenBackground(.refreshing)
         }
     }
@@ -31,7 +31,7 @@ final class ActiveSessionsViewModel: ViewModel {
     enum State {
         case initial
         case error
-        case refreshing
+        case content
     }
 
     @Published
