@@ -12,7 +12,6 @@ import SwiftUI
 // TODO: create environment for image sources
 //       - for when to have episode use series
 //       - pass in folder context
-//       - remove cinematic/thumb
 
 typealias ImageSourceBuilder = ArrayBuilder<ImageSource>
 
@@ -76,14 +75,6 @@ extension Poster {
     }
 
     func squareImageSources(
-        maxWidth: CGFloat?,
-        quality: Int? = nil,
-        environment: Environment
-    ) -> [ImageSource] {
-        []
-    }
-
-    func cinematicImageSources(
         maxWidth: CGFloat?,
         quality: Int? = nil,
         environment: Environment

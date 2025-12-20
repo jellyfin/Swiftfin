@@ -14,7 +14,7 @@ struct CountryPicker: View {
     // MARK: - State Objects
 
     @StateObject
-    private var viewModel: CountriesViewModel
+    private var viewModel: PagingLibraryViewModel<CountryLibrary>
 
     // MARK: - Input Properties
 
@@ -55,13 +55,13 @@ struct CountryPicker: View {
                 Text(CountryInfo.none.displayTitle)
                     .tag(CountryInfo.none as CountryInfo?)
 
-                ForEach(viewModel.value, id: \.self) { country in
+                ForEach(viewModel.elements) { country in
                     Text(country.displayTitle)
                         .tag(country as CountryInfo?)
                 }
             }
             // TODO: iOS 17+ delete this and use the tvOS onChange at the Group level
-            .onChange(of: viewModel.value) { _ in
+            .onChange(of: viewModel.elements) { _ in
                 updateSelection()
             }
             .onChange(of: selection) { newValue in
@@ -75,7 +75,7 @@ struct CountryPicker: View {
     }
 
     private func updateSelection() {
-        let newValue = viewModel.value.first { value in
+        let newValue = viewModel.elements.first { value in
             if let selectedTwo = selection?.twoLetterISORegionName,
                let candidateTwo = value.twoLetterISORegionName,
                selectedTwo == candidateTwo
@@ -122,10 +122,6 @@ extension CountryPicker {
             }
         )
 
-        self._viewModel = StateObject(
-            wrappedValue: CountriesViewModel(
-                initialValue: [.none]
-            )
-        )
+        self._viewModel = .init(wrappedValue: .init(library: .init()))
     }
 }

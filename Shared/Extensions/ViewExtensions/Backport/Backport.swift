@@ -164,7 +164,12 @@ enum ToolbarTitleDisplayMode {
         switch self {
         case .automatic: .automatic
         case .inline: .inline
-        default: .large
+        case .inlineLarge, .large:
+            #if os(iOS)
+            .large
+            #else
+            .automatic
+            #endif
         }
     }
 
@@ -173,8 +178,18 @@ enum ToolbarTitleDisplayMode {
         switch self {
         case .automatic: .automatic
         case .inline: .inline
-        case .inlineLarge: .inlineLarge
-        case .large: .large
+        case .inlineLarge:
+            #if os(iOS)
+            .inlineLarge
+            #else
+            .automatic
+            #endif
+        case .large:
+            #if os(iOS)
+            .large
+            #else
+            .automatic
+            #endif
         }
     }
 }

@@ -24,6 +24,12 @@ extension CountryInfo: Displayable {
     }
 }
 
+extension CountryInfo: @retroactive Identifiable {
+    public var id: Int {
+        hashValue
+    }
+}
+
 extension CountryInfo {
 
     static var none: CountryInfo {

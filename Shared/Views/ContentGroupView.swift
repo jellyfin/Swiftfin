@@ -178,7 +178,7 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
         .ignoresSafeArea(edges: .horizontal)
         .scrollIndicators(.hidden)
         .refreshable {
-            try? await viewModel.background.refresh()
+            await viewModel.background.refresh()
         }
     }
 

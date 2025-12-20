@@ -14,7 +14,7 @@ struct ParentalRatingPicker: View {
     // MARK: - State Objects
 
     @StateObject
-    private var viewModel: ParentalRatingsViewModel
+    private var viewModel: PagingLibraryViewModel<ParentalRatingLibrary>
 
     // MARK: - Input Properties
 
@@ -54,12 +54,12 @@ struct ParentalRatingPicker: View {
                 Text(ParentalRating.none.displayTitle)
                     .tag(ParentalRating.none as ParentalRating?)
 
-                ForEach(viewModel.value, id: \.self) { value in
+                ForEach(viewModel.elements) { value in
                     Text(value.displayTitle)
                         .tag(value as ParentalRating?)
                 }
             }
-            .onChange(of: viewModel.value) { _ in
+            .onChange(of: viewModel.elements) { _ in
                 updateSelection()
             }
             .onChange(of: selection) { newValue in
@@ -75,7 +75,7 @@ struct ParentalRatingPicker: View {
     // MARK: - Update Selection
 
     private func updateSelection() {
-        let newValue = viewModel.value.first { value in
+        let newValue = viewModel.elements.first { value in
             if let selectedName = selection?.name,
                let candidateName = value.name,
                selectedName == candidateName
@@ -111,10 +111,6 @@ extension ParentalRatingPicker {
             }
         )
 
-        self._viewModel = StateObject(
-            wrappedValue: ParentalRatingsViewModel(
-                initialValue: [.none]
-            )
-        )
+        self._viewModel = .init(wrappedValue: .init(library: .init()))
     }
 }

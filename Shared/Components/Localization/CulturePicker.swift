@@ -14,7 +14,8 @@ struct CulturePicker: View {
     // MARK: - State Objects
 
     @StateObject
-    private var viewModel: CulturesViewModel
+    private var viewModel: PagingLibraryViewModel<CultureLibrary>
+//    private var viewModel: CulturesViewModel
 
     // MARK: - Input Properties
 
@@ -55,13 +56,13 @@ struct CulturePicker: View {
                 Text(CultureDto.none.displayTitle)
                     .tag(CultureDto.none as CultureDto?)
 
-                ForEach(viewModel.value, id: \.self) { value in
+                ForEach(viewModel.elements) { value in
                     Text(value.displayTitle)
                         .tag(value as CultureDto?)
                 }
             }
             // TODO: iOS 17+ delete this and use the tvOS onChange at the Group level
-            .onChange(of: viewModel.value) { _ in
+            .onChange(of: viewModel.elements) { _ in
                 updateSelection()
             }
             .onChange(of: selection) { newValue in
@@ -75,7 +76,7 @@ struct CulturePicker: View {
     }
 
     private func updateSelection() {
-        let newValue = viewModel.value.first { value in
+        let newValue = viewModel.elements.first { value in
             if let selectedTwo = selection?.twoLetterISOLanguageName,
                let candidateTwo = value.twoLetterISOLanguageName,
                selectedTwo == candidateTwo
@@ -117,11 +118,7 @@ extension CulturePicker {
             }
         )
 
-        self._viewModel = StateObject(
-            wrappedValue: CulturesViewModel(
-                initialValue: [.none]
-            )
-        )
+        self._viewModel = .init(wrappedValue: .init(library: .init()))
     }
 
     init(_ title: String, threeLetterISOLanguageName: Binding<String?>) {
@@ -144,10 +141,6 @@ extension CulturePicker {
             }
         )
 
-        self._viewModel = StateObject(
-            wrappedValue: CulturesViewModel(
-                initialValue: [.none]
-            )
-        )
+        self._viewModel = .init(wrappedValue: .init(library: .init()))
     }
 }
