@@ -53,9 +53,9 @@ extension CustomizeViewsSettings {
                 }
 
                 Section(L10n.layout) {
-                    CaseIterablePicker(L10n.layout, selection: $libraryDisplayType)
+                    Picker(L10n.layout, selection: $libraryDisplayType)
 
-                    CaseIterablePicker(L10n.posters, selection: $libraryPosterType)
+                    Picker(L10n.posters, selection: $libraryPosterType)
 
                     if libraryDisplayType == .list, UIDevice.isPad {
                         BasicStepper(
@@ -77,7 +77,7 @@ extension CustomizeViewsSettings {
                     Toggle(L10n.letterPicker, isOn: $letterPickerEnabled)
 
                     if letterPickerEnabled {
-                        CaseIterablePicker(
+                        Picker(
                             L10n.orientation,
                             selection: $letterPickerOrientation
                         )

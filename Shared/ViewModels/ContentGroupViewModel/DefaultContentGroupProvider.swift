@@ -55,7 +55,7 @@ struct DefaultContentGroupProvider: _ContentGroupProvider {
         )
 
         (userViews.value.items ?? [])
-            .intersection(
+            .intersecting(
                 [
                     .homevideos,
                     .movies,

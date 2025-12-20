@@ -113,7 +113,7 @@ extension CustomizeViewsSettings {
                     }
                     .scrollIndicators(.hidden)
 
-                    CaseIterablePicker("Status", selection: $previewItemState)
+                    Picker("Status", selection: $previewItemState)
                 }
 
                 Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)

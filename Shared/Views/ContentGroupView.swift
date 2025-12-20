@@ -261,12 +261,12 @@ struct CustomizePosterGroupSettings: View {
             }
 
             Section {
-                CaseIterablePicker(
+                Picker(
                     L10n.posters,
                     selection: $parentPosterStyle.displayType
                 )
 
-                CaseIterablePicker(
+                Picker(
                     "Size",
                     selection: $parentPosterStyle.size
                 )
