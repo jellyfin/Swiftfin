@@ -24,11 +24,8 @@ extension CountryInfo: Displayable {
     }
 }
 
-extension CountryInfo {
-
-    static var none: CountryInfo {
-        CountryInfo(
-            displayName: L10n.none
-        )
+extension CountryInfo: @retroactive Identifiable {
+    public var id: Int {
+        hashValue
     }
 }
