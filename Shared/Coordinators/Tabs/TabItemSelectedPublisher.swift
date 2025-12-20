@@ -6,11 +6,12 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import SwiftUI
 
 extension TabCoordinator {
 
-    typealias TabItemSelectedPublisher = LegacyEventPublisher<TabCoordinator.SelectedEvent>
+    typealias TabItemSelectedPublisher = PassthroughSubject<TabCoordinator.SelectedEvent, Never>
 }
 
 @propertyWrapper

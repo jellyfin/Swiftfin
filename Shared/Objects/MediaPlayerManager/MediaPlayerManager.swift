@@ -15,7 +15,7 @@ import VLCUI
 
 // TODO: proper error catching
 
-typealias MediaPlayerManagerPublisher = LegacyEventPublisher<MediaPlayerManager?>
+typealias MediaPlayerManagerPublisher = PassthroughSubject<MediaPlayerManager?, Never>
 
 extension Scope {
     static let session = Cached()
