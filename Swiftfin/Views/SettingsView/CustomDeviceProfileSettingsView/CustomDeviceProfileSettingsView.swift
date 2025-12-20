@@ -33,7 +33,7 @@ struct CustomDeviceProfileSettingsView: View {
     var body: some View {
         List {
             Section {
-                CaseIterablePicker(
+                Picker(
                     L10n.behavior,
                     selection: $customDeviceProfileAction
                 )

@@ -12,25 +12,17 @@ import SwiftUI
 
 struct EditServerTaskView: View {
 
-    // MARK: - Observed & Environment Objects
-
     @Router
     private var router
+
+    @CurrentDate
+    private var currentDate: Date
 
     @ObservedObject
     var observer: ServerTaskObserver
 
-    // MARK: - Trigger Variables
-
     @State
     private var selectedTrigger: TaskTriggerInfo?
-
-    // MARK: - Error State
-
-    @State
-    private var error: Error?
-
-    // MARK: - Body
 
     var body: some View {
         List {
@@ -42,16 +34,30 @@ struct EditServerTaskView: View {
             ProgressSection(observer: observer)
 
             if let category = observer.task.category {
-                DetailsSection(category: category)
+                Section(L10n.details) {
+                    LabeledContent(L10n.category, value: category)
+                }
             }
 
             if let lastExecutionResult = observer.task.lastExecutionResult {
                 if let status = lastExecutionResult.status, let endTime = lastExecutionResult.endTimeUtc {
-                    LastRunSection(status: status, endTime: endTime)
+                    Section(L10n.lastRun) {
+
+                        LabeledContent(
+                            L10n.status,
+                            value: status.displayTitle
+                        )
+
+                        LabeledContent(L10n.executed, value: endTime, format: .lastSeen)
+                            .id(currentDate)
+                            .monospacedDigit()
+                    }
                 }
 
                 if let errorMessage = lastExecutionResult.errorMessage {
-                    LastErrorSection(message: errorMessage)
+                    Section(L10n.errorDetails) {
+                        Text(errorMessage)
+                    }
                 }
             }
 
@@ -63,7 +69,7 @@ struct EditServerTaskView: View {
         .navigationTitle(L10n.task)
         .topBarTrailing {
 
-            if observer.backgroundStates.contains(.updatingTriggers) {
+            if observer.background.states.contains(.observing) || observer.background.states.contains(.updating) {
                 ProgressView()
             }
 
@@ -75,12 +81,6 @@ struct EditServerTaskView: View {
                 .buttonStyle(.toolbarPill)
             }
         }
-        .onReceive(observer.events) { event in
-            switch event {
-            case let .error(eventError):
-                error = eventError
-            }
-        }
-        .errorMessage($error)
+        .errorMessage($observer.error)
     }
 }

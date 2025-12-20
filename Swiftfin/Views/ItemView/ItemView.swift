@@ -40,16 +40,17 @@ struct ItemView: View {
     // MARK: - Can Delete Item
 
     private var canDelete: Bool {
-        viewModel.userSession.user.permissions.items.canDelete(item: viewModel.item)
+        viewModel.userSession?.user.permissions.items.canDelete(item: viewModel.item) == true
     }
 
     // MARK: - Can Edit Item
 
     private var canEdit: Bool {
-        viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item)
-        // TODO: Enable when Subtitle / Lyric Editing is added
+        viewModel.userSession?.user.permissions.items.canEditMetadata(item: viewModel.item) == true ||
+            viewModel.userSession?.user.permissions.items.canManageSubtitles(item: viewModel.item) == true
+
+        // TODO: Enable whenLyric Editing is added
         // || viewModel.userSession.user.permissions.items.canManageLyrics(item: viewModel.item)
-        // || viewModel.userSession.user.permissions.items.canManageSubtitles(item: viewModel.item)
     }
 
     // MARK: - Deletion or Editing is Enabled

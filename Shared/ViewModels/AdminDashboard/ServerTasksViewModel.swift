@@ -15,141 +15,110 @@ import SwiftUI
 // TODO: do something for errors from restart/shutdown
 //       - toast?
 
-final class ServerTasksViewModel: ViewModel, Stateful {
+@MainActor
+@Stateful
+final class ServerTasksViewModel: ViewModel {
 
-    // MARK: - Action
-
-    enum Action: Equatable {
+    @CasePathable
+    enum Action {
         case restartApplication
         case shutdownApplication
-        case getTasks
-        case refreshTasks
+        case refresh
+
+        var transition: Transition {
+            switch self {
+            case .restartApplication, .shutdownApplication:
+                .none
+            case .refresh:
+                .to(.initial, then: .content)
+                    .whenBackground(.refreshing)
+            }
+        }
     }
 
-    // MARK: - BackgroundState
-
-    enum BackgroundState: Hashable {
-        case gettingTasks
+    enum BackgroundState {
+        case refreshing
     }
 
-    // MARK: - State
-
-    enum State: Hashable {
+    enum State {
         case content
-        case error(ErrorMessage)
+        case error
         case initial
     }
 
     @Published
-    var backgroundStates: Set<BackgroundState> = []
-    @Published
-    var state: State = .initial
-    @Published
     var tasks: OrderedDictionary<String, [ServerTaskObserver]> = [:]
 
-    private var getTasksCancellable: AnyCancellable?
-
-    func respond(to action: Action) -> State {
-        switch action {
-        case .restartApplication:
-            Task {
-                try await sendRestartRequest()
-            }
-            .store(in: &cancellables)
-
-            return .content
-        case .shutdownApplication:
-            Task {
-                try await sendShutdownRequest()
-            }
-            .store(in: &cancellables)
-
-            return .content
-        case .getTasks:
-            getTasksCancellable?.cancel()
-
-            getTasksCancellable = Task {
-                do {
-                    try await getTasks()
-
-                    await MainActor.run {
-                        self.state = .content
-                    }
-                } catch {
-                    await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return state
-        case .refreshTasks:
-            tasks.removeAll()
-            getTasksCancellable?.cancel()
-
-            getTasksCancellable = Task {
-                do {
-                    await MainActor.run {
-                        self.state = .initial
-                    }
-
-                    try await getTasks()
-
-                    await MainActor.run {
-                        self.state = .content
-                    }
-                } catch {
-                    await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return .initial
-        }
-    }
-
-    // MARK: - Get All Tasks
-
-    // TODO: update tasks like `ActiveSessionsViewModel`
-    private func getTasks() async throws {
+    @Function(\Action.Cases.refresh)
+    private func _refresh() async throws {
         let request = Paths.getTasks(isHidden: false, isEnabled: true)
         let response = try await userSession.client.send(request)
 
-        if tasks.isEmpty {
-            let observers = response.value
-                .sorted(using: \.category)
-                .map { ServerTaskObserver(task: $0) }
+        let allTasks = response.value
+        let allTaskIDs = allTasks.compactMap(\.id)
 
-            let newTasks = OrderedDictionary(grouping: observers, by: { $0.task.category ?? "" })
+        let existingTaskIDs = tasks.values.flattened().compactMap(\.task.id)
+        let removedTaskIDs = existingTaskIDs.filtering { allTaskIDs.contains($0) }
 
-            await MainActor.run {
-                self.tasks = newTasks
+        for category in tasks.keys {
+            tasks[category]?.removeAll { observer in
+                guard let id = observer.task.id else { return false }
+                return removedTaskIDs.contains(id)
+            }
+            if tasks[category]?.isEmpty == true {
+                tasks[category] = nil
             }
         }
 
-        for runningTask in response.value where runningTask.state == .running {
+        let existingIDs = existingTaskIDs.filter { allTaskIDs.contains($0) }
+        let newTasks = allTasks.filter { task in
+            guard let id = task.id else { return false }
+            return !existingTaskIDs.contains(id)
+        }
+
+        for id in existingIDs {
             if let observer = tasks.values
-                .flatMap(\.self)
+                .flattened()
+                .first(where: { $0.task.id == id }),
+                let updatedTask = allTasks.first(where: { $0.id == id })
+            {
+                observer.task = updatedTask
+            }
+        }
+
+        for newTask in newTasks {
+            let observer = ServerTaskObserver(task: newTask)
+            let category = newTask.category ?? ""
+
+            if tasks[category] != nil {
+                tasks[category]?.append(observer)
+            } else {
+                tasks[category] = [observer]
+            }
+        }
+
+        for runningTask in allTasks where runningTask.state == .running {
+            if let observer = tasks.values
+                .flattened()
                 .first(where: { $0.task.id == runningTask.id })
             {
-                await observer.send(.start)
+                await observer.start()
             }
+        }
+
+        for category in tasks.keys {
+            tasks[category]?.sort { ($0.task.name ?? "") < ($1.task.name ?? "") }
         }
     }
 
-    // MARK: - Restart Application
-
-    private func sendRestartRequest() async throws {
+    @Function(\Action.Cases.restartApplication)
+    private func _restartApplication() async throws {
         let request = Paths.restartApplication
         try await userSession.client.send(request)
     }
 
-    // MARK: - Shutdown Application
-
-    private func sendShutdownRequest() async throws {
+    @Function(\Action.Cases.shutdownApplication)
+    private func _shutdownApplication() async throws {
         let request = Paths.shutdownApplication
         try await userSession.client.send(request)
     }
