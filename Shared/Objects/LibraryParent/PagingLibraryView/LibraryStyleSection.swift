@@ -13,14 +13,14 @@ extension PagingLibraryView {
     struct LibraryStyleSection: View {
 
         @StateObject
-        private var box: BindingBox<LibraryStyle>
+        private var box: PublishedBox<LibraryStyle>
 
         private var libraryStyle: Binding<LibraryStyle> {
             $box.value
         }
 
         init(libraryStyle: Binding<LibraryStyle>) {
-            self._box = StateObject(wrappedValue: BindingBox(source: libraryStyle))
+            self._box = StateObject(wrappedValue: PublishedBox(source: libraryStyle))
         }
 
 //        init(

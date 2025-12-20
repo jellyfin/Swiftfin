@@ -14,7 +14,7 @@ extension NavigationRoute {
 
     // MARK: - Active Sessions
 
-    static func activeDeviceDetails(box: BindingBox<SessionInfoDto?>) -> NavigationRoute {
+    static func activeDeviceDetails(box: PublishedBox<SessionInfoDto?>) -> NavigationRoute {
         NavigationRoute(id: "activeDeviceDetails") {
             ActiveSessionDetailView(box: box)
         }

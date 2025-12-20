@@ -19,7 +19,7 @@ import SwiftUI
 ///   to respond to view updates from the source
 /// - the source of information that would typically be in a `State`
 ///   variable, or other publishing source, cause view update issues
-class BindingBox<Wrapped>: ObservableObject {
+class PublishedBox<Wrapped>: ObservableObject {
 
     @Published
     var value: Wrapped

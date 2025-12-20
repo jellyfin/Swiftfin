@@ -22,7 +22,7 @@ extension CustomDeviceProfileSettingsView {
         private var isPresentingNotSaved = false
 
         @StateObject
-        private var profile: BindingBox<CustomDeviceProfile>
+        private var profile: PublishedBox<CustomDeviceProfile>
 
         private let createProfile: Bool
 
@@ -36,7 +36,7 @@ extension CustomDeviceProfileSettingsView {
             createProfile = profile == nil
 
             if let profile {
-                self._profile = StateObject(wrappedValue: BindingBox(source: profile))
+                self._profile = StateObject(wrappedValue: PublishedBox(source: profile))
             } else {
                 let empty = Binding<CustomDeviceProfile>(
                     get: { .init(type: .video) },
@@ -44,7 +44,7 @@ extension CustomDeviceProfileSettingsView {
                 )
 
                 self._profile = StateObject(
-                    wrappedValue: BindingBox(source: empty)
+                    wrappedValue: PublishedBox(source: empty)
                 )
             }
         }
