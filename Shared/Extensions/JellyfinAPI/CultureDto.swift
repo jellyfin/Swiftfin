@@ -28,3 +28,9 @@ extension CultureDto: Displayable {
         return displayName ?? L10n.unknown
     }
 }
+
+extension CultureDto: @retroactive Identifiable {
+    public var id: Int {
+        hashValue
+    }
+}

@@ -11,111 +11,76 @@ import SwiftUI
 
 struct CulturePicker: View {
 
-    @State
-    private var selection: CultureDto?
-
     @StateObject
     private var viewModel: CulturesViewModel
 
-    private var selectionBinding: Binding<CultureDto?>
+    private let selection: Binding<String?>
     private let title: String
+    private let isUsingTwoLetterISO: Bool
+
+    init(_ title: String, twoLetterISOLanguageName: Binding<String?>) {
+        self.selection = twoLetterISOLanguageName
+        self.title = title
+        self._viewModel = .init(wrappedValue: .init(initialValue: []))
+        self.isUsingTwoLetterISO = true
+    }
+
+    init(_ title: String, threeLetterISOLanguageName: Binding<String?>) {
+        self.selection = threeLetterISOLanguageName
+        self.title = title
+        self._viewModel = .init(wrappedValue: .init(initialValue: []))
+        self.isUsingTwoLetterISO = false
+    }
+
+    private var currentCulture: CultureDto? {
+        if isUsingTwoLetterISO {
+            return viewModel.value.first(property: \.twoLetterISOLanguageName, equalTo: selection.wrappedValue)
+        } else {
+            return viewModel.value.first(property: \.threeLetterISOLanguageName, equalTo: selection.wrappedValue)
+        }
+    }
+
+    @ViewBuilder
+    private var picker: some View {
+        let _selection = {
+            if isUsingTwoLetterISO {
+                selection.map(
+                    getter: { iso in viewModel.value.first(property: \.twoLetterISOLanguageName, equalTo: iso) },
+                    setter: { $0?.twoLetterISOLanguageName }
+                )
+            } else {
+                selection.map(
+                    getter: { iso in viewModel.value.first(property: \.threeLetterISOLanguageName, equalTo: iso) },
+                    setter: { $0?.threeLetterISOLanguageName }
+                )
+            }
+        }()
+
+        Picker(
+            title,
+            sources: viewModel.value,
+            selection: _selection
+        )
+    }
 
     var body: some View {
         Group {
             #if os(tvOS)
-            ListRowMenu(title, subtitle: $selection.wrappedValue?.displayTitle) {
-                Picker(title, selection: $selection) {
-                    Text(CultureDto.none.displayTitle)
-                        .tag(CultureDto.none as CultureDto?)
-
-                    ForEach(viewModel.value, id: \.self) { value in
-                        Text(value.displayTitle)
-                            .tag(value as CultureDto?)
-                    }
-                }
-            }
-            // TODO: iOS 17+ move this to the Group
-            .onChange(of: viewModel.value) {
-                updateSelection()
-            }
-            .onChange(of: selection) { _, newValue in
-                selectionBinding.wrappedValue = newValue
+            ListRowMenu(
+                title,
+                subtitle: currentCulture?.displayTitle
+            ) {
+                picker
             }
             .menuStyle(.borderlessButton)
             .listRowInsets(.zero)
             #else
-            Picker(title, selection: $selection) {
-
-                Text(L10n.none)
-                    .tag(nil as CultureDto?)
-
-                ForEach(viewModel.value, id: \.self) { value in
-                    Text(value.displayTitle)
-                        .tag(value as CultureDto?)
-                }
-            }
+            picker
             #endif
         }
         .enabled(viewModel.state == .initial)
         .onFirstAppear {
             viewModel.refresh()
         }
-    }
-}
-
-extension CulturePicker {
-
-    init(_ title: String, twoLetterISOLanguageName: Binding<String?>) {
-        self.title = title
-        self._selection = State(
-            initialValue: twoLetterISOLanguageName.wrappedValue.flatMap {
-                CultureDto(twoLetterISOLanguageName: $0)
-            }
-        )
-
-        self.selectionBinding = Binding<CultureDto?>(
-            get: {
-                guard let code = twoLetterISOLanguageName.wrappedValue else {
-                    return nil
-                }
-                return CultureDto(twoLetterISOLanguageName: code)
-            },
-            set: { newCountry in
-                twoLetterISOLanguageName.wrappedValue = newCountry?.twoLetterISOLanguageName
-            }
-        )
-
-        self._viewModel = StateObject(
-            wrappedValue: CulturesViewModel(
-                initialValue: []
-            )
-        )
-    }
-
-    init(_ title: String, threeLetterISOLanguageName: Binding<String?>) {
-        self.title = title
-        self._selection = State(
-            initialValue: threeLetterISOLanguageName.wrappedValue.flatMap {
-                CultureDto(threeLetterISOLanguageName: $0)
-            }
-        )
-
-        self.selectionBinding = Binding<CultureDto?>(
-            get: {
-                guard let code = threeLetterISOLanguageName.wrappedValue else {
-                    return nil
-                }
-                return CultureDto(threeLetterISOLanguageName: code)
-            },
-            set: { newCountry in
-                threeLetterISOLanguageName.wrappedValue = newCountry?.threeLetterISOLanguageName
-            }
-        )
-
-        self._viewModel = StateObject(
-            wrappedValue: CulturesViewModel(
-                initialValue: []
-            )
-        )
     }
 }
