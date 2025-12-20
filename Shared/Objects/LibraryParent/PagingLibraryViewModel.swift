@@ -22,7 +22,7 @@ protocol WithRefresh {
     associatedtype Background: WithRefresh = Empty
 
     func refresh()
-    func refresh() async throws
+    func refresh() async
 
     var background: Background { get set }
 }
@@ -43,7 +43,8 @@ _ContentGroupViewModel where Environment == _PagingLibrary.Environment {
     associatedtype Environment
 
     var id: String { get }
-    var elements: IdentifiedArray<Int, _PagingLibrary.Element> { get set }
+//    var elements: IdentifiedArray<_PagingLibrary.Element.ID, _PagingLibrary.Element> { get set }
+    var elements: IdentifiedArrayOf<_PagingLibrary.Element> { get set }
     var environment: Environment { get set }
     var library: _PagingLibrary { get }
 }
@@ -97,7 +98,8 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
     }
 
     @Published
-    var elements: IdentifiedArray<Int, Element>
+    var elements: IdentifiedArrayOf<Element>
+//    var elements: IdentifiedArray<_PagingLibrary.Element.ID, Element>
     @Published
     var environment: Environment
 
@@ -114,7 +116,7 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
         self.library = library
         self.elements = IdentifiedArray(
             [],
-            id: \.unwrappedIDHashOrZero,
+//            id: \.unwrappedIDHashOrZero,
             uniquingIDsWith: { x, _ in x }
         )
         self.hasNextPage = library.hasNextPage
@@ -143,7 +145,8 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
             pageOffset: elements.count,
             pageSize: DefaultPageSize,
             userSession: userSession,
-            elementIDs: elements.map(\.unwrappedIDHashOrZero)
+            elementIDs: []
+//            elementIDs: elements.map(\.unwrappedIDHashOrZero)
         )
 
         let nextPageElements = try await library.retrievePage(
@@ -168,7 +171,8 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
                 pageOffset: 0,
                 pageSize: 0,
                 userSession: userSession,
-                elementIDs: elements.map(\.unwrappedIDHashOrZero)
+                elementIDs: []
+//                elementIDs: elements.map(\.unwrappedIDHashOrZero)
             )
 
             func inner(

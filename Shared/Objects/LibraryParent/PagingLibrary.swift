@@ -11,6 +11,9 @@ struct LibraryPageState {
     let pageOffset: Int
     let pageSize: Int
     let userSession: UserSession
+
+    // TODO: probably needs to be generic over element IDs
+    // TODO: why this here?
     let elementIDs: [Int]
 }
 
@@ -35,7 +38,7 @@ import SwiftUI
 
 protocol PagingLibrary<Element> {
 
-    associatedtype Element: LibraryIdentifiable
+    associatedtype Element: Identifiable
     associatedtype Environment: WithDefaultValue = Empty
     associatedtype LibraryBody: View = AnyView
     associatedtype Parent: _LibraryParent = _TitledLibraryParent

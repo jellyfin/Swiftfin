@@ -10,6 +10,19 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+struct _GenericItemContentView<ViewModel: ObservableObject>: View {
+
+    @ObservedObject
+    var viewModel: ViewModel
+
+    var body: some View {}
+}
+
+typealias CollectionItemContentView = _GenericItemContentView<CollectionItemViewModel>
+typealias MovieItemContentView = _GenericItemContentView<MovieItemViewModel>
+typealias SeriesItemContentView = _GenericItemContentView<SeriesItemViewModel>
+typealias SimpleItemContentView = _GenericItemContentView<ItemViewModel>
+
 struct ItemView: View {
 
     protocol ScrollContainerView: View {
@@ -200,100 +213,7 @@ struct ItemView: View {
     }
 }
 
-import Factory
-
-struct ItemGroupProvider: _ContentGroupProvider {
-
-    let displayTitle: String
-    let id: String
-
-    func makeGroups(environment: Void) async throws -> [any _ContentGroup] {
-
-        guard let userSession = Container.shared.currentUserSession() else {
-            throw ErrorMessage(L10n.unknownError)
-        }
-
-        let item = try await BaseItemDto.getItem(
-            id: id,
-            userSession: userSession
-        )
-
-        return try await _makeGroups(item: item, itemID: id)
-    }
-
-    @ContentGroupBuilder
-    private func _makeGroups(item: BaseItemDto, itemID: String) async throws -> [any _ContentGroup] {
-
-        if let genres = item.itemGenres, genres.isNotEmpty {
-            PillGroup(
-                displayTitle: L10n.genres,
-                id: "genres",
-                library: StaticLibrary(
-                    title: L10n.genres,
-                    id: "genres",
-                    elements: genres
-                )
-            )
-        }
-
-        if let studios = item.itemStudios, studios.isNotEmpty {
-            PillGroup(
-                displayTitle: L10n.studios,
-                id: "studios",
-                library: StaticLibrary(
-                    title: L10n.studios,
-                    id: "studios",
-                    elements: studios
-                )
-            )
-        }
-
-        switch item.type {
-        case .boxSet, .person, .musicArtist, .tvChannel:
-            try await ItemTypeContentGroupProvider(
-                itemTypes: BaseItemKind.supportedCases
-                    .appending(.episode)
-                    .appending(.person),
-                parent: item
-            )
-            .makeGroups(environment: .default)
-        default: EmptyContentGroup()
-        }
-
-        if let castAndCrew = item.people, castAndCrew.isNotEmpty {
-            PosterGroup(
-                id: "cast-and-crew",
-                library: StaticLibrary(
-                    title: L10n.castAndCrew.localizedCapitalized,
-                    id: "cast-and-crew",
-                    elements: castAndCrew
-                ),
-                posterDisplayType: .portrait,
-                posterSize: .small
-            )
-        }
-
-        PosterGroup(
-            id: "special-features",
-            library: SpecialFeaturesLibrary(itemID: itemID),
-            posterDisplayType: .landscape,
-            posterSize: .small
-        )
-
-        PosterGroup(
-            id: "similar-items",
-            library: SimilarItemsLibrary(itemID: itemID),
-            posterDisplayType: .landscape,
-            posterSize: .small
-        )
-
-        AboutItemGroup(
-            displayTitle: L10n.about,
-            id: "about",
-            item: item
-        )
-    }
-}
+// MARK: - ItemGroupProvider
 
 import CollectionHStack
 
@@ -304,7 +224,7 @@ struct AboutItemGroup: _ContentGroup {
 
     let item: BaseItemDto
 
-    func body(with viewModel: VoidContentGroupViewModel) -> Body {
+    func body(with viewModel: Empty) -> Body {
         Body(item: item)
     }
 
@@ -427,197 +347,164 @@ struct AboutItemGroup: _ContentGroup {
     }
 }
 
-@Stateful
-class _ItemViewModel: ViewModel, _ContentGroupViewModel {
+// MARK: - _ItemViewModel
 
-    @CasePathable
-    enum Action {
-        case refresh
+// MARK: - work
 
-        var transition: Transition {
-            switch self {
-            case .refresh:
-                .to(.refreshing, then: .content)
-            }
-        }
-    }
+struct FrameForViewPreferenceKey: PreferenceKey {
+    static var defaultValue: [CoordinateSpace: CGRect] = [:]
 
-    enum State: Hashable {
-        case content
-        case error
-        case initial
-        case refreshing
-    }
-
-    @Published
-    private(set) var item: BaseItemDto = .init()
-
-    init(id: String) {
-        self.item = .init(id: id)
-    }
-
-    @Function(\Action.Cases.refresh)
-    private func _refresh() async throws {
-        item = try await item.getFullItem(userSession: userSession)
+    static func reduce(
+        value: inout [CoordinateSpace: CGRect],
+        nextValue: () -> [CoordinateSpace: CGRect]
+    ) {
+        value = nextValue()
     }
 }
 
-protocol ContentGroupWithHeader: _ContentGroup {}
+struct OffsetOpacityModifier: ViewModifier {
 
-struct ItemViewHeader: ContentGroupWithHeader {
+    @Environment(\.frameForParentView)
+    private var frameForParentView
 
-    let id = "item-view-header"
-    let viewModel: _ItemViewModel
+    private var opacity: CGFloat {
+        let end = frameForParentView[.scrollView, default: .zero].safeAreaInsets.top + 50
+        let start = end + 100
+        let offset = frameForParentView[.scrollViewHeader, default: .zero].frame.maxY
 
-    func makeViewModel() -> _ItemViewModel {
-        viewModel
+        return min(max((offset - end) / (start - end), 0), 1)
     }
 
-    func body(with viewModel: _ItemViewModel) -> Body {
-        Body(viewModel: viewModel)
+    func body(content: Content) -> some View {
+        content
+            .opacity(opacity)
     }
+}
 
-    struct Body: View {
+extension View {
 
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets
-        @Environment(\.scrollViewOffset)
-        private var scrollViewOffset
-
-        @ObservedObject
-        var viewModel: _ItemViewModel
-
-        private var imageType: ImageType {
-            switch viewModel.item.type {
-            case .episode, .musicVideo, .video:
-                .primary
-            default:
-                .backdrop
-            }
-        }
-
-        var body: some View {
-            VStack(spacing: 0) {
-                Color.clear
-                    .frame(height: 300)
-
-                BlurView(style: .systemThinMaterialDark)
-                    .maskLinearGradient {
-                        (location: 0, opacity: 0)
-                        (location: 0.1, opacity: 1)
-                    }
-                    .frame(height: 200)
-            }
-            .backgroundParallaxHeader(
+    func backgroundParallaxHeader<Header: View>(
+        _ scrollViewOffset: Binding<CGFloat>,
+        multiplier: CGFloat = 1,
+        @ViewBuilder header: @escaping () -> Header
+    ) -> some View {
+        modifier(
+            aBackgroundParallaxHeaderModifier(
                 scrollViewOffset,
-                height: 0,
-                multiplier: 0.3
-            ) {
-                let bottomColor = viewModel.item.blurHash(for: imageType)?.averageLinearColor ?? Color.secondarySystemFill
-
-                AlternateLayoutView {
-                    Color.clear
-                } content: {
-                    ImageView(viewModel.item.imageSource(imageType, maxWidth: 1320))
-                        .aspectRatio(contentMode: .fill)
-                }
-                .frame(height: 300)
-                .bottomEdgeGradient(bottomColor: bottomColor)
-            }
-            .safeAreaInset(edge: .top, content: { Color.red.frame(height: safeAreaInsets.top) })
-        }
+                multiplier: multiplier,
+                header: header
+            )
+        )
     }
 }
 
-struct ItemContentGroupView: View {
+struct aBackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
 
-    @Default(.Customization.itemViewType)
-    private var itemViewType
+    @Environment(\.frameForParentView)
+    private var frameForParentView
 
-//    @StateObject
-//    private var itemViewModel: ItemViewModel
-    @StateObject
-    private var viewModel: ContentGroupViewModel<ItemGroupProvider>
+    @Binding
+    private var scrollViewOffset: CGFloat
 
-    init(provider: ItemGroupProvider) {
-        _viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
-//        _itemViewModel = .init(wrappedValue: .init(item: provider.item))
+    @State
+    private var contentSize: CGSize = .zero
+    @State
+    private var headerSize: CGSize = .zero
+
+    @State
+    private var safeAreaInsetBinding: EdgeInsets = .zero
+
+    private let multiplier: CGFloat
+    private let background: Background
+
+    init(
+        _ scrollViewOffset: Binding<CGFloat>,
+        multiplier: CGFloat = 1,
+        @ViewBuilder header: @escaping () -> Background
+    ) {
+        self._scrollViewOffset = scrollViewOffset
+        self.multiplier = multiplier
+        self.background = header()
     }
 
-//    private func scrollContainerView<Content: View>(
-//        viewModel: ItemViewModel,
-//        content: @escaping () -> Content
-//    ) -> any ItemView.ScrollContainerView {
-//
-//        if UIDevice.isPad {
-//            return ItemView.iPadOSCinematicScrollView(viewModel: viewModel, content: content)
-//        }
-//
-//        switch viewModel.item.type {
-//        case .movie, .series:
-//            switch itemViewType {
-//            case .compactPoster:
-//                return ItemView.CompactPosterScrollView(viewModel: viewModel, content: content)
-//            case .compactLogo:
-//                return ItemView.CompactLogoScrollView(viewModel: viewModel, content: content)
-//            case .cinematic:
-//                return ItemView.CinematicScrollView(viewModel: viewModel, content: content)
-//            }
-//        case .person, .musicArtist:
-//            return ItemView.CompactPosterScrollView(viewModel: viewModel, content: content)
-//        default:
-//            return ItemView.SimpleScrollView(viewModel: viewModel, content: content)
-//        }
-//    }
-
-    @ViewBuilder
-    private var contentView: some View {
-//        scrollContainerView(viewModel: itemViewModel) {
-//            VStack(alignment: .leading, spacing: 10) {
-//                ContentGroupContentView(viewModel: viewModel)
-//            }
-//            .edgePadding(.vertical)
-//            .frame(maxWidth: .infinity, alignment: .leading)
-//        }
-//        .scrollIndicators(.hidden)
-//        .eraseToAnyView()
-
-        ScrollView {
-            VStack(alignment: .leading, spacing: 10) {
-                ContentGroupContentView(viewModel: viewModel)
-            }
-            .edgePadding(.vertical)
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .ignoresSafeArea(edges: .horizontal)
-        .scrollIndicators(.hidden)
+    private var scrollViewSafeAreaInsets: EdgeInsets {
+        frameForParentView[.scrollView, default: .zero].safeAreaInsets
     }
 
-    var body: some View {
-        ZStack {
-            switch viewModel.state {
-            case .content:
-                contentView
-            case .error:
-                viewModel.error.map(ErrorView.init)
-            case .initial, .refreshing:
-                ProgressView()
+    private var maskHeight: CGFloat {
+        if scrollViewOffset < 0, abs(scrollViewOffset) >= scrollViewSafeAreaInsets.top {
+            contentSize.height + abs(scrollViewOffset)
+        } else {
+            max(0, contentSize.height + scrollViewSafeAreaInsets.top - offset)
+        }
+    }
+
+    private var offset: CGFloat {
+        let position = scrollViewOffset + frameForParentView[.navigationStack, default: .zero].safeAreaInsets.top
+
+        return if scrollViewOffset < 0, abs(scrollViewOffset) >= scrollViewSafeAreaInsets.top {
+            position
+        } else {
+            position - ((scrollViewOffset + scrollViewSafeAreaInsets.top) * multiplier)
+        }
+    }
+
+    private var scaleEffect: CGFloat {
+        if scrollViewOffset < 0, abs(scrollViewOffset) >= scrollViewSafeAreaInsets.top {
+            (headerSize.height + abs(scrollViewOffset + scrollViewSafeAreaInsets.top)) / headerSize.height
+        } else {
+            1
+        }
+    }
+
+//        .overlay(alignment: .top) {
+//                        VariableBlurView(
+//                            maxBlurRadius: 100,
+//                            direction: .blurredTopClearBottom,
+//                            startOffset: initialHeaderFrame.origin.y
+//                        )
+//                        .frame(height: initialHeaderFrame.origin.y + 20)
+//                        .maskLinearGradient()
+//                        .offset(y: -initialHeaderFrame.origin.y)
+//                    }
+
+    func body(content: Content) -> some View {
+        content
+            .trackingSize($contentSize, $safeAreaInsetBinding)
+            .background(alignment: .top) {
+                MirrorExtensionView(edges: .top) {
+                    background
+                }
+                .trackingSize($headerSize)
+                .scaleEffect(scaleEffect, anchor: .top)
+                .mask(alignment: .top) {
+                    Color.black
+                        .frame(height: maskHeight)
+                        .offset(y: -scrollViewSafeAreaInsets.top)
+                }
+                .offset(y: offset)
             }
-        }
-        .backport
-        .onChange(of: viewModel.state) { _, newValue in
-            print("ContentGroupView: state changed to \(newValue)")
-        }
-        .backport
-        .onChange(of: viewModel.background.states) { oldValue, newValue in
-            print("ContentGroupView: background states changed from \(oldValue) to \(newValue)")
-        }
-        .animation(.linear(duration: 0.2), value: viewModel.state)
-        .animation(.linear(duration: 0.2), value: viewModel.background.states)
-        .navigationTitle(viewModel.provider.displayTitle)
-        .navigationBarTitleDisplayMode(.inline)
-        .onFirstAppear {
-            viewModel.refresh()
-        }
+            .overlay {
+                VStack {
+                    Text("ScrollView Offset: \(scrollViewOffset)")
+                    Text("Background Height: \(headerSize.height)")
+                    Text("Safe Area Insets: \(safeAreaInsetBinding.top)")
+                    Text("Parent Safe Area Insets: \(scrollViewSafeAreaInsets.top)")
+
+                    Text("--")
+
+                    Text("Background Offset: \(offset)")
+                    Text("Mask Height: \(maskHeight)")
+                    Text("Scale Effect: \(scaleEffect)")
+
+                    Text("--")
+
+                    Text("NS SA: \(frameForParentView[.navigationStack, default: .zero].safeAreaInsets)")
+                }
+                .padding()
+                .background(Color.white)
+                .foregroundStyle(.black)
+                .hidden()
+            }
     }
 }

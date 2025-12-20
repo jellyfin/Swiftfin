@@ -202,11 +202,3 @@ extension BaseItemKind {
         }
     }
 }
-
-extension BaseItemKind {
-
-    /// Item types that can be identified on the server.
-    static var itemIdentifiableCases: [BaseItemKind] {
-        [.boxSet, .movie, .person, .series]
-    }
-}

@@ -6,13 +6,16 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
+import SwiftUI
 
-extension Dictionary {
+struct WithNamespace<Content: View>: View {
 
-    func inserting(value: Value, for key: Key) -> Self {
-        var copy = self
-        copy[key] = value
-        return copy
+    @Namespace
+    private var namespace: Namespace.ID
+
+    let content: (Namespace.ID) -> Content
+
+    var body: some View {
+        content(namespace)
     }
 }

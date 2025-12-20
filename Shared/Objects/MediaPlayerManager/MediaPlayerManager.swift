@@ -232,7 +232,7 @@ final class MediaPlayerManager: ViewModel {
         }
 
         if let nextItem = queue?.nextItem, Defaults[.VideoPlayer.autoPlayEnabled] {
-            try await self.playNewItem(provider: nextItem)
+            await self.playNewItem(provider: nextItem)
         }
     }
 

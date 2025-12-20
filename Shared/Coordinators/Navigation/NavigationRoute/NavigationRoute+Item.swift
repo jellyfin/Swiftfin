@@ -190,19 +190,28 @@ extension NavigationRoute {
         }
     }
 
+    @MainActor
     static func person(_ person: BaseItemPerson) -> NavigationRoute {
         .item(item: .init(person: person))
     }
 
+    @MainActor
     static func item(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(
             id: "item-\(item.id ?? "Unknown")",
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
-            ItemView(item: item)
+//            ItemView(item: item)
+            ItemContentGroupView(
+                provider: ItemGroupProvider(
+                    displayTitle: item.displayTitle,
+                    id: item.id!
+                )
+            )
         }
     }
 
+    @MainActor
     static func item(displayTitle: String, id: String) -> NavigationRoute {
         NavigationRoute(
             id: "item-\(id)",
@@ -218,12 +227,14 @@ extension NavigationRoute {
     }
 
     #if os(iOS)
+    @MainActor
     static func itemEditor(viewModel: ItemViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "itemEditor",
             style: .sheet
         ) {
-            ItemEditorView(viewModel: viewModel)
+//            ItemEditorView(viewModel: viewModel)
+            ItemEditorView(item: viewModel.item)
         }
     }
 

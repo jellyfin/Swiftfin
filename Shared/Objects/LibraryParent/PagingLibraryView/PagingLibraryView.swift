@@ -90,9 +90,11 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                 viewModel.refresh()
             }
         }
+        #if os(iOS)
         .navigationBarMenuButton(
             isLoading: viewModel.background.is(.retrievingNextPage)
         ) {}
+        #endif
     }
 }
 

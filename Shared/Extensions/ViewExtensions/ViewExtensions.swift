@@ -272,12 +272,31 @@ extension View {
         }
     }
 
-    func trackingFrame(_ binding: Binding<CGRect>) -> some View {
-        onFrameChanged { newFrame, _ in
-            binding.wrappedValue = newFrame
+    func trackingFrame(
+        _ frameBinding: Binding<CGRect>,
+        _ safeaAreaInsetsBinding: Binding<EdgeInsets> = .constant(.zero)
+    ) -> some View {
+        onFrameChanged {
+            frameBinding.wrappedValue = $0
+            safeaAreaInsetsBinding.wrappedValue = $1
         }
     }
 
+    @ViewBuilder
+    func trackingFrame(named name: String) -> some View {
+        modifier(
+            TrackingFrameModifier(coordinateSpace: .named(name))
+        )
+    }
+
+    @ViewBuilder
+    func trackingFrame(for coordinateSpace: CoordinateSpace) -> some View {
+        modifier(
+            TrackingFrameModifier(coordinateSpace: coordinateSpace)
+        )
+    }
+
+    @available(*, deprecated, message: "Use `onFrameChanged` instead")
     func onSizeChanged(perform action: @escaping (CGSize, EdgeInsets) -> Void) -> some View {
         onGeometryChange(for: OnFrameChangedValue.self) { proxy in
             let size = proxy.size
@@ -296,8 +315,8 @@ extension View {
         _ sizeBinding: Binding<CGSize>,
         _ safeAreaInsetBinding: Binding<EdgeInsets> = .constant(.zero)
     ) -> some View {
-        onSizeChanged {
-            sizeBinding.wrappedValue = $0
+        onFrameChanged {
+            sizeBinding.wrappedValue = $0.size
             safeAreaInsetBinding.wrappedValue = $1
         }
     }

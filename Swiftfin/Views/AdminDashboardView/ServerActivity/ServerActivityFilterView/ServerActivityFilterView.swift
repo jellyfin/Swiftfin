@@ -39,17 +39,17 @@ struct ServerActivityFilterView: View {
             }
 
             /// Reset button to remove the filter
-            if viewModel.minDate != nil {
-                Section {
-                    Button(L10n.reset, role: .destructive) {
-                        viewModel.minDate = nil
-                        router.dismiss()
-                    }
-                    .buttonStyle(.primary)
-                } footer: {
-                    Text(L10n.resetFilterFooter)
-                }
-            }
+//            if viewModel.minDate != nil {
+//                Section {
+//                    Button(L10n.reset, role: .destructive) {
+//                        viewModel.minDate = nil
+//                        router.dismiss()
+//                    }
+//                    .buttonStyle(.primary)
+//                } footer: {
+//                    Text(L10n.resetFilterFooter)
+//                }
+//            }
         }
         .navigationTitle(L10n.startDate.localizedCapitalized)
         .navigationBarTitleDisplayMode(.inline)

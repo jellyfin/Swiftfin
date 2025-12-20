@@ -64,13 +64,13 @@ final class ContentGroupViewModel<Provider: _ContentGroupProvider>: ViewModel {
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
 
-        if sections.isNotEmpty {
-            for section in sections {
-                try? await section.viewModel.background.refresh()
-            }
-
-            return
-        }
+//        if sections.isNotEmpty {
+//            for section in sections {
+//                await section.viewModel.background.refresh()
+//            }
+//
+//            return
+//        }
 
         func makePair(for group: any _ContentGroup) -> ContentGroupViewModelPair {
             func _makePair(for group: some _ContentGroup) -> ContentGroupViewModelPair {
@@ -85,7 +85,7 @@ final class ContentGroupViewModel<Provider: _ContentGroupProvider>: ViewModel {
         try await withThrowingTaskGroup(of: Void.self) { group in
             for viewModel in newGroups.map(\.viewModel) {
                 group.addTask {
-                    try await viewModel.refresh()
+                    await viewModel.refresh()
                 }
             }
             try await group.waitForAll()

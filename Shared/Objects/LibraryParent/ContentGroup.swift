@@ -30,18 +30,15 @@ protocol _ContentGroup<ViewModel>: Identifiable {
     func body(with viewModel: ViewModel) -> Body
 }
 
-extension _ContentGroup where ViewModel == VoidContentGroupViewModel {
-    func makeViewModel() -> VoidContentGroupViewModel {
+extension _ContentGroup where ViewModel == Empty {
+    func makeViewModel() -> Empty {
         .init()
     }
 }
 
-protocol _ContentGroupViewModel: WithRefresh {}
+extension Empty: _ContentGroupViewModel {}
 
-struct VoidContentGroupViewModel: _ContentGroupViewModel {
-    func refresh() {}
-    func refresh() async throws {}
-}
+protocol _ContentGroupViewModel: WithRefresh {}
 
 @MainActor
 protocol _ContentGroupProvider: Displayable, SystemImageable {
@@ -66,31 +63,9 @@ extension _ContentGroupProvider where Environment == Void {
     }
 }
 
-// TODO: remove
-extension _ContentGroupProvider where Environment: WithDefaultValue {
-    var environment: Environment {
-        get { .default }
-        set {}
-    }
-}
-
 extension _ContentGroupProvider where Environment == Void {
     func makeGroups() async throws -> [any _ContentGroup] {
         try await makeGroups(environment: ())
-    }
-}
-
-struct EmptyContentGroup: _ContentGroup {
-
-    let displayTitle: String = "Empty"
-    let id: String = UUID().uuidString
-
-    func makeViewModel() -> VoidContentGroupViewModel {
-        .init()
-    }
-
-    func body(with viewModel: VoidContentGroupViewModel) -> some View {
-        EmptyView()
     }
 }
 
@@ -105,10 +80,38 @@ struct PillGroup<Library: PagingLibrary>: _ContentGroup where Library.Element: D
     }
 
     func body(with viewModel: PagingLibraryViewModel<Library>) -> some View {
-        PillHStack(
-            title: displayTitle,
-            data: viewModel.elements
-        ) { _ in
+        WithRouter { router in
+            PillHStack(
+                title: displayTitle,
+                data: viewModel.elements
+            ) { element in
+                router.route(
+                    to: .contentGroup(
+                        provider: ItemTypeContentGroupProvider(
+                            itemTypes: [
+                                BaseItemKind.movie,
+                                .series,
+                                .boxSet,
+                                .episode,
+                                .musicVideo,
+                                .video,
+                                .liveTvProgram,
+                                .tvChannel,
+                                .musicArtist,
+                                .person,
+                            ],
+                            parent: .init(id: "\(element.id)"),
+                            environment: .init(
+                                filters: .init(
+                                    genres: [.init(
+                                        stringLiteral: "\(element.id)"
+                                    )]
+                                )
+                            )
+                        )
+                    )
+                )
+            }
         }
     }
 }

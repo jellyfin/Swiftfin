@@ -9,7 +9,6 @@
 import Combine
 import Foundation
 import JellyfinAPI
-import OrderedCollections
 import SwiftUI
 
 @MainActor
@@ -131,7 +130,7 @@ final class SearchViewModel: ViewModel {
 
         itemContentGroupViewModel.provider.environment.filters = filters
 
-        try await itemContentGroupViewModel.refresh()
+        await itemContentGroupViewModel.refresh()
     }
 
     // MARK: suggestions

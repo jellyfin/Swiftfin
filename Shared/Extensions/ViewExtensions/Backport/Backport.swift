@@ -21,6 +21,15 @@ extension Backport where Content: View {
     }
 
     @ViewBuilder
+    func toolbarTitleDisplayMode(_ mode: ToolbarTitleDisplayMode) -> some View {
+        if #available(iOS 17, tvOS 17, *) {
+            content.toolbarTitleDisplayMode(mode.swiftUIValue)
+        } else {
+            content.navigationBarTitleDisplayMode(mode.navigationBarTitleDisplayMode)
+        }
+    }
+
+    @ViewBuilder
     func matchedTransitionSource(id: String, in namespace: Namespace.ID) -> some View {
         if #available(iOS 18.0, tvOS 18.0, *) {
             content.matchedTransitionSource(
@@ -108,4 +117,30 @@ enum ButtonBorderShape {
 enum NavigationTransition: Hashable {
     case automatic
     case zoom(sourceID: String, namespace: Namespace.ID)
+}
+
+enum ToolbarTitleDisplayMode {
+
+    case automatic
+    case inline
+    case inlineLarge
+    case large
+
+    var navigationBarTitleDisplayMode: NavigationBarItem.TitleDisplayMode {
+        switch self {
+        case .automatic: .automatic
+        case .inline: .inline
+        default: .large
+        }
+    }
+
+    @available(iOS 17, tvOS 17, *)
+    var swiftUIValue: SwiftUI.ToolbarTitleDisplayMode {
+        switch self {
+        case .automatic: .automatic
+        case .inline: .inline
+        case .inlineLarge: .inlineLarge
+        case .large: .large
+        }
+    }
 }

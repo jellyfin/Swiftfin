@@ -207,7 +207,8 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .animation(.linear(duration: 0.2), value: viewModel.background.states)
         .navigationTitle(viewModel.provider.displayTitle)
-        .navigationBarTitleDisplayMode(router.isRootOfPath ? .automatic : .inline)
+        .backport
+        .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
         .onFirstAppear {
             viewModel.refresh()
         }

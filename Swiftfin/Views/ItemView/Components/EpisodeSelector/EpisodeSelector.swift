@@ -9,27 +9,51 @@
 import JellyfinAPI
 import SwiftUI
 
+struct SeriesEpisodeContentGroup: _ContentGroup, Identifiable {
+
+    let itemViewModel: _ItemViewModel
+
+    var id: String { "\(itemViewModel.item.libraryID)-episodeSelector" }
+
+    func makeViewModel() -> _ItemViewModel {
+        itemViewModel
+    }
+
+    func body(with viewModel: _ItemViewModel) -> some View {
+        SeriesEpisodeSelector(viewModel: viewModel)
+    }
+}
+
 struct SeriesEpisodeSelector: View {
 
     @ObservedObject
-    var viewModel: SeriesItemViewModel
+    private var viewModel: _ItemViewModel
 
     @State
     private var didSelectPlayButtonSeason = false
     @State
     private var selection: PagingSeasonViewModel.ID?
 
+    @StateObject
+    private var seasonsViewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
+
     private var selectionViewModel: PagingSeasonViewModel? {
-        viewModel.seasons.first(where: { $0.id == selection }) ?? viewModel.seasons.first
+        guard let id = selection else { return nil }
+        return seasonsViewModel.elements[id: id]
+    }
+
+    init(viewModel: _ItemViewModel) {
+        self.viewModel = viewModel
+        self._seasonsViewModel = StateObject(wrappedValue: PagingLibraryViewModel(library: SeasonViewModelLibrary(series: viewModel.item)))
     }
 
     @ViewBuilder
     private var seasonSelectorMenu: some View {
         if let selectionViewModel {
-            if viewModel.seasons.count > 1 {
+            if seasonsViewModel.elements.count > 1 {
                 Menu {
                     Picker(L10n.seasons, selection: $selection) {
-                        ForEach(viewModel.seasons, id: \.library.parent.libraryID) { season in
+                        ForEach(seasonsViewModel.elements, id: \.id) { season in
                             Text(season.library.parent.displayTitle)
                                 .tag(season.id as PagingSeasonViewModel.ID?)
                         }
@@ -69,15 +93,31 @@ struct SeriesEpisodeSelector: View {
         }
         .onReceive(viewModel.playButtonItem.publisher) { newValue in
 
-            guard !didSelectPlayButtonSeason else { return }
-            didSelectPlayButtonSeason = true
+            guard selection == nil else { return }
+            guard let playButtonSeasonID = newValue.seasonID else { return }
 
-            if let playButtonSeason = viewModel.seasons.first(where: { $0.id == newValue.seasonID }) {
+            if let playButtonSeason = seasonsViewModel.elements[id: playButtonSeasonID] {
                 selection = playButtonSeason.id
             } else {
-                selection = viewModel.seasons.first?.id
+                selection = seasonsViewModel.elements.first?.id
             }
+
+//            guard !didSelectPlayButtonSeason else { return }
+//            didSelectPlayButtonSeason = true
+//
+//            if let playButtonSeason = viewModel.seasons.first(where: { $0.id == newValue.seasonID }) {
+//                selection = playButtonSeason.id
+//            } else {
+//                selection = viewModel.seasons.first?.id
+//            }
         }
+        .onFirstAppear {
+            seasonsViewModel.refresh()
+        }
+//        .backport
+//        .onChange(of: seasonsViewModel.elements) { _, _ in
+//            print("here")
+//        }
         .backport
         .onChange(of: selection) { _, _ in
             guard let selectionViewModel else { return }

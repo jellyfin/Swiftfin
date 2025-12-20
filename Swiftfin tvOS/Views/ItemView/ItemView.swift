@@ -9,6 +9,19 @@
 import JellyfinAPI
 import SwiftUI
 
+struct _GenericItemContentView<ViewModel: ObservableObject>: View {
+
+    @ObservedObject
+    var viewModel: ViewModel
+
+    var body: some View {}
+}
+
+typealias CollectionItemContentView = _GenericItemContentView<CollectionItemViewModel>
+typealias MovieItemContentView = _GenericItemContentView<MovieItemViewModel>
+typealias SeriesItemContentView = _GenericItemContentView<SeriesItemViewModel>
+typealias SimpleItemContentView = _GenericItemContentView<ItemViewModel>
+
 struct ItemView: View {
 
     protocol ScrollContainerView: View {

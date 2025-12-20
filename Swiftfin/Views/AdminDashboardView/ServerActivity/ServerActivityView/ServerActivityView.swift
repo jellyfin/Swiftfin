@@ -37,7 +37,7 @@ struct ServerActivityView: View {
         .navigationTitle(L10n.activity)
         .navigationBarTitleDisplayMode(.inline)
         .refreshable {
-            try? await viewModel.refresh()
+            await viewModel.refresh()
         }
         .topBarTrailing {
             if viewModel.background.is(.retrievingNextPage) {

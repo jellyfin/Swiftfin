@@ -50,7 +50,7 @@ final class SeriesItemViewModel: ItemViewModel {
 
                     let newSeasons = try await seasons
                         .sorted { ($0.indexNumber ?? -1) < ($1.indexNumber ?? -1) }
-                        .map(_PagingSeasonLibrary.init)
+                        .map(EpisodeLibrary.init)
                         .map(PagingSeasonViewModel.init)
 
                     await MainActor.run {

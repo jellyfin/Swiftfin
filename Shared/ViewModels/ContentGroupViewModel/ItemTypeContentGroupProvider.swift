@@ -24,13 +24,16 @@ struct ItemTypeContentGroupProvider: _ContentGroupProvider {
 
     let itemTypes: [BaseItemKind]
     let parent: BaseItemDto?
+    var environment: Environment
 
     init(
         itemTypes: [BaseItemKind],
-        parent: BaseItemDto? = nil
+        parent: BaseItemDto? = nil,
+        environment: Environment = .default
     ) {
         self.itemTypes = itemTypes
         self.parent = parent
+        self.environment = environment
     }
 
     func makeGroups(environment: Environment) async throws -> [any _ContentGroup] {

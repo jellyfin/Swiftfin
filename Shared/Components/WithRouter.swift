@@ -6,13 +6,16 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
+import SwiftUI
 
-extension Dictionary {
+struct WithRouter<Content: View>: View {
 
-    func inserting(value: Value, for key: Key) -> Self {
-        var copy = self
-        copy[key] = value
-        return copy
+    @Router
+    private var router
+
+    let content: (Router.Wrapper) -> Content
+
+    var body: some View {
+        content(router)
     }
 }

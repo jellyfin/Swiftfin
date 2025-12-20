@@ -11,7 +11,6 @@ struct LiveTVGroupProvider: _ContentGroupProvider {
     let id: String = "live-tv"
     let displayTitle: String = L10n.liveTV
 
-    @ArrayBuilder<any _ContentGroup>
     func makeGroups(environment: Void) async throws -> [any _ContentGroup] {
 
         LiveTVChannelsPillGroup()
@@ -49,16 +48,8 @@ struct LiveTVChannelsPillGroup: _ContentGroup {
     let displayTitle: String = ""
 
     @ViewBuilder
-    func body(with viewModel: VoidContentGroupViewModel) -> some View {
-        _Body()
-    }
-
-    private struct _Body: View {
-
-        @Router
-        private var router
-
-        var body: some View {
+    func body(with viewModel: Empty) -> some View {
+        WithRouter { router in
             ScrollView(.horizontal) {
                 HStack {
                     Button {

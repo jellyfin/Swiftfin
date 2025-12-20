@@ -8,13 +8,16 @@
 
 import JellyfinAPI
 
+// TODO: rename to be general resume items
+//       - take mediaTypes
+
 struct ContinueWatchingLibrary: PagingLibrary {
 
     let parent: _TitledLibraryParent
 
     init() {
         self.parent = _TitledLibraryParent(
-            displayTitle: "Continue Watching",
+            displayTitle: L10n.continueWatching.localizedCapitalized,
             libraryID: "continue-watching"
         )
     }

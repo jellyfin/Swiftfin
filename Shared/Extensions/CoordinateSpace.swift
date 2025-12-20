@@ -6,13 +6,10 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
+import SwiftUI
 
-extension Dictionary {
+extension CoordinateSpace {
 
-    func inserting(value: Value, for key: Key) -> Self {
-        var copy = self
-        copy[key] = value
-        return copy
-    }
+    static let scrollView = CoordinateSpace.named("scrollView")
+    static let scrollViewHeader = CoordinateSpace.named("scrollView.header")
 }

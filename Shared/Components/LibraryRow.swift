@@ -28,30 +28,6 @@ protocol LibraryElement: Displayable, LibraryIdentifiable, Poster {
     func makeListBody(libraryStyle: LibraryStyle) -> ListBody
 }
 
-struct WithRouter<Content: View>: View {
-
-    @Router
-    private var router
-
-    let content: (Router.Wrapper) -> Content
-
-    var body: some View {
-        content(router)
-    }
-}
-
-struct WithNamespace<Content: View>: View {
-
-    @Namespace
-    private var namespace: Namespace.ID
-
-    let content: (Namespace.ID) -> Content
-
-    var body: some View {
-        content(namespace)
-    }
-}
-
 // struct LibraryRow<Element: LibraryElement>: View {
 //
 //    @Namespace

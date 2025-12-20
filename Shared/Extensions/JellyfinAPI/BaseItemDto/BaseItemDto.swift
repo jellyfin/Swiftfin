@@ -38,7 +38,7 @@ extension BaseItemDto: Displayable {
 extension BaseItemDto: LibraryIdentifiable {
 
     var unwrappedIDHashOrZero: Int {
-        id?.hashValue ?? 0
+        id.hashValueOrZero
     }
 }
 
@@ -156,6 +156,15 @@ extension BaseItemDto {
                 displayTitle: pair.displayTitle,
                 value: id
             )
+        }
+    }
+
+    var isIdentifiable: Bool {
+        switch type {
+        case .boxSet, .movie, .person, .series:
+            true
+        default:
+            false
         }
     }
 
