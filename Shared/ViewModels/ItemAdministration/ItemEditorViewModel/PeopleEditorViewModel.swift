@@ -50,4 +50,16 @@ final class PeopleEditorViewModel: ItemEditorViewModel<BaseItemPerson> {
         updatedItem.people = people
         try await updateItem(updatedItem)
     }
+
+    // MARK: - Contains Element
+
+    override func containsElement(named name: String) -> Bool {
+        item.people?.contains { $0.name?.caseInsensitiveCompare(name) == .orderedSame } ?? false
+    }
+
+    // MARK: - Match Exists
+
+    override func matchExists(named name: String) -> Bool {
+        matches.contains { $0.name?.caseInsensitiveCompare(name) == .orderedSame }
+    }
 }

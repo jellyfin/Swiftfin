@@ -150,4 +150,12 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel {
     func reorderComponents(_ components: [Element]) async throws {
         fatalError("Must be overridden in subclass")
     }
+
+    func containsElement(named name: String) -> Bool {
+        fatalError("Must be overridden in subclass")
+    }
+
+    func matchExists(named name: String) -> Bool {
+        fatalError("Must be overridden in subclass")
+    }
 }

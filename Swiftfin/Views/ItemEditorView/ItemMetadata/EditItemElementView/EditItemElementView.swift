@@ -130,6 +130,9 @@ struct EditItemElementView<Element: Hashable>: View {
                 }
             }
         }
+        .onNotification(.itemMetadataDidChange) { _ in
+            elements = type.getElement(for: viewModel.item)
+        }
         .onReceive(viewModel.events) { event in
             switch event {
             case .updated:

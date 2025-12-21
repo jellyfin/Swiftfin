@@ -103,7 +103,10 @@ extension NavigationRoute {
     }
 
     static func editSubtitles(item: BaseItemDto) -> NavigationRoute {
-        NavigationRoute(id: "editSubtitles") {
+        NavigationRoute(
+            id: "editSubtitles",
+            style: .sheet
+        ) {
             ItemSubtitlesView(item: item)
         }
     }
@@ -203,6 +206,15 @@ extension NavigationRoute {
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
             ItemView(item: item)
+        }
+    }
+
+    static func itemDeletion(viewModel: DeleteItemViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemDeletion",
+            style: .sheet
+        ) {
+            ItemDeletionView(viewModel: viewModel)
         }
     }
 
