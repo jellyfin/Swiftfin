@@ -23,31 +23,27 @@ extension AddServerUserAccessTagsView {
         @Binding
         var tag: String
 
-        let tagIsDuplicate: Bool
-        let tagAlreadyExists: Bool
+        let alreadyOnItem: Bool
+        let existsOnServer: Bool
 
         // MARK: - Body
 
         var body: some View {
-            Section {
+            Section(L10n.access) {
                 Picker(L10n.access, selection: $access) {
                     Text(L10n.allowed).tag(true)
                     Text(L10n.blocked).tag(false)
                 }
-            } header: {
-                Text(L10n.access)
-            } footer: {
-                LearnMoreButton(L10n.accessTags) {
-                    LabeledContent(
-                        L10n.allowed,
-                        value: L10n.accessTagAllowDescription
-                    )
+            } learnMore: {
+                LabeledContent(
+                    L10n.allowed,
+                    value: L10n.accessTagAllowDescription
+                )
 
-                    LabeledContent(
-                        L10n.blocked,
-                        value: L10n.accessTagBlockDescription
-                    )
-                }
+                LabeledContent(
+                    L10n.blocked,
+                    value: L10n.accessTagBlockDescription
+                )
             }
 
             Section {
@@ -61,26 +57,24 @@ extension AddServerUserAccessTagsView {
                         systemImage: "exclamationmark.circle.fill"
                     )
                     .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
-                } else if tagIsDuplicate {
+                } else if alreadyOnItem {
                     Label(
                         L10n.accessTagAlreadyExists,
                         systemImage: "exclamationmark.circle.fill"
                     )
-                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .red))
+                } else if existsOnServer {
+                    Label(
+                        L10n.existsOnServer,
+                        systemImage: "checkmark.circle.fill"
+                    )
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .green))
                 } else {
-                    if tagAlreadyExists {
-                        Label(
-                            L10n.existsOnServer,
-                            systemImage: "checkmark.circle.fill"
-                        )
-                        .labelStyle(.sectionFooterWithImage(imageStyle: .green))
-                    } else {
-                        Label(
-                            L10n.willBeCreatedOnServer,
-                            systemImage: "checkmark.seal.fill"
-                        )
-                        .labelStyle(.sectionFooterWithImage(imageStyle: .blue))
-                    }
+                    Label(
+                        L10n.willBeCreatedOnServer,
+                        systemImage: "checkmark.seal.fill"
+                    )
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .blue))
                 }
             }
             .onFirstAppear {

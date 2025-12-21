@@ -27,25 +27,29 @@ struct AddServerUserAccessTagsView: View {
     @State
     private var access: Bool = false
 
+    private var alreadyOnItem: Bool {
+        let blocked = tempPolicy.blockedTags ?? []
+        let allowed = tempPolicy.allowedTags ?? []
+        return blocked.contains { $0.caseInsensitiveCompare(tempTag) == .orderedSame }
+            || allowed.contains { $0.caseInsensitiveCompare(tempTag) == .orderedSame }
+    }
+
+    private var existsOnServer: Bool {
+        tempTag.isNotEmpty && tagViewModel.matchExists(named: tempTag)
+    }
+
     private var isValid: Bool {
-        tempTag.isNotEmpty && !tagIsDuplicate
-    }
-
-    private var tagIsDuplicate: Bool {
-        viewModel.user.policy!.blockedTags!.contains(tempTag) || viewModel.user.policy!.allowedTags!.contains(tempTag)
-    }
-
-    private var tagAlreadyExists: Bool {
-        tagViewModel.matches.contains {
-            $0.localizedCaseInsensitiveCompare(tempTag) == .orderedSame
-        }
+        tempTag.isNotEmpty && !alreadyOnItem
     }
 
     // MARK: - Initializer
 
     init(viewModel: ServerUserAdminViewModel) {
         self.viewModel = viewModel
-        self.tempPolicy = viewModel.user.policy!
+        self.tempPolicy = viewModel.user.policy ?? UserPolicy(
+            authenticationProviderID: "",
+            passwordResetProviderID: ""
+        )
         self._tagViewModel = StateObject(wrappedValue: TagEditorViewModel(item: .init()))
     }
 
@@ -83,8 +87,8 @@ struct AddServerUserAccessTagsView: View {
                     .disabled(!isValid)
                 }
             }
-            .onChange(of: tempTag) { _ in
-                tagViewModel.search(tempTag)
+            .onChange(of: tempTag) { newTag in
+                tagViewModel.search(newTag)
             }
             .onReceive(viewModel.events) { event in
                 switch event {
@@ -104,8 +108,8 @@ struct AddServerUserAccessTagsView: View {
             TagInput(
                 access: $access,
                 tag: $tempTag,
-                tagIsDuplicate: tagIsDuplicate,
-                tagAlreadyExists: tagAlreadyExists
+                alreadyOnItem: alreadyOnItem,
+                existsOnServer: existsOnServer
             )
 
             SearchResultsSection(
