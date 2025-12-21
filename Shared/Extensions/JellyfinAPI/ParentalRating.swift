@@ -14,12 +14,11 @@ extension ParentalRating: Displayable {
     var displayTitle: String {
         self.name ?? L10n.unknown
     }
+}
 
-    static var none: ParentalRating {
-        ParentalRating(
-            name: L10n.none,
-            value: nil
-        )
+extension ParentalRating: @retroactive Identifiable {
+    public var id: Int {
+        hashValue
     }
 }
 
