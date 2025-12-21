@@ -97,11 +97,11 @@ struct ItemDeletionView: View {
             if let childCount = item.childCount, childCount > 0 {
                 Section {
                     LabeledContent(
-                        "Children",
+                        L10n.children,
                         value: childCount.description
                     )
                 } footer: {
-                    Label("All child items (seaons, episodes, etc.) will be deleted", systemImage: "exclamationmark.circle.fill")
+                    Label(L10n.childDeletionWarning, systemImage: "exclamationmark.circle.fill")
                         .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                 }
             }
