@@ -13,20 +13,14 @@ import SwiftUI
 
 struct AddItemElementView<Element: Hashable>: View {
 
-    // MARK: - Defaults
-
     @Default(.accentColor)
     private var accentColor
-
-    // MARK: - Environment & Observed Objects
 
     @Router
     private var router
 
     @ObservedObject
     var viewModel: ItemEditorViewModel<Element>
-
-    // MARK: - Elements Variables
 
     let type: ItemArrayElements
 
@@ -38,8 +32,6 @@ struct AddItemElementView<Element: Hashable>: View {
     private var personKind: PersonKind = .unknown
     @State
     private var personRole: String = ""
-
-    // MARK: - Error State
 
     @State
     private var error: Error?
@@ -108,21 +100,16 @@ struct AddItemElementView<Element: Hashable>: View {
 
     private var contentView: some View {
         List {
-            NameInput(
+            ItemElementSearchView(
                 name: $name,
+                id: $id,
                 personKind: $personKind,
                 personRole: $personRole,
                 type: type,
+                population: viewModel.matches,
+                isSearching: viewModel.background.states.contains(.searching),
                 alreadyOnItem: alreadyOnItem,
                 existsOnServer: existsOnServer
-            )
-
-            SearchResultsSection(
-                name: $name,
-                id: $id,
-                type: type,
-                population: viewModel.matches,
-                isSearching: viewModel.background.states.contains(.searching)
             )
         }
     }

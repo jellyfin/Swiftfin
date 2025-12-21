@@ -105,17 +105,39 @@ struct AddServerUserAccessTagsView: View {
 
     private var contentView: some View {
         Form {
-            TagInput(
-                access: $access,
-                tag: $tempTag,
+            accessSection
+
+            ItemElementSearchView(
+                name: $tempTag,
+                id: .constant(nil),
+                personKind: .constant(.unknown),
+                personRole: .constant(""),
+                type: .tags,
+                population: tagViewModel.matches,
+                isSearching: tagViewModel.background.states.contains(.searching),
                 alreadyOnItem: alreadyOnItem,
                 existsOnServer: existsOnServer
             )
+        }
+    }
 
-            SearchResultsSection(
-                tag: $tempTag,
-                tags: tagViewModel.matches,
-                isSearching: tagViewModel.background.states.contains(.searching)
+    // MARK: - Access Section
+
+    private var accessSection: some View {
+        Section(L10n.access) {
+            Picker(L10n.access, selection: $access) {
+                Text(L10n.allowed).tag(true)
+                Text(L10n.blocked).tag(false)
+            }
+        } learnMore: {
+            LabeledContent(
+                L10n.allowed,
+                value: L10n.accessTagAllowDescription
+            )
+
+            LabeledContent(
+                L10n.blocked,
+                value: L10n.accessTagBlockDescription
             )
         }
     }
