@@ -39,11 +39,6 @@ struct AddItemElementView<Element: Hashable>: View {
     @State
     private var personRole: String = ""
 
-    // MARK: - Trie Data Loaded
-
-    @State
-    private var loaded: Bool = false
-
     // MARK: - Error State
 
     @State
@@ -58,7 +53,41 @@ struct AddItemElementView<Element: Hashable>: View {
     // MARK: - Name Already Exists
 
     private var itemAlreadyExists: Bool {
-        viewModel.trie.contains(key: name.localizedLowercase)
+        let input = name
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+
+        guard input.isNotEmpty else { return false }
+
+        return viewModel.matches.contains { element in
+            let candidate: String?
+
+            switch type {
+            case .people:
+                candidate = (element as? BaseItemPerson)?.name
+
+            case .genres, .tags:
+                if let string = element as? String {
+                    candidate = string
+                } else if let pair = element as? NameGuidPair {
+                    candidate = pair.name
+                } else {
+                    assertionFailure("Unexpected element type: \(Element.self)")
+                    return false
+                }
+
+            case .studios:
+                candidate = (element as? NameGuidPair)?.name
+            }
+
+            guard let value = candidate else { return false }
+
+            let normalized = value
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+
+            return normalized == input
+        }
     }
 
     // MARK: - Body
@@ -66,10 +95,12 @@ struct AddItemElementView<Element: Hashable>: View {
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .initial, .content, .updating:
+            case .error:
+                viewModel.error.map {
+                    ErrorView(error: $0)
+                }
+            case .initial:
                 contentView
-            case let .error(error):
-                ErrorView(error: error)
             }
         }
         .navigationTitle(type.displayTitle)
@@ -78,43 +109,31 @@ struct AddItemElementView<Element: Hashable>: View {
             router.dismiss()
         }
         .topBarTrailing {
-            if viewModel.backgroundStates.contains(.loading) {
+            if viewModel.background.states.contains(where: { $0 == .searching || $0 == .updating }) {
                 ProgressView()
             }
 
             Button(L10n.save) {
-                viewModel.send(.add([type.createElement(
+                viewModel.add([type.createElement(
                     name: name,
                     id: id,
                     personRole: personRole.isEmpty ? (personKind == .unknown ? nil : personKind.rawValue) : personRole,
                     personKind: personKind
-                )]))
+                )])
             }
             .buttonStyle(.toolbarPill)
             .disabled(!isValid)
         }
-        .onFirstAppear {
-            viewModel.send(.load)
-        }
         .onChange(of: name) { _ in
-            if !viewModel.backgroundStates.contains(.loading) {
-                viewModel.send(.search(name))
-            }
+            viewModel.search(name)
         }
         .onReceive(viewModel.events) { event in
             switch event {
             case .updated:
                 UIDevice.feedback(.success)
                 router.dismiss()
-            case .loaded:
-                loaded = true
-                viewModel.send(.search(name))
-            case let .error(eventError):
-                UIDevice.feedback(.error)
-                error = eventError
             }
         }
-        .errorMessage($error)
     }
 
     // MARK: - Content View
@@ -134,7 +153,7 @@ struct AddItemElementView<Element: Hashable>: View {
                 id: $id,
                 type: type,
                 population: viewModel.matches,
-                isSearching: viewModel.backgroundStates.contains(.searching)
+                isSearching: viewModel.background.states.contains(.searching)
             )
         }
     }

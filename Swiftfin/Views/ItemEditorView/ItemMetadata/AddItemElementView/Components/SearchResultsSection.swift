@@ -13,14 +13,10 @@ extension AddItemElementView {
 
     struct SearchResultsSection: View {
 
-        // MARK: - Element Variables
-
         @Binding
         var name: String
         @Binding
         var id: String?
-
-        // MARK: - Element Search Variables
 
         let type: ItemArrayElements
         let population: [Element]
@@ -54,15 +50,11 @@ extension AddItemElementView {
             }
         }
 
-        // MARK: - No Results View
-
         private var noResultsView: some View {
             Text(L10n.none)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: .infinity, alignment: .center)
         }
-
-        // MARK: - Results View
 
         private var resultsView: some View {
             ForEach(population, id: \.self) { result in
@@ -78,8 +70,6 @@ extension AddItemElementView {
                 .animation(.easeInOut, value: population.count)
             }
         }
-
-        // MARK: - Label View
 
         @ViewBuilder
         private func labelView(_ match: Element) -> some View {

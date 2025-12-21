@@ -11,8 +11,6 @@ import SwiftUI
 
 struct AddServerUserAccessTagsView: View {
 
-    // MARK: - Observed & Environment Objects
-
     @Router
     private var router
 
@@ -22,8 +20,6 @@ struct AddServerUserAccessTagsView: View {
     @StateObject
     private var tagViewModel: TagEditorViewModel
 
-    // MARK: - Access Tag Variables
-
     @State
     private var tempPolicy: UserPolicy
     @State
@@ -31,27 +27,18 @@ struct AddServerUserAccessTagsView: View {
     @State
     private var access: Bool = false
 
-    // MARK: - Error State
-
-    @State
-    private var error: Error?
-
-    // MARK: - Name is Valid
-
     private var isValid: Bool {
         tempTag.isNotEmpty && !tagIsDuplicate
     }
-
-    // MARK: - Tag is Already Blocked/Allowed
 
     private var tagIsDuplicate: Bool {
         viewModel.user.policy!.blockedTags!.contains(tempTag) || viewModel.user.policy!.allowedTags!.contains(tempTag)
     }
 
-    // MARK: - Tag Already Exists on Jellyfin
-
     private var tagAlreadyExists: Bool {
-        tagViewModel.trie.contains(key: tempTag.localizedLowercase)
+        tagViewModel.matches.contains {
+            $0.localizedCaseInsensitiveCompare(tempTag) == .orderedSame
+        }
     }
 
     // MARK: - Initializer
@@ -96,36 +83,18 @@ struct AddServerUserAccessTagsView: View {
                     .disabled(!isValid)
                 }
             }
-            .onFirstAppear {
-                tagViewModel.send(.load)
-            }
             .onChange(of: tempTag) { _ in
-                if !tagViewModel.backgroundStates.contains(.loading) {
-                    tagViewModel.send(.search(tempTag))
-                }
+                tagViewModel.search(tempTag)
             }
             .onReceive(viewModel.events) { event in
                 switch event {
-                case let .error(eventError):
+                case .error:
                     UIDevice.feedback(.error)
-                    error = eventError
                 case .updated:
                     UIDevice.feedback(.success)
                     router.dismiss()
                 }
             }
-            .onReceive(tagViewModel.events) { event in
-                switch event {
-                case .updated:
-                    break
-                case .loaded:
-                    tagViewModel.send(.search(tempTag))
-                case let .error(eventError):
-                    UIDevice.feedback(.error)
-                    error = eventError
-                }
-            }
-            .errorMessage($error)
     }
 
     // MARK: - Content View
@@ -142,7 +111,7 @@ struct AddServerUserAccessTagsView: View {
             SearchResultsSection(
                 tag: $tempTag,
                 tags: tagViewModel.matches,
-                isSearching: tagViewModel.backgroundStates.contains(.searching)
+                isSearching: tagViewModel.background.states.contains(.searching)
             )
         }
     }

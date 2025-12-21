@@ -12,16 +12,16 @@ import JellyfinAPI
 
 final class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
 
-    // MARK: - Populate the Trie
+    // MARK: - Search Studios
 
-    override func populateTrie() {
-        let elements = elements
-            .compacted(using: \.name)
-            .reduce(into: [String: NameGuidPair]()) { result, element in
-                result[element.name!] = element
-            }
+    override func searchElements(_ searchTerm: String) async throws -> [NameGuidPair] {
+        let parameters = Paths.GetStudiosParameters(searchTerm: searchTerm.isEmpty ? nil : searchTerm)
+        let request = Paths.getStudios(parameters: parameters)
+        let response = try await userSession.client.send(request)
 
-        trie.insert(contentsOf: elements)
+        return response.value.items?.map { studio in
+            NameGuidPair(id: studio.id, name: studio.name)
+        } ?? []
     }
 
     // MARK: - Add Studio(s)
@@ -43,26 +43,11 @@ final class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Reorder Tag(s)
+    // MARK: - Reorder Studio(s)
 
     override func reorderComponents(_ studios: [NameGuidPair]) async throws {
         var updatedItem = item
         updatedItem.studios = studios
         try await updateItem(updatedItem)
-    }
-
-    // MARK: - Fetch All Possible Studios
-
-    override func fetchElements() async throws -> [NameGuidPair] {
-        let request = Paths.getStudios()
-        let response = try await userSession.client.send(request)
-
-        if let studios = response.value.items {
-            return studios.map { studio in
-                NameGuidPair(id: studio.id, name: studio.name)
-            }
-        } else {
-            return []
-        }
     }
 }

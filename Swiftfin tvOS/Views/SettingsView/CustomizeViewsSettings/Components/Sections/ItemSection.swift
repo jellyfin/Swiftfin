@@ -8,6 +8,7 @@
 
 import Defaults
 import Factory
+import JellyfinAPI
 import SwiftUI
 
 extension CustomizeViewsSettings {
@@ -32,6 +33,14 @@ extension CustomizeViewsSettings {
         @StoredValue(.User.enableCollectionManagement)
         private var enableCollectionManagement
 
+        private var userPolicy: UserPolicy? {
+            userSession?.user.data.policy
+        }
+
+        private var isAdminstrator: Bool {
+            userPolicy?.isAdministrator == true
+        }
+
         var body: some View {
             Section(L10n.items) {
 
@@ -41,16 +50,16 @@ extension CustomizeViewsSettings {
 
                 ListRowMenu(L10n.enabledTrailers, selection: $enabledTrailers)
 
-                /// Enable Refreshing & Deleting Collections
-                if userSession?.user.permissions.items.canManageCollections == true {
-                    Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
-                }
                 /// Enable Refreshing Items from All Visible LIbraries
-                if userSession?.user.permissions.items.canEditMetadata == true {
+                if isAdminstrator {
                     Toggle(L10n.editMedia, isOn: $enableItemEditing)
                 }
+                /// Enable Refreshing & Deleting Collections
+                if isAdminstrator || userPolicy?.enableCollectionManagement == true {
+                    Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
+                }
                 /// Enable Deleting Items from Approved Libraries
-                if userSession?.user.permissions.items.canDelete == true {
+                if isAdminstrator || userPolicy?.enableContentDeletion == true {
                     Toggle(L10n.deleteMedia, isOn: $enableItemDeletion)
                 }
             }

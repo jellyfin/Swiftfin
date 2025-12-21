@@ -23,47 +23,6 @@ extension ItemView {
         @ObservedObject
         var viewModel: ItemViewModel
 
-        @StateObject
-        private var deleteViewModel: DeleteItemViewModel
-        @StateObject
-        private var metadataViewModel: RefreshMetadataViewModel
-
-        // MARK: - Dialog States
-
-        @State
-        private var showConfirmationDialog = false
-        @State
-        private var isPresentingEventAlert = false
-
-        // MARK: - Error State
-
-        @State
-        private var error: Error?
-
-        // MARK: - Can Delete Item
-
-        private var canDelete: Bool {
-            viewModel.userSession?.user.permissions.items.canDelete(item: viewModel.item) == true
-        }
-
-        // MARK: - Can Refresh Item
-
-        private var canRefresh: Bool {
-            viewModel.userSession?.user.permissions.items.canEditMetadata(item: viewModel.item) == true
-        }
-
-        // MARK: - Can Manage Subtitles
-
-        private var canManageSubtitles: Bool {
-            viewModel.userSession?.user.permissions.items.canManageSubtitles(item: viewModel.item) == true
-        }
-
-        // MARK: - Deletion or Refreshing is Enabled
-
-        private var enableMenu: Bool {
-            canDelete || canRefresh
-        }
-
         // MARK: - Has Trailers
 
         private var hasTrailers: Bool {
@@ -82,8 +41,6 @@ extension ItemView {
 
         init(viewModel: ItemViewModel) {
             self.viewModel = viewModel
-            self._deleteViewModel = StateObject(wrappedValue: .init(item: viewModel.item))
-            self._metadataViewModel = StateObject(wrappedValue: .init(item: viewModel.item))
         }
 
         // MARK: - Body
@@ -128,35 +85,9 @@ extension ItemView {
 
                 // MARK: Advanced Options
 
-                if enableMenu {
+                if viewModel.item.showEditorMenu {
                     Menu {
-                        if canRefresh || canManageSubtitles {
-                            Section(L10n.manage) {
-                                if canRefresh {
-                                    Button(L10n.refreshMetadata, systemImage: "arrow.clockwise") {
-                                        router.route(to: .itemMetadataRefresh(viewModel: metadataViewModel))
-                                    }
-                                }
-
-                                if canManageSubtitles {
-                                    Button(L10n.subtitles, systemImage: "textformat") {
-                                        router.route(
-                                            to: .searchSubtitle(
-                                                viewModel: .init(item: viewModel.item)
-                                            )
-                                        )
-                                    }
-                                }
-                            }
-                        }
-
-                        if canDelete {
-                            Section {
-                                Button(L10n.delete, systemImage: "trash", role: .destructive) {
-                                    showConfirmationDialog = true
-                                }
-                            }
-                        }
+                        ItemEditorMenu(viewModel: viewModel)
                     } label: {
                         Label(L10n.advanced, systemImage: "ellipsis")
                             .rotationEffect(.degrees(90))
@@ -169,25 +100,6 @@ extension ItemView {
             .labelStyle(.iconOnly)
             .font(.title3)
             .fontWeight(.semibold)
-            .confirmationDialog(
-                L10n.deleteItemConfirmationMessage,
-                isPresented: $showConfirmationDialog,
-                titleVisibility: .visible
-            ) {
-                Button(L10n.confirm, role: .destructive) {
-                    deleteViewModel.send(.delete)
-                }
-                Button(L10n.cancel, role: .cancel) {}
-            }
-            .onReceive(deleteViewModel.events) { event in
-                switch event {
-                case let .error(eventError):
-                    error = eventError
-                case .deleted:
-                    router.dismiss()
-                }
-            }
-            .errorMessage($error)
         }
     }
 }

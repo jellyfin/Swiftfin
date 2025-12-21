@@ -13,8 +13,6 @@ extension AddItemElementView {
 
     struct NameInput: View {
 
-        // MARK: - Element Variables
-
         @Binding
         var name: String
         @Binding
@@ -25,8 +23,6 @@ extension AddItemElementView {
         let type: ItemArrayElements
         let itemAlreadyExists: Bool
 
-        // MARK: - Body
-
         var body: some View {
             nameView
 
@@ -34,8 +30,6 @@ extension AddItemElementView {
                 personView
             }
         }
-
-        // MARK: - Name View
 
         private var nameView: some View {
             Section {
@@ -67,8 +61,6 @@ extension AddItemElementView {
                 }
             }
         }
-
-        // MARK: - Person View
 
         var personView: some View {
             Section {
