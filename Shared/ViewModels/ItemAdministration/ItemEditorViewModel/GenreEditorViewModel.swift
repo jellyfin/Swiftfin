@@ -48,4 +48,16 @@ final class GenreEditorViewModel: ItemEditorViewModel<String> {
         updatedItem.genres = genres
         try await updateItem(updatedItem)
     }
+
+    // MARK: - Contains Element
+
+    override func containsElement(named name: String) -> Bool {
+        item.genres?.contains { $0.caseInsensitiveCompare(name) == .orderedSame } ?? false
+    }
+
+    // MARK: - Match Exists
+
+    override func matchExists(named name: String) -> Bool {
+        matches.contains { $0.caseInsensitiveCompare(name) == .orderedSame }
+    }
 }

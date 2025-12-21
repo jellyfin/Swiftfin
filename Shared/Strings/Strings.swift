@@ -762,6 +762,8 @@ internal enum L10n {
   internal static let invertedDark = L10n.tr("Localizable", "invertedDark", fallback: "Inverted dark")
   /// Inverted light
   internal static let invertedLight = L10n.tr("Localizable", "invertedLight", fallback: "Inverted light")
+  /// Item already exists
+  internal static let itemAlreadyExists = L10n.tr("Localizable", "itemAlreadyExists", fallback: "Item already exists")
   /// %1$@ at %2$@
   internal static func itemAtItem(_ p1: Any, _ p2: Any) -> String {
     return L10n.tr("Localizable", "itemAtItem", String(describing: p1), String(describing: p2), fallback: "%1$@ at %2$@")

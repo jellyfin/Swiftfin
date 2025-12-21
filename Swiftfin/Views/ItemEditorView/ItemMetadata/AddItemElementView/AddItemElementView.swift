@@ -44,50 +44,18 @@ struct AddItemElementView<Element: Hashable>: View {
     @State
     private var error: Error?
 
-    // MARK: - Name is Valid
+    // MARK: - Validation
 
-    private var isValid: Bool {
-        name.isNotEmpty
+    private var alreadyOnItem: Bool {
+        name.isNotEmpty && viewModel.containsElement(named: name)
     }
 
-    // MARK: - Name Already Exists
+    private var existsOnServer: Bool {
+        name.isNotEmpty && viewModel.matchExists(named: name)
+    }
 
-    private var itemAlreadyExists: Bool {
-        let input = name
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
-
-        guard input.isNotEmpty else { return false }
-
-        return viewModel.matches.contains { element in
-            let candidate: String?
-
-            switch type {
-            case .people:
-                candidate = (element as? BaseItemPerson)?.name
-
-            case .genres, .tags:
-                if let string = element as? String {
-                    candidate = string
-                } else if let pair = element as? NameGuidPair {
-                    candidate = pair.name
-                } else {
-                    assertionFailure("Unexpected element type: \(Element.self)")
-                    return false
-                }
-
-            case .studios:
-                candidate = (element as? NameGuidPair)?.name
-            }
-
-            guard let value = candidate else { return false }
-
-            let normalized = value
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-                .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
-
-            return normalized == input
-        }
+    private var isValid: Bool {
+        name.isNotEmpty && !alreadyOnItem
     }
 
     // MARK: - Body
@@ -124,8 +92,8 @@ struct AddItemElementView<Element: Hashable>: View {
             .buttonStyle(.toolbarPill)
             .disabled(!isValid)
         }
-        .onChange(of: name) { _ in
-            viewModel.search(name)
+        .onChange(of: name) { newName in
+            viewModel.search(newName)
         }
         .onReceive(viewModel.events) { event in
             switch event {
@@ -145,7 +113,8 @@ struct AddItemElementView<Element: Hashable>: View {
                 personKind: $personKind,
                 personRole: $personRole,
                 type: type,
-                itemAlreadyExists: itemAlreadyExists
+                alreadyOnItem: alreadyOnItem,
+                existsOnServer: existsOnServer
             )
 
             SearchResultsSection(

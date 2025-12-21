@@ -17,9 +17,6 @@ struct ItemEditorMenu: View {
     @ObservedObject
     private var viewModel: ItemViewModel
 
-    @State
-    private var isPresentingConfirmationDialog = false
-
     @StateObject
     private var deleteViewModel: DeleteItemViewModel
 
@@ -31,16 +28,6 @@ struct ItemEditorMenu: View {
     @ViewBuilder
     var body: some View {
         contentView
-            .confirmationDialog(
-                L10n.deleteItemConfirmationMessage,
-                isPresented: $isPresentingConfirmationDialog,
-                titleVisibility: .visible
-            ) {
-                Button(L10n.confirm, role: .destructive) {
-                    deleteViewModel.send(.delete)
-                }
-                Button(L10n.cancel, role: .cancel) {}
-            }
             .onReceive(deleteViewModel.events) { event in
                 switch event {
                 case .deleted:
@@ -56,14 +43,14 @@ struct ItemEditorMenu: View {
     @ViewBuilder
     private var contentView: some View {
         if viewModel.item.canEditMetadata {
-            Button(L10n.refreshMetadata, systemImage: "arrow.clockwise") {
-                router.route(to: .itemMetadataRefresh(viewModel: .init(item: viewModel.item)))
-            }
             #if os(iOS)
-            Button(L10n.metadata, systemImage: "pencil") {
+            Button(L10n.edit, systemImage: "pencil") {
                 router.route(to: .itemEditor(viewModel: viewModel))
             }
             #endif
+            Button(L10n.refreshMetadata, systemImage: "arrow.clockwise") {
+                router.route(to: .itemMetadataRefresh(viewModel: .init(item: viewModel.item)))
+            }
         }
 
         // TODO: Enable when Music & Lyrics are added
@@ -89,7 +76,7 @@ struct ItemEditorMenu: View {
         if viewModel.item.canBeDeleted {
             Section {
                 Button(L10n.delete, systemImage: "trash", role: .destructive) {
-                    isPresentingConfirmationDialog = true
+                    router.route(to: .itemDeletion(viewModel: deleteViewModel))
                 }
             }
         }

@@ -21,7 +21,10 @@ extension AddItemElementView {
         var personRole: String
 
         let type: ItemArrayElements
-        let itemAlreadyExists: Bool
+        let alreadyOnItem: Bool
+        let existsOnServer: Bool
+
+        // MARK: - Body
 
         var body: some View {
             nameView
@@ -31,6 +34,8 @@ extension AddItemElementView {
             }
         }
 
+        // MARK: - Name View
+
         private var nameView: some View {
             Section {
                 TextField(L10n.name, text: $name)
@@ -38,31 +43,37 @@ extension AddItemElementView {
             } header: {
                 Text(L10n.name)
             } footer: {
-                if name.isEmpty || name == "" {
+                if name.isEmpty {
                     Label(
                         L10n.required,
                         systemImage: "exclamationmark.circle.fill"
                     )
                     .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                } else if alreadyOnItem {
+                    Label(
+                        L10n.itemAlreadyExists,
+                        systemImage: "exclamationmark.circle.fill"
+                    )
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .red))
+                } else if existsOnServer {
+                    Label(
+                        L10n.existsOnServer,
+                        systemImage: "checkmark.circle.fill"
+                    )
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .green))
                 } else {
-                    if itemAlreadyExists {
-                        Label(
-                            L10n.existsOnServer,
-                            systemImage: "checkmark.circle.fill"
-                        )
-                        .labelStyle(.sectionFooterWithImage(imageStyle: .green))
-                    } else {
-                        Label(
-                            L10n.willBeCreatedOnServer,
-                            systemImage: "checkmark.seal.fill"
-                        )
-                        .labelStyle(.sectionFooterWithImage(imageStyle: .blue))
-                    }
+                    Label(
+                        L10n.willBeCreatedOnServer,
+                        systemImage: "checkmark.seal.fill"
+                    )
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .blue))
                 }
             }
         }
 
-        var personView: some View {
+        // MARK: - Person View
+
+        private var personView: some View {
             Section {
                 Picker(L10n.type, selection: $personKind) {
                     ForEach(PersonKind.allCases, id: \.self) { kind in

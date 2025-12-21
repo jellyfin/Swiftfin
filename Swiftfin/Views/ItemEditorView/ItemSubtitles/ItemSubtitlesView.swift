@@ -90,6 +90,9 @@ struct ItemSubtitlesView: View {
             }
         }
         .errorMessage($error)
+        .navigationBarCloseButton {
+            router.dismiss()
+        }
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 if isEditing {

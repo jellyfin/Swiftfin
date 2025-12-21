@@ -50,4 +50,16 @@ final class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
         updatedItem.studios = studios
         try await updateItem(updatedItem)
     }
+
+    // MARK: - Contains Element
+
+    override func containsElement(named name: String) -> Bool {
+        item.studios?.contains { $0.name?.caseInsensitiveCompare(name) == .orderedSame } ?? false
+    }
+
+    // MARK: - Match Exists
+
+    override func matchExists(named name: String) -> Bool {
+        matches.contains { $0.name?.caseInsensitiveCompare(name) == .orderedSame }
+    }
 }
