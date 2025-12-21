@@ -30,11 +30,6 @@ struct EditMetadataView: View {
 
     private let itemType: BaseItemKind
 
-    // MARK: - Error State
-
-    @State
-    private var error: Error?
-
     // MARK: - Initializer
 
     init(viewModel: ItemEditorViewModel<BaseItemDto>) {
@@ -50,21 +45,24 @@ struct EditMetadataView: View {
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .initial, .content, .updating:
+            case .error:
+                viewModel.error.map {
+                    ErrorView(error: $0)
+                }
+            case .initial:
                 contentView
-            case let .error(error):
-                ErrorView(error: error)
             }
         }
         .navigationTitle(L10n.metadata)
         .navigationBarTitleDisplayMode(.inline)
-        .refreshable {
-            viewModel.send(.load)
-        }
         .topBarTrailing {
+            if viewModel.background.states.contains(.updating) {
+                ProgressView()
+            }
+
             Button(L10n.save) {
                 item = tempItem
-                viewModel.send(.update(tempItem))
+                viewModel.update(tempItem)
                 router.dismiss()
             }
             .buttonStyle(.toolbarPill)
@@ -73,15 +71,13 @@ struct EditMetadataView: View {
         .navigationBarCloseButton {
             router.dismiss()
         }
-        .onReceive(viewModel.events) { events in
-            switch events {
-            case let .error(eventError):
-                error = eventError
-            default:
-                break
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .updated:
+                UIDevice.feedback(.success)
             }
         }
-        .errorMessage($error)
+        .errorMessage($viewModel.error)
     }
 
     // MARK: - Content View

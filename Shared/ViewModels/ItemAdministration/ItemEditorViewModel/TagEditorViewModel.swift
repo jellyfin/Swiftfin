@@ -12,10 +12,25 @@ import JellyfinAPI
 
 final class TagEditorViewModel: ItemEditorViewModel<String> {
 
-    // MARK: - Populate the Trie
+    private var allTags: [String] = []
+    private var trie = Trie<String, String>()
 
-    override func populateTrie() {
-        trie.insert(contentsOf: elements.keyed(using: \.localizedLowercase))
+    // MARK: - Search Tags
+
+    override func searchElements(_ searchTerm: String) async throws -> [String] {
+        if allTags.isEmpty {
+            let parameters = Paths.GetQueryFiltersLegacyParameters(userID: userSession.user.id)
+            let request = Paths.getQueryFiltersLegacy(parameters: parameters)
+            let response = try await userSession.client.send(request)
+            allTags = response.value.tags ?? []
+            trie.insert(contentsOf: allTags.keyed(using: \.localizedLowercase))
+        }
+
+        guard searchTerm.isNotEmpty else {
+            return allTags
+        }
+
+        return trie.search(prefix: searchTerm.localizedLowercase)
     }
 
     // MARK: - Add Tag(s)
@@ -27,6 +42,11 @@ final class TagEditorViewModel: ItemEditorViewModel<String> {
         }
         updatedItem.tags?.append(contentsOf: tags)
         try await updateItem(updatedItem)
+
+        for tag in tags where !allTags.contains(tag) {
+            allTags.append(tag)
+            trie.insert(key: tag, element: tag.localizedLowercase)
+        }
     }
 
     // MARK: - Remove Tag(s)
@@ -43,15 +63,5 @@ final class TagEditorViewModel: ItemEditorViewModel<String> {
         var updatedItem = item
         updatedItem.tags = tags
         try await updateItem(updatedItem)
-    }
-
-    // MARK: - Fetch All Possible Tags
-
-    override func fetchElements() async throws -> [String] {
-        let parameters = Paths.GetQueryFiltersLegacyParameters(userID: userSession.user.id)
-        let request = Paths.getQueryFiltersLegacy(parameters: parameters)
-        guard let response = try? await userSession.client.send(request) else { return [] }
-
-        return response.value.tags ?? []
     }
 }

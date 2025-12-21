@@ -159,7 +159,11 @@ extension BaseItemDto {
     /// ie: A movie and an episode can be directly played,
     ///     but a series is not as its episodes are playable.
     var isPlayable: Bool {
-        guard !isMissing else { return false }
+        guard !isMissing,
+              Container.shared.currentUserSession()?.user.data.policy?.enableMediaPlayback == true
+        else {
+            return false
+        }
 
         return switch type {
         case .series:

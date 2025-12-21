@@ -89,6 +89,7 @@ extension NavigationRoute {
         }
     }
 
+    @MainActor
     static func editGenres(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editGenres") {
             EditItemElementView<String>(
@@ -116,6 +117,7 @@ extension NavigationRoute {
         }
     }
 
+    @MainActor
     static func editMetadata(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(
             id: "editMetadata",
@@ -125,6 +127,7 @@ extension NavigationRoute {
         }
     }
 
+    @MainActor
     static func editPeople(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editPeople") {
             EditItemElementView<BaseItemPerson>(
@@ -137,6 +140,7 @@ extension NavigationRoute {
         }
     }
 
+    @MainActor
     static func editStudios(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editStudios") {
             EditItemElementView<NameGuidPair>(
@@ -149,6 +153,7 @@ extension NavigationRoute {
         }
     }
 
+    @MainActor
     static func editTags(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editTags") {
             EditItemElementView<String>(

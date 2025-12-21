@@ -39,11 +39,6 @@ final class RefreshMetadataViewModel: ViewModel {
         case refreshing
     }
 
-    // MARK: - Published Items
-
-    @Published
-    private(set) var progress: Double = 0.0
-
     private var item: BaseItemDto
 
     // MARK: - Init
@@ -94,7 +89,6 @@ final class RefreshMetadataViewModel: ViewModel {
         let newItem = try await item.getFullItem(userSession: userSession)
 
         self.item = newItem
-        self.progress = 0.0
 
         Notifications[.itemMetadataDidChange].post(newItem)
     }
@@ -112,7 +106,6 @@ final class RefreshMetadataViewModel: ViewModel {
             try await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
 
             let currentProgress = Double(i) / Double(steps)
-            self.progress = currentProgress
         }
     }
 }

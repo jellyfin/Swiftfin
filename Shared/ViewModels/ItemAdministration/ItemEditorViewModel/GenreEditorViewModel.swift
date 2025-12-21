@@ -12,10 +12,14 @@ import JellyfinAPI
 
 final class GenreEditorViewModel: ItemEditorViewModel<String> {
 
-    // MARK: - Populate the Trie
+    // MARK: - Search Genres
 
-    override func populateTrie() {
-        trie.insert(contentsOf: elements.keyed(using: \.localizedLowercase))
+    override func searchElements(_ searchTerm: String) async throws -> [String] {
+        let parameters = Paths.GetGenresParameters(searchTerm: searchTerm.isEmpty ? nil : searchTerm)
+        let request = Paths.getGenres(parameters: parameters)
+        let response = try await userSession.client.send(request)
+
+        return response.value.items?.compactMap(\.name) ?? []
     }
 
     // MARK: - Add Genre(s)
@@ -37,24 +41,11 @@ final class GenreEditorViewModel: ItemEditorViewModel<String> {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Reorder Tag(s)
+    // MARK: - Reorder Genre(s)
 
     override func reorderComponents(_ genres: [String]) async throws {
         var updatedItem = item
         updatedItem.genres = genres
         try await updateItem(updatedItem)
-    }
-
-    // MARK: - Fetch All Possible Genres
-
-    override func fetchElements() async throws -> [String] {
-        let request = Paths.getGenres()
-        let response = try await userSession.client.send(request)
-
-        if let genres = response.value.items {
-            return genres.compactMap(\.name).compactMap { $0 }
-        } else {
-            return []
-        }
     }
 }

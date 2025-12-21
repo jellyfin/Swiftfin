@@ -12,19 +12,19 @@ import JellyfinAPI
 
 final class PeopleEditorViewModel: ItemEditorViewModel<BaseItemPerson> {
 
-    // MARK: - Populate the Trie
+    // MARK: - Search People
 
-    override func populateTrie() {
-        let elements = elements
-            .compacted(using: \.name)
-            .reduce(into: [String: BaseItemPerson]()) { result, element in
-                result[element.name!.localizedLowercase] = element
-            }
+    override func searchElements(_ searchTerm: String) async throws -> [BaseItemPerson] {
+        let parameters = Paths.GetPersonsParameters(searchTerm: searchTerm.isEmpty ? nil : searchTerm)
+        let request = Paths.getPersons(parameters: parameters)
+        let response = try await userSession.client.send(request)
 
-        trie.insert(contentsOf: elements)
+        return response.value.items?.map { person in
+            BaseItemPerson(id: person.id, name: person.name)
+        } ?? []
     }
 
-    // MARK: - Add People(s)
+    // MARK: - Add People
 
     override func addComponents(_ people: [BaseItemPerson]) async throws {
         var updatedItem = item
@@ -35,7 +35,7 @@ final class PeopleEditorViewModel: ItemEditorViewModel<BaseItemPerson> {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Remove People(s)
+    // MARK: - Remove People
 
     override func removeComponents(_ people: [BaseItemPerson]) async throws {
         var updatedItem = item
@@ -43,26 +43,11 @@ final class PeopleEditorViewModel: ItemEditorViewModel<BaseItemPerson> {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Reorder Tag(s)
+    // MARK: - Reorder People
 
     override func reorderComponents(_ people: [BaseItemPerson]) async throws {
         var updatedItem = item
         updatedItem.people = people
         try await updateItem(updatedItem)
-    }
-
-    // MARK: - Fetch All Possible People
-
-    override func fetchElements() async throws -> [BaseItemPerson] {
-        let request = Paths.getPersons()
-        let response = try await userSession.client.send(request)
-
-        if let people = response.value.items {
-            return people.map { person in
-                BaseItemPerson(id: person.id, name: person.name)
-            }
-        } else {
-            return []
-        }
     }
 }
