@@ -12,6 +12,7 @@ import SwiftUI
 
 extension BaseItemDto {
 
+    /// Can this `BaseItemDto` be deleted by this user
     var canBeDeleted: Bool {
         guard let userPolicy = Container.shared.currentUserSession()?.user.data.policy else { return false }
 
@@ -29,11 +30,13 @@ extension BaseItemDto {
         }
     }
 
+    /// Can this `BaseItemDto` be downloaded by this user
     var canBeDownloaded: Bool {
         guard let userPolicy = Container.shared.currentUserSession()?.user.data.policy else { return false }
         return userPolicy.enableContentDownloading == true && canDownload == true
     }
 
+    /// Can this `BaseItemDto`'s metadata be edited by this user
     var canEditMetadata: Bool {
         guard let userPolicy = Container.shared.currentUserSession()?.user.data.policy else { return false }
 
@@ -49,6 +52,7 @@ extension BaseItemDto {
         }
     }
 
+    /// Can this `BaseItemDto`'s lyrics be edited by this user
     var canEditLyrics: Bool {
         guard let userPolicy = Container.shared.currentUserSession()?.user.data.policy else { return false }
 
@@ -60,6 +64,7 @@ extension BaseItemDto {
         }
     }
 
+    /// Can this `BaseItemDto`'s subtitles be edited by this user
     var canEditSubtitles: Bool {
         guard let userPolicy = Container.shared.currentUserSession()?.user.data.policy else { return false }
 
@@ -71,6 +76,7 @@ extension BaseItemDto {
         }
     }
 
+    /// Is there an editor permission that necessates that the Editor Menu is shown
     var showEditorMenu: Bool {
         canEditMetadata
             || canEditSubtitles
