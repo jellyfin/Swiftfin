@@ -19,7 +19,7 @@ extension ServerUserPermissionsView {
         var body: some View {
             Section(L10n.syncPlay) {
 
-                CaseIterablePicker(
+                Picker(
                     L10n.permissions,
                     selection: $policy.syncPlayAccess.coalesce(.none)
                 )

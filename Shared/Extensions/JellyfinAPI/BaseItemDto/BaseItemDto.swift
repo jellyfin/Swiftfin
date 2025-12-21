@@ -379,6 +379,8 @@ extension BaseItemDto {
             .sorted(using: \.startPositionTicks)
             .compacted(using: \.startPositionTicks) else { return nil }
 
+        guard let userSession = Container.shared.currentUserSession() else { return nil }
+
         return chapters
             .enumerated()
             .map { i, chapter in
@@ -395,7 +397,7 @@ extension BaseItemDto {
                     parameters: parameters
                 )
 
-                let imageURL = Container.shared.currentUserSession()!
+                let imageURL = userSession
                     .client
                     .fullURL(with: request)
 

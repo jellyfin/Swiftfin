@@ -187,24 +187,23 @@ extension ItemView {
 
                     Spacer()
 
-                    VStack {
+                    VStack(spacing: 30) {
                         if viewModel.item.type == .person || viewModel.item.type == .musicArtist {
-                            ImageView(viewModel.item.imageSource(.primary, maxWidth: 440))
+                            ImageView(viewModel.item.imageSource(.primary, maxWidth: 450))
                                 .failure {
                                     SystemImageContentView(systemName: viewModel.item.systemImage)
                                 }
                                 .posterStyle(.portrait, contentMode: .fill)
-                                .frame(width: 440)
                                 .cornerRadius(10)
                                 .accessibilityIgnoresInvertColors()
                         } else if viewModel.item.presentPlayButton {
                             ItemView.PlayButton(viewModel: viewModel)
                                 .focused($focusedLayer, equals: .playButton)
+                                .frame(height: 100)
                         }
-
                         ItemView.ActionButtonHStack(viewModel: viewModel)
                             .focused($focusedLayer, equals: .actionButtons)
-                            .frame(width: 440)
+                            .frame(height: 100)
                     }
                     .frame(width: 450)
                     .padding(.leading, 150)

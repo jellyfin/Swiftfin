@@ -12,12 +12,6 @@ extension ItemView {
 
     struct ActionButtonHStack: View {
 
-        @StoredValue(.User.enableItemDeletion)
-        private var enableItemDeletion: Bool
-        @StoredValue(.User.enableItemEditing)
-        private var enableItemEditing: Bool
-        @StoredValue(.User.enableCollectionManagement)
-        private var enableCollectionManagement: Bool
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers: TrailerSelection
 
@@ -31,6 +25,8 @@ extension ItemView {
 
         @StateObject
         private var deleteViewModel: DeleteItemViewModel
+        @StateObject
+        private var metadataViewModel: RefreshMetadataViewModel
 
         // MARK: - Dialog States
 
@@ -47,19 +43,19 @@ extension ItemView {
         // MARK: - Can Delete Item
 
         private var canDelete: Bool {
-            viewModel.userSession.user.permissions.items.canDelete(item: viewModel.item)
+            viewModel.userSession?.user.permissions.items.canDelete(item: viewModel.item) == true
         }
 
         // MARK: - Can Refresh Item
 
         private var canRefresh: Bool {
-            viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item)
+            viewModel.userSession?.user.permissions.items.canEditMetadata(item: viewModel.item) == true
         }
 
         // MARK: - Can Manage Subtitles
 
         private var canManageSubtitles: Bool {
-            viewModel.userSession.user.permissions.items.canManageSubtitles(item: viewModel.item)
+            viewModel.userSession?.user.permissions.items.canManageSubtitles(item: viewModel.item) == true
         }
 
         // MARK: - Deletion or Refreshing is Enabled
@@ -87,26 +83,23 @@ extension ItemView {
         init(viewModel: ItemViewModel) {
             self.viewModel = viewModel
             self._deleteViewModel = StateObject(wrappedValue: .init(item: viewModel.item))
+            self._metadataViewModel = StateObject(wrappedValue: .init(item: viewModel.item))
         }
 
         // MARK: - Body
 
         var body: some View {
-            HStack(alignment: .center, spacing: 20) {
+            HStack(alignment: .center, spacing: 30) {
 
                 // MARK: Toggle Played
 
                 if viewModel.item.canBePlayed {
                     let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
 
-                    ActionButton(
-                        L10n.played,
-                        icon: "checkmark.circle",
-                        selectedIcon: "checkmark.circle.fill"
-                    ) {
+                    Button(L10n.played, systemImage: "checkmark") {
                         viewModel.send(.toggleIsPlayed)
                     }
-                    .foregroundStyle(Color.jellyfinPurple)
+                    .buttonStyle(.tintedMaterial(tint: Color.jellyfinPurple, foregroundColor: .primary))
                     .isSelected(isCheckmarkSelected)
                     .frame(minWidth: 100, maxWidth: .infinity)
                 }
@@ -115,14 +108,10 @@ extension ItemView {
 
                 let isHeartSelected = viewModel.item.userData?.isFavorite == true
 
-                ActionButton(
-                    L10n.favorited,
-                    icon: "heart.circle",
-                    selectedIcon: "heart.circle.fill"
-                ) {
+                Button(L10n.favorited, systemImage: isHeartSelected ? "heart.fill" : "heart") {
                     viewModel.send(.toggleIsFavorite)
                 }
-                .foregroundStyle(.pink)
+                .buttonStyle(.tintedMaterial(tint: .pink, foregroundColor: .primary))
                 .isSelected(isHeartSelected)
                 .frame(minWidth: 100, maxWidth: .infinity)
 
@@ -133,16 +122,20 @@ extension ItemView {
                         localTrailers: viewModel.localTrailers,
                         externalTrailers: viewModel.item.remoteTrailers ?? []
                     )
+                    .buttonStyle(.tintedMaterial(tint: .pink, foregroundColor: .primary))
+                    .frame(minWidth: 100, maxWidth: .infinity)
                 }
 
                 // MARK: Advanced Options
 
                 if enableMenu {
-                    ActionButton(L10n.advanced, icon: "ellipsis", isCompact: true) {
+                    Menu {
                         if canRefresh || canManageSubtitles {
                             Section(L10n.manage) {
                                 if canRefresh {
-                                    RefreshMetadataButton(item: viewModel.item)
+                                    Button(L10n.refreshMetadata, systemImage: "arrow.clockwise") {
+                                        router.route(to: .itemMetadataRefresh(viewModel: metadataViewModel))
+                                    }
                                 }
 
                                 if canManageSubtitles {
@@ -164,13 +157,18 @@ extension ItemView {
                                 }
                             }
                         }
+                    } label: {
+                        Label(L10n.advanced, systemImage: "ellipsis")
+                            .rotationEffect(.degrees(90))
                     }
-                    .frame(width: 60)
+                    .buttonStyle(.material)
+                    .frame(width: 60, height: 100)
                 }
             }
             .frame(height: 100)
-            .padding(.top, 1)
-            .padding(.bottom, 10)
+            .labelStyle(.iconOnly)
+            .font(.title3)
+            .fontWeight(.semibold)
             .confirmationDialog(
                 L10n.deleteItemConfirmationMessage,
                 isPresented: $showConfirmationDialog,

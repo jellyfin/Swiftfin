@@ -54,7 +54,7 @@ extension EditServerTaskView {
 
                 Button(L10n.delete, role: .destructive) {
                     if let selectedTrigger {
-                        observer.send(.removeTrigger(selectedTrigger))
+                        observer.removeTrigger(selectedTrigger)
                     }
                 }
             } message: {

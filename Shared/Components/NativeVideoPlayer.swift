@@ -96,6 +96,7 @@ extension NativeVideoPlayer {
 
             player?.allowsExternalPlayback = true
             player?.appliesMediaSelectionCriteriaAutomatically = false
+            player?.usesExternalPlaybackWhileExternalScreenIsActive = true
             allowsPictureInPicturePlayback = true
 
             #if !os(tvOS)

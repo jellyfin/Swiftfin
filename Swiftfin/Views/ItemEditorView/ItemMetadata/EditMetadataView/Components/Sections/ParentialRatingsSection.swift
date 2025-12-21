@@ -13,17 +13,12 @@ extension EditMetadataView {
 
     struct ParentalRatingSection: View {
 
-        // MARK: - Item
-
-        @Binding
-        var item: BaseItemDto
-
-        // MARK: - Body
+        let item: Binding<BaseItemDto>
 
         var body: some View {
             Section(L10n.parentalRating) {
-                ParentalRatingPicker(L10n.officialRating, name: $item.officialRating)
-                ParentalRatingPicker(L10n.customRating, name: $item.customRating)
+                ParentalRatingPicker(L10n.officialRating, name: item.officialRating)
+                ParentalRatingPicker(L10n.customRating, name: item.customRating)
             }
         }
     }
