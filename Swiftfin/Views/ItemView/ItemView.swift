@@ -125,7 +125,7 @@ struct ItemView: View {
             isLoading: viewModel.backgroundStates.contains(.refresh),
             isHidden: !viewModel.item.showEditorMenu
         ) {
-            ItemEditorMenu(viewModel: viewModel)
+            ItemEditorMenu(item: viewModel.item)
         }
     }
 }

@@ -17,6 +17,19 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel {
 
     @CasePathable
     enum Action {
+
+        /// Generic Actions
+        case delete
+        case refreshItem(sendNotification: Bool)
+        case refreshMetadata(
+            metadataRefreshMode: MetadataRefreshMode,
+            imageRefreshMode: MetadataRefreshMode,
+            replaceMetadata: Bool,
+            replaceImages: Bool,
+            regenerateTrickplay: Bool
+        )
+
+        /// Component Actions
         case search(String)
         case actuallySearch(String)
         case add([Element])
@@ -26,12 +39,12 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel {
 
         var transition: Transition {
             switch self {
-            case let .search(query):
-                query.isEmpty ? .to(.initial) : .background(.searching)
+            case .add, .delete, .remove, .reorder, .update, .refreshItem, .refreshMetadata:
+                .background(.updating)
+            case .search:
+                .to(.initial)
             case .actuallySearch:
                 .background(.searching)
-            case .add, .remove, .reorder, .update:
-                .background(.updating)
             }
         }
     }
@@ -42,6 +55,8 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel {
     }
 
     enum Event {
+        case deleted
+        case metadataRefreshStarted
         case updated
     }
 
@@ -81,6 +96,50 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel {
 
     // MARK: - Actions
 
+    @Function(\Action.Cases.delete)
+    private func _delete() async throws {
+        guard let itemID = item.id else { return }
+
+        let request = Paths.deleteItem(itemID: itemID)
+        _ = try await userSession.client.send(request)
+
+        Notifications[.didDeleteItem].post(itemID)
+        events.send(.deleted)
+    }
+
+    @Function(\Action.Cases.refreshMetadata)
+    private func _refreshMetadata(
+        _ metadataRefreshMode: MetadataRefreshMode,
+        _ imageRefreshMode: MetadataRefreshMode,
+        _ replaceMetadata: Bool,
+        _ replaceImages: Bool,
+        _ regenerateTrickplay: Bool
+    ) async throws {
+        guard let itemId = item.id else { return }
+
+        var parameters = Paths.RefreshItemParameters()
+        parameters.metadataRefreshMode = metadataRefreshMode
+        parameters.imageRefreshMode = imageRefreshMode
+        parameters.isReplaceAllMetadata = replaceMetadata
+        parameters.isReplaceAllImages = replaceImages
+        parameters.isRegenerateTrickplay = regenerateTrickplay
+
+        let request = Paths.refreshItem(
+            itemID: itemId,
+            parameters: parameters
+        )
+        _ = try await userSession.client.send(request)
+
+        events.send(.metadataRefreshStarted)
+
+        // TODO: Remove this call when we have a WebSocket
+        // - Both lines below this can be replaced by the WebSocket
+        // - Centralized, WebSocket gets the new information and updates when new
+        // - Currently, waits 5 seconds before a manual refresh
+        try await Task.sleep(for: .seconds(5))
+        await refreshItem(sendNotification: true)
+    }
+
     @Function(\Action.Cases.search)
     private func _search(_ searchTerm: String) async throws {
         searchQuery.value = searchTerm
@@ -96,24 +155,26 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel {
     @Function(\Action.Cases.add)
     private func _add(_ components: [Element]) async throws {
         try await addComponents(components)
-        events.send(.updated)
     }
 
     @Function(\Action.Cases.remove)
     private func _remove(_ components: [Element]) async throws {
         try await removeComponents(components)
-        events.send(.updated)
     }
 
     @Function(\Action.Cases.reorder)
     private func _reorder(_ components: [Element]) async throws {
         try await reorderComponents(components)
-        events.send(.updated)
     }
 
     @Function(\Action.Cases.update)
     private func _update(_ newItem: BaseItemDto) async throws {
         try await updateItem(newItem)
+    }
+
+    @Function(\Action.Cases.refreshItem)
+    private func _refreshItem(_ isRefresh: Bool) async throws {
+        item = try await item.getFullItem(userSession: userSession, isRefresh: isRefresh)
         events.send(.updated)
     }
 
@@ -128,9 +189,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel {
         let request = Paths.updateItem(itemID: itemId, updateItem)
         _ = try await userSession.client.send(request)
 
-        item = try await item.getFullItem(userSession: userSession)
-
-        Notifications[.itemMetadataDidChange].post(item)
+        await refreshItem(sendNotification: true)
     }
 
     // MARK: - Overridable Methods

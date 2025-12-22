@@ -15,19 +15,19 @@ struct ItemElementSearchView<Element: Hashable>: View {
     private var isNameFocused: Bool
 
     @Binding
-    var name: String
+    private var name: String
     @Binding
-    var id: String?
+    private var id: String?
     @Binding
-    var personKind: PersonKind
+    private var personKind: PersonKind
     @Binding
-    var personRole: String
+    private var personRole: String
 
-    let type: ItemArrayElements
-    let population: [Element]
-    let isSearching: Bool
-    let alreadyOnItem: Bool
-    let existsOnServer: Bool
+    private let type: ItemArrayElements
+    private let population: [Element]
+    private let isSearching: Bool
+    private let alreadyOnItem: Bool
+    private let existsOnServer: Bool
 
     // MARK: - Body
 
@@ -55,8 +55,6 @@ struct ItemElementSearchView<Element: Hashable>: View {
                 }
             }
             .animation(.easeInOut, value: name)
-            .animation(.easeInOut, value: alreadyOnItem)
-            .animation(.easeInOut, value: existsOnServer)
         }
         .onFirstAppear {
             isNameFocused = true
@@ -102,11 +100,12 @@ struct ItemElementSearchView<Element: Hashable>: View {
 
                     Text(population.count.description)
 
-                    ProgressView()
+                    if isSearching {
+                        ProgressView()
+                    }
                 }
                 .animation(.easeInOut, value: isSearching)
             }
-            .animation(.easeInOut, value: population.count)
         }
     }
 
@@ -136,5 +135,52 @@ struct ItemElementSearchView<Element: Hashable>: View {
             Text(type.getName(for: match))
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
+    }
+}
+
+extension ItemElementSearchView {
+
+    // MARK: - Initializer for Generic `ItemElement`
+
+    init(
+        name: Binding<String>,
+        id: Binding<String?>,
+        type: ItemArrayElements,
+        personKind: Binding<PersonKind>,
+        personRole: Binding<String>,
+        population: [Element],
+        isSearching: Bool,
+        alreadyOnItem: Bool,
+        existsOnServer: Bool
+    ) {
+        self._name = name
+        self._id = id
+        self._personKind = personKind
+        self._personRole = personRole
+        self.type = type
+        self.population = population
+        self.isSearching = isSearching
+        self.alreadyOnItem = alreadyOnItem
+        self.existsOnServer = existsOnServer
+    }
+
+    // MARK: - Initializer for Tags
+
+    init(
+        name: Binding<String>,
+        population: [Element],
+        isSearching: Bool,
+        alreadyOnItem: Bool,
+        existsOnServer: Bool
+    ) {
+        self._name = name
+        self._id = .constant(nil)
+        self._personKind = .constant(.unknown)
+        self._personRole = .constant("")
+        self.type = .tags
+        self.population = population
+        self.isSearching = isSearching
+        self.alreadyOnItem = alreadyOnItem
+        self.existsOnServer = existsOnServer
     }
 }

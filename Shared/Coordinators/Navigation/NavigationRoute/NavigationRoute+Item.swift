@@ -121,12 +121,12 @@ extension NavigationRoute {
     }
 
     @MainActor
-    static func editMetadata(item: BaseItemDto) -> NavigationRoute {
+    static func editMetadata(viewModel: ItemEditorViewModel<BaseItemDto>) -> NavigationRoute {
         NavigationRoute(
             id: "editMetadata",
             style: .sheet
         ) {
-            EditMetadataView(viewModel: ItemEditorViewModel(item: item))
+            EditMetadataView(viewModel: viewModel)
         }
     }
 
@@ -209,7 +209,7 @@ extension NavigationRoute {
         }
     }
 
-    static func itemDeletion(viewModel: DeleteItemViewModel) -> NavigationRoute {
+    static func itemDeletion(viewModel: ItemEditorViewModel<BaseItemDto>) -> NavigationRoute {
         NavigationRoute(
             id: "itemDeletion",
             style: .sheet
@@ -219,7 +219,7 @@ extension NavigationRoute {
     }
 
     #if os(iOS)
-    static func itemEditor(viewModel: ItemViewModel) -> NavigationRoute {
+    static func itemEditor(viewModel: ItemEditorViewModel<BaseItemDto>) -> NavigationRoute {
         NavigationRoute(
             id: "itemEditor",
             style: .sheet
@@ -263,7 +263,7 @@ extension NavigationRoute {
     }
     #endif
 
-    static func itemMetadataRefresh(viewModel: RefreshMetadataViewModel) -> NavigationRoute {
+    static func itemMetadataRefresh(viewModel: ItemEditorViewModel<BaseItemDto>) -> NavigationRoute {
         NavigationRoute(
             id: "itemMetadataRefresh",
             style: .sheet

@@ -12,8 +12,6 @@ import JellyfinAPI
 
 final class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
 
-    // MARK: - Search Studios
-
     override func searchElements(_ searchTerm: String) async throws -> [NameGuidPair] {
         let parameters = Paths.GetStudiosParameters(searchTerm: searchTerm.isEmpty ? nil : searchTerm)
         let request = Paths.getStudios(parameters: parameters)
@@ -24,8 +22,6 @@ final class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
         } ?? []
     }
 
-    // MARK: - Add Studio(s)
-
     override func addComponents(_ studios: [NameGuidPair]) async throws {
         var updatedItem = item
         if updatedItem.studios == nil {
@@ -35,15 +31,11 @@ final class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Remove Studio(s)
-
     override func removeComponents(_ studios: [NameGuidPair]) async throws {
         var updatedItem = item
         updatedItem.studios?.removeAll { studios.contains($0) }
         try await updateItem(updatedItem)
     }
-
-    // MARK: - Reorder Studio(s)
 
     override func reorderComponents(_ studios: [NameGuidPair]) async throws {
         var updatedItem = item
@@ -51,13 +43,9 @@ final class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Contains Element
-
     override func containsElement(named name: String) -> Bool {
         item.studios?.contains { $0.name?.caseInsensitiveCompare(name) == .orderedSame } ?? false
     }
-
-    // MARK: - Match Exists
 
     override func matchExists(named name: String) -> Bool {
         matches.contains { $0.name?.caseInsensitiveCompare(name) == .orderedSame }
