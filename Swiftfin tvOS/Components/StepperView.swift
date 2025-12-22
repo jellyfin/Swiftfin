@@ -58,7 +58,7 @@ struct StepperView<Value: CustomStringConvertible & Strideable & LosslessStringC
     var body: some View {
         VStack(alignment: .center, spacing: 30) {
             HStack {
-                TextField("", text: $inputText)
+                TextField(L10n.interval, text: $inputText)
                     .frame(width: 200)
                     .textFieldStyle(.plain)
                     .background(Color.clear)
@@ -77,7 +77,7 @@ struct StepperView<Value: CustomStringConvertible & Strideable & LosslessStringC
                     }
             }
 
-            HStack(spacing: 100) {
+            HStack {
                 Button {
                     if updatedValue > range.lowerBound {
                         updatedValue = max(updatedValue.advanced(by: -step), range.lowerBound)
@@ -85,10 +85,9 @@ struct StepperView<Value: CustomStringConvertible & Strideable & LosslessStringC
                     }
                 } label: {
                     Image(systemName: "minus")
+                        .frame(width: 200, height: 75)
+                        .font(.title2.weight(.bold))
                 }
-                .frame(width: 250, height: 75)
-                .buttonStyle(.primary)
-                .font(.title2.weight(.bold))
 
                 Button {
                     if updatedValue < range.upperBound {
@@ -97,20 +96,19 @@ struct StepperView<Value: CustomStringConvertible & Strideable & LosslessStringC
                     }
                 } label: {
                     Image(systemName: "plus")
+                        .frame(width: 200, height: 75)
+                        .font(.title2.weight(.bold))
                 }
-                .frame(width: 250, height: 75)
-                .buttonStyle(.primary)
-                .font(.title2.weight(.bold))
             }
 
             Button(L10n.save) {
                 value = updatedValue
                 router.dismiss()
             }
+            .buttonStyle(.primary)
             .frame(width: 200, height: 75)
             .foregroundStyle(accentColor.overlayColor, accentColor)
             .disabled(value == updatedValue)
-            .buttonStyle(.primary)
         }
     }
 
