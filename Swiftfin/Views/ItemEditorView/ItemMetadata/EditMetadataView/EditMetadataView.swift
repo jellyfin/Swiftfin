@@ -57,7 +57,6 @@ struct EditMetadataView: View {
             Button(L10n.save) {
                 item = tempItem
                 viewModel.update(tempItem)
-                router.dismiss()
             }
             .buttonStyle(.toolbarPill)
             .disabled(viewModel.item == tempItem)
