@@ -34,6 +34,7 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
 
     @ViewBuilder
     private var buttonView: some View {
+        // TODO: Remove when 26+ is our minimum
         if #available(tvOS 26.0, *) {
             HStack {
                 title
