@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-struct ItemFormSection: View {
+struct FormItemSection: View {
 
     let item: BaseItemDto
 

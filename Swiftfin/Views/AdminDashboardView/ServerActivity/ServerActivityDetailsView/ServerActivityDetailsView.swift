@@ -27,7 +27,7 @@ struct ServerActivityDetailsView: View {
         List {
             /// Item (If Available)
             if let item = viewModel.item {
-                ItemFormSection(item: item)
+                FormItemSection(item: item)
             }
 
             /// User (If Available)

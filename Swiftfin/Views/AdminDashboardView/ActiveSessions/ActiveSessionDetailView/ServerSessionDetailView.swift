@@ -53,7 +53,7 @@ struct ActiveSessionDetailView: View {
     ) -> some View {
         List {
 
-            ItemFormSection(item: nowPlayingItem)
+            FormItemSection(item: nowPlayingItem)
 
             Section(L10n.progress) {
                 ActiveSessionsView.ProgressSection(

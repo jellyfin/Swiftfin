@@ -148,7 +148,7 @@ struct ItemDeletionView: View {
             }
         }
         #else
-        ItemFormSection(item: viewModel.item)
+        FormItemSection(item: viewModel.item)
         #endif
     }
 }
