@@ -101,8 +101,8 @@ struct AddServerUserAccessTagsView: View {
                     router.dismiss()
                 }
             }
-            // TODO: Add when moved to @Stateful
-            // .errorMessage($viewModel.error)
+        // TODO: Add when moved to @Stateful
+        // .errorMessage($viewModel.error)
     }
 
     // MARK: - Content View
