@@ -51,107 +51,99 @@ struct EditItemElementView<Element: Hashable>: View {
     // MARK: - Body
 
     var body: some View {
-        ZStack {
-            switch viewModel.state {
-            case .error:
-                viewModel.error.map {
-                    ErrorView(error: $0)
+        contentView
+            .navigationTitle(type.displayTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(isEditing || isReordering)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    if isEditing {
+                        navigationBarSelectView
+                    }
                 }
-            case .initial:
-                contentView
-            }
-        }
-        .navigationTitle(type.displayTitle)
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(isEditing || isReordering)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                if isEditing {
-                    navigationBarSelectView
-                }
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                if isEditing || isReordering {
-                    Button(L10n.cancel) {
-                        if isEditing {
-                            isEditing.toggle()
+                ToolbarItem(placement: .topBarTrailing) {
+                    if isEditing || isReordering {
+                        Button(L10n.cancel) {
+                            if isEditing {
+                                isEditing.toggle()
+                            }
+                            if isReordering {
+                                elements = type.getElement(for: viewModel.item)
+                                isReordering.toggle()
+                            }
+                            UIDevice.impact(.light)
+                            selectedElements.removeAll()
                         }
-                        if isReordering {
-                            elements = type.getElement(for: viewModel.item)
-                            isReordering.toggle()
+                        .buttonStyle(.toolbarPill)
+                        .foregroundStyle(accentColor)
+                    }
+                }
+                ToolbarItem(placement: .bottomBar) {
+                    if isEditing {
+                        Button(L10n.delete) {
+                            isPresentingDeletionConfirmation = true
                         }
-                        UIDevice.impact(.light)
-                        selectedElements.removeAll()
+                        .buttonStyle(.toolbarPill(.red))
+                        .disabled(selectedElements.isEmpty)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .buttonStyle(.toolbarPill)
-                    .foregroundStyle(accentColor)
+                    if isReordering {
+                        Button(L10n.save) {
+                            viewModel.reorder(elements)
+                            isReordering = false
+                        }
+                        .buttonStyle(.toolbarPill)
+                        .disabled(type.getElement(for: viewModel.item) == elements)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
                 }
             }
-            ToolbarItem(placement: .bottomBar) {
-                if isEditing {
-                    Button(L10n.delete) {
-                        isPresentingDeletionConfirmation = true
-                    }
-                    .buttonStyle(.toolbarPill(.red))
-                    .disabled(selectedElements.isEmpty)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-                }
-                if isReordering {
-                    Button(L10n.save) {
-                        viewModel.reorder(elements)
-                        isReordering = false
-                    }
-                    .buttonStyle(.toolbarPill)
-                    .disabled(type.getElement(for: viewModel.item) == elements)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-                }
-            }
-        }
-        .navigationBarMenuButton(
-            isLoading: viewModel.background.states.contains(where: { $0 == .searching || $0 == .updating }),
-            isHidden: isEditing || isReordering
-        ) {
-            Button(L10n.add, systemImage: "plus") {
-                route(router.router, viewModel)
-            }
-
-            if elements.isNotEmpty == true {
-                Button(L10n.edit, systemImage: "checkmark.circle") {
-                    isEditing = true
+            .navigationBarMenuButton(
+                isLoading: viewModel.background.states.contains(where: { $0 == .searching || $0 == .updating }),
+                isHidden: isEditing || isReordering
+            ) {
+                Button(L10n.add, systemImage: "plus") {
+                    route(router.router, viewModel)
                 }
 
-                Button(L10n.reorder, systemImage: "arrow.up.arrow.down") {
-                    isReordering = true
+                if elements.isNotEmpty == true {
+                    Button(L10n.edit, systemImage: "checkmark.circle") {
+                        isEditing = true
+                    }
+
+                    Button(L10n.reorder, systemImage: "arrow.up.arrow.down") {
+                        isReordering = true
+                    }
                 }
             }
-        }
-        .onNotification(.itemMetadataDidChange) { _ in
-            elements = type.getElement(for: viewModel.item)
-        }
-        .onReceive(viewModel.events) { event in
-            switch event {
-            case .deleted, .metadataRefreshStarted:
-                break
-            case .updated:
-                UIDevice.feedback(.success)
+            .onNotification(.itemMetadataDidChange) { _ in
+                elements = type.getElement(for: viewModel.item)
             }
-        }
-        .confirmationDialog(
-            L10n.delete,
-            isPresented: $isPresentingDeletionConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button(L10n.cancel, role: .cancel) {}
+            .onReceive(viewModel.events) { event in
+                switch event {
+                case .deleted, .metadataRefreshStarted:
+                    break
+                case .updated:
+                    UIDevice.feedback(.success)
+                }
+            }
+            .confirmationDialog(
+                L10n.delete,
+                isPresented: $isPresentingDeletionConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button(L10n.cancel, role: .cancel) {}
 
-            Button(L10n.confirm, role: .destructive) {
-                let elementsToRemove = elements.filter { selectedElements.contains($0) }
-                viewModel.remove(elementsToRemove)
-                selectedElements.removeAll()
-                isEditing = false
+                Button(L10n.confirm, role: .destructive) {
+                    let elementsToRemove = elements.filter { selectedElements.contains($0) }
+                    viewModel.remove(elementsToRemove)
+                    selectedElements.removeAll()
+                    isEditing = false
+                }
+            } message: {
+                Text(L10n.deleteSelectedConfirmation)
             }
-        } message: {
-            Text(L10n.deleteSelectedConfirmation)
-        }
+            .errorMessage($viewModel.error)
     }
 
     // MARK: - Select/Remove All Button

@@ -26,45 +26,35 @@ struct ItemDeletionView: View {
     }
 
     var body: some View {
-        ZStack {
-            switch viewModel.state {
-            case .initial:
-                contentView
-            case .error:
-                viewModel.error.map {
-                    ErrorView(error: $0)
+        contentView
+            .navigationTitle(L10n.deleteMedia.localizedCapitalized)
+            .navigationBarCloseButton {
+                router.dismiss()
+            }
+            .onReceive(viewModel.events) { event in
+                switch event {
+                case .deleted:
+                    UIDevice.feedback(.success)
+                    router.dismiss()
+                case .metadataRefreshStarted, .updated:
+                    break
                 }
             }
-        }
-        .navigationTitle(L10n.deleteMedia.localizedCapitalized)
-        .navigationBarCloseButton {
-            router.dismiss()
-        }
-        .onReceive(viewModel.events) { event in
-            switch event {
-            case .deleted:
-                UIDevice.feedback(.success)
-                router.dismiss()
-            case .metadataRefreshStarted, .updated:
-                break
+            .confirmationDialog(
+                L10n.deleteItemConfirmationMessage,
+                isPresented: $isPresentingConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button(L10n.confirm, role: .destructive) {
+                    viewModel.delete()
+                }
+                Button(L10n.cancel, role: .cancel) {}
             }
-        }
-        .confirmationDialog(
-            L10n.deleteItemConfirmationMessage,
-            isPresented: $isPresentingConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button(L10n.confirm, role: .destructive) {
-                viewModel.delete()
-            }
-            Button(L10n.cancel, role: .cancel) {}
-        }
-        .errorMessage($viewModel.error)
+            .errorMessage($viewModel.error)
     }
 
     private var contentView: some View {
         Form {
-
             headerView
 
             if let overview = viewModel.item.overview {
@@ -127,28 +117,52 @@ struct ItemDeletionView: View {
     @ViewBuilder
     private var headerView: some View {
         #if os(tvOS)
-        if let overview = viewModel.item.overview {
-            Section(L10n.media) {
-                if let parent = viewModel.item.parentTitle {
-                    LabeledContent(
-                        "Parent",
-                        value: parent
-                    )
-                }
+        Section(L10n.media) {
+            if let parentLabel,
+               let parentValue = viewModel.item.parentTitle
+            {
                 LabeledContent(
-                    L10n.title,
-                    value: viewModel.item.displayTitle
+                    parentLabel,
+                    value: parentValue
                 )
-                if let subtitle = viewModel.item.subtitle {
-                    LabeledContent(
-                        L10n.subtitle,
-                        value: subtitle
-                    )
-                }
+            }
+
+            LabeledContent(
+                L10n.title,
+                value: viewModel.item.displayTitle
+            )
+
+            if let subtitleLabel,
+               let subtitleValue = viewModel.item.subtitle
+            {
+                LabeledContent(
+                    subtitleLabel,
+                    value: subtitleValue
+                )
             }
         }
         #else
         FormItemSection(item: viewModel.item)
         #endif
+    }
+
+    // TODO: Move to `BaseItemDto`
+    private var parentLabel: String? {
+        switch viewModel.item.type {
+        case .episode:
+            L10n.series
+        default:
+            nil
+        }
+    }
+
+    // TODO: Move to `BaseItemDto`
+    private var subtitleLabel: String? {
+        switch viewModel.item.type {
+        case .episode:
+            L10n.episode
+        default:
+            nil
+        }
     }
 }

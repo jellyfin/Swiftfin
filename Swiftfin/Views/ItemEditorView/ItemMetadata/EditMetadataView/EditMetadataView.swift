@@ -37,43 +37,34 @@ struct EditMetadataView: View {
 
     @ViewBuilder
     var body: some View {
-        ZStack {
-            switch viewModel.state {
-            case .error:
-                viewModel.error.map {
-                    ErrorView(error: $0)
+        contentView
+            .navigationTitle(L10n.metadata)
+            .navigationBarTitleDisplayMode(.inline)
+            .topBarTrailing {
+                if viewModel.background.states.contains(.updating) {
+                    ProgressView()
                 }
-            case .initial:
-                contentView
-            }
-        }
-        .navigationTitle(L10n.metadata)
-        .navigationBarTitleDisplayMode(.inline)
-        .topBarTrailing {
-            if viewModel.background.states.contains(.updating) {
-                ProgressView()
-            }
 
-            Button(L10n.save) {
-                item = tempItem
-                viewModel.update(tempItem)
+                Button(L10n.save) {
+                    item = tempItem
+                    viewModel.update(tempItem)
+                }
+                .buttonStyle(.toolbarPill)
+                .disabled(viewModel.item == tempItem)
             }
-            .buttonStyle(.toolbarPill)
-            .disabled(viewModel.item == tempItem)
-        }
-        .navigationBarCloseButton {
-            router.dismiss()
-        }
-        .onReceive(viewModel.events) { event in
-            switch event {
-            case .deleted, .metadataRefreshStarted:
-                break
-            case .updated:
-                UIDevice.feedback(.success)
+            .navigationBarCloseButton {
                 router.dismiss()
             }
-        }
-        .errorMessage($viewModel.error)
+            .onReceive(viewModel.events) { event in
+                switch event {
+                case .deleted, .metadataRefreshStarted:
+                    break
+                case .updated:
+                    UIDevice.feedback(.success)
+                    router.dismiss()
+                }
+            }
+            .errorMessage($viewModel.error)
     }
 
     // MARK: - Content View
