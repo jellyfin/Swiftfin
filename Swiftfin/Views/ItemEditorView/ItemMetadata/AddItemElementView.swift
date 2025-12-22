@@ -53,49 +53,41 @@ struct AddItemElementView<Element: Hashable>: View {
     // MARK: - Body
 
     var body: some View {
-        ZStack {
-            switch viewModel.state {
-            case .initial:
-                contentView
-            case .error:
-                viewModel.error.map {
-                    ErrorView(error: $0)
-                }
-            }
-        }
-        .navigationTitle(type.displayTitle)
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarCloseButton {
-            router.dismiss()
-        }
-        .topBarTrailing {
-            if viewModel.background.states.contains(where: { $0 == .searching || $0 == .updating }) {
-                ProgressView()
-            }
-
-            Button(L10n.save) {
-                viewModel.add([type.createElement(
-                    name: name,
-                    id: id,
-                    personRole: personRole.isEmpty ? (personKind == .unknown ? nil : personKind.rawValue) : personRole,
-                    personKind: personKind
-                )])
-            }
-            .buttonStyle(.toolbarPill)
-            .disabled(!isValid)
-        }
-        .onChange(of: name) { newName in
-            viewModel.search(newName)
-        }
-        .onReceive(viewModel.events) { event in
-            switch event {
-            case .deleted, .metadataRefreshStarted:
-                break
-            case .updated:
-                UIDevice.feedback(.success)
+        contentView
+            .navigationTitle(type.displayTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarCloseButton {
                 router.dismiss()
             }
-        }
+            .topBarTrailing {
+                if viewModel.background.states.contains(where: { $0 == .searching || $0 == .updating }) {
+                    ProgressView()
+                }
+
+                Button(L10n.save) {
+                    viewModel.add([type.createElement(
+                        name: name,
+                        id: id,
+                        personRole: personRole.isEmpty ? (personKind == .unknown ? nil : personKind.rawValue) : personRole,
+                        personKind: personKind
+                    )])
+                }
+                .buttonStyle(.toolbarPill)
+                .disabled(!isValid)
+            }
+            .onChange(of: name) { newName in
+                viewModel.search(newName)
+            }
+            .onReceive(viewModel.events) { event in
+                switch event {
+                case .deleted, .metadataRefreshStarted:
+                    break
+                case .updated:
+                    UIDevice.feedback(.success)
+                    router.dismiss()
+                }
+            }
+            .errorMessage($viewModel.error)
     }
 
     private var contentView: some View {
