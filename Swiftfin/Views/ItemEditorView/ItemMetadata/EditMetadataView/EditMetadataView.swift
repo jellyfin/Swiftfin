@@ -12,25 +12,19 @@ import SwiftUI
 
 struct EditMetadataView: View {
 
-    // MARK: - Observed & Environment Objects
-
     @Router
     private var router
 
     @ObservedObject
     private var viewModel: ItemEditorViewModel<BaseItemDto>
 
-    // MARK: - Metadata Variables
-
     @Binding
-    var item: BaseItemDto
+    private var item: BaseItemDto
 
     @State
     private var tempItem: BaseItemDto
 
     private let itemType: BaseItemKind
-
-    // MARK: - Initializer
 
     init(viewModel: ItemEditorViewModel<BaseItemDto>) {
         self.viewModel = viewModel
@@ -73,8 +67,11 @@ struct EditMetadataView: View {
         }
         .onReceive(viewModel.events) { event in
             switch event {
+            case .deleted, .metadataRefreshStarted:
+                break
             case .updated:
                 UIDevice.feedback(.success)
+                router.dismiss()
             }
         }
         .errorMessage($viewModel.error)

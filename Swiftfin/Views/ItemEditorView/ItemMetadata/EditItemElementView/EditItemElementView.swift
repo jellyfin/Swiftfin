@@ -12,7 +12,6 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: move away from the `route` method for adding a new item
-
 struct EditItemElementView<Element: Hashable>: View {
 
     @Default(.accentColor)
@@ -24,23 +23,19 @@ struct EditItemElementView<Element: Hashable>: View {
     @Router
     private var router
 
-    private let type: ItemArrayElements
-    private let route: (NavigationCoordinator.Router, ItemEditorViewModel<Element>) -> Void
-
     @State
     private var elements: [Element]
     @State
     private var selectedElements: Set<Element> = []
-
     @State
     private var isEditing: Bool = false
     @State
     private var isReordering: Bool = false
-
     @State
     private var isPresentingDeletionConfirmation = false
 
-    // MARK: - Initializer
+    private let type: ItemArrayElements
+    private let route: (NavigationCoordinator.Router, ItemEditorViewModel<Element>) -> Void
 
     init(
         viewModel: ItemEditorViewModel<Element>,
@@ -135,6 +130,8 @@ struct EditItemElementView<Element: Hashable>: View {
         }
         .onReceive(viewModel.events) { event in
             switch event {
+            case .deleted, .metadataRefreshStarted:
+                break
             case .updated:
                 UIDevice.feedback(.success)
             }
@@ -144,7 +141,14 @@ struct EditItemElementView<Element: Hashable>: View {
             isPresented: $isPresentingDeletionConfirmation,
             titleVisibility: .visible
         ) {
-            deletionConfirmationActions
+            Button(L10n.cancel, role: .cancel) {}
+
+            Button(L10n.confirm, role: .destructive) {
+                let elementsToRemove = elements.filter { selectedElements.contains($0) }
+                viewModel.remove(elementsToRemove)
+                selectedElements.removeAll()
+                isEditing = false
+            }
         } message: {
             Text(L10n.deleteSelectedConfirmation)
         }
@@ -204,19 +208,5 @@ struct EditItemElementView<Element: Hashable>: View {
         }
         .listStyle(.plain)
         .environment(\.editMode, isReordering ? .constant(.active) : .constant(.inactive))
-    }
-
-    // MARK: - Deletion Confirmation Actions
-
-    @ViewBuilder
-    private var deletionConfirmationActions: some View {
-        Button(L10n.cancel, role: .cancel) {}
-
-        Button(L10n.confirm, role: .destructive) {
-            let elementsToRemove = elements.filter { selectedElements.contains($0) }
-            viewModel.remove(elementsToRemove)
-            selectedElements.removeAll()
-            isEditing = false
-        }
     }
 }

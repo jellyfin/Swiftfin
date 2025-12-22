@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import JellyfinAPI
 import SwiftUI
 
 struct RefreshMetadataView: View {
@@ -18,7 +19,7 @@ struct RefreshMetadataView: View {
     private var accentColor
 
     @ObservedObject
-    var viewModel: RefreshMetadataViewModel
+    var viewModel: ItemEditorViewModel<BaseItemDto>
 
     @State
     private var refreshType: MetadataRefreshType = .scan
@@ -28,6 +29,39 @@ struct RefreshMetadataView: View {
     private var regenerateTrickplay: Bool = false
 
     var body: some View {
+        ZStack {
+            switch viewModel.state {
+            case .initial:
+                contentView
+            case .error:
+                viewModel.error.map {
+                    ErrorView(error: $0)
+                }
+            }
+        }
+        .navigationTitle(L10n.refreshMetadata.localizedCapitalized)
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .deleted, .updated:
+                break
+            case .metadataRefreshStarted:
+                UIDevice.feedback(.success)
+                router.dismiss()
+            }
+        }
+        .navigationBarCloseButton {
+            router.dismiss()
+        }
+        .errorMessage($viewModel.error)
+        #if os(iOS)
+            .topBarTrailing {
+                Button(L10n.run, action: onRun)
+                    .buttonStyle(.toolbarPill)
+            }
+        #endif
+    }
+
+    private var contentView: some View {
         Form(systemImage: "arrow.clockwise") {
 
             Section {
@@ -57,23 +91,6 @@ struct RefreshMetadataView: View {
             }
             #endif
         }
-        .navigationTitle(L10n.refreshMetadata.localizedCapitalized)
-        .navigationBarTitleDisplayMode(.inline)
-        .onReceive(viewModel.events) { event in
-            if event == .refreshing {
-                router.dismiss()
-            }
-        }
-        .errorMessage($viewModel.error)
-        #if os(iOS)
-            .navigationBarCloseButton {
-                router.dismiss()
-            }
-            .topBarTrailing {
-                Button(L10n.run, action: onRun)
-                    .buttonStyle(.toolbarPill)
-            }
-        #endif
     }
 
     private func onRun() {

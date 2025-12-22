@@ -55,12 +55,12 @@ struct AddItemElementView<Element: Hashable>: View {
     var body: some View {
         ZStack {
             switch viewModel.state {
+            case .initial:
+                contentView
             case .error:
                 viewModel.error.map {
                     ErrorView(error: $0)
                 }
-            case .initial:
-                contentView
             }
         }
         .navigationTitle(type.displayTitle)
@@ -89,6 +89,8 @@ struct AddItemElementView<Element: Hashable>: View {
         }
         .onReceive(viewModel.events) { event in
             switch event {
+            case .deleted, .metadataRefreshStarted:
+                break
             case .updated:
                 UIDevice.feedback(.success)
                 router.dismiss()
@@ -96,16 +98,14 @@ struct AddItemElementView<Element: Hashable>: View {
         }
     }
 
-    // MARK: - Content View
-
     private var contentView: some View {
         List {
             ItemElementSearchView(
                 name: $name,
                 id: $id,
+                type: type,
                 personKind: $personKind,
                 personRole: $personRole,
-                type: type,
                 population: viewModel.matches,
                 isSearching: viewModel.background.states.contains(.searching),
                 alreadyOnItem: alreadyOnItem,

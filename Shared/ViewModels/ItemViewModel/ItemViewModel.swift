@@ -304,7 +304,7 @@ class ItemViewModel: ViewModel, Stateful {
     }
 
     private func getFullItem() async throws -> BaseItemDto {
-        try await item.getFullItem(userSession: userSession)
+        try await item.getFullItem(userSession: userSession, isRefresh: true)
     }
 
     private func getSimilarItems() async -> [BaseItemDto] {

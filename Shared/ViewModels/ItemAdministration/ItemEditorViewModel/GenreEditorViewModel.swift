@@ -12,8 +12,6 @@ import JellyfinAPI
 
 final class GenreEditorViewModel: ItemEditorViewModel<String> {
 
-    // MARK: - Search Genres
-
     override func searchElements(_ searchTerm: String) async throws -> [String] {
         let parameters = Paths.GetGenresParameters(searchTerm: searchTerm.isEmpty ? nil : searchTerm)
         let request = Paths.getGenres(parameters: parameters)
@@ -21,8 +19,6 @@ final class GenreEditorViewModel: ItemEditorViewModel<String> {
 
         return response.value.items?.compactMap(\.name) ?? []
     }
-
-    // MARK: - Add Genre(s)
 
     override func addComponents(_ genres: [String]) async throws {
         var updatedItem = item
@@ -33,15 +29,11 @@ final class GenreEditorViewModel: ItemEditorViewModel<String> {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Remove Genre(s)
-
     override func removeComponents(_ genres: [String]) async throws {
         var updatedItem = item
         updatedItem.genres?.removeAll { genres.contains($0) }
         try await updateItem(updatedItem)
     }
-
-    // MARK: - Reorder Genre(s)
 
     override func reorderComponents(_ genres: [String]) async throws {
         var updatedItem = item
@@ -49,13 +41,9 @@ final class GenreEditorViewModel: ItemEditorViewModel<String> {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Contains Element
-
     override func containsElement(named name: String) -> Bool {
         item.genres?.contains { $0.caseInsensitiveCompare(name) == .orderedSame } ?? false
     }
-
-    // MARK: - Match Exists
 
     override func matchExists(named name: String) -> Bool {
         matches.contains { $0.caseInsensitiveCompare(name) == .orderedSame }

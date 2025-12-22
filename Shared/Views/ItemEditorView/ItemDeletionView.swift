@@ -16,57 +16,60 @@ struct ItemDeletionView: View {
     private var router
 
     @ObservedObject
-    private var viewModel: DeleteItemViewModel
+    private var viewModel: ItemEditorViewModel<BaseItemDto>
 
     @State
     private var isPresentingConfirmation: Bool = false
 
-    @State
-    private var error: Error? = nil
-
-    init(viewModel: DeleteItemViewModel) {
+    init(viewModel: ItemEditorViewModel<BaseItemDto>) {
         self.viewModel = viewModel
     }
 
     var body: some View {
-        if let item = viewModel.item {
-            contentView(item)
-        } else {
-            ErrorView(error: ErrorMessage(L10n.unknownError))
-        }
-    }
-
-    private func contentView(_ item: BaseItemDto) -> some View {
-        Form {
-
-            #if os(tvOS)
-            if let overview = item.overview {
-                Section(L10n.media) {
-                    if let parent = item.parentTitle {
-                        LabeledContent(
-                            "Parent",
-                            value: parent
-                        )
-                    }
-                    LabeledContent(
-                        L10n.title,
-                        value: item.displayTitle
-                    )
-                    if let subtitle = item.subtitle {
-                        LabeledContent(
-                            L10n.subtitle,
-                            value: subtitle
-                        )
-                    }
+        ZStack {
+            switch viewModel.state {
+            case .initial:
+                contentView
+            case .error:
+                viewModel.error.map {
+                    ErrorView(error: $0)
                 }
             }
-            #else
-            ItemFormSection(item: item)
-            #endif
+        }
+        .navigationTitle(L10n.deleteMedia.localizedCapitalized)
+        .navigationBarCloseButton {
+            router.dismiss()
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .deleted:
+                UIDevice.feedback(.success)
+                router.dismiss()
+            case .metadataRefreshStarted, .updated:
+                break
+            }
+        }
+        .confirmationDialog(
+            L10n.deleteItemConfirmationMessage,
+            isPresented: $isPresentingConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button(L10n.confirm, role: .destructive) {
+                viewModel.delete()
+            }
+            Button(L10n.cancel, role: .cancel) {}
+        }
+        .errorMessage($viewModel.error)
+    }
 
-            if let overview = item.overview {
+    private var contentView: some View {
+        Form {
+
+            headerView
+
+            if let overview = viewModel.item.overview {
                 Section(L10n.overview) {
-                    if let taglines = item.taglines, let tagline = taglines.first {
+                    if let taglines = viewModel.item.taglines, let tagline = taglines.first {
                         Text(tagline)
                     }
                     Text(overview)
@@ -74,19 +77,19 @@ struct ItemDeletionView: View {
             }
 
             Section(L10n.details) {
-                if let type = item.type {
+                if let type = viewModel.item.type {
                     LabeledContent(
                         L10n.type,
                         value: type.displayTitle
                     )
                 }
 
-                if let startDate = item.startDate {
+                if let startDate = viewModel.item.startDate {
                     LabeledContent(
                         L10n.startDate,
                         value: startDate.formatted(date: .complete, time: .omitted)
                     )
-                } else if let year = item.premiereDateYear {
+                } else if let year = viewModel.item.premiereDateYear {
                     LabeledContent(
                         L10n.year,
                         value: year.description
@@ -94,7 +97,7 @@ struct ItemDeletionView: View {
                 }
             }
 
-            if let childCount = item.childCount, childCount > 0 {
+            if let childCount = viewModel.item.childCount, childCount > 0 {
                 Section {
                     LabeledContent(
                         L10n.children,
@@ -112,35 +115,40 @@ struct ItemDeletionView: View {
             .buttonStyle(.primary)
         } image: {
             PosterImage(
-                item: item,
-                type: item.preferredPosterDisplayType,
+                item: viewModel.item,
+                type: viewModel.item.preferredPosterDisplayType,
                 contentMode: .fit
             )
             .cornerRadius(20)
             .frame(maxWidth: 400)
         }
-        .confirmationDialog(
-            L10n.deleteItemConfirmationMessage,
-            isPresented: $isPresentingConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button(L10n.confirm, role: .destructive) {
-                viewModel.send(.delete)
+    }
+
+    @ViewBuilder
+    private var headerView: some View {
+        #if os(tvOS)
+        if let overview = viewModel.item.overview {
+            Section(L10n.media) {
+                if let parent = viewModel.item.parentTitle {
+                    LabeledContent(
+                        "Parent",
+                        value: parent
+                    )
+                }
+                LabeledContent(
+                    L10n.title,
+                    value: viewModel.item.displayTitle
+                )
+                if let subtitle = viewModel.item.subtitle {
+                    LabeledContent(
+                        L10n.subtitle,
+                        value: subtitle
+                    )
+                }
             }
-            Button(L10n.cancel, role: .cancel) {}
         }
-        .onReceive(viewModel.events) { event in
-            switch event {
-            case .deleted:
-                router.dismiss()
-            case let .error(eventError):
-                error = eventError
-            }
-        }
-        .navigationTitle(L10n.deleteMedia.localizedCapitalized)
-        .navigationBarCloseButton {
-            router.dismiss()
-        }
-        .errorMessage($error)
+        #else
+        ItemFormSection(item: viewModel.item)
+        #endif
     }
 }

@@ -16,25 +16,17 @@ struct ItemEditorView: View {
     private var router
 
     @ObservedObject
-    var viewModel: ItemViewModel
-
-    @StateObject
-    private var metadataViewModel: RefreshMetadataViewModel
-
-    init(viewModel: ItemViewModel) {
-        self.viewModel = viewModel
-        _metadataViewModel = StateObject(wrappedValue: RefreshMetadataViewModel(item: viewModel.item))
-    }
-
-    // MARK: - Body
+    var viewModel: ItemEditorViewModel<BaseItemDto>
 
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .initial, .content, .refreshing:
+            case .initial:
                 contentView
-            case let .error(error):
-                ErrorView(error: error)
+            case .error:
+                viewModel.error.map {
+                    ErrorView(error: $0)
+                }
             }
         }
         .navigationTitle(L10n.metadata)
@@ -42,8 +34,12 @@ struct ItemEditorView: View {
         .navigationBarCloseButton {
             router.dismiss()
         }
+        .onFirstAppear {
+            // Ensure we have a full `BaseItemDto` or some non-required metadata may be missing
+            viewModel.refreshItem(sendNotification: false)
+        }
         .refreshable {
-            viewModel.send(.refresh)
+            viewModel.refreshItem(sendNotification: false)
         }
     }
 
@@ -55,8 +51,6 @@ struct ItemEditorView: View {
                 viewModel.item.name ?? L10n.unknown,
                 description: viewModel.item.path
             )
-
-            // MARK: Metadata
 
             Section(L10n.edit) {
                 if let itemKind = viewModel.item.type,
@@ -72,11 +66,9 @@ struct ItemEditorView: View {
                 }
 
                 ChevronButton(L10n.metadata) {
-                    router.route(to: .editMetadata(item: viewModel.item))
+                    router.route(to: .editMetadata(viewModel: viewModel))
                 }
             }
-
-            // MARK: Components
 
             if viewModel.item.hasComponents {
                 Section {

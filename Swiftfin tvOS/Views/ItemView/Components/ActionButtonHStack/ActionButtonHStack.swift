@@ -87,7 +87,7 @@ extension ItemView {
 
                 if viewModel.item.showEditorMenu {
                     Menu {
-                        ItemEditorMenu(viewModel: viewModel)
+                        ItemEditorMenu(item: viewModel.item)
                     } label: {
                         Label(L10n.advanced, systemImage: "ellipsis")
                             .rotationEffect(.degrees(90))

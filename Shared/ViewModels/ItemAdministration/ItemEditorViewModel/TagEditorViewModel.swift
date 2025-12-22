@@ -15,7 +15,7 @@ final class TagEditorViewModel: ItemEditorViewModel<String> {
     private var allTags: [String] = []
     private var trie = Trie<String, String>()
 
-    // MARK: - Search Tags
+    // MARK: - Trie Creation and/or Searching
 
     override func searchElements(_ searchTerm: String) async throws -> [String] {
         if allTags.isEmpty {
@@ -33,8 +33,6 @@ final class TagEditorViewModel: ItemEditorViewModel<String> {
         return trie.search(prefix: searchTerm.localizedLowercase)
     }
 
-    // MARK: - Add Tag(s)
-
     override func addComponents(_ tags: [String]) async throws {
         var updatedItem = item
         if updatedItem.tags == nil {
@@ -49,15 +47,11 @@ final class TagEditorViewModel: ItemEditorViewModel<String> {
         }
     }
 
-    // MARK: - Remove Tag(s)
-
     override func removeComponents(_ tags: [String]) async throws {
         var updatedItem = item
         updatedItem.tags?.removeAll { tags.contains($0) }
         try await updateItem(updatedItem)
     }
-
-    // MARK: - Reorder Tag(s)
 
     override func reorderComponents(_ tags: [String]) async throws {
         var updatedItem = item
@@ -65,13 +59,9 @@ final class TagEditorViewModel: ItemEditorViewModel<String> {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Contains Element
-
     override func containsElement(named name: String) -> Bool {
         item.tags?.contains { $0.caseInsensitiveCompare(name) == .orderedSame } ?? false
     }
-
-    // MARK: - Match Exists
 
     override func matchExists(named name: String) -> Bool {
         matches.contains { $0.caseInsensitiveCompare(name) == .orderedSame }
