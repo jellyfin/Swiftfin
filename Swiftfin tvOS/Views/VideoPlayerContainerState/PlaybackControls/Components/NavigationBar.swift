@@ -23,14 +23,10 @@ extension VideoPlayer.PlaybackControls {
                         .foregroundStyle(.white)
                 }
 
-                HStack {
-                    Text(manager.item.displayTitle)
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-
-                    ActionButtons()
-                }
+                Text(manager.item.displayTitle)
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }

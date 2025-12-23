@@ -22,39 +22,41 @@ struct PlaybackProgressViewStyle: ProgressViewStyle {
     var cornerStyle: CornerStyle
 
     @ViewBuilder
-    private func buildCapsule(for progress: Double) -> some View {
-        Rectangle()
-            .cornerRadius(
-                cornerStyle == .round ? contentSize.height / 2 : 0,
-                corners: [.topLeft, .bottomLeft]
+    private func buildProgressFill(for progress: Double, isPrimary: Bool) -> some View {
+        let clampedProgress = clamp(progress, min: 0, max: 1)
+        let cornerRadius = cornerStyle == .round ? contentSize.height / 2 : 0
+
+        Capsule()
+            .fill(
+                isPrimary
+                    ? AnyShapeStyle(Color.white)
+                    : AnyShapeStyle(Color.white.opacity(0.4))
             )
-            .frame(width: contentSize.width * clamp(progress, min: 0, max: 1) + contentSize.height)
-            .offset(x: -contentSize.height)
+            .frame(width: max(contentSize.height, contentSize.width * clampedProgress))
+            .shadow(
+                color: isPrimary ? Color.white.opacity(0.3) : Color.clear,
+                radius: isPrimary ? 8 : 0,
+                y: 0
+            )
     }
 
     func makeBody(configuration: Configuration) -> some View {
-        Capsule()
-            .foregroundStyle(.secondary)
-            .opacity(0.2)
-            .overlay(alignment: .leading) {
-                ZStack(alignment: .leading) {
+        ZStack(alignment: .leading) {
+            // Background track - solid dark color to avoid color bleed from video
+            Capsule()
+                .fill(Color.white.opacity(0.2))
 
-                    if let secondaryProgress,
-                       secondaryProgress > 0
-                    {
-                        buildCapsule(for: secondaryProgress)
-                            .foregroundStyle(.tertiary)
-                    }
+            // Secondary progress (buffered)
+            if let secondaryProgress, secondaryProgress > 0 {
+                buildProgressFill(for: secondaryProgress, isPrimary: false)
+            }
 
-                    if let fractionCompleted = configuration.fractionCompleted {
-                        buildCapsule(for: fractionCompleted)
-                            .foregroundStyle(.primary)
-                    }
-                }
+            // Primary progress
+            if let fractionCompleted = configuration.fractionCompleted {
+                buildProgressFill(for: fractionCompleted, isPrimary: true)
             }
-            .trackingSize($contentSize)
-            .mask {
-                Capsule()
-            }
+        }
+        .clipShape(Capsule())
+        .trackingSize($contentSize)
     }
 }

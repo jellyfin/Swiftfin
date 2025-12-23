@@ -150,10 +150,7 @@ struct UserLocalSecurityView: View {
                             subtitle: pinHint,
                             description: L10n.setPinHintDescription
                         ) {
-                            // TODO: Verify on tvOS 18
-                            // https://forums.developer.apple.com/forums/thread/739545
-                            // TextField(L10n.hint, text: $pinHint)
-                            TextField(text: $pinHint) {}
+                            Backport.textField(L10n.hint, text: $pinHint)
                         }
                     } header: {
                         Text(L10n.hint)
@@ -199,10 +196,7 @@ struct UserLocalSecurityView: View {
                 presenting: onPinCompletion
             ) { completion in
 
-                // TODO: Verify on tvOS 18
-                // https://forums.developer.apple.com/forums/thread/739545
-                // SecureField(L10n.pin, text: $pin)
-                SecureField(text: $pin) {}
+                Backport.secureField(L10n.pin, text: $pin)
                     .keyboardType(.numberPad)
 
                 Button(L10n.continue) {
@@ -219,10 +213,7 @@ struct UserLocalSecurityView: View {
                 presenting: onPinCompletion
             ) { completion in
 
-                // TODO: Verify on tvOS 18
-                // https://forums.developer.apple.com/forums/thread/739545
-                // SecureField(L10n.pin, text: $pin)
-                SecureField(text: $pin) {}
+                Backport.secureField(L10n.pin, text: $pin)
                     .keyboardType(.numberPad)
 
                 Button(L10n.set) {

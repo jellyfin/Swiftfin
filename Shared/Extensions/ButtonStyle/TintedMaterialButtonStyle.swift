@@ -8,9 +8,7 @@
 
 import SwiftUI
 
-// TODO: on tvOS focus, find way to disable brightness effect
-
-extension ButtonStyle where Self == TintedMaterialButtonStyle {
+extension PrimitiveButtonStyle where Self == TintedMaterialButtonStyle {
 
     // TODO: just be `Material` backed instead of `TintedMaterial`
     static var material: TintedMaterialButtonStyle {
@@ -25,19 +23,25 @@ extension ButtonStyle where Self == TintedMaterialButtonStyle {
     }
 }
 
-struct TintedMaterialButtonStyle: ButtonStyle {
+struct TintedMaterialButtonStyle: PrimitiveButtonStyle {
 
     @Environment(\.isSelected)
     private var isSelected
     @Environment(\.isEnabled)
     private var isEnabled
 
+    #if os(tvOS)
+    @FocusState
+    private var isFocused: Bool
+    #endif
+
     // Take tint instead of reading from view as
     // global accent color causes flashes of color
     let tint: Color
     let foregroundColor: Color
 
-    func makeBody(configuration: Configuration) -> some View {
+    @ViewBuilder
+    private func contentView(configuration: Configuration) -> some View {
         ZStack {
             TintedMaterial(tint: buttonTint)
                 .id(isSelected)
@@ -49,7 +53,25 @@ struct TintedMaterialButtonStyle: ButtonStyle {
                 .foregroundStyle(foregroundStyle)
                 .symbolRenderingMode(.monochrome)
         }
+        #if os(tvOS)
+        .focusEffectDisabled()
+        .scaleEffect(isFocused ? 1.05 : 1.0)
+        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isFocused)
+        #else
         .hoverEffect(.lift)
+        #endif
+    }
+
+    func makeBody(configuration: Configuration) -> some View {
+        Button {
+            configuration.trigger()
+        } label: {
+            contentView(configuration: configuration)
+        }
+        .buttonStyle(.plain)
+        #if os(tvOS)
+            .focused($isFocused)
+        #endif
     }
 
     private var buttonTint: Color {

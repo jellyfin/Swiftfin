@@ -56,28 +56,35 @@ extension VideoPlayer {
 
                 NavigationBar()
                     .focusSection()
+                    .isVisible(isScrubbing || isPresentingOverlay)
 
                 PlaybackProgress()
                     .focusGuide(focusGuide, tag: "playbackProgress")
-//                    .isVisible(isScrubbing || isPresentingOverlay)
+                    .isVisible(isScrubbing || isPresentingOverlay)
             }
         }
 
         var body: some View {
-            VStack {
-                Spacer()
+            GeometryReader { geometry in
+                VStack {
+                    // Push content to bottom of screen
+                    Spacer()
+                        .frame(minHeight: geometry.size.height * 0.85)
 
-                bottomContent
-                    .edgePadding()
-                    .background(alignment: .bottom) {
-                        Color.black
-                            .maskLinearGradient {
-                                (location: 0, opacity: 0)
-                                (location: 1, opacity: 0.5)
-                            }
+                    bottomContent
+                        .padding(.horizontal, 60)
+                        .padding(.bottom, 40)
+                        .background(alignment: .bottom) {
+                            LinearGradient(
+                                colors: [.clear, .black.opacity(0.8)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                            .frame(height: geometry.size.height * 0.35)
                             .isVisible(isScrubbing || isPresentingOverlay)
                             .animation(.linear(duration: 0.25), value: isPresentingOverlay)
-                    }
+                        }
+                }
             }
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.bouncy(duration: 0.4), value: isPresentingSupplement)
@@ -85,15 +92,39 @@ extension VideoPlayer {
             .onReceive(onPressEvent) { press in
                 switch press {
                 case (.playPause, _):
+                    // Show overlay and toggle play/pause
+                    if !containerState.isPresentingOverlay {
+                        withAnimation(.linear(duration: 0.25)) {
+                            containerState.isPresentingOverlay = true
+                        }
+                    } else {
+                        containerState.timer.poke()
+                    }
                     manager.togglePlayPause()
+
                 case (.menu, _):
                     if isPresentingSupplement {
                         containerState.selectedSupplement = nil
+                    } else if isPresentingOverlay {
+                        // First menu press hides overlay
+                        withAnimation(.linear(duration: 0.25)) {
+                            containerState.isPresentingOverlay = false
+                        }
                     } else {
+                        // Overlay hidden - exit playback
                         manager.proxy?.stop()
                         router.dismiss()
                     }
-                default: ()
+
+                default:
+                    // Other buttons show overlay
+                    if !containerState.isPresentingOverlay {
+                        withAnimation(.linear(duration: 0.25)) {
+                            containerState.isPresentingOverlay = true
+                        }
+                    } else {
+                        containerState.timer.poke()
+                    }
                 }
             }
         }

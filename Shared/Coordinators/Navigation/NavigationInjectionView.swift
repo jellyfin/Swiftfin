@@ -55,35 +55,27 @@ struct NavigationInjectionView: View {
                 rootCoordinator: rootCoordinator
             )
         )
+
+        // MARK: - Sheet Presentation
+
+        // tvOS 18.0 had a bug where .sheet() used modal presentation instead of full-screen.
+        // This was fixed in tvOS 18.1 (tvOS 26.1).
+        // Reference: https://developer.apple.com/documentation/tvos-release-notes/tvos-26_1-release-notes
         #if os(tvOS)
-        // TODO: Workaround for sheet presentation issue on tvOS
-        // https://developer.apple.com/documentation/tvos-release-notes/tvos-26_1-release-notes
-        // Remove this tvOS section when resolved
-        .fullScreenCover(
-                item: $coordinator.presentedSheet
-            ) {
-                coordinator.presentedSheet = nil
-            } content: { route in
-                let newCoordinator = NavigationCoordinator()
+        .modifier(TVSheetPresentationModifier(presentedSheet: $coordinator.presentedSheet))
+        #else
+        .sheet(
+            item: $coordinator.presentedSheet
+        ) {
+            coordinator.presentedSheet = nil
+        } content: { route in
+            let newCoordinator = NavigationCoordinator()
 
-                NavigationInjectionView(coordinator: newCoordinator) {
-                    route.destination
-                }
-                .background(.regularMaterial)
+            NavigationInjectionView(coordinator: newCoordinator) {
+                route.destination
             }
-        #else // <- Start: Use this for both OS when fixed
-            .sheet(
-                item: $coordinator.presentedSheet
-            ) {
-                coordinator.presentedSheet = nil
-            } content: { route in
-                let newCoordinator = NavigationCoordinator()
-
-                NavigationInjectionView(coordinator: newCoordinator) {
-                    route.destination
-                }
-            }
-        #endif // <- End
+        }
+        #endif
         #if os(tvOS)
         .fullScreenCover(
             item: $coordinator.presentedFullScreen
@@ -122,3 +114,43 @@ struct NavigationInjectionView: View {
         #endif
     }
 }
+
+// MARK: - tvOS Sheet Presentation Modifier
+
+#if os(tvOS)
+/// Handles sheet presentation on tvOS with version-aware behavior.
+/// - tvOS 18.1+: Uses native .sheet() (bug fixed in tvOS 26.1)
+/// - tvOS 17.0-18.0: Uses .fullScreenCover() with material background as workaround
+private struct TVSheetPresentationModifier: ViewModifier {
+
+    @Binding
+    var presentedSheet: NavigationRoute?
+
+    func body(content: Content) -> some View {
+        if #available(tvOS 18.1, *) {
+            content
+                .sheet(item: $presentedSheet) {
+                    presentedSheet = nil
+                } content: { route in
+                    let newCoordinator = NavigationCoordinator()
+
+                    NavigationInjectionView(coordinator: newCoordinator) {
+                        route.destination
+                    }
+                }
+        } else {
+            content
+                .fullScreenCover(item: $presentedSheet) {
+                    presentedSheet = nil
+                } content: { route in
+                    let newCoordinator = NavigationCoordinator()
+
+                    NavigationInjectionView(coordinator: newCoordinator) {
+                        route.destination
+                    }
+                    .background(.regularMaterial)
+                }
+        }
+    }
+}
+#endif

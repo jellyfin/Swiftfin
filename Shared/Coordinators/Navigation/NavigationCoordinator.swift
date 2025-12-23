@@ -26,7 +26,10 @@ final class NavigationCoordinator: ObservableObject {
 
         #if os(tvOS)
         switch style {
-        case .push, .sheet:
+        case .push:
+            // Use fullscreen for push navigation on tvOS
+            presentedFullScreen = route
+        case .sheet:
             presentedSheet = route
         case .fullscreen:
             presentedFullScreen = route

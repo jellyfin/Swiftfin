@@ -133,83 +133,83 @@ extension ItemView {
                     .focusable()
                     .focused($focusedLayer, equals: .top)
 
-                HStack(alignment: .bottom) {
+                VStack(alignment: .leading, spacing: 30) {
+                    // Logo or title at top
+                    ImageView(viewModel.item.imageSource(
+                        .logo,
+                        maxHeight: 200
+                    ))
+                    .placeholder { _ in
+                        EmptyView()
+                    }
+                    .failure {
+                        Marquee(viewModel.item.displayTitle)
+                            .font(.largeTitle)
+                            .fontWeight(.semibold)
+                            .lineLimit(1)
+                            .foregroundStyle(.white)
+                    }
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxHeight: 150)
 
-                    VStack(alignment: .leading, spacing: 20) {
-
-                        ImageView(viewModel.item.imageSource(
-                            .logo,
-                            maxHeight: 250
-                        ))
-                        .placeholder { _ in
-                            EmptyView()
-                        }
-                        .failure {
-                            Marquee(viewModel.item.displayTitle)
-                                .font(.largeTitle)
-                                .fontWeight(.semibold)
-                                .lineLimit(1)
-                                .foregroundStyle(.white)
-                        }
-                        .aspectRatio(contentMode: .fit)
-                        .padding(.bottom)
-
-                        OverviewView(item: viewModel.item)
-                            .taglineLineLimit(1)
-                            .overviewLineLimit(3)
-
-                        if viewModel.item.type != .person {
-                            HStack {
-
-                                DotHStack {
-                                    if let firstGenre = viewModel.item.genres?.first {
-                                        Text(firstGenre)
-                                    }
-
-                                    if let premiereYear = viewModel.item.premiereDateYear {
-                                        Text(premiereYear)
-                                    }
-
-                                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
-                                        Text(runtime)
-                                    }
+                    // Metadata row
+                    if viewModel.item.type != .person {
+                        HStack(spacing: 20) {
+                            DotHStack {
+                                if let firstGenre = viewModel.item.genres?.first {
+                                    Text(firstGenre)
                                 }
-                                .font(.caption)
-                                .foregroundColor(Color(UIColor.lightGray))
 
-                                ItemView.AttributesHStack(
-                                    attributes: attributes,
-                                    viewModel: viewModel
-                                )
+                                if let premiereYear = viewModel.item.premiereDateYear {
+                                    Text(premiereYear)
+                                }
+
+                                if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
+                                    Text(runtime)
+                                }
                             }
+                            .font(.title3)
+                            .foregroundColor(Color(UIColor.lightGray))
+
+                            ItemView.AttributesHStack(
+                                attributes: attributes,
+                                viewModel: viewModel
+                            )
                         }
                     }
 
-                    Spacer()
+                    // Overview - spans full width
+                    OverviewView(item: viewModel.item)
+                        .taglineLineLimit(1)
+                        .overviewLineLimit(4)
 
-                    VStack(spacing: 30) {
+                    // Buttons row - spans full width
+                    HStack(spacing: 30) {
                         if viewModel.item.type == .person || viewModel.item.type == .musicArtist {
-                            ImageView(viewModel.item.imageSource(.primary, maxWidth: 450))
+                            ImageView(viewModel.item.imageSource(.primary, maxWidth: 300))
                                 .failure {
                                     SystemImageContentView(systemName: viewModel.item.systemImage)
                                 }
                                 .posterStyle(.portrait, contentMode: .fill)
                                 .cornerRadius(10)
+                                .frame(height: 200)
                                 .accessibilityIgnoresInvertColors()
                         } else if viewModel.item.presentPlayButton {
                             ItemView.PlayButton(viewModel: viewModel)
                                 .focused($focusedLayer, equals: .playButton)
                                 .frame(height: 100)
                         }
+
                         ItemView.ActionButtonHStack(viewModel: viewModel)
                             .focused($focusedLayer, equals: .actionButtons)
                             .frame(height: 100)
+
+                        Spacer()
                     }
-                    .frame(width: 450)
-                    .padding(.leading, 150)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(.horizontal, 50)
+            .padding(.horizontal, 80)
             .onChange(of: focusedLayer) { _, layer in
                 if layer == .top {
                     if viewModel.item.presentPlayButton {

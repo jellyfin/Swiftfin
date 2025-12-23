@@ -80,6 +80,39 @@ extension Backport where Content: View {
             content
         }
     }
+
+    // MARK: - tvOS Focus Animations
+
+    /// Applies a scale effect based on focus state with platform-appropriate animation.
+    /// On tvOS 18+, uses enhanced spring animation. On older versions, uses simpler easing.
+    @ViewBuilder
+    func focusedScaleEffect(focused: Bool) -> some View {
+        #if os(tvOS)
+        if #available(tvOS 18.0, *) {
+            content
+                .scaleEffect(focused ? 1.08 : 1.0)
+                .animation(.spring(response: 0.25, dampingFraction: 0.8), value: focused)
+        } else {
+            content
+                .scaleEffect(focused ? 1.05 : 1.0)
+                .animation(.easeInOut(duration: 0.2), value: focused)
+        }
+        #else
+        content
+        #endif
+    }
+
+    /// Applies a shadow effect based on focus state for depth perception on tvOS.
+    @ViewBuilder
+    func focusedShadow(focused: Bool) -> some View {
+        content
+            .shadow(
+                color: .black.opacity(focused ? 0.3 : 0.1),
+                radius: focused ? 20 : 5,
+                y: focused ? 10 : 2
+            )
+            .animation(.easeInOut(duration: 0.2), value: focused)
+    }
 }
 
 // MARK: ButtonBorderShape

@@ -351,10 +351,7 @@ struct SelectUserView: View {
         }
         .alert(L10n.signIn, isPresented: $isPresentingLocalPin) {
 
-            // TODO: Verify on tvOS 18
-            // https://forums.developer.apple.com/forums/thread/739545
-            // TextField(L10n.pin, text: $pin)
-            TextField(text: $pin) {}
+            Backport.textField(L10n.pin, text: $pin)
                 .keyboardType(.numberPad)
 
             Button(L10n.signIn) {

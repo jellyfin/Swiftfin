@@ -91,11 +91,13 @@ extension ItemView {
             Button {
                 play()
             } label: {
-                HStack(spacing: 15) {
+                HStack(spacing: 20) {
                     Image(systemName: "play.fill")
+                        .font(.title2)
 
-                    VStack {
+                    VStack(alignment: .leading, spacing: 4) {
                         Text(title)
+                            .font(.headline)
 
                         if let source {
                             Marquee(source, animateWhenFocused: true)
@@ -104,7 +106,8 @@ extension ItemView {
                         }
                     }
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, 30)
+                .padding(.vertical, 10)
             }
             .buttonStyle(
                 .tintedMaterial(
