@@ -8,23 +8,89 @@
 
 import SwiftUI
 
-// TODO: fix lifecycle with zoom transition
+struct _UseOffsetNavigationBarKey: PreferenceKey {
+    static var defaultValue: Bool = false
+    static func reduce(value: inout Bool, nextValue: () -> Bool) {
+        value = nextValue()
+    }
+}
 
-struct NavigationBarOffsetView<Content: View>: UIViewControllerRepresentable {
+struct TrackingPreference<Content: View, Key: PreferenceKey>: View where Key.Value: Equatable {
+
+    @State
+    private var currentValue = Key.defaultValue
+
+    private let content: (Key.Value) -> Content
+    private let key: Key.Type
+
+    init(
+        key: Key.Type,
+        @ViewBuilder content: @escaping (Key.Value) -> Content
+    ) {
+        self.content = content
+        self.key = key
+    }
+
+    var body: some View {
+        content(currentValue)
+            .onPreferenceChange(key) { newValue in
+                currentValue = newValue
+            }
+    }
+}
+
+struct OffsetNavigationBar<Content: View>: View {
+
+    @Environment(\.frameForParentView)
+    private var frameForParentView
 
     private let content: Content
-    private let scrollViewOffset: Binding<CGFloat>
+    private let headerMaxY: CGFloat?
+    private let start: CGFloat
+
+    init(
+        headerMaxY: CGFloat?,
+        start: CGFloat = 25,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.content = content()
+        self.headerMaxY = headerMaxY
+        self.start = start
+    }
+
+    var body: some View {
+        if let headerMaxY {
+            NavigationBarOffsetView(
+                headerOffset: headerMaxY,
+                start: frameForParentView[.scrollView, default: .zero].safeAreaInsets.top + start,
+                end: frameForParentView[.scrollView, default: .zero].safeAreaInsets.top
+            ) {
+                content
+            }
+            .ignoresSafeArea()
+        } else {
+            content
+        }
+    }
+}
+
+// TODO: fix lifecycle with zoom transition
+
+private struct NavigationBarOffsetView<Content: View>: UIViewControllerRepresentable {
+
+    private let content: Content
+    private let headerOffset: CGFloat
     private let start: CGFloat
     private let end: CGFloat
 
     init(
-        scrollViewOffset: Binding<CGFloat>,
+        headerOffset: CGFloat,
         start: CGFloat,
         end: CGFloat,
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.content = content()
-        self.scrollViewOffset = scrollViewOffset
+        self.headerOffset = headerOffset
         self.start = start
         self.end = end
     }
@@ -35,14 +101,14 @@ struct NavigationBarOffsetView<Content: View>: UIViewControllerRepresentable {
 
     func updateUIViewController(_ uiViewController: UINavigationBarOffsetHostingController<Content>, context: Context) {
         uiViewController.scrollViewDidScroll(
-            scrollViewOffset.wrappedValue,
+            headerOffset,
             start: start,
             end: end
         )
     }
 }
 
-class UINavigationBarOffsetHostingController<Content: View>: UIHostingController<Content> {
+private class UINavigationBarOffsetHostingController<Content: View>: UIHostingController<Content> {
 
     private var lastAlpha: CGFloat = 0
 
@@ -56,7 +122,6 @@ class UINavigationBarOffsetHostingController<Content: View>: UIHostingController
         super.viewDidLoad()
 
         view.backgroundColor = nil
-
         view.addSubview(blurView)
         blurView.alpha = 0
 

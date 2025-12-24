@@ -22,26 +22,23 @@ struct DefaultContentGroupProvider: _ContentGroupProvider {
     let systemImage: String = "house.fill"
 
     @ContentGroupBuilder
-    func makeGroups(environment: Void) async throws -> [any _ContentGroup] {
+    func makeGroups(environment: Empty) async throws -> [any _ContentGroup] {
         let parameters = Paths.GetUserViewsParameters(userID: userSession.user.id)
         let userViewsPath = Paths.getUserViews(parameters: parameters)
         let userViews = try await userSession.client.send(userViewsPath)
         let excludedLibraryIDs = userSession.user.data.configuration?.latestItemsExcludes ?? []
 
         PosterGroup(
-            id: UUID().uuidString,
             library: ContinueWatchingLibrary(),
             posterDisplayType: .landscape,
             posterSize: .medium
         )
 
         PosterGroup(
-            id: UUID().uuidString,
             library: NextUpLibrary()
         )
 
         PosterGroup(
-            id: UUID().uuidString,
             library: PagingItemLibrary(
                 parent: .init(
                     name: L10n.recentlyAdded
@@ -61,11 +58,17 @@ struct DefaultContentGroupProvider: _ContentGroupProvider {
                     .movies,
                     .musicvideos,
                     .tvshows,
+                    .music,
                 ],
                 using: \.collectionType
             )
             .subtracting(excludedLibraryIDs, using: \.id)
             .map(LatestInLibrary.init)
-            .map { PosterGroup(id: UUID().uuidString, library: $0) }
+            .map {
+                PosterGroup(
+                    library: $0,
+                    posterDisplayType: .square
+                )
+            }
     }
 }

@@ -26,7 +26,8 @@ struct ItemEditorView: View {
     let item: BaseItemDto
 
     private var canEditMetadata: Bool {
-        userSession.user.permissions.items.canEditMetadata(item: item) == true
+//        userSession.user.permissions.items.canEditMetadata(item: item) == true
+        true
     }
 
     private var canManageSubtitles: Bool {

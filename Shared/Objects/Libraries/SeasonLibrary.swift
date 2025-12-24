@@ -9,6 +9,8 @@
 import Defaults
 import JellyfinAPI
 
+typealias PagingSeasonViewModel = PagingLibraryViewModel<EpisodeLibrary>
+
 @MainActor
 struct SeasonViewModelLibrary: PagingLibrary {
 

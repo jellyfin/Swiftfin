@@ -8,10 +8,7 @@
 
 import SwiftUI
 
-extension Text {
-
-    @available(*, deprecated, message: "Just use `.displayTitle` manually instead")
-    init(_ content: some Displayable) {
-        self.init(verbatim: "\(content.displayTitle)")
-    }
+enum NavigationTransition: Hashable {
+    case automatic
+    case zoom(sourceID: String, namespace: Namespace.ID)
 }

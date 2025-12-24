@@ -132,7 +132,7 @@ extension View {
 
     /// Identifies this view as the source of a context menu
     /// associated with the data type when used with `contextMenu(for:content:)`
-    /// or `contextMenu(for:content:preview:)` but allows local preview
+    /// or `contextMenu(for:content:preview:)` with local preview
     /// creation.
     func matchedContextMenu<V>(
         for value: V,

@@ -8,12 +8,19 @@
 
 import SwiftUI
 
-@available(*, deprecated, message: "Use `Divider().edgePadding(.horizontal)` instead")
-struct RowDivider: View {
+struct WithFrame<Content: View>: View {
+
+    @State
+    private var frame: CGRect = .zero
+
+    private let content: (CGRect) -> Content
+
+    init(@ViewBuilder content: @escaping (CGRect) -> Content) {
+        self.content = content
+    }
 
     var body: some View {
-        Color.secondarySystemFill
-            .frame(height: 1)
-            .edgePadding(.horizontal)
+        content(frame)
+            .trackingFrame($frame)
     }
 }

@@ -49,7 +49,7 @@ enum TabItemSetting: @preconcurrency Identifiable {
         case let .contentGroup(provider):
             .contentGroup(provider: provider.provider)
         case let .item(id):
-            .item(id: id)
+            .contentGroup(provider: ItemGroupProvider(displayTitle: "", id: id))
         case .liveTV:
             .liveTV
         case .media:
@@ -106,27 +106,10 @@ extension TabItem {
         TabItem(
             id: provider.id,
             title: provider.displayTitle,
-            systemImage: provider.systemImage
+            systemImage: "heart.fill"
         ) {
             ContentGroupView(provider: provider)
 //            ContentGroupShimView(id: provider.id)
-        }
-    }
-
-    static func item(
-        id: String
-    ) -> TabItem {
-        TabItem(
-            id: id,
-            title: "Test",
-            systemImage: "figure.walk"
-        ) {
-            ItemView(
-                item: .init(
-                    id: id,
-                    type: .movie
-                )
-            )
         }
     }
 

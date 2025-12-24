@@ -7,22 +7,23 @@
 //
 
 import CollectionHStack
-import Defaults
-import IdentifiedCollections
 import JellyfinAPI
 import SwiftUI
 
-// TODO: rename `AboutItemView`
-// TODO: see what to do about bottom padding
-//       - don't like it adds more than the edge
-//       - just have this determine bottom padding
-//         instead of scrollviews?
+struct AboutItemGroup: _ContentGroup {
 
-extension ItemView {
+    let displayTitle: String
+    let id: String
 
-    struct AboutView: View {
+    let item: BaseItemDto
 
-        private enum AboutViewItem: Identifiable {
+    func body(with viewModel: Empty) -> Body {
+        Body(item: item)
+    }
+
+    struct Body: View {
+
+        private enum AboutViewSection: Identifiable {
             case image
             case overview
             case mediaSource(MediaSourceInfo)
@@ -42,38 +43,30 @@ extension ItemView {
             }
         }
 
-        @ObservedObject
-        var viewModel: ItemViewModel
-
         @State
-        private var contentSize: CGSize = .zero
+        private var contentFrame: CGRect = .zero
 
-        private var items: [AboutViewItem] {
-            var items: [AboutViewItem] = [
-                .image,
-                .overview,
-            ]
+        @ArrayBuilder<AboutViewSection>
+        private var sections: [AboutViewSection] {
+//            .image
+            .overview
 
-            if let mediaSources = viewModel.item.mediaSources {
-                items.append(contentsOf: mediaSources.map { AboutViewItem.mediaSource($0) })
+            if let mediaSources = item.mediaSources {
+                mediaSources.map(AboutViewSection.mediaSource)
             }
 
-            if viewModel.item.hasRatings {
-                items.append(.ratings)
+            if item.hasRatings {
+                .ratings
             }
-
-            return items
         }
 
-        init(viewModel: ItemViewModel) {
-            self.viewModel = viewModel
-        }
+        let item: BaseItemDto
 
         // TODO: break out into a general solution for general use?
         // use similar math from CollectionHStack
         private var padImageWidth: CGFloat {
             let portraitMinWidth: CGFloat = 140
-            let contentWidth = contentSize.width
+            let contentWidth = contentFrame.width
             let usableWidth = contentWidth - EdgeInsets.edgePadding * 2
             var columns = CGFloat(Int(usableWidth / portraitMinWidth))
             let preItemSpacing = (columns - 1) * (EdgeInsets.edgePadding / 2)
@@ -91,7 +84,7 @@ extension ItemView {
         }
 
         private var phoneImageWidth: CGFloat {
-            let contentWidth = contentSize.width
+            let contentWidth = contentFrame.width
             let usableWidth = contentWidth - EdgeInsets.edgePadding * 2
             let itemSpacing = (EdgeInsets.edgePadding / 2) * 2
             let itemWidth = (usableWidth - itemSpacing) / 3
@@ -115,26 +108,29 @@ extension ItemView {
                     .edgePadding(.horizontal)
 
                 CollectionHStack(
-                    uniqueElements: items,
+                    uniqueElements: sections,
                     variadicWidths: true
-                ) { item in
-                    switch item {
+                ) { section in
+                    switch section {
                     case .image:
-                        ImageCard(viewModel: viewModel)
-                            .frame(width: UIDevice.isPad ? padImageWidth : phoneImageWidth)
-//                    default: EmptyView()
+//                        ImageCard(viewModel: viewModel)
+//                            .frame(width: UIDevice.isPad ? padImageWidth : phoneImageWidth)
+                        EmptyView()
                     case .overview:
-                        OverviewCard(item: viewModel.item)
-                            .frame(width: cardSize.width, height: cardSize.height)
+//                        ItemView.AboutView.OverviewCard(item: item)
+//                            .frame(width: cardSize.width, height: cardSize.height)
+                        EmptyView()
                     case let .mediaSource(source):
-                        MediaSourcesCard(
-                            subtitle: (viewModel.item.mediaSources ?? []).count > 1 ? source.displayTitle : nil,
-                            source: source
-                        )
-                        .frame(width: cardSize.width, height: cardSize.height)
+//                        ItemView.AboutView.MediaSourcesCard(
+//                            subtitle: (item.mediaSources ?? []).count > 1 ? source.displayTitle : nil,
+//                            source: source
+//                        )
+//                        .frame(width: cardSize.width, height: cardSize.height)
+                        EmptyView()
                     case .ratings:
-                        RatingsCard(item: viewModel.item)
-                            .frame(width: cardSize.width, height: cardSize.height)
+//                        ItemView.AboutView.RatingsCard(item: item)
+//                            .frame(width: cardSize.width, height: cardSize.height)
+                        EmptyView()
                     }
                 }
                 .clipsToBounds(false)
@@ -142,8 +138,7 @@ extension ItemView {
                 .itemSpacing(EdgeInsets.edgePadding / 2)
                 .scrollBehavior(.continuousLeadingEdge)
             }
-            .trackingSize($contentSize)
-            .id(viewModel.item.hashValue)
+            .trackingFrame($contentFrame)
         }
     }
 }

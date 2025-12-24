@@ -13,8 +13,6 @@ import JellyfinAPI
 @Stateful
 final class ContentGroupViewModel<Provider: _ContentGroupProvider>: ViewModel {
 
-    typealias ContentGroupViewModelPair = (viewModel: any _ContentGroupViewModel, group: any _ContentGroup)
-
     @CasePathable
     enum Action {
         case backgroundRefresh
@@ -45,7 +43,7 @@ final class ContentGroupViewModel<Provider: _ContentGroupProvider>: ViewModel {
     }
 
     @Published
-    private(set) var sections: [ContentGroupViewModelPair] = []
+    private(set) var groups: [any _ContentGroup] = []
 
     var provider: Provider
 
@@ -72,25 +70,24 @@ final class ContentGroupViewModel<Provider: _ContentGroupProvider>: ViewModel {
 //            return
 //        }
 
-        func makePair(for group: any _ContentGroup) -> ContentGroupViewModelPair {
-            func _makePair(for group: some _ContentGroup) -> ContentGroupViewModelPair {
-                (viewModel: group.makeViewModel(), group: group)
-            }
-            return _makePair(for: group)
+        func getViewModel<T: _ContentGroup>(for group: T) -> any WithRefresh {
+            group.viewModel
         }
 
         let newGroups = try await provider.makeGroups(environment: provider.environment)
-            .map(makePair)
+        let viewModels = newGroups.map { getViewModel(for: $0) }
+
+        self.groups = newGroups
 
         try await withThrowingTaskGroup(of: Void.self) { group in
-            for viewModel in newGroups.map(\.viewModel) {
+
+            for viewModel in viewModels {
                 group.addTask {
                     await viewModel.refresh()
                 }
             }
+
             try await group.waitForAll()
         }
-
-        self.sections = newGroups
     }
 }

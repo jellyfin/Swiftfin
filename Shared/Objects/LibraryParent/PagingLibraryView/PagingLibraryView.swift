@@ -215,11 +215,6 @@ extension PagingLibraryView {
                 viewModel.retrieveNextPage()
             }
             .scrollIndicators(.hidden)
-            .posterStyle(for: Element.self) { environment, _ in
-                var environment = environment
-                environment.displayType = libraryStyle.posterDisplayType
-                return environment
-            }
             .onReceive(viewModel.events) { event in
                 switch event {
                 case let .retrievedRandomElement(element): ()

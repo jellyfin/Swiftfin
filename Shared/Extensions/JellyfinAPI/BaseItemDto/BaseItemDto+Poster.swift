@@ -17,8 +17,17 @@ extension BaseItemDto: Poster {
 
     struct Environment: CustomEnvironmentValue {
         let useParent: Bool
+        let isThumb: Bool
 
-        static let `default` = Environment(useParent: false)
+        init(
+            useParent: Bool = false,
+            isThumb: Bool = false
+        ) {
+            self.useParent = useParent
+            self.isThumb = isThumb
+        }
+
+        static let `default`: Self = .init()
     }
 
     var preferredPosterDisplayType: PosterDisplayType {
@@ -102,7 +111,9 @@ extension BaseItemDto: Poster {
         switch type {
         case .episode:
             if environment.useParent {
-                seriesImageSource(.thumb, maxWidth: maxWidth, quality: quality)
+                if environment.isThumb {
+                    seriesImageSource(.thumb, maxWidth: maxWidth, quality: quality)
+                }
                 seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality)
                 imageSource(.primary, maxWidth: maxWidth, quality: quality)
             } else {
@@ -111,7 +122,9 @@ extension BaseItemDto: Poster {
         case .collectionFolder, .folder, .musicVideo, .program, .userView, .video:
             imageSource(.primary, maxWidth: maxWidth, quality: quality)
         default:
-            imageSource(.thumb, maxWidth: maxWidth, quality: quality)
+            if environment.isThumb {
+                imageSource(.thumb, maxWidth: maxWidth, quality: quality)
+            }
             imageSource(.backdrop, maxWidth: maxWidth, quality: quality)
         }
     }

@@ -21,10 +21,6 @@ extension EnvironmentValues {
     var presentationControllerShouldDismiss: Binding<Bool> = .constant(true)
 }
 
-extension CoordinateSpace {
-    static let navigationStack = CoordinateSpace.named("navigationStack")
-}
-
 struct NavigationInjectionView: View {
 
     @StateObject

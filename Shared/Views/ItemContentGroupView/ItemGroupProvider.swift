@@ -22,7 +22,7 @@ struct ItemGroupProvider: _ContentGroupProvider {
         self.viewModel = .init(id: id)
     }
 
-    func makeGroups(environment: Void) async throws -> [any _ContentGroup] {
+    func makeGroups(environment: Empty) async throws -> [any _ContentGroup] {
         await viewModel.refresh()
 
         guard viewModel.error == nil else {
@@ -38,10 +38,16 @@ struct ItemGroupProvider: _ContentGroupProvider {
     @ContentGroupBuilder
     private func _makeGroups(item: BaseItemDto, itemID: String) async throws -> [any _ContentGroup] {
 
-        ItemViewHeader(viewModel: viewModel)
+        if item.type == .movie || item.type == .series {
+            ItemViewHeader(viewModel: viewModel)
+        } else if item.type == .person || item.type == .musicArtist {
+            PortraitItemViewHeader(viewModel: viewModel)
+        } else {
+            SimpleItemViewHeader(viewModel: viewModel)
+        }
 
         if item.type == .series {
-            SeriesEpisodeContentGroup(itemViewModel: viewModel)
+            SeriesEpisodeContentGroup(viewModel: viewModel)
         }
 
         if let genres = item.itemGenres, genres.isNotEmpty {

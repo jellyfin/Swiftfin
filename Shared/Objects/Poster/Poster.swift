@@ -57,6 +57,13 @@ protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
 }
 
 extension Poster {
+    var posterLabel: AnyView {
+        EmptyView().eraseToAnyView()
+    }
+
+    var posterOverlay: (PosterDisplayType) -> AnyView {
+        { _ in EmptyView().eraseToAnyView() }
+    }
 
     func landscapeImageSources(
         maxWidth: CGFloat? = nil,

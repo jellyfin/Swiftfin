@@ -137,7 +137,7 @@ extension StoredValues.Keys {
             )
         }
 
-        static func posterButtonStyle(parentID: String?) -> Key<PosterStyleEnvironment> {
+        static func posterButtonStyle(parentID: String?) -> Key<PosterDisplayConfiguration> {
             CurrentUserKey(
                 parentID,
                 domain: "setting-posterButtonStyle",

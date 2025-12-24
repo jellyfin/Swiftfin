@@ -50,8 +50,8 @@ final class SearchViewModel: ViewModel {
     let filterViewModel: FilterViewModel
 
     var hasNoResults: Bool {
-        itemContentGroupViewModel.sections
-            .allSatisfy { _, _ in
+        itemContentGroupViewModel.groups
+            .allSatisfy { _ in
                 @MainActor
                 func isEmpty(_ vm: some __PagingLibaryViewModel) -> Bool {
                     vm.elements.isEmpty

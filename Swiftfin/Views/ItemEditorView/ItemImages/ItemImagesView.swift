@@ -93,7 +93,8 @@ struct ItemImagesView: View {
     private var imageView: some View {
         ScrollView {
             SeparatorVStack(alignment: .leading) {
-                RowDivider()
+                Divider()
+                    .edgePadding(.horizontal)
                     .padding(.vertical, 10)
             } content: {
                 ForEach(
@@ -124,15 +125,6 @@ struct ItemImagesView: View {
             )
         } header: {
             sectionHeader(for: imageType)
-        }
-        .posterStyle(for: ImageInfo.self) { environment, image in
-            var environment = environment
-
-            // TODO: change poster display type based on parent item type
-            // and image type (e.g. square for primary images of channels)
-
-            environment.displayType = image.preferredPosterDisplayType
-            return environment
         }
         .customEnvironment(
             for: ImageInfo.self,

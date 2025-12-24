@@ -195,7 +195,7 @@ extension BaseItemKind {
         switch self {
         case .audio, .channel, .musicAlbum, .tvChannel:
             .square
-        case .folder, .program, .musicVideo, .video, .userView:
+        case .episode, .folder, .program, .musicVideo, .video, .userView:
             .landscape
         default:
             .portrait

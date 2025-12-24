@@ -11,7 +11,7 @@ struct LiveTVGroupProvider: _ContentGroupProvider {
     let id: String = "live-tv"
     let displayTitle: String = L10n.liveTV
 
-    func makeGroups(environment: Void) async throws -> [any _ContentGroup] {
+    func makeGroups(environment: Empty) async throws -> [any _ContentGroup] {
 
         LiveTVChannelsPillGroup()
 
@@ -46,6 +46,7 @@ struct LiveTVChannelsPillGroup: _ContentGroup {
 
     let id: String = "asdf"
     let displayTitle: String = ""
+    let viewModel: Empty = .init()
 
     @ViewBuilder
     func body(with viewModel: Empty) -> some View {

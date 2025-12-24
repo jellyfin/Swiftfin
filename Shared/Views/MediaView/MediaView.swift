@@ -94,7 +94,7 @@ struct FavoritesContentGroupProvider: _ContentGroupProvider {
     let displayTitle: String = L10n.favorites
     let id: String = "favorites-content-group-provider"
 
-    func makeGroups(environment: ()) async throws -> [any _ContentGroup] {
+    func makeGroups(environment: Empty) async throws -> [any _ContentGroup] {
         try await ItemTypeContentGroupProvider(
             itemTypes: [
                 BaseItemKind.movie,

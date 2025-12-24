@@ -73,55 +73,6 @@ extension BaseItemDto {
             }
     }
 
-    func nowPlayableStaticMetadata(_ image: UIImage? = nil) -> NowPlayableStaticMetadata {
-
-        let mediaType: MPNowPlayingInfoMediaType = {
-            switch type {
-            case .audio, .audioBook: .audio
-            default: .video
-            }
-        }()
-
-        let title: String = {
-            if type == .episode,
-               let seriesName = seriesName
-            {
-                return seriesName
-            } else {
-                return displayTitle
-            }
-        }()
-
-        let albumArtist: String? = {
-            switch type {
-            case .audio:
-                return artists?.joined(separator: ", ")
-            default:
-                return nil
-            }
-        }()
-
-        let albumTitle: String? = {
-            switch type {
-            case .audio:
-                return album
-            default:
-                return nil
-            }
-        }()
-
-        // TODO: only fill artist, albumArtist, and albumTitle if audio type
-        return .init(
-            mediaType: mediaType,
-            isLiveStream: isLiveStream,
-            title: title,
-            artist: subtitle,
-            artwork: image.map { image in MPMediaItemArtwork(boundsSize: image.size) { _ in image }},
-            albumArtist: albumArtist,
-            albumTitle: albumTitle
-        )
-    }
-
     var birthday: Date? {
         guard type == .person else { return nil }
         return premiereDate
@@ -264,6 +215,69 @@ extension BaseItemDto {
         return response.value.items?.first
     }
 
+    func nowPlayableStaticMetadata(_ image: UIImage? = nil) -> NowPlayableStaticMetadata {
+
+        let mediaType: MPNowPlayingInfoMediaType = {
+            switch type {
+            case .audio, .audioBook: .audio
+            default: .video
+            }
+        }()
+
+        let title: String = {
+            if type == .episode,
+               let seriesName = seriesName
+            {
+                return seriesName
+            } else {
+                return displayTitle
+            }
+        }()
+
+        let albumArtist: String? = {
+            switch type {
+            case .audio:
+                return artists?.joined(separator: ", ")
+            default:
+                return nil
+            }
+        }()
+
+        let albumTitle: String? = {
+            switch type {
+            case .audio:
+                return album
+            default:
+                return nil
+            }
+        }()
+
+        // TODO: only fill artist, albumArtist, and albumTitle if audio type
+        return .init(
+            mediaType: mediaType,
+            isLiveStream: isLiveStream,
+            title: title,
+            artist: subtitle,
+            artwork: image.map { image in MPMediaItemArtwork(boundsSize: image.size) { _ in image }},
+            albumArtist: albumArtist,
+            albumTitle: albumTitle
+        )
+    }
+
+    var programDuration: TimeInterval? {
+        guard let startDate, let endDate else { return nil }
+        return endDate.timeIntervalSince(startDate)
+    }
+
+    func programProgress(relativeTo other: Date) -> Double? {
+        guard let startDate, let endDate else { return nil }
+
+        let length = endDate.timeIntervalSince(startDate)
+        let progress = other.timeIntervalSince(startDate)
+
+        return progress / length
+    }
+
     var progress: Double? {
         guard let startSeconds, let runtime, startSeconds > .zero, startSeconds < runtime else { return nil }
         return startSeconds / runtime
@@ -274,14 +288,14 @@ extension BaseItemDto {
         return Duration.ticks(runTimeTicks)
     }
 
-    var startSeconds: Duration? {
-        guard let ticks = userData?.playbackPositionTicks else { return nil }
-        return Duration.ticks(ticks)
-    }
-
     var seasonEpisodeLabel: String? {
         guard let seasonNo = parentIndexNumber, let episodeNo = indexNumber else { return nil }
         return L10n.seasonAndEpisode(String(seasonNo), String(episodeNo))
+    }
+
+    @available(*, deprecated, message: "Use `userData?.playbackPosition` instead")
+    var startSeconds: Duration? {
+        userData?.playbackPosition
     }
 
     // MARK: Calculations
@@ -301,58 +315,17 @@ extension BaseItemDto {
         return text
     }
 
-    @available(*, deprecated, message: "remove, use a formatter instead")
-    var progressLabel: String? {
-        guard let playbackPositionTicks = userData?.playbackPositionTicks,
-              let totalTicks = runTimeTicks,
-              playbackPositionTicks != 0,
-              totalTicks != 0 else { return nil }
-
-        let remainingSeconds = (totalTicks - playbackPositionTicks) / 10_000_000
-
-        let formatter = DateComponentsFormatter()
-        formatter.allowedUnits = [.hour, .minute]
-        formatter.unitsStyle = .abbreviated
-
-        return formatter.string(from: .init(remainingSeconds))
-    }
-
-    var programDuration: TimeInterval? {
-        guard let startDate, let endDate else { return nil }
-        return endDate.timeIntervalSince(startDate)
-    }
-
-    var programProgress: Double? {
-        guard let startDate, let endDate else { return nil }
-
-        let length = endDate.timeIntervalSince(startDate)
-        let progress = Date.now.timeIntervalSince(startDate)
-
-        return progress / length
-    }
-
-    func programProgress(relativeTo other: Date) -> Double? {
-        guard let startDate, let endDate else { return nil }
-
-        let length = endDate.timeIntervalSince(startDate)
-        let progress = other.timeIntervalSince(startDate)
-
-        return progress / length
+    var audioStreams: [MediaStream] {
+        mediaStreams?.filter { $0.type == .audio } ?? []
     }
 
     var subtitleStreams: [MediaStream] {
         mediaStreams?.filter { $0.type == .subtitle } ?? []
     }
 
-    var audioStreams: [MediaStream] {
-        mediaStreams?.filter { $0.type == .audio } ?? []
-    }
-
     var videoStreams: [MediaStream] {
         mediaStreams?.filter { $0.type == .video } ?? []
     }
-
-    // MARK: Missing and Unaired
 
     var isMissing: Bool {
         locationType == .virtual
@@ -372,23 +345,17 @@ extension BaseItemDto {
     }
 
     var premiereDateLabel: String? {
-        guard let premiereDate = premiereDate else { return nil }
-
+        guard let premiereDate else { return nil }
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .medium
         return dateFormatter.string(from: premiereDate)
     }
 
     var premiereDateYear: String? {
-        guard let premiereDate = premiereDate else { return nil }
+        guard let premiereDate else { return nil }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY"
         return dateFormatter.string(from: premiereDate)
-    }
-
-    var hasExternalLinks: Bool {
-        guard let externalURLs else { return false }
-        return externalURLs.isNotEmpty
     }
 
     var hasRatings: Bool {
@@ -398,8 +365,7 @@ extension BaseItemDto {
         ].contains { $0 != nil }
     }
 
-    // MARK: Chapter Images
-
+    // TODO: take userSession parameter
     var fullChapterInfo: [ChapterInfo.FullInfo]? {
 
         guard let chapters = chapters?
@@ -501,8 +467,15 @@ extension BaseItemDto {
             return L10n.missing
         }
 
-        if let progressLabel {
-            return progressLabel
+        if let seasonEpisodeLabel {
+            return seasonEpisodeLabel
+        }
+
+        if let runtime,
+           let playbackPosition = userData?.playbackPosition,
+           playbackPosition > .zero
+        {
+            return (runtime - playbackPosition).formatted(RuntimeUnitsFormatStyle(width: .narrow))
         }
 
         return L10n.play
@@ -512,6 +485,8 @@ extension BaseItemDto {
         switch type {
         case .audio:
             album
+        case .musicAlbum:
+            albumArtists?.first?.name
         case .episode:
             seriesName
         default:

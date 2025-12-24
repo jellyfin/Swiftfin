@@ -12,7 +12,7 @@ import SwiftUI
 // TODO: selected media source
 
 @Stateful
-class _ItemViewModel: ViewModel, _ContentGroupViewModel {
+class _ItemViewModel: ViewModel, WithRefresh {
 
     @CasePathable
     enum Action {
@@ -36,7 +36,14 @@ class _ItemViewModel: ViewModel, _ContentGroupViewModel {
     @Published
     private(set) var item: BaseItemDto = .init()
     @Published
-    private(set) var playButtonItem: BaseItemDto?
+    private(set) var playButtonItem: BaseItemDto? {
+        willSet {
+            selectedMediaSource = newValue?.mediaSources?.first
+        }
+    }
+
+    @Published
+    var selectedMediaSource: MediaSourceInfo?
 
     init(id: String) {
         self.item = .init(id: id)

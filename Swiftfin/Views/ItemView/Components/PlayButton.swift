@@ -11,132 +11,108 @@ import JellyfinAPI
 import Logging
 import SwiftUI
 
-extension ItemView {
+struct PlayButton: View {
 
-    struct PlayButton: View {
+    @Default(.accentColor)
+    private var accentColor
 
-        @Default(.accentColor)
-        private var accentColor
+    @ObservedObject
+    var viewModel: _ItemViewModel
 
-        @Router
-        private var router
+    @Router
+    private var router
 
-        @ObservedObject
-        var viewModel: ItemViewModel
+    private let logger = Logger.swiftfin()
 
-        private let logger = Logger.swiftfin()
+    // MARK: - Media Source
 
-        // MARK: - Validation
+    private var source: String? {
+        nil
 
-        private var isEnabled: Bool {
-            viewModel.selectedMediaSource != nil
-        }
+//        guard let sourceLabel = viewModel.selectedMediaSource?.displayTitle,
+//              viewModel.item.mediaSources?.count ?? 0 > 1
+//        else {
+//            return nil
+//        }
+//
+//        return sourceLabel
+    }
 
-        // MARK: - Title
+    // MARK: - Body
 
-        private var title: String {
-            /// Use the Season/Episode label for the Series ItemView
-            if let seriesViewModel = viewModel as? SeriesItemViewModel,
-               let seasonEpisodeLabel = seriesViewModel.playButtonItem?.seasonEpisodeLabel
-            {
-                return seasonEpisodeLabel
+    var body: some View {
+        Button {
+            play()
+        } label: {
+            HStack {
+                Image(systemName: "play.fill")
 
-                /// Use a Play/Resume label for single Media Source items that are not Series
-            } else if let playButtonLabel = viewModel.playButtonItem?.playButtonLabel {
-                return playButtonLabel
+                VStack {
+                    Text(viewModel.playButtonItem?.playButtonLabel ?? L10n.play)
 
-                /// Fallback to a generic `Play` label
-            } else {
-                return L10n.play
-            }
-        }
-
-        // MARK: - Media Source
-
-        private var source: String? {
-            guard let sourceLabel = viewModel.selectedMediaSource?.displayTitle,
-                  viewModel.item.mediaSources?.count ?? 0 > 1
-            else {
-                return nil
-            }
-
-            return sourceLabel
-        }
-
-        // MARK: - Body
-
-        var body: some View {
-            Button {
-                play()
-            } label: {
-                HStack {
-                    Image(systemName: "play.fill")
-
-                    VStack {
-                        Text(title)
-
-                        if let source {
-                            Marquee(source, speed: 40, delay: 3, fade: 5)
-                                .font(.caption)
-                                .fontWeight(.medium)
-                        }
+                    if let source {
+                        Marquee(source, speed: 40, delay: 3, fade: 5)
+                            .font(.caption)
+                            .fontWeight(.medium)
                     }
                 }
-                .padding(.horizontal, 20)
-                .font(.callout)
-                .fontWeight(.semibold)
             }
-            .buttonStyle(
-                .tintedMaterial(
-                    tint: accentColor,
-                    foregroundColor: accentColor.overlayColor
-                )
+            .padding(.horizontal, 20)
+            .font(.callout)
+            .fontWeight(.semibold)
+        }
+        .frame(height: 50)
+        .frame(maxWidth: 300)
+        .buttonStyle(
+            .tintedMaterial(
+                tint: accentColor,
+                foregroundColor: accentColor.overlayColor
             )
-            .contextMenu {
-                if viewModel.playButtonItem?.userData?.playbackPositionTicks != 0 {
-                    Button(L10n.playFromBeginning, systemImage: "gobackward") {
-                        play(fromBeginning: true)
-                    }
+        )
+        .contextMenu {
+            if viewModel.playButtonItem?.userData?.playbackPositionTicks != 0 {
+                Button(L10n.playFromBeginning, systemImage: "gobackward") {
+                    play(fromBeginning: true)
                 }
             }
-            .isSelected(true)
-            .enabled(isEnabled)
+        }
+        .isSelected(true)
+        .disabled(viewModel.selectedMediaSource == nil)
+    }
+
+    // MARK: - Play Content
+
+    private func play(fromBeginning: Bool = false) {
+        guard let playButtonItem = viewModel.playButtonItem,
+              let selectedMediaSource = viewModel.selectedMediaSource
+        else {
+            logger.error("Play selected with no item or media source")
+            return
         }
 
-        // MARK: - Play Content
-
-        private func play(fromBeginning: Bool = false) {
-            guard let playButtonItem = viewModel.playButtonItem,
-                  let selectedMediaSource = viewModel.selectedMediaSource
-            else {
-                logger.error("Play selected with no item or media source")
-                return
+        let queue: (any MediaPlayerQueue)? = {
+            if playButtonItem.type == .episode {
+                return EpisodeMediaPlayerQueue(episode: playButtonItem)
             }
+            return nil
+        }()
 
-            let queue: (any MediaPlayerQueue)? = {
-                if playButtonItem.type == .episode {
-                    return EpisodeMediaPlayerQueue(episode: playButtonItem)
-                }
-                return nil
-            }()
-
-            let provider = MediaPlayerItemProvider(item: playButtonItem) { item in
-                try await MediaPlayerItem.build(
-                    for: item,
-                    mediaSource: selectedMediaSource
-                ) {
-                    if fromBeginning {
-                        $0.userData?.playbackPositionTicks = 0
-                    }
+        let provider = MediaPlayerItemProvider(item: playButtonItem) { item in
+            try await MediaPlayerItem.build(
+                for: item,
+                mediaSource: selectedMediaSource
+            ) {
+                if fromBeginning {
+                    $0.userData?.playbackPositionTicks = 0
                 }
             }
+        }
 
-            router.route(
-                to: .videoPlayer(
-                    provider: provider,
-                    queue: queue
-                )
+        router.route(
+            to: .videoPlayer(
+                provider: provider,
+                queue: queue
             )
-        }
+        )
     }
 }

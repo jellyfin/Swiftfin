@@ -14,12 +14,6 @@ struct LibraryStyle: WithDefaultValue, Hashable, Storable {
     var posterDisplayType: PosterDisplayType
     var listColumnCount: Int
 
-    enum CodingKeys: CodingKey {
-        case displayType
-        case posterDisplayType
-        case listColumnCount
-    }
-
     static let `default`: LibraryStyle = .init(
         displayType: .grid,
         posterDisplayType: .portrait,

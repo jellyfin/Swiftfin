@@ -8,7 +8,21 @@
 
 import SwiftUI
 
-struct TrackingFrameModifier: ViewModifier {
+struct ScrollViewHeaderFrameKey: PreferenceKey {
+    static var defaultValue: CGRect = .zero
+    static func reduce(value: inout Value, nextValue: () -> Value) {
+        value = nextValue()
+    }
+}
+
+struct EmptyCGRectPreferenceKey: PreferenceKey {
+    static var defaultValue: CGRect { .zero }
+    static func reduce(value: inout Value, nextValue: () -> CGRect) {
+        value = .zero
+    }
+}
+
+struct TrackingFrameModifier<Key: PreferenceKey>: ViewModifier where Key.Value == CGRect {
 
     @Environment(\.frameForParentView)
     private var frameForParentView
@@ -18,24 +32,36 @@ struct TrackingFrameModifier: ViewModifier {
     @State
     private var safeAreaInsets: EdgeInsets = .zero
 
-    let coordinateSpace: CoordinateSpace
+    private let coordinateSpace: CoordinateSpace
+    private let key: Key.Type?
+
+    init(coordinateSpace: CoordinateSpace, key: Key.Type? = nil) {
+        self.coordinateSpace = coordinateSpace
+        self.key = key
+    }
+
+    @ViewBuilder
+    private func attachingFramePreference(
+        @ViewBuilder to content: @escaping () -> some View
+    ) -> some View {
+        if let key {
+            content().preference(key: key, value: frame)
+        } else {
+            content()
+        }
+    }
 
     func body(content: Content) -> some View {
-        content
-            .environment(
-                \.frameForParentView,
-                frameForParentView.inserting(
-                    value: .init(frame: frame, safeAreaInsets: safeAreaInsets),
-                    for: coordinateSpace
+        attachingFramePreference {
+            content
+                .trackingFrame($frame, $safeAreaInsets)
+                .environment(
+                    \.frameForParentView,
+                    frameForParentView.inserting(
+                        value: .init(frame: frame, safeAreaInsets: safeAreaInsets),
+                        for: coordinateSpace
+                    )
                 )
-            )
-            .trackingFrame($frame, $safeAreaInsets)
-//            .preference(
-//                key: FrameForViewPreferenceKey.self,
-//                value: .init().inserting(
-//                    value: frame,
-//                    for: .named(name)
-//                )
-//            )
+        }
     }
 }

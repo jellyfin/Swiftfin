@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+// TODO: make wrapper view instead
 struct BottomEdgeGradientModifier: ViewModifier {
 
     let bottomColor: Color

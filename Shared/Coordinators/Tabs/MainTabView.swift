@@ -117,32 +117,9 @@ struct MainTabView: View {
 //                size: .small
 //            )
 //        }
-        .posterStyle(for: BaseItemPerson.self) { person in
-            .init(
-                displayType: .portrait,
-                label: person.posterLabel,
-                size: .small
-            )
-        }
         .customEnvironment(
             for: BaseItemDto.self,
-            value: .init(useParent: useSeriesLandscapeBackdrop)
-        )
-    }
-}
-
-extension BaseItemDto {
-
-    @ViewBuilder
-    var posterLabel: some View {}
-}
-
-extension BaseItemPerson {
-
-    var posterLabel: some View {
-        TitleSubtitleContentView(
-            title: displayTitle,
-            subtitle: role
+            value: .init(useParent: useSeriesLandscapeBackdrop, isThumb: true)
         )
     }
 }

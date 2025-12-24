@@ -22,9 +22,6 @@ private let portraitMaxWidth: CGFloat = 500
 
 struct PosterImage<Element: Poster>: View {
 
-    @ForTypeInEnvironment<Element, AnyForPosterStyleEnvironment>(\.posterStyleRegistry)
-    private var posterStyleRegistry
-
     @ForTypeInEnvironment<Element, (Any) -> any CustomEnvironmentValue>(\.customEnvironmentValueRegistry)
     private var customEnvironmentValueRegistry
 
@@ -33,20 +30,17 @@ struct PosterImage<Element: Poster>: View {
     // TODO: figure out what to do with this
     private let imageMaxWidth: CGFloat
     private var pipeline: ImagePipeline
+    private let size: PosterDisplayType.Size
     private let type: PosterDisplayType
 
     private var customEnvironmentValue: Element.Environment {
         (customEnvironmentValueRegistry?(element) as? Element.Environment) ?? .default
     }
 
-    private var posterStyle: PosterStyleEnvironment {
-        posterStyleRegistry?(element) ?? .default
-    }
-
     private var imageSources: [ImageSource] {
         element.imageSources(
             for: type,
-            size: posterStyle.size,
+            size: size,
             environment: customEnvironmentValue
         )
     }
@@ -55,12 +49,14 @@ struct PosterImage<Element: Poster>: View {
         item: Element,
         type: PosterDisplayType,
         contentMode: ContentMode = .fill,
-        maxWidth: CGFloat? = nil
+        maxWidth: CGFloat? = nil,
+        size: PosterDisplayType.Size = .small
     ) {
         self.contentMode = contentMode
         self.element = item
         self.imageMaxWidth = maxWidth ?? (type == .landscape ? landscapeMaxWidth : portraitMaxWidth)
         self.pipeline = .shared
+        self.size = size
         self.type = type
     }
 

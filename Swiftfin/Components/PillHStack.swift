@@ -15,14 +15,8 @@ struct PillHStack<Data: RandomAccessCollection>: View where Data.Element: Displa
     let action: (Data.Element) -> Void
 
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(title)
-                .font(.title2)
-                .fontWeight(.semibold)
-                .accessibility(addTraits: [.isHeader])
-                .edgePadding(.horizontal)
-
-            ScrollView(.horizontal, showsIndicators: false) {
+        Section {
+            ScrollView(.horizontal) {
                 HStack {
                     ForEach(data, id: \.displayTitle) { item in
                         Button {
@@ -34,14 +28,17 @@ struct PillHStack<Data: RandomAccessCollection>: View where Data.Element: Displa
                                 .padding(10)
                                 .background {
                                     Color.systemFill
-                                        .cornerRadius(10)
                                 }
+                                .cornerRadius(10)
                         }
                         .foregroundStyle(.primary, .secondary)
                     }
                 }
                 .edgePadding(.horizontal)
             }
+            .scrollIndicators(.hidden)
+        } header: {
+            DefaultHeader(title: title)
         }
     }
 }

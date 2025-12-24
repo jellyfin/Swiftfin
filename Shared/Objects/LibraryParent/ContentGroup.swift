@@ -20,30 +20,23 @@ typealias ContentGroupBuilder = ArrayBuilder<any _ContentGroup>
 protocol _ContentGroup<ViewModel>: Identifiable {
 
     associatedtype Body: View
-    associatedtype ViewModel: _ContentGroupViewModel
+    associatedtype ViewModel: WithRefresh
 
     var id: String { get }
-
-    func makeViewModel() -> ViewModel
+    var viewModel: ViewModel { get }
 
     @ViewBuilder
     func body(with viewModel: ViewModel) -> Body
 }
 
 extension _ContentGroup where ViewModel == Empty {
-    func makeViewModel() -> Empty {
-        .init()
-    }
+    var viewModel: Empty { .init() }
 }
 
-extension Empty: _ContentGroupViewModel {}
-
-protocol _ContentGroupViewModel: WithRefresh {}
-
 @MainActor
-protocol _ContentGroupProvider: Displayable, SystemImageable {
+protocol _ContentGroupProvider: Displayable {
 
-    associatedtype Environment = Void
+    associatedtype Environment = Empty
 
     var id: String { get }
     var environment: Environment { get set }
@@ -52,20 +45,10 @@ protocol _ContentGroupProvider: Displayable, SystemImageable {
     func makeGroups(environment: Environment) async throws -> [any _ContentGroup]
 }
 
-extension _ContentGroupProvider {
-    var systemImage: String { "bird.fill" }
-}
-
-extension _ContentGroupProvider where Environment == Void {
-    var environment: Void {
-        get { () }
+extension _ContentGroupProvider where Environment == Empty {
+    var environment: Empty {
+        get { .init() }
         set {}
-    }
-}
-
-extension _ContentGroupProvider where Environment == Void {
-    func makeGroups() async throws -> [any _ContentGroup] {
-        try await makeGroups(environment: ())
     }
 }
 
@@ -74,9 +57,17 @@ struct PillGroup<Library: PagingLibrary>: _ContentGroup where Library.Element: D
     let displayTitle: String
     let id: String
     let library: Library
+    let viewModel: PagingLibraryViewModel<Library>
 
-    func makeViewModel() -> PagingLibraryViewModel<Library> {
-        .init(library: library)
+    init(
+        displayTitle: String,
+        id: String,
+        library: Library
+    ) {
+        self.displayTitle = displayTitle
+        self.id = id
+        self.library = library
+        self.viewModel = .init(library: library)
     }
 
     func body(with viewModel: PagingLibraryViewModel<Library>) -> some View {
@@ -126,6 +117,7 @@ struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element:
     let library: Library
     let posterDisplayType: PosterDisplayType
     let posterSize: PosterDisplayType.Size
+    let viewModel: PagingLibraryViewModel<Library>
 
     init(
         id: String = UUID().uuidString,
@@ -137,35 +129,19 @@ struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element:
         self.library = library
         self.posterDisplayType = posterDisplayType
         self.posterSize = posterSize
+        self.viewModel = .init(library: library)
     }
-
-//    init(library: Library) {
-//        self.id = library.parent.libraryID
-//        self.library = library
-//    }
 
     @ViewBuilder
     func body(with viewModel: PagingLibraryViewModel<Library>) -> some View {
-//        WithPosterButtonStyle(id: id) {
         PosterHStackLibrarySection(viewModel: viewModel, group: self)
-            .posterStyle(for: BaseItemDto.self) { environment, _ in
-                var environment = environment
-                environment.displayType = posterDisplayType
-                environment.size = posterSize
-                return environment
-            }
-//        }
-    }
-
-    func makeViewModel() -> PagingLibraryViewModel<Library> {
-        .init(library: library)
     }
 }
 
 struct WithPosterButtonStyle<Content: View>: View {
 
     @StoredValue
-    private var parentPosterStyle: PosterStyleEnvironment
+    private var parentPosterStyle: PosterDisplayConfiguration
 
     private let content: Content
     private let id: String
@@ -179,12 +155,6 @@ struct WithPosterButtonStyle<Content: View>: View {
 
     var body: some View {
         content
-            .posterStyle(for: BaseItemDto.self) { environment, _ in
-                var environment = environment
-                environment.displayType = parentPosterStyle.displayType
-                environment.size = parentPosterStyle.size
-                return environment
-            }
     }
 }
 
@@ -280,7 +250,7 @@ struct StoredContentGroupProvider: _ContentGroupProvider, Equatable, Hashable, S
     var systemImage: String
     var groups: [ContentGroupSetting]
 
-    func makeGroups(environment: ()) async throws -> [any _ContentGroup] {
+    func makeGroups(environment: Empty) async throws -> [any _ContentGroup] {
         groups.map(\.group)
     }
 }

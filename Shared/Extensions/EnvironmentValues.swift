@@ -43,8 +43,5 @@ extension EnvironmentValues {
     var safeAreaInsets: EdgeInsets = UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero
 
     @Entry
-    var scrollViewOffset: Binding<CGFloat> = .constant(0)
-
-    @Entry
     var subtitleOffset: Binding<Duration> = .constant(.zero)
 }

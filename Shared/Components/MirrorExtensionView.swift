@@ -8,12 +8,10 @@
 
 import SwiftUI
 
-// TODO: use blurhash for extensions?
-
 struct MirrorExtensionView<Content: View>: View {
 
     @State
-    private var contentSize: CGSize = .zero
+    private var contentFrame: CGRect = .zero
 
     private let content: Content
     private let edges: Edge.Set
@@ -23,26 +21,31 @@ struct MirrorExtensionView<Content: View>: View {
         self.edges = edges
     }
 
+    @ViewBuilder
+    private var mirroredContent: some View {
+        ZStack {
+            content
+
+            content
+                .blur(radius: 5)
+
+            content
+                .blur(radius: 20)
+        }
+    }
+
     var body: some View {
         content
-            .trackingSize($contentSize)
+            .trackingFrame($contentFrame)
             .overlay(alignment: .top) {
                 if edges.contains(.top) {
-                    ZStack {
-                        content
-
-                        content
-                            .blur(radius: 5)
-
-                        content
-                            .blur(radius: 20)
-                    }
-                    .scaleEffect(y: -1, anchor: .top)
+                    mirroredContent
+                        .scaleEffect(y: -1, anchor: .top)
                 }
             }
             .overlay(alignment: .bottom) {
                 if edges.contains(.bottom) {
-                    content
+                    mirroredContent
                         .scaleEffect(y: -1, anchor: .bottom)
                 }
             }

@@ -17,6 +17,14 @@ extension BaseItemPerson: Poster {
         .portrait
     }
 
+    var posterLabel: AnyView {
+        TitleSubtitleContentView(
+            title: displayTitle,
+            subtitle: role
+        )
+        .eraseToAnyView()
+    }
+
     var unwrappedIDHashOrZero: Int {
         id?.hashValue ?? 0
     }

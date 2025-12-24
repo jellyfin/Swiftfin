@@ -12,7 +12,7 @@ import SwiftUI
 struct AlternateLayoutView<Content: View, Layout: View>: View {
 
     @State
-    private var layoutSize: CGSize = .zero
+    private var layoutFrame: CGRect = .zero
 
     private let alignment: Alignment
     private let content: (CGSize) -> Content
@@ -41,9 +41,9 @@ struct AlternateLayoutView<Content: View, Layout: View>: View {
     var body: some View {
         layout
             .hidden()
-            .trackingSize($layoutSize)
+            .trackingFrame($layoutFrame)
             .overlay(alignment: alignment) {
-                content(layoutSize)
+                content(layoutFrame.size)
             }
     }
 }

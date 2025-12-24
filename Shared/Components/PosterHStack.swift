@@ -16,12 +16,6 @@ struct PosterHStack<
     Header: View
 >: View where Data.Element: Poster, Data.Index == Int {
 
-    @ForTypeInEnvironment<Data.Element, AnyForPosterStyleEnvironment>(\.posterStyleRegistry)
-    private var posterStyleRegistry
-
-    @Router
-    private var router
-
     private let elements: Data
     private let header: Header
     private let displayType: PosterDisplayType
@@ -29,22 +23,17 @@ struct PosterHStack<
 
     private var action: (Data.Element, Namespace.ID) -> Void
 
-    private var posterStyle: PosterStyleEnvironment {
-        guard let first = elements.first else { return .default }
-        return posterStyleRegistry?(first) ?? .default
-    }
-
     private var layout: CollectionHStackLayout {
         #if os(tvOS)
         .grid(
-            columns: posterStyle.displayType == .landscape ? 5 : 7,
+            columns: displayType == .landscape ? 5 : 7,
             rows: 1,
             columnTrailingInset: 0
         )
         #else
         if UIDevice.isPad {
             let minWidth: CGFloat = {
-                switch (posterStyle.displayType, posterStyle.size) {
+                switch (displayType, size) {
                 case (.landscape, .small):
                     220
                 case (.landscape, .medium):
@@ -62,7 +51,7 @@ struct PosterHStack<
             )
         } else {
             let columnCount: CGFloat = {
-                switch (posterStyle.displayType, posterStyle.size) {
+                switch (displayType, size) {
                 case (.landscape, .small):
                     2
                 case (.landscape, .medium):
@@ -100,7 +89,8 @@ struct PosterHStack<
             ) { item in
                 PosterButton(
                     item: item,
-                    type: displayType
+                    type: displayType,
+                    size: size
                 ) { namespace in
                     action(item, namespace)
                 }
@@ -116,11 +106,10 @@ struct PosterHStack<
     var body: some View {
         let _ = Self._printChanges()
 
-        VStack(alignment: .leading) {
-
-            header
-
+        Section {
             stack
+        } header: {
+            header
         }
     }
 }
@@ -130,7 +119,7 @@ extension PosterHStack {
     init(
         elements: Data,
         type: PosterDisplayType,
-        size: PosterDisplayType.Size = .medium,
+        size: PosterDisplayType.Size = .small,
         action: @escaping (Data.Element, Namespace.ID) -> Void,
         @ViewBuilder header: () -> Header
     ) {
@@ -148,7 +137,7 @@ extension PosterHStack where Header == DefaultHeader {
         title: String,
         elements: Data,
         type: PosterDisplayType,
-        size: PosterDisplayType.Size = .medium,
+        size: PosterDisplayType.Size = .small,
         action: @escaping (Data.Element, Namespace.ID) -> Void
     ) {
         self.init(

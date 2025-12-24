@@ -12,9 +12,6 @@ import SwiftUI
 
 struct PosterButton<Item: Poster, Label: View>: View {
 
-    @ForTypeInEnvironment<Item, AnyForPosterStyleEnvironment>(\.posterStyleRegistry)
-    private var posterStyleRegistry
-
     @Namespace
     private var namespace
 
@@ -23,21 +20,20 @@ struct PosterButton<Item: Poster, Label: View>: View {
 
     private let item: Item
     private let type: PosterDisplayType
+    private let size: PosterDisplayType.Size
     private let label: Label
     private let action: (Namespace.ID) -> Void
-
-    private var posterStyle: PosterStyleEnvironment {
-        posterStyleRegistry?(item) ?? .default
-    }
 
     init(
         item: Item,
         type: PosterDisplayType,
+        size: PosterDisplayType.Size = .small,
         action: @escaping (Namespace.ID) -> Void,
         @ViewBuilder label: @escaping () -> Label
     ) {
         self.item = item
         self.type = type
+        self.size = size
         self.action = action
         self.label = label()
     }
@@ -46,12 +42,13 @@ struct PosterButton<Item: Poster, Label: View>: View {
     private func posterImage(overlay: some View = EmptyView()) -> some View {
         PosterImage(
             item: item,
-            type: posterStyle.displayType
+            type: type,
+            size: size
         )
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .overlay { overlay }
         .contentShape(.contextMenuPreview, Rectangle())
-        .posterCornerRadius(posterStyle.displayType)
+        .posterCornerRadius(type)
         .backport
         .matchedTransitionSource(id: "item", in: namespace)
         .posterShadow()
@@ -64,7 +61,7 @@ struct PosterButton<Item: Poster, Label: View>: View {
             if Label.self != EmptyView.self {
                 label
             } else {
-                posterStyle.label
+                item.posterLabel
             }
         }
         .allowsHitTesting(false)
@@ -85,11 +82,11 @@ struct PosterButton<Item: Poster, Label: View>: View {
         } label: {
             // Layout required for tvOS focused offset label behavior
             #if os(tvOS)
-            posterImage(overlay: posterStyle.overlay(posterStyle.displayType))
+            posterImage(overlay: item.posterOverlay(type))
             resolvedLabel
                 .frame(maxWidth: .infinity, alignment: .leading)
             #else
-            buttonLabel(overlay: posterStyle.overlay(posterStyle.displayType))
+            buttonLabel(overlay: item.posterOverlay(type))
                 .trackingSize($posterSize)
             #endif
         }
@@ -151,11 +148,13 @@ extension PosterButton where Label == EmptyView {
     init(
         item: Item,
         type: PosterDisplayType,
+        size: PosterDisplayType.Size = .small,
         action: @escaping (Namespace.ID) -> Void
     ) {
         self.init(
             item: item,
             type: type,
+            size: size,
             action: action
         ) {
             EmptyView()

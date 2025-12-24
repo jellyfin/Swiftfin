@@ -37,7 +37,7 @@ extension WithRefresh where Background == Empty {
 
 @MainActor
 protocol __PagingLibaryViewModel<_PagingLibrary>: AnyObject, Identifiable,
-_ContentGroupViewModel where Environment == _PagingLibrary.Environment {
+WithRefresh where Environment == _PagingLibrary.Environment {
 
     associatedtype _PagingLibrary: PagingLibrary
     associatedtype Environment

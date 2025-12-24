@@ -171,19 +171,21 @@ extension View {
         shadow(radius: 4, y: 2)
     }
 
+    @ViewBuilder
     func scrollViewOffset(_ scrollViewOffset: Binding<CGFloat>) -> some View {
-        modifier(ScrollViewOffsetModifier(scrollViewOffset: scrollViewOffset))
+        if #available(iOS 18, tvOS 18, *) {
+            onScrollGeometryChange(for: CGFloat.self) { geometry in
+                geometry.contentOffset.y
+            } action: { _, newValue in
+                scrollViewOffset.wrappedValue = newValue
+            }
+        } else {
+            modifier(ScrollViewOffsetModifier(scrollViewOffset: scrollViewOffset))
+        }
     }
 
-    func backgroundParallaxHeader<Header: View>(
-        _ scrollViewOffset: Binding<CGFloat>,
-        height: CGFloat,
-        multiplier: CGFloat = 1,
-        @ViewBuilder header: @escaping () -> Header
-    ) -> some View {
-        modifier(BackgroundParallaxHeaderModifier(scrollViewOffset, height: height, multiplier: multiplier, header: header))
-    }
-
+    // TODO: make a wrapper view instead
+    @available(*, deprecated, message: "Make a wrapper view instead")
     func bottomEdgeGradient(bottomColor: Color) -> some View {
         modifier(BottomEdgeGradientModifier(bottomColor: bottomColor))
     }
@@ -250,28 +252,29 @@ extension View {
         corners: RectangleCorner = .allCorners,
         style: RoundedCornerStyle = .circular
     ) -> some View {
-        modifier(
-            OnSizeChangedModifier { size in
-                let radius = size[keyPath: side] * ratio
-                self.cornerRadius(radius, corners: corners, style: style, container: true)
-            }
-        )
+        WithFrame { frame in
+            self.cornerRadius(
+                frame.size[keyPath: side] * ratio,
+                corners: corners,
+                style: style,
+                container: true
+            )
+        }
     }
 
+    @ViewBuilder
     func onFrameChanged(perform action: @escaping (CGRect, EdgeInsets) -> Void) -> some View {
         onGeometryChange(for: OnFrameChangedValue.self) { proxy in
-            let frame = proxy.frame(in: .global)
-            let safeAreaInsets = proxy.safeAreaInsets
-
-            return .init(
-                frame: frame,
-                safeAreaInsets: safeAreaInsets
+            .init(
+                frame: proxy.frame(in: .global),
+                safeAreaInsets: proxy.safeAreaInsets
             )
         } action: { newValue in
             action(newValue.frame, newValue.safeAreaInsets)
         }
     }
 
+    @ViewBuilder
     func trackingFrame(
         _ frameBinding: Binding<CGRect>,
         _ safeaAreaInsetsBinding: Binding<EdgeInsets> = .constant(.zero)
@@ -285,14 +288,28 @@ extension View {
     @ViewBuilder
     func trackingFrame(named name: String) -> some View {
         modifier(
-            TrackingFrameModifier(coordinateSpace: .named(name))
+            TrackingFrameModifier<EmptyCGRectPreferenceKey>(coordinateSpace: .named(name), key: nil)
         )
     }
 
     @ViewBuilder
     func trackingFrame(for coordinateSpace: CoordinateSpace) -> some View {
         modifier(
-            TrackingFrameModifier(coordinateSpace: coordinateSpace)
+            TrackingFrameModifier<EmptyCGRectPreferenceKey>(coordinateSpace: coordinateSpace, key: nil)
+        )
+    }
+
+    @ViewBuilder
+    func trackingFrame<K: PreferenceKey>(named name: String, key: K.Type) -> some View where K.Value == CGRect {
+        modifier(
+            TrackingFrameModifier(coordinateSpace: .named(name), key: key)
+        )
+    }
+
+    @ViewBuilder
+    func trackingFrame<K: PreferenceKey>(for coordinateSpace: CoordinateSpace, key: K.Type) -> some View where K.Value == CGRect {
+        modifier(
+            TrackingFrameModifier(coordinateSpace: coordinateSpace, key: key)
         )
     }
 
@@ -311,6 +328,7 @@ extension View {
         }
     }
 
+    @available(*, deprecated, message: "Use `trackingFrame` instead")
     func trackingSize(
         _ sizeBinding: Binding<CGSize>,
         _ safeAreaInsetBinding: Binding<EdgeInsets> = .constant(.zero)
@@ -349,12 +367,6 @@ extension View {
             hidden()
         } else {
             self
-        }
-    }
-
-    func blurred(style: UIBlurEffect.Style = .regular) -> some View {
-        overlay {
-            BlurView(style: style)
         }
     }
 
@@ -455,6 +467,27 @@ extension View {
 
     func scrollIfLargerThanContainer(padding: CGFloat = 0) -> some View {
         modifier(ScrollIfLargerThanContainerModifier(padding: padding))
+    }
+
+    @ViewBuilder
+    func scrollViewHeaderOffsetOpacity(
+        start: CGFloat = 100,
+        end: CGFloat = 25
+    ) -> some View {
+        WithEnvironment(value: \.frameForParentView) { frameForParentView in
+            var opacity: CGFloat {
+                let end = frameForParentView[.scrollView, default: .zero].safeAreaInsets.top + end
+                let start = end + start
+                let offset = frameForParentView[.scrollViewHeader, default: .zero].frame.maxY
+
+                return clamp((offset - end) / (start - end), min: 0, max: 1)
+            }
+
+            self.overlay {
+                Color.systemBackground
+                    .opacity(1 - opacity)
+            }
+        }
     }
 
     /// Masks the view with a linear gradient from top to bottom.

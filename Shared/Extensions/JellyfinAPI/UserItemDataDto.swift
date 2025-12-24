@@ -6,15 +6,12 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-import SwiftUI
+import JellyfinAPI
 
-@available(*, deprecated, message: "Just use a `ZStack` instead")
-struct WrappedView<Content: View>: View {
+extension UserItemDataDto {
 
-    @ViewBuilder
-    let content: () -> Content
-
-    var body: some View {
-        content()
+    var playbackPosition: Duration? {
+        guard let playbackPositionTicks else { return nil }
+        return Duration.ticks(playbackPositionTicks)
     }
 }

@@ -11,13 +11,8 @@ import SwiftUI
 
 struct SeriesEpisodeContentGroup: _ContentGroup, Identifiable {
 
-    let itemViewModel: _ItemViewModel
-
-    var id: String { "\(itemViewModel.item.libraryID)-episodeSelector" }
-
-    func makeViewModel() -> _ItemViewModel {
-        itemViewModel
-    }
+    let viewModel: _ItemViewModel
+    var id: String { "\(viewModel.item.libraryID)-episodeSelector" }
 
     func body(with viewModel: _ItemViewModel) -> some View {
         SeriesEpisodeSelector(viewModel: viewModel)
@@ -44,7 +39,7 @@ struct SeriesEpisodeSelector: View {
 
     init(viewModel: _ItemViewModel) {
         self.viewModel = viewModel
-        self._seasonsViewModel = StateObject(wrappedValue: PagingLibraryViewModel(library: SeasonViewModelLibrary(series: viewModel.item)))
+        self._seasonsViewModel = .init(wrappedValue: .init(library: .init(series: viewModel.item)))
     }
 
     @ViewBuilder
@@ -70,6 +65,10 @@ struct SeriesEpisodeSelector: View {
                     .font(.title2)
                     .fontWeight(.semibold)
             }
+        } else {
+            Text(verbatim: .emptyDash)
+                .font(.title2)
+                .fontWeight(.semibold)
         }
     }
 

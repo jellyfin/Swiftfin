@@ -18,7 +18,9 @@ struct ItemContentGroupView: View {
     private var router
 
     @State
-    private var scrollViewOffset: CGFloat = 0
+    private var carriedHeaderFrame: CGRect = .zero
+    @State
+    private var carriedUseOffsetNavigationBar: Bool = false
 
     @StateObject
     private var viewModel: ContentGroupViewModel<ItemGroupProvider>
@@ -27,21 +29,37 @@ struct ItemContentGroupView: View {
         _viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
     }
 
-//        .modifier(OffsetOpacityModifier())
-
     @ViewBuilder
     private var contentView: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 10) {
-                ContentGroupContentView(viewModel: viewModel)
+        OffsetNavigationBar(headerMaxY: carriedUseOffsetNavigationBar ? carriedHeaderFrame.maxY : nil) {
+            WithEnvironment(value: \.frameForParentView) { frameForParentView in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 10) {
+
+                        // SwiftUI bug causes preference key changes to not propagate any higher
+                        ContentGroupContentView(viewModel: viewModel)
+                            .onPreferenceChange(_UseOffsetNavigationBarKey.self) { value in
+                                carriedUseOffsetNavigationBar = value
+                            }
+                            .onPreferenceChange(ScrollViewHeaderFrameKey.self) { value in
+                                carriedHeaderFrame = value
+                            }
+                    }
+                    .edgePadding(.bottom)
+                }
+                .ignoresSafeArea(edges: .horizontal)
+                .scrollIndicators(.hidden)
+                .overlay(alignment: .top) {
+                    Rectangle()
+                        .fill(Material.ultraThin)
+                        .maskLinearGradient()
+                        .frame(height: frameForParentView[.navigationStack, default: .zero].safeAreaInsets.top)
+                        .offset(y: -frameForParentView[.scrollView, default: .zero].safeAreaInsets.top)
+                        .colorScheme(.dark)
+                        .hidden(!carriedUseOffsetNavigationBar)
+                }
             }
-            .edgePadding(.bottom)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .environment(\.scrollViewOffset, $scrollViewOffset)
         }
-        .scrollViewOffset($scrollViewOffset)
-        .ignoresSafeArea(edges: .horizontal)
-        .scrollIndicators(.hidden)
         .trackingFrame(for: .scrollView)
     }
 
@@ -50,6 +68,7 @@ struct ItemContentGroupView: View {
             switch viewModel.state {
             case .content:
                 contentView
+                    .navigationTitle(viewModel.provider.displayTitle)
             case .error:
                 viewModel.error.map(ErrorView.init)
             case .initial, .refreshing:
@@ -66,7 +85,7 @@ struct ItemContentGroupView: View {
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .animation(.linear(duration: 0.2), value: viewModel.background.states)
-        .navigationTitle(viewModel.provider.displayTitle)
+//        .navigationTitle(viewModel.provider.displayTitle)
         .backport
         .toolbarTitleDisplayMode(.inline)
         .onFirstAppear {

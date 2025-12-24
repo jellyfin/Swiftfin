@@ -228,13 +228,22 @@ extension NavigationRoute {
 
     #if os(iOS)
     @MainActor
-    static func itemEditor(viewModel: ItemViewModel) -> NavigationRoute {
+    static func itemEditor(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(
             id: "itemEditor",
             style: .sheet
         ) {
-//            ItemEditorView(viewModel: viewModel)
-            ItemEditorView(item: viewModel.item)
+            ItemEditorView(item: item)
+        }
+    }
+
+    @MainActor
+    static func editItem(_ item: BaseItemDto) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemEditor",
+            style: .sheet
+        ) {
+            ItemEditorView(item: item)
         }
     }
 

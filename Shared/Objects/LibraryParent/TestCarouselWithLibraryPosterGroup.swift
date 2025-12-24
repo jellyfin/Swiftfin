@@ -15,9 +15,11 @@ struct TestCarouselWithLibraryPosterGroup: _ContentGroup {
     let id: String = "test"
     let displayTitle: String = ""
     let filters: ItemFilterCollection
+    let viewModel: PagingLibraryViewModel<PagingItemLibrary>
 
-    func makeViewModel() -> PagingLibraryViewModel<PagingItemLibrary> {
-        PagingLibraryViewModel(
+    init(filters: ItemFilterCollection) {
+        self.filters = filters
+        self.viewModel = PagingLibraryViewModel(
             library: PagingItemLibrary(
                 parent: .init(),
                 filters: filters
@@ -92,13 +94,6 @@ struct PagingCarouselPosterHStack<P: PagingLibrary>: View where P.Element: Poste
             }
             ._didEndDecelerating {
                 scrollTimer.poke()
-            }
-            .posterStyle(for: BaseItemDto.self) { environment, _ in
-                var environment = environment
-                environment.displayType = .landscape
-                environment.label = EmptyView()
-                    .eraseToAnyView()
-                return environment
             }
 
             VStack(alignment: .leading) {

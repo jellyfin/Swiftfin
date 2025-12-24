@@ -90,106 +90,10 @@ extension Backport where Content: View {
         }
     }
 
-    // TODO: don't use
+    @available(iOS 9999, *)
     @ViewBuilder
     func tabViewStyle(_ style: TabViewStyle) -> some View {
         content.tabViewStyle(style.swiftUIValue)
             .eraseToAnyView()
-    }
-}
-
-// MARK: ButtonBorderShape
-
-enum ButtonBorderShape {
-    case automatic
-    case capsule
-    case roundedRectangle
-    case circle
-
-    var swiftUIValue: SwiftUI.ButtonBorderShape {
-        switch self {
-        case .automatic: .automatic
-        case .capsule: .capsule
-        case .roundedRectangle: .roundedRectangle
-        case .circle:
-            if #available(iOS 17, *) {
-                .circle
-            } else {
-                .roundedRectangle
-            }
-        }
-    }
-}
-
-enum NavigationTransition: Hashable {
-    case automatic
-    case zoom(sourceID: String, namespace: Namespace.ID)
-}
-
-enum TabViewStyle {
-
-    case automatic
-    case page
-    case sidebarAdaptable
-    case tabBarOnly
-
-    var swiftUIValue: any SwiftUI.TabViewStyle {
-        switch self {
-        case .automatic: .automatic
-        case .page: .page
-        case .sidebarAdaptable:
-            if #available(iOS 18, tvOS 18, *) {
-                .sidebarAdaptable
-            } else {
-                .automatic
-            }
-        case .tabBarOnly:
-            if #available(iOS 18, tvOS 18, *) {
-                .tabBarOnly
-            } else {
-                .automatic
-            }
-        }
-    }
-}
-
-enum ToolbarTitleDisplayMode {
-
-    case automatic
-    case inline
-    case inlineLarge
-    case large
-
-    var navigationBarTitleDisplayMode: NavigationBarItem.TitleDisplayMode {
-        switch self {
-        case .automatic: .automatic
-        case .inline: .inline
-        case .inlineLarge, .large:
-            #if os(iOS)
-            .large
-            #else
-            .automatic
-            #endif
-        }
-    }
-
-    @available(iOS 17, tvOS 17, *)
-    var swiftUIValue: SwiftUI.ToolbarTitleDisplayMode {
-        switch self {
-        case .automatic: .automatic
-        case .inline: .inline
-        case .inlineLarge:
-            #if os(iOS)
-            .inlineLarge
-            #else
-            .automatic
-            #endif
-        case .large:
-            #if os(iOS)
-            .large
-            #else
-            .automatic
-            #endif
-        }
     }
 }

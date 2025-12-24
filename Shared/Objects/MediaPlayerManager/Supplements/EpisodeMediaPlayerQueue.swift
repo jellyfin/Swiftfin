@@ -53,13 +53,13 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     lazy var previousItemPublisher: Published<MediaPlayerItemProvider?>.Publisher = $previousItem
 
     private var currentAdjacentEpisodesTask: AnyCancellable?
-    private let seriesViewModel: SeriesItemViewModel
+    private let seriesViewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
     init(episode: BaseItemDto) {
-        self.seriesViewModel = SeriesItemViewModel(episode: episode)
+        self.seriesViewModel = .init(library: .init(series: .init()))
         super.init()
 
-        seriesViewModel.send(.refresh)
+//        seriesViewModel.send(.refresh)
     }
 
     var videoPlayerBody: some PlatformView {
@@ -158,14 +158,14 @@ extension EpisodeMediaPlayerQueue {
         private var manager: MediaPlayerManager
 
         @ObservedObject
-        var viewModel: SeriesItemViewModel
+        var viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
         @State
         private var selection: PagingSeasonViewModel.ID?
 
         private var selectionViewModel: PagingSeasonViewModel? {
             guard let selection else { return nil }
-            return viewModel.seasons[id: selection]
+            return viewModel.elements[id: selection]
         }
 
         private func select(episode: BaseItemDto) {
@@ -194,13 +194,13 @@ extension EpisodeMediaPlayerQueue {
             }
             .environmentObject(viewModel)
             .onAppear {
-                if let seasonID = manager.item.seasonID, let season = viewModel.seasons[id: seasonID] {
+                if let seasonID = manager.item.seasonID, let season = viewModel.elements[id: seasonID] {
                     if season.elements.isEmpty {
                         season.refresh()
                     }
                     selection = season.id
                 } else {
-                    selection = viewModel.seasons.first?.id
+                    selection = viewModel.elements.first?.id
                 }
             }
         }
@@ -209,14 +209,14 @@ extension EpisodeMediaPlayerQueue {
     private struct CompactSeasonStackObserver: View {
 
         @EnvironmentObject
-        private var seriesViewModel: SeriesItemViewModel
+        private var seriesViewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
         private let selection: Binding<PagingSeasonViewModel.ID?>
         private let action: (BaseItemDto) -> Void
 
         private var selectionViewModel: PagingSeasonViewModel? {
             guard let id = selection.wrappedValue else { return nil }
-            return seriesViewModel.seasons[id: id]
+            return seriesViewModel.elements[id: id]
         }
 
         init(
@@ -266,14 +266,14 @@ extension EpisodeMediaPlayerQueue {
         private var safeAreaInsets: EdgeInsets
 
         @EnvironmentObject
-        private var seriesViewModel: SeriesItemViewModel
+        private var seriesViewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
         private let selection: Binding<PagingSeasonViewModel.ID?>
         private let action: (BaseItemDto) -> Void
 
         private var selectionViewModel: PagingSeasonViewModel? {
             guard let id = selection.wrappedValue else { return nil }
-            return seriesViewModel.seasons[id: id]
+            return seriesViewModel.elements[id: id]
         }
 
         init(
@@ -326,7 +326,7 @@ extension EpisodeMediaPlayerQueue {
             @EnvironmentObject
             private var manager: MediaPlayerManager
             @EnvironmentObject
-            private var seriesViewModel: SeriesItemViewModel
+            private var seriesViewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
             let selection: Binding<PagingSeasonViewModel.ID?>
             let selectionViewModel: PagingSeasonViewModel

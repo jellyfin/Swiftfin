@@ -31,10 +31,9 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View where Library.El
         if viewModel.elements.isNotEmpty {
             PosterHStack(
                 elements: viewModel.elements,
-                type: .portrait
-            ) {
-                element,
-                    namespace in
+                type: group.posterDisplayType,
+                size: group.posterSize
+            ) { element, namespace in
 
                 switch element {
                 case let element as BaseItemDto:
@@ -48,10 +47,10 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View where Library.El
                     default:
                         router.route(to: .item(item: element), in: namespace)
                     }
-                case let person as BaseItemPerson:
-                    if let itemID = person.id {
-                        router.route(to: .item(item: .init(person: person)), in: namespace)
-                    }
+                case let _ as BaseItemPerson: ()
+//                    if let itemID = person.id {
+//                        router.route(to: .item(item: .init(person: person)), in: namespace)
+//                    }
                 default: ()
                 }
             } header: {
@@ -75,12 +74,13 @@ extension PosterHStackLibrarySection {
             Button(action: action) {
                 HStack(spacing: 3) {
                     Text(title)
-                        .foregroundStyle(.primary)
                         .font(.title2)
+                        .lineLimit(2)
+                        .foregroundStyle(.primary)
 
                     Image(systemName: "chevron.forward")
-                        .foregroundStyle(.secondary)
                         .font(.title3)
+                        .foregroundStyle(.secondary)
                 }
                 .fontWeight(.semibold)
             }
@@ -97,27 +97,14 @@ struct ContentGroupContentView<Provider: _ContentGroupProvider>: View {
     @ObservedObject
     var viewModel: ContentGroupViewModel<Provider>
 
-    private func makeGroupBody(
-        with libraryViewModel: any _ContentGroupViewModel,
-        group: any _ContentGroup
-    ) -> some View {
-
-        @ViewBuilder
-        func _makeSection<Group: _ContentGroup>(_ group: Group) -> some View {
-            if let castedLibrary = libraryViewModel as? Group.ViewModel {
-                group.body(with: castedLibrary)
-            } else {
-                AssertionFailureView("Mismatched library casting")
-            }
-        }
-
-        return _makeSection(group)
-            .eraseToAnyView()
+    private func makeGroupBody<G: _ContentGroup>(_ group: G) -> some View {
+        group.body(with: group.viewModel)
     }
 
     var body: some View {
-        ForEach(viewModel.sections, id: \.group.id) { section in
-            makeGroupBody(with: section.viewModel, group: section.group)
+        ForEach(viewModel.groups, id: \.id) { group in
+            makeGroupBody(group)
+                .eraseToAnyView()
         }
     }
 }
@@ -243,7 +230,7 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
 struct CustomizePosterGroupSettings: View {
 
     @StoredValue
-    private var parentPosterStyle: PosterStyleEnvironment
+    private var parentPosterStyle: PosterDisplayConfiguration
 
     private let id: String
 
