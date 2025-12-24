@@ -37,22 +37,52 @@ extension SwiftfinStore.State {
     }
 }
 
-extension UserState {
+struct AccessToken: Codable {
+    let userId: String
+    let username: String
+    let token: String
+    let associatedServerURLs: Set<URL>
 
+    var keychainData: Data? {
+        let encoder = JSONEncoder()
+        return try? encoder.encode(self)
+    }
+
+    init(userId: String, username: String, token: String, associatedServerURLs: Set<URL>) {
+        self.userId = userId
+        self.username = username
+        self.token = token
+        self.associatedServerURLs = associatedServerURLs
+    }
+
+    init?(keychainData: Data) {
+        let decoder = JSONDecoder()
+        if let token = try? decoder.decode(AccessToken.self, from: keychainData) {
+            self = token
+        } else {
+            return nil
+        }
+    }
+}
+
+extension UserState {
     typealias Key = StoredValues.Key
 
     var accessToken: String {
-        get {
-            guard let accessToken = Container.shared.keychainService().get("\(id)-accessToken") else {
-                assertionFailure("access token missing in keychain")
-                return ""
+        guard let accessTokenData = Container.shared.keychainService().getData("\(id)-accessToken"),
+              let accessToken = AccessToken(keychainData: accessTokenData)
+        else {
+            // Should only happen once to allow for migration to the AccessToken model
+            if let oldAccessToken = Container.shared.keychainService().get("\(id)-accessToken") {
+                setAccessToken(oldAccessToken, username: username, associatedServerURLs: [])
+                return oldAccessToken
             }
 
-            return accessToken
+            assertionFailure("access token missing in keychain")
+            return ""
         }
-        nonmutating set {
-            Container.shared.keychainService().set(newValue, forKey: "\(id)-accessToken")
-        }
+
+        return accessToken.token
     }
 
     var data: UserDto {
@@ -102,6 +132,12 @@ extension UserState {
 }
 
 extension UserState {
+    func setAccessToken(_ token: String, username: String, associatedServerURLs: Set<URL>) {
+        let accessToken = AccessToken(userId: id, username: username, token: token, associatedServerURLs: associatedServerURLs)
+        guard let tokenData = accessToken.keychainData else { return }
+
+        Container.shared.keychainService().set(tokenData, forKey: "\(id)-accessToken")
+    }
 
     /// Deletes the model that this state represents and
     /// all settings from `Defaults` `Keychain`, and `StoredValues`

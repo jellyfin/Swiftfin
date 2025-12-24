@@ -223,7 +223,7 @@ final class UserSignInViewModel: ViewModel {
         }
 
         savedUserState.accessPolicy = accessPolicy
-        savedUserState.accessToken = user.state.accessToken
+        savedUserState.setAccessToken(user.state.accessToken, username: user.state.state.username, associatedServerURLs: serverModel.urls)
         savedUserState.data = user.data
 
         if let evaluatedPinPolicy = evaluatedPolicy as? PinEvaluatedUserAccessPolicy {
@@ -261,7 +261,7 @@ final class UserSignInViewModel: ViewModel {
         }
 
         if replaceForAccessToken {
-            user.state.state.accessToken = user.state.accessToken
+            user.state.state.setAccessToken(user.state.accessToken, username: user.state.state.username, associatedServerURLs: server.urls)
         }
 
         events.send(.saved(user.state.state))
