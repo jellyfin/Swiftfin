@@ -17,7 +17,7 @@ extension SeriesEpisodeSelector {
     struct EpisodeHStack: View {
 
         @ObservedObject
-        var viewModel: SeasonItemViewModel
+        var viewModel: PagingSeasonViewModel
 
         @State
         private var didScrollToPlayButtonItem = false
@@ -27,7 +27,8 @@ extension SeriesEpisodeSelector {
 
         let playButtonItem: BaseItemDto?
 
-        private func contentView(viewModel: SeasonItemViewModel) -> some View {
+        @ViewBuilder
+        private var contentView: some View {
             CollectionHStack(
                 uniqueElements: viewModel.elements,
                 id: \.unwrappedIDHashOrZero,
@@ -58,10 +59,14 @@ extension SeriesEpisodeSelector {
                 if viewModel.elements.isEmpty {
                     EmptyHStack()
                 } else {
-                    contentView(viewModel: viewModel)
+                    contentView
                 }
-            case let .error(error):
-                ErrorHStack(viewModel: viewModel, error: error)
+            case .error:
+                viewModel.error.map { error in
+                    ErrorHStack(error: error) {
+                        viewModel.refresh()
+                    }
+                }
             case .initial, .refreshing:
                 LoadingHStack()
             }
@@ -84,21 +89,20 @@ extension SeriesEpisodeSelector {
     }
 
     // TODO: better refresh design
-    struct ErrorHStack: View {
+    struct ErrorHStack<_Error: Error>: View {
 
-        @ObservedObject
-        var viewModel: SeasonItemViewModel
-
-        let error: ErrorMessage
+        let error: _Error
+        let action: () -> Void
 
         var body: some View {
             CollectionHStack(
                 count: 1,
                 columns: UIDevice.isPhone ? 1.5 : 3.5
             ) { _ in
-                SeriesEpisodeSelector.ErrorCard(error: error) {
-                    viewModel.send(.refresh)
-                }
+                SeriesEpisodeSelector.ErrorCard(
+                    error: error,
+                    action: action
+                )
             }
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)

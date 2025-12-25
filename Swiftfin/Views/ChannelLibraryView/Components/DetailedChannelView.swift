@@ -46,18 +46,17 @@ extension ChannelLibraryView {
 
         @ViewBuilder
         private func programLabel(for program: BaseItemDto) -> some View {
-            HStack(alignment: .top) {
+            HStack {
                 AlternateLayoutView(alignment: .leading) {
                     Text("00:00 AAA")
-                        .monospacedDigit()
                 } content: {
                     if let startDate = program.startDate {
                         Text(startDate, style: .time)
-                            .monospacedDigit()
                     } else {
                         Text(String.emptyRuntime)
                     }
                 }
+                .monospacedDigit()
 
                 Text(program.displayTitle)
             }
@@ -68,26 +67,26 @@ extension ChannelLibraryView {
         private var programListView: some View {
             VStack(alignment: .leading, spacing: 0) {
                 if let currentProgram = channel.currentProgram {
-                    ProgressBar(progress: currentProgram.programProgress(relativeTo: now) ?? 0)
-                        .frame(height: 5)
-                        .padding(.bottom, 5)
-                        .foregroundStyle(accentColor)
+//                    ProgressBar(progress: currentProgram.programProgress(relativeTo: now) ?? 0)
+//                        .frame(height: 5)
+//                        .padding(.bottom, 5)
+//                        .foregroundStyle(accentColor)
 
                     programLabel(for: currentProgram)
                         .font(.footnote.weight(.bold))
                 }
 
-                if let nextProgram = channel.programAfterCurrent(offset: 0) {
-                    programLabel(for: nextProgram)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
-
-                if let futureProgram = channel.programAfterCurrent(offset: 1) {
-                    programLabel(for: futureProgram)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
+//                if let nextProgram = channel.programAfterCurrent(offset: 0) {
+//                    programLabel(for: nextProgram)
+//                        .font(.footnote)
+//                        .foregroundStyle(.secondary)
+//                }
+//
+//                if let futureProgram = channel.programAfterCurrent(offset: 1) {
+//                    programLabel(for: futureProgram)
+//                        .font(.footnote)
+//                        .foregroundStyle(.secondary)
+//                }
             }
             .id(channel.currentProgram)
         }

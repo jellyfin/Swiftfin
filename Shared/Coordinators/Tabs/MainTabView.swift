@@ -6,26 +6,34 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Factory
+import JellyfinAPI
 import SwiftUI
 
-// TODO: move popup to router
-//       - or, make tab view environment object
-
-// TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
+
+    @Default(.Customization.showPosterLabels)
+    private var showPosterLabels
+    @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
+    private var useSeriesLandscapeBackdrop
+
+    @Default(.Customization.Library._libraryStyle)
+    private var defaultLibraryStyle
 
     #if os(iOS)
     @StateObject
     private var tabCoordinator = TabCoordinator {
-        TabItem.home
-        TabItem.search
-        TabItem.media
+        TabItemSetting.contentGroup(.default)
+        TabItemSetting.search
+        TabItemSetting.media
+        TabItemSetting.liveTV
+//        TabItemSetting.contentGroup(StoredValues[.User.customContentGroup(id: "asdf")])
     }
     #else
     @StateObject
     private var tabCoordinator = TabCoordinator {
-        TabItem.home
+        TabItem.contentGroup(provider: DefaultContentGroupProvider())
         TabItem.library(
             title: L10n.tvShowsCapitalized,
             systemName: "tv",
@@ -42,7 +50,6 @@ struct MainTabView: View {
     }
     #endif
 
-    @ViewBuilder
     var body: some View {
         TabView(selection: $tabCoordinator.selectedTabID) {
             ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
@@ -50,12 +57,17 @@ struct MainTabView: View {
                     coordinator: tab.coordinator
                 ) {
                     tab.item.content
+                        .topBarTrailing {
+                            if tab.item.id != "settings" {
+                                SettingsBarButton()
+                            }
+                        }
                 }
                 .environmentObject(tabCoordinator)
                 .environment(\.tabItemSelected, tab.publisher)
                 .tabItem {
                     Label(
-                        tab.item.title,
+                        tab.item.displayTitle,
                         systemImage: tab.item.systemImage
                     )
                     .labelStyle(tab.item.labelStyle)
@@ -65,5 +77,87 @@ struct MainTabView: View {
                 .tag(tab.item.id)
             }
         }
+//        .backport
+//        .tabViewStyle(.sidebarAdaptable)
+        .contextMenu(for: BaseItemDto.self) { item in
+            Button(item.displayTitle)
+        }
+        .libraryStyle(for: BaseItemDto.self) { _, _ in
+            (defaultLibraryStyle, $defaultLibraryStyle)
+        }
+        .libraryStyle(for: ChannelProgram.self) { _, _ in
+            (defaultLibraryStyle, $defaultLibraryStyle)
+        }
+//        .posterStyle(for: BaseItemDto.self) { item in
+//
+//            @ViewBuilder
+//            func _label() -> some View {
+//                if item.type == .program {
+//                    ProgramButtonContent(
+//                        program: item
+//                    )
+//                } else {
+//                    TitleSubtitleContentView(
+//                        title: showPosterLabels ? item.displayTitle : nil,
+//                        subtitle: item.subtitle
+//                    )
+//                }
+//            }
+//
+//            return .init(
+//                displayType: .landscape,
+//                label: _label(),
+//                overlay: {
+//                    PosterIndicatorsOverlay(
+//                        item: item,
+//                        indicators: [.progress],
+//                        posterDisplayType: $0
+//                    )
+//                },
+//                size: .small
+//            )
+//        }
+        .customEnvironment(
+            for: BaseItemDto.self,
+            value: .init(useParent: useSeriesLandscapeBackdrop, isThumb: true)
+        )
     }
 }
+
+// struct ProgramButtonContent: View {
+//
+//    let program: BaseItemDto
+//
+//    var body: some View {
+//        VStack(alignment: .leading) {
+//
+//            Text(program.channelName ?? .emptyDash)
+//                .font(.footnote.weight(.semibold))
+//                .foregroundColor(.primary)
+//                .lineLimit(1, reservesSpace: true)
+//
+//            Text(program.displayTitle)
+//                .font(.footnote.weight(.regular))
+//                .foregroundColor(.primary)
+//                .lineLimit(1, reservesSpace: true)
+//
+////            HStack(spacing: 2) {
+////                if let startDate = program.startDate {
+////                    Text(startDate, style: .time)
+////                } else {
+////                    Text(String.emptyDash)
+////                }
+////
+////                Text("-")
+////
+////                if let endDate = program.endDate {
+////                    Text(endDate, style: .time)
+////                } else {
+////                    Text(String.emptyDash)
+////                }
+////            }
+////            .font(.footnote)
+////            .foregroundStyle(.secondary)
+//        }
+//    }
+// }

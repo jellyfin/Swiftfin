@@ -9,23 +9,42 @@
 import Defaults
 import SwiftUI
 
-struct WatchedIndicator: View {
+// TODO: make icon-based indicators relative container size based
+// TODO: remove favorited
+
+enum PosterOverlayIndicator: String, CaseIterable, Storable {
+
+    case favorited
+    case played
+    case progress
+    case unplayed
+
+    static let favoritedBody = FavoriteIndicator()
+    static let playedBody = PlayedIndicator()
+    static func progressBody(for progress: Double) -> some View {
+//        ProgressIndicator(progress: progress)
+        EmptyView()
+    }
+
+    static let unplayedBody = UnplayedIndicator()
+}
+
+struct PlayedIndicator: View {
 
     @Default(.accentColor)
     private var accentColor
 
-    let size: CGFloat
-
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            Color.clear
-
+        ContainerRelativeView(
+            alignment: .bottomTrailing,
+            ratio: 0.2
+        ) {
             Image(systemName: "checkmark.circle.fill")
                 .resizable()
-                .frame(width: size, height: size)
                 .symbolRenderingMode(.palette)
+                .aspectRatio(1, contentMode: .fit)
                 .foregroundStyle(.white, accentColor)
-                .padding(3)
         }
+        .padding(5)
     }
 }

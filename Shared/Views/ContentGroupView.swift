@@ -1,0 +1,263 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+//
+
+import Defaults
+import Factory
+import Foundation
+import JellyfinAPI
+import SwiftUI
+
+struct PosterHStackLibrarySection<Library: PagingLibrary>: View where Library.Element: LibraryElement {
+
+    @Router
+    private var router
+
+    @StateObject
+    private var viewModel: PagingLibraryViewModel<Library>
+
+    private let group: PosterGroup<Library>
+
+    init(viewModel: PagingLibraryViewModel<Library>, group: PosterGroup<Library>) {
+        self.group = group
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
+
+    var body: some View {
+        if viewModel.elements.isNotEmpty {
+            PosterHStack(
+                elements: viewModel.elements,
+                type: group.posterDisplayType,
+                size: group.posterSize
+            ) { element, namespace in
+
+                switch element {
+                case let element as BaseItemDto:
+                    switch element.type {
+                    case .program, .liveTvChannel, .tvProgram, .tvChannel:
+                        router.route(
+                            to: .videoPlayer(
+                                provider: element.getPlaybackItemProvider(userSession: viewModel.userSession)
+                            )
+                        )
+                    default:
+                        router.route(to: .item(item: element), in: namespace)
+                    }
+                case let _ as BaseItemPerson: ()
+//                    if let itemID = person.id {
+//                        router.route(to: .item(item: .init(person: person)), in: namespace)
+//                    }
+                default: ()
+                }
+            } header: {
+                Header(title: viewModel.library.parent.displayTitle) {
+                    router.route(to: .library(library: viewModel.library))
+                }
+            }
+            .animation(.linear(duration: 0.2), value: viewModel.elements)
+        }
+    }
+}
+
+extension PosterHStackLibrarySection {
+
+    struct Header: View {
+
+        let title: String
+        let action: () -> Void
+
+        var body: some View {
+            Button(action: action) {
+                HStack(spacing: 3) {
+                    Text(title)
+                        .font(.title2)
+                        .lineLimit(2)
+                        .foregroundStyle(.primary)
+
+                    Image(systemName: "chevron.forward")
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
+                }
+                .fontWeight(.semibold)
+            }
+            .foregroundStyle(.primary, .secondary)
+            .accessibilityAddTraits(.isHeader)
+            .accessibilityAction(named: Text("Open library"), action)
+            .edgePadding(.horizontal)
+        }
+    }
+}
+
+struct ContentGroupContentView<Provider: _ContentGroupProvider>: View {
+
+    @ObservedObject
+    var viewModel: ContentGroupViewModel<Provider>
+
+    private func makeGroupBody<G: _ContentGroup>(_ group: G) -> some View {
+        group.body(with: group.viewModel)
+    }
+
+    var body: some View {
+        ForEach(viewModel.groups, id: \.id) { group in
+            makeGroupBody(group)
+                .eraseToAnyView()
+        }
+    }
+}
+
+struct ContentGroupShimView: View {
+
+    @StoredValue
+    private var customContentGroup: ContentGroupProviderSetting
+
+    init(id: String) {
+        self._customContentGroup = StoredValue(
+            .User.customContentGroup(id: id)
+        )
+    }
+
+    @ViewBuilder
+    private func unpack(_ provider: some _ContentGroupProvider) -> some View {
+        ContentGroupView(provider: provider)
+    }
+
+    var body: some View {
+        unpack(customContentGroup.provider)
+            .eraseToAnyView()
+            .id(customContentGroup.hashValue)
+            .backport
+            .onChange(of: customContentGroup) { oldValue, newValue in
+                print("ContentGroupShimView: customContentGroup changed from \(oldValue) to \(newValue)")
+            }
+    }
+}
+
+struct HeaderedContentGroupView<Header: _ContentGroup, Provider: _ContentGroupProvider>: View {
+
+    var body: some View {}
+}
+
+struct ContentGroupView<Provider: _ContentGroupProvider>: View {
+
+    @Router
+    private var router
+
+    @StateObject
+    private var viewModel: ContentGroupViewModel<Provider>
+
+    init(provider: Provider) {
+        _viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
+    }
+
+    @ViewBuilder
+    private var contentView: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 10) {
+                ContentGroupContentView(viewModel: viewModel)
+            }
+            .edgePadding(.vertical)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .ignoresSafeArea(edges: .horizontal)
+        .scrollIndicators(.hidden)
+        .refreshable {
+            await viewModel.background.refresh()
+        }
+    }
+
+    var body: some View {
+        ZStack {
+            switch viewModel.state {
+            case .content:
+                contentView
+            case .error:
+                viewModel.error.map(ErrorView.init)
+            case .initial, .refreshing:
+                ProgressView()
+            }
+        }
+        .backport
+        .onChange(of: viewModel.state) { _, newValue in
+            print("ContentGroupView: state changed to \(newValue)")
+        }
+        .backport
+        .onChange(of: viewModel.background.states) { oldValue, newValue in
+            print("ContentGroupView: background states changed from \(oldValue) to \(newValue)")
+        }
+        .animation(.linear(duration: 0.2), value: viewModel.state)
+        .animation(.linear(duration: 0.2), value: viewModel.background.states)
+        .navigationTitle(viewModel.provider.displayTitle)
+        .backport
+        .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
+        .onFirstAppear {
+            viewModel.refresh()
+        }
+        .topBarTrailing {
+
+            if viewModel.background.is(.refreshing) {
+                ProgressView()
+            }
+
+//            Button("Refresh", systemImage: "arrow.clockwise.circle") {
+//                viewModel.background.refresh()
+//            }
+//
+//            Button("Content") {
+//                router.route(
+//                    to: .init(
+//                        id: "test-content",
+//                        style: .sheet,
+//                        content: {
+//                            CustomContentGroupSettingsView(id: "asdf")
+//                        }
+//                    )
+//                )
+//            }
+        }
+//        .sinceLastDisappear { interval in
+//            if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {
+//                viewModel.send(.backgroundRefresh)
+//                viewModel.notificationsReceived.remove(.itemMetadataDidChange)
+//            }
+//        }
+    }
+}
+
+struct CustomizePosterGroupSettings: View {
+
+    @StoredValue
+    private var parentPosterStyle: PosterDisplayConfiguration
+
+    private let id: String
+
+    init(id: String) {
+        self._parentPosterStyle = StoredValue(.User.posterButtonStyle(parentID: id))
+
+        self.id = id
+    }
+
+    var body: some View {
+        Form {
+
+            Section("ID") {
+                Text(id)
+            }
+
+            Section {
+                Picker(
+                    L10n.posters,
+                    selection: $parentPosterStyle.displayType
+                )
+
+                Picker(
+                    "Size",
+                    selection: $parentPosterStyle.size
+                )
+            }
+        }
+    }
+}

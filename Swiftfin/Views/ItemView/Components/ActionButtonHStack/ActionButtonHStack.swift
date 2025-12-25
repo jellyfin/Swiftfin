@@ -22,29 +22,20 @@ extension ItemView {
         private var enabledTrailers: TrailerSelection
 
         @ObservedObject
-        private var viewModel: ItemViewModel
-
-        private let equalSpacing: Bool
+        var viewModel: _ItemViewModel
 
         // MARK: - Has Trailers
 
         private var hasTrailers: Bool {
-            if enabledTrailers.contains(.local), viewModel.localTrailers.isNotEmpty {
-                return true
-            }
+//            if enabledTrailers.contains(.local), viewModel.localTrailers.isNotEmpty {
+//                return true
+//            }
+//
+//            if enabledTrailers.contains(.external), viewModel.item.remoteTrailers?.isNotEmpty == true {
+//                return true
+//            }
 
-            if enabledTrailers.contains(.external), viewModel.item.remoteTrailers?.isNotEmpty == true {
-                return true
-            }
-
-            return false
-        }
-
-        // MARK: - Initializer
-
-        init(viewModel: ItemViewModel, equalSpacing: Bool = true) {
-            self.viewModel = viewModel
-            self.equalSpacing = equalSpacing
+            false
         }
 
         // MARK: - Body
@@ -59,14 +50,11 @@ extension ItemView {
                     let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
 
                     Button(L10n.played, systemImage: "checkmark") {
-                        viewModel.send(.toggleIsPlayed)
+//                        viewModel.send(.toggleIsPlayed)
                     }
                     .buttonStyle(.tintedMaterial(tint: .jellyfinPurple, foregroundColor: .white))
                     .isSelected(isCheckmarkSelected)
                     .frame(maxWidth: .infinity)
-                    .if(!equalSpacing) { view in
-                        view.aspectRatio(1, contentMode: .fit)
-                    }
                 }
 
                 // MARK: - Toggle Favorite
@@ -74,44 +62,38 @@ extension ItemView {
                 let isHeartSelected = viewModel.item.userData?.isFavorite == true
 
                 Button(L10n.favorite, systemImage: isHeartSelected ? "heart.fill" : "heart") {
-                    viewModel.send(.toggleIsFavorite)
+//                    viewModel.send(.toggleIsFavorite)
                 }
                 .buttonStyle(.tintedMaterial(tint: .red, foregroundColor: .white))
                 .isSelected(isHeartSelected)
                 .frame(maxWidth: .infinity)
-                .if(!equalSpacing) { view in
-                    view.aspectRatio(1, contentMode: .fit)
-                }
 
                 // MARK: - Select a Version
 
                 if let mediaSources = viewModel.playButtonItem?.mediaSources,
                    mediaSources.count > 1
                 {
-                    VersionMenu(
-                        viewModel: viewModel,
-                        mediaSources: mediaSources
-                    )
+                    Menu(L10n.version, systemImage: "list.dash") {
+                        Picker(
+                            L10n.version,
+                            sources: mediaSources,
+                            selection: $viewModel.selectedMediaSource
+                        )
+                    }
                     .menuStyle(.button)
                     .frame(maxWidth: .infinity)
-                    .if(!equalSpacing) { view in
-                        view.aspectRatio(1, contentMode: .fit)
-                    }
                 }
 
                 // MARK: - Watch a Trailer
 
-                if hasTrailers {
-                    TrailerMenu(
-                        localTrailers: viewModel.localTrailers,
-                        externalTrailers: viewModel.item.remoteTrailers ?? []
-                    )
-                    .menuStyle(.button)
-                    .frame(maxWidth: .infinity)
-                    .if(!equalSpacing) { view in
-                        view.aspectRatio(1, contentMode: .fit)
-                    }
-                }
+//                if hasTrailers {
+//                    TrailerMenu(
+//                        localTrailers: viewModel.localTrailers,
+//                        externalTrailers: viewModel.item.remoteTrailers ?? []
+//                    )
+//                    .menuStyle(.button)
+//                    .frame(maxWidth: .infinity)
+//                }
             }
             .font(.title3)
             .fontWeight(.semibold)

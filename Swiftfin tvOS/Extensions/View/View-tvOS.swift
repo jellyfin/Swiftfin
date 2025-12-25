@@ -12,6 +12,12 @@ import SwiftUIIntrospect
 
 extension View {
 
+    /// - Important: This does nothing on tvOS.
+    @ViewBuilder
+    func listRowSeparator(_ visiblity: Visibility) -> some View {
+        self
+    }
+
     @ViewBuilder
     func navigationBarBranding(
         isLoading: Bool = false
@@ -23,6 +29,9 @@ extension View {
         )
     }
 
+    // TODO: mark availability to use `toolbarTitleDisplayMode` instead
+    //       - overload iOS for same
+
     /// - Important: This does nothing on tvOS.
     @ViewBuilder
     func navigationBarTitleDisplayMode(_ mode: NavigationBarItem.TitleDisplayMode) -> some View {
@@ -31,13 +40,13 @@ extension View {
 
     /// - Important: This does nothing on tvOS.
     @ViewBuilder
-    func statusBarHidden() -> some View {
+    func prefersStatusBarHidden(_ hidden: Bool) -> some View {
         self
     }
 
     /// - Important: This does nothing on tvOS.
     @ViewBuilder
-    func prefersStatusBarHidden(_ hidden: Bool) -> some View {
+    func statusBarHidden() -> some View {
         self
     }
 }

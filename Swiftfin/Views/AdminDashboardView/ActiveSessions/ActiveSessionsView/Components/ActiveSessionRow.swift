@@ -18,7 +18,7 @@ extension ActiveSessionsView {
         private var currentDate: Date
 
         @ObservedObject
-        private var box: BindingBox<SessionInfoDto?>
+        private var box: PublishedBox<SessionInfoDto?>
 
         private let onSelect: () -> Void
 
@@ -26,7 +26,7 @@ extension ActiveSessionsView {
             box.value ?? .init()
         }
 
-        init(box: BindingBox<SessionInfoDto?>, onSelect action: @escaping () -> Void) {
+        init(box: PublishedBox<SessionInfoDto?>, onSelect action: @escaping () -> Void) {
             self.box = box
             self.onSelect = action
         }
@@ -115,7 +115,10 @@ extension ActiveSessionsView {
         }
 
         var body: some View {
-            ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
+            ListRow(
+                insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding),
+                action: onSelect
+            ) {
                 rowLeading
             } content: {
                 if let nowPlayingItem = session.nowPlayingItem, let playState = session.playState {
@@ -124,7 +127,6 @@ extension ActiveSessionsView {
                     idleSessionDetails
                 }
             }
-            .onSelect(perform: onSelect)
         }
     }
 }

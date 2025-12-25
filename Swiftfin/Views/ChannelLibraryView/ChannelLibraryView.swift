@@ -12,19 +12,11 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-// TODO: remove and flatten to `PagingLibraryView`
-
 // TODO: sorting by number/filtering
 //       - see if can use normal filter view model?
 //       - how to add custom filters for data context?
 // TODO: saving item display type/detailed column count
 //       - wait until after user refactor
-
-// Note: Repurposes `LibraryDisplayType` to save from creating a new type.
-//       If there are other places where detailed/compact contextually differ
-//       from the library types, then create a new type and use it here.
-//       - list: detailed
-//       - grid: compact
 
 struct ChannelLibraryView: View {
 
@@ -37,7 +29,9 @@ struct ChannelLibraryView: View {
     private var layout: CollectionVGridLayout
 
     @StateObject
-    private var viewModel = ChannelLibraryViewModel()
+    private var viewModel = PagingLibraryViewModel(
+        library: ChannelProgramLibrary()
+    )
 
     // MARK: init
 
@@ -113,7 +107,7 @@ struct ChannelLibraryView: View {
             }
         }
         .onReachedBottomEdge(offset: .offset(300)) {
-            viewModel.send(.getNextPage)
+            viewModel.retrieveNextPage()
         }
     }
 
@@ -128,8 +122,8 @@ struct ChannelLibraryView: View {
                 } else {
                     contentView
                 }
-            case let .error(error):
-                ErrorView(error: error)
+            case .error:
+                viewModel.error.map(ErrorView.init)
             case .initial, .refreshing:
                 ProgressView()
             }
@@ -137,7 +131,7 @@ struct ChannelLibraryView: View {
         .navigationTitle(L10n.channels)
         .navigationBarTitleDisplayMode(.inline)
         .refreshable {
-            viewModel.send(.refresh)
+            try? await viewModel.refresh()
         }
         .onChange(of: channelDisplayType) { newValue in
             if UIDevice.isPhone {
@@ -148,18 +142,18 @@ struct ChannelLibraryView: View {
         }
         .onFirstAppear {
             if viewModel.state == .initial {
-                viewModel.send(.refresh)
+                viewModel.refresh()
             }
         }
         .sinceLastDisappear { interval in
             // refresh after 3 hours
             if interval >= 10800 {
-                viewModel.send(.refresh)
+                viewModel.refresh()
             }
         }
         .topBarTrailing {
 
-            if viewModel.backgroundStates.contains(.gettingNextPage) {
+            if viewModel.background.is(.retrievingNextPage) {
                 ProgressView()
             }
 

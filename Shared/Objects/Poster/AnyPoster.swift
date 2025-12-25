@@ -29,10 +29,6 @@ struct AnyPoster: Poster {
         _poster.unwrappedIDHashOrZero
     }
 
-    var subtitle: String? {
-        _poster.subtitle
-    }
-
     var systemImage: String {
         _poster.systemImage
     }
@@ -44,32 +40,27 @@ struct AnyPoster: Poster {
     func hash(into hasher: inout Hasher) {
         hasher.combine(_poster.unwrappedIDHashOrZero)
         hasher.combine(_poster.displayTitle)
-        hasher.combine(_poster.subtitle)
         hasher.combine(_poster.systemImage)
     }
 
-    var showTitle: Bool {
-        _poster.showTitle
+    func landscapeImageSources(
+        maxWidth: CGFloat?,
+        quality: Int?,
+        environment: Empty
+    ) -> [ImageSource] {
+        func inner(_ poster: some Poster) -> [ImageSource] {
+            poster.landscapeImageSources(
+                maxWidth: maxWidth,
+                quality: quality,
+                environment: .default
+            )
+        }
+
+        return inner(_poster)
     }
 
-    func portraitImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
-        _poster.portraitImageSources(maxWidth: maxWidth, quality: quality)
-    }
-
-    func landscapeImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
-        _poster.landscapeImageSources(maxWidth: maxWidth, quality: quality)
-    }
-
-    func cinematicImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
-        _poster.cinematicImageSources(maxWidth: maxWidth, quality: quality)
-    }
-
-    func squareImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
-        _poster.squareImageSources(maxWidth: maxWidth, quality: quality)
-    }
-
-    func transform(image: Image) -> some View {
-        _poster.transform(image: image)
+    func transform(image: Image, displayType: PosterDisplayType) -> some View {
+        _poster.transform(image: image, displayType: displayType)
             .eraseToAnyView()
     }
 

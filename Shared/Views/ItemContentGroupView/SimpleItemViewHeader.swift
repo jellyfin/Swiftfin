@@ -1,0 +1,163 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+//
+
+import Defaults
+import JellyfinAPI
+import SwiftUI
+
+struct SimpleItemViewHeader: _ContentGroup {
+
+    let id = "item-view-header"
+    let viewModel: _ItemViewModel
+
+    func body(with viewModel: _ItemViewModel) -> Body {
+        Body(viewModel: viewModel)
+    }
+
+    struct Body: View {
+
+        @Default(.accentColor)
+        private var accentColor
+
+        @ObservedObject
+        var viewModel: _ItemViewModel
+
+        @Namespace
+        private var namespace
+
+        @Router
+        private var router
+
+        @ViewBuilder
+        private var titleAndAttributes: some View {
+            VStack(alignment: .center, spacing: 5) {
+                if let parentID = viewModel.item.seriesID, let parentTitle = viewModel.item.parentTitle {
+                    Button {
+                        router.route(
+                            to: .item(
+                                displayTitle: parentTitle,
+                                id: parentID
+                            )
+                        )
+                    } label: {
+                        HStack(spacing: 2) {
+                            Text(parentTitle)
+                                .font(.headline)
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2)
+
+                            Image(systemName: "chevron.forward")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                        .fontWeight(.semibold)
+                    }
+                    .foregroundStyle(.primary, .secondary)
+                }
+
+                Text(viewModel.item.displayTitle)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+
+                DotHStack {
+                    if let firstGenre = viewModel.item.genres?.first {
+                        Text(firstGenre)
+                    }
+
+                    if let premiereYear = viewModel.item.premiereDateYear {
+                        Text(premiereYear)
+                    }
+
+                    if let runtime = viewModel.item.runtime {
+                        Text(runtime, format: .hourMinuteAbbreviated)
+                    }
+
+                    if let seasonEpisodeLabel = viewModel.item.seasonEpisodeLabel {
+                        Text(seasonEpisodeLabel)
+                    }
+                }
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundStyle(.secondary)
+            }
+        }
+
+        @ViewBuilder
+        private var overlay: some View {
+            VStack(alignment: .center, spacing: 10) {
+                PosterImage(
+                    item: viewModel.item,
+                    type: viewModel.item.preferredPosterDisplayType,
+                    contentMode: .fit
+                )
+                .frame(maxWidth: 300)
+                .accessibilityIgnoresInvertColors()
+                .posterShadow()
+
+                titleAndAttributes
+
+                if viewModel.item.presentPlayButton {
+                    PlayButton(viewModel: viewModel)
+                }
+
+                Divider()
+
+                ItemView.OverviewView(item: viewModel.item)
+                    .overviewLineLimit(3)
+                    .taglineLineLimit(2)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                AttributesHStack(
+                    attributes: ItemViewAttribute.allCases,
+                    item: viewModel.item,
+                    mediaSource: nil
+                )
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .edgePadding(.bottom)
+//            .background(
+//                alignment: .bottom,
+//                extendedBy: .init(vertical: 25, horizontal: EdgeInsets.edgePadding)
+//            ) {
+//                Rectangle()
+//                    .fill(Material.ultraThin)
+//                    .maskLinearGradient {
+//                        (location: 0, opacity: 0)
+//                        (location: 0.1, opacity: 0.7)
+//                        (location: 0.2, opacity: 1)
+//                    }
+//            }
+        }
+
+        var body: some View {
+            VStack {
+                overlay
+                    .edgePadding(.horizontal)
+                    .frame(maxWidth: .infinity)
+//                    .colorScheme(.dark)
+            }
+//            .backgroundParallaxHeader(
+//                multiplier: 0.3
+//            ) {
+//                AlternateLayoutView {
+//                    Color.clear
+//                } content: {
+//                    ImageView(
+//                        viewModel.item.landscapeImageSources(maxWidth: 1320, environment: .init(useParent: false))
+//                    )
+//                }
+//                .aspectRatio(1.77, contentMode: .fit)
+//            }
+//            .scrollViewHeaderOffsetOpacity()
+//            .trackingFrame(for: .scrollViewHeader, key: ScrollViewHeaderFrameKey.self)
+//            .preference(key: _UseOffsetNavigationBarKey.self, value: true)
+        }
+    }
+}

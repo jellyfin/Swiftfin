@@ -19,7 +19,7 @@ extension ItemView {
         @Router
         private var router
 
-        let item: BaseItemDto
+        private let item: BaseItemDto
         private var overviewLineLimit: Int?
         private var taglineLineLimit: Int?
 

@@ -95,6 +95,8 @@ extension View {
         }
     }
 
+    // TODO: rename `posterDisplayStyle`
+
     /// Applies the aspect ratio, corner radius, and border for the given `PosterType`
     ///
     /// Note: will not apply `posterShadow`
@@ -106,13 +108,13 @@ extension View {
         switch type {
         case .landscape:
             posterAspectRatio(type, contentMode: contentMode)
-            #if !os(tvOS)
+            #if os(iOS)
                 .posterBorder()
                 .posterCornerRadius(type)
             #endif
         case .portrait:
             posterAspectRatio(type, contentMode: contentMode)
-            #if !os(tvOS)
+            #if os(iOS)
                 .posterBorder()
                 .posterCornerRadius(type)
             #endif
@@ -144,18 +146,15 @@ extension View {
     func posterCornerRadius(
         _ type: PosterDisplayType
     ) -> some View {
-        #if !os(tvOS)
         switch type {
         case .landscape:
             cornerRadius(ratio: 1 / 30, of: \.width)
         case .portrait, .square:
             cornerRadius(ratio: 0.0375, of: \.width)
         }
-        #else
-        self
-        #endif
     }
 
+    @ViewBuilder
     func posterBorder() -> some View {
         overlay {
             ContainerRelativeShape()
@@ -167,23 +166,26 @@ extension View {
         }
     }
 
+    @ViewBuilder
     func posterShadow() -> some View {
         shadow(radius: 4, y: 2)
     }
 
+    @ViewBuilder
     func scrollViewOffset(_ scrollViewOffset: Binding<CGFloat>) -> some View {
-        modifier(ScrollViewOffsetModifier(scrollViewOffset: scrollViewOffset))
+        if #available(iOS 18, tvOS 18, *) {
+            onScrollGeometryChange(for: CGFloat.self) { geometry in
+                geometry.contentOffset.y
+            } action: { _, newValue in
+                scrollViewOffset.wrappedValue = newValue
+            }
+        } else {
+            modifier(ScrollViewOffsetModifier(scrollViewOffset: scrollViewOffset))
+        }
     }
 
-    func backgroundParallaxHeader<Header: View>(
-        _ scrollViewOffset: Binding<CGFloat>,
-        height: CGFloat,
-        multiplier: CGFloat = 1,
-        @ViewBuilder header: @escaping () -> Header
-    ) -> some View {
-        modifier(BackgroundParallaxHeaderModifier(scrollViewOffset, height: height, multiplier: multiplier, header: header))
-    }
-
+    // TODO: make a wrapper view instead
+    @available(*, deprecated, message: "Make a wrapper view instead")
     func bottomEdgeGradient(bottomColor: Color) -> some View {
         modifier(BottomEdgeGradientModifier(bottomColor: bottomColor))
     }
@@ -250,34 +252,68 @@ extension View {
         corners: RectangleCorner = .allCorners,
         style: RoundedCornerStyle = .circular
     ) -> some View {
-        modifier(
-            OnSizeChangedModifier { size in
-                let radius = size[keyPath: side] * ratio
-                self.cornerRadius(radius, corners: corners, style: style, container: true)
-            }
-        )
+        WithFrame { frame in
+            self.cornerRadius(
+                frame.size[keyPath: side] * ratio,
+                corners: corners,
+                style: style,
+                container: true
+            )
+        }
     }
 
+    @ViewBuilder
     func onFrameChanged(perform action: @escaping (CGRect, EdgeInsets) -> Void) -> some View {
         onGeometryChange(for: OnFrameChangedValue.self) { proxy in
-            let frame = proxy.frame(in: .global)
-            let safeAreaInsets = proxy.safeAreaInsets
-
-            return .init(
-                frame: frame,
-                safeAreaInsets: safeAreaInsets
+            .init(
+                frame: proxy.frame(in: .global),
+                safeAreaInsets: proxy.safeAreaInsets
             )
         } action: { newValue in
             action(newValue.frame, newValue.safeAreaInsets)
         }
     }
 
-    func trackingFrame(_ binding: Binding<CGRect>) -> some View {
-        onFrameChanged { newFrame, _ in
-            binding.wrappedValue = newFrame
+    @ViewBuilder
+    func trackingFrame(
+        _ frameBinding: Binding<CGRect>,
+        _ safeaAreaInsetsBinding: Binding<EdgeInsets> = .constant(.zero)
+    ) -> some View {
+        onFrameChanged {
+            frameBinding.wrappedValue = $0
+            safeaAreaInsetsBinding.wrappedValue = $1
         }
     }
 
+    @ViewBuilder
+    func trackingFrame(named name: String) -> some View {
+        modifier(
+            TrackingFrameModifier<EmptyCGRectPreferenceKey>(coordinateSpace: .named(name), key: nil)
+        )
+    }
+
+    @ViewBuilder
+    func trackingFrame(for coordinateSpace: CoordinateSpace) -> some View {
+        modifier(
+            TrackingFrameModifier<EmptyCGRectPreferenceKey>(coordinateSpace: coordinateSpace, key: nil)
+        )
+    }
+
+    @ViewBuilder
+    func trackingFrame<K: PreferenceKey>(named name: String, key: K.Type) -> some View where K.Value == CGRect {
+        modifier(
+            TrackingFrameModifier(coordinateSpace: .named(name), key: key)
+        )
+    }
+
+    @ViewBuilder
+    func trackingFrame<K: PreferenceKey>(for coordinateSpace: CoordinateSpace, key: K.Type) -> some View where K.Value == CGRect {
+        modifier(
+            TrackingFrameModifier(coordinateSpace: coordinateSpace, key: key)
+        )
+    }
+
+    @available(*, deprecated, message: "Use `onFrameChanged` instead")
     func onSizeChanged(perform action: @escaping (CGSize, EdgeInsets) -> Void) -> some View {
         onGeometryChange(for: OnFrameChangedValue.self) { proxy in
             let size = proxy.size
@@ -292,12 +328,13 @@ extension View {
         }
     }
 
+    @available(*, deprecated, message: "Use `trackingFrame` instead")
     func trackingSize(
         _ sizeBinding: Binding<CGSize>,
         _ safeAreaInsetBinding: Binding<EdgeInsets> = .constant(.zero)
     ) -> some View {
-        onSizeChanged {
-            sizeBinding.wrappedValue = $0
+        onFrameChanged {
+            sizeBinding.wrappedValue = $0.size
             safeAreaInsetBinding.wrappedValue = $1
         }
     }
@@ -330,12 +367,6 @@ extension View {
             hidden()
         } else {
             self
-        }
-    }
-
-    func blurred(style: UIBlurEffect.Style = .regular) -> some View {
-        overlay {
-            BlurView(style: style)
         }
     }
 
@@ -399,12 +430,7 @@ extension View {
     }
 
     func onNotification<P>(_ key: Notifications.Key<P>, perform action: @escaping (P) -> Void) -> some View {
-        modifier(
-            OnReceiveNotificationModifier(
-                key: key,
-                onReceive: action
-            )
-        )
+        onReceive(key.publisher, perform: action)
     }
 
     func onAppDidEnterBackground(_ action: @escaping () -> Void) -> some View {
@@ -431,19 +457,76 @@ extension View {
         onNotification(.sceneWillEnterForeground, perform: action)
     }
 
+    @ViewBuilder
+    func preference<Key: PreferenceKey, V>(
+        key: Key.Type,
+        @ArrayBuilder<V> value: () -> [V]
+    ) -> some View where Key.Value == [V] {
+        preference(key: Key.self, value: value())
+    }
+
     func scrollIfLargerThanContainer(padding: CGFloat = 0) -> some View {
         modifier(ScrollIfLargerThanContainerModifier(padding: padding))
     }
 
-    func maskLinearGradient(
-        @ArrayBuilder<OpacityLinearGradientModifier.Stop> stops: () -> [OpacityLinearGradientModifier.Stop]
+    @ViewBuilder
+    func scrollViewHeaderOffsetOpacity(
+        start: CGFloat = 100,
+        end: CGFloat = 25
     ) -> some View {
-        modifier(OpacityLinearGradientModifier(stops: stops()))
+        WithEnvironment(value: \.frameForParentView) { frameForParentView in
+            var opacity: CGFloat {
+                let end = frameForParentView[.scrollView, default: .zero].safeAreaInsets.top + end
+                let start = end + start
+                let offset = frameForParentView[.scrollViewHeader, default: .zero].frame.maxY
+
+                return clamp((offset - end) / (start - end), min: 0, max: 1)
+            }
+
+            self.overlay {
+                Color.systemBackground
+                    .opacity(1 - opacity)
+            }
+        }
+    }
+
+    /// Masks the view with a linear gradient from top to bottom.
+    func maskLinearGradient(
+        @ArrayBuilder<LinearGradient.Stop> stops: () -> [LinearGradient.Stop] = {
+            [(location: 0, opacity: 1), (location: 1, opacity: 0)]
+        }
+    ) -> some View {
+        mask {
+            LinearGradient(
+                stops: stops().map {
+                    Gradient.Stop(
+                        color: Color.black.opacity($0.opacity),
+                        location: $0.location
+                    )
+                },
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        }
     }
 
     // TODO: look at changing to symbolEffect
     func videoPlayerActionButtonTransition() -> some View {
         transition(.opacity.combined(with: .scale).animation(.snappy))
+    }
+
+    func overlay(
+        alignment: Alignment = .center,
+        ratio: CGFloat,
+        @ViewBuilder content: @escaping () -> some View
+    ) -> some View {
+        overlay {
+            ContainerRelativeView(
+                alignment: alignment,
+                ratio: ratio,
+                content: content
+            )
+        }
     }
 
     // MARK: debug

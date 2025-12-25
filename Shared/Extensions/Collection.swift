@@ -14,6 +14,10 @@ extension Collection {
         Array(self)
     }
 
+    var nilIfEmpty: Self? {
+        isEmpty ? nil : self
+    }
+
     var isNotEmpty: Bool {
         !isEmpty
     }

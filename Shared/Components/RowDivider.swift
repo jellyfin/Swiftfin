@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+@available(*, deprecated, message: "Use `Divider().edgePadding(.horizontal)` instead")
 struct RowDivider: View {
 
     var body: some View {

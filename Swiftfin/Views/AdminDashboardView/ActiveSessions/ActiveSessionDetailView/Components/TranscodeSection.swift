@@ -33,7 +33,7 @@ extension ActiveSessionDetailView {
                 Divider()
 
                 ForEach(transcodeReasons, id: \.self) { reason in
-                    Text(reason)
+                    Text(reason.displayTitle)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
                 }

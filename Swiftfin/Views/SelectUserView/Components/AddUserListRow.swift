@@ -57,15 +57,13 @@ extension SelectUserView {
         @ViewBuilder
         private var label: some View {
             ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
-                rowLeading
-            } content: {
-                rowContent
-            }
-            .isSeparatorVisible(false)
-            .onSelect {
                 if let selectedServer {
                     action(selectedServer)
                 }
+            } leading: {
+                rowLeading
+            } content: {
+                rowContent
             }
         }
 

@@ -11,30 +11,16 @@ import SwiftUI
 
 extension ItemView {
 
-    // TODO: take in binding instead of view model
     struct VersionMenu: View {
 
-        @ObservedObject
-        var viewModel: ItemViewModel
-
         let mediaSources: [MediaSourceInfo]
-
-        private var selectedMediaSourceBinding: Binding<MediaSourceInfo?> {
-            Binding(
-                get: { viewModel.selectedMediaSource },
-                set: { newSource in
-                    if let newSource {
-                        viewModel.send(.selectMediaSource(newSource))
-                    }
-                }
-            )
-        }
+        let selection: Binding<MediaSourceInfo?>
 
         // MARK: - Body
 
         var body: some View {
             Menu(L10n.version, systemImage: "list.dash") {
-                Picker(L10n.version, selection: selectedMediaSourceBinding) {
+                Picker(L10n.version, selection: selection) {
                     ForEach(mediaSources, id: \.hashValue) { mediaSource in
                         Button {
                             Text(mediaSource.displayTitle)

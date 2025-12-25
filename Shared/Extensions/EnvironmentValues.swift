@@ -8,10 +8,20 @@
 
 import SwiftUI
 
+struct FrameAndSafeAreaInsets {
+    let frame: CGRect
+    let safeAreaInsets: EdgeInsets
+
+    static let zero: Self = .init(frame: .zero, safeAreaInsets: .zero)
+}
+
 extension EnvironmentValues {
 
     @Entry
     var audioOffset: Binding<Duration> = .constant(.zero)
+
+    @Entry
+    var frameForParentView: [CoordinateSpace: FrameAndSafeAreaInsets] = [:]
 
     @Entry
     var isEditing: Bool = false
@@ -28,6 +38,7 @@ extension EnvironmentValues {
     @Entry
     var playbackSpeed: Binding<Double> = .constant(1)
 
+    @available(*, deprecated, message: "Use `frameForParentView` instead")
     @Entry
     var safeAreaInsets: EdgeInsets = UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero
 

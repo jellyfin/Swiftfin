@@ -24,3 +24,30 @@ struct ItemGenre: Codable, ExpressibleByStringLiteral, Hashable, ItemFilter {
         self.value = anyFilter.value
     }
 }
+
+import SwiftUI
+
+extension ItemGenre: LibraryElement {
+
+    func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {}
+
+    func makeGridBody(libraryStyle: LibraryStyle) -> EmptyView {}
+
+    func makeListBody(libraryStyle: LibraryStyle) -> EmptyView {}
+
+    var unwrappedIDHashOrZero: Int {
+        value.hashValue
+    }
+
+    var preferredPosterDisplayType: PosterDisplayType {
+        .landscape
+    }
+
+    var id: String {
+        value
+    }
+
+    var systemImage: String {
+        "bird.fill"
+    }
+}
