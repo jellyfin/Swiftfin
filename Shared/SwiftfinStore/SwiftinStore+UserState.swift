@@ -158,6 +158,7 @@ extension UserState {
 
         let keychain = Container.shared.keychainService()
         keychain.delete("\(id)-pin")
+        keychain.delete("\(id)-accessToken")
     }
 
     /// Deletes user settings from `UserDefaults` and `StoredValues`
