@@ -39,34 +39,13 @@ final class UserSession {
 }
 
 extension Container {
-
     // TODO: be parameterized, take user id
     //       - don't be optional
     //       - in `ViewModel`, don't be implicitly unwrapped
     //         and have idempotent default value
     var currentUserSession: Factory<UserSession?> {
         self {
-            guard case let .signedIn(userId) = Defaults[.lastSignedInUserID] else { return nil }
-
-            guard let user = try? SwiftfinStore.dataStack.fetchOne(
-                From<UserModel>().where(\.$id == userId)
-            ) else {
-                // had last user ID but no saved user
-                Defaults[.lastSignedInUserID] = .signedOut
-
-                return nil
-            }
-
-            guard let server = user.server,
-                  let _ = SwiftfinStore.dataStack.fetchExisting(server)
-            else {
-                fatalError("No associated server for last user")
-            }
-
-            return .init(
-                server: server.state,
-                user: user.state
-            )
+            UserSessionRestorationHelper().getCurrentUserSession()
         }.cached
     }
 }

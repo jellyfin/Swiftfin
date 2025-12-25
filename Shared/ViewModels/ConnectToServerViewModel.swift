@@ -175,7 +175,32 @@ final class ConnectToServerViewModel: ViewModel {
             return editServer.state
         }
 
+        updateServerURLsInKeychain(server: newState)
+
         Notifications[.didChangeCurrentServerURL].post(newState)
+    }
+
+    private func updateServerURLsInKeychain(server: ServerState) {
+        let keychain = Container.shared.keychainService()
+
+        for key in keychain.allKeys where key.hasSuffix("-accessToken") {
+            guard let accessTokenData = keychain.getData(key),
+                  let accessToken = AccessToken(keychainData: accessTokenData),
+                  server.userIDs.contains(accessToken.userId)
+            else {
+                continue
+            }
+
+            let updatedAccessToken = AccessToken(
+                userId: accessToken.userId,
+                username: accessToken.username,
+                token: accessToken.token,
+                associatedServerURLs: server.urls
+            )
+            if let keychainData = updatedAccessToken.keychainData {
+                keychain.set(keychainData, forKey: key)
+            }
+        }
     }
 
     @Function(\Action.Cases.searchForServers)

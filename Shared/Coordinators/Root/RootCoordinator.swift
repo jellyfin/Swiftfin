@@ -24,7 +24,7 @@ final class RootCoordinator: ObservableObject {
             do {
                 try await SwiftfinStore.setupDataStack()
 
-                if Container.shared.currentUserSession() != nil, !Defaults[.signOutOnClose] {
+                if await UserSessionRestorationHelper().getInitialUserSession() != nil, !Defaults[.signOutOnClose] {
                     #if os(tvOS)
                     await MainActor.run {
                         root(.mainTab)
