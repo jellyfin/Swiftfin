@@ -6,109 +6,118 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
-struct StepperView<Value: CustomStringConvertible & Strideable>: View {
+struct StepperView<Value: CustomStringConvertible & Strideable & LosslessStringConvertible, Formatter: FormatStyle>: View
+    where Formatter.FormatInput == Value,
+    Formatter.FormatOutput == String
+{
+
+    @Router
+    private var router
+
+    @Default(.accentColor)
+    private var accentColor
+
+    @FocusState
+    private var isTextFieldFocused: Bool
 
     @Binding
     private var value: Value
 
     @State
     private var updatedValue: Value
-    @Environment(\.presentationMode)
-    private var presentationMode
 
-    private var title: String
-    private var description: String?
+    @State
+    private var inputText: String
+
     private var range: ClosedRange<Value>
     private let step: Value.Stride
-    private var formatter: (Value) -> String
-    private var onCloseSelected: () -> Void
+    private let formatter: Formatter
 
-    var body: some View {
-        VStack {
-            VStack {
-                Spacer()
-
-                Text(title)
-                    .font(.title)
-                    .fontWeight(.semibold)
-
-                if let description {
-                    Text(description)
-                        .padding(.vertical)
-                }
-            }
-            .frame(maxHeight: .infinity)
-
-            Text(formatter(updatedValue))
-                .font(.title)
-                .frame(height: 250)
-
-            VStack {
-
-                HStack {
-                    Button {
-                        if updatedValue > range.lowerBound {
-                            updatedValue = max(updatedValue.advanced(by: -step), range.lowerBound)
-                            value = updatedValue
-                        }
-                    } label: {
-                        Image(systemName: "minus")
-                            .font(.title2.weight(.bold))
-                            .frame(width: 200, height: 75)
-                    }
-                    .buttonStyle(.card)
-
-                    Button {
-                        if updatedValue < range.upperBound {
-                            updatedValue = min(updatedValue.advanced(by: step), range.upperBound)
-                            value = updatedValue
-                        }
-                    } label: {
-                        Image(systemName: "plus")
-                            .font(.title2.weight(.bold))
-                            .frame(width: 200, height: 75)
-                    }
-                    .buttonStyle(.card)
-                }
-
-                Button(L10n.close) {
-                    onCloseSelected()
-                    presentationMode.wrappedValue.dismiss()
-                }
-
-                Spacer()
-            }
-            .frame(maxHeight: .infinity)
-        }
-    }
-}
-
-extension StepperView {
+    // MARK: - Initializer
 
     init(
-        title: String,
-        description: String? = nil,
         value: Binding<Value>,
         range: ClosedRange<Value>,
-        step: Value.Stride
+        step: Value.Stride = 1,
+        formatter: Formatter
     ) {
         self._value = value
         self._updatedValue = State(initialValue: value.wrappedValue)
-        self.title = title
-        self.description = description
+        self._inputText = State(initialValue: value.wrappedValue.description)
+
         self.range = range
         self.step = step
-        self.formatter = { $0.description }
-        self.onCloseSelected = {}
+        self.formatter = formatter
     }
 
-    func valueFormatter(_ formatter: @escaping (Value) -> String) -> Self {
-        copy(modifying: \.formatter, with: formatter)
+    // MARK: - Body
+
+    var body: some View {
+        VStack(alignment: .center, spacing: 30) {
+            HStack {
+                TextField(L10n.interval, text: $inputText)
+                    .frame(width: 200)
+                    .textFieldStyle(.plain)
+                    .background(Color.clear)
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .multilineTextAlignment(.center)
+                    .keyboardType(.numberPad)
+                    .focused($isTextFieldFocused)
+                    .onChange(of: isTextFieldFocused) { _, focused in
+                        if !focused {
+                            commitInput()
+                        }
+                    }
+                    .onSubmit {
+                        commitInput()
+                    }
+            }
+
+            HStack {
+                Button {
+                    if updatedValue > range.lowerBound {
+                        updatedValue = max(updatedValue.advanced(by: -step), range.lowerBound)
+                        inputText = String(describing: updatedValue)
+                    }
+                } label: {
+                    Image(systemName: "minus")
+                        .frame(width: 200, height: 75)
+                        .font(.title2.weight(.bold))
+                }
+
+                Button {
+                    if updatedValue < range.upperBound {
+                        updatedValue = min(updatedValue.advanced(by: step), range.upperBound)
+                        inputText = String(describing: updatedValue)
+                    }
+                } label: {
+                    Image(systemName: "plus")
+                        .frame(width: 200, height: 75)
+                        .font(.title2.weight(.bold))
+                }
+            }
+
+            Button(L10n.save) {
+                value = updatedValue
+                router.dismiss()
+            }
+            .buttonStyle(.primary)
+            .frame(width: 200, height: 75)
+            .foregroundStyle(accentColor.overlayColor, accentColor)
+            .disabled(value == updatedValue)
+        }
     }
 
-    func onCloseSelected(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onCloseSelected, with: action)
+    // MARK: - Commit Input
+
+    private func commitInput() {
+        if let parsed = Value(inputText) {
+            updatedValue = min(max(parsed, range.lowerBound), range.upperBound)
+        }
+        inputText = String(describing: updatedValue)
     }
 }

@@ -34,7 +34,6 @@ struct VideoPlayerSettingsView: View {
             }
 
             Section {
-
                 BasicStepper(
                     L10n.resumeOffset,
                     value: $resumeOffset,
