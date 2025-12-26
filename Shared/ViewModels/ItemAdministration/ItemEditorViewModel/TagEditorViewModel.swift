@@ -12,13 +12,26 @@ import JellyfinAPI
 
 final class TagEditorViewModel: ItemEditorViewModel<String> {
 
-    // MARK: - Populate the Trie
+    private var allTags: [String] = []
+    private var trie = Trie<String, String>()
 
-    override func populateTrie() {
-        trie.insert(contentsOf: elements.keyed(using: \.localizedLowercase))
+    // MARK: - Trie Creation and/or Searching
+
+    override func searchElements(_ searchTerm: String) async throws -> [String] {
+        if allTags.isEmpty {
+            let parameters = Paths.GetQueryFiltersLegacyParameters(userID: userSession.user.id)
+            let request = Paths.getQueryFiltersLegacy(parameters: parameters)
+            let response = try await userSession.client.send(request)
+            allTags = response.value.tags ?? []
+            trie.insert(contentsOf: allTags.keyed(using: \.localizedLowercase))
+        }
+
+        guard searchTerm.isNotEmpty else {
+            return allTags
+        }
+
+        return trie.search(prefix: searchTerm.localizedLowercase)
     }
-
-    // MARK: - Add Tag(s)
 
     override func addComponents(_ tags: [String]) async throws {
         var updatedItem = item
@@ -27,9 +40,12 @@ final class TagEditorViewModel: ItemEditorViewModel<String> {
         }
         updatedItem.tags?.append(contentsOf: tags)
         try await updateItem(updatedItem)
-    }
 
-    // MARK: - Remove Tag(s)
+        for tag in tags where !allTags.contains(tag) {
+            allTags.append(tag)
+            trie.insert(key: tag, element: tag.localizedLowercase)
+        }
+    }
 
     override func removeComponents(_ tags: [String]) async throws {
         var updatedItem = item
@@ -37,21 +53,17 @@ final class TagEditorViewModel: ItemEditorViewModel<String> {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Reorder Tag(s)
-
     override func reorderComponents(_ tags: [String]) async throws {
         var updatedItem = item
         updatedItem.tags = tags
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Fetch All Possible Tags
+    override func containsElement(named name: String) -> Bool {
+        item.tags?.contains { $0.caseInsensitiveCompare(name) == .orderedSame } ?? false
+    }
 
-    override func fetchElements() async throws -> [String] {
-        let parameters = Paths.GetQueryFiltersLegacyParameters(userID: userSession.user.id)
-        let request = Paths.getQueryFiltersLegacy(parameters: parameters)
-        guard let response = try? await userSession.client.send(request) else { return [] }
-
-        return response.value.tags ?? []
+    override func matchExists(named name: String) -> Bool {
+        matches.contains { $0.caseInsensitiveCompare(name) == .orderedSame }
     }
 }

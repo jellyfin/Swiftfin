@@ -159,7 +159,11 @@ extension BaseItemDto {
     /// ie: A movie and an episode can be directly played,
     ///     but a series is not as its episodes are playable.
     var isPlayable: Bool {
-        guard !isMissing else { return false }
+        guard !isMissing,
+              Container.shared.currentUserSession()?.user.data.policy?.enableMediaPlayback == true
+        else {
+            return false
+        }
 
         return switch type {
         case .series:
@@ -504,7 +508,7 @@ extension BaseItemDto {
         }
     }
 
-    func getFullItem(userSession: UserSession) async throws -> BaseItemDto {
+    func getFullItem(userSession: UserSession, isRefresh: Bool = false) async throws -> BaseItemDto {
         guard let id else {
             throw ErrorMessage(L10n.unknownError)
         }
@@ -515,6 +519,10 @@ extension BaseItemDto {
         // A check against `id` would typically be done, but a plugin
         // may have provided `self` or the response item and may not
         // be invariant over `id`.
+
+        if isRefresh {
+            Notifications[.itemMetadataDidChange].post(response.value)
+        }
 
         return response.value
     }

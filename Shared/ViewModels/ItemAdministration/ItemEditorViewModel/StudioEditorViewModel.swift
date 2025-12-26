@@ -12,19 +12,15 @@ import JellyfinAPI
 
 final class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
 
-    // MARK: - Populate the Trie
+    override func searchElements(_ searchTerm: String) async throws -> [NameGuidPair] {
+        let parameters = Paths.GetStudiosParameters(searchTerm: searchTerm.isEmpty ? nil : searchTerm)
+        let request = Paths.getStudios(parameters: parameters)
+        let response = try await userSession.client.send(request)
 
-    override func populateTrie() {
-        let elements = elements
-            .compacted(using: \.name)
-            .reduce(into: [String: NameGuidPair]()) { result, element in
-                result[element.name!] = element
-            }
-
-        trie.insert(contentsOf: elements)
+        return response.value.items?.map { studio in
+            NameGuidPair(id: studio.id, name: studio.name)
+        } ?? []
     }
-
-    // MARK: - Add Studio(s)
 
     override func addComponents(_ studios: [NameGuidPair]) async throws {
         var updatedItem = item
@@ -35,15 +31,11 @@ final class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Remove Studio(s)
-
     override func removeComponents(_ studios: [NameGuidPair]) async throws {
         var updatedItem = item
         updatedItem.studios?.removeAll { studios.contains($0) }
         try await updateItem(updatedItem)
     }
-
-    // MARK: - Reorder Tag(s)
 
     override func reorderComponents(_ studios: [NameGuidPair]) async throws {
         var updatedItem = item
@@ -51,18 +43,11 @@ final class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Fetch All Possible Studios
+    override func containsElement(named name: String) -> Bool {
+        item.studios?.contains { $0.name?.caseInsensitiveCompare(name) == .orderedSame } ?? false
+    }
 
-    override func fetchElements() async throws -> [NameGuidPair] {
-        let request = Paths.getStudios()
-        let response = try await userSession.client.send(request)
-
-        if let studios = response.value.items {
-            return studios.map { studio in
-                NameGuidPair(id: studio.id, name: studio.name)
-            }
-        } else {
-            return []
-        }
+    override func matchExists(named name: String) -> Bool {
+        matches.contains { $0.name?.caseInsensitiveCompare(name) == .orderedSame }
     }
 }

@@ -27,7 +27,7 @@ struct ServerActivityDetailsView: View {
         List {
             /// Item (If Available)
             if let item = viewModel.item {
-                AdminDashboardView.MediaItemSection(item: item)
+                FormItemSection(item: item)
             }
 
             /// User (If Available)

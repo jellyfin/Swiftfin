@@ -64,10 +64,6 @@ extension UserState {
         }
     }
 
-    var permissions: UserPermissions {
-        UserPermissions(data.policy)
-    }
-
     var pin: String {
         get {
             guard let pin = Container.shared.keychainService().get("\(id)-pin") else {

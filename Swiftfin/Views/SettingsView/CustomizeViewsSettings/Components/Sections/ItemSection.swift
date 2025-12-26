@@ -8,6 +8,7 @@
 
 import Defaults
 import Factory
+import JellyfinAPI
 import SwiftUI
 
 extension CustomizeViewsSettings {
@@ -32,6 +33,14 @@ extension CustomizeViewsSettings {
         @StoredValue(.User.enableCollectionManagement)
         private var enableCollectionManagement
 
+        private var userPolicy: UserPolicy? {
+            userSession?.user.data.policy
+        }
+
+        private var isAdminstrator: Bool {
+            userPolicy?.isAdministrator == true
+        }
+
         var body: some View {
             Section(L10n.items) {
 
@@ -44,19 +53,16 @@ extension CustomizeViewsSettings {
                     selection: $enabledTrailers
                 )
 
-                /// Enabled Collection Management for collection managers
-                if userSession?.user.permissions.items.canManageCollections == true {
-                    Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
-                }
-                /// Enabled Media Management when there are media elements that can be managed
-                if userSession?.user.permissions.items.canEditMetadata == true ||
-                    userSession?.user.permissions.items.canManageLyrics == true ||
-                    userSession?.user.permissions.items.canManageSubtitles == true
-                {
+                /// Enable Refreshing Items from All Visible LIbraries
+                if isAdminstrator {
                     Toggle(L10n.editMedia, isOn: $enableItemEditing)
                 }
-                /// Enabled Media Deletion for valid deletion users
-                if userSession?.user.permissions.items.canDelete == true {
+                /// Enable Refreshing & Deleting Collections
+                if isAdminstrator || userPolicy?.enableCollectionManagement == true {
+                    Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
+                }
+                /// Enable Deleting Items from Approved Libraries
+                if isAdminstrator || userPolicy?.enableContentDeletion == true {
                     Toggle(L10n.deleteMedia, isOn: $enableItemDeletion)
                 }
             }
