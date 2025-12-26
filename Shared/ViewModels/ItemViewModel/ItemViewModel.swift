@@ -24,6 +24,7 @@ class ItemViewModel: ViewModel, Stateful {
         case backgroundRefresh
         case error(ErrorMessage)
         case refresh
+        case refreshUserDataOnly
         case replace(BaseItemDto)
         case toggleIsFavorite
         case toggleIsPlayed
@@ -231,6 +232,9 @@ class ItemViewModel: ViewModel, Stateful {
             .asAnyCancellable()
 
             return .refreshing
+        case .refreshUserDataOnly:
+
+            return state
         case let .replace(newItem):
 
             backgroundStates.insert(.refresh)

@@ -19,6 +19,8 @@ extension SeriesEpisodeSelector {
         @ObservedObject
         var viewModel: SeasonItemViewModel
 
+        var seriesViewModel: SeriesItemViewModel
+
         @State
         private var didScrollToPlayButtonItem = false
 
@@ -33,7 +35,10 @@ extension SeriesEpisodeSelector {
                 id: \.unwrappedIDHashOrZero,
                 columns: UIDevice.isPhone ? 1.5 : 3.5
             ) { episode in
-                SeriesEpisodeSelector.EpisodeCard(episode: episode)
+                SeriesEpisodeSelector.EpisodeCard(
+                    episode: episode,
+                    seriesViewModel: seriesViewModel
+                )
             }
             .clipsToBounds(false)
             .scrollBehavior(.continuousLeadingEdge)
