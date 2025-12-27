@@ -63,6 +63,13 @@ extension StoredValues.Keys {
 
 // MARK: values
 
+extension UserAccessPolicy: Storable {}
+extension UserDto: Storable {}
+extension Int: Storable {}
+extension String: Storable {}
+extension Bool: Storable {}
+extension Array: Storable where Element: Storable {}
+
 extension StoredValues.Keys {
 
     enum User {
@@ -196,34 +203,5 @@ extension StoredValues.Keys {
                 default: .trickplay(fallbackToChapters: false)
             )
         }
-    }
-}
-
-// TODO: chapters fallback
-enum PreviewImageScrubbingOption: CaseIterable, Displayable, Hashable, Storable {
-
-    case trickplay(fallbackToChapters: Bool = true)
-    case chapters
-    case disabled
-
-    var displayTitle: String {
-        switch self {
-        case .trickplay: "Trickplay"
-        case .disabled: L10n.disabled
-        case .chapters: "Chapters"
-        }
-    }
-
-    // TODO: enhance full screen determination
-    //       - allow checking against image size?
-    var supportsFullscreen: Bool {
-        switch self {
-        case .trickplay: true
-        case .disabled, .chapters: false
-        }
-    }
-
-    static var allCases: [PreviewImageScrubbingOption] {
-        [.trickplay(), .chapters, .disabled]
     }
 }

@@ -42,6 +42,8 @@ extension StoredValues.Keys {
 
 // MARK: values
 
+extension PublicSystemInfo: Storable {}
+
 extension StoredValues.Keys {
 
     enum Server {
