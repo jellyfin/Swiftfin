@@ -232,7 +232,7 @@ enum ContentGroupSetting: Equatable, Hashable, Storable {
         ):
             PosterGroup(
                 id: id,
-                library: PagingItemLibrary(
+                library: ItemLibrary(
                     parent: .init(id: libraryID, name: displayTitle),
                     filters: filters
                 ),

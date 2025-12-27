@@ -183,6 +183,76 @@ extension BaseItemDto: Poster {
                 .aspectRatio(contentMode: .fill)
         }
     }
+
+    @ViewBuilder
+    var posterLabel: some View {
+        _BaseItemPosterLabel(item: self)
+    }
+
+    @ViewBuilder
+    func posterOverlay(for displayType: PosterDisplayType) -> some View {
+        PosterIndicatorsOverlay(
+            item: self,
+            indicators: [.progress],
+            posterDisplayType: displayType
+        )
+    }
+}
+
+struct _BaseItemPosterLabel: View {
+
+    @Default(.Customization.showPosterLabels)
+    private var showPosterLabels
+    @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
+    private var useSeriesLandscapeBackdrop
+
+    let item: BaseItemDto
+
+    var body: some View {
+        if item.type == .episode {
+            EpisodeContentSubtitleContent(item: item)
+        } else {
+            TitleSubtitleContentView(
+                title: showPosterLabels ? item.displayTitle : nil,
+                subtitle: item.subtitle
+            )
+        }
+    }
+}
+
+struct EpisodeContentSubtitleContent: View {
+
+    @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
+    private var useSeriesLandscapeBackdrop
+
+    let item: BaseItemDto
+
+    var body: some View {
+        // Unsure why this needs 0 spacing
+        // compared to other default content
+        VStack(alignment: .leading, spacing: 0) {
+            if item.showTitle, let seriesName = item.seriesName {
+                Text(seriesName)
+                    .font(.footnote)
+                    .fontWeight(.regular)
+                    .foregroundStyle(.primary)
+                    .lineLimit(1, reservesSpace: true)
+            }
+
+            DotHStack(padding: 3) {
+                Text(item.seasonEpisodeLabel ?? .emptyDash)
+
+                if item.showTitle || useSeriesLandscapeBackdrop {
+                    Text(item.displayTitle)
+                } else if let seriesName = item.seriesName {
+                    Text(seriesName)
+                }
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
+        }
+    }
 }
 
 private let landscapeWidth: CGFloat = 110
@@ -194,7 +264,7 @@ extension BaseItemDto: LibraryElement {
     func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {
         switch type {
         case .collectionFolder, .folder, .userView:
-            let library = PagingItemLibrary(parent: self)
+            let library = ItemLibrary(parent: self)
             router.route(to: .library(library: library), in: namespace)
         default:
             router.route(to: .item(item: self), in: namespace)

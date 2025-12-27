@@ -46,7 +46,7 @@ struct ItemTypeContentGroupProvider: _ContentGroupProvider {
 
             return PosterGroup(
                 id: "\(parent?.id ?? "unknown")-\(itemType.rawValue)",
-                library: PagingItemLibrary(
+                library: ItemLibrary(
                     parent: .init(
                         id: parent?.id,
                         name: itemType.pluralDisplayTitle,

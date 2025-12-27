@@ -133,10 +133,10 @@ extension Defaults.Keys {
 
         enum Indicators {
 
-            static let showFavorited: Key<Bool> = UserKey("showFavoritedIndicator", default: true)
-            static let showProgress: Key<Bool> = UserKey("showProgressIndicator", default: true)
-            static let showUnplayed: Key<Bool> = UserKey("showUnplayedIndicator", default: true)
-            static let showPlayed: Key<Bool> = UserKey("showPlayedIndicator", default: true)
+            static let enabled: Key<PosterIndicator> = UserKey(
+                "enabledPosterIndicators",
+                default: [.favorited, .played, .progress, .unplayed]
+            )
         }
 
         enum Library {

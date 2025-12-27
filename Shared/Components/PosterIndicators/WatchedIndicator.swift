@@ -9,8 +9,15 @@
 import Defaults
 import SwiftUI
 
-// TODO: make icon-based indicators relative container size based
-// TODO: remove favorited
+struct PosterIndicator: OptionSet, Storable {
+    let rawValue: Int
+
+    static let favorited = PosterIndicator(rawValue: 1 << 0)
+    static let played = PosterIndicator(rawValue: 1 << 1)
+    static let progress = PosterIndicator(rawValue: 1 << 3)
+    static let unplayed = PosterIndicator(rawValue: 1 << 2)
+}
+
 
 enum PosterOverlayIndicator: String, CaseIterable, Storable {
 

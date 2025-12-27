@@ -111,7 +111,7 @@ final class SearchViewModel: ViewModel {
             return
         }
 
-        func inner<VM: __PagingLibaryViewModel>(_ vm: VM) where VM._PagingLibrary == PagingItemLibrary {
+        func inner<VM: __PagingLibaryViewModel>(_ vm: VM) where VM._PagingLibrary == ItemLibrary {
             var filters = vm.environment.filters
             filters.query = query
 
@@ -124,7 +124,7 @@ final class SearchViewModel: ViewModel {
         }
 
 //        for (viewModel, _) in itemContentGroupViewModel.sections {
-//            if let library = viewModel.library as? PagingItemLibrary {
+//            if let library = viewModel.library as? ItemLibrary {
 //                library.filterViewModel?.currentFilters.query = query
 //            }
 //        }

@@ -17,12 +17,11 @@ extension BaseItemPerson: Poster {
         .portrait
     }
 
-    var posterLabel: AnyView {
+    var posterLabel: some View {
         TitleSubtitleContentView(
             title: displayTitle,
             subtitle: role
         )
-        .eraseToAnyView()
     }
 
     var unwrappedIDHashOrZero: Int {

@@ -10,7 +10,7 @@ import JellyfinAPI
 import SwiftUI
 
 @MainActor
-struct PagingItemLibrary: PagingLibrary, WithRandomElementLibrary {
+struct ItemLibrary: PagingLibrary, WithRandomElementLibrary {
 
     struct Environment: WithDefaultValue {
         let grouping: Parent.Grouping?

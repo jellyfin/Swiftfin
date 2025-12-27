@@ -9,10 +9,7 @@
 import Defaults
 import SwiftUI
 
-struct ItemContentGroupView: View {
-
-    @Default(.Customization.itemViewType)
-    private var itemViewType
+struct ItemContentGroupView<Provider: _ContentGroupProvider>: View {
 
     @Router
     private var router
@@ -23,9 +20,9 @@ struct ItemContentGroupView: View {
     private var carriedUseOffsetNavigationBar: Bool = false
 
     @StateObject
-    private var viewModel: ContentGroupViewModel<ItemGroupProvider>
+    private var viewModel: ContentGroupViewModel<Provider>
 
-    init(provider: ItemGroupProvider) {
+    init(provider: Provider) {
         _viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
     }
 
@@ -45,7 +42,13 @@ struct ItemContentGroupView: View {
                                 carriedHeaderFrame = value
                             }
                     }
-                    .edgePadding(.bottom)
+                    .edgePadding(
+                        .bottom.inserting(
+                            .top,
+                            if: !carriedUseOffsetNavigationBar
+                        )
+                    )
+//                    .edgePadding(.bottom)
                 }
                 .ignoresSafeArea(edges: .horizontal)
                 .scrollIndicators(.hidden)
@@ -87,7 +90,8 @@ struct ItemContentGroupView: View {
         .animation(.linear(duration: 0.2), value: viewModel.background.states)
 //        .navigationTitle(viewModel.provider.displayTitle)
         .backport
-        .toolbarTitleDisplayMode(.inline)
+        .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
+//        .toolbarTitleDisplayMode(.inline)
         .onFirstAppear {
             viewModel.refresh()
         }

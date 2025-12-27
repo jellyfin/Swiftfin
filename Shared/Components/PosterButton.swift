@@ -16,7 +16,7 @@ struct PosterButton<Item: Poster, Label: View>: View {
     private var namespace
 
     @State
-    private var posterSize: CGSize = .zero
+    private var posterFrame: CGRect = .zero
 
     private let item: Item
     private let type: PosterDisplayType
@@ -82,26 +82,25 @@ struct PosterButton<Item: Poster, Label: View>: View {
         } label: {
             // Layout required for tvOS focused offset label behavior
             #if os(tvOS)
-            posterImage(overlay: item.posterOverlay(type))
+            posterImage(overlay: item.posterOverlay(for: type))
             resolvedLabel
                 .frame(maxWidth: .infinity, alignment: .leading)
             #else
-            buttonLabel(overlay: item.posterOverlay(type))
-                .trackingSize($posterSize)
+            buttonLabel(overlay: item.posterOverlay(for: type))
+                .trackingFrame($posterFrame)
             #endif
         }
         .foregroundStyle(.primary, .secondary)
         .accessibilityLabel(item.displayTitle)
         .buttonStyle(.borderless)
         .focusedValue(\.focusedPoster, .init(item))
-//        .focusedValue(\.focusedPosterID, item.unwrappedIDHashOrZero)
         .matchedContextMenu(for: item) {
             let frameScale = 1.3
 
             buttonLabel()
                 .frame(
-                    width: posterSize.width * frameScale,
-                    height: posterSize.height * frameScale
+                    width: posterFrame.width * frameScale,
+                    height: posterFrame.height * frameScale
                 )
                 .padding(20)
                 .background {
@@ -132,9 +131,9 @@ struct PosterIndicatorsOverlay: View {
                 PlayedIndicator()
             }
 
-            if indicators.contains(.progress), let progress = item.progress, let startSeconds = item.startSeconds {
-                PosterProgressBar(
-                    title: startSeconds.formatted(.runtime),
+            if indicators.contains(.progress), let progress = item.progress, let position = item.userData?.playbackPosition {
+                PosterProgressIndicator(
+                    title: position.formatted(.runtime),
                     progress: progress,
                     posterDisplayType: posterDisplayType
                 )

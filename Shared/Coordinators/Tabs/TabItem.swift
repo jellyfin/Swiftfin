@@ -108,7 +108,7 @@ extension TabItem {
             title: provider.displayTitle,
             systemImage: "heart.fill"
         ) {
-            ContentGroupView(provider: provider)
+            ItemContentGroupView(provider: provider)
 //            ContentGroupShimView(id: provider.id)
         }
     }
@@ -126,7 +126,7 @@ extension TabItem {
             title: title,
             systemImage: systemName
         ) {
-            let library = PagingItemLibrary(
+            let library = ItemLibrary(
                 parent: .init(name: title),
                 filters: filters
             )

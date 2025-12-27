@@ -39,7 +39,7 @@ struct DefaultContentGroupProvider: _ContentGroupProvider {
         )
 
         PosterGroup(
-            library: PagingItemLibrary(
+            library: ItemLibrary(
                 parent: .init(
                     name: L10n.recentlyAdded
                 ),
@@ -58,7 +58,6 @@ struct DefaultContentGroupProvider: _ContentGroupProvider {
                     .movies,
                     .musicvideos,
                     .tvshows,
-                    .music,
                 ],
                 using: \.collectionType
             )
@@ -67,7 +66,7 @@ struct DefaultContentGroupProvider: _ContentGroupProvider {
             .map {
                 PosterGroup(
                     library: $0,
-                    posterDisplayType: .square
+                    posterDisplayType: .portrait
                 )
             }
     }

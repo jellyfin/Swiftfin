@@ -15,19 +15,19 @@ struct TestCarouselWithLibraryPosterGroup: _ContentGroup {
     let id: String = "test"
     let displayTitle: String = ""
     let filters: ItemFilterCollection
-    let viewModel: PagingLibraryViewModel<PagingItemLibrary>
+    let viewModel: PagingLibraryViewModel<ItemLibrary>
 
     init(filters: ItemFilterCollection) {
         self.filters = filters
         self.viewModel = PagingLibraryViewModel(
-            library: PagingItemLibrary(
+            library: ItemLibrary(
                 parent: .init(),
                 filters: filters
             )
         )
     }
 
-    func body(with viewModel: PagingLibraryViewModel<PagingItemLibrary>) -> some View {
+    func body(with viewModel: PagingLibraryViewModel<ItemLibrary>) -> some View {
         PagingCarouselPosterHStack(
             library: viewModel
         )

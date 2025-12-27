@@ -24,7 +24,7 @@ extension SeriesEpisodeSelector {
         @ViewBuilder
         private var overlayView: some View {
             if let progress = episode.progress {
-                PosterProgressBar(
+                PosterProgressIndicator(
                     title: "Test",
                     progress: progress,
                     posterDisplayType: .landscape

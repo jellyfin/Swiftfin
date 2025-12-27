@@ -9,8 +9,6 @@
 import Combine
 import SwiftUI
 
-// TODO: rename `PublishedBox`, remove other implementation
-
 /// Utility class to act as an intermediary for a `Binding` value or
 /// the source of a single value where `State` is not appropriate.
 ///

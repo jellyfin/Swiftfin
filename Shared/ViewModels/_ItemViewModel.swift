@@ -9,8 +9,6 @@
 import JellyfinAPI
 import SwiftUI
 
-// TODO: selected media source
-
 @Stateful
 class _ItemViewModel: ViewModel, WithRefresh {
 

@@ -20,6 +20,8 @@ protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
 
     associatedtype Environment: WithDefaultValue = Empty
     associatedtype ImageBody: View = Image
+    associatedtype LabelBody: View = EmptyView
+    associatedtype OverlayBody: View = EmptyView
 
     var preferredPosterDisplayType: PosterDisplayType { get }
 
@@ -54,16 +56,17 @@ protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
     @MainActor
     @ViewBuilder
     func transform(image: Image, displayType: PosterDisplayType) -> ImageBody
+
+    @MainActor
+    @ViewBuilder
+    var posterLabel: LabelBody { get }
+
+    @MainActor
+    @ViewBuilder
+    func posterOverlay(for displayType: PosterDisplayType) -> OverlayBody
 }
 
 extension Poster {
-    var posterLabel: AnyView {
-        EmptyView().eraseToAnyView()
-    }
-
-    var posterOverlay: (PosterDisplayType) -> AnyView {
-        { _ in EmptyView().eraseToAnyView() }
-    }
 
     func landscapeImageSources(
         maxWidth: CGFloat? = nil,
@@ -126,6 +129,24 @@ extension Poster where ImageBody == Image {
     @ViewBuilder
     func transform(image: Image, displayType: PosterDisplayType) -> ImageBody {
         image
+    }
+}
+
+extension Poster where LabelBody == EmptyView {
+
+    @MainActor
+    @ViewBuilder
+    var posterLabel: LabelBody {
+        EmptyView()
+    }
+}
+
+extension Poster where OverlayBody == EmptyView {
+
+    @MainActor
+    @ViewBuilder
+    func posterOverlay(for displayType: PosterDisplayType) -> OverlayBody {
+        EmptyView()
     }
 }
 

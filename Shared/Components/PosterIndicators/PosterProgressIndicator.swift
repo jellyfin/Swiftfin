@@ -9,7 +9,7 @@
 import Defaults
 import SwiftUI
 
-struct PosterProgressBar: View {
+struct PosterProgressIndicator: View {
 
     @Default(.accentColor)
     private var accentColor

@@ -47,10 +47,8 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View where Library.El
                     default:
                         router.route(to: .item(item: element), in: namespace)
                     }
-                case let _ as BaseItemPerson: ()
-//                    if let itemID = person.id {
-//                        router.route(to: .item(item: .init(person: person)), in: namespace)
-//                    }
+                case let element as BaseItemPerson: ()
+                    router.route(to: .item(item: .init(person: element)), in: namespace)
                 default: ()
                 }
             } header: {
@@ -134,11 +132,6 @@ struct ContentGroupShimView: View {
                 print("ContentGroupShimView: customContentGroup changed from \(oldValue) to \(newValue)")
             }
     }
-}
-
-struct HeaderedContentGroupView<Header: _ContentGroup, Provider: _ContentGroupProvider>: View {
-
-    var body: some View {}
 }
 
 struct ContentGroupView<Provider: _ContentGroupProvider>: View {
