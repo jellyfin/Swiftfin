@@ -46,7 +46,6 @@ extension ActiveSessionsView {
                 .frame(width: 60)
                 .frame(minHeight: 90)
                 .posterShadow()
-                .frame(maxHeight: .infinity, alignment: .top)
             } else {
                 ZStack {
                     session.device.clientColor
@@ -54,7 +53,7 @@ extension ActiveSessionsView {
                     Image(session.device.image)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 40)
+                        .padding(8)
                 }
                 .posterStyle(.square)
                 .frame(width: 60, height: 60)
@@ -81,7 +80,6 @@ extension ActiveSessionsView {
                 )
             }
             .font(.subheadline)
-            .frame(maxHeight: .infinity, alignment: .top)
         }
 
         @ViewBuilder
