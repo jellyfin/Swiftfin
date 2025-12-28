@@ -26,6 +26,10 @@ extension ActiveSessionsView {
             box.value ?? .init()
         }
 
+        private var isPlaying: Bool {
+            session.nowPlayingItem != nil && session.playState != nil
+        }
+
         init(box: BindingBox<SessionInfoDto?>, onSelect action: @escaping () -> Void) {
             self.box = box
             self.onSelect = action
@@ -33,35 +37,34 @@ extension ActiveSessionsView {
 
         @ViewBuilder
         private var rowLeading: some View {
-            Group {
-                if let nowPlayingItem = session.nowPlayingItem {
-                    PosterImage(
-                        item: nowPlayingItem,
-                        type: nowPlayingItem.preferredPosterDisplayType,
-                        contentMode: .fit
-                    )
-                    .frame(width: 60)
-                } else {
-                    ZStack {
-                        session.device.clientColor
+            if let nowPlayingItem = session.nowPlayingItem {
+                PosterImage(
+                    item: nowPlayingItem,
+                    type: nowPlayingItem.preferredPosterDisplayType,
+                    contentMode: .fit
+                )
+                .frame(width: 60)
+                .frame(minHeight: 90)
+                .posterShadow()
+                .frame(maxHeight: .infinity, alignment: .top)
+            } else {
+                ZStack {
+                    session.device.clientColor
 
-                        Image(session.device.image)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 40)
-                    }
-                    .posterStyle(.square)
-                    .frame(width: 60, height: 60)
+                    Image(session.device.image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 40)
                 }
+                .posterStyle(.square)
+                .frame(width: 60, height: 60)
+                .posterShadow()
             }
-            .frame(width: 60, height: 90)
-            .posterShadow()
-            .padding(.vertical, 8)
         }
 
         @ViewBuilder
         private func activeSessionDetails(_ nowPlayingItem: BaseItemDto, playState: PlayerStateInfo) -> some View {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(session.userName ?? L10n.unknown)
                     .multilineTextAlignment(.leading)
                     .font(.headline)
@@ -78,11 +81,12 @@ extension ActiveSessionsView {
                 )
             }
             .font(.subheadline)
+            .frame(maxHeight: .infinity, alignment: .top)
         }
 
         @ViewBuilder
         private var idleSessionDetails: some View {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 4) {
 
                 Text(session.userName ?? L10n.unknown)
                     .font(.headline)
@@ -115,7 +119,7 @@ extension ActiveSessionsView {
         }
 
         var body: some View {
-            ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
+            ListRow(insets: .init(vertical: isPlaying ? 8 : 12, horizontal: EdgeInsets.edgePadding)) {
                 rowLeading
             } content: {
                 if let nowPlayingItem = session.nowPlayingItem, let playState = session.playState {

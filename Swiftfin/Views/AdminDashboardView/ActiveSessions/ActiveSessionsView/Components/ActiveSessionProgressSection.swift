@@ -72,7 +72,7 @@ extension ActiveSessionsView {
                             }
                         }
 
-                        Text(playMethod)
+                        Text(playMethod.displayTitle)
                             .foregroundStyle(.secondary)
                     }
                 }
