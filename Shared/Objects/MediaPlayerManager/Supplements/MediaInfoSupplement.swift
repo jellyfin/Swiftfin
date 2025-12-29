@@ -140,7 +140,7 @@ extension MediaInfoSupplement {
                     type: item.preferredPosterDisplayType,
                     contentMode: .fit
                 )
-                .environment(\.isOverComplexContent, true)
+                .withViewContext(.isOverComplexContent)
                 .frame(
                     maxWidth: item.preferredPosterDisplayType == .portrait ? nil : 170
                 )

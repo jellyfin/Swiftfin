@@ -32,7 +32,7 @@ struct PortraitItemViewHeader: _ContentGroup {
                     type: .portrait,
                     contentMode: .fit
                 )
-                .environment(\.isOverComplexContent, true)
+                .withViewContext(.isOverComplexContent)
                 .frame(width: 130)
                 .accessibilityIgnoresInvertColors()
 
@@ -75,6 +75,7 @@ struct PortraitItemViewHeader: _ContentGroup {
                     ImageView(
                         viewModel.item.landscapeImageSources(maxWidth: 1320, environment: .init(useParent: false))
                     )
+                    .aspectRatio(contentMode: .fit)
                 }
                 .aspectRatio(1.77, contentMode: .fit)
             }

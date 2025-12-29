@@ -36,8 +36,6 @@ struct SeriesEpisodeSelector: View {
         self._seasonsViewModel = .init(wrappedValue: .init(library: .init(series: viewModel.item)))
     }
 
-    // MARK: - Body
-
     var body: some View {
         VStack(spacing: 0) {
             SeasonsHStack(

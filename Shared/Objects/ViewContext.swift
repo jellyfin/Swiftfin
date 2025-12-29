@@ -14,6 +14,7 @@ struct ViewContext: OptionSet {
 
     static let isInMenu = ViewContext(rawValue: 1 << 0)
     static let isThumb = ViewContext(rawValue: 1 << 1)
+    static let isOverComplexContent = ViewContext(rawValue: 1 << 2)
 }
 
 extension EnvironmentValues {

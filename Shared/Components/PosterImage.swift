@@ -13,8 +13,8 @@ import SwiftUI
 /// Retrieving images by exact pixel dimensions is a bit
 /// intense for normal usage and eases cache usage and modifications.
 #if os(iOS)
-private let landscapeMaxWidth: CGFloat = 300
-private let portraitMaxWidth: CGFloat = 200
+private let landscapeMaxWidth: CGFloat = 200
+private let portraitMaxWidth: CGFloat = 120
 #else
 private let landscapeMaxWidth: CGFloat = 500
 private let portraitMaxWidth: CGFloat = 500

@@ -48,15 +48,16 @@ struct AttributesHStack: View {
     @ViewBuilder
     private func CriticRating() -> some View {
         if let criticRating = item.criticRating {
-            AttributeBadge(
-                style: .outline,
-                title: Text("\(criticRating, specifier: "%.0f")")
-            ) {
-                if criticRating >= 60 {
-                    Image(.tomatoFresh)
-                        .symbolRenderingMode(.hierarchical)
-                } else {
-                    Image(.tomatoRotten)
+            AttributeBadge(style: .outline) {
+                Label {
+                    Text("\(criticRating, specifier: "%.0f")")
+                } icon: {
+                    if criticRating >= 60 {
+                        Image(.tomatoFresh)
+                            .symbolRenderingMode(.hierarchical)
+                    } else {
+                        Image(.tomatoRotten)
+                    }
                 }
             }
         }
@@ -65,21 +66,22 @@ struct AttributesHStack: View {
     @ViewBuilder
     private func CommunityRating() -> some View {
         if let communityRating = item.communityRating {
-            AttributeBadge(
-                style: .outline,
-                title: Text("\(communityRating, specifier: "%.01f")"),
-                systemName: "star.fill"
-            )
+            AttributeBadge(style: .outline) {
+                Label {
+                    Text("\(communityRating, specifier: "%.01f")")
+                } icon: {
+                    Image(systemName: "star.fill")
+                }
+            }
         }
     }
 
     @ViewBuilder
     private func OfficialRating() -> some View {
         if let officialRating = item.officialRating {
-            AttributeBadge(
-                style: .outline,
-                title: officialRating
-            )
+            AttributeBadge(style: .outline) {
+                Text(officialRating)
+            }
         }
     }
 
@@ -87,27 +89,23 @@ struct AttributesHStack: View {
     private func VideoQuality() -> some View {
         if let mediaStreams = mediaSource?.mediaStreams {
             if mediaStreams.has4KVideo {
-                AttributeBadge(
-                    style: .fill,
-                    title: "4K"
-                )
+                AttributeBadge(style: .fill) {
+                    Text("4K")
+                }
             } else if mediaStreams.hasHDVideo {
-                AttributeBadge(
-                    style: .fill,
-                    title: "HD"
-                )
+                AttributeBadge(style: .fill) {
+                    Text("HD")
+                }
             }
             if mediaStreams.hasDolbyVision {
-                AttributeBadge(
-                    style: .fill,
-                    title: "DV"
-                )
+                AttributeBadge(style: .fill) {
+                    Text("DV")
+                }
             }
             if mediaStreams.hasHDRVideo {
-                AttributeBadge(
-                    style: .fill,
-                    title: "HDR"
-                )
+                AttributeBadge(style: .fill) {
+                    Text("HDR")
+                }
             }
         }
     }
@@ -116,16 +114,14 @@ struct AttributesHStack: View {
     private func AudioChannels() -> some View {
         if let mediaStreams = mediaSource?.mediaStreams {
             if mediaStreams.has51AudioChannelLayout {
-                AttributeBadge(
-                    style: .fill,
-                    title: "5.1"
-                )
+                AttributeBadge(style: .fill) {
+                    Text("5.1")
+                }
             }
             if mediaStreams.has71AudioChannelLayout {
-                AttributeBadge(
-                    style: .fill,
-                    title: "7.1"
-                )
+                AttributeBadge(style: .fill) {
+                    Text("7.1")
+                }
             }
         }
     }
@@ -135,10 +131,9 @@ struct AttributesHStack: View {
         if let mediaStreams = mediaSource?.mediaStreams,
            mediaStreams.hasSubtitles
         {
-            AttributeBadge(
-                style: .outline,
-                title: "CC"
-            )
+            AttributeBadge(style: .outline) {
+                Text("CC")
+            }
         }
     }
 }

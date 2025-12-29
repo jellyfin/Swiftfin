@@ -40,7 +40,7 @@ struct ItemGroupProvider: _ContentGroupProvider {
     @ContentGroupBuilder
     private func _makeGroups(item: BaseItemDto, itemID: String) async throws -> [any _ContentGroup] {
 
-        if UIDevice.isPad {
+        if UIDevice.isPad || UIDevice.isTV {
             EnhancedItemViewHeader(itemViewModel: viewModel)
         } else {
             if item.type == .movie || item.type == .series, Defaults[.Customization.itemViewType] == .enhanced {

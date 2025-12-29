@@ -48,7 +48,6 @@ struct ItemContentGroupView<Provider: _ContentGroupProvider>: View {
                             if: !carriedUseOffsetNavigationBar
                         )
                     )
-//                    .edgePadding(.bottom)
                 }
                 .ignoresSafeArea(edges: .horizontal)
                 .scrollIndicators(.hidden)
@@ -80,17 +79,8 @@ struct ItemContentGroupView<Provider: _ContentGroupProvider>: View {
                 ProgressView()
             }
         }
-        .backport
-        .onChange(of: viewModel.state) { _, newValue in
-            print("ContentGroupView: state changed to \(newValue)")
-        }
-        .backport
-        .onChange(of: viewModel.background.states) { oldValue, newValue in
-            print("ContentGroupView: background states changed from \(oldValue) to \(newValue)")
-        }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .animation(.linear(duration: 0.2), value: viewModel.background.states)
-//        .navigationTitle(viewModel.provider.displayTitle)
         .backport
         .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
         .onFirstAppear {

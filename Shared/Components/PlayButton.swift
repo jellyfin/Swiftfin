@@ -24,16 +24,9 @@ struct PlayButton: View {
 
     private let logger = Logger.swiftfin()
 
-    private var source: String? {
-        nil
-
-//        guard let sourceLabel = viewModel.selectedMediaSource?.displayTitle,
-//              viewModel.item.mediaSources?.count ?? 0 > 1
-//        else {
-//            return nil
-//        }
-//
-//        return sourceLabel
+    private var mediaSource: String? {
+        guard viewModel.item.mediaSources?.count ?? 0 > 1 else { return nil }
+        return viewModel.selectedMediaSource?.displayTitle
     }
 
     private func play(fromBeginning: Bool = false) {
@@ -105,8 +98,8 @@ struct PlayButton: View {
                 VStack {
                     Text(viewModel.playButtonItem?.playButtonLabel ?? L10n.play)
 
-                    if let source {
-                        Marquee(source, speed: 40, delay: 3, fade: 5)
+                    if let mediaSource {
+                        Marquee(mediaSource, speed: 40, delay: 3, fade: 5)
                             .font(.caption)
                             .fontWeight(.medium)
                     }
@@ -116,7 +109,6 @@ struct PlayButton: View {
             .font(.callout)
             .fontWeight(.semibold)
         }
-        .frame(maxWidth: 300)
         .buttonStyle(
             .tintedMaterial(
                 tint: accentColor,
@@ -140,6 +132,6 @@ struct PlayButton: View {
 
             versionMenu
         }
-        .frame(height: 50)
+        .frame(height: UIDevice.isTV ? 100 : 44)
     }
 }

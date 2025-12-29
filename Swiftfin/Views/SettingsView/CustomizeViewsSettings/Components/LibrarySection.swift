@@ -13,13 +13,17 @@ extension CustomizeViewsSettings {
 
     struct LibrarySection: View {
 
+        @Default(.Customization.Library.showFavorites)
+        private var showFavorites
         @Default(.Customization.Library.enabledDrawerFilters)
         private var libraryEnabledDrawerFilters
+        @Default(.Customization.Library.randomImage)
+        private var libraryRandomImage
 
         @Default(.Customization.Library.displayType)
         private var libraryDisplayType
         @Default(.Customization.Library.posterType)
-        private var libraryPosterType
+        private var posterDisplayType
         @Default(.Customization.Library.listColumnCount)
         private var listColumnCount
 
@@ -38,6 +42,13 @@ extension CustomizeViewsSettings {
 
         var body: some View {
             Form {
+
+                Section {
+                    Toggle(L10n.favorites, isOn: $showFavorites)
+
+                    Toggle(L10n.randomImage, isOn: $libraryRandomImage)
+                } footer: {}
+
                 Section(L10n.filters) {
                     ChevronButton(L10n.filters) {
                         router.route(
@@ -55,15 +66,22 @@ extension CustomizeViewsSettings {
                 Section(L10n.layout) {
                     Picker(L10n.layout, selection: $libraryDisplayType)
 
-                    Picker(L10n.posters, selection: $libraryPosterType)
+                    Picker(L10n.posters, selection: $posterDisplayType)
 
                     if libraryDisplayType == .list, UIDevice.isPad {
-                        BasicStepper(
+                        Stepper(
                             L10n.columns,
                             value: $listColumnCount,
-                            range: 1 ... 4,
+                            in: 1 ... 4,
                             step: 1
                         )
+
+//                        BasicStepper(
+//                            L10n.columns,
+//                            value: $listColumnCount,
+//                            range: 1 ... 4,
+//                            step: 1
+//                        )
                     }
                 }
 

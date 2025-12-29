@@ -10,7 +10,8 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: have items provide labeled attributes
-// TODO: don't layout `VStack` if no data
+
+enum ItemView {}
 
 extension ItemView {
 

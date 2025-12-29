@@ -11,13 +11,16 @@ import SwiftUI
 
 extension EnhancedItemViewHeader {
 
-    struct iOSBody: View {
+    struct RegularBody: View {
 
-        @ObservedObject
-        var viewModel: _ItemViewModel
+        @Environment(\.frameForParentView)
+        private var frameForParentView
 
         @Namespace
         private var namespace
+
+        @ObservedObject
+        var viewModel: _ItemViewModel
 
         @Router
         private var router
@@ -42,69 +45,68 @@ extension EnhancedItemViewHeader {
 
         @ViewBuilder
         private var overlay: some View {
-            VStack(alignment: .center, spacing: 10) {
-                AlternateLayoutView(alignment: .bottom) {
-                    Color.clear
-                        .aspectRatio(1.77, contentMode: .fill)
-                } content: {
+            HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
+                VStack(alignment: .leading, spacing: 10) {
                     logo
-                        .frame(maxWidth: .infinity)
-                }
-                .frame(maxWidth: .infinity)
-                .zIndex(10)
-
-                VStack(alignment: .center, spacing: 10) {
-                    DotHStack {
-                        if let firstGenre = viewModel.item.genres?.first {
-                            Text(firstGenre)
-                        }
-
-                        if let premiereYear = viewModel.item.premiereDateYear {
-                            Text(premiereYear)
-                        }
-
-                        if let runtime = viewModel.item.runtime {
-                            Text(runtime, format: .hourMinuteAbbreviated)
-                        }
-                    }
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.secondary)
-
-                    if viewModel.item.presentPlayButton {
-                        PlayButton(viewModel: viewModel)
-                    }
 
                     ItemView.OverviewView(item: viewModel.item)
                         .overviewLineLimit(3)
                         .taglineLineLimit(2)
-                        .frame(maxWidth: .infinity, alignment: .leading)
 
-                    AttributesHStack(
-                        item: viewModel.item,
-                        mediaSource: nil
-                    )
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .edgePadding(.bottom)
-                .background(
-                    alignment: .bottom,
-                    extendedBy: .init(vertical: 25, horizontal: EdgeInsets.edgePadding)
-                ) {
-                    Rectangle()
-                        .fill(Material.ultraThin)
-                        .maskLinearGradient {
-                            (location: 0, opacity: 0)
-                            (location: 0.1, opacity: 0.7)
-                            (location: 0.2, opacity: 1)
+                    HStack(alignment: .top) {
+                        AttributesHStack(
+                            item: viewModel.item,
+                            mediaSource: viewModel.selectedMediaSource
+                        )
+
+                        DotHStack {
+                            if let firstGenre = viewModel.item.genres?.first {
+                                Text(firstGenre)
+                            }
+
+                            if let premiereYear = viewModel.item.premiereDateYear {
+                                Text(premiereYear)
+                            }
+
+                            if let runtime = viewModel.item.runtime {
+                                Text(runtime, format: .hourMinuteAbbreviated)
+                            }
                         }
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.secondary)
+                    }
                 }
-                .zIndex(9)
+                .frame(maxWidth: .infinity)
+
+                VStack(alignment: .center, spacing: 10) {
+                    if viewModel.item.presentPlayButton {
+                        PlayButton(viewModel: viewModel)
+                    }
+
+                    ActionButtonHStack(viewModel: viewModel)
+                }
+                .frame(maxWidth: 300)
+            }
+            .edgePadding(.bottom)
+            .background(
+                alignment: .bottom,
+                extendedBy: .init(horizontal: EdgeInsets.edgePadding)
+            ) {
+                Rectangle()
+                    .fill(Material.ultraThin)
+                    .maskLinearGradient {
+                        (location: 0, opacity: 0)
+                        (location: 0.5, opacity: 1)
+                    }
             }
         }
 
         var body: some View {
-            VStack {
+            AlternateLayoutView(alignment: .bottom) {
+                Color.clear
+                    .aspectRatio(2, contentMode: .fit)
+            } content: {
                 overlay
                     .edgePadding(.horizontal)
                     .frame(maxWidth: .infinity)
@@ -115,15 +117,17 @@ extension EnhancedItemViewHeader {
             ) {
                 AlternateLayoutView {
                     Color.clear
+                        .aspectRatio(2, contentMode: .fit)
                 } content: {
                     ImageView(
                         viewModel.item.landscapeImageSources(maxWidth: 1320, environment: .init(useParent: false))
                     )
+                    .aspectRatio(contentMode: .fit)
                 }
-                .aspectRatio(1.77, contentMode: .fit)
             }
             .scrollViewHeaderOffsetOpacity()
             .trackingFrame(for: .scrollViewHeader, key: ScrollViewHeaderFrameKey.self)
+            .environment(\.frameForParentView, frameForParentView.removingValue(for: .navigationStack))
             .preference(key: _UseOffsetNavigationBarKey.self, value: true)
             .preference(key: MenuContentKey.self) {
                 //                if viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item) {

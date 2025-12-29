@@ -9,8 +9,7 @@
 import SwiftUI
 import UIKit
 
-// TODO: rename `BlurEffectView`, or just use `Material`
-
+@available(*, deprecated, message: "Use `Material` instead")
 struct BlurView: UIViewRepresentable {
 
     let style: UIBlurEffect.Style

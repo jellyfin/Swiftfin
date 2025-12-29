@@ -8,19 +8,10 @@
 
 import SwiftUI
 
-struct OffsetNavigationBar<Content: View>: View {
-
-    private let content: Content
-
-    init(
-        headerMaxY: CGFloat?,
-        start: CGFloat = 25,
-        @ViewBuilder content: @escaping () -> Content
-    ) {
-        self.content = content()
-    }
-
-    var body: some View {
-        content
-    }
+func OffsetNavigationBar(
+    headerMaxY: CGFloat?,
+    start: CGFloat = 25,
+    @ViewBuilder content: @escaping () -> some View
+) -> some View {
+    content()
 }

@@ -31,15 +31,6 @@ struct CustomizeViewsSettings: View {
         List {
 
             Section {
-
-                Toggle(L10n.favorites, isOn: $showFavorites)
-                Toggle(L10n.randomImage, isOn: $libraryRandomImage)
-
-            } header: {
-                Text(L10n.library)
-            }
-
-            Section {
                 ChevronButton(L10n.search) {
                     router.route(to: .itemFilterDrawerSelector(selection: $searchEnabledDrawerFilters))
                 }

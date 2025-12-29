@@ -21,10 +21,10 @@ struct EnhancedItemViewHeader: _ContentGroup {
     }
 
     func body(with viewModel: Empty) -> some View {
-        if UIDevice.isPad {
-            iPadOSBody(viewModel: itemViewModel)
+        if UIDevice.isPhone {
+            CompactBody(viewModel: itemViewModel)
         } else {
-            iOSBody(viewModel: itemViewModel)
+            RegularBody(viewModel: itemViewModel)
         }
     }
 }

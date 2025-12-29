@@ -113,9 +113,14 @@ struct SimpleItemViewHeader: _ContentGroup {
 
                 titleAndAttributes
 
-                if viewModel.item.presentPlayButton {
-                    PlayButton(viewModel: viewModel)
+                VStack(alignment: .center, spacing: 10) {
+                    if viewModel.item.presentPlayButton {
+                        PlayButton(viewModel: viewModel)
+                    }
+
+                    ActionButtonHStack(viewModel: viewModel)
                 }
+                .frame(maxWidth: 300)
 
                 Divider()
 
@@ -131,18 +136,6 @@ struct SimpleItemViewHeader: _ContentGroup {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .edgePadding(.bottom)
-//            .background(
-//                alignment: .bottom,
-//                extendedBy: .init(vertical: 25, horizontal: EdgeInsets.edgePadding)
-//            ) {
-//                Rectangle()
-//                    .fill(Material.ultraThin)
-//                    .maskLinearGradient {
-//                        (location: 0, opacity: 0)
-//                        (location: 0.1, opacity: 0.7)
-//                        (location: 0.2, opacity: 1)
-//                    }
-//            }
         }
 
         var body: some View {
@@ -150,23 +143,7 @@ struct SimpleItemViewHeader: _ContentGroup {
                 overlay
                     .edgePadding(.horizontal)
                     .frame(maxWidth: .infinity)
-//                    .colorScheme(.dark)
             }
-//            .backgroundParallaxHeader(
-//                multiplier: 0.3
-//            ) {
-//                AlternateLayoutView {
-//                    Color.clear
-//                } content: {
-//                    ImageView(
-//                        viewModel.item.landscapeImageSources(maxWidth: 1320, environment: .init(useParent: false))
-//                    )
-//                }
-//                .aspectRatio(1.77, contentMode: .fit)
-//            }
-//            .scrollViewHeaderOffsetOpacity()
-//            .trackingFrame(for: .scrollViewHeader, key: ScrollViewHeaderFrameKey.self)
-//            .preference(key: _UseOffsetNavigationBarKey.self, value: true)
         }
     }
 }

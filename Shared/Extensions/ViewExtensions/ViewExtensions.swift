@@ -40,7 +40,10 @@ extension View {
     ///              Instead, use a native `if` statement.
     @ViewBuilder
     @inlinable
-    func `if`<Content: View>(_ condition: Bool, @ViewBuilder transform: (Self) -> Content) -> some View {
+    func `if`(
+        _ condition: Bool,
+        @ViewBuilder transform: (Self) -> some View
+    ) -> some View {
         if condition {
             transform(self)
         } else {
@@ -52,10 +55,10 @@ extension View {
     ///              Instead, use a native `if/else` statement.
     @ViewBuilder
     @inlinable
-    func `if`<Content: View>(
+    func `if`(
         _ condition: Bool,
-        @ViewBuilder transformIf: (Self) -> Content,
-        @ViewBuilder transformElse: (Self) -> Content
+        @ViewBuilder transformIf: (Self) -> some View,
+        @ViewBuilder transformElse: (Self) -> some View
     ) -> some View {
         if condition {
             transformIf(self)
@@ -68,9 +71,9 @@ extension View {
     ///              Instead, use a native `if let` statement.
     @ViewBuilder
     @inlinable
-    func ifLet<Value, Content: View>(
+    func ifLet<Value>(
         _ value: Value?,
-        @ViewBuilder transform: (Self, Value) -> Content
+        @ViewBuilder transform: (Self, Value) -> some View
     ) -> some View {
         if let value {
             transform(self, value)
@@ -83,10 +86,10 @@ extension View {
     ///              Instead, use a native `if let/else` statement.
     @ViewBuilder
     @inlinable
-    func ifLet<Value, Content: View>(
+    func ifLet<Value>(
         _ value: Value?,
-        @ViewBuilder transformIf: (Self, Value) -> Content,
-        @ViewBuilder transformElse: (Self) -> Content
+        @ViewBuilder transformIf: (Self, Value) -> some View,
+        @ViewBuilder transformElse: (Self) -> some View
     ) -> some View {
         if let value {
             transformIf(self, value)
