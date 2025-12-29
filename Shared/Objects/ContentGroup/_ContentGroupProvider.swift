@@ -1,0 +1,26 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+//
+
+@MainActor
+protocol _ContentGroupProvider: Displayable {
+
+    associatedtype Environment = Empty
+
+    var id: String { get }
+    var environment: Environment { get set }
+
+    @ContentGroupBuilder
+    func makeGroups(environment: Environment) async throws -> [any _ContentGroup]
+}
+
+extension _ContentGroupProvider where Environment == Empty {
+    var environment: Empty {
+        get { .init() }
+        set {}
+    }
+}

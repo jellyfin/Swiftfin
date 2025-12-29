@@ -31,7 +31,7 @@ struct TypeKeyedDictionary<Value> {
         }
     }
 
-    func withInsert<T>(type: T.Type, value: Value?) -> Self {
+    func inserting<T>(type: T.Type, value: Value?) -> Self {
         if let value {
             var copy = self
             copy[type] = value

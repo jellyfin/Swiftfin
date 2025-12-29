@@ -205,10 +205,10 @@ extension PagingLibraryView {
                 switch libraryStyle.displayType {
                 case .grid:
                     element.makeGridBody(libraryStyle: libraryStyle)
-//                    gridItemView(element: element)
+                        .withViewContext(.isThumb)
                 case .list:
                     element.makeListBody(libraryStyle: libraryStyle)
-//                    listItemView(element: element)
+                        .withViewContext(.isThumb)
                 }
             }
             .onReachedBottomEdge(offset: .offset(300)) {
@@ -217,8 +217,8 @@ extension PagingLibraryView {
             .scrollIndicators(.hidden)
             .onReceive(viewModel.events) { event in
                 switch event {
-                case let .retrievedRandomElement(element): ()
-//                    element.librarySelectAction(router: router, in: namespace)
+                case let .retrievedRandomElement(element):
+                    element.libraryDidSelectElement(router: router, in: namespace)
                 }
             }
             .preference(key: MenuContentKey.self) {

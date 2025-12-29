@@ -16,25 +16,6 @@ private let DefaultPageSize = 50
 private let SmallPageSize = 20
 
 @MainActor
-protocol WithRefresh {
-
-    associatedtype Background: WithRefresh = Empty
-
-    func refresh()
-    func refresh() async
-
-    var background: Background { get set }
-}
-
-extension WithRefresh where Background == Empty {
-
-    var background: Empty {
-        get { .init() }
-        set {}
-    }
-}
-
-@MainActor
 protocol __PagingLibaryViewModel<_PagingLibrary>: AnyObject, Identifiable,
 WithRefresh where Environment == _PagingLibrary.Environment {
 
@@ -42,7 +23,6 @@ WithRefresh where Environment == _PagingLibrary.Environment {
     associatedtype Environment
 
     var id: String { get }
-//    var elements: IdentifiedArray<_PagingLibrary.Element.ID, _PagingLibrary.Element> { get set }
     var elements: IdentifiedArrayOf<_PagingLibrary.Element> { get set }
     var environment: Environment { get set }
     var library: _PagingLibrary { get }
@@ -98,19 +78,22 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
 
     @Published
     var elements: IdentifiedArrayOf<Element>
-//    var elements: IdentifiedArray<_PagingLibrary.Element.ID, Element>
     @Published
     var environment: Environment
 
     private var hasNextPage = true
 
     let library: _PagingLibrary
+    let pageSize: Int
 
     var id: String {
         library.parent.libraryID
     }
 
-    init(library: _PagingLibrary) {
+    init(
+        library: _PagingLibrary,
+        pageSize: Int = DefaultPageSize
+    ) {
         self.environment = library.environment ?? .default
         self.library = library
         self.elements = IdentifiedArray(
@@ -119,6 +102,7 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
             uniquingIDsWith: { x, _ in x }
         )
         self.hasNextPage = library.hasNextPage
+        self.pageSize = pageSize
 
         super.init()
     }
@@ -133,7 +117,7 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
     @Function(\Action.Cases.retrieveNextPage)
     private func _retrieveNextPage() async throws {
         guard hasNextPage else { return }
-        try await self._actuallyRetrieveNextPage()
+        await self._actuallyRetrieveNextPage()
     }
 
     @Function(\Action.Cases._actuallyRetrieveNextPage)
@@ -142,7 +126,7 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
 
         let pageState = LibraryPageState(
             pageOffset: elements.count,
-            pageSize: DefaultPageSize,
+            pageSize: pageSize,
             userSession: userSession,
             elementIDs: []
 //            elementIDs: elements.map(\.unwrappedIDHashOrZero)
@@ -155,7 +139,7 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
 
         guard !Task.isCancelled else { return }
 
-        hasNextPage = !(nextPageElements.count < DefaultPageSize)
+        hasNextPage = !(nextPageElements.count < pageSize)
 
         elements.append(contentsOf: nextPageElements)
     }

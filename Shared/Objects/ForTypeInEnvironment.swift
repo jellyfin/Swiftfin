@@ -53,7 +53,7 @@ struct ForTypeInEnvironment<KeyType, Value>: DynamicProperty {
             content
                 .environment(
                     keyPath,
-                    dictionary.withInsert(
+                    dictionary.inserting(
                         type: KeyType.self,
                         value: self.content?(dictionary)
                     )

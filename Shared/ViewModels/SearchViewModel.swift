@@ -49,17 +49,26 @@ final class SearchViewModel: ViewModel {
 
     let filterViewModel: FilterViewModel
 
-    var hasNoResults: Bool {
-        itemContentGroupViewModel.groups
-            .allSatisfy { _ in
-                @MainActor
-                func isEmpty(_ vm: some __PagingLibaryViewModel) -> Bool {
-                    vm.elements.isEmpty
-                }
-
-//                return isEmpty(viewModel)
-                return false
+    var isEmpty: Bool {
+        func extract<T: _ContentGroup>(_ group: T) -> Bool {
+            func inner<VM: __PagingLibaryViewModel>(_ vm: VM) -> Bool {
+                vm.elements.isEmpty
             }
+
+            if let libaryViewModel = group.viewModel as? any __PagingLibaryViewModel {
+                return inner(libaryViewModel)
+            } else {
+                return true
+            }
+        }
+
+        return itemContentGroupViewModel.groups
+            .map { extract($0) }
+            .reduce(true) { $0 && $1 }
+    }
+
+    var isNotEmpty: Bool {
+        !isEmpty
     }
 
     var canSearch: Bool {

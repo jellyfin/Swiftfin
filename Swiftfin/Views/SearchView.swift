@@ -35,6 +35,11 @@ struct SearchView: View {
     private var viewModel = SearchViewModel()
 
     @ViewBuilder
+    private func makeGroupBody<G: _ContentGroup>(_ group: G) -> some View {
+        group.body(with: group.viewModel)
+    }
+
+    @ViewBuilder
     private var suggestionsView: some View {
         VStack(spacing: 20) {
             ForEach(viewModel.suggestions) { item in
@@ -49,9 +54,10 @@ struct SearchView: View {
     private var resultsView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
-                ContentGroupContentView(
-                    viewModel: viewModel.itemContentGroupViewModel
-                )
+                ForEach(viewModel.itemContentGroupViewModel.groups, id: \.id) { group in
+                    makeGroupBody(group)
+                        .eraseToAnyView()
+                }
             }
             .edgePadding(.vertical)
         }
@@ -62,7 +68,7 @@ struct SearchView: View {
         ZStack {
             switch viewModel.state {
             case .initial:
-                if viewModel.hasNoResults {
+                if viewModel.isEmpty {
                     if viewModel.canSearch {
                         Text(L10n.noResults)
                     } else {

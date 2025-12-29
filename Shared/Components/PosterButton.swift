@@ -111,37 +111,6 @@ struct PosterButton<Item: Poster, Label: View>: View {
     }
 }
 
-struct PosterIndicatorsOverlay: View {
-
-    let item: BaseItemDto
-    let indicators: [PosterOverlayIndicator]
-    let posterDisplayType: PosterDisplayType
-
-    var body: some View {
-        ZStack {
-            if indicators.contains(.favorited) {
-                FavoriteIndicator()
-            }
-
-            if indicators.contains(.unplayed) {
-                UnplayedIndicator()
-            }
-
-            if indicators.contains(.played) {
-                PlayedIndicator()
-            }
-
-            if indicators.contains(.progress), let progress = item.progress, let position = item.userData?.playbackPosition {
-                PosterProgressIndicator(
-                    title: position.formatted(.runtime),
-                    progress: progress,
-                    posterDisplayType: posterDisplayType
-                )
-            }
-        }
-    }
-}
-
 extension PosterButton where Label == EmptyView {
 
     init(
@@ -182,6 +151,37 @@ struct TitleSubtitleContentView: View {
                     .fontWeight(.medium)
                     .foregroundStyle(.secondary)
                     .lineLimit(1, reservesSpace: true)
+            }
+        }
+    }
+}
+
+struct PosterIndicatorsOverlay: View {
+
+    let item: BaseItemDto
+    let indicators: [PosterOverlayIndicator]
+    let posterDisplayType: PosterDisplayType
+
+    var body: some View {
+        ZStack {
+            if indicators.contains(.favorited) {
+                FavoriteIndicator()
+            }
+
+            if indicators.contains(.unplayed) {
+                UnplayedIndicator()
+            }
+
+            if indicators.contains(.played) {
+                PlayedIndicator()
+            }
+
+            if indicators.contains(.progress), let progress = item.progress, let position = item.userData?.playbackPosition {
+                PosterProgressIndicator(
+                    title: position.formatted(.runtime),
+                    progress: progress,
+                    posterDisplayType: posterDisplayType
+                )
             }
         }
     }

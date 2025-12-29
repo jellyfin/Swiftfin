@@ -53,7 +53,7 @@ struct SearchView: View {
         ZStack {
             switch viewModel.state {
             case .initial:
-                if viewModel.hasNoResults {
+                if viewModel.isEmpty {
                     if viewModel.canSearch {
                         Text(L10n.noResults)
                     } else {

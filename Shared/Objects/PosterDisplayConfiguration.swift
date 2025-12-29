@@ -13,11 +13,6 @@ struct PosterDisplayConfiguration: Equatable, WithDefaultValue, Storable {
     var displayType: PosterDisplayType
     var size: PosterDisplayType.Size
 
-    enum CodingKeys: String, CodingKey {
-        case displayType
-        case size
-    }
-
     static let `default`: PosterDisplayConfiguration = .init(
         displayType: .portrait,
         size: .small

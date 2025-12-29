@@ -278,8 +278,6 @@ extension BaseItemDto: LibraryElement {
                 type: libraryStyle.posterDisplayType
             ) { namespace in
                 libraryDidSelectElement(router: router, in: namespace)
-            } label: {
-                EmptyView()
             }
         }
     }

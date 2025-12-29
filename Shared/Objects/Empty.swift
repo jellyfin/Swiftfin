@@ -8,6 +8,11 @@
 
 struct Empty {}
 
+extension Empty: LibraryGrouping {
+    var displayTitle: String { "" }
+    var id: String { "" }
+}
+
 extension Empty: WithDefaultValue {
     static var `default`: Empty = .init()
 }
@@ -15,15 +20,4 @@ extension Empty: WithDefaultValue {
 extension Empty: WithRefresh {
     func refresh() {}
     func refresh() async throws {}
-}
-
-extension Empty: LibraryGrouping {
-
-    var displayTitle: String {
-        ""
-    }
-
-    var id: String {
-        ""
-    }
 }
