@@ -7,27 +7,11 @@
 //
 
 import Defaults
-import JellyfinAPI
 import SwiftUI
 
-struct EnhancedItemViewHeader: _ContentGroup {
+extension EnhancedItemViewHeader {
 
-    let id = "item-view-header"
-    let viewModel: Empty = .init()
-    let itemViewModel: _ItemViewModel
-
-    init(itemViewModel: _ItemViewModel) {
-        self.itemViewModel = itemViewModel
-    }
-
-    func body(with viewModel: Empty) -> Body {
-        Body(viewModel: itemViewModel)
-    }
-
-    struct Body: View {
-
-        @Default(.accentColor)
-        private var accentColor
+    struct iOSBody: View {
 
         @ObservedObject
         var viewModel: _ItemViewModel
@@ -39,26 +23,31 @@ struct EnhancedItemViewHeader: _ContentGroup {
         private var router
 
         @ViewBuilder
+        private var logo: some View {
+            ImageView(viewModel.item.imageURL(.logo, maxHeight: 70))
+                .placeholder { _ in
+                    EmptyView()
+                }
+                .failure {
+                    MaxHeightText(viewModel.item.displayTitle)
+                        .font(.largeTitle)
+                        .fontWeight(.semibold)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(.primary)
+                }
+                .aspectRatio(contentMode: .fit)
+                .frame(height: 70, alignment: .bottom)
+        }
+
+        @ViewBuilder
         private var overlay: some View {
             VStack(alignment: .center, spacing: 10) {
                 AlternateLayoutView(alignment: .bottom) {
                     Color.clear
                         .aspectRatio(1.77, contentMode: .fill)
                 } content: {
-                    ImageView(viewModel.item.imageURL(.logo, maxHeight: 70))
-                        .placeholder { _ in
-                            EmptyView()
-                        }
-                        .failure {
-                            MaxHeightText(viewModel.item.displayTitle)
-                                .font(.largeTitle)
-                                .fontWeight(.semibold)
-                                .lineLimit(2)
-                                .multilineTextAlignment(.center)
-                                .foregroundStyle(.primary)
-                        }
-                        .aspectRatio(contentMode: .fit)
-                        .frame(height: 70, alignment: .bottom)
+                    logo
                         .frame(maxWidth: .infinity)
                 }
                 .frame(maxWidth: .infinity)
@@ -115,54 +104,38 @@ struct EnhancedItemViewHeader: _ContentGroup {
         }
 
         var body: some View {
-            WithEnvironment(value: \.frameForParentView) { frameForParentView in
-                var opacity: CGFloat {
-                    let end = frameForParentView[.scrollView, default: .zero].safeAreaInsets.top + 25
-                    let start = end + 100
-                    let offset = frameForParentView[.scrollViewHeader, default: .zero].frame.maxY
-
-                    return clamp((offset - end) / (start - end), min: 0, max: 1)
-                }
-
-                VStack {
-                    overlay
-                        .edgePadding(.horizontal)
-                        .frame(maxWidth: .infinity)
-                        .colorScheme(.dark)
-                }
-                .backgroundParallaxHeader(
-                    multiplier: 0.3
-                ) {
-                    AlternateLayoutView {
-                        Color.clear
-                    } content: {
-                        ImageView(
-                            viewModel.item.landscapeImageSources(maxWidth: 1320, environment: .init(useParent: false))
-                        )
-                    }
-                    .aspectRatio(1.77, contentMode: .fit)
-                }
-                .overlay {
-                    #if os(iOS)
-                    Color.systemBackground
-                        .opacity(1 - opacity)
-                    #endif
-                }
+            VStack {
+                overlay
+                    .edgePadding(.horizontal)
+                    .frame(maxWidth: .infinity)
+                    .colorScheme(.dark)
             }
-//            .scrollViewHeaderOffsetOpacity()
+            .backgroundParallaxHeader(
+                multiplier: 0.3
+            ) {
+                AlternateLayoutView {
+                    Color.clear
+                } content: {
+                    ImageView(
+                        viewModel.item.landscapeImageSources(maxWidth: 1320, environment: .init(useParent: false))
+                    )
+                }
+                .aspectRatio(1.77, contentMode: .fit)
+            }
+            .scrollViewHeaderOffsetOpacity()
             .trackingFrame(for: .scrollViewHeader, key: ScrollViewHeaderFrameKey.self)
             .preference(key: _UseOffsetNavigationBarKey.self, value: true)
             .preference(key: MenuContentKey.self) {
-//                if viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item) {
+                //                if viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item) {
                 #if os(iOS)
                 MenuContentGroup(id: "test") {
                     Button(L10n.edit, systemImage: "pencil") {
                         router.route(to: .editItem(viewModel.item))
-//                            router.route(to: .settings)
+                        //                            router.route(to: .settings)
                     }
                 }
                 #endif
-//                }
+                //                }
             }
         }
     }

@@ -53,13 +53,15 @@ struct ItemContentGroupView<Provider: _ContentGroupProvider>: View {
                 .ignoresSafeArea(edges: .horizontal)
                 .scrollIndicators(.hidden)
                 .overlay(alignment: .top) {
-                    Rectangle()
-                        .fill(Material.ultraThin)
-                        .maskLinearGradient()
-                        .frame(height: frameForParentView[.navigationStack, default: .zero].safeAreaInsets.top)
-                        .offset(y: -frameForParentView[.scrollView, default: .zero].safeAreaInsets.top)
-                        .colorScheme(.dark)
-                        .hidden(!carriedUseOffsetNavigationBar)
+                    if carriedUseOffsetNavigationBar, UIDevice.isPhone {
+                        Rectangle()
+                            .fill(Material.ultraThin)
+                            .maskLinearGradient()
+                            .frame(height: frameForParentView[.navigationStack, default: .zero].safeAreaInsets.top)
+                            .offset(y: -frameForParentView[.scrollView, default: .zero].safeAreaInsets.top)
+                            .colorScheme(.dark)
+                            .hidden(!carriedUseOffsetNavigationBar)
+                    }
                 }
             }
         }

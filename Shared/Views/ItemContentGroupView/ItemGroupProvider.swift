@@ -40,12 +40,16 @@ struct ItemGroupProvider: _ContentGroupProvider {
     @ContentGroupBuilder
     private func _makeGroups(item: BaseItemDto, itemID: String) async throws -> [any _ContentGroup] {
 
-        if item.type == .movie || item.type == .series, Defaults[.Customization.itemViewType] == .enhanced {
+        if UIDevice.isPad {
             EnhancedItemViewHeader(itemViewModel: viewModel)
-        } else if item.type == .person || item.type == .musicArtist {
-            PortraitItemViewHeader(itemViewModel: viewModel)
         } else {
-            SimpleItemViewHeader(itemViewModel: viewModel)
+            if item.type == .movie || item.type == .series, Defaults[.Customization.itemViewType] == .enhanced {
+                EnhancedItemViewHeader(itemViewModel: viewModel)
+            } else if item.type == .person || item.type == .musicArtist {
+                PortraitItemViewHeader(itemViewModel: viewModel)
+            } else {
+                SimpleItemViewHeader(itemViewModel: viewModel)
+            }
         }
 
         #if os(iOS)
