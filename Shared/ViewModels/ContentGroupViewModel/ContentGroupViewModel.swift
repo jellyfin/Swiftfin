@@ -76,6 +76,7 @@ final class ContentGroupViewModel<Provider: _ContentGroupProvider>: ViewModel {
 
         let newGroups = try await provider.makeGroups(environment: provider.environment)
         let viewModels = newGroups.map { getViewModel(for: $0) }
+            .uniqued { ObjectIdentifier($0 as AnyObject) }
 
         self.groups = newGroups
 

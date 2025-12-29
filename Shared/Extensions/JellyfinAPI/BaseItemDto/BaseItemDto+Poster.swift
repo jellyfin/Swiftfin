@@ -17,14 +17,14 @@ extension BaseItemDto: Poster {
 
     struct Environment: CustomEnvironmentValue {
         let useParent: Bool
-        let isThumb: Bool
+        let viewContext: ViewContext
 
         init(
             useParent: Bool = false,
-            isThumb: Bool = false
+            viewContext: ViewContext = .init()
         ) {
             self.useParent = useParent
-            self.isThumb = isThumb
+            self.viewContext = viewContext
         }
 
         static let `default`: Self = .init()
@@ -111,7 +111,7 @@ extension BaseItemDto: Poster {
         switch type {
         case .episode:
             if environment.useParent {
-                if environment.isThumb {
+                if environment.viewContext.contains(.isThumb) {
                     seriesImageSource(.thumb, maxWidth: maxWidth, quality: quality)
                 }
                 seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality)
@@ -122,7 +122,7 @@ extension BaseItemDto: Poster {
         case .collectionFolder, .folder, .musicVideo, .program, .userView, .video:
             imageSource(.primary, maxWidth: maxWidth, quality: quality)
         default:
-            if environment.isThumb {
+            if environment.viewContext.contains(.isThumb) {
                 imageSource(.thumb, maxWidth: maxWidth, quality: quality)
             }
             imageSource(.backdrop, maxWidth: maxWidth, quality: quality)

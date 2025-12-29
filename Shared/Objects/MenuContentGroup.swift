@@ -14,12 +14,15 @@ struct MenuContentGroup: Identifiable, Equatable {
 
     let id: String
     let content: AnyView
+    let isPrimary: Bool
 
     init(
         id: String = UUID().uuidString,
+        isPrimary: Bool = false,
         @ViewBuilder content: () -> some View
     ) {
         self.id = id
+        self.isPrimary = isPrimary
         self.content = AnyView(content())
     }
 

@@ -173,6 +173,7 @@ extension StoredValues.Keys {
             )
         }
 
+        // TODO: move edit/delete item + edit collections to an OptionSet
         static var enableItemEditing: Key<Bool> {
             CurrentUserKey(
                 "enableItemEditing",
@@ -202,14 +203,6 @@ extension StoredValues.Keys {
                 "enabledTrailers",
                 domain: "enabledTrailers",
                 default: .all
-            )
-        }
-
-        static var itemViewAttributes: Key<[ItemViewAttribute]> {
-            CurrentUserKey(
-                "itemViewAttributes",
-                domain: "itemViewAttributes",
-                default: ItemViewAttribute.allCases
             )
         }
 

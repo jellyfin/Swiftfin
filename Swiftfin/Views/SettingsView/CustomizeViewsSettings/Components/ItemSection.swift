@@ -22,11 +22,7 @@ extension CustomizeViewsSettings {
 
         @Default(.Customization.itemViewType)
         private var itemViewType
-        @Default(.Customization.CinematicItemViewType.usePrimaryImage)
-        private var cinematicItemViewTypeUsePrimaryImage
 
-        @StoredValue(.User.itemViewAttributes)
-        private var itemViewAttributes
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers
 
@@ -48,18 +44,6 @@ extension CustomizeViewsSettings {
                     Section {
                         Picker(L10n.items, selection: $itemViewType)
                     }
-
-                    if itemViewType == .cinematic {
-                        Section {
-                            Toggle(L10n.usePrimaryImage, isOn: $cinematicItemViewTypeUsePrimaryImage)
-                        } footer: {
-                            Text(L10n.usePrimaryImageDescription)
-                        }
-                    }
-                }
-
-                ChevronButton(L10n.mediaAttributes) {
-                    router.route(to: .itemViewAttributes(selection: $itemViewAttributes))
                 }
 
                 Picker(

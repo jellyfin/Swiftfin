@@ -98,20 +98,28 @@ extension SeriesEpisodeSelector {
             ZStack {
                 PlaceholderHStack()
 
-                Group {
-                    switch viewModel.state {
-                    case .content:
-                        if viewModel.elements.isEmpty {
-                            EmptyHStack(focusedEpisodeID: $focusedEpisodeID)
-                        } else {
-                            contentView(viewModel: viewModel)
-                        }
-                    case let .error(error):
-                        ErrorHStack(viewModel: viewModel, error: error, focusedEpisodeID: $focusedEpisodeID)
-                    case .initial, .refreshing:
-                        LoadingHStack(focusedEpisodeID: $focusedEpisodeID)
-                    }
-                }.transition(.opacity.animation(.linear(duration: 0.1)))
+//                Group {
+//                    switch viewModel.state {
+//                    case .content:
+//                        if viewModel.elements.isEmpty {
+                ////                            EmptyHStack(focusedEpisodeID: $focusedEpisodeID)
+//                        } else {
+//                            contentView
+//                        }
+//                    case let .error(error):
+//                        viewModel.error.map { error in
+//                            ErrorHStack(
+//                                error: error,
+//                                focusedEpisodeID: $focusedEpisodeID
+//                            ) {
+//                                viewModel.refresh()
+//                            }
+//                        }
+//                    case .initial, .refreshing:
+//                        LoadingHStack(focusedEpisodeID: $focusedEpisodeID)
+//                    }
+//                }
+//                .transition(.opacity.animation(.linear(duration: 0.1)))
             }
             .padding(.bottom, 45)
             .focusSection()
@@ -161,12 +169,11 @@ extension SeriesEpisodeSelector {
 
     // MARK: - Error HStack
 
-    struct ErrorHStack: View {
+    struct ErrorHStack<_Error: Error>: View {
 
-        @ObservedObject
-        var viewModel: PagingSeasonViewModel
-
+        let error: _Error
         let focusedEpisodeID: FocusState<String?>.Binding
+        let action: () -> Void
 
         var body: some View {
             CollectionHStack(
@@ -174,10 +181,9 @@ extension SeriesEpisodeSelector {
                 columns: 3.5
             ) { _ in
                 SeriesEpisodeSelector.ErrorCard(
-                    error: viewModel.error ?? JellyfinAPIError(L10n.unknownError)
-                ) {
-                    viewModel.refresh()
-                }
+                    error: error,
+                    action: action
+                )
                 .focused(focusedEpisodeID, equals: "errorCard")
                 .padding(.horizontal, 4)
             }

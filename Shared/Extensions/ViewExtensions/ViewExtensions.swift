@@ -370,6 +370,7 @@ extension View {
         }
     }
 
+    @available(*, deprecated, message: "Use `Router` and `NavigationRoute` instead")
     func blurredFullScreenCover(
         isPresented: Binding<Bool>,
         onDismiss: (() -> Void)? = nil,
@@ -474,6 +475,7 @@ extension View {
         start: CGFloat = 100,
         end: CGFloat = 25
     ) -> some View {
+        #if os(iOS)
         WithEnvironment(value: \.frameForParentView) { frameForParentView in
             var opacity: CGFloat {
                 let end = frameForParentView[.scrollView, default: .zero].safeAreaInsets.top + end
@@ -488,6 +490,9 @@ extension View {
                     .opacity(1 - opacity)
             }
         }
+        #else
+        self
+        #endif
     }
 
     /// Masks the view with a linear gradient from top to bottom.

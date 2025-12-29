@@ -8,37 +8,6 @@
 
 import SwiftUI
 
-struct _UseOffsetNavigationBarKey: PreferenceKey {
-    static var defaultValue: Bool = false
-    static func reduce(value: inout Bool, nextValue: () -> Bool) {
-        value = nextValue()
-    }
-}
-
-struct TrackingPreference<Content: View, Key: PreferenceKey>: View where Key.Value: Equatable {
-
-    @State
-    private var currentValue = Key.defaultValue
-
-    private let content: (Key.Value) -> Content
-    private let key: Key.Type
-
-    init(
-        key: Key.Type,
-        @ViewBuilder content: @escaping (Key.Value) -> Content
-    ) {
-        self.content = content
-        self.key = key
-    }
-
-    var body: some View {
-        content(currentValue)
-            .onPreferenceChange(key) { newValue in
-                currentValue = newValue
-            }
-    }
-}
-
 struct OffsetNavigationBar<Content: View>: View {
 
     @Environment(\.frameForParentView)

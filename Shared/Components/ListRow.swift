@@ -12,7 +12,7 @@ import SwiftUI
 struct ListRow<Leading: View, Content: View>: View {
 
     @State
-    private var contentSize: CGSize = .zero
+    private var contentFrame: CGRect = .zero
 
     private let action: () -> Void
     private let content: Content
@@ -43,7 +43,7 @@ struct ListRow<Leading: View, Content: View>: View {
                         maxHeight: .infinity,
                         alignment: .leading
                     )
-                    .trackingSize($contentSize)
+                    .trackingFrame($contentFrame)
             }
             .padding(insets)
         }
@@ -51,10 +51,11 @@ struct ListRow<Leading: View, Content: View>: View {
         .contentShape(.contextMenuPreview, Rectangle())
         .listRowSeparator(.hidden)
         .overlay(alignment: .bottomTrailing) {
-            Color.secondarySystemFill
+//            Color.secondarySystemFill
+            Divider()
                 .frame(
-                    width: contentSize.width + insets.trailing,
-                    height: 1
+                    width: contentFrame.width + insets.trailing
+//                    height: 1
                 )
         }
     }

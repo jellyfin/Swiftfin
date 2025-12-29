@@ -40,6 +40,16 @@ extension View {
 
     /// - Important: This does nothing on tvOS.
     @ViewBuilder
+    func navigationBarMenuButton(
+        isLoading: Bool = false,
+        isHidden: Bool = false,
+        @ViewBuilder _ content: @escaping () -> some View
+    ) -> some View {
+        self
+    }
+
+    /// - Important: This does nothing on tvOS.
+    @ViewBuilder
     func prefersStatusBarHidden(_ hidden: Bool) -> some View {
         self
     }

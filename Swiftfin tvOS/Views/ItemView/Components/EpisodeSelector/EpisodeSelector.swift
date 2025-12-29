@@ -12,50 +12,62 @@ import SwiftUI
 
 struct SeriesEpisodeSelector: View {
 
-    // MARK: - Observed & Environment Objects
-
     @ObservedObject
-    var viewModel: SeriesItemViewModel
+    var viewModel: _ItemViewModel
 
     @EnvironmentObject
     private var parentFocusGuide: FocusGuide
-
-    // MARK: - State Variables
 
     @State
     private var didSelectPlayButtonSeason = false
     @State
     private var selection: PagingSeasonViewModel.ID?
 
-    // MARK: - Calculated Variables
+    @StateObject
+    private var seasonsViewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
     private var selectionViewModel: PagingSeasonViewModel? {
-        viewModel.seasons.first(where: { $0.id == selection }) ?? viewModel.seasons.first
+        guard let id = selection else { return nil }
+        return seasonsViewModel.elements[id: id]
+    }
+
+    init(viewModel: _ItemViewModel) {
+        self.viewModel = viewModel
+        self._seasonsViewModel = .init(wrappedValue: .init(library: .init(series: viewModel.item)))
     }
 
     // MARK: - Body
 
     var body: some View {
         VStack(spacing: 0) {
-            SeasonsHStack(viewModel: viewModel, selection: $selection)
-                .environmentObject(parentFocusGuide)
+            SeasonsHStack(
+                viewModel: seasonsViewModel,
+                selection: $selection
+            )
 
             if let selectionViewModel {
-                EpisodeHStack(viewModel: selectionViewModel, playButtonItem: viewModel.playButtonItem)
-                    .environmentObject(parentFocusGuide)
+                EpisodeHStack(
+                    viewModel: selectionViewModel,
+                    playButtonItem: viewModel.playButtonItem
+                )
             }
         }
+        .environmentObject(parentFocusGuide)
         .onReceive(viewModel.playButtonItem.publisher) { newValue in
 
-            guard !didSelectPlayButtonSeason else { return }
-            didSelectPlayButtonSeason = true
+            guard selection == nil else { return }
+            guard let playButtonSeasonID = newValue.seasonID else { return }
 
-            if let playButtonSeason = viewModel.seasons.first(where: { $0.id == newValue.seasonID }) {
+            if let playButtonSeason = seasonsViewModel.elements[id: playButtonSeasonID] {
                 selection = playButtonSeason.id
             } else {
-                selection = viewModel.seasons.first?.id
+                selection = seasonsViewModel.elements.first?.id
             }
         }
+        .onFirstAppear {
+            seasonsViewModel.refresh()
+        }
+        .backport
         .onChange(of: selection) { _, _ in
             guard let selectionViewModel else { return }
 

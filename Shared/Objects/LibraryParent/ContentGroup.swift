@@ -70,6 +70,11 @@ struct PillGroup<Library: PagingLibrary>: _ContentGroup where Library.Element: D
         self.viewModel = .init(library: library)
     }
 
+    #if os(tvOS)
+    func body(with viewModel: PagingLibraryViewModel<Library>) -> some View {
+        EmptyView()
+    }
+    #else
     func body(with viewModel: PagingLibraryViewModel<Library>) -> some View {
         WithRouter { router in
             PillHStack(
@@ -105,6 +110,7 @@ struct PillGroup<Library: PagingLibrary>: _ContentGroup where Library.Element: D
             }
         }
     }
+    #endif
 }
 
 struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element: LibraryElement {

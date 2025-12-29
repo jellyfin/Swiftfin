@@ -154,13 +154,6 @@ extension NavigationRoute {
         }
     }
 
-    static func itemViewAttributes(selection: Binding<[ItemViewAttribute]>) -> NavigationRoute {
-        NavigationRoute(id: "itemViewAttributes") {
-            OrderedSectionSelectorView(selection: selection, sources: ItemViewAttribute.allCases)
-                .navigationTitle(L10n.mediaAttributes.localizedCapitalized)
-        }
-    }
-
     static let localSecurity = NavigationRoute(
         id: "localSecurity"
     ) {

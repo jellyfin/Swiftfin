@@ -113,7 +113,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                             menuActionButtons,
                             content: view(for:)
                         )
-                        .environment(\.isInMenu, true)
+                        .withViewContext(.isInMenu)
                     }
                 }
             }

@@ -12,128 +12,6 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-struct PosterHStackLibrarySection<Library: PagingLibrary>: View where Library.Element: LibraryElement {
-
-    @Router
-    private var router
-
-    @StateObject
-    private var viewModel: PagingLibraryViewModel<Library>
-
-    private let group: PosterGroup<Library>
-
-    init(viewModel: PagingLibraryViewModel<Library>, group: PosterGroup<Library>) {
-        self.group = group
-        _viewModel = StateObject(wrappedValue: viewModel)
-    }
-
-    var body: some View {
-        if viewModel.elements.isNotEmpty {
-            PosterHStack(
-                elements: viewModel.elements,
-                type: group.posterDisplayType,
-                size: group.posterSize
-            ) { element, namespace in
-
-                switch element {
-                case let element as BaseItemDto:
-                    switch element.type {
-                    case .program, .liveTvChannel, .tvProgram, .tvChannel:
-                        router.route(
-                            to: .videoPlayer(
-                                provider: element.getPlaybackItemProvider(userSession: viewModel.userSession)
-                            )
-                        )
-                    default:
-                        router.route(to: .item(item: element), in: namespace)
-                    }
-                case let element as BaseItemPerson: ()
-                    router.route(to: .item(item: .init(person: element)), in: namespace)
-                default: ()
-                }
-            } header: {
-                Header(title: viewModel.library.parent.displayTitle) {
-                    router.route(to: .library(library: viewModel.library))
-                }
-            }
-            .animation(.linear(duration: 0.2), value: viewModel.elements)
-        }
-    }
-}
-
-extension PosterHStackLibrarySection {
-
-    struct Header: View {
-
-        let title: String
-        let action: () -> Void
-
-        var body: some View {
-            Button(action: action) {
-                HStack(spacing: 3) {
-                    Text(title)
-                        .font(.title2)
-                        .lineLimit(2)
-                        .foregroundStyle(.primary)
-
-                    Image(systemName: "chevron.forward")
-                        .font(.title3)
-                        .foregroundStyle(.secondary)
-                }
-                .fontWeight(.semibold)
-            }
-            .foregroundStyle(.primary, .secondary)
-            .accessibilityAddTraits(.isHeader)
-            .accessibilityAction(named: Text("Open library"), action)
-            .edgePadding(.horizontal)
-        }
-    }
-}
-
-struct ContentGroupContentView<Provider: _ContentGroupProvider>: View {
-
-    @ObservedObject
-    var viewModel: ContentGroupViewModel<Provider>
-
-    private func makeGroupBody<G: _ContentGroup>(_ group: G) -> some View {
-        group.body(with: group.viewModel)
-    }
-
-    var body: some View {
-        ForEach(viewModel.groups, id: \.id) { group in
-            makeGroupBody(group)
-                .eraseToAnyView()
-        }
-    }
-}
-
-struct ContentGroupShimView: View {
-
-    @StoredValue
-    private var customContentGroup: ContentGroupProviderSetting
-
-    init(id: String) {
-        self._customContentGroup = StoredValue(
-            .User.customContentGroup(id: id)
-        )
-    }
-
-    @ViewBuilder
-    private func unpack(_ provider: some _ContentGroupProvider) -> some View {
-        ContentGroupView(provider: provider)
-    }
-
-    var body: some View {
-        unpack(customContentGroup.provider)
-            .eraseToAnyView()
-            .id(customContentGroup.hashValue)
-            .backport
-            .onChange(of: customContentGroup) { oldValue, newValue in
-                print("ContentGroupShimView: customContentGroup changed from \(oldValue) to \(newValue)")
-            }
-    }
-}
-
 struct ContentGroupView<Provider: _ContentGroupProvider>: View {
 
     @Router
@@ -142,23 +20,39 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
     @StateObject
     private var viewModel: ContentGroupViewModel<Provider>
 
+    @TabItemSelected
+    private var tabItemSelected
+
     init(provider: Provider) {
         _viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
     }
 
     @ViewBuilder
     private var contentView: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 10) {
-                ContentGroupContentView(viewModel: viewModel)
+        ScrollViewReader { proxy in
+            ScrollView {
+                Color.clear
+                    .frame(height: 0)
+                    .id("top")
+
+                VStack(alignment: .leading, spacing: 10) {
+                    ContentGroupContentView(viewModel: viewModel)
+                }
+                .edgePadding(.vertical)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .edgePadding(.vertical)
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .ignoresSafeArea(edges: .horizontal)
-        .scrollIndicators(.hidden)
-        .refreshable {
-            await viewModel.background.refresh()
+            .ignoresSafeArea(edges: .horizontal)
+            .scrollIndicators(.hidden)
+            .refreshable {
+                await viewModel.background.refresh()
+            }
+            .onReceive(tabItemSelected) { event in
+                if event.isRepeat, event.isRoot {
+                    withAnimation {
+                        proxy.scrollTo("top", anchor: .top)
+                    }
+                }
+            }
         }
     }
 
@@ -217,6 +111,51 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
 //                viewModel.notificationsReceived.remove(.itemMetadataDidChange)
 //            }
 //        }
+    }
+}
+
+struct ContentGroupContentView<Provider: _ContentGroupProvider>: View {
+
+    @ObservedObject
+    var viewModel: ContentGroupViewModel<Provider>
+
+    @ViewBuilder
+    private func makeGroupBody<G: _ContentGroup>(_ group: G) -> some View {
+        group.body(with: group.viewModel)
+    }
+
+    var body: some View {
+        ForEach(viewModel.groups, id: \.id) { group in
+            makeGroupBody(group)
+                .eraseToAnyView()
+        }
+    }
+}
+
+struct ContentGroupShimView: View {
+
+    @StoredValue
+    private var customContentGroup: ContentGroupProviderSetting
+
+    init(id: String) {
+        self._customContentGroup = StoredValue(
+            .User.customContentGroup(id: id)
+        )
+    }
+
+    @ViewBuilder
+    private func unpack(_ provider: some _ContentGroupProvider) -> some View {
+        ContentGroupView(provider: provider)
+    }
+
+    var body: some View {
+        unpack(customContentGroup.provider)
+            .eraseToAnyView()
+            .id(customContentGroup.hashValue)
+            .backport
+            .onChange(of: customContentGroup) { oldValue, newValue in
+                print("ContentGroupShimView: customContentGroup changed from \(oldValue) to \(newValue)")
+            }
     }
 }
 

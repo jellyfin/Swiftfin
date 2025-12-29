@@ -18,7 +18,6 @@ struct PosterIndicator: OptionSet, Storable {
     static let unplayed = PosterIndicator(rawValue: 1 << 2)
 }
 
-
 enum PosterOverlayIndicator: String, CaseIterable, Storable {
 
     case favorited

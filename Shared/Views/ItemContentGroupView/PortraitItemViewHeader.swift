@@ -12,10 +12,11 @@ import SwiftUI
 struct PortraitItemViewHeader: _ContentGroup {
 
     let id = "item-view-header"
-    let viewModel: _ItemViewModel
+    let viewModel: Empty = .init()
+    let itemViewModel: _ItemViewModel
 
-    func body(with viewModel: _ItemViewModel) -> Body {
-        Body(viewModel: viewModel)
+    func body(with viewModel: Empty) -> Body {
+        Body(viewModel: itemViewModel)
     }
 
     struct Body: View {
@@ -69,7 +70,7 @@ struct PortraitItemViewHeader: _ContentGroup {
                 multiplier: 0.3
             ) {
                 AlternateLayoutView {
-                    Color.red
+                    Color.clear
                 } content: {
                     ImageView(
                         viewModel.item.landscapeImageSources(maxWidth: 1320, environment: .init(useParent: false))

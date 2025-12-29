@@ -26,9 +26,7 @@ extension EnvironmentValues {
     @Entry
     var isEditing: Bool = false
 
-    @Entry
-    var isInMenu: Bool = false
-
+    // TODO: transition to a ViewContext entry
     @Entry
     var isOverComplexContent: Bool = false
 

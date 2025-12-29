@@ -10,7 +10,7 @@ import SwiftUI
 
 extension Button where Label: View {
 
-    /// Creates a Button with an empty action and a custom label.
+    @available(*, deprecated, message: "Use normal `Button.init` instead")
     init(role: ButtonRole? = nil, @ViewBuilder label: @escaping () -> Label) {
         self.init {} label: {
             label()
@@ -20,7 +20,7 @@ extension Button where Label: View {
 
 extension Button where Label == Text {
 
-    /// Creates a Button with an empty action and a plain text label.
+    @available(*, deprecated, message: "Use normal `Button.init` instead")
     init(_ title: String, role: ButtonRole? = nil) {
         self.init(role: role) {
             Text(title)

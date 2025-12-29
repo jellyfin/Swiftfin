@@ -24,8 +24,6 @@ struct PlayButton: View {
 
     private let logger = Logger.swiftfin()
 
-    // MARK: - Media Source
-
     private var source: String? {
         nil
 
@@ -37,50 +35,6 @@ struct PlayButton: View {
 //
 //        return sourceLabel
     }
-
-    // MARK: - Body
-
-    var body: some View {
-        Button {
-            play()
-        } label: {
-            HStack {
-                Image(systemName: "play.fill")
-
-                VStack {
-                    Text(viewModel.playButtonItem?.playButtonLabel ?? L10n.play)
-
-                    if let source {
-                        Marquee(source, speed: 40, delay: 3, fade: 5)
-                            .font(.caption)
-                            .fontWeight(.medium)
-                    }
-                }
-            }
-            .padding(.horizontal, 20)
-            .font(.callout)
-            .fontWeight(.semibold)
-        }
-        .frame(height: 50)
-        .frame(maxWidth: 300)
-        .buttonStyle(
-            .tintedMaterial(
-                tint: accentColor,
-                foregroundColor: accentColor.overlayColor
-            )
-        )
-        .contextMenu {
-            if viewModel.playButtonItem?.userData?.playbackPositionTicks != 0 {
-                Button(L10n.playFromBeginning, systemImage: "gobackward") {
-                    play(fromBeginning: true)
-                }
-            }
-        }
-        .isSelected(true)
-        .disabled(viewModel.selectedMediaSource == nil)
-    }
-
-    // MARK: - Play Content
 
     private func play(fromBeginning: Bool = false) {
         guard let playButtonItem = viewModel.playButtonItem,
@@ -114,5 +68,78 @@ struct PlayButton: View {
                 queue: queue
             )
         )
+    }
+
+    @ViewBuilder
+    private var versionMenu: some View {
+        if let mediaSources = viewModel.playButtonItem?.mediaSources,
+           mediaSources.count > 1
+        {
+            Menu(L10n.version, systemImage: "list.dash") {
+                Picker(
+                    L10n.version,
+                    sources: mediaSources,
+                    selection: $viewModel.selectedMediaSource,
+                    noneStyle: nil
+                )
+            }
+            .menuStyle(.button)
+            .labelStyle(.iconOnly)
+            .buttonStyle(
+                .tintedMaterial(
+                    tint: .white,
+                    foregroundColor: .black
+                )
+            )
+            .aspectRatio(1, contentMode: .fit)
+        }
+    }
+
+    private var playButton: some View {
+        Button {
+            play()
+        } label: {
+            HStack {
+                Image(systemName: "play.fill")
+
+                VStack {
+                    Text(viewModel.playButtonItem?.playButtonLabel ?? L10n.play)
+
+                    if let source {
+                        Marquee(source, speed: 40, delay: 3, fade: 5)
+                            .font(.caption)
+                            .fontWeight(.medium)
+                    }
+                }
+            }
+            .padding(.horizontal, 20)
+            .font(.callout)
+            .fontWeight(.semibold)
+        }
+        .frame(maxWidth: 300)
+        .buttonStyle(
+            .tintedMaterial(
+                tint: accentColor,
+                foregroundColor: accentColor.overlayColor
+            )
+        )
+        .contextMenu {
+            if viewModel.playButtonItem?.userData?.playbackPositionTicks != 0 {
+                Button(L10n.playFromBeginning, systemImage: "gobackward") {
+                    play(fromBeginning: true)
+                }
+            }
+        }
+        .isSelected(true)
+        .disabled(viewModel.selectedMediaSource == nil)
+    }
+
+    var body: some View {
+        HStack {
+            playButton
+
+            versionMenu
+        }
+        .frame(height: 50)
     }
 }

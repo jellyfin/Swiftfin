@@ -40,7 +40,7 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
                         ProgressView()
                     }
 
-                    if !isHidden {
+                    if !isHidden, collectedMenuGroups.isNotEmpty {
                         Menu(L10n.options, systemImage: "ellipsis.circle") {
                             menuContent
 

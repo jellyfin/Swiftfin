@@ -6,7 +6,9 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
+import SwiftUI
 
 struct ItemGroupProvider: _ContentGroupProvider {
 
@@ -38,17 +40,19 @@ struct ItemGroupProvider: _ContentGroupProvider {
     @ContentGroupBuilder
     private func _makeGroups(item: BaseItemDto, itemID: String) async throws -> [any _ContentGroup] {
 
-        if item.type == .movie || item.type == .series {
-            ItemViewHeader(viewModel: viewModel)
+        if item.type == .movie || item.type == .series, Defaults[.Customization.itemViewType] == .enhanced {
+            EnhancedItemViewHeader(itemViewModel: viewModel)
         } else if item.type == .person || item.type == .musicArtist {
-            PortraitItemViewHeader(viewModel: viewModel)
+            PortraitItemViewHeader(itemViewModel: viewModel)
         } else {
-            SimpleItemViewHeader(viewModel: viewModel)
+            SimpleItemViewHeader(itemViewModel: viewModel)
         }
 
+        #if os(iOS)
         if item.type == .series {
             SeriesEpisodeContentGroup(viewModel: viewModel)
         }
+        #endif
 
         if let genres = item.itemGenres, genres.isNotEmpty {
             PillGroup(

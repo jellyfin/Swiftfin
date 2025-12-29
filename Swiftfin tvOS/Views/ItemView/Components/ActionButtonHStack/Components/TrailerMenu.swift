@@ -11,6 +11,8 @@ import JellyfinAPI
 import Logging
 import SwiftUI
 
+enum ItemView {}
+
 extension ItemView {
 
     struct TrailerMenu: View {

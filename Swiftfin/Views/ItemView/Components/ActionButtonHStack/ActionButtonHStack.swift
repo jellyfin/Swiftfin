@@ -24,8 +24,6 @@ extension ItemView {
         @ObservedObject
         var viewModel: _ItemViewModel
 
-        // MARK: - Has Trailers
-
         private var hasTrailers: Bool {
 //            if enabledTrailers.contains(.local), viewModel.localTrailers.isNotEmpty {
 //                return true
@@ -37,8 +35,6 @@ extension ItemView {
 
             false
         }
-
-        // MARK: - Body
 
         var body: some View {
             HStack(alignment: .center, spacing: 10) {
@@ -67,22 +63,6 @@ extension ItemView {
                 .buttonStyle(.tintedMaterial(tint: .red, foregroundColor: .white))
                 .isSelected(isHeartSelected)
                 .frame(maxWidth: .infinity)
-
-                // MARK: - Select a Version
-
-                if let mediaSources = viewModel.playButtonItem?.mediaSources,
-                   mediaSources.count > 1
-                {
-                    Menu(L10n.version, systemImage: "list.dash") {
-                        Picker(
-                            L10n.version,
-                            sources: mediaSources,
-                            selection: $viewModel.selectedMediaSource
-                        )
-                    }
-                    .menuStyle(.button)
-                    .frame(maxWidth: .infinity)
-                }
 
                 // MARK: - Watch a Trailer
 

@@ -49,6 +49,8 @@ class _ItemViewModel: ViewModel, WithRefresh {
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
+        print("Refreshing itemVM: \(item.id)")
+
         let newItem = try await item.getFullItem(userSession: userSession)
         item = newItem
 

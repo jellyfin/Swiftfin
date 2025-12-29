@@ -108,7 +108,8 @@ extension TabItem {
             title: provider.displayTitle,
             systemImage: "heart.fill"
         ) {
-            ItemContentGroupView(provider: provider)
+            // TODO: consolidate item and plain content group view?
+            ContentGroupView(provider: provider)
 //            ContentGroupShimView(id: provider.id)
         }
     }

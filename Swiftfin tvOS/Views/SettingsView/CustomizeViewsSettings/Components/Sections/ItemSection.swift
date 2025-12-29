@@ -20,8 +20,6 @@ extension CustomizeViewsSettings {
         @Router
         private var router
 
-        @StoredValue(.User.itemViewAttributes)
-        private var itemViewAttributes
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers
 
@@ -34,10 +32,6 @@ extension CustomizeViewsSettings {
 
         var body: some View {
             Section(L10n.items) {
-
-                ChevronButton(L10n.mediaAttributes) {
-                    router.route(to: .itemViewAttributes(selection: $itemViewAttributes))
-                }
 
                 ListRowMenu(L10n.enabledTrailers, selection: $enabledTrailers)
 

@@ -37,9 +37,9 @@ struct ChannelLibraryView: View {
 
     init() {
         if UIDevice.isPhone {
-            layout = Self.padlayout(channelDisplayType: .list)
-        } else {
             layout = Self.phonelayout(channelDisplayType: .list)
+        } else {
+            layout = Self.padlayout(channelDisplayType: .list)
         }
     }
 

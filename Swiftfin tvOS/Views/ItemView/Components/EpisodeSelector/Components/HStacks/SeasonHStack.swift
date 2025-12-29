@@ -18,7 +18,7 @@ extension SeriesEpisodeSelector {
         private var focusGuide: FocusGuide
 
         @ObservedObject
-        var viewModel: SeriesItemViewModel
+        var viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
         // MARK: - Selection Binding
 
@@ -39,7 +39,7 @@ extension SeriesEpisodeSelector {
             ScrollViewReader { proxy in
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: EdgeInsets.edgePadding / 2) {
-                        ForEach(viewModel.seasons) { season in
+                        ForEach(viewModel.elements) { season in
                             seasonButton(season: season)
                                 .id(season.id)
                         }

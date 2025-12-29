@@ -13,10 +13,15 @@ import SwiftUI
 struct SimpleItemViewHeader: _ContentGroup {
 
     let id = "item-view-header"
-    let viewModel: _ItemViewModel
+    let viewModel: Empty = .init()
+    let itemViewModel: _ItemViewModel
 
-    func body(with viewModel: _ItemViewModel) -> Body {
-        Body(viewModel: viewModel)
+    init(itemViewModel: _ItemViewModel) {
+        self.itemViewModel = itemViewModel
+    }
+
+    func body(with viewModel: Empty) -> Body {
+        Body(viewModel: itemViewModel)
     }
 
     struct Body: View {
@@ -89,17 +94,22 @@ struct SimpleItemViewHeader: _ContentGroup {
             }
         }
 
+        private var headerImageDisplayType: PosterDisplayType {
+            viewModel.item.preferredPosterDisplayType == .portrait ? .landscape : viewModel.item.preferredPosterDisplayType
+        }
+
         @ViewBuilder
         private var overlay: some View {
             VStack(alignment: .center, spacing: 10) {
                 PosterImage(
                     item: viewModel.item,
-                    type: viewModel.item.preferredPosterDisplayType,
+                    type: headerImageDisplayType,
                     contentMode: .fit
                 )
-                .frame(maxWidth: 300)
+                .frame(maxWidth: headerImageDisplayType == .square ? 400 : .infinity)
                 .accessibilityIgnoresInvertColors()
                 .posterShadow()
+                .customEnvironment(for: BaseItemDto.self, value: .init(useParent: false))
 
                 titleAndAttributes
 
@@ -115,7 +125,6 @@ struct SimpleItemViewHeader: _ContentGroup {
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 AttributesHStack(
-                    attributes: ItemViewAttribute.allCases,
                     item: viewModel.item,
                     mediaSource: nil
                 )

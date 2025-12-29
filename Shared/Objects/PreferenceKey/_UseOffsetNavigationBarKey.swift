@@ -6,17 +6,11 @@
 // Copyright (c) 2025 Jellyfin & Jellyfin Contributors
 //
 
-enum ItemViewType: String, CaseIterable, Displayable, Storable {
+import SwiftUI
 
-    case enhanced
-    case simple
-
-    var displayTitle: String {
-        switch self {
-        case .enhanced:
-            "Enhanced"
-        case .simple:
-            "Simple"
-        }
+struct _UseOffsetNavigationBarKey: PreferenceKey {
+    static var defaultValue: Bool = false
+    static func reduce(value: inout Bool, nextValue: () -> Bool) {
+        value = nextValue()
     }
 }

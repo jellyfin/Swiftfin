@@ -25,7 +25,7 @@ extension SeriesEpisodeSelector {
         private var overlayView: some View {
             ZStack {
                 if let progress = episode.progress {
-                    PosterProgressBar(
+                    PosterProgressIndicator(
                         title: "Test",
                         progress: progress,
                         posterDisplayType: .landscape

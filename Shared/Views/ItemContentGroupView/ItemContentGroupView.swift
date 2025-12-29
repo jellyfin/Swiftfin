@@ -91,7 +91,6 @@ struct ItemContentGroupView<Provider: _ContentGroupProvider>: View {
 //        .navigationTitle(viewModel.provider.displayTitle)
         .backport
         .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
-//        .toolbarTitleDisplayMode(.inline)
         .onFirstAppear {
             viewModel.refresh()
         }

@@ -57,11 +57,13 @@ struct MainTabView: View {
                     coordinator: tab.coordinator
                 ) {
                     tab.item.content
+                    #if os(iOS)
                         .topBarTrailing {
                             if tab.item.id != "settings" {
                                 SettingsBarButton()
                             }
                         }
+                    #endif
                 }
                 .environmentObject(tabCoordinator)
                 .environment(\.tabItemSelected, tab.publisher)
@@ -70,9 +72,7 @@ struct MainTabView: View {
                         tab.item.displayTitle,
                         systemImage: tab.item.systemImage
                     )
-                    .labelStyle(tab.item.labelStyle)
                     .symbolRenderingMode(.monochrome)
-                    .eraseToAnyView()
                 }
                 .tag(tab.item.id)
             }
@@ -80,7 +80,40 @@ struct MainTabView: View {
 //        .backport
 //        .tabViewStyle(.sidebarAdaptable)
         .contextMenu(for: BaseItemDto.self) { item in
-            Button(item.displayTitle)
+            // TODO: get view context environment for thumbnail vs backdrop
+
+            if item.type == .episode {
+                WithRouter { router in
+                    Button("Go to Episode", systemImage: "info.circle") {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            router.route(to: .item(item: item))
+                        }
+                    }
+                }
+
+                if let seriesID = item.seriesID {
+                    WithRouter { router in
+                        Button("Go to Show", systemImage: "info.circle") {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                router.route(
+                                    to: .item(
+                                        displayTitle: item.displayTitle,
+                                        id: seriesID
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+            } else {
+                WithRouter { router in
+                    Button("Go to Item", systemImage: "info.circle") {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            router.route(to: .item(item: item))
+                        }
+                    }
+                }
+            }
         }
         .libraryStyle(for: BaseItemDto.self) { _, _ in
             (defaultLibraryStyle, $defaultLibraryStyle)
@@ -90,7 +123,7 @@ struct MainTabView: View {
         }
         .customEnvironment(
             for: BaseItemDto.self,
-            value: .init(useParent: useSeriesLandscapeBackdrop, isThumb: true)
+            value: .init(useParent: useSeriesLandscapeBackdrop)
         )
     }
 }

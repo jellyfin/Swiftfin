@@ -8,38 +8,36 @@
 
 import SwiftUI
 
-// TODO: anchor for scaleEffect?
-// TODO: try an implementation that doesn't require passing in the height
-
-/// A `Text` wrapper that will scale down the underlying `Text` view
-/// if the height is greater than the given `maxHeight`.
+/// A `Text` wrapper that will scale down its text
+/// if its height is greater than its container
 struct MaxHeightText: View {
 
-    @State
-    private var scale = 1.0
+    private let text: String
 
-    let text: String
-    let maxHeight: CGFloat
+    init(_ text: String) {
+        self.text = text
+    }
 
     var body: some View {
-        Text(text)
-            .fixedSize(horizontal: false, vertical: true)
-            .hidden()
-            .overlay {
+        AlternateLayoutView {
+            Color.clear
+        } content: { layoutSize in
+            WithFrame { textFrame in
                 Text(text)
-                    .scaleEffect(CGSize(width: scale, height: scale), anchor: .bottom)
-            }
-            .onFrameChanged { frame, _ in
-                let newSize = frame.size
+                    .fixedSize(horizontal: true, vertical: false)
+                    .hidden()
+                    .debugOverlay(.blue.opacity(0.5))
+                    .overlay(alignment: .bottom) {
+                        let scale = textFrame.height > layoutSize.height
+                            ? layoutSize.height / textFrame.height
+                            : 1.0
 
-                if newSize.height > maxHeight {
-                    scale = maxHeight / newSize.height
-                }
+                        Text(text)
+                            .scaleEffect(x: scale, y: scale, anchor: .bottom)
+                            .debugOverlay(.yellow.opacity(0.5))
+                    }
             }
-//            .onSizeChanged { newSize, _ in
-//                if newSize.height > maxHeight {
-//                    scale = maxHeight / newSize.height
-//                }
-//            }
+        }
+        .debugOverlay(.red.opacity(0.5))
     }
 }

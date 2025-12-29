@@ -17,17 +17,11 @@ extension ItemView {
 
     struct TrailerMenu: View {
 
-        // MARK: - Stored Value
-
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers: TrailerSelection
 
-        // MARK: - Observed & Envirnoment Objects
-
         @Router
         private var router
-
-        // MARK: - Error State
 
         @State
         private var error: Error?
@@ -44,8 +38,6 @@ extension ItemView {
             enabledTrailers.contains(.external) && externalTrailers.isNotEmpty
         }
 
-        // MARK: - Body
-
         var body: some View {
             Group {
                 switch localTrailers.count + externalTrailers.count {
@@ -57,8 +49,6 @@ extension ItemView {
             }
             .errorMessage($error)
         }
-
-        // MARK: - Single Trailer Button
 
         @ViewBuilder
         private var trailerButton: some View {
@@ -75,8 +65,6 @@ extension ItemView {
                 }
             }
         }
-
-        // MARK: - Multiple Trailers Menu Button
 
         @ViewBuilder
         private var trailerMenu: some View {
@@ -97,7 +85,7 @@ extension ItemView {
 
                 if showExternalTrailers {
                     Section(L10n.external) {
-                        ForEach(externalTrailers, id: \.self) { mediaURL in
+                        ForEach(externalTrailers, id: \.hashValue) { mediaURL in
                             Button(
                                 mediaURL.name ?? L10n.trailer,
                                 systemImage: "arrow.up.forward"
@@ -110,8 +98,6 @@ extension ItemView {
             }
         }
 
-        // MARK: - Play: Local Trailer
-
         private func playLocalTrailer(_ trailer: BaseItemDto) {
             if let mediaSource = trailer.mediaSources?.first {
                 router.route(to: .videoPlayer(item: trailer, mediaSource: mediaSource))
@@ -121,12 +107,10 @@ extension ItemView {
             }
         }
 
-        // MARK: - Play: External Trailer
-
         private func playExternalTrailer(_ trailer: MediaURL) {
             if let url = URL(string: trailer.url), UIApplication.shared.canOpenURL(url) {
-                UIApplication.shared.open(url) { success in
-                    guard !success else { return }
+                UIApplication.shared.open(url) { isSuccess in
+                    guard !isSuccess else { return }
 
                     error = ErrorMessage(L10n.unableToOpenTrailer)
                 }

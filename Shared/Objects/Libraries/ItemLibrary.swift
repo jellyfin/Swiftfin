@@ -195,14 +195,14 @@ struct ItemLibrary: PagingLibrary, WithRandomElementLibrary {
     }
 
     func makeLibraryBody(content: some View) -> AnyView {
-        WithRouter { router in
+        WithRouter { _ in
             content
-                .navigationBarFilterDrawer(
-                    viewModel: filterViewModel,
-                    types: ItemFilterType.allCases
-                ) {
-                    router.route(to: .filter(type: $0.type, viewModel: $0.viewModel))
-                }
+//                .navigationBarFilterDrawer(
+//                    viewModel: filterViewModel,
+//                    types: ItemFilterType.allCases
+//                ) {
+//                    router.route(to: .filter(type: $0.type, viewModel: $0.viewModel))
+//                }
         }
         .eraseToAnyView()
     }
