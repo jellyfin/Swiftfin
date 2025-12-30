@@ -710,6 +710,8 @@ internal enum L10n {
   internal static let halfTopAndBottom = L10n.tr("Localizable", "halfTopAndBottom", fallback: "Half top and bottom")
   /// Hearing impaired
   internal static let hearingImpaired = L10n.tr("Localizable", "hearingImpaired", fallback: "Hearing impaired")
+  /// Hex input
+  internal static let hexInput = L10n.tr("Localizable", "hexInput", fallback: "Hex input")
   /// Hidden
   internal static let hidden = L10n.tr("Localizable", "hidden", fallback: "Hidden")
   /// Hide user from login screen
@@ -1022,6 +1024,8 @@ internal enum L10n {
   internal static let onApplicationStartup = L10n.tr("Localizable", "onApplicationStartup", fallback: "On application startup")
   /// On Now
   internal static let onNow = L10n.tr("Localizable", "onNow", fallback: "On Now")
+  /// Opacity
+  internal static let opacity = L10n.tr("Localizable", "opacity", fallback: "Opacity")
   /// Options
   internal static let options = L10n.tr("Localizable", "options", fallback: "Options")
   /// Orange
@@ -1038,6 +1042,8 @@ internal enum L10n {
   internal static let originalTitle = L10n.tr("Localizable", "originalTitle", fallback: "Original title")
   /// Other
   internal static let other = L10n.tr("Localizable", "other", fallback: "Other")
+  /// Other inputs
+  internal static let otherInputs = L10n.tr("Localizable", "otherInputs", fallback: "Other inputs")
   /// Overview
   internal static let overview = L10n.tr("Localizable", "overview", fallback: "Overview")
   /// Parental controls

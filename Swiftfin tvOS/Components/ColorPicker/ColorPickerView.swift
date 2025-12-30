@@ -42,34 +42,10 @@ struct ColorPickerView: View {
     @State
     private var tempHexString: String = ""
 
-    // MARK: Focus States
-
-    @FocusState
-    private var isRedFocused: Bool
-    @FocusState
-    private var isGreenFocused: Bool
-    @FocusState
-    private var isBlueFocused: Bool
-    @FocusState
-    private var isOpacityFocused: Bool
-    @FocusState
-    private var isMenuFocused: Bool
-
     // MARK: Error State
 
     @State
     private var error: Error?
-
-    // MARK: Show Keyboard
-
-    @State
-    private var showHexInput: Bool = false
-
-    // MARK: Sizing & spacing
-
-    private static let sliderHeight: CGFloat = 48
-    private static let sliderIndicatorWidth: CGFloat = 8
-    private static let maximumWidth: CGFloat = 1000
 
     // MARK: - Initializer
 
@@ -92,67 +68,111 @@ struct ColorPickerView: View {
     // MARK: - Body
 
     var body: some View {
-        VStack(alignment: .center) {
-
-            colorSlider(label: L10n.red, value: $red, focusState: $isRedFocused, colorComponent: .red)
-            colorSlider(label: L10n.green, value: $green, focusState: $isGreenFocused, colorComponent: .green)
-            colorSlider(label: L10n.blue, value: $blue, focusState: $isBlueFocused, colorComponent: .blue)
-
-            if supportsOpacity {
-                // TODO: Localize
-                // We never really use opacity in Swiftfin but it's called as false frequently.
-                // Do we want to mirror the API for ease of platform logic or just drop it?
-                // Is there ever a case where we'd want opacity?
-                colorSlider(
-                    label: "Opacity",
-                    value: $opacity,
-                    focusState: $isOpacityFocused,
-                    colorComponent: .opacity
-                )
+        SplitFormWindowView()
+            .descriptionView {
+                descriptionView
             }
+            .contentView {
+                slidersView
+                manualInputsView
+            }
+            .errorMessage($error)
+    }
 
-            Divider()
-
-            Form {
-                ListRowButton(hexString) {
-                    showHexInput = true
-                }
-                .font(.title)
-                .listRowInsets(.zero)
-                .foregroundStyle(color.overlayColor, color)
-                // TODO: Rebase on Main and replace ListRowButton with Button & .buttonStyle(.primary)
-                // https://github.com/jellyfin/Swiftfin/issues/1817
-
-                ListRowMenu(L10n.color, subtitle: {
-                    if let selected = ColorPickerDefaults.allCases.first(where: { $0.color.isEqual(to: color) }) {
+    private var descriptionView: some View {
+        VStack(spacing: 20) {
+            ZStack {
+                Circle()
+                    .fill(color)
+                    .overlay(
                         Circle()
-                            .fill(selected.color)
-                            .frame(width: 30, height: 30)
+                            .stroke(
+                                Color.white.opacity(1.0 - opacity),
+                                lineWidth: 1.5
+                            )
+                    )
+                Text(hexString)
+                    .font(.headline)
+                    .fontWeight(.bold)
+                    .fontDesign(.monospaced)
+                    .foregroundStyle(color.overlayColor)
+            }
+
+            FlowLayout(
+                alignment: .center,
+                direction: .down,
+                spacing: 20,
+                lineSpacing: 10,
+                minRowLength: 2
+            ) {
+                let colors: [Color] = supportsOpacity ? [.red, .green, .blue, .gray] : [.red, .green, .blue]
+
+                ForEach(colors, id: \.self) { color in
+                    let value: CGFloat = switch color {
+                    case .red: red
+                    case .green: green
+                    case .blue: blue
+                    case .gray: opacity
+                    default: 0
                     }
-                }) {
-                    Picker(L10n.color, selection: Binding<ColorPickerDefaults?>(
-                        get: { ColorPickerDefaults.allCases.first(where: { $0.color.isEqual(to: color) }) },
-                        set: { if let newValue = $0 { updateFromColor(color: newValue.color) } }
-                    )) {
-                        ForEach(ColorPickerDefaults.allCases, id: \.self) { colorItem in
-                            Text(colorItem.displayTitle).tag(colorItem as ColorPickerDefaults?)
-                        }
+
+                    Label {
+                        Text(String(format: "%-3d", Int(value * 255)))
+                            .monospaced()
+                    } icon: {
+                        Circle()
+                            .frame(width: 32, height: 32)
+                    }
+                    .foregroundStyle(color)
+                }
+            }
+            .font(.body)
+        }
+        .frame(width: 400, height: 400)
+    }
+
+    @ViewBuilder
+    private var slidersView: some View {
+        colorSlider(label: L10n.red, value: $red, colorComponent: .red)
+        colorSlider(label: L10n.green, value: $green, colorComponent: .green)
+        colorSlider(label: L10n.blue, value: $blue, colorComponent: .blue)
+
+        if supportsOpacity {
+            colorSlider(label: L10n.opacity, value: $opacity, colorComponent: .opacity)
+        }
+    }
+
+    @ViewBuilder
+    private var manualInputsView: some View {
+        Section(L10n.otherInputs) {
+            TextField(L10n.hexInput, text: $tempHexString) {
+                if let newColor = Color(hex: tempHexString) {
+                    if newColor != color {
+                        update(color: newColor)
+                    }
+                } else {
+                    error = JellyfinAPIError(L10n.unknownError)
+                }
+            }
+            .listRowInsets(.zero)
+            .frame(height: 70)
+
+            ListRowMenu(L10n.color, subtitle: {
+                Circle()
+                    .fill(color)
+                    .frame(width: 30, height: 30)
+            }) {
+                Picker(L10n.color, selection: Binding<ColorPickerDefaults?>(
+                    get: { ColorPickerDefaults.allCases.first(where: { $0.color.isEqual(to: color) }) },
+                    set: { if let newValue = $0 { update(color: newValue.color) } }
+                )) {
+                    ForEach(ColorPickerDefaults.allCases, id: \.self) { colorItem in
+                        Text(colorItem.displayTitle).tag(colorItem as ColorPickerDefaults?)
                     }
                 }
-                .focused($isMenuFocused)
             }
-            .scrollClipDisabled()
+            .frame(height: 70)
         }
-        .frame(maxWidth: ColorPickerView.maximumWidth)
-        .errorMessage($error)
-
-        KeyboardTextField(
-            text: $tempHexString,
-            isFirstResponder: $showHexInput
-        ) {
-            updateFromHex()
-        }
-        .frame(width: 0, height: 0).opacity(0)
     }
 
     // MARK: - Color Slider
@@ -161,20 +181,11 @@ struct ColorPickerView: View {
     private func colorSlider(
         label: String,
         value: Binding<CGFloat>,
-        focusState: FocusState<Bool>.Binding,
         colorComponent: ColorComponent
     ) -> some View {
-        VStack {
-            HStack {
-                Text(label)
-                Spacer()
-                Text(Int(255 * value.wrappedValue).description)
-            }
-            .font(.system(size: 20, weight: .medium))
-            .foregroundColor(focusState.wrappedValue ? .primary : .secondary)
-
+        Section {
             Button {} label: {
-                GeometryReader { _ in
+                GeometryReader { geo in
                     let startColor: Color = colorComponent == .opacity
                         ? Color(red: red, green: green, blue: blue, opacity: 0)
                         : Color(
@@ -191,6 +202,9 @@ struct ColorPickerView: View {
                             blue: colorComponent == .blue ? 1 : blue
                         )
 
+                    let width = geo.size.width - 24
+                    let cursorPosition = 8 + width * value.wrappedValue
+
                     ZStack(alignment: .leading) {
                         LinearGradient(
                             gradient: Gradient(colors: [startColor, endColor]),
@@ -198,10 +212,10 @@ struct ColorPickerView: View {
                             endPoint: .trailing
                         )
 
-                        RoundedRectangle(cornerRadius: ColorPickerView.sliderIndicatorWidth)
+                        RoundedRectangle(cornerRadius: 8)
                             .fill(.primary)
-                            .frame(width: ColorPickerView.sliderIndicatorWidth)
-                            .padding(.leading, ColorPickerView.maximumWidth * value.wrappedValue - ColorPickerView.sliderIndicatorWidth / 2)
+                            .frame(width: 8)
+                            .offset(x: cursorPosition)
                     }
                 }
             }
@@ -209,9 +223,16 @@ struct ColorPickerView: View {
                 handleMoveCommand(colorComponent: colorComponent, direction)
             }
             .buttonStyle(.card)
-            .frame(height: ColorPickerView.sliderHeight)
-            .opacity(focusState.wrappedValue ? 1 : 0.8)
+        } header: {
+            HStack {
+                Text(label)
+                Spacer()
+                Text(Int(255 * value.wrappedValue).description)
+            }
+            .padding()
         }
+        .frame(height: 65)
+        .listRowInsets(.zero)
     }
 
     // MARK: - Handle Cursor Movement
@@ -240,76 +261,20 @@ struct ColorPickerView: View {
         self.tempHexString = self.hexString
     }
 
-    // MARK: - Update Logic
+    // MARK: - Update Color Value
 
-    private func updateFromHex() {
-        guard let newColor = Color(hex: tempHexString) else {
-            error = JellyfinAPIError(L10n.invalidFormat)
-            return
-        }
-
-        updateFromColor(color: newColor)
-    }
-
-    private func updateFromColor(color: Color) {
-        self.color = color
+    private func update(color: Color) {
         var alpha: CGFloat = 0
         color.uiColor.getRed(&self.red, green: &self.green, blue: &self.blue, alpha: &alpha)
-        self.opacity = supportsOpacity ? alpha : 1
+        
+        if self.supportsOpacity {
+            self.color = color
+            self.opacity = alpha
+        } else {
+            self.color = Color(red: self.red, green: self.green, blue: self.blue)
+        }
 
         self.hexString = color.hexString(includeOpacity: supportsOpacity)
         self.tempHexString = self.hexString
-    }
-}
-
-private struct KeyboardTextField: UIViewRepresentable {
-    @Binding
-    var text: String
-    @Binding
-    var isFirstResponder: Bool
-    var onCommit: (() -> Void)?
-
-    func makeUIView(context: Context) -> UITextField {
-        let textField = UITextField(frame: .zero)
-        textField.isHidden = true
-        textField.delegate = context.coordinator
-        textField.autocorrectionType = .no
-        textField.autocapitalizationType = .allCharacters
-        textField.keyboardType = .asciiCapable
-        return textField
-    }
-
-    func updateUIView(_ uiView: UITextField, context: Context) {
-        uiView.text = text
-
-        if isFirstResponder, uiView.window != nil {
-            DispatchQueue.main.async {
-                uiView.becomeFirstResponder()
-            }
-        } else if !isFirstResponder, uiView.isFirstResponder {
-            uiView.resignFirstResponder()
-        }
-    }
-
-    func makeCoordinator() -> Coordinator { Coordinator(self) }
-
-    class Coordinator: NSObject, UITextFieldDelegate {
-        var parent: KeyboardTextField
-        init(_ parent: KeyboardTextField) { self.parent = parent }
-
-        func textFieldDidChangeSelection(_ textField: UITextField) {
-            parent.text = textField.text ?? ""
-        }
-
-        func textFieldDidEndEditing(_ textField: UITextField) {
-            parent.isFirstResponder = false
-        }
-
-        func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-            textField.resignFirstResponder()
-            parent.isFirstResponder = false
-            parent.onCommit?()
-            return true
-        }
     }
 }
