@@ -102,7 +102,9 @@ final class ServerTasksViewModel: ViewModel {
                 .flattened()
                 .first(where: { $0.task.id == runningTask.id })
             {
-                await observer.start()
+                Task {
+                    await observer.start()
+                }
             }
         }
 

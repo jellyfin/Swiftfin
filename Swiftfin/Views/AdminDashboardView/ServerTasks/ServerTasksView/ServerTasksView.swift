@@ -69,9 +69,6 @@ struct ServerTasksView: View {
                 }
             }
         }
-        .onReceive(timer) { _ in
-            viewModel.background.refresh()
-        }
     }
 
     var body: some View {
@@ -89,6 +86,9 @@ struct ServerTasksView: View {
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.tasks)
+        .onReceive(timer) { _ in
+            viewModel.background.refresh()
+        }
         .refreshable {
             viewModel.refresh()
         }
