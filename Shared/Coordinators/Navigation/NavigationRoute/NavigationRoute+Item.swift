@@ -296,13 +296,7 @@ extension NavigationRoute {
             id: "itemOverview",
             style: .sheet
         ) {
-//            ItemOverview(item: item)
-//                .navigationTitle(item.displayTitle)
-//                .backport
-//                .toolbarTitleDisplayMode(.inline)
-//                .navigationBarCloseButton {
-//                    router.dismiss()
-//                }
+            ItemOverviewView(item: item)
         }
     }
 

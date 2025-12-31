@@ -13,8 +13,6 @@ import SwiftUI
 
 struct MainTabView: View {
 
-    @Default(.Customization.showPosterLabels)
-    private var showPosterLabels
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
     private var useSeriesLandscapeBackdrop
 

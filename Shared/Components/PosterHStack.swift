@@ -74,7 +74,7 @@ struct PosterHStack<
 
     private var itemSpacing: CGFloat {
         #if os(tvOS)
-        EdgeInsets.edgePadding - 10
+        EdgeInsets.edgePadding
         #else
         EdgeInsets.edgePadding / 2
         #endif
@@ -98,7 +98,7 @@ struct PosterHStack<
             .clipsToBounds(false)
             .dataPrefix(20)
             .insets(horizontal: EdgeInsets.edgePadding)
-            .itemSpacing(EdgeInsets.edgePadding / 2)
+            .itemSpacing(itemSpacing)
             .scrollBehavior(.continuousLeadingEdge)
         }
     }
@@ -106,10 +106,12 @@ struct PosterHStack<
     var body: some View {
 //        let _ = Self._printChanges()
 
-        Section {
-            stack
-        } header: {
-            header
+        VStack(alignment: .leading, spacing: 10) {
+            Section {
+                stack
+            } header: {
+                header
+            }
         }
     }
 }

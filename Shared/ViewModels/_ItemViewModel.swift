@@ -60,8 +60,6 @@ class _ItemViewModel: ViewModel, WithRefresh {
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
-        print("Refreshing itemVM: \(item.id)")
-
         let newItem = try await item.getFullItem(userSession: userSession)
         item = newItem
 
@@ -78,6 +76,8 @@ class _ItemViewModel: ViewModel, WithRefresh {
 
     private func getNextUp(seriesID: String?) async throws -> BaseItemDto? {
         var parameters = Paths.GetNextUpParameters()
+        parameters.enableUserData = true
+        parameters.fields = [.mediaSources]
         parameters.seriesID = seriesID
         parameters.userID = userSession.user.id
 

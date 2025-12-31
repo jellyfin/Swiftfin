@@ -27,6 +27,11 @@ struct ItemContentGroupView<Provider: _ContentGroupProvider>: View {
     }
 
     @ViewBuilder
+    private func makeGroupBody<G: _ContentGroup>(_ group: G) -> some View {
+        group.body(with: group.viewModel)
+    }
+
+    @ViewBuilder
     private var contentView: some View {
         OffsetNavigationBar(headerMaxY: carriedUseOffsetNavigationBar ? carriedHeaderFrame.maxY : nil) {
             WithEnvironment(value: \.frameForParentView) { frameForParentView in
@@ -34,13 +39,16 @@ struct ItemContentGroupView<Provider: _ContentGroupProvider>: View {
                     VStack(alignment: .leading, spacing: 10) {
 
                         // SwiftUI bug causes preference key changes to not propagate any higher
-                        ContentGroupContentView(viewModel: viewModel)
-                            .onPreferenceChange(_UseOffsetNavigationBarKey.self) { value in
-                                carriedUseOffsetNavigationBar = value
-                            }
-                            .onPreferenceChange(ScrollViewHeaderFrameKey.self) { value in
-                                carriedHeaderFrame = value
-                            }
+                        ForEach(viewModel.groups, id: \.id) { group in
+                            makeGroupBody(group)
+                                .eraseToAnyView()
+                        }
+                        .onPreferenceChange(_UseOffsetNavigationBarKey.self) { value in
+                            carriedUseOffsetNavigationBar = value
+                        }
+                        .onPreferenceChange(ScrollViewHeaderFrameKey.self) { value in
+                            carriedHeaderFrame = value
+                        }
                     }
                     .edgePadding(
                         .bottom.inserting(

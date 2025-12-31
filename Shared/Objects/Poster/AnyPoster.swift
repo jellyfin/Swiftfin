@@ -59,6 +59,22 @@ struct AnyPoster: Poster {
         return inner(_poster)
     }
 
+    func portraitImageSources(
+        maxWidth: CGFloat?,
+        quality: Int?,
+        environment: Empty
+    ) -> [ImageSource] {
+        func inner(_ poster: some Poster) -> [ImageSource] {
+            poster.portraitImageSources(
+                maxWidth: maxWidth,
+                quality: quality,
+                environment: .default
+            )
+        }
+
+        return inner(_poster)
+    }
+
     func transform(image: Image, displayType: PosterDisplayType) -> some View {
         _poster.transform(image: image, displayType: displayType)
             .eraseToAnyView()

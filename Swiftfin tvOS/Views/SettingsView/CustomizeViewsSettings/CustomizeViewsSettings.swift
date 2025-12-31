@@ -16,8 +16,6 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.shouldShowMissingEpisodes)
     private var shouldShowMissingEpisodes
 
-    @Default(.Customization.showPosterLabels)
-    private var showPosterLabels
     @Default(.Customization.nextUpPosterType)
     private var nextUpPosterType
     @Default(.Customization.recentlyAddedPosterType)
@@ -56,8 +54,6 @@ struct CustomizeViewsSettings: View {
 //                    ChevronButton(L10n.indicators) {
 //                        router.route(to: .indicatorSettings)
 //                    }
-
-                    Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 
                     ListRowMenu(L10n.next, selection: $nextUpPosterType)
 

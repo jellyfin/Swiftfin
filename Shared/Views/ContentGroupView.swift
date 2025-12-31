@@ -28,6 +28,11 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
     }
 
     @ViewBuilder
+    private func makeGroupBody<G: _ContentGroup>(_ group: G) -> some View {
+        group.body(with: group.viewModel)
+    }
+
+    @ViewBuilder
     private var contentView: some View {
         ScrollViewReader { proxy in
             ScrollView {
@@ -36,7 +41,10 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
                     .id("top")
 
                 VStack(alignment: .leading, spacing: 10) {
-                    ContentGroupContentView(viewModel: viewModel)
+                    ForEach(viewModel.groups, id: \.id) { group in
+                        makeGroupBody(group)
+                            .eraseToAnyView()
+                    }
                 }
                 .edgePadding(.vertical)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -111,24 +119,6 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
 //                viewModel.notificationsReceived.remove(.itemMetadataDidChange)
 //            }
 //        }
-    }
-}
-
-struct ContentGroupContentView<Provider: _ContentGroupProvider>: View {
-
-    @ObservedObject
-    var viewModel: ContentGroupViewModel<Provider>
-
-    @ViewBuilder
-    private func makeGroupBody<G: _ContentGroup>(_ group: G) -> some View {
-        group.body(with: group.viewModel)
-    }
-
-    var body: some View {
-        ForEach(viewModel.groups, id: \.id) { group in
-            makeGroupBody(group)
-                .eraseToAnyView()
-        }
     }
 }
 

@@ -43,7 +43,10 @@ struct ItemGroupProvider: _ContentGroupProvider {
         if UIDevice.isPad || UIDevice.isTV {
             EnhancedItemViewHeader(itemViewModel: viewModel)
         } else {
-            if item.type == .movie || item.type == .series, Defaults[.Customization.itemViewType] == .enhanced {
+            if item.type == .movie || item.type == .series,
+               Defaults[.Customization.itemViewType] == .enhanced,
+               item.backdropImageTags?.isNotEmpty == true
+            {
                 EnhancedItemViewHeader(itemViewModel: viewModel)
             } else if item.type == .person || item.type == .musicArtist {
                 PortraitItemViewHeader(itemViewModel: viewModel)

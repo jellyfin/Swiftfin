@@ -45,15 +45,6 @@ extension BaseItemDto: Poster {
         }
     }
 
-    var showTitle: Bool {
-        switch type {
-        case .episode, .series, .movie, .boxSet, .collectionFolder:
-            Defaults[.Customization.showPosterLabels]
-        default:
-            true
-        }
-    }
-
     var systemImage: String {
         switch type {
         case .audio, .musicAlbum:
@@ -201,8 +192,6 @@ extension BaseItemDto: Poster {
 
 struct _BaseItemPosterLabel: View {
 
-    @Default(.Customization.showPosterLabels)
-    private var showPosterLabels
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
     private var useSeriesLandscapeBackdrop
 
@@ -210,47 +199,22 @@ struct _BaseItemPosterLabel: View {
 
     var body: some View {
         if item.type == .episode {
-            EpisodeContentSubtitleContent(item: item)
-        } else {
             TitleSubtitleContentView(
-                title: showPosterLabels ? item.displayTitle : nil,
-                subtitle: item.subtitle
-            )
-        }
-    }
-}
-
-struct EpisodeContentSubtitleContent: View {
-
-    @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
-    private var useSeriesLandscapeBackdrop
-
-    let item: BaseItemDto
-
-    var body: some View {
-        // Unsure why this needs 0 spacing
-        // compared to other default content
-        VStack(alignment: .leading, spacing: 0) {
-            if item.showTitle, let seriesName = item.seriesName {
-                Text(seriesName)
-                    .font(.footnote)
-                    .fontWeight(.regular)
-                    .foregroundStyle(.primary)
-                    .lineLimit(1, reservesSpace: true)
-            }
-
-            DotHStack(padding: 3) {
-                Text(item.seasonEpisodeLabel ?? .emptyDash)
-
-                if item.showTitle || useSeriesLandscapeBackdrop {
-                    Text(item.displayTitle)
-                } else if let seriesName = item.seriesName {
-                    Text(seriesName)
+                title: item.seriesName ?? L10n.unknown
+            ) {
+                DotHStack(padding: 2) {
+                    if let seasonEpisodeLabel = item.seasonEpisodeLabel {
+                        Text(seasonEpisodeLabel)
+                    }
                 }
             }
-            .font(.caption)
-            .foregroundStyle(.secondary)
-            .lineLimit(1)
+        } else {
+            TitleSubtitleContentView(
+                title: item.displayTitle
+            ) {
+                Text(item.subtitle ?? "")
+                    .hidden(item.subtitle == nil)
+            }
         }
     }
 }

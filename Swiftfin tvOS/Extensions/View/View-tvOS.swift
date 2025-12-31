@@ -33,8 +33,19 @@ extension View {
     //       - overload iOS for same
 
     /// - Important: This does nothing on tvOS.
+    @available(*, deprecated, message: "Use `toolbarTitleDisplayMode` instead.")
     @ViewBuilder
-    func navigationBarTitleDisplayMode(_ mode: NavigationBarItem.TitleDisplayMode) -> some View {
+    func navigationBarTitleDisplayMode(
+        _ mode: NavigationBarItem.TitleDisplayMode
+    ) -> some View {
+        self
+    }
+
+    /// - Important: This does nothing on tvOS.
+    @ViewBuilder
+    func navigationBarCloseButton(
+        action: @escaping () -> Void
+    ) -> some View {
         self
     }
 

@@ -30,9 +30,6 @@ extension CustomizeViewsSettings {
             }
         }
 
-        @Default(.Customization.showPosterLabels)
-        private var showPosterLabels
-
         @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
         private var useSeriesLandscapeBackdrop
 
@@ -69,17 +66,10 @@ extension CustomizeViewsSettings {
 //                }
                 .posterCornerRadius(type)
 
-                AlternateLayoutView(alignment: .topLeading) {
-                    TitleSubtitleContentView(
-                        title: "Example",
-                        subtitle: "Subtitle"
-                    )
-                } content: {
-                    TitleSubtitleContentView(
-                        title: showPosterLabels ? "Example" : nil,
-                        subtitle: "Subtitle"
-                    )
-                }
+                TitleSubtitleContentView(
+                    title: "Example",
+                    subtitle: "Subtitle"
+                )
             }
             .animation(.linear(duration: 0.1), value: indicators)
             .animation(.linear(duration: 0.1), value: previewItemState)
@@ -106,8 +96,6 @@ extension CustomizeViewsSettings {
 
                     Picker("Status", selection: $previewItemState)
                 }
-
-                Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 
                 Section(L10n.indicators) {
                     Toggle(L10n.progress, isOn: $indicators.contains(.progress))

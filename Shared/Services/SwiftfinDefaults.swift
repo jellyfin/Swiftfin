@@ -110,7 +110,6 @@ extension Defaults.Keys {
 
         static let itemViewType: Key<ItemViewType> = UserKey("itemViewType", default: .enhanced)
 
-        static let showPosterLabels: Key<Bool> = UserKey("showPosterLabels", default: true)
         static let nextUpPosterType: Key<PosterDisplayType> = UserKey("nextUpPosterType", default: .portrait)
         static let recentlyAddedPosterType: Key<PosterDisplayType> = UserKey("recentlyAddedPosterType", default: .portrait)
         static let latestInLibraryPosterType: Key<PosterDisplayType> = UserKey("latestInLibraryPosterType", default: .portrait)

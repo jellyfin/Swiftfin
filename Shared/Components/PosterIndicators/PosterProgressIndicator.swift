@@ -24,6 +24,8 @@ struct PosterProgressIndicator: View {
             alignment: .bottomLeading,
             ratio: .init(width: progress, height: 1)
         ) {
+            let _ = Self._printChanges()
+
             Rectangle()
                 .fill(accentColor)
                 .frame(height: 8)
@@ -40,6 +42,8 @@ struct PosterProgressIndicator: View {
         ContainerRelativeView(
             ratio: .init(width: 0.95, height: 0.9)
         ) {
+            let _ = Self._printChanges()
+
             VStack(alignment: .leading, spacing: 5) {
 
                 Text(title)
@@ -68,15 +72,17 @@ struct PosterProgressIndicator: View {
                 }
                 .frame(height: 50)
         }
+        .colorScheme(.dark)
     }
 
     var body: some View {
-        CompactOrRegularView(
-            isCompact: posterDisplayType != .landscape
-        ) {
-            compactView
-        } regularView: {
-            regularView
-        }
+        let _ = Self._printChanges()
+//        CompactOrRegularView(
+//            isCompact: posterDisplayType != .landscape
+//        ) {
+//            compactView
+//        } regularView: {
+//            regularView
+//        }
     }
 }

@@ -30,7 +30,7 @@ struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element:
         self.library = library
         self.posterDisplayType = posterDisplayType
         self.posterSize = posterSize
-        self.viewModel = .init(library: library)
+        self.viewModel = .init(library: library, pageSize: 20)
     }
 
     @ViewBuilder

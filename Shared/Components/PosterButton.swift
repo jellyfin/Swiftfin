@@ -130,29 +130,43 @@ extension PosterButton where Label == EmptyView {
     }
 }
 
-struct TitleSubtitleContentView: View {
+struct TitleSubtitleContentView<Subtitle: View>: View {
 
-    let title: String?
-    let subtitle: String?
+    private let title: String
+    private let subtitle: Subtitle
+
+    init(
+        title: String,
+        @ViewBuilder subtitle: @escaping () -> Subtitle
+    ) {
+        self.title = title
+        self.subtitle = subtitle()
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            if let title {
-                Text(title)
-                    .font(.footnote)
-                    .fontWeight(.regular)
-                    .foregroundStyle(.primary)
-                    .lineLimit(1, reservesSpace: true)
-            }
+            Text(title)
+                .fontWeight(.regular)
+                .foregroundStyle(.primary)
+                .lineLimit(1, reservesSpace: true)
 
-            if let subtitle {
-                Text(subtitle)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1, reservesSpace: true)
-            }
+            subtitle
+                .fontWeight(.medium)
+                .foregroundStyle(.secondary)
+                .lineLimit(1, reservesSpace: true)
         }
+        .font(.footnote)
+    }
+}
+
+extension TitleSubtitleContentView where Subtitle == Text {
+
+    init(
+        title: String,
+        subtitle: String
+    ) {
+        self.title = title
+        self.subtitle = Text(subtitle)
     }
 }
 

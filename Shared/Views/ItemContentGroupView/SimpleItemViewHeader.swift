@@ -124,19 +124,22 @@ struct SimpleItemViewHeader: _ContentGroup {
 
                 Divider()
 
-                if let tagline = viewModel.item.taglines?.first {
-                    Text(tagline)
-                        .fontWeight(.bold)
-                        .lineLimit(2)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
+                VStack(alignment: .leading, spacing: 5) {
+                    if let tagline = viewModel.item.taglines?.first {
+                        Text(tagline)
+                            .fontWeight(.bold)
+                            .lineLimit(2)
+                    }
 
-                if let overview = viewModel.item.overview {
-                    SeeMoreText(overview) {}
+                    if let overview = viewModel.item.overview {
+                        SeeMoreText(overview) {
+                            router.route(to: .itemOverview(item: viewModel.item))
+                        }
                         .font(.footnote)
                         .lineLimit(3)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 AttributesHStack(
                     item: viewModel.item,
