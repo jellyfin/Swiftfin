@@ -10,22 +10,24 @@ import JellyfinAPI
 
 struct LocalTrailerLibrary: PagingLibrary {
 
-    let parent: BaseItemDto
+    let parent: _TitledLibraryParent
     let hasNextPage: Bool = false
 
-    init(parent: BaseItemDto) {
-        self.parent = parent
+    init(parentID: String) {
+        self.parent = .init(
+            displayTitle: "",
+            libraryID: parentID
+        )
     }
 
     func retrievePage(
         environment: Empty,
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
-        guard let itemID = parent.id else {
-            throw ErrorMessage(L10n.unknownError)
-        }
-
-        let request = Paths.getLocalTrailers(itemID: itemID, userID: pageState.userSession.user.id)
+        let request = Paths.getLocalTrailers(
+            itemID: parent.libraryID,
+            userID: pageState.userSession.user.id
+        )
         let response = try await pageState.userSession.client.send(request)
 
         return response.value

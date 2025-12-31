@@ -32,10 +32,16 @@ struct TrackingFrameModifier<Key: PreferenceKey>: ViewModifier where Key.Value =
     @State
     private var safeAreaInsets: EdgeInsets = .zero
 
+    private let containerCoordinateSpace: CoordinateSpace
     private let coordinateSpace: CoordinateSpace
     private let key: Key.Type?
 
-    init(coordinateSpace: CoordinateSpace, key: Key.Type? = nil) {
+    init(
+        containerCoordinateSpace: CoordinateSpace = .global,
+        coordinateSpace: CoordinateSpace,
+        key: Key.Type? = nil
+    ) {
+        self.containerCoordinateSpace = containerCoordinateSpace
         self.coordinateSpace = coordinateSpace
         self.key = key
     }
@@ -54,7 +60,11 @@ struct TrackingFrameModifier<Key: PreferenceKey>: ViewModifier where Key.Value =
     func body(content: Content) -> some View {
         attachingFramePreference {
             content
-                .trackingFrame($frame, $safeAreaInsets)
+                .trackingFrame(
+                    in: containerCoordinateSpace,
+                    $frame,
+                    $safeAreaInsets
+                )
                 .environment(
                     \.frameForParentView,
                     frameForParentView.inserting(

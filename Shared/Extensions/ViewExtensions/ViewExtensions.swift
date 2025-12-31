@@ -266,10 +266,13 @@ extension View {
     }
 
     @ViewBuilder
-    func onFrameChanged(perform action: @escaping (CGRect, EdgeInsets) -> Void) -> some View {
+    func onFrameChanged(
+        in containerCoordinateSpace: CoordinateSpace = .global,
+        perform action: @escaping (CGRect, EdgeInsets) -> Void
+    ) -> some View {
         onGeometryChange(for: OnFrameChangedValue.self) { proxy in
             .init(
-                frame: proxy.frame(in: .global),
+                frame: proxy.frame(in: containerCoordinateSpace),
                 safeAreaInsets: proxy.safeAreaInsets
             )
         } action: { newValue in
@@ -279,40 +282,71 @@ extension View {
 
     @ViewBuilder
     func trackingFrame(
+        in containerCoordinateSpace: CoordinateSpace = .global,
         _ frameBinding: Binding<CGRect>,
         _ safeaAreaInsetsBinding: Binding<EdgeInsets> = .constant(.zero)
     ) -> some View {
-        onFrameChanged {
+        onFrameChanged(in: containerCoordinateSpace) {
             frameBinding.wrappedValue = $0
             safeaAreaInsetsBinding.wrappedValue = $1
         }
     }
 
     @ViewBuilder
-    func trackingFrame(named name: String) -> some View {
+    func trackingFrame(
+        in containerCoordinateSpace: CoordinateSpace = .global,
+        named name: String
+    ) -> some View {
         modifier(
-            TrackingFrameModifier<EmptyCGRectPreferenceKey>(coordinateSpace: .named(name), key: nil)
+            TrackingFrameModifier<EmptyCGRectPreferenceKey>(
+                containerCoordinateSpace: containerCoordinateSpace,
+                coordinateSpace: .named(name),
+                key: nil
+            )
         )
     }
 
     @ViewBuilder
-    func trackingFrame(for coordinateSpace: CoordinateSpace) -> some View {
+    func trackingFrame(
+        in containerCoordinateSpace: CoordinateSpace = .global,
+        for coordinateSpace: CoordinateSpace
+    ) -> some View {
         modifier(
-            TrackingFrameModifier<EmptyCGRectPreferenceKey>(coordinateSpace: coordinateSpace, key: nil)
+            TrackingFrameModifier<EmptyCGRectPreferenceKey>(
+                containerCoordinateSpace: containerCoordinateSpace,
+                coordinateSpace: coordinateSpace,
+                key: nil
+            )
         )
     }
 
     @ViewBuilder
-    func trackingFrame<K: PreferenceKey>(named name: String, key: K.Type) -> some View where K.Value == CGRect {
+    func trackingFrame<K: PreferenceKey>(
+        in containerCoordinateSpace: CoordinateSpace = .global,
+        named name: String,
+        key: K.Type
+    ) -> some View where K.Value == CGRect {
         modifier(
-            TrackingFrameModifier(coordinateSpace: .named(name), key: key)
+            TrackingFrameModifier(
+                containerCoordinateSpace: containerCoordinateSpace,
+                coordinateSpace: .named(name),
+                key: key
+            )
         )
     }
 
     @ViewBuilder
-    func trackingFrame<K: PreferenceKey>(for coordinateSpace: CoordinateSpace, key: K.Type) -> some View where K.Value == CGRect {
+    func trackingFrame<K: PreferenceKey>(
+        in containerCoordinateSpace: CoordinateSpace = .global,
+        for coordinateSpace: CoordinateSpace,
+        key: K.Type
+    ) -> some View where K.Value == CGRect {
         modifier(
-            TrackingFrameModifier(coordinateSpace: coordinateSpace, key: key)
+            TrackingFrameModifier(
+                containerCoordinateSpace: containerCoordinateSpace,
+                coordinateSpace: coordinateSpace,
+                key: key
+            )
         )
     }
 
@@ -350,6 +384,10 @@ extension View {
 
     func isEditing(_ isEditing: Bool) -> some View {
         environment(\.isEditing, isEditing)
+    }
+
+    func isHighlighted(_ isHighlighted: Bool) -> some View {
+        environment(\.isHighlighted, isHighlighted)
     }
 
     func isSelected(_ isSelected: Bool) -> some View {

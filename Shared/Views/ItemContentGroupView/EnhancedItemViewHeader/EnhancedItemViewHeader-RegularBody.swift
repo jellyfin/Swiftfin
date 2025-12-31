@@ -49,9 +49,19 @@ extension EnhancedItemViewHeader {
                 VStack(alignment: .leading, spacing: 10) {
                     logo
 
-                    ItemView.OverviewView(item: viewModel.item)
-                        .overviewLineLimit(3)
-                        .taglineLineLimit(2)
+                    if let tagline = viewModel.item.taglines?.first {
+                        Text(tagline)
+                            .fontWeight(.bold)
+                            .lineLimit(2)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+
+                    if let overview = viewModel.item.overview {
+                        SeeMoreText(overview) {}
+                            .font(.footnote)
+                            .lineLimit(3)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
 
                     HStack(alignment: .top) {
                         AttributesHStack(
@@ -86,7 +96,11 @@ extension EnhancedItemViewHeader {
 
                     ActionButtonHStack(viewModel: viewModel)
                 }
+                #if os(tvOS)
+                .frame(width: 450)
+                #else
                 .frame(maxWidth: 300)
+                #endif
             }
             .edgePadding(.bottom)
             .background(
@@ -126,7 +140,11 @@ extension EnhancedItemViewHeader {
                 }
             }
             .scrollViewHeaderOffsetOpacity()
-            .trackingFrame(for: .scrollViewHeader, key: ScrollViewHeaderFrameKey.self)
+            .trackingFrame(
+                in: .local,
+                for: .scrollViewHeader,
+                key: ScrollViewHeaderFrameKey.self
+            )
             .environment(\.frameForParentView, frameForParentView.removingValue(for: .navigationStack))
             .preference(key: _UseOffsetNavigationBarKey.self, value: true)
             .preference(key: MenuContentKey.self) {
@@ -142,5 +160,107 @@ extension EnhancedItemViewHeader {
                 //                }
             }
         }
+    }
+}
+
+import Combine
+import Factory
+import JellyfinAPI
+
+struct ItemWithValueAction<Value> {
+
+    private let action: @MainActor (BaseItemDto, Value) -> Void
+
+    init(
+        action: @escaping @MainActor (BaseItemDto, Value) -> Void
+    ) {
+        self.action = action
+    }
+
+    @MainActor
+    func callAsFunction(_ item: BaseItemDto, _ value: Value) {
+        action(item, value)
+    }
+}
+
+typealias ItemFavoriteAction = ItemWithValueAction<Bool>
+
+extension EnvironmentValues {
+
+    @Entry
+    @MainActor
+    var favoriteItemAction: ItemWithValueAction = .init { @MainActor item, isFavorited in
+        let handler = Container.shared.itemUserDataHandler()
+        handler.setFavoriteStatus(for: item, isFavorited: isFavorited)
+    }
+}
+
+extension Container {
+
+    var itemUserDataHandler: Factory<ItemUserDataHandler> {
+        self { ItemUserDataHandler() }
+            .singleton
+    }
+}
+
+@MainActor
+class ItemUserDataHandler: ViewModel {
+
+    private var favoriteItemTasks: [String: Task<Void, Never>] = [:]
+
+    private var favoriteItemsSubject: PassthroughSubject<(BaseItemDto, Bool), Never> = .init()
+
+    override init() {
+        super.init()
+
+        favoriteItemsSubject
+            .debounce(for: 0.2, scheduler: RunLoop.main)
+            .sink { @MainActor [weak self] item, isFavorited in
+                self?._setFavoriteStatus(for: item, isFavorited: isFavorited)
+            }
+            .store(in: &cancellables)
+    }
+
+    func setFavoriteStatus(
+        for item: BaseItemDto,
+        isFavorited: Bool
+    ) {
+        favoriteItemsSubject.send((item, isFavorited))
+    }
+
+    private func _setFavoriteStatus(
+        for item: BaseItemDto,
+        isFavorited: Bool
+    ) {
+        guard let itemId = item.id else { return }
+
+        favoriteItemTasks[itemId]?.cancel()
+
+        let task = Task {
+            do {
+
+                try await Task.sleep(for: .seconds(3))
+
+                let newUserData: UserItemDataDto
+
+                if isFavorited {
+                    newUserData = try await userSession.client.send(
+                        Paths.markFavoriteItem(itemID: itemId)
+                    ).value
+                } else {
+                    newUserData = try await userSession.client.send(
+                        Paths.unmarkFavoriteItem(itemID: itemId)
+                    ).value
+                }
+
+                Notifications[.itemUserDataDidChange].post(newUserData)
+            } catch {
+                print("Failed to update favorite status for item \(itemId): \(error)")
+            }
+
+            favoriteItemTasks[itemId] = nil
+        }
+
+        favoriteItemTasks[itemId] = task
     }
 }

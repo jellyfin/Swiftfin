@@ -41,8 +41,6 @@ struct MediaView: View {
                 case let .collectionFolder(item):
                     let pagingLibrary = ItemLibrary(parent: item)
                     router.route(to: .library(library: pagingLibrary), in: namespace)
-                case .downloads:
-                    router.route(to: .downloadList)
                 case .favorites:
                     router.route(
                         to: .contentGroup(
@@ -72,7 +70,7 @@ struct MediaView: View {
                 ProgressView()
             }
         }
-        .animation(.linear(duration: 0.1), value: viewModel.state)
+        .animation(.linear(duration: 0.2), value: viewModel.state)
         .ignoresSafeArea()
         .navigationTitle(L10n.allMedia.localizedCapitalized)
         .backport

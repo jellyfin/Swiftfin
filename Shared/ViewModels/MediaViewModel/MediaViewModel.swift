@@ -91,11 +91,6 @@ final class MediaViewModel: ViewModel {
             return []
         }
 
-        // downloads doesn't have random
-        if mediaType == .downloads {
-            return []
-        }
-
         var parentID: String?
 
         if case let MediaType.collectionFolder(item) = mediaType {

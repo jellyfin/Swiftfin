@@ -10,14 +10,10 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: have programs only pull recommended/current?
-//       - have progress overlay
 struct SearchView: View {
 
     @Default(.Customization.Search.enabledDrawerFilters)
     private var enabledDrawerFilters
-    @Default(.Customization.searchPosterType)
-    private var searchPosterType
 
     @FocusState
     private var isSearchFocused: Bool
@@ -28,11 +24,11 @@ struct SearchView: View {
     @State
     private var searchQuery = ""
 
-    @TabItemSelected
-    private var tabItemSelected
-
     @StateObject
     private var viewModel = SearchViewModel()
+
+    @TabItemSelected
+    private var tabItemSelected
 
     @ViewBuilder
     private func makeGroupBody<G: _ContentGroup>(_ group: G) -> some View {
@@ -46,6 +42,9 @@ struct SearchView: View {
                 Button(item.displayTitle) {
                     searchQuery = item.displayTitle
                 }
+                #if os(tvOS)
+                .buttonStyle(.plain)
+                #endif
             }
         }
     }
@@ -86,16 +85,17 @@ struct SearchView: View {
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .navigationTitle(L10n.search)
-        .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .refreshable {
             viewModel.search(query: searchQuery)
         }
-        .navigationBarFilterDrawer(
-            viewModel: viewModel.filterViewModel,
-            types: enabledDrawerFilters
-        ) {
-            router.route(to: .filter(type: $0.type, viewModel: $0.viewModel))
-        }
+//        .navigationBarFilterDrawer(
+//            viewModel: viewModel.filterViewModel,
+//            types: enabledDrawerFilters
+//        ) {
+//            router.route(to: .filter(type: $0.type, viewModel: $0.viewModel))
+//        }
         .onFirstAppear {
             viewModel.getSuggestions()
         }
@@ -105,7 +105,6 @@ struct SearchView: View {
         }
         .searchable(
             text: $searchQuery,
-            placement: .navigationBarDrawer(displayMode: .always),
             prompt: L10n.search
         )
         .backport

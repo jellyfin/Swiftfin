@@ -145,15 +145,6 @@ extension NavigationRoute {
         }
     }
 
-    static func itemOverviewView(item: BaseItemDto) -> NavigationRoute {
-        NavigationRoute(
-            id: "itemOverviewView",
-            style: .sheet
-        ) {
-            ItemOverviewView(item: item)
-        }
-    }
-
     static let localSecurity = NavigationRoute(
         id: "localSecurity"
     ) {

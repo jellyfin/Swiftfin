@@ -65,9 +65,9 @@ extension MediaInfoSupplement {
                 manager.setPlaybackRequestStatus(status: .playing)
                 containerState.select(supplement: nil)
             }
-            #if os(iOS)
-            .buttonStyle(.material)
-            #endif
+//            #if os(iOS)
+//            .buttonStyle(.material)
+//            #endif
             .frame(width: 200, height: 50)
             .font(.subheadline)
             .fontWeight(.semibold)

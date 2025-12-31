@@ -124,10 +124,19 @@ struct SimpleItemViewHeader: _ContentGroup {
 
                 Divider()
 
-                ItemView.OverviewView(item: viewModel.item)
-                    .overviewLineLimit(3)
-                    .taglineLineLimit(2)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                if let tagline = viewModel.item.taglines?.first {
+                    Text(tagline)
+                        .fontWeight(.bold)
+                        .lineLimit(2)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                if let overview = viewModel.item.overview {
+                    SeeMoreText(overview) {}
+                        .font(.footnote)
+                        .lineLimit(3)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
 
                 AttributesHStack(
                     item: viewModel.item,

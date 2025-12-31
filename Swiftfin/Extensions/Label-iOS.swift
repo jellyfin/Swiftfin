@@ -39,23 +39,3 @@ struct EpisodeSelectorLabelStyle: LabelStyle {
         .font(.caption)
     }
 }
-
-// MARK: SectionFooterWithImageLabelStyle
-
-extension TitleAndIconLabelStyle {
-
-    var trailingIcon: TrailingIconReversedButtonStyle {
-        TrailingIconReversedButtonStyle()
-    }
-}
-
-struct TrailingIconReversedButtonStyle: LabelStyle {
-
-    func makeBody(configuration: Configuration) -> some View {
-        HStack {
-            configuration.title
-
-            configuration.icon
-        }
-    }
-}

@@ -77,13 +77,13 @@ struct PlayButton: View {
                 )
             }
             .menuStyle(.button)
-            .labelStyle(.iconOnly)
-            .buttonStyle(
+            .labelStyle(
                 .tintedMaterial(
                     tint: .white,
                     foregroundColor: .black
                 )
             )
+            .labelStyle(.iconOnly)
             .aspectRatio(1, contentMode: .fit)
         }
     }
@@ -95,7 +95,7 @@ struct PlayButton: View {
             HStack {
                 Image(systemName: "play.fill")
 
-                VStack {
+                VStack(spacing: 2) {
                     Text(viewModel.playButtonItem?.playButtonLabel ?? L10n.play)
 
                     if let mediaSource {
@@ -105,16 +105,11 @@ struct PlayButton: View {
                     }
                 }
             }
-            .padding(.horizontal, 20)
             .font(.callout)
             .fontWeight(.semibold)
         }
-        .buttonStyle(
-            .tintedMaterial(
-                tint: accentColor,
-                foregroundColor: accentColor.overlayColor
-            )
-        )
+        .foregroundStyle(accentColor.overlayColor, accentColor)
+        .buttonStyle(.primary)
         .contextMenu {
             if viewModel.playButtonItem?.userData?.playbackPositionTicks != 0 {
                 Button(L10n.playFromBeginning, systemImage: "gobackward") {
@@ -133,5 +128,18 @@ struct PlayButton: View {
             versionMenu
         }
         .frame(height: UIDevice.isTV ? 100 : 44)
+    }
+}
+
+struct InlineLabelStyle<Content: View>: LabelStyle {
+
+    private let content: (Configuration) -> Content
+
+    init(@ViewBuilder content: @escaping (Configuration) -> Content) {
+        self.content = content
+    }
+
+    func makeBody(configuration: Configuration) -> some View {
+        content(configuration)
     }
 }

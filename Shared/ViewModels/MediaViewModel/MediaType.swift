@@ -14,7 +14,6 @@ extension MediaViewModel {
     enum MediaType: Displayable, Hashable, Identifiable {
 
         case collectionFolder(BaseItemDto)
-        case downloads
         case favorites
         case liveTV(BaseItemDto)
 
@@ -22,8 +21,6 @@ extension MediaViewModel {
             switch self {
             case let .collectionFolder(item):
                 return item.displayTitle
-            case .downloads:
-                return L10n.downloads
             case .favorites:
                 return L10n.favorites
             case .liveTV:
@@ -35,8 +32,6 @@ extension MediaViewModel {
             switch self {
             case let .collectionFolder(item):
                 return item.id
-            case .downloads:
-                return "downloads"
             case .favorites:
                 return "favorites"
             case let .liveTV(item):

@@ -32,7 +32,7 @@ class _ItemViewModel: ViewModel, WithRefresh {
     }
 
     @Published
-    private(set) var item: BaseItemDto = .init()
+    var item: BaseItemDto = .init()
     @Published
     private(set) var playButtonItem: BaseItemDto? {
         willSet {
@@ -43,8 +43,19 @@ class _ItemViewModel: ViewModel, WithRefresh {
     @Published
     var selectedMediaSource: MediaSourceInfo?
 
+    @ObservedPublisher
+    var localTrailers: [BaseItemDto]
+
+    private var localTrailerViewModel: PagingLibraryViewModel<LocalTrailerLibrary>
+
     init(id: String) {
         self.item = .init(id: id)
+        self.localTrailerViewModel = .init(library: .init(parentID: id))
+
+        self._localTrailers = .init(
+            wrappedValue: [],
+            observing: localTrailerViewModel.$elements.map(\.elements)
+        )
     }
 
     @Function(\Action.Cases.refresh)
@@ -53,6 +64,10 @@ class _ItemViewModel: ViewModel, WithRefresh {
 
         let newItem = try await item.getFullItem(userSession: userSession)
         item = newItem
+
+        Task {
+            localTrailerViewModel.refresh()
+        }
 
         if item.type == .series {
             playButtonItem = try await getNextUp(seriesID: item.id)
@@ -74,5 +89,53 @@ class _ItemViewModel: ViewModel, WithRefresh {
         }
 
         return item
+    }
+}
+
+import Combine
+
+/// Observable object property wrapper that allows observing
+/// another `Publisher`.
+@propertyWrapper
+final class ObservedPublisher<Value>: ObservableObject {
+
+    @Published
+    private(set) var wrappedValue: Value
+
+    var projectedValue: AnyPublisher<Value, Never> {
+        $wrappedValue
+            .eraseToAnyPublisher()
+    }
+
+    private var cancellables = Set<AnyCancellable>()
+
+    init<P: Publisher>(
+        wrappedValue: Value,
+        observing publisher: P
+    ) where P.Output == Value, P.Failure == Never {
+        self.wrappedValue = wrappedValue
+
+        publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] newValue in
+                self?.wrappedValue = newValue
+            }
+            .store(in: &cancellables)
+    }
+
+    static subscript<T: ObservableObject>(
+        _enclosingInstance instance: T,
+        wrapped wrappedKeyPath: KeyPath<T, Value>,
+        storage storageKeyPath: KeyPath<T, ObservedPublisher<Value>>
+    ) -> Value where T.ObjectWillChangePublisher == ObservableObjectPublisher {
+        let wrapper = instance[keyPath: storageKeyPath]
+
+        wrapper.objectWillChange
+            .sink { [weak instance] _ in
+                instance?.objectWillChange.send()
+            }
+            .store(in: &wrapper.cancellables)
+
+        return wrapper.wrappedValue
     }
 }

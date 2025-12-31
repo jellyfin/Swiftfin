@@ -27,6 +27,9 @@ extension EnvironmentValues {
     var isEditing: Bool = false
 
     @Entry
+    var isHighlighted: Bool = true
+
+    @Entry
     var isSelected: Bool = false
 
     @Entry

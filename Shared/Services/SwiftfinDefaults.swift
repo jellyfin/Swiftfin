@@ -234,12 +234,6 @@ extension Defaults.Keys {
         }
     }
 
-    // Experimental settings
-    enum Experimental {
-
-        static let downloads: Key<Bool> = UserKey("experimentalDownloads", default: false)
-    }
-
     // tvos specific
     static let downActionShowsMenu: Key<Bool> = UserKey("downActionShowsMenu", default: true)
     static let confirmClose: Key<Bool> = UserKey("confirmClose", default: false)

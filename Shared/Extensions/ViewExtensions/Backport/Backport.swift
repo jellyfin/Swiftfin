@@ -78,16 +78,20 @@ extension Backport where Content: View {
         }
     }
 
-    @available(tvOS, unavailable)
+    /// - Important: This does nothing on tvOS.
     @ViewBuilder
     func searchFocused(
         _ isSearchFocused: FocusState<Bool>.Binding
     ) -> some View {
+        #if os(iOS)
         if #available(iOS 18.0, *) {
             content.searchFocused(isSearchFocused)
         } else {
             content
         }
+        #else
+        content
+        #endif
     }
 
     @available(iOS 9999, *)

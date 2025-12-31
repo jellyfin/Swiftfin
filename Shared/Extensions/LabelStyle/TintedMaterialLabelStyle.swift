@@ -10,22 +10,17 @@ import SwiftUI
 
 // TODO: on tvOS focus, find way to disable brightness effect
 
-extension ButtonStyle where Self == TintedMaterialButtonStyle {
+extension LabelStyle where Self == TintedMaterialLabelStyle {
 
-    // TODO: just be `Material` backed instead of `TintedMaterial`
-    static var material: TintedMaterialButtonStyle {
-        TintedMaterialButtonStyle(tint: Color.clear, foregroundColor: Color.primary)
-    }
-
-    static func tintedMaterial(tint: Color, foregroundColor: Color) -> TintedMaterialButtonStyle {
-        TintedMaterialButtonStyle(
+    static func tintedMaterial(tint: Color, foregroundColor: Color) -> TintedMaterialLabelStyle {
+        TintedMaterialLabelStyle(
             tint: tint,
             foregroundColor: foregroundColor
         )
     }
 }
 
-struct TintedMaterialButtonStyle: ButtonStyle {
+struct TintedMaterialLabelStyle: LabelStyle {
 
     @Environment(\.isSelected)
     private var isSelected
@@ -36,21 +31,6 @@ struct TintedMaterialButtonStyle: ButtonStyle {
     // global accent color causes flashes of color
     let tint: Color
     let foregroundColor: Color
-
-    func makeBody(configuration: Configuration) -> some View {
-        ZStack {
-            TintedMaterial(tint: buttonTint)
-                .id(isSelected)
-            #if !os(tvOS)
-                .cornerRadius(10)
-            #endif
-
-            configuration.label
-                .foregroundStyle(foregroundStyle)
-                .symbolRenderingMode(.monochrome)
-        }
-        .hoverEffect(.lift)
-    }
 
     private var buttonTint: Color {
         if isEnabled && isSelected {
@@ -69,6 +49,20 @@ struct TintedMaterialButtonStyle: ButtonStyle {
         } else {
             // TODO: change to a full-opacity color
             AnyShapeStyle(Color.gray.opacity(0.3))
+        }
+    }
+
+    func makeBody(configuration: Configuration) -> some View {
+        ZStack {
+            TintedMaterial(tint: buttonTint)
+                .id(isSelected)
+            #if !os(tvOS)
+                .cornerRadius(10)
+            #endif
+
+            Label(configuration)
+                .foregroundStyle(foregroundStyle)
+                .symbolRenderingMode(.monochrome)
         }
     }
 }
