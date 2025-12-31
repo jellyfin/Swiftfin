@@ -45,10 +45,10 @@ extension VideoRangeType: Displayable {
     /// Returns `true` if the video format is HDR (including Dolby Vision).
     var isHDR: Bool {
         switch self {
-        case .hdr10, .hlg, .hdr10Plus, .dovi, .doviWithHDR10, .doviWithHLG, .doviWithSDR:
-            return true
-        default:
+        case .sdr, .doviInvalid, .unknown:
             return false
+        default:
+            return true
         }
     }
 
