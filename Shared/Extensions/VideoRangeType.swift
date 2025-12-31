@@ -55,7 +55,7 @@ extension VideoRangeType: Displayable {
     /// Returns `true` if the video format is Dolby Vision.
     var isDolbyVision: Bool {
         switch self {
-        case .dovi, .doviWithHDR10, .doviWithHLG, .doviWithSDR:
+        case .dovi, .doviWithEL, .doviWithHLG, .doviWithSDR, .doviWithHDR10, .doviWithHDR10Plus, .doviWithELHDR10Plus:
             return true
         default:
             return false
