@@ -56,6 +56,7 @@ final class MediaPlayerManager: ViewModel {
         case playNewItem(provider: MediaPlayerItemProvider)
         case setPlaybackRequestStatus(status: PlaybackRequestStatus)
         case setRate(rate: Float)
+        case setTrack(type: MediaStreamType, index: Int?)
         case start
         case stop
         case togglePlayPause
@@ -169,6 +170,7 @@ final class MediaPlayerManager: ViewModel {
     }
 
     private var itemBuildTask: AnyCancellable?
+    private var streamChangeTask: AnyCancellable?
 
     private var initialMediaPlayerItemProvider: MediaPlayerItemProvider?
 
@@ -292,6 +294,52 @@ final class MediaPlayerManager: ViewModel {
         }
     }
 
+    // TODO: MKV can contain multiple video streams too
+    // - Need logic for handle video track changes
+    @Function(\Action.Cases.setTrack)
+    private func _setTrack(_ type: MediaStreamType, _ index: Int?) async throws {
+        guard let currentItem = playbackItem,
+              MediaStreamType.supportedCases.contains(type)
+        else { return }
+
+        streamChangeTask?.cancel()
+
+        let newAudioIndex = type == .audio ? index : currentItem.selectedAudioStreamIndex
+        let newSubtitleIndex = type == .subtitle ? index : currentItem.selectedSubtitleStreamIndex
+
+        logger.info(
+            "Changing \(type.rawValue) stream",
+            metadata: [
+                "newIndex": .stringConvertible(index ?? -1),
+                "audioIndex": .stringConvertible(newAudioIndex ?? -1),
+                "subtitleIndex": .stringConvertible(newSubtitleIndex ?? -1),
+            ]
+        )
+
+        proxy?.stop()
+
+        /// Rebuilding to ensure that the new selected track does not require transcoding
+        /// - Will result in a DirectStream or Transcode if required
+        let newItem = try await MediaPlayerItem.build(
+            for: currentItem.baseItem,
+            mediaSource: currentItem.mediaSource,
+            audioStreamIndex: newAudioIndex,
+            subtitleStreamIndex: newSubtitleIndex,
+            requestedBitrate: currentItem.requestedBitrate
+        )
+
+        logger.info(
+            "Built new playback item",
+            metadata: [
+                "playSessionID": .stringConvertible(newItem.playSessionID),
+                "isTranscoding": .stringConvertible(newItem.mediaSource.transcodingURL != nil),
+                "url": .stringConvertible(newItem.url.absoluteString),
+            ]
+        )
+
+        playbackItem = newItem
+    }
+
     @Function(\Action.Cases.start)
     private func _start() async throws {
         guard let initialMediaPlayerItemProvider else {
@@ -309,6 +357,7 @@ final class MediaPlayerManager: ViewModel {
         // TODO: remove playback item?
         //       - check that observers would respond correctly to stopping
         itemBuildTask?.cancel()
+        streamChangeTask?.cancel()
         proxy?.stop()
         Container.shared.mediaPlayerManager.reset()
     }
