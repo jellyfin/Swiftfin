@@ -51,16 +51,18 @@ struct SearchView: View {
 
     @ViewBuilder
     private var resultsView: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 10) {
-                ForEach(viewModel.itemContentGroupViewModel.groups, id: \.id) { group in
-                    makeGroupBody(group)
-                        .eraseToAnyView()
-                }
-            }
-            .edgePadding(.vertical)
-        }
-        .scrollIndicators(.hidden)
+        ContentGroupView(viewModel: viewModel.itemContentGroupViewModel)
+
+//        ScrollView {
+//            VStack(alignment: .leading, spacing: 10) {
+//                ForEach(viewModel.itemContentGroupViewModel.groups, id: \.id) { group in
+//                    makeGroupBody(group)
+//                        .eraseToAnyView()
+//                }
+//            }
+//            .edgePadding(.vertical)
+//        }
+//        .scrollIndicators(.hidden)
     }
 
     var body: some View {

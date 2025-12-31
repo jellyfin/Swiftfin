@@ -30,7 +30,7 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View where Library.El
     @Router
     private var router
 
-    @StateObject
+    @ObservedObject
     private var viewModel: PagingLibraryViewModel<Library>
 
     private var _elements: [_Element] {
@@ -49,7 +49,7 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View where Library.El
 
     init(viewModel: PagingLibraryViewModel<Library>, group: PosterGroup<Library>) {
         self.group = group
-        _viewModel = StateObject(wrappedValue: viewModel)
+        self.viewModel = viewModel
     }
 
     private func routeToLibrary() {

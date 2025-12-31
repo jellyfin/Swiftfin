@@ -22,17 +22,6 @@ extension NavigationRoute {
     }
     #endif
 
-//    static func library(
-//        viewModel: PagingLibraryViewModel<some Poster>
-//    ) -> NavigationRoute {
-//        NavigationRoute(
-//            id: "library-(\(viewModel.parent?.id ?? "Unparented"))",
-//            withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
-//        ) {
-//            PagingLibraryView(viewModel: viewModel)
-//        }
-//    }
-
     @MainActor
     static func contentGroup<Provider: _ContentGroupProvider>(
         provider: Provider

@@ -76,6 +76,19 @@ extension CustomizeViewsSettings {
                 } header: {
                     Text(L10n.missingItems)
                 }
+            } image: {
+                WithEnvironment(value: \._navigationTitle) { navigationTitle in
+                    VStack {
+                        Image(systemName: "house.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(maxWidth: 400)
+
+                        if let navigationTitle {
+                            Text(navigationTitle)
+                        }
+                    }
+                }
             }
             .navigationTitle(L10n.items)
         }

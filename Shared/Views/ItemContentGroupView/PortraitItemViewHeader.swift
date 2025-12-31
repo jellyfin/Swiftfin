@@ -81,7 +81,7 @@ struct PortraitItemViewHeader: _ContentGroup {
             }
             .scrollViewHeaderOffsetOpacity()
             .trackingFrame(for: .scrollViewHeader, key: ScrollViewHeaderFrameKey.self)
-            .preference(key: _UseOffsetNavigationBarKey.self, value: true)
+            .preference(key: _ContentGroupCustomizationKey.self, value: .useOffsetNavigationBar)
         }
     }
 }

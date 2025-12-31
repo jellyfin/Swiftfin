@@ -9,26 +9,16 @@
 import Defaults
 import SwiftUI
 
-// TODO: will be entirely re-organized
-
 struct CustomizeViewsSettings: View {
 
     @Default(.Customization.Search.enabledDrawerFilters)
     private var searchEnabledDrawerFilters
 
-    @Default(.Customization.recentlyAddedPosterType)
-    private var showRecentlyAdded
-
-    @Default(.Customization.Library.showFavorites)
-    private var showFavorites
-    @Default(.Customization.Library.randomImage)
-    private var libraryRandomImage
-
     @Router
     private var router
 
     var body: some View {
-        List {
+        Form(systemImage: "gear") {
 
             Section {
                 ChevronButton(L10n.search) {

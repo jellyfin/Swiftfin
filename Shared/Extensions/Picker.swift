@@ -18,7 +18,7 @@ func Picker<Element: CaseIterable & Displayable & Hashable>(
         Text(noneStyle.displayTitle)
             .tag(nil as Element?)
 
-        ForEach(Element.allCases.asArray, id: \.hashValue) {
+        ForEach(Array(Element.allCases), id: \.hashValue) {
             Text($0.displayTitle)
                 .tag($0 as Element?)
         }
@@ -31,7 +31,7 @@ func Picker<Element: CaseIterable & Displayable & Hashable>(
     selection: Binding<Element>
 ) -> some View {
     SwiftUI.Picker(title, selection: selection) {
-        ForEach(Element.allCases.asArray, id: \.hashValue) {
+        ForEach(Array(Element.allCases), id: \.hashValue) {
             Text($0.displayTitle)
                 .tag($0 as Element)
         }
@@ -45,7 +45,7 @@ func Picker<Element: SupportedCaseIterable & Displayable & Hashable>(
     onlySupported: Bool = false
 ) -> some View {
 
-    let elements = onlySupported ? Element.supportedCases.asArray : Element.allCases.asArray
+    let elements = onlySupported ? Array(Element.supportedCases) : Array(Element.allCases)
 
     SwiftUI.Picker(title, selection: selection) {
         ForEach(elements, id: \.hashValue) {

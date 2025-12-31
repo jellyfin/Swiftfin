@@ -17,6 +17,9 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
     @Router
     private var router
 
+    @State
+    private var _contentGroupOptions: _ContentGroupParentOption = .init()
+
     @StateObject
     private var viewModel: ContentGroupViewModel<Provider>
 
@@ -25,6 +28,10 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
 
     init(provider: Provider) {
         _viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
+    }
+
+    init(viewModel: ContentGroupViewModel<Provider>) {
+        _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     @ViewBuilder
@@ -41,15 +48,31 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
                     .id("top")
 
                 VStack(alignment: .leading, spacing: 10) {
-                    ForEach(viewModel.groups, id: \.id) { group in
+                    ForEach(Array(viewModel.groups.enumerated()), id: \.element.id) { offset, group in
                         makeGroupBody(group)
+                            .environment(\._contentGroupIndex, offset)
                             .eraseToAnyView()
                     }
+                    .onPreferenceChange(_ContentGroupCustomizationKey.self) { value in
+                        _contentGroupOptions = value
+                    }
                 }
-                .edgePadding(.vertical)
+//                .scrollTargetLayout()
+                .edgePadding(
+                    .bottom.inserting(
+                        .top,
+                        if: _contentGroupOptions.contains(.ignoreTopSafeArea)
+                    )
+                )
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .ignoresSafeArea(edges: .horizontal)
+//            .scrollTargetBehavior(.viewAligned)
+            .ignoresSafeArea(
+                edges: .horizontal.inserting(
+                    .top,
+                    if: _contentGroupOptions.contains(.ignoreTopSafeArea)
+                )
+            )
             .scrollIndicators(.hidden)
             .refreshable {
                 await viewModel.background.refresh()
@@ -62,6 +85,7 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
                 }
             }
         }
+        .trackingFrame(for: .scrollView)
     }
 
     var body: some View {
@@ -74,14 +98,6 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
             case .initial, .refreshing:
                 ProgressView()
             }
-        }
-        .backport
-        .onChange(of: viewModel.state) { _, newValue in
-            print("ContentGroupView: state changed to \(newValue)")
-        }
-        .backport
-        .onChange(of: viewModel.background.states) { oldValue, newValue in
-            print("ContentGroupView: background states changed from \(oldValue) to \(newValue)")
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .animation(.linear(duration: 0.2), value: viewModel.background.states)
@@ -96,22 +112,6 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
             if viewModel.background.is(.refreshing) {
                 ProgressView()
             }
-
-//            Button("Refresh", systemImage: "arrow.clockwise.circle") {
-//                viewModel.background.refresh()
-//            }
-//
-//            Button("Content") {
-//                router.route(
-//                    to: .init(
-//                        id: "test-content",
-//                        style: .sheet,
-//                        content: {
-//                            CustomContentGroupSettingsView(id: "asdf")
-//                        }
-//                    )
-//                )
-//            }
         }
 //        .sinceLastDisappear { interval in
 //            if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {

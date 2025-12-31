@@ -80,8 +80,6 @@ final class ContentGroupViewModel<Provider: _ContentGroupProvider>: ViewModel {
         let viewModels = newGroups.map { getViewModel(for: $0) }
             .uniqued { ObjectIdentifier($0 as AnyObject) }
 
-        self.groups = newGroups
-
         try await withThrowingTaskGroup(of: Void.self) { group in
 
             for viewModel in viewModels {
@@ -92,5 +90,8 @@ final class ContentGroupViewModel<Provider: _ContentGroupProvider>: ViewModel {
 
             try await group.waitForAll()
         }
+
+        self.groups = newGroups
+            .filter(\._shouldBeResolved)
     }
 }

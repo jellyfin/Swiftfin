@@ -15,12 +15,16 @@ struct ItemContentGroupView<Provider: _ContentGroupProvider>: View {
     private var router
 
     @State
-    private var carriedHeaderFrame: CGRect = .zero
+    private var _contentGroupOptions: _ContentGroupParentOption = .init()
     @State
-    private var carriedUseOffsetNavigationBar: Bool = false
+    private var carriedHeaderFrame: CGRect = .zero
 
     @StateObject
     private var viewModel: ContentGroupViewModel<Provider>
+
+    private var carriedUseOffsetNavigationBar: Bool {
+        _contentGroupOptions.contains(.useOffsetNavigationBar)
+    }
 
     init(provider: Provider) {
         _viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
@@ -43,13 +47,14 @@ struct ItemContentGroupView<Provider: _ContentGroupProvider>: View {
                             makeGroupBody(group)
                                 .eraseToAnyView()
                         }
-                        .onPreferenceChange(_UseOffsetNavigationBarKey.self) { value in
-                            carriedUseOffsetNavigationBar = value
+                        .onPreferenceChange(_ContentGroupCustomizationKey.self) { value in
+                            _contentGroupOptions = value
                         }
                         .onPreferenceChange(ScrollViewHeaderFrameKey.self) { value in
                             carriedHeaderFrame = value
                         }
                     }
+//                    .scrollTargetLayout()
                     .edgePadding(
                         .bottom.inserting(
                             .top,
@@ -57,6 +62,7 @@ struct ItemContentGroupView<Provider: _ContentGroupProvider>: View {
                         )
                     )
                 }
+//                .scrollTargetBehavior(.viewAligned)
                 .ignoresSafeArea(edges: .horizontal)
                 .scrollIndicators(.hidden)
                 .overlay(alignment: .top) {

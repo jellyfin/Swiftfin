@@ -9,6 +9,21 @@
 import Defaults
 import SwiftUI
 
+extension EnvironmentValues {
+
+    @Entry
+    var _navigationTitle: String? = nil
+}
+
+extension View {
+
+    func navigationTitle(_ title: String) -> some View {
+        self
+            .environment(\._navigationTitle, title)
+            .navigationTitle(Text(title))
+    }
+}
+
 extension CustomizeViewsSettings {
 
     struct PosterSection: View {
@@ -77,6 +92,7 @@ extension CustomizeViewsSettings {
 
         var body: some View {
             Form {
+                #if os(iOS)
                 Section("Preview") {
                     ScrollView(.horizontal) {
                         HStack(alignment: .bottom) {
@@ -96,6 +112,7 @@ extension CustomizeViewsSettings {
 
                     Picker("Status", selection: $previewItemState)
                 }
+                #endif
 
                 Section(L10n.indicators) {
                     Toggle(L10n.progress, isOn: $indicators.contains(.progress))

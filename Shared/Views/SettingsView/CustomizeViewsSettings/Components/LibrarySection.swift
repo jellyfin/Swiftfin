@@ -41,7 +41,7 @@ extension CustomizeViewsSettings {
         private var router
 
         var body: some View {
-            Form {
+            Form(systemImage: "rectangle.stack.fill") {
 
                 Section {
                     Toggle(L10n.favorites, isOn: $showFavorites)
@@ -69,12 +69,12 @@ extension CustomizeViewsSettings {
                     Picker(L10n.posters, selection: $posterDisplayType)
 
                     if libraryDisplayType == .list, UIDevice.isPad {
-                        Stepper(
-                            L10n.columns,
-                            value: $listColumnCount,
-                            in: 1 ... 4,
-                            step: 1
-                        )
+//                        Stepper(
+//                            L10n.columns,
+//                            value: $listColumnCount,
+//                            in: 1 ... 4,
+//                            step: 1
+//                        )
 
 //                        BasicStepper(
 //                            L10n.columns,

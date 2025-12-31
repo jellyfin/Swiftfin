@@ -18,11 +18,22 @@ protocol _ContentGroup<ViewModel>: Identifiable {
 
     var id: String { get }
     var viewModel: ViewModel { get }
+    var _shouldBeResolved: Bool { get }
 
     @ViewBuilder
     func body(with viewModel: ViewModel) -> Body
 }
 
+extension _ContentGroup {
+    var _shouldBeResolved: Bool { true }
+}
+
 extension _ContentGroup where ViewModel == Empty {
     var viewModel: Empty { .init() }
+}
+
+extension EnvironmentValues {
+
+    @Entry
+    var _contentGroupIndex: Int = -1
 }

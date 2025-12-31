@@ -118,6 +118,7 @@ extension NavigationRoute {
     ) {
         GestureSettingsView()
     }
+    #endif
 
     static let itemSettings = NavigationRoute(
         id: "itemSettings"
@@ -136,7 +137,6 @@ extension NavigationRoute {
     ) {
         CustomizeViewsSettings.PosterSection()
     }
-    #endif
 
     static func itemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> NavigationRoute {
         NavigationRoute(id: "itemFilterDrawerSelector") {

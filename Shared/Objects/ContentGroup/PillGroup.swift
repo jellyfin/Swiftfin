@@ -16,6 +16,10 @@ struct PillGroup<Library: PagingLibrary>: _ContentGroup where Library.Element: D
     let library: Library
     let viewModel: PagingLibraryViewModel<Library>
 
+    var _shouldBeResolved: Bool {
+        viewModel.elements.isNotEmpty
+    }
+
     init(
         displayTitle: String,
         id: String,

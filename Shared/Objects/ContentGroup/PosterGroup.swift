@@ -20,6 +20,10 @@ struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element:
     let posterSize: PosterDisplayType.Size
     let viewModel: PagingLibraryViewModel<Library>
 
+    var _shouldBeResolved: Bool {
+        viewModel.elements.isNotEmpty
+    }
+
     init(
         id: String = UUID().uuidString,
         library: Library,

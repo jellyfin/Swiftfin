@@ -149,7 +149,7 @@ extension EnhancedItemViewHeader {
                 key: ScrollViewHeaderFrameKey.self
             )
             .environment(\.frameForParentView, frameForParentView.removingValue(for: .navigationStack))
-            .preference(key: _UseOffsetNavigationBarKey.self, value: true)
+            .preference(key: _ContentGroupCustomizationKey.self, value: .useOffsetNavigationBar)
             .preference(key: MenuContentKey.self) {
                 //                if viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item) {
                 #if os(iOS)
