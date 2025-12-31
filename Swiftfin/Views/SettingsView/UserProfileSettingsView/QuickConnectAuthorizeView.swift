@@ -91,20 +91,21 @@ struct QuickConnectAuthorizeView: View {
             }
 
             if viewModel.state == .authorizing {
-                ListRowButton(L10n.cancel, role: .cancel) {
+                Button(L10n.cancel, role: .cancel) {
                     viewModel.cancel()
                     isCodeFocused = true
                 }
+                .buttonStyle(.primary)
             } else {
-                ListRowButton(L10n.authorize) {
+                Button(L10n.authorize) {
                     viewModel.authorize(code: code)
                 }
+                .buttonStyle(.primary)
                 .disabled(code.count != 6 || viewModel.state == .authorizing)
                 .foregroundStyle(
                     accentColor.overlayColor,
                     accentColor
                 )
-                .opacity(code.count != 6 ? 0.5 : 1)
             }
         }
         .interactiveDismissDisabled(viewModel.state == .authorizing)
@@ -140,7 +141,7 @@ struct QuickConnectAuthorizeView: View {
                 router.dismiss()
             }
         } message: {
-            L10n.quickConnectSuccessMessage.text
+            Text(L10n.quickConnectSuccessMessage)
         }
         .errorMessage($viewModel.error) {
             isCodeFocused = true

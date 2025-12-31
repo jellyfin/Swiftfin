@@ -11,121 +11,52 @@ import SwiftUI
 
 struct CountryPicker: View {
 
-    // MARK: - State Objects
-
     @StateObject
     private var viewModel: CountriesViewModel
 
-    // MARK: - Input Properties
-
-    private var selectionBinding: Binding<CountryInfo?>
+    private let selection: Binding<String?>
     private let title: String
 
-    @State
-    private var selection: CountryInfo?
+    init(_ title: String, twoLetterISORegion: Binding<String?>) {
+        self.selection = twoLetterISORegion
+        self.title = title
+        self._viewModel = .init(wrappedValue: .init(initialValue: []))
+    }
 
-    // MARK: - Body
+    private var currentCountry: CountryInfo? {
+        viewModel.value.first(property: \.twoLetterISORegionName, equalTo: selection.wrappedValue)
+    }
+
+    @ViewBuilder
+    private var picker: some View {
+        Picker(
+            title,
+            sources: viewModel.value,
+            selection: selection.map(
+                getter: { iso in viewModel.value.first(property: \.twoLetterISORegionName, equalTo: iso) },
+                setter: { info in info?.twoLetterISORegionName }
+            )
+        )
+    }
 
     var body: some View {
         Group {
             #if os(tvOS)
-            ListRowMenu(title, subtitle: $selection.wrappedValue?.displayTitle) {
-                Picker(title, selection: $selection) {
-                    Text(CountryInfo.none.displayTitle)
-                        .tag(CountryInfo.none as CountryInfo?)
-
-                    ForEach(viewModel.value, id: \.self) { country in
-                        Text(country.displayTitle)
-                            .tag(country as CountryInfo?)
-                    }
-                }
-            }
-            // TODO: iOS 17+ move this to the Group
-            .onChange(of: viewModel.value) {
-                updateSelection()
-            }
-            .onChange(of: selection) { _, newValue in
-                selectionBinding.wrappedValue = newValue
+            ListRowMenu(
+                title,
+                subtitle: currentCountry?.displayTitle
+            ) {
+                picker
             }
             .menuStyle(.borderlessButton)
             .listRowInsets(.zero)
             #else
-            Picker(title, selection: $selection) {
-
-                Text(CountryInfo.none.displayTitle)
-                    .tag(CountryInfo.none as CountryInfo?)
-
-                ForEach(viewModel.value, id: \.self) { country in
-                    Text(country.displayTitle)
-                        .tag(country as CountryInfo?)
-                }
-            }
-            // TODO: iOS 17+ delete this and use the tvOS onChange at the Group level
-            .onChange(of: viewModel.value) { _ in
-                updateSelection()
-            }
-            .onChange(of: selection) { newValue in
-                selectionBinding.wrappedValue = newValue
-            }
+            picker
             #endif
         }
+        .enabled(viewModel.state == .initial)
         .onFirstAppear {
             viewModel.refresh()
         }
-    }
-
-    private func updateSelection() {
-        let newValue = viewModel.value.first { value in
-            if let selectedTwo = selection?.twoLetterISORegionName,
-               let candidateTwo = value.twoLetterISORegionName,
-               selectedTwo == candidateTwo
-            {
-                return true
-            }
-            if let selectedThree = selection?.threeLetterISORegionName,
-               let candidateThree = value.threeLetterISORegionName,
-               selectedThree == candidateThree
-            {
-                return true
-            }
-            return false
-        }
-
-        selection = newValue ?? CountryInfo.none
-    }
-}
-
-extension CountryPicker {
-
-    init(_ title: String, twoLetterISORegion: Binding<String?>) {
-        self.title = title
-        self._selection = State(
-            initialValue: twoLetterISORegion.wrappedValue.flatMap { code in
-                CountryInfo(
-                    name: code,
-                    twoLetterISORegionName: code
-                )
-            } ?? CountryInfo.none
-        )
-        self.selectionBinding = Binding(
-            get: {
-                guard let code = twoLetterISORegion.wrappedValue else {
-                    return CountryInfo.none
-                }
-                return CountryInfo(
-                    name: code,
-                    twoLetterISORegionName: code
-                )
-            },
-            set: { newCountry in
-                twoLetterISORegion.wrappedValue = newCountry?.twoLetterISORegionName
-            }
-        )
-
-        self._viewModel = StateObject(
-            wrappedValue: CountriesViewModel(
-                initialValue: [.none]
-            )
-        )
     }
 }

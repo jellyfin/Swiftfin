@@ -17,27 +17,17 @@ extension ItemView {
 
         private let logger = Logger.swiftfin()
 
-        // MARK: - Stored Value
-
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers: TrailerSelection
-
-        // MARK: - Focus State
 
         @FocusState
         private var isFocused: Bool
 
-        // MARK: - Observed & Envirnoment Objects
-
         @Router
         private var router
 
-        // MARK: - Error State
-
         @State
         private var error: Error?
-
-        // MARK: - Notification State
 
         @State
         private var selectedRemoteURL: MediaURL?
@@ -53,8 +43,6 @@ extension ItemView {
             enabledTrailers.contains(.external) && externalTrailers.isNotEmpty
         }
 
-        // MARK: - Body
-
         var body: some View {
             Group {
                 switch localTrailers.count + externalTrailers.count {
@@ -67,13 +55,10 @@ extension ItemView {
             .errorMessage($error)
         }
 
-        // MARK: - Single Trailer Button
-
         private var trailerButton: some View {
-            ActionButton(
+            Button(
                 L10n.trailers,
-                icon: "movieclapper",
-                selectedIcon: "movieclapper"
+                systemImage: "movieclapper"
             ) {
                 if showLocalTrailers, let firstTrailer = localTrailers.first {
                     playLocalTrailer(firstTrailer)
@@ -85,11 +70,9 @@ extension ItemView {
             }
         }
 
-        // MARK: - Multiple Trailers Menu Button
-
         @ViewBuilder
         private var trailerMenu: some View {
-            ActionButton(L10n.trailers, icon: "movieclapper") {
+            Menu(L10n.trailers, systemImage: "movieclapper") {
 
                 if showLocalTrailers {
                     Section(L10n.local) {
@@ -119,33 +102,43 @@ extension ItemView {
             }
         }
 
-        // MARK: - Play: Local Trailer
+        // MARK: Play Local Trailer
 
         private func playLocalTrailer(_ trailer: BaseItemDto) {
-            if let selectedMediaSource = trailer.mediaSources?.first {
-//                router.route(
-//                    to: .videoPlayer(manager: OnlineVideoPlayerManager(
-//                        item: trailer,
-//                        mediaSource: selectedMediaSource
-//                    ))
-//                )
-            } else {
+            guard let selectedMediaSource = trailer.mediaSources?.first else {
                 logger.log(level: .error, "No media sources found")
-                error = JellyfinAPIError(L10n.unknownError)
+                error = ErrorMessage(L10n.unknownError)
+                return
             }
+
+            let manager = MediaPlayerManager(item: trailer) { item in
+                try await MediaPlayerItem.build(for: item, mediaSource: selectedMediaSource)
+            }
+
+            router.route(to: .videoPlayer(manager: manager))
         }
 
-        // MARK: - Play: External Trailer
+        // MARK: Play External Trailer
 
         private func playExternalTrailer(_ trailer: MediaURL) {
-            if let url = URL(string: trailer.url), UIApplication.shared.canOpenURL(url) {
-                UIApplication.shared.open(url) { success in
-                    guard !success else { return }
+            guard let urlString = trailer.url else {
+                error = ErrorMessage(L10n.unableToOpenTrailer)
+                return
+            }
 
-                    error = JellyfinAPIError(L10n.unableToOpenTrailer)
+            guard let externalURL = ExternalTrailerURL(string: urlString) else {
+                error = ErrorMessage(L10n.unableToOpenTrailer)
+                return
+            }
+
+            if externalURL.canBeOpened {
+                UIApplication.shared.open(externalURL.deepLink) { success in
+                    if !success {
+                        error = ErrorMessage(L10n.unableToOpenTrailerApp(externalURL.source.displayTitle))
+                    }
                 }
             } else {
-                error = JellyfinAPIError(L10n.unableToOpenTrailer)
+                error = ErrorMessage(L10n.unableToOpenTrailer)
             }
         }
     }

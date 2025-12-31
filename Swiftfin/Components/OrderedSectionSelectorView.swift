@@ -47,7 +47,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
             Section(L10n.enabled) {
 
                 if selection.value.isEmpty {
-                    L10n.none.text
+                    Text(L10n.none)
                         .foregroundStyle(.secondary)
                 }
 
@@ -77,7 +77,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
             Section(L10n.disabled) {
 
                 if disabledSelection.isEmpty {
-                    L10n.none.text
+                    Text(L10n.none)
                         .foregroundStyle(.secondary)
                 }
 

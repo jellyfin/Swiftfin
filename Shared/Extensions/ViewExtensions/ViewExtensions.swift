@@ -16,6 +16,11 @@ import SwiftUI
 extension View {
 
     @inlinable
+    func enabled(_ enabled: Bool) -> some View {
+        disabled(!enabled)
+    }
+
+    @inlinable
     func eraseToAnyView() -> AnyView {
         AnyView(self)
     }
@@ -191,7 +196,7 @@ extension View {
         dismissAction: @escaping () -> Void = {}
     ) -> some View {
         alert(
-            L10n.error.text,
+            Text(L10n.error),
             isPresented: .constant(error.wrappedValue != nil),
             presenting: error.wrappedValue
         ) { _ in

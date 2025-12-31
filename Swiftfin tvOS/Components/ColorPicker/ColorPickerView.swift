@@ -151,7 +151,7 @@ struct ColorPickerView: View {
                         update(color: newColor)
                     }
                 } else {
-                    error = JellyfinAPIError(L10n.unknownError)
+                    error = ErrorMessage(L10n.unknownError)
                 }
             }
             .listRowInsets(.zero)
@@ -266,7 +266,7 @@ struct ColorPickerView: View {
     private func update(color: Color) {
         var alpha: CGFloat = 0
         color.uiColor.getRed(&self.red, green: &self.green, blue: &self.blue, alpha: &alpha)
-        
+
         if self.supportsOpacity {
             self.color = color
             self.opacity = alpha

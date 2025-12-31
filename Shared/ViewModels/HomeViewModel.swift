@@ -19,7 +19,7 @@ final class HomeViewModel: ViewModel, Stateful {
 
     enum Action: Equatable {
         case backgroundRefresh
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
         case setIsPlayed(Bool, BaseItemDto)
         case refresh
     }
@@ -34,7 +34,7 @@ final class HomeViewModel: ViewModel, Stateful {
 
     enum State: Hashable {
         case content
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
         case initial
         case refreshing
     }
@@ -195,7 +195,7 @@ final class HomeViewModel: ViewModel, Stateful {
         async let excludedLibraryIDs = getExcludedLibraries()
 
         return try await (userViews.value.items ?? [])
-            .intersection(
+            .intersecting(
                 [
                     .homevideos,
                     .movies,

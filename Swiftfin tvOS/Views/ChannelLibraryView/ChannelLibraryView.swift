@@ -44,21 +44,21 @@ struct ChannelLibraryView: View {
             switch viewModel.state {
             case .content:
                 if viewModel.elements.isEmpty {
-                    L10n.noResults.text
+                    Text(L10n.noResults)
                 } else {
                     contentView
                 }
             case let .error(error):
                 ErrorView(error: error)
-                    .onRetry {
-                        viewModel.send(.refresh)
-                    }
             case .initial, .refreshing:
                 ProgressView()
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
+        .refreshable {
+            viewModel.send(.refresh)
+        }
         .onFirstAppear {
             if viewModel.state == .initial {
                 viewModel.send(.refresh)

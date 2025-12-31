@@ -115,7 +115,7 @@ extension ItemView {
                 router.route(to: .videoPlayer(item: trailer, mediaSource: mediaSource))
             } else {
                 logger.log(level: .error, "No media sources found")
-                error = JellyfinAPIError(L10n.unknownError)
+                error = ErrorMessage(L10n.unknownError)
             }
         }
 
@@ -126,10 +126,10 @@ extension ItemView {
                 UIApplication.shared.open(url) { success in
                     guard !success else { return }
 
-                    error = JellyfinAPIError(L10n.unableToOpenTrailer)
+                    error = ErrorMessage(L10n.unableToOpenTrailer)
                 }
             } else {
-                error = JellyfinAPIError(L10n.unableToOpenTrailer)
+                error = ErrorMessage(L10n.unableToOpenTrailer)
             }
         }
     }

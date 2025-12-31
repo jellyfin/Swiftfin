@@ -89,7 +89,7 @@ extension SeriesEpisodeSelector {
         @ObservedObject
         var viewModel: SeasonItemViewModel
 
-        let error: JellyfinAPIError
+        let error: ErrorMessage
 
         var body: some View {
             CollectionHStack(

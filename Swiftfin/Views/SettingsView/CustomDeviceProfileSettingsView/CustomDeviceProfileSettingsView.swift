@@ -33,7 +33,7 @@ struct CustomDeviceProfileSettingsView: View {
     var body: some View {
         List {
             Section {
-                CaseIterablePicker(
+                Picker(
                     L10n.behavior,
                     selection: $customDeviceProfileAction
                 )
@@ -41,9 +41,9 @@ struct CustomDeviceProfileSettingsView: View {
                 VStack(spacing: 8) {
                     switch customDeviceProfileAction {
                     case .add:
-                        L10n.customDeviceProfileAdd.text
+                        Text(L10n.customDeviceProfileAdd)
                     case .replace:
-                        L10n.customDeviceProfileReplace.text
+                        Text(L10n.customDeviceProfileReplace)
                     }
 
                     if !isValid {

@@ -95,10 +95,10 @@ struct UserLocalSecurityView: View {
 
             await MainActor.run {
                 self
-                    .error = JellyfinAPIError(L10n.unableToPerformDeviceAuthFaceID)
+                    .error = ErrorMessage(L10n.unableToPerformDeviceAuthFaceID)
             }
 
-            throw JellyfinAPIError(L10n.deviceAuthFailed)
+            throw ErrorMessage(L10n.deviceAuthFailed)
         }
 
         do {
@@ -107,10 +107,10 @@ struct UserLocalSecurityView: View {
             viewModel.logger.critical("\(error.localizedDescription)")
 
             await MainActor.run {
-                self.error = JellyfinAPIError(L10n.unableToPerformDeviceAuth)
+                self.error = ErrorMessage(L10n.unableToPerformDeviceAuth)
             }
 
-            throw JellyfinAPIError(L10n.deviceAuthFailed)
+            throw ErrorMessage(L10n.deviceAuthFailed)
         }
     }
 
@@ -120,7 +120,7 @@ struct UserLocalSecurityView: View {
         List {
 
             Section {
-                CaseIterablePicker(L10n.security, selection: $signInPolicy)
+                Picker(L10n.security, selection: $signInPolicy)
             } footer: {
                 VStack(alignment: .leading, spacing: 10) {
                     Text(L10n.additionalSecurityAccessDescription)

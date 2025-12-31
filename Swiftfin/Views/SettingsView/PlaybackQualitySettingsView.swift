@@ -24,12 +24,12 @@ struct PlaybackQualitySettingsView: View {
     var body: some View {
         Form {
             Section {
-                CaseIterablePicker(
+                Picker(
                     L10n.maximumBitrate,
                     selection: $appMaximumBitrate
                 )
             } header: {
-                L10n.bitrateDefault.text
+                Text(L10n.bitrateDefault)
             } footer: {
                 VStack(alignment: .leading) {
                     Text(L10n.bitrateDefaultDescription)
@@ -49,21 +49,21 @@ struct PlaybackQualitySettingsView: View {
 
             if appMaximumBitrate == .auto {
                 Section {
-                    CaseIterablePicker(
+                    Picker(
                         L10n.testSize,
                         selection: $appMaximumBitrateTest
                     )
                 } header: {
-                    L10n.bitrateTest.text
+                    Text(L10n.bitrateTest)
                 } footer: {
                     VStack(alignment: .leading) {
-                        L10n.bitrateTestDisclaimer.text
+                        Text(L10n.bitrateTestDisclaimer)
                     }
                 }
             }
 
             Section {
-                CaseIterablePicker(
+                Picker(
                     L10n.compatibility,
                     selection: $compatibilityMode
                 )

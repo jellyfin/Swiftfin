@@ -211,14 +211,14 @@ extension BaseItemDto {
                 ),
                     let mediaSource = channel.mediaSources?.first
                 else {
-                    throw JellyfinAPIError(L10n.unknownError)
+                    throw ErrorMessage(L10n.unknownError)
                 }
                 return try await MediaPlayerItem.build(for: program, mediaSource: mediaSource)
             }
         default:
             MediaPlayerItemProvider(item: self) { item in
                 guard let mediaSource = item.mediaSources?.first else {
-                    throw JellyfinAPIError(L10n.unknownError)
+                    throw ErrorMessage(L10n.unknownError)
                 }
                 return try await MediaPlayerItem.build(for: item, mediaSource: mediaSource)
             }
@@ -379,6 +379,8 @@ extension BaseItemDto {
             .sorted(using: \.startPositionTicks)
             .compacted(using: \.startPositionTicks) else { return nil }
 
+        guard let userSession = Container.shared.currentUserSession() else { return nil }
+
         return chapters
             .enumerated()
             .map { i, chapter in
@@ -395,7 +397,7 @@ extension BaseItemDto {
                     parameters: parameters
                 )
 
-                let imageURL = Container.shared.currentUserSession()!
+                let imageURL = userSession
                     .client
                     .fullURL(with: request)
 
@@ -504,7 +506,7 @@ extension BaseItemDto {
 
     func getFullItem(userSession: UserSession) async throws -> BaseItemDto {
         guard let id else {
-            throw JellyfinAPIError(L10n.unknownError)
+            throw ErrorMessage(L10n.unknownError)
         }
 
         let request = Paths.getItem(itemID: id, userID: userSession.user.id)

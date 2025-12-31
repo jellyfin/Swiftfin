@@ -22,22 +22,24 @@ struct ItemEditorView: View {
     @ObservedObject
     var viewModel: ItemViewModel
 
-    // MARK: - Can Edit Metadata
+    @StateObject
+    private var metadataViewModel: RefreshMetadataViewModel
 
     private var canEditMetadata: Bool {
         viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item) == true
     }
 
-    // MARK: - Can Manage Subtitles
-
     private var canManageSubtitles: Bool {
         viewModel.userSession.user.permissions.items.canManageSubtitles(item: viewModel.item) == true
     }
 
-    // MARK: - Can Manage Lyrics
-
     private var canManageLyrics: Bool {
         viewModel.userSession.user.permissions.items.canManageLyrics(item: viewModel.item) == true
+    }
+
+    init(viewModel: ItemViewModel) {
+        self.viewModel = viewModel
+        _metadataViewModel = StateObject(wrappedValue: RefreshMetadataViewModel(item: viewModel.item))
     }
 
     // MARK: - Body
@@ -48,13 +50,16 @@ struct ItemEditorView: View {
             case .initial, .content, .refreshing:
                 contentView
             case let .error(error):
-                errorView(with: error)
+                ErrorView(error: error)
             }
         }
         .navigationTitle(L10n.metadata)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
+        }
+        .refreshable {
+            viewModel.send(.refresh)
         }
     }
 
@@ -90,41 +95,33 @@ struct ItemEditorView: View {
         }
     }
 
-    // MARK: - ErrorView
-
-    @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.send(.refresh)
-            }
-    }
-
-    // MARK: - Refresh Menu Button
+    // MARK: - Refresh Button
 
     @ViewBuilder
     private var refreshButtonView: some View {
         Section {
-            RefreshMetadataButton(item: viewModel.item)
-        } footer: {
-            LearnMoreButton(L10n.metadata) {
-                LabeledContent(
-                    L10n.findMissing,
-                    value: L10n.findMissingDescription
-                )
-                LabeledContent(
-                    L10n.replaceMetadata,
-                    value: L10n.replaceMetadataDescription
-                )
-                LabeledContent(
-                    L10n.replaceImages,
-                    value: L10n.replaceImagesDescription
-                )
-                LabeledContent(
-                    L10n.replaceAll,
-                    value: L10n.replaceAllDescription
-                )
+            Button {
+                router.route(to: .itemMetadataRefresh(viewModel: metadataViewModel))
+            } label: {
+                HStack {
+                    Text(L10n.refreshMetadata)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .foregroundStyle(.primary)
+
+                    if metadataViewModel.state == .refreshing {
+                        ProgressView(value: metadataViewModel.progress)
+                            .progressViewStyle(.gauge)
+                            .transition(.opacity.combined(with: .scale).animation(.bouncy))
+                            .frame(width: 25, height: 25)
+                    } else {
+                        Image(systemName: "arrow.clockwise")
+                            .foregroundStyle(.secondary)
+                            .fontWeight(.semibold)
+                    }
+                }
             }
+            .foregroundStyle(.primary, .secondary)
+            .disabled(metadataViewModel.state == .refreshing)
         }
     }
 

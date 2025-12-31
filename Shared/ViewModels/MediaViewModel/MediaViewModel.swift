@@ -63,7 +63,7 @@ final class MediaViewModel: ViewModel {
         // force it to `folders` for better view handling
         let supportedUserViews = try await (userViews.value.items ?? [])
             .coalesced(property: \.collectionType, with: .folders)
-            .intersection(CollectionType.supportedCases, using: \.collectionType)
+            .intersecting(CollectionType.supportedCases, using: \.collectionType)
             .subtracting(excludedLibraryIDs, using: \.id)
             .map { item in
 
@@ -112,7 +112,7 @@ final class MediaViewModel: ViewModel {
         parameters.limit = 3
         parameters.isRecursive = true
         parameters.parentID = parentID
-        parameters.includeItemTypes = [.movie, .series, .boxSet]
+        parameters.includeItemTypes = BaseItemKind.supportedCases
         parameters.filters = filters
         parameters.sortBy = [ItemSortBy.random.rawValue]
 
@@ -120,6 +120,6 @@ final class MediaViewModel: ViewModel {
         let response = try await userSession.client.send(request)
 
         return (response.value.items ?? [])
-            .map { $0.imageSource(.backdrop, maxWidth: 200) }
+            .flatMap { $0.landscapeImageSources(maxWidth: 200) }
     }
 }

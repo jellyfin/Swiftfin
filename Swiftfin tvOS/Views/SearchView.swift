@@ -24,13 +24,6 @@ struct SearchView: View {
     @StateObject
     private var viewModel = SearchViewModel()
 
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.search(query: searchQuery)
-            }
-    }
-
     @ViewBuilder
     private var suggestionsView: some View {
         VStack(spacing: 20) {
@@ -171,13 +164,15 @@ struct SearchView: View {
         ZStack {
             switch viewModel.state {
             case .error:
-                viewModel.error.map { errorView(with: $0) }
+                viewModel.error.map {
+                    ErrorView(error: $0)
+                }
             case .initial:
                 if viewModel.hasNoResults {
-                    if searchQuery.isEmpty {
-                        suggestionsView
-                    } else {
+                    if viewModel.canSearch {
                         Text(L10n.noResults)
+                    } else {
+                        suggestionsView
                     }
                 } else {
                     resultsView
@@ -188,6 +183,9 @@ struct SearchView: View {
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea(edges: [.bottom, .horizontal])
+        .refreshable {
+            viewModel.search(query: searchQuery)
+        }
         .onFirstAppear {
             viewModel.getSuggestions()
         }

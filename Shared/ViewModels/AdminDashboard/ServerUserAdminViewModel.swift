@@ -16,7 +16,7 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
     // MARK: - Event
 
     enum Event {
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
         case updated
     }
 
@@ -43,7 +43,7 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
     enum State: Hashable {
         case initial
         case content
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
     }
 
     // MARK: - Published Values
@@ -236,7 +236,7 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
     // MARK: - Load User Details
 
     private func loadDetails() async throws {
-        guard let userID = user.id else { throw JellyfinAPIError("User ID is missing") }
+        guard let userID = user.id else { throw ErrorMessage("User ID is missing") }
         let request = Paths.getUserByID(userID: userID)
         let response = try await userSession.client.send(request)
 
@@ -259,7 +259,7 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
     // MARK: - Update User Policy
 
     private func updatePolicy(policy: UserPolicy) async throws {
-        guard let userID = user.id else { throw JellyfinAPIError("User ID is missing") }
+        guard let userID = user.id else { throw ErrorMessage("User ID is missing") }
         let request = Paths.updateUserPolicy(userID: userID, policy)
         try await userSession.client.send(request)
 
@@ -271,7 +271,7 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
     // MARK: - Update User Configuration
 
     private func updateConfiguration(configuration: UserConfiguration) async throws {
-        guard let userID = user.id else { throw JellyfinAPIError("User ID is missing") }
+        guard let userID = user.id else { throw ErrorMessage("User ID is missing") }
         let request = Paths.updateUserConfiguration(userID: userID, configuration)
         try await userSession.client.send(request)
 
@@ -283,7 +283,7 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
     // MARK: - Update Username
 
     private func updateUsername(username: String) async throws {
-        guard let userID = user.id else { throw JellyfinAPIError("User ID is missing") }
+        guard let userID = user.id else { throw ErrorMessage("User ID is missing") }
         var updatedUser = user
         updatedUser.name = username
 

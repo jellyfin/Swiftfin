@@ -35,21 +35,22 @@ struct ItemView: View {
     @State
     private var isPresentingEventAlert = false
     @State
-    private var error: JellyfinAPIError?
+    private var error: ErrorMessage?
 
     // MARK: - Can Delete Item
 
     private var canDelete: Bool {
-        viewModel.userSession.user.permissions.items.canDelete(item: viewModel.item)
+        viewModel.userSession?.user.permissions.items.canDelete(item: viewModel.item) == true
     }
 
     // MARK: - Can Edit Item
 
     private var canEdit: Bool {
-        viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item)
-        // TODO: Enable when Subtitle / Lyric Editing is added
+        viewModel.userSession?.user.permissions.items.canEditMetadata(item: viewModel.item) == true ||
+            viewModel.userSession?.user.permissions.items.canManageSubtitles(item: viewModel.item) == true
+
+        // TODO: Enable whenLyric Editing is added
         // || viewModel.userSession.user.permissions.items.canManageLyrics(item: viewModel.item)
-        // || viewModel.userSession.user.permissions.items.canManageSubtitles(item: viewModel.item)
     }
 
     // MARK: - Deletion or Editing is Enabled
@@ -141,11 +142,14 @@ struct ItemView: View {
             case let .error(error):
                 ErrorView(error: error)
             case .initial, .refreshing:
-                DelayedProgressView()
+                ProgressView()
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            viewModel.send(.refresh)
+        }
         .onFirstAppear {
             viewModel.send(.refresh)
         }

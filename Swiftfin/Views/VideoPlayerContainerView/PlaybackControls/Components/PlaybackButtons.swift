@@ -71,7 +71,7 @@ extension VideoPlayer.PlaybackControls {
             } label: {
                 Label(
                     "\(jumpForwardInterval.rawValue, format: Duration.UnitsFormatStyle(allowedUnits: [.seconds], width: .narrow))",
-                    systemImage: jumpForwardInterval.forwardSystemImage
+                    systemImage: jumpForwardInterval.systemImage
                 )
                 .labelStyle(.iconOnly)
                 .font(.system(size: 32, weight: .regular, design: .default))
@@ -87,7 +87,7 @@ extension VideoPlayer.PlaybackControls {
             } label: {
                 Label(
                     "\(jumpBackwardInterval.rawValue, format: Duration.UnitsFormatStyle(allowedUnits: [.seconds], width: .narrow))",
-                    systemImage: jumpBackwardInterval.backwardSystemImage
+                    systemImage: jumpBackwardInterval.secondarySystemImage
                 )
                 .labelStyle(.iconOnly)
                 .font(.system(size: 32, weight: .regular, design: .default))

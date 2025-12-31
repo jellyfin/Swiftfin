@@ -25,9 +25,10 @@ extension ItemImageDetailsView {
         // MARK: - Body
 
         var body: some View {
-            ListRowButton(L10n.delete, role: .destructive) {
+            Button(L10n.delete, role: .destructive) {
                 isPresentingConfirmation = true
             }
+            .buttonStyle(.primary)
             .confirmationDialog(
                 L10n.delete,
                 isPresented: $isPresentingConfirmation,
