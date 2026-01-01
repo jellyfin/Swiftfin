@@ -135,7 +135,7 @@ extension Defaults.Keys {
 
             static let showFavorited: Key<Bool> = UserKey("showFavoritedIndicator", default: true)
             static let showProgress: Key<Bool> = UserKey("showProgressIndicator", default: true)
-            static let showUnplayed: Key<Bool> = UserKey("showUnplayedIndicator", default: true)
+            static let showUnplayed: Key<UnplayedIndicatorType> = UserKey("showUnplayedIndicator", default: .indicator)
             static let showPlayed: Key<Bool> = UserKey("showPlayedIndicator", default: true)
         }
 

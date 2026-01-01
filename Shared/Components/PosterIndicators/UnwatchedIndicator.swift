@@ -11,14 +11,43 @@ import SwiftUI
 
 struct UnwatchedIndicator: View {
 
-    let size: CGFloat
+    private let size: CGFloat
+    private let count: Int?
+
+    #if os(iOS)
+    private let padding: CGFloat = 4
+    private let bottomLeadingRadius: CGFloat = 5
+    #else
+    private let padding: CGFloat = 8
+    private let bottomLeadingRadius: CGFloat = 10
+    #endif
+
+    init(size: CGFloat, count: Int? = nil) {
+        self.size = size
+        self.count = count
+    }
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
             Color.clear
 
-            Q3RightTriangle()
-                .frame(width: size, height: size)
+            if let count, count > 0 {
+                Text(count.description)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.primary)
+                    .padding(.horizontal, padding)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(height: size, alignment: .center)
+                    .frame(minWidth: size)
+                    .background {
+                        UnevenRoundedRectangle(bottomLeadingRadius: bottomLeadingRadius)
+                            .foregroundStyle(.secondary)
+                    }
+            } else {
+                Q3RightTriangle()
+                    .frame(width: size, height: size)
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 }
