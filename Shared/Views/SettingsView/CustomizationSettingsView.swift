@@ -170,7 +170,11 @@ struct CustomizationSettingsView: View {
             Toggle(L10n.letterPicker, isOn: $letterPickerEnabled)
 
             if letterPickerEnabled {
+                #if os(tvOS)
+                ListRowMenu(L10n.orientation, selection: $letterPickerOrientation)
+                #else
                 Picker(L10n.orientation, selection: $letterPickerOrientation)
+                #endif
             }
 
             ChevronButton(L10n.library) {
@@ -188,9 +192,15 @@ struct CustomizationSettingsView: View {
     @ViewBuilder
     private var librarySettings: some View {
         Section(L10n.libraries) {
+            #if os(tvOS)
+            ListRowMenu(L10n.posters, selection: $libraryPosterType)
+
+            ListRowMenu(L10n.defaultLayout, selection: $libraryDisplayType)
+            #else
             Picker(L10n.posters, selection: $libraryPosterType)
 
             Picker(L10n.defaultLayout, selection: $libraryDisplayType)
+            #endif
 
             if libraryDisplayType == .list, !UIDevice.isPhone {
                 BasicStepper(
@@ -218,6 +228,17 @@ struct CustomizationSettingsView: View {
                 router.route(to: .indicatorSettings)
             }
 
+            #if os(tvOS)
+            ListRowMenu(L10n.nextUp, selection: $nextUpPosterType)
+
+            ListRowMenu(L10n.recentlyAdded, selection: $recentlyAddedPosterType)
+
+            ListRowMenu(L10n.latestWithString(L10n.library.localizedLowercase), selection: $latestInLibraryPosterType)
+
+            ListRowMenu(L10n.recommended, selection: $similarPosterType)
+
+            ListRowMenu(L10n.search, selection: $searchPosterType)
+            #else
             Picker(L10n.nextUp, selection: $nextUpPosterType)
 
             Picker(L10n.recentlyAdded, selection: $recentlyAddedPosterType)
@@ -227,6 +248,7 @@ struct CustomizationSettingsView: View {
             Picker(L10n.recommended, selection: $similarPosterType)
 
             Picker(L10n.search, selection: $searchPosterType)
+            #endif
         }
     }
 
@@ -239,7 +261,11 @@ struct CustomizationSettingsView: View {
                 router.route(to: .itemViewAttributes(selection: $itemViewAttributes))
             }
 
+            #if os(tvOS)
+            ListRowMenu(L10n.enabledTrailers, selection: $enabledTrailers)
+            #else
             Picker(L10n.enabledTrailers, selection: $enabledTrailers)
+            #endif
 
             Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
 

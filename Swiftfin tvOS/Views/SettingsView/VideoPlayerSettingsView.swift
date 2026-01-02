@@ -36,11 +36,11 @@ struct VideoPlayerSettingsView: View {
 
             Section {
                 BasicStepper(
-                    L10n.offset,
+                    L10n.resumeOffset,
                     value: $resumeOffset,
                     range: 0 ... 30,
                     step: 1,
-                    displayAs: [.seconds]
+                    formatter: SecondFormatter()
                 )
             } header: {
                 Text(L10n.resume)

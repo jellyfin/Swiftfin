@@ -10,34 +10,94 @@ import SwiftUI
 
 struct ListRowMenu<Content: View, Subtitle: View>: View {
 
+    // MARK: - Focus State
+
+    @FocusState
+    private var isFocused: Bool
+
+    // MARK: - Properties
+
     private let title: Text
     private let subtitle: Subtitle?
     private let content: () -> Content
 
+    // MARK: - Body
+
     var body: some View {
         Menu(content: content) {
+            buttonView
+        }
+        .menuStyle(.borderlessButton)
+        .listRowInsets(.zero)
+        .focused($isFocused)
+    }
+
+    @ViewBuilder
+    private var buttonView: some View {
+        // TODO: Remove when 26+ is our minimum
+        if #available(tvOS 26.0, *) {
             HStack {
                 title
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(isFocused ? .black : .white)
+                    .padding(.leading, 4)
 
                 Spacer()
 
                 if let subtitle {
                     subtitle
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(isFocused ? .black : .secondary)
+                        .brightness(isFocused ? 0.4 : 0)
                 }
 
                 Image(systemName: "chevron.up.chevron.down")
                     .font(.body.weight(.regular))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(isFocused ? .black : .secondary)
+                    .brightness(isFocused ? 0.4 : 0)
             }
             .padding(.horizontal)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-            .hoverEffect(.lift)
+            .background(
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12.5)
+                        .fill(isFocused ? Color.white : Color.clear)
+                    if isFocused {
+                        RoundedRectangle(cornerRadius: 12.5)
+                            .fill(Color.white.opacity(0.8))
+                            .scaleEffect(x: 1.0, y: isFocused ? 1.10 : 1.0, anchor: .center)
+                    }
+                }
+            )
+            .scaleEffect(x: isFocused ? 1.01 : 1.0, y: isFocused ? 1.05 : 1.0, anchor: .center)
+            .animation(.easeInOut(duration: 0.125), value: isFocused)
+            .listRowBackground(Color.clear)
+        } else {
+            HStack {
+                title
+                    .foregroundStyle(isFocused ? .black : .white)
+                    .padding(.leading, 4)
+
+                Spacer()
+
+                if let subtitle {
+                    subtitle
+                        .foregroundStyle(isFocused ? .black : .secondary)
+                        .brightness(isFocused ? 0.4 : 0)
+                }
+
+                Image(systemName: "chevron.up.chevron.down")
+                    .font(.body.weight(.regular))
+                    .foregroundStyle(isFocused ? .black : .secondary)
+                    .brightness(isFocused ? 0.4 : 0)
+            }
+            .padding(.horizontal)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(isFocused ? Color.white : Color.clear)
+            )
+            .scaleEffect(isFocused ? 1.04 : 1.0)
+            .animation(.easeInOut(duration: 0.125), value: isFocused)
         }
-        .menuStyle(.borderlessButton)
-        .listRowInsets(.zero)
-        .listRowBackground(Color.clear)
     }
 }
 
