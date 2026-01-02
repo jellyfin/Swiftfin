@@ -11,10 +11,6 @@ import SwiftUI
 
 struct VideoPlayerSettingsView: View {
 
-    @Default(.VideoPlayer.jumpBackwardInterval)
-    private var jumpBackwardLength
-    @Default(.VideoPlayer.jumpForwardInterval)
-    private var jumpForwardLength
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
 
@@ -26,11 +22,6 @@ struct VideoPlayerSettingsView: View {
 
             ChevronButton(L10n.gestures) {
                 router.route(to: .gestureSettings)
-            }
-
-            Section(L10n.buttons) {
-                JumpIntervalPicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
-                JumpIntervalPicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
             }
 
             Section {
@@ -50,7 +41,7 @@ struct VideoPlayerSettingsView: View {
 
             SliderSection()
 
-            SubtitleSection()
+            TrackConfigurationSection()
 
             TimestampSection()
         }

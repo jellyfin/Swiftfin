@@ -231,7 +231,6 @@
 				ViewModels/AdminDashboard/ServerActivityViewModel.swift,
 				ViewModels/AdminDashboard/ServerTaskObserver.swift,
 				ViewModels/AdminDashboard/ServerTasksViewModel.swift,
-				ViewModels/AdminDashboard/ServerUserAdminViewModel.swift,
 				ViewModels/AdminDashboard/ServerUsersViewModel.swift,
 				ViewModels/DownloadListViewModel.swift,
 				ViewModels/ItemAdministration/IdentifyItemViewModel.swift,

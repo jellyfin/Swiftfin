@@ -11,9 +11,6 @@ import SwiftUI
 
 struct VideoPlayerSettingsView: View {
 
-    @Default(.VideoPlayer.Subtitle.subtitleFontName)
-    private var subtitleFontName
-
     @Default(.VideoPlayer.jumpBackwardInterval)
     private var jumpBackwardLength
     @Default(.VideoPlayer.jumpForwardInterval)
@@ -29,60 +26,43 @@ struct VideoPlayerSettingsView: View {
 
     // TODO: Update with correct settings once the tvOS PlayerUI is complete
     var body: some View {
-        SplitFormWindowView()
-            .descriptionView {
-                Image(systemName: "tv")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: 400)
+        Form(systemImage: "tv") {
+
+            Section(L10n.buttons) {
+                JumpIntervalPicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
+                JumpIntervalPicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
             }
-            .contentView {
 
-                Section(L10n.buttons) {
-                    JumpIntervalPicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
-                    JumpIntervalPicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
+            Section {
+                ChevronButton(
+                    L10n.offset,
+                    subtitle: resumeOffset.secondLabel
+                ) {
+                    isPresentingResumeOffsetStepper = true
                 }
-
-                Section {
-
-                    ChevronButton(
-                        L10n.offset,
-                        subtitle: resumeOffset.secondLabel
-                    ) {
-                        isPresentingResumeOffsetStepper = true
-                    }
-                } header: {
-                    Text(L10n.resume)
-                } footer: {
-                    Text(L10n.resumeOffsetDescription)
-                }
-
-                Section {
-
-                    ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName) {
-                        router.route(to: .fontPicker(selection: $subtitleFontName))
-                    }
-                } header: {
-                    Text(L10n.subtitles)
-                } footer: {
-                    Text(L10n.subtitlesDisclaimer)
-                }
+            } header: {
+                Text(L10n.resume)
+            } footer: {
+                Text(L10n.resumeOffsetDescription)
             }
-            .navigationTitle(L10n.videoPlayer.localizedCapitalized)
-            .blurredFullScreenCover(isPresented: $isPresentingResumeOffsetStepper) {
-                StepperView(
-                    title: L10n.resumeOffsetTitle,
-                    description: L10n.resumeOffsetDescription,
-                    value: $resumeOffset,
-                    range: 0 ... 30,
-                    step: 1
-                )
-                .valueFormatter {
-                    $0.secondLabel
-                }
-                .onCloseSelected {
-                    isPresentingResumeOffsetStepper = false
-                }
+
+            TrackConfigurationSection()
+        }
+        .navigationTitle(L10n.videoPlayer.localizedCapitalized)
+        .blurredFullScreenCover(isPresented: $isPresentingResumeOffsetStepper) {
+            StepperView(
+                title: L10n.resumeOffsetTitle,
+                description: L10n.resumeOffsetDescription,
+                value: $resumeOffset,
+                range: 0 ... 30,
+                step: 1
+            )
+            .valueFormatter {
+                $0.secondLabel
             }
+            .onCloseSelected {
+                isPresentingResumeOffsetStepper = false
+            }
+        }
     }
 }
