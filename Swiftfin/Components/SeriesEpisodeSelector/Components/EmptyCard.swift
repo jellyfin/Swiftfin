@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -19,9 +19,9 @@ extension SeriesEpisodeSelector {
                     .posterStyle(.landscape)
 
                 SeriesEpisodeSelector.EpisodeContent(
-                    header: L10n.noResults,
-                    subHeader: .emptyDash,
-                    content: L10n.noEpisodesAvailable,
+                    title: L10n.noResults,
+                    subtitle: .emptyDash,
+                    description: L10n.noEpisodesAvailable,
                     action: {}
                 )
                 .disabled(true)

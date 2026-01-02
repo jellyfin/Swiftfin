@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import JellyfinAPI
@@ -84,9 +84,10 @@ struct SeriesEpisodeSelector: View {
                         viewModel: selectionViewModel,
                         playButtonItem: viewModel.playButtonItem
                     )
-                } else {
-                    LoadingHStack()
                 }
+//                else {
+//                    LoadingHStack()
+//                }
             }
             .transition(.opacity.animation(.linear(duration: 0.1)))
         }
@@ -113,10 +114,6 @@ struct SeriesEpisodeSelector: View {
         .onFirstAppear {
             seasonsViewModel.refresh()
         }
-//        .backport
-//        .onChange(of: seasonsViewModel.elements) { _, _ in
-//            print("here")
-//        }
         .backport
         .onChange(of: selection) { _, _ in
             guard let selectionViewModel else { return }

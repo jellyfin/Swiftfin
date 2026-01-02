@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -16,35 +16,35 @@ extension SeriesEpisodeSelector {
         @Default(.accentColor)
         private var accentColor
 
-        let header: String
-        let subHeader: String
-        let content: String
+        let title: String
+        let subtitle: String
+        let description: String
         let action: () -> Void
 
         @ViewBuilder
-        private var subHeaderView: some View {
-            Text(subHeader)
+        private var subtitleView: some View {
+            Text(subtitle)
                 .font(.footnote)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
                 .lineLimit(1)
         }
 
         @ViewBuilder
-        private var headerView: some View {
-            Text(header)
+        private var titleView: some View {
+            Text(title)
                 .font(.body)
-                .foregroundColor(.primary)
+                .foregroundStyle(.primary)
                 .lineLimit(1)
                 .multilineTextAlignment(.leading)
                 .padding(.bottom, 1)
         }
 
         @ViewBuilder
-        private var contentView: some View {
-            Text(content)
+        private var descriptionView: some View {
+            Text(description)
                 .font(.caption)
                 .fontWeight(.light)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
                 .multilineTextAlignment(.leading)
                 .lineLimit(3, reservesSpace: true)
         }
@@ -52,11 +52,11 @@ extension SeriesEpisodeSelector {
         var body: some View {
             Button(action: action) {
                 VStack(alignment: .leading) {
-                    subHeaderView
+                    subtitleView
 
-                    headerView
+                    titleView
 
-                    contentView
+                    descriptionView
 
                     Text(L10n.seeMore)
                         .font(.caption)
@@ -64,6 +64,7 @@ extension SeriesEpisodeSelector {
                         .foregroundStyle(accentColor)
                 }
             }
+            .foregroundStyle(.primary, .secondary)
         }
     }
 }
