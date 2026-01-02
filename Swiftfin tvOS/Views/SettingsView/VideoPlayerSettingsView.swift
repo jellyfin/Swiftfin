@@ -27,6 +27,12 @@ struct VideoPlayerSettingsView: View {
     // TODO: Update with correct settings once the tvOS PlayerUI is complete
     var body: some View {
         Form(systemImage: "tv") {
+
+            Section(L10n.buttons) {
+                JumpIntervalPicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
+                JumpIntervalPicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
+            }
+
             Section {
                 BasicStepper(
                     L10n.resumeOffset,
