@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -51,6 +51,24 @@ func Picker<Element: SupportedCaseIterable & Displayable & Hashable>(
         ForEach(elements, id: \.hashValue) {
             Text($0.displayTitle)
                 .tag($0 as Element)
+        }
+    }
+}
+
+@ViewBuilder
+func Picker<Element: Identifiable & Displayable & Hashable, Data: RandomAccessCollection>(
+    _ title: String,
+    sources: Data,
+    selection: Binding<Element?>,
+    noneStyle: Picker<EmptyView, Element, EmptyView>.NoneStyle = .text
+) -> some View where Data.Element == Element {
+    SwiftUI.Picker(title, selection: selection) {
+        Text(noneStyle.displayTitle)
+            .tag(nil as Element?)
+
+        ForEach(sources) { element in
+            Text(element.displayTitle)
+                .tag(element as Element?)
         }
     }
 }
