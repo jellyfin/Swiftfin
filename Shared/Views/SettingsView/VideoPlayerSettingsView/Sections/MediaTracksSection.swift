@@ -11,7 +11,7 @@ import JellyfinAPI
 import SwiftUI
 
 struct TrackConfigurationSection: View {
-    
+
     @Default(.VideoPlayer.Subtitle.subtitleFontName)
     private var subtitleFontName
     @Default(.VideoPlayer.Subtitle.subtitleSize)
