@@ -107,7 +107,7 @@ final class MediaViewModel: ViewModel {
         parameters.limit = 3
         parameters.isRecursive = true
         parameters.parentID = parentID
-        parameters.includeItemTypes = [.movie, .series, .boxSet]
+        parameters.includeItemTypes = BaseItemKind.supportedCases
         parameters.filters = filters
         parameters.sortBy = [ItemSortBy.random.rawValue]
 
@@ -115,6 +115,6 @@ final class MediaViewModel: ViewModel {
         let response = try await userSession.client.send(request)
 
         return (response.value.items ?? [])
-            .map { $0.imageSource(.backdrop, maxWidth: 200) }
+            .flatMap { $0.landscapeImageSources(maxWidth: 200) }
     }
 }
