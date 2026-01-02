@@ -10,8 +10,6 @@ import BlurHashKit
 import Nuke
 import SwiftUI
 
-/// Retrieving images by exact pixel dimensions is a bit
-/// intense for normal usage and eases cache usage and modifications.
 #if os(iOS)
 private let landscapeMaxWidth: CGFloat = 200
 private let portraitMaxWidth: CGFloat = 120
@@ -72,33 +70,19 @@ struct PosterImage<Element: Poster>: View {
                     .image { image in
                         element.transform(image: image, displayType: type)
                     }
-//                    .image(element.transform)
                     .placeholder { imageSource in
                         if let blurHash = imageSource.blurHash {
                             BlurHashView(blurHash: blurHash)
-//                        } else if item.showTitle {
                         } else {
                             SystemImageContentView(
                                 systemName: element.systemImage
                             )
-//                        } else {
-//                            SystemImageContentView(
-//                                title: item.displayTitle,
-//                                systemName: item.systemImage
-//                            )
                         }
                     }
                     .failure {
-//                        if item.showTitle {
                         SystemImageContentView(
                             systemName: element.systemImage
                         )
-//                        } else {
-//                            SystemImageContentView(
-//                                title: item.displayTitle,
-//                                systemName: item.systemImage
-//                            )
-//                        }
                     }
             }
         }

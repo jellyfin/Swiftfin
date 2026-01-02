@@ -10,13 +10,6 @@ import JellyfinAPI
 
 struct SpecialFeaturesLibrary: PagingLibrary {
 
-    struct Environment: WithDefaultValue {
-
-        static var `default`: Self {
-            .init()
-        }
-    }
-
     let itemID: String
     let parent: _TitledLibraryParent
 
@@ -29,7 +22,7 @@ struct SpecialFeaturesLibrary: PagingLibrary {
     }
 
     func retrievePage(
-        environment: Environment,
+        environment: Empty,
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
 

@@ -9,6 +9,7 @@
 import Defaults
 import JellyfinAPI
 
+// TODO: rename
 typealias PagingSeasonViewModel = PagingLibraryViewModel<EpisodeLibrary>
 
 @MainActor

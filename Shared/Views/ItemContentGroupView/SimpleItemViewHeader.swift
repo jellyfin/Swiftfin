@@ -41,6 +41,9 @@ struct SimpleItemViewHeader: _ContentGroup {
         @ViewBuilder
         private var titleAndAttributes: some View {
             VStack(alignment: .center, spacing: 5) {
+                
+                // TODO: environment value to not have routing
+                //       - ex: episode already routed from series
                 if let parentID = viewModel.item.seriesID, let parentTitle = viewModel.item.parentTitle {
                     Button {
                         router.route(

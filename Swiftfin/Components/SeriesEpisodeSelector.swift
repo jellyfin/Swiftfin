@@ -19,6 +19,8 @@ struct SeriesEpisodeContentGroup: _ContentGroup, Identifiable {
     }
 }
 
+// TODO: refactor to not take _ItemViewModel
+
 struct SeriesEpisodeSelector: View {
 
     @ObservedObject
@@ -27,13 +29,13 @@ struct SeriesEpisodeSelector: View {
     @State
     private var didSelectPlayButtonSeason = false
     @State
-    private var selection: PagingSeasonViewModel.ID?
+    private var selectionID: PagingSeasonViewModel.ID?
 
     @StateObject
     private var seasonsViewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
     private var selectionViewModel: PagingSeasonViewModel? {
-        guard let id = selection else { return nil }
+        guard let id = selectionID else { return nil }
         return seasonsViewModel.elements[id: id]
     }
 
@@ -44,31 +46,38 @@ struct SeriesEpisodeSelector: View {
 
     @ViewBuilder
     private var seasonSelectorMenu: some View {
-        if let selectionViewModel {
-            if seasonsViewModel.elements.count > 1 {
-                Menu {
-                    Picker(L10n.seasons, selection: $selection) {
-                        ForEach(seasonsViewModel.elements, id: \.id) { season in
-                            Text(season.library.parent.displayTitle)
-                                .tag(season.id as PagingSeasonViewModel.ID?)
-                        }
-                    }
-                } label: {
-                    Label(
-                        selectionViewModel.library.parent.displayTitle,
-                        systemImage: "chevron.down"
-                    )
-                    .labelStyle(.episodeSelector)
-                }
-            } else {
-                Text(selectionViewModel.library.parent.displayTitle)
-                    .font(.title2)
-                    .fontWeight(.semibold)
-            }
-        } else {
-            Text(verbatim: .emptyDash)
+        AlternateLayoutView(alignment: .leading) {
+            Text(" ")
+                .frame(maxWidth: .infinity)
                 .font(.title2)
                 .fontWeight(.semibold)
+        } content: {
+            if let selectionViewModel {
+                if seasonsViewModel.elements.count > 1 {
+                    Menu(
+                        selectionViewModel.library.parent.displayTitle,
+                        systemImage: "chevron.down"
+                    ) {
+                        Picker(L10n.seasons, selection: $selectionID) {
+                            ForEach(seasonsViewModel.elements, id: \.id) { season in
+                                Text(season.library.parent.displayTitle)
+                                    .tag(season.id as PagingSeasonViewModel.ID?)
+                            }
+                        }
+                    }
+                    .labelStyle(.episodeSelector)
+                } else {
+                    Text(selectionViewModel.library.parent.displayTitle)
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .lineLimit(2)
+                }
+            } else {
+                Text(String.random(count: 8))
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .redacted(reason: .placeholder)
+            }
         }
     }
 
@@ -78,44 +87,43 @@ struct SeriesEpisodeSelector: View {
             seasonSelectorMenu
                 .edgePadding(.horizontal)
 
-            Group {
+            ZStack {
+                EpisodeHStack(
+                    viewModel: .init(library: EpisodeLibrary(season: .init())),
+                    playButtonItemID: nil
+                )
+                .opacity(0)
+
                 if let selectionViewModel {
                     EpisodeHStack(
                         viewModel: selectionViewModel,
-                        playButtonItem: viewModel.playButtonItem
+                        playButtonItemID: viewModel.playButtonItem?.id
+                    )
+                } else {
+                    EpisodeHStack(
+                        viewModel: .init(library: EpisodeLibrary(season: .init())),
+                        playButtonItemID: nil
                     )
                 }
-//                else {
-//                    LoadingHStack()
-//                }
             }
-            .transition(.opacity.animation(.linear(duration: 0.1)))
+            .transition(.opacity.animation(.linear(duration: 0.2)))
         }
         .onReceive(viewModel.playButtonItem.publisher) { newValue in
 
-            guard selection == nil else { return }
+            guard selectionID == nil else { return }
             guard let playButtonSeasonID = newValue.seasonID else { return }
 
             if let playButtonSeason = seasonsViewModel.elements[id: playButtonSeasonID] {
-                selection = playButtonSeason.id
+                selectionID = playButtonSeason.id
             } else {
-                selection = seasonsViewModel.elements.first?.id
+                selectionID = seasonsViewModel.elements.first?.id
             }
-
-//            guard !didSelectPlayButtonSeason else { return }
-//            didSelectPlayButtonSeason = true
-//
-//            if let playButtonSeason = viewModel.seasons.first(where: { $0.id == newValue.seasonID }) {
-//                selection = playButtonSeason.id
-//            } else {
-//                selection = viewModel.seasons.first?.id
-//            }
         }
         .onFirstAppear {
             seasonsViewModel.refresh()
         }
         .backport
-        .onChange(of: selection) { _, _ in
+        .onChange(of: selectionID) { _, _ in
             guard let selectionViewModel else { return }
 
             if selectionViewModel.state == .initial {
