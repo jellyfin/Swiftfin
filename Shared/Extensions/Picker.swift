@@ -3,24 +3,95 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
 
-func Picker<ItemType>(
+@ViewBuilder
+func Picker<Element: CaseIterable & Displayable & Hashable>(
     _ title: String,
-    selection: Binding<ItemType>
-) -> some View where ItemType: CaseIterable & Displayable & Hashable,
-    ItemType.AllCases: RandomAccessCollection
-{
-    #if os(tvOS)
-    ListRowMenu(title, selection: selection)
-    #else
+    selection: Binding<Element?>,
+    noneStyle: Picker<EmptyView, Element, EmptyView>.NoneStyle = .text
+) -> some View {
     SwiftUI.Picker(title, selection: selection) {
-        ForEach(Array(ItemType.allCases), id: \.self) { option in
-            Text(option.displayTitle).tag(option)
+        Text(noneStyle.displayTitle)
+            .tag(nil as Element?)
+
+        ForEach(Element.allCases.asArray, id: \.hashValue) {
+            Text($0.displayTitle)
+                .tag($0 as Element?)
         }
     }
-    #endif
+}
+
+@ViewBuilder
+func Picker<Element: CaseIterable & Displayable & Hashable>(
+    _ title: String,
+    selection: Binding<Element>
+) -> some View {
+    SwiftUI.Picker(title, selection: selection) {
+        ForEach(Element.allCases.asArray, id: \.hashValue) {
+            Text($0.displayTitle)
+                .tag($0 as Element)
+        }
+    }
+}
+
+@ViewBuilder
+func Picker<Element: SupportedCaseIterable & Displayable & Hashable>(
+    _ title: String,
+    selection: Binding<Element>,
+    onlySupported: Bool = false
+) -> some View {
+
+    let elements = onlySupported ? Element.supportedCases.asArray : Element.allCases.asArray
+
+    SwiftUI.Picker(title, selection: selection) {
+        ForEach(elements, id: \.hashValue) {
+            Text($0.displayTitle)
+                .tag($0 as Element)
+        }
+    }
+}
+
+@ViewBuilder
+func Picker<Element: Identifiable & Displayable & Hashable, Data: RandomAccessCollection>(
+    _ title: String,
+    sources: Data,
+    selection: Binding<Element?>,
+    noneStyle: Picker<EmptyView, Element, EmptyView>.NoneStyle = .text
+) -> some View where Data.Element == Element {
+    SwiftUI.Picker(title, selection: selection) {
+        Text(noneStyle.displayTitle)
+            .tag(nil as Element?)
+
+        ForEach(sources) { element in
+            Text(element.displayTitle)
+                .tag(element as Element?)
+        }
+    }
+}
+
+extension Picker {
+
+    enum NoneStyle: Displayable {
+
+        case text
+        case dash(Int)
+        case custom(String)
+
+        var displayTitle: String {
+            switch self {
+            case .text:
+                return L10n.none
+            case let .dash(length):
+                assert(length >= 1, "Dash must have length of at least 1.")
+                return String(repeating: "-", count: length)
+            case let .custom(text):
+                assert(text.isNotEmpty, "Custom text must have length of at least 1.")
+                return text
+            }
+        }
+    }
 }
