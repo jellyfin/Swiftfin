@@ -7,10 +7,10 @@
 //
 
 import CollectionVGrid
-import Defaults
-import Engine
 import JellyfinAPI
 import SwiftUI
+
+// TODO: find way to consolidate with PagingLibraryView
 
 struct MediaView: View {
 
@@ -84,29 +84,5 @@ struct MediaView: View {
         .if(UIDevice.isTV) { view in
             view.toolbar(.hidden, for: .navigationBar)
         }
-    }
-}
-
-struct FavoritesContentGroupProvider: _ContentGroupProvider {
-
-    let displayTitle: String = L10n.favorites
-    let id: String = "favorites-content-group-provider"
-
-    func makeGroups(environment: Empty) async throws -> [any _ContentGroup] {
-        try await ItemTypeContentGroupProvider(
-            itemTypes: [
-                BaseItemKind.movie,
-                .series,
-                .boxSet,
-                .episode,
-                .musicVideo,
-                .video,
-                .liveTvProgram,
-                .tvChannel,
-                .musicArtist,
-                .person,
-            ]
-        )
-        .makeGroups(environment: .init(filters: .favorites))
     }
 }

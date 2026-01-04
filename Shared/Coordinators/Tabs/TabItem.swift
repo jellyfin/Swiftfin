@@ -106,11 +106,10 @@ extension TabItem {
         TabItem(
             id: provider.id,
             title: provider.displayTitle,
-            systemImage: "heart.fill"
+            systemImage: "house.fill"
         ) {
             // TODO: consolidate item and plain content group view?
             ContentGroupView(provider: provider)
-//            ContentGroupShimView(id: provider.id)
         }
     }
 
@@ -149,7 +148,6 @@ extension TabItem {
         title: L10n.media,
         systemImage: "rectangle.stack.fill"
     ) {
-//        PagingLibraryView(library: MediaLibrary())
         MediaView()
     }
 

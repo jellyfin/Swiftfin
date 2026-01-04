@@ -10,7 +10,68 @@ import CollectionHStack
 import JellyfinAPI
 import SwiftUI
 
-struct EpisodeHStack<Library: PagingLibrary>: View where Library.Element == BaseItemDto {
+struct EpisodeGroup<Library: PagingLibrary>: _ContentGroup where Library.Element == BaseItemDto {
+
+    var displayTitle: String {
+        library.parent.displayTitle
+    }
+
+    let id: String
+    let library: Library
+    let viewModel: PagingLibraryViewModel<Library>
+
+    var _shouldBeResolved: Bool {
+        viewModel.elements.isNotEmpty
+    }
+
+    init(
+        id: String = UUID().uuidString,
+        library: Library
+    ) {
+        self.id = id
+        self.library = library
+        self.viewModel = .init(library: library, pageSize: 20)
+    }
+
+    @ViewBuilder
+    func body(with viewModel: PagingLibraryViewModel<Library>) -> some View {
+        WithRouter { router in
+            EpisodeHStack(
+                viewModel: viewModel,
+                playButtonItemID: nil
+            ) {
+                #if os(tvOS)
+                Text(viewModel.library.parent.displayTitle)
+                    .font(.title3)
+                    .lineLimit(1)
+                    .accessibilityAddTraits(.isHeader)
+                    .edgePadding(.horizontal)
+                #else
+                Button {
+                    router.route(to: .library(library: viewModel.library))
+                } label: {
+                    HStack(spacing: 3) {
+                        Text(viewModel.library.parent.displayTitle)
+                            .font(.title2)
+                            .lineLimit(1)
+
+                        Image(systemName: "chevron.forward")
+                            .font(.title3)
+                            .foregroundStyle(.secondary)
+                    }
+                    .fontWeight(.semibold)
+                }
+                .foregroundStyle(.primary, .secondary)
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityAction(named: Text("Open library")) { router.route(to: .library(library: viewModel.library)) }
+                .edgePadding(.horizontal)
+                #endif
+            }
+        }
+    }
+}
+
+struct EpisodeHStack<Library: PagingLibrary, Header: View>: View where Library.Element == BaseItemDto {
 
     private enum Element: Identifiable {
         case empty
@@ -28,8 +89,11 @@ struct EpisodeHStack<Library: PagingLibrary>: View where Library.Element == Base
         }
     }
 
+    @ViewContextContains(.isInParent)
+    private var isInParent
+
     @ObservedObject
-    var viewModel: PagingLibraryViewModel<Library>
+    private var viewModel: PagingLibraryViewModel<Library>
 
     @Router
     private var router
@@ -40,7 +104,18 @@ struct EpisodeHStack<Library: PagingLibrary>: View where Library.Element == Base
     @StateObject
     private var proxy = CollectionHStackProxy()
 
-    let playButtonItemID: BaseItemDto.ID?
+    private let header: Header
+    private let playButtonItemID: BaseItemDto.ID?
+
+    init(
+        viewModel: PagingLibraryViewModel<Library>,
+        playButtonItemID: BaseItemDto.ID? = nil,
+        @ViewBuilder header: () -> Header = { EmptyView() }
+    ) {
+        self.viewModel = viewModel
+        self.playButtonItemID = playButtonItemID
+        self.header = header()
+    }
 
     private var elements: [Element] {
         switch viewModel.state {
@@ -75,8 +150,24 @@ struct EpisodeHStack<Library: PagingLibrary>: View where Library.Element == Base
     }
 
     @ViewBuilder
+    func _subtitle(episode: BaseItemDto) -> some View {
+        if isInParent {
+            Text(episode.episodeLocator ?? .emptyDash)
+        } else {
+            DotHStack {
+                if let seriesName = episode.seriesName {
+                    Text(seriesName)
+                }
+
+                Text(episode.seasonEpisodeLabel ?? .emptyDash)
+            }
+        }
+    }
+
+    @ViewBuilder
     private func _episode(_ episode: BaseItemDto) -> some View {
-        var episodeContent: String {
+
+        var description: String {
             if episode.isUnaired {
                 episode.airDateLabel ?? L10n.noOverviewAvailable
             } else {
@@ -87,8 +178,8 @@ struct EpisodeHStack<Library: PagingLibrary>: View where Library.Element == Base
         WithNamespace { namespace in
             ElementView(
                 title: episode.displayTitle,
-                subtitle: episode.episodeLocator ?? .emptyDash,
-                description: episodeContent
+                subtitle: _subtitle(episode: episode),
+                description: description
             ) {
                 router.route(to: .item(item: episode), in: namespace)
             } content: {
@@ -112,11 +203,32 @@ struct EpisodeHStack<Library: PagingLibrary>: View where Library.Element == Base
                         .posterShadow()
                 }
                 .foregroundStyle(.primary, .secondary)
+            } menuContent: {
+                // TODO: get context menu content
+                Button("Go to Episode", systemImage: "info.circle") {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        router.route(to: .item(item: episode))
+                    }
+                }
+
+                if !isInParent, let seriesID = episode.seriesID {
+                    Button("Go to Show", systemImage: "info.circle") {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            router.route(
+                                to: .item(
+                                    displayTitle: episode.seriesName ?? "",
+                                    id: seriesID
+                                )
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 
-    var body: some View {
+    @ViewBuilder
+    private var stack: some View {
         CollectionHStack(
             uniqueElements: elements,
             layout: layout
@@ -166,6 +278,16 @@ struct EpisodeHStack<Library: PagingLibrary>: View where Library.Element == Base
             // good enough?
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 proxy.scrollTo(id: playButtonItemID, animated: false)
+            }
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Section {
+                stack
+            } header: {
+                header
             }
         }
     }

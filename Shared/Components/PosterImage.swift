@@ -20,7 +20,10 @@ private let portraitMaxWidth: CGFloat = 500
 
 struct PosterImage<Element: Poster>: View {
 
-    @ForTypeInEnvironment<Element, (Any) -> any CustomEnvironmentValue>(\.customEnvironmentValueRegistry)
+    @Environment(\.viewContext)
+    private var viewContext
+
+    @ForTypeInEnvironment<Element, (Any) -> any WithDefaultValue>(\.customEnvironmentValueRegistry)
     private var customEnvironmentValueRegistry
 
     private let contentMode: ContentMode
@@ -36,11 +39,20 @@ struct PosterImage<Element: Poster>: View {
     }
 
     private var imageSources: [ImageSource] {
-        element.imageSources(
-            for: type,
-            size: size,
-            environment: customEnvironmentValue
-        )
+        if var environment = customEnvironmentValue as? WithViewContext {
+            environment.viewContext = viewContext
+            return element.imageSources(
+                for: type,
+                size: size,
+                environment: environment as! Element.Environment
+            )
+        } else {
+            return element.imageSources(
+                for: type,
+                size: size,
+                environment: customEnvironmentValue
+            )
+        }
     }
 
     init(

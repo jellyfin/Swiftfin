@@ -81,53 +81,60 @@ struct SeriesEpisodeSelector: View {
         }
     }
 
+    // TODO: fix when no seasons
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-
-            seasonSelectorMenu
-                .edgePadding(.horizontal)
-
+        if seasonsViewModel.state != .content || seasonsViewModel.elements.isNotEmpty {
             ZStack {
                 EpisodeHStack(
                     viewModel: .init(library: EpisodeLibrary(season: .init())),
                     playButtonItemID: nil
-                )
+                ) {
+                    seasonSelectorMenu
+                        .edgePadding(.horizontal)
+                }
                 .opacity(0)
 
                 if let selectionViewModel {
                     EpisodeHStack(
                         viewModel: selectionViewModel,
                         playButtonItemID: viewModel.playButtonItem?.id
-                    )
+                    ) {
+                        seasonSelectorMenu
+                            .edgePadding(.horizontal)
+                    }
                 } else {
                     EpisodeHStack(
                         viewModel: .init(library: EpisodeLibrary(season: .init())),
                         playButtonItemID: nil
-                    )
+                    ) {
+                        seasonSelectorMenu
+                            .edgePadding(.horizontal)
+                    }
                 }
             }
             .transition(.opacity.animation(.linear(duration: 0.2)))
-        }
-        .onReceive(viewModel.playButtonItem.publisher) { newValue in
+            .withViewContext(.isInParent)
+            .onReceive(viewModel.playButtonItem.publisher) { newValue in
 
-            guard selectionID == nil else { return }
-            guard let playButtonSeasonID = newValue.seasonID else { return }
+                guard selectionID == nil else { return }
+                guard let playButtonSeasonID = newValue.seasonID else { return }
 
-            if let playButtonSeason = seasonsViewModel.elements[id: playButtonSeasonID] {
-                selectionID = playButtonSeason.id
-            } else {
-                selectionID = seasonsViewModel.elements.first?.id
+                if let playButtonSeason = seasonsViewModel.elements[id: playButtonSeasonID] {
+                    selectionID = playButtonSeason.id
+                } else {
+                    selectionID = seasonsViewModel.elements.first?.id
+                }
             }
-        }
-        .onFirstAppear {
-            seasonsViewModel.refresh()
-        }
-        .backport
-        .onChange(of: selectionID) { _, _ in
-            guard let selectionViewModel else { return }
+            .onFirstAppear {
+                seasonsViewModel.refresh()
+            }
+            .backport
+            .onChange(of: selectionID) { _, _ in
+                guard let selectionViewModel else { return }
 
-            if selectionViewModel.state == .initial {
-                selectionViewModel.refresh()
+                if selectionViewModel.state == .initial {
+                    selectionViewModel.refresh()
+                }
             }
         }
     }

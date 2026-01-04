@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 extension EnhancedItemViewHeader {
@@ -15,9 +14,6 @@ extension EnhancedItemViewHeader {
 
         @Environment(\.frameForParentView)
         private var frameForParentView
-
-        @Namespace
-        private var namespace
 
         @ObservedObject
         var viewModel: _ItemViewModel
@@ -97,7 +93,10 @@ extension EnhancedItemViewHeader {
                         PlayButton(viewModel: viewModel)
                     }
 
-                    ActionButtonHStack(viewModel: viewModel)
+                    ActionButtonHStack(
+                        item: viewModel.item,
+                        localTrailers: viewModel.localTrailers
+                    )
                 }
                 #if os(tvOS)
                 .frame(width: 450)

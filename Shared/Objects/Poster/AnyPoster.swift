@@ -25,9 +25,9 @@ struct AnyPoster: Poster {
         _poster.displayTitle
     }
 
-    var unwrappedIDHashOrZero: Int {
-        _poster.unwrappedIDHashOrZero
-    }
+//    var unwrappedIDHashOrZero: Int {
+//        _poster.unwrappedIDHashOrZero
+//    }
 
     var systemImage: String {
         _poster.systemImage
@@ -38,7 +38,7 @@ struct AnyPoster: Poster {
     }
 
     func hash(into hasher: inout Hasher) {
-        hasher.combine(_poster.unwrappedIDHashOrZero)
+//        hasher.combine(_poster.unwrappedIDHashOrZero)
         hasher.combine(_poster.displayTitle)
         hasher.combine(_poster.systemImage)
     }

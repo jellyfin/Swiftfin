@@ -37,8 +37,7 @@ struct TrailerMenu: View {
                     Section(L10n.local) {
                         ForEach(localTrailers) { trailer in
                             Button(
-                                trailer.name ?? L10n.trailer,
-                                systemImage: "play.fill"
+                                trailer.name ?? L10n.trailer
                             ) {
                                 playLocalTrailer(trailer)
                             }
@@ -50,8 +49,7 @@ struct TrailerMenu: View {
                     Section(L10n.external) {
                         ForEach(remoteTrailers, id: \.hashValue) { mediaURL in
                             Button(
-                                mediaURL.name ?? L10n.trailer,
-                                systemImage: "arrow.up.forward"
+                                mediaURL.name ?? L10n.trailer
                             ) {
                                 playExternalTrailer(mediaURL)
                             }
@@ -62,7 +60,6 @@ struct TrailerMenu: View {
                 Label(L10n.trailers, systemImage: "movieclapper")
             }
             .errorMessage($error)
-            .menuStyle(.button)
         }
     }
 

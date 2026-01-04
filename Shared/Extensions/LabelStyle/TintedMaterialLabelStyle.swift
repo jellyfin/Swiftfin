@@ -8,7 +8,44 @@
 
 import SwiftUI
 
-// TODO: on tvOS focus, find way to disable brightness effect
+#if os(tvOS)
+struct _BasicHoverButtonStyle: ButtonStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .hoverEffect(.lift)
+    }
+}
+#else
+typealias _BasicHoverButtonStyle = BorderlessButtonStyle
+#endif
+
+struct ActionLabelStyle: LabelStyle {
+
+    @Environment(\.isHighlighted)
+    private var isHighlighted
+
+    func makeBody(configuration: Configuration) -> some View {
+        ZStack {
+            if isHighlighted {
+                Rectangle()
+                    .fill(.secondary)
+            } else {
+                VisualEffectView(
+                    blur: .regular,
+                    tint: Color.gray.opacity(0.3)
+                )
+            }
+
+            configuration.icon
+                .symbolRenderingMode(.monochrome)
+                .foregroundStyle(.primary)
+        }
+        #if os(iOS)
+        .cornerRadius(10)
+        #endif
+    }
+}
 
 extension LabelStyle where Self == TintedMaterialLabelStyle {
 

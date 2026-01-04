@@ -9,22 +9,43 @@
 import SwiftUI
 import UIKit
 
-@available(*, deprecated, message: "Use `Material` instead")
-struct BlurView: UIViewRepresentable {
+@available(*, deprecated, message: "Use `Material` or `VisualEffectView` instead")
+typealias BlurView = VisualEffectView
 
-    let style: UIBlurEffect.Style
+struct VisualEffectView: UIViewRepresentable {
 
-    init(style: UIBlurEffect.Style = .regular) {
-        self.style = style
+    private let effect: UIVisualEffect
+    private let tint: Color?
+
+    init(
+        blur style: UIBlurEffect.Style = .regular,
+        tint: Color? = nil
+    ) {
+        self.effect = UIBlurEffect(style: style)
+        self.tint = tint
+    }
+
+    init(
+        effect: UIVisualEffect,
+        tint: Color? = nil
+    ) {
+        self.effect = effect
+        self.tint = tint
     }
 
     func makeUIView(context: Context) -> UIVisualEffectView {
-        let view = UIVisualEffectView(effect: UIBlurEffect(style: style))
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
+        UIVisualEffectView(effect: effect)
     }
 
     func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
-        uiView.effect = UIBlurEffect(style: style)
+        uiView.effect = effect
+
+        let overlayView = uiView.subviews.first { type(of: $0) == NSClassFromString("_UIVisualEffectSubview") }
+
+        if let tint {
+            overlayView?.backgroundColor = UIColor(tint)
+        } else {
+            overlayView?.backgroundColor = nil
+        }
     }
 }

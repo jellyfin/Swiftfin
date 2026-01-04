@@ -8,6 +8,10 @@
 
 import SwiftUI
 
+protocol WithViewContext {
+    var viewContext: ViewContext { get set }
+}
+
 struct ViewContext: OptionSet {
 
     let rawValue: Int
@@ -15,6 +19,7 @@ struct ViewContext: OptionSet {
     static let isInMenu = ViewContext(rawValue: 1 << 0)
     static let isThumb = ViewContext(rawValue: 1 << 1)
     static let isOverComplexContent = ViewContext(rawValue: 1 << 2)
+    static let isInParent = ViewContext(rawValue: 1 << 3)
 }
 
 extension EnvironmentValues {

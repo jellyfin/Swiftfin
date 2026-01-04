@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -26,14 +25,8 @@ struct SimpleItemViewHeader: _ContentGroup {
 
     struct Body: View {
 
-        @Default(.accentColor)
-        private var accentColor
-
         @ObservedObject
         var viewModel: _ItemViewModel
-
-        @Namespace
-        private var namespace
 
         @Router
         private var router
@@ -41,7 +34,7 @@ struct SimpleItemViewHeader: _ContentGroup {
         @ViewBuilder
         private var titleAndAttributes: some View {
             VStack(alignment: .center, spacing: 5) {
-                
+
                 // TODO: environment value to not have routing
                 //       - ex: episode already routed from series
                 if let parentID = viewModel.item.seriesID, let parentTitle = viewModel.item.parentTitle {
@@ -121,7 +114,10 @@ struct SimpleItemViewHeader: _ContentGroup {
                         PlayButton(viewModel: viewModel)
                     }
 
-                    ActionButtonHStack(viewModel: viewModel)
+                    ActionButtonHStack(
+                        item: viewModel.item,
+                        localTrailers: viewModel.localTrailers
+                    )
                 }
                 .frame(maxWidth: 300)
 

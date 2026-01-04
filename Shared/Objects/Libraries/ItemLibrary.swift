@@ -15,11 +15,13 @@ struct ItemLibrary: PagingLibrary, WithRandomElementLibrary {
     struct Environment: WithDefaultValue {
         let grouping: Parent.Grouping?
         let filters: ItemFilterCollection
+        let fields: [ItemFields]?
 
         static var `default`: Self {
             .init(
                 grouping: nil,
-                filters: .default
+                filters: .default,
+                fields: nil
             )
         }
     }
@@ -30,12 +32,14 @@ struct ItemLibrary: PagingLibrary, WithRandomElementLibrary {
 
     init(
         parent: Parent,
-        filters: ItemFilterCollection? = nil
+        filters: ItemFilterCollection? = nil,
+        fields: [ItemFields]? = nil
     ) {
-        if parent.groupings?.defaultSelection != nil || filters != nil {
+        if parent.groupings?.defaultSelection != nil || filters != nil || fields != nil {
             environment = .init(
                 grouping: parent.groupings?.defaultSelection,
-                filters: filters ?? .default
+                filters: filters ?? .default,
+                fields: fields
             )
         } else {
             environment = nil
@@ -97,6 +101,7 @@ struct ItemLibrary: PagingLibrary, WithRandomElementLibrary {
 
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.enableUserData = true
+        parameters.fields = environment.fields
 
         // Default values, expected to be overridden
         // by parent or filters
@@ -216,7 +221,8 @@ struct ItemLibrary: PagingLibrary, WithRandomElementLibrary {
                     get: { environment.wrappedValue.grouping },
                     set: { environment.wrappedValue = Environment(
                         grouping: $0,
-                        filters: environment.wrappedValue.filters
+                        filters: environment.wrappedValue.filters,
+                        fields: environment.wrappedValue.fields
                     ) }
                 )
 

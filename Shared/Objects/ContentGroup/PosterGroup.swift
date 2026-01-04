@@ -10,10 +10,7 @@ import SwiftUI
 
 struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element: LibraryElement {
 
-    var displayTitle: String {
-        library.parent.displayTitle
-    }
-
+    let displayTitle: String
     let id: String
     let library: Library
     let posterDisplayType: PosterDisplayType
@@ -30,6 +27,7 @@ struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element:
         posterDisplayType: PosterDisplayType = .portrait,
         posterSize: PosterDisplayType.Size = .small
     ) {
+        self.displayTitle = library.parent.displayTitle
         self.id = id
         self.library = library
         self.posterDisplayType = posterDisplayType
@@ -39,6 +37,9 @@ struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element:
 
     @ViewBuilder
     func body(with viewModel: PagingLibraryViewModel<Library>) -> some View {
-        PosterHStackLibrarySection(viewModel: viewModel, group: self)
+        PosterHStackLibrarySection(
+            viewModel: viewModel,
+            group: self
+        )
     }
 }

@@ -126,7 +126,8 @@ final class SearchViewModel: ViewModel {
 
             vm.environment = .init(
                 grouping: vm.environment.grouping,
-                filters: filters
+                filters: filters,
+                fields: nil
             )
 
             print(vm.environment)

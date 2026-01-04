@@ -20,42 +20,40 @@ struct ActionButtonHStack: View {
     @StoredValue(.User.enabledTrailers)
     private var enabledTrailers: TrailerSelection
 
-    @ObservedObject
-    var viewModel: _ItemViewModel
+    let item: BaseItemDto
+    let localTrailers: [BaseItemDto]
 
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
 
-            if viewModel.item.canBePlayed {
+            if item.canBePlayed {
 
-                let isPlayedSelected = viewModel.item.userData?.isPlayed == true
+                let isPlayedSelected = item.userData?.isPlayed == true
 
                 Button(L10n.played, systemImage: "checkmark") {
-                    viewModel.item.userData?.isPlayed?.toggle()
+                    print("Mark as played action")
                 }
                 .foregroundStyle(.white, Color.jellyfinPurple)
-                .buttonStyle(.primary)
                 .isHighlighted(isPlayedSelected)
                 .frame(maxWidth: .infinity)
             }
 
-            let isFavoriteSelected = viewModel.item.userData?.isFavorite == true
+            let isFavoriteSelected = item.userData?.isFavorite == true
 
             Button(L10n.favorite, systemImage: isFavoriteSelected ? "heart.fill" : "heart") {
-                viewModel.item.userData?.isFavorite?.toggle()
+                print("Favorite action")
             }
             .foregroundStyle(.white, .red)
-            .buttonStyle(.primary)
             .isHighlighted(isFavoriteSelected)
             .frame(maxWidth: .infinity)
 
             TrailerMenu(
-                localTrailers: enabledTrailers.contains(.local) ? viewModel.localTrailers : [],
-                remoteTrailers: enabledTrailers.contains(.external) ? (viewModel.item.remoteTrailers ?? []) : []
+                localTrailers: enabledTrailers.contains(.local) ? localTrailers : [],
+                remoteTrailers: enabledTrailers.contains(.external) ? (item.remoteTrailers ?? []) : []
             )
             .menuStyle(.button)
-            .foregroundStyle(.black, .white)
-            .buttonStyle(.primary)
+            .foregroundStyle(.white)
+            .isHighlighted(false)
             .frame(maxWidth: .infinity)
 
             if UIDevice.isTV {
@@ -65,16 +63,22 @@ struct ActionButtonHStack: View {
                         Button(L10n.edit) {}
                     }
                 } label: {
-                    Label(L10n.advanced, systemImage: "ellipsis")
-                        .rotationEffect(.degrees(90))
+                    Label {
+                        Text(L10n.advanced)
+                    } icon: {
+                        Image(systemName: "ellipsis")
+                            .rotationEffect(.degrees(90))
+                    }
                 }
-                .buttonStyle(.primary)
+                .menuStyle(.button)
+                .foregroundStyle(.black, .white)
                 .frame(width: 60)
             }
         }
         .font(.title3)
         .fontWeight(.semibold)
-        .labelStyle(.iconOnly)
+        .labelStyle(ActionLabelStyle())
+        .buttonStyle(_BasicHoverButtonStyle())
         .frame(height: UIDevice.isTV ? 100 : 44)
         .withViewContext(.isOverComplexContent)
     }

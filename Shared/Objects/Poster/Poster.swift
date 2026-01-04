@@ -16,7 +16,7 @@ import SwiftUI
 typealias ImageSourceBuilder = ArrayBuilder<ImageSource>
 
 /// A type that is displayed as a poster
-protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
+protocol Poster: Displayable, Hashable, Identifiable, SystemImageable {
 
     associatedtype Environment: WithDefaultValue = Empty
     associatedtype ImageBody: View = Image

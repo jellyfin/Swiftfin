@@ -11,15 +11,22 @@ import SwiftUI
 
 // TODO: move to PosterGroup?
 
+struct SeeAllPoster: Poster {
+    var preferredPosterDisplayType: PosterDisplayType { .portrait }
+    var displayTitle: String = L10n.seeAll
+    var id: String { "see-all" }
+    var systemImage: String { "ellipsis" }
+}
+
 struct PosterHStackLibrarySection<Library: PagingLibrary>: View where Library.Element: LibraryElement {
 
-    enum _Element: Hashable {
-        case item(Library.Element)
+    enum Element: Hashable {
+        case element(Library.Element)
         case seeAll
 
         var asAnyPoster: AnyPoster {
             switch self {
-            case let .item(element):
+            case let .element(element):
                 return AnyPoster(element)
             case .seeAll:
                 return AnyPoster(BaseItemDto())
@@ -27,21 +34,21 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View where Library.El
         }
     }
 
-    @Router
-    private var router
-
     @ObservedObject
     private var viewModel: PagingLibraryViewModel<Library>
 
-    private var _elements: [_Element] {
+    @Router
+    private var router
+
+    private var _elements: [Element] {
         #if os(tvOS)
         viewModel.elements.elements
             .prefix(19)
-            .map { .item($0) }
+            .map { .element($0) }
             .appending(.seeAll)
         #else
         viewModel.elements.elements
-            .map { .item($0) }
+            .map { .element($0) }
         #endif
     }
 
@@ -88,11 +95,10 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View where Library.El
         if viewModel.elements.isNotEmpty {
             PosterHStack(
                 elements: viewModel.elements,
-//                elements: _elements.map(\.asAnyPoster),
+                //                elements: _elements.map(\.asAnyPoster),
                 type: group.posterDisplayType,
                 size: group.posterSize
             ) { element, namespace in
-
                 switch element {
                 case let element as BaseItemDto:
                     switch element.type {

@@ -70,6 +70,9 @@ extension BaseItemPerson: Poster {
     }
 }
 
+// TODO: probably don't cast to `BaseItemDto`?
+// - loses roles
+
 extension BaseItemPerson: LibraryElement {
 
     @MainActor

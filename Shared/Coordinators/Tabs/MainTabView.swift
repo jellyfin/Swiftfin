@@ -25,8 +25,6 @@ struct MainTabView: View {
         TabItemSetting.contentGroup(.default)
         TabItemSetting.search
         TabItemSetting.media
-        TabItemSetting.liveTV
-//        TabItemSetting.contentGroup(StoredValues[.User.customContentGroup(id: "asdf")])
     }
     #else
     @StateObject

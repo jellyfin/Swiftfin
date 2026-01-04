@@ -19,7 +19,7 @@ extension ImageInfo: @retroactive Identifiable {
 
 extension ImageInfo: Poster {
 
-    struct Environment: CustomEnvironmentValue {
+    struct Environment: WithDefaultValue {
         let itemID: String
         let client: JellyfinClient
 

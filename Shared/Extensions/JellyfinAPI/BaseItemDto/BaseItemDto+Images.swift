@@ -62,13 +62,15 @@ extension BaseItemDto {
         _ type: ImageType,
         maxWidth: CGFloat? = nil,
         maxHeight: CGFloat? = nil,
-        quality: Int? = nil
+        quality: Int? = nil,
+        requireTag: Bool = true
     ) -> ImageSource {
         _imageSource(
             type,
             maxWidth: maxWidth,
             maxHeight: maxHeight,
-            quality: quality
+            quality: quality,
+            requireTag: requireTag
         )
     }
 
@@ -197,14 +199,16 @@ extension BaseItemDto {
         _ type: ImageType,
         maxWidth: CGFloat?,
         maxHeight: CGFloat?,
-        quality: Int?
+        quality: Int?,
+        requireTag: Bool = true
     ) -> ImageSource {
         let url = _imageURL(
             type,
             maxWidth: maxWidth,
             maxHeight: maxHeight,
             quality: quality,
-            itemID: id ?? ""
+            itemID: id ?? "",
+            requireTag: requireTag
         )
         let blurHash = blurHashString(for: type)
 

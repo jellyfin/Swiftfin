@@ -93,7 +93,7 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background(alignment: .top) {
-                MirrorExtensionView(edges: .vertical) {
+                MirrorExtensionView(edges: .top) {
                     background
                 }
                 .onFrameChanged { frame, _ in

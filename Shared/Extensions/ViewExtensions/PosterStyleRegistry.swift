@@ -8,16 +8,12 @@
 
 import SwiftUI
 
-protocol WithDefaultValue: Equatable {
-    static var `default`: Self { get }
-}
-
-protocol CustomEnvironmentValue: WithDefaultValue {}
+// TODO: rework to `PosterEnvironment`
 
 extension EnvironmentValues {
 
     @Entry
-    var customEnvironmentValueRegistry: TypeKeyedDictionary<(Any) -> any CustomEnvironmentValue> = .init()
+    var customEnvironmentValueRegistry: TypeKeyedDictionary<(Any) -> any WithDefaultValue> = .init()
 }
 
 extension View {
@@ -26,9 +22,9 @@ extension View {
     func customEnvironment<P: Poster>(
         for type: P.Type,
         value: P.Environment
-    ) -> some View where P.Environment: CustomEnvironmentValue {
+    ) -> some View where P.Environment: WithDefaultValue {
         modifier(
-            ForTypeInEnvironment<P, (Any) -> any CustomEnvironmentValue>.SetValue(
+            ForTypeInEnvironment<P, (Any) -> any WithDefaultValue>.SetValue(
                 { _ in { _ in value } },
                 for: \.customEnvironmentValueRegistry
             )

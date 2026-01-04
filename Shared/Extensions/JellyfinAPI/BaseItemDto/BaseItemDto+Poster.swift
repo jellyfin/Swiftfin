@@ -15,9 +15,9 @@ import SwiftUI
 
 extension BaseItemDto: Poster {
 
-    struct Environment: CustomEnvironmentValue {
+    struct Environment: WithDefaultValue, WithViewContext {
         let useParent: Bool
-        let viewContext: ViewContext
+        var viewContext: ViewContext
 
         init(
             useParent: Bool = false,
@@ -74,8 +74,19 @@ extension BaseItemDto: Poster {
         switch type {
         case .episode:
             seriesImageSource(.primary, maxWidth: maxWidth, quality: quality)
-        case .boxSet, .channel, .liveTvChannel, .movie, .musicArtist, .person, .series, .tvChannel:
-            imageSource(.primary, maxWidth: maxWidth, quality: quality)
+        case .boxSet, .channel, .liveTvChannel, .movie, .musicArtist, .series, .tvChannel:
+            imageSource(
+                .primary,
+                maxWidth: maxWidth,
+                quality: quality
+            )
+        case .person:
+            imageSource(
+                .primary,
+                maxWidth: maxWidth,
+                quality: quality,
+                requireTag: false
+            )
         default:
             // TODO: cleanup
             // parentBackdropItemID seems good enough

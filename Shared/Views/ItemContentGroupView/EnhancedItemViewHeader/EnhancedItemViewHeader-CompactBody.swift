@@ -6,15 +6,11 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 extension EnhancedItemViewHeader {
 
     struct CompactBody: View {
-
-        @Namespace
-        private var namespace
 
         @ObservedObject
         var viewModel: _ItemViewModel
@@ -45,10 +41,12 @@ extension EnhancedItemViewHeader {
             VStack(alignment: .center, spacing: 10) {
                 AlternateLayoutView(alignment: .bottom) {
                     Color.clear
-                        .aspectRatio(1.77, contentMode: .fill)
+                        .aspectRatio(1.77, contentMode: .fit)
+                        .padding(.bottom, 70)
                 } content: {
                     logo
                         .frame(maxWidth: .infinity)
+                        .debugCross()
                 }
                 .frame(maxWidth: .infinity)
                 .zIndex(10)
@@ -76,7 +74,10 @@ extension EnhancedItemViewHeader {
                             PlayButton(viewModel: viewModel)
                         }
 
-                        ActionButtonHStack(viewModel: viewModel)
+                        ActionButtonHStack(
+                            item: viewModel.item,
+                            localTrailers: viewModel.localTrailers
+                        )
                     }
                     .frame(maxWidth: 300)
 
@@ -136,6 +137,7 @@ extension EnhancedItemViewHeader {
                     ImageView(
                         viewModel.item.landscapeImageSources(maxWidth: 1320, environment: .init(useParent: false))
                     )
+                    .debugOverlay(.blue.opacity(0.2))
                 }
                 .aspectRatio(1.77, contentMode: .fit)
             }

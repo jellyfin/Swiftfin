@@ -100,12 +100,11 @@ struct PosterHStack<
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(itemSpacing)
             .scrollBehavior(.continuousLeadingEdge)
+            .withViewContext(.isThumb)
         }
     }
 
     var body: some View {
-//        let _ = Self._printChanges()
-
         VStack(alignment: .leading, spacing: 10) {
             Section {
                 stack

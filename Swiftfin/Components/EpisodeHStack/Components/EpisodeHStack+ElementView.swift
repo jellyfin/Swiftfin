@@ -11,7 +11,7 @@ import SwiftUI
 
 extension EpisodeHStack {
 
-    struct ElementView<Content: View>: View {
+    struct ElementView<Content: View, Subtitle: View, MenuContent: View>: View {
 
         @Default(.accentColor)
         private var accentColor
@@ -19,47 +19,27 @@ extension EpisodeHStack {
         @Environment(\.isEnabled)
         private var isEnabled
 
-        private let content: Content
-        private let title: String
-        private let subtitle: String
-        private let description: String
         private let action: () -> Void
+        private let content: Content
+        private let description: String
+        private let menuContent: MenuContent
+        private let subtitle: Subtitle
+        private let title: String
 
         init(
             title: String,
-            subtitle: String,
+            subtitle: Subtitle,
             description: String,
             action: @escaping () -> Void,
-            @ViewBuilder content: () -> Content
+            @ViewBuilder content: () -> Content,
+            @ViewBuilder menuContent: () -> MenuContent
         ) {
-            self.title = title
-            self.subtitle = subtitle
-            self.description = description
             self.action = action
             self.content = content()
-        }
-
-        @ViewBuilder
-        private var subtitleView: some View {
-            Text(subtitle)
-                .fontWeight(.semibold)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-        }
-
-        @ViewBuilder
-        private var titleView: some View {
-            Text(title)
-                .font(.callout)
-                .lineLimit(1)
-        }
-
-        @ViewBuilder
-        private var descriptionView: some View {
-            Text(description)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.leading)
-                .lineLimit(3, reservesSpace: true)
+            self.description = description
+            self.menuContent = menuContent()
+            self.subtitle = subtitle
+            self.title = title
         }
 
         var body: some View {
@@ -68,11 +48,19 @@ extension EpisodeHStack {
 
                 Button(action: action) {
                     VStack(alignment: .leading) {
-                        subtitleView
+                        subtitle
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
 
-                        titleView
+                        Text(title)
+                            .font(.callout)
+                            .lineLimit(1)
 
-                        descriptionView
+                        Text(description)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.leading)
+                            .lineLimit(3, reservesSpace: true)
 
                         Text(L10n.seeMore)
                             .fontWeight(.light)
@@ -83,12 +71,49 @@ extension EpisodeHStack {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .foregroundStyle(.primary, .secondary)
+                .overlay(alignment: .topTrailing) {
+                    if MenuContent.self != EmptyView.self {
+                        AlternateLayoutView(alignment: .trailing) {
+                            Text(" ")
+                        } content: { layoutSize in
+                            Menu {
+                                menuContent
+                            } label: {
+                                Label(L10n.options, systemImage: "ellipsis")
+                                    .labelStyle(.iconOnly)
+                                    .frame(width: layoutSize.height, height: layoutSize.height)
+                            }
+                            .contentShape(Rectangle())
+                        }
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.secondary)
+                    }
+                }
             }
         }
     }
 }
 
-extension EpisodeHStack.ElementView where Content == AnyView {
+extension EpisodeHStack.ElementView where Subtitle == Text {
+
+    init(
+        title: String,
+        subtitle: String,
+        description: String,
+        action: @escaping () -> Void,
+        @ViewBuilder content: () -> Content,
+        @ViewBuilder menuContent: () -> MenuContent
+    ) {
+        self.action = action
+        self.content = content()
+        self.description = description
+        self.menuContent = menuContent()
+        self.subtitle = Text(subtitle)
+        self.title = title
+    }
+}
+
+extension EpisodeHStack.ElementView where Content == AnyView, Subtitle == Text, MenuContent == EmptyView {
 
     init(
         title: String,
@@ -97,23 +122,20 @@ extension EpisodeHStack.ElementView where Content == AnyView {
         systemImage: String? = nil,
         action: @escaping () -> Void
     ) {
-        self.init(
-            title: title,
-            subtitle: subtitle,
-            description: description,
-            action: action,
-            content: {
-                Rectangle()
-                    .fill(.complexSecondary)
-                    .posterStyle(.landscape)
-                    .overlay {
-                        if let systemImage {
-                            RelativeSystemImageView(systemName: systemImage)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    .eraseToAnyView()
+        self.action = action
+        self.content = Rectangle()
+            .fill(.complexSecondary)
+            .posterStyle(.landscape)
+            .overlay {
+                if let systemImage {
+                    RelativeSystemImageView(systemName: systemImage)
+                        .foregroundStyle(.secondary)
+                }
             }
-        )
+            .eraseToAnyView()
+        self.description = description
+        self.menuContent = EmptyView()
+        self.subtitle = Text(subtitle)
+        self.title = title
     }
 }

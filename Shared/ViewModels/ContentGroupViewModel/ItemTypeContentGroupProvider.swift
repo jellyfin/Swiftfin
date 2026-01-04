@@ -44,17 +44,31 @@ struct ItemTypeContentGroupProvider: _ContentGroupProvider {
             var filters = environment.filters
             filters.itemTypes = itemTypes
 
-            return PosterGroup(
-                id: "\(parent?.id ?? "unknown")-\(itemType.rawValue)",
-                library: ItemLibrary(
-                    parent: .init(
-                        id: parent?.id,
-                        name: itemType.pluralDisplayTitle,
-                        type: parent?.type
-                    ),
-                    filters: filters
+            if itemType == .episode {
+                return EpisodeGroup(
+                    library: ItemLibrary(
+                        parent: .init(
+                            id: parent?.id,
+                            name: itemType.pluralDisplayTitle,
+                            type: parent?.type
+                        ),
+                        filters: filters,
+                        fields: [.overview]
+                    )
                 )
-            )
+            } else {
+                return PosterGroup(
+                    id: "\(parent?.id ?? "unknown")-\(itemType.rawValue)",
+                    library: ItemLibrary(
+                        parent: .init(
+                            id: parent?.id,
+                            name: itemType.pluralDisplayTitle,
+                            type: parent?.type
+                        ),
+                        filters: filters
+                    )
+                )
+            }
         }
     }
 }
