@@ -19,10 +19,8 @@ struct PlaybackQualitySettingsView: View {
     @Default(.VideoPlayer.Playback.compatibilityMode)
     private var compatibilityMode
 
-    @StoredValue(.User.transcodeOnSDRDisplay)
-    private var transcodeOnSDRDisplay
-    @StoredValue(.User.enableDOVIP5)
-    private var enableDOVIP5
+    @StoredValue(.User.forceSDR)
+    private var forceSDR
 
     @Router
     private var router
@@ -123,17 +121,18 @@ struct PlaybackQualitySettingsView: View {
             /// Proper nouns. Do not localize.
             Section {
                 Toggle(
-                    L10n.forceSDRForNonHDRDisplays,
-                    isOn: $transcodeOnSDRDisplay
-                )
-                Toggle(
-                    "Dolby Vision (P5)",
-                    isOn: $enableDOVIP5
+                    L10n.forceSDR,
+                    isOn: $forceSDR
                 )
             } header: {
-                Text("HDR & Dolby Video")
+                Text(VideoRange.hdr.rawValue)
             } footer: {
-                Text(L10n.forceSDRForNonHDRDisplaysMessage)
+                VStack(alignment: .leading) {
+                    if !DeviceGPU.isDisplayHDRCompatible {
+                        Label(L10n.forceSDRWarning, systemImage: "exclamationmark.circle.fill")
+                            .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                    }
+                }
             }
         }
         .animation(.linear, value: appMaximumBitrate)

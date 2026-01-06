@@ -197,18 +197,10 @@ extension StoredValues.Keys {
             )
         }
 
-        static var enableDOVIP5: Key<Bool> {
+        static var forceSDR: Key<Bool> {
             CurrentUserKey(
-                "enableDOVIP5",
-                domain: "enableDOVIP5",
-                default: false
-            )
-        }
-
-        static var transcodeOnSDRDisplay: Key<Bool> {
-            CurrentUserKey(
-                "transcodeOnSDRDisplay",
-                domain: "transcodeOnSDRDisplay",
+                "forceSDR",
+                domain: "forceSDR",
                 default: false
             )
         }

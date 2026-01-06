@@ -19,17 +19,7 @@ enum DeviceGPU {
 
     /// Should Swiftfin handle HDR content (true) or should it be tone mapped by the server (false)?
     static var hdrEnabled: Bool {
-        if StoredValues[.User.transcodeOnSDRDisplay] {
-            isDisplayHDRCompatible
-        } else {
-            true
-        }
-    }
-
-    /// Should Swiftfin handle Dolby Video (P5) content (true) or should it be tone mapped by the server (false)?
-    /// - Note: This breaks DV 8.4 files that uses MKV
-    static var doviP5Enabled: Bool {
-        StoredValues[.User.enableDOVIP5]
+        !StoredValues[.User.forceSDR]
     }
 
     /// Which generation of GPU does this device use?

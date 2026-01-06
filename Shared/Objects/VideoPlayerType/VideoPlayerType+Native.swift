@@ -266,7 +266,7 @@ extension VideoPlayerType {
                 VideoRangeType.doviWithHDR10Plus
             }
 
-            if DeviceGPU.family?.supportsDolbyVisionDecode == true && DeviceGPU.doviP5Enabled {
+            if DeviceGPU.family?.supportsDolbyVisionDecode == true {
                 VideoRangeType.dovi
             }
         }
