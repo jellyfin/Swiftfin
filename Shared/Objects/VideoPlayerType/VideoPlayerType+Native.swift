@@ -245,6 +245,7 @@ extension VideoPlayerType {
         if PlaybackCapabilities.supportsHDR10 || PlaybackCapabilities.supportsDolbyVision {
             VideoRangeType.doviWithHDR10
             VideoRangeType.doviWithHDR10Plus
+            VideoRangeType.doviWithELHDR10Plus
         }
 
         if PlaybackCapabilities.supportsDolbyVision {

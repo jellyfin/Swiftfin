@@ -296,6 +296,7 @@ extension VideoPlayerType {
             VideoRangeType.doviWithHLG
             VideoRangeType.doviWithHDR10
             VideoRangeType.doviWithHDR10Plus
+            VideoRangeType.doviWithELHDR10Plus
         }
     }
 }
