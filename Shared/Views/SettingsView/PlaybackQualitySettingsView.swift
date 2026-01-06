@@ -30,10 +30,17 @@ struct PlaybackQualitySettingsView: View {
     var body: some View {
         Form(systemImage: "play.rectangle.on.rectangle") {
             Section(L10n.bitrateDefault) {
+                #if os(iOS)
                 Picker(
                     L10n.maximumBitrate,
                     selection: $appMaximumBitrate
                 )
+                #else
+                ListRowMenu(
+                    L10n.maximumBitrate,
+                    selection: $appMaximumBitrate
+                )
+                #endif
             } footer: {
                 VStack(alignment: .leading) {
                     Text(L10n.bitrateDefaultDescription)
@@ -52,10 +59,17 @@ struct PlaybackQualitySettingsView: View {
 
             if appMaximumBitrate == .auto {
                 Section {
+                    #if os(iOS)
                     Picker(
                         L10n.testSize,
                         selection: $appMaximumBitrateTest
                     )
+                    #else
+                    ListRowMenu(
+                        L10n.testSize,
+                        selection: $appMaximumBitrateTest
+                    )
+                    #endif
                 } header: {
                     Text(L10n.bitrateTest)
                 } footer: {
@@ -66,11 +80,17 @@ struct PlaybackQualitySettingsView: View {
             }
 
             Section(L10n.deviceProfile) {
+                #if os(iOS)
                 Picker(
                     L10n.compatibility,
                     selection: $compatibilityMode
                 )
-                .animation(.none, value: compatibilityMode)
+                #else
+                ListRowMenu(
+                    L10n.compatibility,
+                    selection: $compatibilityMode
+                )
+                #endif
 
                 if compatibilityMode == .custom {
                     ChevronButton(L10n.profiles) {
@@ -100,9 +120,10 @@ struct PlaybackQualitySettingsView: View {
                 )
             }
 
+            /// Proper nouns. Do not localize.
             Section {
                 Toggle(
-                    "Force SDR on non-HDR displays",
+                    L10n.forceSDRForNonHDRDisplays,
                     isOn: $transcodeOnSDRDisplay
                 )
                 Toggle(
@@ -112,67 +133,7 @@ struct PlaybackQualitySettingsView: View {
             } header: {
                 Text("HDR & Dolby Video")
             } footer: {
-                Text("Dolby Vision (P5) will cause issues with Dolby Vision with HLG (8.4) using MKV.")
-            }
-
-            Section(L10n.device) {
-                LabeledContent(
-                    "GPU",
-                    value: DeviceGPU.displayTitle
-                )
-
-                LabeledContent(
-                    "GPU Family",
-                    value: DeviceGPU.family?.rawValue.description ?? "Unknown"
-                )
-
-                LabeledContent(
-                    "Apple Silicon",
-                    value: DeviceGPU.family?.isAppleSilicon == true ? L10n.yes : L10n.no
-                )
-
-                LabeledContent(
-                    "Display Supports HDR",
-                    value: DeviceGPU.isDisplayHDRCompatible ? L10n.yes : L10n.no
-                )
-            }
-
-            Section(L10n.capabilities) {
-                LabeledContent(
-                    VideoCodec.av1.displayTitle,
-                    value: DeviceGPU.family?.supportsAV1Decode == true ? L10n.yes : L10n.no
-                )
-                LabeledContent(
-                    VideoCodec.hevc.displayTitle,
-                    value: DeviceGPU.family?.supportsHEVCDecode == true ? L10n.yes : L10n.no
-                )
-                LabeledContent(
-                    VideoCodec.vp8.displayTitle,
-                    value: DeviceGPU.family?.supportsVP8Decode == true ? L10n.yes : L10n.no
-                )
-                LabeledContent(
-                    VideoCodec.vp9.displayTitle,
-                    value: DeviceGPU.family?.supportsVP9Decode == true ? L10n.yes : L10n.no
-                )
-                LabeledContent(
-                    VideoCodec.vvc.displayTitle,
-                    value: DeviceGPU.family?.supportsVVCDecode == true ? L10n.yes : L10n.no
-                )
-            }
-
-            Section {
-                LabeledContent(
-                    VideoRangeType.hdr10Plus.displayTitle,
-                    value: DeviceGPU.family?.supportsHDR10Decode == true ? L10n.yes : L10n.no
-                )
-                LabeledContent(
-                    VideoRangeType.hlg.displayTitle,
-                    value: DeviceGPU.family?.supportsHLGDecode == true ? L10n.yes : L10n.no
-                )
-                LabeledContent(
-                    VideoRangeType.dovi.displayTitle,
-                    value: DeviceGPU.family?.supportsDolbyVisionDecode == true ? L10n.yes : L10n.no
-                )
+                Text(L10n.forceSDRForNonHDRDisplaysMessage)
             }
         }
         .animation(.linear, value: appMaximumBitrate)
