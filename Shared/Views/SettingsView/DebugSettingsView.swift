@@ -29,15 +29,15 @@ struct DebugSettingsView: View {
             Section("Device Details") {
                 Button {
                     LabeledContent(
-                        "GPU",
-                        value: DeviceGPU.displayTitle
+                        "SoC & GPU",
+                        value: PlaybackCapabilities.gpuName
                     )
                 }
 
                 Button {
                     LabeledContent(
-                        "Display Supports HDR",
-                        value: DeviceGPU.isDisplayHDRCompatible ? L10n.yes : L10n.no
+                        "Device Reports HDR Capabilities",
+                        value: PlaybackCapabilities.isDeviceHDRCapable ? L10n.yes : L10n.no
                     )
                 }
             }
@@ -46,21 +46,21 @@ struct DebugSettingsView: View {
                 Button {
                     LabeledContent(
                         VideoCodec.av1.displayTitle,
-                        value: DeviceGPU.supportsAV1 ? L10n.yes : L10n.no
+                        value: PlaybackCapabilities.supportsAV1 ? L10n.yes : L10n.no
                     )
                 }
 
                 Button {
                     LabeledContent(
                         VideoCodec.hevc.displayTitle,
-                        value: DeviceGPU.supportsHEVC ? L10n.yes : L10n.no
+                        value: PlaybackCapabilities.supportsHEVC ? L10n.yes : L10n.no
                     )
                 }
 
                 Button {
                     LabeledContent(
                         VideoCodec.vp9.displayTitle,
-                        value: DeviceGPU.supportsVP9 ? L10n.yes : L10n.no
+                        value: PlaybackCapabilities.supportsVP9 ? L10n.yes : L10n.no
                     )
                 }
             }
@@ -69,21 +69,21 @@ struct DebugSettingsView: View {
                 Button {
                     LabeledContent(
                         VideoRangeType.hdr10Plus.displayTitle,
-                        value: DeviceGPU.supportsHDR10 ? L10n.yes : L10n.no
+                        value: PlaybackCapabilities.supportsHDR10 ? L10n.yes : L10n.no
                     )
                 }
 
                 Button {
                     LabeledContent(
                         VideoRangeType.hlg.displayTitle,
-                        value: DeviceGPU.supportsHLG ? L10n.yes : L10n.no
+                        value: PlaybackCapabilities.supportsHLG ? L10n.yes : L10n.no
                     )
                 }
 
                 Button {
                     LabeledContent(
                         VideoRangeType.dovi.displayTitle,
-                        value: DeviceGPU.supportsDolbyVision ? L10n.yes : L10n.no
+                        value: PlaybackCapabilities.supportsDolbyVision ? L10n.yes : L10n.no
                     )
                 }
             }

@@ -10,11 +10,11 @@ import AVFoundation
 import Defaults
 import VideoToolbox
 
-enum DeviceGPU {
+enum PlaybackCapabilities {
 
     /// This property is true if an HDR display is available and the device is capable of playing HDR content from an appropriate AVAsset,
     /// false otherwise.
-    static var isDisplayHDRCompatible: Bool {
+    static var isDeviceHDRCapable: Bool {
         AVPlayer.eligibleForHDRPlayback
     }
 
@@ -28,7 +28,7 @@ enum DeviceGPU {
         !StoredValues[.User.forceHDRTranscode]
     }
 
-    static var displayTitle: String {
+    static var gpuName: String {
         MTLCreateSystemDefaultDevice()?.name ?? L10n.unknown
     }
 

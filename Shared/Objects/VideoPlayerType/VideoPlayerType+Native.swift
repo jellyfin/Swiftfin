@@ -27,13 +27,13 @@ extension VideoPlayerType {
             VideoCodec.h264
             VideoCodec.mpeg4
 
-            if DeviceGPU.supportsAV1 {
+            if PlaybackCapabilities.supportsAV1 {
                 VideoCodec.av1
             }
-            if DeviceGPU.supportsHEVC {
+            if PlaybackCapabilities.supportsHEVC {
                 VideoCodec.hevc
             }
-            if DeviceGPU.supportsVP9 {
+            if PlaybackCapabilities.supportsVP9 {
                 VideoCodec.vp9
             }
 
@@ -58,7 +58,7 @@ extension VideoPlayerType {
             VideoCodec.mjpeg
             VideoCodec.mpeg4
 
-            if DeviceGPU.supportsHEVC {
+            if PlaybackCapabilities.supportsHEVC {
                 VideoCodec.hevc
             }
 
@@ -75,7 +75,7 @@ extension VideoPlayerType {
 
             VideoCodec.h264
 
-            if DeviceGPU.supportsHEVC {
+            if PlaybackCapabilities.supportsHEVC {
                 VideoCodec.hevc
             }
 
@@ -125,11 +125,11 @@ extension VideoPlayerType {
             AudioCodec.flac
         } videoCodecs: {
 
-            /// Notice: Transcode Profiles prioritizes codecs by order
-            if DeviceGPU.supportsAV1 {
+            /// - Note: Transcode Profiles prioritizes codecs by order
+            if PlaybackCapabilities.supportsAV1 {
                 VideoCodec.av1
             }
-            if DeviceGPU.supportsHEVC {
+            if PlaybackCapabilities.supportsHEVC {
                 VideoCodec.hevc
             }
 
@@ -232,22 +232,22 @@ extension VideoPlayerType {
         VideoRangeType.sdr
         VideoRangeType.doviWithSDR
 
-        if DeviceGPU.supportsHLG {
+        if PlaybackCapabilities.supportsHLG {
             VideoRangeType.hlg
             VideoRangeType.doviWithHLG
         }
 
-        if DeviceGPU.supportsHDR10 {
+        if PlaybackCapabilities.supportsHDR10 {
             VideoRangeType.hdr10
             VideoRangeType.hdr10Plus
         }
 
-        if DeviceGPU.supportsHDR10 || DeviceGPU.supportsDolbyVision {
+        if PlaybackCapabilities.supportsHDR10 || PlaybackCapabilities.supportsDolbyVision {
             VideoRangeType.doviWithHDR10
             VideoRangeType.doviWithHDR10Plus
         }
 
-        if DeviceGPU.supportsDolbyVision {
+        if PlaybackCapabilities.supportsDolbyVision {
             VideoRangeType.dovi
         }
     }

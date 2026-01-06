@@ -45,6 +45,37 @@ extension VideoPlayerType {
             AudioCodec.wmapro
             AudioCodec.wmav1
             AudioCodec.wmav2
+        } videoCodecs: {
+
+            /// This is possible with non-AV1 supported devices but the FPS is terrible on some devices.s
+            ///  - Defaulting to disabled but can be enabled in custom profiles if desired.
+            if PlaybackCapabilities.supportsAV1 {
+                VideoCodec.av1
+            }
+
+            VideoCodec.dirac
+            VideoCodec.dv
+            VideoCodec.ffv1
+            VideoCodec.flv1
+            VideoCodec.h261
+            VideoCodec.h263
+            VideoCodec.h264
+            VideoCodec.hevc
+            VideoCodec.mjpeg
+            VideoCodec.mpeg1video
+            VideoCodec.mpeg2video
+            VideoCodec.mpeg4
+            VideoCodec.msmpeg4v1
+            VideoCodec.msmpeg4v2
+            VideoCodec.msmpeg4v3
+            VideoCodec.prores
+            VideoCodec.theora
+            VideoCodec.vc1
+            VideoCodec.vp8
+            VideoCodec.vp9
+            VideoCodec.wmv1
+            VideoCodec.wmv2
+            VideoCodec.wmv3
         }
     }
 
@@ -72,7 +103,14 @@ extension VideoPlayerType {
             AudioCodec.opus
             AudioCodec.vorbis
         } videoCodecs: {
-            VideoCodec.av1
+
+            /// - Note: Transcode Profiles prioritizes codecs by order
+            /// This is possible with non-AV1 supported devices but the FPS is terrible on some devices.s
+            ///  - Defaulting to disabled but can be enabled in custom profiles if desired.
+            if PlaybackCapabilities.supportsAV1 {
+                VideoCodec.av1
+            }
+
             VideoCodec.h263
             VideoCodec.h264
             VideoCodec.hevc
@@ -251,7 +289,7 @@ extension VideoPlayerType {
         VideoRangeType.sdr
         VideoRangeType.doviWithSDR
 
-        if DeviceGPU.hdrEnabled {
+        if PlaybackCapabilities.hdrEnabled {
             VideoRangeType.hlg
             VideoRangeType.hdr10
             VideoRangeType.hdr10Plus

@@ -135,8 +135,8 @@ struct PlaybackQualitySettingsView: View {
             } footer: {
                 VStack(alignment: .leading) {
                     Text(L10n.forceDVHDRTranscodeMessage)
-                    if !DeviceGPU.isDisplayHDRCompatible {
-                        Label(L10n.displayHDRWarning, systemImage: "exclamationmark.circle.fill")
+                    if !PlaybackCapabilities.isDeviceHDRCapable {
+                        Label(L10n.deviceHDRWarning, systemImage: "exclamationmark.circle.fill")
                             .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                     }
                 }
