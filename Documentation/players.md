@@ -145,25 +145,29 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVKit)
 
 | Format | Swiftfin (VLCKit) | Native (AVKit) |
 |--------|-------------------|----------------|
-| **Dolby Vision Profile 5** | ❌             | ✅             |
-| **Dolby Vision Profile 8** | ❌             | 🔶 [2]         |
+| **Dolby Vision Profile 5** | ❌             | 🔶 [1]         |
+| **Dolby Vision Profile 7** | ❌             | ❌             |
+| **Dolby Vision Profile 8.1** | ❌           | ✅             |
+| **Dolby Vision Profile 8.2** | ❌           | ✅             |
+| **Dolby Vision Profile 8.4** | ❌           | 🔶 [2]         |
 | **Dolby Vision Profile 10** | ❌            | 🔶 [3]         |
-| **HDR10** | ✅                              | ✅             |
-| **HDR10+** | 🔶 [1]                         | 🔶 [4]         |
-| **HLG** | ❌                                | ❌             |
+| **HDR10** | ✅ [4]                           | ✅             |
+| **HDR10+** | 🔶 [5]                         | 🔶 [6]         |
+| **HLG** | ✅ [4]                              | ✅             |
 
 **Notes**
 
-[1] Will fallback to HDR10 rendering, ignoring dynamic metadata.
+[1] Dolby Vision Profile 5 is disabled by default due to having no fallback layer. Can be enabled in Settings > Video Player > Playback Quality. Enabling Dolby Vision Profile 5 will cause issues with Dolby Vision Profile 8.4 MKV files.
 
-[2] Dolby Vision Profile 8 support is limited to compatible devices only.
+[2] Dolby Vision Profile 8.4 may fail when the source container is MKV due to a Jellyfin server remuxing issue (see [1]). MP4 sources work correctly.
 
-[3] Dolby Vision Profile 10 requires AV1 to be enabled.
+[3] Dolby Vision Profile 10 requires an AV1 compatible device. Apple A16 Bionic or M2 and above.
 
-[4] HDR10+ support is limited to certain devices, such as the Apple TV 4K (3rd Generation) and recent iPhones and iPads with compatible hardware.
+[4] Swiftfin (VLCKit) renders HDR content via software tone mapping to SDR. Colorspace accuracy may vary depending on content and device.
 
-- HLG (Hybrid Log-Gamma) support in Native (AVKit) is limited and not currently supported in Swiftin.
-- Swiftfin (VLCKit) does not support HDR playback natively. HDR content may play back without the intended high dynamic range effect.
+[5] Will fallback to HDR10 rendering, ignoring dynamic metadata.
+
+[6] HDR10+ support is limited to certain devices, such as the Apple TV 4K (3rd Generation) and recent iPhones and iPads with compatible hardware. Unsupported devices will fallback to HDR10 rendering, ignoring dynamic metadata.
 
 --- 
 
