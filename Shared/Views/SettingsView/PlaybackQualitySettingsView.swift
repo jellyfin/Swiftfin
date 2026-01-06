@@ -19,8 +19,10 @@ struct PlaybackQualitySettingsView: View {
     @Default(.VideoPlayer.Playback.compatibilityMode)
     private var compatibilityMode
 
-    @StoredValue(.User.forceSDR)
-    private var forceSDR
+    @StoredValue(.User.forceDVTranscode)
+    private var forceDVTranscode
+    @StoredValue(.User.forceHDRTranscode)
+    private var forceHDRTranscode
 
     @Router
     private var router
@@ -118,18 +120,23 @@ struct PlaybackQualitySettingsView: View {
                 )
             }
 
-            /// Proper nouns. Do not localize.
             Section {
                 Toggle(
-                    L10n.forceSDR,
-                    isOn: $forceSDR
+                    L10n.forceDVTranscode,
+                    isOn: $forceDVTranscode
+                )
+                Toggle(
+                    L10n.forceHDRTranscode,
+                    isOn: $forceHDRTranscode
                 )
             } header: {
-                Text(VideoRange.hdr.rawValue)
+                /// Proper nouns. Do not localize.
+                Text("HDR & Dolby Vision")
             } footer: {
                 VStack(alignment: .leading) {
+                    Text(L10n.forceDVHDRTranscodeMessage)
                     if !DeviceGPU.isDisplayHDRCompatible {
-                        Label(L10n.forceSDRWarning, systemImage: "exclamationmark.circle.fill")
+                        Label(L10n.displayHDRWarning, systemImage: "exclamationmark.circle.fill")
                             .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                     }
                 }

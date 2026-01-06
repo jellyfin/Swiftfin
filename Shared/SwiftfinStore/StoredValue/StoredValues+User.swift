@@ -197,10 +197,18 @@ extension StoredValues.Keys {
             )
         }
 
-        static var forceSDR: Key<Bool> {
+        static var forceDVTranscode: Key<Bool> {
             CurrentUserKey(
-                "forceSDR",
-                domain: "forceSDR",
+                "forceDVTranscode",
+                domain: "forceDVTranscode",
+                default: false
+            )
+        }
+
+        static var forceHDRTranscode: Key<Bool> {
+            CurrentUserKey(
+                "forceHDRTranscode",
+                domain: "forceHDRTranscode",
                 default: false
             )
         }

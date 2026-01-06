@@ -36,20 +36,6 @@ struct DebugSettingsView: View {
 
                 Button {
                     LabeledContent(
-                        "GPU Family",
-                        value: DeviceGPU.family?.rawValue.description ?? "Unknown"
-                    )
-                }
-
-                Button {
-                    LabeledContent(
-                        "Apple Silicon",
-                        value: DeviceGPU.family?.isAppleSilicon == true ? L10n.yes : L10n.no
-                    )
-                }
-
-                Button {
-                    LabeledContent(
                         "Display Supports HDR",
                         value: DeviceGPU.isDisplayHDRCompatible ? L10n.yes : L10n.no
                     )
@@ -60,35 +46,21 @@ struct DebugSettingsView: View {
                 Button {
                     LabeledContent(
                         VideoCodec.av1.displayTitle,
-                        value: DeviceGPU.family?.supportsAV1Decode == true ? L10n.yes : L10n.no
+                        value: DeviceGPU.supportsAV1 ? L10n.yes : L10n.no
                     )
                 }
 
                 Button {
                     LabeledContent(
                         VideoCodec.hevc.displayTitle,
-                        value: DeviceGPU.family?.supportsHEVCDecode == true ? L10n.yes : L10n.no
-                    )
-                }
-
-                Button {
-                    LabeledContent(
-                        VideoCodec.vp8.displayTitle,
-                        value: DeviceGPU.family?.supportsVP8Decode == true ? L10n.yes : L10n.no
+                        value: DeviceGPU.supportsHEVC ? L10n.yes : L10n.no
                     )
                 }
 
                 Button {
                     LabeledContent(
                         VideoCodec.vp9.displayTitle,
-                        value: DeviceGPU.family?.supportsVP9Decode == true ? L10n.yes : L10n.no
-                    )
-                }
-
-                Button {
-                    LabeledContent(
-                        VideoCodec.vvc.displayTitle,
-                        value: DeviceGPU.family?.supportsVVCDecode == true ? L10n.yes : L10n.no
+                        value: DeviceGPU.supportsVP9 ? L10n.yes : L10n.no
                     )
                 }
             }
@@ -97,21 +69,21 @@ struct DebugSettingsView: View {
                 Button {
                     LabeledContent(
                         VideoRangeType.hdr10Plus.displayTitle,
-                        value: DeviceGPU.family?.supportsHDR10Decode == true ? L10n.yes : L10n.no
+                        value: DeviceGPU.supportsHDR10 ? L10n.yes : L10n.no
                     )
                 }
 
                 Button {
                     LabeledContent(
                         VideoRangeType.hlg.displayTitle,
-                        value: DeviceGPU.family?.supportsHLGDecode == true ? L10n.yes : L10n.no
+                        value: DeviceGPU.supportsHLG ? L10n.yes : L10n.no
                     )
                 }
 
                 Button {
                     LabeledContent(
                         VideoRangeType.dovi.displayTitle,
-                        value: DeviceGPU.family?.supportsDolbyVisionDecode == true ? L10n.yes : L10n.no
+                        value: DeviceGPU.supportsDolbyVision ? L10n.yes : L10n.no
                     )
                 }
             }

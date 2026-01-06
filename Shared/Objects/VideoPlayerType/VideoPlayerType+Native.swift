@@ -27,20 +27,14 @@ extension VideoPlayerType {
             VideoCodec.h264
             VideoCodec.mpeg4
 
-            if DeviceGPU.family?.supportsAV1Decode == true {
+            if DeviceGPU.supportsAV1 {
                 VideoCodec.av1
             }
-            if DeviceGPU.family?.supportsHEVCDecode == true {
+            if DeviceGPU.supportsHEVC {
                 VideoCodec.hevc
             }
-            if DeviceGPU.family?.supportsVP8Decode == true {
-                VideoCodec.vp8
-            }
-            if DeviceGPU.family?.supportsVP9Decode == true {
+            if DeviceGPU.supportsVP9 {
                 VideoCodec.vp9
-            }
-            if DeviceGPU.family?.supportsVVCDecode == true {
-                VideoCodec.vvc
             }
 
         } containers: {
@@ -64,7 +58,7 @@ extension VideoPlayerType {
             VideoCodec.mjpeg
             VideoCodec.mpeg4
 
-            if DeviceGPU.family?.supportsHEVCDecode == true {
+            if DeviceGPU.supportsHEVC {
                 VideoCodec.hevc
             }
 
@@ -81,7 +75,7 @@ extension VideoPlayerType {
 
             VideoCodec.h264
 
-            if DeviceGPU.family?.supportsHEVCDecode == true {
+            if DeviceGPU.supportsHEVC {
                 VideoCodec.hevc
             }
 
@@ -132,13 +126,10 @@ extension VideoPlayerType {
         } videoCodecs: {
 
             /// Notice: Transcode Profiles prioritizes codecs by order
-            if DeviceGPU.family?.supportsAV1Decode == true {
+            if DeviceGPU.supportsAV1 {
                 VideoCodec.av1
             }
-            if DeviceGPU.family?.supportsVVCDecode == true {
-                VideoCodec.vvc
-            }
-            if DeviceGPU.family?.supportsHEVCDecode == true {
+            if DeviceGPU.supportsHEVC {
                 VideoCodec.hevc
             }
 
@@ -235,40 +226,29 @@ extension VideoPlayerType {
         )
     }
 
-    /// Workarounds:
-    /// - .dovi  (P5)                         —   When included, this breaks `.doviWithHLG` files that use MKV (Tested on 10.11.5)
-    ///
-    /// NOT included:
-    /// - .doviWithEL  (P7)             —   Dual layer unsupported
-    /// - .doviWithELHDR10Plus   —   Dual layer unsupported
     @ArrayBuilder<VideoRangeType>
     private static var nativeHDRProfiles: [VideoRangeType] {
 
         VideoRangeType.sdr
         VideoRangeType.doviWithSDR
 
-        if DeviceGPU.hdrEnabled {
+        if DeviceGPU.supportsHLG {
+            VideoRangeType.hlg
+            VideoRangeType.doviWithHLG
+        }
 
-            if DeviceGPU.family?.supportsHLGDecode == true {
-                VideoRangeType.hlg
-                VideoRangeType.doviWithHLG
-            }
+        if DeviceGPU.supportsHDR10 {
+            VideoRangeType.hdr10
+            VideoRangeType.hdr10Plus
+        }
 
-            if DeviceGPU.family?.supportsHDR10Decode == true {
-                VideoRangeType.hdr10
-                VideoRangeType.hdr10Plus
-            }
+        if DeviceGPU.supportsHDR10 || DeviceGPU.supportsDolbyVision {
+            VideoRangeType.doviWithHDR10
+            VideoRangeType.doviWithHDR10Plus
+        }
 
-            if DeviceGPU.family?.supportsHDR10Decode == true ||
-                DeviceGPU.family?.supportsDolbyVisionDecode == true
-            {
-                VideoRangeType.doviWithHDR10
-                VideoRangeType.doviWithHDR10Plus
-            }
-
-            if DeviceGPU.family?.supportsDolbyVisionDecode == true {
-                VideoRangeType.dovi
-            }
+        if DeviceGPU.supportsDolbyVision {
+            VideoRangeType.dovi
         }
     }
 }

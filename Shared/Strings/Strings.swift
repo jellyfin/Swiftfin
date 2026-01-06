@@ -546,6 +546,8 @@ internal enum L10n {
   internal static let disclaimer = L10n.tr("Localizable", "disclaimer", fallback: "Disclaimer")
   /// Dismiss
   internal static let dismiss = L10n.tr("Localizable", "dismiss", fallback: "Dismiss")
+  /// Connected display does not have HDR capabilities.
+  internal static let displayHDRWarning = L10n.tr("Localizable", "displayHDRWarning", fallback: "Connected display does not have HDR capabilities.")
   /// Display order
   internal static let displayOrder = L10n.tr("Localizable", "displayOrder", fallback: "Display order")
   /// Done
@@ -670,12 +672,14 @@ internal enum L10n {
   internal static let folders = L10n.tr("Localizable", "folders", fallback: "Folders")
   /// Forced
   internal static let forced = L10n.tr("Localizable", "forced", fallback: "Forced")
+  /// Force HDR tone mapping on the server.
+  internal static let forceDVHDRTranscodeMessage = L10n.tr("Localizable", "forceDVHDRTranscodeMessage", fallback: "Force HDR tone mapping on the server.")
+  /// Force Dolby Vision to transcode
+  internal static let forceDVTranscode = L10n.tr("Localizable", "forceDVTranscode", fallback: "Force Dolby Vision to transcode")
+  /// Force HDR to transcode
+  internal static let forceHDRTranscode = L10n.tr("Localizable", "forceHDRTranscode", fallback: "Force HDR to transcode")
   /// Force remote media transcoding
   internal static let forceRemoteTranscoding = L10n.tr("Localizable", "forceRemoteTranscoding", fallback: "Force remote media transcoding")
-  /// Force HDR transcoding
-  internal static let forceSDR = L10n.tr("Localizable", "forceSDR", fallback: "Force HDR transcoding")
-  /// The connected display does not have HDR capabilities!
-  internal static let forceSDRWarning = L10n.tr("Localizable", "forceSDRWarning", fallback: "The connected display does not have HDR capabilities!")
   /// Format
   internal static let format = L10n.tr("Localizable", "format", fallback: "Format")
   /// 3D format
@@ -1096,10 +1100,10 @@ internal enum L10n {
   internal static let playCount = L10n.tr("Localizable", "playCount", fallback: "Play count")
   /// Played
   internal static let played = L10n.tr("Localizable", "played", fallback: "Played")
-  /// Uses Apple's AVPlayer which supports HDR, Picture in Picture, AirPlay casting, and HomePod or AirPlay-enabled speakers. However, it has no subtitle support and is very restrictive with file formats.
-  internal static let playerNativeDescription = L10n.tr("Localizable", "playerNativeDescription", fallback: "Uses Apple's AVPlayer which supports HDR, Picture in Picture, AirPlay casting, and HomePod or AirPlay-enabled speakers. However, it has no subtitle support and is very restrictive with file formats.")
-  /// Uses VLC's VLCKit to provide compatibility with nearly any file type. However, VLCKit cannot use HomePod or AirPlay-enabled speakers, HDR, Picture in Picture, or AirPlay casting.
-  internal static let playerSwiftfinDescription = L10n.tr("Localizable", "playerSwiftfinDescription", fallback: "Uses VLC's VLCKit to provide compatibility with nearly any file type. However, VLCKit cannot use HomePod or AirPlay-enabled speakers, HDR, Picture in Picture, or AirPlay casting.")
+  /// Uses Apple's AVPlayer with support for HDR, Dolby Vision, Picture in Picture, and AirPlay. Limited to MP4, M4V, and MOV containers with no subtitle or audio track selection.
+  internal static let playerNativeDescription = L10n.tr("Localizable", "playerNativeDescription", fallback: "Uses Apple's AVPlayer with support for HDR, Dolby Vision, Picture in Picture, and AirPlay. Limited to MP4, M4V, and MOV containers with no subtitle or audio track selection.")
+  /// Uses VLCKit for broad format compatibility including subtitles, and audio track selection. HDR content is tone mapped to SDR. Does not support some Dolby Video formats, Picture in Picture, or AirPlay casting.
+  internal static let playerSwiftfinDescription = L10n.tr("Localizable", "playerSwiftfinDescription", fallback: "Uses VLCKit for broad format compatibility including subtitles, and audio track selection. HDR content is tone mapped to SDR. Does not support some Dolby Video formats, Picture in Picture, or AirPlay casting.")
   /// Play From beginning
   internal static let playFromBeginning = L10n.tr("Localizable", "playFromBeginning", fallback: "Play From beginning")
   /// Playlist

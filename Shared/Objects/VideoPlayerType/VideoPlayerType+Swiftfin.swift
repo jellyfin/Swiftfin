@@ -247,13 +247,17 @@ extension VideoPlayerType {
 
     @ArrayBuilder<VideoRangeType>
     private static var swiftfinHDRProfiles: [VideoRangeType] {
-        VideoRangeType.hlg
+
         VideoRangeType.sdr
-        VideoRangeType.hdr10
-        VideoRangeType.hdr10Plus
-        VideoRangeType.doviWithHLG
         VideoRangeType.doviWithSDR
-        VideoRangeType.doviWithHDR10
-        VideoRangeType.doviWithHDR10Plus
+
+        if DeviceGPU.hdrEnabled {
+            VideoRangeType.hlg
+            VideoRangeType.hdr10
+            VideoRangeType.hdr10Plus
+            VideoRangeType.doviWithHLG
+            VideoRangeType.doviWithHDR10
+            VideoRangeType.doviWithHDR10Plus
+        }
     }
 }
