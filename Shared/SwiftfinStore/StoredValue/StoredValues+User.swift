@@ -196,6 +196,14 @@ extension StoredValues.Keys {
                 default: .trickplay(fallbackToChapters: false)
             )
         }
+
+        static var transcodeOnSDRDisplay: Key<Bool> {
+            CurrentUserKey(
+                "transcodeOnSDRDisplay",
+                domain: "transcodeOnSDRDisplay",
+                default: false
+            )
+        }
     }
 }
 

@@ -15,6 +15,7 @@ extension VideoPlayerType {
 
     @ArrayBuilder<DirectPlayProfile>
     static var _nativeDirectPlayProfiles: [DirectPlayProfile] {
+
         DirectPlayProfile(type: .video) {
             AudioCodec.aac
             AudioCodec.ac3
@@ -22,22 +23,28 @@ extension VideoPlayerType {
             AudioCodec.eac3
             AudioCodec.flac
         } videoCodecs: {
-            VideoCodec.h261
-            VideoCodec.hevc
-            VideoCodec.mpeg4
-        } containers: {
-            MediaContainer.mp4
-        }
 
-        DirectPlayProfile(type: .video) {
-            AudioCodec.aac
-            AudioCodec.ac3
-            AudioCodec.alac
-            AudioCodec.eac3
-        } videoCodecs: {
             VideoCodec.h264
             VideoCodec.mpeg4
+
+            if DeviceGPU.family?.supportsAV1Decode == true {
+                VideoCodec.av1
+            }
+            if DeviceGPU.family?.supportsHEVCDecode == true {
+                VideoCodec.hevc
+            }
+            if DeviceGPU.family?.supportsVP8Decode == true {
+                VideoCodec.vp8
+            }
+            if DeviceGPU.family?.supportsVP9Decode == true {
+                VideoCodec.vp9
+            }
+            if DeviceGPU.family?.supportsVVCDecode == true {
+                VideoCodec.vvc
+            }
+
         } containers: {
+            MediaContainer.mp4
             MediaContainer.m4v
         }
 
@@ -52,10 +59,15 @@ extension VideoPlayerType {
             AudioCodec.pcm_s24be
             AudioCodec.pcm_s24le
         } videoCodecs: {
+
             VideoCodec.h264
-            VideoCodec.hevc
             VideoCodec.mjpeg
             VideoCodec.mpeg4
+
+            if DeviceGPU.family?.supportsHEVCDecode == true {
+                VideoCodec.hevc
+            }
+
         } containers: {
             MediaContainer.mov
         }
@@ -66,7 +78,13 @@ extension VideoPlayerType {
             AudioCodec.eac3
             AudioCodec.mp3
         } videoCodecs: {
+
             VideoCodec.h264
+
+            if DeviceGPU.family?.supportsHEVCDecode == true {
+                VideoCodec.hevc
+            }
+
         } containers: {
             MediaContainer.mpegts
         }
@@ -96,6 +114,7 @@ extension VideoPlayerType {
 
     @ArrayBuilder<TranscodingProfile>
     static var _nativeTranscodingProfiles: [TranscodingProfile] {
+
         TranscodingProfile(
             isBreakOnNonKeyFrames: true,
             context: .streaming,
@@ -111,9 +130,21 @@ extension VideoPlayerType {
             AudioCodec.eac3
             AudioCodec.flac
         } videoCodecs: {
-            VideoCodec.hevc
+
+            /// Notice: Transcode Profiles prioritizes codecs by order
+            if DeviceGPU.family?.supportsAV1Decode == true {
+                VideoCodec.av1
+            }
+            if DeviceGPU.family?.supportsVVCDecode == true {
+                VideoCodec.vvc
+            }
+            if DeviceGPU.family?.supportsHEVCDecode == true {
+                VideoCodec.hevc
+            }
+
             VideoCodec.h264
             VideoCodec.mpeg4
+
         } containers: {
             MediaContainer.mp4
         }
@@ -123,6 +154,7 @@ extension VideoPlayerType {
 
     @ArrayBuilder<SubtitleProfile>
     static var _nativeSubtitleProfiles: [SubtitleProfile] {
+
         SubtitleProfile.build(method: .embed) {
             SubtitleFormat.cc_dec
             SubtitleFormat.ttml
@@ -144,6 +176,7 @@ extension VideoPlayerType {
 
     @ArrayBuilder<CodecProfile>
     static var _nativeCodecProfiles: [CodecProfile] {
+
         CodecProfile(
             codec: VideoCodec.h264.rawValue,
             type: .video,
@@ -155,6 +188,7 @@ extension VideoPlayerType {
                     property: .videoRangeType
                 ) {
                     VideoRangeType.sdr
+                    VideoRangeType.doviWithSDR
                 }
             }
         )
@@ -169,13 +203,7 @@ extension VideoPlayerType {
                     isRequired: false,
                     property: .videoRangeType
                 ) {
-                    VideoRangeType.sdr
-                    VideoRangeType.hdr10
-                    VideoRangeType.hdr10Plus
-                    VideoRangeType.dovi
-                    VideoRangeType.doviWithHDR10
-                    VideoRangeType.doviWithHDR10Plus
-                    VideoRangeType.doviWithSDR
+                    nativeHDRProfiles
                 }
             }
         )
@@ -201,15 +229,40 @@ extension VideoPlayerType {
                     isRequired: false,
                     property: .videoRangeType
                 ) {
-                    VideoRangeType.sdr
-                    VideoRangeType.hdr10
-                    VideoRangeType.hdr10Plus
-                    VideoRangeType.dovi
-                    VideoRangeType.doviWithHDR10
-                    VideoRangeType.doviWithHDR10Plus
-                    VideoRangeType.doviWithSDR
+                    nativeHDRProfiles
                 }
             }
         )
+    }
+
+    @ArrayBuilder<VideoRangeType>
+    private static var nativeHDRProfiles: [VideoRangeType] {
+
+        VideoRangeType.sdr
+        VideoRangeType.doviWithSDR
+
+        if DeviceGPU.hdrEnabled {
+
+            if DeviceGPU.family?.supportsHLGDecode == true {
+                VideoRangeType.hlg
+                VideoRangeType.doviWithHLG
+            }
+
+            if DeviceGPU.family?.supportsHDR10Decode == true {
+                VideoRangeType.hdr10
+                VideoRangeType.hdr10Plus
+            }
+
+            if DeviceGPU.family?.supportsHDR10Decode == true ||
+                DeviceGPU.family?.supportsDolbyVisionDecode == true
+            {
+                VideoRangeType.doviWithHDR10
+                VideoRangeType.doviWithHDR10Plus
+            }
+
+            if DeviceGPU.family?.supportsDolbyVisionDecode == true {
+                VideoRangeType.dovi
+            }
+        }
     }
 }

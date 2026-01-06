@@ -153,6 +153,7 @@ extension VideoPlayerType {
                     property: .videoRangeType
                 ) {
                     VideoRangeType.sdr
+                    VideoRangeType.doviWithSDR
                 }
             }
         )
@@ -186,12 +187,7 @@ extension VideoPlayerType {
                     isRequired: true,
                     property: .videoRangeType
                 ) {
-                    VideoRangeType.sdr
-                    VideoRangeType.hdr10
-                    VideoRangeType.hdr10Plus
-                    VideoRangeType.doviWithSDR
-                    VideoRangeType.doviWithHDR10
-                    VideoRangeType.doviWithHDR10Plus
+                    swiftfinHDRProfiles
                 }
             }
         )
@@ -217,12 +213,7 @@ extension VideoPlayerType {
                     isRequired: true,
                     property: .videoRangeType
                 ) {
-                    VideoRangeType.sdr
-                    VideoRangeType.hdr10
-                    VideoRangeType.hdr10Plus
-                    VideoRangeType.doviWithSDR
-                    VideoRangeType.doviWithHDR10
-                    VideoRangeType.doviWithHDR10Plus
+                    swiftfinHDRProfiles
                 }
             }
         )
@@ -248,14 +239,19 @@ extension VideoPlayerType {
                     isRequired: true,
                     property: .videoRangeType
                 ) {
-                    VideoRangeType.sdr
-                    VideoRangeType.hdr10
-                    VideoRangeType.hdr10Plus
-                    VideoRangeType.doviWithSDR
-                    VideoRangeType.doviWithHDR10
-                    VideoRangeType.doviWithHDR10Plus
+                    swiftfinHDRProfiles
                 }
             }
         )
+    }
+
+    @ArrayBuilder<VideoRangeType>
+    private static var swiftfinHDRProfiles: [VideoRangeType] {
+        VideoRangeType.sdr
+        VideoRangeType.hdr10
+        VideoRangeType.hdr10Plus
+        VideoRangeType.doviWithSDR
+        VideoRangeType.doviWithHDR10
+        VideoRangeType.doviWithHDR10Plus
     }
 }

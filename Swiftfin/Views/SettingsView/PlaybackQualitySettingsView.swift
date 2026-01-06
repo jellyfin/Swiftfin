@@ -18,6 +18,9 @@ struct PlaybackQualitySettingsView: View {
     @Default(.VideoPlayer.Playback.compatibilityMode)
     private var compatibilityMode
 
+    @StoredValue(.User.transcodeOnSDRDisplay)
+    private var transcodeOnSDRDisplay
+
     @Router
     private var router
 
@@ -98,6 +101,35 @@ struct PlaybackQualitySettingsView: View {
                         )
                     }
                 }
+            }
+
+            Section("HDR & Dolby Video") {
+                Toggle(
+                    "Force SDR on non-HDR displays",
+                    isOn: $transcodeOnSDRDisplay
+                )
+            }
+
+            Section(L10n.device) {
+                LabeledContent(
+                    "GPU",
+                    value: DeviceGPU.displayTitle
+                )
+
+                LabeledContent(
+                    "GPU Family",
+                    value: DeviceGPU.family?.rawValue.description ?? "Unknown"
+                )
+
+                LabeledContent(
+                    "Apple Silicon",
+                    value: DeviceGPU.family?.isAppleSilicon == true ? L10n.yes : L10n.no
+                )
+
+                LabeledContent(
+                    "Display Supports HDR",
+                    value: DeviceGPU.isDisplayHDRCompatible ? L10n.yes : L10n.no
+                )
             }
         }
         .animation(.linear, value: appMaximumBitrate)
