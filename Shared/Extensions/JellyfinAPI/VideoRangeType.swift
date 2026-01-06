@@ -61,22 +61,4 @@ extension VideoRangeType: Displayable {
             return false
         }
     }
-
-    /// Dolby Vision profile version (e.g., 5.0, 7.0, 8.1, 8.2, 8.4).
-    var dolbyVisionProfile: Double? {
-        switch self {
-        case .dovi:
-            5.0
-        case .doviWithEL, .doviWithELHDR10Plus:
-            7.0
-        case .doviWithHDR10, .doviWithHDR10Plus:
-            8.1
-        case .doviWithSDR:
-            8.2
-        case .doviWithHLG:
-            8.4
-        default:
-            nil
-        }
-    }
 }
