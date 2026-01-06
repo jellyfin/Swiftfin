@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import JellyfinAPI
 import SwiftUI
 
 struct PlaybackQualitySettingsView: View {
@@ -20,33 +21,32 @@ struct PlaybackQualitySettingsView: View {
 
     @StoredValue(.User.transcodeOnSDRDisplay)
     private var transcodeOnSDRDisplay
+    @StoredValue(.User.enableDOVIP5)
+    private var enableDOVIP5
 
     @Router
     private var router
 
     var body: some View {
-        Form {
-            Section {
+        Form(systemImage: "play.rectangle.on.rectangle") {
+            Section(L10n.bitrateDefault) {
                 Picker(
                     L10n.maximumBitrate,
                     selection: $appMaximumBitrate
                 )
-            } header: {
-                Text(L10n.bitrateDefault)
             } footer: {
                 VStack(alignment: .leading) {
                     Text(L10n.bitrateDefaultDescription)
-                    LearnMoreButton(L10n.bitrateDefault) {
-                        LabeledContent(
-                            L10n.auto,
-                            value: L10n.birateAutoDescription
-                        )
-                        LabeledContent(
-                            L10n.bitrateMax,
-                            value: L10n.bitrateMaxDescription(PlaybackBitrate.max.rawValue.formatted(.bitRate))
-                        )
-                    }
                 }
+            } learnMore: {
+                LabeledContent(
+                    L10n.auto,
+                    value: L10n.birateAutoDescription
+                )
+                LabeledContent(
+                    L10n.bitrateMax,
+                    value: L10n.bitrateMaxDescription(PlaybackBitrate.max.rawValue.formatted(.bitRate))
+                )
             }
             .animation(.none, value: appMaximumBitrate)
 
@@ -65,7 +65,7 @@ struct PlaybackQualitySettingsView: View {
                 }
             }
 
-            Section {
+            Section(L10n.deviceProfile) {
                 Picker(
                     L10n.compatibility,
                     selection: $compatibilityMode
@@ -77,37 +77,42 @@ struct PlaybackQualitySettingsView: View {
                         router.route(to: .customDeviceProfileSettings)
                     }
                 }
-            } header: {
-                Text(L10n.deviceProfile)
             } footer: {
                 VStack(alignment: .leading) {
                     Text(L10n.deviceProfileDescription)
-                    LearnMoreButton(L10n.deviceProfile) {
-                        LabeledContent(
-                            L10n.auto,
-                            value: L10n.autoDescription
-                        )
-                        LabeledContent(
-                            L10n.compatible,
-                            value: L10n.compatibleDescription
-                        )
-                        LabeledContent(
-                            L10n.directPlay,
-                            value: L10n.directDescription
-                        )
-                        LabeledContent(
-                            L10n.custom,
-                            value: L10n.customDescription
-                        )
-                    }
                 }
+            } learnMore: {
+                LabeledContent(
+                    L10n.auto,
+                    value: L10n.autoDescription
+                )
+                LabeledContent(
+                    L10n.compatible,
+                    value: L10n.compatibleDescription
+                )
+                LabeledContent(
+                    L10n.directPlay,
+                    value: L10n.directDescription
+                )
+                LabeledContent(
+                    L10n.custom,
+                    value: L10n.customDescription
+                )
             }
 
-            Section("HDR & Dolby Video") {
+            Section {
                 Toggle(
                     "Force SDR on non-HDR displays",
                     isOn: $transcodeOnSDRDisplay
                 )
+                Toggle(
+                    "Dolby Vision (P5)",
+                    isOn: $enableDOVIP5
+                )
+            } header: {
+                Text("HDR & Dolby Video")
+            } footer: {
+                Text("Dolby Vision (P5) will cause issues with Dolby Vision with HLG (8.4) using MKV.")
             }
 
             Section(L10n.device) {
@@ -129,6 +134,44 @@ struct PlaybackQualitySettingsView: View {
                 LabeledContent(
                     "Display Supports HDR",
                     value: DeviceGPU.isDisplayHDRCompatible ? L10n.yes : L10n.no
+                )
+            }
+
+            Section(L10n.capabilities) {
+                LabeledContent(
+                    VideoCodec.av1.displayTitle,
+                    value: DeviceGPU.family?.supportsAV1Decode == true ? L10n.yes : L10n.no
+                )
+                LabeledContent(
+                    VideoCodec.hevc.displayTitle,
+                    value: DeviceGPU.family?.supportsHEVCDecode == true ? L10n.yes : L10n.no
+                )
+                LabeledContent(
+                    VideoCodec.vp8.displayTitle,
+                    value: DeviceGPU.family?.supportsVP8Decode == true ? L10n.yes : L10n.no
+                )
+                LabeledContent(
+                    VideoCodec.vp9.displayTitle,
+                    value: DeviceGPU.family?.supportsVP9Decode == true ? L10n.yes : L10n.no
+                )
+                LabeledContent(
+                    VideoCodec.vvc.displayTitle,
+                    value: DeviceGPU.family?.supportsVVCDecode == true ? L10n.yes : L10n.no
+                )
+            }
+
+            Section {
+                LabeledContent(
+                    VideoRangeType.hdr10Plus.displayTitle,
+                    value: DeviceGPU.family?.supportsHDR10Decode == true ? L10n.yes : L10n.no
+                )
+                LabeledContent(
+                    VideoRangeType.hlg.displayTitle,
+                    value: DeviceGPU.family?.supportsHLGDecode == true ? L10n.yes : L10n.no
+                )
+                LabeledContent(
+                    VideoRangeType.dovi.displayTitle,
+                    value: DeviceGPU.family?.supportsDolbyVisionDecode == true ? L10n.yes : L10n.no
                 )
             }
         }

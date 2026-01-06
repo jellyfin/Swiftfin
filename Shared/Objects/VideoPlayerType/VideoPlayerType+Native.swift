@@ -235,6 +235,12 @@ extension VideoPlayerType {
         )
     }
 
+    /// Workarounds:
+    /// - .dovi  (P5)                         —   When included, this breaks `.doviWithHLG` files that use MKV (Tested on 10.11.5)
+    ///
+    /// NOT included:
+    /// - .doviWithEL  (P7)             —   Dual layer unsupported
+    /// - .doviWithELHDR10Plus   —   Dual layer unsupported
     @ArrayBuilder<VideoRangeType>
     private static var nativeHDRProfiles: [VideoRangeType] {
 
@@ -260,7 +266,7 @@ extension VideoPlayerType {
                 VideoRangeType.doviWithHDR10Plus
             }
 
-            if DeviceGPU.family?.supportsDolbyVisionDecode == true {
+            if DeviceGPU.family?.supportsDolbyVisionDecode == true && DeviceGPU.doviP5Enabled {
                 VideoRangeType.dovi
             }
         }

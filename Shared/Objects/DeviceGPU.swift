@@ -11,13 +11,13 @@ import Defaults
 
 enum DeviceGPU {
 
-    /// This property is YES if an HDR display is available and the device is capable of playing HDR content from an appropriate AVAsset, NO
-    /// otherwise. This property does not indicate whether video contains HDR content, whether HDR video is currently playing, or whether
-    /// video is playing on an HDR display. This property is not KVO observable.
+    /// This property is true if an HDR display is available and the device is capable of playing HDR content from an appropriate AVAsset,
+    /// false otherwise.
     static var isDisplayHDRCompatible: Bool {
         AVPlayer.eligibleForHDRPlayback
     }
 
+    /// Should Swiftfin handle HDR content (true) or should it be tone mapped by the server (false)?
     static var hdrEnabled: Bool {
         if StoredValues[.User.transcodeOnSDRDisplay] {
             isDisplayHDRCompatible
@@ -26,6 +26,13 @@ enum DeviceGPU {
         }
     }
 
+    /// Should Swiftfin handle Dolby Video (P5) content (true) or should it be tone mapped by the server (false)?
+    /// - Note: This breaks DV 8.4 files that uses MKV
+    static var doviP5Enabled: Bool {
+        StoredValues[.User.enableDOVIP5]
+    }
+
+    /// Which generation of GPU does this device use?
     static var family: MTLGPUFamily? {
         MTLGPUFamily.current
     }

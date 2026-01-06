@@ -197,6 +197,14 @@ extension StoredValues.Keys {
             )
         }
 
+        static var enableDOVIP5: Key<Bool> {
+            CurrentUserKey(
+                "enableDOVIP5",
+                domain: "enableDOVIP5",
+                default: false
+            )
+        }
+
         static var transcodeOnSDRDisplay: Key<Bool> {
             CurrentUserKey(
                 "transcodeOnSDRDisplay",
