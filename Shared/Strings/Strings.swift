@@ -672,6 +672,10 @@ internal enum L10n {
   internal static let forced = L10n.tr("Localizable", "forced", fallback: "Forced")
   /// Force remote media transcoding
   internal static let forceRemoteTranscoding = L10n.tr("Localizable", "forceRemoteTranscoding", fallback: "Force remote media transcoding")
+  /// Force SDR for non-HDR displays
+  internal static let forceSDRForNonHDRDisplays = L10n.tr("Localizable", "forceSDRForNonHDRDisplays", fallback: "Force SDR for non-HDR displays")
+  /// Dolby Vision (P5) will cause issues with Dolby Vision with HLG (8.4) using MKV.
+  internal static let forceSDRForNonHDRDisplaysMessage = L10n.tr("Localizable", "forceSDRForNonHDRDisplaysMessage", fallback: "Dolby Vision (P5) will cause issues with Dolby Vision with HLG (8.4) using MKV.")
   /// Format
   internal static let format = L10n.tr("Localizable", "format", fallback: "Format")
   /// 3D format
