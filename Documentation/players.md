@@ -122,7 +122,7 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 
 - [1] AV1 requires A17 Pro, M3, or newer for acceptable performance. Older devices that do not report AV1 capabilities have AV1 disabled by default.
 
-- [2] HEVC requires A8X Pro, M1, or newer for acceptable performance. Older devices that do not report AV1 capabilities have AV1 disabled by default.
+- [2] HEVC requires A8X Pro, M1, or newer for acceptable performance. Older devices that do not report HEVC capabilities have HEVC disabled by default.
 
 - [3] VVC has mix reports of support by Swiftfin (VLCKit). Apple does not provide an API to check VVC capabilities so VVC disabled by default.
 
