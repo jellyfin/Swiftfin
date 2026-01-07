@@ -186,7 +186,7 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 
 - [3] May cause playback issues on [Jellyfin Server 10.11.5 and earlier](https://github.com/jellyfin/jellyfin/pull/15835) when using MKV containers.
 
-- [4] Requires an AV1 compatible device (Apple A16 Bionic or M3 and above) or a custom profile with AV1 enabled.
+- [4] Requires an AV1 compatible device (Apple A17 Pro or M3 and above) or a custom profile with AV1 enabled.
 
 - [5] HDR10+ support is limited to certain devices, such as the Apple TV 4K (3rd Generation) and recent iPhones and iPads with compatible hardware. Unsupported devices will fallback to HDR10 rendering, ignoring dynamic metadata.
 
