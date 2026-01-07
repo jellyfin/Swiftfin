@@ -6,13 +6,13 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 
 ## Feature Support
 
-| Feature                 | Swiftfin (VLCKit) | Native (AVPlayer) |
-|-------------------------|-------------------|----------------|
-| **Framerate Matching**  | ❌                | ✅             |
-| **HDR to SDR Tonemapping** | ✅ [1]         | 🔶 [2] |
-| **Player Controls**     | - Speed adjustment<br>- Aspect Fill<br>- Chapter Support<br>- Subtitle Support<br>- Audio Track Selection<br>- Customizable UI | - Speed adjustment<br>- Aspect Fill |
-| **Picture-in-Picture**  | ❌                | ✅             |
-| **TLS Support**         | 1.1, 1.2 [3]     | 1.1, 1.2, 1.3 |
+| Feature                    | Swiftfin (VLCKit) | Native (AVPlayer) |
+|----------------------------|-------------------|----------------|
+| **Framerate Matching**     | ❌                | ✅             |
+| **HDR to SDR Tonemapping** | ✅ [1]            | 🔶 [2]         |
+| **Player Controls**        | - Speed adjustment<br>- Aspect Fill<br>- Chapter Support<br>- Subtitle Support<br>- Audio Track Selection<br>- Customizable UI | - Speed adjustment<br>- Aspect Fill |
+| **Picture-in-Picture**     | ❌                | ✅             |
+| **TLS Support**            | 1.1, 1.2 [3]      | 1.1, 1.2, 1.3  |
 | **[Airplay Audio Output](https://support.apple.com/en-us/102357)** | 🔶 [4] | ✅ |
 
 **Notes**
@@ -29,19 +29,19 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 
 ## Container Support
 
-| Container                                                                                      | Swiftfin (VLCKit) | Native (AVPlayer) |
-|------------------------------------------------------------------------------------------------|-------------------|-------------------|
-| [AVI](https://en.wikipedia.org/wiki/Audio_Video_Interleave)                                    | ✅                | 🔶 [1]            |
-| [FLV](https://en.wikipedia.org/wiki/Flash_Video)                                               | ✅                | ❌                |
-| [M4V](https://en.wikipedia.org/wiki/M4V)                                                       | ✅                | ✅                |
-| [MKV](https://en.wikipedia.org/wiki/Matroska)                                                  | ✅                | ❌                |
-| [MOV](https://en.wikipedia.org/wiki/QuickTime_File_Format)                                     | ✅                | ✅                |
-| [MP4](https://en.wikipedia.org/wiki/MP4_file_format)                                           | ✅                | ✅                |
-| [MPEG-TS](https://en.wikipedia.org/wiki/MPEG_transport_stream)                                 | ✅                | 🔶 [1]            |
-| [TS](https://en.wikipedia.org/wiki/MPEG_transport_stream)                                      | ✅                | 🔶 [1]            |
-| [3G2](https://en.wikipedia.org/wiki/3GP_and_3G2)                                               | ✅                | ✅                |
-| [3GP](https://en.wikipedia.org/wiki/3GP_and_3G2)                                               | ✅                | ✅                |
-| [WebM](https://en.wikipedia.org/wiki/WebM)                                                     | ✅                | ❌                |
+| Container                                                        | Swiftfin (VLCKit) | Native (AVPlayer) |
+|------------------------------------------------------------------|-------------------|-------------------|
+| [AVI](https://en.wikipedia.org/wiki/Audio_Video_Interleave)      | ✅                | 🔶 [1]            |
+| [FLV](https://en.wikipedia.org/wiki/Flash_Video)                 | ✅                | ❌                |
+| [M4V](https://en.wikipedia.org/wiki/M4V)                         | ✅                | ✅                |
+| [MKV](https://en.wikipedia.org/wiki/Matroska)                    | ✅                | ❌                |
+| [MOV](https://en.wikipedia.org/wiki/QuickTime_File_Format)       | ✅                | ✅                |
+| [MP4](https://en.wikipedia.org/wiki/MP4_file_format)             | ✅                | ✅                |
+| [MPEG-TS](https://en.wikipedia.org/wiki/MPEG_transport_stream)   | ✅                | 🔶 [1]            |
+| [TS](https://en.wikipedia.org/wiki/MPEG_transport_stream)        | ✅                | 🔶 [1]            |
+| [3G2](https://en.wikipedia.org/wiki/3GP_and_3G2)                 | ✅                | ✅                |
+| [3GP](https://en.wikipedia.org/wiki/3GP_and_3G2)                 | ✅                | ✅                |
+| [WebM](https://en.wikipedia.org/wiki/WebM)                       | ✅                | ❌                |
 
 **Notes:**
 
@@ -53,31 +53,31 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 
 ## Audio Support
 
-| Audio Codec                                                                                    | Swiftfin (VLCKit) | Native (AVPlayer) |
-|------------------------------------------------------------------------------------------------|-------------------|-------------------|
-| [AAC](https://en.wikipedia.org/wiki/Advanced_Audio_Coding)                                     | ✅                | ✅                |
-| [AC3](https://en.wikipedia.org/wiki/Dolby_Digital)                                             | ✅                | ✅                |
-| [ALAC](https://en.wikipedia.org/wiki/Apple_Lossless_Audio_Codec)                               | ✅                | ✅                |
-| [AMR NB](https://en.wikipedia.org/wiki/Adaptive_Multi-Rate_audio_codec)                        | ✅                | ✅                |
-| [AMR WB](https://en.wikipedia.org/wiki/Adaptive_Multi-Rate_Wideband)                           | ✅                | ❌                |
-| [DTS](https://en.wikipedia.org/wiki/DTS_(company)#DTS_Digital_Surround)                        | ✅                | ❌                |
-| [DTS-HD](https://en.wikipedia.org/wiki/DTS-HD_Master_Audio)                                    | ❌                | ❌                |
-| [EAC3](https://en.wikipedia.org/wiki/Dolby_Digital_Plus)                                       | ✅                | ✅                |
-| [FLAC](https://en.wikipedia.org/wiki/FLAC)                                                     | ✅                | ✅                |
-| [MP1](https://en.wikipedia.org/wiki/MPEG-1_Audio_Layer_I)                                      | ✅                | ❌                |
-| [MP2](https://en.wikipedia.org/wiki/MPEG-1_Audio_Layer_II)                                     | ✅                | ❌                |
-| [MP3](https://en.wikipedia.org/wiki/MP3)                                                       | ✅                | ✅                |
-| [MLP](https://en.wikipedia.org/wiki/Meridian_Lossless_Packing)                                 | ❌                | ❌                |
-| [Nellymoser](https://en.wikipedia.org/wiki/Nellymoser_Asao_Codec)                              | ✅                | ❌                |
-| [Opus](https://en.wikipedia.org/wiki/Opus_(audio_format))                                      | ✅                | ❌                |
-| [PCM](https://en.wikipedia.org/wiki/Pulse-code_modulation)                                     | ✅                | 🔶 [1]            |
-| [Speex](https://en.wikipedia.org/wiki/Speex)                                                   | ✅                | ❌                |
-| [TrueHD](https://en.wikipedia.org/wiki/Dolby_TrueHD)                                           | ❌                | ❌                |
-| [Vorbis](https://en.wikipedia.org/wiki/Vorbis)                                                 | ✅                | ❌                |
-| [WavPack](https://en.wikipedia.org/wiki/WavPack)                                               | ✅                | ❌                |
-| [WMA](https://en.wikipedia.org/wiki/Windows_Media_Audio)                                       | ✅                | ❌                |
-| [WMA Lossless](https://en.wikipedia.org/wiki/Windows_Media_Audio#WMA_Lossless)                 | ✅                | ❌                |
-| [WMA Pro](https://en.wikipedia.org/wiki/Windows_Media_Audio#WMA_Pro)                           | ✅                | ❌                |
+| Audio Codec                                                                    | Swiftfin (VLCKit) | Native (AVPlayer) |
+|--------------------------------------------------------------------------------|-------------------|-------------------|
+| [AAC](https://en.wikipedia.org/wiki/Advanced_Audio_Coding)                     | ✅                | ✅                |
+| [AC3](https://en.wikipedia.org/wiki/Dolby_Digital)                             | ✅                | ✅                |
+| [ALAC](https://en.wikipedia.org/wiki/Apple_Lossless_Audio_Codec)               | ✅                | ✅                |
+| [AMR NB](https://en.wikipedia.org/wiki/Adaptive_Multi-Rate_audio_codec)        | ✅                | ✅                |
+| [AMR WB](https://en.wikipedia.org/wiki/Adaptive_Multi-Rate_Wideband)           | ✅                | ❌                |
+| [DTS](https://en.wikipedia.org/wiki/DTS_(company)#DTS_Digital_Surround)        | ✅                | ❌                |
+| [DTS-HD](https://en.wikipedia.org/wiki/DTS-HD_Master_Audio)                    | ❌                | ❌                |
+| [EAC3](https://en.wikipedia.org/wiki/Dolby_Digital_Plus)                       | ✅                | ✅                |
+| [FLAC](https://en.wikipedia.org/wiki/FLAC)                                     | ✅                | ✅                |
+| [MP1](https://en.wikipedia.org/wiki/MPEG-1_Audio_Layer_I)                      | ✅                | ❌                |
+| [MP2](https://en.wikipedia.org/wiki/MPEG-1_Audio_Layer_II)                     | ✅                | ❌                |
+| [MP3](https://en.wikipedia.org/wiki/MP3)                                       | ✅                | ✅                |
+| [MLP](https://en.wikipedia.org/wiki/Meridian_Lossless_Packing)                 | ❌                | ❌                |
+| [Nellymoser](https://en.wikipedia.org/wiki/Nellymoser_Asao_Codec)              | ✅                | ❌                |
+| [Opus](https://en.wikipedia.org/wiki/Opus_(audio_format))                      | ✅                | ❌                |
+| [PCM](https://en.wikipedia.org/wiki/Pulse-code_modulation)                     | ✅                | 🔶 [1]            |
+| [Speex](https://en.wikipedia.org/wiki/Speex)                                   | ✅                | ❌                |
+| [TrueHD](https://en.wikipedia.org/wiki/Dolby_TrueHD)                           | ❌                | ❌                |
+| [Vorbis](https://en.wikipedia.org/wiki/Vorbis)                                 | ✅                | ❌                |
+| [WavPack](https://en.wikipedia.org/wiki/WavPack)                               | ✅                | ❌                |
+| [WMA](https://en.wikipedia.org/wiki/Windows_Media_Audio)                       | ✅                | ❌                |
+| [WMA Lossless](https://en.wikipedia.org/wiki/Windows_Media_Audio#WMA_Lossless) | ✅                | ❌                |
+| [WMA Pro](https://en.wikipedia.org/wiki/Windows_Media_Audio#WMA_Pro)           | ✅                | ❌                |
 
 **Notes:**
 
@@ -90,33 +90,33 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 
 ## Video Support
 
-| Video Codec                                                                                    | Swiftfin (VLCKit) | Native (AVPlayer) |
-|------------------------------------------------------------------------------------------------|-------------------|-------------------|
-| [AV1](https://en.wikipedia.org/wiki/AV1)                                                       | 🔶 [1]            | 🔶 [1]            |
-| [Dirac](https://en.wikipedia.org/wiki/Dirac_(video_compression_format))                        | ✅                | ❌                |
-| [DV](https://en.wikipedia.org/wiki/DV)                                                         | ✅                | ❌                |
-| [FFV1](https://en.wikipedia.org/wiki/FFV1)                                                     | ✅                | ❌                |
-| [FLV1](https://en.wikipedia.org/wiki/Sorenson_Spark)                                           | ✅                | ❌                |
-| [H.261](https://en.wikipedia.org/wiki/H.261)                                                   | ✅                | ❌                |
-| [H.263](https://en.wikipedia.org/wiki/H.263)                                                   | ✅                | ❌                |
-| [H.264](https://en.wikipedia.org/wiki/Advanced_Video_Coding)                                   | ✅                | ✅                |
-| [H.265/HEVC](https://en.wikipedia.org/wiki/High_Efficiency_Video_Coding)                       | ✅                | 🔶 [2]            |
-| [H.266/VVC](https://en.wikipedia.org/wiki/Versatile_Video_Coding)                              | ❌ [3]            | ❌                |
-| [MJPEG](https://en.wikipedia.org/wiki/Motion_JPEG)                                             | ✅                | ✅                |
-| [MPEG-1](https://en.wikipedia.org/wiki/MPEG-1)                                                 | ✅                | ❌                |
-| [MPEG-2](https://en.wikipedia.org/wiki/MPEG-2)                                                 | ✅                | ❌                |
-| [MPEG-4 Part 2](https://en.wikipedia.org/wiki/MPEG-4_Part_2)                                   | ✅                | ✅                |
-| [MS-MPEG4v1](https://en.wikipedia.org/wiki/Microsoft_MPEG-4_AVC)                               | ✅                | ❌                |
-| [MS-MPEG4v2](https://en.wikipedia.org/wiki/Microsoft_MPEG-4_AVC)                               | ✅                | ❌                |
-| [MS-MPEG4v3](https://en.wikipedia.org/wiki/Microsoft_MPEG-4_AVC)                               | ✅                | ❌                |
-| [ProRes](https://en.wikipedia.org/wiki/Apple_ProRes)                                           | ✅                | ❌                |
-| [Theora](https://en.wikipedia.org/wiki/Theora)                                                 | ✅                | ❌                |
-| [VC-1](https://en.wikipedia.org/wiki/VC-1)                                                     | ✅                | ❌                |
-| [VP8](https://en.wikipedia.org/wiki/VP8)                                                       | ✅                | ❌                |
-| [VP9](https://en.wikipedia.org/wiki/VP9)                                                       | ✅                | ❌                |
-| [WMV1](https://en.wikipedia.org/wiki/Windows_Media_Video)                                      | ✅                | ❌                |
-| [WMV2](https://en.wikipedia.org/wiki/Windows_Media_Video)                                      | ✅                | ❌                |
-| [WMV3](https://en.wikipedia.org/wiki/Windows_Media_Video)                                      | ✅                | ❌                |
+| Video Codec                                                              | Swiftfin (VLCKit) | Native (AVPlayer) |
+|--------------------------------------------------------------------------|-------------------|-------------------|
+| [AV1](https://en.wikipedia.org/wiki/AV1)                                 | 🔶 [1]            | 🔶 [1]            |
+| [Dirac](https://en.wikipedia.org/wiki/Dirac_(video_compression_format))  | ✅                | ❌                |
+| [DV](https://en.wikipedia.org/wiki/DV)                                   | ✅                | ❌                |
+| [FFV1](https://en.wikipedia.org/wiki/FFV1)                               | ✅                | ❌                |
+| [FLV1](https://en.wikipedia.org/wiki/Sorenson_Spark)                     | ✅                | ❌                |
+| [H.261](https://en.wikipedia.org/wiki/H.261)                             | ✅                | ❌                |
+| [H.263](https://en.wikipedia.org/wiki/H.263)                             | ✅                | ❌                |
+| [H.264](https://en.wikipedia.org/wiki/Advanced_Video_Coding)             | ✅                | ✅                |
+| [H.265/HEVC](https://en.wikipedia.org/wiki/High_Efficiency_Video_Coding) | ✅                | 🔶 [2]            |
+| [H.266/VVC](https://en.wikipedia.org/wiki/Versatile_Video_Coding)        | ❌ [3]            | ❌                |
+| [MJPEG](https://en.wikipedia.org/wiki/Motion_JPEG)                       | ✅                | ✅                |
+| [MPEG-1](https://en.wikipedia.org/wiki/MPEG-1)                           | ✅                | ❌                |
+| [MPEG-2](https://en.wikipedia.org/wiki/MPEG-2)                           | ✅                | ❌                |
+| [MPEG-4 Part 2](https://en.wikipedia.org/wiki/MPEG-4_Part_2)             | ✅                | ✅                |
+| [MS-MPEG4v1](https://en.wikipedia.org/wiki/Microsoft_MPEG-4_AVC)         | ✅                | ❌                |
+| [MS-MPEG4v2](https://en.wikipedia.org/wiki/Microsoft_MPEG-4_AVC)         | ✅                | ❌                |
+| [MS-MPEG4v3](https://en.wikipedia.org/wiki/Microsoft_MPEG-4_AVC)         | ✅                | ❌                |
+| [ProRes](https://en.wikipedia.org/wiki/Apple_ProRes)                     | ✅                | ❌                |
+| [Theora](https://en.wikipedia.org/wiki/Theora)                           | ✅                | ❌                |
+| [VC-1](https://en.wikipedia.org/wiki/VC-1)                               | ✅                | ❌                |
+| [VP8](https://en.wikipedia.org/wiki/VP8)                                 | ✅                | ❌                |
+| [VP9](https://en.wikipedia.org/wiki/VP9)                                 | ✅                | ❌                |
+| [WMV1](https://en.wikipedia.org/wiki/Windows_Media_Video)                | ✅                | ❌                |
+| [WMV2](https://en.wikipedia.org/wiki/Windows_Media_Video)                | ✅                | ❌                |
+| [WMV3](https://en.wikipedia.org/wiki/Windows_Media_Video)                | ✅                | ❌                |
 
 **Notes:**
 
@@ -132,29 +132,29 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 
 ## Subtitle Support
 
-| Subtitle Format                                                                                | Swiftfin (VLCKit) | Native (AVPlayer) |
-|------------------------------------------------------------------------------------------------|-------------------|-------------------|
-| [ASS](https://en.wikipedia.org/wiki/SubStation_Alpha#Advanced_SubStation_Alpha)                | ✅                | ❌                |
-| [CC_DEC](https://en.wikipedia.org/wiki/Closed_captioning)                                      | ✅                | ✅                |
-| [DVBSub](https://en.wikipedia.org/wiki/DVB_subtitles)                                          | ✅                | 🔶 [1]            |
-| [DVDSub](https://en.wikipedia.org/wiki/VobSub)                                                 | ✅                | 🔶 [1]            |
-| [JacoSub](https://en.wikipedia.org/wiki/JACOsub)                                               | ✅                | ❌                |
-| [MOV_Text](https://en.wikipedia.org/wiki/MPEG-4_Part_17)                                       | ✅                | ❌                |
-| [MPL2](https://en.wikipedia.org/wiki/MPL2)                                                     | ✅                | ❌                |
-| [PGSSub](https://en.wikipedia.org/wiki/Presentation_Graphic_Stream)                            | ✅                | 🔶 [1]            |
-| [PJS](https://en.wikipedia.org/wiki/Phoenix_Subtitle)                                          | ✅                | ❌                |
-| [RealText](https://en.wikipedia.org/wiki/RealText)                                             | ✅                | ❌                |
-| [SAMI](https://en.wikipedia.org/wiki/SAMI)                                                     | ✅                | ❌                |
-| [SSA](https://en.wikipedia.org/wiki/SubStation_Alpha)                                          | ✅                | ❌                |
-| [SubRip (SRT)](https://en.wikipedia.org/wiki/SubRip)                                           | ✅                | ❌                |
-| [SubViewer](https://en.wikipedia.org/wiki/SubViewer)                                           | ✅                | ❌                |
-| [SubViewer1](https://en.wikipedia.org/wiki/SubViewer)                                          | ✅                | ❌                |
-| [Teletext](https://en.wikipedia.org/wiki/Teletext)                                             | ✅                | ❌                |
-| [Text](https://en.wikipedia.org/wiki/Plain_text)                                               | ✅                | ❌                |
-| [TTML](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language)                               | ✅                | ✅                |
-| [VPlayer](https://en.wikipedia.org/wiki/VPlayer)                                               | ✅                | ❌                |
-| [VTT](https://en.wikipedia.org/wiki/WebVTT)                                                    | ✅                | ✅                |
-| [XSub](https://en.wikipedia.org/wiki/XSUB)                                                     | ✅                | 🔶 [1]            |
+| Subtitle Format                                                                 | Swiftfin (VLCKit) | Native (AVPlayer) |
+|---------------------------------------------------------------------------------|-------------------|-------------------|
+| [ASS](https://en.wikipedia.org/wiki/SubStation_Alpha#Advanced_SubStation_Alpha) | ✅                | ❌                |
+| [CC_DEC](https://en.wikipedia.org/wiki/Closed_captioning)                       | ✅                | ✅                |
+| [DVBSub](https://en.wikipedia.org/wiki/DVB_subtitles)                           | ✅                | 🔶 [1]            |
+| [DVDSub](https://en.wikipedia.org/wiki/VobSub)                                  | ✅                | 🔶 [1]            |
+| [JacoSub](https://en.wikipedia.org/wiki/JACOsub)                                | ✅                | ❌                |
+| [MOV_Text](https://en.wikipedia.org/wiki/MPEG-4_Part_17)                        | ✅                | ❌                |
+| [MPL2](https://en.wikipedia.org/wiki/MPL2)                                      | ✅                | ❌                |
+| [PGSSub](https://en.wikipedia.org/wiki/Presentation_Graphic_Stream)             | ✅                | 🔶 [1]            |
+| [PJS](https://en.wikipedia.org/wiki/Phoenix_Subtitle)                           | ✅                | ❌                |
+| [RealText](https://en.wikipedia.org/wiki/RealText)                              | ✅                | ❌                |
+| [SAMI](https://en.wikipedia.org/wiki/SAMI)                                      | ✅                | ❌                |
+| [SSA](https://en.wikipedia.org/wiki/SubStation_Alpha)                           | ✅                | ❌                |
+| [SubRip (SRT)](https://en.wikipedia.org/wiki/SubRip)                            | ✅                | ❌                |
+| [SubViewer](https://en.wikipedia.org/wiki/SubViewer)                            | ✅                | ❌                |
+| [SubViewer1](https://en.wikipedia.org/wiki/SubViewer)                           | ✅                | ❌                |
+| [Teletext](https://en.wikipedia.org/wiki/Teletext)                              | ✅                | ❌                |
+| [Text](https://en.wikipedia.org/wiki/Plain_text)                                | ✅                | ❌                |
+| [TTML](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language)                | ✅                | ✅                |
+| [VPlayer](https://en.wikipedia.org/wiki/VPlayer)                                | ✅                | ❌                |
+| [VTT](https://en.wikipedia.org/wiki/WebVTT)                                     | ✅                | ✅                |
+| [XSub](https://en.wikipedia.org/wiki/XSUB)                                      | ✅                | 🔶 [1]            |
 
 **Notes:**
 
@@ -166,17 +166,17 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 
 ## HDR Support
 
-| Format                                                                                         | Swiftfin (VLCKit) | Native (AVPlayer) |
-|------------------------------------------------------------------------------------------------|-------------------|-------------------|
-| [Dolby Vision Profile 5](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles)                  | ❌                | ✅                |
-| [Dolby Vision Profile 7.6](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles)                | 🔶 [1] [2]        | 🔶 [1] [2]        |
-| [Dolby Vision Profile 8.1](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles)                | 🔶 [1]            | ✅                |
-| [Dolby Vision Profile 8.2](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles)                | 🔶 [1]            | ✅                |
-| [Dolby Vision Profile 8.4](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles)                | 🔶 [1]            | ✅ [3]            |
-| [Dolby Vision Profile 10](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles)                 | 🔶 [1] [4]        | 🔶 [4]            |
-| [HDR10](https://en.wikipedia.org/wiki/HDR10)                                                   | ✅                | ✅                |
-| [HDR10+](https://en.wikipedia.org/wiki/HDR10%2B)                                               | 🔶 [1]            | 🔶 [5]            |
-| [HLG](https://en.wikipedia.org/wiki/Hybrid_log%E2%80%93gamma)                                  | ✅                | ✅                |
+| Format                                                                          | Swiftfin (VLCKit) | Native (AVPlayer) |
+|---------------------------------------------------------------------------------|-------------------|-------------------|
+| [Dolby Vision Profile 5](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles)   | ❌                | ✅                |
+| [Dolby Vision Profile 7.6](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles) | 🔶 [1] [2]        | 🔶 [1] [2]        |
+| [Dolby Vision Profile 8.1](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles) | 🔶 [1]            | ✅                |
+| [Dolby Vision Profile 8.2](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles) | 🔶 [1]            | ✅                |
+| [Dolby Vision Profile 8.4](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles) | 🔶 [1]            | ✅ [3]            |
+| [Dolby Vision Profile 10](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles)  | 🔶 [1] [4]        | 🔶 [4]            |
+| [HDR10](https://en.wikipedia.org/wiki/HDR10)                                    | ✅                | ✅                |
+| [HDR10+](https://en.wikipedia.org/wiki/HDR10%2B)                                | 🔶 [1]            | 🔶 [5]            |
+| [HLG](https://en.wikipedia.org/wiki/Hybrid_log%E2%80%93gamma)                   | ✅                | ✅                |
 
 **Notes:**
 
