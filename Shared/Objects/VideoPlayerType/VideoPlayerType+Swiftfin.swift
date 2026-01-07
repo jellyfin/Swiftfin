@@ -47,7 +47,7 @@ extension VideoPlayerType {
             AudioCodec.wmav2
         } videoCodecs: {
 
-            /// This is possible with non-AV1 supported devices but the FPS is terrible on some devices.s
+            /// This is possible with non-AV1 supported devices but the FPS is terrible on some devices
             ///  - Defaulting to disabled but can be enabled in custom profiles if desired.
             if PlaybackCapabilities.supportsAV1 {
                 VideoCodec.av1
@@ -105,7 +105,7 @@ extension VideoPlayerType {
         } videoCodecs: {
 
             /// - Note: Transcode Profiles prioritizes codecs by order
-            /// This is possible with non-AV1 supported devices but the FPS is terrible on some devices.s
+            /// This is possible with non-AV1 supported devices but the FPS is terrible on some devices
             ///  - Defaulting to disabled but can be enabled in custom profiles if desired.
             if PlaybackCapabilities.supportsAV1 {
                 VideoCodec.av1
