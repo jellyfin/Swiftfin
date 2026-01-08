@@ -75,7 +75,7 @@ struct SettingsView: View {
             }
 
             #if os(iOS)
-            if viewModel.userSession.user.data.policy?.isAdministrator == true {
+            if viewModel.userSession?.user.data.policy?.isAdministrator == true {
                 ChevronButton(L10n.dashboard) {
                     router.route(to: .adminDashboard)
                 }

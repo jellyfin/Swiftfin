@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct RefreshMetadataView: View {
+struct ItemRefreshView: View {
 
     @Router
     private var router

@@ -174,7 +174,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel {
 
     @Function(\Action.Cases.refreshItem)
     private func _refreshItem(_ isRefresh: Bool) async throws {
-        item = try await item.getFullItem(userSession: userSession, isRefresh: isRefresh)
+        self.item = try await item.getFullItem(userSession: userSession, sendNotification: isRefresh)
         events.send(.updated)
     }
 

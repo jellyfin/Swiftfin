@@ -28,9 +28,7 @@ struct ItemEditorMenu: View {
                 UIDevice.feedback(.error)
                 router.dismiss()
             }
-        // TODO: Move over when @Stateful
-        // - Might make the most sense to move the .delete func to the `ItemViewModel` instead
-        // .errorMessage($deleteViewModel.error)
+            .errorMessage($viewModel.error)
     }
 
     @ViewBuilder
