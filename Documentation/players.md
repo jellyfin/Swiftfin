@@ -100,7 +100,7 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 | [H.261](https://en.wikipedia.org/wiki/H.261)                             | ✅                | ❌                |
 | [H.263](https://en.wikipedia.org/wiki/H.263)                             | ✅                | ❌                |
 | [H.264](https://en.wikipedia.org/wiki/Advanced_Video_Coding)             | ✅                | ✅                |
-| [H.265/HEVC](https://en.wikipedia.org/wiki/High_Efficiency_Video_Coding) | ✅                | 🔶 [2]            |
+| [H.265/HEVC](https://en.wikipedia.org/wiki/High_Efficiency_Video_Coding) | ✅                | ✅ [2]            |
 | [H.266/VVC](https://en.wikipedia.org/wiki/Versatile_Video_Coding)        | ❌ [3]            | ❌                |
 | [MJPEG](https://en.wikipedia.org/wiki/Motion_JPEG)                       | ✅                | ✅                |
 | [MPEG-1](https://en.wikipedia.org/wiki/MPEG-1)                           | ✅                | ❌                |
@@ -122,7 +122,7 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 
 - [1] AV1 requires A17 Pro, M3, or newer for acceptable performance. Older devices that do not report AV1 capabilities have AV1 disabled by default.
 
-- [2] HEVC requires A8X Pro, M1, or newer for acceptable performance. Older devices that do not report HEVC capabilities have HEVC disabled by default.
+- [2] HEVC requires A8X Pro, M1, or newer for acceptable performance. Older devices that do not report HEVC capabilities have HEVC disabled by default. All devices supported by Swiftfin should have HEVC available.
 
 - [3] VVC has mix reports of support by Swiftfin (VLCKit). Apple does not provide an API to check VVC capabilities so VVC disabled by default.
 
@@ -169,26 +169,24 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 | Format                                                                          | Swiftfin (VLCKit) | Native (AVPlayer) |
 |---------------------------------------------------------------------------------|-------------------|-------------------|
 | [Dolby Vision Profile 5](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles)   | ❌                | ✅                |
-| [Dolby Vision Profile 7.6](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles) | 🔶 [1] [2]        | 🔶 [1] [2]        |
+| [Dolby Vision Profile 7.6](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles) | 🔶 [1]            | 🔶 [1]            |
 | [Dolby Vision Profile 8.1](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles) | 🔶 [1]            | ✅                |
 | [Dolby Vision Profile 8.2](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles) | 🔶 [1]            | ✅                |
-| [Dolby Vision Profile 8.4](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles) | 🔶 [1]            | ✅ [3]            |
-| [Dolby Vision Profile 10](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles)  | 🔶 [1] [4]        | 🔶 [4]            |
+| [Dolby Vision Profile 8.4](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles) | 🔶 [1]            | ✅ [2]            |
+| [Dolby Vision Profile 10](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles)  | 🔶 [1] [3]        | 🔶 [3]            |
 | [HDR10](https://en.wikipedia.org/wiki/HDR10)                                    | ✅                | ✅                |
-| [HDR10+](https://en.wikipedia.org/wiki/HDR10%2B)                                | 🔶 [1]            | 🔶 [5]            |
+| [HDR10+](https://en.wikipedia.org/wiki/HDR10%2B)                                | 🔶 [1]            | 🔶 [4]            |
 | [HLG](https://en.wikipedia.org/wiki/Hybrid_log%E2%80%93gamma)                   | ✅                | ✅                |
 
 **Notes:**
 
 - [1] Uses fallback layers and ignores dynamic metadata.
 
-- [2] Dolby Vision 7.6 can only be played from MP4. MKV files will need to be remuxed or transcoded to MP4 to play.
+- [2] May cause playback issues on [Jellyfin Server 10.11.5 and earlier](https://github.com/jellyfin/jellyfin/pull/15835) when using MKV containers.
 
-- [3] May cause playback issues on [Jellyfin Server 10.11.5 and earlier](https://github.com/jellyfin/jellyfin/pull/15835) when using MKV containers.
+- [3] Requires an AV1 compatible device (Apple A17 Pro or M3 and above).
 
-- [4] Requires an AV1 compatible device (Apple A17 Pro or M3 and above) or a custom profile with AV1 enabled.
-
-- [5] HDR10+ support is limited to certain devices, such as the Apple TV 4K (3rd Generation) and recent iPhones and iPads with compatible hardware. Unsupported devices will fallback to HDR10 rendering, ignoring dynamic metadata.
+- [4] HDR10+ support is limited to certain devices, such as the Apple TV 4K (3rd Generation) and recent iPhones and iPads with compatible hardware. Unsupported devices will fallback to HDR10 rendering, ignoring dynamic metadata.
 
 - Unsupported video ranges will require tone mapping to play.
 
