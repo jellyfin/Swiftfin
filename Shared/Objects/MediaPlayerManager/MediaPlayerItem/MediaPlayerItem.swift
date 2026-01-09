@@ -97,8 +97,11 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
 
         super.init()
 
-        selectedAudioStreamIndex = initialAudioStreamIndex ?? mediaSource.defaultAudioStreamIndex
-        selectedSubtitleStreamIndex = initialSubtitleStreamIndex ?? mediaSource.defaultSubtitleStreamIndex
+        /// Selected Stream -> Default Stream -> First Stream -> No Stream
+        selectedAudioStreamIndex = initialAudioStreamIndex ?? mediaSource.defaultAudioStreamIndex ?? audioStreams.first?.index ?? -1
+
+        /// Selected Stream -> Default Stream -> No Stream
+        selectedSubtitleStreamIndex = initialSubtitleStreamIndex ?? mediaSource.defaultSubtitleStreamIndex ?? -1
 
         isInitializing = false
 
