@@ -209,7 +209,7 @@ extension MediaStream {
 
 extension [MediaStream] {
 
-    /// Filter & Re-index tracks based on the LibraryOptions.embeddedSubtitleOption from the item's parent Library
+    /// Filter based on the LibraryOptions.embeddedSubtitleOption from the item's parent Library
     func adjustedTrackIndexes(embeddedSubtitleOption: EmbeddedSubtitleOptions = .allowAll) -> [MediaStream] {
         self.filter { stream in
             guard stream.type == .subtitle, !(stream.isExternal ?? false) else {
