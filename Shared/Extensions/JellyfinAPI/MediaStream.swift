@@ -209,55 +209,24 @@ extension MediaStream {
 
 extension [MediaStream] {
 
-    /// Adjusts track indexes for a full set of media streams.
-    /// For non-transcode stream types:
-    ///   Internal tracks (non-external) are ordered as: Video, Audio, Subtitles, then any others.
-    ///   Their relative order within each group is preserved and indexes start at 0.
-    /// For transcode stream type:
-    ///   Only the first internal video track and the first internal audio track are included, in that order.
-    /// In both cases, external tracks are appended in their original order with indexes continuing after internal tracks.
-    func adjustedTrackIndexes(for playMethod: PlayMethod, selectedAudioStreamIndex: Int) -> [MediaStream] {
-        let internalTracks = self.filter { !($0.isExternal ?? false) }
-        let externalTracks = self.filter { $0.isExternal ?? false }
-
-        var orderedInternal: [MediaStream] = []
-
-        let subtitleInternal = internalTracks.filter { $0.type == .subtitle }
-
-        if playMethod == .transcode {
-            // Only include the first video and first audio track for transcode.
-            let videoInternal = internalTracks.filter { $0.type == .video }
-            let audioInternal = internalTracks.filter { $0.type == .audio }
-
-            if let firstVideo = videoInternal.first {
-                orderedInternal.append(firstVideo)
-            }
-            if let selectedAudio = audioInternal.first(where: { $0.index == selectedAudioStreamIndex }) {
-                orderedInternal.append(selectedAudio)
+    /// Filter based on the LibraryOptions.embeddedSubtitleOption from the item's parent Library
+    func adjustedTrackIndexes(embeddedSubtitleOption: EmbeddedSubtitleOptions = .allowAll) -> [MediaStream] {
+        self.filter { stream in
+            guard stream.type == .subtitle, !(stream.isExternal ?? false) else {
+                return true
             }
 
-            orderedInternal += subtitleInternal
-        } else {
-            let videoInternal = internalTracks.filter { $0.type == .video }
-            let audioInternal = internalTracks.filter { $0.type == .audio }
-
-            orderedInternal = videoInternal + audioInternal + subtitleInternal
+            switch embeddedSubtitleOption {
+            case .allowAll:
+                return true
+            case .allowText:
+                return stream.isTextSubtitleStream ?? false
+            case .allowImage:
+                return !(stream.isTextSubtitleStream ?? false)
+            case .allowNone:
+                return false
+            }
         }
-
-        var newInternalTracks: [MediaStream] = []
-        for (index, var track) in orderedInternal.enumerated() {
-            track.index = index
-            newInternalTracks.append(track)
-        }
-
-        var newExternalTracks: [MediaStream] = []
-        let startingIndexForExternal = newInternalTracks.count
-        for (offset, var track) in externalTracks.enumerated() {
-            track.index = startingIndexForExternal + offset
-            newExternalTracks.append(track)
-        }
-
-        return newInternalTracks + newExternalTracks
     }
 
     var has4KVideo: Bool {
