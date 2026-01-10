@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import UIKit
 
 extension UIApplication {
@@ -27,6 +28,16 @@ extension UIApplication {
             .first {
                 $0.isKeyWindow
             }
+    }
+
+    func open(_ mediaURL: MediaURL) throws {
+        guard let url = URL(string: mediaURL.url),
+              UIApplication.shared.canOpenURL(url)
+        else {
+            throw ErrorMessage(L10n.unableToOpenTrailer)
+        }
+
+        open(url)
     }
 
     // TODO: change to all windows?

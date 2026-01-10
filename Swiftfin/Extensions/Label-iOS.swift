@@ -31,31 +31,10 @@ struct EpisodeSelectorLabelStyle: LabelStyle {
         .padding(.vertical, 5)
         .padding(.horizontal, 10)
         .background {
-            Color.tertiarySystemFill
-                .cornerRadius(10)
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.tertiarySystemFill)
         }
         .compositingGroup()
         .shadow(radius: 1)
-        .font(.caption)
-    }
-}
-
-// MARK: SectionFooterWithImageLabelStyle
-
-extension TitleAndIconLabelStyle {
-
-    var trailingIcon: TrailingIconReversedButtonStyle {
-        TrailingIconReversedButtonStyle()
-    }
-}
-
-struct TrailingIconReversedButtonStyle: LabelStyle {
-
-    func makeBody(configuration: Configuration) -> some View {
-        HStack {
-            configuration.title
-
-            configuration.icon
-        }
     }
 }

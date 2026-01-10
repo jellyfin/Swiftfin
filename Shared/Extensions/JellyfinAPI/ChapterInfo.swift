@@ -58,7 +58,7 @@ extension ChapterInfo {
             [imageSource]
         }
 
-        func transform(image: Image) -> some View {
+        func transform(image: Image, displayType: PosterDisplayType) -> some View {
             ZStack {
                 Color.black
 

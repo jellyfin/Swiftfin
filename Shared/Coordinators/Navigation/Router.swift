@@ -16,6 +16,7 @@ extension NavigationCoordinator {
         let navigationCoordinator: NavigationCoordinator?
         let rootCoordinator: RootCoordinator?
 
+        // TODO: on navigation route dismissed
         func route(
             to route: NavigationRoute,
             transition: NavigationRoute.TransitionType? = nil,
@@ -42,6 +43,14 @@ struct Router: DynamicProperty {
     struct Wrapper {
         let router: NavigationCoordinator.Router
         let dismiss: DismissAction
+
+        var isRootOfPath: Bool {
+            guard let router = router.navigationCoordinator else {
+                return false
+            }
+
+            return router.path.isEmpty
+        }
 
         func route(
             to route: NavigationRoute,

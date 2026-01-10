@@ -97,6 +97,22 @@ extension StoredValues.Keys {
             )
         }
 
+        static func libraryStyle(id: String?) -> Key<LibraryStyle> {
+            if let id {
+                CurrentUserKey(
+                    id,
+                    domain: "setting-libraryStyle",
+                    default: .default
+                )
+            } else {
+                CurrentUserKey(
+                    "swiftfin-default",
+                    domain: "setting-libraryStyle",
+                    default: .default
+                )
+            }
+        }
+
         static func libraryDisplayType(parentID: String?) -> Key<LibraryDisplayType> {
             CurrentUserKey(
                 parentID,
@@ -118,6 +134,14 @@ extension StoredValues.Keys {
                 parentID,
                 domain: "setting-libraryPosterType",
                 default: Defaults[.Customization.Library.posterType]
+            )
+        }
+
+        static func posterButtonStyle(parentID: String?) -> Key<PosterDisplayConfiguration> {
+            CurrentUserKey(
+                parentID,
+                domain: "setting-posterButtonStyle",
+                default: .default
             )
         }
 
@@ -149,6 +173,7 @@ extension StoredValues.Keys {
             )
         }
 
+        // TODO: move edit/delete item + edit collections to an OptionSet
         static var enableItemEditing: Key<Bool> {
             CurrentUserKey(
                 "enableItemEditing",
@@ -178,14 +203,6 @@ extension StoredValues.Keys {
                 "enabledTrailers",
                 domain: "enabledTrailers",
                 default: .all
-            )
-        }
-
-        static var itemViewAttributes: Key<[ItemViewAttribute]> {
-            CurrentUserKey(
-                "itemViewAttributes",
-                domain: "itemViewAttributes",
-                default: ItemViewAttribute.allCases
             )
         }
 

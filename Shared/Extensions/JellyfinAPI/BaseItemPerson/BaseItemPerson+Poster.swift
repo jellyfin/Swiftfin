@@ -17,6 +17,13 @@ extension BaseItemPerson: Poster {
         .portrait
     }
 
+    var posterLabel: some View {
+        TitleSubtitleContentView(
+            title: displayTitle,
+            subtitle: role ?? "!!!"
+        )
+    }
+
     var unwrappedIDHashOrZero: Int {
         id?.hashValue ?? 0
     }
@@ -29,13 +36,17 @@ extension BaseItemPerson: Poster {
         "person.fill"
     }
 
-    func portraitImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
-
+    func portraitImageSources(
+        maxWidth: CGFloat?,
+        quality: Int?,
+        environment: Empty
+    ) -> [ImageSource] {
         guard let client = Container.shared.currentUserSession()?.client else { return [] }
 
         // TODO: figure out what to do about screen scaling with .main being deprecated
         //       - maxWidth assume already scaled?
         let scaleWidth: Int? = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
+        guard let primaryImageTag else { return [] }
 
         let imageRequestParameters = Paths.GetItemImageParameters(
             maxWidth: scaleWidth ?? Int(maxWidth),
@@ -57,8 +68,26 @@ extension BaseItemPerson: Poster {
             blurHash: blurHash
         )]
     }
+}
 
-    func transform(image: Image) -> some View {
-        image
+// TODO: probably don't cast to `BaseItemDto`?
+// - loses roles
+
+extension BaseItemPerson: LibraryElement {
+
+    @MainActor
+    func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {
+        BaseItemDto(person: self)
+            .libraryDidSelectElement(router: router, in: namespace)
+    }
+
+    func makeGridBody(libraryStyle: LibraryStyle) -> some View {
+        BaseItemDto(person: self)
+            .makeGridBody(libraryStyle: libraryStyle)
+    }
+
+    func makeListBody(libraryStyle: LibraryStyle) -> some View {
+        BaseItemDto(person: self)
+            .makeListBody(libraryStyle: libraryStyle)
     }
 }

@@ -95,7 +95,10 @@ extension SelectUserView {
         }
 
         var body: some View {
-            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
+            ListRow(
+                insets: .init(horizontal: EdgeInsets.edgePadding),
+                action: action
+            ) {
                 UserProfileImage(
                     userID: user.id,
                     source: user.profileImageSource(
@@ -108,7 +111,6 @@ extension SelectUserView {
             } content: {
                 rowContent
             }
-            .onSelect(perform: action)
             .contextMenu {
                 Button(L10n.delete, role: .destructive) {
                     onDelete()

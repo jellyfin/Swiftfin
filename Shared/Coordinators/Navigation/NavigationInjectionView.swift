@@ -48,6 +48,7 @@ struct NavigationInjectionView: View {
                     route.destination
                 }
         }
+        .trackingFrame(for: .navigationStack)
         .environment(
             \.router,
             .init(

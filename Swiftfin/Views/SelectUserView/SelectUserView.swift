@@ -379,7 +379,7 @@ struct SelectUserView: View {
                 }
             }
             .animation(.linear(duration: 0.1), value: userListDisplayType)
-            .environment(\.isOverComplexContent, true)
+            .withViewContext(.isOverComplexContent)
             .isEditing(isEditingUsers)
             .frame(maxHeight: .infinity)
             .mask {

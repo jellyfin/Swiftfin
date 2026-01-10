@@ -15,6 +15,21 @@ import SwiftUI
 
 extension BaseItemDto: Poster {
 
+    struct Environment: WithDefaultValue, WithViewContext {
+        let useParent: Bool
+        var viewContext: ViewContext
+
+        init(
+            useParent: Bool = false,
+            viewContext: ViewContext = .init()
+        ) {
+            self.useParent = useParent
+            self.viewContext = viewContext
+        }
+
+        static let `default`: Self = .init()
+    }
+
     var preferredPosterDisplayType: PosterDisplayType {
         type?.preferredPosterDisplayType ?? .portrait
     }
@@ -30,15 +45,6 @@ extension BaseItemDto: Poster {
         }
     }
 
-    var showTitle: Bool {
-        switch type {
-        case .episode, .series, .movie, .boxSet, .collectionFolder:
-            Defaults[.Customization.showPosterLabels]
-        default:
-            true
-        }
-    }
-
     var systemImage: String {
         switch type {
         case .audio, .musicAlbum:
@@ -49,7 +55,7 @@ extension BaseItemDto: Poster {
             "tv"
         case .episode, .movie, .series, .video:
             "film"
-        case .folder:
+        case .collectionFolder, .folder, .userView:
             "folder.fill"
         case .musicVideo:
             "music.note.tv.fill"
@@ -60,17 +66,32 @@ extension BaseItemDto: Poster {
         }
     }
 
-    func portraitImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
+    func portraitImageSources(
+        maxWidth: CGFloat? = nil,
+        quality: Int? = nil,
+        environment: Environment
+    ) -> [ImageSource] {
         switch type {
         case .episode:
-            [seriesImageSource(.primary, maxWidth: maxWidth, quality: quality)]
-        case .boxSet, .channel, .liveTvChannel, .movie, .musicArtist, .person, .series, .tvChannel:
-            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
+            seriesImageSource(.primary, maxWidth: maxWidth, quality: quality)
+        case .boxSet, .channel, .liveTvChannel, .movie, .musicArtist, .series, .tvChannel:
+            imageSource(
+                .primary,
+                maxWidth: maxWidth,
+                quality: quality
+            )
+        case .person:
+            imageSource(
+                .primary,
+                maxWidth: maxWidth,
+                quality: quality,
+                requireTag: false
+            )
         default:
             // TODO: cleanup
             // parentBackdropItemID seems good enough
             if extraType != nil, let parentBackdropItemID {
-                [.init(
+                .init(
                     url: _imageURL(
                         .primary,
                         maxWidth: maxWidth,
@@ -79,75 +100,212 @@ extension BaseItemDto: Poster {
                         itemID: parentBackdropItemID,
                         requireTag: false
                     )
-                )]
-            } else {
-                []
+                )
             }
         }
     }
 
-    func landscapeImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
+    func landscapeImageSources(
+        maxWidth: CGFloat? = nil,
+        quality: Int? = nil,
+        environment: Environment
+    ) -> [ImageSource] {
         switch type {
         case .episode:
-            if Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
-                [
-                    seriesImageSource(.thumb, maxWidth: maxWidth, quality: quality),
-                    seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality),
-                    imageSource(.primary, maxWidth: maxWidth, quality: quality),
-                ]
+            if environment.useParent {
+                if environment.viewContext.contains(.isThumb) {
+                    seriesImageSource(.thumb, maxWidth: maxWidth, quality: quality)
+                }
+                seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality)
+                imageSource(.primary, maxWidth: maxWidth, quality: quality)
             } else {
-                [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
+                imageSource(.primary, maxWidth: maxWidth, quality: quality)
             }
-        case .folder, .program, .musicVideo, .video:
-            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
+        case .collectionFolder, .folder, .musicVideo, .program, .userView, .video:
+            imageSource(.primary, maxWidth: maxWidth, quality: quality)
         default:
-            [
-                imageSource(.thumb, maxWidth: maxWidth, quality: quality),
-                imageSource(.backdrop, maxWidth: maxWidth, quality: quality),
-            ]
+            if environment.viewContext.contains(.isThumb) {
+                imageSource(.thumb, maxWidth: maxWidth, quality: quality)
+            }
+            imageSource(.backdrop, maxWidth: maxWidth, quality: quality)
         }
     }
 
-    func cinematicImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
-        switch type {
-        case .episode:
-            [seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality)]
-        default:
-            [imageSource(.backdrop, maxWidth: maxWidth, quality: quality)]
-        }
-    }
-
-    func squareImageSources(maxWidth: CGFloat?, quality: Int? = nil) -> [ImageSource] {
+    func squareImageSources(
+        maxWidth: CGFloat?,
+        quality: Int? = nil,
+        environment: Environment
+    ) -> [ImageSource] {
         switch type {
         case .audio, .channel, .musicAlbum, .tvChannel:
-            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
+            // TODO: generalize blurhash retrieval
+            imageSource(.primary, maxWidth: maxWidth, quality: quality)
+            imageSource(
+                id: albumID,
+                blurHash: imageBlurHashes?.primary?.first?.value,
+                .primary,
+                maxWidth: maxWidth,
+                quality: quality
+            )
+        case .program:
+            if let channelID {
+                imageSource(
+                    id: channelID,
+                    .primary,
+                    maxWidth: maxWidth,
+                    quality: quality
+                )
+            }
         default:
             []
         }
     }
 
-    func thumbImageSources() -> [ImageSource] {
-        switch preferredPosterDisplayType {
-        case .portrait:
-            portraitImageSources(maxWidth: 200, quality: 90)
-        case .landscape:
-            landscapeImageSources(maxWidth: 200, quality: 90)
-        case .square:
-            squareImageSources(maxWidth: 200, quality: 90)
-        }
-    }
-
     @ViewBuilder
-    func transform(image: Image) -> some View {
+    func transform(image: Image, displayType: PosterDisplayType) -> some View {
         switch type {
         case .channel, .tvChannel:
             ContainerRelativeView(ratio: 0.95) {
                 image
                     .aspectRatio(contentMode: .fit)
             }
+        case .program:
+            if displayType == .square {
+                // Using channel from above
+                ContainerRelativeView(ratio: 0.95) {
+                    image
+                        .aspectRatio(contentMode: .fit)
+                }
+            } else {
+                image
+                    .aspectRatio(contentMode: .fill)
+            }
         default:
             image
                 .aspectRatio(contentMode: .fill)
+        }
+    }
+
+    @ViewBuilder
+    var posterLabel: some View {
+        _BaseItemPosterLabel(item: self)
+    }
+
+    @ViewBuilder
+    func posterOverlay(for displayType: PosterDisplayType) -> some View {
+        PosterIndicatorsOverlay(
+            item: self,
+            indicators: [.progress],
+            posterDisplayType: displayType
+        )
+    }
+}
+
+struct _BaseItemPosterLabel: View {
+
+    @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
+    private var useSeriesLandscapeBackdrop
+
+    let item: BaseItemDto
+
+    var body: some View {
+        if item.type == .episode {
+            TitleSubtitleContentView(
+                title: item.seriesName ?? L10n.unknown
+            ) {
+                DotHStack(padding: 2) {
+                    if let seasonEpisodeLabel = item.seasonEpisodeLabel {
+                        Text(seasonEpisodeLabel)
+                    }
+                }
+            }
+        } else {
+            TitleSubtitleContentView(
+                title: item.displayTitle
+            ) {
+                Text(item.subtitle ?? "")
+                    .hidden(item.subtitle == nil)
+            }
+        }
+    }
+}
+
+private let landscapeWidth: CGFloat = 110
+private let portraitWidth: CGFloat = 60
+
+extension BaseItemDto: LibraryElement {
+
+    @MainActor
+    func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {
+        switch type {
+        case .collectionFolder, .folder, .userView:
+            let library = ItemLibrary(parent: self)
+            router.route(to: .library(library: library), in: namespace)
+        default:
+            router.route(to: .item(item: self), in: namespace)
+        }
+    }
+
+    func makeGridBody(libraryStyle: LibraryStyle) -> some View {
+        WithRouter { router in
+            PosterButton(
+                item: self,
+                type: libraryStyle.posterDisplayType
+            ) { namespace in
+                libraryDidSelectElement(router: router, in: namespace)
+            }
+        }
+    }
+
+    func makeListBody(libraryStyle: LibraryStyle) -> some View {
+        WithNamespace { namespace in
+            WithRouter { router in
+                ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
+                    libraryDidSelectElement(router: router, in: namespace)
+                } leading: {
+                    PosterImage(
+                        item: self,
+                        type: libraryStyle.posterDisplayType,
+                        contentMode: .fill
+                    )
+                    .posterShadow()
+                    .frame(width: libraryStyle.posterDisplayType == .landscape ? landscapeWidth : portraitWidth)
+                } content: {
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(displayTitle)
+                            .font(.callout)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.primary)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
+
+                        accessoryView
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .backport
+                .matchedTransitionSource(id: "item", in: namespace)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var accessoryView: some View {
+        DotHStack {
+            if type == .episode, let seasonEpisodeLocator = seasonEpisodeLabel {
+                Text(seasonEpisodeLocator)
+            } else if let premiereYear = premiereDateYear {
+                Text(premiereYear)
+            }
+
+            if let runtime {
+                Text(runtime, format: .runtime)
+            }
+
+            if let officialRating {
+                Text(officialRating)
+            }
         }
     }
 }

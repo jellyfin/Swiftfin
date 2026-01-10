@@ -65,9 +65,9 @@ extension MediaInfoSupplement {
                 manager.setPlaybackRequestStatus(status: .playing)
                 containerState.select(supplement: nil)
             }
-            #if os(iOS)
-            .buttonStyle(.material)
-            #endif
+//            #if os(iOS)
+//            .buttonStyle(.material)
+//            #endif
             .frame(width: 200, height: 50)
             .font(.subheadline)
             .fontWeight(.semibold)
@@ -134,15 +134,16 @@ extension MediaInfoSupplement {
 
         @ViewBuilder
         private var iOSRegularView: some View {
-            HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
-                // TODO: determine what to do with non-portrait (channel, home video) images
-                //       - use aspect ratio?
+            HStack(spacing: EdgeInsets.edgePadding) {
                 PosterImage(
                     item: item,
                     type: item.preferredPosterDisplayType,
                     contentMode: .fit
                 )
-                .environment(\.isOverComplexContent, true)
+                .withViewContext(.isOverComplexContent)
+                .frame(
+                    maxWidth: item.preferredPosterDisplayType == .portrait ? nil : 170
+                )
 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(item.displayTitle)
@@ -162,14 +163,23 @@ extension MediaInfoSupplement {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(
+                    maxWidth: .infinity,
+                    maxHeight: .infinity,
+                    alignment: .bottomLeading
+                )
 
                 if !item.isLiveStream {
                     VStack {
                         fromBeginningButton
                     }
+                    .frame(
+                        maxHeight: .infinity,
+                        alignment: .bottomLeading
+                    )
                 }
             }
+            .frame(maxHeight: .infinity, alignment: .bottom)
         }
 
         var tvOSView: some View { EmptyView() }

@@ -9,7 +9,6 @@
 import Combine
 import Foundation
 import JellyfinAPI
-import OrderedCollections
 import SwiftUI
 
 @MainActor
@@ -42,16 +41,34 @@ final class SearchViewModel: ViewModel {
     }
 
     @Published
-    private(set) var items: [BaseItemKind: [BaseItemDto]] = [:]
-    @Published
     private(set) var suggestions: [BaseItemDto] = []
+
+    let itemContentGroupViewModel: ContentGroupViewModel<SearchContentGroupProvider>
 
     private var searchQuery: CurrentValueSubject<String, Never> = .init("")
 
     let filterViewModel: FilterViewModel
 
-    var hasNoResults: Bool {
-        items.values.allSatisfy(\.isEmpty)
+    var isEmpty: Bool {
+        func extract<T: _ContentGroup>(_ group: T) -> Bool {
+            func inner<VM: __PagingLibaryViewModel>(_ vm: VM) -> Bool {
+                vm.elements.isEmpty
+            }
+
+            if let libaryViewModel = group.viewModel as? any __PagingLibaryViewModel {
+                return inner(libaryViewModel)
+            } else {
+                return true
+            }
+        }
+
+        return itemContentGroupViewModel.groups
+            .map { extract($0) }
+            .reduce(true) { $0 && $1 }
+    }
+
+    var isNotEmpty: Bool {
+        !isEmpty
     }
 
     var canSearch: Bool {
@@ -60,8 +77,13 @@ final class SearchViewModel: ViewModel {
 
     // MARK: init
 
-    init(filterViewModel: FilterViewModel = .init()) {
+    init(filterViewModel: FilterViewModel? = nil) {
+        let filterViewModel = filterViewModel ?? .init()
+
         self.filterViewModel = filterViewModel
+
+        self.itemContentGroupViewModel = .init(provider: .init())
+
         super.init()
 
         searchQuery
@@ -94,100 +116,35 @@ final class SearchViewModel: ViewModel {
     private func _actuallySearch(_ query: String) async throws {
 
         guard self.canSearch else {
-            items.removeAll()
+//            items.removeAll()
             return
         }
 
-        let newItems = try await withThrowingTaskGroup(
-            of: (BaseItemKind, [BaseItemDto]).self,
-            returning: [BaseItemKind: [BaseItemDto]].self
-        ) { group in
+        func inner<VM: __PagingLibaryViewModel>(_ vm: VM) where VM._PagingLibrary == ItemLibrary {
+            var filters = vm.environment.filters
+            filters.query = query
 
-            // Base items
-            let retrievingItemTypes: [BaseItemKind] = [
-                .boxSet,
-                .episode,
-                .movie,
-                .musicArtist,
-                .musicVideo,
-                .liveTvProgram,
-                .series,
-                .tvChannel,
-                .video,
-            ]
+            vm.environment = .init(
+                grouping: vm.environment.grouping,
+                filters: filters,
+                fields: nil
+            )
 
-            for type in retrievingItemTypes {
-                group.addTask {
-                    let items = try await self._getItems(query: query, itemType: type)
-                    return (type, items)
-                }
-            }
-
-            // People
-            group.addTask {
-                let items = try await self._getPeople(query: query)
-                return (BaseItemKind.person, items)
-            }
-
-            var result: [BaseItemKind: [BaseItemDto]] = [:]
-
-            while let items = try await group.next() {
-                if items.1.isNotEmpty {
-                    result[items.0] = items.1
-                }
-            }
-
-            return result
+            print(vm.environment)
         }
 
-        guard !Task.isCancelled else { return }
-        self.items = newItems
-    }
+//        for (viewModel, _) in itemContentGroupViewModel.sections {
+//            if let library = viewModel.library as? ItemLibrary {
+//                library.filterViewModel?.currentFilters.query = query
+//            }
+//        }
 
-    private func _getItems(query: String, itemType: BaseItemKind) async throws -> [BaseItemDto] {
+        var filters = filterViewModel.currentFilters
+        filters.query = query
 
-        var parameters = Paths.GetItemsByUserIDParameters()
-        parameters.enableUserData = true
-        parameters.fields = .MinimumFields
-        parameters.includeItemTypes = [itemType]
-        parameters.isRecursive = true
-        parameters.limit = 20
-        parameters.searchTerm = query
+        itemContentGroupViewModel.provider.environment.filters = filters
 
-        // Filters
-        let filters = filterViewModel.currentFilters
-        parameters.filters = filters.traits
-        parameters.genres = filters.genres.map(\.value)
-        parameters.sortBy = filters.sortBy.map(\.rawValue)
-        parameters.sortOrder = filters.sortOrder
-        parameters.tags = filters.tags.map(\.value)
-        parameters.years = filters.years.map(\.intValue)
-
-        if filters.letter.first?.value == "#" {
-            parameters.nameLessThan = "A"
-        } else {
-            parameters.nameStartsWith = filters.letter
-                .map(\.value)
-                .filter { $0 != "#" }
-                .first
-        }
-
-        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
-        let response = try await userSession.client.send(request)
-
-        return response.value.items ?? []
-    }
-
-    private func _getPeople(query: String) async throws -> [BaseItemDto] {
-
-        var parameters = Paths.GetPersonsParameters()
-        parameters.limit = 20
-        parameters.searchTerm = query
-
-        let request = Paths.getPersons(parameters: parameters)
-        let response = try await userSession.client.send(request)
-
-        return response.value.items ?? []
+        await itemContentGroupViewModel.refresh()
     }
 
     // MARK: suggestions
@@ -195,7 +152,7 @@ final class SearchViewModel: ViewModel {
     @Function(\Action.Cases.getSuggestions)
     private func _getSuggestions() async throws {
 
-        filterViewModel.send(.getQueryFilters)
+        async let _ = filterViewModel.getQueryFilters()
 
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.includeItemTypes = [.movie, .series]

@@ -10,6 +10,10 @@ import SwiftUI
 
 extension FocusedValues {
 
+    // TODO: fix
     @Entry
     var focusedPoster: AnyPoster?
+
+    @Entry
+    var focusedPosterID: Int?
 }
