@@ -211,7 +211,7 @@ extension [MediaStream] {
 
     /// Filter & Re-index tracks based on the LibraryOptions.embeddedSubtitleOption from the item's parent Library
     func adjustedTrackIndexes(embeddedSubtitleOption: EmbeddedSubtitleOptions = .allowAll) -> [MediaStream] {
-        let filtered = self.filter { stream in
+        self.filter { stream in
             guard stream.type == .subtitle, !(stream.isExternal ?? false) else {
                 return true
             }
@@ -227,14 +227,6 @@ extension [MediaStream] {
                 return false
             }
         }
-
-        var result: [MediaStream] = []
-        for (index, var track) in filtered.enumerated() {
-            track.index = index
-            result.append(track)
-        }
-
-        return result
     }
 
     var has4KVideo: Bool {
