@@ -12,12 +12,8 @@ import SwiftUI
 
 struct ServerUserLiveTVAccessView: View {
 
-    // MARK: - Current Date
-
     @CurrentDate
     private var currentDate: Date
-
-    // MARK: - Observed & Environment Objects
 
     @Router
     private var router
@@ -25,17 +21,8 @@ struct ServerUserLiveTVAccessView: View {
     @ObservedObject
     private var viewModel: ServerUserAdminViewModel
 
-    // MARK: - Policy Variable
-
     @State
     private var tempPolicy: UserPolicy
-
-    // MARK: - Error State
-
-    @State
-    private var error: Error?
-
-    // MARK: - Initializer
 
     init(viewModel: ServerUserAdminViewModel) {
         self.viewModel = viewModel
@@ -47,44 +34,7 @@ struct ServerUserLiveTVAccessView: View {
         self.tempPolicy = policy
     }
 
-    // MARK: - Body
-
     var body: some View {
-        contentView
-            .navigationTitle(L10n.liveTVAccessCapitalized)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarCloseButton {
-                router.dismiss()
-            }
-            .topBarTrailing {
-                if viewModel.backgroundStates.contains(.updating) {
-                    ProgressView()
-                }
-                Button(L10n.save) {
-                    if tempPolicy != viewModel.user.policy {
-                        viewModel.send(.updatePolicy(tempPolicy))
-                    }
-                }
-                .buttonStyle(.toolbarPill)
-                .disabled(viewModel.user.policy == tempPolicy)
-            }
-            .onReceive(viewModel.events) { event in
-                switch event {
-                case let .error(eventError):
-                    UIDevice.feedback(.error)
-                    error = eventError
-                case .updated:
-                    UIDevice.feedback(.success)
-                    router.dismiss()
-                }
-            }
-            .errorMessage($error)
-    }
-
-    // MARK: - Content View
-
-    @ViewBuilder
-    var contentView: some View {
         List {
             Section(L10n.access) {
                 Toggle(
@@ -97,5 +47,33 @@ struct ServerUserLiveTVAccessView: View {
                 )
             }
         }
+        .navigationTitle(L10n.liveTVAccessCapitalized)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarCloseButton {
+            router.dismiss()
+        }
+        .refreshable {
+            viewModel.refresh()
+        }
+        .topBarTrailing {
+            if viewModel.background.is(.updating) {
+                ProgressView()
+            }
+            Button(L10n.save) {
+                if tempPolicy != viewModel.user.policy {
+                    viewModel.updatePolicy(tempPolicy)
+                }
+            }
+            .buttonStyle(.toolbarPill)
+            .disabled(viewModel.user.policy == tempPolicy)
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .updated:
+                UIDevice.feedback(.success)
+                router.dismiss()
+            }
+        }
+        .errorMessage($viewModel.error)
     }
 }

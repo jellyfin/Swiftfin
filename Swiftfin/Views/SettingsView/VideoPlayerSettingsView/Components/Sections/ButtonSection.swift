@@ -13,6 +13,11 @@ extension VideoPlayerSettingsView {
 
     struct ButtonSection: View {
 
+        @Default(.VideoPlayer.jumpBackwardInterval)
+        private var jumpBackwardLength
+        @Default(.VideoPlayer.jumpForwardInterval)
+        private var jumpForwardLength
+
         @Default(.VideoPlayer.barActionButtons)
         private var barActionButtons
         @Default(.VideoPlayer.menuActionButtons)
@@ -25,6 +30,10 @@ extension VideoPlayerSettingsView {
 
         var body: some View {
             Section(L10n.buttons) {
+
+                JumpIntervalPicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
+
+                JumpIntervalPicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
 
                 ChevronButton(L10n.barButtons) {
                     router.route(to: .actionBarButtonSelector(
