@@ -54,7 +54,7 @@ extension NavigationRoute {
         CustomizeViewsSettings()
     }
 
-    #if DEBUG && !os(tvOS)
+    #if DEBUG
     static let debugSettings = NavigationRoute(
         id: "debugSettings"
     ) {
