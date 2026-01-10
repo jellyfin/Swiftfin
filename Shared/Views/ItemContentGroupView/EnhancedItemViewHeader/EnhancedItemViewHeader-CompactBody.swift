@@ -42,11 +42,10 @@ extension EnhancedItemViewHeader {
                 AlternateLayoutView(alignment: .bottom) {
                     Color.clear
                         .aspectRatio(1.77, contentMode: .fit)
-                        .padding(.bottom, 70)
+                        .padding(.bottom, 35)
                 } content: {
                     logo
                         .frame(maxWidth: .infinity)
-                        .debugCross()
                 }
                 .frame(maxWidth: .infinity)
                 .zIndex(10)
@@ -122,6 +121,9 @@ extension EnhancedItemViewHeader {
         }
 
         var body: some View {
+
+            let backdropColor = viewModel.item.blurHash(for: .backdrop)?.averageLinearColor ?? Color.gray
+
             VStack {
                 overlay
                     .edgePadding(.horizontal)
@@ -129,7 +131,8 @@ extension EnhancedItemViewHeader {
                     .colorScheme(.dark)
             }
             .backgroundParallaxHeader(
-                multiplier: 0.3
+                multiplier: 0.3,
+                _backgroundColor: backdropColor
             ) {
                 AlternateLayoutView {
                     Color.clear
@@ -137,9 +140,17 @@ extension EnhancedItemViewHeader {
                     ImageView(
                         viewModel.item.landscapeImageSources(maxWidth: 1320, environment: .init(useParent: false))
                     )
-                    .debugOverlay(.blue.opacity(0.2))
                 }
                 .aspectRatio(1.77, contentMode: .fit)
+                .overlay(alignment: .bottom) {
+                    backdropColor
+                        .frame(height: 70)
+                        .maskLinearGradient {
+                            (location: 0, opacity: 0)
+                            (location: 0.7, opacity: 1)
+                        }
+                }
+                .accessibilityHidden(true)
             }
             .scrollViewHeaderOffsetOpacity()
             .trackingFrame(for: .scrollViewHeader, key: ScrollViewHeaderFrameKey.self)

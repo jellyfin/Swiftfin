@@ -61,18 +61,13 @@ extension PagingLibraryView {
 
             Picker(selection: libraryStyle.posterDisplayType) {
                 ForEach(PosterDisplayType.allCases, id: \.self) { displayType in
-                    Label(
-                        displayType.displayTitle,
-                        systemImage: displayType.systemImage
-                    )
-                    .tag(displayType)
+                    Text(displayType.displayTitle)
+                        .tag(displayType)
                 }
             } label: {
                 Text(L10n.posters)
 
                 Text(libraryStyle.wrappedValue.posterDisplayType.displayTitle)
-
-                Image(systemName: libraryStyle.wrappedValue.posterDisplayType.systemImage)
             }
             .pickerStyle(.menu)
         }

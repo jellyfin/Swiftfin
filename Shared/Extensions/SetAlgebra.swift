@@ -8,7 +8,21 @@
 
 import Foundation
 
-extension OptionSet {
+extension SetAlgebra {
+
+    mutating func toggle(value: Element) {
+        if contains(value) {
+            remove(value)
+        } else {
+            insert(value)
+        }
+    }
+
+    mutating func insert(contentsOf elements: [Element]) {
+        for element in elements {
+            insert(element)
+        }
+    }
 
     func inserting(_ element: Element) -> Self {
         var copy = self

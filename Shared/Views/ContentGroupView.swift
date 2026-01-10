@@ -92,7 +92,15 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
         ZStack {
             switch viewModel.state {
             case .content:
-                contentView
+                if viewModel.groups.isEmpty {
+                    // TODO: non-error like empty view
+                    ErrorView(error: ErrorMessage(L10n.noResults))
+                        .refreshable {
+                            viewModel.refresh()
+                        }
+                } else {
+                    contentView
+                }
             case .error:
                 viewModel.error.map(ErrorView.init)
             case .initial, .refreshing:

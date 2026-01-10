@@ -9,6 +9,8 @@
 import Defaults
 import JellyfinAPI
 
+// TODO: just be item library with season parent?
+
 struct EpisodeLibrary: PagingLibrary {
 
     let parent: BaseItemDto

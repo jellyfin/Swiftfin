@@ -24,7 +24,7 @@ struct SeriesEpisodeContentGroup: _ContentGroup, Identifiable {
 struct SeriesEpisodeSelector: View {
 
     @ObservedObject
-    private var viewModel: _ItemViewModel
+    var viewModel: _ItemViewModel
 
     @State
     private var didSelectPlayButtonSeason = false
@@ -46,6 +46,12 @@ struct SeriesEpisodeSelector: View {
 
     @ViewBuilder
     private var seasonSelectorMenu: some View {
+        #if os(tvOS)
+        SeasonsHStack(
+            viewModel: seasonsViewModel,
+            selection: $selectionID
+        )
+        #else
         AlternateLayoutView(alignment: .leading) {
             Text(" ")
                 .frame(maxWidth: .infinity)
@@ -79,9 +85,10 @@ struct SeriesEpisodeSelector: View {
                     .redacted(reason: .placeholder)
             }
         }
+        .edgePadding(.horizontal)
+        #endif
     }
 
-    // TODO: fix when no seasons
     var body: some View {
         if seasonsViewModel.state != .content || seasonsViewModel.elements.isNotEmpty {
             ZStack {
@@ -90,7 +97,6 @@ struct SeriesEpisodeSelector: View {
                     playButtonItemID: nil
                 ) {
                     seasonSelectorMenu
-                        .edgePadding(.horizontal)
                 }
                 .opacity(0)
 
@@ -100,7 +106,6 @@ struct SeriesEpisodeSelector: View {
                         playButtonItemID: viewModel.playButtonItem?.id
                     ) {
                         seasonSelectorMenu
-                            .edgePadding(.horizontal)
                     }
                 } else {
                     EpisodeHStack(
@@ -108,7 +113,6 @@ struct SeriesEpisodeSelector: View {
                         playButtonItemID: nil
                     ) {
                         seasonSelectorMenu
-                            .edgePadding(.horizontal)
                     }
                 }
             }

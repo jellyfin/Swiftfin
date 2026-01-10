@@ -56,12 +56,45 @@ class _ItemViewModel: ViewModel, WithRefresh {
             wrappedValue: [],
             observing: localTrailerViewModel.$elements.map(\.elements)
         )
+
+        super.init()
+
+        Notifications[.itemUserDataDidChange]
+            .publisher
+//            .filter { [weak self] userData in
+//                guard let self else { return false }
+//                return userData.itemId == self.item.id ||
+//                    userData.itemId == self.playButtonItem?.id
+//            }
+            .sink { [weak self] userData in
+                self?.updateItemUserData(userData)
+            }
+            .store(in: &cancellables)
+    }
+
+    private func updateItemUserData(_ userData: UserItemDataDto) {
+        guard item.id == userData.itemID else { return }
+        item = item.mutating(\.userData, with: userData)
+    }
+
+    private func notifyUserDataIfNeeded(for item: BaseItemDto) {
+//        guard let itemId = item.id, let userData = item.userData else { return }
+//
+//        let shouldNotify = ItemUserDataCache.shared.updateIfNeeded(
+//            itemId: itemId,
+//            userData: userData
+//        )
+//
+//        if shouldNotify {
+//            Notifications[.itemUserDataDidChange].post(userData)
+//        }
     }
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
         let newItem = try await item.getFullItem(userSession: userSession)
         item = newItem
+        notifyUserDataIfNeeded(for: newItem)
 
         Task {
             localTrailerViewModel.refresh()
@@ -71,6 +104,10 @@ class _ItemViewModel: ViewModel, WithRefresh {
             playButtonItem = try await getNextUp(seriesID: item.id)
         } else {
             playButtonItem = newItem
+        }
+
+        if let playButtonItem {
+            notifyUserDataIfNeeded(for: playButtonItem)
         }
     }
 
@@ -89,53 +126,5 @@ class _ItemViewModel: ViewModel, WithRefresh {
         }
 
         return item
-    }
-}
-
-import Combine
-
-/// Observable object property wrapper that allows observing
-/// another `Publisher`.
-@propertyWrapper
-final class ObservedPublisher<Value>: ObservableObject {
-
-    @Published
-    private(set) var wrappedValue: Value
-
-    var projectedValue: AnyPublisher<Value, Never> {
-        $wrappedValue
-            .eraseToAnyPublisher()
-    }
-
-    private var cancellables = Set<AnyCancellable>()
-
-    init<P: Publisher>(
-        wrappedValue: Value,
-        observing publisher: P
-    ) where P.Output == Value, P.Failure == Never {
-        self.wrappedValue = wrappedValue
-
-        publisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] newValue in
-                self?.wrappedValue = newValue
-            }
-            .store(in: &cancellables)
-    }
-
-    static subscript<T: ObservableObject>(
-        _enclosingInstance instance: T,
-        wrapped wrappedKeyPath: KeyPath<T, Value>,
-        storage storageKeyPath: KeyPath<T, ObservedPublisher<Value>>
-    ) -> Value where T.ObjectWillChangePublisher == ObservableObjectPublisher {
-        let wrapper = instance[keyPath: storageKeyPath]
-
-        wrapper.objectWillChange
-            .sink { [weak instance] _ in
-                instance?.objectWillChange.send()
-            }
-            .store(in: &wrapper.cancellables)
-
-        return wrapper.wrappedValue
     }
 }

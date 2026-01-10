@@ -19,6 +19,7 @@ import SwiftUI
 
 extension BaseItemDto {
 
+    // TODO: remove?
     init(person: BaseItemPerson) {
         self.init(
             id: person.id,
@@ -32,13 +33,6 @@ extension BaseItemDto: Displayable {
 
     var displayTitle: String {
         name ?? L10n.unknown
-    }
-}
-
-extension BaseItemDto: LibraryIdentifiable {
-
-    var unwrappedIDHashOrZero: Int {
-        id.hashValueOrZero
     }
 }
 

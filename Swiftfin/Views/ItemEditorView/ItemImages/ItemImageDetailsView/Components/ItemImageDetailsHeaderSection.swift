@@ -57,10 +57,6 @@ private struct BasicImagePosterItem: Poster {
     let systemImage: String
     let type: ImageType?
 
-    var unwrappedIDHashOrZero: Int {
-        id
-    }
-
     func imageSources(
         for displayType: PosterDisplayType,
         size: PosterDisplayType.Size,

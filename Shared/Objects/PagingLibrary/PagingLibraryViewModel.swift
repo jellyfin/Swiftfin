@@ -7,8 +7,10 @@
 //
 
 import Combine
+import Factory
 import Foundation
 import IdentifiedCollections
+import JellyfinAPI
 import SwiftUI
 
 /// Magic number for page sizes
@@ -30,7 +32,7 @@ WithRefresh where Environment == _PagingLibrary.Environment {
 
 @MainActor
 @Stateful(conformances: [WithRefresh.self])
-class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __PagingLibaryViewModel {
+class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, @MainActor __PagingLibaryViewModel {
 
     typealias Background = _BackgroundActions
     typealias Element = _PagingLibrary.Element
@@ -98,13 +100,45 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
         self.library = library
         self.elements = IdentifiedArray(
             [],
-//            id: \.unwrappedIDHashOrZero,
             uniquingIDsWith: { x, _ in x }
         )
         self.hasNextPage = library.hasNextPage
         self.pageSize = pageSize
 
         super.init()
+
+        Notifications[.itemUserDataDidChange]
+            .publisher
+            .sink { [weak self] userData in
+                self?.updateItemUserData(userData)
+            }
+            .store(in: &cancellables)
+    }
+
+    // TODO: somehow make item checks generic?
+    private func updateItemUserData(_ userData: UserItemDataDto) {
+        guard let itemID = userData.itemID else { return }
+
+        guard let index = (elements as? IdentifiedArrayOf<BaseItemDto>)?.index(id: itemID) else { return }
+        guard var item = elements[index] as? BaseItemDto else { return }
+        item.userData = userData
+        elements[index] = item as! Element
+    }
+
+    private func notifyUserDataChanges(in elements: [Element]) {
+        for element in elements {
+            guard let item = element as? BaseItemDto,
+                  let itemID = item.id,
+                  let userData = item.userData
+            else { continue }
+
+            let shouldNotify = Container.shared.userItemCache()
+                .touch(key: itemID, value: userData)
+
+            if shouldNotify {
+                Notifications[.itemUserDataDidChange].post(userData)
+            }
+        }
     }
 
     @Function(\Action.Cases.refresh)
@@ -129,7 +163,6 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
             pageSize: pageSize,
             userSession: userSession,
             elementIDs: []
-//            elementIDs: elements.map(\.unwrappedIDHashOrZero)
         )
 
         let nextPageElements = try await library.retrievePage(
@@ -138,6 +171,8 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
         )
 
         guard !Task.isCancelled else { return }
+
+        notifyUserDataChanges(in: nextPageElements)
 
         hasNextPage = !(nextPageElements.count < pageSize)
 
@@ -155,7 +190,6 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, __Paging
                 pageSize: 0,
                 userSession: userSession,
                 elementIDs: []
-//                elementIDs: elements.map(\.unwrappedIDHashOrZero)
             )
 
             func inner(

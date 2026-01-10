@@ -55,38 +55,79 @@ struct ItemGroupProvider: _ContentGroupProvider {
             }
         }
 
-        #if os(iOS)
         if item.type == .series {
             SeriesEpisodeContentGroup(viewModel: viewModel)
         }
-        #endif
 
         if let genres = item.itemGenres, genres.isNotEmpty {
             PillGroup(
                 displayTitle: L10n.genres,
                 id: "genres",
-                library: StaticLibrary(
-                    title: L10n.genres,
-                    id: "genres",
-                    elements: genres
+                elements: genres
+            ) { router, element in
+                router.route(
+                    to: .contentGroup(
+                        provider: ItemTypeContentGroupProvider(
+                            itemTypes: [
+                                BaseItemKind.movie,
+                                .series,
+                                .boxSet,
+                                .episode,
+                                .musicVideo,
+                                .video,
+                                .liveTvProgram,
+                                .tvChannel,
+                                .musicArtist,
+                                .person,
+                            ],
+                            parent: .init(name: element.displayTitle),
+                            environment: .init(
+                                filters: .init(
+                                    genres: [.init(
+                                        stringLiteral: element.id
+                                    )]
+                                )
+                            )
+                        )
+                    )
                 )
-            )
+            }
         }
 
         if let studios = item.itemStudios, studios.isNotEmpty {
             PillGroup(
                 displayTitle: L10n.studios,
                 id: "studios",
-                library: StaticLibrary(
-                    title: L10n.studios,
-                    id: "studios",
-                    elements: studios
+                elements: studios
+            ) { router, element in
+                router.route(
+                    to: .contentGroup(
+                        provider: ItemTypeContentGroupProvider(
+                            itemTypes: [
+                                BaseItemKind.movie,
+                                .series,
+                                .boxSet,
+                                .episode,
+                                .musicVideo,
+                                .video,
+                                .liveTvProgram,
+                                .tvChannel,
+                                .musicArtist,
+                                .person,
+                            ],
+                            parent: .init(
+                                id: element.id,
+                                name: element.displayTitle,
+                                type: .studio
+                            )
+                        )
+                    )
                 )
-            )
+            }
         }
 
         switch item.type {
-        case .boxSet, .person, .musicArtist, .tvChannel:
+        case .boxSet, .person, .musicArtist:
             try await ItemTypeContentGroupProvider(
                 itemTypes: BaseItemKind.supportedCases
                     .appending(.episode)

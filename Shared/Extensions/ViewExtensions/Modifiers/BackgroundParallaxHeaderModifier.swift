@@ -12,11 +12,13 @@ extension View {
 
     func backgroundParallaxHeader(
         multiplier: CGFloat = 1,
+        _backgroundColor: Color? = nil,
         @ViewBuilder header: @escaping () -> some View
     ) -> some View {
         modifier(
             BackgroundParallaxHeaderModifier(
                 multiplier: multiplier,
+                _backgroundColor: _backgroundColor,
                 header: header
             )
         )
@@ -31,15 +33,18 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
     @State
     private var headerFrame: CGRect = .zero
 
-    private let multiplier: CGFloat
+    private let _backgroundColor: Color?
     private let background: Background
+    private let multiplier: CGFloat
 
     init(
         multiplier: CGFloat = 1,
+        _backgroundColor: Color? = nil,
         @ViewBuilder header: @escaping () -> Background
     ) {
-        self.multiplier = multiplier
         self.background = header()
+        self._backgroundColor = _backgroundColor
+        self.multiplier = multiplier
     }
 
     private var contentFrame: CGRect {
@@ -109,24 +114,6 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
                 }
                 .offset(y: offset)
             }
-            .overlay {
-                VStack {
-                    Text("ScrollView Offset: \(scrollViewOffset)")
-                    Text("Background Height: \(adjustedHeaderHeight)")
-                    Text("Parent Safe Area Insets: \(scrollViewSafeAreaInsets.top)")
-
-                    Text("--")
-
-                    Text("Background Offset: \(offset)")
-//                    Text("Mask Height: \(maskHeight)")
-                    Text("Scale Effect: \(scaleEffect)")
-                    Text("MaxY: \(frameForParentView[.scrollViewHeader, default: .zero].frame.maxY)")
-                    Text("NBH: \(navigationBarHeight)")
-                }
-                .padding()
-                .background(Color.white.opacity(0.2))
-                .foregroundStyle(.black)
-                .hidden()
-            }
+            .background(_backgroundColor)
     }
 }

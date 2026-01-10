@@ -74,7 +74,7 @@ struct PosterHStack<
 
     private var itemSpacing: CGFloat {
         #if os(tvOS)
-        EdgeInsets.edgePadding
+        40
         #else
         EdgeInsets.edgePadding / 2
         #endif

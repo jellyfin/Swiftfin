@@ -69,7 +69,6 @@ struct ServerActivityView: View {
         } else {
             CollectionVGrid(
                 uniqueElements: viewModel.elements,
-                id: \.unwrappedIDHashOrZero,
                 layout: .columns(1)
             ) { log in
 

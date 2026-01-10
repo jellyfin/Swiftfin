@@ -24,10 +24,6 @@ extension RemoteImageInfo: @retroactive Identifiable, Poster {
         providerName ?? L10n.unknown
     }
 
-    var unwrappedIDHashOrZero: Int {
-        id
-    }
-
     var subtitle: String? {
         language
     }

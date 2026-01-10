@@ -187,12 +187,6 @@ extension View {
         }
     }
 
-    // TODO: make a wrapper view instead
-    @available(*, deprecated, message: "Make a wrapper view instead")
-    func bottomEdgeGradient(bottomColor: Color) -> some View {
-        modifier(BottomEdgeGradientModifier(bottomColor: bottomColor))
-    }
-
     // TODO: rename `errorAlert`
 
     /// Error Message Alert
@@ -438,11 +432,6 @@ extension View {
 
     var backport: Backport<Self> {
         Backport(content: self)
-    }
-
-    /// Perform an action on the final disappearance of a `View`.
-    func onFinalDisappear(perform action: @escaping () -> Void) -> some View {
-        modifier(OnFinalDisappearModifier(action: action))
     }
 
     /// Perform an action on the first appearance of a `View`.

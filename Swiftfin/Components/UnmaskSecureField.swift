@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import SwiftUI
 
 // TODO: use _UIHostingView for button animation workaround?
@@ -31,7 +32,7 @@ struct _UnmaskSecureField: UIViewRepresentable {
     func makeUIView(context: Context) -> UITextField {
 
         let textField = UITextField()
-        textField.font = context.environment.font?.uiFont ?? UIFont.preferredFont(forTextStyle: .body)
+        textField.font = context.environment.font?.toUIFont()
         textField.adjustsFontForContentSizeCategory = true
         textField.isSecureTextEntry = true
         textField.keyboardType = .asciiCapable

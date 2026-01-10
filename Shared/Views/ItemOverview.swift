@@ -18,13 +18,11 @@ struct ItemOverviewView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(spacing: 10) {
 
                 #if os(tvOS)
                 Text(item.displayTitle)
                     .font(.title)
-                    .frame(maxWidth: .infinity)
-                    .padding(.bottom, 200)
                 #endif
 
                 if let firstTagline = item.taglines?.first {

@@ -35,10 +35,6 @@ extension ItemGenre: LibraryElement {
 
     func makeListBody(libraryStyle: LibraryStyle) -> EmptyView {}
 
-    var unwrappedIDHashOrZero: Int {
-        value.hashValue
-    }
-
     var preferredPosterDisplayType: PosterDisplayType {
         .landscape
     }

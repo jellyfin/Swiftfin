@@ -130,17 +130,17 @@ extension PosterButton where Label == EmptyView {
     }
 }
 
-struct TitleSubtitleContentView<Subtitle: View>: View {
+struct TitleSubtitleContentView<Content: View>: View {
 
     private let title: String
-    private let subtitle: Subtitle
+    private let content: Content
 
     init(
         title: String,
-        @ViewBuilder subtitle: @escaping () -> Subtitle
+        @ViewBuilder content: @escaping () -> Content
     ) {
         self.title = title
-        self.subtitle = subtitle()
+        self.content = content()
     }
 
     var body: some View {
@@ -150,7 +150,7 @@ struct TitleSubtitleContentView<Subtitle: View>: View {
                 .foregroundStyle(.primary)
                 .lineLimit(1, reservesSpace: true)
 
-            subtitle
+            content
                 .fontWeight(.medium)
                 .foregroundStyle(.secondary)
                 .lineLimit(1, reservesSpace: true)
@@ -159,21 +159,21 @@ struct TitleSubtitleContentView<Subtitle: View>: View {
     }
 }
 
-extension TitleSubtitleContentView where Subtitle == Text {
+extension TitleSubtitleContentView where Content == Text {
 
     init(
         title: String,
         subtitle: String
     ) {
         self.title = title
-        self.subtitle = Text(subtitle)
+        self.content = Text(subtitle)
     }
 }
 
 struct PosterIndicatorsOverlay: View {
 
     let item: BaseItemDto
-    let indicators: [PosterOverlayIndicator]
+    let indicators: PosterIndicator
     let posterDisplayType: PosterDisplayType
 
     var body: some View {
@@ -186,7 +186,7 @@ struct PosterIndicatorsOverlay: View {
                 UnplayedIndicator()
             }
 
-            if indicators.contains(.played) {
+            if indicators.contains(.played), item.userData?.isPlayed == true {
                 PlayedIndicator()
             }
 

@@ -16,12 +16,14 @@ struct ItemLibrary: PagingLibrary, WithRandomElementLibrary {
         let grouping: Parent.Grouping?
         let filters: ItemFilterCollection
         let fields: [ItemFields]?
+        let allowRecursive: Bool
 
         static var `default`: Self {
             .init(
                 grouping: nil,
                 filters: .default,
-                fields: nil
+                fields: nil,
+                allowRecursive: true
             )
         }
     }
@@ -39,7 +41,8 @@ struct ItemLibrary: PagingLibrary, WithRandomElementLibrary {
             environment = .init(
                 grouping: parent.groupings?.defaultSelection,
                 filters: filters ?? .default,
-                fields: fields
+                fields: fields,
+                allowRecursive: true
             )
         } else {
             environment = nil
@@ -110,7 +113,7 @@ struct ItemLibrary: PagingLibrary, WithRandomElementLibrary {
         parameters.sortBy = [ItemSortBy.name.rawValue]
 
         /// Recursive should only apply to parents/folders and not to baseItems
-        parameters.isRecursive = parent._isRecursiveCollection(for: environment.grouping)
+        parameters.isRecursive = parent._isRecursiveCollection(for: environment.grouping) && environment.allowRecursive
         parameters.includeItemTypes = parent._supportedItemTypes(for: environment.grouping)
 
         if let parentID = parent.id, let parentType = parent.type {
@@ -222,7 +225,8 @@ struct ItemLibrary: PagingLibrary, WithRandomElementLibrary {
                     set: { environment.wrappedValue = Environment(
                         grouping: $0,
                         filters: environment.wrappedValue.filters,
-                        fields: environment.wrappedValue.fields
+                        fields: environment.wrappedValue.fields,
+                        allowRecursive: environment.wrappedValue.allowRecursive
                     ) }
                 )
 
@@ -240,6 +244,21 @@ struct ItemLibrary: PagingLibrary, WithRandomElementLibrary {
                 }
                 .pickerStyle(.menu)
             }
+        }
+
+        MenuContentGroup(id: "recursive") {
+
+            let binding = Binding<Bool>(
+                get: { environment.wrappedValue.allowRecursive },
+                set: { environment.wrappedValue = Environment(
+                    grouping: environment.wrappedValue.grouping,
+                    filters: environment.wrappedValue.filters,
+                    fields: environment.wrappedValue.fields,
+                    allowRecursive: $0
+                ) }
+            )
+
+            Toggle("Recursive", isOn: binding)
         }
     }
 }

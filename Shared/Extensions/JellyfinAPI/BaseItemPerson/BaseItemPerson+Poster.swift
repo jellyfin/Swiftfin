@@ -24,10 +24,6 @@ extension BaseItemPerson: Poster {
         )
     }
 
-    var unwrappedIDHashOrZero: Int {
-        id?.hashValue ?? 0
-    }
-
     var subtitle: String? {
         firstRole
     }
@@ -70,9 +66,6 @@ extension BaseItemPerson: Poster {
     }
 }
 
-// TODO: probably don't cast to `BaseItemDto`?
-// - loses roles
-
 extension BaseItemPerson: LibraryElement {
 
     @MainActor
@@ -82,12 +75,48 @@ extension BaseItemPerson: LibraryElement {
     }
 
     func makeGridBody(libraryStyle: LibraryStyle) -> some View {
-        BaseItemDto(person: self)
-            .makeGridBody(libraryStyle: libraryStyle)
+        WithRouter { router in
+            PosterButton(
+                item: self,
+                type: .portrait
+            ) { namespace in
+                libraryDidSelectElement(router: router, in: namespace)
+            }
+        }
     }
 
     func makeListBody(libraryStyle: LibraryStyle) -> some View {
-        BaseItemDto(person: self)
-            .makeListBody(libraryStyle: libraryStyle)
+        WithNamespace { namespace in
+            WithRouter { router in
+                ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
+                    libraryDidSelectElement(router: router, in: namespace)
+                } leading: {
+                    PosterImage(
+                        item: self,
+                        type: .portrait,
+                        contentMode: .fill
+                    )
+                    .posterShadow()
+                    .frame(width: 60)
+                } content: {
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(displayTitle)
+                            .font(.callout)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.primary)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
+
+                        if let role {
+                            Text(role)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                .backport
+                .matchedTransitionSource(id: "item", in: namespace)
+            }
+        }
     }
 }

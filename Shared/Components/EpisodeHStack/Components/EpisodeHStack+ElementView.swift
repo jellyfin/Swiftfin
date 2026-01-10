@@ -71,24 +71,27 @@ extension EpisodeHStack {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .foregroundStyle(.primary, .secondary)
-                .overlay(alignment: .topTrailing) {
-                    if MenuContent.self != EmptyView.self {
-                        AlternateLayoutView(alignment: .trailing) {
-                            Text(" ")
-                        } content: { layoutSize in
-                            Menu {
-                                menuContent
-                            } label: {
-                                Label(L10n.options, systemImage: "ellipsis")
-                                    .labelStyle(.iconOnly)
-                                    .frame(width: layoutSize.height, height: layoutSize.height)
+                .buttonStyle(.card)
+                #if os(iOS)
+                    .overlay(alignment: .topTrailing) {
+                        if MenuContent.self != EmptyView.self {
+                            AlternateLayoutView(alignment: .trailing) {
+                                Text(" ")
+                            } content: { layoutSize in
+                                Menu {
+                                    menuContent
+                                } label: {
+                                    Label(L10n.options, systemImage: "ellipsis")
+                                        .labelStyle(.iconOnly)
+                                        .frame(width: layoutSize.height, height: layoutSize.height)
+                                }
+                                .contentShape(Rectangle())
                             }
-                            .contentShape(Rectangle())
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.secondary)
                         }
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.secondary)
                     }
-                }
+                #endif
             }
         }
     }

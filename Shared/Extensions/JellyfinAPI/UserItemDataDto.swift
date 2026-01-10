@@ -6,7 +6,20 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import JellyfinAPI
+
+extension Container {
+
+    var userItemCache: Factory<HashCache<UserItemDataDto>> {
+        self { @MainActor in HashCache<UserItemDataDto>() }
+            .singleton
+    }
+}
+
+protocol WithUserData {
+    var userData: UserItemDataDto? { get set }
+}
 
 extension UserItemDataDto {
 

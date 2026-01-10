@@ -9,6 +9,8 @@
 import Foundation
 import JellyfinAPI
 
+// TODO: channel programs, guide, record
+
 struct ItemTypeContentGroupProvider: _ContentGroupProvider {
 
     struct Environment: WithDefaultValue {
@@ -19,8 +21,8 @@ struct ItemTypeContentGroupProvider: _ContentGroupProvider {
         }
     }
 
-    let id: String = ""
-    let displayTitle: String = ""
+    let id: String
+    let displayTitle: String
 
     let itemTypes: [BaseItemKind]
     let parent: BaseItemDto?
@@ -34,6 +36,9 @@ struct ItemTypeContentGroupProvider: _ContentGroupProvider {
         self.itemTypes = itemTypes
         self.parent = parent
         self.environment = environment
+
+        self.id = UUID().uuidString
+        self.displayTitle = parent?.displayTitle ?? ""
     }
 
     func makeGroups(environment: Environment) async throws -> [any _ContentGroup] {

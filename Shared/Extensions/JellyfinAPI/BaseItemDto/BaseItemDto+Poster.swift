@@ -195,7 +195,7 @@ extension BaseItemDto: Poster {
     func posterOverlay(for displayType: PosterDisplayType) -> some View {
         PosterIndicatorsOverlay(
             item: self,
-            indicators: [.progress],
+            indicators: [.progress, .played],
             posterDisplayType: displayType
         )
     }

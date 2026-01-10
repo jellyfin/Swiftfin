@@ -45,20 +45,20 @@ extension BaseItemDto: _LibraryParent {
     }
 
     func _supportedItemTypes(for grouping: Grouping?) -> [BaseItemKind] {
-        if self.collectionType == .folders {
-            return BaseItemKind.supportedCases
-                .appending([.folder, .collectionFolder])
-        }
-
-        if collectionType == .tvshows {
-            if let grouping, grouping == .episodes {
-                return [.episode]
-            } else {
-                return [.series]
-            }
-        }
-
-        return BaseItemKind.supportedCases
+//        if self.collectionType == .folders {
+        BaseItemKind.supportedCases
+            .appending([.folder, .collectionFolder])
+//        }
+//
+//        if collectionType == .tvshows {
+//            if let grouping, grouping == .episodes {
+//                return [.episode]
+//            } else {
+//                return [.series]
+//            }
+//        }
+//
+//        return BaseItemKind.supportedCases
     }
 
     func _isRecursiveCollection(for grouping: Grouping?) -> Bool {

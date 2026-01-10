@@ -44,7 +44,24 @@ struct MediaView: View {
                 case .favorites:
                     router.route(
                         to: .contentGroup(
-                            provider: FavoritesContentGroupProvider()
+                            provider: ItemTypeContentGroupProvider(
+                                itemTypes: [
+                                    BaseItemKind.movie,
+                                    .series,
+                                    .boxSet,
+                                    .episode,
+                                    .musicVideo,
+                                    .video,
+                                    .liveTvProgram,
+                                    .tvChannel,
+                                    .musicArtist,
+                                    .person,
+                                ],
+                                parent: .init(name: L10n.favorites),
+                                environment: .init(
+                                    filters: .favorites
+                                )
+                            )
                         ),
                         in: namespace
                     )

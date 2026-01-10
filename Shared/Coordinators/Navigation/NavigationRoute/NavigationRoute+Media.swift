@@ -15,18 +15,11 @@ import Transmission
 
 extension NavigationRoute {
 
-    static let channels = NavigationRoute(
-        id: "channels"
-    ) {
-        ChannelLibraryView()
-    }
-
     @MainActor
     static let liveTV = NavigationRoute(
         id: "liveTV",
         withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
     ) {
-//        ProgramsView()
         ContentGroupView(provider: LiveTVGroupProvider())
     }
 

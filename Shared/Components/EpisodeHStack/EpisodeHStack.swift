@@ -10,67 +10,6 @@ import CollectionHStack
 import JellyfinAPI
 import SwiftUI
 
-struct EpisodeGroup<Library: PagingLibrary>: _ContentGroup where Library.Element == BaseItemDto {
-
-    var displayTitle: String {
-        library.parent.displayTitle
-    }
-
-    let id: String
-    let library: Library
-    let viewModel: PagingLibraryViewModel<Library>
-
-    var _shouldBeResolved: Bool {
-        viewModel.elements.isNotEmpty
-    }
-
-    init(
-        id: String = UUID().uuidString,
-        library: Library
-    ) {
-        self.id = id
-        self.library = library
-        self.viewModel = .init(library: library, pageSize: 20)
-    }
-
-    @ViewBuilder
-    func body(with viewModel: PagingLibraryViewModel<Library>) -> some View {
-        WithRouter { router in
-            EpisodeHStack(
-                viewModel: viewModel,
-                playButtonItemID: nil
-            ) {
-                #if os(tvOS)
-                Text(viewModel.library.parent.displayTitle)
-                    .font(.title3)
-                    .lineLimit(1)
-                    .accessibilityAddTraits(.isHeader)
-                    .edgePadding(.horizontal)
-                #else
-                Button {
-                    router.route(to: .library(library: viewModel.library))
-                } label: {
-                    HStack(spacing: 3) {
-                        Text(viewModel.library.parent.displayTitle)
-                            .font(.title2)
-                            .lineLimit(1)
-
-                        Image(systemName: "chevron.forward")
-                            .font(.title3)
-                            .foregroundStyle(.secondary)
-                    }
-                    .fontWeight(.semibold)
-                }
-                .foregroundStyle(.primary, .secondary)
-                .accessibilityAddTraits(.isHeader)
-                .accessibilityAction(named: Text("Open library")) { router.route(to: .library(library: viewModel.library)) }
-                .edgePadding(.horizontal)
-                #endif
-            }
-        }
-    }
-}
-
 struct EpisodeHStack<Library: PagingLibrary, Header: View>: View where Library.Element == BaseItemDto {
 
     private enum Element: Identifiable {
@@ -82,7 +21,7 @@ struct EpisodeHStack<Library: PagingLibrary, Header: View>: View where Library.E
         var id: Int {
             switch self {
             case let .element(episode):
-                episode.unwrappedIDHashOrZero
+                episode.id?.hashValue ?? 0
             default:
                 UUID().hashValue
             }
@@ -135,6 +74,13 @@ struct EpisodeHStack<Library: PagingLibrary, Header: View>: View where Library.E
     }
 
     private var layout: CollectionHStackLayout {
+        #if os(tvOS)
+        .grid(
+            columns: 3.5,
+            rows: 1,
+            columnTrailingInset: 0
+        )
+        #else
         if UIDevice.isPad {
             .minimumWidth(
                 columnWidth: 300,
@@ -147,6 +93,15 @@ struct EpisodeHStack<Library: PagingLibrary, Header: View>: View where Library.E
                 columnTrailingInset: 0
             )
         }
+        #endif
+    }
+
+    private var itemSpacing: CGFloat {
+        #if os(tvOS)
+        40
+        #else
+        EdgeInsets.edgePadding / 2
+        #endif
     }
 
     @ViewBuilder
@@ -203,8 +158,9 @@ struct EpisodeHStack<Library: PagingLibrary, Header: View>: View where Library.E
                         .posterShadow()
                 }
                 .foregroundStyle(.primary, .secondary)
+                .buttonStyle(.card)
             } menuContent: {
-                // TODO: get context menu content
+                // TODO: don't have, just use environment context menu?
                 Button("Go to Episode", systemImage: "info.circle") {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         router.route(to: .item(item: episode))
@@ -265,9 +221,9 @@ struct EpisodeHStack<Library: PagingLibrary, Header: View>: View where Library.E
             }
         }
         .clipsToBounds(false)
-        .scrollBehavior(.continuousLeadingEdge)
         .insets(horizontal: EdgeInsets.edgePadding)
-        .itemSpacing(EdgeInsets.edgePadding / 2)
+        .itemSpacing(itemSpacing)
+        .scrollBehavior(.continuousLeadingEdge)
         .proxy(proxy)
         .scrollDisabled(viewModel.state != .content)
         .onFirstAppear {

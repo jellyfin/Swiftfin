@@ -54,7 +54,6 @@ struct LiveTVChannelsPillGroup: _ContentGroup {
             ScrollView(.horizontal) {
                 HStack {
                     Button {
-//                        router.route(to: .channels)
                         router.route(to: .library(library: ChannelProgramLibrary()))
                     } label: {
                         Label(

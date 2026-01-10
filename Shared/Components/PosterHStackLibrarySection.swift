@@ -43,7 +43,7 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View where Library.El
     private var _elements: [Element] {
         #if os(tvOS)
         viewModel.elements.elements
-            .prefix(19)
+            .prefix(20)
             .map { .element($0) }
             .appending(.seeAll)
         #else
@@ -95,26 +95,11 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View where Library.El
         if viewModel.elements.isNotEmpty {
             PosterHStack(
                 elements: viewModel.elements,
-                //                elements: _elements.map(\.asAnyPoster),
+//                elements: _elements.map(\.asAnyPoster),
                 type: group.posterDisplayType,
                 size: group.posterSize
-            ) { element, namespace in
-                switch element {
-                case let element as BaseItemDto:
-                    switch element.type {
-                    case .program, .liveTvChannel, .tvProgram, .tvChannel:
-                        router.route(
-                            to: .videoPlayer(
-                                provider: element.getPlaybackItemProvider(userSession: viewModel.userSession)
-                            )
-                        )
-                    default:
-                        router.route(to: .item(item: element), in: namespace)
-                    }
-                case let element as BaseItemPerson: ()
-                    router.route(to: .item(item: .init(person: element)), in: namespace)
-                default: ()
-                }
+            ) { _, _ in
+                element.libraryDidSelectElement(router: router, in: namespace)
             } header: {
                 header
             }

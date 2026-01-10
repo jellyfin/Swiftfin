@@ -45,10 +45,6 @@ extension ItemStudio: LibraryElement {
         EmptyView()
     }
 
-    var unwrappedIDHashOrZero: Int {
-        value.hashValue
-    }
-
     var preferredPosterDisplayType: PosterDisplayType {
         .landscape
     }

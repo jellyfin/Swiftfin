@@ -40,7 +40,7 @@ struct ItemContentGroupView<Provider: _ContentGroupProvider>: View {
         OffsetNavigationBar(headerMaxY: carriedUseOffsetNavigationBar ? carriedHeaderFrame.maxY : nil) {
             WithEnvironment(value: \.frameForParentView) { frameForParentView in
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 10) {
+                    VStack(alignment: .leading, spacing: UIDevice.isTV ? 40 : 10) {
 
                         // SwiftUI bug causes preference key changes to not propagate any higher
                         ForEach(viewModel.groups, id: \.id) { group in
@@ -54,7 +54,6 @@ struct ItemContentGroupView<Provider: _ContentGroupProvider>: View {
                             carriedHeaderFrame = value
                         }
                     }
-//                    .scrollTargetLayout()
                     .edgePadding(
                         .bottom.inserting(
                             .top,
@@ -62,7 +61,6 @@ struct ItemContentGroupView<Provider: _ContentGroupProvider>: View {
                         )
                     )
                 }
-//                .scrollTargetBehavior(.viewAligned)
                 .ignoresSafeArea(edges: .horizontal)
                 .scrollIndicators(.hidden)
                 .overlay(alignment: .top) {

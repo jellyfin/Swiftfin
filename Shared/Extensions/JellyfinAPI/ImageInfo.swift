@@ -57,10 +57,6 @@ extension ImageInfo: Poster {
         imageType?.displayTitle ?? L10n.unknown
     }
 
-    var unwrappedIDHashOrZero: Int {
-        id
-    }
-
     var systemImage: String {
         "photo"
     }

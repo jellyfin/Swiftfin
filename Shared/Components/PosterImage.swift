@@ -96,6 +96,7 @@ struct PosterImage<Element: Poster>: View {
                             systemName: element.systemImage
                         )
                     }
+                    .accessibilityRemoveTraits(.isImage)
             }
         }
         .posterStyle(

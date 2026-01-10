@@ -56,10 +56,11 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     private let seriesViewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
     init(episode: BaseItemDto) {
+        // TODO: fix
         self.seriesViewModel = .init(library: .init(series: .init()))
         super.init()
 
-//        seriesViewModel.send(.refresh)
+        seriesViewModel.refresh()
     }
 
     var videoPlayerBody: some PlatformView {
@@ -296,8 +297,7 @@ extension EpisodeMediaPlayerQueue {
 
             var body: some View {
                 CollectionHStack(
-                    uniqueElements: selectionViewModel.elements,
-                    id: \.unwrappedIDHashOrZero
+                    uniqueElements: selectionViewModel.elements
                 ) { item in
                     EpisodeButton(episode: item) {
                         action(item)

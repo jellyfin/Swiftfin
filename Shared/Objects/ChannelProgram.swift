@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionVGrid
 import JellyfinAPI
 import SwiftUI
 
@@ -70,10 +71,6 @@ extension ChannelProgram: Poster {
         .square
     }
 
-    var unwrappedIDHashOrZero: Int {
-        channel.id?.hashValue ?? 0
-    }
-
     var displayTitle: String {
         channel.displayTitle
     }
@@ -87,11 +84,34 @@ extension ChannelProgram: Poster {
     }
 }
 
-extension ChannelProgram: LibraryElement {
+extension ChannelProgram: @MainActor LibraryElement {
+
+    static func layout(for libraryStyle: LibraryStyle) -> CollectionVGridLayout {
+        var padLayout: CollectionVGridLayout {
+            switch libraryStyle.displayType {
+            case .grid:
+                .minWidth(150)
+            case .list:
+                .minWidth(250)
+            }
+        }
+
+        var phoneLayout: CollectionVGridLayout {
+            switch libraryStyle.displayType {
+            case .grid:
+                .columns(3)
+            case .list:
+                .columns(1)
+            }
+        }
+
+        return UIDevice.isPhone ? phoneLayout : padLayout
+    }
 
     @MainActor
     func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {
-        router.route(to: .videoPlayer(item: channel), in: namespace)
+//        router.route(to: .videoPlayer(item: channel), in: namespace)
+        router.route(to: .item(item: channel), in: namespace)
     }
 
     func makeGridBody(libraryStyle: LibraryStyle) -> some View {
@@ -101,8 +121,6 @@ extension ChannelProgram: LibraryElement {
                 type: .square
             ) { namespace in
                 libraryDidSelectElement(router: router, in: namespace)
-            } label: {
-                EmptyView()
             }
         }
     }

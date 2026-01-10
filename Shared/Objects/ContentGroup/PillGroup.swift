@@ -9,65 +9,41 @@
 import JellyfinAPI
 import SwiftUI
 
-struct PillGroup<Library: PagingLibrary>: _ContentGroup where Library.Element: Displayable {
+struct PillGroup<Element: Displayable & Identifiable>: _ContentGroup {
 
+    let action: (Router.Wrapper, Element) -> Void
     let displayTitle: String
     let id: String
-    let library: Library
-    let viewModel: PagingLibraryViewModel<Library>
+    let elements: [Element]
 
     var _shouldBeResolved: Bool {
-        viewModel.elements.isNotEmpty
+        elements.isNotEmpty
     }
 
     init(
         displayTitle: String,
         id: String,
-        library: Library
+        elements: [Element],
+        action: @escaping (Router.Wrapper, Element) -> Void
     ) {
+        self.action = action
         self.displayTitle = displayTitle
         self.id = id
-        self.library = library
-        self.viewModel = .init(library: library)
+        self.elements = elements
     }
 
     #if os(tvOS)
-    func body(with viewModel: PagingLibraryViewModel<Library>) -> some View {
+    func body(with viewModel: Empty) -> some View {
         EmptyView()
     }
     #else
-    func body(with viewModel: PagingLibraryViewModel<Library>) -> some View {
+    func body(with viewModel: Empty) -> some View {
         WithRouter { router in
             PillHStack(
                 title: displayTitle,
-                data: viewModel.elements
+                data: elements
             ) { element in
-                router.route(
-                    to: .contentGroup(
-                        provider: ItemTypeContentGroupProvider(
-                            itemTypes: [
-                                BaseItemKind.movie,
-                                .series,
-                                .boxSet,
-                                .episode,
-                                .musicVideo,
-                                .video,
-                                .liveTvProgram,
-                                .tvChannel,
-                                .musicArtist,
-                                .person,
-                            ],
-                            parent: .init(id: "\(element.id)"),
-                            environment: .init(
-                                filters: .init(
-                                    genres: [.init(
-                                        stringLiteral: "\(element.id)"
-                                    )]
-                                )
-                            )
-                        )
-                    )
-                )
+                action(router, element)
             }
         }
     }

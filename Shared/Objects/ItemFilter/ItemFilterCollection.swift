@@ -9,6 +9,8 @@
 import Foundation
 import JellyfinAPI
 
+// TODO: take parent for libraries?
+
 /// A structure representing a collection of item filters
 struct ItemFilterCollection: Hashable, Storable {
 

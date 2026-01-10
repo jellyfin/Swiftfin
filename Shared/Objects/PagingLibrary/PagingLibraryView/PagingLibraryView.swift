@@ -51,7 +51,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         switch viewModel.state {
         case .initial, .refreshing:
             ProgressView()
-                .progressViewStyle(.circular)
         case .content:
             if viewModel.elements.isEmpty {
                 Text(L10n.noResults)
@@ -128,78 +127,21 @@ extension PagingLibraryView {
             }
         }
 
-        #if os(iOS)
-        private var layout: CollectionVGridLayout {
-            if UIDevice.isPhone {
-                phoneLayout
-            } else {
-                padLayout
-            }
-        }
-
-        private var padLayout: CollectionVGridLayout {
-            switch (libraryStyle.posterDisplayType, libraryStyle.displayType) {
-            case (.landscape, .grid):
-                .minWidth(220)
-            case (.portrait, .grid), (.square, .grid):
-                .minWidth(140)
-            case (_, .list):
-                .columns(libraryStyle.listColumnCount, insets: .zero, itemSpacing: 0, lineSpacing: 0)
-            }
-        }
-
-        private var phoneLayout: CollectionVGridLayout {
-            switch (libraryStyle.posterDisplayType, libraryStyle.displayType) {
-            case (.landscape, .grid):
-                .columns(2)
-            case (.portrait, .grid):
-                .columns(3)
-            case (.square, .grid):
-                .columns(3)
-            case (_, .list):
-                .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
-            }
-        }
-        #else
-        private var layout: CollectionVGridLayout {
-            switch (libraryStyle.posterDisplayType, libraryStyle.displayType) {
-            case (.landscape, .grid):
-                return .columns(
-                    5,
-                    insets: EdgeInsets.edgeInsets,
-                    itemSpacing: EdgeInsets.edgePadding,
-                    lineSpacing: EdgeInsets.edgePadding
-                )
-            case (.portrait, .grid), (.square, .grid):
-                return .columns(
-                    7,
-                    insets: EdgeInsets.edgeInsets,
-                    itemSpacing: EdgeInsets.edgePadding,
-                    lineSpacing: EdgeInsets.edgePadding
-                )
-            case (_, .list):
-                return .columns(
-                    libraryStyle.listColumnCount,
-                    insets: EdgeInsets.edgeInsets,
-                    itemSpacing: EdgeInsets.edgePadding,
-                    lineSpacing: EdgeInsets.edgePadding
-                )
-            }
-        }
-        #endif
-
-        private var evaluatedStyle: (LibraryStyle, Binding<LibraryStyle>?) {
+        private var resolvedStyle: (LibraryStyle, Binding<LibraryStyle>?) {
             libraryStyleRegistry?(Element.self) ?? (.default, nil)
         }
 
+        private var layout: CollectionVGridLayout {
+            Element.layout(for: libraryStyle)
+        }
+
         private var libraryStyle: LibraryStyle {
-            evaluatedStyle.0
+            resolvedStyle.0
         }
 
         var body: some View {
             CollectionVGrid(
                 uniqueElements: viewModel.elements,
-                id: \.unwrappedIDHashOrZero,
                 layout: layout
             ) { element, _ in
                 switch libraryStyle.displayType {
@@ -222,7 +164,7 @@ extension PagingLibraryView {
                 }
             }
             .preference(key: MenuContentKey.self) {
-                if let libraryStyleBinding = evaluatedStyle.1 {
+                if let libraryStyleBinding = resolvedStyle.1 {
                     MenuContentGroup(
                         id: "library-style"
                     ) {

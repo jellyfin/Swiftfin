@@ -11,6 +11,7 @@ import Combine
 import Factory
 import Foundation
 import JellyfinAPI
+import OrderedCollections
 import UIKit
 
 extension Container {
@@ -189,12 +190,6 @@ extension Notifications.Key {
 
     static var didAddServerUser: Key<UserDto> {
         Key("didAddServerUser")
-    }
-
-    // MARK: - Playback
-
-    static var didStartPlayback: Key<Void> {
-        Key("didStartPlayback")
     }
 
     // MARK: - UIApplication

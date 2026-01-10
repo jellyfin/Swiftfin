@@ -138,7 +138,6 @@ struct ExamplePosterItem: Poster {
 
     let preferredPosterDisplayType: PosterDisplayType = .portrait
     let displayTitle: String = "Example"
-    let unwrappedIDHashOrZero: Int = 0
     let systemImage: String = "film"
     let id: String = "example"
 }

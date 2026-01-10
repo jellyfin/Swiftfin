@@ -72,13 +72,9 @@ struct RemoteImageProvidersLibrary: PagingLibrary {
     }
 }
 
-extension ImageProviderInfo: @retroactive Identifiable, LibraryIdentifiable {
+extension ImageProviderInfo: @retroactive Identifiable {
 
     public var id: String? { name }
-
-    var unwrappedIDHashOrZero: Int {
-        name?.hashValue ?? 0
-    }
 }
 
 // TODO: Good example of a multi-library view model, find way to generalize
