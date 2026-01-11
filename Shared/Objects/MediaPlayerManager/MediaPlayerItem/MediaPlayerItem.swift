@@ -19,27 +19,21 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
 
     typealias ThumbnailProvider = () async -> UIImage?
 
-    private var isInitializing = true
-
     @Published
     var selectedAudioStreamIndex: Int? = nil {
         didSet {
-            guard !isInitializing, oldValue != selectedAudioStreamIndex else { return }
-            manager?.setTrack(
-                type: .audio,
-                index: selectedAudioStreamIndex
-            )
+            if let proxy = manager?.proxy as? any VideoMediaPlayerProxy {
+                proxy.setAudioStream(.init(index: selectedAudioStreamIndex))
+            }
         }
     }
 
     @Published
     var selectedSubtitleStreamIndex: Int? = nil {
         didSet {
-            guard !isInitializing, oldValue != selectedSubtitleStreamIndex else { return }
-            manager?.setTrack(
-                type: .subtitle,
-                index: selectedSubtitleStreamIndex
-            )
+            if let proxy = manager?.proxy as? any VideoMediaPlayerProxy {
+                proxy.setSubtitleStream(.init(index: selectedSubtitleStreamIndex))
+            }
         }
     }
 
@@ -74,8 +68,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         playSessionID: String,
         url: URL,
         requestedBitrate: PlaybackBitrate = .max,
-        initialAudioStreamIndex: Int? = nil,
-        initialSubtitleStreamIndex: Int? = nil,
         previewImageProvider: (any PreviewImageProvider)? = nil,
         thumbnailProvider: ThumbnailProvider? = nil
     ) {
@@ -87,23 +79,18 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         self.thumbnailProvider = thumbnailProvider
         self.url = url
 
-        let mediaStreams = baseItem.mediaSources?.first(where: { $0.id == mediaSource.id })?.mediaStreams
+        let audioStreams = mediaSource.mediaStreams?.filter { $0.type == .audio } ?? []
+        let subtitleStreams = mediaSource.mediaStreams?.filter { $0.type == .subtitle } ?? []
+        let videoStreams = mediaSource.mediaStreams?.filter { $0.type == .video } ?? []
 
-        let adjustedMediaStreams = mediaStreams?.adjustedTrackIndexes()
-
-        self.audioStreams = adjustedMediaStreams?.filter { $0.type == .audio } ?? []
-        self.subtitleStreams = adjustedMediaStreams?.filter { $0.type == .subtitle } ?? []
-        self.videoStreams = adjustedMediaStreams?.filter { $0.type == .video } ?? []
+        self.audioStreams = audioStreams
+        self.subtitleStreams = subtitleStreams
+        self.videoStreams = videoStreams
 
         super.init()
 
-        /// Selected Stream -> Default Stream -> First Stream -> No Stream
-        selectedAudioStreamIndex = initialAudioStreamIndex ?? mediaSource.defaultAudioStreamIndex ?? audioStreams.first?.index ?? -1
-
-        /// Selected Stream -> Default Stream -> No Stream
-        selectedSubtitleStreamIndex = initialSubtitleStreamIndex ?? mediaSource.defaultSubtitleStreamIndex ?? -1
-
-        isInitializing = false
+        selectedAudioStreamIndex = mediaSource.defaultAudioStreamIndex ?? -1
+        selectedSubtitleStreamIndex = mediaSource.defaultSubtitleStreamIndex ?? -1
 
         observers.append(MediaProgressObserver(item: self))
     }
