@@ -686,6 +686,8 @@
 				mn,
 				km,
 				lv,
+				peo,
+				fa,
 			);
 			mainGroup = 5377CBE8263B596A003A4E83;
 			packageReferences = (

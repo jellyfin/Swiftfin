@@ -209,26 +209,6 @@ extension MediaStream {
 
 extension [MediaStream] {
 
-    /// Filter based on the LibraryOptions.embeddedSubtitleOption from the item's parent Library
-    func adjustedTrackIndexes(embeddedSubtitleOption: EmbeddedSubtitleOptions = .allowAll) -> [MediaStream] {
-        self.filter { stream in
-            guard stream.type == .subtitle, !(stream.isExternal ?? false) else {
-                return true
-            }
-
-            switch embeddedSubtitleOption {
-            case .allowAll:
-                return true
-            case .allowText:
-                return stream.isTextSubtitleStream ?? false
-            case .allowImage:
-                return !(stream.isTextSubtitleStream ?? false)
-            case .allowNone:
-                return false
-            }
-        }
-    }
-
     var has4KVideo: Bool {
         contains { $0.is4kVideo }
     }
