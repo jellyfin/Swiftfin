@@ -209,6 +209,65 @@ extension MediaStream {
 
 extension [MediaStream] {
 
+    /// Adjusts track indexes for VLC playback.
+    /// Shows ALL tracks (embedded + external, regardless of deliveryURL).
+    /// External tracks are always placed at the end after internal tracks.
+    /// Indices are remapped to 0-based sequence for VLC.
+    ///
+    /// Returns: (adjusted streams with new indices, map of original index -> adjusted index)
+    func adjustedIndexMap(for playMethod: PlayMethod, selectedAudioStreamIndex: Int) -> [Int: Int] {
+        let internalTracks = self.filter { !($0.isExternal ?? false) }
+        let externalTracks = self.filter { $0.isExternal == true }
+
+        var orderedInternal: [MediaStream] = []
+        let subtitleInternal = internalTracks.filter { $0.type == .subtitle }
+
+        if playMethod == .transcode {
+            // Only include the first video and selected audio track for transcode
+            let videoInternal = internalTracks.filter { $0.type == .video }
+            let audioInternal = internalTracks.filter { $0.type == .audio }
+
+            if let firstVideo = videoInternal.first {
+                orderedInternal.append(firstVideo)
+            }
+            if let selectedAudio = audioInternal.first(where: { $0.index == selectedAudioStreamIndex }) {
+                orderedInternal.append(selectedAudio)
+            }
+
+            orderedInternal += subtitleInternal
+        } else {
+            let videoInternal = internalTracks.filter { $0.type == .video }
+            let audioInternal = internalTracks.filter { $0.type == .audio }
+
+            orderedInternal = videoInternal + audioInternal + subtitleInternal
+        }
+
+        // Remap indices for VLC (0-based sequence)
+        var indexMap: [Int: Int] = [:]
+        var newInternalTracks: [MediaStream] = []
+
+        for (newIndex, var track) in orderedInternal.enumerated() {
+            guard let oldIndex = track.index else { continue }
+
+            track.index = newIndex
+            indexMap[oldIndex] = newIndex
+            newInternalTracks.append(track)
+        }
+
+        // Add ALL external tracks at the end
+        let startingIndexForExternal = newInternalTracks.count
+
+        for (offset, var track) in externalTracks.enumerated() {
+            guard let oldIndex = track.index else { continue }
+
+            let newIndex = startingIndexForExternal + offset
+            track.index = newIndex
+            indexMap[oldIndex] = newIndex
+        }
+
+        return indexMap
+    }
+
     var has4KVideo: Bool {
         contains { $0.is4kVideo }
     }

@@ -22,20 +22,22 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
     @Published
     var selectedAudioStreamIndex: Int? = nil {
         didSet {
-            if let proxy = manager?.proxy as? any VideoMediaPlayerProxy {
-                proxy.setAudioStream(.init(index: selectedAudioStreamIndex))
-            }
+            guard let selectedAudioStreamIndex, selectedAudioStreamIndex != oldValue else { return }
+            manager?.setAudioTrack(index: selectedAudioStreamIndex)
         }
     }
 
     @Published
     var selectedSubtitleStreamIndex: Int? = nil {
         didSet {
+            guard let selectedIndex = indexMap[selectedSubtitleStreamIndex] else { return }
             if let proxy = manager?.proxy as? any VideoMediaPlayerProxy {
-                proxy.setSubtitleStream(.init(index: selectedSubtitleStreamIndex))
+                proxy.setSubtitleStream(.init(index: selectedIndex))
             }
         }
     }
+
+    private let indexMap: [Int: Int]
 
     weak var manager: MediaPlayerManager? {
         didSet {
@@ -68,6 +70,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         playSessionID: String,
         url: URL,
         requestedBitrate: PlaybackBitrate = .max,
+        initialAudioStreamIndex: Int? = nil,
         previewImageProvider: (any PreviewImageProvider)? = nil,
         thumbnailProvider: ThumbnailProvider? = nil
     ) {
@@ -79,17 +82,23 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         self.thumbnailProvider = thumbnailProvider
         self.url = url
 
-        let audioStreams = mediaSource.mediaStreams?.filter { $0.type == .audio } ?? []
-        let subtitleStreams = mediaSource.mediaStreams?.filter { $0.type == .subtitle } ?? []
-        let videoStreams = mediaSource.mediaStreams?.filter { $0.type == .video } ?? []
+        let mediaStreams = baseItem.mediaSources?.first(where: { $0.id == mediaSource.id })?.mediaStreams
 
-        self.audioStreams = audioStreams
-        self.subtitleStreams = subtitleStreams
-        self.videoStreams = videoStreams
+        self.audioStreams = mediaStreams?.filter { $0.type == .audio } ?? []
+        self.subtitleStreams = mediaStreams?.filter { $0.type == .subtitle } ?? []
+        self.videoStreams = mediaStreams?.filter { $0.type == .video } ?? []
+
+        self.indexMap = mediaStreams?.adjustedIndexMap(
+            for: mediaSource.transcodingURL == nil ? .directPlay : .transcode,
+            selectedAudioStreamIndex: initialAudioStreamIndex ?? 0
+        ) ?? [:]
 
         super.init()
 
-        selectedAudioStreamIndex = mediaSource.defaultAudioStreamIndex ?? -1
+        selectedAudioStreamIndex = initialAudioStreamIndex
+            ?? mediaSource.defaultAudioStreamIndex
+            ?? mediaSource.mediaStreams?.first?.index ?? -1
+
         selectedSubtitleStreamIndex = mediaSource.defaultSubtitleStreamIndex ?? -1
 
         observers.append(MediaProgressObserver(item: self))
