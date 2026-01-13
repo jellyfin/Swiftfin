@@ -33,6 +33,11 @@ struct AnyPoster: Poster {
         AnyHashable(_poster).hashValue
     }
 
+    var posterLabel: some View {
+        _poster.posterLabel
+            .eraseToAnyView()
+    }
+
     func hash(into hasher: inout Hasher) {
         hasher.combine(_poster.displayTitle)
         hasher.combine(_poster.systemImage)

@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-// TODO: take parent for libraries?
+// TODO: take parent id for libraries?
 
 /// A structure representing a collection of item filters
 struct ItemFilterCollection: Hashable, Storable {
@@ -48,7 +48,7 @@ struct ItemFilterCollection: Hashable, Storable {
         traits: ItemTrait.supportedCases
     )
 
-    var hasFilters: Bool {
+    var isNotEmpty: Bool {
         self != Self.default
     }
 

@@ -60,17 +60,22 @@ extension MediaInfoSupplement {
 
         @ViewBuilder
         private var fromBeginningButton: some View {
-            Button("From Beginning", systemImage: "play.fill") {
+            Button {
                 manager.proxy?.setSeconds(.zero)
                 manager.setPlaybackRequestStatus(status: .playing)
                 containerState.select(supplement: nil)
+            } label: {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(.white)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                    Label("From Beginning", systemImage: "play.fill")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.black)
+                }
             }
-//            #if os(iOS)
-//            .buttonStyle(.material)
-//            #endif
-            .frame(width: 200, height: 50)
-            .font(.subheadline)
-            .fontWeight(.semibold)
         }
 
         // TODO: may need to be a layout for correct overview frame
@@ -111,22 +116,8 @@ extension MediaInfoSupplement {
                 .allowsHitTesting(false)
 
                 if !item.isLiveStream {
-                    Button {
-                        manager.proxy?.setSeconds(.zero)
-                        manager.setPlaybackRequestStatus(status: .playing)
-                        containerState.select(supplement: nil)
-                    } label: {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 7)
-                                .foregroundStyle(.white)
-
-                            Label("From Beginning", systemImage: "play.fill")
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.black)
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 40)
+                    fromBeginningButton
+                        .frame(height: 44)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -137,13 +128,13 @@ extension MediaInfoSupplement {
             HStack(spacing: EdgeInsets.edgePadding) {
                 PosterImage(
                     item: item,
-                    type: item.preferredPosterDisplayType,
+                    type: .portrait,
                     contentMode: .fit
                 )
                 .withViewContext(.isOverComplexContent)
-                .frame(
-                    maxWidth: item.preferredPosterDisplayType == .portrait ? nil : 170
-                )
+//                .frame(
+//                    maxWidth: item.preferredPosterDisplayType == .portrait ? nil : 170
+//                )
 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(item.displayTitle)
@@ -172,6 +163,7 @@ extension MediaInfoSupplement {
                 if !item.isLiveStream {
                     VStack {
                         fromBeginningButton
+                            .frame(width: 200, height: 50)
                     }
                     .frame(
                         maxHeight: .infinity,

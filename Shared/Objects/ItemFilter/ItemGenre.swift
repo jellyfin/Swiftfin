@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct ItemGenre: Codable, ExpressibleByStringLiteral, Hashable, ItemFilter {
+struct ItemGenre: Codable, Hashable, ItemFilter {
 
     let value: String
 
@@ -16,34 +16,11 @@ struct ItemGenre: Codable, ExpressibleByStringLiteral, Hashable, ItemFilter {
         value
     }
 
-    init(stringLiteral value: String) {
+    init(value: String) {
         self.value = value
     }
 
     init(from anyFilter: AnyItemFilter) {
         self.value = anyFilter.value
-    }
-}
-
-import SwiftUI
-
-extension ItemGenre: LibraryElement {
-
-    func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {}
-
-    func makeGridBody(libraryStyle: LibraryStyle) -> EmptyView {}
-
-    func makeListBody(libraryStyle: LibraryStyle) -> EmptyView {}
-
-    var preferredPosterDisplayType: PosterDisplayType {
-        .landscape
-    }
-
-    var id: String {
-        value
-    }
-
-    var systemImage: String {
-        "bird.fill"
     }
 }

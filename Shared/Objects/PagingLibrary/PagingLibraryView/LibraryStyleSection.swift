@@ -23,13 +23,6 @@ extension PagingLibraryView {
             self._box = StateObject(wrappedValue: PublishedBox(source: libraryStyle))
         }
 
-//        init(
-//            displayType: Binding<LibraryDisplayType>?,
-//            posterDisplayType: Binding<PosterDisplayType>?
-//        ) {
-//
-//        }
-
         var body: some View {
             Picker(selection: libraryStyle.displayType) {
                 ForEach(LibraryDisplayType.allCases, id: \.self) { displayType in
@@ -48,16 +41,13 @@ extension PagingLibraryView {
             }
             .pickerStyle(.menu)
 
-//                    if libraryStyle.wrappedValue.displayType == .list, UIDevice.isPad {
-//                        Divider()
-//
-//                        Stepper(
-//                            L10n.columnsWithCount(libraryStyle.wrappedValue.listColumnCount),
-//                            value: libraryStyle.listColumnCount,
-//                            in: 1 ... 3
-//                        )
-//                    }
-//                }
+            if libraryStyle.wrappedValue.displayType == .list, UIDevice.isPad {
+                Stepper(
+                    L10n.columnsWithCount(libraryStyle.wrappedValue.listColumnCount),
+                    value: libraryStyle.listColumnCount,
+                    in: 1 ... 3
+                )
+            }
 
             Picker(selection: libraryStyle.posterDisplayType) {
                 ForEach(PosterDisplayType.allCases, id: \.self) { displayType in

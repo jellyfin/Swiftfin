@@ -56,7 +56,8 @@ protocol PagingLibrary<Element> {
         pageState: LibraryPageState
     ) async throws -> [Element]
 
-    func makeLibraryBody(content: some View) -> LibraryBody
+    @ViewBuilder
+    func makeLibraryBody(content: some View, state: PagingLibraryViewModel<Self>._State) -> LibraryBody
 
     @MenuContentGroupBuilder
     func menuContent(environment: Binding<Environment>) -> [MenuContentGroup]
@@ -67,8 +68,10 @@ extension PagingLibrary {
     var environment: Environment? { nil }
     var hasNextPage: Bool { true }
 
-    func makeLibraryBody(content: some View) -> AnyView {
-        content.eraseToAnyView()
+    func makeLibraryBody(content: some View, state: PagingLibraryViewModel<Self>._State) -> AnyView {
+        content
+            .debugOverlay()
+            .eraseToAnyView()
     }
 
     @MenuContentGroupBuilder

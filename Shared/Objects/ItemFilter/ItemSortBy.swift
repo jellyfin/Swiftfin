@@ -10,6 +10,7 @@ import Foundation
 import JellyfinAPI
 
 extension ItemSortBy: Displayable, SupportedCaseIterable {
+
     var displayTitle: String {
         switch self {
         case .default:
@@ -80,19 +81,10 @@ extension ItemSortBy: Displayable, SupportedCaseIterable {
             .dateLastContentAdded,
             .name,
             .premiereDate,
-            .sortName,
             .random,
+            .sortName,
         ]
     }
 }
 
-extension ItemSortBy: ItemFilter {
-
-    var value: String {
-        rawValue
-    }
-
-    init(from anyFilter: AnyItemFilter) {
-        self.init(rawValue: anyFilter.value)!
-    }
-}
+extension ItemSortBy: ItemFilter {}

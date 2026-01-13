@@ -56,8 +56,7 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     private let seriesViewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
     init(episode: BaseItemDto) {
-        // TODO: fix
-        self.seriesViewModel = .init(library: .init(series: .init()))
+        self.seriesViewModel = .init(library: .init(series: .init(id: episode.seriesID)))
         super.init()
 
         seriesViewModel.refresh()
@@ -453,8 +452,8 @@ extension EpisodeMediaPlayerQueue {
                     Text(seasonEpisodeLabel)
                 }
 
-                if let runtime = episode.runTimeLabel {
-                    Text(runtime)
+                if let runtime = episode.runtime {
+                    Text(runtime, format: .hourMinuteAbbreviated)
                 }
             }
             .font(.caption)

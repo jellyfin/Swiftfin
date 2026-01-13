@@ -81,13 +81,7 @@ struct ItemGroupProvider: _ContentGroupProvider {
                                 .person,
                             ],
                             parent: .init(name: element.displayTitle),
-                            environment: .init(
-                                filters: .init(
-                                    genres: [.init(
-                                        stringLiteral: element.id
-                                    )]
-                                )
-                            )
+                            environment: .init(filters: .init(genres: [element]))
                         )
                     )
                 )
@@ -116,7 +110,7 @@ struct ItemGroupProvider: _ContentGroupProvider {
                                 .person,
                             ],
                             parent: .init(
-                                id: element.id,
+                                id: element.value,
                                 name: element.displayTitle,
                                 type: .studio
                             )

@@ -23,37 +23,3 @@ struct ItemStudio: Codable, Hashable, ItemFilter {
         self.value = anyFilter.value
     }
 }
-
-import SwiftUI
-
-extension ItemStudio: LibraryElement {
-
-    func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {
-//        router.route(
-//            to: .library(
-//                library: Pagingitemlibrar
-//            ),
-//            in: <#T##Namespace.ID?#>
-//        )
-    }
-
-    func makeGridBody(libraryStyle: LibraryStyle) -> EmptyView {}
-
-    func makeListBody(libraryStyle: LibraryStyle) -> EmptyView {}
-
-    func makeBody(libraryStyle: LibraryStyle) -> EmptyView {
-        EmptyView()
-    }
-
-    var preferredPosterDisplayType: PosterDisplayType {
-        .landscape
-    }
-
-    var id: String {
-        value
-    }
-
-    var systemImage: String {
-        "bird.fill"
-    }
-}

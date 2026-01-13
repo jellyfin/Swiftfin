@@ -129,14 +129,6 @@ extension StoredValues.Keys {
             )
         }
 
-        static func libraryPosterType(parentID: String?) -> Key<PosterDisplayType> {
-            CurrentUserKey(
-                parentID,
-                domain: "setting-libraryPosterType",
-                default: Defaults[.Customization.Library.posterType]
-            )
-        }
-
         static func posterButtonStyle(parentID: String?) -> Key<PosterDisplayConfiguration> {
             CurrentUserKey(
                 parentID,

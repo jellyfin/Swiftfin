@@ -34,7 +34,7 @@ struct NavigationBarFilterDrawer: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
-                if viewModel.currentFilters.hasFilters {
+                if viewModel.currentFilters.isNotEmpty {
                     Menu(L10n.reset, systemImage: "line.3.horizontal.decrease") {
                         Button(L10n.reset, role: .destructive) {
                             viewModel.reset(filterType: nil)

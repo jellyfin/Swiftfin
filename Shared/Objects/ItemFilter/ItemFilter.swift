@@ -13,8 +13,6 @@ protocol ItemFilter: Displayable {
 
     var value: String { get }
 
-    // TODO: Should this be optional if the concrete type
-    //       can't be constructed?
     init(from anyFilter: AnyItemFilter)
 }
 

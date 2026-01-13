@@ -98,7 +98,7 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View where Library.El
 //                elements: _elements.map(\.asAnyPoster),
                 type: group.posterDisplayType,
                 size: group.posterSize
-            ) { _, _ in
+            ) { element, namespace in
                 element.libraryDidSelectElement(router: router, in: namespace)
             } header: {
                 header

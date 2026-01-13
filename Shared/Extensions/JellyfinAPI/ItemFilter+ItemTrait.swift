@@ -14,16 +14,7 @@ import JellyfinAPI
 /// - Important: Make sure to use the correct `filters` parameter for item calls!
 typealias ItemTrait = JellyfinAPI.ItemFilter
 
-extension ItemTrait: ItemFilter {
-
-    var value: String {
-        rawValue
-    }
-
-    init(from anyFilter: AnyItemFilter) {
-        self.init(rawValue: anyFilter.value)!
-    }
-}
+extension ItemTrait: ItemFilter {}
 
 extension ItemTrait: Displayable {
     var displayTitle: String {

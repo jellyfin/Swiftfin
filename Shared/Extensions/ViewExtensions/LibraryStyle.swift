@@ -17,7 +17,7 @@ struct LibraryStyle: WithDefaultValue, Hashable, Storable {
     static let `default`: LibraryStyle = .init(
         displayType: .grid,
         posterDisplayType: .portrait,
-        listColumnCount: 2
+        listColumnCount: 1
     )
 }
 

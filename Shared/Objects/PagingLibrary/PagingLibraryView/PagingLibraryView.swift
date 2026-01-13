@@ -74,7 +74,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         ZStack {
             Color.clear
 
-            viewModel.library.makeLibraryBody(content: contentView)
+            viewModel.library.makeLibraryBody(content: contentView, state: viewModel.state)
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()

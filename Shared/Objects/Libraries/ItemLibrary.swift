@@ -202,9 +202,17 @@ struct ItemLibrary: PagingLibrary, WithRandomElementLibrary {
         return response?.value.items?.first
     }
 
-    func makeLibraryBody(content: some View) -> AnyView {
+    @ViewBuilder
+    func makeLibraryBody(content: some View, state: PagingLibraryViewModel<ItemLibrary>._State) -> AnyView {
         WithRouter { _ in
+//            HStack(spacing: 10) {
             content
+
+//                if state == .content {
+//                    LetterPickerBar(viewModel: filterViewModel)
+//                        .padding(.horizontal, 10)
+//                }
+//            }
 //                .navigationBarFilterDrawer(
 //                    viewModel: filterViewModel,
 //                    types: ItemFilterType.allCases
