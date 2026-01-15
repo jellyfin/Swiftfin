@@ -39,6 +39,7 @@ extension ChevronButton {
         let alertTitle: String
         let content: () -> Content
         let description: String?
+        let hasIcon: Bool
         let label: Label
         let onCancel: (() -> Void)?
         let onSave: (() -> Void)?
@@ -47,7 +48,12 @@ extension ChevronButton {
             Button {
                 isPresented = true
             } label: {
-                label
+                if hasIcon {
+                    label
+                } else {
+                    label
+                        .labelStyle(.titleOnly)
+                }
             }
             .foregroundStyle(.primary, .secondary)
             .alert(alertTitle, isPresented: $isPresented) {
@@ -77,16 +83,17 @@ extension ChevronButton {
 
     private struct ButtonContentView<Label: View>: View {
 
+        let hasIcon: Bool
         let label: Label
         let action: () -> Void
 
         var body: some View {
             Button(action: action) {
-                if Icon.self == EmptyView.self {
+                if hasIcon {
                     label
-                        .labelStyle(.titleOnly)
                 } else {
                     label
+                        .labelStyle(.titleOnly)
                 }
             }
             .foregroundStyle(.primary, .secondary)
@@ -108,6 +115,7 @@ extension ChevronButton {
         self.subtitle = subtitle()
         self.innerContent = { label in
             ButtonContentView(
+                hasIcon: Icon.self != EmptyView.self,
                 label: label,
                 action: action
             )
@@ -126,6 +134,7 @@ extension ChevronButton {
         self.subtitle = subtitle()
         self.innerContent = { label in
             ButtonContentView(
+                hasIcon: Icon.self != EmptyView.self,
                 label: label,
                 action: action
             )
@@ -146,6 +155,7 @@ extension ChevronButton where Icon == EmptyView, Subtitle == Text {
         self.subtitle = Text(subtitle)
         self.innerContent = { label in
             ButtonContentView(
+                hasIcon: false,
                 label: label,
                 action: action
             )
@@ -163,6 +173,7 @@ extension ChevronButton where Icon == EmptyView, Subtitle == Text {
         self.subtitle = subtitle
         self.innerContent = { label in
             ButtonContentView(
+                hasIcon: false,
                 label: label,
                 action: action
             )
@@ -182,6 +193,7 @@ extension ChevronButton where Icon == EmptyView, Subtitle == EmptyView {
         self.subtitle = EmptyView()
         self.innerContent = { label in
             ButtonContentView(
+                hasIcon: false,
                 label: label,
                 action: action
             )
@@ -205,6 +217,7 @@ extension ChevronButton where Icon == Image, Subtitle == Text {
         self.subtitle = Text(subtitle)
         self.innerContent = { label in
             ButtonContentView(
+                hasIcon: true,
                 label: label,
                 action: action
             )
@@ -223,6 +236,7 @@ extension ChevronButton where Icon == Image, Subtitle == Text {
         self.subtitle = subtitle
         self.innerContent = { label in
             ButtonContentView(
+                hasIcon: true,
                 label: label,
                 action: action
             )
@@ -243,6 +257,7 @@ extension ChevronButton where Icon == Image, Subtitle == Text {
         self.subtitle = Text(subtitle)
         self.innerContent = { label in
             ButtonContentView(
+                hasIcon: true,
                 label: label,
                 action: action
             )
@@ -261,6 +276,7 @@ extension ChevronButton where Icon == Image, Subtitle == Text {
         self.subtitle = subtitle
         self.innerContent = { label in
             ButtonContentView(
+                hasIcon: true,
                 label: label,
                 action: action
             )
@@ -283,6 +299,7 @@ extension ChevronButton where Icon == Image, Subtitle == EmptyView {
         self.subtitle = EmptyView()
         self.innerContent = { label in
             ButtonContentView(
+                hasIcon: true,
                 label: label,
                 action: action
             )
@@ -302,6 +319,7 @@ extension ChevronButton where Icon == Image, Subtitle == EmptyView {
         self.subtitle = EmptyView()
         self.innerContent = { label in
             ButtonContentView(
+                hasIcon: true,
                 label: label,
                 action: action
             )
@@ -327,6 +345,7 @@ extension ChevronButton where Icon == EmptyView, Subtitle == Text {
                 alertTitle: title,
                 content: content,
                 description: description,
+                hasIcon: false,
                 label: label,
                 onCancel: onCancel,
                 onSave: onSave
@@ -350,6 +369,7 @@ extension ChevronButton where Icon == EmptyView, Subtitle == Text {
                 alertTitle: title,
                 content: content,
                 description: description,
+                hasIcon: false,
                 label: label,
                 onCancel: onCancel,
                 onSave: onSave
