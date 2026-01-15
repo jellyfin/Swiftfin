@@ -11,288 +11,124 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiable {
+@MainActor
+@Stateful
+final class ServerUserAdminViewModel: ViewModel, Identifiable {
 
-    // MARK: - Event
-
-    enum Event {
-        case error(ErrorMessage)
-        case updated
-    }
-
-    // MARK: - Action
-
-    enum Action: Equatable {
+    @CasePathable
+    enum Action {
         case cancel
         case refresh
-        case loadLibraries(isHidden: Bool? = false)
+        case getLibraries(isHidden: Bool? = false)
         case updatePolicy(UserPolicy)
         case updateConfiguration(UserConfiguration)
         case updateUsername(String)
+
+        var transition: Transition {
+            switch self {
+            case .cancel:
+                .to(.initial)
+            case .refresh, .getLibraries:
+                .to(.initial, then: .content)
+                    .whenBackground(.refreshing)
+            case .updatePolicy, .updateConfiguration, .updateUsername:
+                .background(.updating)
+            }
+        }
     }
 
-    // MARK: - Background State
-
-    enum BackgroundState: Hashable {
+    enum BackgroundState {
         case updating
         case refreshing
     }
 
-    // MARK: - State
-
-    enum State: Hashable {
-        case initial
-        case content
-        case error(ErrorMessage)
+    enum Event {
+        case updated
     }
 
-    // MARK: - Published Values
-
-    @Published
-    var state: State = .initial
-    @Published
-    var backgroundStates: Set<BackgroundState> = []
+    enum State {
+        case initial
+        case content
+        case error
+    }
 
     @Published
     private(set) var user: UserDto
-
     @Published
     var libraries: [BaseItemDto] = []
 
-    private var userTaskCancellable: AnyCancellable?
-    private var eventSubject = PassthroughSubject<Event, Never>()
+    init(user: UserDto? = nil) {
 
-    var events: AnyPublisher<Event, Never> {
-        eventSubject
-            .receive(on: RunLoop.main)
-            .eraseToAnyPublisher()
-    }
+        self.user = .init()
 
-    // MARK: - Initializer
-
-    init(user: UserDto) {
-        self.user = user
         super.init()
+
+        self.user = user ?? userSession.user.data
 
         Notifications[.didChangeUserProfile]
             .publisher
-            .sink { userID in
-                guard userID == self.user.id else { return }
+            .sink { [weak self] userID in
+                guard let self, userID == self.user.id else { return }
 
-                Task {
-                    await self.send(.refresh)
-                }
+                self.refresh()
             }
             .store(in: &cancellables)
     }
 
-    // MARK: - Respond
-
-    func respond(to action: Action) -> State {
-        switch action {
-        case .cancel:
-            return .initial
-
-        case .refresh:
-            userTaskCancellable?.cancel()
-
-            userTaskCancellable = Task {
-                do {
-                    await MainActor.run {
-                        _ = backgroundStates.insert(.refreshing)
-                    }
-
-                    try await loadDetails()
-
-                    await MainActor.run {
-                        state = .content
-                        _ = backgroundStates.remove(.refreshing)
-                    }
-                } catch {
-                    await MainActor.run {
-                        state = .error(.init(error.localizedDescription))
-                        eventSubject.send(.error(.init(error.localizedDescription)))
-                        _ = backgroundStates.remove(.refreshing)
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return state
-
-        case let .loadLibraries(isHidden):
-            userTaskCancellable?.cancel()
-
-            userTaskCancellable = Task {
-                do {
-                    await MainActor.run {
-                        _ = backgroundStates.insert(.refreshing)
-                    }
-
-                    try await loadLibraries(isHidden: isHidden)
-
-                    await MainActor.run {
-                        state = .content
-                        _ = backgroundStates.remove(.refreshing)
-                    }
-                } catch {
-                    await MainActor.run {
-                        state = .error(.init(error.localizedDescription))
-                        eventSubject.send(.error(.init(error.localizedDescription)))
-                        _ = backgroundStates.remove(.refreshing)
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return state
-
-        case let .updatePolicy(policy):
-            userTaskCancellable?.cancel()
-
-            userTaskCancellable = Task {
-                do {
-                    await MainActor.run {
-                        _ = backgroundStates.insert(.updating)
-                    }
-
-                    try await updatePolicy(policy: policy)
-
-                    await MainActor.run {
-                        state = .content
-                        eventSubject.send(.updated)
-                        _ = backgroundStates.remove(.updating)
-                    }
-                } catch {
-                    await MainActor.run {
-                        state = .error(.init(error.localizedDescription))
-                        eventSubject.send(.error(.init(error.localizedDescription)))
-                        _ = backgroundStates.remove(.updating)
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return state
-
-        case let .updateConfiguration(configuration):
-            userTaskCancellable?.cancel()
-
-            userTaskCancellable = Task {
-                do {
-                    await MainActor.run {
-                        _ = backgroundStates.insert(.updating)
-                    }
-
-                    try await updateConfiguration(configuration: configuration)
-
-                    await MainActor.run {
-                        state = .content
-                        eventSubject.send(.updated)
-                        _ = backgroundStates.remove(.updating)
-                    }
-                } catch {
-                    await MainActor.run {
-                        state = .error(.init(error.localizedDescription))
-                        eventSubject.send(.error(.init(error.localizedDescription)))
-                        _ = backgroundStates.remove(.updating)
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return state
-
-        case let .updateUsername(username):
-            userTaskCancellable?.cancel()
-
-            userTaskCancellable = Task {
-                do {
-                    await MainActor.run {
-                        _ = backgroundStates.insert(.updating)
-                    }
-
-                    try await updateUsername(username: username)
-
-                    await MainActor.run {
-                        state = .content
-                        eventSubject.send(.updated)
-                        _ = backgroundStates.remove(.updating)
-                    }
-                } catch {
-                    await MainActor.run {
-                        state = .error(.init(error.localizedDescription))
-                        eventSubject.send(.error(.init(error.localizedDescription)))
-                        _ = backgroundStates.remove(.updating)
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return state
-        }
+    @Function(\Action.Cases.refresh)
+    private func _refresh() async throws {
+        user = try await user.getFullUser(userSession: userSession)
     }
 
-    // MARK: - Load User Details
-
-    private func loadDetails() async throws {
-        guard let userID = user.id else { throw ErrorMessage("User ID is missing") }
-        let request = Paths.getUserByID(userID: userID)
-        let response = try await userSession.client.send(request)
-
-        await MainActor.run {
-            self.user = response.value
-        }
-    }
-
-    // MARK: - Load Libraries
-
-    private func loadLibraries(isHidden: Bool?) async throws {
+    @Function(\Action.Cases.getLibraries)
+    private func _getLibraries(_ isHidden: Bool?) async throws {
         let request = Paths.getMediaFolders(isHidden: isHidden)
         let response = try await userSession.client.send(request)
 
-        await MainActor.run {
-            self.libraries = response.value.items ?? []
-        }
+        libraries = response.value.items ?? []
     }
 
-    // MARK: - Update User Policy
+    @Function(\Action.Cases.updatePolicy)
+    private func _updatePolicy(_ policy: UserPolicy) async throws {
+        guard let userID = user.id else {
+            throw ErrorMessage("User ID is missing")
+        }
 
-    private func updatePolicy(policy: UserPolicy) async throws {
-        guard let userID = user.id else { throw ErrorMessage("User ID is missing") }
         let request = Paths.updateUserPolicy(userID: userID, policy)
         try await userSession.client.send(request)
 
-        await MainActor.run {
-            self.user.policy = policy
-        }
+        user.policy = policy
+        events.send(.updated)
     }
 
-    // MARK: - Update User Configuration
+    @Function(\Action.Cases.updateConfiguration)
+    private func _updateConfiguration(_ configuration: UserConfiguration) async throws {
+        guard let userID = user.id else {
+            throw ErrorMessage("User ID is missing")
+        }
 
-    private func updateConfiguration(configuration: UserConfiguration) async throws {
-        guard let userID = user.id else { throw ErrorMessage("User ID is missing") }
         let request = Paths.updateUserConfiguration(userID: userID, configuration)
         try await userSession.client.send(request)
 
-        await MainActor.run {
-            self.user.configuration = configuration
-        }
+        user.configuration = configuration
+        events.send(.updated)
     }
 
-    // MARK: - Update Username
+    @Function(\Action.Cases.updateUsername)
+    private func _updateUsername(_ username: String) async throws {
+        guard let userID = user.id else {
+            throw ErrorMessage("User ID is missing")
+        }
 
-    private func updateUsername(username: String) async throws {
-        guard let userID = user.id else { throw ErrorMessage("User ID is missing") }
         var updatedUser = user
         updatedUser.name = username
 
         let request = Paths.updateUser(userID: userID, updatedUser)
         try await userSession.client.send(request)
 
-        await MainActor.run {
-            self.user.name = username
-            Notifications[.didChangeUserProfile].post(userID)
-        }
+        user.name = username
+
+        Notifications[.didChangeUserProfile].post(userID)
+        events.send(.updated)
     }
 }
