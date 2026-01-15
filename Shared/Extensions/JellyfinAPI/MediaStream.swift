@@ -209,23 +209,21 @@ extension MediaStream {
 
 extension [MediaStream] {
 
-    /// Adjusts track indexes for a full set of media streams.
-    /// For non-transcode stream types:
-    ///   Internal tracks (non-external) are ordered as: Video, Audio, Subtitles, then any others.
-    ///   Their relative order within each group is preserved and indexes start at 0.
-    /// For transcode stream type:
-    ///   Only the first internal video track and the first internal audio track are included, in that order.
-    /// In both cases, external tracks are appended in their original order with indexes continuing after internal tracks.
-    func adjustedTrackIndexes(for playMethod: PlayMethod, selectedAudioStreamIndex: Int) -> [MediaStream] {
+    /// Adjusts track indexes for VLC playback.
+    /// Shows ALL tracks (embedded + external, regardless of deliveryURL).
+    /// External tracks are always placed at the end after internal tracks.
+    /// Indices are remapped to 0-based sequence for VLC.
+    ///
+    /// Returns: (adjusted streams with new indices, map of original index -> adjusted index)
+    func adjustedIndexMap(for playMethod: PlayMethod, selectedAudioStreamIndex: Int) -> [Int: Int] {
         let internalTracks = self.filter { !($0.isExternal ?? false) }
-        let externalTracks = self.filter { $0.isExternal ?? false }
+        let externalTracks = self.filter { $0.isExternal == true }
 
         var orderedInternal: [MediaStream] = []
-
         let subtitleInternal = internalTracks.filter { $0.type == .subtitle }
 
         if playMethod == .transcode {
-            // Only include the first video and first audio track for transcode.
+            // Only include the first video and selected audio track for transcode
             let videoInternal = internalTracks.filter { $0.type == .video }
             let audioInternal = internalTracks.filter { $0.type == .audio }
 
@@ -244,20 +242,30 @@ extension [MediaStream] {
             orderedInternal = videoInternal + audioInternal + subtitleInternal
         }
 
+        // Remap indices for VLC (0-based sequence)
+        var indexMap: [Int: Int] = [:]
         var newInternalTracks: [MediaStream] = []
-        for (index, var track) in orderedInternal.enumerated() {
-            track.index = index
+
+        for (newIndex, var track) in orderedInternal.enumerated() {
+            guard let oldIndex = track.index else { continue }
+
+            track.index = newIndex
+            indexMap[oldIndex] = newIndex
             newInternalTracks.append(track)
         }
 
-        var newExternalTracks: [MediaStream] = []
+        // Add ALL external tracks at the end
         let startingIndexForExternal = newInternalTracks.count
+
         for (offset, var track) in externalTracks.enumerated() {
-            track.index = startingIndexForExternal + offset
-            newExternalTracks.append(track)
+            guard let oldIndex = track.index else { continue }
+
+            let newIndex = startingIndexForExternal + offset
+            track.index = newIndex
+            indexMap[oldIndex] = newIndex
         }
 
-        return newInternalTracks + newExternalTracks
+        return indexMap
     }
 
     var has4KVideo: Bool {
