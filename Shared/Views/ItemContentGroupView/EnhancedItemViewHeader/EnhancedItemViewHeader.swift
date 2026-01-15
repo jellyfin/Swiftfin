@@ -9,13 +9,13 @@
 import JellyfinAPI
 import SwiftUI
 
-struct EnhancedItemViewHeader: _ContentGroup {
+struct EnhancedItemViewHeader: ContentGroup {
 
     let id = "item-view-header"
     let viewModel: Empty = .init()
-    let itemViewModel: _ItemViewModel
+    let itemViewModel: ItemViewModel
 
-    init(itemViewModel: _ItemViewModel) {
+    init(itemViewModel: ItemViewModel) {
         self.itemViewModel = itemViewModel
     }
 

@@ -6,36 +6,15 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-struct LibraryPageState {
+import SwiftUI
 
+struct LibraryPageState {
     let pageOffset: Int
     let pageSize: Int
     let userSession: UserSession
-
-    // TODO: probably needs to be generic over element IDs
-    // TODO: why this here?
-    let elementIDs: [Int]
 }
 
-protocol _LibraryParent: Displayable {
-
-    associatedtype Grouping: LibraryGrouping = Empty
-
-    var groupings: (defaultSelection: Grouping, elements: [Grouping])? { get }
-    var libraryID: String { get }
-}
-
-extension _LibraryParent where Grouping == Empty {
-    var groupings: (defaultSelection: Grouping, elements: [Grouping])? { nil }
-}
-
-protocol WithLibraryGrouping<Grouping> {
-    associatedtype Grouping: LibraryGrouping
-    var grouping: Grouping? { get set }
-}
-
-import SwiftUI
-
+@MainActor
 protocol PagingLibrary<Element> {
 
     associatedtype Element: Identifiable
@@ -70,7 +49,6 @@ extension PagingLibrary {
 
     func makeLibraryBody(content: some View, state: PagingLibraryViewModel<Self>._State) -> AnyView {
         content
-            .debugOverlay()
             .eraseToAnyView()
     }
 

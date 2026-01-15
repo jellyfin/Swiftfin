@@ -101,7 +101,7 @@ extension TabItem {
     }
 
     static func contentGroup(
-        provider: some _ContentGroupProvider
+        provider: some ContentGroupProvider
     ) -> TabItem {
         TabItem(
             id: provider.id,

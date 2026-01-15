@@ -20,7 +20,7 @@ extension BaseItemPerson: Poster {
     var posterLabel: some View {
         TitleSubtitleContentView(
             title: displayTitle,
-            subtitle: role ?? "!!!"
+            subtitle: role ?? ""
         )
     }
 

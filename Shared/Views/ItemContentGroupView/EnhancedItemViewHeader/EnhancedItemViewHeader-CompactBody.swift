@@ -13,7 +13,7 @@ extension EnhancedItemViewHeader {
     struct CompactBody: View {
 
         @ObservedObject
-        var viewModel: _ItemViewModel
+        var viewModel: ItemViewModel
 
         @Router
         private var router
@@ -25,7 +25,8 @@ extension EnhancedItemViewHeader {
                     EmptyView()
                 }
                 .failure {
-                    MaxHeightText(viewModel.item.displayTitle)
+                    Text(viewModel.item.displayTitle)
+                        .fixedSize(horizontal: false, vertical: true)
                         .font(.largeTitle)
                         .fontWeight(.semibold)
                         .lineLimit(2)
@@ -45,9 +46,7 @@ extension EnhancedItemViewHeader {
                         .padding(.bottom, 35)
                 } content: {
                     logo
-                        .frame(maxWidth: .infinity)
                 }
-                .frame(maxWidth: .infinity)
                 .zIndex(10)
 
                 VStack(alignment: .center, spacing: 10) {
@@ -154,7 +153,7 @@ extension EnhancedItemViewHeader {
             }
             .scrollViewHeaderOffsetOpacity()
             .trackingFrame(for: .scrollViewHeader, key: ScrollViewHeaderFrameKey.self)
-            .preference(key: _ContentGroupCustomizationKey.self, value: .useOffsetNavigationBar)
+            .preference(key: ContentGroupCustomizationKey.self, value: .useOffsetNavigationBar)
             .preference(key: MenuContentKey.self) {
                 //                if viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item) {
                 #if os(iOS)

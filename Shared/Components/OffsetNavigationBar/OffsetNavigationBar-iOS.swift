@@ -43,8 +43,6 @@ struct OffsetNavigationBar<Content: View>: View {
     }
 }
 
-// TODO: fix lifecycle with zoom transition
-
 private struct NavigationBarOffsetView<Content: View>: UIViewControllerRepresentable {
 
     private let content: Content
@@ -81,6 +79,9 @@ private class UINavigationBarOffsetHostingController<Content: View>: UIHostingCo
 
     private var lastAlpha: CGFloat = 0
 
+    // scrollview offset will trigger during transitions
+    private var hasCalledWillDisappear = false
+
     private lazy var blurView: UIVisualEffectView = {
         let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
         blurView.translatesAutoresizingMaskIntoConstraints = false
@@ -104,6 +105,8 @@ private class UINavigationBarOffsetHostingController<Content: View>: UIHostingCo
 
     func scrollViewDidScroll(_ offset: CGFloat, start: CGFloat, end: CGFloat) {
 
+        guard !hasCalledWillDisappear else { return }
+
         let diff = end - start
         let currentProgress = (offset - start) / diff
         let alpha = clamp(currentProgress, min: 0, max: 1)
@@ -117,6 +120,8 @@ private class UINavigationBarOffsetHostingController<Content: View>: UIHostingCo
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
+        hasCalledWillDisappear = false
+
         navigationController?.navigationBar
             .titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label.withAlphaComponent(lastAlpha)]
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
@@ -125,6 +130,8 @@ private class UINavigationBarOffsetHostingController<Content: View>: UIHostingCo
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+
+        hasCalledWillDisappear = true
 
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label]
         navigationController?.navigationBar.setBackgroundImage(nil, for: .default)

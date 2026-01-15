@@ -7,7 +7,7 @@
 //
 
 @MainActor
-protocol _ContentGroupProvider: Displayable {
+protocol ContentGroupProvider: Displayable {
 
     associatedtype Environment = Empty
 
@@ -15,10 +15,10 @@ protocol _ContentGroupProvider: Displayable {
     var environment: Environment { get set }
 
     @ContentGroupBuilder
-    func makeGroups(environment: Environment) async throws -> [any _ContentGroup]
+    func makeGroups(environment: Environment) async throws -> [any ContentGroup]
 }
 
-extension _ContentGroupProvider where Environment == Empty {
+extension ContentGroupProvider where Environment == Empty {
     var environment: Empty {
         get { .init() }
         set {}

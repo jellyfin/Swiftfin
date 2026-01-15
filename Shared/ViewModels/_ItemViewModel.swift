@@ -10,7 +10,7 @@ import JellyfinAPI
 import SwiftUI
 
 @Stateful
-class _ItemViewModel: ViewModel, WithRefresh {
+class ItemViewModel: ViewModel, WithRefresh {
 
     @CasePathable
     enum Action {

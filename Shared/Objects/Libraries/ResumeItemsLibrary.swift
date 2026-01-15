@@ -8,14 +8,13 @@
 
 import JellyfinAPI
 
-// TODO: rename to be general resume items
-//       - take mediaTypes
+struct ResumeItemsLibrary: PagingLibrary {
 
-struct ContinueWatchingLibrary: PagingLibrary {
-
+    let mediaTypes: [MediaType]
     let parent: _TitledLibraryParent
 
-    init() {
+    init(mediaTypes: [MediaType]) {
+        self.mediaTypes = mediaTypes
         self.parent = _TitledLibraryParent(
             displayTitle: "Continue Watching",
             libraryID: "continue-watching"
@@ -29,7 +28,7 @@ struct ContinueWatchingLibrary: PagingLibrary {
         var parameters = Paths.GetResumeItemsParameters()
         parameters.userID = pageState.userSession.user.id
         parameters.enableUserData = true
-        parameters.mediaTypes = [.video]
+        parameters.mediaTypes = mediaTypes
 
         parameters.limit = pageState.pageSize
         parameters.startIndex = pageState.pageOffset

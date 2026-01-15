@@ -50,7 +50,7 @@ final class SearchViewModel: ViewModel {
     let filterViewModel: FilterViewModel
 
     var isEmpty: Bool {
-        func extract<T: _ContentGroup>(_ group: T) -> Bool {
+        func extract<T: ContentGroup>(_ group: T) -> Bool {
             func inner<VM: __PagingLibaryViewModel>(_ vm: VM) -> Bool {
                 vm.elements.isEmpty
             }
@@ -127,8 +127,7 @@ final class SearchViewModel: ViewModel {
             vm.environment = .init(
                 grouping: vm.environment.grouping,
                 filters: filters,
-                fields: nil,
-                allowRecursive: true
+                fields: nil
             )
 
             print(vm.environment)

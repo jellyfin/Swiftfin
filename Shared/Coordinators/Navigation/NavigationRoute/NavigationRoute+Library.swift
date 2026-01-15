@@ -9,6 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
+@MainActor
 extension NavigationRoute {
 
     #if os(iOS)
@@ -22,8 +23,7 @@ extension NavigationRoute {
     }
     #endif
 
-    @MainActor
-    static func contentGroup<Provider: _ContentGroupProvider>(
+    static func contentGroup<Provider: ContentGroupProvider>(
         provider: Provider
     ) -> NavigationRoute {
         NavigationRoute(
@@ -42,15 +42,6 @@ extension NavigationRoute {
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
             PagingLibraryView(library: library)
-        }
-    }
-
-    static func posterGroupPosterButtonStyle(id: String) -> NavigationRoute {
-        NavigationRoute(
-            id: "poster-group-poster-button-style-\(id)",
-            style: .sheet
-        ) {
-            CustomizePosterGroupSettings(id: id)
         }
     }
 }

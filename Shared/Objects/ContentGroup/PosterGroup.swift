@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element: LibraryElement {
+struct PosterGroup<Library: PagingLibrary>: ContentGroup where Library.Element: LibraryElement {
 
     let displayTitle: String
     let id: String
@@ -16,6 +16,8 @@ struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element:
     let posterDisplayType: PosterDisplayType
     let posterSize: PosterDisplayType.Size
     let viewModel: PagingLibraryViewModel<Library>
+
+    let _viewContext: ViewContext?
 
     var _shouldBeResolved: Bool {
         viewModel.elements.isNotEmpty
@@ -25,7 +27,8 @@ struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element:
         id: String = UUID().uuidString,
         library: Library,
         posterDisplayType: PosterDisplayType = .portrait,
-        posterSize: PosterDisplayType.Size = .small
+        posterSize: PosterDisplayType.Size = .small,
+        _viewContext: ViewContext? = nil
     ) {
         self.displayTitle = library.parent.displayTitle
         self.id = id
@@ -33,6 +36,7 @@ struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element:
         self.posterDisplayType = posterDisplayType
         self.posterSize = posterSize
         self.viewModel = .init(library: library, pageSize: 20)
+        self._viewContext = _viewContext
     }
 
     @ViewBuilder
@@ -41,5 +45,6 @@ struct PosterGroup<Library: PagingLibrary>: _ContentGroup where Library.Element:
             viewModel: viewModel,
             group: self
         )
+        .withViewContext(_viewContext ?? .init())
     }
 }

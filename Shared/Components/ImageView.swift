@@ -131,14 +131,6 @@ extension ImageView {
 
 // MARK: Defaults
 
-struct DefaultFailureView: View {
-
-    var body: some View {
-        Color.secondarySystemFill
-            .opacity(0.75)
-    }
-}
-
 struct DefaultPlaceholderView: View {
 
     let blurHash: String?

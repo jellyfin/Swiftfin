@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-struct _ContentGroupParentOption: OptionSet {
+struct ContentGroupParentOption: OptionSet {
 
     let rawValue: Int
 
@@ -17,18 +17,18 @@ struct _ContentGroupParentOption: OptionSet {
     static let useOffsetNavigationBar = Self(rawValue: 1 << 1)
 }
 
-struct _ContentGroupCustomizationKey: PreferenceKey {
-    static var defaultValue: _ContentGroupParentOption = []
+struct ContentGroupCustomizationKey: PreferenceKey {
+    static var defaultValue: ContentGroupParentOption = []
 
     static func reduce(
-        value: inout _ContentGroupParentOption,
-        nextValue: () -> _ContentGroupParentOption
+        value: inout ContentGroupParentOption,
+        nextValue: () -> ContentGroupParentOption
     ) {
         value.formUnion(nextValue())
     }
 }
 
-struct LargePosterGroup: _ContentGroup {
+struct LargePosterGroup: ContentGroup {
 
     let id = "item-view-header"
     let viewModel: Empty = .init()
@@ -83,7 +83,7 @@ struct LargePosterHStack<
         }
         .debugBackground()
         .preference(
-            key: _ContentGroupCustomizationKey.self,
+            key: ContentGroupCustomizationKey.self,
             value: [.ignoreTopSafeArea]
         )
     }

@@ -9,13 +9,13 @@
 import JellyfinAPI
 import SwiftUI
 
-struct SimpleItemViewHeader: _ContentGroup {
+struct SimpleItemViewHeader: ContentGroup {
 
     let id = "item-view-header"
     let viewModel: Empty = .init()
-    let itemViewModel: _ItemViewModel
+    let itemViewModel: ItemViewModel
 
-    init(itemViewModel: _ItemViewModel) {
+    init(itemViewModel: ItemViewModel) {
         self.itemViewModel = itemViewModel
     }
 
@@ -26,39 +26,51 @@ struct SimpleItemViewHeader: _ContentGroup {
     struct Body: View {
 
         @ObservedObject
-        var viewModel: _ItemViewModel
+        var viewModel: ItemViewModel
 
         @Router
         private var router
 
         @ViewBuilder
+        private func parentButton(_ title: String, id: String) -> some View {
+            Button {
+                router.route(
+                    to: .item(
+                        displayTitle: title,
+                        id: id
+                    )
+                )
+            } label: {
+                HStack(spacing: 2) {
+                    Text(title)
+                        .font(.headline)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+
+                    Image(systemName: "chevron.forward")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                .fontWeight(.semibold)
+            }
+            .foregroundStyle(.primary, .secondary)
+        }
+
+        @ViewBuilder
         private var titleAndAttributes: some View {
             VStack(alignment: .center, spacing: 5) {
 
-                // TODO: environment value to not have routing
-                //       - ex: episode already routed from series
-                if let parentID = viewModel.item.seriesID, let parentTitle = viewModel.item.parentTitle {
-                    Button {
-                        router.route(
-                            to: .item(
-                                displayTitle: parentTitle,
-                                id: parentID
-                            )
-                        )
-                    } label: {
-                        HStack(spacing: 2) {
-                            Text(parentTitle)
-                                .font(.headline)
-                                .multilineTextAlignment(.center)
-                                .lineLimit(2)
-
-                            Image(systemName: "chevron.forward")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-                        .fontWeight(.semibold)
+                switch viewModel.item.type {
+                case .episode:
+                    if let parentID = viewModel.item.seriesID, let parentTitle = viewModel.item.parentTitle {
+                        parentButton(parentTitle, id: parentID)
                     }
-                    .foregroundStyle(.primary, .secondary)
+                case .liveTvProgram:
+                    if let channelID = viewModel.item.channelID, let channelName = viewModel.item.channelName {
+                        parentButton(channelName, id: channelID)
+                    }
+                default:
+                    EmptyView()
                 }
 
                 Text(viewModel.item.displayTitle)
@@ -96,7 +108,7 @@ struct SimpleItemViewHeader: _ContentGroup {
 
         @ViewBuilder
         private var overlay: some View {
-            VStack(alignment: .center, spacing: 10) {
+            VStack(spacing: 10) {
                 PosterImage(
                     item: viewModel.item,
                     type: headerImageDisplayType,

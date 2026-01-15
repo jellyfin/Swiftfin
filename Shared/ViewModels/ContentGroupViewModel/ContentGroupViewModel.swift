@@ -13,7 +13,7 @@ import JellyfinAPI
 
 @MainActor
 @Stateful
-final class ContentGroupViewModel<Provider: _ContentGroupProvider>: ViewModel {
+final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
 
     @CasePathable
     enum Action {
@@ -45,7 +45,7 @@ final class ContentGroupViewModel<Provider: _ContentGroupProvider>: ViewModel {
     }
 
     @Published
-    private(set) var groups: [any _ContentGroup] = []
+    private(set) var groups: [any ContentGroup] = []
 
     var provider: Provider
 
@@ -72,7 +72,7 @@ final class ContentGroupViewModel<Provider: _ContentGroupProvider>: ViewModel {
 //            return
 //        }
 
-        func getViewModel<T: _ContentGroup>(for group: T) -> any WithRefresh {
+        func getViewModel<T: ContentGroup>(for group: T) -> any WithRefresh {
             group.viewModel
         }
 

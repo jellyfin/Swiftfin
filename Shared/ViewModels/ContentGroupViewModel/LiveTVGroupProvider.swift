@@ -6,12 +6,12 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-struct LiveTVGroupProvider: _ContentGroupProvider {
+struct LiveTVGroupProvider: ContentGroupProvider {
 
     let id: String = "live-tv"
     let displayTitle: String = L10n.liveTV
 
-    func makeGroups(environment: Empty) async throws -> [any _ContentGroup] {
+    func makeGroups(environment: Empty) async throws -> [any ContentGroup] {
 
         LiveTVChannelsPillGroup()
 
@@ -42,7 +42,7 @@ struct LiveTVGroupProvider: _ContentGroupProvider {
 
 import SwiftUI
 
-struct LiveTVChannelsPillGroup: _ContentGroup {
+struct LiveTVChannelsPillGroup: ContentGroup {
 
     let id: String = "asdf"
     let displayTitle: String = ""

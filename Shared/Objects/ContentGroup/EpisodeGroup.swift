@@ -9,12 +9,9 @@
 import JellyfinAPI
 import SwiftUI
 
-struct EpisodeGroup<Library: PagingLibrary>: _ContentGroup where Library.Element == BaseItemDto {
+struct EpisodeGroup<Library: PagingLibrary>: ContentGroup where Library.Element == BaseItemDto {
 
-    var displayTitle: String {
-        library.parent.displayTitle
-    }
-
+    let displayTitle: String
     let id: String
     let library: Library
     let viewModel: PagingLibraryViewModel<Library>
@@ -24,10 +21,10 @@ struct EpisodeGroup<Library: PagingLibrary>: _ContentGroup where Library.Element
     }
 
     init(
-        id: String = UUID().uuidString,
         library: Library
     ) {
-        self.id = id
+        self.displayTitle = library.parent.displayTitle
+        self.id = UUID().uuidString
         self.library = library
         self.viewModel = .init(library: library, pageSize: 20)
     }

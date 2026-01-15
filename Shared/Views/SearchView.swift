@@ -31,7 +31,7 @@ struct SearchView: View {
     private var tabItemSelected
 
     @ViewBuilder
-    private func makeGroupBody<G: _ContentGroup>(_ group: G) -> some View {
+    private func makeGroupBody<G: ContentGroup>(_ group: G) -> some View {
         group.body(with: group.viewModel)
     }
 

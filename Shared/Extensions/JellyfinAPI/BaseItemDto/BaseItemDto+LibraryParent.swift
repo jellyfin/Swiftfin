@@ -12,12 +12,6 @@ protocol LibraryGrouping: Displayable, Equatable, Hashable, Identifiable<String>
     var id: String { get }
 }
 
-struct _TitledLibraryParent: _LibraryParent {
-
-    let displayTitle: String
-    let libraryID: String
-}
-
 extension BaseItemDto: _LibraryParent {
 
     struct Grouping: LibraryGrouping {
@@ -45,20 +39,19 @@ extension BaseItemDto: _LibraryParent {
     }
 
     func _supportedItemTypes(for grouping: Grouping?) -> [BaseItemKind] {
-//        if self.collectionType == .folders {
-        BaseItemKind.supportedCases
-            .appending([.folder, .collectionFolder])
-//        }
-//
-//        if collectionType == .tvshows {
-//            if let grouping, grouping == .episodes {
-//                return [.episode]
-//            } else {
-//                return [.series]
-//            }
-//        }
-//
-//        return BaseItemKind.supportedCases
+        if collectionType == .folders {
+            return BaseItemKind.supportedCases
+        }
+
+        if collectionType == .tvshows {
+            if let grouping, grouping == .episodes {
+                return [.episode]
+            } else {
+                return [.series]
+            }
+        }
+
+        return BaseItemKind.supportedCases
     }
 
     func _isRecursiveCollection(for grouping: Grouping?) -> Bool {

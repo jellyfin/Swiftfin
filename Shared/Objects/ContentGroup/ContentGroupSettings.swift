@@ -15,7 +15,7 @@ enum ContentGroupProviderSetting: Equatable, Hashable, Storable {
     case `default`
     case custom(StoredContentGroupProvider)
 
-    var provider: any _ContentGroupProvider {
+    var provider: any ContentGroupProvider {
         switch self {
         case .default:
             DefaultContentGroupProvider()
@@ -49,7 +49,7 @@ enum ContentGroupSetting: Equatable, Hashable, Storable {
         posterSize: PosterDisplayType.Size = .medium
     )
 
-    var group: any _ContentGroup {
+    var group: any ContentGroup {
         switch self {
         case let .continueWatching(
             id: id,
@@ -58,7 +58,7 @@ enum ContentGroupSetting: Equatable, Hashable, Storable {
         ):
             PosterGroup(
                 id: id,
-                library: ContinueWatchingLibrary(),
+                library: ResumeItemsLibrary(mediaTypes: [.video]),
                 posterDisplayType: posterDisplayType,
                 posterSize: posterSize
             )
@@ -94,14 +94,14 @@ enum ContentGroupSetting: Equatable, Hashable, Storable {
     }
 }
 
-struct StoredContentGroupProvider: _ContentGroupProvider, Equatable, Hashable, Storable {
+struct StoredContentGroupProvider: ContentGroupProvider, Equatable, Hashable, Storable {
 
     var displayTitle: String
     var id: String
     var systemImage: String
     var groups: [ContentGroupSetting]
 
-    func makeGroups(environment: Empty) async throws -> [any _ContentGroup] {
+    func makeGroups(environment: Empty) async throws -> [any ContentGroup] {
         groups.map(\.group)
     }
 }

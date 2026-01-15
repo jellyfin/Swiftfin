@@ -13,6 +13,7 @@ import SwiftUI
 private let landscapeWidth: CGFloat = 110
 private let portraitWidth: CGFloat = 60
 
+@MainActor
 protocol LibraryElement: Displayable, Poster {
 
     associatedtype GridBody: View = EmptyView

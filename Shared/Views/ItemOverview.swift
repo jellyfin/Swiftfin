@@ -18,7 +18,7 @@ struct ItemOverviewView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 10) {
+            VStack(alignment: UIDevice.isTV ? .center : .leading, spacing: 10) {
 
                 #if os(tvOS)
                 Text(item.displayTitle)

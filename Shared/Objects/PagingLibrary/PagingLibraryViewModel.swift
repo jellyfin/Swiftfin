@@ -13,7 +13,6 @@ import IdentifiedCollections
 import JellyfinAPI
 import SwiftUI
 
-/// Magic number for page sizes
 private let DefaultPageSize = 50
 private let SmallPageSize = 20
 
@@ -161,8 +160,7 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, @MainAct
         let pageState = LibraryPageState(
             pageOffset: elements.count,
             pageSize: pageSize,
-            userSession: userSession,
-            elementIDs: []
+            userSession: userSession
         )
 
         let nextPageElements = try await library.retrievePage(
@@ -188,8 +186,7 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, @MainAct
             let pageState = LibraryPageState(
                 pageOffset: 0,
                 pageSize: 0,
-                userSession: userSession,
-                elementIDs: []
+                userSession: userSession
             )
 
             func inner(

@@ -20,6 +20,7 @@ struct ViewContext: OptionSet {
     static let isThumb = ViewContext(rawValue: 1 << 1)
     static let isOverComplexContent = ViewContext(rawValue: 1 << 2)
     static let isInParent = ViewContext(rawValue: 1 << 3)
+    static let isInResume = ViewContext(rawValue: 1 << 4)
 }
 
 extension EnvironmentValues {

@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-struct PillGroup<Element: Displayable>: _ContentGroup {
+struct PillGroup<Element: Displayable>: ContentGroup {
 
     let action: (Router.Wrapper, Element) -> Void
     let displayTitle: String

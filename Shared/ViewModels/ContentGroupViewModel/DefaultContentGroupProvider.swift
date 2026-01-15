@@ -6,52 +6,30 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Factory
 import Foundation
 import JellyfinAPI
 
 // TODO: rename `HomeContentGroupProvider`
 
-struct DefaultContentGroupProvider: _ContentGroupProvider {
+struct DefaultContentGroupProvider: ContentGroupProvider {
 
     @Injected(\.currentUserSession)
-    var userSession: UserSession!
+    var userSession: UserSession?
 
     let displayTitle: String = L10n.home
     let id: String = "default-content-group-provider"
     let systemImage: String = "house.fill"
 
-    @ContentGroupBuilder
-    func makeGroups(environment: Empty) async throws -> [any _ContentGroup] {
+    func makeGroups(environment: Empty) async throws -> [any ContentGroup] {
+        guard let userSession else { return [] }
         let parameters = Paths.GetUserViewsParameters(userID: userSession.user.id)
         let userViewsPath = Paths.getUserViews(parameters: parameters)
         let userViews = try await userSession.client.send(userViewsPath)
         let excludedLibraryIDs = userSession.user.data.configuration?.latestItemsExcludes ?? []
 
-        PosterGroup(
-            library: ContinueWatchingLibrary(),
-            posterDisplayType: .landscape,
-            posterSize: .medium
-        )
-
-        PosterGroup(
-            library: NextUpLibrary()
-        )
-
-        PosterGroup(
-            library: ItemLibrary(
-                parent: .init(
-                    name: L10n.recentlyAdded
-                ),
-                filters: .init(
-                    itemTypes: [.movie, .series],
-                    sortBy: [.dateCreated],
-                    sortOrder: [.descending]
-                )
-            )
-        )
-
-        (userViews.value.items ?? [])
+        let resolvedUserViews = (userViews.value.items ?? []).subtracting(excludedLibraryIDs, using: \.id)
             .intersecting(
                 [
                     .homevideos,
@@ -61,12 +39,45 @@ struct DefaultContentGroupProvider: _ContentGroupProvider {
                 ],
                 using: \.collectionType
             )
-            .subtracting(excludedLibraryIDs, using: \.id)
+
+        return _makeGroups(userViews: resolvedUserViews)
+    }
+
+    @ContentGroupBuilder
+    private func _makeGroups(userViews: [BaseItemDto]) -> [any ContentGroup] {
+
+        PosterGroup(
+            library: ResumeItemsLibrary(mediaTypes: [.video]),
+            posterDisplayType: .landscape,
+            posterSize: .medium,
+            _viewContext: .isInResume
+        )
+
+        PosterGroup(
+            library: NextUpLibrary()
+        )
+
+        if Defaults[.Customization.Home.showRecentlyAdded] {
+            PosterGroup(
+                library: ItemLibrary(
+                    parent: .init(
+                        name: L10n.recentlyAdded
+                    ),
+                    filters: .init(
+                        itemTypes: [.movie, .series],
+                        sortBy: [.dateCreated],
+                        sortOrder: [.descending]
+                    )
+                )
+            )
+        }
+
+        userViews
             .map(LatestInLibrary.init)
             .map {
                 PosterGroup(
                     library: $0,
-                    posterDisplayType: .portrait
+                    posterDisplayType: .landscape
                 )
             }
     }

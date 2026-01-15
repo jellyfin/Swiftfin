@@ -7,22 +7,8 @@
 //
 
 import Defaults
+import JellyfinAPI
 import SwiftUI
-
-extension EnvironmentValues {
-
-    @Entry
-    var _navigationTitle: String? = nil
-}
-
-extension View {
-
-    func navigationTitle(_ title: String) -> some View {
-        self
-            .environment(\._navigationTitle, title)
-            .navigationTitle(Text(title))
-    }
-}
 
 extension CustomizeViewsSettings {
 
@@ -54,31 +40,34 @@ extension CustomizeViewsSettings {
         @State
         private var previewItemState: PreviewItemState = .unplayed
 
+        private let sampleItem: BaseItemDto = .init(
+            runTimeTicks: Duration.seconds(1800).ticks,
+            type: .movie,
+            userData: .init(
+                isFavorite: true,
+                playbackPositionTicks: Duration.seconds(600).ticks,
+                isPlayed: true
+            )
+        )
+
         @ViewBuilder
         private func posterPreview(type: PosterDisplayType) -> some View {
             VStack(alignment: .leading) {
                 PosterImage(
-                    item: ExamplePosterItem(),
+                    item: sampleItem,
                     type: type,
                     contentMode: .fit
                 )
-//                .overlay {
-//                    if showProgress, previewItemState == .inProgress {
-//                        PosterProgressBar(
-//                            title: Duration.seconds(1800).formatted(.runtime),
-//                            progress: 0.33,
-//                            posterDisplayType: type
-//                        )
-//                    }
-//
-//                    if showPlayed, previewItemState == .played {
-//                        PlayedIndicator()
-//                    }
-//
-//                    if showUnplayed, previewItemState == .unplayed {
-//                        UnplayedIndicator()
-//                    }
-//                }
+                .overlay {
+                    PosterIndicatorsOverlay(
+                        item: sampleItem,
+                        indicators: indicators
+                            .removing(.progress, if: previewItemState != .inProgress)
+                            .removing(.played, if: previewItemState != .played)
+                            .removing(.unplayed, if: previewItemState != .unplayed),
+                        posterDisplayType: type
+                    )
+                }
                 .posterCornerRadius(type)
 
                 TitleSubtitleContentView(
@@ -115,6 +104,9 @@ extension CustomizeViewsSettings {
                 #endif
 
                 Section(L10n.indicators) {
+
+                    Toggle(L10n.favorited, isOn: $indicators.contains(.favorited))
+
                     Toggle(L10n.progress, isOn: $indicators.contains(.progress))
 
                     Toggle(L10n.played, isOn: $indicators.contains(.played))
@@ -132,12 +124,4 @@ extension CustomizeViewsSettings {
             .navigationTitle(L10n.posters)
         }
     }
-}
-
-struct ExamplePosterItem: Poster {
-
-    let preferredPosterDisplayType: PosterDisplayType = .portrait
-    let displayTitle: String = "Example"
-    let systemImage: String = "film"
-    let id: String = "example"
 }

@@ -9,7 +9,9 @@
 import Defaults
 import SwiftUI
 
-struct PosterProgressIndicator: View {
+// TODO: report indicator height, rather than
+
+struct ProgressIndicator: View {
 
     @Default(.accentColor)
     private var accentColor
@@ -24,65 +26,49 @@ struct PosterProgressIndicator: View {
             alignment: .bottomLeading,
             ratio: .init(width: progress, height: 1)
         ) {
-            let _ = Self._printChanges()
-
             Rectangle()
                 .fill(accentColor)
-                .frame(height: 8)
                 .frame(
                     maxWidth: .infinity,
                     maxHeight: .infinity,
                     alignment: .bottomLeading
                 )
         }
+        .frame(height: 6)
     }
 
     @ViewBuilder
     private var regularView: some View {
-        ContainerRelativeView(
-            ratio: .init(width: 0.95, height: 0.9)
-        ) {
-            let _ = Self._printChanges()
+        VStack(alignment: .leading, spacing: 5) {
 
-            VStack(alignment: .leading, spacing: 5) {
+            Text(title)
+                .font(.system(.footnote, design: .rounded))
+                .fontWeight(.medium)
 
-                Text(title)
-                    .font(.system(.body, design: .rounded))
-                    .fontWeight(.medium)
-                    .foregroundStyle(.secondary)
-//                    .foregroundStyle(Color(uiColor: UIColor.lightText))
-
-                ProgressView(value: progress)
-                    .progressViewStyle(.playback)
-                    .foregroundStyle(.white)
-                    .frame(height: 5)
-            }
-            .frame(
-                maxWidth: .infinity,
-                maxHeight: .infinity,
-                alignment: .bottom
-            )
+            ProgressView(value: progress)
+                .progressViewStyle(.playback)
+                .foregroundStyle(.white)
+                .frame(height: 6)
         }
-        .background(alignment: .bottom) {
+        .padding(.bottom, 5)
+        .padding(.horizontal, 5)
+        .background(extendedBy: .init(top: 5, leading: 0, bottom: 0, trailing: 0)) {
             Rectangle()
                 .fill(Color.black)
                 .maskLinearGradient {
                     (location: 0, opacity: 0)
+                    (location: 0.5, opacity: 0.7)
                     (location: 1, opacity: 1)
                 }
-                .frame(height: 50)
         }
         .colorScheme(.dark)
     }
 
     var body: some View {
-        let _ = Self._printChanges()
-//        CompactOrRegularView(
-//            isCompact: posterDisplayType != .landscape
-//        ) {
-//            compactView
-//        } regularView: {
-//            regularView
-//        }
+        if posterDisplayType != .landscape {
+            compactView
+        } else {
+            regularView
+        }
     }
 }

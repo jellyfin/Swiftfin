@@ -10,12 +10,12 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct ItemGroupProvider: _ContentGroupProvider {
+struct ItemGroupProvider: ContentGroupProvider {
 
     let displayTitle: String
     let id: String
 
-    let viewModel: _ItemViewModel
+    let viewModel: ItemViewModel
 
     init(displayTitle: String, id: String) {
         self.displayTitle = displayTitle
@@ -24,7 +24,7 @@ struct ItemGroupProvider: _ContentGroupProvider {
         self.viewModel = .init(id: id)
     }
 
-    func makeGroups(environment: Empty) async throws -> [any _ContentGroup] {
+    func makeGroups(environment: Empty) async throws -> [any ContentGroup] {
         await viewModel.refresh()
 
         guard viewModel.error == nil else {
@@ -38,7 +38,7 @@ struct ItemGroupProvider: _ContentGroupProvider {
     }
 
     @ContentGroupBuilder
-    private func _makeGroups(item: BaseItemDto, itemID: String) async throws -> [any _ContentGroup] {
+    private func _makeGroups(item: BaseItemDto, itemID: String) async throws -> [any ContentGroup] {
 
         if UIDevice.isPad || UIDevice.isTV {
             EnhancedItemViewHeader(itemViewModel: viewModel)
@@ -53,6 +53,28 @@ struct ItemGroupProvider: _ContentGroupProvider {
             } else {
                 SimpleItemViewHeader(itemViewModel: viewModel)
             }
+        }
+
+        // TODO: show age of person
+        if let birthday = item.birthday?.formatted(date: .long, time: .omitted) {
+            LabeledContentGroup(
+                L10n.born,
+                value: birthday
+            )
+        }
+
+        if let deathday = item.deathday?.formatted(date: .long, time: .omitted) {
+            LabeledContentGroup(
+                L10n.died,
+                value: deathday
+            )
+        }
+
+        if let birthplace = item.birthplace {
+            LabeledContentGroup(
+                L10n.birthplace,
+                value: birthplace
+            )
         }
 
         if item.type == .series {
@@ -77,7 +99,6 @@ struct ItemGroupProvider: _ContentGroupProvider {
                                 .video,
                                 .liveTvProgram,
                                 .tvChannel,
-                                .musicArtist,
                                 .person,
                             ],
                             parent: .init(name: element.displayTitle),
@@ -106,7 +127,6 @@ struct ItemGroupProvider: _ContentGroupProvider {
                                 .video,
                                 .liveTvProgram,
                                 .tvChannel,
-                                .musicArtist,
                                 .person,
                             ],
                             parent: .init(

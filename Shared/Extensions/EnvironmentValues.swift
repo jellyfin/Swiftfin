@@ -8,13 +8,6 @@
 
 import SwiftUI
 
-struct FrameAndSafeAreaInsets {
-    let frame: CGRect
-    let safeAreaInsets: EdgeInsets
-
-    static let zero: Self = .init(frame: .zero, safeAreaInsets: .zero)
-}
-
 extension EnvironmentValues {
 
     @Entry
@@ -31,6 +24,9 @@ extension EnvironmentValues {
 
     @Entry
     var isSelected: Bool = false
+
+    @Entry
+    var _navigationTitle: String? = nil
 
     @Entry
     var playbackSpeed: Binding<Double> = .constant(1)

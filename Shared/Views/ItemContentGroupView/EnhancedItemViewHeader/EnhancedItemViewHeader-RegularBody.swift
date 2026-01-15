@@ -16,7 +16,7 @@ extension EnhancedItemViewHeader {
         private var frameForParentView
 
         @ObservedObject
-        var viewModel: _ItemViewModel
+        var viewModel: ItemViewModel
 
         @Router
         private var router
@@ -28,11 +28,12 @@ extension EnhancedItemViewHeader {
                     EmptyView()
                 }
                 .failure {
-                    MaxHeightText(viewModel.item.displayTitle)
+                    Text(viewModel.item.displayTitle)
+                        .fixedSize(horizontal: false, vertical: true)
                         .font(.largeTitle)
                         .fontWeight(.semibold)
                         .lineLimit(2)
-                        .multilineTextAlignment(.center)
+                        .multilineTextAlignment(.leading)
                         .foregroundStyle(.primary)
                 }
                 .aspectRatio(contentMode: .fit)
@@ -148,7 +149,7 @@ extension EnhancedItemViewHeader {
                 key: ScrollViewHeaderFrameKey.self
             )
             .environment(\.frameForParentView, frameForParentView.removingValue(for: .navigationStack))
-            .preference(key: _ContentGroupCustomizationKey.self, value: .useOffsetNavigationBar)
+            .preference(key: ContentGroupCustomizationKey.self, value: .useOffsetNavigationBar)
             .preference(key: MenuContentKey.self) {
                 //                if viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item) {
                 #if os(iOS)

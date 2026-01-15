@@ -17,7 +17,7 @@ struct PlayButton: View {
     private var accentColor
 
     @ObservedObject
-    var viewModel: _ItemViewModel
+    var viewModel: ItemViewModel
 
     @Router
     private var router

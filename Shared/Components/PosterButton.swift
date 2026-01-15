@@ -130,6 +130,7 @@ extension PosterButton where Label == EmptyView {
     }
 }
 
+// TODO: turn into a LabelStyle?
 struct TitleSubtitleContentView<Content: View>: View {
 
     private let title: String
@@ -167,36 +168,5 @@ extension TitleSubtitleContentView where Content == Text {
     ) {
         self.title = title
         self.content = Text(subtitle)
-    }
-}
-
-struct PosterIndicatorsOverlay: View {
-
-    let item: BaseItemDto
-    let indicators: PosterIndicator
-    let posterDisplayType: PosterDisplayType
-
-    var body: some View {
-        ZStack {
-            if indicators.contains(.favorited) {
-                FavoriteIndicator()
-            }
-
-            if indicators.contains(.unplayed) {
-                UnplayedIndicator()
-            }
-
-            if indicators.contains(.played), item.userData?.isPlayed == true {
-                PlayedIndicator()
-            }
-
-            if indicators.contains(.progress), let progress = item.progress, let position = item.userData?.playbackPosition {
-                PosterProgressIndicator(
-                    title: position.formatted(.runtime),
-                    progress: progress,
-                    posterDisplayType: posterDisplayType
-                )
-            }
-        }
     }
 }

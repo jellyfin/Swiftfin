@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-struct AboutItemGroup: _ContentGroup {
+struct AboutItemGroup: ContentGroup {
 
     let displayTitle: String
     let id: String

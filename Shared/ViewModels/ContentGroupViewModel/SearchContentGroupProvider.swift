@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-struct SearchContentGroupProvider: _ContentGroupProvider {
+struct SearchContentGroupProvider: ContentGroupProvider {
 
     struct Environment: WithDefaultValue {
         var filters: ItemFilterCollection
@@ -24,7 +24,7 @@ struct SearchContentGroupProvider: _ContentGroupProvider {
     var environment: Environment = .default
 
     @ContentGroupBuilder
-    func makeGroups(environment: Environment) async throws -> [any _ContentGroup] {
+    func makeGroups(environment: Environment) async throws -> [any ContentGroup] {
         try await ItemTypeContentGroupProvider(
             itemTypes: [
                 BaseItemKind.movie,
@@ -36,7 +36,6 @@ struct SearchContentGroupProvider: _ContentGroupProvider {
                 .liveTvProgram,
                 .tvChannel,
                 .musicArtist,
-                .person,
             ]
         )
         .makeGroups(environment: .init(filters: environment.filters))

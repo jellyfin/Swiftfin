@@ -264,7 +264,7 @@ extension View {
         in containerCoordinateSpace: CoordinateSpace = .global,
         perform action: @escaping (CGRect, EdgeInsets) -> Void
     ) -> some View {
-        onGeometryChange(for: OnFrameChangedValue.self) { proxy in
+        onGeometryChange(for: FrameAndSafeAreaInsets.self) { proxy in
             .init(
                 frame: proxy.frame(in: containerCoordinateSpace),
                 safeAreaInsets: proxy.safeAreaInsets
@@ -346,7 +346,7 @@ extension View {
 
     @available(*, deprecated, message: "Use `onFrameChanged` instead")
     func onSizeChanged(perform action: @escaping (CGSize, EdgeInsets) -> Void) -> some View {
-        onGeometryChange(for: OnFrameChangedValue.self) { proxy in
+        onGeometryChange(for: FrameAndSafeAreaInsets.self) { proxy in
             let size = proxy.size
             let safeAreaInsets = proxy.safeAreaInsets
 
@@ -564,9 +564,13 @@ extension View {
         }
     }
 
-    // MARK: debug
+    func navigationTitle(_ title: String) -> some View {
+        self
+            .environment(\._navigationTitle, title)
+            .navigationTitle(Text(title))
+    }
 
-    // Useful modifiers during development for layout without RocketSim
+    // MARK: debug
 
     #if DEBUG
     func debugBackground<S: ShapeStyle>(_ fill: S = .red.opacity(0.5)) -> some View {
@@ -605,9 +609,4 @@ extension View {
             .debugHLine(fill)
     }
     #endif
-}
-
-private struct OnFrameChangedValue: Equatable {
-    let frame: CGRect
-    let safeAreaInsets: EdgeInsets
 }

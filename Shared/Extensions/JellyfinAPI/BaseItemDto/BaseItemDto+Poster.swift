@@ -11,7 +11,8 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-// MARK: Poster
+private let landscapeWidth: CGFloat = 110
+private let portraitWidth: CGFloat = 60
 
 extension BaseItemDto: Poster {
 
@@ -121,7 +122,7 @@ extension BaseItemDto: Poster {
             } else {
                 imageSource(.primary, maxWidth: maxWidth, quality: quality)
             }
-        case .collectionFolder, .folder, .musicVideo, .program, .userView, .video:
+        case .collectionFolder, .folder, .musicVideo, .liveTvProgram, .program, .userView, .video:
             imageSource(.primary, maxWidth: maxWidth, quality: quality)
         default:
             if environment.viewContext.contains(.isThumb) {
@@ -193,15 +194,27 @@ extension BaseItemDto: Poster {
 
     @ViewBuilder
     func posterOverlay(for displayType: PosterDisplayType) -> some View {
-        PosterIndicatorsOverlay(
-            item: self,
-            indicators: [.progress, .played],
-            posterDisplayType: displayType
-        )
+        WithEnvironment(value: \.viewContext) { viewContext in
+            if viewContext.contains(.isInResume) {
+                PosterIndicatorsOverlay(
+                    item: self,
+                    indicators: .progress,
+                    posterDisplayType: displayType
+                )
+            } else {
+                WithDefaults(.Customization.Indicators.enabled) { indicators in
+                    PosterIndicatorsOverlay(
+                        item: self,
+                        indicators: indicators,
+                        posterDisplayType: displayType
+                    )
+                }
+            }
+        }
     }
 }
 
-struct _BaseItemPosterLabel: View {
+private struct _BaseItemPosterLabel: View {
 
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
     private var useSeriesLandscapeBackdrop
@@ -209,29 +222,69 @@ struct _BaseItemPosterLabel: View {
     let item: BaseItemDto
 
     var body: some View {
-        if item.type == .episode {
+        switch item.type {
+        case .liveTvProgram, .program, .tvProgram:
+            VStack(alignment: .leading) {
+
+                Text(item.channelName ?? .emptyDash)
+                    .font(.footnote)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+
+                Text(item.displayTitle)
+                    .font(.callout)
+                    .lineLimit(1)
+
+                SeparatorHStack {
+                    Text("-")
+                } content: {
+                    if let startDate = item.startDate {
+                        Text(startDate, style: .time)
+                    } else {
+                        Text(String.emptyDash)
+                    }
+
+                    if let endDate = item.endDate {
+                        Text(endDate, style: .time)
+                    } else {
+                        Text(String.emptyDash)
+                    }
+                }
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+            }
+        case .episode:
             TitleSubtitleContentView(
                 title: item.seriesName ?? L10n.unknown
             ) {
-                DotHStack(padding: 2) {
-                    if let seasonEpisodeLabel = item.seasonEpisodeLabel {
-                        Text(seasonEpisodeLabel)
+                AlternateLayoutView(alignment: .leading) {
+                    Text(" ")
+                        .frame(maxWidth: .infinity)
+                } content: {
+                    DotHStack(padding: 2) {
+                        if let seasonEpisodeLabel = item.seasonEpisodeLabel {
+                            Text(seasonEpisodeLabel)
+                        }
                     }
                 }
             }
-        } else {
+        default:
             TitleSubtitleContentView(
                 title: item.displayTitle
             ) {
-                Text(item.subtitle ?? "")
-                    .hidden(item.subtitle == nil)
+                AlternateLayoutView(alignment: .leading) {
+                    Text(" ")
+                        .frame(maxWidth: .infinity)
+                } content: {
+                    if let subtitle = item.subtitle {
+                        Text(subtitle)
+                    }
+                }
             }
         }
     }
 }
-
-private let landscapeWidth: CGFloat = 110
-private let portraitWidth: CGFloat = 60
 
 extension BaseItemDto: LibraryElement {
 

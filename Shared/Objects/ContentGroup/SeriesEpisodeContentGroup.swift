@@ -9,22 +9,22 @@
 import JellyfinAPI
 import SwiftUI
 
-struct SeriesEpisodeContentGroup: _ContentGroup, Identifiable {
+struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
 
-    let viewModel: _ItemViewModel
+    let viewModel: ItemViewModel
     var id: String { "\(viewModel.item.libraryID)-episodeSelector" }
 
-    func body(with viewModel: _ItemViewModel) -> some View {
+    func body(with viewModel: ItemViewModel) -> some View {
         SeriesEpisodeSelector(viewModel: viewModel)
     }
 }
 
-// TODO: refactor to not take _ItemViewModel
+// TODO: refactor to not take ItemViewModel
 
 struct SeriesEpisodeSelector: View {
 
     @ObservedObject
-    var viewModel: _ItemViewModel
+    var viewModel: ItemViewModel
 
     @State
     private var didSelectPlayButtonSeason = false
@@ -39,7 +39,7 @@ struct SeriesEpisodeSelector: View {
         return seasonsViewModel.elements[id: id]
     }
 
-    init(viewModel: _ItemViewModel) {
+    init(viewModel: ItemViewModel) {
         self.viewModel = viewModel
         self._seasonsViewModel = .init(wrappedValue: .init(library: .init(series: viewModel.item)))
     }

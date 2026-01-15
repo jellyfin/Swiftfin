@@ -8,10 +8,10 @@
 
 import SwiftUI
 
-typealias ContentGroupBuilder = ArrayBuilder<any _ContentGroup>
+typealias ContentGroupBuilder = ArrayBuilder<any ContentGroup>
 
 @MainActor
-protocol _ContentGroup<ViewModel>: Identifiable {
+protocol ContentGroup<ViewModel>: Identifiable {
 
     associatedtype Body: View
     associatedtype ViewModel: WithRefresh
@@ -24,16 +24,10 @@ protocol _ContentGroup<ViewModel>: Identifiable {
     func body(with viewModel: ViewModel) -> Body
 }
 
-extension _ContentGroup {
+extension ContentGroup {
     var _shouldBeResolved: Bool { true }
 }
 
-extension _ContentGroup where ViewModel == Empty {
+extension ContentGroup where ViewModel == Empty {
     var viewModel: Empty { .init() }
-}
-
-extension EnvironmentValues {
-
-    @Entry
-    var _contentGroupIndex: Int = -1
 }

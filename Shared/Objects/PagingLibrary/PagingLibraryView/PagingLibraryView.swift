@@ -76,10 +76,11 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
 
             viewModel.library.makeLibraryBody(content: contentView, state: viewModel.state)
         }
-        .animation(.linear(duration: 0.1), value: viewModel.state)
+        .animation(.linear(duration: 0.2), value: viewModel.state)
         .ignoresSafeArea()
         .navigationTitle(viewModel.library.parent.displayTitle)
-        .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .backport
         .onChange(of: viewModel.environment) { _, _ in
             viewModel.refresh()

@@ -9,13 +9,13 @@
 import Defaults
 import SwiftUI
 
-struct ItemContentGroupView<Provider: _ContentGroupProvider>: View {
+struct ItemContentGroupView<Provider: ContentGroupProvider>: View {
 
     @Router
     private var router
 
     @State
-    private var _contentGroupOptions: _ContentGroupParentOption = .init()
+    private var ContentGroupOptions: ContentGroupParentOption = .init()
     @State
     private var carriedHeaderFrame: CGRect = .zero
 
@@ -23,7 +23,7 @@ struct ItemContentGroupView<Provider: _ContentGroupProvider>: View {
     private var viewModel: ContentGroupViewModel<Provider>
 
     private var carriedUseOffsetNavigationBar: Bool {
-        _contentGroupOptions.contains(.useOffsetNavigationBar)
+        ContentGroupOptions.contains(.useOffsetNavigationBar)
     }
 
     init(provider: Provider) {
@@ -31,7 +31,7 @@ struct ItemContentGroupView<Provider: _ContentGroupProvider>: View {
     }
 
     @ViewBuilder
-    private func makeGroupBody<G: _ContentGroup>(_ group: G) -> some View {
+    private func makeGroupBody<G: ContentGroup>(_ group: G) -> some View {
         group.body(with: group.viewModel)
     }
 
@@ -47,8 +47,8 @@ struct ItemContentGroupView<Provider: _ContentGroupProvider>: View {
                             makeGroupBody(group)
                                 .eraseToAnyView()
                         }
-                        .onPreferenceChange(_ContentGroupCustomizationKey.self) { value in
-                            _contentGroupOptions = value
+                        .onPreferenceChange(ContentGroupCustomizationKey.self) { value in
+                            ContentGroupOptions = value
                         }
                         .onPreferenceChange(ScrollViewHeaderFrameKey.self) { value in
                             carriedHeaderFrame = value

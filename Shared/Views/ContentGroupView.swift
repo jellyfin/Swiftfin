@@ -12,13 +12,13 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-struct ContentGroupView<Provider: _ContentGroupProvider>: View {
+struct ContentGroupView<Provider: ContentGroupProvider>: View {
 
     @Router
     private var router
 
     @State
-    private var _contentGroupOptions: _ContentGroupParentOption = .init()
+    private var contentGroupOptions: ContentGroupParentOption = .init()
 
     @StateObject
     private var viewModel: ContentGroupViewModel<Provider>
@@ -35,7 +35,7 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
     }
 
     @ViewBuilder
-    private func makeGroupBody<G: _ContentGroup>(_ group: G) -> some View {
+    private func makeGroupBody<G: ContentGroup>(_ group: G) -> some View {
         group.body(with: group.viewModel)
     }
 
@@ -48,29 +48,26 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
                     .id("top")
 
                 VStack(alignment: .leading, spacing: 10) {
-                    ForEach(Array(viewModel.groups.enumerated()), id: \.element.id) { offset, group in
+                    ForEach(Array(viewModel.groups.enumerated()), id: \.element.id) { _, group in
                         makeGroupBody(group)
-                            .environment(\._contentGroupIndex, offset)
                             .eraseToAnyView()
                     }
-                    .onPreferenceChange(_ContentGroupCustomizationKey.self) { value in
-                        _contentGroupOptions = value
+                    .onPreferenceChange(ContentGroupCustomizationKey.self) { value in
+                        contentGroupOptions = value
                     }
                 }
-//                .scrollTargetLayout()
                 .edgePadding(
                     .bottom.inserting(
                         .top,
-                        if: _contentGroupOptions.contains(.ignoreTopSafeArea)
+                        if: contentGroupOptions.contains(.ignoreTopSafeArea)
                     )
                 )
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-//            .scrollTargetBehavior(.viewAligned)
             .ignoresSafeArea(
                 edges: .horizontal.inserting(
                     .top,
-                    if: _contentGroupOptions.contains(.ignoreTopSafeArea)
+                    if: contentGroupOptions.contains(.ignoreTopSafeArea)
                 )
             )
             .scrollIndicators(.hidden)
@@ -127,67 +124,5 @@ struct ContentGroupView<Provider: _ContentGroupProvider>: View {
 //                viewModel.notificationsReceived.remove(.itemMetadataDidChange)
 //            }
 //        }
-    }
-}
-
-struct ContentGroupShimView: View {
-
-    @StoredValue
-    private var customContentGroup: ContentGroupProviderSetting
-
-    init(id: String) {
-        self._customContentGroup = StoredValue(
-            .User.customContentGroup(id: id)
-        )
-    }
-
-    @ViewBuilder
-    private func unpack(_ provider: some _ContentGroupProvider) -> some View {
-        ContentGroupView(provider: provider)
-    }
-
-    var body: some View {
-        unpack(customContentGroup.provider)
-            .eraseToAnyView()
-            .id(customContentGroup.hashValue)
-            .backport
-            .onChange(of: customContentGroup) { oldValue, newValue in
-                print("ContentGroupShimView: customContentGroup changed from \(oldValue) to \(newValue)")
-            }
-    }
-}
-
-struct CustomizePosterGroupSettings: View {
-
-    @StoredValue
-    private var parentPosterStyle: PosterDisplayConfiguration
-
-    private let id: String
-
-    init(id: String) {
-        self._parentPosterStyle = StoredValue(.User.posterButtonStyle(parentID: id))
-
-        self.id = id
-    }
-
-    var body: some View {
-        Form {
-
-            Section("ID") {
-                Text(id)
-            }
-
-            Section {
-                Picker(
-                    L10n.posters,
-                    selection: $parentPosterStyle.displayType
-                )
-
-                Picker(
-                    "Size",
-                    selection: $parentPosterStyle.size
-                )
-            }
-        }
     }
 }

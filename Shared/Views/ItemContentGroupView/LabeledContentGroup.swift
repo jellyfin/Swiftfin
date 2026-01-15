@@ -8,24 +8,31 @@
 
 import SwiftUI
 
-extension LabeledContentStyle where Self == LearnMoreLabeledContentStyle {
+struct LabeledContentGroup: ContentGroup {
 
-    static var learnMore: LearnMoreLabeledContentStyle {
-        LearnMoreLabeledContentStyle()
+    let displayTitle: String
+    let id: String
+    let value: String
+
+    init(
+        _ title: String,
+        value: String
+    ) {
+        self.displayTitle = title
+        self.id = UUID().uuidString
+        self.value = value
     }
-}
 
-struct LearnMoreLabeledContentStyle: LabeledContentStyle {
-
-    func makeBody(configuration: Configuration) -> some View {
+    func body(with viewModel: Empty) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            configuration.label
+            Text(displayTitle)
                 .font(.headline)
                 .foregroundStyle(.primary)
 
-            configuration.content
-                .font(.subheadline)
+            Text(value)
+                .font(.footnote)
                 .foregroundStyle(.secondary)
         }
+        .edgePadding(.horizontal)
     }
 }

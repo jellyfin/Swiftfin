@@ -8,13 +8,9 @@
 
 import SwiftUI
 
-struct FavoriteIndicator: View {
+struct FrameAndSafeAreaInsets: Equatable {
+    let frame: CGRect
+    let safeAreaInsets: EdgeInsets
 
-    var body: some View {
-        Image(systemName: "heart.circle.fill")
-            .resizable()
-            .symbolRenderingMode(.palette)
-            .foregroundStyle(.white, .pink)
-            .frame(width: 25, height: 25)
-    }
+    static let zero: Self = .init(frame: .zero, safeAreaInsets: .zero)
 }

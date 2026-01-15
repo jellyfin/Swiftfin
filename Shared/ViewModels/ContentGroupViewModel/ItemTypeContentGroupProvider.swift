@@ -9,9 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-// TODO: channel programs, guide, record
-
-struct ItemTypeContentGroupProvider: _ContentGroupProvider {
+struct ItemTypeContentGroupProvider: ContentGroupProvider {
 
     struct Environment: WithDefaultValue {
         var filters: ItemFilterCollection
@@ -23,27 +21,28 @@ struct ItemTypeContentGroupProvider: _ContentGroupProvider {
 
     let id: String
     let displayTitle: String
-
+    var environment: Environment
     let itemTypes: [BaseItemKind]
     let parent: BaseItemDto?
-    var environment: Environment
 
     init(
         itemTypes: [BaseItemKind],
         parent: BaseItemDto? = nil,
         environment: Environment = .default
     ) {
-        self.itemTypes = itemTypes
-        self.parent = parent
-        self.environment = environment
-
         self.id = UUID().uuidString
         self.displayTitle = parent?.displayTitle ?? ""
+        self.itemTypes = itemTypes
+        self.environment = environment
+        self.parent = parent
     }
 
-    func makeGroups(environment: Environment) async throws -> [any _ContentGroup] {
-        itemTypes.map { itemType in
-            /// Server will edit filters if only boxset, add userView as workaround.
+    func makeGroups(environment: Environment) async throws -> [any ContentGroup] {
+
+        guard environment.filters.isNotEmpty || parent != nil else { return [] }
+
+        return itemTypes.map { itemType in
+            // Server will edit filters if only boxset, add userView as workaround.
             let itemTypes = (itemType == .boxSet ? [.boxSet, .userView] : [itemType])
 
             var filters = environment.filters
@@ -70,8 +69,10 @@ struct ItemTypeContentGroupProvider: _ContentGroupProvider {
                             name: itemType.pluralDisplayTitle,
                             type: parent?.type
                         ),
-                        filters: filters
-                    )
+                        filters: filters,
+                        fields: itemType == .liveTvProgram ? [.channelInfo] : nil
+                    ),
+                    posterDisplayType: itemType.preferredPosterDisplayType
                 )
             }
         }
