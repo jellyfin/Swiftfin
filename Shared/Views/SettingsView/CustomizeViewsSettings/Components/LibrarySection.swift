@@ -19,13 +19,8 @@ extension CustomizeViewsSettings {
         private var libraryEnabledDrawerFilters
         @Default(.Customization.Library.randomImage)
         private var libraryRandomImage
-
-        @Default(.Customization.Library.displayType)
-        private var libraryDisplayType
-        @Default(.Customization.Library.posterType)
-        private var posterDisplayType
-        @Default(.Customization.Library.listColumnCount)
-        private var listColumnCount
+        @Default(.Customization.Library._libraryStyle)
+        private var libraryStyle
 
         @Default(.Customization.Library.letterPickerEnabled)
         private var letterPickerEnabled
@@ -64,22 +59,14 @@ extension CustomizeViewsSettings {
                 }
 
                 Section(L10n.layout) {
-                    Picker(L10n.layout, selection: $libraryDisplayType)
+                    Picker(L10n.layout, selection: $libraryStyle.displayType)
 
-                    Picker(L10n.posters, selection: $posterDisplayType)
-
-                    if libraryDisplayType == .list, UIDevice.isPad {
+                    if libraryStyle.displayType == .list, !UIDevice.isPhone {
+                        // TODO: tvOS
 //                        Stepper(
 //                            L10n.columns,
-//                            value: $listColumnCount,
+//                            value: $libraryStyle.listColumnCount,
 //                            in: 1 ... 4,
-//                            step: 1
-//                        )
-
-//                        BasicStepper(
-//                            L10n.columns,
-//                            value: $listColumnCount,
-//                            range: 1 ... 4,
 //                            step: 1
 //                        )
                     }

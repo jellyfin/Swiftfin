@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionVGrid
 import Defaults
 import JellyfinAPI
 import SwiftUI
@@ -15,8 +14,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
 
     typealias Element = Library.Element
 
-    @Default(.Customization.Library.enabledDrawerFilters)
-    private var enabledDrawerFilters
     @Default(.Customization.Library.rememberLayout)
     private var rememberIndividualLibraryStyle
 
@@ -71,13 +68,11 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     }
 
     var body: some View {
-        ZStack {
-            Color.clear
-
-            viewModel.library.makeLibraryBody(content: contentView, state: viewModel.state)
+        viewModel.library.makeLibraryBody(viewModel: viewModel) {
+            contentView
+                .frame(maxWidth: .infinity)
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
-        .ignoresSafeArea()
         .navigationTitle(viewModel.library.parent.displayTitle)
         .backport
         .toolbarTitleDisplayMode(.inline)
@@ -95,94 +90,5 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             isLoading: viewModel.background.is(.retrievingNextPage)
         ) {}
         #endif
-    }
-}
-
-extension PagingLibraryView {
-
-    // TODO: breakout into own content view?
-    struct ElementsView: View {
-
-        @ForTypeInEnvironment<Element.Type, (Any) -> (LibraryStyle, Binding<LibraryStyle>?)>(\.libraryStyleRegistry)
-        private var libraryStyleRegistry
-
-        @Namespace
-        private var namespace
-
-        @ObservedObject
-        private var viewModel: PagingLibraryViewModel<Library>
-
-        @Router
-        private var router
-
-        private var libraryStyleBinding: Binding<LibraryStyle>?
-
-        init(
-            viewModel: PagingLibraryViewModel<Library>
-        ) {
-            self._libraryStyleRegistry = ForTypeInEnvironment(\.libraryStyleRegistry)
-            self.viewModel = viewModel
-
-            if let libraryStyleBinding {
-                self.libraryStyleBinding = libraryStyleBinding
-            }
-        }
-
-        private var resolvedStyle: (LibraryStyle, Binding<LibraryStyle>?) {
-            libraryStyleRegistry?(Element.self) ?? (.default, nil)
-        }
-
-        private var layout: CollectionVGridLayout {
-            Element.layout(for: libraryStyle)
-        }
-
-        private var libraryStyle: LibraryStyle {
-            resolvedStyle.0
-        }
-
-        var body: some View {
-            CollectionVGrid(
-                uniqueElements: viewModel.elements,
-                layout: layout
-            ) { element, _ in
-                switch libraryStyle.displayType {
-                case .grid:
-                    element.makeGridBody(libraryStyle: libraryStyle)
-                        .withViewContext(.isThumb)
-                case .list:
-                    element.makeListBody(libraryStyle: libraryStyle)
-                        .withViewContext(.isThumb)
-                }
-            }
-            .onReachedBottomEdge(offset: .offset(300)) {
-                viewModel.retrieveNextPage()
-            }
-            .scrollIndicators(.hidden)
-            .onReceive(viewModel.events) { event in
-                switch event {
-                case let .retrievedRandomElement(element):
-                    element.libraryDidSelectElement(router: router, in: namespace)
-                }
-            }
-            .preference(key: MenuContentKey.self) {
-                if let libraryStyleBinding = resolvedStyle.1 {
-                    MenuContentGroup(
-                        id: "library-style"
-                    ) {
-                        LibraryStyleSection(libraryStyle: libraryStyleBinding)
-                    }
-                }
-
-                viewModel.library.menuContent(environment: $viewModel.environment)
-
-                MenuContentGroup(
-                    id: "retrieve-random-element"
-                ) {
-                    Button(L10n.random, systemImage: "dice.fill") {
-                        viewModel.retrieveRandomElement()
-                    }
-                }
-            }
-        }
     }
 }

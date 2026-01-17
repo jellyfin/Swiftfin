@@ -12,6 +12,9 @@ import SwiftUI
 
 struct ScrollIfLargerThanContainerModifier: ViewModifier {
 
+    @ViewContextContains(.withConstrainedSize)
+    private var withConstrainedSize: Bool
+
     @State
     private var contentFrame: CGRect = .zero
 
@@ -30,6 +33,9 @@ struct ScrollIfLargerThanContainerModifier: ViewModifier {
             .scrollClipDisabled()
             .scrollDisabled(contentFrame.height < layoutSize.height)
             .scrollIndicators(.never)
+        }
+        .if(withConstrainedSize) { view in
+            view.frame(maxWidth: contentFrame.width)
         }
     }
 }

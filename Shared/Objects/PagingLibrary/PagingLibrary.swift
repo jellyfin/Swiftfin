@@ -19,7 +19,6 @@ protocol PagingLibrary<Element> {
 
     associatedtype Element: Identifiable
     associatedtype Environment: WithDefaultValue = Empty
-    associatedtype LibraryBody: View = AnyView
     associatedtype Parent: _LibraryParent = _TitledLibraryParent
 
     /// The initial environment configuration for the library.
@@ -36,7 +35,10 @@ protocol PagingLibrary<Element> {
     ) async throws -> [Element]
 
     @ViewBuilder
-    func makeLibraryBody(content: some View, state: PagingLibraryViewModel<Self>._State) -> LibraryBody
+    func makeLibraryBody(
+        viewModel: PagingLibraryViewModel<Self>,
+        @ViewBuilder content: @escaping () -> some View
+    ) -> AnyView
 
     @MenuContentGroupBuilder
     func menuContent(environment: Binding<Environment>) -> [MenuContentGroup]
@@ -47,8 +49,11 @@ extension PagingLibrary {
     var environment: Environment? { nil }
     var hasNextPage: Bool { true }
 
-    func makeLibraryBody(content: some View, state: PagingLibraryViewModel<Self>._State) -> AnyView {
-        content
+    func makeLibraryBody(
+        viewModel: PagingLibraryViewModel<Self>,
+        @ViewBuilder content: @escaping () -> some View
+    ) -> AnyView {
+        content()
             .eraseToAnyView()
     }
 

@@ -9,7 +9,7 @@
 import Defaults
 import SwiftUI
 
-struct WithDefaults<Content: View, Value: Storable>: View {
+struct WithDefaults<Content: View, Value: _DefaultsSerializable>: View {
 
     @Default<Value>
     private var value: Value

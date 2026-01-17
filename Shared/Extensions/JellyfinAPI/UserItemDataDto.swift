@@ -24,7 +24,12 @@ protocol WithUserData {
 extension UserItemDataDto {
 
     var playbackPosition: Duration? {
-        guard let playbackPositionTicks else { return nil }
-        return Duration.ticks(playbackPositionTicks)
+        get {
+            guard let playbackPositionTicks else { return nil }
+            return Duration.ticks(playbackPositionTicks)
+        }
+        set {
+            playbackPositionTicks = newValue?.ticks
+        }
     }
 }

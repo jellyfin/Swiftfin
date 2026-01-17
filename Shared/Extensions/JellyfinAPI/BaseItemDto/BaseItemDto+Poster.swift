@@ -194,7 +194,7 @@ extension BaseItemDto: Poster {
 
     @ViewBuilder
     func posterOverlay(for displayType: PosterDisplayType) -> some View {
-        WithEnvironment(value: \.viewContext) { viewContext in
+        WithEnvironment(\.viewContext) { viewContext in
             if viewContext.contains(.isInResume) {
                 PosterIndicatorsOverlay(
                     item: self,

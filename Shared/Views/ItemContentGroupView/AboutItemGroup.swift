@@ -182,12 +182,12 @@ struct AboutItemGroup: ContentGroup {
                             ScrollView(.horizontal) {
                                 HStack(spacing: UIDevice.isPhone ? EdgeInsets.edgePadding / 2 : 40) {
                                     descriptionCard
-                                        .frame(width: cardWidth(for: frame.width))
+                                        .frame(width: cardWidth(for: frame.frame.width))
 
                                     if let mediaSources = item.mediaSources {
                                         ForEach(mediaSources) { source in
                                             mediaSourceCard(for: source, hasMultipleSources: mediaSources.count > 1)
-                                                .frame(width: cardWidth(for: frame.width))
+                                                .frame(width: cardWidth(for: frame.frame.width))
                                         }
                                     }
 

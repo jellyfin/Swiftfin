@@ -14,7 +14,6 @@ import JellyfinAPI
 import SwiftUI
 
 private let DefaultPageSize = 50
-private let SmallPageSize = 20
 
 @MainActor
 protocol __PagingLibaryViewModel<_PagingLibrary>: AnyObject, Identifiable,

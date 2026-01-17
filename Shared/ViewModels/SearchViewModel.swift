@@ -19,7 +19,7 @@ final class SearchViewModel: ViewModel {
     enum Action {
         case getSuggestions
         case search(query: String)
-        case actuallySearch(query: String)
+        case _actuallySearch(query: String)
 
         var transition: Transition {
             switch self {
@@ -27,7 +27,7 @@ final class SearchViewModel: ViewModel {
                 .none
             case let .search(query):
                 query.isEmpty ? .to(.initial) : .to(.searching)
-            case .actuallySearch:
+            case ._actuallySearch:
                 .to(.searching, then: .initial)
                     .onRepeat(.cancel)
             }
@@ -43,11 +43,10 @@ final class SearchViewModel: ViewModel {
     @Published
     private(set) var suggestions: [BaseItemDto] = []
 
+    let filterViewModel: FilterViewModel
     let itemContentGroupViewModel: ContentGroupViewModel<SearchContentGroupProvider>
 
-    private var searchQuery: CurrentValueSubject<String, Never> = .init("")
-
-    let filterViewModel: FilterViewModel
+    private let searchQuery: CurrentValueSubject<String, Never> = .init("")
 
     var isEmpty: Bool {
         func extract<T: ContentGroup>(_ group: T) -> Bool {
@@ -64,7 +63,7 @@ final class SearchViewModel: ViewModel {
 
         return itemContentGroupViewModel.groups
             .map { extract($0) }
-            .reduce(true) { $0 && $1 }
+            .allSatisfy { $0 }
     }
 
     var isNotEmpty: Bool {
@@ -75,13 +74,10 @@ final class SearchViewModel: ViewModel {
         searchQuery.value.isNotEmpty || filterViewModel.currentFilters.hasQueryableFilters
     }
 
-    // MARK: init
-
     init(filterViewModel: FilterViewModel? = nil) {
         let filterViewModel = filterViewModel ?? .init()
 
         self.filterViewModel = filterViewModel
-
         self.itemContentGroupViewModel = .init(provider: .init())
 
         super.init()
@@ -89,18 +85,15 @@ final class SearchViewModel: ViewModel {
         searchQuery
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] query in
-                guard let self else { return }
-
-                actuallySearch(query: query)
+                self?._actuallySearch(query: query)
             }
             .store(in: &cancellables)
 
         filterViewModel.$currentFilters
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] _ in
-                guard let self else { return }
-
-                actuallySearch(query: searchQuery.value)
+                guard let query = self?.searchQuery.value else { return }
+                self?._actuallySearch(query: query)
             }
             .store(in: &cancellables)
     }
@@ -112,13 +105,10 @@ final class SearchViewModel: ViewModel {
         await cancel()
     }
 
-    @Function(\Action.Cases.actuallySearch)
-    private func _actuallySearch(_ query: String) async throws {
+    @Function(\Action.Cases._actuallySearch)
+    private func __actuallySearch(_ query: String) async throws {
 
-        guard self.canSearch else {
-//            items.removeAll()
-            return
-        }
+        guard canSearch else { return }
 
         func inner<VM: __PagingLibaryViewModel>(_ vm: VM) where VM._PagingLibrary == ItemLibrary {
             var filters = vm.environment.filters
@@ -129,15 +119,7 @@ final class SearchViewModel: ViewModel {
                 filters: filters,
                 fields: nil
             )
-
-            print(vm.environment)
         }
-
-//        for (viewModel, _) in itemContentGroupViewModel.sections {
-//            if let library = viewModel.library as? ItemLibrary {
-//                library.filterViewModel?.currentFilters.query = query
-//            }
-//        }
 
         var filters = filterViewModel.currentFilters
         filters.query = query
@@ -146,8 +128,6 @@ final class SearchViewModel: ViewModel {
 
         await itemContentGroupViewModel.refresh()
     }
-
-    // MARK: suggestions
 
     @Function(\Action.Cases.getSuggestions)
     private func _getSuggestions() async throws {

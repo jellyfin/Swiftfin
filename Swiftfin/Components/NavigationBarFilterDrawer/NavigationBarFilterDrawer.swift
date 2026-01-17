@@ -12,23 +12,20 @@ import SwiftUI
 
 struct NavigationBarFilterDrawer: View {
 
-    struct Parameters {
-        let type: ItemFilterType
-        let viewModel: FilterViewModel
-    }
+    @ObservedObject
+    private var viewModel: FilterViewModel
 
-    private let action: (Parameters) -> Void
+    @Router
+    private var router
+
     private let filterTypes: [ItemFilterType]
-    private let viewModel: FilterViewModel
 
     init(
         viewModel: FilterViewModel,
-        types: [ItemFilterType],
-        action: @escaping (Parameters) -> Void
+        types: [ItemFilterType]
     ) {
         self.viewModel = viewModel
         self.filterTypes = types
-        self.action = action
     }
 
     var body: some View {
@@ -41,13 +38,17 @@ struct NavigationBarFilterDrawer: View {
                         }
                     }
                     .foregroundStyle(.primary, .secondary)
-                    .isSelected(true)
                     .labelStyle(.navigationDrawer.iconOnly)
                 }
 
                 ForEach(filterTypes, id: \.self) { type in
                     Button {
-                        action(.init(type: type, viewModel: viewModel))
+                        router.route(
+                            to: .filter(
+                                type: type,
+                                viewModel: viewModel
+                            )
+                        )
                     } label: {
                         Label {
                             Text(type.displayTitle)
@@ -56,13 +57,11 @@ struct NavigationBarFilterDrawer: View {
                         }
                     }
                     .foregroundStyle(.primary, .secondary)
-                    .isSelected(
-                        viewModel.isFilterSelected(type: type)
-                    )
+                    .isHighlighted(viewModel.isFilterSelected(type: type))
                 }
             }
             .padding(.horizontal)
-            .padding(.vertical, 1)
+            .padding(.bottom, 5)
             .labelStyle(.navigationDrawer)
         }
     }

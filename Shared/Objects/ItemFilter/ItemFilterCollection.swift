@@ -53,7 +53,12 @@ struct ItemFilterCollection: Hashable, Storable {
     }
 
     var hasQueryableFilters: Bool {
-        genres.isNotEmpty || itemTypes.isNotEmpty || letter.isNotEmpty || tags.isNotEmpty || traits.isNotEmpty || years.isNotEmpty
+        genres.isNotEmpty ||
+            itemTypes.isNotEmpty ||
+            letter.isNotEmpty ||
+            tags.isNotEmpty ||
+            traits.isNotEmpty ||
+            years.isNotEmpty
     }
 
     var activeFilterCount: Int {

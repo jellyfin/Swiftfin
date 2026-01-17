@@ -21,6 +21,7 @@ struct ViewContext: OptionSet {
     static let isOverComplexContent = ViewContext(rawValue: 1 << 2)
     static let isInParent = ViewContext(rawValue: 1 << 3)
     static let isInResume = ViewContext(rawValue: 1 << 4)
+    static let withConstrainedSize = ViewContext(rawValue: 1 << 5)
 }
 
 extension EnvironmentValues {
@@ -49,13 +50,13 @@ struct ViewContextContains: DynamicProperty {
 extension View {
 
     func withViewContext(_ context: ViewContext) -> some View {
-        WithEnvironment(value: \.viewContext) { oldValue in
+        WithEnvironment(\.viewContext) { oldValue in
             self.environment(\.viewContext, oldValue.inserting(context))
         }
     }
 
     func removingViewContext(_ context: ViewContext) -> some View {
-        WithEnvironment(value: \.viewContext) { oldValue in
+        WithEnvironment(\.viewContext) { oldValue in
             self.environment(\.viewContext, oldValue.removing(context))
         }
     }

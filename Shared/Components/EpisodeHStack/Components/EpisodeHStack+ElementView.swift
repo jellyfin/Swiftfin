@@ -19,6 +19,9 @@ extension EpisodeHStack {
         @Environment(\.isEnabled)
         private var isEnabled
 
+        @FocusState
+        private var isElementFocused
+
         private let action: () -> Void
         private let content: Content
         private let description: String
@@ -69,30 +72,35 @@ extension EpisodeHStack {
                     }
                     .font(.footnote)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    #if os(tvOS)
+                        .padding(10)
+                    #endif
                 }
                 .foregroundStyle(.primary, .secondary)
                 .buttonStyle(.card)
-                #if os(iOS)
-                    .overlay(alignment: .topTrailing) {
-                        if MenuContent.self != EmptyView.self {
-                            AlternateLayoutView(alignment: .trailing) {
-                                Text(" ")
-                            } content: { layoutSize in
-                                Menu {
-                                    menuContent
-                                } label: {
-                                    Label(L10n.options, systemImage: "ellipsis")
-                                        .labelStyle(.iconOnly)
-                                        .frame(width: layoutSize.height, height: layoutSize.height)
-                                }
-                                .contentShape(Rectangle())
-                            }
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.secondary)
-                        }
-                    }
-                #endif
+                // TODO: complete
+//                #if os(iOS)
+//                    .overlay(alignment: .topTrailing) {
+//                        if MenuContent.self != EmptyView.self {
+//                            AlternateLayoutView(alignment: .trailing) {
+//                                Text(" ")
+//                            } content: { layoutSize in
+//                                Menu {
+//                                    menuContent
+//                                } label: {
+//                                    Label(L10n.options, systemImage: "ellipsis")
+//                                        .labelStyle(.iconOnly)
+//                                        .frame(width: layoutSize.height, height: layoutSize.height)
+//                                }
+//                                .contentShape(Rectangle())
+//                            }
+//                            .fontWeight(.semibold)
+//                            .foregroundStyle(.secondary)
+//                        }
+//                    }
+//                #endif
             }
+            .focused($isElementFocused)
         }
     }
 }

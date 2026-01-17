@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -61,7 +62,8 @@ struct ItemLibrary: PagingLibrary, WithRandomElementLibrary {
         let parameters = attachPage(
             to: attachFilters(
                 to: makeBaseItemParameters(environment: environment),
-                using: self.environment?.filters ?? environment.filters,
+//                using: self.environment?.filters ?? environment.filters,
+                using: environment.filters,
                 pageState: pageState
             ),
             pageState: pageState
@@ -200,23 +202,15 @@ struct ItemLibrary: PagingLibrary, WithRandomElementLibrary {
     }
 
     @ViewBuilder
-    func makeLibraryBody(content: some View, state: PagingLibraryViewModel<ItemLibrary>._State) -> AnyView {
-        WithRouter { _ in
-//            HStack(spacing: 10) {
-            content
-
-//                if state == .content {
-//                    LetterPickerBar(viewModel: filterViewModel)
-//                        .padding(.horizontal, 10)
-//                }
-//            }
-//                .navigationBarFilterDrawer(
-//                    viewModel: filterViewModel,
-//                    types: ItemFilterType.allCases
-//                ) {
-//                    router.route(to: .filter(type: $0.type, viewModel: $0.viewModel))
-//                }
-        }
+    func makeLibraryBody(
+        viewModel: PagingLibraryViewModel<Self>,
+        @ViewBuilder content: @escaping () -> some View
+    ) -> AnyView {
+        ItemLibraryBody(
+            content: content(),
+            filterViewModel: filterViewModel,
+            viewModel: viewModel
+        )
         .eraseToAnyView()
     }
 
@@ -247,6 +241,75 @@ struct ItemLibrary: PagingLibrary, WithRandomElementLibrary {
                     }
                 }
                 .pickerStyle(.menu)
+            }
+        }
+    }
+}
+
+extension ItemLibrary {
+
+    struct ItemLibraryBody<Content: View>: View {
+
+        @Default(.Customization.Library.enabledDrawerFilters)
+        private var enabledDrawerFilters
+        @Default(.Customization.Library.letterPickerEnabled)
+        private var isLetterPickerEnabled
+        @Default(.Customization.Library.letterPickerOrientation)
+        private var letterPickerOrientation
+
+        @ObservedObject
+        private var viewModel: PagingLibraryViewModel<ItemLibrary>
+
+        private let content: Content
+        private let filterViewModel: FilterViewModel
+
+        init(
+            content: Content,
+            filterViewModel: FilterViewModel,
+            viewModel: PagingLibraryViewModel<ItemLibrary>
+        ) {
+            self.content = content
+            self.filterViewModel = filterViewModel
+            self.viewModel = viewModel
+        }
+
+        var body: some View {
+            HStack(
+                reversed: letterPickerOrientation == .leading,
+                spacing: 0
+            ) {
+
+                content
+                    .id(isLetterPickerEnabled)
+
+                if isLetterPickerEnabled {
+                    LetterPickerBar(
+                        viewModel: filterViewModel
+                    )
+                    .padding(letterPickerOrientation == .leading ? .leading : .trailing, 10)
+                }
+            }
+            .onFirstAppear {
+                filterViewModel.getQueryFilters()
+            }
+            .navigationBarFilterDrawer(
+                viewModel: filterViewModel,
+                types: enabledDrawerFilters
+            )
+            .onReceive(
+                filterViewModel.$currentFilters
+                    .dropFirst()
+                    .removeDuplicates()
+                    .debounce(for: 1, scheduler: RunLoop.main)
+            ) { newValue in
+                let newEnvironment: ItemLibrary.Environment = .init(
+                    grouping: viewModel.environment.grouping,
+                    filters: newValue,
+                    fields: viewModel.environment.fields
+                )
+
+                viewModel.environment = newEnvironment
+                viewModel.refresh()
             }
         }
     }

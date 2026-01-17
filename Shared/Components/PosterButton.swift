@@ -12,6 +12,9 @@ import SwiftUI
 
 struct PosterButton<Item: Poster, Label: View>: View {
 
+    @Environment(\.viewContext)
+    private var viewContext
+
     @Namespace
     private var namespace
 
@@ -98,6 +101,7 @@ struct PosterButton<Item: Poster, Label: View>: View {
             let frameScale = 1.3
 
             buttonLabel()
+                .withViewContext(viewContext)
                 .frame(
                     width: posterFrame.width * frameScale,
                     height: posterFrame.height * frameScale

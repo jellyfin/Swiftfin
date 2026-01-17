@@ -143,7 +143,7 @@ extension EnhancedItemViewHeader {
                 .aspectRatio(1.77, contentMode: .fit)
                 .overlay(alignment: .bottom) {
                     backdropColor
-                        .frame(height: 70)
+                        .frame(height: 30)
                         .maskLinearGradient {
                             (location: 0, opacity: 0)
                             (location: 0.7, opacity: 1)
@@ -155,15 +155,15 @@ extension EnhancedItemViewHeader {
             .trackingFrame(for: .scrollViewHeader, key: ScrollViewHeaderFrameKey.self)
             .preference(key: ContentGroupCustomizationKey.self, value: .useOffsetNavigationBar)
             .preference(key: MenuContentKey.self) {
-                //                if viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item) {
                 #if os(iOS)
-                MenuContentGroup(id: "test") {
-                    Button(L10n.edit, systemImage: "pencil") {
-                        router.route(to: .editItem(viewModel.item))
+                if viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item) {
+                    MenuContentGroup(id: "test") {
+                        Button(L10n.edit, systemImage: "pencil") {
+                            router.route(to: .editItem(viewModel.item))
+                        }
                     }
                 }
                 #endif
-                //                }
             }
         }
     }

@@ -17,14 +17,11 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
 
     @CasePathable
     enum Action {
-        case backgroundRefresh
         case error
         case refresh
 
         var transition: Transition {
             switch self {
-            case .backgroundRefresh:
-                .background(.refreshing)
             case .error:
                 .none
             case .refresh:
@@ -54,23 +51,8 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
         super.init()
     }
 
-//    @Function(\Action.Cases.refresh)
-//    private func _backgroundRefresh() async throws {
-//        for section in sections {
-//            try await section.viewModel.background.refresh()
-//        }
-//    }
-
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
-
-//        if sections.isNotEmpty {
-//            for section in sections {
-//                await section.viewModel.background.refresh()
-//            }
-//
-//            return
-//        }
 
         func getViewModel<T: ContentGroup>(for group: T) -> any WithRefresh {
             group.viewModel

@@ -11,16 +11,21 @@ import SwiftUI
 struct WithFrame<Content: View>: View {
 
     @State
-    private var frame: CGRect = .zero
+    private var frame: FrameAndSafeAreaInsets = .zero
 
-    private let content: (CGRect) -> Content
+    private let content: (FrameAndSafeAreaInsets) -> Content
 
-    init(@ViewBuilder content: @escaping (CGRect) -> Content) {
+    init(@ViewBuilder content: @escaping (FrameAndSafeAreaInsets) -> Content) {
         self.content = content
     }
 
     var body: some View {
         content(frame)
-            .trackingFrame($frame)
+            .onFrameChanged(perform: { frame, safeArea in
+                self.frame = .init(
+                    frame: frame,
+                    safeAreaInsets: safeArea
+                )
+            })
     }
 }

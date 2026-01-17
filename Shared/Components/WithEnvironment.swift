@@ -16,7 +16,7 @@ struct WithEnvironment<Content: View, EnvironmentValue>: View {
     private let content: (EnvironmentValue) -> Content
 
     init(
-        value keyPath: KeyPath<EnvironmentValues, EnvironmentValue>,
+        _ keyPath: KeyPath<EnvironmentValues, EnvironmentValue>,
         @ViewBuilder content: @escaping (EnvironmentValue) -> Content
     ) {
         self._environment = Environment(keyPath)

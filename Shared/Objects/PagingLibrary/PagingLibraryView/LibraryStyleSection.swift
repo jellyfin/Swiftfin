@@ -42,11 +42,12 @@ extension PagingLibraryView {
             .pickerStyle(.menu)
 
             if libraryStyle.wrappedValue.displayType == .list, UIDevice.isPad {
-                Stepper(
-                    L10n.columnsWithCount(libraryStyle.wrappedValue.listColumnCount),
-                    value: libraryStyle.listColumnCount,
-                    in: 1 ... 3
-                )
+                // TODO: tvOS
+//                Stepper(
+//                    L10n.columnsWithCount(libraryStyle.wrappedValue.listColumnCount),
+//                    value: libraryStyle.listColumnCount,
+//                    in: 1 ... 3
+//                )
             }
 
             Picker(selection: libraryStyle.posterDisplayType) {

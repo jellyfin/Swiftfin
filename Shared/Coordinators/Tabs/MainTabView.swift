@@ -73,11 +73,7 @@ struct MainTabView: View {
                 .tag(tab.item.id)
             }
         }
-//        .backport
-//        .tabViewStyle(.sidebarAdaptable)
         .contextMenu(for: BaseItemDto.self) { item in
-            // TODO: get view context environment for thumbnail vs backdrop
-
             if item.type == .episode {
                 WithRouter { router in
                     Button("Go to Episode", systemImage: "info.circle") {

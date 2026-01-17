@@ -43,8 +43,6 @@ extension Container {
     }
 }
 
-import StatefulMacros
-
 @MainActor
 @Stateful
 final class MediaPlayerManager: ViewModel {

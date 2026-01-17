@@ -12,7 +12,7 @@ struct MediaLibrary: PagingLibrary {
 
     let displayTitle: String
     let id: String
-    let pages: Bool = false
+    let hasNextPage: Bool = false
 
     var parent: _TitledLibraryParent
 

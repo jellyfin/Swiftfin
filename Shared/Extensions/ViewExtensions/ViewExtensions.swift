@@ -251,7 +251,7 @@ extension View {
     ) -> some View {
         WithFrame { frame in
             self.cornerRadius(
-                frame.size[keyPath: side] * ratio,
+                frame.frame.size[keyPath: side] * ratio,
                 corners: corners,
                 style: style,
                 container: true
@@ -319,7 +319,7 @@ extension View {
         in containerCoordinateSpace: CoordinateSpace = .global,
         named name: String,
         key: K.Type
-    ) -> some View where K.Value == CGRect {
+    ) -> some View where K.Value == FrameAndSafeAreaInsets {
         modifier(
             TrackingFrameModifier(
                 containerCoordinateSpace: containerCoordinateSpace,
@@ -334,7 +334,7 @@ extension View {
         in containerCoordinateSpace: CoordinateSpace = .global,
         for coordinateSpace: CoordinateSpace,
         key: K.Type
-    ) -> some View where K.Value == CGRect {
+    ) -> some View where K.Value == FrameAndSafeAreaInsets {
         modifier(
             TrackingFrameModifier(
                 containerCoordinateSpace: containerCoordinateSpace,
@@ -506,7 +506,7 @@ extension View {
         end: CGFloat = 25
     ) -> some View {
         #if os(iOS)
-        WithEnvironment(value: \.frameForParentView) { frameForParentView in
+        WithEnvironment(\.frameForParentView) { frameForParentView in
             var opacity: CGFloat {
                 let end = frameForParentView[.scrollView, default: .zero].safeAreaInsets.top + end
                 let start = end + start

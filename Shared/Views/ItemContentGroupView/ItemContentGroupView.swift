@@ -38,7 +38,7 @@ struct ItemContentGroupView<Provider: ContentGroupProvider>: View {
     @ViewBuilder
     private var contentView: some View {
         OffsetNavigationBar(headerMaxY: carriedUseOffsetNavigationBar ? carriedHeaderFrame.maxY : nil) {
-            WithEnvironment(value: \.frameForParentView) { frameForParentView in
+            WithEnvironment(\.frameForParentView) { frameForParentView in
                 ScrollView {
                     VStack(alignment: .leading, spacing: UIDevice.isTV ? 40 : 10) {
 
@@ -51,7 +51,7 @@ struct ItemContentGroupView<Provider: ContentGroupProvider>: View {
                             ContentGroupOptions = value
                         }
                         .onPreferenceChange(ScrollViewHeaderFrameKey.self) { value in
-                            carriedHeaderFrame = value
+                            carriedHeaderFrame = value.frame
                         }
                     }
                     .edgePadding(

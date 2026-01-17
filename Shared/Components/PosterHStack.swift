@@ -9,8 +9,6 @@
 import CollectionHStack
 import SwiftUI
 
-// TODO: check accessibility
-
 struct PosterHStack<
     Data: Collection,
     Header: View

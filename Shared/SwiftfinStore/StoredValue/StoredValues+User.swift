@@ -113,22 +113,6 @@ extension StoredValues.Keys {
             }
         }
 
-        static func libraryDisplayType(parentID: String?) -> Key<LibraryDisplayType> {
-            CurrentUserKey(
-                parentID,
-                domain: "setting-libraryDisplayType",
-                default: Defaults[.Customization.Library.displayType]
-            )
-        }
-
-        static func libraryListColumnCount(parentID: String?) -> Key<Int> {
-            CurrentUserKey(
-                parentID,
-                domain: "setting-libraryListColumnCount",
-                default: Defaults[.Customization.Library.listColumnCount]
-            )
-        }
-
         static func posterButtonStyle(parentID: String?) -> Key<PosterDisplayConfiguration> {
             CurrentUserKey(
                 parentID,
@@ -205,34 +189,5 @@ extension StoredValues.Keys {
                 default: .trickplay(fallbackToChapters: false)
             )
         }
-    }
-}
-
-// TODO: chapters fallback
-enum PreviewImageScrubbingOption: CaseIterable, Displayable, Hashable, Storable {
-
-    case trickplay(fallbackToChapters: Bool = true)
-    case chapters
-    case disabled
-
-    var displayTitle: String {
-        switch self {
-        case .trickplay: "Trickplay"
-        case .disabled: L10n.disabled
-        case .chapters: "Chapters"
-        }
-    }
-
-    // TODO: enhance full screen determination
-    //       - allow checking against image size?
-    var supportsFullscreen: Bool {
-        switch self {
-        case .trickplay: true
-        case .disabled, .chapters: false
-        }
-    }
-
-    static var allCases: [PreviewImageScrubbingOption] {
-        [.trickplay(), .chapters, .disabled]
     }
 }

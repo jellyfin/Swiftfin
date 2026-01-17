@@ -110,7 +110,6 @@ extension ChannelProgram: @MainActor LibraryElement {
 
     @MainActor
     func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {
-//        router.route(to: .videoPlayer(item: channel), in: namespace)
         router.route(to: .item(item: channel), in: namespace)
     }
 
@@ -187,7 +186,6 @@ extension ChannelProgram: @MainActor LibraryElement {
                 }
             }
             .font(.footnote)
-//            .id(channel.currentProgram)
         }
 
         @ViewBuilder

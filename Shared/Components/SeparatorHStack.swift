@@ -40,9 +40,6 @@ struct SeparatorHStack<Content: View, Separator: View>: View {
             content
         }
     }
-}
-
-extension SeparatorHStack {
 
     struct SeparatorHStackLayout: _VariadicView_UnaryViewRoot {
 

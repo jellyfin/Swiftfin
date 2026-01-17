@@ -160,7 +160,7 @@ struct ServerUserParentalRatingView: View {
     // MARK: - Parental Rating Learn More
 
     @LabeledContentBuilder
-    private func parentalRatingLabeledContent() -> AnyView {
+    private func parentalRatingLabeledContent() -> some View {
         let reducedRatings = reducedParentalRatings()
         let groupedRatings = parentalRatingsViewModel.elements.grouped { $0.value ?? 0 }
 

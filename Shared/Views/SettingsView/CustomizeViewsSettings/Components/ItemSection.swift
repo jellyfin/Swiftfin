@@ -77,7 +77,7 @@ extension CustomizeViewsSettings {
                     Text(L10n.missingItems)
                 }
             } image: {
-                WithEnvironment(value: \._navigationTitle) { navigationTitle in
+                WithEnvironment(\._navigationTitle) { navigationTitle in
                     VStack {
                         Image(systemName: "house.fill")
                             .resizable()

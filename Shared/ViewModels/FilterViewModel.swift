@@ -21,7 +21,6 @@ final class FilterViewModel: ViewModel {
         case cancel
         case getQueryFilters
         case reset(filterType: ItemFilterType?)
-//        case update(ItemFilterType, [AnyItemFilter])
 
         var transition: Transition {
             switch self {
@@ -39,20 +38,7 @@ final class FilterViewModel: ViewModel {
     @Published
     private(set) var allFilters: ItemFilterCollection = .all
     @Published
-    var currentFilters: ItemFilterCollection {
-        didSet {
-            currentFiltersSubject.send(currentFilters)
-        }
-    }
-
-    var currentFiltersDebounced: AnyPublisher<ItemFilterCollection, Never> {
-        currentFiltersSubject
-            .debounce(for: 1, scheduler: RunLoop.main)
-            .removeDuplicates()
-            .eraseToAnyPublisher()
-    }
-
-    private var currentFiltersSubject: PassthroughSubject<ItemFilterCollection, Never> = .init()
+    var currentFilters: ItemFilterCollection
 
     private let parent: (any _LibraryParent)?
 
@@ -64,12 +50,6 @@ final class FilterViewModel: ViewModel {
         self.currentFilters = currentFilters
 
         super.init()
-
-//        if let parent {
-//            self.allFilters.itemTypes = parent._supportedItemTypes(
-//                for: parent._groupings?.defaultSelection
-//            )
-//        }
     }
 
     func isFilterSelected(type: ItemFilterType) -> Bool {

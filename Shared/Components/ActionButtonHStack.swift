@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import Factory
 import JellyfinAPI
 import SwiftUI
 
@@ -14,8 +15,8 @@ import SwiftUI
 
 struct ActionButtonHStack: View {
 
-    @Environment(\.favoriteItemAction)
-    private var favoriteItemAction
+    @Injected(\.itemUserDataHandler)
+    private var itemUserDataHandler
 
     @StoredValue(.User.enabledTrailers)
     private var enabledTrailers: TrailerSelection
@@ -31,7 +32,7 @@ struct ActionButtonHStack: View {
                 let isPlayedSelected = item.userData?.isPlayed == true
 
                 Button(L10n.played, systemImage: "checkmark") {
-                    print("Mark as played action")
+                    itemUserDataHandler.setPlayedStatus(for: item, isPlayed: !isPlayedSelected)
                 }
                 .foregroundStyle(.white, Color.jellyfinPurple)
                 .isHighlighted(isPlayedSelected)
@@ -41,7 +42,7 @@ struct ActionButtonHStack: View {
             let isFavoriteSelected = item.userData?.isFavorite == true
 
             Button(L10n.favorite, systemImage: isFavoriteSelected ? "heart.fill" : "heart") {
-                print("Favorite action")
+                itemUserDataHandler.setFavoriteStatus(for: item, isFavorited: !isFavoriteSelected)
             }
             .foregroundStyle(.white, .red)
             .isHighlighted(isFavoriteSelected)

@@ -108,7 +108,7 @@ extension Defaults.Keys {
 
     enum Customization {
 
-        static let itemViewType: Key<ItemViewType> = UserKey("itemViewType", default: .enhanced)
+        static let itemViewType: Key<ItemViewType> = UserKey("mediaItemViewType", default: .enhanced)
 
         static let shouldShowMissingSeasons: Key<Bool> = UserKey("shouldShowMissingSeasons", default: true)
         static let shouldShowMissingEpisodes: Key<Bool> = UserKey("shouldShowMissingEpisodes", default: true)
@@ -137,9 +137,6 @@ extension Defaults.Keys {
             static let letterPickerOrientation: Key<LetterPickerOrientation> = .init(
                 "letterPickerOrientation", default: .trailing
             )
-            static let displayType: Key<LibraryDisplayType> = UserKey("libraryViewType", default: .grid)
-            static let posterType: Key<PosterDisplayType> = UserKey("libraryPosterType", default: .portrait)
-            static let listColumnCount: Key<Int> = UserKey("listColumnCount", default: 1)
             static let randomImage: Key<Bool> = UserKey("libraryRandomImage", default: true)
             static let showFavorites: Key<Bool> = UserKey("libraryShowFavorites", default: true)
 

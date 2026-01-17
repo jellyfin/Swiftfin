@@ -33,21 +33,18 @@ struct LetterPickerBar: View {
                     ZStack {
                         RoundedRectangle(cornerRadius: 5)
                             .fill(isSelected ? accentColor : Color.clear)
+                            .aspectRatio(1, contentMode: .fit)
 
                         Text(letter.value)
                             .font(.headline)
                             .foregroundStyle(isSelected ? accentColor.overlayColor : accentColor)
                     }
-                    .frame(width: 30, height: 30)
+                    .frame(width: UIFont.preferredFont(forTextStyle: .headline).lineHeight)
                 }
             }
         }
         .frame(maxHeight: .infinity)
         .scrollIfLargerThanContainer()
-        .frame(width: 30)
-    }
-
-    private var fontLineHeight: CGFloat {
-        UIFont.preferredFont(forTextStyle: .headline).lineHeight
+        .withViewContext(.withConstrainedSize)
     }
 }

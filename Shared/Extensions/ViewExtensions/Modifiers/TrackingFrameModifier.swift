@@ -9,20 +9,20 @@
 import SwiftUI
 
 struct ScrollViewHeaderFrameKey: PreferenceKey {
-    static var defaultValue: CGRect = .zero
+    static let defaultValue: FrameAndSafeAreaInsets = .zero
     static func reduce(value: inout Value, nextValue: () -> Value) {
         value = nextValue()
     }
 }
 
 struct EmptyCGRectPreferenceKey: PreferenceKey {
-    static var defaultValue: CGRect { .zero }
-    static func reduce(value: inout Value, nextValue: () -> CGRect) {
+    static let defaultValue: FrameAndSafeAreaInsets = .zero
+    static func reduce(value: inout Value, nextValue: () -> Value) {
         value = .zero
     }
 }
 
-struct TrackingFrameModifier<Key: PreferenceKey>: ViewModifier where Key.Value == CGRect {
+struct TrackingFrameModifier<Key: PreferenceKey>: ViewModifier where Key.Value == FrameAndSafeAreaInsets {
 
     @Environment(\.frameForParentView)
     private var frameForParentView
@@ -51,7 +51,11 @@ struct TrackingFrameModifier<Key: PreferenceKey>: ViewModifier where Key.Value =
         @ViewBuilder to content: @escaping () -> some View
     ) -> some View {
         if let key {
-            content().preference(key: key, value: frame)
+            content()
+                .preference(
+                    key: key,
+                    value: .init(frame: frame, safeAreaInsets: safeAreaInsets)
+                )
         } else {
             content()
         }

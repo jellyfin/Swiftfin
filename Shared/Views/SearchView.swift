@@ -31,11 +31,6 @@ struct SearchView: View {
     private var tabItemSelected
 
     @ViewBuilder
-    private func makeGroupBody<G: ContentGroup>(_ group: G) -> some View {
-        group.body(with: group.viewModel)
-    }
-
-    @ViewBuilder
     private var suggestionsView: some View {
         VStack(spacing: 20) {
             ForEach(viewModel.suggestions) { item in
@@ -50,33 +45,36 @@ struct SearchView: View {
     }
 
     @ViewBuilder
-    private var resultsView: some View {
-        ContentGroupView(viewModel: viewModel.itemContentGroupViewModel)
+    private func makeGroupBody<G: ContentGroup>(_ group: G) -> some View {
+        group.body(with: group.viewModel)
+    }
 
-//        ScrollView {
-//            VStack(alignment: .leading, spacing: 10) {
-//                ForEach(viewModel.itemContentGroupViewModel.groups, id: \.id) { group in
-//                    makeGroupBody(group)
-//                        .eraseToAnyView()
-//                }
-//            }
-//            .edgePadding(.vertical)
-//        }
-//        .scrollIndicators(.hidden)
+    @ViewBuilder
+    private var resultsView: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 10) {
+                ForEach(viewModel.itemContentGroupViewModel.groups, id: \.id) { group in
+                    makeGroupBody(group)
+                        .eraseToAnyView()
+                }
+            }
+            .edgePadding(.vertical)
+        }
+        .scrollIndicators(.hidden)
     }
 
     var body: some View {
         ZStack {
             switch viewModel.state {
             case .initial:
-                if viewModel.isEmpty {
-                    if viewModel.canSearch {
+                if viewModel.canSearch {
+                    if viewModel.isEmpty {
                         Text(L10n.noResults)
                     } else {
-                        suggestionsView
+                        resultsView
                     }
                 } else {
-                    resultsView
+                    suggestionsView
                 }
             case .error:
                 viewModel.error.map(ErrorView.init)
@@ -89,15 +87,10 @@ struct SearchView: View {
         .navigationTitle(L10n.search)
         .backport
         .toolbarTitleDisplayMode(.inline)
-        .refreshable {
-            viewModel.search(query: searchQuery)
-        }
 //        .navigationBarFilterDrawer(
 //            viewModel: viewModel.filterViewModel,
 //            types: enabledDrawerFilters
-//        ) {
-//            router.route(to: .filter(type: $0.type, viewModel: $0.viewModel))
-//        }
+//        )
         .onFirstAppear {
             viewModel.getSuggestions()
         }
