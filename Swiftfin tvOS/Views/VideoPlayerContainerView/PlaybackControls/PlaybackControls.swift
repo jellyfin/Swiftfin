@@ -59,7 +59,7 @@ extension VideoPlayer {
 
                 PlaybackProgress()
                     .focusGuide(focusGuide, tag: "playbackProgress")
-//                    .isVisible(isScrubbing || isPresentingOverlay)
+                    .isVisible(isScrubbing || isPresentingOverlay)
             }
         }
 
@@ -84,6 +84,10 @@ extension VideoPlayer {
             .animation(.bouncy(duration: 0.25), value: isPresentingOverlay)
             .onReceive(onPressEvent) { press in
                 switch press {
+                case (.select, _):
+                    if focusGuide.focusedTag == "playbackProgress" {
+                        manager.togglePlayPause()
+                    }
                 case (.playPause, _):
                     manager.togglePlayPause()
                 case (.menu, _):

@@ -14,12 +14,16 @@ extension VideoPlayer.PlaybackControls {
 
         @Environment(\.isEnabled)
         private var isEnabled
+        @Environment(\.isFocused)
+        private var isFocused
 
         let onPressed: (Bool) -> Void
 
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
-                .foregroundStyle(isEnabled ? AnyShapeStyle(HierarchicalShapeStyle.primary) : AnyShapeStyle(Color.gray))
+                .foregroundStyle(isEnabled ? isFocused ? AnyShapeStyle(Color.black) : AnyShapeStyle(HierarchicalShapeStyle.primary) :
+                    AnyShapeStyle(Color.gray)
+                )
                 .labelStyle(.iconOnly)
                 .contentShape(Rectangle())
                 .scaleEffect(
@@ -30,7 +34,7 @@ extension VideoPlayer.PlaybackControls {
                 .animation(nil, value: configuration.isPressed)
                 .background {
                     Circle()
-                        .foregroundStyle(Color.white.opacity(configuration.isPressed ? 0.25 : 0))
+                        .foregroundStyle(Color.white.opacity(configuration.isPressed ? 0.25 : isFocused ? 1 : 0))
                         .scaleEffect(configuration.isPressed ? 1 : 0.9)
                 }
                 .animation(.linear(duration: 0.1).delay(configuration.isPressed ? 0.2 : 0), value: configuration.isPressed)

@@ -23,6 +23,9 @@ extension VideoPlayer.PlaybackControls {
         @Router
         private var router
 
+        private var fontSize: CGFloat = !UIDevice.isTV ? 24 : 36
+        private var fontWeight: Font.Weight = !UIDevice.isTV ? .semibold : .regular
+
         private func onPressed(isPressed: Bool) {
             if isPressed {
                 containerState.timer.stop()
@@ -31,25 +34,32 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
+        private var closeButton: some View {
+            Button {
+                if containerState.isPresentingSupplement {
+                    containerState.select(supplement: nil)
+                } else {
+                    manager.stop()
+                    router.dismiss()
+                }
+            } label: {
+                AlternateLayoutView {
+                    Image(systemName: "xmark")
+                } content: {
+                    Label(
+                        L10n.close,
+                        systemImage: containerState.isPresentingSupplement ? "chevron.down" : "xmark"
+                    )
+                }
+                .contentShape(Rectangle())
+            }
+        }
+
         var body: some View {
             HStack(alignment: .center) {
-                Button {
-                    if containerState.isPresentingSupplement {
-                        containerState.select(supplement: nil)
-                    } else {
-                        manager.stop()
-                        router.dismiss()
-                    }
-                } label: {
-                    AlternateLayoutView {
-                        Image(systemName: "xmark")
-                    } content: {
-                        Label(
-                            L10n.close,
-                            systemImage: containerState.isPresentingSupplement ? "chevron.down" : "xmark"
-                        )
-                    }
-                    .contentShape(Rectangle())
+
+                if !UIDevice.isTV {
+                    closeButton
                 }
 
                 TitleView(item: manager.item)
@@ -57,11 +67,13 @@ extension VideoPlayer.PlaybackControls {
 
                 ActionButtons()
             }
+            #if os(iOS)
             .background {
                 EmptyHitTestView()
             }
-            .font(.system(size: 24, weight: .semibold))
-            .buttonStyle(OverlayButtonStyle(onPressed: onPressed))
+            #endif
+            .font(.system(size: fontSize, weight: fontWeight))
+                .buttonStyle(OverlayButtonStyle(onPressed: onPressed))
         }
     }
 }
@@ -98,6 +110,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
             let titleSubtitle = self._titleSubtitle
 
             Text(titleSubtitle.title)
+                .font(.headline)
                 .fontWeight(.semibold)
                 .lineLimit(1)
                 .frame(minWidth: max(50, subtitleContentSize.width))
