@@ -78,13 +78,15 @@ extension VideoPlayer {
 
         private lazy var playbackControlsViewController: HostingController<AnyView> = {
             let controller = HostingController(
-                content: playbackControls
-                    .environment(\.onPressEventPublisher, onPressEvent)
-                    .environmentObject(containerState)
-                    .environmentObject(containerState.scrubbedSeconds)
-                    .environmentObject(focusGuide)
-                    .environmentObject(manager)
-                    .eraseToAnyView()
+                content: OverlayToastView(proxy: containerState.toastProxy) {
+                    playbackControls
+                        .environment(\.onPressEventPublisher, onPressEvent)
+                        .environmentObject(containerState)
+                        .environmentObject(containerState.scrubbedSeconds)
+                        .environmentObject(focusGuide)
+                        .environmentObject(manager)
+                }
+                .eraseToAnyView()
             )
             controller.disablesSafeArea = true
             controller.automaticallyAllowUIKitAnimationsForNextUpdate = true

@@ -35,6 +35,9 @@ extension VideoPlayer {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
+        @Toaster
+        private var toaster: ToastProxy
+
         @Router
         private var router
 
@@ -70,9 +73,25 @@ extension VideoPlayer {
                         .onMoveCommand { direction in
                             switch direction {
                             case .left:
+                                containerState.jumpProgressObserver.jumpBackward()
                                 manager.proxy?.jumpBackward(jumpBackwardInterval.rawValue)
+                                toaster.present(
+                                    Text(
+                                        jumpBackwardInterval.rawValue * containerState.jumpProgressObserver.jumps,
+                                        format: .minuteSecondsAbbreviated
+                                    ),
+                                    systemName: "gobackward"
+                                )
                             case .right:
+                                containerState.jumpProgressObserver.jumpForward()
                                 manager.proxy?.jumpForward(jumpForwardInterval.rawValue)
+                                toaster.present(
+                                    Text(
+                                        jumpForwardInterval.rawValue * containerState.jumpProgressObserver.jumps,
+                                        format: .minuteSecondsAbbreviated
+                                    ),
+                                    systemName: "goforward"
+                                )
                             default:
                                 break
                             }
@@ -124,8 +143,10 @@ extension VideoPlayer {
                     switch manager.playbackRequestStatus {
                     case .playing:
                         manager.setPlaybackRequestStatus(status: .paused)
+                        toaster.present(L10n.pause, systemName: "pause.circle")
                     case .paused:
                         manager.setPlaybackRequestStatus(status: .playing)
+                        toaster.present(L10n.play, systemName: "play.circle")
                     }
                 }
                 containerState.isPresentingOverlay = true
