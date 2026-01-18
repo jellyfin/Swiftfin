@@ -81,6 +81,8 @@ struct PlaybackRateMediaPlayerSupplement: MediaPlayerSupplement {
             }
         }
 
-        var tvOSView: some View {}
+        var tvOSView: some View {
+            compactView
+        }
     }
 }

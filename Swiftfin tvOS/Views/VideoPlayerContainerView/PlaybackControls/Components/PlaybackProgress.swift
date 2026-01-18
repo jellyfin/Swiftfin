@@ -111,6 +111,9 @@ extension VideoPlayer.PlaybackControls {
             .scaleEffect(isFocused ? 1.0 : 0.95)
             .animation(.easeInOut(duration: 0.3), value: isFocused)
             .foregroundStyle(isFocused ? Color.white : Color.white.opacity(0.8))
+            .onTapGesture {
+                manager.togglePlayPause()
+            }
         }
     }
 }

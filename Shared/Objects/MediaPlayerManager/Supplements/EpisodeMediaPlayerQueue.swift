@@ -182,7 +182,12 @@ extension EpisodeMediaPlayerQueue {
             manager.playNewItem(provider: provider)
         }
 
-        var tvOSView: some View { EmptyView() }
+        var tvOSView: some View {
+            RegularSeasonStackObserver(
+                selection: $selection,
+                action: select
+            )
+        }
 
         var iOSView: some View {
             CompactOrRegularView(

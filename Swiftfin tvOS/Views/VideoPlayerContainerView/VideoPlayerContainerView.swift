@@ -79,6 +79,7 @@ extension VideoPlayer {
         private lazy var playbackControlsViewController: HostingController<AnyView> = {
             let controller = HostingController(
                 content: playbackControls
+                    .environment(\.onPressEventPublisher, onPressEvent)
                     .environmentObject(containerState)
                     .environmentObject(containerState.scrubbedSeconds)
                     .environmentObject(focusGuide)
@@ -121,6 +122,7 @@ extension VideoPlayer {
         private let containerState: VideoPlayerContainerState
 
         let focusGuide = FocusGuide()
+        let onPressEvent = OnPressEvent()
 
         private var cancellables: Set<AnyCancellable> = []
 
@@ -241,5 +243,94 @@ extension VideoPlayer {
 
         @objc
         func ignorePress() {}
+
+        private func forwardPressesBegan(
+            _ presses: Set<UIPress>,
+            event: UIPressesEvent?
+        ) {
+            super.pressesBegan(presses, with: event)
+        }
+
+        private func forwardPressesEnded(
+            _ presses: Set<UIPress>,
+            event: UIPressesEvent?
+        ) {
+            super.pressesEnded(presses, with: event)
+        }
+
+        override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+            for press in presses {
+                let defaultAction: () -> Void = { [weak self] in
+                    guard let self else { return }
+                    self.forwardPressesBegan([press], event: event)
+                }
+
+                onPressEvent.send(
+                    .init(
+                        type: press.type,
+                        phase: press.phase,
+                        performDefault: defaultAction
+                    )
+                )
+            }
+        }
+
+        override func pressesEnded(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+            for press in presses {
+                let defaultAction: () -> Void = { [weak self] in
+                    guard let self else { return }
+                    self.forwardPressesEnded([press], event: event)
+                }
+
+                onPressEvent.send(
+                    .init(
+                        type: press.type,
+                        phase: press.phase,
+                        performDefault: defaultAction
+                    )
+                )
+            }
+        }
     }
+}
+
+extension VideoPlayer.UIVideoPlayerContainerViewController {
+
+    struct PressEvent {
+
+        enum Resolution {
+            case handled
+            case fallback
+        }
+
+        let type: UIPress.PressType
+        let phase: UIPress.Phase
+
+        fileprivate let performDefault: () -> Void
+
+        func resolve(_ resolution: Resolution) {
+            if resolution == .fallback {
+                performDefault()
+            }
+        }
+    }
+
+    typealias OnPressEvent = LegacyEventPublisher<PressEvent>
+}
+
+@propertyWrapper
+struct OnPressEvent: DynamicProperty {
+
+    @Environment(\.onPressEventPublisher)
+    private var publisher
+
+    var wrappedValue: VideoPlayer.UIVideoPlayerContainerViewController.OnPressEvent {
+        publisher
+    }
+}
+
+extension EnvironmentValues {
+
+    @Entry
+    var onPressEventPublisher: VideoPlayer.UIVideoPlayerContainerViewController.OnPressEvent = .init()
 }

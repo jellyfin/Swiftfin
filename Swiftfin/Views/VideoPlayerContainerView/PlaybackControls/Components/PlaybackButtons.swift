@@ -51,7 +51,7 @@ extension VideoPlayer.PlaybackControls {
                 Group {
                     switch manager.playbackRequestStatus {
                     case .playing:
-                        Label("Pause", systemImage: "pause.fill")
+                        Label(L10n.pause, systemImage: "pause.fill")
                     case .paused:
                         Label(L10n.play, systemImage: "play.fill")
                     }
