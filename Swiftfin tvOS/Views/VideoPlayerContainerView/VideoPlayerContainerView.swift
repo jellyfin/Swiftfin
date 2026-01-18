@@ -78,13 +78,15 @@ extension VideoPlayer {
 
         private lazy var playbackControlsViewController: HostingController<AnyView> = {
             let controller = HostingController(
-                content: playbackControls
-                    .environment(\.onPressEventPublisher, onPressEvent)
-                    .environmentObject(containerState)
-                    .environmentObject(containerState.scrubbedSeconds)
-                    .environmentObject(focusGuide)
-                    .environmentObject(manager)
-                    .eraseToAnyView()
+                content: OverlayToastView(proxy: containerState.toastProxy) {
+                    playbackControls
+                        .environment(\.onPressEventPublisher, onPressEvent)
+                        .environmentObject(containerState)
+                        .environmentObject(containerState.scrubbedSeconds)
+                        .environmentObject(focusGuide)
+                        .environmentObject(manager)
+                }
+                .eraseToAnyView()
             )
             controller.disablesSafeArea = true
             controller.automaticallyAllowUIKitAnimationsForNextUpdate = true
@@ -244,18 +246,77 @@ extension VideoPlayer {
         @objc
         func ignorePress() {}
 
-        override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
-            print(presses)
-            guard let buttonPress = presses.first else { return }
+        private func forwardPressesBegan(
+            _ presses: Set<UIPress>,
+            event: UIPressesEvent?
+        ) {
+            super.pressesBegan(presses, with: event)
+        }
 
-            onPressEvent.send((type: buttonPress.type, phase: buttonPress.phase))
+        private func forwardPressesEnded(
+            _ presses: Set<UIPress>,
+            event: UIPressesEvent?
+        ) {
+            super.pressesEnded(presses, with: event)
+        }
+
+        override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+            for press in presses {
+                let defaultAction: () -> Void = { [weak self] in
+                    guard let self else { return }
+                    self.forwardPressesBegan([press], event: event)
+                }
+
+                onPressEvent.send(
+                    .init(
+                        type: press.type,
+                        phase: press.phase,
+                        performDefault: defaultAction
+                    )
+                )
+            }
+        }
+
+        override func pressesEnded(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+            for press in presses {
+                let defaultAction: () -> Void = { [weak self] in
+                    guard let self else { return }
+                    self.forwardPressesEnded([press], event: event)
+                }
+
+                onPressEvent.send(
+                    .init(
+                        type: press.type,
+                        phase: press.phase,
+                        performDefault: defaultAction
+                    )
+                )
+            }
         }
     }
 }
 
 extension VideoPlayer.UIVideoPlayerContainerViewController {
 
-    typealias PressEvent = (type: UIPress.PressType, phase: UIPress.Phase)
+    struct PressEvent {
+
+        enum Resolution {
+            case handled
+            case fallback
+        }
+
+        let type: UIPress.PressType
+        let phase: UIPress.Phase
+
+        fileprivate let performDefault: () -> Void
+
+        func resolve(_ resolution: Resolution) {
+            if resolution == .fallback {
+                performDefault()
+            }
+        }
+    }
+
     typealias OnPressEvent = LegacyEventPublisher<PressEvent>
 }
 
