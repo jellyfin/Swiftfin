@@ -56,7 +56,7 @@ extension VideoPlayer.PlaybackControls {
         }
 
         var body: some View {
-            HStack(alignment: .center) {
+            HStack(alignment: UIDevice.isTV ? .bottom : .center) {
 
                 if !UIDevice.isTV {
                     closeButton
@@ -65,15 +65,20 @@ extension VideoPlayer.PlaybackControls {
                 TitleView(item: manager.item)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                ActionButtons()
+                AlternateLayoutView {
+                    ActionButtons()
+                } content: {
+                    ActionButtons()
+                        .focusSection()
+                }
             }
-            #if os(iOS)
-            .background {
-                EmptyHitTestView()
-            }
-            #endif
             .font(.system(size: fontSize, weight: fontWeight))
-                .buttonStyle(OverlayButtonStyle(onPressed: onPressed))
+            .buttonStyle(OverlayButtonStyle(onPressed: onPressed))
+            #if os(iOS)
+                .background {
+                    EmptyHitTestView()
+                }
+            #endif
         }
     }
 }
@@ -109,6 +114,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
         var body: some View {
             let titleSubtitle = self._titleSubtitle
 
+            #if os(iOS)
             Text(titleSubtitle.title)
                 .font(.headline)
                 .fontWeight(.semibold)
@@ -121,6 +127,20 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                             .offset(y: subtitleContentSize.height)
                     }
                 }
+            #else
+            VStack(alignment: .leading) {
+                Text(titleSubtitle.title)
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .lineLimit(1)
+
+                if let subtitle = titleSubtitle.subtitle {
+                    _subtitle(subtitle)
+                        .lineLimit(1)
+                }
+            }
+            .frame(minWidth: max(50, subtitleContentSize.width))
+            #endif
         }
     }
 }

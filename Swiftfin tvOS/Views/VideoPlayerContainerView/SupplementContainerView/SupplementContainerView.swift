@@ -113,8 +113,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 .animation(.linear(duration: 0.2), value: containerState.selectedSupplement?.id)
             }
             .edgePadding(.top)
-            .isVisible(isPresentingOverlay)
-            .isVisible(!isScrubbing)
             .animation(.linear(duration: 0.2), value: isPresentingOverlay)
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.bouncy(duration: 0.3, extraBounce: 0.1), value: currentSupplements)
