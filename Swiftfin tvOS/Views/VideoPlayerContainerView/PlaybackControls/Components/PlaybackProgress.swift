@@ -49,8 +49,9 @@ extension VideoPlayer.PlaybackControls {
         }
 
         private var previewXOffset: CGFloat {
-            let p = sliderSize.width * scrubbedProgress
-            return clamp(p, min: 100, max: sliderSize.width - 100)
+            let videoWidth = 200 * videoSizeAspectRatio
+            let p = (sliderSize.width * scrubbedProgress) - (videoWidth / 2)
+            return clamp(p, min: 0, max: sliderSize.width - videoWidth)
         }
 
         private var scrubbedProgress: Double {
@@ -60,6 +61,14 @@ extension VideoPlayer.PlaybackControls {
 
         private var scrubbedSeconds: Duration {
             scrubbedSecondsBox.value
+        }
+
+        private var videoSizeAspectRatio: CGFloat {
+            guard let videoPlayerProxy = manager.proxy as? any VideoMediaPlayerProxy else {
+                return 1.77
+            }
+
+            return clamp(videoPlayerProxy.videoSize.value.aspectRatio, min: 0.25, max: 4)
         }
 
         @ViewBuilder
@@ -114,6 +123,17 @@ extension VideoPlayer.PlaybackControls {
             .scaleEffect(isFocused ? 1.0 : 0.95)
             .animation(.easeInOut(duration: 0.3), value: isFocused)
             .foregroundStyle(isFocused ? Color.white : Color.white.opacity(0.8))
+            .overlay(alignment: .topLeading) {
+                if isScrubbing, let previewImageProvider = manager.playbackItem?.previewImageProvider {
+                    PreviewImageView(previewImageProvider: previewImageProvider)
+                        .aspectRatio(videoSizeAspectRatio, contentMode: .fit)
+                        .frame(height: 200)
+                        .posterBorder()
+                        .cornerRadius(ratio: 1 / 30, of: \.width)
+                        .offset(x: previewXOffset, y: -220)
+                        .shadow(color: Color.black.opacity(0.5), radius: 20, x: 0, y: 10)
+                }
+            }
             .onTapGesture {
                 manager.togglePlayPause()
                 if manager.playbackRequestStatus == .playing {
