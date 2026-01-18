@@ -15,6 +15,11 @@ extension VideoPlayer {
 
     struct PlaybackControls: View {
 
+        @Default(.VideoPlayer.jumpBackwardInterval)
+        private var jumpBackwardInterval
+        @Default(.VideoPlayer.jumpForwardInterval)
+        private var jumpForwardInterval
+
         // since this view ignores safe area, it must
         // get safe area insets from parent views
         @Environment(\.safeAreaInsets)
@@ -26,9 +31,6 @@ extension VideoPlayer {
         private var focusGuide: FocusGuide
         @EnvironmentObject
         private var manager: MediaPlayerManager
-
-        @OnPressEvent
-        private var onPressEvent
 
         @Router
         private var router
@@ -55,11 +57,32 @@ extension VideoPlayer {
             if !isPresentingSupplement {
 
                 NavigationBar()
-                    .focusSection()
+                    .focusGuide(
+                        focusGuide,
+                        tag: "navigationBar",
+                        bottom: "playbackProgress"
+                    )
+                    .padding(.vertical, .none)
 
                 PlaybackProgress()
-                    .focusGuide(focusGuide, tag: "playbackProgress")
-                    .isVisible(isScrubbing || isPresentingOverlay)
+                    .focusGuide(
+                        focusGuide,
+                        tag: "playbackProgress",
+                        top: "navigationBar",
+                        bottom: "supplementButtons"
+                    )
+                    .frame(height: 100)
+                    .onMoveCommand { direction in
+                        switch direction {
+                        case .left:
+                            manager.proxy?.jumpBackward(jumpBackwardInterval.rawValue)
+                        case .right:
+                            manager.proxy?.jumpForward(jumpForwardInterval.rawValue)
+                        default:
+                            break
+                        }
+                    }
+                // .isVisible(isScrubbing || isPresentingOverlay)
             }
         }
 
@@ -82,22 +105,22 @@ extension VideoPlayer {
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.bouncy(duration: 0.4), value: isPresentingSupplement)
             .animation(.bouncy(duration: 0.25), value: isPresentingOverlay)
-            .onReceive(onPressEvent) { press in
-                switch press {
-                case (.select, _):
-                    if focusGuide.focusedTag == "playbackProgress" {
-                        manager.togglePlayPause()
-                    }
-                case (.playPause, _):
-                    manager.togglePlayPause()
-                case (.menu, _):
-                    if isPresentingSupplement {
-                        containerState.selectedSupplement = nil
-                    } else {
-                        manager.proxy?.stop()
-                        router.dismiss()
-                    }
-                default: ()
+            .onChange(of: containerState.isPresentingOverlay) { _, newValue in
+                if newValue && focusGuide.focusedTag != "playbackProgress" {
+                    focusGuide.transition(to: "playbackProgress")
+                } else {
+                    focusGuide.transition(to: nil)
+                }
+            }
+            .onPlayPauseCommand {
+                manager.togglePlayPause()
+            }
+            .onExitCommand {
+                if isPresentingSupplement {
+                    containerState.selectedSupplement = nil
+                } else {
+                    manager.proxy?.stop()
+                    router.dismiss()
                 }
             }
         }

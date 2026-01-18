@@ -22,9 +22,9 @@ struct FocusGuideModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         VStack(spacing: 0) {
+
             Color(debug ? .red : .clear)
                 .frame(height: 1)
-                .padding(0)
                 .if(focusConstructor.topTarget != nil, transform: { boundary in
                     boundary.focusable()
                 })
@@ -33,7 +33,6 @@ struct FocusGuideModifier: ViewModifier {
             HStack(spacing: 0) {
                 Color(debug ? .red : .clear)
                     .frame(width: 1)
-                    .padding(0)
                     .if(focusConstructor.leftTarget != nil, transform: { boundary in
                         boundary.focusable()
                     })
@@ -44,7 +43,6 @@ struct FocusGuideModifier: ViewModifier {
 
                 Color(debug ? .red : .clear)
                     .frame(width: 1)
-                    .padding(0)
                     .if(focusConstructor.rightTarget != nil, transform: { boundary in
                         boundary.focusable()
                     })
@@ -53,26 +51,10 @@ struct FocusGuideModifier: ViewModifier {
 
             Color(debug ? .red : .clear)
                 .frame(height: 1)
-                .padding(0)
                 .if(focusConstructor.bottomTarget != nil, transform: { boundary in
                     boundary.focusable()
                 })
                 .focused($focusDirection, equals: .bottom)
-        }
-        .padding(0)
-        .onChange(of: focusDirection) { _, focusDirection in
-            guard let focusDirection = focusDirection else { return }
-            switch focusDirection {
-            case .top:
-                focusGuide.transition(to: focusConstructor.topTarget!)
-            case .bottom:
-                focusGuide.transition(to: focusConstructor.bottomTarget!)
-            case .left:
-                focusGuide.transition(to: focusConstructor.leftTarget!)
-            case .right:
-                focusGuide.transition(to: focusConstructor.rightTarget!)
-            case .content: ()
-            }
         }
         .onChange(of: focusGuide.focusedTag) { _, newTag in
             if newTag == focusConstructor.tag {
