@@ -30,7 +30,7 @@ extension VideoPlayer.PlaybackControls {
                     configuration.isPressed ? 0.8 : 1
                 )
                 .animation(.bouncy(duration: 0.25, extraBounce: 0.25), value: configuration.isPressed)
-                .padding(4)
+                .padding(UIDevice.isTV ? 12 : 4)
                 .animation(nil, value: configuration.isPressed)
                 .background {
                     Circle()
