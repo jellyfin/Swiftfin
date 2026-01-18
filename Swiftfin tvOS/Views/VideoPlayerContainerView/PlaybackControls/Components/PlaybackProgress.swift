@@ -30,6 +30,9 @@ extension VideoPlayer.PlaybackControls {
         @EnvironmentObject
         private var scrubbedSecondsBox: PublishedBox<Duration>
 
+        @Toaster
+        private var toaster: ToastProxy
+
         @FocusState
         private var isFocused: Bool
 
@@ -113,6 +116,11 @@ extension VideoPlayer.PlaybackControls {
             .foregroundStyle(isFocused ? Color.white : Color.white.opacity(0.8))
             .onTapGesture {
                 manager.togglePlayPause()
+                if manager.playbackRequestStatus == .playing {
+                    toaster.present(L10n.pause, systemName: "pause.circle")
+                } else if manager.playbackRequestStatus == .paused {
+                    toaster.present(L10n.play, systemName: "play.circle")
+                }
             }
         }
     }
