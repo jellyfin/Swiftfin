@@ -79,7 +79,6 @@ extension VideoPlayer {
         private lazy var playbackControlsViewController: HostingController<AnyView> = {
             let controller = HostingController(
                 content: playbackControls
-                    .environment(\.onPressEventPublisher, onPressEvent)
                     .environmentObject(containerState)
                     .environmentObject(containerState.scrubbedSeconds)
                     .environmentObject(focusGuide)
@@ -122,7 +121,6 @@ extension VideoPlayer {
         private let containerState: VideoPlayerContainerState
 
         let focusGuide = FocusGuide()
-        let onPressEvent = OnPressEvent()
 
         private var cancellables: Set<AnyCancellable> = []
 
@@ -243,35 +241,5 @@ extension VideoPlayer {
 
         @objc
         func ignorePress() {}
-
-        override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
-            print(presses)
-            guard let buttonPress = presses.first else { return }
-
-            onPressEvent.send((type: buttonPress.type, phase: buttonPress.phase))
-        }
     }
-}
-
-extension VideoPlayer.UIVideoPlayerContainerViewController {
-
-    typealias PressEvent = (type: UIPress.PressType, phase: UIPress.Phase)
-    typealias OnPressEvent = LegacyEventPublisher<PressEvent>
-}
-
-@propertyWrapper
-struct OnPressEvent: DynamicProperty {
-
-    @Environment(\.onPressEventPublisher)
-    private var publisher
-
-    var wrappedValue: VideoPlayer.UIVideoPlayerContainerViewController.OnPressEvent {
-        publisher
-    }
-}
-
-extension EnvironmentValues {
-
-    @Entry
-    var onPressEventPublisher: VideoPlayer.UIVideoPlayerContainerViewController.OnPressEvent = .init()
 }
