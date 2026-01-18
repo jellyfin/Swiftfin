@@ -7,41 +7,67 @@
 //
 
 import BlurHashKit
+import Nuke
 import SwiftUI
 
-/// Retrieving images by exact pixel dimensions is a bit
-/// intense for normal usage and eases cache usage and modifications.
-private let landscapeMaxWidth: CGFloat = 300
-private let portraitMaxWidth: CGFloat = 200
+#if os(iOS)
+private let landscapeMaxWidth: CGFloat = 200
+private let portraitMaxWidth: CGFloat = 120
+#else
+private let landscapeMaxWidth: CGFloat = 500
+private let portraitMaxWidth: CGFloat = 500
+#endif
 
-struct PosterImage<Item: Poster>: View {
+struct PosterImage<Element: Poster>: View {
+
+    @Environment(\.viewContext)
+    private var viewContext
+
+    @ForTypeInEnvironment<Element, (Any) -> any WithDefaultValue>(\.customEnvironmentValueRegistry)
+    private var customEnvironmentValueRegistry
 
     private let contentMode: ContentMode
+    private let element: Element
+    // TODO: figure out what to do with this
     private let imageMaxWidth: CGFloat
-    private let item: Item
+    private var pipeline: ImagePipeline
+    private let size: PosterDisplayType.Size
     private let type: PosterDisplayType
 
-    init(
-        item: Item,
-        type: PosterDisplayType,
-        contentMode: ContentMode = .fill,
-        maxWidth: CGFloat? = nil
-    ) {
-        self.contentMode = contentMode
-        self.imageMaxWidth = maxWidth ?? (type == .landscape ? landscapeMaxWidth : portraitMaxWidth)
-        self.item = item
-        self.type = type
+    private var customEnvironmentValue: Element.Environment {
+        (customEnvironmentValueRegistry?(element) as? Element.Environment) ?? .default
     }
 
     private var imageSources: [ImageSource] {
-        switch type {
-        case .landscape:
-            item.landscapeImageSources(maxWidth: imageMaxWidth, quality: 90)
-        case .portrait:
-            item.portraitImageSources(maxWidth: imageMaxWidth, quality: 90)
-        case .square:
-            item.squareImageSources(maxWidth: imageMaxWidth, quality: 90)
+        if var environment = customEnvironmentValue as? WithViewContext {
+            environment.viewContext = viewContext
+            return element.imageSources(
+                for: type,
+                size: size,
+                environment: environment as! Element.Environment
+            )
+        } else {
+            return element.imageSources(
+                for: type,
+                size: size,
+                environment: customEnvironmentValue
+            )
         }
+    }
+
+    init(
+        item: Element,
+        type: PosterDisplayType,
+        contentMode: ContentMode = .fill,
+        maxWidth: CGFloat? = nil,
+        size: PosterDisplayType.Size = .small
+    ) {
+        self.contentMode = contentMode
+        self.element = item
+        self.imageMaxWidth = maxWidth ?? (type == .landscape ? landscapeMaxWidth : portraitMaxWidth)
+        self.pipeline = .shared
+        self.size = size
+        self.type = type
     }
 
     var body: some View {
@@ -53,38 +79,36 @@ struct PosterImage<Item: Poster>: View {
                 Color.clear
             } content: {
                 ImageView(imageSources)
-                    .image(item.transform)
+                    .image { image in
+                        element.transform(image: image, displayType: type)
+                    }
                     .placeholder { imageSource in
                         if let blurHash = imageSource.blurHash {
                             BlurHashView(blurHash: blurHash)
-                        } else if item.showTitle {
-                            SystemImageContentView(
-                                systemName: item.systemImage
-                            )
                         } else {
                             SystemImageContentView(
-                                title: item.displayTitle,
-                                systemName: item.systemImage
+                                systemName: element.systemImage
                             )
                         }
                     }
                     .failure {
-                        if item.showTitle {
-                            SystemImageContentView(
-                                systemName: item.systemImage
-                            )
-                        } else {
-                            SystemImageContentView(
-                                title: item.displayTitle,
-                                systemName: item.systemImage
-                            )
-                        }
+                        SystemImageContentView(
+                            systemName: element.systemImage
+                        )
                     }
+                    .accessibilityRemoveTraits(.isImage)
             }
         }
         .posterStyle(
             type,
             contentMode: contentMode
         )
+    }
+}
+
+extension PosterImage {
+
+    func pipeline(_ pipeline: ImagePipeline) -> Self {
+        copy(modifying: \.pipeline, with: pipeline)
     }
 }

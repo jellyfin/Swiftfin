@@ -18,7 +18,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
     private var focusedElement: Element?
 
     @StateObject
-    private var selection: BindingBox<[Element]>
+    private var selection: PublishedBox<[Element]>
 
     private var disabledSelection: [Element] {
         sources.filter { !selection.value.contains($0) }
@@ -182,7 +182,7 @@ private struct DisabledSection<Element: Displayable & Hashable>: View {
 extension OrderedSectionSelectorView {
 
     init(selection: Binding<[Element]>, sources: [Element]) {
-        self._selection = StateObject(wrappedValue: BindingBox(source: selection))
+        self._selection = StateObject(wrappedValue: PublishedBox(source: selection))
         self.sources = sources
         self.label = { Text($0.displayTitle).foregroundColor(.primary).eraseToAnyView() }
         self.systemImage = "filemenu.and.selection"
