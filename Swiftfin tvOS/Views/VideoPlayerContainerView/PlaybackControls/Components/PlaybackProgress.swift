@@ -119,10 +119,11 @@ extension VideoPlayer.PlaybackControls {
                     SplitTimeStamp()
                 }
             }
+            .padding(.horizontal)
             .focused($isFocused)
-            .scaleEffect(isFocused ? 1.0 : 0.95)
-            .animation(.easeInOut(duration: 0.3), value: isFocused)
+            .scaleEffect(isFocused ? 1.01 : 1.0)
             .foregroundStyle(isFocused ? Color.white : Color.white.opacity(0.8))
+            .animation(.bouncy(duration: 0.4, extraBounce: 0.1), value: isFocused)
             .overlay(alignment: .topLeading) {
                 if isScrubbing, let previewImageProvider = manager.playbackItem?.previewImageProvider {
                     PreviewImageView(previewImageProvider: previewImageProvider)

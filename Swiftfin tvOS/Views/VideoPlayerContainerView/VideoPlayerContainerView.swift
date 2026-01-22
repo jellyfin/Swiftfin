@@ -79,12 +79,30 @@ extension VideoPlayer {
         private lazy var playbackControlsViewController: HostingController<AnyView> = {
             let controller = HostingController(
                 content: OverlayToastView(proxy: containerState.toastProxy) {
-                    playbackControls
-                        .environment(\.onPressEventPublisher, onPressEvent)
-                        .environmentObject(containerState)
-                        .environmentObject(containerState.scrubbedSeconds)
-                        .environmentObject(focusGuide)
-                        .environmentObject(manager)
+                    ZStack {
+                        GestureView()
+                            .environment(\.panGestureDirection, .vertical)
+
+                        playbackControls
+                            .environment(\.onPressEventPublisher, onPressEvent)
+                            .environmentObject(containerState)
+                            .environmentObject(containerState.scrubbedSeconds)
+                            .environmentObject(focusGuide)
+                            .environmentObject(manager)
+                    }
+                    .environment(
+                        \.panAction,
+                        .init(
+                            action: { [self] in
+                                containerState.containerView?.handleSupplementPanAction(
+                                    translation: $0,
+                                    velocity: $1.y,
+                                    location: $2,
+                                    state: $4
+                                )
+                            }
+                        )
+                    )
                 }
                 .eraseToAnyView()
             )
@@ -95,11 +113,29 @@ extension VideoPlayer {
         }()
 
         private lazy var supplementContainerViewController: HostingController<AnyView> = {
-            let content = SupplementContainerView()
-                .environmentObject(containerState)
-                .environmentObject(focusGuide)
-                .environmentObject(manager)
-                .eraseToAnyView()
+            let content = ZStack {
+                GestureView()
+                    .environment(\.panGestureDirection, .vertical)
+
+                SupplementContainerView()
+                    .environmentObject(containerState)
+                    .environmentObject(focusGuide)
+                    .environmentObject(manager)
+            }
+            .environment(
+                \.panAction,
+                .init(
+                    action: { [self] in
+                        containerState.containerView?.handleSupplementPanAction(
+                            translation: $0,
+                            velocity: $1.y,
+                            location: $2,
+                            state: $4
+                        )
+                    }
+                )
+            )
+            .eraseToAnyView()
             let controller = HostingController(content: content)
             controller.disablesSafeArea = true
             controller.automaticallyAllowUIKitAnimationsForNextUpdate = true
@@ -128,6 +164,13 @@ extension VideoPlayer {
 
         private var cancellables: Set<AnyCancellable> = []
 
+        // MARK: - Pan Gesture State
+
+        private var lastVerticalPanLocation: CGPoint?
+        private var verticalPanGestureStartConstant: CGFloat?
+        private var isPanning: Bool = false
+        private var didStartPanningWithSupplement: Bool = false
+
         init(
             containerState: VideoPlayerContainerState,
             manager: MediaPlayerManager,
@@ -150,28 +193,134 @@ extension VideoPlayer {
             fatalError("init(coder:) has not been implemented")
         }
 
+        // MARK: - Supplement Pan Action
+
+        func handleSupplementPanAction(
+            translation: CGPoint,
+            velocity: CGFloat,
+            location: CGPoint,
+            state: UIGestureRecognizer.State
+        ) {
+            let yDirection: CGFloat = translation.y > 0 ? -1 : 1
+            let newOffset: CGFloat
+            let clampedOffset: CGFloat
+
+            let supplementContainerOffset: CGFloat = (view.bounds.height / 3) + EdgeInsets.edgePadding * 2
+            let dismissedOffset: CGFloat = 50 + EdgeInsets.edgePadding * 2
+            let minimumTranslation: CGFloat = 100.0
+
+            if state == .began {
+                self.view.layer.removeAllAnimations()
+                didStartPanningWithSupplement = containerState.selectedSupplement != nil
+                verticalPanGestureStartConstant = supplementBottomAnchor.constant
+            }
+
+            if state == .began || state == .changed {
+                lastVerticalPanLocation = location
+                isPanning = true
+
+                let shouldHaveSupplementPresented = self.supplementBottomAnchor.constant < -(minimumTranslation + dismissedOffset)
+
+                if shouldHaveSupplementPresented, !containerState.isPresentingSupplement {
+                    containerState.selectedSupplement = manager.supplements.first
+                } else if !shouldHaveSupplementPresented, containerState.selectedSupplement != nil {
+                    containerState.selectedSupplement = nil
+                }
+            } else {
+                lastVerticalPanLocation = nil
+                verticalPanGestureStartConstant = nil
+                isPanning = false
+
+                let shouldActuallyDismissSupplement = didStartPanningWithSupplement &&
+                    (translation.y > minimumTranslation || velocity > 1000)
+                if shouldActuallyDismissSupplement {
+                    containerState.selectedSupplement = nil
+                }
+
+                let shouldActuallyPresentSupplement = !didStartPanningWithSupplement &&
+                    (translation.y < -minimumTranslation || velocity < -1000)
+                if shouldActuallyPresentSupplement {
+                    containerState.selectedSupplement = manager.supplements.first
+                }
+
+                let stateToPass: (translation: CGFloat, velocity: CGFloat)? = (translation: translation.y, velocity: velocity)
+                presentSupplementContainer(containerState.selectedSupplement != nil, with: stateToPass)
+                return
+            }
+
+            guard let verticalPanGestureStartConstant else { return }
+
+            if (!didStartPanningWithSupplement && yDirection > 0) || (didStartPanningWithSupplement && yDirection < 0) {
+                newOffset = verticalPanGestureStartConstant + (translation.y.magnitude * -yDirection)
+            } else {
+                newOffset = verticalPanGestureStartConstant - (translation.y.magnitude * yDirection)
+            }
+
+            clampedOffset = clamp(
+                newOffset,
+                min: -supplementContainerOffset,
+                max: -dismissedOffset
+            )
+
+            if newOffset < clampedOffset {
+                let excess = clampedOffset - newOffset
+                let resistance = pow(excess, 0.7)
+                supplementBottomAnchor.constant = clampedOffset - resistance
+            } else if newOffset > -dismissedOffset {
+                let excess = newOffset - clampedOffset
+                let resistance = pow(excess, 0.5)
+                supplementBottomAnchor.constant = clamp(clampedOffset + resistance, min: -dismissedOffset, max: -50)
+            } else {
+                supplementBottomAnchor.constant = clampedOffset
+            }
+
+            containerState.supplementOffset = supplementBottomAnchor.constant
+        }
+
         // MARK: - didPresent
 
         func presentSupplementContainer(
-            _ didPresent: Bool
+            _ didPresent: Bool,
+            with panningState: (translation: CGFloat, velocity: CGFloat)? = nil
         ) {
+            guard !isPanning else { return }
+
             if didPresent {
-                self.supplementBottomAnchor.constant = -(500 + EdgeInsets.edgePadding * 2)
+                self.supplementBottomAnchor.constant = -((view.bounds.height / 3) + EdgeInsets.edgePadding * 2)
             } else {
-                self.supplementBottomAnchor.constant = -(100 + EdgeInsets.edgePadding)
+                self.supplementBottomAnchor.constant = -(50 + EdgeInsets.edgePadding * 2)
             }
 
             containerState.isPresentingPlaybackControls = !didPresent
             containerState.supplementOffset = supplementBottomAnchor.constant
 
-            UIView.animate(
-                withDuration: 0.75,
-                delay: 0,
-                usingSpringWithDamping: 0.8,
-                initialSpringVelocity: 0.4,
-                options: .allowUserInteraction
-            ) {
-                self.view.layoutIfNeeded()
+            /// Force layout BEFORE animation
+            view.setNeedsLayout()
+
+            if let panningState {
+                let velocity = panningState.velocity.magnitude / 1000
+                let distance = panningState.translation.magnitude
+                let duration = min(max(Double(distance) / Double(velocity * 1000), 0.2), 0.75)
+
+                UIView.animate(
+                    withDuration: duration,
+                    delay: 0,
+                    usingSpringWithDamping: 0.8,
+                    initialSpringVelocity: velocity,
+                    options: .allowUserInteraction
+                ) { [weak self] in
+                    self?.view.layoutIfNeeded()
+                }
+            } else {
+                UIView.animate(
+                    withDuration: 0.75,
+                    delay: 0,
+                    usingSpringWithDamping: 0.8,
+                    initialSpringVelocity: 0.4,
+                    options: .allowUserInteraction
+                ) { [weak self] in
+                    self?.view.layoutIfNeeded()
+                }
             }
         }
 
@@ -217,11 +366,11 @@ extension VideoPlayer {
 
             supplementBottomAnchor = supplementContainerView.topAnchor.constraint(
                 equalTo: view.bottomAnchor,
-                constant: -(100 + EdgeInsets.edgePadding)
+                constant: -(50 + EdgeInsets.edgePadding * 2)
             )
             containerState.supplementOffset = supplementBottomAnchor.constant
 
-            let constant = (500 + EdgeInsets.edgePadding * 2)
+            let constant = (view.bounds.height / 3) + EdgeInsets.edgePadding * 2
             supplementHeightAnchor = supplementContainerView.heightAnchor.constraint(equalToConstant: constant)
 
             supplementRegularConstraints = [
@@ -241,6 +390,32 @@ extension VideoPlayer {
             ]
 
             NSLayoutConstraint.activate(playbackControlsConstraints)
+        }
+
+        deinit {
+            /// Clean up constraints
+            NSLayoutConstraint.deactivate(playerRegularConstraints)
+            NSLayoutConstraint.deactivate(supplementRegularConstraints)
+            NSLayoutConstraint.deactivate(playbackControlsConstraints)
+
+            /// Clean up gesture state
+            lastVerticalPanLocation = nil
+            verticalPanGestureStartConstant = nil
+
+            /// Clean up child view controllers
+            playerViewController.willMove(toParent: nil)
+            playerViewController.removeFromParent()
+
+            playbackControlsViewController.willMove(toParent: nil)
+            playbackControlsViewController.removeFromParent()
+
+            supplementContainerViewController.willMove(toParent: nil)
+            supplementContainerViewController.removeFromParent()
+
+            /// Clean up views
+            playerView.removeFromSuperview()
+            playbackControlsView.removeFromSuperview()
+            supplementContainerView.removeFromSuperview()
         }
 
         @objc
