@@ -53,11 +53,14 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             } content: {
                 supplement.videoPlayerBody
             }
+            .background {
+                GestureView()
+                    .environment(\.panGestureDirection, .vertical)
+            }
         }
 
         var body: some View {
-            VStack(spacing: EdgeInsets.edgePadding) {
-
+            VStack(spacing: 0) {
                 // TODO: scroll if larger than horizontal
                 HStack(spacing: 10) {
                     if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
@@ -82,10 +85,10 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 .buttonStyle(SupplementTitleButtonStyle())
                 .padding(.leading, safeAreaInsets.leading)
                 .padding(.trailing, safeAreaInsets.trailing)
+                .edgePadding(.horizontal)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .focusSection()
                 .isVisible(isPresentingOverlay)
-                .disabled(!isPresentingOverlay)
 
                 ZStack {
                     if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
@@ -109,12 +112,10 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                         .tabViewStyle(.page(indexDisplayMode: .never))
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .isVisible(containerState.isPresentingSupplement)
                 .disabled(!containerState.isPresentingSupplement)
                 .animation(.linear(duration: 0.2), value: containerState.selectedSupplement?.id)
             }
-            .padding(.bottom, safeAreaInsets.bottom)
             .edgePadding(.top)
             .isVisible(isPresentingOverlay)
             .isVisible(!isScrubbing)
@@ -128,14 +129,18 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 )
                 currentSupplements = newSupplements
             }
+            .onChange(of: isPresentingSupplement) { _, newValue in
+                if newValue {
+                    focusedSupplementID = containerState.selectedSupplement?.id
+                }
+            }
             .onChange(of: focusedSupplementID) { oldValue, newValue in
                 if let supplementID = newValue, oldValue != newValue {
                     if let supplement = currentSupplements[id: supplementID] {
+                        containerState.selectedSupplement = supplement.supplement
+
                         if !isPresentingSupplement {
-                            containerState.selectedSupplement = supplement.supplement
                             containerState.containerView?.presentSupplementContainer(true)
-                        } else {
-                            containerState.selectedSupplement = supplement.supplement
                         }
                     }
                 } else if newValue == nil, oldValue != nil {
@@ -189,10 +194,9 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 .animation(.linear(duration: 0.05), value: isFocused)
                 .focusable()
                 .focused($isFocused)
-                .onChange(of: isFocused) { _, newValue in
-                    if newValue {
-                        configuration.trigger()
-                    }
+                .onTapGesture {
+                    // TODO: Remove in favor of just focusing IMO?
+                    configuration.trigger()
                 }
         }
     }

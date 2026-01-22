@@ -42,9 +42,33 @@ extension VideoPlayer {
         private var router
 
         @State
+        private var bottomContentFrame: CGRect = .zero
+        @State
         private var contentSize: CGSize = .zero
         @State
         private var effectiveSafeArea: EdgeInsets = .zero
+
+        // TODO: Cleanup. Lotta variables I think we can cleanup/combine.
+        @State
+        private var scrubbingTimer: Timer?
+        @State
+        private var scrubbingDirection: ScrubbingDirection?
+        @State
+        private var scrubbingSpeed: Double = 1.0
+        @State
+        private var scrubbingStartTime: Date?
+        @State
+        private var hasEnteredScrubMode: Bool = false
+        @State
+        private var isPresentingCloseConfirmation: Bool = false
+
+        @FocusState
+        private var isPlaybackProgressFocused: Bool
+
+        enum ScrubbingDirection {
+            case forward
+            case backward
+        }
 
         private var isPresentingOverlay: Bool {
             containerState.isPresentingOverlay
@@ -63,60 +87,41 @@ extension VideoPlayer {
             if !isPresentingSupplement {
                 VStack(spacing: 0) {
                     NavigationBar()
-                        .focusSection()
-                        .isVisible(isPresentingOverlay)
                         .padding(.horizontal)
+                        .isVisible(isPresentingOverlay || isScrubbing)
 
                     PlaybackProgress()
-                        .focusSection()
                         .isVisible(isPresentingOverlay || isScrubbing)
-                        .onMoveCommand { direction in
-                            switch direction {
-                            case .left:
-                                containerState.jumpProgressObserver.jumpBackward()
-                                manager.proxy?.jumpBackward(jumpBackwardInterval.rawValue)
-                                toaster.present(
-                                    Text(
-                                        jumpBackwardInterval.rawValue * containerState.jumpProgressObserver.jumps,
-                                        format: .minuteSecondsAbbreviated
-                                    ),
-                                    systemName: "gobackward"
-                                )
-                            case .right:
-                                containerState.jumpProgressObserver.jumpForward()
-                                manager.proxy?.jumpForward(jumpForwardInterval.rawValue)
-                                toaster.present(
-                                    Text(
-                                        jumpForwardInterval.rawValue * containerState.jumpProgressObserver.jumps,
-                                        format: .minuteSecondsAbbreviated
-                                    ),
-                                    systemName: "goforward"
-                                )
-                            default:
-                                break
-                            }
-                        }
+                        .focused($isPlaybackProgressFocused, equals: true)
                 }
             }
         }
 
         var body: some View {
             ZStack {
-                bottomContent
-                    .frame(maxHeight: .infinity, alignment: .bottom)
-                    .edgePadding()
-                    .background(alignment: .bottom) {
-                        Color.black
-                            .maskLinearGradient {
-                                (location: 0, opacity: 0)
-                                (location: 1, opacity: 0.5)
-                            }
-                            .isVisible(isScrubbing || isPresentingOverlay)
-                            .animation(.linear(duration: 0.25), value: isPresentingOverlay)
-                    }
-                    .animation(.linear(duration: 0.1), value: isScrubbing)
-                    .animation(.bouncy(duration: 0.4), value: isPresentingSupplement)
-                    .animation(.bouncy(duration: 0.25), value: isPresentingOverlay)
+                VStack(spacing: 0) {
+                    Spacer()
+                        .allowsHitTesting(false)
+
+                    bottomContent
+                        .edgePadding(.horizontal)
+                        .trackingFrame($bottomContentFrame)
+                        .animation(.linear(duration: 0.1), value: isScrubbing)
+                        .animation(.bouncy(duration: 0.4), value: isPresentingSupplement)
+                        .animation(.bouncy(duration: 0.25), value: isPresentingOverlay)
+                        .background(alignment: .top) {
+                            Color.black
+                                .maskLinearGradient {
+                                    (location: 0, opacity: 0)
+                                    (location: 1, opacity: 0.5)
+                                }
+                                .frame(height: bottomContentFrame.height + 50 + EdgeInsets.edgePadding * 2)
+                                .isVisible((isScrubbing || isPresentingOverlay) && !isPresentingSupplement)
+                                .animation(.linear(duration: 0.25), value: isPresentingOverlay)
+                                .allowsHitTesting(false)
+                        }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                 if manager.playbackRequestStatus == .paused {
                     Label(L10n.pause, systemImage: "pause.fill")
@@ -126,19 +131,160 @@ extension VideoPlayer {
                         .frame(maxHeight: .infinity)
                 }
             }
+            .alert("Close Player", isPresented: $isPresentingCloseConfirmation) {
+                Button("Cancel", role: .cancel) {}
+                Button("Close", role: .destructive) {
+                    containerState.isPresentingOverlay = false
+                    manager.proxy?.stop()
+                    router.dismiss()
+                }
+            } message: {
+                Text("Are you sure you want to close the player?")
+            }
             .onFirstAppear {
                 containerState.isPresentingOverlay = true
+            }
+            .onChange(of: containerState.isPresentingOverlay) { newValue in
+                if newValue {
+                    isPlaybackProgressFocused = true
+                }
             }
             .onReceive(onPressEvent) { press in
                 handlePressEvent(press)
             }
         }
 
+        private func startScrubbing(direction: ScrubbingDirection) {
+            /// If already scrubbing in same direction, increase speed
+            if hasEnteredScrubMode, scrubbingDirection == direction {
+                increaseScrubbingSpeed()
+                return
+            }
+
+            /// If scrubbing in opposite direction, decrease speed
+            if hasEnteredScrubMode, scrubbingDirection != direction {
+                decreaseScrubbingSpeed(newDirection: direction)
+                return
+            }
+
+            /// Start new scrubbing session
+            scrubbingDirection = direction
+            scrubbingStartTime = Date()
+            scrubbingSpeed = 0.0
+            hasEnteredScrubMode = false
+            containerState.scrubbedSeconds.value = manager.seconds
+
+            scrubbingTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [self] _ in
+                containerState.timer.poke()
+
+                guard let startTime = scrubbingStartTime else { return }
+                let elapsed = Date().timeIntervalSince(startTime)
+
+                /// After 2 seconds, activate scrubbing at 2×
+                if elapsed >= 2.0 && !hasEnteredScrubMode {
+                    scrubbingSpeed = 2.0
+                    hasEnteredScrubMode = true
+                    containerState.isScrubbing = true
+                    toaster.present("2×", systemName: direction == .forward ? "goforward" : "gobackward")
+                }
+
+                /// Only scrub if in scrub mode
+                guard hasEnteredScrubMode else { return }
+
+                let scrubAmount = Duration.seconds(scrubbingSpeed * 0.1)
+                if direction == .forward {
+                    containerState.scrubbedSeconds.value += scrubAmount
+                } else {
+                    containerState.scrubbedSeconds.value -= scrubAmount
+                }
+            }
+        }
+
+        private func increaseScrubbingSpeed() {
+            if scrubbingSpeed == 2.0 {
+                scrubbingSpeed = 4.0
+            } else if scrubbingSpeed == 4.0 {
+                scrubbingSpeed = 8.0
+            } else if scrubbingSpeed == 8.0 {
+                scrubbingSpeed = 16.0
+            } else if scrubbingSpeed == 16.0 {
+                scrubbingSpeed = 32.0
+            }
+
+            let speedText = "\(Int(scrubbingSpeed))×"
+            toaster.present(
+                speedText,
+                systemName: scrubbingDirection == .forward ? "goforward" : "gobackward"
+            )
+        }
+
+        private func decreaseScrubbingSpeed(newDirection: ScrubbingDirection) {
+            if scrubbingSpeed == 2.0 {
+                manager.proxy?.setSeconds(containerState.scrubbedSeconds.value)
+                stopScrubbing(performJump: false)
+            } else if scrubbingSpeed == 4.0 {
+                scrubbingSpeed = 2.0
+            } else if scrubbingSpeed == 8.0 {
+                scrubbingSpeed = 4.0
+            } else if scrubbingSpeed == 16.0 {
+                scrubbingSpeed = 8.0
+            } else if scrubbingSpeed == 32.0 {
+                scrubbingSpeed = 16.0
+            }
+
+            if scrubbingSpeed > 0 {
+                let speedText = "\(Int(scrubbingSpeed))×"
+                toaster.present(
+                    speedText,
+                    systemName: scrubbingDirection == .forward ? "goforward" : "gobackward"
+                )
+            }
+        }
+
+        private func stopScrubbing(performJump: Bool = false) {
+            scrubbingTimer?.invalidate()
+            scrubbingTimer = nil
+
+            if performJump, let direction = scrubbingDirection, !hasEnteredScrubMode {
+
+                /// Less than 2 second selection is a jump not a scrub
+                if direction == .forward {
+                    containerState.jumpProgressObserver.jumpForward()
+                    manager.proxy?.jumpForward(jumpForwardInterval.rawValue)
+                    toaster.present(
+                        Text(
+                            jumpForwardInterval.rawValue * containerState.jumpProgressObserver.jumps,
+                            format: .minuteSecondsAbbreviated
+                        ),
+                        systemName: "goforward"
+                    )
+                } else {
+                    containerState.jumpProgressObserver.jumpBackward()
+                    manager.proxy?.jumpBackward(jumpBackwardInterval.rawValue)
+                    toaster.present(
+                        Text(
+                            jumpBackwardInterval.rawValue * containerState.jumpProgressObserver.jumps,
+                            format: .minuteSecondsAbbreviated
+                        ),
+                        systemName: "gobackward"
+                    )
+                }
+            } else if hasEnteredScrubMode {
+                manager.proxy?.setSeconds(containerState.scrubbedSeconds.value)
+            }
+
+            containerState.isScrubbing = false
+            scrubbingDirection = nil
+            scrubbingSpeed = 0.0
+            scrubbingStartTime = nil
+            hasEnteredScrubMode = false
+        }
+
         private func handlePressEvent(_ press: VideoPlayer.UIVideoPlayerContainerViewController.PressEvent) {
 
-            /// Global Rule:
-            /// - Any remote button press should show the overlay if hidden
+            /// Any remote button press should show the overlay if hidden
             if !isPresentingOverlay {
+                /// Handle Pause/Play otherwies VLCKit will try to and cause conflcits
                 if press.type == .playPause {
                     switch manager.playbackRequestStatus {
                     case .playing:
@@ -148,17 +294,81 @@ extension VideoPlayer {
                         manager.setPlaybackRequestStatus(status: .playing)
                         toaster.present(L10n.play, systemName: "play.circle")
                     }
+                    containerState.isPresentingOverlay = true
+                    press.resolve(.handled)
+                    return
+                } else {
+                    containerState.isPresentingOverlay = true
+                    press.resolve(.fallback)
+                    return
                 }
-                containerState.isPresentingOverlay = true
-                press.resolve(.handled)
-                return
             }
 
-            /// Overlay Rules
             switch (press.type, press.phase) {
 
-            /// Use Arrow Keys Normally
-            case (.playPause, _):
+            /// Handle arrow key scrubbing
+            case (.upArrow, .began):
+                if isPresentingSupplement && !isPlaybackProgressFocused {
+                    containerState.selectedSupplement = nil
+                    containerState.containerView?.presentSupplementContainer(false)
+                    containerState.timer.poke()
+                    isPlaybackProgressFocused = true
+                    press.resolve(.handled)
+                } else {
+                    press.resolve(.fallback)
+                }
+
+            case (.downArrow, .began):
+                if !manager.supplements.isEmpty && isPlaybackProgressFocused {
+                    if containerState.selectedSupplement == nil {
+                        containerState.selectedSupplement = manager.supplements.first
+                        containerState.containerView?.presentSupplementContainer(true)
+                    }
+                }
+                press.resolve(.handled)
+
+            case (.leftArrow, .began):
+                if isPlaybackProgressFocused {
+                    startScrubbing(direction: .backward)
+                    press.resolve(.handled)
+                } else {
+                    press.resolve(.fallback)
+                }
+
+            case (.leftArrow, .ended), (.leftArrow, .cancelled):
+                if scrubbingDirection == .backward, !hasEnteredScrubMode {
+                    stopScrubbing(performJump: true)
+                    press.resolve(.handled)
+                } else if scrubbingDirection == .backward {
+                    press.resolve(.handled)
+                } else {
+                    press.resolve(.fallback)
+                }
+
+            case (.rightArrow, .began):
+                if isPlaybackProgressFocused {
+                    startScrubbing(direction: .forward)
+                    press.resolve(.handled)
+                } else {
+                    press.resolve(.fallback)
+                }
+
+            case (.rightArrow, .ended), (.rightArrow, .cancelled):
+                if scrubbingDirection == .forward, !hasEnteredScrubMode {
+                    stopScrubbing(performJump: true)
+                    press.resolve(.handled)
+                } else if scrubbingDirection == .forward {
+                    press.resolve(.handled)
+                } else {
+                    press.resolve(.fallback)
+                }
+
+            case (.playPause, .began):
+                if hasEnteredScrubMode {
+                    manager.proxy?.setSeconds(containerState.scrubbedSeconds.value)
+                    stopScrubbing(performJump: false)
+                }
+
                 switch manager.playbackRequestStatus {
                 case .playing:
                     manager.setPlaybackRequestStatus(status: .paused)
@@ -168,17 +378,24 @@ extension VideoPlayer {
                 containerState.timer.poke()
                 press.resolve(.handled)
 
+            case (.select, _):
+                if hasEnteredScrubMode {
+                    manager.proxy?.setSeconds(containerState.scrubbedSeconds.value)
+                    stopScrubbing(performJump: false)
+                    press.resolve(.handled)
+                } else {
+                    press.resolve(.fallback)
+                }
+
             /// Use Menu Key to Open the Overlay or Close the Player
             case (.menu, _):
                 if isPresentingSupplement {
                     containerState.selectedSupplement = nil
                     containerState.timer.poke()
                     press.resolve(.handled)
-
                 } else {
-                    containerState.isPresentingOverlay = false
-                    manager.proxy?.stop()
-                    router.dismiss()
+                    // Show close confirmation dialog
+                    isPresentingCloseConfirmation = true
                     press.resolve(.handled)
                 }
 
