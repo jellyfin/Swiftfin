@@ -38,6 +38,10 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             containerState.isPresentingOverlay
         }
 
+        private var isPresentingSupplement: Bool {
+            containerState.isPresentingSupplement
+        }
+
         private var isScrubbing: Bool {
             containerState.isScrubbing
         }
@@ -67,7 +71,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                             let isSelected = containerState.selectedSupplement?.id == supplement.id
 
                             Button(supplement.displayTitle) {
-                                containerState.select(supplement: supplement.supplement)
+                                containerState.selectedSupplement = supplement.supplement
+                                containerState.containerView?.presentSupplementContainer(true)
                             }
                             .isSelected(isSelected)
                             .focused($focusedSupplementID, equals: supplement.id)
@@ -77,14 +82,10 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 .buttonStyle(SupplementTitleButtonStyle())
                 .padding(.leading, safeAreaInsets.leading)
                 .padding(.trailing, safeAreaInsets.trailing)
-                .edgePadding(.horizontal)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .focusGuide(
-                    focusGuide,
-                    tag: "supplementButtons",
-                    top: "playbackProgress"
-                )
                 .focusSection()
+                .isVisible(isPresentingOverlay)
+                .disabled(!isPresentingOverlay)
 
                 ZStack {
                     if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
@@ -108,11 +109,15 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                         .tabViewStyle(.page(indexDisplayMode: .never))
                     }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .isVisible(containerState.isPresentingSupplement)
                 .disabled(!containerState.isPresentingSupplement)
                 .animation(.linear(duration: 0.2), value: containerState.selectedSupplement?.id)
             }
+            .padding(.bottom, safeAreaInsets.bottom)
             .edgePadding(.top)
+            .isVisible(isPresentingOverlay)
+            .isVisible(!isScrubbing)
             .animation(.linear(duration: 0.2), value: isPresentingOverlay)
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.bouncy(duration: 0.3, extraBounce: 0.1), value: currentSupplements)
@@ -123,15 +128,28 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 )
                 currentSupplements = newSupplements
             }
-            .onReceive(containerState.$selectedSupplement) { output in
-                if focusedSupplementID != output?.id {
-                    focusedSupplementID = output?.id
+            .onChange(of: focusedSupplementID) { oldValue, newValue in
+                if let supplementID = newValue, oldValue != newValue {
+                    if let supplement = currentSupplements[id: supplementID] {
+                        if !isPresentingSupplement {
+                            containerState.selectedSupplement = supplement.supplement
+                            containerState.containerView?.presentSupplementContainer(true)
+                        } else {
+                            containerState.selectedSupplement = supplement.supplement
+                        }
+                    }
+                } else if newValue == nil, oldValue != nil {
+                    containerState.selectedSupplement = nil
+                    containerState.containerView?.presentSupplementContainer(false)
                 }
             }
         }
     }
 
     struct SupplementTitleButtonStyle: PrimitiveButtonStyle {
+
+        @EnvironmentObject
+        private var containerState: VideoPlayerContainerState
 
         @FocusState
         private var isFocused
