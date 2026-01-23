@@ -10,11 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: bar color default to style
-// TODO: remove compact buttons?
-// TODO: capsule scale on editing
-// TODO: possible issue with runTimeSeconds == 0
-// TODO: live tv
+// TODO: Test Live TV
 
 extension VideoPlayer.PlaybackControls {
 
