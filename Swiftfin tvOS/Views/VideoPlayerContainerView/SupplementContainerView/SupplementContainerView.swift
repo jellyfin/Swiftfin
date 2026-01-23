@@ -24,8 +24,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
-        private var focusGuide: FocusGuide
-        @EnvironmentObject
         private var manager: MediaPlayerManager
 
         @State
@@ -33,6 +31,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
 
         @FocusState
         private var focusedSupplementID: AnyMediaPlayerSupplement.ID?
+
+        // MARK: - Convenience Variables
 
         private var isPresentingOverlay: Bool {
             containerState.isPresentingOverlay
@@ -46,6 +46,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             containerState.isScrubbing
         }
 
+        // MARK: - Supplement Container
+
         @ViewBuilder
         private func supplementContainer(for supplement: some MediaPlayerSupplement) -> some View {
             AlternateLayoutView(alignment: .topLeading) {
@@ -58,6 +60,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                     .environment(\.panGestureDirection, .vertical)
             }
         }
+
+        // MARK: - Body
 
         var body: some View {
             VStack(spacing: 0) {

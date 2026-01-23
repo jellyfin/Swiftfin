@@ -31,8 +31,6 @@ extension VideoPlayer {
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
-        private var focusGuide: FocusGuide
-        @EnvironmentObject
         private var manager: MediaPlayerManager
 
         @Toaster
@@ -132,11 +130,9 @@ extension VideoPlayer {
                 }
             }
             .alert("Close Player", isPresented: $isPresentingCloseConfirmation) {
-                Button("Cancel", role: .cancel) {}
-                Button("Close", role: .destructive) {
-                    containerState.isPresentingOverlay = false
-                    manager.proxy?.stop()
-                    router.dismiss()
+                Button(L10n.cancel, role: .cancel) {}
+                Button(L10n.ok, role: .destructive) {
+                    manager.stop()
                 }
             } message: {
                 Text("Are you sure you want to close the player?")
@@ -144,7 +140,7 @@ extension VideoPlayer {
             .onFirstAppear {
                 containerState.isPresentingOverlay = true
             }
-            .onChange(of: containerState.isPresentingOverlay) { newValue in
+            .onChange(of: containerState.isPresentingOverlay) { _, newValue in
                 if newValue {
                     isPlaybackProgressFocused = true
                 }
@@ -185,7 +181,12 @@ extension VideoPlayer {
                     scrubbingSpeed = 2.0
                     hasEnteredScrubMode = true
                     containerState.isScrubbing = true
-                    toaster.present("2×", systemName: direction == .forward ? "goforward" : "gobackward")
+
+                    let speedText = "\(Int(scrubbingSpeed))×"
+                    toaster.present(
+                        speedText,
+                        systemName: scrubbingDirection == .forward ? "goforward" : "gobackward"
+                    )
                 }
 
                 /// Only scrub if in scrub mode
