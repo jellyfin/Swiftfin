@@ -15,10 +15,14 @@ extension VideoPlayer {
 
     struct PlaybackControls: View {
 
+        // MARK: - Defaults
+
         @Default(.VideoPlayer.jumpBackwardInterval)
         private var jumpBackwardInterval
         @Default(.VideoPlayer.jumpForwardInterval)
         private var jumpForwardInterval
+
+        // MARK: - Environment
 
         // since this view ignores safe area, it must
         // get safe area insets from parent views
@@ -39,6 +43,8 @@ extension VideoPlayer {
         @Router
         private var router
 
+        // MARK: - State
+
         @State
         private var bottomContentFrame: CGRect = .zero
         @State
@@ -46,7 +52,8 @@ extension VideoPlayer {
         @State
         private var effectiveSafeArea: EdgeInsets = .zero
 
-        // TODO: Cleanup. Lotta variables I think we can cleanup/combine.
+        // MARK: - Scrubbing State
+
         @State
         private var scrubbingTimer: Timer?
         @State
@@ -68,6 +75,8 @@ extension VideoPlayer {
             case backward
         }
 
+        // MARK: - Convenience Variables
+
         private var isPresentingOverlay: Bool {
             containerState.isPresentingOverlay
         }
@@ -79,6 +88,8 @@ extension VideoPlayer {
         private var isScrubbing: Bool {
             containerState.isScrubbing
         }
+
+        // MARK: - Bottom Content
 
         @ViewBuilder
         private var bottomContent: some View {
@@ -94,6 +105,8 @@ extension VideoPlayer {
                 }
             }
         }
+
+        // MARK: - Body
 
         var body: some View {
             ZStack {
@@ -149,6 +162,8 @@ extension VideoPlayer {
                 handlePressEvent(press)
             }
         }
+
+        // MARK: - Scrubbing Methods
 
         private func startScrubbing(direction: ScrubbingDirection) {
             /// If already scrubbing in same direction, increase speed
@@ -280,6 +295,8 @@ extension VideoPlayer {
             scrubbingStartTime = nil
             hasEnteredScrubMode = false
         }
+
+        // MARK: - Press Event Handling
 
         private func handlePressEvent(_ press: VideoPlayer.UIVideoPlayerContainerViewController.PressEvent) {
 
