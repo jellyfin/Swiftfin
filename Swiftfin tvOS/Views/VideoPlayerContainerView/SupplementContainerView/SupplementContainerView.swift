@@ -78,8 +78,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                             let isSelected = containerState.selectedSupplement?.id == supplement.id
 
                             Button(supplement.displayTitle) {
-                                containerState.selectedSupplement = supplement.supplement
-                                containerState.containerView?.presentSupplementContainer(true)
+                                containerState.select(supplement: supplement.supplement)
                             }
                             .isSelected(isSelected)
                             .focused($focusedSupplementID, equals: supplement.id)
@@ -154,6 +153,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             }
         }
     }
+
+    // MARK: - SupplementTitleButtonStyle
 
     struct SupplementTitleButtonStyle: PrimitiveButtonStyle {
 
