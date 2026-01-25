@@ -72,7 +72,7 @@ struct ServerUserDetailsView: View {
                 ) {
                     TextField(L10n.username, text: $username)
                 } onSave: {
-                    viewModel.send(.updateUsername(username))
+                    viewModel.updateUsername(username)
                     isPresentingUsername = false
                 } onCancel: {
                     username = viewModel.user.name ?? ""
@@ -118,18 +118,14 @@ struct ServerUserDetailsView: View {
             }
         }
         .navigationTitle(L10n.user)
-        .onAppear {
-            viewModel.send(.refresh)
+        .onFirstAppear {
+            viewModel.refresh()
         }
-        .onReceive(viewModel.events) { event in
-            switch event {
-            case let .error(eventError):
-                error = eventError
-                username = viewModel.user.name ?? ""
-            case .updated:
-                break
-            }
+        .refreshable {
+            viewModel.refresh()
         }
-        .errorMessage($error)
+        .errorMessage($error) {
+            username = viewModel.user.name ?? ""
+        }
     }
 }
