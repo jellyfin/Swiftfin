@@ -26,7 +26,9 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
                 .padding(.vertical, 3)
                 .background {
                     ZStack {
+                        #if os(iOS)
                         EmptyHitTestView()
+                        #endif
 
                         if isSelected {
                             Rectangle()
