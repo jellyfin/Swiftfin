@@ -8,18 +8,15 @@
 
 enum ItemViewType: String, CaseIterable, Displayable, Storable {
 
-    case compactPoster
-    case compactLogo
-    case cinematic
+    case enhanced
+    case simple
 
     var displayTitle: String {
         switch self {
-        case .compactPoster:
-            return L10n.compactPoster
-        case .compactLogo:
-            return L10n.compactLogo
-        case .cinematic:
-            return L10n.cinematic
+        case .enhanced:
+            "Enhanced"
+        case .simple:
+            "Simple"
         }
     }
 }

@@ -25,13 +25,12 @@ extension ServerActivityView {
         // MARK: - Body
 
         var body: some View {
-            ListRow {
+            ListRow(action: action) {
                 userImage
             } content: {
                 rowContent
                     .padding(.bottom, 8)
             }
-            .onSelect(perform: action)
         }
 
         // MARK: - User Image
