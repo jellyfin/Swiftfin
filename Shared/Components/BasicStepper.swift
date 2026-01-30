@@ -8,8 +8,15 @@
 
 import SwiftUI
 
-struct BasicStepper<Value: CustomStringConvertible & Strideable, Formatter: FormatStyle>: View where Formatter.FormatInput == Value,
-Formatter.FormatOutput == String {
+struct BasicStepper<Value: CustomStringConvertible & Strideable & LosslessStringConvertible, Formatter: FormatStyle>: View
+    where Formatter.FormatInput == Value,
+    Formatter.FormatOutput == String
+{
+
+    #if os(tvOS)
+    @Router
+    private var router
+    #endif
 
     @Binding
     private var value: Value
@@ -20,6 +27,7 @@ Formatter.FormatOutput == String {
     private let formatter: Formatter
 
     var body: some View {
+        #if os(iOS)
         Stepper(value: $value, in: range, step: step) {
             HStack {
                 Text(title)
@@ -30,6 +38,17 @@ Formatter.FormatOutput == String {
                     .foregroundColor(.secondary)
             }
         }
+        #else
+        ChevronButton(title, subtitle: Text(value, format: formatter)) {
+            router.route(to: .stepperView(
+                title: title,
+                value: $value,
+                range: range,
+                step: step,
+                formatter: formatter
+            ))
+        }
+        #endif
     }
 }
 
