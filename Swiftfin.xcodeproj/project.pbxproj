@@ -236,7 +236,6 @@
 				ViewModels/DownloadListViewModel.swift,
 				ViewModels/ItemAdministration/IdentifyItemViewModel.swift,
 				ViewModels/ItemAdministration/ItemEditorViewModel/GenreEditorViewModel.swift,
-				ViewModels/ItemAdministration/ItemEditorViewModel/ItemEditorViewModel.swift,
 				ViewModels/ItemAdministration/ItemEditorViewModel/PeopleEditorViewModel.swift,
 				ViewModels/ItemAdministration/ItemEditorViewModel/StudioEditorViewModel.swift,
 				ViewModels/ItemAdministration/ItemEditorViewModel/TagEditorViewModel.swift,
