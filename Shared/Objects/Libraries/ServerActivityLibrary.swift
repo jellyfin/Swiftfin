@@ -15,7 +15,9 @@ struct ServerActivityLibrary: PagingLibrary {
         var hasUserID: Bool?
         var minDate: Date?
 
-        static var `default`: Self { .init() }
+        static var `default`: Self {
+            .init()
+        }
     }
 
     let parent: _TitledLibraryParent

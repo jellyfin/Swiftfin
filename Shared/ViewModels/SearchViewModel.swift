@@ -49,8 +49,8 @@ final class SearchViewModel: ViewModel {
     private let searchQuery: CurrentValueSubject<String, Never> = .init("")
 
     var isEmpty: Bool {
-        func extract<T: ContentGroup>(_ group: T) -> Bool {
-            func inner<VM: __PagingLibaryViewModel>(_ vm: VM) -> Bool {
+        func extract(_ group: some ContentGroup) -> Bool {
+            func inner(_ vm: some __PagingLibaryViewModel) -> Bool {
                 vm.elements.isEmpty
             }
 
@@ -63,7 +63,7 @@ final class SearchViewModel: ViewModel {
 
         return itemContentGroupViewModel.groups
             .map { extract($0) }
-            .allSatisfy { $0 }
+            .allSatisfy(\.self)
     }
 
     var isNotEmpty: Bool {

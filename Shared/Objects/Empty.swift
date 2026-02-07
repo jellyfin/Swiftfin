@@ -9,8 +9,13 @@
 struct Empty {}
 
 extension Empty: LibraryGrouping {
-    var displayTitle: String { "" }
-    var id: String { "" }
+    var displayTitle: String {
+        ""
+    }
+
+    var id: String {
+        ""
+    }
 }
 
 extension Empty: WithDefaultValue {

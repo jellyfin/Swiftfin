@@ -15,7 +15,9 @@ protocol _LibraryParent: Displayable {
 }
 
 extension _LibraryParent where Grouping == Empty {
-    var groupings: (defaultSelection: Grouping, elements: [Grouping])? { nil }
+    var groupings: (defaultSelection: Grouping, elements: [Grouping])? {
+        nil
+    }
 }
 
 struct _TitledLibraryParent: _LibraryParent {

@@ -12,7 +12,9 @@ import SwiftUI
 struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
 
     let viewModel: ItemViewModel
-    var id: String { "\(viewModel.item.libraryID)-episodeSelector" }
+    var id: String {
+        "\(viewModel.item.libraryID)-episodeSelector"
+    }
 
     func body(with viewModel: ItemViewModel) -> some View {
         SeriesEpisodeSelector(viewModel: viewModel)

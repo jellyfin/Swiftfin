@@ -20,11 +20,7 @@ struct NavigationDrawerLabelStyle: LabelStyle {
         NavigationDrawerLabelStyle(isIconOnly: true)
     }
 
-    init() {
-        self.isIconOnly = false
-    }
-
-    fileprivate init(isIconOnly: Bool) {
+    init(isIconOnly: Bool = false) {
         self.isIconOnly = isIconOnly
     }
 
@@ -61,12 +57,5 @@ struct NavigationDrawerLabelStyle: LabelStyle {
         }
         .clipShape(.capsule)
         .containerShape(.capsule)
-    }
-}
-
-extension LabelStyle where Self == NavigationDrawerLabelStyle {
-
-    static var navigationDrawer: NavigationDrawerLabelStyle {
-        NavigationDrawerLabelStyle(isIconOnly: false)
     }
 }

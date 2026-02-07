@@ -9,7 +9,9 @@
 import SwiftUI
 
 extension LabelStyle where Self == MaterialLabelStyle {
-    static var material: MaterialLabelStyle { MaterialLabelStyle() }
+    static var material: MaterialLabelStyle {
+        MaterialLabelStyle()
+    }
 }
 
 struct MaterialLabelStyle: LabelStyle {

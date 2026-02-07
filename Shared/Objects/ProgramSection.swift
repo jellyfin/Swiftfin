@@ -17,15 +17,15 @@ enum ProgramSection: String, CaseIterable, Displayable {
     var displayTitle: String {
         switch self {
         case .kids:
-            return L10n.kids
+            L10n.kids
         case .movies:
-            return L10n.movies
+            L10n.movies
         case .news:
-            return L10n.news
+            L10n.news
         case .series:
-            return L10n.series
+            L10n.series
         case .sports:
-            return L10n.sports
+            L10n.sports
         }
     }
 }

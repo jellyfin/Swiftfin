@@ -22,11 +22,11 @@ extension CustomizeViewsSettings {
             var displayTitle: String {
                 switch self {
                 case .inProgress:
-                    return "In progress"
+                    "In progress"
                 case .played:
-                    return L10n.played
+                    L10n.played
                 case .unplayed:
-                    return L10n.unplayed
+                    L10n.unplayed
                 }
             }
         }

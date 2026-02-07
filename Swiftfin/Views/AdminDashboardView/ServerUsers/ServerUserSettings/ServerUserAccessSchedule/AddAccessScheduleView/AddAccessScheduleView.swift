@@ -66,14 +66,12 @@ struct AddAccessScheduleView: View {
         let endDouble = Double(endHour) + Double(endMinute) / 60.0
 
         // AccessSchedule should have valid Start & End Hours
-        let newSchedule = AccessSchedule(
+        return AccessSchedule(
             dayOfWeek: selectedDay,
             endHour: endDouble,
             startHour: startDouble,
             userID: viewModel.user.id
         )
-
-        return newSchedule
     }
 
     private var isDuplicateSchedule: Bool {

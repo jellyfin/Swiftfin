@@ -56,9 +56,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                     .ignoresSafeArea()
                     .libraryStyle(for: Element.self) { environment, _ in
                         if rememberIndividualLibraryStyle {
-                            return (parentLibraryStyle, $parentLibraryStyle)
+                            (parentLibraryStyle, $parentLibraryStyle)
                         } else {
-                            return environment
+                            environment
                         }
                     }
             }

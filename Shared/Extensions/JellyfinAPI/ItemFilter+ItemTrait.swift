@@ -20,15 +20,15 @@ extension ItemTrait: Displayable {
     var displayTitle: String {
         switch self {
         case .isUnplayed:
-            return L10n.unplayed
+            L10n.unplayed
         case .isPlayed:
-            return L10n.played
+            L10n.played
         case .isFavorite:
-            return L10n.favorites
+            L10n.favorites
         case .likes:
-            return L10n.likedItems
+            L10n.likedItems
         default:
-            return ""
+            ""
         }
     }
 }

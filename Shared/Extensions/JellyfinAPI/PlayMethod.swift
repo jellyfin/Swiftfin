@@ -15,11 +15,11 @@ extension PlayMethod: Displayable {
     var displayTitle: String {
         switch self {
         case .transcode:
-            return L10n.transcode
+            L10n.transcode
         case .directStream:
-            return L10n.directStream
+            L10n.directStream
         case .directPlay:
-            return L10n.directPlay
+            L10n.directPlay
         }
     }
 }

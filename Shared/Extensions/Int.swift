@@ -22,7 +22,7 @@ extension Int {
     }
 
     init?(_ source: CGFloat?) {
-        if let source = source {
+        if let source {
             self.init(source)
         } else {
             return nil

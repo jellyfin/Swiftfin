@@ -454,7 +454,7 @@ extension View {
         }
     }
 
-    func assign<P>(_ publisher: P, to binding: Binding<P.Output>) -> some View where P: Publisher, P.Failure == Never {
+    func assign<P: Publisher>(_ publisher: P, to binding: Binding<P.Output>) -> some View where P.Failure == Never {
         onReceive(publisher) { output in
             binding.wrappedValue = output
         }
@@ -573,14 +573,14 @@ extension View {
     // MARK: debug
 
     #if DEBUG
-    func debugBackground<S: ShapeStyle>(_ fill: S = .red.opacity(0.5)) -> some View {
+    func debugBackground(_ fill: some ShapeStyle = .red.opacity(0.5)) -> some View {
         background {
             Rectangle()
                 .fill(fill)
         }
     }
 
-    func debugOverlay<S: ShapeStyle>(_ fill: S = .red.opacity(0.5)) -> some View {
+    func debugOverlay(_ fill: some ShapeStyle = .red.opacity(0.5)) -> some View {
         overlay {
             Rectangle()
                 .fill(fill)
@@ -588,7 +588,7 @@ extension View {
         }
     }
 
-    func debugVLine<S: ShapeStyle>(_ fill: S) -> some View {
+    func debugVLine(_ fill: some ShapeStyle) -> some View {
         overlay {
             Rectangle()
                 .fill(fill)
@@ -596,7 +596,7 @@ extension View {
         }
     }
 
-    func debugHLine<S: ShapeStyle>(_ fill: S) -> some View {
+    func debugHLine(_ fill: some ShapeStyle) -> some View {
         overlay {
             Rectangle()
                 .fill(fill)
@@ -604,7 +604,7 @@ extension View {
         }
     }
 
-    func debugCross<S: ShapeStyle>(_ fill: S = .red) -> some View {
+    func debugCross(_ fill: some ShapeStyle = .red) -> some View {
         debugVLine(fill)
             .debugHLine(fill)
     }

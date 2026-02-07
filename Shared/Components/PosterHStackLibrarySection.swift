@@ -12,10 +12,18 @@ import SwiftUI
 // TODO: move to PosterGroup?
 
 struct SeeAllPoster: Poster {
-    var preferredPosterDisplayType: PosterDisplayType { .portrait }
+    var preferredPosterDisplayType: PosterDisplayType {
+        .portrait
+    }
+
     var displayTitle: String = L10n.seeAll
-    var id: String { "see-all" }
-    var systemImage: String { "ellipsis" }
+    var id: String {
+        "see-all"
+    }
+
+    var systemImage: String {
+        "ellipsis"
+    }
 }
 
 struct PosterHStackLibrarySection<Library: PagingLibrary>: View where Library.Element: LibraryElement {
@@ -27,9 +35,9 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View where Library.El
         var asAnyPoster: AnyPoster {
             switch self {
             case let .element(element):
-                return AnyPoster(element)
+                AnyPoster(element)
             case .seeAll:
-                return AnyPoster(BaseItemDto())
+                AnyPoster(BaseItemDto())
             }
         }
     }

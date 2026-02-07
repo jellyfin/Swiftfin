@@ -22,21 +22,21 @@ enum PlaybackSpeed: Double, CaseIterable, Displayable {
     var displayTitle: String {
         switch self {
         case .quarter:
-            return "0.25x"
+            "0.25x"
         case .half:
-            return "0.5x"
+            "0.5x"
         case .threeQuarter:
-            return "0.75x"
+            "0.75x"
         case .one:
-            return "1x"
+            "1x"
         case .oneQuarter:
-            return "1.25x"
+            "1.25x"
         case .oneHalf:
-            return "1.5x"
+            "1.5x"
         case .oneThreeQuarter:
-            return "1.75x"
+            "1.75x"
         case .two:
-            return "2x"
+            "2x"
         }
     }
 }

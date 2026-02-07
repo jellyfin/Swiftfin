@@ -174,6 +174,8 @@ extension MediaInfoSupplement {
             .frame(maxHeight: .infinity, alignment: .bottom)
         }
 
-        var tvOSView: some View { EmptyView() }
+        var tvOSView: some View {
+            EmptyView()
+        }
     }
 }

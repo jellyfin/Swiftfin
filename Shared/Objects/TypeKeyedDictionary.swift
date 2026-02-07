@@ -14,24 +14,24 @@ struct TypeKeyedDictionary<Value> {
         self.elements = []
     }
 
-    subscript<T>(type: T.Type) -> Value? {
+    subscript(type: (some Any).Type) -> Value? {
         get {
             elements.first(where: { $0.key == type })?.value
         }
         set {
             if let index = elements.firstIndex(where: { $0.key == type }) {
-                if let newValue = newValue {
+                if let newValue {
                     elements[index].value = newValue
                 } else {
                     elements.remove(at: index)
                 }
-            } else if let newValue = newValue {
+            } else if let newValue {
                 elements.append((key: type, value: newValue))
             }
         }
     }
 
-    func inserting<T>(type: T.Type, value: Value?) -> Self {
+    func inserting(type: (some Any).Type, value: Value?) -> Self {
         if let value {
             var copy = self
             copy[type] = value

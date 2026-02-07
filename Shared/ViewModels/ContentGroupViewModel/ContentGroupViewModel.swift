@@ -54,7 +54,7 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
 
-        func getViewModel<T: ContentGroup>(for group: T) -> any WithRefresh {
+        func getViewModel(for group: some ContentGroup) -> any WithRefresh {
             group.viewModel
         }
 

@@ -15,10 +15,6 @@ struct EnhancedItemViewHeader: ContentGroup {
     let viewModel: Empty = .init()
     let itemViewModel: ItemViewModel
 
-    init(itemViewModel: ItemViewModel) {
-        self.itemViewModel = itemViewModel
-    }
-
     func body(with viewModel: Empty) -> some View {
         if UIDevice.isPhone {
             CompactBody(viewModel: itemViewModel)

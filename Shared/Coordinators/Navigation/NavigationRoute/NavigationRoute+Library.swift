@@ -23,8 +23,8 @@ extension NavigationRoute {
     }
     #endif
 
-    static func contentGroup<Provider: ContentGroupProvider>(
-        provider: Provider
+    static func contentGroup(
+        provider: some ContentGroupProvider
     ) -> NavigationRoute {
         NavigationRoute(
             id: "content-group-\(provider.id)",

@@ -34,9 +34,9 @@ struct CulturePicker: View {
 
     private var currentCulture: CultureDto? {
         if isUsingTwoLetterISO {
-            return viewModel.elements.first(property: \.twoLetterISOLanguageName, equalTo: selection.wrappedValue)
+            viewModel.elements.first(property: \.twoLetterISOLanguageName, equalTo: selection.wrappedValue)
         } else {
-            return viewModel.elements.first(property: \.threeLetterISOLanguageName, equalTo: selection.wrappedValue)
+            viewModel.elements.first(property: \.threeLetterISOLanguageName, equalTo: selection.wrappedValue)
         }
     }
 

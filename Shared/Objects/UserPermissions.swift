@@ -48,13 +48,13 @@ struct UserPermissions {
             switch item.type {
             case .playlist:
                 /// Playlists can only be edited by owners who can also delete
-                return item.canDelete == true
+                item.canDelete == true
             case .boxSet:
-                return canManageCollections
+                canManageCollections
                     && StoredValues[.User.enableCollectionManagement]
                     && item.canDelete == true
             default:
-                return canDelete
+                canDelete
                     && StoredValues[.User.enableItemDeletion]
                     && item.canDelete == true
             }
@@ -70,12 +70,12 @@ struct UserPermissions {
             switch item.type {
             case .playlist:
                 /// Playlists can only be edited by owners who can also delete
-                return item.canDelete == true
+                item.canDelete == true
             case .boxSet:
-                return (canManageCollections || canEditMetadata)
+                (canManageCollections || canEditMetadata)
                     && StoredValues[.User.enableCollectionManagement]
             default:
-                return canEditMetadata
+                canEditMetadata
                     && StoredValues[.User.enableItemEditing]
             }
         }
@@ -84,10 +84,10 @@ struct UserPermissions {
         func canManageSubtitles(item: BaseItemDto) -> Bool {
             switch item.type {
             case .episode, .movie, .musicVideo, .trailer, .video:
-                return (canManageSubtitles || canEditMetadata)
+                (canManageSubtitles || canEditMetadata)
                     && StoredValues[.User.enableItemEditing]
             default:
-                return false
+                false
             }
         }
 
@@ -95,10 +95,10 @@ struct UserPermissions {
         func canManageLyrics(item: BaseItemDto) -> Bool {
             switch item.type {
             case .audio:
-                return (canManageLyrics || canEditMetadata)
+                (canManageLyrics || canEditMetadata)
                     && StoredValues[.User.enableItemEditing]
             default:
-                return false
+                false
             }
         }
     }

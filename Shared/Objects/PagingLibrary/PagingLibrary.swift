@@ -46,8 +46,13 @@ protocol PagingLibrary<Element> {
 
 extension PagingLibrary {
 
-    var environment: Environment? { nil }
-    var hasNextPage: Bool { true }
+    var environment: Environment? {
+        nil
+    }
+
+    var hasNextPage: Bool {
+        true
+    }
 
     func makeLibraryBody(
         viewModel: PagingLibraryViewModel<Self>,

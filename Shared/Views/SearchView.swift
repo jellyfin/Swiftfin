@@ -45,7 +45,7 @@ struct SearchView: View {
     }
 
     @ViewBuilder
-    private func makeGroupBody<G: ContentGroup>(_ group: G) -> some View {
+    private func makeGroupBody(_ group: some ContentGroup) -> some View {
         group.body(with: group.viewModel)
     }
 

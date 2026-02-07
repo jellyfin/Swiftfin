@@ -86,9 +86,9 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
     private var scaleEffect: CGFloat {
         var t: CGFloat {
             if scrollViewOffset < 0, abs(scrollViewOffset) >= scrollViewSafeAreaInsets.top {
-                return (adjustedHeaderHeight + abs(scrollViewOffset + scrollViewSafeAreaInsets.top)) / headerFrame.height
+                (adjustedHeaderHeight + abs(scrollViewOffset + scrollViewSafeAreaInsets.top)) / headerFrame.height
             } else {
-                return adjustedHeaderHeight / headerFrame.height
+                adjustedHeaderHeight / headerFrame.height
             }
         }
 

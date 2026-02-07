@@ -20,9 +20,9 @@ extension Array {
 
     func appending(_ element: @autoclosure () -> Element, if condition: Bool) -> [Element] {
         if condition {
-            return self + [element()]
+            self + [element()]
         } else {
-            return self
+            self
         }
     }
 
@@ -40,9 +40,9 @@ extension Array {
 
     func prepending(_ element: @autoclosure () -> Element, if condition: Bool) -> [Element] {
         if condition {
-            return [element()] + self
+            [element()] + self
         } else {
-            return self
+            self
         }
     }
 

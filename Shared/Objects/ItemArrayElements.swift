@@ -22,13 +22,13 @@ enum ItemArrayElements: Displayable {
     var displayTitle: String {
         switch self {
         case .studios:
-            return L10n.studios
+            L10n.studios
         case .genres:
-            return L10n.genres
+            L10n.genres
         case .tags:
-            return L10n.tags
+            L10n.tags
         case .people:
-            return L10n.people
+            L10n.people
         }
     }
 
@@ -37,13 +37,13 @@ enum ItemArrayElements: Displayable {
     var description: String {
         switch self {
         case .studios:
-            return L10n.studiosDescription
+            L10n.studiosDescription
         case .genres:
-            return L10n.genresDescription
+            L10n.genresDescription
         case .tags:
-            return L10n.tagsDescription
+            L10n.tagsDescription
         case .people:
-            return L10n.peopleDescription
+            L10n.peopleDescription
         }
     }
 
@@ -57,11 +57,11 @@ enum ItemArrayElements: Displayable {
     ) -> T {
         switch self {
         case .genres, .tags:
-            return name as! T
+            name as! T
         case .studios:
-            return NameGuidPair(id: id, name: name) as! T
+            NameGuidPair(id: id, name: name) as! T
         case .people:
-            return BaseItemPerson(
+            BaseItemPerson(
                 id: id,
                 name: name,
                 role: personRole,
@@ -75,13 +75,13 @@ enum ItemArrayElements: Displayable {
     func getElement<T: Hashable>(for item: BaseItemDto) -> [T] {
         switch self {
         case .studios:
-            return item.studios as? [T] ?? []
+            item.studios as? [T] ?? []
         case .genres:
-            return item.genres as? [T] ?? []
+            item.genres as? [T] ?? []
         case .tags:
-            return item.tags as? [T] ?? []
+            item.tags as? [T] ?? []
         case .people:
-            return item.people as? [T] ?? []
+            item.people as? [T] ?? []
         }
     }
 
@@ -90,11 +90,11 @@ enum ItemArrayElements: Displayable {
     func getId(for element: AnyHashable) -> String? {
         switch self {
         case .genres, .tags:
-            return nil
+            nil
         case .studios:
-            return (element.base as? NameGuidPair)?.id
+            (element.base as? NameGuidPair)?.id
         case .people:
-            return (element.base as? BaseItemPerson)?.id
+            (element.base as? BaseItemPerson)?.id
         }
     }
 
@@ -103,11 +103,11 @@ enum ItemArrayElements: Displayable {
     func getName(for element: AnyHashable) -> String {
         switch self {
         case .genres, .tags:
-            return element.base as? String ?? L10n.unknown
+            element.base as? String ?? L10n.unknown
         case .studios:
-            return (element.base as? NameGuidPair)?.name ?? L10n.unknown
+            (element.base as? NameGuidPair)?.name ?? L10n.unknown
         case .people:
-            return (element.base as? BaseItemPerson)?.name ?? L10n.unknown
+            (element.base as? BaseItemPerson)?.name ?? L10n.unknown
         }
     }
 }

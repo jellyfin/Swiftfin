@@ -39,7 +39,7 @@ struct ForTypeInEnvironment<KeyType, Value>: DynamicProperty {
             self.keyPath = keyPath
             self._dictionary = Environment(keyPath)
 
-            if let value = value {
+            if let value {
                 self.content = { existingDictionary in
                     let existingValue = existingDictionary[KeyType.self]
                     return value(existingValue)

@@ -65,21 +65,21 @@ extension LibraryElement {
         var layout: CollectionVGridLayout {
             switch (libraryStyle.posterDisplayType, libraryStyle.displayType) {
             case (.landscape, .grid):
-                return .columns(
+                .columns(
                     5,
                     insets: EdgeInsets.edgeInsets,
                     itemSpacing: EdgeInsets.edgePadding,
                     lineSpacing: EdgeInsets.edgePadding
                 )
             case (.portrait, .grid), (.square, .grid):
-                return .columns(
+                .columns(
                     7,
                     insets: EdgeInsets.edgeInsets,
                     itemSpacing: EdgeInsets.edgePadding,
                     lineSpacing: EdgeInsets.edgePadding
                 )
             case (_, .list):
-                return .columns(
+                .columns(
                     libraryStyle.listColumnCount,
                     insets: EdgeInsets.edgeInsets,
                     itemSpacing: EdgeInsets.edgePadding,

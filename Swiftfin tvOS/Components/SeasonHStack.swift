@@ -65,7 +65,7 @@ struct SeasonsHStack: View {
                 }
             }
             .onChange(of: focusedSeason) { _, newValue in
-                if let newValue = newValue {
+                if let newValue {
                     selection = newValue
                 }
             }

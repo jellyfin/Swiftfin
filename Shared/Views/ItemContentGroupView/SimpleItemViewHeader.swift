@@ -15,10 +15,6 @@ struct SimpleItemViewHeader: ContentGroup {
     let viewModel: Empty = .init()
     let itemViewModel: ItemViewModel
 
-    init(itemViewModel: ItemViewModel) {
-        self.itemViewModel = itemViewModel
-    }
-
     func body(with viewModel: Empty) -> Body {
         Body(viewModel: itemViewModel)
     }

@@ -59,14 +59,13 @@ final class ActiveSessionsViewModel: ViewModel {
         let request = Paths.getSessions(parameters: parameters)
         let response = try await userSession.client.send(request)
 
-        let filteredSessions: [SessionInfoDto]
-        switch showSessionType {
+        let filteredSessions: [SessionInfoDto] = switch showSessionType {
         case .all:
-            filteredSessions = response.value
+            response.value
         case .active:
-            filteredSessions = response.value.filter { $0.nowPlayingItem != nil }
+            response.value.filter { $0.nowPlayingItem != nil }
         case .inactive:
-            filteredSessions = response.value.filter { $0.nowPlayingItem == nil }
+            response.value.filter { $0.nowPlayingItem == nil }
         }
 
         let removedSessionIDs = sessions.keys.filter { !filteredSessions.map(\.id).contains($0) }

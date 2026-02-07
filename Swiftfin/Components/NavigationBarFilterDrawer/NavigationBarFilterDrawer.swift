@@ -38,7 +38,7 @@ struct NavigationBarFilterDrawer: View {
                         }
                     }
                     .foregroundStyle(.primary, .secondary)
-                    .labelStyle(.navigationDrawer.iconOnly)
+                    .labelStyle(NavigationDrawerLabelStyle(isIconOnly: true))
                 }
 
                 ForEach(filterTypes, id: \.self) { type in
@@ -62,7 +62,7 @@ struct NavigationBarFilterDrawer: View {
             }
             .padding(.horizontal)
             .padding(.bottom, 5)
-            .labelStyle(.navigationDrawer)
+            .labelStyle(NavigationDrawerLabelStyle())
         }
     }
 }

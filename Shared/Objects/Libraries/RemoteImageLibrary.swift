@@ -14,7 +14,9 @@ struct RemoteImageLibrary: PagingLibrary {
         var includeAllLanguages: Bool = false
         var provider: String?
 
-        static var `default`: Self { .init() }
+        static var `default`: Self {
+            .init()
+        }
     }
 
     let imageType: ImageType

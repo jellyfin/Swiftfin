@@ -37,14 +37,12 @@ class ItemUserDataHandler: ViewModel {
         let task = Task {
             do {
 
-                let newUserData: UserItemDataDto
-
-                if isFavorited {
-                    newUserData = try await userSession.client.send(
+                let newUserData: UserItemDataDto = if isFavorited {
+                    try await userSession.client.send(
                         Paths.markFavoriteItem(itemID: itemID)
                     ).value
                 } else {
-                    newUserData = try await userSession.client.send(
+                    try await userSession.client.send(
                         Paths.unmarkFavoriteItem(itemID: itemID)
                     ).value
                 }
@@ -80,14 +78,12 @@ class ItemUserDataHandler: ViewModel {
 
         let task = Task {
             do {
-                let newUserData: UserItemDataDto
-
-                if isPlayed {
-                    newUserData = try await userSession.client.send(
+                let newUserData: UserItemDataDto = if isPlayed {
+                    try await userSession.client.send(
                         Paths.markPlayedItem(itemID: itemID)
                     ).value
                 } else {
-                    newUserData = try await userSession.client.send(
+                    try await userSession.client.send(
                         Paths.markUnplayedItem(itemID: itemID)
                     ).value
                 }

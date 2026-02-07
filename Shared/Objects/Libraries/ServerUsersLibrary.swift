@@ -14,7 +14,9 @@ struct ServerUsersLibrary: PagingLibrary {
         var isHidden: Bool?
         var isDisabled: Bool?
 
-        static var `default`: Self { .init() }
+        static var `default`: Self {
+            .init()
+        }
     }
 
     let parent: _TitledLibraryParent

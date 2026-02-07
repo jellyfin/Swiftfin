@@ -10,5 +10,7 @@ import JellyfinAPI
 
 extension ImageProviderInfo: @retroactive Identifiable {
 
-    public var id: String? { name }
+    public var id: String? {
+        name
+    }
 }

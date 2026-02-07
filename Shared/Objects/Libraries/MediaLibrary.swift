@@ -35,11 +35,9 @@ struct MediaLibrary: PagingLibrary {
         let userViews = try await pageState.userSession.client.send(userViewsPath)
         let excludedLibraryIDs = pageState.userSession.user.data.configuration?.latestItemsExcludes ?? []
 
-        let supportedUserViews = (userViews.value.items ?? [])
+        return (userViews.value.items ?? [])
             .coalesced(property: \.collectionType, with: .folders)
             .intersecting(CollectionType.supportedCases, using: \.collectionType)
             .subtracting(excludedLibraryIDs, using: \.id)
-
-        return supportedUserViews
     }
 }

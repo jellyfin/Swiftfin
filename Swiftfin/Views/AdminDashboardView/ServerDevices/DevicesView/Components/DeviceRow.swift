@@ -123,7 +123,7 @@ extension DevicesView {
                 rowContent
             }
             .swipeActions {
-                if let onDelete = onDelete {
+                if let onDelete {
                     Button(
                         L10n.delete,
                         systemImage: "trash",

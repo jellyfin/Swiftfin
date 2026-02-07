@@ -52,7 +52,7 @@ final class GenreEditorViewModel: ItemEditorViewModel<String> {
         let response = try await userSession.client.send(request)
 
         if let genres = response.value.items {
-            return genres.compactMap(\.name).compactMap { $0 }
+            return genres.compactMap(\.name).compactMap(\.self)
         } else {
             return []
         }

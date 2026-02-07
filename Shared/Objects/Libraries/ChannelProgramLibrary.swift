@@ -40,12 +40,10 @@ struct ChannelProgramLibrary: PagingLibrary {
             return []
         }
 
-        let processedChannels = try await getPrograms(
+        return try await getPrograms(
             for: channels,
             userSession: pageState.userSession
         )
-
-        return processedChannels
     }
 
     private func getPrograms(for channels: [BaseItemDto], userSession: UserSession) async throws -> [ChannelProgram] {
@@ -68,14 +66,12 @@ struct ChannelProgramLibrary: PagingLibrary {
                 channels.first(where: { $0.id == program.channelID })
             }
 
-        let channelPrograms: [ChannelProgram] = channels
+        return channels
             .reduce(into: [:]) { partialResult, channel in
                 partialResult[channel] = (groupedPrograms[channel] ?? [])
                     .sorted(using: \.startDate)
             }
             .map(ChannelProgram.init)
             .sorted(using: \.channel.name)
-
-        return channelPrograms
     }
 }

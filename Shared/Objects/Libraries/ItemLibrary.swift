@@ -83,7 +83,7 @@ struct ItemLibrary: PagingLibrary, WithRandomElementLibrary {
         // 2 - if parent is type `folder`, then we are in a folder-view
         //     context so change `collectionFolder` types to `folder`
         //     for better view handling
-        let elements = (response.value.items ?? [])
+        return response.value.items ?? []
 //            .filter { $0.collectionType?.isSupported == true }
         //            .filter { $0.collectionType?.isSupported ?? true }
         //            .map { item in
@@ -93,8 +93,6 @@ struct ItemLibrary: PagingLibrary, WithRandomElementLibrary {
         //
         //                return item
         //            }
-
-        return elements
     }
 
     private func makeBaseItemParameters(

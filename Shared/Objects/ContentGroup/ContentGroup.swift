@@ -25,9 +25,13 @@ protocol ContentGroup<ViewModel>: Identifiable {
 }
 
 extension ContentGroup {
-    var _shouldBeResolved: Bool { true }
+    var _shouldBeResolved: Bool {
+        true
+    }
 }
 
 extension ContentGroup where ViewModel == Empty {
-    var viewModel: Empty { .init() }
+    var viewModel: Empty {
+        .init()
+    }
 }

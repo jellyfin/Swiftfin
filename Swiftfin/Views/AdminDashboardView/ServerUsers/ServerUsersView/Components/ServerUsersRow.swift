@@ -44,9 +44,9 @@ extension ServerUsersView {
 
         private var userActive: Bool {
             if let isDisabled = user.policy?.isDisabled {
-                return !isDisabled
+                !isDisabled
             } else {
-                return false
+                false
             }
         }
 

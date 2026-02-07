@@ -12,7 +12,7 @@ import Foundation
 public enum KeyCommandsBuilder {
 
     public static func buildBlock(_ components: [KeyCommandAction]...) -> [KeyCommandAction] {
-        components.flatMap { $0 }
+        components.flatMap(\.self)
     }
 
     public static func buildExpression(_ expression: KeyCommandAction) -> [KeyCommandAction] {
@@ -32,6 +32,6 @@ public enum KeyCommandsBuilder {
     }
 
     public static func buildArray(_ components: [[KeyCommandAction]]) -> [KeyCommandAction] {
-        components.flatMap { $0 }
+        components.flatMap(\.self)
     }
 }
