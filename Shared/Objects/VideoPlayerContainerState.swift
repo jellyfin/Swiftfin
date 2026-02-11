@@ -107,6 +107,11 @@ class VideoPlayerContainerState: ObservableObject {
     }
 
     @Published
+    var isSpeedPlaybackActive: Bool = false
+
+    var originalPlaybackRate: Float?
+
+    @Published
     var presentationControllerShouldDismiss: Bool = true
 
     @Published

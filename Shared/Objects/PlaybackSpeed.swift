@@ -6,9 +6,10 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 
-enum PlaybackSpeed: Double, CaseIterable, Displayable {
+enum PlaybackSpeed: Double, CaseIterable, Defaults.Serializable, Displayable {
 
     case quarter = 0.25
     case half = 0.5
