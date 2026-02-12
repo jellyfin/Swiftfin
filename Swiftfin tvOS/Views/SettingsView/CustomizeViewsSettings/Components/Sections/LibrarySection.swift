@@ -54,13 +54,12 @@ extension CustomizeViewsSettings {
                 ListRowMenu(L10n.library, selection: $libraryDisplayType)
 
                 if libraryDisplayType == .list {
-                    ChevronButton(
+                    BasicStepper(
                         L10n.columns,
-                        subtitle: listColumnCount.description
-                    ) {
-                        // TODO: Implement listColumnSettings route in new Router system
-//                        router.route(to: .listColumnSettings(columnCount: $listColumnCount))
-                    }
+                        value: $listColumnCount,
+                        range: 1 ... 4,
+                        step: 1
+                    )
                 }
             }
 
