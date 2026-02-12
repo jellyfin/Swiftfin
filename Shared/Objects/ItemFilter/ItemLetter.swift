@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-struct ItemLetter: CaseIterable, Codable, ExpressibleByStringLiteral, Hashable, ItemFilter {
+struct ItemLetter: CaseIterable, Codable, Hashable, ItemFilter {
 
     let value: String
 
@@ -17,7 +17,7 @@ struct ItemLetter: CaseIterable, Codable, ExpressibleByStringLiteral, Hashable, 
         value
     }
 
-    init(stringLiteral value: String) {
+    init(value: String) {
         self.value = value
     }
 

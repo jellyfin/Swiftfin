@@ -15,16 +15,12 @@ import Transmission
 
 extension NavigationRoute {
 
-    static let channels = NavigationRoute(
-        id: "channels"
-    ) {
-        ChannelLibraryView()
-    }
-
+    @MainActor
     static let liveTV = NavigationRoute(
-        id: "liveTV"
+        id: "liveTV",
+        withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
     ) {
-        ProgramsView()
+        ContentGroupView(provider: LiveTVGroupProvider())
     }
 
     static func mediaSourceInfo(source: MediaSourceInfo) -> NavigationRoute {
@@ -50,10 +46,12 @@ extension NavigationRoute {
         mediaSource: MediaSourceInfo? = nil,
         queue: (any MediaPlayerQueue)? = nil
     ) -> NavigationRoute {
-        let provider = MediaPlayerItemProvider(item: item) { item in
-            try await MediaPlayerItem.build(for: item, mediaSource: mediaSource)
-        }
-        return Self.videoPlayer(provider: provider, queue: queue)
+        videoPlayer(
+            provider: MediaPlayerItemProvider(item: item) { item in
+                try await MediaPlayerItem.build(for: item, mediaSource: mediaSource)
+            },
+            queue: queue
+        )
     }
 
     @MainActor
@@ -61,13 +59,13 @@ extension NavigationRoute {
         provider: MediaPlayerItemProvider,
         queue: (any MediaPlayerQueue)? = nil
     ) -> NavigationRoute {
-        let manager = MediaPlayerManager(
-            item: provider.item,
-            queue: queue,
-            mediaPlayerItemProvider: provider.function
+        videoPlayer(
+            manager: MediaPlayerManager(
+                item: provider.item,
+                queue: queue,
+                mediaPlayerItemProvider: provider.function
+            )
         )
-
-        return Self.videoPlayer(manager: manager)
     }
 
     @MainActor
@@ -114,7 +112,7 @@ struct VideoPlayerViewShim: View {
         .ignoresSafeArea()
         .persistentSystemOverlays(.hidden)
         .toolbar(.hidden, for: .navigationBar)
-        .onSizeChanged { _, safeArea in
+        .onFrameChanged { _, safeArea in
             self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
         }
     }

@@ -116,7 +116,8 @@ struct InsetGroupedListHeader<Content: View>: View {
                 .fill(Color.secondarySystemBackground)
 
             SeparatorVStack {
-                RowDivider()
+                Divider()
+                    .edgePadding(.horizontal)
             } content: {
                 if title != nil || description != nil {
                     header

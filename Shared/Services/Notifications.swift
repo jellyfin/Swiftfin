@@ -11,6 +11,7 @@ import Combine
 import Factory
 import Foundation
 import JellyfinAPI
+import OrderedCollections
 import UIKit
 
 extension Container {
@@ -151,6 +152,10 @@ extension Notifications.Key {
 
     // TODO: come up with a cleaner, more defined way for item update notifications
 
+    static var itemUserDataDidChange: Key<UserItemDataDto> {
+        Key("itemUserDataDidChange")
+    }
+
     /// - Payload: The new item with updated metadata.
     static var itemMetadataDidChange: Key<BaseItemDto> {
         Key("itemMetadataDidChange")
@@ -185,16 +190,6 @@ extension Notifications.Key {
 
     static var didAddServerUser: Key<UserDto> {
         Key("didAddServerUser")
-    }
-
-    // MARK: - Playback
-
-    static var didStartPlayback: Key<Void> {
-        Key("didStartPlayback")
-    }
-
-    static var interruption: Key<Void> {
-        Key(AVAudioSession.interruptionNotification)
     }
 
     // MARK: - UIApplication

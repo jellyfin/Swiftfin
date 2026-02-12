@@ -15,7 +15,7 @@ extension EdgeInsets {
     /// typically the edges of the View's scene
     static let edgePadding: CGFloat = {
         #if os(tvOS)
-        44
+        60
         #else
         if UIDevice.isPad {
             24
@@ -48,17 +48,6 @@ extension EdgeInsets {
             bottom: Swift.max(bottom, value),
             trailing: Swift.max(trailing, value)
         )
-    }
-}
-
-extension NSDirectionalEdgeInsets {
-
-    init(constant: CGFloat) {
-        self.init(top: constant, leading: constant, bottom: constant, trailing: constant)
-    }
-
-    init(vertical: CGFloat = 0, horizontal: CGFloat = 0) {
-        self.init(top: vertical, leading: horizontal, bottom: vertical, trailing: horizontal)
     }
 }
 

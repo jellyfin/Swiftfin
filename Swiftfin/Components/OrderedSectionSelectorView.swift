@@ -14,7 +14,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
     private var editMode
 
     @StateObject
-    private var selection: BindingBox<[Element]>
+    private var selection: PublishedBox<[Element]>
 
     private var disabledSelection: [Element] {
         sources.subtracting(selection.value)
@@ -113,7 +113,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
 extension OrderedSectionSelectorView {
 
     init(selection: Binding<[Element]>, sources: [Element]) {
-        self._selection = StateObject(wrappedValue: BindingBox(source: selection))
+        self._selection = StateObject(wrappedValue: PublishedBox(source: selection))
         self.sources = sources
         self.label = { Text($0.displayTitle).foregroundColor(.primary) }
     }

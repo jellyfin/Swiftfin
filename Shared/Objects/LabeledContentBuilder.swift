@@ -11,15 +11,17 @@ import SwiftUI
 @resultBuilder
 struct LabeledContentBuilder {
 
+    @ViewBuilder
     static func buildBlock<each A: View, each B: View>(
         _ content: repeat LabeledContent<each A, each B>
-    ) -> AnyView {
-        .init(TupleView((repeat each content)))
+    ) -> some View {
+        TupleView((repeat each content))
     }
 
+    @ViewBuilder
     static func buildBlock<A: RandomAccessCollection, B: Hashable, C: View, D: View>(
         _ content: ForEach<A, B, LabeledContent<C, D>?>
-    ) -> AnyView {
-        .init(content)
+    ) -> some View {
+        content
     }
 }

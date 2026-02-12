@@ -17,10 +17,10 @@ struct ServerUserParentalRatingView: View {
     @Router
     private var router
 
-    @StateObject
+    @ObservedObject
     private var viewModel: ServerUserAdminViewModel
     @StateObject
-    private var parentalRatingsViewModel: ParentalRatingsViewModel
+    private var parentalRatingsViewModel: PagingLibraryViewModel<ParentalRatingLibrary>
 
     // MARK: - Policy Variable
 
@@ -35,8 +35,8 @@ struct ServerUserParentalRatingView: View {
     // MARK: - Initializer
 
     init(viewModel: ServerUserAdminViewModel) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
-        self._parentalRatingsViewModel = StateObject(wrappedValue: ParentalRatingsViewModel(initialValue: []))
+        self.viewModel = viewModel
+        self._parentalRatingsViewModel = .init(wrappedValue: .init(library: .init()))
 
         guard let policy = viewModel.user.policy else {
             preconditionFailure("User policy cannot be empty.")
@@ -137,7 +137,7 @@ struct ServerUserParentalRatingView: View {
 
     private func reducedParentalRatings() -> [ParentalRating] {
         [ParentalRating(name: L10n.none, value: nil)] +
-            parentalRatingsViewModel.value.grouped { $0.value ?? 0 }
+            parentalRatingsViewModel.elements.grouped { $0.value ?? 0 }
             .map { key, group in
                 if key < 100 {
                     if key == 0 {
@@ -160,9 +160,9 @@ struct ServerUserParentalRatingView: View {
     // MARK: - Parental Rating Learn More
 
     @LabeledContentBuilder
-    private func parentalRatingLabeledContent() -> AnyView {
+    private func parentalRatingLabeledContent() -> some View {
         let reducedRatings = reducedParentalRatings()
-        let groupedRatings = parentalRatingsViewModel.value.grouped { $0.value ?? 0 }
+        let groupedRatings = parentalRatingsViewModel.elements.grouped { $0.value ?? 0 }
 
         ForEach(groupedRatings.keys.sorted(), id: \.self) { key in
             if let matchingRating = reducedRatings.first(where: { $0.value == key }) {
