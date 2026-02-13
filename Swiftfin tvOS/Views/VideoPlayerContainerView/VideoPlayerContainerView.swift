@@ -306,21 +306,32 @@ extension VideoPlayer {
 
         func presentSupplementContainer(
             _ didPresent: Bool,
+            redirectFocus: Bool = true,
             with panningState: (translation: CGFloat, velocity: CGFloat)? = nil
         ) {
             guard !isPanning else { return }
 
             if didPresent {
                 self.supplementBottomAnchor.constant = -supplementContainerOffset
+                containerState.isPresentingOverlay = true
+                supplementContainerView.isUserInteractionEnabled = true
             } else {
                 self.supplementBottomAnchor.constant = -dismissedSupplementContainerOffset
+                supplementContainerView.isUserInteractionEnabled = false
             }
 
-            containerState.isPresentingPlaybackControls = !didPresent
+            containerState.isPresentingPlaybackControls = true
             containerState.supplementOffset = supplementBottomAnchor.constant
 
-            /// Force layout BEFORE animation
             view.setNeedsLayout()
+
+            if redirectFocus {
+                if didPresent {
+                    self.redirectFocus(to: supplementContainerViewController)
+                } else {
+                    self.redirectFocus(to: playbackControlsViewController)
+                }
+            }
 
             if let panningState {
                 let velocity = panningState.velocity.magnitude / 1000
@@ -347,6 +358,34 @@ extension VideoPlayer {
                     self?.view.layoutIfNeeded()
                 }
             }
+        }
+
+        // MARK: - Focus
+
+        private var focusTarget: UIFocusEnvironment?
+
+        override var preferredFocusEnvironments: [UIFocusEnvironment] {
+            if let target = focusTarget {
+                return [target]
+            }
+            return super.preferredFocusEnvironments
+        }
+
+        private func redirectFocus(to target: UIFocusEnvironment) {
+            focusTarget = target
+            setNeedsFocusUpdate()
+            updateFocusIfNeeded()
+            DispatchQueue.main.async { [weak self] in
+                self?.focusTarget = nil
+            }
+        }
+
+        func redirectFocusToPlaybackControls() {
+            redirectFocus(to: playbackControlsViewController)
+        }
+
+        func redirectFocusToSupplementContent() {
+            redirectFocus(to: supplementContainerViewController)
         }
 
         // MARK: - viewDidLoad
@@ -379,6 +418,8 @@ extension VideoPlayer {
             view.addSubview(supplementContainerView)
             supplementContainerViewController.didMove(toParent: self)
             supplementContainerView.backgroundColor = .clear
+
+            supplementContainerView.isUserInteractionEnabled = false
         }
 
         private func setupConstraints() {
@@ -423,7 +464,6 @@ extension VideoPlayer {
         override func viewWillDisappear(_ animated: Bool) {
             super.viewWillDisappear(animated)
 
-            /// Only call stop if not already stopped to prevent duplicate dismissals
             guard manager.state != .stopped else { return }
 
             Task { @MainActor in

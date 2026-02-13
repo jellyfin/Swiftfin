@@ -12,14 +12,6 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: current button
-// TODO: scroll to current chapter on appear
-// TODO: fix swapping between chapters on selection
-//       - little flicker at seconds boundary
-// TODO: sometimes safe area for CollectionHStack doesn't trigger
-// TODO: fix chapter image aspect fit
-//       - still be in a 1.77 box
-
 class MediaChaptersSupplement: ObservableObject, MediaPlayerSupplement {
 
     let chapters: [ChapterInfo.FullInfo]
@@ -95,7 +87,6 @@ extension MediaChaptersSupplement {
 
         @ViewBuilder
         private var iOSCompactView: some View {
-            // TODO: scroll to current chapter
             CollectionVGrid(
                 uniqueElements: chapters,
                 layout: .columns(
@@ -115,8 +106,6 @@ extension MediaChaptersSupplement {
 
         @ViewBuilder
         private var iOSRegularView: some View {
-            // TODO: change to continuousLeadingEdge after
-            // layout inset fix in CollectionHStack
             CollectionHStack(
                 uniqueElements: chapters
             ) { chapter in
@@ -138,7 +127,75 @@ extension MediaChaptersSupplement {
         }
 
         var tvOSView: some View {
-            iOSRegularView
+            VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerView
+                .SupplementChapterHStack(chapters: chapters)
+                .environmentObject(supplement)
+        }
+    }
+
+    struct TVOSChapterCard: View {
+
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
+        @EnvironmentObject
+        private var supplement: MediaChaptersSupplement
+
+        @State
+        private var activeSeconds: Duration = .zero
+        @FocusState
+        private var isFocused: Bool
+
+        let chapter: ChapterInfo.FullInfo
+        let action: () -> Void
+
+        private var isCurrentChapter: Bool {
+            supplement.isCurrentChapter(
+                seconds: activeSeconds,
+                chapter: chapter
+            )
+        }
+
+        var body: some View {
+            Button(action: action) {
+                VStack(alignment: .leading, spacing: 8) {
+                    ChapterPreview(chapter: chapter)
+                        .frame(height: 180)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(chapter.chapterInfo.displayTitle)
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .lineLimit(2)
+                            .foregroundStyle(.white)
+
+                        Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
+                            .font(.caption)
+                            .foregroundStyle(Color(UIColor.systemBlue))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background {
+                                Color(.darkGray)
+                                    .opacity(0.3)
+                                    .cornerRadius(6)
+                            }
+                    }
+                }
+                .padding(12)
+                .background {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.black.opacity(0.4))
+                }
+                .overlay {
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(isFocused ? Color.white : Color.clear, lineWidth: 4)
+                }
+                .scaleEffect(isFocused ? 1.1 : 1.0)
+                .animation(.easeInOut(duration: 0.2), value: isFocused)
+            }
+            .buttonStyle(.plain)
+            .focused($isFocused)
+            .assign(manager.secondsBox.$value, to: $activeSeconds)
+            .isSelected(isCurrentChapter)
         }
     }
 
@@ -169,6 +226,25 @@ extension MediaChaptersSupplement {
                 }
             }
             .posterStyle(.landscape)
+        }
+    }
+
+    struct ChapterLabel: View {
+
+        let chapter: ChapterInfo.FullInfo
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                Text(chapter.chapterInfo.displayTitle)
+                    .font(.footnote.weight(.regular))
+                    .foregroundColor(.primary)
+                    .lineLimit(1, reservesSpace: true)
+
+                Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
+                    .font(.caption.weight(.medium))
+                    .foregroundColor(.secondary)
+                    .lineLimit(1, reservesSpace: true)
+            }
         }
     }
 
