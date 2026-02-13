@@ -25,7 +25,7 @@ class DownloadTask: NSObject, ObservableObject {
         var localizedDescription: String {
             switch self {
             case .notEnoughStorage:
-                return "Not enough storage"
+                "Not enough storage"
             }
         }
     }

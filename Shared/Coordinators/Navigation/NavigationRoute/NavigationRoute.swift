@@ -34,12 +34,12 @@ struct NavigationRoute: Identifiable, Hashable {
     var transitionStyle: TransitionStyle {
         switch transitionType {
         case let .automatic(style):
-            return style
+            style
         case let .withNamespace(builder):
             if let namespace {
-                return builder(namespace)
+                builder(namespace)
             } else {
-                return .push(.automatic)
+                .push(.automatic)
             }
         }
     }

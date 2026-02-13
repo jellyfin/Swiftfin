@@ -13,7 +13,7 @@ import UIKit
 
 extension JellyfinClient {
 
-    func fullURL<T>(with request: Request<T>, queryAPIKey: Bool = false) -> URL? {
+    func fullURL(with request: Request<some Any>, queryAPIKey: Bool = false) -> URL? {
 
         guard let path = request.url?.path else { return configuration.url }
         guard let fullPath = fullURL(with: path) else { return nil }

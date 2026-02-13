@@ -31,13 +31,13 @@ extension ItemView {
             var id: String? {
                 switch self {
                 case .image:
-                    return "image"
+                    "image"
                 case .overview:
-                    return "overview"
+                    "overview"
                 case let .mediaSource(source):
-                    return source.id
+                    source.id
                 case .ratings:
-                    return "ratings"
+                    "ratings"
                 }
             }
         }

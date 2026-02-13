@@ -32,15 +32,13 @@ extension ItemView {
         private func withBackgroundImageSource(
             @ViewBuilder content: @escaping (ImageSource) -> some View
         ) -> some View {
-            let item: BaseItemDto
-
-            if viewModel.item.type == .person || viewModel.item.type == .musicArtist,
-               let typeViewModel = viewModel as? CollectionItemViewModel,
-               let randomItem = typeViewModel.randomItem()
+            let item: BaseItemDto = if viewModel.item.type == .person || viewModel.item.type == .musicArtist,
+                                       let typeViewModel = viewModel as? CollectionItemViewModel,
+                                       let randomItem = typeViewModel.randomItem()
             {
-                item = randomItem
+                randomItem
             } else {
-                item = viewModel.item
+                viewModel.item
             }
 
             let imageType: ImageType = {

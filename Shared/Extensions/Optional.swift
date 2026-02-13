@@ -16,9 +16,9 @@ extension Optional where Wrapped: Collection {
 
     mutating func appendedOrInit(_ element: Wrapped.Element) -> [Wrapped.Element] {
         if let self {
-            return self + [element]
+            self + [element]
         } else {
-            return [element]
+            [element]
         }
     }
 }
