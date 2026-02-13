@@ -205,23 +205,6 @@ final class IdentifyItemViewModel: ViewModel, Stateful, Eventful {
         let request = Paths.applySearchCriteria(itemID: itemID, match)
         _ = try await userSession.client.send(request)
 
-        try await refreshItem()
-    }
-
-    // MARK: - Refresh Item
-
-    private func refreshItem() async throws {
-        guard let itemID = item.id else { return }
-
-        let request = Paths.getItem(
-            itemID: itemID,
-            userID: userSession.user.id
-        )
-        let response = try await userSession.client.send(request)
-
-        await MainActor.run {
-            self.item = response.value
-            Notifications[.itemShouldRefreshMetadata].post(itemID)
-        }
+        try await item = item.getFullItem(userSession: userSession, sendNotification: true)
     }
 }
