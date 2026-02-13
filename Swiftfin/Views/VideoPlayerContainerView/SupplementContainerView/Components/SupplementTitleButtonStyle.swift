@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerView {
@@ -26,9 +27,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
                 .padding(.vertical, 3)
                 .background {
                     ZStack {
-                        #if os(iOS)
                         EmptyHitTestView()
-                        #endif
 
                         if isSelected {
                             Rectangle()

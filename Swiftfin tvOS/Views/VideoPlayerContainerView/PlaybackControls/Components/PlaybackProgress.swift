@@ -10,8 +10,6 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: Test Live TV
-
 extension VideoPlayer.PlaybackControls {
 
     struct PlaybackProgress: View {
@@ -115,9 +113,8 @@ extension VideoPlayer.PlaybackControls {
                     SplitTimeStamp()
                 }
             }
-            .padding(.horizontal)
             .focused($isFocused)
-            .scaleEffect(isFocused ? 1.01 : 1.0)
+            .scaleEffect(isFocused ? 1.025 : 1.0)
             .foregroundStyle(isFocused ? Color.white : Color.white.opacity(0.8))
             .animation(.bouncy(duration: 0.4, extraBounce: 0.1), value: isFocused)
             .overlay(alignment: .topLeading) {

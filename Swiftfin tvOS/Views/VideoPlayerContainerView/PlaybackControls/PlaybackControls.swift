@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import IdentifiedCollections
 import PreferencesView
 import SwiftUI
 import VLCUI
@@ -15,14 +16,13 @@ extension VideoPlayer {
 
     struct PlaybackControls: View {
 
-        // MARK: - Defaults
+        private typealias SupplementTitleButtonStyle = VideoPlayer.UIVideoPlayerContainerViewController
+            .SupplementContainerView.SupplementTitleButtonStyle
 
         @Default(.VideoPlayer.jumpBackwardInterval)
         private var jumpBackwardInterval
         @Default(.VideoPlayer.jumpForwardInterval)
         private var jumpForwardInterval
-
-        // MARK: - Environment
 
         // since this view ignores safe area, it must
         // get safe area insets from parent views
@@ -43,16 +43,12 @@ extension VideoPlayer {
         @Router
         private var router
 
-        // MARK: - State
-
         @State
         private var bottomContentFrame: CGRect = .zero
         @State
         private var contentSize: CGSize = .zero
         @State
         private var effectiveSafeArea: EdgeInsets = .zero
-
-        // MARK: - Scrubbing State
 
         @State
         private var scrubbingTimer: Timer?
@@ -69,13 +65,16 @@ extension VideoPlayer {
 
         @FocusState
         private var isPlaybackProgressFocused: Bool
+        @FocusState
+        private var focusedSupplementID: AnyMediaPlayerSupplement.ID?
 
-        enum ScrubbingDirection {
+        @State
+        private var currentSupplements: IdentifiedArrayOf<AnyMediaPlayerSupplement> = []
+
+        private enum ScrubbingDirection {
             case forward
             case backward
         }
-
-        // MARK: - Convenience Variables
 
         private var isPresentingOverlay: Bool {
             containerState.isPresentingOverlay
@@ -89,24 +88,58 @@ extension VideoPlayer {
             containerState.isScrubbing
         }
 
-        // MARK: - Bottom Content
+        @ViewBuilder
+        private var supplementTabButtons: some View {
+            HStack(spacing: 20) {
+                if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
+                    Button {
+                        containerState.select(supplement: nil)
+                    } label: {
+                        Text(supplement.displayTitle)
+                    }
+                    .buttonStyle(SupplementTitleButtonStyle())
+                    .isSelected(true)
+                    .focused($focusedSupplementID, equals: supplement.id)
+                } else {
+                    ForEach(currentSupplements) { supplement in
+                        Button {
+                            containerState.selectedSupplement = supplement.supplement
+                            containerState.containerView?.presentSupplementContainer(true)
+                        } label: {
+                            Text(supplement.displayTitle)
+                        }
+                        .buttonStyle(SupplementTitleButtonStyle())
+                        .isSelected(
+                            focusedSupplementID == supplement.id ||
+                                (focusedSupplementID == nil && containerState.selectedSupplement?.id == supplement.id)
+                        )
+                        .focused($focusedSupplementID, equals: supplement.id)
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .focusSection()
+        }
 
         @ViewBuilder
         private var bottomContent: some View {
-            if !isPresentingSupplement {
-                VStack(spacing: 0) {
+            VStack(spacing: 0) {
+                if !isPresentingSupplement {
                     NavigationBar()
-                        .padding(.horizontal)
                         .isVisible(isPresentingOverlay || isScrubbing)
 
                     PlaybackProgress()
                         .isVisible(isPresentingOverlay || isScrubbing)
                         .focused($isPlaybackProgressFocused, equals: true)
                 }
+
+                supplementTabButtons
+                    .padding(.top, isPresentingSupplement ? 0 : 20)
+                    .isVisible(isPresentingOverlay && !isScrubbing && !currentSupplements.isEmpty)
             }
         }
 
-        // MARK: - Body
+        // MARK: body
 
         var body: some View {
             ZStack {
@@ -158,27 +191,67 @@ extension VideoPlayer {
                     isPlaybackProgressFocused = true
                 }
             }
+            .onChange(of: isPlaybackProgressFocused) { _, newValue in
+                if newValue && isPresentingSupplement {
+                    containerState.selectedSupplement = nil
+                    containerState.containerView?.presentSupplementContainer(false, redirectFocus: false)
+                }
+            }
             .onReceive(onPressEvent) { press in
                 handlePressEvent(press)
             }
+            .onAppear {
+                let initial = IdentifiedArray(
+                    uniqueElements: manager.supplements.map(AnyMediaPlayerSupplement.init)
+                )
+                if currentSupplements.isEmpty && !initial.isEmpty {
+                    currentSupplements = initial
+                }
+            }
+            .onReceive(manager.$supplements) { newValue in
+                let newSupplements = IdentifiedArray(
+                    uniqueElements: newValue.map(AnyMediaPlayerSupplement.init)
+                )
+                currentSupplements = newSupplements
+            }
+            .onChange(of: focusedSupplementID) { oldValue, newValue in
+                guard oldValue != newValue else { return }
+                guard let supplementID = newValue else { return }
+                guard !isRedirectingToTab else { return }
+
+                if oldValue == nil {
+                    if let selectedID = containerState.selectedSupplement?.id, supplementID != selectedID {
+                        focusedSupplementID = selectedID
+                        return
+                    } else if containerState.selectedSupplement == nil,
+                              let firstID = currentSupplements.first?.id,
+                              supplementID != firstID
+                    {
+                        focusedSupplementID = firstID
+                        return
+                    }
+                }
+
+                if let supplement = currentSupplements[id: supplementID] {
+                    containerState.selectedSupplement = supplement.supplement
+                    containerState.containerView?.presentSupplementContainer(true, redirectFocus: false)
+                }
+            }
         }
 
-        // MARK: - Scrubbing Methods
+        // MARK: - Scrubbing
 
         private func startScrubbing(direction: ScrubbingDirection) {
-            /// If already scrubbing in same direction, increase speed
             if hasEnteredScrubMode, scrubbingDirection == direction {
                 increaseScrubbingSpeed()
                 return
             }
 
-            /// If scrubbing in opposite direction, decrease speed
             if hasEnteredScrubMode, scrubbingDirection != direction {
                 decreaseScrubbingSpeed(newDirection: direction)
                 return
             }
 
-            /// Start new scrubbing session
             scrubbingDirection = direction
             scrubbingStartTime = Date()
             scrubbingSpeed = 0.0
@@ -191,7 +264,6 @@ extension VideoPlayer {
                 guard let startTime = scrubbingStartTime else { return }
                 let elapsed = Date().timeIntervalSince(startTime)
 
-                /// After 2 seconds, activate scrubbing at 2×
                 if elapsed >= 2.0 && !hasEnteredScrubMode {
                     scrubbingSpeed = 2.0
                     hasEnteredScrubMode = true
@@ -204,7 +276,6 @@ extension VideoPlayer {
                     )
                 }
 
-                /// Only scrub if in scrub mode
                 guard hasEnteredScrubMode else { return }
 
                 let scrubAmount = Duration.seconds(scrubbingSpeed * 0.1)
@@ -227,9 +298,8 @@ extension VideoPlayer {
                 scrubbingSpeed = 32.0
             }
 
-            let speedText = "\(Int(scrubbingSpeed))×"
             toaster.present(
-                speedText,
+                "\(Int(scrubbingSpeed))×",
                 systemName: scrubbingDirection == .forward ? "goforward" : "gobackward"
             )
         }
@@ -249,9 +319,8 @@ extension VideoPlayer {
             }
 
             if scrubbingSpeed > 0 {
-                let speedText = "\(Int(scrubbingSpeed))×"
                 toaster.present(
-                    speedText,
+                    "\(Int(scrubbingSpeed))×",
                     systemName: scrubbingDirection == .forward ? "goforward" : "gobackward"
                 )
             }
@@ -262,8 +331,6 @@ extension VideoPlayer {
             scrubbingTimer = nil
 
             if performJump, let direction = scrubbingDirection, !hasEnteredScrubMode {
-
-                /// Less than 2 second selection is a jump not a scrub
                 if direction == .forward {
                     containerState.jumpProgressObserver.jumpForward()
                     manager.proxy?.jumpForward(jumpForwardInterval.rawValue)
@@ -296,13 +363,37 @@ extension VideoPlayer {
             hasEnteredScrubMode = false
         }
 
+        // MARK: - Focus Zone
+
+        private enum FocusZone {
+            case navBar
+            case progressBar
+            case tabButtons
+            case supplementContent
+        }
+
+        @State
+        private var pressBeganZone: FocusZone?
+        @State
+        private var isRedirectingToTab: Bool = false
+
+        private var currentFocusZone: FocusZone {
+            if isPlaybackProgressFocused {
+                return .progressBar
+            } else if focusedSupplementID != nil {
+                return .tabButtons
+            } else if isPresentingSupplement {
+                return .supplementContent
+            } else {
+                return .navBar
+            }
+        }
+
         // MARK: - Press Event Handling
 
         private func handlePressEvent(_ press: VideoPlayer.UIVideoPlayerContainerViewController.PressEvent) {
 
-            /// Any remote button press should show the overlay if hidden
             if !isPresentingOverlay {
-                /// Handle Pause/Play otherwies VLCKit will try to and cause conflcits
                 if press.type == .playPause {
                     switch manager.playbackRequestStatus {
                     case .playing:
@@ -322,32 +413,86 @@ extension VideoPlayer {
                 }
             }
 
+            if press.phase == .began {
+                pressBeganZone = currentFocusZone
+            }
+
+            let zone = pressBeganZone ?? currentFocusZone
+
             switch (press.type, press.phase) {
 
-            /// Handle arrow key scrubbing
+            // MARK: Up Arrow
+
             case (.upArrow, .began):
-                if isPresentingSupplement && !isPlaybackProgressFocused {
-                    containerState.selectedSupplement = nil
-                    containerState.containerView?.presentSupplementContainer(false)
-                    containerState.timer.poke()
-                    isPlaybackProgressFocused = true
+                switch zone {
+                case .tabButtons, .supplementContent:
                     press.resolve(.handled)
-                } else {
+                default:
                     press.resolve(.fallback)
                 }
 
-            case (.downArrow, .began):
-                if !manager.supplements.isEmpty && isPlaybackProgressFocused {
-                    if containerState.selectedSupplement == nil {
-                        containerState.selectedSupplement = manager.supplements.first
-                        containerState.containerView?.presentSupplementContainer(true)
+            case (.upArrow, .ended):
+                switch zone {
+                case .tabButtons:
+                    containerState.selectedSupplement = nil
+                    containerState.containerView?.presentSupplementContainer(false, redirectFocus: false)
+                    containerState.timer.poke()
+                    isPlaybackProgressFocused = true
+                    press.resolve(.handled)
+                case .supplementContent:
+                    let targetID = containerState.selectedSupplement?.id ?? currentSupplements.first?.id
+                    isRedirectingToTab = true
+                    containerState.containerView?.redirectFocusToPlaybackControls()
+                    containerState.timer.poke()
+                    DispatchQueue.main.async {
+                        focusedSupplementID = targetID
+                        isRedirectingToTab = false
                     }
+                    press.resolve(.handled)
+                default:
+                    press.resolve(.fallback)
                 }
-                press.resolve(.handled)
+
+            // MARK: Down Arrow
+
+            case (.downArrow, .began):
+                switch zone {
+                case .progressBar where !currentSupplements.isEmpty,
+                     .tabButtons where isPresentingSupplement:
+                    press.resolve(.handled)
+                default:
+                    press.resolve(.fallback)
+                }
+
+            case (.downArrow, .ended):
+                switch zone {
+                case .progressBar where !currentSupplements.isEmpty:
+                    let targetID = containerState.selectedSupplement?.id ?? currentSupplements.first?.id
+                    focusedSupplementID = targetID
+                    containerState.timer.poke()
+                    press.resolve(.handled)
+                case .tabButtons where isPresentingSupplement:
+                    containerState.containerView?.redirectFocusToSupplementContent()
+                    containerState.timer.poke()
+                    press.resolve(.handled)
+                default:
+                    press.resolve(.fallback)
+                }
+
+            // MARK: Left Arrow
 
             case (.leftArrow, .began):
-                if isPlaybackProgressFocused {
+                if zone == .progressBar {
                     startScrubbing(direction: .backward)
+                    press.resolve(.handled)
+                } else if zone == .tabButtons {
+                    if let currentID = focusedSupplementID,
+                       let currentIndex = currentSupplements.index(id: currentID),
+                       currentIndex > currentSupplements.startIndex
+                    {
+                        let previousIndex = currentSupplements.index(before: currentIndex)
+                        focusedSupplementID = currentSupplements[previousIndex].id
+                    }
                     press.resolve(.handled)
                 } else {
                     press.resolve(.fallback)
@@ -359,13 +504,27 @@ extension VideoPlayer {
                     press.resolve(.handled)
                 } else if scrubbingDirection == .backward {
                     press.resolve(.handled)
+                } else if zone == .tabButtons {
+                    press.resolve(.handled)
                 } else {
                     press.resolve(.fallback)
                 }
 
+            // MARK: Right Arrow
+
             case (.rightArrow, .began):
-                if isPlaybackProgressFocused {
+                if zone == .progressBar {
                     startScrubbing(direction: .forward)
+                    press.resolve(.handled)
+                } else if zone == .tabButtons {
+                    if let currentID = focusedSupplementID,
+                       let currentIndex = currentSupplements.index(id: currentID)
+                    {
+                        let nextIndex = currentSupplements.index(after: currentIndex)
+                        if nextIndex < currentSupplements.endIndex {
+                            focusedSupplementID = currentSupplements[nextIndex].id
+                        }
+                    }
                     press.resolve(.handled)
                 } else {
                     press.resolve(.fallback)
@@ -377,9 +536,13 @@ extension VideoPlayer {
                     press.resolve(.handled)
                 } else if scrubbingDirection == .forward {
                     press.resolve(.handled)
+                } else if zone == .tabButtons {
+                    press.resolve(.handled)
                 } else {
                     press.resolve(.fallback)
                 }
+
+            // MARK: Play/Pause
 
             case (.playPause, .began):
                 if hasEnteredScrubMode {
@@ -396,6 +559,8 @@ extension VideoPlayer {
                 containerState.timer.poke()
                 press.resolve(.handled)
 
+            // MARK: Select
+
             case (.select, _):
                 if hasEnteredScrubMode {
                     manager.proxy?.setSeconds(containerState.scrubbedSeconds.value)
@@ -405,19 +570,20 @@ extension VideoPlayer {
                     press.resolve(.fallback)
                 }
 
-            /// Use Menu Key to Open the Overlay or Close the Player
+            // MARK: Menu
+
             case (.menu, _):
                 if isPresentingSupplement {
                     containerState.selectedSupplement = nil
+                    containerState.containerView?.presentSupplementContainer(false, redirectFocus: false)
                     containerState.timer.poke()
+                    isPlaybackProgressFocused = true
                     press.resolve(.handled)
                 } else {
-                    // Show close confirmation dialog
                     isPresentingCloseConfirmation = true
                     press.resolve(.handled)
                 }
 
-            /// Use Default Key Press Actions
             default:
                 containerState.timer.poke()
                 press.resolve(.fallback)

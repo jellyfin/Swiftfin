@@ -9,8 +9,6 @@
 import JellyfinAPI
 import SwiftUI
 
-// TODO: scroll if description too long
-
 struct MediaInfoSupplement: MediaPlayerSupplement {
 
     let displayTitle: String = "Info"
@@ -73,8 +71,6 @@ extension MediaInfoSupplement {
             .fontWeight(.semibold)
         }
 
-        // TODO: may need to be a layout for correct overview frame
-        //       with scrolling if too long
         var iOSView: some View {
             CompactOrRegularView(
                 isCompact: containerState.isCompact
@@ -135,8 +131,6 @@ extension MediaInfoSupplement {
         @ViewBuilder
         private var iOSRegularView: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
-                // TODO: determine what to do with non-portrait (channel, home video) images
-                //       - use aspect ratio?
                 PosterImage(
                     item: item,
                     type: item.preferredPosterDisplayType,
@@ -175,8 +169,6 @@ extension MediaInfoSupplement {
 
         var tvOSView: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
-                // TODO: determine what to do with non-portrait (channel, home video) images
-                //       - use aspect ratio?
                 PosterImage(
                     item: item,
                     type: item.preferredPosterDisplayType,
@@ -184,36 +176,45 @@ extension MediaInfoSupplement {
                 )
                 .environment(\.isOverComplexContent, true)
 
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(item.displayTitle)
-                        .font(.callout)
-                        .fontWeight(.semibold)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
+                VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Marquee(item.displayTitle)
+                            .font(.title)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.white)
+
+                        accessoryView
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
 
                     if let overview = item.overview {
-                        Text(overview)
-                            .font(.subheadline)
+                        Marquee(overview, speed: 40)
+                            .font(.body)
                             .fontWeight(.regular)
-                            .lineLimit(3)
+                            .foregroundStyle(.white)
                     }
 
-                    accessoryView
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    Spacer()
+
+                    if !item.isLiveStream {
+                        Button {
+                            manager.proxy?.setSeconds(.zero)
+                            manager.setPlaybackRequestStatus(status: .playing)
+                            containerState.select(supplement: nil)
+                        } label: {
+                            Label("From Beginning", systemImage: "play.fill")
+                                .padding()
+                        }
+                        .buttonStyle(.material)
+                        .frame(height: 75)
+                        .fixedSize(horizontal: true, vertical: false)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-
-                if !item.isLiveStream {
-                    VStack {
-                        fromBeginningButton
-                            .frame(height: 75)
-                            .fixedSize(horizontal: true, vertical: false)
-                            .scrollClipDisabled()
-                    }
-                }
             }
-            .edgePadding()
+            .padding(safeAreaInsets)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
     }
 }

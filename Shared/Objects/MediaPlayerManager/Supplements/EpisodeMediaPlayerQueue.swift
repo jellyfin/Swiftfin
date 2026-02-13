@@ -15,10 +15,6 @@ import IdentifiedCollections
 import JellyfinAPI
 import SwiftUI
 
-// TODO: loading, error states
-// TODO: watched/status indicators
-// TODO: sometimes safe area for CollectionHStack doesn't trigger
-
 @MainActor
 class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 
@@ -183,10 +179,31 @@ extension EpisodeMediaPlayerQueue {
         }
 
         var tvOSView: some View {
-            RegularSeasonStackObserver(
-                selection: $selection,
-                action: select
-            )
+            Group {
+                if let selectionViewModel {
+                    VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerView
+                        .SupplementEpisodeHStack(
+                            viewModel: selectionViewModel,
+                            action: select
+                        )
+                }
+            }
+            .onReceive(viewModel.$seasons) { newSeasons in
+                guard selection == nil, !newSeasons.isEmpty else { return }
+                selection = newSeasons.first?.id
+                newSeasons.first?.send(.refresh)
+            }
+            .onAppear {
+                if let seasonID = manager.item.seasonID, let season = viewModel.seasons[id: seasonID] {
+                    if season.elements.isEmpty {
+                        season.send(.refresh)
+                    }
+                    selection = season.id
+                } else {
+                    selection = viewModel.seasons.first?.id
+                    viewModel.seasons.first?.send(.refresh)
+                }
+            }
         }
 
         var iOSView: some View {
@@ -295,41 +312,27 @@ extension EpisodeMediaPlayerQueue {
             self.action = action
         }
 
-        private struct _Body: View {
-
-            @Environment(\.safeAreaInsets)
-            private var safeAreaInsets: EdgeInsets
-
-            @ObservedObject
-            var selectionViewModel: SeasonItemViewModel
-
-            let action: (BaseItemDto) -> Void
-
-            var body: some View {
-                CollectionHStack(
-                    uniqueElements: selectionViewModel.elements,
-                    id: \.unwrappedIDHashOrZero
-                ) { item in
-                    EpisodeButton(episode: item) {
-                        action(item)
-                    }
-                    .frame(height: 150)
-                }
-                .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
-            }
-        }
-
         var body: some View {
-            if let selectionViewModel {
-                _Body(
-                    selectionViewModel: selectionViewModel,
-                    action: action
-                )
-                .frame(height: 150)
+            Group {
+                if let selectionViewModel {
+                    PosterHStack(
+                        type: .landscape,
+                        items: selectionViewModel.elements
+                    ) { episode in
+                        action(episode)
+                    } label: { episode in
+                        PosterButton<BaseItemDto>.TitleSubtitleContentView(item: episode)
+                            .lineLimit(2, reservesSpace: true)
+                    }
+                }
+            }
+            .onReceive(seriesViewModel.$seasons) { newSeasons in
+                guard selection.wrappedValue == nil, !newSeasons.isEmpty else { return }
+                selection.wrappedValue = newSeasons.first?.id
+                newSeasons.first?.send(.refresh)
             }
         }
 
-        // TODO: make experimental setting to enable
         private struct _ButtonStack: View {
 
             @EnvironmentObject
@@ -470,6 +473,25 @@ extension EpisodeMediaPlayerQueue {
             }
             .font(.caption)
             .foregroundStyle(.secondary)
+        }
+    }
+
+    private struct EpisodeLabel: View {
+
+        let episode: BaseItemDto
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 5) {
+                Text(episode.displayTitle)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .lineLimit(1)
+                    .foregroundStyle(.primary)
+
+                EpisodeDescription(episode: episode)
+                    .frame(alignment: .top)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
