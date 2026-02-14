@@ -9,6 +9,11 @@
 import IdentifiedCollections
 import SwiftUI
 
+// TODO: possibly make custom tab view to have observe
+//       vertical scroll content and transfer to dismissal
+// TODO: fix improper supplement selected
+//       - maybe a race issue
+
 extension VideoPlayer.UIVideoPlayerContainerViewController {
 
     struct SupplementContainerView: View {
@@ -52,6 +57,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
 
                 VStack(spacing: EdgeInsets.edgePadding) {
 
+                    // TODO: scroll if larger than horizontal
                     HStack(spacing: 10) {
                         if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
                             Button(supplement.displayTitle) {

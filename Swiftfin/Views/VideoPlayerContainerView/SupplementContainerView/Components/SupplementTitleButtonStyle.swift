@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerView {

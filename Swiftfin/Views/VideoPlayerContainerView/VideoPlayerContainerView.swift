@@ -12,6 +12,25 @@ import Engine
 import Logging
 import SwiftUI
 
+// TODO: don't dismiss overlay while panning and supplement not presented
+// TODO: use video size from proxies to control aspect fill
+//       - stay within safe areas, aspect fill to screen
+// TODO: instead of static sizes for supplement view, take into account available space
+//       - necessary for full-screen supplements and/or small screens
+// TODO: custom buttons on playback controls
+//       - skip intro, next episode, etc.
+//       - can just do on playback controls itself
+// TODO: pass in safe area insets explicitly?
+// TODO: pause when center tapped when overlay dismissed
+//       - can be done entirely on playback controls layer
+// TODO: no supplements state
+//       - don't pan
+// TODO: account for gesture state active when item changes
+// TODO: only show player view if not error/other bad states
+//       - only show when have item?
+//       - helps with not rendering before ready
+//       - would require refactor so that video players take media player items
+
 // MARK: - VideoPlayerContainerView
 
 extension VideoPlayer {
@@ -62,6 +81,7 @@ extension VideoPlayer {
 
         // MARK: - Views
 
+        // TODO: preview image while scrubbing option
         private struct PlayerContainerView: View {
 
             @EnvironmentObject
@@ -286,6 +306,7 @@ extension VideoPlayer {
             fatalError("init(coder:) has not been implemented")
         }
 
+        // TODO: don't force unwrap optional, sometimes gets into weird state
         private var lastVerticalPanLocation: CGPoint?
         private var verticalPanGestureStartConstant: CGFloat?
         private var isPanning: Bool = false
