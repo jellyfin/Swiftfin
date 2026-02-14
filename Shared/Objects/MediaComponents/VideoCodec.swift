@@ -77,9 +77,9 @@ enum VideoCodec: String, CaseIterable, Codable, Displayable, Storable {
         case .vp8:
             "VP8"
         case .vp9:
-            return "VP9"
+            "VP9"
         case .vvc:
-            return "VVC"
+            "VVC"
         case .wmv1:
             "WMV1"
         case .wmv2:

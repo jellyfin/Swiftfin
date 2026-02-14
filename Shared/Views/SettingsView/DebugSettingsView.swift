@@ -25,7 +25,6 @@ struct DebugSettingsView: View {
                 Toggle("Send Progress Reports", isOn: $sendProgressReports)
             }
 
-            #if DEBUG
             Section("Device Details") {
                 Button {
                     LabeledContent(
@@ -87,7 +86,6 @@ struct DebugSettingsView: View {
                     )
                 }
             }
-            #endif
         }
         .navigationTitle("Debug")
     }
