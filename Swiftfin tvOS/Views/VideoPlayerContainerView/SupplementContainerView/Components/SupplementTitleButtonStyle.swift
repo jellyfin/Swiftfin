@@ -6,15 +6,11 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerView {
 
     struct SupplementTitleButtonStyle: ButtonStyle {
-
-        @Default(.accentColor)
-        private var accentColor
 
         @Environment(\.isFocused)
         private var isFocused
@@ -43,7 +39,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
                 }
                 .overlay {
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(isFocused ? accentColor : .white, lineWidth: 8)
+                        .stroke(isFocused ? .black : .white, lineWidth: 8)
                 }
                 .mask {
                     RoundedRectangle(cornerRadius: 10)

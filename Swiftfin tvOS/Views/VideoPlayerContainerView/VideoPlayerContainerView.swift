@@ -169,7 +169,6 @@ extension VideoPlayer {
             (view.bounds.height / 3) + EdgeInsets.edgePadding * 2
         }
 
-        private let dismissedSupplementContainerOffset: CGFloat = 50.0 + EdgeInsets.edgePadding * 2
         private let minimumTranslation: CGFloat = 100.0
 
         // MARK: - Constraints
@@ -244,7 +243,7 @@ extension VideoPlayer {
                 isPanning = true
 
                 let shouldHaveSupplementPresented = self.supplementBottomAnchor
-                    .constant < -(minimumTranslation + dismissedSupplementContainerOffset)
+                    .constant < -(minimumTranslation + EdgeInsets.edgePadding)
 
                 if shouldHaveSupplementPresented, !containerState.isPresentingSupplement {
                     containerState.selectedSupplement = manager.supplements.first
@@ -284,17 +283,17 @@ extension VideoPlayer {
             clampedOffset = clamp(
                 newOffset,
                 min: -supplementContainerOffset,
-                max: -dismissedSupplementContainerOffset
+                max: -EdgeInsets.edgePadding
             )
 
             if newOffset < clampedOffset {
                 let excess = clampedOffset - newOffset
                 let resistance = pow(excess, 0.7)
                 supplementBottomAnchor.constant = clampedOffset - resistance
-            } else if newOffset > -dismissedSupplementContainerOffset {
+            } else if newOffset > -EdgeInsets.edgePadding {
                 let excess = newOffset - clampedOffset
                 let resistance = pow(excess, 0.5)
-                supplementBottomAnchor.constant = clamp(clampedOffset + resistance, min: -dismissedSupplementContainerOffset, max: -50)
+                supplementBottomAnchor.constant = clamp(clampedOffset + resistance, min: -EdgeInsets.edgePadding, max: -50)
             } else {
                 supplementBottomAnchor.constant = clampedOffset
             }
@@ -316,7 +315,7 @@ extension VideoPlayer {
                 containerState.isPresentingOverlay = true
                 supplementContainerView.isUserInteractionEnabled = true
             } else {
-                self.supplementBottomAnchor.constant = -dismissedSupplementContainerOffset
+                self.supplementBottomAnchor.constant = -EdgeInsets.edgePadding
                 supplementContainerView.isUserInteractionEnabled = false
             }
 
@@ -434,7 +433,7 @@ extension VideoPlayer {
 
             supplementBottomAnchor = supplementContainerView.topAnchor.constraint(
                 equalTo: view.bottomAnchor,
-                constant: -dismissedSupplementContainerOffset
+                constant: -EdgeInsets.edgePadding
             )
             containerState.supplementOffset = supplementBottomAnchor.constant
 
