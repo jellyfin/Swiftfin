@@ -23,13 +23,13 @@ struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element 
 
     private var layout: CollectionHStackLayout {
         if UIDevice.isPhone {
-            return .grid(
+            .grid(
                 columns: type == .landscape ? 2 : 3,
                 rows: 1,
                 columnTrailingInset: 0
             )
         } else {
-            return .minimumWidth(
+            .minimumWidth(
                 columnWidth: type == .landscape ? 220 : 140,
                 rows: 1
             )

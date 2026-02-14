@@ -137,7 +137,9 @@ extension MediaChaptersSupplement {
             }
         }
 
-        var tvOSView: some View { EmptyView() }
+        var tvOSView: some View {
+            EmptyView()
+        }
     }
 
     struct ChapterPreview: View {

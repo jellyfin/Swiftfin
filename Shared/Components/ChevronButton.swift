@@ -311,11 +311,11 @@ extension ChevronButton where Icon == Image, Subtitle == EmptyView {
 
 extension ChevronButton where Icon == EmptyView, Subtitle == Text {
 
-    init<Content: View>(
+    init(
         _ title: String,
         subtitle: String? = nil,
         description: String?,
-        @ViewBuilder content: @escaping () -> Content,
+        @ViewBuilder content: @escaping () -> some View,
         onSave: (() -> Void)? = nil,
         onCancel: (() -> Void)? = nil
     ) {
@@ -334,11 +334,11 @@ extension ChevronButton where Icon == EmptyView, Subtitle == Text {
         }
     }
 
-    init<Content: View>(
+    init(
         _ title: String,
         subtitle: Text? = nil,
         description: String?,
-        @ViewBuilder content: @escaping () -> Content,
+        @ViewBuilder content: @escaping () -> some View,
         onSave: (() -> Void)? = nil,
         onCancel: (() -> Void)? = nil
     ) {

@@ -63,9 +63,9 @@ struct ItemView: View {
 
     // MARK: scrollContainerView
 
-    private func scrollContainerView<Content: View>(
+    private func scrollContainerView(
         viewModel: ItemViewModel,
-        content: @escaping () -> Content
+        content: @escaping () -> some View
     ) -> any ScrollContainerView {
         CinematicScrollView(viewModel: viewModel, content: content)
     }

@@ -13,7 +13,9 @@ import JellyfinAPI
 import Logging
 
 extension Container {
-    var downloadManager: Factory<DownloadManager> { self { DownloadManager() }.shared }
+    var downloadManager: Factory<DownloadManager> {
+        self { DownloadManager() }.shared
+    }
 }
 
 class DownloadManager: ObservableObject {
