@@ -10,6 +10,9 @@ import Combine
 import Foundation
 import SwiftUI
 
+// TODO: turned into spaghetti to get out, clean up with a better state system
+// TODO: verify timer states
+
 @MainActor
 class VideoPlayerContainerState: ObservableObject {
 
@@ -25,9 +28,11 @@ class VideoPlayerContainerState: ObservableObject {
         }
     }
 
+    // TODO: rename isPresentingPlaybackButtons
     @Published
     var isPresentingPlaybackControls: Bool = false
 
+    // TODO: replace with graph dependency package
     func setPlaybackControlsVisibility() {
 
         guard isPresentingOverlay else {
@@ -63,6 +68,7 @@ class VideoPlayerContainerState: ObservableObject {
     @Published
     var isGuestSupplement: Bool = false
 
+    // TODO: rename isPresentingPlaybackControls
     @Published
     var isPresentingOverlay: Bool = false {
         didSet {

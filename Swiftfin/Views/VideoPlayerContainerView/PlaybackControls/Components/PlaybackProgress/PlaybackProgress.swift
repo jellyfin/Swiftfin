@@ -10,6 +10,13 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: enabled/disabled state
+// TODO: scrubbing snapping behaviors
+//       - chapter boundaries
+//       - current running time
+// TODO: show chapter title under preview image
+//       - have max width, on separate offset track
+
 extension VideoPlayer.PlaybackControls {
 
     struct PlaybackProgress: View {

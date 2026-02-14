@@ -15,6 +15,11 @@ import IdentifiedCollections
 import JellyfinAPI
 import SwiftUI
 
+
+// TODO: loading, error states
+// TODO: watched/status indicators
+// TODO: sometimes safe area for CollectionHStack doesn't trigger
+
 @MainActor
 class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 

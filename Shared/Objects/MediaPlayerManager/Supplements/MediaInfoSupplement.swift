@@ -88,6 +88,7 @@ extension MediaInfoSupplement {
         }
 
         var iOSView: some View {
+            // TODO: scroll if description too long
             CompactOrRegularView(
                 isCompact: containerState.isCompact
             ) {
@@ -134,6 +135,8 @@ extension MediaInfoSupplement {
         @ViewBuilder
         private var iOSRegularView: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
+                // TODO: determine what to do with non-portrait (channel, home video) images
+                //       - use aspect ratio?
                 PosterImage(
                     item: item,
                     type: item.preferredPosterDisplayType,
@@ -172,6 +175,8 @@ extension MediaInfoSupplement {
 
         var tvOSView: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
+                // TODO: determine what to do with non-portrait (channel, home video) images
+                //       - use aspect ratio?
                 PosterImage(
                     item: item,
                     type: item.preferredPosterDisplayType,

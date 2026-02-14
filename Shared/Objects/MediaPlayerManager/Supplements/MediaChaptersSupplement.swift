@@ -12,6 +12,14 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: current button
+// TODO: scroll to current chapter on appear
+// TODO: fix swapping between chapters on selection
+//       - little flicker at seconds boundary
+// TODO: sometimes safe area for CollectionHStack doesn't trigger
+// TODO: fix chapter image aspect fit
+//       - still be in a 1.77 box
+
 class MediaChaptersSupplement: ObservableObject, MediaPlayerSupplement {
 
     let chapters: [ChapterInfo.FullInfo]
@@ -87,6 +95,7 @@ extension MediaChaptersSupplement {
 
         @ViewBuilder
         private var iOSCompactView: some View {
+            // TODO: scroll to current chapter
             CollectionVGrid(
                 uniqueElements: chapters,
                 layout: .columns(
@@ -106,6 +115,8 @@ extension MediaChaptersSupplement {
 
         @ViewBuilder
         private var iOSRegularView: some View {
+            // TODO: change to continuousLeadingEdge after
+            // layout inset fix in CollectionHStack
             CollectionHStack(
                 uniqueElements: chapters
             ) { chapter in

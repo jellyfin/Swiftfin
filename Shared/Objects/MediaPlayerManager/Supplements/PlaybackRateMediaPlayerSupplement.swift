@@ -8,6 +8,9 @@
 
 import SwiftUI
 
+// TODO: POC of a "guest" supplement, finish
+//       - make general for basic increment/decrement controls
+//       - audio/subtitle offset
 struct PlaybackRateMediaPlayerSupplement: MediaPlayerSupplement {
 
     let displayTitle: String = "Playback Rate"
