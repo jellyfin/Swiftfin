@@ -14,31 +14,31 @@ extension VideoRangeType: Displayable {
     var displayTitle: String {
         switch self {
         case .unknown:
-            return L10n.unknown
+            L10n.unknown
         case .sdr:
-            return "SDR"
+            "SDR"
         case .hdr10:
-            return "HDR10"
+            "HDR10"
         case .hlg:
-            return "HLG"
+            "HLG"
         case .dovi:
-            return "Dolby Vision"
+            "Dolby Vision"
         case .doviWithEL:
-            return "Dolby Vision with Enhancement Layer"
+            "Dolby Vision with Enhancement Layer"
         case .doviWithELHDR10Plus:
-            return "Dolby Vision with Enhancement Layer / HDR10+"
+            "Dolby Vision with Enhancement Layer / HDR10+"
         case .doviWithHDR10:
-            return "Dolby Vision / HDR10"
+            "Dolby Vision / HDR10"
         case .doviWithHDR10Plus:
-            return "Dolby Vision / HDR10+"
+            "Dolby Vision / HDR10+"
         case .doviWithHLG:
-            return "Dolby Vision / HLG"
+            "Dolby Vision / HLG"
         case .doviInvalid:
-            return "Invalid Dobly Vision"
+            "Invalid Dobly Vision"
         case .doviWithSDR:
-            return "Dolby Vision / SDR"
+            "Dolby Vision / SDR"
         case .hdr10Plus:
-            return "HDR10+"
+            "HDR10+"
         }
     }
 
@@ -46,9 +46,9 @@ extension VideoRangeType: Displayable {
     var isHDR: Bool {
         switch self {
         case .sdr, .doviInvalid, .unknown:
-            return false
+            false
         default:
-            return true
+            true
         }
     }
 
@@ -56,9 +56,9 @@ extension VideoRangeType: Displayable {
     var isDolbyVision: Bool {
         switch self {
         case .dovi, .doviWithEL, .doviWithHLG, .doviWithSDR, .doviWithHDR10, .doviWithHDR10Plus, .doviWithELHDR10Plus:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 }

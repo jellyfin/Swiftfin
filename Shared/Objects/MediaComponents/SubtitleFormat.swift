@@ -45,47 +45,47 @@ enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Storable {
     var displayTitle: String {
         switch self {
         case .ass:
-            return "ASS"
+            "ASS"
         case .cc_dec:
-            return "EIA-608"
+            "EIA-608"
         case .dvdsub:
-            return "DVD Subtitle"
+            "DVD Subtitle"
         case .dvbsub:
-            return "DVB Subtitle"
+            "DVB Subtitle"
         case .jacosub:
-            return "Jacosub"
+            "Jacosub"
         case .libzvbi_teletextdec:
-            return "DVB Teletext"
+            "DVB Teletext"
         case .mov_text:
-            return "MPEG-4 Timed Text"
+            "MPEG-4 Timed Text"
         case .mpl2:
-            return "MPL2"
+            "MPL2"
         case .pjs:
-            return "Phoenix Subtitle"
+            "Phoenix Subtitle"
         case .pgssub:
-            return "PGS Subtitle"
+            "PGS Subtitle"
         case .realtext:
-            return "RealText"
+            "RealText"
         case .sami:
-            return "SMI"
+            "SMI"
         case .ssa:
-            return "SSA"
+            "SSA"
         case .subrip:
-            return "SRT"
+            "SRT"
         case .subviewer:
-            return "SubViewer"
+            "SubViewer"
         case .subviewer1:
-            return "SubViewer1"
+            "SubViewer1"
         case .text:
-            return "TXT"
+            "TXT"
         case .ttml:
-            return "TTML"
+            "TTML"
         case .vplayer:
-            return "VPlayer"
+            "VPlayer"
         case .vtt:
-            return "WebVTT"
+            "WebVTT"
         case .xsub:
-            return "XSUB"
+            "XSUB"
         }
     }
 
@@ -93,47 +93,47 @@ enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Storable {
     var fileExtension: String {
         switch self {
         case .ass:
-            return "ass"
+            "ass"
         case .cc_dec:
-            return "608"
+            "608"
         case .dvdsub:
-            return "sub"
+            "sub"
         case .dvbsub:
-            return "dvbsub"
+            "dvbsub"
         case .jacosub:
-            return "jss"
+            "jss"
         case .libzvbi_teletextdec:
-            return "txt"
+            "txt"
         case .mov_text:
-            return "tx3g"
+            "tx3g"
         case .mpl2:
-            return "mpl"
+            "mpl"
         case .pjs:
-            return "pjs"
+            "pjs"
         case .pgssub:
-            return "sup"
+            "sup"
         case .realtext:
-            return "rt"
+            "rt"
         case .sami:
-            return "smi"
+            "smi"
         case .ssa:
-            return "ssa"
+            "ssa"
         case .subrip:
-            return "srt"
+            "srt"
         case .subviewer:
-            return "sub"
+            "sub"
         case .subviewer1:
-            return "sub"
+            "sub"
         case .text:
-            return "txt"
+            "txt"
         case .ttml:
-            return "ttml"
+            "ttml"
         case .vplayer:
-            return "txt"
+            "txt"
         case .vtt:
-            return "vtt"
+            "vtt"
         case .xsub:
-            return "xsub"
+            "xsub"
         }
     }
 
@@ -153,9 +153,9 @@ enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Storable {
         case .ass, .cc_dec, .jacosub, .libzvbi_teletextdec, .mov_text,
              .mpl2, .pjs, .realtext, .sami, .ssa, .subrip, .subviewer,
              .subviewer1, .text, .ttml, .vplayer, .vtt:
-            return true
+            true
         case .dvdsub, .dvbsub, .pgssub, .xsub:
-            return false
+            false
         }
     }
 }

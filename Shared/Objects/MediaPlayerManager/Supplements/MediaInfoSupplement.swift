@@ -172,6 +172,8 @@ extension MediaInfoSupplement {
             }
         }
 
-        var tvOSView: some View { EmptyView() }
+        var tvOSView: some View {
+            EmptyView()
+        }
     }
 }

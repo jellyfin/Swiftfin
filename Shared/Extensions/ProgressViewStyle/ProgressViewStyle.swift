@@ -21,7 +21,9 @@ extension ProgressViewStyle where Self == GaugeProgressViewStyle {
 
 extension ProgressViewStyle where Self == PlaybackProgressViewStyle {
 
-    static var playback: Self { .init(secondaryProgress: nil, cornerStyle: .round) }
+    static var playback: Self {
+        .init(secondaryProgress: nil, cornerStyle: .round)
+    }
 
     func secondaryProgress(_ progress: Double?) -> Self {
         copy(self, modifying: \.secondaryProgress, to: progress)

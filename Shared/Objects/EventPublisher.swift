@@ -16,7 +16,7 @@ struct LegacyEventPublisher<T>: Publisher {
 
     private let subject = PassthroughSubject<T, Never>()
 
-    func receive<S>(subscriber: S) where S: Subscriber, Never == S.Failure, T == S.Input {
+    func receive<S: Subscriber>(subscriber: S) where Never == S.Failure, T == S.Input {
         subject.receive(subscriber: subscriber)
     }
 
