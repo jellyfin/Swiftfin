@@ -9,6 +9,8 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: scroll if description too long
+
 struct MediaInfoSupplement: MediaPlayerSupplement {
 
     let displayTitle: String = "Info"
@@ -87,8 +89,9 @@ extension MediaInfoSupplement {
             }
         }
 
+        // TODO: may need to be a layout for correct overview frame
+        //       with scrolling if too long
         var iOSView: some View {
-            // TODO: scroll if description too long
             CompactOrRegularView(
                 isCompact: containerState.isCompact
             ) {
