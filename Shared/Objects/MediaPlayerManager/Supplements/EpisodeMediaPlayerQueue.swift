@@ -415,11 +415,6 @@ extension EpisodeMediaPlayerQueue {
 
     private struct TVOSSeasonStackObserver: View {
 
-        @Default(.accentColor)
-        private var accentColor
-
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
         @EnvironmentObject
         private var seriesViewModel: SeriesItemViewModel
 
@@ -439,9 +434,21 @@ extension EpisodeMediaPlayerQueue {
             self.action = action
         }
 
-        var body: some View {
-            Group {
-                if let selectionViewModel {
+        private struct _Body: View {
+
+            @Default(.accentColor)
+            private var accentColor
+
+            @EnvironmentObject
+            private var manager: MediaPlayerManager
+
+            @ObservedObject
+            var selectionViewModel: SeasonItemViewModel
+
+            let action: (BaseItemDto) -> Void
+
+            var body: some View {
+                Group {
                     switch selectionViewModel.state {
                     case .content:
                         if !selectionViewModel.elements.isEmpty {
@@ -475,6 +482,17 @@ extension EpisodeMediaPlayerQueue {
                     case .error:
                         ErrorView(error: ErrorMessage(L10n.unknownError))
                     }
+                }
+            }
+        }
+
+        var body: some View {
+            Group {
+                if let selectionViewModel {
+                    _Body(
+                        selectionViewModel: selectionViewModel,
+                        action: action
+                    )
                 }
             }
             .onReceive(seriesViewModel.$seasons) { newSeasons in
