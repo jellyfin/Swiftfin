@@ -192,7 +192,7 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 
 --- 
 
-### Track Selection
+## Track Selection
 
 Swiftfin track selection is limited by compatibility with each player. In testing, as of Swiftfin 1.3, the following interactions have been tested.
 
@@ -200,14 +200,14 @@ Swiftfin track selection is limited by compatibility with each player. In testin
 🔶 Partially working with limitations </br>
 ❌ Not working
 
-## Swiftfin Player
+### Swiftfin Player
 
 | File Configuration                                       | DirectPlay | Transcode | Notes |
 |---------------------------------------------------------|------------|-----------|------------------------------------------------|
 | Internal Audio                                          | ✅         | ✅        |                                                |
-| Internal Audio + Internal Subtitles                    | ✅         | 🔶        | - Subtitles do not work if Non-External *(DVDSUB)* |
-| Internal Audio + External Subtitles                    | ✅         | ✅        |                                                |
-| Internal Audio + Internal Subtitles + External Subtitles | ✅         | 🔶        | - Subtitles do not work if Non-External *(DVDSUB)* |
+| Internal Audio + Internal Subtitles                     | ✅         | 🔶        | - Subtitles do not work if Non-External *(DVDSUB)* |
+| Internal Audio + External Subtitles                     | ✅         | ✅        |                                                |
+| Internal Audio + Internal Subtitles + External Subtitles| ✅         | 🔶        | - Subtitles do not work if Non-External *(DVDSUB)* |
 | Multiple Internal Audio + Multiple Internal Subtitles  | ✅         | 🔶        | - Subtitles do not work if Non-External *(DVDSUB)* |
 | Multiple Internal Audio + Multiple External Subtitles  | ✅         | ✅        |                                                |
 | Multiple Internal Audio + Internal Subtitles + External Subtitles | ✅ | 🔶 | - Subtitles do not work if Non-External *(DVDSUB)* |
@@ -215,7 +215,7 @@ Swiftfin track selection is limited by compatibility with each player. In testin
 | External Audio + Internal Audio + Internal Subtitles   | ✅         | ✅        | - Cannot play external audio track if transcoding is required </br> - Subtitles do not work if Non-External *(DVDSUB)* |
 | External Audio + Internal Audio + Internal Subtitles + External Subtitles | ✅ | ✅ | - Cannot play external audio track if transcoding is required </br> - Subtitles do not work if Non-External *(DVDSUB)* |
 
-## Native Player
+### Native Player
 
 | File Configuration                                      | DirectPlay | Transcode | Notes |
 |--------------------------------------------------------|------------|-----------|------------------------------------------------|

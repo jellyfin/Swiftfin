@@ -7,7 +7,6 @@
 //
 
 import AVFoundation
-import Defaults
 import VideoToolbox
 
 enum PlaybackCapabilities {
