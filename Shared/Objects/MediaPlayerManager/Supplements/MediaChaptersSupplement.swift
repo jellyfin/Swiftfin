@@ -12,14 +12,6 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: current button
-// TODO: scroll to current chapter on appear
-// TODO: fix swapping between chapters on selection
-//       - little flicker at seconds boundary
-// TODO: sometimes safe area for CollectionHStack doesn't trigger
-// TODO: fix chapter image aspect fit
-//       - still be in a 1.77 box
-
 class MediaChaptersSupplement: ObservableObject, MediaPlayerSupplement {
 
     let chapters: [ChapterInfo.FullInfo]
@@ -51,6 +43,9 @@ class MediaChaptersSupplement: ObservableObject, MediaPlayerSupplement {
 extension MediaChaptersSupplement {
 
     private struct ChapterOverlay: PlatformView {
+
+        @Default(.accentColor)
+        private var accentColor
 
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets: EdgeInsets
@@ -95,7 +90,6 @@ extension MediaChaptersSupplement {
 
         @ViewBuilder
         private var iOSCompactView: some View {
-            // TODO: scroll to current chapter
             CollectionVGrid(
                 uniqueElements: chapters,
                 layout: .columns(
@@ -115,8 +109,6 @@ extension MediaChaptersSupplement {
 
         @ViewBuilder
         private var iOSRegularView: some View {
-            // TODO: change to continuousLeadingEdge after
-            // layout inset fix in CollectionHStack
             CollectionHStack(
                 uniqueElements: chapters
             ) { chapter in
@@ -137,7 +129,29 @@ extension MediaChaptersSupplement {
             }
         }
 
-        var tvOSView: some View { EmptyView() }
+        var tvOSView: some View {
+            PosterHStack(
+                type: .landscape,
+                items: chapters
+            ) { chapter in
+                guard let startSeconds = chapter.chapterInfo.startSeconds else { return }
+                manager.proxy?.setSeconds(startSeconds)
+                manager.setPlaybackRequestStatus(status: .playing)
+            } label: { chapter in
+                ChapterLabel(chapter: chapter)
+            }
+            .posterOverlay(for: ChapterInfo.FullInfo.self) { chapter in
+                if supplement.isCurrentChapter(seconds: manager.seconds, chapter: chapter) {
+                    ContainerRelativeShape()
+                        .stroke(
+                            accentColor,
+                            lineWidth: 12
+                        )
+                        .clipped()
+                }
+            }
+            .environmentObject(supplement)
+        }
     }
 
     struct ChapterPreview: View {
@@ -167,6 +181,25 @@ extension MediaChaptersSupplement {
                 }
             }
             .posterStyle(.landscape)
+        }
+    }
+
+    struct ChapterLabel: View {
+
+        let chapter: ChapterInfo.FullInfo
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                Text(chapter.chapterInfo.displayTitle)
+                    .font(.footnote.weight(.regular))
+                    .foregroundColor(.primary)
+                    .lineLimit(1, reservesSpace: true)
+
+                Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
+                    .font(.caption.weight(.medium))
+                    .foregroundColor(.secondary)
+                    .lineLimit(1, reservesSpace: true)
+            }
         }
     }
 

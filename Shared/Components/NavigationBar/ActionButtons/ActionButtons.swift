@@ -9,6 +9,8 @@
 import Defaults
 import SwiftUI
 
+// TODO: ensure changes on playback item change
+
 extension VideoPlayer.PlaybackControls.NavigationBar {
 
     struct ActionButtons: View {
@@ -69,11 +71,13 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
             case .autoPlay:
                 AutoPlay()
             case .gestureLock:
+                #if os(iOS)
+                GestureLock()
+                #else
                 EmptyView()
-//                GestureLock()
+                #endif
             case .playbackSpeed:
-                EmptyView()
-//                PlaybackRateMenu()
+                PlaybackRateMenu()
 //            case .playbackQuality:
 //                PlaybackQuality()
             case .playNextItem:
@@ -86,19 +90,30 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
         }
 
         @ViewBuilder
-        private var menuButtons: some View {
+        private var compactView: some View {
             Menu(
-                "Menu",
+                L10n.menu,
                 systemImage: "ellipsis.circle"
             ) {
-                ForEach(menuActionButtons) { actionButton in
-                    view(for: actionButton)
-                }
+                ForEach(
+                    barActionButtons,
+                    content: view(for:)
+                )
+                .environment(\.isInMenu, true)
+
+                Divider()
+
+                ForEach(
+                    menuActionButtons,
+                    content: view(for:)
+                )
+                .environment(\.isInMenu, true)
             }
         }
 
-        var body: some View {
-            HStack(spacing: 10) {
+        @ViewBuilder
+        private var regularView: some View {
+            HStack(spacing: 0) {
                 ForEach(
                     barActionButtons,
                     content: view(for:)
@@ -117,10 +132,14 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                     }
                 }
             }
-            .menuStyle(.button)
-            .labelStyle(.iconOnly)
-            .buttonBorderShape(.circle)
-            .buttonStyle(.plain)
+        }
+
+        var body: some View {
+            if containerState.isCompact {
+                compactView
+            } else {
+                regularView
+            }
         }
     }
 }

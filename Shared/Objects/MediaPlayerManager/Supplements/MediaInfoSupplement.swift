@@ -9,8 +9,6 @@
 import JellyfinAPI
 import SwiftUI
 
-// TODO: scroll if description too long
-
 struct MediaInfoSupplement: MediaPlayerSupplement {
 
     let displayTitle: String = "Info"
@@ -58,23 +56,37 @@ extension MediaInfoSupplement {
             }
         }
 
-        @ViewBuilder
-        private var fromBeginningButton: some View {
-            Button("From Beginning", systemImage: "play.fill") {
-                manager.proxy?.setSeconds(.zero)
-                manager.setPlaybackRequestStatus(status: .playing)
-                containerState.select(supplement: nil)
-            }
-            #if os(iOS)
-            .buttonStyle(.material)
-            #endif
-            .frame(width: 200, height: 50)
-            .font(.subheadline)
-            .fontWeight(.semibold)
+        private func resetPlayback() {
+            manager.proxy?.setSeconds(.zero)
+            manager.setPlaybackRequestStatus(status: .playing)
+            containerState.select(supplement: nil)
         }
 
-        // TODO: may need to be a layout for correct overview frame
-        //       with scrolling if too long
+        @ViewBuilder
+        // TODO: Localize
+        private var resetPlaybackButton: some View {
+            AlternateLayoutView {
+                Button(action: resetPlayback) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 7)
+                            .foregroundStyle(.white)
+
+                        Label("From Beginning", systemImage: "play.fill")
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.black)
+                    }
+                }
+            } content: {
+                Button(action: resetPlayback) {
+                    Label("From Beginning", systemImage: "play.fill")
+                        .padding()
+                }
+                .buttonStyle(.material)
+                .font(.subheadline)
+                .fontWeight(.semibold)
+            }
+        }
+
         var iOSView: some View {
             CompactOrRegularView(
                 isCompact: containerState.isCompact
@@ -111,22 +123,9 @@ extension MediaInfoSupplement {
                 .allowsHitTesting(false)
 
                 if !item.isLiveStream {
-                    Button {
-                        manager.proxy?.setSeconds(.zero)
-                        manager.setPlaybackRequestStatus(status: .playing)
-                        containerState.select(supplement: nil)
-                    } label: {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 7)
-                                .foregroundStyle(.white)
-
-                            Label("From Beginning", systemImage: "play.fill")
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.black)
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 40)
+                    resetPlaybackButton
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 40)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -135,8 +134,6 @@ extension MediaInfoSupplement {
         @ViewBuilder
         private var iOSRegularView: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
-                // TODO: determine what to do with non-portrait (channel, home video) images
-                //       - use aspect ratio?
                 PosterImage(
                     item: item,
                     type: item.preferredPosterDisplayType,
@@ -166,12 +163,49 @@ extension MediaInfoSupplement {
 
                 if !item.isLiveStream {
                     VStack {
-                        fromBeginningButton
+                        resetPlaybackButton
+                            .frame(width: 200, height: 50)
                     }
                 }
             }
         }
 
-        var tvOSView: some View { EmptyView() }
+        var tvOSView: some View {
+            HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
+                PosterImage(
+                    item: item,
+                    type: item.preferredPosterDisplayType,
+                    contentMode: .fit
+                )
+                .environment(\.isOverComplexContent, true)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Marquee(item.displayTitle, speed: 120, delay: 3, fade: 5)
+                        .font(.title)
+                        .fontWeight(.semibold)
+
+                    accessoryView
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+
+                    if let overview = item.overview {
+                        Text(overview)
+                            .font(.body)
+                            .lineLimit(3)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                if !item.isLiveStream {
+                    resetPlaybackButton
+                        .frame(height: 75)
+                        .fixedSize(horizontal: true, vertical: false)
+                }
+            }
+            .padding(safeAreaInsets)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        }
     }
 }
