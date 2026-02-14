@@ -870,6 +870,8 @@ internal enum L10n {
   internal static let logsDescription = L10n.tr("Localizable", "logsDescription", fallback: "Access the Jellyfin server logs for troubleshooting and monitoring purposes.")
   /// Long press
   internal static let longPress = L10n.tr("Localizable", "longPress", fallback: "Long press")
+  /// Long press speed
+  internal static let longPressSpeed = L10n.tr("Localizable", "longPressSpeed", fallback: "Long press speed")
   /// Lyricist
   internal static let lyricist = L10n.tr("Localizable", "lyricist", fallback: "Lyricist")
   /// Lyrics
@@ -1412,6 +1414,8 @@ internal enum L10n {
   internal static let sourceCode = L10n.tr("Localizable", "sourceCode", fallback: "Source code")
   /// Special features
   internal static let specialFeatures = L10n.tr("Localizable", "specialFeatures", fallback: "Special features")
+  /// Speed
+  internal static let speed = L10n.tr("Localizable", "speed", fallback: "Speed")
   /// Splashscreen
   internal static let splashscreen = L10n.tr("Localizable", "splashscreen", fallback: "Splashscreen")
   /// When all servers are selected, use the splashscreen from a single server or a random server.

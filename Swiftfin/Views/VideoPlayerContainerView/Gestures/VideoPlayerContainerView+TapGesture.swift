@@ -200,13 +200,13 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         unitPoint: UnitPoint,
         state: UILongPressGestureRecognizer.State
     ) {
-        guard state != .ended else { return }
-
         let action = Defaults[.VideoPlayer.Gesture.longPressAction]
 
         switch action {
         case .none: ()
         case .gestureLock:
+            guard state != .ended else { return }
+
             if containerState.isGestureLocked {
                 containerState.isGestureLocked = false
 
@@ -221,6 +221,48 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                     L10n.gesturesLocked,
                     systemName: VideoPlayerActionButton.gestureLock.systemImage
                 )
+            }
+        case .speed:
+            guard checkGestureLock() else { return }
+            guard containerState.manager?.item.isLiveStream == false else { return }
+
+            switch state {
+            case .began:
+                // Save original playback rate
+                containerState.originalPlaybackRate = containerState.manager?.rate
+
+                // Get configured speed multiplier
+                let multiplier = Defaults[.VideoPlayer.Gesture.longPressSpeedMultiplier]
+
+                // Set speed playback
+                containerState.isSpeedPlaybackActive = true
+                containerState.manager?.setRate(rate: Float(multiplier.rawValue))
+
+                // Show toast notification
+                containerState.toastProxy.present(
+                    Text(multiplier.displayTitle),
+                    systemName: "forward.fill"
+                )
+
+            case .ended, .cancelled:
+                // Restore original playback rate
+                if containerState.isSpeedPlaybackActive {
+                    let originalRate = containerState.originalPlaybackRate ?? 1.0
+                    containerState.manager?.setRate(rate: originalRate)
+
+                    containerState.isSpeedPlaybackActive = false
+                    containerState.originalPlaybackRate = nil
+
+                    // Show toast notification for restored speed
+                    let rateText = originalRate == 1.0 ? "1x" : String(format: "%.2gx", originalRate)
+                    containerState.toastProxy.present(
+                        Text(rateText),
+                        systemName: "forward.fill"
+                    )
+                }
+
+            default:
+                break
             }
         }
     }
