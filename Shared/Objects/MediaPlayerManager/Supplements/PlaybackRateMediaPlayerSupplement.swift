@@ -78,6 +78,7 @@ struct PlaybackRateMediaPlayerSupplement: MediaPlayerSupplement {
             }
         }
 
+        // TODO: Localize
         var tvOSView: some View {
             VStack(spacing: 30) {
                 Text("Playback Rate")

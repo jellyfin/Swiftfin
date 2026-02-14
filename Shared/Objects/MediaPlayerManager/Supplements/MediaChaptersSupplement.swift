@@ -44,6 +44,9 @@ extension MediaChaptersSupplement {
 
     private struct ChapterOverlay: PlatformView {
 
+        @Default(.accentColor)
+        private var accentColor
+
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets: EdgeInsets
 
@@ -127,75 +130,27 @@ extension MediaChaptersSupplement {
         }
 
         var tvOSView: some View {
-            VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerView
-                .SupplementChapterHStack(chapters: chapters)
-                .environmentObject(supplement)
-        }
-    }
-
-    struct TVOSChapterCard: View {
-
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
-        @EnvironmentObject
-        private var supplement: MediaChaptersSupplement
-
-        @State
-        private var activeSeconds: Duration = .zero
-        @FocusState
-        private var isFocused: Bool
-
-        let chapter: ChapterInfo.FullInfo
-        let action: () -> Void
-
-        private var isCurrentChapter: Bool {
-            supplement.isCurrentChapter(
-                seconds: activeSeconds,
-                chapter: chapter
-            )
-        }
-
-        var body: some View {
-            Button(action: action) {
-                VStack(alignment: .leading, spacing: 8) {
-                    ChapterPreview(chapter: chapter)
-                        .frame(height: 180)
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(chapter.chapterInfo.displayTitle)
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                            .lineLimit(2)
-                            .foregroundStyle(.white)
-
-                        Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
-                            .font(.caption)
-                            .foregroundStyle(Color(UIColor.systemBlue))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background {
-                                Color(.darkGray)
-                                    .opacity(0.3)
-                                    .cornerRadius(6)
-                            }
-                    }
-                }
-                .padding(12)
-                .background {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.black.opacity(0.4))
-                }
-                .overlay {
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(isFocused ? Color.white : Color.clear, lineWidth: 4)
-                }
-                .scaleEffect(isFocused ? 1.1 : 1.0)
-                .animation(.easeInOut(duration: 0.2), value: isFocused)
+            PosterHStack(
+                type: .landscape,
+                items: chapters
+            ) { chapter in
+                guard let startSeconds = chapter.chapterInfo.startSeconds else { return }
+                manager.proxy?.setSeconds(startSeconds)
+                manager.setPlaybackRequestStatus(status: .playing)
+            } label: { chapter in
+                ChapterLabel(chapter: chapter)
             }
-            .buttonStyle(.plain)
-            .focused($isFocused)
-            .assign(manager.secondsBox.$value, to: $activeSeconds)
-            .isSelected(isCurrentChapter)
+            .posterOverlay(for: ChapterInfo.FullInfo.self) { chapter in
+                if supplement.isCurrentChapter(seconds: manager.seconds, chapter: chapter) {
+                    ContainerRelativeShape()
+                        .stroke(
+                            accentColor,
+                            lineWidth: 12
+                        )
+                        .clipped()
+                }
+            }
+            .environmentObject(supplement)
         }
     }
 

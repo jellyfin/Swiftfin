@@ -56,19 +56,35 @@ extension MediaInfoSupplement {
             }
         }
 
+        private func resetPlayback() {
+            manager.proxy?.setSeconds(.zero)
+            manager.setPlaybackRequestStatus(status: .playing)
+            containerState.select(supplement: nil)
+        }
+
         @ViewBuilder
-        private var fromBeginningButton: some View {
-            Button {
-                manager.proxy?.setSeconds(.zero)
-                manager.setPlaybackRequestStatus(status: .playing)
-                containerState.select(supplement: nil)
-            } label: {
-                Label("From Beginning", systemImage: "play.fill")
-                    .padding()
+        // TODO: Localize
+        private var resetPlaybackButton: some View {
+            AlternateLayoutView {
+                Button(action: resetPlayback) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 7)
+                            .foregroundStyle(.white)
+
+                        Label("From Beginning", systemImage: "play.fill")
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.black)
+                    }
+                }
+            } content: {
+                Button(action: resetPlayback) {
+                    Label("From Beginning", systemImage: "play.fill")
+                        .padding()
+                }
+                .buttonStyle(.material)
+                .font(.subheadline)
+                .fontWeight(.semibold)
             }
-            .buttonStyle(.material)
-            .font(.subheadline)
-            .fontWeight(.semibold)
         }
 
         var iOSView: some View {
@@ -107,22 +123,9 @@ extension MediaInfoSupplement {
                 .allowsHitTesting(false)
 
                 if !item.isLiveStream {
-                    Button {
-                        manager.proxy?.setSeconds(.zero)
-                        manager.setPlaybackRequestStatus(status: .playing)
-                        containerState.select(supplement: nil)
-                    } label: {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 7)
-                                .foregroundStyle(.white)
-
-                            Label("From Beginning", systemImage: "play.fill")
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.black)
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 40)
+                    resetPlaybackButton
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 40)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -160,7 +163,7 @@ extension MediaInfoSupplement {
 
                 if !item.isLiveStream {
                     VStack {
-                        fromBeginningButton
+                        resetPlaybackButton
                             .frame(width: 200, height: 50)
                     }
                 }
@@ -176,42 +179,30 @@ extension MediaInfoSupplement {
                 )
                 .environment(\.isOverComplexContent, true)
 
-                VStack(alignment: .leading, spacing: 20) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Marquee(item.displayTitle)
-                            .font(.title)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.white)
+                VStack(alignment: .leading, spacing: 8) {
+                    Marquee(item.displayTitle, speed: 120, delay: 3, fade: 5)
+                        .font(.title)
+                        .fontWeight(.semibold)
 
-                        accessoryView
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
+                    accessoryView
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
 
                     if let overview = item.overview {
-                        Marquee(overview, speed: 40)
+                        Text(overview)
                             .font(.body)
-                            .fontWeight(.regular)
-                            .foregroundStyle(.white)
-                    }
-
-                    Spacer()
-
-                    if !item.isLiveStream {
-                        Button {
-                            manager.proxy?.setSeconds(.zero)
-                            manager.setPlaybackRequestStatus(status: .playing)
-                            containerState.select(supplement: nil)
-                        } label: {
-                            Label("From Beginning", systemImage: "play.fill")
-                                .padding()
-                        }
-                        .buttonStyle(.material)
-                        .frame(height: 75)
-                        .fixedSize(horizontal: true, vertical: false)
+                            .lineLimit(3)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
+
+                if !item.isLiveStream {
+                    resetPlaybackButton
+                        .frame(height: 75)
+                        .fixedSize(horizontal: true, vertical: false)
+                }
             }
             .padding(safeAreaInsets)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)

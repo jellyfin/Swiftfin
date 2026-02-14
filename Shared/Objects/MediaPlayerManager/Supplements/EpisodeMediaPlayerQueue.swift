@@ -179,20 +179,11 @@ extension EpisodeMediaPlayerQueue {
         }
 
         var tvOSView: some View {
-            Group {
-                if let selectionViewModel {
-                    VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerView
-                        .SupplementEpisodeHStack(
-                            viewModel: selectionViewModel,
-                            action: select
-                        )
-                }
-            }
-            .onReceive(viewModel.$seasons) { newSeasons in
-                guard selection == nil, !newSeasons.isEmpty else { return }
-                selection = newSeasons.first?.id
-                newSeasons.first?.send(.refresh)
-            }
+            TVOSSeasonStackObserver(
+                selection: $selection,
+                action: select
+            )
+            .environmentObject(viewModel)
             .onAppear {
                 if let seasonID = manager.item.seasonID, let season = viewModel.seasons[id: seasonID] {
                     if season.elements.isEmpty {
@@ -201,7 +192,6 @@ extension EpisodeMediaPlayerQueue {
                     selection = season.id
                 } else {
                     selection = viewModel.seasons.first?.id
-                    viewModel.seasons.first?.send(.refresh)
                 }
             }
         }
@@ -419,6 +409,78 @@ extension EpisodeMediaPlayerQueue {
                 .frame(width: 150)
                 .edgePadding(.horizontal)
 //                .padding(.trailing, safeAreaInsets.trailing)
+            }
+        }
+    }
+
+    private struct TVOSSeasonStackObserver: View {
+
+        @Default(.accentColor)
+        private var accentColor
+
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
+        @EnvironmentObject
+        private var seriesViewModel: SeriesItemViewModel
+
+        private let selection: Binding<SeasonItemViewModel.ID?>
+        private let action: (BaseItemDto) -> Void
+
+        private var selectionViewModel: SeasonItemViewModel? {
+            guard let id = selection.wrappedValue else { return nil }
+            return seriesViewModel.seasons[id: id]
+        }
+
+        init(
+            selection: Binding<SeasonItemViewModel.ID?>,
+            action: @escaping (BaseItemDto) -> Void
+        ) {
+            self.selection = selection
+            self.action = action
+        }
+
+        var body: some View {
+            Group {
+                if let selectionViewModel {
+                    switch selectionViewModel.state {
+                    case .content:
+                        if !selectionViewModel.elements.isEmpty {
+                            PosterHStack(
+                                type: .landscape,
+                                items: selectionViewModel.elements
+                            ) { episode in
+                                action(episode)
+                            } label: { episode in
+                                PosterButton<BaseItemDto>.TitleSubtitleContentView(item: episode)
+                                    .lineLimit(2, reservesSpace: true)
+                            }
+                            .posterOverlay(for: BaseItemDto.self) { episode in
+                                ZStack {
+                                    PosterButton<BaseItemDto>.DefaultOverlay(item: episode)
+
+                                    if episode.id == manager.item.id {
+                                        ContainerRelativeShape()
+                                            .stroke(
+                                                accentColor,
+                                                lineWidth: 12
+                                            )
+                                            .clipped()
+                                    }
+                                }
+                            }
+                        }
+                    case .initial, .refreshing:
+                        ProgressView()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    case .error:
+                        ErrorView(error: ErrorMessage(L10n.unknownError))
+                    }
+                }
+            }
+            .onReceive(seriesViewModel.$seasons) { newSeasons in
+                guard selection.wrappedValue == nil, !newSeasons.isEmpty else { return }
+                selection.wrappedValue = newSeasons.first?.id
+                newSeasons.first?.send(.refresh)
             }
         }
     }

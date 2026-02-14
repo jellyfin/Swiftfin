@@ -76,6 +76,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                     startPoint: .top,
                     endPoint: .bottom
                 )
+                .padding(.top, -(EdgeInsets.edgePadding * 2 + 50))
                 .isVisible(containerState.isPresentingSupplement)
                 .allowsHitTesting(false)
             }
