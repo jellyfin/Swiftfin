@@ -322,95 +322,6 @@ extension EpisodeMediaPlayerQueue {
                 newSeasons.first?.send(.refresh)
             }
         }
-
-        private struct _ButtonStack: View {
-
-            @EnvironmentObject
-            private var containerState: VideoPlayerContainerState
-            @EnvironmentObject
-            private var manager: MediaPlayerManager
-            @EnvironmentObject
-            private var seriesViewModel: SeriesItemViewModel
-
-            let selection: Binding<SeasonItemViewModel.ID?>
-            let selectionViewModel: SeasonItemViewModel
-
-            init(
-                selection: Binding<SeasonItemViewModel.ID?>,
-                selectionViewModel: SeasonItemViewModel
-            ) {
-                self.selection = selection
-                self.selectionViewModel = selectionViewModel
-            }
-
-            var body: some View {
-                VStack {
-                    Menu {
-                        ForEach(seriesViewModel.seasons, id: \.season.id) { season in
-                            Button {
-                                selection.wrappedValue = season.id
-                                if season.elements.isEmpty {
-                                    season.send(.refresh)
-                                }
-                            } label: {
-                                if season.id == selection.wrappedValue {
-                                    Label(season.season.displayTitle, systemImage: "checkmark")
-                                } else {
-                                    Text(season.season.displayTitle)
-                                }
-                            }
-                        }
-                    } label: {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 7)
-                                .foregroundStyle(.white)
-
-                            Label(selectionViewModel.season.displayTitle, systemImage: "chevron.down")
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.black)
-                        }
-                    }
-                    .frame(maxHeight: .infinity)
-
-                    Button {
-                        guard let nextItem = manager.queue?.nextItem else { return }
-                        manager.playNewItem(provider: nextItem)
-                        manager.setPlaybackRequestStatus(status: .playing)
-                        containerState.select(supplement: nil)
-                    } label: {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 7)
-                                .foregroundStyle(.white)
-
-                            Label("Next", systemImage: "forward.end.fill")
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.black)
-                        }
-                    }
-                    .frame(maxHeight: .infinity)
-
-                    Button {
-                        guard let previousItem = manager.queue?.previousItem else { return }
-                        manager.playNewItem(provider: previousItem)
-                        manager.setPlaybackRequestStatus(status: .playing)
-                        containerState.select(supplement: nil)
-                    } label: {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 7)
-                                .foregroundStyle(.white)
-
-                            Label("Previous", systemImage: "backward.end.fill")
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.black)
-                        }
-                    }
-                    .frame(maxHeight: .infinity)
-                }
-                .frame(width: 150)
-                .edgePadding(.horizontal)
-//                .padding(.trailing, safeAreaInsets.trailing)
-            }
-        }
     }
 
     private struct TVOSSeasonStackObserver: View {
@@ -436,12 +347,6 @@ extension EpisodeMediaPlayerQueue {
 
         private struct _Body: View {
 
-            @Default(.accentColor)
-            private var accentColor
-
-            @EnvironmentObject
-            private var manager: MediaPlayerManager
-
             @ObservedObject
             var selectionViewModel: SeasonItemViewModel
 
@@ -452,29 +357,17 @@ extension EpisodeMediaPlayerQueue {
                     switch selectionViewModel.state {
                     case .content:
                         if !selectionViewModel.elements.isEmpty {
-                            PosterHStack(
-                                type: .landscape,
-                                items: selectionViewModel.elements
+                            CollectionHStack(
+                                uniqueElements: selectionViewModel.elements,
+                                columns: 4
                             ) { episode in
-                                action(episode)
-                            } label: { episode in
-                                PosterButton<BaseItemDto>.TitleSubtitleContentView(item: episode)
-                                    .lineLimit(2, reservesSpace: true)
-                            }
-                            .posterOverlay(for: BaseItemDto.self) { episode in
-                                ZStack {
-                                    PosterButton<BaseItemDto>.DefaultOverlay(item: episode)
-
-                                    if episode.id == manager.item.id {
-                                        ContainerRelativeShape()
-                                            .stroke(
-                                                accentColor,
-                                                lineWidth: 12
-                                            )
-                                            .clipped()
-                                    }
+                                EpisodeButton(episode: episode) {
+                                    action(episode)
                                 }
                             }
+                            .insets(horizontal: EdgeInsets.edgePadding)
+                            .itemSpacing(EdgeInsets.edgePadding)
+                            .focusSection()
                         }
                     case .initial, .refreshing:
                         ProgressView()
@@ -513,6 +406,14 @@ extension EpisodeMediaPlayerQueue {
 
         let episode: BaseItemDto
 
+        private var strokeLineWidth: CGFloat {
+            #if os(tvOS)
+            12
+            #else
+            8
+            #endif
+        }
+
         var body: some View {
             ZStack {
                 Rectangle()
@@ -528,7 +429,7 @@ extension EpisodeMediaPlayerQueue {
                     ContainerRelativeShape()
                         .stroke(
                             accentColor,
-                            lineWidth: 8
+                            lineWidth: strokeLineWidth
                         )
                         .clipped()
                 }
@@ -556,29 +457,7 @@ extension EpisodeMediaPlayerQueue {
         }
     }
 
-    private struct EpisodeLabel: View {
-
-        let episode: BaseItemDto
-
-        var body: some View {
-            VStack(alignment: .leading, spacing: 5) {
-                Text(episode.displayTitle)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .lineLimit(1)
-                    .foregroundStyle(.primary)
-
-                EpisodeDescription(episode: episode)
-                    .frame(alignment: .top)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
-
     private struct EpisodeRow: View {
-
-        @Default(.accentColor)
-        private var accentColor
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
@@ -615,9 +494,6 @@ extension EpisodeMediaPlayerQueue {
 
     private struct EpisodeButton: View {
 
-        @Default(.accentColor)
-        private var accentColor
-
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
@@ -632,6 +508,12 @@ extension EpisodeMediaPlayerQueue {
             Button(action: action) {
                 VStack(alignment: .leading, spacing: 5) {
                     EpisodePreview(episode: episode)
+                    #if os(tvOS)
+                        .overlay {
+                            PosterButton<BaseItemDto>.DefaultOverlay(item: episode)
+                        }
+                        .hoverEffect(.highlight)
+                    #endif
 
                     VStack(alignment: .leading, spacing: 5) {
                         Text(episode.displayTitle)
@@ -647,6 +529,10 @@ extension EpisodeMediaPlayerQueue {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
+            #if os(tvOS)
+            .buttonStyle(.borderless)
+            .buttonBorderShape(.roundedRectangle)
+            #endif
             .foregroundStyle(.primary, .secondary)
             .isSelected(isCurrentEpisode)
         }

@@ -191,6 +191,11 @@ extension VideoPlayer {
                     isPlaybackProgressFocused = true
                 }
             }
+            .onChange(of: manager.playbackRequestStatus) { _, newValue in
+                if newValue == .paused, !isPresentingOverlay {
+                    containerState.isPresentingOverlay = true
+                }
+            }
             .onChange(of: isPlaybackProgressFocused) { _, newValue in
                 if newValue && isPresentingSupplement {
                     containerState.selectedSupplement = nil
@@ -565,6 +570,8 @@ extension VideoPlayer {
                 if hasEnteredScrubMode {
                     manager.proxy?.setSeconds(containerState.scrubbedSeconds.value)
                     stopScrubbing(performJump: false)
+                    manager.setPlaybackRequestStatus(status: .playing)
+                    containerState.timer.poke()
                     press.resolve(.handled)
                 } else {
                     press.resolve(.fallback)

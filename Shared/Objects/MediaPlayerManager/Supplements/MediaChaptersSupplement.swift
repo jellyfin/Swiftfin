@@ -44,9 +44,6 @@ extension MediaChaptersSupplement {
 
     private struct ChapterOverlay: PlatformView {
 
-        @Default(.accentColor)
-        private var accentColor
-
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets: EdgeInsets
 
@@ -130,26 +127,19 @@ extension MediaChaptersSupplement {
         }
 
         var tvOSView: some View {
-            PosterHStack(
-                type: .landscape,
-                items: chapters
+            CollectionHStack(
+                uniqueElements: chapters,
+                columns: 4
             ) { chapter in
-                guard let startSeconds = chapter.chapterInfo.startSeconds else { return }
-                manager.proxy?.setSeconds(startSeconds)
-                manager.setPlaybackRequestStatus(status: .playing)
-            } label: { chapter in
-                ChapterLabel(chapter: chapter)
-            }
-            .posterOverlay(for: ChapterInfo.FullInfo.self) { chapter in
-                if supplement.isCurrentChapter(seconds: manager.seconds, chapter: chapter) {
-                    ContainerRelativeShape()
-                        .stroke(
-                            accentColor,
-                            lineWidth: 12
-                        )
-                        .clipped()
+                ChapterButton(chapter: chapter) {
+                    guard let startSeconds = chapter.chapterInfo.startSeconds else { return }
+                    manager.proxy?.setSeconds(startSeconds)
+                    manager.setPlaybackRequestStatus(status: .playing)
                 }
             }
+            .insets(horizontal: EdgeInsets.edgePadding)
+            .itemSpacing(EdgeInsets.edgePadding)
+            .focusSection()
             .environmentObject(supplement)
         }
     }
@@ -164,6 +154,14 @@ extension MediaChaptersSupplement {
 
         let chapter: ChapterInfo.FullInfo
 
+        private var strokeLineWidth: CGFloat {
+            #if os(tvOS)
+            12
+            #else
+            8
+            #endif
+        }
+
         var body: some View {
             PosterImage(
                 item: chapter,
@@ -175,7 +173,7 @@ extension MediaChaptersSupplement {
                     ContainerRelativeShape()
                         .stroke(
                             accentColor,
-                            lineWidth: 8
+                            lineWidth: strokeLineWidth
                         )
                         .clipped()
                 }
@@ -184,7 +182,7 @@ extension MediaChaptersSupplement {
         }
     }
 
-    struct ChapterLabel: View {
+    struct ChapterContent: View {
 
         let chapter: ChapterInfo.FullInfo
 
@@ -200,33 +198,6 @@ extension MediaChaptersSupplement {
                     .foregroundColor(.secondary)
                     .lineLimit(1, reservesSpace: true)
             }
-        }
-    }
-
-    struct ChapterContent: View {
-
-        let chapter: ChapterInfo.FullInfo
-
-        var body: some View {
-            VStack(alignment: .leading, spacing: 5) {
-                Text(chapter.chapterInfo.displayTitle)
-                    .lineLimit(1)
-                    .foregroundStyle(.white)
-                    .frame(height: 15)
-
-                Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
-                    .frame(height: 20)
-                    .foregroundStyle(Color(UIColor.systemBlue))
-                    .padding(.horizontal, 4)
-                    .background {
-                        Color(.darkGray)
-                            .opacity(0.2)
-                            .cornerRadius(4)
-                    }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .font(.subheadline)
-            .fontWeight(.semibold)
         }
     }
 
@@ -289,17 +260,31 @@ extension MediaChaptersSupplement {
         var body: some View {
             Button(action: action) {
                 VStack(alignment: .leading, spacing: 5) {
-                    ChapterPreview(
-                        chapter: chapter
-                    )
+                    ChapterPreview(chapter: chapter)
+                    #if os(tvOS)
+                        .hoverEffect(.highlight)
+                    #endif
 
-                    ChapterContent(
-                        chapter: chapter
-                    )
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(chapter.chapterInfo.displayTitle)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .lineLimit(1)
+                            .foregroundStyle(.primary)
+                            .frame(height: 15)
+
+                        Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .frame(height: 20, alignment: .top)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .font(.subheadline)
-                .fontWeight(.semibold)
             }
+            #if os(tvOS)
+            .buttonStyle(.borderless)
+            .buttonBorderShape(.roundedRectangle)
+            #endif
             .foregroundStyle(.primary, .secondary)
             .assign(manager.secondsBox.$value, to: $activeSeconds)
             .isSelected(isCurrentChapter)
