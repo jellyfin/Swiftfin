@@ -156,8 +156,8 @@ struct ItemSubtitleUploadView: View {
     // MARK: - Upload Subtitle
 
     private func uploadSubtitle() {
-        guard let subtitleData = subtitleData,
-              let subtitleFormat = subtitleFormat
+        guard let subtitleData,
+              let subtitleFormat
         else {
             error = ErrorMessage(L10n.noItemSelected)
             return

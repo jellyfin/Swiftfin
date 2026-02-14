@@ -15,11 +15,11 @@ enum LongPressGestureAction: String, GestureAction {
     var displayTitle: String {
         switch self {
         case .none:
-            return L10n.none
+            L10n.none
         case .gestureLock:
-            return L10n.gestureLock
+            L10n.gestureLock
         case .speed:
-            return L10n.speed
+            L10n.speed
         }
     }
 }

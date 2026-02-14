@@ -36,53 +36,53 @@ enum VideoCodec: String, CaseIterable, Codable, Displayable, Storable {
     var displayTitle: String {
         switch self {
         case .av1:
-            return "AV1"
+            "AV1"
         case .dv:
-            return "DV"
+            "DV"
         case .dirac:
-            return "Dirac"
+            "Dirac"
         case .ffv1:
-            return "FFV1"
+            "FFV1"
         case .flv1:
-            return "FLV1"
+            "FLV1"
         case .h261:
-            return "H.261"
+            "H.261"
         case .h263:
-            return "H.263"
+            "H.263"
         case .h264:
-            return "H.264"
+            "H.264"
         case .hevc:
-            return "HEVC"
+            "HEVC"
         case .mjpeg:
-            return "MJPEG"
+            "MJPEG"
         case .mpeg1video:
-            return "MPEG-1 Video"
+            "MPEG-1 Video"
         case .mpeg2video:
-            return "MPEG-2 Video"
+            "MPEG-2 Video"
         case .mpeg4:
-            return "MPEG-4"
+            "MPEG-4"
         case .msmpeg4v1:
-            return "MS MPEG-4 v1"
+            "MS MPEG-4 v1"
         case .msmpeg4v2:
-            return "MS MPEG-4 v2"
+            "MS MPEG-4 v2"
         case .msmpeg4v3:
-            return "MS MPEG-4 v3"
+            "MS MPEG-4 v3"
         case .prores:
-            return "ProRes"
+            "ProRes"
         case .theora:
-            return "Theora"
+            "Theora"
         case .vc1:
-            return "VC-1"
+            "VC-1"
         case .vp8:
-            return "VP8"
+            "VP8"
         case .vp9:
-            return "VP9"
+            "VP9"
         case .wmv1:
-            return "WMV1"
+            "WMV1"
         case .wmv2:
-            return "WMV2"
+            "WMV2"
         case .wmv3:
-            return "WMV3"
+            "WMV3"
         }
     }
 }

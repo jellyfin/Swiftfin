@@ -47,15 +47,15 @@ extension ItemView {
             if let seriesViewModel = viewModel as? SeriesItemViewModel,
                let seasonEpisodeLabel = seriesViewModel.playButtonItem?.seasonEpisodeLabel
             {
-                return seasonEpisodeLabel
+                seasonEpisodeLabel
 
                 /// Use a Play/Resume label for single Media Source items that are not Series
             } else if let playButtonLabel = viewModel.playButtonItem?.playButtonLabel {
-                return playButtonLabel
+                playButtonLabel
 
                 /// Fallback to a generic `Play` label
             } else {
-                return L10n.play
+                L10n.play
             }
         }
 

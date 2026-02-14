@@ -22,13 +22,6 @@ struct PhotoPickerView: UIViewControllerRepresentable {
     var onSelect: (UIImage) -> Void
     var onCancel: () -> Void
 
-    // MARK: - Initializer
-
-    init(onSelect: @escaping (UIImage) -> Void, onCancel: @escaping () -> Void) {
-        self.onSelect = onSelect
-        self.onCancel = onCancel
-    }
-
     // MARK: - UIView Controller
 
     func makeUIViewController(context: Context) -> PHPickerViewController {
