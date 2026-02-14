@@ -13,26 +13,26 @@ extension TaskTriggerInfoType: Displayable, SystemImageable {
     var displayTitle: String {
         switch self {
         case .dailyTrigger:
-            return L10n.daily
+            L10n.daily
         case .weeklyTrigger:
-            return L10n.weekly
+            L10n.weekly
         case .intervalTrigger:
-            return L10n.interval
+            L10n.interval
         case .startupTrigger:
-            return L10n.onApplicationStartup
+            L10n.onApplicationStartup
         }
     }
 
     var systemImage: String {
         switch self {
         case .dailyTrigger:
-            return "clock"
+            "clock"
         case .weeklyTrigger:
-            return "calendar"
+            "calendar"
         case .intervalTrigger:
-            return "timer"
+            "timer"
         case .startupTrigger:
-            return "power"
+            "power"
         }
     }
 }

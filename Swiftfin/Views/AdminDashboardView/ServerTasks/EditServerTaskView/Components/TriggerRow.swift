@@ -7,7 +7,6 @@
 //
 
 import JellyfinAPI
-
 import SwiftUI
 
 extension EditServerTaskView {

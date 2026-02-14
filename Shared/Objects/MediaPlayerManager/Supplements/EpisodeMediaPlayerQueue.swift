@@ -182,7 +182,9 @@ extension EpisodeMediaPlayerQueue {
             manager.playNewItem(provider: provider)
         }
 
-        var tvOSView: some View { EmptyView() }
+        var tvOSView: some View {
+            EmptyView()
+        }
 
         var iOSView: some View {
             CompactOrRegularView(

@@ -332,11 +332,11 @@ struct FlowLayout: Layout {
     ) -> CGFloat {
         switch alignment {
         case .trailing:
-            return bounds.maxX - rowWidth
+            bounds.maxX - rowWidth
         case .center:
-            return bounds.minX + (bounds.width - rowWidth) / 2
+            bounds.minX + (bounds.width - rowWidth) / 2
         default:
-            return bounds.minX
+            bounds.minX
         }
     }
 

@@ -22,15 +22,15 @@ struct TrailerSelection: OptionSet, CaseIterable, Displayable, Hashable, Storabl
     var displayTitle: String {
         switch self {
         case .all:
-            return L10n.all
+            L10n.all
         case .local:
-            return L10n.local
+            L10n.local
         case .external:
-            return L10n.external
+            L10n.external
         case .none:
-            return L10n.none
+            L10n.none
         default:
-            return L10n.unknown
+            L10n.unknown
         }
     }
 }

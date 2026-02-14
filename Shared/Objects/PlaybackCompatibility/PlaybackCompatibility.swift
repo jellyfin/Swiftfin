@@ -19,13 +19,13 @@ enum PlaybackCompatibility: String, CaseIterable, Defaults.Serializable, Display
     var displayTitle: String {
         switch self {
         case .auto:
-            return L10n.auto
+            L10n.auto
         case .mostCompatible:
-            return L10n.compatible
+            L10n.compatible
         case .directPlay:
-            return L10n.directPlay
+            L10n.directPlay
         case .custom:
-            return L10n.custom
+            L10n.custom
         }
     }
 }

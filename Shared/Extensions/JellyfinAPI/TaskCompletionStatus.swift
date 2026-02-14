@@ -14,13 +14,13 @@ extension TaskCompletionStatus: Displayable {
     var displayTitle: String {
         switch self {
         case .completed:
-            return L10n.taskCompleted
+            L10n.taskCompleted
         case .failed:
-            return L10n.taskFailed
+            L10n.taskFailed
         case .cancelled:
-            return L10n.taskCancelled
+            L10n.taskCancelled
         case .aborted:
-            return L10n.taskAborted
+            L10n.taskAborted
         }
     }
 }

@@ -19,9 +19,9 @@ enum ItemFilterType: String, CaseIterable, Storable {
     var selectorType: SelectorType {
         switch self {
         case .genres, .tags, .traits, .years:
-            return .multi
+            .multi
         case .letter, .sortBy, .sortOrder:
-            return .single
+            .single
         }
     }
 
