@@ -86,8 +86,6 @@ struct Stepper<
     }
 }
 
-// MARK: - VerbatimFormatStyle Convenience
-
 extension Stepper where Formatter == VerbatimFormatStyle<Value> {
 
     init(

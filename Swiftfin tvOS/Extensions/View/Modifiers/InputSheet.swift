@@ -69,10 +69,10 @@ struct InputSheet<SheetContent: View, Buttons: View>: ViewModifier {
                         }
                         .frame(width: geometry.size.width * 0.3)
                         .background {
-                            RoundedRectangle(cornerRadius: 36)
+                            RoundedRectangle(cornerRadius: 40)
                                 .fill(.thickMaterial)
                                 .overlay {
-                                    RoundedRectangle(cornerRadius: 36)
+                                    RoundedRectangle(cornerRadius: 40)
                                         .strokeBorder(.white.opacity(0.15), lineWidth: 1)
                                 }
                         }
