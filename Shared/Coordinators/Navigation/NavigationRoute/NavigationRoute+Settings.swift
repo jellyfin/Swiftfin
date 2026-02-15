@@ -199,29 +199,6 @@ extension NavigationRoute {
         SettingsView()
     }
 
-    #if os(tvOS)
-    static func stepperView<Value: CustomStringConvertible & Strideable & LosslessStringConvertible, Formatter: FormatStyle>(
-        title: String,
-        value: Binding<Value>,
-        range: ClosedRange<Value>,
-        step: Value.Stride,
-        formatter: Formatter
-    ) -> NavigationRoute where Formatter.FormatInput == Value, Formatter.FormatOutput == String {
-        NavigationRoute(
-            id: "stepperView",
-            style: .sheet
-        ) {
-            StepperView(
-                value: value,
-                range: range,
-                step: step,
-                formatter: formatter
-            )
-            .navigationTitle(title.localizedCapitalized)
-        }
-    }
-    #endif
-
     static func userProfile(viewModel: SettingsViewModel) -> NavigationRoute {
         NavigationRoute(id: "userProfile") {
             UserProfileSettingsView(viewModel: viewModel)
