@@ -54,6 +54,17 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
     @FocusedValue(\.formLearnMore)
     private var focusedLearnMore
 
+    @FocusState
+    private var isModalFocused: Bool
+
+    @State
+    private var learnMoreContent: AnyView?
+
+    @State
+    private var contentSize: CGSize = .zero
+    @State
+    private var layoutSize: CGSize = .zero
+
     private let content: Content
     private let image: Image
 
@@ -84,6 +95,18 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
             .backport
             .scrollClipDisabled()
         }
+        .onChange(of: focusedLearnMore != nil) {
+            if let focusedLearnMore {
+                learnMoreContent = focusedLearnMore
+            } else if !isModalFocused {
+                learnMoreContent = nil
+            }
+        }
+        .onChange(of: isModalFocused) {
+            if !isModalFocused && focusedLearnMore == nil {
+                learnMoreContent = nil
+            }
+        }
     }
 
     @ViewBuilder
@@ -91,25 +114,48 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
         ZStack {
             image
 
-            if let focusedLearnMore {
-                learnMoreModal(focusedLearnMore)
+            if let learnMoreContent {
+                learnMoreModal(learnMoreContent)
             }
         }
-        .animation(.linear(duration: 0.2), value: focusedLearnMore == nil)
+        .focusSection()
+        .animation(.linear(duration: 0.2), value: learnMoreContent == nil)
     }
 
     @ViewBuilder
     private func learnMoreModal(_ content: AnyView) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
-            content
-                .labeledContentStyle(LearnMoreLabeledContentStyle())
-                .foregroundStyle(Color.primary, Color.secondary)
+        AlternateLayoutView {
+            Color.clear
+                .trackingSize($layoutSize)
+        } content: {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    content
+                        .labeledContentStyle(LearnMoreLabeledContentStyle())
+                        .foregroundStyle(
+                            isModalFocused ? Color.black : Color.white,
+                            isModalFocused ? Color.black : Color.secondary
+                        )
+                }
+                .edgePadding()
+                .trackingSize($contentSize)
+            }
+            .scrollIndicators(.never)
+            .focusSection()
+            .focused($isModalFocused)
+            .frame(maxHeight: contentSize.height >= layoutSize.height ? .infinity : contentSize.height)
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .background {
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Material.thick)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(isModalFocused ? Color.white : .clear)
+                    }
+            }
+            .padding()
+            .scaleEffect(isModalFocused ? 1.04 : 1.0)
+            .animation(.easeInOut(duration: 0.125), value: isModalFocused)
         }
-        .edgePadding()
-        .background {
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Material.thick)
-        }
-        .padding()
     }
 }
