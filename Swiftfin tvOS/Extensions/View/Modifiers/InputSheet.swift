@@ -36,8 +36,7 @@ struct InputSheet<SheetContent: View, Buttons: View>: ViewModifier {
         content
             .fullScreenCover(isPresented: $isPresented) {
                 GeometryReader { geometry in
-                    let spacing = geometry.size.height * 0.04
-                    let padding = geometry.size.width * 0.04
+                    let spacing = geometry.size.height * 0.05
 
                     ZStack {
                         Color.black.opacity(0.5)
@@ -62,10 +61,10 @@ struct InputSheet<SheetContent: View, Buttons: View>: ViewModifier {
 
                                 sheetContent()
                             }
-                            .padding(padding)
+                            .padding(spacing)
 
                             buttons()
-                                .padding(spacing)
+                                .padding(spacing * 0.75)
                         }
                         .frame(width: geometry.size.width * 0.3)
                         .background {
