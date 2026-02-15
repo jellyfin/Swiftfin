@@ -400,11 +400,7 @@ extension VideoPlayer {
 
             if !isPresentingOverlay {
                 if press.type == .playPause {
-                    switch manager.playbackRequestStatus {
-                    case .playing:
-                        manager.setPlaybackRequestStatus(status: .paused)
-                        toaster.present(L10n.pause, systemName: "pause.circle")
-                    case .paused:
+                    if manager.playbackRequestStatus == .paused {
                         manager.setPlaybackRequestStatus(status: .playing)
                         toaster.present(L10n.play, systemName: "play.circle")
                     }
@@ -477,6 +473,7 @@ extension VideoPlayer {
                     containerState.timer.poke()
                     press.resolve(.handled)
                 case .tabButtons where isPresentingSupplement:
+                    containerState.supplementContentNeedsFocus = true
                     containerState.containerView?.redirectFocusToSupplementContent()
                     containerState.timer.poke()
                     press.resolve(.handled)

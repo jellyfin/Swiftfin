@@ -60,6 +60,13 @@ extension MediaChaptersSupplement {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
+        #if os(tvOS)
+        @FocusState
+        private var focusedChapterID: ChapterInfo.FullInfo.ID?
+        @State
+        private var lastFocusedChapterID: ChapterInfo.FullInfo.ID?
+        #endif
+
         @ObservedObject
         private var supplement: MediaChaptersSupplement
 
@@ -137,9 +144,22 @@ extension MediaChaptersSupplement {
             }
         }
 
+        #if os(tvOS)
+        private func getContentFocus() {
+            if let lastFocusedChapterID,
+               chapters.contains(where: { $0.id == lastFocusedChapterID })
+            {
+                focusedChapterID = lastFocusedChapterID
+            } else {
+                focusedChapterID = currentChapter?.id ?? chapters.first?.id
+            }
+        }
+        #endif
+
         var tvOSView: some View {
             CollectionHStack(
                 uniqueElements: chapters,
+                id: \.unwrappedIDHashOrZero,
                 columns: 4
             ) { chapter in
                 ChapterButton(chapter: chapter) {
@@ -147,11 +167,39 @@ extension MediaChaptersSupplement {
                     manager.proxy?.setSeconds(startSeconds)
                     manager.setPlaybackRequestStatus(status: .playing)
                 }
+                .environmentObject(supplement)
+                #if os(tvOS)
+                    .focused($focusedChapterID, equals: chapter.id)
+                    .padding(.horizontal, 4)
+                #endif
             }
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding)
-            .focusSection()
-            .environmentObject(supplement)
+            .proxy(collectionHStackProxy)
+            #if os(tvOS)
+                .focusSection()
+                .onChange(of: focusedChapterID) { _, newValue in
+                    guard let newValue else { return }
+                    lastFocusedChapterID = newValue
+                }
+                .onChange(of: containerState.supplementContentNeedsFocus) { _, needsFocus in
+                    guard needsFocus else { return }
+                    containerState.supplementContentNeedsFocus = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        getContentFocus()
+                    }
+                }
+            #endif
+                .onFirstAppear {
+                        #if os(tvOS)
+                        lastFocusedChapterID = currentChapter?.id
+                        #endif
+
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            guard let currentChapter else { return }
+                            collectionHStackProxy.scrollTo(id: currentChapter.unwrappedIDHashOrZero, animated: false)
+                        }
+                    }
         }
     }
 
@@ -190,6 +238,8 @@ extension MediaChaptersSupplement {
                 }
             }
             .posterStyle(.landscape)
+            .posterShadow()
+            .hoverEffect(.highlight)
         }
     }
 
@@ -270,11 +320,8 @@ extension MediaChaptersSupplement {
 
         var body: some View {
             Button(action: action) {
-                VStack(alignment: .leading, spacing: 5) {
+                VStack(alignment: .leading, spacing: UIDevice.isTV ? 15 : 5) {
                     ChapterPreview(chapter: chapter)
-                    #if os(tvOS)
-                        .hoverEffect(.highlight)
-                    #endif
 
                     VStack(alignment: .leading, spacing: 5) {
                         Text(chapter.chapterInfo.displayTitle)
@@ -282,14 +329,12 @@ extension MediaChaptersSupplement {
                             .fontWeight(.semibold)
                             .lineLimit(1)
                             .foregroundStyle(.primary)
-                            .frame(height: 15)
 
                         Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
                             .font(.caption)
+                            .lineLimit(1)
                             .foregroundStyle(.secondary)
-                            .frame(height: 20, alignment: .top)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
             #if os(tvOS)

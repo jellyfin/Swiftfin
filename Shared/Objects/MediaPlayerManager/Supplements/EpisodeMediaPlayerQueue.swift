@@ -351,10 +351,38 @@ extension EpisodeMediaPlayerQueue {
 
         private struct _Body: View {
 
+            @EnvironmentObject
+            private var containerState: VideoPlayerContainerState
+            @EnvironmentObject
+            private var manager: MediaPlayerManager
+
+            #if os(tvOS)
+            @FocusState
+            private var focusedEpisodeID: String?
+
+            @State
+            private var lastFocusedEpisodeID: String?
+            #endif
+
             @ObservedObject
             var selectionViewModel: SeasonItemViewModel
 
+            @StateObject
+            private var collectionHStackProxy: CollectionHStackProxy = .init()
+
             let action: (BaseItemDto) -> Void
+
+            #if os(tvOS)
+            private func getContentFocus() {
+                if let lastFocusedEpisodeID,
+                   selectionViewModel.elements.contains(where: { $0.id == lastFocusedEpisodeID })
+                {
+                    focusedEpisodeID = lastFocusedEpisodeID
+                } else {
+                    focusedEpisodeID = selectionViewModel.elements.first?.id
+                }
+            }
+            #endif
 
             var body: some View {
                 Group {
@@ -363,15 +391,46 @@ extension EpisodeMediaPlayerQueue {
                         if !selectionViewModel.elements.isEmpty {
                             CollectionHStack(
                                 uniqueElements: selectionViewModel.elements,
+                                id: \.unwrappedIDHashOrZero,
                                 columns: 4
                             ) { episode in
                                 EpisodeButton(episode: episode) {
                                     action(episode)
                                 }
+                                #if os(tvOS)
+                                .focused($focusedEpisodeID, equals: episode.id)
+                                .padding(.horizontal, 4)
+                                #endif
                             }
                             .insets(horizontal: EdgeInsets.edgePadding)
                             .itemSpacing(EdgeInsets.edgePadding)
-                            .focusSection()
+                            .proxy(collectionHStackProxy)
+                            #if os(tvOS)
+                                .focusSection()
+                                .onChange(of: focusedEpisodeID) { _, newValue in
+                                    guard let newValue else { return }
+                                    lastFocusedEpisodeID = newValue
+                                }
+                                .onChange(of: containerState.supplementContentNeedsFocus) { _, needsFocus in
+                                    guard needsFocus else { return }
+                                    containerState.supplementContentNeedsFocus = false
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        getContentFocus()
+                                    }
+                                }
+                            #endif
+                                .onFirstAppear {
+                                        #if os(tvOS)
+                                        lastFocusedEpisodeID = manager.item.id
+                                        #endif
+
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                            collectionHStackProxy.scrollTo(
+                                                id: manager.item.unwrappedIDHashOrZero,
+                                                animated: false
+                                            )
+                                        }
+                                    }
                         }
                     case .initial, .refreshing:
                         ProgressView()
@@ -439,6 +498,8 @@ extension EpisodeMediaPlayerQueue {
                 }
             }
             .posterStyle(.landscape)
+            .posterShadow()
+            .hoverEffect(.highlight)
         }
     }
 
@@ -501,23 +562,20 @@ extension EpisodeMediaPlayerQueue {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
+        @State
+        private var activeItemID: String?
+
         let episode: BaseItemDto
         let action: () -> Void
 
         private var isCurrentEpisode: Bool {
-            manager.item.id == episode.id
+            activeItemID == episode.id
         }
 
         var body: some View {
             Button(action: action) {
-                VStack(alignment: .leading, spacing: 5) {
+                VStack(alignment: .leading, spacing: UIDevice.isTV ? 15 : 5) {
                     EpisodePreview(episode: episode)
-                    #if os(tvOS)
-                        .overlay {
-                            PosterButton<BaseItemDto>.DefaultOverlay(item: episode)
-                        }
-                        .hoverEffect(.highlight)
-                    #endif
 
                     VStack(alignment: .leading, spacing: 5) {
                         Text(episode.displayTitle)
@@ -525,12 +583,10 @@ extension EpisodeMediaPlayerQueue {
                             .fontWeight(.semibold)
                             .lineLimit(1)
                             .foregroundStyle(.primary)
-                            .frame(height: 15)
 
                         EpisodeDescription(episode: episode)
-                            .frame(height: 20, alignment: .top)
+                            .lineLimit(1)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
             #if os(tvOS)
@@ -538,6 +594,9 @@ extension EpisodeMediaPlayerQueue {
             .buttonBorderShape(.roundedRectangle)
             #endif
             .foregroundStyle(.primary, .secondary)
+            .onReceive(manager.$item) { newItem in
+                activeItemID = newItem.id
+            }
             .isSelected(isCurrentEpisode)
         }
     }
