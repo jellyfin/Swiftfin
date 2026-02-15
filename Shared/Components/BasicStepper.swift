@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+@available(iOS, deprecated, message: "Use a Stepper with a `LabeledContent` label directly instead")
 struct BasicStepper<Value: CustomStringConvertible & Strideable & LosslessStringConvertible, Formatter: FormatStyle>: View
     where Formatter.FormatInput == Value,
     Formatter.FormatOutput == String
@@ -18,41 +19,11 @@ struct BasicStepper<Value: CustomStringConvertible & Strideable & LosslessString
     private var router
     #endif
 
-    @Binding
-    private var value: Value
-
     private let title: String
     private let range: ClosedRange<Value>
     private let step: Value.Stride
     private let formatter: Formatter
-
-    var body: some View {
-        #if os(iOS)
-        Stepper(value: $value, in: range, step: step) {
-            HStack {
-                Text(title)
-
-                Spacer()
-
-                Text(value, format: formatter)
-                    .foregroundColor(.secondary)
-            }
-        }
-        #else
-        ChevronButton(title, subtitle: Text(value, format: formatter)) {
-            router.route(to: .stepperView(
-                title: title,
-                value: $value,
-                range: range,
-                step: step,
-                formatter: formatter
-            ))
-        }
-        #endif
-    }
-}
-
-extension BasicStepper {
+    private let value: Binding<Value>
 
     init(
         _ title: String,
@@ -61,13 +32,31 @@ extension BasicStepper {
         step: Value.Stride = 1,
         formatter: Formatter
     ) {
-        self.init(
-            value: value,
-            title: title,
-            range: range,
-            step: step,
-            formatter: formatter
-        )
+        self.title = title
+        self.range = range
+        self.step = step
+        self.formatter = formatter
+        self.value = value
+    }
+
+    var body: some View {
+        #if os(iOS)
+        Stepper(value: value, in: range, step: step) {
+            LabeledContent(title) {
+                Text(value.wrappedValue, format: formatter)
+            }
+        }
+        #else
+        ChevronButton(title, subtitle: Text(value.wrappedValue, format: formatter)) {
+            router.route(to: .stepperView(
+                title: title,
+                value: value,
+                range: range,
+                step: step,
+                formatter: formatter
+            ))
+        }
+        #endif
     }
 }
 
@@ -79,8 +68,8 @@ extension BasicStepper where Formatter == VerbatimFormatStyle<Value> {
         step: Value.Stride = 1
     ) {
         self.init(
+            title,
             value: value,
-            title: title,
             range: range,
             step: step,
             formatter: VerbatimFormatStyle()
