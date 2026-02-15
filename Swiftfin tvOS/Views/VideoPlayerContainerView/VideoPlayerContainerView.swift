@@ -470,6 +470,18 @@ extension VideoPlayer {
             }
         }
 
+        // MARK: - Touch Handling
+
+        override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+            super.touchesBegan(touches, with: event)
+
+            if !containerState.isPresentingOverlay {
+                containerState.isPresentingOverlay = true
+            } else {
+                containerState.timer.poke()
+            }
+        }
+
         // MARK: - Press Handling
 
         @objc
