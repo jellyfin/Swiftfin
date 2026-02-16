@@ -51,10 +51,8 @@ extension CustomizeViewsSettings {
                     Stepper(L10n.columns, value: $listColumnCount, in: 1 ... 4, step: 1) {
                         LabeledContent {
                             Text("\(listColumnCount)")
-                                .foregroundStyle(.secondary)
                         } label: {
                             Text(L10n.columns)
-                                .foregroundStyle(.primary)
                         }
                     }
                 }

@@ -8,41 +8,46 @@
 
 import SwiftUI
 
+// TODO: respond to swipes
+
 struct Stepper<
     Value: CustomStringConvertible & Strideable,
-    Formatter: FormatStyle,
-    _Label: View,
-    _Content: View
->: View
-    where Formatter.FormatInput == Value,
-    Formatter.FormatOutput == String
-{
-
-    @State
-    private var isPresented: Bool = false
+    Format: FormatStyle<Value, String>,
+    Label: View,
+    Content: View
+>: View {
 
     @Binding
     private var value: Value
 
-    private let formatter: Formatter
-    private let label: () -> LabeledContent<_Label, _Content>
+    @State
+    private var isPresented = false
+
+    private let format: Format
+    private let label: LabeledContent<Label, Content>
     private let range: ClosedRange<Value>
     private let step: Value.Stride
     private let title: String
 
-    // MARK: - Initializer
+    private var canDecrement: Bool {
+        value > range.lowerBound
+    }
+
+    private var canIncrement: Bool {
+        value < range.upperBound
+    }
 
     init(
         _ title: String,
         value: Binding<Value>,
         in range: ClosedRange<Value>,
         step: Value.Stride = 1,
-        formatter: Formatter,
-        @ViewBuilder label: @escaping () -> LabeledContent<_Label, _Content>
+        format: Format,
+        @ViewBuilder label: @escaping () -> LabeledContent<Label, Content>
     ) {
         self._value = value
-        self.formatter = formatter
-        self.label = label
+        self.format = format
+        self.label = label()
         self.range = range
         self.step = step
         self.title = title
@@ -54,53 +59,77 @@ struct Stepper<
         ChevronButton {
             isPresented = true
         } label: {
-            label()
+            label
         }
-        .inputSheet(title, isPresented: $isPresented) {
-            Text(value, format: formatter)
-                .font(.title3)
-                .fontWeight(.semibold)
-        } buttons: {
-            HStack(spacing: 12) {
-                Button {
-                    if value > range.lowerBound {
-                        value = max(value.advanced(by: -step), range.lowerBound)
+        ._alert(title, isPresented: $isPresented) {
+            VStack {
+                HStack(spacing: 24) {
+                    Button("Decrement", systemImage: "minus") {
+                        value = min(range.upperBound, value.advanced(by: -step))
                     }
-                } label: {
-                    Image(systemName: "minus")
-                        .font(.body.weight(.bold))
-                        .frame(maxWidth: .infinity)
+                    .buttonStyle(.bordered)
+                    .disabled(!canDecrement)
+
+                    Text(value, format: format)
+                        .font(.headline)
+                        .fontDesign(.rounded)
+                        .monospacedDigit()
+                        .foregroundStyle(.white)
+                        .frame(height: 80)
+                        .frame(minWidth: 100)
+                        .padding(.horizontal, 24)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .fill(.white.opacity(0.08))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .strokeBorder(.white.opacity(0.18), lineWidth: 1)
+                        )
+
+                    Button("Increment", systemImage: "plus") {
+                        value = min(range.upperBound, value.advanced(by: step))
+                    }
+                    .buttonStyle(.bordered)
+                    .disabled(!canIncrement)
                 }
+                .labelStyle(.iconOnly)
+                .focusSection()
 
                 Button {
-                    if value < range.upperBound {
-                        value = min(value.advanced(by: step), range.upperBound)
-                    }
+                    isPresented = false
                 } label: {
-                    Image(systemName: "plus")
-                        .font(.body.weight(.bold))
-                        .frame(maxWidth: .infinity)
+                    AlternateLayoutView {
+                        Color.clear
+                            .aspectRatio(3.5, contentMode: .fit)
+                            .frame(height: 40)
+                    } content: {
+                        Text(L10n.close)
+                    }
                 }
+            }
+            .onAppear {
+                value = min(max(value, range.lowerBound), range.upperBound)
             }
         }
     }
 }
 
-extension Stepper where Formatter == VerbatimFormatStyle<Value> {
+extension Stepper where Format == VerbatimFormatStyle<Value> {
 
     init(
         _ title: String,
         value: Binding<Value>,
         in range: ClosedRange<Value>,
         step: Value.Stride = 1,
-        @ViewBuilder label: @escaping () -> LabeledContent<_Label, _Content>
+        @ViewBuilder label: @escaping () -> LabeledContent<Label, Content>
     ) {
         self.init(
             title,
             value: value,
             in: range,
             step: step,
-            formatter: VerbatimFormatStyle(),
+            format: VerbatimFormatStyle(),
             label: label
         )
     }

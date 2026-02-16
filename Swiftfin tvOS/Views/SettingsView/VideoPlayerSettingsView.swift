@@ -34,13 +34,11 @@ struct VideoPlayerSettingsView: View {
             }
 
             Section {
-                Stepper(L10n.resumeOffset, value: $resumeOffset, in: 0 ... 30, step: 1, formatter: SecondFormatter()) {
+                Stepper(L10n.resumeOffset, value: $resumeOffset, in: 0 ... 30, step: 1, format: SecondFormatter()) {
                     LabeledContent {
                         Text(resumeOffset, format: SecondFormatter())
-                            .foregroundStyle(.secondary)
                     } label: {
                         Text(L10n.resumeOffset)
-                            .foregroundStyle(.primary)
                     }
                 }
             } header: {

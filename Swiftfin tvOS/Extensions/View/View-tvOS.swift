@@ -40,24 +40,6 @@ extension View {
     func prefersStatusBarHidden(_ hidden: Bool) -> some View {
         self
     }
-
-    func inputSheet(
-        _ title: String,
-        subtitle: String? = nil,
-        isPresented: Binding<Bool>,
-        @ViewBuilder content: @escaping () -> some View,
-        @ViewBuilder buttons: @escaping () -> some View
-    ) -> some View {
-        modifier(
-            InputSheet(
-                title,
-                subtitle: subtitle,
-                isPresented: isPresented,
-                content: content,
-                buttons: buttons
-            )
-        )
-    }
 }
 
 extension EnvironmentValues {
