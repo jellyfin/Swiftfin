@@ -10,51 +10,35 @@ import SwiftUI
 
 struct ListRowMenu<Content: View, Subtitle: View>: View {
 
-    // MARK: - Focus State
-
-    @FocusState
-    private var isFocused: Bool
-
-    // MARK: - Properties
-
     private let title: Text
     private let subtitle: Subtitle?
     private let content: () -> Content
-
-    // MARK: - Body
 
     var body: some View {
         Menu(content: content) {
             HStack {
                 title
-                    .foregroundStyle(isFocused ? .black : .white)
+                    .foregroundStyle(.primary)
                     .padding(.leading, 4)
 
                 Spacer()
 
                 if let subtitle {
                     subtitle
-                        .foregroundStyle(isFocused ? .black : .secondary)
-                        .brightness(isFocused ? 0.4 : 0)
+                        .foregroundStyle(.secondary)
                 }
 
                 Image(systemName: "chevron.up.chevron.down")
                     .font(.body.weight(.regular))
-                    .foregroundStyle(isFocused ? .black : .secondary)
-                    .brightness(isFocused ? 0.4 : 0)
+                    .foregroundStyle(.secondary)
             }
             .padding(.horizontal)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(isFocused ? Color.white : Color.clear)
-            )
-            .scaleEffect(isFocused ? 1.04 : 1.0)
-            .animation(.easeInOut(duration: 0.125), value: isFocused)
+            .hoverEffect(.lift)
         }
         .menuStyle(.borderlessButton)
         .listRowInsets(.zero)
-        .focused($isFocused)
+        .listRowBackground(Color.clear)
     }
 }
 
