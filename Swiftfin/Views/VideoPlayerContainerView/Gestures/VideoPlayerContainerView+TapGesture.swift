@@ -222,7 +222,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                     systemName: VideoPlayerActionButton.gestureLock.systemImage
                 )
             }
-        case .speed:
+        case .playbackSpeed:
             guard checkGestureLock() else { return }
             guard containerState.manager?.item.isLiveStream == false else { return }
 

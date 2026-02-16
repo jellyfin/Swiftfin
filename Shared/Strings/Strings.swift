@@ -418,6 +418,8 @@ internal enum L10n {
   internal static let customJumpIntervalDescription = L10n.tr("Localizable", "customJumpIntervalDescription", fallback: "Provide a custom jump interval in seconds.")
   /// Custom name
   internal static let customName = L10n.tr("Localizable", "customName", fallback: "Custom name")
+  /// Provide a custom playback speed multiplier.
+  internal static let customPlaybackSpeedDescription = L10n.tr("Localizable", "customPlaybackSpeedDescription", fallback: "Provide a custom playback speed multiplier.")
   /// Custom profile
   internal static let customProfile = L10n.tr("Localizable", "customProfile", fallback: "Custom profile")
   /// Custom rating
@@ -878,10 +880,6 @@ internal enum L10n {
   internal static let logsDescription = L10n.tr("Localizable", "logsDescription", fallback: "Access the Jellyfin server logs for troubleshooting and monitoring purposes.")
   /// Long press
   internal static let longPress = L10n.tr("Localizable", "longPress", fallback: "Long press")
-  /// Playback speed
-  internal static let longPressOptionSpeed = L10n.tr("Localizable", "longPressOptionSpeed", fallback: "Playback speed")
-  /// Long press playback speed
-  internal static let longPressPlaybackSpeed = L10n.tr("Localizable", "longPressPlaybackSpeed", fallback: "Long press playback speed")
   /// Lyricist
   internal static let lyricist = L10n.tr("Localizable", "lyricist", fallback: "Lyricist")
   /// Lyrics

@@ -8,6 +8,9 @@
 
 import SwiftUI
 
+// TODO: Generic StorablePicker?
+// - Combine JumpIntervalPicker & PlaybackSpeedPicker if possible
+
 struct JumpIntervalPicker: View {
 
     @State
