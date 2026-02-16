@@ -87,29 +87,33 @@ struct DisplayableFormatStyle<Value: Displayable>: FormatStyle {
     }
 }
 
-extension FormatStyle where Self == PlaybackRateFormatStyle<Float> {
-    static var playbackRate: PlaybackRateFormatStyle<Float> {
-        .init()
+extension FormatStyle where Self == PlaybackRateStyle {
+
+    static var playbackRate: PlaybackRateStyle {
+        PlaybackRateStyle()
     }
 
-    static func playbackRate(precision: Int) -> PlaybackRateFormatStyle<Float> {
-        .init(precision: precision)
+    static func playbackRate(precision: Int) -> PlaybackRateStyle {
+        PlaybackRateStyle(precision: precision)
     }
 }
 
-/// Represents a multiplier as 1x, 1.2x, 1.23x, etc. Defaults to 2 digits of precision (1.23x)
-struct PlaybackRateFormatStyle<Value: BinaryFloatingPoint>: FormatStyle {
+struct PlaybackRateStyle: FormatStyle {
 
-    typealias FormatInput = Value
-    typealias FormatOutput = String
+    var precision: Int?
 
-    var precision: Int = 3
+    func format(_ value: Float) -> String {
+        let formatted: String = if let precision {
+            FloatingPointFormatStyle<Float>()
+                .precision(.fractionLength(0 ... precision))
+                .format(value)
+        } else {
+            FloatingPointFormatStyle<Float>()
+                .precision(.significantDigits(1 ... 3))
+                .format(value)
+        }
 
-    func format(_ value: Value) -> String {
-        FloatingPointFormatStyle<Value>()
-            .precision(.fractionLength(0 ... precision))
-            .format(value)
-            .appending("\u{00D7}")
+        return formatted.appending("\u{00D7}")
     }
 }
 
