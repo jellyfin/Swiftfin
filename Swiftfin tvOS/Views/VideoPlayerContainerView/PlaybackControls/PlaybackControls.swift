@@ -136,7 +136,7 @@ extension VideoPlayer {
 
                 supplementTabButtons
                     .padding(.top, isPresentingSupplement ? 0 : 20)
-                    .isVisible(isPresentingOverlay && !isScrubbing && !currentSupplements.isEmpty)
+                    .isVisible(isPresentingOverlay && !currentSupplements.isEmpty)
             }
         }
 
