@@ -60,7 +60,7 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
 
 // MARK: - Initializers
 
-// Base initializer
+/// Base initializer
 extension ListRowMenu where Subtitle == Text? {
 
     init(_ title: Text, @ViewBuilder content: @escaping () -> Content) {
@@ -100,7 +100,7 @@ extension ListRowMenu where Subtitle == Text? {
     }
 }
 
-// Custom view subtitles
+/// Custom view subtitles
 extension ListRowMenu {
 
     init(_ title: String, @ViewBuilder subtitle: @escaping () -> Subtitle, @ViewBuilder content: @escaping () -> Content) {
@@ -116,7 +116,7 @@ extension ListRowMenu {
     }
 }
 
-// Initialize from a CaseIterable Enum
+/// Initialize from a CaseIterable Enum
 extension ListRowMenu where Subtitle == Text, Content == AnyView {
 
     init<ItemType>(

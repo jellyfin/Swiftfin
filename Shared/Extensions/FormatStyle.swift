@@ -23,7 +23,9 @@ struct MinuteSecondsFormatStyle: FormatStyle {
 extension FormatStyle where Self == MinuteSecondsFormatStyle {
 
     @available(*, deprecated, message: "Use `Duration` instead.")
-    static var minuteSeconds: MinuteSecondsFormatStyle { MinuteSecondsFormatStyle() }
+    static var minuteSeconds: MinuteSecondsFormatStyle {
+        MinuteSecondsFormatStyle()
+    }
 }
 
 extension FormatStyle where Self == Duration.UnitsFormatStyle {
@@ -205,12 +207,16 @@ struct LastSeenFormatStyle: FormatStyle {
 
 extension FormatStyle where Self == LastSeenFormatStyle {
 
-    static var lastSeen: LastSeenFormatStyle { LastSeenFormatStyle() }
+    static var lastSeen: LastSeenFormatStyle {
+        LastSeenFormatStyle()
+    }
 }
 
 extension FormatStyle where Self == AgeFormatStyle {
 
-    static var age: AgeFormatStyle { AgeFormatStyle() }
+    static var age: AgeFormatStyle {
+        AgeFormatStyle()
+    }
 }
 
 struct AgeFormatStyle: FormatStyle {
@@ -250,5 +256,7 @@ struct IntBitRateFormatStyle: FormatStyle {
 }
 
 extension FormatStyle where Self == IntBitRateFormatStyle {
-    static var bitRate: IntBitRateFormatStyle { IntBitRateFormatStyle() }
+    static var bitRate: IntBitRateFormatStyle {
+        IntBitRateFormatStyle()
+    }
 }

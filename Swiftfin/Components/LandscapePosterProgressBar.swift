@@ -17,7 +17,7 @@ struct LandscapePosterProgressBar<Content: View>: View {
     @Default(.accentColor)
     private var accentColor
 
-    // Scale padding depending on view width
+    /// Scale padding depending on view width
     @State
     private var paddingScale: CGFloat = 1.0
     @State

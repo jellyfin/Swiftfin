@@ -52,7 +52,6 @@ extension ItemSubtitlesView {
 
         // MARK: - Row Content
 
-        @ViewBuilder
         private var rowContent: some View {
             HStack {
                 Text(subtitle.displayTitle ?? L10n.unknown)

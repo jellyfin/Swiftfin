@@ -160,7 +160,6 @@ struct ItemSubtitlesView: View {
 
     // MARK: - Content Views
 
-    @ViewBuilder
     private var contentView: some View {
         List {
             ListTitleSection(

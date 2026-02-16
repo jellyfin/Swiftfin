@@ -93,7 +93,6 @@ struct ServerUserPermissionsView: View {
 
     // MARK: - Permissions List View
 
-    @ViewBuilder
     var permissionsListView: some View {
         List {
             StatusSection(policy: $tempPolicy)

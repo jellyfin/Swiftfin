@@ -38,7 +38,7 @@ extension ItemView.AboutView {
 
         // MARK: - On Select
 
-        // Switch case to allow other funcitonality if we need to expand this beyond episode > series
+        /// Switch case to allow other funcitonality if we need to expand this beyond episode > series
         private func onSelect() {
             switch viewModel.item.type {
             case .episode:

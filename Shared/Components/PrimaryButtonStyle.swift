@@ -48,7 +48,6 @@ struct PrimaryButtonStyle: PrimitiveButtonStyle {
         }
     }
 
-    @ViewBuilder
     private func contentView(configuration: Configuration) -> some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)

@@ -243,7 +243,6 @@ extension View {
     }
 
     /// Apply a corner radius as a ratio of a view's side
-    @ViewBuilder
     func cornerRadius(
         ratio: CGFloat,
         of side: KeyPath<CGSize, CGFloat>,
@@ -392,7 +391,7 @@ extension View {
         }
     }
 
-    func assign<P>(_ publisher: P, to binding: Binding<P.Output>) -> some View where P: Publisher, P.Failure == Never {
+    func assign<P: Publisher>(_ publisher: P, to binding: Binding<P.Output>) -> some View where P.Failure == Never {
         onReceive(publisher) { output in
             binding.wrappedValue = output
         }

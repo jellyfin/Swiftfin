@@ -103,7 +103,7 @@ struct SwiftfinApp: App {
 
 extension UINavigationController {
 
-    // Remove back button text
+    /// Remove back button text
     override open func viewWillLayoutSubviews() {
         navigationBar.topItem?.backButtonDisplayMode = .minimal
     }

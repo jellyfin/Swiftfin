@@ -14,7 +14,7 @@ extension DayOfWeek {
     var displayTitle: String {
         let newLineRemoved = rawValue.replacingOccurrences(of: "\n", with: "")
 
-        /// The enum is in English so validation must be done against a calendar in English
+        // The enum is in English so validation must be done against a calendar in English
         let englishCalendar = DateFormatter()
         englishCalendar.locale = Locale(identifier: "en_US_POSIX")
 

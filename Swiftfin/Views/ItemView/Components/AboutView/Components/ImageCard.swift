@@ -37,7 +37,7 @@ extension ItemView.AboutView {
             }
         }
 
-        // Switch case to allow other funcitonality if we need to expand this beyond episode > series
+        /// Switch case to allow other funcitonality if we need to expand this beyond episode > series
         private func action(namespace: Namespace.ID) {
             switch viewModel.item.type {
             case .episode:

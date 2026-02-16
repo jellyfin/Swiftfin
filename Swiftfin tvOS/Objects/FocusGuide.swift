@@ -119,20 +119,6 @@ struct FocusConstructor {
     let bottomTarget: String?
     let leftTarget: String?
     let rightTarget: String?
-
-    init(
-        tag: String,
-        topTarget: String?,
-        bottomTarget: String?,
-        leftTarget: String?,
-        rightTarget: String?
-    ) {
-        self.tag = tag
-        self.topTarget = topTarget
-        self.bottomTarget = bottomTarget
-        self.leftTarget = leftTarget
-        self.rightTarget = rightTarget
-    }
 }
 
 // TODO: generic focus values instead of strings

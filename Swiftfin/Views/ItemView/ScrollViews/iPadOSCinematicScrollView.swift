@@ -61,7 +61,6 @@ extension ItemView {
                 .animation(.linear(duration: 0.1), value: imageSource.url?.hashValue)
         }
 
-        @ViewBuilder
         private var headerView: some View {
             withHeaderImageItem { imageSource, bottomColor in
                 ImageView(imageSource)

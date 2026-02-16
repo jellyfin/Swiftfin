@@ -13,7 +13,9 @@ enum BoxSetDisplayOrder: String, CaseIterable, Identifiable {
     case sortName = "SortName"
     case premiereDate = "PremiereDate"
 
-    var id: String { rawValue }
+    var id: String {
+        rawValue
+    }
 
     var displayTitle: String {
         switch self {

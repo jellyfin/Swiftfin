@@ -19,7 +19,6 @@ struct ChannelLibraryView: View {
     @StateObject
     private var viewModel = ChannelLibraryViewModel()
 
-    @ViewBuilder
     private var contentView: some View {
         CollectionVGrid(
             uniqueElements: viewModel.elements,

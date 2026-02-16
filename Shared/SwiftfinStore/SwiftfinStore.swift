@@ -22,7 +22,9 @@ typealias UserState = SwiftfinStore.State.User
 // MARK: Namespaces
 
 extension Container {
-    var dataStore: Factory<DataStack> { self { SwiftfinStore.dataStack }.singleton }
+    var dataStore: Factory<DataStack> {
+        self { SwiftfinStore.dataStack }.singleton
+    }
 }
 
 enum SwiftfinStore {

@@ -13,24 +13,20 @@ protocol PlatformView: View {
     associatedtype iOSBody: View
     associatedtype tvOSBody: View
 
-    @ViewBuilder
     @MainActor
     var iOSView: Self.iOSBody { get }
-    @ViewBuilder
     @MainActor
     var tvOSView: Self.tvOSBody { get }
 }
 
 extension PlatformView {
     #if os(iOS)
-    @ViewBuilder
     @MainActor
     var body: some View {
         iOSView
     }
 
     #elseif os(tvOS)
-    @ViewBuilder
     @MainActor
     var body: some View {
         tvOSView

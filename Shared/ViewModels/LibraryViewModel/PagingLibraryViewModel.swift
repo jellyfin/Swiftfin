@@ -123,7 +123,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     // MARK: init
 
-    // static
+    /// static
     init(
         _ data: some Collection<Element>,
         parent: (any LibraryParent)? = nil
@@ -160,7 +160,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         )
     }
 
-    // paging
+    /// paging
     init(
         parent: (any LibraryParent)? = nil,
         filters: ItemFilterCollection? = nil,

@@ -28,7 +28,7 @@ final class UserLocalSecurityViewModel: ViewModel, Eventful {
 
     private var eventSubject: PassthroughSubject<Event, Never> = .init()
 
-    // Will throw and send event if needing to prompt for old auth.
+    /// Will throw and send event if needing to prompt for old auth.
     func checkForOldPolicy() throws {
 
         let oldPolicy = userSession.user.accessPolicy
@@ -46,7 +46,7 @@ final class UserLocalSecurityViewModel: ViewModel, Eventful {
         }
     }
 
-    // Will throw and send event if needing to prompt for new auth.
+    /// Will throw and send event if needing to prompt for new auth.
     func checkFor(newPolicy: UserAccessPolicy) throws {
         switch newPolicy {
         case .requireDeviceAuthentication:

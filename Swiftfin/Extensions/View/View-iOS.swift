@@ -48,7 +48,6 @@ extension View {
         }
     }
 
-    @ViewBuilder
     func navigationBarCloseButton(
         disabled: Bool = false,
         _ action: @escaping () -> Void
@@ -61,7 +60,6 @@ extension View {
         )
     }
 
-    @ViewBuilder
     func navigationBarMenuButton<Content: View>(
         isLoading: Bool = false,
         isHidden: Bool = false,
@@ -77,7 +75,6 @@ extension View {
         )
     }
 
-    @ViewBuilder
     func listRowCornerRadius(_ radius: CGFloat) -> some View {
         introspect(.listCell, on: .iOS(.v16), .iOS(.v17), .iOS(.v18)) { cell in
             cell.layer.cornerRadius = radius

@@ -36,7 +36,6 @@ struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element 
         }
     }
 
-    @ViewBuilder
     private var stack: some View {
         CollectionHStack(
             uniqueElements: data,

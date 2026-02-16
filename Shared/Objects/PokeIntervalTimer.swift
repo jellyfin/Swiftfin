@@ -22,7 +22,7 @@ class PokeIntervalTimer: ObservableObject, Publisher {
         self.defaultInterval = defaultInterval
     }
 
-    func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Never, S.Input == Void {
+    func receive<S: Subscriber>(subscriber: S) where S.Failure == Never, S.Input == Void {
         delaySubject.receive(subscriber: subscriber)
     }
 

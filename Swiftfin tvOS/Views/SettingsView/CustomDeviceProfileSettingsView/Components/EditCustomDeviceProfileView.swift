@@ -49,7 +49,6 @@ extension CustomDeviceProfileSettingsView {
             }
         }
 
-        @ViewBuilder
         private func codecSection(
             title: String,
             content: String,

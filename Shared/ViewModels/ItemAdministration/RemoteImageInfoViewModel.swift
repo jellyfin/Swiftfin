@@ -11,7 +11,7 @@ import JellyfinAPI
 
 final class RemoteImageInfoViewModel: PagingLibraryViewModel<RemoteImageInfo> {
 
-    // Image providers come from the paging call
+    /// Image providers come from the paging call
     @Published
     private(set) var providers: [String] = []
 

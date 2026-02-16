@@ -89,7 +89,6 @@ struct ServerUserParentalRatingView: View {
 
     // MARK: - Maximum Parental Ratings View
 
-    @ViewBuilder
     private var maxParentalRatingsView: some View {
         Section {
             Picker(L10n.parentalRating, selection: $tempPolicy.maxParentalRating) {
@@ -117,7 +116,6 @@ struct ServerUserParentalRatingView: View {
 
     // MARK: - Block Unrated Items View
 
-    @ViewBuilder
     private var blockUnratedItemsView: some View {
         Section {
             ForEach(UnratedItem.allCases.sorted(using: \.displayTitle), id: \.self) { item in

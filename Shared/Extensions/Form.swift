@@ -86,7 +86,6 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
         }
     }
 
-    @ViewBuilder
     private var descriptionView: some View {
         ZStack {
             image
@@ -98,7 +97,6 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
         .animation(.linear(duration: 0.2), value: focusedLearnMore == nil)
     }
 
-    @ViewBuilder
     private func learnMoreModal(_ content: AnyView) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             content

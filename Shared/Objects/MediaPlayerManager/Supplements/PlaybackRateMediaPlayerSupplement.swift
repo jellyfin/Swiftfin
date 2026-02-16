@@ -27,7 +27,6 @@ struct PlaybackRateMediaPlayerSupplement: MediaPlayerSupplement {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
-        @ViewBuilder
         private var compactView: some View {
             VStack {
 

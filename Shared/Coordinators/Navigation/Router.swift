@@ -79,7 +79,7 @@ struct Router: DynamicProperty {
         }
     }
 
-    // `.dismiss` causes changes on disappear
+    /// `.dismiss` causes changes on disappear
     @Environment(\.self)
     private var environment
 

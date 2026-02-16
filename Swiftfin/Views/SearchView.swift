@@ -37,7 +37,6 @@ struct SearchView: View {
     @StateObject
     private var viewModel = SearchViewModel()
 
-    @ViewBuilder
     private var suggestionsView: some View {
         VStack(spacing: 20) {
             ForEach(viewModel.suggestions) { item in
@@ -48,7 +47,6 @@ struct SearchView: View {
         }
     }
 
-    @ViewBuilder
     private var resultsView: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {
@@ -156,7 +154,6 @@ struct SearchView: View {
         }
     }
 
-    @ViewBuilder
     private func itemsSection(
         title: String,
         type: BaseItemKind,

@@ -107,7 +107,7 @@ final class RefreshMetadataViewModel: ViewModel {
         let interval: Double = 0.05
         let steps = Int(totalDuration / interval)
 
-        /// Update progress every 0.05 seconds. Ticks up "1%" at a time.
+        // Update progress every 0.05 seconds. Ticks up "1%" at a time.
         for i in 1 ... steps {
             try await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
 
