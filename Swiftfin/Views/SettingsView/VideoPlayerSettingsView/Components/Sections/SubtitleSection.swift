@@ -27,12 +27,11 @@ extension VideoPlayerSettingsView {
                     router.route(to: .fontPicker(selection: $subtitleFontName))
                 }
 
-                BasicStepper(
-                    L10n.subtitleSize,
-                    value: $subtitleSize,
-                    range: 1 ... 20,
-                    step: 1
-                )
+                Stepper(value: $subtitleSize, in: 1 ... 20, step: 1) {
+                    LabeledContent(L10n.subtitleSize) {
+                        Text(subtitleSize.description)
+                    }
+                }
 
                 ColorPicker(selection: $subtitleColor, supportsOpacity: false) {
                     Text(L10n.subtitleColor)

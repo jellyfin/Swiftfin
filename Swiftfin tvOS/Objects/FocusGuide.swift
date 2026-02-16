@@ -57,7 +57,7 @@ struct FocusGuideModifier: ViewModifier {
                 .focused($focusDirection, equals: .bottom)
         }
         .onChange(of: focusDirection) { _, focusDirection in
-            guard let focusDirection = focusDirection else { return }
+            guard let focusDirection else { return }
             switch focusDirection {
             case .top:
                 focusGuide.transition(to: focusConstructor.topTarget!)
@@ -119,20 +119,6 @@ struct FocusConstructor {
     let bottomTarget: String?
     let leftTarget: String?
     let rightTarget: String?
-
-    init(
-        tag: String,
-        topTarget: String?,
-        bottomTarget: String?,
-        leftTarget: String?,
-        rightTarget: String?
-    ) {
-        self.tag = tag
-        self.topTarget = topTarget
-        self.bottomTarget = bottomTarget
-        self.leftTarget = leftTarget
-        self.rightTarget = rightTarget
-    }
 }
 
 // TODO: generic focus values instead of strings

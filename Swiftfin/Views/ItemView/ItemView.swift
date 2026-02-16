@@ -67,9 +67,9 @@ struct ItemView: View {
     }
 
     // TODO: break out into pad vs phone views based on item type
-    private func scrollContainerView<Content: View>(
+    private func scrollContainerView(
         viewModel: ItemViewModel,
-        content: @escaping () -> Content
+        content: @escaping () -> some View
     ) -> any ScrollContainerView {
 
         if UIDevice.isPad {

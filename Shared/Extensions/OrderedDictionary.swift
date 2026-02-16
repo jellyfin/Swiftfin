@@ -31,7 +31,7 @@ extension OrderedDictionary {
         })
     }
 
-    func sortedKeys<KeyValue: Comparable>(using keyValue: (Key) -> KeyValue) -> Self {
+    func sortedKeys(using keyValue: (Key) -> some Comparable) -> Self {
         sortedKeys { lhs, rhs in
             keyValue(lhs) < keyValue(rhs)
         }

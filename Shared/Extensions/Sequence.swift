@@ -18,7 +18,7 @@ extension Sequence {
         }
     }
 
-    func compacted<Value>(using keyPath: KeyPath<Element, Value?>) -> [Element] {
+    func compacted(using keyPath: KeyPath<Element, (some Any)?>) -> [Element] {
         filter { $0[keyPath: keyPath] != nil }
     }
 
@@ -36,7 +36,7 @@ extension Sequence {
 
     /// Returns the elements of the sequence, sorted by comparing values
     /// at the given `KeyPath` of `Element`.
-    func sorted<Key: Comparable>(using keyPath: KeyPath<Element, Key>) -> [Element] {
+    func sorted(using keyPath: KeyPath<Element, some Comparable>) -> [Element] {
         sorted(by: { $0[keyPath: keyPath] < $1[keyPath: keyPath] })
     }
 
@@ -46,7 +46,7 @@ extension Sequence {
     /// at the given `KeyPath` of `Element`.
     ///
     /// `nil` values are considered the maximum.
-    func sorted<Key: Comparable>(using keyPath: KeyPath<Element, Key?>) -> [Element] {
+    func sorted(using keyPath: KeyPath<Element, (some Comparable)?>) -> [Element] {
         sorted {
             let x = $0[keyPath: keyPath]
             let y = $1[keyPath: keyPath]

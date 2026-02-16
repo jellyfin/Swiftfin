@@ -111,7 +111,7 @@ final class ItemImagesViewModel: ViewModel, Stateful, Eventful {
             task?.cancel()
 
             task = Task { [weak self] in
-                guard let self = self else { return }
+                guard let self else { return }
                 do {
                     await MainActor.run {
                         _ = self.backgroundStates.insert(.updating)
@@ -141,7 +141,7 @@ final class ItemImagesViewModel: ViewModel, Stateful, Eventful {
             task?.cancel()
 
             task = Task { [weak self] in
-                guard let self = self else { return }
+                guard let self else { return }
                 do {
                     await MainActor.run {
                         _ = self.backgroundStates.insert(.updating)
@@ -171,7 +171,7 @@ final class ItemImagesViewModel: ViewModel, Stateful, Eventful {
             task?.cancel()
 
             task = Task { [weak self] in
-                guard let self = self else { return }
+                guard let self else { return }
                 do {
                     await MainActor.run {
                         _ = self.backgroundStates.insert(.updating)
@@ -201,7 +201,7 @@ final class ItemImagesViewModel: ViewModel, Stateful, Eventful {
             task?.cancel()
 
             task = Task { [weak self] in
-                guard let self = self else { return }
+                guard let self else { return }
                 do {
                     await MainActor.run {
                         _ = self.backgroundStates.insert(.updating)

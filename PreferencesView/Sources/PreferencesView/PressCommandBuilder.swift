@@ -12,7 +12,7 @@ import Foundation
 public enum PressCommandsBuilder {
 
     public static func buildBlock(_ components: [PressCommandAction]...) -> [PressCommandAction] {
-        components.flatMap { $0 }
+        components.flatMap(\.self)
     }
 
     public static func buildExpression(_ expression: PressCommandAction) -> [PressCommandAction] {
@@ -32,6 +32,6 @@ public enum PressCommandsBuilder {
     }
 
     public static func buildArray(_ components: [[PressCommandAction]]) -> [PressCommandAction] {
-        components.flatMap { $0 }
+        components.flatMap(\.self)
     }
 }

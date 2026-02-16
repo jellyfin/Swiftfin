@@ -160,7 +160,7 @@ struct SettingsView: View {
                 router.route(to: .log)
             }
 
-            #if DEBUG && os(iOS)
+            #if DEBUG
             ChevronButton("Debug") {
                 router.route(to: .debugSettings)
             }

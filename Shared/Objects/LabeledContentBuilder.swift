@@ -17,8 +17,8 @@ struct LabeledContentBuilder {
         .init(TupleView((repeat each content)))
     }
 
-    static func buildBlock<A: RandomAccessCollection, B: Hashable, C: View, D: View>(
-        _ content: ForEach<A, B, LabeledContent<C, D>?>
+    static func buildBlock(
+        _ content: ForEach<some RandomAccessCollection, some Hashable, LabeledContent<some View, some View>?>
     ) -> AnyView {
         .init(content)
     }

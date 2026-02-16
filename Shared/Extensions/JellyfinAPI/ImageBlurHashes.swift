@@ -14,31 +14,31 @@ extension BaseItemDto.ImageBlurHashes {
     subscript(imageType: ImageType) -> [String: String]? {
         switch imageType {
         case .primary:
-            return primary
+            primary
         case .art:
-            return art
+            art
         case .backdrop:
-            return backdrop
+            backdrop
         case .banner:
-            return banner
+            banner
         case .logo:
-            return logo
+            logo
         case .thumb:
-            return thumb
+            thumb
         case .disc:
-            return disc
+            disc
         case .box:
-            return box
+            box
         case .screenshot:
-            return screenshot
+            screenshot
         case .menu:
-            return menu
+            menu
         case .chapter:
-            return chapter
+            chapter
         case .boxRear:
-            return boxRear
+            boxRear
         case .profile:
-            return profile
+            profile
         }
     }
 }

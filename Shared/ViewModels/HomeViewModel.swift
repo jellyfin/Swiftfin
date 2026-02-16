@@ -217,15 +217,13 @@ final class HomeViewModel: ViewModel, Stateful {
     }
 
     private func setIsPlayed(_ isPlayed: Bool, for item: BaseItemDto) async throws {
-        let request: Request<UserItemDataDto>
-
-        if isPlayed {
-            request = Paths.markPlayedItem(
+        let request: Request<UserItemDataDto> = if isPlayed {
+            Paths.markPlayedItem(
                 itemID: item.id!,
                 userID: userSession.user.id
             )
         } else {
-            request = Paths.markUnplayedItem(
+            Paths.markUnplayedItem(
                 itemID: item.id!,
                 userID: userSession.user.id
             )

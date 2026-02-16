@@ -14,9 +14,9 @@ enum MultiTapGestureAction: String, GestureAction {
     var displayTitle: String {
         switch self {
         case .none:
-            return L10n.none
+            L10n.none
         case .jump:
-            return L10n.jump
+            L10n.jump
         }
     }
 }

@@ -55,19 +55,19 @@ extension Logger.Level {
     var emoji: String {
         switch self {
         case .trace:
-            return "🟣"
+            "🟣"
         case .debug:
-            return "🔵"
+            "🔵"
         case .info:
-            return "🟢"
+            "🟢"
         case .notice:
-            return "🟠"
+            "🟠"
         case .warning:
-            return "🟡"
+            "🟡"
         case .error:
-            return "🔴"
+            "🔴"
         case .critical:
-            return "💥"
+            "💥"
         }
     }
 }
