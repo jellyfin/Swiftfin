@@ -35,7 +35,6 @@ struct TruncatedText: View {
     private var seeMoreType: SeeMoreType
     private let text: String
 
-    @ViewBuilder
     private var textView: some View {
         ZStack(alignment: .bottomTrailing) {
             Text(text)

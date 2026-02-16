@@ -16,7 +16,6 @@ struct LetterPickerBar: View {
 
     // MARK: - Body
 
-    @ViewBuilder
     var body: some View {
         VStack(spacing: 0) {
             Spacer()

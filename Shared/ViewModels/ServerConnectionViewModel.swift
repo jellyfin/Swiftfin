@@ -35,7 +35,7 @@ final class ServerConnectionViewModel: ViewModel {
         do {
             try dataStack.perform { transaction in
 
-                /// Delete stored data for all users
+                // Delete stored data for all users
                 for user in storedServer.users {
                     let storedDataClause = AnyStoredData.fetchClause(ownerID: user.id)
                     let storedData = try transaction.fetchAll(storedDataClause)

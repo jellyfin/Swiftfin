@@ -21,7 +21,6 @@ struct ServerLogsView: View {
     @StateObject
     private var viewModel = ServerLogsViewModel()
 
-    @ViewBuilder
     private var contentView: some View {
         List {
             ListTitleSection(

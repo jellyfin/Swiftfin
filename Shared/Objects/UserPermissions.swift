@@ -47,7 +47,7 @@ struct UserPermissions {
         func canDelete(item: BaseItemDto) -> Bool {
             switch item.type {
             case .playlist:
-                /// Playlists can only be edited by owners who can also delete
+                // Playlists can only be edited by owners who can also delete
                 return item.canDelete == true
             case .boxSet:
                 return canManageCollections
@@ -69,7 +69,7 @@ struct UserPermissions {
         func canEditMetadata(item: BaseItemDto) -> Bool {
             switch item.type {
             case .playlist:
-                /// Playlists can only be edited by owners who can also delete
+                // Playlists can only be edited by owners who can also delete
                 return item.canDelete == true
             case .boxSet:
                 return (canManageCollections || canEditMetadata)

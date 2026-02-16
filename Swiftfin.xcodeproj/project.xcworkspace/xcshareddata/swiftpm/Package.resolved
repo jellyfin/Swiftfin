@@ -1,5 +1,5 @@
 {
-  "originHash" : "38a493503cb22432e1bf1b0b812569bb2bdd51f821207a74b6b78ff16a049011",
+  "originHash" : "9a5744ec25a8115942cebcd80a837a7cb5b36da050e9ca80e1681f8bcd1a17fc",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -69,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nathantannar4/Engine",
       "state" : {
-        "revision" : "8062b68c43373af4abf1695bb8aba86cc013ec9d",
-        "version" : "2.3.2"
+        "revision" : "bf88d1f0518200f4ee03af069b01edd3ba9f977d",
+        "version" : "2.5.0"
       }
     },
     {

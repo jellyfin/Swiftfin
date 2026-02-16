@@ -70,7 +70,6 @@ extension VideoPlayer.PlaybackControls {
             return clamp(videoPlayerProxy.videoSize.value.aspectRatio, min: 0.25, max: 4)
         }
 
-        @ViewBuilder
         private var liveIndicator: some View {
             Text("Live")
                 .font(.subheadline)

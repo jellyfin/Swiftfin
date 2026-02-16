@@ -39,7 +39,6 @@ extension MediaInfoSupplement {
 
         let item: BaseItemDto
 
-        @ViewBuilder
         private var accessoryView: some View {
             DotHStack {
                 if item.type == .episode, let seasonEpisodeLocator = item.seasonEpisodeLabel {
@@ -64,7 +63,6 @@ extension MediaInfoSupplement {
             containerState.select(supplement: nil)
         }
 
-        @ViewBuilder
         // TODO: Localize
         private var resetPlaybackButton: some View {
             AlternateLayoutView {
@@ -105,7 +103,6 @@ extension MediaInfoSupplement {
             .edgePadding(.bottom)
         }
 
-        @ViewBuilder
         private var iOSCompactView: some View {
             VStack(alignment: .leading) {
                 Group {
@@ -135,7 +132,6 @@ extension MediaInfoSupplement {
             .frame(maxWidth: .infinity, alignment: .topLeading)
         }
 
-        @ViewBuilder
         private var iOSRegularView: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
                 // TODO: determine what to do with non-portrait (channel, home video) images

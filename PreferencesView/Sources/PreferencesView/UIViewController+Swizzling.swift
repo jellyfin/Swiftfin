@@ -13,7 +13,7 @@ extension UIViewController {
 
     // MARK: Swizzle
 
-    // only swizzle once
+    /// only swizzle once
     static var swizzlePreferences = {
         Swizzle(UIViewController.self) {
             #if os(iOS)

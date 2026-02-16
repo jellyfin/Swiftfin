@@ -55,7 +55,7 @@ struct ServerActivityFilterView: View {
                 .labelsHidden()
             }
 
-            /// Reset button to remove the filter
+            // Reset button to remove the filter
             if viewModel.minDate != nil {
                 Section {
                     Button(L10n.reset, role: .destructive) {

@@ -70,7 +70,6 @@ struct ItemView: View {
         CinematicScrollView(viewModel: viewModel, content: content)
     }
 
-    @ViewBuilder
     private var innerBody: some View {
         scrollContainerView(viewModel: viewModel) {
             scrollContentView

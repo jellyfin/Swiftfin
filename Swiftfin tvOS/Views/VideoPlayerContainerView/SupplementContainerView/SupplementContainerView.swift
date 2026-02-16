@@ -36,7 +36,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             containerState.isScrubbing
         }
 
-        @ViewBuilder
         private func supplementContainer(for supplement: some MediaPlayerSupplement) -> some View {
             supplement.videoPlayerBody
                 .background {

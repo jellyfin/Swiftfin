@@ -24,7 +24,7 @@ struct UserProfileImage<Placeholder: View>: View {
     private let placeholder: Placeholder
 
     private var overlayOpacity: Double {
-        /// Dim the Profile Image if Editing & Unselected or if Disabled
+        // Dim the Profile Image if Editing & Unselected or if Disabled
         if (isEditing && !isSelected) || !isEnabled {
             return 0.5
         } else {

@@ -27,7 +27,6 @@ struct PosterButton<Item: Poster>: View {
     private let label: any View
     private let action: () -> Void
 
-    @ViewBuilder
     private func poster(overlay: some View) -> some View {
         PosterImage(item: item, type: type)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -129,7 +128,7 @@ extension PosterButton {
 
     // TODO: clean up
 
-    // Content specific for BaseItemDto episode items
+    /// Content specific for BaseItemDto episode items
     struct EpisodeContentSubtitleContent: View {
 
         let item: Item

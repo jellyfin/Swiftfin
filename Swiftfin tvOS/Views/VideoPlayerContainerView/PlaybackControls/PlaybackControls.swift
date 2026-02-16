@@ -24,8 +24,8 @@ extension VideoPlayer {
         @Default(.VideoPlayer.jumpForwardInterval)
         private var jumpForwardInterval
 
-        // since this view ignores safe area, it must
-        // get safe area insets from parent views
+        /// since this view ignores safe area, it must
+        /// get safe area insets from parent views
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets
 
@@ -63,6 +63,9 @@ extension VideoPlayer {
         @State
         private var isPresentingCloseConfirmation: Bool = false
 
+        @State
+        private var pendingJumpWork: DispatchWorkItem?
+
         @FocusState
         private var isPlaybackProgressFocused: Bool
         @FocusState
@@ -88,7 +91,6 @@ extension VideoPlayer {
             containerState.isScrubbing
         }
 
-        @ViewBuilder
         private var supplementTabButtons: some View {
             HStack(spacing: 20) {
                 if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
@@ -121,7 +123,6 @@ extension VideoPlayer {
             .focusSection()
         }
 
-        @ViewBuilder
         private var bottomContent: some View {
             VStack(spacing: 0) {
                 if !isPresentingSupplement {
@@ -338,7 +339,6 @@ extension VideoPlayer {
             if performJump, let direction = scrubbingDirection, !hasEnteredScrubMode {
                 if direction == .forward {
                     containerState.jumpProgressObserver.jumpForward()
-                    manager.proxy?.jumpForward(jumpForwardInterval.rawValue)
                     toaster.present(
                         Text(
                             jumpForwardInterval.rawValue * containerState.jumpProgressObserver.jumps,
@@ -346,9 +346,9 @@ extension VideoPlayer {
                         ),
                         systemName: "goforward"
                     )
+                    scheduleJump(direction: .forward)
                 } else {
                     containerState.jumpProgressObserver.jumpBackward()
-                    manager.proxy?.jumpBackward(jumpBackwardInterval.rawValue)
                     toaster.present(
                         Text(
                             jumpBackwardInterval.rawValue * containerState.jumpProgressObserver.jumps,
@@ -356,6 +356,7 @@ extension VideoPlayer {
                         ),
                         systemName: "gobackward"
                     )
+                    scheduleJump(direction: .backward)
                 }
             } else if hasEnteredScrubMode {
                 manager.proxy?.setSeconds(containerState.scrubbedSeconds.value)
@@ -366,6 +367,27 @@ extension VideoPlayer {
             scrubbingSpeed = 0.0
             scrubbingStartTime = nil
             hasEnteredScrubMode = false
+        }
+
+        private func scheduleJump(direction: ScrubbingDirection) {
+            pendingJumpWork?.cancel()
+
+            let jumpCount = containerState.jumpProgressObserver.jumps
+            let interval = direction == .forward
+                ? jumpForwardInterval.rawValue
+                : jumpBackwardInterval.rawValue
+
+            let work = DispatchWorkItem { [weak manager] in
+                let totalDuration = interval * jumpCount
+                if direction == .forward {
+                    manager?.proxy?.jumpForward(totalDuration)
+                } else {
+                    manager?.proxy?.jumpBackward(totalDuration)
+                }
+            }
+
+            pendingJumpWork = work
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: work)
         }
 
         // MARK: - Focus Zone

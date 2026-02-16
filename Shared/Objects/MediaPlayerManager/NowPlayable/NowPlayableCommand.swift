@@ -36,7 +36,7 @@ enum NowPlayableCommand: CaseIterable {
     case like
     case dislike
 
-    // Bookmark
+    /// Bookmark
     case bookmark
 
     // Languages

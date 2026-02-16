@@ -100,11 +100,15 @@ extension Defaults.Keys {
 
     /// The accent color default for user contexts.
     /// Only use for `set`, use `accentColor` for `get`.
-    static var userAccentColor: Key<Color> { UserKey("userAccentColor", default: .jellyfinPurple) }
+    static var userAccentColor: Key<Color> {
+        UserKey("userAccentColor", default: .jellyfinPurple)
+    }
 
     /// The appearance default for user contexts.
     /// /// Only use for `set`, use `appearance` for `get`.
-    static var userAppearance: Key<AppAppearance> { UserKey("userAppearance", default: .system) }
+    static var userAppearance: Key<AppAppearance> {
+        UserKey("userAppearance", default: .system)
+    }
 
     enum Customization {
 
@@ -212,7 +216,7 @@ extension Defaults.Keys {
 
             static let chapterSlider: Key<Bool> = UserKey("chapterSlider", default: true)
 
-            // Timestamp
+            /// Timestamp
             static let trailingTimestampType: Key<TrailingTimestampType> = UserKey("trailingTimestamp", default: .timeLeft)
         }
 
@@ -237,7 +241,7 @@ extension Defaults.Keys {
         }
     }
 
-    // Experimental settings
+    /// Experimental settings
     enum Experimental {
 
         static let downloads: Key<Bool> = UserKey("experimentalDownloads", default: false)

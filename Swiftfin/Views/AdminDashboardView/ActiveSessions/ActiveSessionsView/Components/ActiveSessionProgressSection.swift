@@ -38,7 +38,6 @@ extension ActiveSessionsView {
             self.showTranscodeReason = showTranscodeReason
         }
 
-        @ViewBuilder
         private var playbackInformation: some View {
             HStack(alignment: .top) {
                 FlowLayout(

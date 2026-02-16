@@ -37,14 +37,14 @@ struct HourMinutePicker: UIViewRepresentable {
     }
 
     class Coordinator: TVOSPickerViewDelegate {
-        // callback to set the value to defaults
+        /// callback to set the value to defaults
         var callback: ((TimeInterval) -> Void)?
 
         // selected values
         private var selectedHour: TimeInterval = 0
         private var selectedMinute: TimeInterval = 0
 
-        // previousInterval helps set the default values of the picker
+        /// previousInterval helps set the default values of the picker
         private let previousInterval: TimeInterval
 
         init(previousInterval: TimeInterval) {

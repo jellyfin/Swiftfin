@@ -10,9 +10,9 @@ import Defaults
 import Foundation
 import JellyfinAPI
 
-// Since we don't view care to view seasons directly, this doesn't subclass from `ItemViewModel`.
-// If we ever care for viewing seasons directly, subclass from that and have the library view model
-// as a property.
+/// Since we don't view care to view seasons directly, this doesn't subclass from `ItemViewModel`.
+/// If we ever care for viewing seasons directly, subclass from that and have the library view model
+/// as a property.
 final class SeasonItemViewModel: PagingLibraryViewModel<BaseItemDto>, Identifiable {
 
     let season: BaseItemDto

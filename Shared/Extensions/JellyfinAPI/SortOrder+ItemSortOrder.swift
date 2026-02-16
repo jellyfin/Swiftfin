@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-// Necessary to handle conflict with Foundation.SortOrder
+/// Necessary to handle conflict with Foundation.SortOrder
 typealias ItemSortOrder = JellyfinAPI.SortOrder
 
 extension ItemSortOrder: Displayable {

@@ -21,7 +21,9 @@ enum SeriesDisplayOrder: String, CaseIterable, Identifiable {
     case regional
     case alternateDVD = "altdvd"
 
-    var id: String { rawValue }
+    var id: String {
+        rawValue
+    }
 
     var displayTitle: String {
         switch self {

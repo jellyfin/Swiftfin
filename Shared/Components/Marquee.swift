@@ -15,7 +15,7 @@ private enum MarqueeState {
     case animating
 }
 
-struct Marquee<Content>: View where Content: View {
+struct Marquee<Content: View>: View {
 
     @Environment(\.isFocused)
     private var isFocused: Bool

@@ -53,7 +53,6 @@ struct AddTaskTriggerView: View {
 
     // MARK: - View for TaskTriggerInfoType.daily
 
-    @ViewBuilder
     private var dailyView: some View {
         TimeRow(taskTriggerInfo: $taskTriggerInfo)
     }
@@ -76,7 +75,6 @@ struct AddTaskTriggerView: View {
 
     // MARK: - View for TaskTriggerInfoType.interval
 
-    @ViewBuilder
     private var intervalView: some View {
         IntervalRow(taskTriggerInfo: $taskTriggerInfo)
     }

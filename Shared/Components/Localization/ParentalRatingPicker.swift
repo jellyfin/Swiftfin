@@ -27,7 +27,6 @@ struct ParentalRatingPicker: View {
         viewModel.value.first(property: \.name, equalTo: selection.wrappedValue)
     }
 
-    @ViewBuilder
     private var picker: some View {
         Picker(
             title,

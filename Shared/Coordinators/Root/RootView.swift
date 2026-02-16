@@ -9,7 +9,7 @@
 import SwiftUI
 import Transmission
 
-// Status bar presentation needs to happen at this level
+/// Status bar presentation needs to happen at this level
 struct RootView: View {
 
     @State
