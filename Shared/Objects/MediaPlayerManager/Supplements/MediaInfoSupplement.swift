@@ -40,19 +40,26 @@ extension MediaInfoSupplement {
         let item: BaseItemDto
 
         private var accessoryView: some View {
-            DotHStack {
-                if item.type == .episode, let seasonEpisodeLocator = item.seasonEpisodeLabel {
-                    Text(seasonEpisodeLocator)
-                } else if let premiereYear = item.premiereDateYear {
-                    Text(premiereYear)
-                }
+            VStack(alignment: .leading) {
+                DotHStack {
+                    if item.type == .episode {
+                        if let premiereDateLabel = item.premiereDateLabel {
+                            Text(premiereDateLabel)
+                        }
+                        if let seasonEpisodeLocator = item.seasonEpisodeLabel {
+                            Text(seasonEpisodeLocator)
+                        }
 
-                if let runtime = item.runTimeLabel {
-                    Text(runtime)
-                }
+                    } else if let premiereYear = item.premiereDateYear {
+                        Text(premiereYear)
+                    }
 
-                if let officialRating = item.officialRating {
-                    Text(officialRating)
+                    if let runtime = item.runTimeLabel {
+                        Text(runtime)
+                    }
+                    if let officialRating = item.officialRating {
+                        Text(officialRating)
+                    }
                 }
             }
         }
