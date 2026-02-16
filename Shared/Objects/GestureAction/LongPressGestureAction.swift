@@ -19,7 +19,7 @@ enum LongPressGestureAction: String, GestureAction {
         case .gestureLock:
             L10n.gestureLock
         case .speed:
-            L10n.speed
+            L10n.longPressOptionSpeed
         }
     }
 }

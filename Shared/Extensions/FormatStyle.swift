@@ -104,6 +104,23 @@ struct PlaybackRateStyle: FormatStyle {
     }
 }
 
+struct DoublePlaybackRateFormatStyle: FormatStyle {
+
+    func format(_ value: Double) -> String {
+        FloatingPointFormatStyle<Double>()
+            .precision(.significantDigits(1 ... 3))
+            .format(value)
+            .appending("\u{00D7}")
+    }
+}
+
+extension FormatStyle where Self == DoublePlaybackRateFormatStyle {
+
+    static var doublePlaybackRate: DoublePlaybackRateFormatStyle {
+        DoublePlaybackRateFormatStyle()
+    }
+}
+
 /// Represent intervals as 24 hour, 60 minute, 60 second days
 struct DayIntervalParseableFormatStyle: ParseableFormatStyle {
 

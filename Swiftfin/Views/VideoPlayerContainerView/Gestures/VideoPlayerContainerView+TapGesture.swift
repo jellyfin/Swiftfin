@@ -228,24 +228,19 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
 
             switch state {
             case .began:
-                // Save original playback rate
                 containerState.originalPlaybackRate = containerState.manager?.rate
 
-                // Get configured speed multiplier
                 let multiplier = Defaults[.VideoPlayer.Gesture.longPressSpeedMultiplier]
 
-                // Set speed playback
                 containerState.isSpeedPlaybackActive = true
                 containerState.manager?.setRate(rate: Float(multiplier.rawValue))
 
-                // Show toast notification
                 containerState.toastProxy.present(
                     Text(multiplier.displayTitle),
                     systemName: "forward.fill"
                 )
 
             case .ended, .cancelled:
-                // Restore original playback rate
                 if containerState.isSpeedPlaybackActive {
                     let originalRate = containerState.originalPlaybackRate ?? 1.0
                     containerState.manager?.setRate(rate: originalRate)
@@ -253,8 +248,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                     containerState.isSpeedPlaybackActive = false
                     containerState.originalPlaybackRate = nil
 
-                    // Show toast notification for restored speed
-                    let rateText = originalRate == 1.0 ? "1x" : String(format: "%.2gx", originalRate)
+                    let rateText = originalRate.formatted(.playbackRate)
                     containerState.toastProxy.present(
                         Text(rateText),
                         systemName: "forward.fill"

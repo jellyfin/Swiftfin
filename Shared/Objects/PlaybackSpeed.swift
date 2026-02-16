@@ -21,23 +21,6 @@ enum PlaybackSpeed: Double, CaseIterable, Defaults.Serializable, Displayable {
     case two = 2.0
 
     var displayTitle: String {
-        switch self {
-        case .quarter:
-            "0.25x"
-        case .half:
-            "0.5x"
-        case .threeQuarter:
-            "0.75x"
-        case .one:
-            "1x"
-        case .oneQuarter:
-            "1.25x"
-        case .oneHalf:
-            "1.5x"
-        case .oneThreeQuarter:
-            "1.75x"
-        case .two:
-            "2x"
-        }
+        DoublePlaybackRateFormatStyle().format(rawValue)
     }
 }
