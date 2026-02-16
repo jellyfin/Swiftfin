@@ -26,7 +26,7 @@ enum PlaybackSpeed: CaseIterable, Displayable, Hashable, RawRepresentable, Stora
     init(rawValue: Float) {
         switch rawValue {
         case 0.25:
-        self = .quarter
+            self = .quarter
         case 0.5:
             self = .half
         case 0.75:
