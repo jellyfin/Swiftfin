@@ -107,11 +107,6 @@ class VideoPlayerContainerState: ObservableObject {
     }
 
     @Published
-    var isSpeedPlaybackActive: Bool = false
-
-    var originalPlaybackRate: Float?
-
-    @Published
     var presentationControllerShouldDismiss: Bool = true
 
     @Published
@@ -126,6 +121,8 @@ class VideoPlayerContainerState: ObservableObject {
 
     @Published
     var centerOffset: CGFloat = 0.0
+
+    var originalPlaybackRate: Float?
 
     let jumpProgressObserver: JumpProgressObserver = .init()
     let scrubbedSeconds: PublishedBox<Duration> = .init(initialValue: .zero)

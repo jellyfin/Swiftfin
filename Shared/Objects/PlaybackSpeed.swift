@@ -9,7 +9,7 @@
 import Defaults
 import Foundation
 
-enum PlaybackSpeed: CaseIterable, Displayable, Hashable, RawRepresentable, Defaults.Serializable {
+enum PlaybackSpeed: CaseIterable, Displayable, Hashable, RawRepresentable, Storable {
 
     typealias RawValue = Float
 
@@ -26,7 +26,7 @@ enum PlaybackSpeed: CaseIterable, Displayable, Hashable, RawRepresentable, Defau
     init(rawValue: Float) {
         switch rawValue {
         case 0.25:
-            self = .quarter
+        self = .quarter
         case 0.5:
             self = .half
         case 0.75:

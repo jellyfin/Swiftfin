@@ -95,7 +95,7 @@ struct PlaybackSpeedPicker: View {
             .backport
             .onChange(of: selection.wrappedValue) { oldValue, newValue in
                 if case let .custom(value) = newValue {
-                    if value == 0.0 {
+                    if value == .zero {
                         customSpeed = oldValue.rawValue
                         isPresentingCustomSpeed = true
                     } else {
