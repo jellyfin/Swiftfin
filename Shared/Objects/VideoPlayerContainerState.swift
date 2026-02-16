@@ -22,6 +22,7 @@ class VideoPlayerContainerState: ObservableObject {
     @Published
     var isGestureLocked: Bool = false {
         didSet {
+            guard isGestureLocked != oldValue else { return }
             if isGestureLocked {
                 isPresentingOverlay = false
             }
@@ -33,35 +34,29 @@ class VideoPlayerContainerState: ObservableObject {
     var isPresentingPlaybackControls: Bool = false
 
     // TODO: replace with graph dependency package
-    func setPlaybackControlsVisibility() {
 
-        guard isPresentingOverlay else {
-            isPresentingPlaybackControls = false
-            return
-        }
-
-        if isPresentingOverlay && !isPresentingSupplement {
-            isPresentingPlaybackControls = true
-            return
-        }
-
-        if isCompact {
-            if isPresentingSupplement {
-                if !isPresentingPlaybackControls {
-                    isPresentingPlaybackControls = true
-                }
-            } else {
-                isPresentingPlaybackControls = false
-            }
+    private func updatePlaybackControlsVisibility() {
+        let newValue: Bool
+        if !isPresentingOverlay {
+            newValue = false
+        } else if !isPresentingSupplement {
+            newValue = true
+        } else if isCompact {
+            newValue = true
         } else {
-            isPresentingPlaybackControls = false
+            newValue = false
+        }
+
+        if isPresentingPlaybackControls != newValue {
+            isPresentingPlaybackControls = newValue
         }
     }
 
     @Published
     var isCompact: Bool = false {
         didSet {
-            setPlaybackControlsVisibility()
+            guard isCompact != oldValue else { return }
+            updatePlaybackControlsVisibility()
         }
     }
 
@@ -72,7 +67,8 @@ class VideoPlayerContainerState: ObservableObject {
     @Published
     var isPresentingOverlay: Bool = false {
         didSet {
-            setPlaybackControlsVisibility()
+            guard isPresentingOverlay != oldValue else { return }
+            updatePlaybackControlsVisibility()
 
             if isPresentingOverlay, !isPresentingSupplement {
                 timer.poke()
@@ -83,7 +79,8 @@ class VideoPlayerContainerState: ObservableObject {
     @Published
     private(set) var isPresentingSupplement: Bool = false {
         didSet {
-            setPlaybackControlsVisibility()
+            guard isPresentingSupplement != oldValue else { return }
+            updatePlaybackControlsVisibility()
             presentationControllerShouldDismiss = !isPresentingSupplement
 
             if isPresentingSupplement {
@@ -98,6 +95,7 @@ class VideoPlayerContainerState: ObservableObject {
     @Published
     var isScrubbing: Bool = false {
         didSet {
+            guard isScrubbing != oldValue else { return }
             if isScrubbing {
                 timer.stop()
             } else {
