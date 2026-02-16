@@ -42,7 +42,7 @@ struct PlaybackSpeedPicker: View {
                     )
             ) {
                 ForEach(PlaybackSpeed.allCases, id: \.hashValue) { speed in
-                    Text(speed.rawValue, format: .playbackRate)
+                    Text(speed.displayTitle)
                         .tag(speed.rawValue)
                 }
 
@@ -51,7 +51,7 @@ struct PlaybackSpeedPicker: View {
                 Text(L10n.custom)
                     .tag(Float(0))
             } currentValueLabel: {
-                Text(selection.wrappedValue.rawValue, format: .playbackRate)
+                Text(selection.wrappedValue.displayTitle)
             }
         } else {
             Picker(
@@ -67,7 +67,7 @@ struct PlaybackSpeedPicker: View {
                     )
             ) {
                 ForEach(PlaybackSpeed.allCases, id: \.hashValue) { speed in
-                    Text(speed.rawValue, format: .playbackRate)
+                    Text(speed.displayTitle)
                         .tag(speed.rawValue)
                 }
 
@@ -82,7 +82,7 @@ struct PlaybackSpeedPicker: View {
     @ViewBuilder
     private var content: some View {
         #if os(tvOS)
-        ListRowMenu(title, subtitle: Text(selection.wrappedValue.rawValue, format: .playbackRate)) {
+        ListRowMenu(title, subtitle: Text(selection.wrappedValue.displayTitle)) {
             picker
         }
         #else
