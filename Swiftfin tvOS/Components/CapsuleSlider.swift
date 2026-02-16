@@ -52,5 +52,12 @@ private struct CapsuleSliderContent: SliderContentView {
         ProgressView(value: sliderState.value, total: sliderState.total)
             .progressViewStyle(PlaybackProgressViewStyle(cornerStyle: .round))
             .frame(height: 30)
+            .overlay {
+                Capsule()
+                    .strokeBorder(
+                        Color.white.opacity(sliderState.isFocused ? 1 : 0.4),
+                        lineWidth: 1.5
+                    )
+            }
     }
 }
