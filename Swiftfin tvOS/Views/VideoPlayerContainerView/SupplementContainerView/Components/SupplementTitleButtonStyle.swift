@@ -6,47 +6,44 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerView {
 
     struct SupplementTitleButtonStyle: ButtonStyle {
 
+        @Default(.accentColor)
+        private var accentColor
+
         @Environment(\.isFocused)
         private var isFocused
         @Environment(\.isSelected)
         private var isSelected
 
-        private var scale: CGFloat {
-            if isFocused {
-                return 1.25
-            } else {
-                return 1
-            }
-        }
-
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
                 .fontWeight(.semibold)
-                .foregroundStyle(isFocused ? .black : isSelected ? .black : .white)
+                .foregroundStyle(isFocused || isSelected ? .black : .white)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
                 .background {
                     if isFocused || isSelected {
-                        Rectangle()
+                        RoundedRectangle(cornerRadius: 10)
                             .foregroundStyle(.white)
                     }
                 }
+                .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay {
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(isFocused ? .black : .white, lineWidth: 8)
+                        .strokeBorder(isFocused ? accentColor : .white, lineWidth: 4)
                 }
-                .mask {
-                    RoundedRectangle(cornerRadius: 10)
+                .if(isFocused) { button in
+                    button
+                        .posterShadow()
                 }
-                .scaleEffect(scale)
+                .scaleEffect(isFocused ? 1.2 : 1)
                 .animation(.bouncy(duration: 0.4), value: isFocused)
-                .animation(.bouncy(duration: 0.4), value: isSelected)
         }
     }
 }
