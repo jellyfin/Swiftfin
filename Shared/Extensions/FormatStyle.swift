@@ -100,20 +100,14 @@ extension FormatStyle where Self == PlaybackRateStyle {
 
 struct PlaybackRateStyle: FormatStyle {
 
-    var precision: Int?
+    /// Default to W.XYZ
+    var precision: Int = 3
 
     func format(_ value: Float) -> String {
-        let formatted: String = if let precision {
-            FloatingPointFormatStyle<Float>()
-                .precision(.fractionLength(0 ... precision))
-                .format(value)
-        } else {
-            FloatingPointFormatStyle<Float>()
-                .precision(.significantDigits(1 ... 3))
-                .format(value)
-        }
-
-        return formatted.appending("\u{00D7}")
+        FloatingPointFormatStyle<Float>()
+            .precision(.fractionLength(0 ... precision))
+            .format(value)
+            .appending("\u{00D7}")
     }
 }
 
