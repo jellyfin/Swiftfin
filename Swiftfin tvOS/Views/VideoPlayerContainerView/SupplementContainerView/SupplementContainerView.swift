@@ -79,11 +79,9 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 .isVisible(containerState.isPresentingSupplement)
                 .allowsHitTesting(false)
             }
-            .isVisible(isPresentingOverlay)
-            .isVisible(!isScrubbing)
-            .animation(.linear(duration: 0.2), value: isPresentingOverlay)
-            .animation(.linear(duration: 0.1), value: isScrubbing)
-            .animation(.bouncy(duration: 0.3, extraBounce: 0.1), value: currentSupplements)
+            .isVisible(isPresentingOverlay && !isScrubbing)
+            .animation(.linear(duration: 0.15), value: isPresentingOverlay)
+            .animation(.linear(duration: 0.15), value: isScrubbing)
             .environment(\.isOverComplexContent, true)
             .onAppear {
                 let initial = IdentifiedArray(

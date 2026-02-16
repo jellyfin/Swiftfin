@@ -100,7 +100,6 @@ extension VideoPlayer.PlaybackControls {
             )
             .onEditingChanged { isEditing in
                 isScrubbing = isEditing
-                print(isEditing)
             }
             .frame(height: 50)
         }
@@ -120,7 +119,7 @@ extension VideoPlayer.PlaybackControls {
             .focused($isFocused)
             .scaleEffect(isFocused ? 1.025 : 1.0)
             .foregroundStyle(isFocused ? Color.white : Color.white.opacity(0.8))
-            .animation(.bouncy(duration: 0.4, extraBounce: 0.1), value: isFocused)
+            .animation(.easeInOut(duration: 0.2), value: isFocused)
             .overlay(alignment: .topLeading) {
                 if isScrubbing, let previewImageProvider = manager.playbackItem?.previewImageProvider {
                     PreviewImageView(previewImageProvider: previewImageProvider)
@@ -129,7 +128,7 @@ extension VideoPlayer.PlaybackControls {
                         .posterBorder()
                         .cornerRadius(ratio: 1 / 30, of: \.width)
                         .offset(x: previewXOffset, y: -220)
-                        .shadow(color: Color.black.opacity(0.5), radius: 20, x: 0, y: 10)
+                        .shadow(color: Color.black.opacity(0.5), radius: 4, x: 0, y: 4)
                 }
             }
             .onTapGesture {
