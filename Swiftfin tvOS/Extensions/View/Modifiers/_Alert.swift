@@ -9,6 +9,8 @@
 import Engine
 import SwiftUI
 
+// TODO: tvOS 26: `.background(ultraThinMaterial)` to `.glassEffect`
+
 extension View {
 
     func _alert(
