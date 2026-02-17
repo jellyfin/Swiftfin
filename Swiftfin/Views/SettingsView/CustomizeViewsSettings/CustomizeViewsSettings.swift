@@ -166,12 +166,11 @@ struct CustomizeViewsSettings: View {
                 )
 
                 if libraryDisplayType == .list, UIDevice.isPad {
-                    BasicStepper(
-                        L10n.columns,
-                        value: $listColumnCount,
-                        range: 1 ... 4,
-                        step: 1
-                    )
+                    Stepper(value: $listColumnCount, in: 1 ... 4, step: 1) {
+                        LabeledContent(L10n.columns) {
+                            Text(listColumnCount.description)
+                        }
+                    }
                 }
             }
 
