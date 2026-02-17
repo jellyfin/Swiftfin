@@ -448,9 +448,9 @@ extension BaseItemDto {
         case .audio, .audioBook, .book, .channel, .channelFolderItem, .episode,
              .movie, .liveTvChannel, .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .playlist,
              .program, .recording, .season, .series, .trailer, .tvChannel, .tvProgram, .video:
-            true
+            return true
         default:
-            false
+            return false
         }
     }
 
