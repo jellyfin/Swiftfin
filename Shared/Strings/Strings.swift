@@ -418,6 +418,8 @@ internal enum L10n {
   internal static let customJumpIntervalDescription = L10n.tr("Localizable", "customJumpIntervalDescription", fallback: "Provide a custom jump interval in seconds.")
   /// Custom name
   internal static let customName = L10n.tr("Localizable", "customName", fallback: "Custom name")
+  /// Provide a custom playback speed multiplier.
+  internal static let customPlaybackSpeedDescription = L10n.tr("Localizable", "customPlaybackSpeedDescription", fallback: "Provide a custom playback speed multiplier.")
   /// Custom profile
   internal static let customProfile = L10n.tr("Localizable", "customProfile", fallback: "Custom profile")
   /// Custom rating
