@@ -686,8 +686,8 @@
 				mn,
 				km,
 				lv,
-				fa,
 				peo,
+				fa,
 				et,
 			);
 			mainGroup = 5377CBE8263B596A003A4E83;

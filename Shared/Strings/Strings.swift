@@ -418,6 +418,8 @@ internal enum L10n {
   internal static let customJumpIntervalDescription = L10n.tr("Localizable", "customJumpIntervalDescription", fallback: "Provide a custom jump interval in seconds.")
   /// Custom name
   internal static let customName = L10n.tr("Localizable", "customName", fallback: "Custom name")
+  /// Provide a custom playback speed multiplier.
+  internal static let customPlaybackSpeedDescription = L10n.tr("Localizable", "customPlaybackSpeedDescription", fallback: "Provide a custom playback speed multiplier.")
   /// Custom profile
   internal static let customProfile = L10n.tr("Localizable", "customProfile", fallback: "Custom profile")
   /// Custom rating
@@ -1020,8 +1022,6 @@ internal enum L10n {
   }
   /// Official rating
   internal static let officialRating = L10n.tr("Localizable", "officialRating", fallback: "Official rating")
-  /// Offset
-  internal static let offset = L10n.tr("Localizable", "offset", fallback: "Offset")
   /// OK
   internal static let ok = L10n.tr("Localizable", "ok", fallback: "OK")
   /// On application startup
@@ -1100,10 +1100,10 @@ internal enum L10n {
   internal static let playCount = L10n.tr("Localizable", "playCount", fallback: "Play count")
   /// Played
   internal static let played = L10n.tr("Localizable", "played", fallback: "Played")
-  /// Uses Apple's AVPlayer with support for HDR, Dolby Vision, Picture in Picture, and AirPlay. Limited to MP4, M4V, and MOV containers with no subtitle or audio track selection. Some format compatibility is restricted to new Apple devices only and may result in trancsoding.
-  internal static let playerNativeDescription = L10n.tr("Localizable", "playerNativeDescription", fallback: "Uses Apple's AVPlayer with support for HDR, Dolby Vision, Picture in Picture, and AirPlay. Limited to MP4, M4V, and MOV containers with no subtitle or audio track selection. Some format compatibility is restricted to new Apple devices only and may result in trancsoding.")
-  /// Uses VLCKit for broad format compatibility including subtitles, and audio track selection. Unsupported HDR content is tone mapped to HDR10 or SDR. Cannot Direct Play Dolby Vision profiles without a fallback layer. Does not support Picture in Picture, or AirPlay casting.
-  internal static let playerSwiftfinDescription = L10n.tr("Localizable", "playerSwiftfinDescription", fallback: "Uses VLCKit for broad format compatibility including subtitles, and audio track selection. Unsupported HDR content is tone mapped to HDR10 or SDR. Cannot Direct Play Dolby Vision profiles without a fallback layer. Does not support Picture in Picture, or AirPlay casting.")
+  /// Uses Apple's AVPlayer which supports HDR, Picture in Picture, AirPlay casting, and HomePod or AirPlay-enabled speakers. However, it has no subtitle support and is very restrictive with file formats.
+  internal static let playerNativeDescription = L10n.tr("Localizable", "playerNativeDescription", fallback: "Uses Apple's AVPlayer which supports HDR, Picture in Picture, AirPlay casting, and HomePod or AirPlay-enabled speakers. However, it has no subtitle support and is very restrictive with file formats.")
+  /// Uses VLC's VLCKit to provide compatibility with nearly any file type. However, VLCKit cannot use HomePod or AirPlay-enabled speakers, HDR, Picture in Picture, or AirPlay casting.
+  internal static let playerSwiftfinDescription = L10n.tr("Localizable", "playerSwiftfinDescription", fallback: "Uses VLC's VLCKit to provide compatibility with nearly any file type. However, VLCKit cannot use HomePod or AirPlay-enabled speakers, HDR, Picture in Picture, or AirPlay casting.")
   /// Play From beginning
   internal static let playFromBeginning = L10n.tr("Localizable", "playFromBeginning", fallback: "Play From beginning")
   /// Playlist
@@ -1262,8 +1262,6 @@ internal enum L10n {
   internal static let resumeOffset = L10n.tr("Localizable", "resumeOffset", fallback: "Resume offset")
   /// Resume content seconds before the recorded resume time.
   internal static let resumeOffsetDescription = L10n.tr("Localizable", "resumeOffsetDescription", fallback: "Resume content seconds before the recorded resume time.")
-  /// Resume Offset
-  internal static let resumeOffsetTitle = L10n.tr("Localizable", "resumeOffsetTitle", fallback: "Resume Offset")
   /// Retrieving media information
   internal static let retrievingMediaInformation = L10n.tr("Localizable", "retrievingMediaInformation", fallback: "Retrieving media information")
   /// Retry
