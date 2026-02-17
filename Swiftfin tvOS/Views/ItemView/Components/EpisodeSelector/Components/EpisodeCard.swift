@@ -6,12 +6,20 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
 extension SeriesEpisodeSelector {
 
     struct EpisodeCard: View {
+
+        @Default(.accentColor)
+        private var accentColor
+        @Default(.Customization.Indicators.showUnplayed)
+        private var showUnplayed
+        @Default(.Customization.Indicators.showPlayed)
+        private var showPlayed
 
         @Router
         private var router
@@ -30,16 +38,12 @@ extension SeriesEpisodeSelector {
                         progress: (episode.userData?.playedPercentage ?? 0) / 100
                     )
                 } else if episode.userData?.isPlayed ?? false {
-                    ZStack(alignment: .bottomTrailing) {
-                        Color.clear
-
-                        Image(systemName: "checkmark.circle.fill")
-                            .resizable()
-                            .frame(width: 30, height: 30, alignment: .bottomTrailing)
-                            .symbolRenderingMode(.palette)
-                            .foregroundStyle(.white, .black)
-                            .padding()
-                    }
+                    WatchedIndicator(size: 45)
+                        .isVisible(showPlayed)
+                } else if episode.canBePlayed && !episode.isLiveStream {
+                    UnwatchedIndicator(size: 45)
+                        .foregroundColor(accentColor)
+                        .isVisible(showUnplayed)
                 }
 
                 if isFocused {
