@@ -25,6 +25,14 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
+        #if os(tvOS)
+        var focusedActionButton: FocusState<VideoPlayerActionButton?>.Binding?
+
+        init(focusedActionButton: FocusState<VideoPlayerActionButton?>.Binding? = nil) {
+            self.focusedActionButton = focusedActionButton
+        }
+        #endif
+
         private func filteredActionButtons(_ rawButtons: [VideoPlayerActionButton]) -> [VideoPlayerActionButton] {
             var filteredButtons = rawButtons
 
@@ -112,10 +120,14 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
 
         private var regularView: some View {
             HStack(spacing: 0) {
-                ForEach(
-                    barActionButtons,
-                    content: view(for:)
-                )
+                ForEach(barActionButtons) { button in
+                    view(for: button)
+                    #if os(tvOS)
+                        .if(focusedActionButton != nil) { view in
+                            view.focused(focusedActionButton!, equals: button)
+                        }
+                    #endif
+                }
 
                 if menuActionButtons.isNotEmpty {
                     Menu(
