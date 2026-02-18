@@ -9,6 +9,11 @@
 import IdentifiedCollections
 import SwiftUI
 
+// TODO: possibly make custom tab view to have observe
+//       vertical scroll content and transfer to dismissal
+// TODO: fix improper supplement selected
+//       - maybe a race issue
+
 extension VideoPlayer.UIVideoPlayerContainerViewController {
 
     struct SupplementContainerView: View {
@@ -26,16 +31,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         @State
         private var currentSupplements: IdentifiedArrayOf<AnyMediaPlayerSupplement> = []
 
-        private var isPresentingOverlay: Bool {
-            containerState.isPresentingOverlay
-        }
-
-        private var isPresentingSupplement: Bool {
-            containerState.isPresentingSupplement
-        }
-
-        private var isScrubbing: Bool {
-            containerState.isScrubbing
+        private var isContainerVisible: Bool {
+            containerState.isPresentingOverlay && !containerState.isScrubbing
         }
 
         private func supplementContainer(for supplement: some MediaPlayerSupplement) -> some View {
@@ -87,9 +84,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 .isVisible(containerState.isPresentingSupplement)
                 .allowsHitTesting(false)
             }
-            .isVisible(isPresentingOverlay && !isScrubbing)
-            .animation(.linear(duration: 0.15), value: isPresentingOverlay)
-            .animation(.linear(duration: 0.15), value: isScrubbing)
+            .isVisible(isContainerVisible)
+            .animation(.linear(duration: 0.15), value: isContainerVisible)
             .environment(\.isOverComplexContent, true)
             .onAppear {
                 let initial = IdentifiedArray(

@@ -81,8 +81,8 @@ extension VideoPlayer.PlaybackControls {
 
     func decreaseScrubbingSpeed(newDirection: ScrubbingDirection) {
         if scrubbingSpeed == 2.0 {
-            manager.proxy?.setSeconds(containerState.scrubbedSeconds.value)
-            stopScrubbing(performJump: false)
+            stopScrubbing()
+            return
         } else if scrubbingSpeed == 4.0 {
             scrubbingSpeed = 2.0
         } else if scrubbingSpeed == 8.0 {
@@ -136,6 +136,23 @@ extension VideoPlayer.PlaybackControls {
         scrubbingSpeed = 0.0
         scrubbingStartTime = nil
         hasEnteredScrubMode = false
+        scrubOriginSeconds = nil
+    }
+
+    func cancelScrubbing() {
+        scrubbingTimer?.invalidate()
+        scrubbingTimer = nil
+
+        if let origin = scrubOriginSeconds {
+            containerState.scrubbedSeconds.value = origin
+        }
+
+        containerState.isScrubbing = false
+        scrubbingDirection = nil
+        scrubbingSpeed = 0.0
+        scrubbingStartTime = nil
+        hasEnteredScrubMode = false
+        scrubOriginSeconds = nil
     }
 
     func scheduleJump(direction: ScrubbingDirection) {

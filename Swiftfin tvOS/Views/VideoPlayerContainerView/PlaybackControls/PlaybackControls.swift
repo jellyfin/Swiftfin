@@ -42,17 +42,10 @@ extension VideoPlayer {
         @Toaster
         var toaster: ToastProxy
 
-        @Router
-        private var router
-
         // MARK: - State (Layout)
 
         @State
         private var bottomContentFrame: CGRect = .zero
-        @State
-        private var contentSize: CGSize = .zero
-        @State
-        private var effectiveSafeArea: EdgeInsets = .zero
 
         // MARK: - State (Scrubbing)
 
@@ -65,14 +58,7 @@ extension VideoPlayer {
         @State
         var scrubbingStartTime: Date?
         @State
-        var hasEnteredScrubMode: Bool = false
-        @State
         var pendingJumpWork: DispatchWorkItem?
-
-        // MARK: - State (Press Handling)
-
-        @State
-        var isPresentingCloseConfirmation: Bool = false
 
         // MARK: - Focus
 
@@ -91,8 +77,9 @@ extension VideoPlayer {
         @State
         private var lastFocusedSupplementID: AnyMediaPlayerSupplement.ID?
 
-        @State
-        var isProgressBarFocused: Bool = false
+        var isProgressBarFocused: Bool {
+            containerState.isProgressBarFocused
+        }
 
         // MARK: - State (Supplements)
 
@@ -113,8 +100,19 @@ extension VideoPlayer {
             containerState.isScrubbing
         }
 
+        var hasEnteredScrubMode: Bool {
+            get { containerState.hasEnteredScrubMode }
+            nonmutating set { containerState.hasEnteredScrubMode = newValue }
+        }
+
+        var scrubOriginSeconds: Duration? {
+            get { containerState.scrubOriginSeconds }
+            nonmutating set { containerState.scrubOriginSeconds = newValue }
+        }
+
         // MARK: - View Builders
 
+        // TODO: scroll if larger than horizontal
         private var supplementTabButtons: some View {
             HStack(spacing: 20) {
                 if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
@@ -150,7 +148,6 @@ extension VideoPlayer {
         private var bottomContent: some View {
             VStack(spacing: 0) {
                 NavigationBar(focusedActionButton: $focusedActionButton)
-                    .fixedSize(horizontal: false, vertical: true)
                     .focusGuide(
                         focusGuide,
                         tag: "navigationBar",
@@ -164,17 +161,25 @@ extension VideoPlayer {
                     .isVisible((isPresentingOverlay || isScrubbing) && !isPresentingSupplement)
                     .disabled(isPresentingSupplement)
 
-                PlaybackProgress(isProgressBarFocused: $isProgressBarFocused)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .focusGuide(
-                        focusGuide,
-                        tag: "progressBar",
-                        fixedSize: (horizontal: false, vertical: true),
-                        top: "navigationBar",
-                        bottom: currentSupplements.isEmpty ? nil : "dividerZone"
-                    )
-                    .isVisible((isPresentingOverlay || isScrubbing) && !isPresentingSupplement)
-                    .disabled(isPresentingSupplement)
+                PlaybackProgress(
+                    onPanScrubChanged: { isPanning in
+                        if isPanning {
+                            if scrubOriginSeconds == nil {
+                                scrubOriginSeconds = manager.seconds
+                            }
+                            hasEnteredScrubMode = true
+                        }
+                    }
+                )
+                .focusGuide(
+                    focusGuide,
+                    tag: "progressBar",
+                    fixedSize: (horizontal: false, vertical: true),
+                    top: "navigationBar",
+                    bottom: currentSupplements.isEmpty ? nil : "dividerZone"
+                )
+                .isVisible((isPresentingOverlay || isScrubbing) && !isPresentingSupplement)
+                .disabled(isPresentingSupplement)
 
                 Color.clear
                     .frame(height: 0)
@@ -185,7 +190,7 @@ extension VideoPlayer {
                         onContentFocus: {
                             if focusGuide.lastFocusedTag == "tabButtons" {
                                 if isPresentingSupplement {
-                                    // Dismiss supplement, then redirect after hierarchy updates
+                                    // Dismiss supplement then redirect after hierarchy updates
                                     containerState.selectedSupplement = nil
                                     containerState.containerView?.presentSupplementContainer(false, redirectFocus: false)
 
@@ -196,7 +201,7 @@ extension VideoPlayer {
                                     focusGuide.transition(to: "progressBar")
                                 }
                             } else {
-                                // Coming from above (progressBar) — pass through to tabs
+                                // Coming from above (progressBar) pass through to tabs
                                 focusGuide.transition(to: "tabButtons")
                             }
                         },
@@ -206,7 +211,6 @@ extension VideoPlayer {
                     .isVisible(isPresentingOverlay)
 
                 supplementTabButtons
-                    .fixedSize(horizontal: false, vertical: true)
                     .focusGuide(
                         focusGuide,
                         tag: "tabButtons",
@@ -220,7 +224,6 @@ extension VideoPlayer {
                         top: "dividerZone",
                         bottom: isPresentingSupplement ? "supplementContent" : nil
                     )
-                    .padding(.top, isPresentingSupplement ? 0 : 20)
                     .isVisible(isPresentingOverlay && !currentSupplements.isEmpty)
             }
         }
@@ -228,39 +231,29 @@ extension VideoPlayer {
         // MARK: body
 
         var body: some View {
-            ZStack {
-                VStack(spacing: 0) {
-                    Spacer()
-                        .allowsHitTesting(false)
+            VStack(spacing: 0) {
+                Spacer()
+                    .allowsHitTesting(false)
 
-                    bottomContent
-                        .edgePadding(.horizontal)
-                        .trackingFrame($bottomContentFrame)
-                        .animation(.linear(duration: 0.1), value: isScrubbing)
-                        .animation(.easeInOut(duration: 0.3), value: isPresentingSupplement)
-                        .animation(.easeInOut(duration: 0.25), value: isPresentingOverlay)
-                        .background(alignment: .top) {
-                            Color.black
-                                .maskLinearGradient {
-                                    (location: 0, opacity: 0)
-                                    (location: 1, opacity: 0.5)
-                                }
-                                .frame(height: bottomContentFrame.height + 50 + EdgeInsets.edgePadding * 2)
-                                .isVisible((isScrubbing || isPresentingOverlay) && !isPresentingSupplement)
-                                .allowsHitTesting(false)
-                        }
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-                if manager.playbackRequestStatus == .paused {
-                    Label(L10n.pause, systemImage: "pause.fill")
-                        .transition(.opacity.combined(with: .scale).animation(.bouncy(duration: 0.7, extraBounce: 0.2)))
-                        .font(.system(size: 72, weight: .bold, design: .default))
-                        .labelStyle(.iconOnly)
-                        .frame(maxHeight: .infinity)
-                }
+                bottomContent
+                    .edgePadding(.horizontal)
+                    .trackingFrame($bottomContentFrame)
+                    .background(alignment: .top) {
+                        Color.black
+                            .maskLinearGradient {
+                                (location: 0, opacity: 0)
+                                (location: 1, opacity: 0.5)
+                            }
+                            .frame(height: bottomContentFrame.height + 50 + EdgeInsets.edgePadding * 2)
+                            .isVisible((isScrubbing || isPresentingOverlay) && !isPresentingSupplement)
+                            .allowsHitTesting(false)
+                    }
             }
-            .alert("Close Player", isPresented: $isPresentingCloseConfirmation) {
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .animation(.linear(duration: 0.1), value: isScrubbing)
+            .animation(.easeInOut(duration: 0.3), value: isPresentingSupplement)
+            .animation(.easeInOut(duration: 0.25), value: isPresentingOverlay)
+            .alert("Close Player", isPresented: $containerState.isPresentingCloseConfirmation) {
                 Button(L10n.cancel, role: .cancel) {}
                 Button(L10n.ok, role: .destructive) {
                     manager.stop()
@@ -273,7 +266,10 @@ extension VideoPlayer {
             }
             .onChange(of: containerState.isPresentingOverlay) { _, newValue in
                 if newValue {
-                    focusGuide.transition(to: "progressBar")
+                    focusGuide.transition(to: nil)
+                    DispatchQueue.main.async {
+                        focusGuide.transition(to: "progressBar")
+                    }
                 }
             }
             .onChange(of: manager.playbackRequestStatus) { _, newValue in

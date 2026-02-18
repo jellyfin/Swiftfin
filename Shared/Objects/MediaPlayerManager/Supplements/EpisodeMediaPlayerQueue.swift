@@ -309,6 +309,7 @@ extension EpisodeMediaPlayerQueue {
         var body: some View {
             Group {
                 if let selectionViewModel {
+                    #if os(tvOS)
                     PosterHStack(
                         type: .landscape,
                         items: selectionViewModel.elements
@@ -318,6 +319,18 @@ extension EpisodeMediaPlayerQueue {
                         PosterButton<BaseItemDto>.TitleSubtitleContentView(item: episode)
                             .lineLimit(2, reservesSpace: true)
                     }
+                    #else
+                    CollectionHStack(
+                        uniqueElements: selectionViewModel.elements,
+                        id: \.unwrappedIDHashOrZero
+                    ) { item in
+                        EpisodeButton(episode: item) {
+                            action(item)
+                        }
+                        .frame(height: 150)
+                    }
+                    .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
+                    #endif
                 }
             }
             .onReceive(seriesViewModel.$seasons) { newSeasons in
