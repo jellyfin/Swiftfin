@@ -19,6 +19,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
+        private var focusGuide: FocusGuide
+        @EnvironmentObject
         private var manager: MediaPlayerManager
 
         @State
@@ -60,6 +62,12 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                         .transition(.opacity)
                 }
             }
+            .focusSection()
+            .focusGuide(
+                focusGuide,
+                tag: "supplementContent",
+                top: "tabButtons"
+            )
             .isVisible(containerState.isPresentingSupplement)
             .disabled(!containerState.isPresentingSupplement)
             .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingSupplement)

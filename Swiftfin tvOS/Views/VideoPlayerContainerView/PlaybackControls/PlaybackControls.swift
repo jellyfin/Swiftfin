@@ -75,17 +75,26 @@ extension VideoPlayer {
 
         @State
         var isPresentingCloseConfirmation: Bool = false
-        @State
-        var pressBeganZone: FocusZone?
-        @State
-        var isRedirectingToTab: Bool = false
 
         // MARK: - Focus
 
+        @EnvironmentObject
+        var focusGuide: FocusGuide
+
         @FocusState
-        var isPlaybackProgressFocused: Bool
+        var focusedActionButton: VideoPlayerActionButton?
+
         @FocusState
         var focusedSupplementID: AnyMediaPlayerSupplement.ID?
+
+        @State
+        var lastFocusedActionButton: VideoPlayerActionButton?
+
+        @State
+        var lastFocusedSupplementID: AnyMediaPlayerSupplement.ID?
+
+        @State
+        var isProgressBarFocused: Bool = false
 
         // MARK: - State (Supplements)
 
@@ -143,15 +152,76 @@ extension VideoPlayer {
         private var bottomContent: some View {
             VStack(spacing: 0) {
                 if !isPresentingSupplement {
-                    NavigationBar()
+                    NavigationBar(focusedActionButton: $focusedActionButton)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .focusGuide(
+                            focusGuide,
+                            tag: "navigationBar",
+                            fixedSize: (horizontal: false, vertical: true),
+                            onContentFocus: {
+                                focusedActionButton = lastFocusedActionButton
+                                    ?? Defaults[.VideoPlayer.barActionButtons].first
+                            },
+                            bottom: "progressBar"
+                        )
                         .isVisible(isPresentingOverlay || isScrubbing)
 
-                    PlaybackProgress()
+                    PlaybackProgress(isProgressBarFocused: $isProgressBarFocused)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .focusGuide(
+                            focusGuide,
+                            tag: "progressBar",
+                            fixedSize: (horizontal: false, vertical: true),
+                            top: "navigationBar",
+                            bottom: currentSupplements.isEmpty ? nil : "dividerZone"
+                        )
                         .isVisible(isPresentingOverlay || isScrubbing)
-                        .focused($isPlaybackProgressFocused, equals: true)
                 }
 
+                Color.clear
+                    .frame(height: 0)
+                    .focusGuide(
+                        focusGuide,
+                        tag: "dividerZone",
+                        fixedSize: (horizontal: false, vertical: true),
+                        onContentFocus: {
+                            if focusGuide.lastFocusedTag == "tabButtons" {
+                                if isPresentingSupplement {
+                                    // Dismiss supplement, then redirect after hierarchy updates
+                                    containerState.selectedSupplement = nil
+                                    containerState.containerView?.presentSupplementContainer(false, redirectFocus: false)
+
+                                    DispatchQueue.main.async {
+                                        focusGuide.transition(to: "progressBar")
+                                    }
+                                } else {
+                                    focusGuide.transition(to: "progressBar")
+                                }
+                            } else {
+                                // Coming from above (progressBar) — pass through to tabs
+                                focusGuide.transition(to: "tabButtons")
+                            }
+                        },
+                        top: "progressBar",
+                        bottom: "tabButtons"
+                    )
+                    .isVisible(isPresentingOverlay)
+
                 supplementTabButtons
+                    .fixedSize(horizontal: false, vertical: true)
+                    .focusGuide(
+                        focusGuide,
+                        tag: "tabButtons",
+                        fixedSize: (horizontal: false, vertical: true),
+                        onContentFocus: {
+                            let targetID = lastFocusedSupplementID
+                                ?? containerState.selectedSupplement?.id
+                                ?? currentSupplements.first?.id
+                            focusedSupplementID = targetID
+                        },
+                        top: "dividerZone",
+                        bottom: isPresentingSupplement ? "supplementContent" : nil
+                    )
                     .padding(.top, isPresentingSupplement ? 0 : 20)
                     .isVisible(isPresentingOverlay && !currentSupplements.isEmpty)
             }
@@ -205,18 +275,12 @@ extension VideoPlayer {
             }
             .onChange(of: containerState.isPresentingOverlay) { _, newValue in
                 if newValue {
-                    isPlaybackProgressFocused = true
+                    focusGuide.transition(to: "progressBar")
                 }
             }
             .onChange(of: manager.playbackRequestStatus) { _, newValue in
                 if newValue == .paused, !isPresentingOverlay {
                     containerState.isPresentingOverlay = true
-                }
-            }
-            .onChange(of: isPlaybackProgressFocused) { _, newValue in
-                if newValue && isPresentingSupplement {
-                    containerState.selectedSupplement = nil
-                    containerState.containerView?.presentSupplementContainer(false, redirectFocus: false)
                 }
             }
             .onReceive(onPressEvent) { press in
@@ -236,23 +300,18 @@ extension VideoPlayer {
                 )
                 currentSupplements = newSupplements
             }
+            .onChange(of: focusedActionButton) { _, newValue in
+                if let newValue {
+                    lastFocusedActionButton = newValue
+                }
+            }
             .onChange(of: focusedSupplementID) { oldValue, newValue in
+                if let newValue {
+                    lastFocusedSupplementID = newValue
+                }
+
                 guard oldValue != newValue else { return }
                 guard let supplementID = newValue else { return }
-                guard !isRedirectingToTab else { return }
-
-                if oldValue == nil {
-                    if let selectedID = containerState.selectedSupplement?.id, supplementID != selectedID {
-                        focusedSupplementID = selectedID
-                        return
-                    } else if containerState.selectedSupplement == nil,
-                              let firstID = currentSupplements.first?.id,
-                              supplementID != firstID
-                    {
-                        focusedSupplementID = firstID
-                        return
-                    }
-                }
 
                 if let supplement = currentSupplements[id: supplementID] {
                     containerState.selectedSupplement = supplement.supplement

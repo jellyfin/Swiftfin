@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import Engine
 import SwiftUI
 
@@ -120,6 +119,7 @@ extension VideoPlayer {
                     onPressEvent: onPressEvent
                 )
                 .environmentObject(containerState)
+                .environmentObject(focusGuide)
                 .environmentObject(manager)
                 .eraseToAnyView()
             )
@@ -136,6 +136,7 @@ extension VideoPlayer {
 
                 SupplementContainerView()
                     .environmentObject(containerState)
+                    .environmentObject(focusGuide)
                     .environmentObject(manager)
             }
             .environment(
@@ -194,10 +195,9 @@ extension VideoPlayer {
         private let player: AnyView
         private let playbackControls: AnyView
         private let containerState: VideoPlayerContainerState
+        private let focusGuide = FocusGuide()
 
         let onPressEvent = OnPressEvent()
-
-        private var cancellables: Set<AnyCancellable> = []
 
         // MARK: - Pan Gesture State
 
@@ -332,12 +332,8 @@ extension VideoPlayer {
 
             view.setNeedsLayout()
 
-            if redirectFocus {
-                if didPresent {
-                    self.redirectFocus(to: supplementContainerViewController)
-                } else {
-                    self.redirectFocus(to: playbackControlsViewController)
-                }
+            if redirectFocus && !didPresent {
+                focusGuide.transition(to: "progressBar")
             }
 
             if let panningState {
@@ -365,34 +361,6 @@ extension VideoPlayer {
                     self?.view.layoutIfNeeded()
                 }
             }
-        }
-
-        // MARK: - Focus
-
-        private var focusTarget: UIFocusEnvironment?
-
-        override var preferredFocusEnvironments: [UIFocusEnvironment] {
-            if let target = focusTarget {
-                return [target]
-            }
-            return super.preferredFocusEnvironments
-        }
-
-        private func redirectFocus(to target: UIFocusEnvironment) {
-            focusTarget = target
-            setNeedsFocusUpdate()
-            updateFocusIfNeeded()
-            DispatchQueue.main.async { [weak self] in
-                self?.focusTarget = nil
-            }
-        }
-
-        func redirectFocusToPlaybackControls() {
-            redirectFocus(to: playbackControlsViewController)
-        }
-
-        func redirectFocusToSupplementContent() {
-            redirectFocus(to: supplementContainerViewController)
         }
 
         // MARK: - viewDidLoad

@@ -37,6 +37,14 @@ extension MediaInfoSupplement {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
+        #if os(tvOS)
+        @EnvironmentObject
+        private var focusGuide: FocusGuide
+
+        @FocusState
+        private var isResetButtonFocused: Bool
+        #endif
+
         let item: BaseItemDto
 
         private var accessoryView: some View {
@@ -213,10 +221,21 @@ extension MediaInfoSupplement {
                     resetPlaybackButton
                         .frame(height: 75)
                         .fixedSize(horizontal: true, vertical: false)
+                    #if os(tvOS)
+                        .focused($isResetButtonFocused)
+                    #endif
                 }
             }
             .padding(safeAreaInsets)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            #if os(tvOS)
+                .focusSection()
+                .onChange(of: focusGuide.focusedTag) { _, newTag in
+                    if newTag == "supplementContent" {
+                        isResetButtonFocused = true
+                    }
+                }
+            #endif
         }
     }
 }

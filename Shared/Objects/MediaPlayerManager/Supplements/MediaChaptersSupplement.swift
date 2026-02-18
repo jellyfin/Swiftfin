@@ -61,6 +61,9 @@ extension MediaChaptersSupplement {
         private var manager: MediaPlayerManager
 
         #if os(tvOS)
+        @EnvironmentObject
+        private var focusGuide: FocusGuide
+
         @FocusState
         private var focusedChapterID: ChapterInfo.FullInfo.ID?
         @State
@@ -180,10 +183,13 @@ extension MediaChaptersSupplement {
                     guard let newValue else { return }
                     lastFocusedChapterID = newValue
                 }
-                .onChange(of: containerState.supplementContentNeedsFocus) { _, needsFocus in
-                    guard needsFocus else { return }
-                    containerState.supplementContentNeedsFocus = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                .onChange(of: containerState.isPresentingSupplement) { _, newValue in
+                    if newValue {
+                        getContentFocus()
+                    }
+                }
+                .onChange(of: focusGuide.focusedTag) { _, newTag in
+                    if newTag == "supplementContent" {
                         getContentFocus()
                     }
                 }

@@ -114,11 +114,6 @@ class VideoPlayerContainerState: ObservableObject {
         }
     }
 
-    #if os(tvOS)
-    @Published
-    var supplementContentNeedsFocus: Bool = false
-    #endif
-
     @Published
     var supplementOffset: CGFloat = 0.0
 

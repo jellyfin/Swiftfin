@@ -32,6 +32,9 @@ extension VideoPlayer.PlaybackControls {
         @Toaster
         private var toaster: ToastProxy
 
+        @Binding
+        var isProgressBarFocused: Bool
+
         @FocusState
         private var isFocused: Bool
 
@@ -130,6 +133,9 @@ extension VideoPlayer.PlaybackControls {
                         .offset(x: previewXOffset, y: -220)
                         .shadow(color: Color.black.opacity(0.5), radius: 4, x: 0, y: 4)
                 }
+            }
+            .onChange(of: isFocused) { _, newValue in
+                isProgressBarFocused = newValue
             }
             .onTapGesture {
                 manager.togglePlayPause()
