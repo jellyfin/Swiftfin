@@ -7,7 +7,24 @@
 //
 
 import Engine
+import MediaPlayer
 import SwiftUI
+
+// TODO: use video size from proxies to control aspect fill
+//       - stay within safe areas, aspect fill to screen
+// TODO: instead of static sizes for supplement view, take into account available space
+//       - necessary for full-screen supplements and/or small screens
+// TODO: custom buttons on playback controls
+//       - skip intro, next episode, etc.
+//       - can just do on playback controls itself
+// TODO: no supplements state
+//       - don't pan
+// TODO: only show player view if not error/other bad states
+//       - only show when have item?
+//       - helps with not rendering before ready
+//       - would require refactor so that video players take media player items
+
+// MARK: - VideoPlayerContainerView
 
 extension VideoPlayer {
     struct VideoPlayerContainerView<Player: View, PlaybackControls: View>: UIViewControllerRepresentable {
@@ -50,6 +67,7 @@ extension VideoPlayer {
 
         // MARK: - Views
 
+        // TODO: preview image while scrubbing option
         private struct PlayerContainerView: View {
 
             @EnvironmentObject
@@ -57,9 +75,20 @@ extension VideoPlayer {
 
             let player: AnyView
 
+            @EnvironmentObject
+            private var manager: MediaPlayerManager
+
             var body: some View {
                 player
                     .overlay(Color.black.opacity(containerState.isPresentingPlaybackControls ? 0.3 : 0.0))
+                    .overlay {
+                        if manager.playbackRequestStatus == .paused {
+                            Label(L10n.pause, systemImage: "pause.fill")
+                                .transition(.opacity.combined(with: .scale).animation(.bouncy(duration: 0.7, extraBounce: 0.2)))
+                                .font(.system(size: 72, weight: .bold, design: .default))
+                                .labelStyle(.iconOnly)
+                        }
+                    }
                     .animation(.linear(duration: 0.2), value: containerState.isPresentingPlaybackControls)
             }
         }
@@ -74,14 +103,9 @@ extension VideoPlayer {
 
             var body: some View {
                 OverlayToastView(proxy: containerState.toastProxy) {
-                    ZStack {
-                        GestureView()
-                            .environment(\.panGestureDirection, .vertical)
-
-                        playbackControls
-                            .environment(\.onPressEventPublisher, onPressEvent)
-                            .environmentObject(containerState.scrubbedSeconds)
-                    }
+                    playbackControls
+                        .environment(\.onPressEventPublisher, onPressEvent)
+                        .environmentObject(containerState.scrubbedSeconds)
                 }
                 .environment(
                     \.panAction,
@@ -130,29 +154,11 @@ extension VideoPlayer {
         }()
 
         private lazy var supplementContainerViewController: HostingController<AnyView> = {
-            let content = ZStack {
-                GestureView()
-                    .environment(\.panGestureDirection, .vertical)
-
-                SupplementContainerView()
-                    .environmentObject(containerState)
-                    .environmentObject(focusGuide)
-                    .environmentObject(manager)
-            }
-            .environment(
-                \.panAction,
-                .init(
-                    action: { [self] in
-                        containerState.containerView?.handleSupplementPanAction(
-                            translation: $0,
-                            velocity: $1.y,
-                            location: $2,
-                            state: $4
-                        )
-                    }
-                )
-            )
-            .eraseToAnyView()
+            let content = SupplementContainerView()
+                .environmentObject(containerState)
+                .environmentObject(focusGuide)
+                .environmentObject(manager)
+                .eraseToAnyView()
             let controller = HostingController(content: content)
             controller.disablesSafeArea = true
             controller.automaticallyAllowUIKitAnimationsForNextUpdate = true
@@ -200,6 +206,7 @@ extension VideoPlayer {
         private var verticalPanGestureStartConstant: CGFloat?
         private var isPanning: Bool = false
         private var didStartPanningWithSupplement: Bool = false
+        private var lastTouchPokeTime: CFTimeInterval = 0
 
         init(
             containerState: VideoPlayerContainerState,
@@ -326,7 +333,10 @@ extension VideoPlayer {
             view.setNeedsLayout()
 
             if redirectFocus && !didPresent {
-                focusGuide.transition(to: "progressBar")
+                focusGuide.transition(to: nil)
+                DispatchQueue.main.async { [self] in
+                    focusGuide.transition(to: "progressBar")
+                }
             }
 
             if let panningState {
@@ -366,9 +376,32 @@ extension VideoPlayer {
             setupViews()
             setupConstraints()
 
-            let gesture = UITapGestureRecognizer(target: self, action: #selector(ignorePress))
+            let gesture = UITapGestureRecognizer(target: self, action: #selector(menuPressed))
             gesture.allowedPressTypes = [NSNumber(value: UIPress.PressType.menu.rawValue)]
             view.addGestureRecognizer(gesture)
+        }
+
+        override func viewDidAppear(_ animated: Bool) {
+            super.viewDidAppear(animated)
+            Task { @MainActor in
+                disableTogglePlayPauseCommand()
+            }
+        }
+
+        private func disableTogglePlayPauseCommand() {
+            let cmd = MPRemoteCommandCenter.shared().togglePlayPauseCommand
+            cmd.removeTarget(nil)
+            cmd.addTarget { _ in .success }
+        }
+
+        override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+
+            guard manager.state != .stopped else { return }
+
+            Task { @MainActor in
+                manager.stop()
+            }
         }
 
         private func setupViews() {
@@ -427,22 +460,14 @@ extension VideoPlayer {
             NSLayoutConstraint.activate(playbackControlsConstraints)
         }
 
-        // MARK: - viewWillDisappear
-
-        override func viewWillDisappear(_ animated: Bool) {
-            super.viewWillDisappear(animated)
-
-            guard manager.state != .stopped else { return }
-
-            Task { @MainActor in
-                manager.stop()
-            }
-        }
-
         // MARK: - Touch Handling
 
         override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
             super.touchesBegan(touches, with: event)
+
+            let now = CACurrentMediaTime()
+            guard now - lastTouchPokeTime > 1.0 else { return }
+            lastTouchPokeTime = now
 
             if !containerState.isPresentingOverlay {
                 containerState.isPresentingOverlay = true
@@ -454,7 +479,9 @@ extension VideoPlayer {
         // MARK: - Press Handling
 
         @objc
-        func ignorePress() {}
+        private func menuPressed() {
+            handleMenuEnded()
+        }
 
         private func forwardPressesBegan(
             _ presses: Set<UIPress>,
@@ -472,35 +499,118 @@ extension VideoPlayer {
 
         override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
             for press in presses {
-                let defaultAction: () -> Void = { [weak self] in
-                    guard let self else { return }
-                    self.forwardPressesBegan([press], event: event)
-                }
+                switch press.type {
+                case .playPause, .select, .menu:
+                    continue
+                default:
+                    let defaultAction: () -> Void = { [weak self] in
+                        guard let self else { return }
+                        self.forwardPressesBegan([press], event: event)
+                    }
 
-                onPressEvent.send(
-                    .init(
-                        type: press.type,
-                        phase: press.phase,
-                        performDefault: defaultAction
+                    onPressEvent.send(
+                        .init(
+                            type: press.type,
+                            phase: press.phase,
+                            performDefault: defaultAction
+                        )
                     )
-                )
+                }
             }
         }
 
         override func pressesEnded(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
             for press in presses {
-                let defaultAction: () -> Void = { [weak self] in
-                    guard let self else { return }
-                    self.forwardPressesEnded([press], event: event)
-                }
+                switch press.type {
+                case .playPause:
+                    handlePlayPauseEnded()
+                case .select:
+                    handleSelectEnded(press, event: event)
+                case .menu:
+                    handleMenuEnded()
+                default:
+                    let defaultAction: () -> Void = { [weak self] in
+                        guard let self else { return }
+                        self.forwardPressesEnded([press], event: event)
+                    }
 
-                onPressEvent.send(
-                    .init(
-                        type: press.type,
-                        phase: press.phase,
-                        performDefault: defaultAction
+                    onPressEvent.send(
+                        .init(
+                            type: press.type,
+                            phase: press.phase,
+                            performDefault: defaultAction
+                        )
                     )
-                )
+                }
+            }
+        }
+
+        // MARK: - Play/Pause
+
+        private func handlePlayPauseEnded() {
+            if !containerState.isPresentingOverlay {
+                if manager.playbackRequestStatus == .paused {
+                    manager.setPlaybackRequestStatus(status: .playing)
+                }
+                containerState.isPresentingOverlay = true
+            } else {
+                switch manager.playbackRequestStatus {
+                case .playing:
+                    manager.setPlaybackRequestStatus(status: .paused)
+                case .paused:
+                    manager.setPlaybackRequestStatus(status: .playing)
+                }
+            }
+            containerState.timer.poke()
+        }
+
+        // MARK: - Select
+
+        private func handleSelectEnded(_ press: UIPress, event: UIPressesEvent?) {
+            if !containerState.isPresentingOverlay {
+                containerState.isPresentingOverlay = true
+                containerState.timer.poke()
+                return
+            }
+
+            if containerState.hasEnteredScrubMode {
+                containerState.commitScrub()
+                containerState.timer.poke()
+            } else if containerState.isProgressBarFocused {
+                switch manager.playbackRequestStatus {
+                case .playing:
+                    manager.setPlaybackRequestStatus(status: .paused)
+                case .paused:
+                    manager.setPlaybackRequestStatus(status: .playing)
+                }
+                containerState.timer.poke()
+            } else {
+                forwardPressesEnded([press], event: event)
+            }
+        }
+
+        // MARK: - Menu
+
+        private func handleMenuEnded() {
+            if !containerState.isPresentingOverlay {
+                containerState.isPresentingOverlay = true
+                containerState.timer.poke()
+                return
+            }
+
+            if containerState.hasEnteredScrubMode {
+                containerState.cancelScrub()
+                containerState.timer.poke()
+            } else if containerState.isPresentingSupplement {
+                containerState.selectedSupplement = nil
+                presentSupplementContainer(false, redirectFocus: false)
+                containerState.timer.poke()
+                focusGuide.transition(to: nil)
+                DispatchQueue.main.async { [self] in
+                    focusGuide.transition(to: "progressBar")
+                }
+            } else {
+                containerState.isPresentingCloseConfirmation = true
             }
         }
     }

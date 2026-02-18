@@ -247,20 +247,42 @@ extension MediaChaptersSupplement {
         }
     }
 
-    struct ChapterContent: View {
+    struct ChapterContent: PlatformView {
 
         let chapter: ChapterInfo.FullInfo
 
-        var body: some View {
+        var iOSView: some View {
+            VStack(alignment: .leading, spacing: 5) {
+                Text(chapter.chapterInfo.displayTitle)
+                    .lineLimit(1)
+                    .foregroundStyle(.white)
+                    .frame(height: 15)
+
+                Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
+                    .frame(height: 20)
+                    .foregroundStyle(Color(UIColor.systemBlue))
+                    .padding(.horizontal, 4)
+                    .background {
+                        Color(.darkGray)
+                            .opacity(0.2)
+                            .cornerRadius(4)
+                    }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .font(.subheadline)
+            .fontWeight(.semibold)
+        }
+
+        var tvOSView: some View {
             VStack(alignment: .leading, spacing: 0) {
                 Text(chapter.chapterInfo.displayTitle)
                     .font(.footnote.weight(.regular))
-                    .foregroundColor(.primary)
+                    .foregroundStyle(.white)
                     .lineLimit(1, reservesSpace: true)
 
                 Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
                     .font(.caption.weight(.medium))
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(Color(UIColor.systemBlue))
                     .lineLimit(1, reservesSpace: true)
             }
         }

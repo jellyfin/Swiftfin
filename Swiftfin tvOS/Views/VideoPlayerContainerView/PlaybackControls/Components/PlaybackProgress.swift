@@ -32,8 +32,7 @@ extension VideoPlayer.PlaybackControls {
         @Toaster
         private var toaster: ToastProxy
 
-        @Binding
-        var isProgressBarFocused: Bool
+        var onPanScrubChanged: ((Bool) -> Void)?
 
         @FocusState
         private var isFocused: Bool
@@ -86,6 +85,12 @@ extension VideoPlayer.PlaybackControls {
                 }
         }
 
+        private func originProgress(resolution: Double) -> Double? {
+            guard let origin = containerState.scrubOriginSeconds,
+                  let runtime = manager.item.runtime, runtime > .zero else { return nil }
+            return clamp((origin.seconds / runtime.seconds) * resolution, min: 0, max: resolution)
+        }
+
         @ViewBuilder
         private var capsuleSlider: some View {
 
@@ -101,8 +106,14 @@ extension VideoPlayer.PlaybackControls {
                 ),
                 total: resolution
             )
+            .originProgress(originProgress(resolution: resolution))
             .onEditingChanged { isEditing in
-                isScrubbing = isEditing
+                if isEditing {
+                    isScrubbing = true
+                    onPanScrubChanged?(true)
+                } else {
+                    onPanScrubChanged?(false)
+                }
             }
             .frame(height: 50)
         }
@@ -135,15 +146,7 @@ extension VideoPlayer.PlaybackControls {
                 }
             }
             .onChange(of: isFocused) { _, newValue in
-                isProgressBarFocused = newValue
-            }
-            .onTapGesture {
-                manager.togglePlayPause()
-                if manager.playbackRequestStatus == .playing {
-                    toaster.present(L10n.pause, systemName: "pause.circle")
-                } else if manager.playbackRequestStatus == .paused {
-                    toaster.present(L10n.play, systemName: "play.circle")
-                }
+                containerState.isProgressBarFocused = newValue
             }
         }
     }
