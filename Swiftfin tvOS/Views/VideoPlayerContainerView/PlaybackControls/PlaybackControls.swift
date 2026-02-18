@@ -8,9 +8,7 @@
 
 import Defaults
 import IdentifiedCollections
-import PreferencesView
 import SwiftUI
-import VLCUI
 
 extension VideoPlayer {
 
@@ -88,10 +86,10 @@ extension VideoPlayer {
         var focusedSupplementID: AnyMediaPlayerSupplement.ID?
 
         @State
-        var lastFocusedActionButton: VideoPlayerActionButton?
+        private var lastFocusedActionButton: VideoPlayerActionButton?
 
         @State
-        var lastFocusedSupplementID: AnyMediaPlayerSupplement.ID?
+        private var lastFocusedSupplementID: AnyMediaPlayerSupplement.ID?
 
         @State
         var isProgressBarFocused: Bool = false
@@ -99,7 +97,7 @@ extension VideoPlayer {
         // MARK: - State (Supplements)
 
         @State
-        var currentSupplements: IdentifiedArrayOf<AnyMediaPlayerSupplement> = []
+        private var currentSupplements: IdentifiedArrayOf<AnyMediaPlayerSupplement> = []
 
         // MARK: - Computed Properties
 
@@ -111,7 +109,7 @@ extension VideoPlayer {
             containerState.isPresentingSupplement
         }
 
-        var isScrubbing: Bool {
+        private var isScrubbing: Bool {
             containerState.isScrubbing
         }
 
@@ -151,32 +149,32 @@ extension VideoPlayer {
 
         private var bottomContent: some View {
             VStack(spacing: 0) {
-                if !isPresentingSupplement {
-                    NavigationBar(focusedActionButton: $focusedActionButton)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .focusGuide(
-                            focusGuide,
-                            tag: "navigationBar",
-                            fixedSize: (horizontal: false, vertical: true),
-                            onContentFocus: {
-                                focusedActionButton = lastFocusedActionButton
-                                    ?? Defaults[.VideoPlayer.barActionButtons].first
-                            },
-                            bottom: "progressBar"
-                        )
-                        .isVisible(isPresentingOverlay || isScrubbing)
+                NavigationBar(focusedActionButton: $focusedActionButton)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .focusGuide(
+                        focusGuide,
+                        tag: "navigationBar",
+                        fixedSize: (horizontal: false, vertical: true),
+                        onContentFocus: {
+                            focusedActionButton = lastFocusedActionButton
+                                ?? Defaults[.VideoPlayer.barActionButtons].first
+                        },
+                        bottom: "progressBar"
+                    )
+                    .isVisible((isPresentingOverlay || isScrubbing) && !isPresentingSupplement)
+                    .disabled(isPresentingSupplement)
 
-                    PlaybackProgress(isProgressBarFocused: $isProgressBarFocused)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .focusGuide(
-                            focusGuide,
-                            tag: "progressBar",
-                            fixedSize: (horizontal: false, vertical: true),
-                            top: "navigationBar",
-                            bottom: currentSupplements.isEmpty ? nil : "dividerZone"
-                        )
-                        .isVisible(isPresentingOverlay || isScrubbing)
-                }
+                PlaybackProgress(isProgressBarFocused: $isProgressBarFocused)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .focusGuide(
+                        focusGuide,
+                        tag: "progressBar",
+                        fixedSize: (horizontal: false, vertical: true),
+                        top: "navigationBar",
+                        bottom: currentSupplements.isEmpty ? nil : "dividerZone"
+                    )
+                    .isVisible((isPresentingOverlay || isScrubbing) && !isPresentingSupplement)
+                    .disabled(isPresentingSupplement)
 
                 Color.clear
                     .frame(height: 0)
@@ -298,6 +296,7 @@ extension VideoPlayer {
                 let newSupplements = IdentifiedArray(
                     uniqueElements: newValue.map(AnyMediaPlayerSupplement.init)
                 )
+                guard newSupplements.ids != currentSupplements.ids else { return }
                 currentSupplements = newSupplements
             }
             .onChange(of: focusedActionButton) { _, newValue in

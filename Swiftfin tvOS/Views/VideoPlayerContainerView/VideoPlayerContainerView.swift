@@ -182,10 +182,6 @@ extension VideoPlayer {
 
         // MARK: - Constraints
 
-        private var playerRegularConstraints: [NSLayoutConstraint] = []
-        private var playbackControlsConstraints: [NSLayoutConstraint] = []
-        private var supplementContainerConstraints: [NSLayoutConstraint] = []
-
         private var supplementHeightAnchor: NSLayoutConstraint!
         private var supplementBottomAnchor: NSLayoutConstraint!
 
@@ -201,7 +197,6 @@ extension VideoPlayer {
 
         // MARK: - Pan Gesture State
 
-        private var lastVerticalPanLocation: CGPoint?
         private var verticalPanGestureStartConstant: CGFloat?
         private var isPanning: Bool = false
         private var didStartPanningWithSupplement: Bool = false
@@ -247,7 +242,6 @@ extension VideoPlayer {
             }
 
             if state == .began || state == .changed {
-                lastVerticalPanLocation = location
                 isPanning = true
 
                 let shouldHaveSupplementPresented = self.supplementBottomAnchor
@@ -259,7 +253,6 @@ extension VideoPlayer {
                     containerState.selectedSupplement = nil
                 }
             } else {
-                lastVerticalPanLocation = nil
                 verticalPanGestureStartConstant = nil
                 isPanning = false
 
@@ -398,14 +391,14 @@ extension VideoPlayer {
         }
 
         private func setupConstraints() {
-            playerRegularConstraints = [
+            let playerConstraints = [
                 playerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 playerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                 playerView.topAnchor.constraint(equalTo: view.topAnchor),
                 playerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             ]
 
-            NSLayoutConstraint.activate(playerRegularConstraints)
+            NSLayoutConstraint.activate(playerConstraints)
 
             supplementBottomAnchor = supplementContainerView.topAnchor.constraint(
                 equalTo: view.bottomAnchor,
@@ -415,16 +408,16 @@ extension VideoPlayer {
 
             supplementHeightAnchor = supplementContainerView.heightAnchor.constraint(equalToConstant: supplementContainerOffset)
 
-            supplementContainerConstraints = [
+            let supplementConstraints = [
                 supplementContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 supplementContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                supplementBottomAnchor,
-                supplementHeightAnchor,
+                supplementBottomAnchor!,
+                supplementHeightAnchor!,
             ]
 
-            NSLayoutConstraint.activate(supplementContainerConstraints)
+            NSLayoutConstraint.activate(supplementConstraints)
 
-            playbackControlsConstraints = [
+            let playbackControlsConstraints = [
                 playbackControlsView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 playbackControlsView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                 playbackControlsView.topAnchor.constraint(equalTo: view.topAnchor),

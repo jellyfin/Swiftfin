@@ -103,6 +103,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 let newSupplements = IdentifiedArray(
                     uniqueElements: newValue.map(AnyMediaPlayerSupplement.init)
                 )
+                guard newSupplements.ids != currentSupplements.ids else { return }
                 currentSupplements = newSupplements
             }
         }
