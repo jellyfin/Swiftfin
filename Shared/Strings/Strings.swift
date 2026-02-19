@@ -292,8 +292,8 @@ internal enum L10n {
   internal static let chapters = L10n.tr("Localizable", "chapters", fallback: "Chapters")
   /// Chapter slider
   internal static let chapterSlider = L10n.tr("Localizable", "chapterSlider", fallback: "Chapter slider")
-  /// All child items (seaons, episodes, etc.) will be deleted
-  internal static let childDeletionWarning = L10n.tr("Localizable", "childDeletionWarning", fallback: "All child items (seaons, episodes, etc.) will be deleted")
+  /// All child items (seasons, episodes, etc.) will be deleted
+  internal static let childDeletionWarning = L10n.tr("Localizable", "childDeletionWarning", fallback: "All child items (seasons, episodes, etc.) will be deleted")
   /// Children
   internal static let children = L10n.tr("Localizable", "children", fallback: "Children")
   /// Cinematic
