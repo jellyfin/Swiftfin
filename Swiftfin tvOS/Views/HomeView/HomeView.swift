@@ -13,6 +13,23 @@ import SwiftUI
 
 struct HomeView: View {
 
+    private enum HomeLook {
+        static let topSpacing: CGFloat = 56
+        static let sectionSpacing: CGFloat = 30
+
+        static var backgroundGradient: LinearGradient {
+            LinearGradient(
+                colors: [
+                    Color(red: 0.03, green: 0.06, blue: 0.12),
+                    Color(red: 0.04, green: 0.10, blue: 0.19),
+                    Color(red: 0.08, green: 0.05, blue: 0.12),
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
+    }
+
     @Router
     private var router
 
@@ -25,7 +42,7 @@ struct HomeView: View {
     @ViewBuilder
     private var contentView: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: HomeLook.sectionSpacing) {
 
                 if viewModel.resumeItems.isNotEmpty {
                     CinematicResumeView(viewModel: viewModel)
@@ -48,12 +65,30 @@ struct HomeView: View {
                     LatestInLibraryView(viewModel: viewModel)
                 }
             }
+            .safeAreaPadding(.top, HomeLook.topSpacing)
         }
     }
 
     var body: some View {
         ZStack {
-            Color.clear
+            HomeLook.backgroundGradient
+
+            GeometryReader { proxy in
+                ZStack {
+                    Circle()
+                        .fill(Color(red: 0.98, green: 0.57, blue: 0.20).opacity(0.20))
+                        .frame(width: proxy.size.width * 0.50)
+                        .blur(radius: 90)
+                        .position(x: proxy.size.width * 0.80, y: proxy.size.height * 0.16)
+
+                    Circle()
+                        .fill(Color(red: 0.32, green: 0.76, blue: 0.97).opacity(0.22))
+                        .frame(width: proxy.size.width * 0.64)
+                        .blur(radius: 110)
+                        .position(x: proxy.size.width * 0.08, y: proxy.size.height * 0.74)
+                }
+            }
+            .allowsHitTesting(false)
 
             switch viewModel.state {
             case .content:

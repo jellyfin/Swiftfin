@@ -13,6 +13,23 @@ import SwiftUI
 
 struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element == Element, Data.Index == Int {
 
+    private enum ShelfLook {
+        static let cornerRadius: CGFloat = 34
+        static let horizontalPadding: CGFloat = EdgeInsets.edgePadding
+
+        static var sectionGradient: LinearGradient {
+            LinearGradient(
+                colors: [
+                    Color.white.opacity(0.12),
+                    Color.white.opacity(0.06),
+                    Color.black.opacity(0.16),
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
+    }
+
     private var data: Data
     private var title: String?
     private var type: PosterDisplayType
@@ -25,14 +42,28 @@ struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element 
 
             if let title {
                 HStack {
+                    Capsule()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 0.98, green: 0.57, blue: 0.20),
+                                    Color(red: 0.31, green: 0.74, blue: 0.94),
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 10, height: 36)
+
                     Text(title)
-                        .font(.title2)
-                        .fontWeight(.semibold)
+                        .font(.system(size: 36, weight: .bold, design: .rounded))
+                        .textCase(.uppercase)
+                        .tracking(1.1)
                         .accessibility(addTraits: [.isHeader])
-                        .padding(.leading, 50)
 
                     Spacer()
                 }
+                .padding(.horizontal, ShelfLook.horizontalPadding)
             }
 
             CollectionHStack(
@@ -53,6 +84,16 @@ struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element 
             .insets(horizontal: EdgeInsets.edgePadding, vertical: 20)
             .itemSpacing(EdgeInsets.edgePadding - 20)
             .scrollBehavior(.continuousLeadingEdge)
+        }
+        .padding(.vertical, 22)
+        .background {
+            RoundedRectangle(cornerRadius: ShelfLook.cornerRadius, style: .continuous)
+                .fill(ShelfLook.sectionGradient)
+                .overlay {
+                    RoundedRectangle(cornerRadius: ShelfLook.cornerRadius, style: .continuous)
+                        .stroke(Color.white.opacity(0.18), lineWidth: 1)
+                }
+                .padding(.horizontal, ShelfLook.horizontalPadding)
         }
         .focusSection()
     }
