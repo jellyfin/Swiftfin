@@ -16,13 +16,11 @@ extension BaseItemDto {
     var canBeDeleted: Bool {
         switch type {
         case .playlist:
-            return canDelete == true
+            canDelete == true
         case .boxSet:
-            return StoredValues[.User.enableCollectionManagement]
-                && canDelete == true
+            StoredValues[.User.enableCollectionManagement] && canDelete == true
         default:
-            return StoredValues[.User.enableItemDeletion]
-                && canDelete == true
+            StoredValues[.User.enableItemDeletion] && canDelete == true
         }
     }
 
