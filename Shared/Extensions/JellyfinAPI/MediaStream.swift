@@ -209,63 +209,87 @@ extension MediaStream {
 
 extension [MediaStream] {
 
-    /// Adjusts track indexes for VLC playback.
-    /// Shows ALL tracks (embedded + external, regardless of deliveryURL).
-    /// External tracks are always placed at the end after internal tracks.
-    /// Indices are remapped to 0-based sequence for VLC.
+    /// Maps Jellyfin stream indexes to VLC track indexes.
     ///
-    /// Returns: (adjusted streams with new indices, map of original index -> adjusted index)
-    func adjustedIndexMap(for playMethod: PlayMethod, selectedAudioStreamIndex: Int) -> [Int: Int] {
-        let internalTracks = self.filter { !($0.isExternal ?? false) }
-        let externalTracks = self.filter { $0.isExternal == true }
-
-        var orderedInternal: [MediaStream] = []
-        let subtitleInternal = internalTracks.filter { $0.type == .subtitle }
+    /// - **Transcode**: HLS has 1 video + 1 audio; subtitles are playback children starting at index 2.
+    /// - **DirectPlay**: Jellyfin indexes externals first, then internals. Subtract external count
+    ///   to get VLC container position. External subtitle indexes are resolved at runtime via
+    ///   `resolveExternalSubtitleIndexes` since the server may hide container tracks (e.g. PGS
+    ///   filtered by "Disable embedded subtitles") that VLC still sees.
+    func adjustedIndexMap(
+        for playMethod: PlayMethod,
+        selectedAudioStreamIndex: Int
+    ) -> [Int: Int] {
+        var indexMap: [Int: Int] = [:]
 
         if playMethod == .transcode {
-            // Only include the first video and selected audio track for transcode
-            let videoInternal = internalTracks.filter { $0.type == .video }
-            let audioInternal = internalTracks.filter { $0.type == .audio }
+            var containerTracks: [MediaStream] = []
 
-            if let firstVideo = videoInternal.first {
-                orderedInternal.append(firstVideo)
+            let videoTracks = self.filter { $0.type == .video && !($0.isExternal ?? false) }
+            let audioTracks = self.filter { $0.type == .audio && !($0.isExternal ?? false) }
+
+            if let firstVideo = videoTracks.first {
+                containerTracks.append(firstVideo)
             }
-            if let selectedAudio = audioInternal.first(where: { $0.index == selectedAudioStreamIndex }) {
-                orderedInternal.append(selectedAudio)
+            if let selectedAudio = audioTracks.first(where: { $0.index == selectedAudioStreamIndex }) {
+                containerTracks.append(selectedAudio)
             }
 
-            orderedInternal += subtitleInternal
+            for (newIndex, track) in containerTracks.enumerated() {
+                guard let oldIndex = track.index else { continue }
+                indexMap[oldIndex] = newIndex
+            }
+
+            let externalSubtitles = self.filter { $0.type == .subtitle && $0.deliveryURL != nil }
+            let externalStartIndex = containerTracks.count
+
+            for (offset, track) in externalSubtitles.enumerated() {
+                guard let oldIndex = track.index else { continue }
+                indexMap[oldIndex] = externalStartIndex + offset
+            }
         } else {
-            let videoInternal = internalTracks.filter { $0.type == .video }
-            let audioInternal = internalTracks.filter { $0.type == .audio }
+            let externalCount = self.count(where: { $0.isExternal == true })
+            let internalTracks = self.filter { !($0.isExternal ?? false) }
 
-            orderedInternal = videoInternal + audioInternal + subtitleInternal
-        }
+            for track in internalTracks {
+                guard let oldIndex = track.index else { continue }
+                indexMap[oldIndex] = oldIndex - externalCount
+            }
 
-        // Remap indices for VLC (0-based sequence)
-        var indexMap: [Int: Int] = [:]
-        var newInternalTracks: [MediaStream] = []
-
-        for (newIndex, var track) in orderedInternal.enumerated() {
-            guard let oldIndex = track.index else { continue }
-
-            track.index = newIndex
-            indexMap[oldIndex] = newIndex
-            newInternalTracks.append(track)
-        }
-
-        // Add ALL external tracks at the end
-        let startingIndexForExternal = newInternalTracks.count
-
-        for (offset, var track) in externalTracks.enumerated() {
-            guard let oldIndex = track.index else { continue }
-
-            let newIndex = startingIndexForExternal + offset
-            track.index = newIndex
-            indexMap[oldIndex] = newIndex
+            /// External subtitle indexes resolved dynamically in `resolveExternalSubtitleIndexes`
         }
 
         return indexMap
+    }
+
+    /// Resolves external subtitle VLC indexes using VLC's actual track list after media loads.
+    /// Playback children always get the highest indexes (appended after container tracks).
+    /// Takes the last N unmapped VLC subtitle indexes where N = external subtitle count.
+    static func resolveExternalSubtitleIndexes(
+        vlcSubtitleTracks: [(index: Int, title: String)],
+        currentIndexMap: [Int: Int],
+        externalSubtitleStreams: [MediaStream]
+    ) -> [Int: Int] {
+        guard !externalSubtitleStreams.isEmpty else { return currentIndexMap }
+
+        var updatedMap = currentIndexMap
+
+        let mappedVLCIndexes = Set(currentIndexMap.values)
+        let unmappedVLCIndexes = vlcSubtitleTracks
+            .map(\.index)
+            .filter { $0 >= 0 && !mappedVLCIndexes.contains($0) }
+            .sorted()
+
+        let externalVLCIndexes = [Int](unmappedVLCIndexes.suffix(externalSubtitleStreams.count))
+
+        for (offset, stream) in externalSubtitleStreams.enumerated() {
+            guard let jellyfinIndex = stream.index else { continue }
+            if offset < externalVLCIndexes.count {
+                updatedMap[jellyfinIndex] = externalVLCIndexes[offset]
+            }
+        }
+
+        return updatedMap
     }
 
     var has4KVideo: Bool {

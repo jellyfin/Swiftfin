@@ -315,7 +315,7 @@ final class MediaPlayerManager: ViewModel {
         let newItem = try await MediaPlayerItem.build(
             for: currentItem.baseItem,
             mediaSource: currentItem.mediaSource,
-            audioStreamIndex: currentItem.selectedAudioStreamIndex,
+            audioStreamIndex: index,
             requestedBitrate: currentItem.requestedBitrate
         )
 

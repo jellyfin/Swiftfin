@@ -37,7 +37,10 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         }
     }
 
-    private let indexMap: [Int: Int]
+    /// Jellyfin stream index -> VLC track index. External subtitle entries are resolved at playback via `resolveExternalSubtitleIndexes`.
+    private(set) var indexMap: [Int: Int]
+
+    private var externalSubtitlesResolved = false
 
     weak var manager: MediaPlayerManager? {
         didSet {
@@ -81,10 +84,11 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         self.previewImageProvider = previewImageProvider
         self.thumbnailProvider = thumbnailProvider
         self.url = url
+        let mediaStreams = mediaSource.mediaStreams
 
-        let mediaStreams = baseItem.mediaSources?.first(where: { $0.id == mediaSource.id })?.mediaStreams
-
-        self.audioStreams = mediaStreams?.filter { $0.type == .audio } ?? []
+        // TODO: Always force remux when external audio tracks are present
+        /// External audio hidden — server has no deliveryURL for them
+        self.audioStreams = mediaStreams?.filter { $0.type == .audio && $0.isExternal != true } ?? []
         self.subtitleStreams = mediaStreams?.filter { $0.type == .subtitle } ?? []
         self.videoStreams = mediaStreams?.filter { $0.type == .video } ?? []
 
@@ -102,5 +106,24 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         selectedSubtitleStreamIndex = mediaSource.defaultSubtitleStreamIndex ?? -1
 
         observers.append(MediaProgressObserver(item: self))
+    }
+
+    /// Resolves external subtitle VLC indexes from VLC's actual track list.
+    /// Called once on first `.playing` state. Only needed for DirectPlay since the server may hide container tracks that affect playback child offsets.
+    func resolveExternalSubtitleIndexes(vlcSubtitleTracks: [(index: Int, title: String)]) {
+        guard !externalSubtitlesResolved else { return }
+        externalSubtitlesResolved = true
+
+        /// Only needed for DirectPlay — transcode external indexes are predicted correctly
+        guard mediaSource.transcodingURL == nil else { return }
+
+        let externalSubtitleStreams = subtitleStreams.filter { $0.isExternal == true }
+        guard !externalSubtitleStreams.isEmpty else { return }
+
+        indexMap = [MediaStream].resolveExternalSubtitleIndexes(
+            vlcSubtitleTracks: vlcSubtitleTracks,
+            currentIndexMap: indexMap,
+            externalSubtitleStreams: externalSubtitleStreams
+        )
     }
 }
