@@ -14,9 +14,9 @@ enum OverlayType: String, CaseIterable, Storable {
     var label: String {
         switch self {
         case .normal:
-            return L10n.normal
+            L10n.normal
         case .compact:
-            return L10n.compact
+            L10n.compact
         }
     }
 }
@@ -29,9 +29,9 @@ enum PlaybackButtonType: String, CaseIterable, Displayable, Storable {
     var displayTitle: String {
         switch self {
         case .large:
-            return L10n.large
+            L10n.large
         case .compact:
-            return L10n.compact
+            L10n.compact
         }
     }
 }

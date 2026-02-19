@@ -9,6 +9,11 @@
 import SwiftUI
 
 extension AnyView: PlatformView {
-    var iOSView: some View { self }
-    var tvOSView: some View { self }
+    var iOSView: some View {
+        self
+    }
+
+    var tvOSView: some View {
+        self
+    }
 }

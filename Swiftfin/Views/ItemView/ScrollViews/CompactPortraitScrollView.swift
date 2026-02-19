@@ -33,15 +33,13 @@ extension ItemView {
             @ViewBuilder content: @escaping (ImageSource, Color) -> some View
         ) -> some View {
 
-            let item: BaseItemDto
-
-            if viewModel.item.type == .person || viewModel.item.type == .musicArtist,
-               let typeViewModel = viewModel as? CollectionItemViewModel,
-               let randomItem = typeViewModel.randomItem()
+            let item: BaseItemDto = if viewModel.item.type == .person || viewModel.item.type == .musicArtist,
+                                       let typeViewModel = viewModel as? CollectionItemViewModel,
+                                       let randomItem = typeViewModel.randomItem()
             {
-                item = randomItem
+                randomItem
             } else {
-                item = viewModel.item
+                viewModel.item
             }
 
             let imageType: ImageType = item.type == .episode ? .primary : .backdrop

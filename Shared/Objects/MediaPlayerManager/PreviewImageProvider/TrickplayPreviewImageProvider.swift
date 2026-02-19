@@ -30,8 +30,7 @@ class TrickplayPreviewImageProvider: PreviewImageProvider {
             }
 
             let index = Int(((seconds - secondsRange.lowerBound) / tileInterval).rounded(.down))
-            let tileImage = image.getTileImage(columns: columns, rows: rows, index: index)
-            return tileImage
+            return image.getTileImage(columns: columns, rows: rows, index: index)
         }
     }
 
@@ -56,8 +55,7 @@ class TrickplayPreviewImageProvider: PreviewImageProvider {
     }
 
     func imageIndex(for seconds: Duration) -> Int? {
-        let intervalIndex = Int(seconds / Duration.milliseconds(info.interval ?? 1000))
-        return intervalIndex
+        Int(seconds / Duration.milliseconds(info.interval ?? 1000))
     }
 
     @MainActor
@@ -138,15 +136,13 @@ class TrickplayPreviewImageProvider: PreviewImageProvider {
             let secondsRangeStart = tileImageDuration * Double(imageIndex)
             let secondsRangeEnd = secondsRangeStart + tileImageDuration
 
-            let trickplayImage = TrickplayImage(
+            return TrickplayImage(
                 image: image,
                 secondsRange: secondsRangeStart ... secondsRangeEnd,
                 columns: columns,
                 rows: rows,
                 tileInterval: tileInterval
             )
-
-            return trickplayImage
         }
     }
 }

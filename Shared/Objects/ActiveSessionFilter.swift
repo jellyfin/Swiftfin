@@ -17,22 +17,22 @@ enum ActiveSessionFilter: String, CaseIterable, SystemImageable, Displayable, St
     var displayTitle: String {
         switch self {
         case .all:
-            return L10n.all
+            L10n.all
         case .active:
-            return L10n.active
+            L10n.active
         case .inactive:
-            return L10n.inactive
+            L10n.inactive
         }
     }
 
     var systemImage: String {
         switch self {
         case .all:
-            return "line.3.horizontal"
+            "line.3.horizontal"
         case .active:
-            return "play"
+            "play"
         case .inactive:
-            return "play.slash"
+            "play.slash"
         }
     }
 }

@@ -125,7 +125,7 @@ extension DevicesView {
             .onSelect(perform: onSelect)
             .isSeparatorVisible(false)
             .swipeActions {
-                if let onDelete = onDelete {
+                if let onDelete {
                     Button(
                         L10n.delete,
                         systemImage: "trash",

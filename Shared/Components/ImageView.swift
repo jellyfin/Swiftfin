@@ -32,7 +32,7 @@ struct ImageView<Failure: View>: View {
 
     @ViewBuilder
     private func _placeholder(_ currentSource: ImageSource) -> some View {
-        if let placeholder = placeholder {
+        if let placeholder {
             placeholder(currentSource)
                 .eraseToAnyView()
         } else {

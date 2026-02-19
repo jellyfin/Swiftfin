@@ -78,7 +78,7 @@ extension AnyStoredData {
     }
 
     /// Note: if `domain == nil`, will default to "none" to avoid local typing issues.
-    static func store<Value: Codable>(value: Value, key: String, ownerID: String, domain: String? = nil) throws {
+    static func store(value: some Codable, key: String, ownerID: String, domain: String? = nil) throws {
 
         let domain = domain ?? "none"
 
