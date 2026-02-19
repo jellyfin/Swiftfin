@@ -14,18 +14,14 @@ extension BaseItemDto {
 
     /// Can this `BaseItemDto` be deleted by this user
     var canBeDeleted: Bool {
-        guard let userPolicy = Container.shared.currentUserSession()?.user.data.policy else { return false }
-
         switch type {
         case .playlist:
             return canDelete == true
         case .boxSet:
-            return userPolicy.isAdministrator == true
-                && StoredValues[.User.enableCollectionManagement]
+            return StoredValues[.User.enableCollectionManagement]
                 && canDelete == true
         default:
-            return userPolicy.isAdministrator == true
-                && StoredValues[.User.enableItemDeletion]
+            return StoredValues[.User.enableItemDeletion]
                 && canDelete == true
         }
     }
