@@ -26,6 +26,7 @@ extension MediaPlayerItem {
         videoPlayerType: VideoPlayerType = Defaults[.VideoPlayer.videoPlayerType],
         requestedBitrate: PlaybackBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate],
         compatibilityMode: PlaybackCompatibility = Defaults[.VideoPlayer.Playback.compatibilityMode],
+        startTimeTicks: Int? = nil,
         modifyItem: ((inout BaseItemDto) -> Void)? = nil
     ) async throws -> MediaPlayerItem {
 
@@ -79,6 +80,7 @@ extension MediaPlayerItem {
         playbackInfo.userID = userSession.user.id
         playbackInfo.audioStreamIndex = audioStreamIndex
         playbackInfo.subtitleStreamIndex = subtitleStreamIndex
+        playbackInfo.startTimeTicks = startTimeTicks
 
         if !item.isLiveStream {
             playbackInfo.mediaSourceID = initialMediaSource.id

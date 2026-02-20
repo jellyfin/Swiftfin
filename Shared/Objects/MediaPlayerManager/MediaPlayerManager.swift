@@ -171,7 +171,7 @@ final class MediaPlayerManager: ViewModel {
     }
 
     private var itemBuildTask: AnyCancellable?
-    private var streamChangeTask: AnyCancellable?
+    private var itemUpdateTask: AnyCancellable?
 
     private var initialMediaPlayerItemProvider: MediaPlayerItemProvider?
 
@@ -351,7 +351,7 @@ final class MediaPlayerManager: ViewModel {
         // TODO: remove playback item?
         //       - check that observers would respond correctly to stopping
         itemBuildTask?.cancel()
-        streamChangeTask?.cancel()
+        itemUpdateTask?.cancel()
         proxy?.stop()
         Container.shared.mediaPlayerManager.reset()
     }
@@ -375,13 +375,17 @@ final class MediaPlayerManager: ViewModel {
         requestedBitrate: PlaybackBitrate? = nil
     ) async throws {
 
-        streamChangeTask?.cancel()
+        itemUpdateTask?.cancel()
+
+        /// Capture the current playback position before stopping
+        let currentSeconds = self.seconds
 
         logger.info(
             "Rebuilding Media Player Item",
             metadata: [
                 "audioIndex": .stringConvertible(audioStreamIndex ?? -1),
                 "subtitleIndex": .stringConvertible(subtitleStreamIndex ?? -1),
+                "currentSeconds": .stringConvertible(self.seconds),
             ]
         )
 
@@ -392,7 +396,8 @@ final class MediaPlayerManager: ViewModel {
             mediaSource: currentItem.mediaSource,
             audioStreamIndex: audioStreamIndex ?? currentItem.selectedAudioStreamIndex,
             subtitleStreamIndex: subtitleStreamIndex ?? currentItem.selectedSubtitleStreamIndex,
-            requestedBitrate: requestedBitrate ?? currentItem.requestedBitrate
+            requestedBitrate: requestedBitrate ?? currentItem.requestedBitrate,
+            startTimeTicks: currentSeconds.ticks
         )
 
         logger.info(
@@ -403,7 +408,7 @@ final class MediaPlayerManager: ViewModel {
                 "url": .stringConvertible(newItem.url.absoluteString),
             ]
         )
-
-        playbackItem = newItem
+        self.playbackItem = newItem
+        self.seconds = currentSeconds
     }
 }
