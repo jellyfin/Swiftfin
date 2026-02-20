@@ -155,7 +155,7 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 | [TTML](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language)                | ✅                | ✅                |
 | [VPlayer](https://en.wikipedia.org/wiki/VPlayer)                                | ✅                | ❌                |
 | [VTT](https://en.wikipedia.org/wiki/WebVTT)                                     | ✅                | ✅                |
-| [XSub](https://en.wikipedia.org/wiki/XSUB)                                      | ✅                | 🔶 [2]            |
+| [XSub](https://en.wikipedia.org/wiki/XSUB)                                      | ✅ [1]            | 🔶 [2]            |
 
 **Notes:**
 
