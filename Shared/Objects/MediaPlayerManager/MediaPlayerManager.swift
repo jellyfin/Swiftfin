@@ -385,7 +385,7 @@ final class MediaPlayerManager: ViewModel {
             metadata: [
                 "audioIndex": .stringConvertible(audioStreamIndex ?? -1),
                 "subtitleIndex": .stringConvertible(subtitleStreamIndex ?? -1),
-                "currentSeconds": .stringConvertible(self.seconds),
+                "currentSeconds": .stringConvertible(currentSeconds),
             ]
         )
 
@@ -397,7 +397,12 @@ final class MediaPlayerManager: ViewModel {
             audioStreamIndex: audioStreamIndex ?? currentItem.selectedAudioStreamIndex,
             subtitleStreamIndex: subtitleStreamIndex ?? currentItem.selectedSubtitleStreamIndex,
             requestedBitrate: requestedBitrate ?? currentItem.requestedBitrate,
-            startTimeTicks: currentSeconds.ticks
+            modifyItem: { item in
+                if item.userData == nil {
+                    item.userData = UserItemDataDto()
+                }
+                item.userData?.playbackPositionTicks = currentSeconds.ticks
+            }
         )
 
         logger.info(
