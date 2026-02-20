@@ -11,292 +11,210 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
+@MainActor
+@Stateful
+class ItemEditorViewModel<Element: Equatable>: ViewModel {
 
-    // MARK: - Events
+    @CasePathable
+    enum Action {
 
-    enum Event: Equatable {
-        case updated
-        case loaded
-        case error(ErrorMessage)
-    }
+        /// Generic Actions
+        case delete
+        case refreshItem(sendNotification: Bool)
+        case refreshMetadata(
+            metadataRefreshMode: MetadataRefreshMode,
+            imageRefreshMode: MetadataRefreshMode,
+            replaceMetadata: Bool,
+            replaceImages: Bool,
+            regenerateTrickplay: Bool
+        )
 
-    // MARK: - Actions
-
-    enum Action: Equatable {
-        case load
+        /// Component Actions
         case search(String)
+        case actuallySearch(String)
         case add([Element])
         case remove([Element])
         case reorder([Element])
         case update(BaseItemDto)
+
+        var transition: Transition {
+            switch self {
+            case .add, .delete, .remove, .reorder, .update, .refreshItem, .refreshMetadata:
+                .background(.updating)
+            case .search:
+                .to(.initial)
+            case .actuallySearch:
+                .background(.searching)
+            }
+        }
     }
 
-    // MARK: BackgroundState
-
-    enum BackgroundState: Hashable {
-        case loading
-        case searching
-        case refreshing
-    }
-
-    // MARK: - State
-
-    enum State: Hashable {
-        case initial
-        case content
+    enum BackgroundState {
         case updating
-        case error(ErrorMessage)
+        case searching
     }
 
-    @Published
-    var backgroundStates: Set<BackgroundState> = []
+    enum Event {
+        case deleted
+        case metadataRefreshStarted
+        case updated
+    }
+
+    enum State {
+        case initial
+        case error
+    }
+
+    // MARK: - Published Properties
+
     @Published
     var item: BaseItemDto
+
     @Published
-    var elements: [Element] = []
-    @Published
-    var matches: [Element] = []
-    @Published
-    var state: State = .initial
+    private(set) var matches: [Element] = []
 
-    var trie = Trie<String, Element>()
+    private var searchQuery: CurrentValueSubject<String, Never> = .init("")
 
-    private var loadTask: AnyCancellable?
-    private var updateTask: AnyCancellable?
-    private var searchTask: AnyCancellable?
-    private var searchQuery = CurrentValueSubject<String, Never>("")
-
-    private let eventSubject = PassthroughSubject<Event, Never>()
-
-    final var events: AnyPublisher<Event, Never> {
-        eventSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
-    }
-
-    // MARK: - Initializer
+    // MARK: - Initialization
 
     init(item: BaseItemDto) {
         self.item = item
-
         super.init()
 
-        setupSearchDebounce()
-    }
-
-    // MARK: - Setup Debouncing
-
-    private func setupSearchDebounce() {
         searchQuery
-            .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
-            .removeDuplicates()
-            .sink { [weak self] searchTerm in
+            .debounce(for: 0.5, scheduler: RunLoop.main)
+            .sink { [weak self] query in
                 guard let self else { return }
-                guard searchTerm.isNotEmpty else { return }
-
-                self.executeSearch(for: searchTerm)
+                if query.isNotEmpty {
+                    actuallySearch(query)
+                } else {
+                    matches = []
+                }
             }
             .store(in: &cancellables)
     }
 
-    // MARK: - Respond to Actions
+    // MARK: - Actions
 
-    func respond(to action: Action) -> State {
-        switch action {
-        case .load:
-            loadTask?.cancel()
+    @Function(\Action.Cases.delete)
+    private func _delete() async throws {
+        guard let itemID = item.id else { return }
 
-            loadTask = Task { [weak self] in
-                guard let self else { return }
+        let request = Paths.deleteItem(itemID: itemID)
+        _ = try await userSession.client.send(request)
 
-                do {
-                    await MainActor.run {
-                        self.matches = []
-                        self.state = .initial
-                        _ = self.backgroundStates.insert(.loading)
-                    }
-
-                    let allElements = try await self.fetchElements()
-
-                    await MainActor.run {
-                        self.elements = allElements
-                        self.state = .content
-                        self.eventSubject.send(.loaded)
-
-                        _ = self.backgroundStates.remove(.loading)
-                    }
-
-                    populateTrie()
-
-                } catch {
-                    let apiError = ErrorMessage(error.localizedDescription)
-                    await MainActor.run {
-                        self.state = .error(apiError)
-                        _ = self.backgroundStates.remove(.loading)
-                    }
-                }
-            }.asAnyCancellable()
-
-            return state
-
-        case let .search(searchTerm):
-            searchQuery.send(searchTerm)
-            return state
-
-        case let .add(addItems):
-            executeAction {
-                try await self.addComponents(addItems)
-            }
-            return state
-
-        case let .remove(removeItems):
-            executeAction {
-                try await self.removeComponents(removeItems)
-            }
-            return state
-
-        case let .reorder(orderedItems):
-            executeAction {
-                try await self.reorderComponents(orderedItems)
-            }
-            return state
-
-        case let .update(updateItem):
-            executeAction {
-                try await self.updateItem(updateItem)
-            }
-            return state
-        }
+        Notifications[.didDeleteItem].post(itemID)
+        events.send(.deleted)
     }
 
-    // MARK: - Execute Debounced Search
+    @Function(\Action.Cases.refreshMetadata)
+    private func _refreshMetadata(
+        _ metadataRefreshMode: MetadataRefreshMode,
+        _ imageRefreshMode: MetadataRefreshMode,
+        _ replaceMetadata: Bool,
+        _ replaceImages: Bool,
+        _ regenerateTrickplay: Bool
+    ) async throws {
+        guard let itemId = item.id else { return }
 
-    private func executeSearch(for searchTerm: String) {
-        searchTask?.cancel()
+        var parameters = Paths.RefreshItemParameters()
+        parameters.metadataRefreshMode = metadataRefreshMode
+        parameters.imageRefreshMode = imageRefreshMode
+        parameters.isReplaceAllMetadata = replaceMetadata
+        parameters.isReplaceAllImages = replaceImages
+        parameters.isRegenerateTrickplay = regenerateTrickplay
 
-        searchTask = Task { [weak self] in
-            guard let self else { return }
+        let request = Paths.refreshItem(
+            itemID: itemId,
+            parameters: parameters
+        )
+        _ = try await userSession.client.send(request)
 
-            do {
-                await MainActor.run {
-                    _ = self.backgroundStates.insert(.searching)
-                }
+        events.send(.metadataRefreshStarted)
 
-                let results = try await self.searchElements(searchTerm)
-
-                await MainActor.run {
-                    self.matches = results
-                    _ = self.backgroundStates.remove(.searching)
-                }
-            } catch {
-                let apiError = ErrorMessage(error.localizedDescription)
-                await MainActor.run {
-                    self.state = .error(apiError)
-                    _ = self.backgroundStates.remove(.searching)
-                }
-            }
-        }.asAnyCancellable()
+        // TODO: Remove this call when we have a WebSocket
+        // - Both lines below this can be replaced by the WebSocket
+        // - Centralized, WebSocket gets the new information and updates when new
+        // - Currently, waits 5 seconds before a manual refresh
+        try await Task.sleep(for: .seconds(5))
+        await refreshItem(sendNotification: true)
     }
 
-    // MARK: - Helper: Execute Task for Add/Remove/Reorder/Update
+    @Function(\Action.Cases.search)
+    private func _search(_ searchTerm: String) async throws {
+        searchQuery.value = searchTerm
 
-    private func executeAction(action: @escaping () async throws -> Void) {
-        updateTask?.cancel()
-
-        updateTask = Task { [weak self] in
-            guard let self else { return }
-
-            do {
-                await MainActor.run {
-                    self.state = .updating
-                }
-
-                try await action()
-
-                await MainActor.run {
-                    self.state = .content
-                    self.eventSubject.send(.updated)
-                }
-            } catch {
-                let apiError = ErrorMessage(error.localizedDescription)
-                await MainActor.run {
-                    self.state = .content
-                    self.eventSubject.send(.error(apiError))
-                }
-            }
-        }.asAnyCancellable()
+        await cancel()
     }
 
-    // MARK: - Save Updated Item to Server
+    @Function(\Action.Cases.actuallySearch)
+    private func _actuallySearch(_ searchTerm: String) async throws {
+        matches = try await searchElements(searchTerm)
+    }
+
+    @Function(\Action.Cases.add)
+    private func _add(_ components: [Element]) async throws {
+        try await addComponents(components)
+    }
+
+    @Function(\Action.Cases.remove)
+    private func _remove(_ components: [Element]) async throws {
+        try await removeComponents(components)
+    }
+
+    @Function(\Action.Cases.reorder)
+    private func _reorder(_ components: [Element]) async throws {
+        try await reorderComponents(components)
+    }
+
+    @Function(\Action.Cases.update)
+    private func _update(_ newItem: BaseItemDto) async throws {
+        try await updateItem(newItem)
+    }
+
+    @Function(\Action.Cases.refreshItem)
+    private func _refreshItem(_ isRefresh: Bool) async throws {
+        self.item = try await item.getFullItem(userSession: userSession, sendNotification: isRefresh)
+        events.send(.updated)
+    }
+
+    // MARK: - Update Item
 
     func updateItem(_ newItem: BaseItemDto) async throws {
         guard let itemId = item.id else { return }
 
-        let request = Paths.updateItem(itemID: itemId, newItem)
+        var updateItem = newItem
+        updateItem.trickplay = nil
+
+        let request = Paths.updateItem(itemID: itemId, updateItem)
         _ = try await userSession.client.send(request)
 
-        try await refreshItem()
-
-        await MainActor.run {
-            Notifications[.itemMetadataDidChange].post(newItem)
-        }
+        await refreshItem(sendNotification: true)
     }
 
-    // MARK: - Refresh Item
-
-    private func refreshItem() async throws {
-        guard let itemId = item.id else { return }
-
-        await MainActor.run {
-            _ = self.backgroundStates.insert(.refreshing)
-        }
-
-        let request = Paths.getItem(
-            itemID: itemId,
-            userID: userSession.user.id
-        )
-        let response = try await userSession.client.send(request)
-
-        await MainActor.run {
-            self.item = response.value
-            _ = self.backgroundStates.remove(.refreshing)
-        }
-    }
-
-    // MARK: - Populate the Trie
-
-    func populateTrie() {
-        fatalError("This method should be overridden in subclasses")
-    }
-
-    // MARK: - Add Element Component to Item (To Be Overridden)
-
-    func addComponents(_ components: [Element]) async throws {
-        fatalError("This method should be overridden in subclasses")
-    }
-
-    // MARK: - Remove Element Component from Item (To Be Overridden)
-
-    func removeComponents(_ components: [Element]) async throws {
-        fatalError("This method should be overridden in subclasses")
-    }
-
-    // MARK: - Reorder Elements (To Be Overridden)
-
-    // TODO: should instead move to an index-based self insertion
-    //       instead of replacement
-    func reorderComponents(_ tags: [Element]) async throws {
-        fatalError("This method should be overridden in subclasses")
-    }
-
-    // MARK: - Fetch All Possible Elements (To Be Overridden)
-
-    func fetchElements() async throws -> [Element] {
-        fatalError("This method should be overridden in subclasses")
-    }
-
-    // MARK: - Return Matching Elements (To Be Overridden)
+    // MARK: - Overridable Methods
 
     func searchElements(_ searchTerm: String) async throws -> [Element] {
-        trie.search(prefix: searchTerm.localizedLowercase)
+        fatalError("Must be overridden in subclass")
+    }
+
+    func addComponents(_ components: [Element]) async throws {
+        fatalError("Must be overridden in subclass")
+    }
+
+    func removeComponents(_ components: [Element]) async throws {
+        fatalError("Must be overridden in subclass")
+    }
+
+    func reorderComponents(_ components: [Element]) async throws {
+        fatalError("Must be overridden in subclass")
+    }
+
+    func containsElement(named name: String) -> Bool {
+        fatalError("Must be overridden in subclass")
+    }
+
+    func matchExists(named name: String) -> Bool {
+        fatalError("Must be overridden in subclass")
     }
 }

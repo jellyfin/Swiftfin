@@ -292,6 +292,10 @@ internal enum L10n {
   internal static let chapters = L10n.tr("Localizable", "chapters", fallback: "Chapters")
   /// Chapter slider
   internal static let chapterSlider = L10n.tr("Localizable", "chapterSlider", fallback: "Chapter slider")
+  /// All child items (seasons, episodes, etc.) will be deleted
+  internal static let childDeletionWarning = L10n.tr("Localizable", "childDeletionWarning", fallback: "All child items (seasons, episodes, etc.) will be deleted")
+  /// Children
+  internal static let children = L10n.tr("Localizable", "children", fallback: "Children")
   /// Cinematic
   internal static let cinematic = L10n.tr("Localizable", "cinematic", fallback: "Cinematic")
   /// Cinematic background
@@ -772,6 +776,8 @@ internal enum L10n {
   internal static let invertedDark = L10n.tr("Localizable", "invertedDark", fallback: "Inverted dark")
   /// Inverted light
   internal static let invertedLight = L10n.tr("Localizable", "invertedLight", fallback: "Inverted light")
+  /// Item already exists
+  internal static let itemAlreadyExists = L10n.tr("Localizable", "itemAlreadyExists", fallback: "Item already exists")
   /// %1$@ at %2$@
   internal static func itemAtItem(_ p1: Any, _ p2: Any) -> String {
     return L10n.tr("Localizable", "itemAtItem", String(describing: p1), String(describing: p2), fallback: "%1$@ at %2$@")
