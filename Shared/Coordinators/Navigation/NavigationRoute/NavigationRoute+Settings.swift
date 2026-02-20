@@ -210,4 +210,13 @@ extension NavigationRoute {
     ) {
         VideoPlayerSettingsView()
     }
+
+    #if os(tvOS)
+    static func colorPicker(title: String, selection: Binding<Color>, supportsOpacity: Bool) -> NavigationRoute {
+        NavigationRoute(id: "colorPicker") {
+            ColorPickerView(color: selection, supportsOpacity: supportsOpacity)
+                .navigationTitle(title.localizedCapitalized)
+        }
+    }
+    #endif
 }
