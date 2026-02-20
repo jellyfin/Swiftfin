@@ -307,7 +307,10 @@ final class MediaPlayerManager: ViewModel {
 
     @Function(\Action.Cases.setTrack)
     private func _setTrack(_ type: MediaStreamType, _ oldIndex: Int?, _ newIndex: Int?) async throws {
-        guard let currentItem = playbackItem else { return }
+        guard let currentItem = playbackItem else {
+            logger.warning("setTrack: no playbackItem")
+            return
+        }
 
         switch type {
         case .audio:
@@ -316,6 +319,8 @@ final class MediaPlayerManager: ViewModel {
                 audioStreamIndex: newIndex
             )
         case .subtitle:
+            let newStream = currentItem.subtitleStreams.first(where: { $0.index == newIndex })
+
             if currentItem.isRebuildRequired(from: oldIndex, to: newIndex) {
                 try await updateMediaPlayerItem(
                     currentItem: currentItem,

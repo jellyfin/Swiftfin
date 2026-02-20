@@ -186,7 +186,7 @@ extension VLCMediaPlayerProxy {
                             manager.proxy?.isBuffering.value = true
                         case .ended:
                             // Live streams will send stopped/ended events
-                            guard !playbackItem.baseItem.isLiveStream else { return }
+                            guard !(manager.playbackItem?.baseItem.isLiveStream ?? false) else { return }
                             manager.proxy?.isBuffering.value = false
                             manager.ended()
                         case .stopped: ()
@@ -201,7 +201,7 @@ extension VLCMediaPlayerProxy {
                             manager.setPlaybackRequestStatus(status: .playing)
 
                             let tracks = info.subtitleTracks.map { (index: $0.index, title: $0.title) }
-                            playbackItem.getSubtitleIndexes(subtitleTracks: tracks)
+                            manager.playbackItem?.getSubtitleIndexes(subtitleTracks: tracks)
                         case .paused:
                             manager.setPlaybackRequestStatus(status: .paused)
                         }
