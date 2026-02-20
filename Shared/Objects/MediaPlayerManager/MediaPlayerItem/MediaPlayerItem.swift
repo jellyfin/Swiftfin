@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -89,7 +90,14 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
 
         // TODO: Fix External Audio Tracks & Re-Enable
         self.audioStreams = mediaStreams?.filter { $0.type == .audio && $0.isExternal != true } ?? []
-        self.subtitleStreams = mediaStreams?.filter { $0.type == .subtitle && $0.deliveryMethod != .drop } ?? []
+        self.subtitleStreams = mediaStreams?.filter {
+            $0.type == .subtitle
+                && $0.deliveryMethod != .drop
+                /// Hide external image subtitles in direct play — they require transcoding to burn in
+                && !(Defaults[.VideoPlayer.Playback.compatibilityMode] == .directPlay
+                    && $0.isExternal == true
+                    && $0.isTextSubtitleStream != true)
+        } ?? []
         self.videoStreams = mediaStreams?.filter { $0.type == .video } ?? []
 
         let resolvedAudioStreamIndex = initialAudioStreamIndex

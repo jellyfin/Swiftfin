@@ -9,7 +9,6 @@
 import Factory
 import Foundation
 import JellyfinAPI
-import Logging
 import VLCUI
 
 extension MediaStream {
@@ -223,12 +222,9 @@ extension [MediaStream] {
         for playMethod: PlayMethod,
         selectedAudioStreamIndex: Int
     ) -> [Int: Int] {
-        let logger = Logger.swiftfin()
         let playbackChildren = self.sidecarSubtitles
         var indexMap: [Int: Int] = [:]
 
-        logger.debug("playMethod=\(String(describing: playMethod)), selectedAudio=\(selectedAudioStreamIndex)")
-        logger.debug("total streams: \(self.count)")
         if playMethod == .transcode {
             /// Transcode HLS has exactly 1 video + 1 audio in the container
             var containerTracks: [MediaStream] = []
@@ -255,7 +251,6 @@ extension [MediaStream] {
                 guard let oldIndex = track.index else { continue }
                 let playerIndex = playbackChildStartIndex + offset
                 indexMap[oldIndex] = playerIndex
-                logger.debug("  sidecar: jellyfin \(oldIndex) → player \(playerIndex)")
             }
         } else {
             /// Jellyfin puts external tracks first in its global indexes, so internal container indexes are offset by that count
@@ -266,7 +261,6 @@ extension [MediaStream] {
                 guard let oldIndex = track.index else { continue }
                 let playerIndex = oldIndex - externalCount
                 indexMap[oldIndex] = playerIndex
-                logger.debug("  direct: jellyfin \(oldIndex) → player \(playerIndex), delivery=\(String(describing: track.deliveryMethod))")
             }
         }
 
