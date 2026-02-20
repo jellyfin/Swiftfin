@@ -13,6 +13,7 @@ import SwiftUI
 
 struct HomeView: View {
 
+    // Home-specific visual tokens for the redesigned tvOS layout.
     private enum HomeLook {
         static let topSpacing: CGFloat = 56
         static let sectionSpacing: CGFloat = 30
@@ -73,6 +74,7 @@ struct HomeView: View {
         ZStack {
             HomeLook.backgroundGradient
 
+            // Soft ambient glows over the base gradient for depth.
             GeometryReader { proxy in
                 ZStack {
                     Circle()

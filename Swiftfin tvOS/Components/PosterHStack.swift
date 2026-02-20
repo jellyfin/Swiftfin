@@ -13,6 +13,7 @@ import SwiftUI
 
 struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element == Element, Data.Index == Int {
 
+    // Shelf-level styling used across all home rows.
     private var shelfCornerRadius: CGFloat {
         34
     }
@@ -45,6 +46,7 @@ struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element 
 
             if let title {
                 HStack {
+                    // Accent marker to visually anchor each row title.
                     Capsule()
                         .fill(
                             LinearGradient(
