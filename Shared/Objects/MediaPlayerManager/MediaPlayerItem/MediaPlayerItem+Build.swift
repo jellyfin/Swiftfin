@@ -108,12 +108,6 @@ extension MediaPlayerItem {
                 }
             }
 
-            if let initialID = initialMediaSource.id,
-               let matchingMediaSource = mediaSources.first(where: { $0.id == initialID })
-            {
-                return matchingMediaSource
-            }
-
             logger.warning("Unable to find matching media source, defaulting to first media source")
 
             return mediaSources.first
