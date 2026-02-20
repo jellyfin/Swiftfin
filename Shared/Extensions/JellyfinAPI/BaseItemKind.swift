@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import JellyfinAPI
@@ -33,79 +33,79 @@ extension BaseItemKind: ItemFilter {
     var displayTitle: String {
         switch self {
         case .aggregateFolder:
-            return L10n.aggregateFolder
+            L10n.aggregateFolder
         case .audio:
-            return L10n.audio
+            L10n.audio
         case .audioBook:
-            return L10n.audioBook
+            L10n.audioBook
         case .basePluginFolder:
-            return L10n.basePluginFolder
+            L10n.basePluginFolder
         case .book:
-            return L10n.book
+            L10n.book
         case .boxSet:
-            return L10n.collection
+            L10n.collection
         case .channel:
-            return L10n.channel
+            L10n.channel
         case .channelFolderItem:
-            return L10n.channelFolderItem
+            L10n.channelFolderItem
         case .collectionFolder:
-            return L10n.collectionFolder
+            L10n.collectionFolder
         case .episode:
-            return L10n.episode
+            L10n.episode
         case .folder:
-            return L10n.folder
+            L10n.folder
         case .genre:
-            return L10n.genre
+            L10n.genre
         case .manualPlaylistsFolder:
-            return L10n.manualPlaylistsFolder
+            L10n.manualPlaylistsFolder
         case .movie:
-            return L10n.movie
+            L10n.movie
         case .liveTvChannel:
-            return L10n.liveTVChannel
+            L10n.liveTVChannel
         case .liveTvProgram:
-            return L10n.liveTVProgram
+            L10n.liveTVProgram
         case .musicAlbum:
-            return L10n.album
+            L10n.album
         case .musicArtist:
-            return L10n.artist
+            L10n.artist
         case .musicGenre:
-            return L10n.genre
+            L10n.genre
         case .musicVideo:
-            return L10n.musicVideo
+            L10n.musicVideo
         case .person:
-            return L10n.person
+            L10n.person
         case .photo:
-            return L10n.photo
+            L10n.photo
         case .photoAlbum:
-            return L10n.photoAlbum
+            L10n.photoAlbum
         case .playlist:
-            return L10n.playlist
+            L10n.playlist
         case .playlistsFolder:
-            return L10n.playlistsFolder
+            L10n.playlistsFolder
         case .program:
-            return L10n.program
+            L10n.program
         case .recording:
-            return L10n.recording
+            L10n.recording
         case .season:
-            return L10n.season
+            L10n.season
         case .series:
-            return L10n.series
+            L10n.series
         case .studio:
-            return L10n.studio
+            L10n.studio
         case .trailer:
-            return L10n.trailer
+            L10n.trailer
         case .tvChannel:
-            return L10n.tvChannel
+            L10n.tvChannel
         case .tvProgram:
-            return L10n.tvProgram
+            L10n.tvProgram
         case .userRootFolder:
-            return L10n.userRootFolder
+            L10n.userRootFolder
         case .userView:
-            return L10n.userView
+            L10n.userView
         case .video:
-            return L10n.video
+            L10n.video
         case .year:
-            return L10n.year
+            L10n.year
         }
     }
 }
@@ -115,79 +115,79 @@ extension BaseItemKind {
     var pluralDisplayTitle: String {
         switch self {
         case .aggregateFolder:
-            return L10n.aggregateFolders
+            L10n.aggregateFolders
         case .audio:
-            return L10n.audio
+            L10n.audio
         case .audioBook:
-            return L10n.audioBooks
+            L10n.audioBooks
         case .basePluginFolder:
-            return L10n.basePluginFolders
+            L10n.basePluginFolders
         case .book:
-            return L10n.books
+            L10n.books
         case .boxSet:
-            return L10n.collections
+            L10n.collections
         case .channel:
-            return L10n.channels
+            L10n.channels
         case .channelFolderItem:
-            return L10n.channelFolderItems
+            L10n.channelFolderItems
         case .collectionFolder:
-            return L10n.collectionFolders
+            L10n.collectionFolders
         case .episode:
-            return L10n.episodes
+            L10n.episodes
         case .folder:
-            return L10n.folders
+            L10n.folders
         case .genre:
-            return L10n.genres
+            L10n.genres
         case .manualPlaylistsFolder:
-            return L10n.manualPlaylistsFolders
+            L10n.manualPlaylistsFolders
         case .movie:
-            return L10n.movies
+            L10n.movies
         case .liveTvChannel:
-            return L10n.liveTVChannels
+            L10n.liveTVChannels
         case .liveTvProgram:
-            return L10n.liveTVPrograms
+            L10n.liveTVPrograms
         case .musicAlbum:
-            return L10n.albums
+            L10n.albums
         case .musicArtist:
-            return L10n.artists
+            L10n.artists
         case .musicGenre:
-            return L10n.genres
+            L10n.genres
         case .musicVideo:
-            return L10n.musicVideos
+            L10n.musicVideos
         case .person:
-            return L10n.people
+            L10n.people
         case .photo:
-            return L10n.photos
+            L10n.photos
         case .photoAlbum:
-            return L10n.photoAlbums
+            L10n.photoAlbums
         case .playlist:
-            return L10n.playlists
+            L10n.playlists
         case .playlistsFolder:
-            return L10n.playlistsFolders
+            L10n.playlistsFolders
         case .program:
-            return L10n.programs
+            L10n.programs
         case .recording:
-            return L10n.recordings
+            L10n.recordings
         case .season:
-            return L10n.seasons
+            L10n.seasons
         case .series:
-            return L10n.series
+            L10n.series
         case .studio:
-            return L10n.studios
+            L10n.studios
         case .trailer:
-            return L10n.trailers
+            L10n.trailers
         case .tvChannel:
-            return L10n.tvChannels
+            L10n.tvChannels
         case .tvProgram:
-            return L10n.tvPrograms
+            L10n.tvPrograms
         case .userRootFolder:
-            return L10n.userRootFolders
+            L10n.userRootFolders
         case .userView:
-            return L10n.userViews
+            L10n.userViews
         case .video:
-            return L10n.videos
+            L10n.videos
         case .year:
-            return L10n.years
+            L10n.years
         }
     }
 

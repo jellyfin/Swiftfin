@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -20,15 +20,15 @@ enum PlaybackBitrateTestSize: Int, CaseIterable, Defaults.Serializable, Displaya
     var displayTitle: String {
         switch self {
         case .largest:
-            return L10n.largest
+            L10n.largest
         case .larger:
-            return L10n.larger
+            L10n.larger
         case .regular:
-            return L10n.regular
+            L10n.regular
         case .smaller:
-            return L10n.smaller
+            L10n.smaller
         case .smallest:
-            return L10n.smallest
+            L10n.smallest
         }
     }
 }

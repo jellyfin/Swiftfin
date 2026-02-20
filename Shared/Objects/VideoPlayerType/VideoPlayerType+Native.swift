@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
@@ -15,6 +15,7 @@ extension VideoPlayerType {
 
     @ArrayBuilder<DirectPlayProfile>
     static var _nativeDirectPlayProfiles: [DirectPlayProfile] {
+
         DirectPlayProfile(type: .video) {
             AudioCodec.aac
             AudioCodec.ac3
@@ -22,22 +23,22 @@ extension VideoPlayerType {
             AudioCodec.eac3
             AudioCodec.flac
         } videoCodecs: {
-            VideoCodec.h261
-            VideoCodec.hevc
-            VideoCodec.mpeg4
-        } containers: {
-            MediaContainer.mp4
-        }
 
-        DirectPlayProfile(type: .video) {
-            AudioCodec.aac
-            AudioCodec.ac3
-            AudioCodec.alac
-            AudioCodec.eac3
-        } videoCodecs: {
             VideoCodec.h264
             VideoCodec.mpeg4
+
+            if PlaybackCapabilities.supportsAV1 {
+                VideoCodec.av1
+            }
+            if PlaybackCapabilities.supportsHEVC {
+                VideoCodec.hevc
+            }
+            if PlaybackCapabilities.supportsVP9 {
+                VideoCodec.vp9
+            }
+
         } containers: {
+            MediaContainer.mp4
             MediaContainer.m4v
         }
 
@@ -52,10 +53,15 @@ extension VideoPlayerType {
             AudioCodec.pcm_s24be
             AudioCodec.pcm_s24le
         } videoCodecs: {
+
             VideoCodec.h264
-            VideoCodec.hevc
             VideoCodec.mjpeg
             VideoCodec.mpeg4
+
+            if PlaybackCapabilities.supportsHEVC {
+                VideoCodec.hevc
+            }
+
         } containers: {
             MediaContainer.mov
         }
@@ -66,7 +72,13 @@ extension VideoPlayerType {
             AudioCodec.eac3
             AudioCodec.mp3
         } videoCodecs: {
+
             VideoCodec.h264
+
+            if PlaybackCapabilities.supportsHEVC {
+                VideoCodec.hevc
+            }
+
         } containers: {
             MediaContainer.mpegts
         }
@@ -96,6 +108,7 @@ extension VideoPlayerType {
 
     @ArrayBuilder<TranscodingProfile>
     static var _nativeTranscodingProfiles: [TranscodingProfile] {
+
         TranscodingProfile(
             isBreakOnNonKeyFrames: true,
             context: .streaming,
@@ -111,9 +124,18 @@ extension VideoPlayerType {
             AudioCodec.eac3
             AudioCodec.flac
         } videoCodecs: {
-            VideoCodec.hevc
+
+            /// - Note: Transcode Profiles prioritizes codecs by order
+            if PlaybackCapabilities.supportsAV1 {
+                VideoCodec.av1
+            }
+            if PlaybackCapabilities.supportsHEVC {
+                VideoCodec.hevc
+            }
+
             VideoCodec.h264
             VideoCodec.mpeg4
+
         } containers: {
             MediaContainer.mp4
         }
@@ -123,6 +145,7 @@ extension VideoPlayerType {
 
     @ArrayBuilder<SubtitleProfile>
     static var _nativeSubtitleProfiles: [SubtitleProfile] {
+
         SubtitleProfile.build(method: .embed) {
             SubtitleFormat.cc_dec
             SubtitleFormat.ttml
@@ -144,6 +167,7 @@ extension VideoPlayerType {
 
     @ArrayBuilder<CodecProfile>
     static var _nativeCodecProfiles: [CodecProfile] {
+
         CodecProfile(
             codec: VideoCodec.h264.rawValue,
             type: .video,
@@ -155,6 +179,7 @@ extension VideoPlayerType {
                     property: .videoRangeType
                 ) {
                     VideoRangeType.sdr
+                    VideoRangeType.doviWithSDR
                 }
             }
         )
@@ -169,13 +194,7 @@ extension VideoPlayerType {
                     isRequired: false,
                     property: .videoRangeType
                 ) {
-                    VideoRangeType.sdr
-                    VideoRangeType.hdr10
-                    VideoRangeType.hdr10Plus
-                    VideoRangeType.dovi
-                    VideoRangeType.doviWithHDR10
-                    VideoRangeType.doviWithHDR10Plus
-                    VideoRangeType.doviWithSDR
+                    nativeHDRProfiles
                 }
             }
         )
@@ -201,15 +220,36 @@ extension VideoPlayerType {
                     isRequired: false,
                     property: .videoRangeType
                 ) {
-                    VideoRangeType.sdr
-                    VideoRangeType.hdr10
-                    VideoRangeType.hdr10Plus
-                    VideoRangeType.dovi
-                    VideoRangeType.doviWithHDR10
-                    VideoRangeType.doviWithHDR10Plus
-                    VideoRangeType.doviWithSDR
+                    nativeHDRProfiles
                 }
             }
         )
+    }
+
+    @ArrayBuilder<VideoRangeType>
+    private static var nativeHDRProfiles: [VideoRangeType] {
+
+        VideoRangeType.sdr
+        VideoRangeType.doviWithSDR
+
+        if PlaybackCapabilities.supportsHLG {
+            VideoRangeType.hlg
+            VideoRangeType.doviWithHLG
+        }
+
+        if PlaybackCapabilities.supportsHDR10 {
+            VideoRangeType.hdr10
+            VideoRangeType.hdr10Plus
+        }
+
+        if PlaybackCapabilities.supportsHDR10 || PlaybackCapabilities.supportsDolbyVision {
+            VideoRangeType.doviWithHDR10
+            VideoRangeType.doviWithHDR10Plus
+            VideoRangeType.doviWithELHDR10Plus
+        }
+
+        if PlaybackCapabilities.supportsDolbyVision {
+            VideoRangeType.dovi
+        }
     }
 }

@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -225,9 +225,17 @@ extension VideoPlayer {
             return controller
         }()
 
-        private var playerView: UIView { playerViewController.view }
-        private var playbackControlsView: UIView { playbackControlsViewController.view }
-        private var supplementContainerView: UIView { supplementContainerViewController.view }
+        private var playerView: UIView {
+            playerViewController.view
+        }
+
+        private var playbackControlsView: UIView {
+            playbackControlsViewController.view
+        }
+
+        private var supplementContainerView: UIView {
+            supplementContainerViewController.view
+        }
 
         // MARK: - Constants
 
@@ -270,9 +278,7 @@ extension VideoPlayer {
             }
             let supplementContainerHeight = compactSupplementContainerOffset(view.bounds.height)
             let offsetPercentage = 1 - clamp(supplementBottomAnchor.constant.magnitude / supplementContainerHeight, min: 0, max: 1)
-            let offset = (dismissedSupplementContainerOffset + EdgeInsets.edgePadding) * offsetPercentage
-
-            return offset
+            return (dismissedSupplementContainerOffset + EdgeInsets.edgePadding) * offsetPercentage
         }
 
         private let logger = Logger.swiftfin()

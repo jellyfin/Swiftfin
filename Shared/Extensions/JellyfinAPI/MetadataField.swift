@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
@@ -13,23 +13,23 @@ extension MetadataField: Displayable {
     var displayTitle: String {
         switch self {
         case .cast:
-            return L10n.people
+            L10n.people
         case .genres:
-            return L10n.genres
+            L10n.genres
         case .productionLocations:
-            return L10n.productionLocations
+            L10n.productionLocations
         case .studios:
-            return L10n.studios
+            L10n.studios
         case .tags:
-            return L10n.tags
+            L10n.tags
         case .name:
-            return L10n.name
+            L10n.name
         case .overview:
-            return L10n.overview
+            L10n.overview
         case .runtime:
-            return L10n.runtime
+            L10n.runtime
         case .officialRating:
-            return L10n.officialRating
+            L10n.officialRating
         }
     }
 }

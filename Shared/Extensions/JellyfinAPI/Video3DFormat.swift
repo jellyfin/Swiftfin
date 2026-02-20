@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
@@ -13,15 +13,15 @@ extension Video3DFormat {
     var displayTitle: String {
         switch self {
         case .halfSideBySide:
-            return L10n.halfSideBySide
+            L10n.halfSideBySide
         case .fullSideBySide:
-            return L10n.fullSideBySide
+            L10n.fullSideBySide
         case .fullTopAndBottom:
-            return L10n.fullTopAndBottom
+            L10n.fullTopAndBottom
         case .halfTopAndBottom:
-            return L10n.halfTopAndBottom
+            L10n.halfTopAndBottom
         case .mvc:
-            return L10n.mvc
+            L10n.mvc
         }
     }
 }

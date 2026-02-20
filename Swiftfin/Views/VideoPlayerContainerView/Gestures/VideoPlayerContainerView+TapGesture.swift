@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -200,13 +200,13 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         unitPoint: UnitPoint,
         state: UILongPressGestureRecognizer.State
     ) {
-        guard state != .ended else { return }
-
         let action = Defaults[.VideoPlayer.Gesture.longPressAction]
 
         switch action {
         case .none: ()
         case .gestureLock:
+            guard state != .ended else { return }
+
             if containerState.isGestureLocked {
                 containerState.isGestureLocked = false
 
@@ -221,6 +221,37 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                     L10n.gesturesLocked,
                     systemName: VideoPlayerActionButton.gestureLock.systemImage
                 )
+            }
+        case .playbackSpeed:
+            guard checkGestureLock() else { return }
+            guard containerState.manager?.item.isLiveStream == false else { return }
+
+            switch state {
+            case .began:
+                containerState.originalPlaybackRate = containerState.manager?.rate
+
+                let multiplier = Defaults[.VideoPlayer.Gesture.longPressSpeedMultiplier]
+
+                containerState.manager?.setRate(rate: multiplier.rawValue)
+
+                containerState.toastProxy.present(
+                    Text(multiplier.displayTitle),
+                    systemName: "forward.fill"
+                )
+
+            case .ended, .cancelled:
+                guard let originalRate = containerState.originalPlaybackRate else { return }
+                containerState.manager?.setRate(rate: originalRate)
+
+                containerState.originalPlaybackRate = nil
+
+                containerState.toastProxy.present(
+                    Text(originalRate, format: .playbackRate),
+                    systemName: "forward.fill"
+                )
+
+            default:
+                break
             }
         }
     }

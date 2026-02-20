@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -35,9 +35,9 @@ extension UserDefaults {
     static var currentUserSuite: UserDefaults {
         switch Defaults[.lastSignedInUserID] {
         case .signedOut:
-            return userSuite(id: "default")
+            userSuite(id: "default")
         case let .signedIn(userID):
-            return userSuite(id: userID)
+            userSuite(id: userID)
         }
     }
 
@@ -100,11 +100,15 @@ extension Defaults.Keys {
 
     /// The accent color default for user contexts.
     /// Only use for `set`, use `accentColor` for `get`.
-    static var userAccentColor: Key<Color> { UserKey("userAccentColor", default: .jellyfinPurple) }
+    static var userAccentColor: Key<Color> {
+        UserKey("userAccentColor", default: .jellyfinPurple)
+    }
 
     /// The appearance default for user contexts.
     /// /// Only use for `set`, use `appearance` for `get`.
-    static var userAppearance: Key<AppAppearance> { UserKey("userAppearance", default: .system) }
+    static var userAppearance: Key<AppAppearance> {
+        UserKey("userAppearance", default: .system)
+    }
 
     enum Customization {
 
@@ -201,6 +205,10 @@ extension Defaults.Keys {
             static let horizontalPanAction: Key<PanGestureAction> = UserKey("videoPlayerHorizontalPanGesture", default: .none)
             static let horizontalSwipeAction: Key<SwipeGestureAction> = UserKey("videoPlayerhorizontalSwipeAction", default: .none)
             static let longPressAction: Key<LongPressGestureAction> = UserKey("videoPlayerLongPressGesture", default: .gestureLock)
+            static let longPressSpeedMultiplier: Key<PlaybackSpeed> = UserKey(
+                "videoPlayerLongPressSpeedMultiplier",
+                default: .two
+            )
             static let multiTapGesture: Key<MultiTapGestureAction> = UserKey("videoPlayerMultiTapGesture", default: .none)
             static let doubleTouchGesture: Key<DoubleTouchGestureAction> = UserKey("videoPlayerDoubleTouchGesture", default: .none)
             static let pinchGesture: Key<PinchGestureAction> = UserKey("videoPlayerSwipeGesture", default: .aspectFill)

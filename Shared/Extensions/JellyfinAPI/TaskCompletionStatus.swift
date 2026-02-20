@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
@@ -14,13 +14,13 @@ extension TaskCompletionStatus: Displayable {
     var displayTitle: String {
         switch self {
         case .completed:
-            return L10n.taskCompleted
+            L10n.taskCompleted
         case .failed:
-            return L10n.taskFailed
+            L10n.taskFailed
         case .cancelled:
-            return L10n.taskCancelled
+            L10n.taskCancelled
         case .aborted:
-            return L10n.taskAborted
+            L10n.taskAborted
         }
     }
 }

@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -21,11 +21,11 @@ final class AppURLHandler {
         func allowedScheme(with url: URL) -> Bool {
             switch self {
             case .launched:
-                return false
+                false
             case .allowed:
-                return true
+                true
             case .allowedInLogin:
-                return false
+                false
             }
         }
     }
@@ -53,7 +53,7 @@ extension AppURLHandler {
     }
 
     func processLaunchedURLIfNeeded() {
-        guard let launchURL = launchURL,
+        guard let launchURL,
               launchURL.absoluteString.isNotEmpty else { return }
         if processDeepLink(url: launchURL) {
             self.launchURL = nil
@@ -79,7 +79,7 @@ extension AppURLHandler {
         {
             // It would be nice if the ItemViewModel could be initialized to id later.
             getItem(userID: userID, itemID: itemID) { item in
-                guard let item = item else { return }
+                guard let item else { return }
                 // TODO: reimplement URL handling
 //                Notifications[.processDeepLink].post(DeepLink.item(item))
             }

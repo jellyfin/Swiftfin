@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import JellyfinAPI
@@ -33,15 +33,13 @@ extension ItemView {
             @ViewBuilder content: @escaping (ImageSource, Color) -> some View
         ) -> some View {
 
-            let item: BaseItemDto
-
-            if viewModel.item.type == .person || viewModel.item.type == .musicArtist,
-               let typeViewModel = viewModel as? CollectionItemViewModel,
-               let randomItem = typeViewModel.randomItem()
+            let item: BaseItemDto = if viewModel.item.type == .person || viewModel.item.type == .musicArtist,
+                                       let typeViewModel = viewModel as? CollectionItemViewModel,
+                                       let randomItem = typeViewModel.randomItem()
             {
-                item = randomItem
+                randomItem
             } else {
-                item = viewModel.item
+                viewModel.item
             }
 
             let imageType: ImageType = item.type == .episode ? .primary : .backdrop

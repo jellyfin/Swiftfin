@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import CoreStore
@@ -72,13 +72,13 @@ extension CoreStore.LogLevel {
     var asSwiftLog: Logger.Level {
         switch self {
         case .trace:
-            return .trace
+            .trace
         case .notice:
-            return .debug
+            .debug
         case .warning:
-            return .warning
+            .warning
         case .fatal:
-            return .critical
+            .critical
         }
     }
 }

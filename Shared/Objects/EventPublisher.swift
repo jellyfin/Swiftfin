@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -16,7 +16,7 @@ struct LegacyEventPublisher<T>: Publisher {
 
     private let subject = PassthroughSubject<T, Never>()
 
-    func receive<S>(subscriber: S) where S: Subscriber, Never == S.Failure, T == S.Input {
+    func receive<S: Subscriber>(subscriber: S) where Never == S.Failure, T == S.Input {
         subject.receive(subscriber: subscriber)
     }
 

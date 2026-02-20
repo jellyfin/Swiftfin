@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -96,9 +96,9 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         }
     }
 
-    private func unpackAndHandlePan<Handler: _PanHandlingAction>(
+    private func unpackAndHandlePan(
         handlingState: _PanHandlingState,
-        action: Handler
+        action: some _PanHandlingAction
     ) {
         action.onChange(
             action.startState,
@@ -311,9 +311,9 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 .first(where: { $0 is UISlider }) as? UISlider else { return }
             let translation: CGFloat = {
                 if startState.direction.isHorizontal {
-                    return handlingState.translation.x
+                    handlingState.translation.x
                 } else {
-                    return -handlingState.translation.y
+                    -handlingState.translation.y
                 }
             }()
 

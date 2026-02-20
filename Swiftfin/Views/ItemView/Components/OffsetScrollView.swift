@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -46,8 +46,7 @@ extension ItemView {
             let start = headerHeight - safeAreaInsets.top - 90
             let end = headerHeight - safeAreaInsets.top - 40
             let diff = end - start
-            let opacity = clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
-            return opacity
+            return clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
         }
 
         private var headerHeight: CGFloat {

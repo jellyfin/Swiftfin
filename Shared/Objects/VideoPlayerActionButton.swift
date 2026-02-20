@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 // TODO: add audio/subtitle offset
@@ -23,23 +23,23 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     var displayTitle: String {
         switch self {
         case .aspectFill:
-            return L10n.aspectFill
+            L10n.aspectFill
         case .audio:
-            return L10n.audio
+            L10n.audio
         case .autoPlay:
-            return L10n.autoPlay
+            L10n.autoPlay
         case .gestureLock:
-            return L10n.gestureLock
+            L10n.gestureLock
         case .playbackSpeed:
-            return L10n.playbackSpeed
+            L10n.playbackSpeed
 //        case .playbackQuality:
 //            return L10n.playbackQuality
         case .playNextItem:
-            return L10n.playNextItem
+            L10n.playNextItem
         case .playPreviousItem:
-            return L10n.playPreviousItem
+            L10n.playPreviousItem
         case .subtitles:
-            return L10n.subtitles
+            L10n.subtitles
         }
     }
 

@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -34,14 +34,11 @@ struct VideoPlayerSettingsView: View {
             }
 
             Section {
-
-                BasicStepper(
-                    L10n.resumeOffset,
-                    value: $resumeOffset,
-                    range: 0 ... 30,
-                    step: 1,
-                    formatter: SecondFormatter()
-                )
+                Stepper(value: $resumeOffset, in: 0 ... 30, step: 1) {
+                    LabeledContent(L10n.resumeOffset) {
+                        Text(resumeOffset, format: SecondFormatter())
+                    }
+                }
             } footer: {
                 Text(L10n.resumeOffsetDescription)
             }

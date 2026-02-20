@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -126,7 +126,7 @@ extension View {
     /// Identifies this view as the source of a context menu
     /// associated with the data type when used with `contextMenu(for:content:)`
     /// or `contextMenu(for:content:preview:)`.
-    func matchedContextMenu<V>(for value: V) -> some View {
+    func matchedContextMenu(for value: some Any) -> some View {
         modifier(
             EnvironmentContextMenu.Extractor(
                 value: value
@@ -138,8 +138,8 @@ extension View {
     /// associated with the data type when used with `contextMenu(for:content:)`
     /// or `contextMenu(for:content:preview:)` but allows local preview
     /// creation.
-    func matchedContextMenu<V>(
-        for value: V,
+    func matchedContextMenu(
+        for value: some Any,
         @ViewBuilder preview: @escaping () -> some View
     ) -> some View {
         modifier(
