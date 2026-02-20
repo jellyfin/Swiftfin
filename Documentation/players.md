@@ -137,12 +137,12 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 |---------------------------------------------------------------------------------|-------------------|-------------------|
 | [ASS](https://en.wikipedia.org/wiki/SubStation_Alpha#Advanced_SubStation_Alpha) | ✅                | ❌                |
 | [CC_DEC](https://en.wikipedia.org/wiki/Closed_captioning)                       | ✅                | ✅                |
-| [DVBSub](https://en.wikipedia.org/wiki/DVB_subtitles)                           | ✅                | 🔶 [1]            |
-| [DVDSub](https://en.wikipedia.org/wiki/VobSub)                                  | ✅                | 🔶 [1]            |
+| [DVBSub](https://en.wikipedia.org/wiki/DVB_subtitles)                           | ✅ [1]            | 🔶 [2]            |
+| [DVDSub](https://en.wikipedia.org/wiki/VobSub)                                  | ✅ [1]            | 🔶 [2]            |
 | [JacoSub](https://en.wikipedia.org/wiki/JACOsub)                                | ✅                | ❌                |
 | [MOV_Text](https://en.wikipedia.org/wiki/MPEG-4_Part_17)                        | ✅                | ❌                |
 | [MPL2](https://en.wikipedia.org/wiki/MPL2)                                      | ✅                | ❌                |
-| [PGSSub](https://en.wikipedia.org/wiki/Presentation_Graphic_Stream)             | ✅                | 🔶 [1]            |
+| [PGSSub](https://en.wikipedia.org/wiki/Presentation_Graphic_Stream)             | ✅ [1]            | 🔶 [2]            |
 | [PJS](https://en.wikipedia.org/wiki/Phoenix_Subtitle)                           | ✅                | ❌                |
 | [RealText](https://en.wikipedia.org/wiki/RealText)                              | ✅                | ❌                |
 | [SAMI](https://en.wikipedia.org/wiki/SAMI)                                      | ✅                | ❌                |
@@ -155,11 +155,12 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 | [TTML](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language)                | ✅                | ✅                |
 | [VPlayer](https://en.wikipedia.org/wiki/VPlayer)                                | ✅                | ❌                |
 | [VTT](https://en.wikipedia.org/wiki/WebVTT)                                     | ✅                | ✅                |
-| [XSub](https://en.wikipedia.org/wiki/XSUB)                                      | ✅                | 🔶 [1]            |
+| [XSub](https://en.wikipedia.org/wiki/XSUB)                                      | ✅                | 🔶 [2]            |
 
 **Notes:**
 
-- [1] Subtitle format requires server-side encoding for Native (AVPlayer) playback.
+- [1] Subtitle format can be played if embedded in the container (MKV) but requres server-side encoding for playback is the source is an external file.
+- [2] Subtitle format requires server-side encoding for playback.
 
 - Subtitle track selection is not currently supported in Native (AVPlayer) due to issues with HLS file incompatibilities.
 
