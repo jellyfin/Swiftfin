@@ -100,7 +100,7 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 | [FLV1](https://en.wikipedia.org/wiki/Sorenson_Spark)                     | ✅                | ❌                |
 | [H.261](https://en.wikipedia.org/wiki/H.261)                             | ✅                | ❌                |
 | [H.263](https://en.wikipedia.org/wiki/H.263)                             | ✅                | ❌                |
-| [H.264](https://en.wikipedia.org/wiki/Advanced_Video_Coding)             | ✅                | ✅                |
+| [H.264/AVC](https://en.wikipedia.org/wiki/Advanced_Video_Coding)         | ✅                | ✅                |
 | [H.265/HEVC](https://en.wikipedia.org/wiki/High_Efficiency_Video_Coding) | ✅                | ✅ [2]            |
 | [H.266/VVC](https://en.wikipedia.org/wiki/Versatile_Video_Coding)        | ❌ [3]            | ❌                |
 | [MJPEG](https://en.wikipedia.org/wiki/Motion_JPEG)                       | ✅                | ✅                |
