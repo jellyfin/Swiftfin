@@ -8,6 +8,7 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 
 | Feature                    | Swiftfin (VLCKit) | Native (AVPlayer) |
 |----------------------------|-------------------|----------------|
+| **External Audio Tracks**  | ❌                | ❌             |
 | **Framerate Matching**     | ❌                | ✅             |
 | **HDR to SDR Tonemapping** | ✅ [1]            | 🔶 [2]         |
 | **Player Controls**        | - Speed adjustment<br>- Aspect Fill<br>- Chapter Support<br>- Subtitle Support<br>- Audio Track Selection<br>- Customizable UI | - Speed adjustment<br>- Aspect Fill |
@@ -189,46 +190,6 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 - [4] HDR10+ support is limited to certain devices, such as the Apple TV 4K (3rd Generation) and recent iPhones and iPads with compatible hardware. Unsupported devices will fallback to HDR10 rendering, ignoring dynamic metadata.
 
 - Unsupported video ranges will require tone mapping to play.
-
---- 
-
-## Track Selection
-
-Swiftfin track selection is limited by compatibility with each player. In testing, as of Swiftfin 1.3, the following interactions have been tested.
-
-✅ Working correctly </br>
-🔶 Partially working with limitations </br>
-❌ Not working
-
-### Swiftfin Player
-
-| File Configuration                                       | DirectPlay | Transcode | Notes |
-|---------------------------------------------------------|------------|-----------|------------------------------------------------|
-| Internal Audio                                          | ✅         | ✅        |                                                |
-| Internal Audio + Internal Subtitles                     | ✅         | 🔶        | - Subtitles do not work if Non-External *(DVDSUB)* |
-| Internal Audio + External Subtitles                     | ✅         | ✅        |                                                |
-| Internal Audio + Internal Subtitles + External Subtitles| ✅         | 🔶        | - Subtitles do not work if Non-External *(DVDSUB)* |
-| Multiple Internal Audio + Multiple Internal Subtitles  | ✅         | 🔶        | - Subtitles do not work if Non-External *(DVDSUB)* |
-| Multiple Internal Audio + Multiple External Subtitles  | ✅         | ✅        |                                                |
-| Multiple Internal Audio + Internal Subtitles + External Subtitles | ✅ | 🔶 | - Subtitles do not work if Non-External *(DVDSUB)* |
-| External Audio + Internal Audio + External Subtitles   | ✅         | ✅        | - Cannot play external audio track if transcoding is required </br> - Subtitles do not work if Non-External *(DVDSUB)* |
-| External Audio + Internal Audio + Internal Subtitles   | ✅         | ✅        | - Cannot play external audio track if transcoding is required </br> - Subtitles do not work if Non-External *(DVDSUB)* |
-| External Audio + Internal Audio + Internal Subtitles + External Subtitles | ✅ | ✅ | - Cannot play external audio track if transcoding is required </br> - Subtitles do not work if Non-External *(DVDSUB)* |
-
-### Native Player
-
-| File Configuration                                      | DirectPlay | Transcode | Notes |
-|--------------------------------------------------------|------------|-----------|------------------------------------------------|
-| Internal Audio                                         | ✅         | ✅        |                                                |
-| Internal Audio + Internal Subtitles                   | 🔶         | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
-| Internal Audio + External Subtitles                   | 🔶         | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
-| Internal Audio + Internal Subtitles + External Subtitles | 🔶      | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
-| Multiple Internal Audio + Multiple Internal Subtitles | 🔶         | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
-| Multiple Internal Audio + Multiple External Subtitles | 🔶         | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
-| Multiple Internal Audio + Internal Subtitles + External Subtitles | 🔶 | ❌ | - The default audio track will played </br> - subtitles cannot be selected. |
-| External Audio + Internal Audio + External Subtitles  | 🔶         | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
-| External Audio + Internal Audio + Internal Subtitles  | 🔶         | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
-| External Audio + Internal Audio + Internal Subtitles + External Subtitles | 🔶 | ❌ | - The default audio track will played </br> - subtitles cannot be selected. |
 
 --- 
 
