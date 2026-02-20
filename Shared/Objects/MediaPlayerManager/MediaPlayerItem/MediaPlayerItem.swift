@@ -23,21 +23,19 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
     var selectedAudioStreamIndex: Int? = nil {
         didSet {
             guard let selectedAudioStreamIndex, selectedAudioStreamIndex != oldValue else { return }
-            manager?.setAudioTrack(index: selectedAudioStreamIndex)
+            manager?.setTrack(type: .audio, from: oldValue, to: selectedAudioStreamIndex)
         }
     }
 
     @Published
     var selectedSubtitleStreamIndex: Int? = nil {
         didSet {
-            guard let selectedIndex = indexMap[selectedSubtitleStreamIndex] else { return }
-            if let proxy = manager?.proxy as? any VideoMediaPlayerProxy {
-                proxy.setSubtitleStream(.init(index: selectedIndex))
-            }
+            guard selectedSubtitleStreamIndex != oldValue else { return }
+            manager?.setTrack(type: .subtitle, from: oldValue, to: selectedSubtitleStreamIndex)
         }
     }
 
-    /// Jellyfin stream index -> VLC track index. External subtitle entries are resolved at playback via `resolveExternalSubtitleIndexes`.
+    /// Jellyfin stream index → player track index
     private(set) var indexMap: [Int: Int]
 
     private var externalSubtitlesResolved = false
@@ -74,6 +72,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         url: URL,
         requestedBitrate: PlaybackBitrate = .max,
         initialAudioStreamIndex: Int? = nil,
+        initialSubtitleStreamIndex: Int? = nil,
         previewImageProvider: (any PreviewImageProvider)? = nil,
         thumbnailProvider: ThumbnailProvider? = nil
     ) {
@@ -84,46 +83,89 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         self.previewImageProvider = previewImageProvider
         self.thumbnailProvider = thumbnailProvider
         self.url = url
-        let mediaStreams = mediaSource.mediaStreams
 
-        // TODO: Always force remux when external audio tracks are present
-        /// External audio hidden — server has no deliveryURL for them
+        let mediaStreams = mediaSource.mediaStreams
+        let isTranscoding = mediaSource.transcodingURL != nil
+
+        // TODO: Fix External Audio Tracks & Re-Enable
         self.audioStreams = mediaStreams?.filter { $0.type == .audio && $0.isExternal != true } ?? []
-        self.subtitleStreams = mediaStreams?.filter { $0.type == .subtitle } ?? []
+        self.subtitleStreams = mediaStreams?.filter { $0.type == .subtitle && $0.deliveryMethod != .drop } ?? []
         self.videoStreams = mediaStreams?.filter { $0.type == .video } ?? []
 
-        self.indexMap = mediaStreams?.adjustedIndexMap(
-            for: mediaSource.transcodingURL == nil ? .directPlay : .transcode,
-            selectedAudioStreamIndex: initialAudioStreamIndex ?? 0
+        let resolvedAudioStreamIndex = initialAudioStreamIndex
+            ?? mediaSource.defaultAudioStreamIndex
+            ?? mediaSource.mediaStreams?.first(where: { $0.type == .audio })?.index ?? 0
+
+        self.indexMap = mediaStreams?.buildIndexMap(
+            for: isTranscoding ? .transcode : .directPlay,
+            selectedAudioStreamIndex: resolvedAudioStreamIndex
         ) ?? [:]
 
         super.init()
 
-        selectedAudioStreamIndex = initialAudioStreamIndex
-            ?? mediaSource.defaultAudioStreamIndex
-            ?? mediaSource.mediaStreams?.first?.index ?? -1
+        selectedAudioStreamIndex = resolvedAudioStreamIndex
 
-        selectedSubtitleStreamIndex = mediaSource.defaultSubtitleStreamIndex ?? -1
+        selectedSubtitleStreamIndex = initialSubtitleStreamIndex
+            ?? mediaSource.defaultSubtitleStreamIndex
+            ?? -1
 
         observers.append(MediaProgressObserver(item: self))
     }
 
-    /// Resolves external subtitle VLC indexes from VLC's actual track list.
-    /// Called once on first `.playing` state. Only needed for DirectPlay since the server may hide container tracks that affect playback child offsets.
-    func resolveExternalSubtitleIndexes(vlcSubtitleTracks: [(index: Int, title: String)]) {
+    /// Encoded or image-based (PGS) subtitles require a server rebuild to burn in
+    func isRebuildRequired(from oldIndex: Int?, to newIndex: Int?) -> Bool {
+        let needsRebuild: (MediaStream?) -> Bool = { stream in
+            guard let stream else { return false }
+            return stream.deliveryMethod == .encode || stream.isTextSubtitleStream != true
+        }
+
+        let oldStream = subtitleStreams.first(where: { $0.index == oldIndex })
+        let newStream: MediaStream? = {
+            guard let idx = newIndex, idx != -1 else { return nil }
+            return subtitleStreams.first(where: { $0.index == idx })
+        }()
+
+        return needsRebuild(oldStream) || needsRebuild(newStream)
+    }
+
+    /// Switch subtitle track directly without rebuilding
+    func switchSubtitleTrack(index: Int?) {
+        let playerIndex: Int
+        if index == nil || index == -1 {
+            playerIndex = -1
+        } else if let mapped = indexMap[index] {
+            playerIndex = mapped
+        } else {
+            return
+        }
+
+        if let proxy = manager?.proxy as? any VideoMediaPlayerProxy {
+            proxy.setSubtitleStream(.init(index: playerIndex))
+        }
+    }
+
+    /// Resolve sidecar subtitle indexes once the player reports its actual tracks
+    func getSubtitleIndexes(subtitleTracks: [(index: Int, title: String)]) {
         guard !externalSubtitlesResolved else { return }
         externalSubtitlesResolved = true
 
-        /// Only needed for DirectPlay — transcode external indexes are predicted correctly
-        guard mediaSource.transcodingURL == nil else { return }
+        let playbackChildren = subtitleStreams.sidecarSubtitles
+        guard playbackChildren.isNotEmpty else { return }
 
-        let externalSubtitleStreams = subtitleStreams.filter { $0.isExternal == true }
-        guard !externalSubtitleStreams.isEmpty else { return }
-
-        indexMap = [MediaStream].resolveExternalSubtitleIndexes(
-            vlcSubtitleTracks: vlcSubtitleTracks,
-            currentIndexMap: indexMap,
-            externalSubtitleStreams: externalSubtitleStreams
+        indexMap = [MediaStream].resolveIndexMap(
+            into: indexMap,
+            playbackChildren: playbackChildren,
+            subtitleTracks: subtitleTracks,
+            isTranscoding: mediaSource.transcodingURL != nil
         )
+
+        // re-apply current subtitle now that we have real indexes
+        if let currentSubtitle = selectedSubtitleStreamIndex,
+           let playerIndex = indexMap[currentSubtitle]
+        {
+            if let proxy = manager?.proxy as? any VideoMediaPlayerProxy {
+                proxy.setSubtitleStream(.init(index: playerIndex))
+            }
+        }
     }
 }

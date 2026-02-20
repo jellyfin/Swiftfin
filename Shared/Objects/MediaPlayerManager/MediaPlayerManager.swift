@@ -54,9 +54,10 @@ final class MediaPlayerManager: ViewModel {
         case ended
         case error
         case playNewItem(provider: MediaPlayerItemProvider)
+        case setBitrate(bitrate: PlaybackBitrate)
         case setPlaybackRequestStatus(status: PlaybackRequestStatus)
         case setRate(rate: Float)
-        case setAudioTrack(index: Int?)
+        case setTrack(type: MediaStreamType, from: Int?, to: Int? = nil)
         case start
         case stop
         case togglePlayPause
@@ -273,6 +274,16 @@ final class MediaPlayerManager: ViewModel {
         playbackItem = try await provider()
     }
 
+    @Function(\Action.Cases.setBitrate)
+    private func _setBitrate(_ requestedBitrate: PlaybackBitrate) async throws {
+        guard let currentItem = playbackItem else { return }
+
+        try await updateMediaPlayerItem(
+            currentItem: currentItem,
+            requestedBitrate: requestedBitrate
+        )
+    }
+
     @Function(\Action.Cases.setPlaybackRequestStatus)
     private func set(_ status: PlaybackRequestStatus) {
         if self.playbackRequestStatus != status {
@@ -294,41 +305,28 @@ final class MediaPlayerManager: ViewModel {
         }
     }
 
-    @Function(\Action.Cases.setAudioTrack)
-    private func _setAudioTrack(_ index: Int?) async throws {
+    @Function(\Action.Cases.setTrack)
+    private func _setTrack(_ type: MediaStreamType, _ oldIndex: Int?, _ newIndex: Int?) async throws {
         guard let currentItem = playbackItem else { return }
 
-        streamChangeTask?.cancel()
-
-        logger.info(
-            "Changing audio stream",
-            metadata: [
-                "newIndex": .stringConvertible(index ?? -1),
-                "audioIndex": .stringConvertible(currentItem.selectedAudioStreamIndex ?? -1),
-            ]
-        )
-
-        proxy?.stop()
-
-        /// Rebuilding to ensure that the new selected track does not require transcoding
-        /// - Will result in a DirectStream or Transcode if required
-        let newItem = try await MediaPlayerItem.build(
-            for: currentItem.baseItem,
-            mediaSource: currentItem.mediaSource,
-            audioStreamIndex: index,
-            requestedBitrate: currentItem.requestedBitrate
-        )
-
-        logger.info(
-            "Built new playback item",
-            metadata: [
-                "playSessionID": .stringConvertible(newItem.playSessionID),
-                "isTranscoding": .stringConvertible(newItem.mediaSource.transcodingURL != nil),
-                "url": .stringConvertible(newItem.url.absoluteString),
-            ]
-        )
-
-        playbackItem = newItem
+        switch type {
+        case .audio:
+            try await updateMediaPlayerItem(
+                currentItem: currentItem,
+                audioStreamIndex: newIndex
+            )
+        case .subtitle:
+            if currentItem.isRebuildRequired(from: oldIndex, to: newIndex) {
+                try await updateMediaPlayerItem(
+                    currentItem: currentItem,
+                    subtitleStreamIndex: newIndex
+                )
+            } else {
+                currentItem.switchSubtitleTrack(index: newIndex)
+            }
+        default:
+            logger.warning("MediaPlayerManager.SetTrack called with unsupported type: \(String(describing: type))")
+        }
     }
 
     @Function(\Action.Cases.start)
@@ -361,5 +359,46 @@ final class MediaPlayerManager: ViewModel {
         case .paused:
             setPlaybackRequestStatus(status: .playing)
         }
+    }
+
+    /// Rebuilds the playback item with new stream indexes / bitrate.
+    /// Stops the current proxy, requests new playback info from the server, and starts playback with the new configuration.
+    private func updateMediaPlayerItem(
+        currentItem: MediaPlayerItem,
+        audioStreamIndex: Int? = nil,
+        subtitleStreamIndex: Int? = nil,
+        requestedBitrate: PlaybackBitrate? = nil
+    ) async throws {
+
+        streamChangeTask?.cancel()
+
+        logger.info(
+            "Rebuilding Media Player Item",
+            metadata: [
+                "audioIndex": .stringConvertible(audioStreamIndex ?? -1),
+                "subtitleIndex": .stringConvertible(subtitleStreamIndex ?? -1),
+            ]
+        )
+
+        proxy?.stop()
+
+        let newItem = try await MediaPlayerItem.build(
+            for: currentItem.baseItem,
+            mediaSource: currentItem.mediaSource,
+            audioStreamIndex: audioStreamIndex ?? currentItem.selectedAudioStreamIndex,
+            subtitleStreamIndex: subtitleStreamIndex ?? currentItem.selectedSubtitleStreamIndex,
+            requestedBitrate: requestedBitrate ?? currentItem.requestedBitrate
+        )
+
+        logger.info(
+            "Built new playback item",
+            metadata: [
+                "playSessionID": .stringConvertible(newItem.playSessionID),
+                "isTranscoding": .stringConvertible(newItem.mediaSource.transcodingURL != nil),
+                "url": .stringConvertible(newItem.url.absoluteString),
+            ]
+        )
+
+        playbackItem = newItem
     }
 }

@@ -209,20 +209,24 @@ extension MediaStream {
 
 extension [MediaStream] {
 
-    /// Maps Jellyfin stream indexes to VLC track indexes.
-    ///
-    /// - **Transcode**: HLS has 1 video + 1 audio; subtitles are playback children starting at index 2.
-    /// - **DirectPlay**: Jellyfin indexes externals first, then internals. Subtract external count
-    ///   to get VLC container position. External subtitle indexes are resolved at runtime via
-    ///   `resolveExternalSubtitleIndexes` since the server may hide container tracks (e.g. PGS
-    ///   filtered by "Disable embedded subtitles") that VLC still sees.
-    func adjustedIndexMap(
+    /// Text-based external subtitles loaded as sidecar files. Image-based subtitles are excluded because the player silently drops them.
+    var sidecarSubtitles: [MediaStream] {
+        filter { $0.deliveryMethod == .external && $0.deliveryURL != nil && $0.isTextSubtitleStream == true }
+    }
+
+    /// Jellyfin uses global stream indexes across all tracks. VLC uses container-position-based indexes.
+    /// This maps between the two so we can tell the player which track to use.
+    ///  - `Transcode`   HLS container only has 1 video (0) and 1 audio (1). Sidecar subtitles are predicted after that.
+    ///  - `DirectPlay` Internal tracks are offset by how many external tracks Jellyfin puts first.
+    func buildIndexMap(
         for playMethod: PlayMethod,
         selectedAudioStreamIndex: Int
     ) -> [Int: Int] {
+        let playbackChildren = self.sidecarSubtitles
         var indexMap: [Int: Int] = [:]
 
         if playMethod == .transcode {
+            /// Transcode HLS has exactly 1 video + 1 audio in the container
             var containerTracks: [MediaStream] = []
 
             let videoTracks = self.filter { $0.type == .video && !($0.isExternal ?? false) }
@@ -240,14 +244,15 @@ extension [MediaStream] {
                 indexMap[oldIndex] = newIndex
             }
 
-            let externalSubtitles = self.filter { $0.type == .subtitle && $0.deliveryURL != nil }
-            let externalStartIndex = containerTracks.count
+            /// Get sidecar subtitle positions after container tracks
+            let playbackChildStartIndex = containerTracks.count
 
-            for (offset, track) in externalSubtitles.enumerated() {
+            for (offset, track) in playbackChildren.enumerated() {
                 guard let oldIndex = track.index else { continue }
-                indexMap[oldIndex] = externalStartIndex + offset
+                indexMap[oldIndex] = playbackChildStartIndex + offset
             }
         } else {
+            /// Jellyfin puts external tracks first in its global indexes, so internal container indexes are offset by that count
             let externalCount = self.count(where: { $0.isExternal == true })
             let internalTracks = self.filter { !($0.isExternal ?? false) }
 
@@ -255,37 +260,51 @@ extension [MediaStream] {
                 guard let oldIndex = track.index else { continue }
                 indexMap[oldIndex] = oldIndex - externalCount
             }
-
-            /// External subtitle indexes resolved dynamically in `resolveExternalSubtitleIndexes`
         }
 
         return indexMap
     }
 
-    /// Resolves external subtitle VLC indexes using VLC's actual track list after media loads.
-    /// Playback children always get the highest indexes (appended after container tracks).
-    /// Takes the last N unmapped VLC subtitle indexes where N = external subtitle count.
-    static func resolveExternalSubtitleIndexes(
-        vlcSubtitleTracks: [(index: Int, title: String)],
-        currentIndexMap: [Int: Int],
-        externalSubtitleStreams: [MediaStream]
+    /// Sidecar subtitles get player-assigned indexes we can't see at initialization.
+    /// Once the player reports its actual tracks, we match them up and update the map.
+    ///  - `Transcode`   No embedded subtitles in HLS, so all reported tracks are sidecars match sequentially.
+    ///  - `DirectPlay` Container subtitles are already mapped, so take the last N unmapped indexes for sidecars.
+    static func resolveIndexMap(
+        into indexMap: [Int: Int],
+        playbackChildren: [MediaStream],
+        subtitleTracks: [(index: Int, title: String)],
+        isTranscoding: Bool
     ) -> [Int: Int] {
-        guard !externalSubtitleStreams.isEmpty else { return currentIndexMap }
+        guard !playbackChildren.isEmpty else { return indexMap }
 
-        var updatedMap = currentIndexMap
+        var updatedMap = indexMap
 
-        let mappedVLCIndexes = Set(currentIndexMap.values)
-        let unmappedVLCIndexes = vlcSubtitleTracks
+        let playerIndexes = subtitleTracks
             .map(\.index)
-            .filter { $0 >= 0 && !mappedVLCIndexes.contains($0) }
+            .filter { $0 >= 0 }
             .sorted()
 
-        let externalVLCIndexes = [Int](unmappedVLCIndexes.suffix(externalSubtitleStreams.count))
+        if isTranscoding {
+            /// All reported subtitle tracks are sidecars
+            for (offset, playerIndex) in playerIndexes.enumerated() {
+                guard offset < playbackChildren.count,
+                      let jellyfinIndex = playbackChildren[offset].index
+                else { continue }
+                updatedMap[jellyfinIndex] = playerIndex
+            }
+        } else {
+            /// Filter out already-mapped container tracks, remaining are sidecars
+            let mappedIndexes = Set(indexMap.values)
+            let unmappedIndexes = playerIndexes
+                .filter { !mappedIndexes.contains($0) }
 
-        for (offset, stream) in externalSubtitleStreams.enumerated() {
-            guard let jellyfinIndex = stream.index else { continue }
-            if offset < externalVLCIndexes.count {
-                updatedMap[jellyfinIndex] = externalVLCIndexes[offset]
+            let externalIndexes = [Int](unmappedIndexes.suffix(playbackChildren.count))
+
+            for (offset, stream) in playbackChildren.enumerated() {
+                guard let jellyfinIndex = stream.index else { continue }
+                if offset < externalIndexes.count {
+                    updatedMap[jellyfinIndex] = externalIndexes[offset]
+                }
             }
         }
 

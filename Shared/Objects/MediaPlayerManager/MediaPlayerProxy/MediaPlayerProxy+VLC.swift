@@ -134,10 +134,16 @@ extension VLCMediaPlayerProxy {
             if !baseItem.isLiveStream {
                 configuration.startSeconds = startSeconds
 
-                /// Translate Jellyfin indexes to VLC indexes
-                let audioIndex = item.indexMap[mediaSource.defaultAudioStreamIndex] ?? -1
-                let subtitleIndex = item.indexMap[mediaSource.defaultSubtitleStreamIndex] ?? -1
-                configuration.audioIndex = .absolute(audioIndex)
+                let subtitleIndex = item.indexMap[item.selectedSubtitleStreamIndex] ?? -1
+
+                /// Check if the Media Source being transcoded
+                if mediaSource.transcodingURL != nil {
+                    configuration.audioIndex = .auto
+                } else {
+                    let audioIndex = item.indexMap[item.selectedAudioStreamIndex] ?? -1
+                    configuration.audioIndex = .absolute(audioIndex)
+                }
+
                 configuration.subtitleIndex = .absolute(subtitleIndex)
             }
 
@@ -148,14 +154,7 @@ extension VLCMediaPlayerProxy {
                 configuration.subtitleFont = .absolute(font)
             }
 
-            let isTranscoding = mediaSource.transcodingURL != nil
-
-            /// External subtitles added as VLC playback children.
-            /// Transcode: all subs delivered via URL. DirectPlay: only external subs.
-            let filteredSubtitles = item.subtitleStreams
-                .filter { isTranscoding ? $0.deliveryURL != nil : $0.isExternal == true }
-
-            configuration.playbackChildren = filteredSubtitles
+            configuration.playbackChildren = item.subtitleStreams.sidecarSubtitles
                 .compactMap(\.asVLCPlaybackChild)
 
             return configuration
@@ -201,9 +200,8 @@ extension VLCMediaPlayerProxy {
                             manager.proxy?.isBuffering.value = false
                             manager.setPlaybackRequestStatus(status: .playing)
 
-                            /// Resolve external subtitle indexes from VLC's actual track list
-                            let vlcTracks = info.subtitleTracks.map { (index: $0.index, title: $0.title) }
-                            playbackItem.resolveExternalSubtitleIndexes(vlcSubtitleTracks: vlcTracks)
+                            let tracks = info.subtitleTracks.map { (index: $0.index, title: $0.title) }
+                            playbackItem.getSubtitleIndexes(subtitleTracks: tracks)
                         case .paused:
                             manager.setPlaybackRequestStatus(status: .paused)
                         }
