@@ -11,7 +11,7 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 | **External Audio Tracks**  | ❌                | ❌             |
 | **Framerate Matching**     | ❌                | ✅             |
 | **HDR to SDR Tonemapping** | ✅ [1]            | 🔶 [2]         |
-| **Player Controls**        | - Speed adjustment<br>- Aspect Fill<br>- Chapter Support<br>- Subtitle Support<br>- Trickplay Support<br>- Audio Track Selection<br>- Customizable UI | - Speed adjustment<br>- Aspect Fill |
+| **Player Controls**        | - Speed Adjustment <br>- Aspect Fill <br>- Chapter Support <br>- Subtitle Support <br>- Trickplay Support <br>- Audio Track Selection <br>- Customizable UI | - Speed Adjustment <br>- Aspect Fill |
 | **Picture-in-Picture**     | ❌                | ✅             |
 | **TLS Support**            | 1.1, 1.2 [3]      | 1.1, 1.2, 1.3  |
 | **[Airplay Audio Output](https://support.apple.com/en-us/102357)** | 🔶 [4] | ✅ |
