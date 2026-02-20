@@ -11,7 +11,7 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 | **External Audio Tracks**  | ❌                | ❌             |
 | **Framerate Matching**     | ❌                | ✅             |
 | **HDR to SDR Tonemapping** | ✅ [1]            | 🔶 [2]         |
-| **Player Controls**        | - Speed adjustment<br>- Aspect Fill<br>- Chapter Support<br>- Subtitle Support<br>- Audio Track Selection<br>- Customizable UI | - Speed adjustment<br>- Aspect Fill |
+| **Player Controls**        | - Speed adjustment<br>- Aspect Fill<br>- Chapter Support<br>- Subtitle Support<br>- Trickplay Support<br>- Audio Track Selection<br>- Customizable UI | - Speed adjustment<br>- Aspect Fill |
 | **Picture-in-Picture**     | ❌                | ✅             |
 | **TLS Support**            | 1.1, 1.2 [3]      | 1.1, 1.2, 1.3  |
 | **[Airplay Audio Output](https://support.apple.com/en-us/102357)** | 🔶 [4] | ✅ |
@@ -196,9 +196,9 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 
 ### Miscellaneous
 
-| Feature | Swiftfin (VLCKit) | Native (AVPlayer) | Notes |
-|-------------|-------------------|----------------|----------------|
-| **External Display Support** | 🔶        | ✅        | Swiftfin Player can only be mirrored. As a result, the player will retain the source device dimensions. |
-| **Energy Consumption** | 🔶        | ✅        | Swiftfin Player will use a software decoder if the media cannot be handled by iOS natively. This results in higher power consumption. |
+| Feature                      | Swiftfin (VLCKit) | Native (AVPlayer) | Notes                                                                                                                                 |
+|------------------------------|-------------------|-------------------|---------------------------------------------------------------------------------------------------------------------------------------|
+| **External Display Support** | 🔶                | ✅                | Swiftfin Player can only be mirrored. As a result, the player will retain the source device dimensions.                               |
+| **Energy Consumption**       | 🔶                | ✅                | Swiftfin Player will use a software decoder if the media cannot be handled by iOS natively. This results in higher power consumption. |
 
 ---
