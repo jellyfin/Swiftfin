@@ -13,21 +13,24 @@ import SwiftUI
 
 struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element == Element, Data.Index == Int {
 
-    private enum ShelfLook {
-        static let cornerRadius: CGFloat = 34
-        static let horizontalPadding: CGFloat = EdgeInsets.edgePadding
+    private var shelfCornerRadius: CGFloat {
+        34
+    }
 
-        static var sectionGradient: LinearGradient {
-            LinearGradient(
-                colors: [
-                    Color.white.opacity(0.12),
-                    Color.white.opacity(0.06),
-                    Color.black.opacity(0.16),
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        }
+    private var shelfHorizontalPadding: CGFloat {
+        EdgeInsets.edgePadding
+    }
+
+    private var shelfSectionGradient: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color.white.opacity(0.12),
+                Color.white.opacity(0.06),
+                Color.black.opacity(0.16),
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
     }
 
     private var data: Data
@@ -63,7 +66,7 @@ struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element 
 
                     Spacer()
                 }
-                .padding(.horizontal, ShelfLook.horizontalPadding)
+                .padding(.horizontal, shelfHorizontalPadding)
             }
 
             CollectionHStack(
@@ -87,13 +90,13 @@ struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element 
         }
         .padding(.vertical, 22)
         .background {
-            RoundedRectangle(cornerRadius: ShelfLook.cornerRadius, style: .continuous)
-                .fill(ShelfLook.sectionGradient)
+            RoundedRectangle(cornerRadius: shelfCornerRadius, style: .continuous)
+                .fill(shelfSectionGradient)
                 .overlay {
-                    RoundedRectangle(cornerRadius: ShelfLook.cornerRadius, style: .continuous)
+                    RoundedRectangle(cornerRadius: shelfCornerRadius, style: .continuous)
                         .stroke(Color.white.opacity(0.18), lineWidth: 1)
                 }
-                .padding(.horizontal, ShelfLook.horizontalPadding)
+                .padding(.horizontal, shelfHorizontalPadding)
         }
         .focusSection()
     }
