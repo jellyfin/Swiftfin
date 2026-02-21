@@ -13,9 +13,9 @@ extension RatingType: Displayable {
     var displayTitle: String {
         switch self {
         case .score:
-            return L10n.score
+            L10n.score
         case .likes:
-            return L10n.likes
+            L10n.likes
         }
     }
 }

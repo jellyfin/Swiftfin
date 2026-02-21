@@ -27,7 +27,7 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         // 2 - if parent is type `folder`, then we are in a folder-view
         //     context so change `collectionFolder` types to `folder`
         //     for better view handling
-        let items = (response.value.items ?? [])
+        return (response.value.items ?? [])
             .filter { item in
                 if let collectionType = item.collectionType {
                     return CollectionType.supportedCases.contains(collectionType)
@@ -42,8 +42,6 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
                 return item
             }
-
-        return items
     }
 
     // MARK: item parameters

@@ -13,38 +13,38 @@ extension LogLevel: SystemImageable, Displayable {
     public var color: Color {
         switch self {
         case .trace:
-            return .gray.opacity(0.7)
+            .gray.opacity(0.7)
         case .debug:
-            return .gray
+            .gray
         case .information:
-            return .blue
+            .blue
         case .warning:
-            return .orange
+            .orange
         case .error:
-            return .red
+            .red
         case .critical:
-            return .purple
+            .purple
         case .none:
-            return .secondary
+            .secondary
         }
     }
 
     public var systemImage: String {
         switch self {
         case .trace:
-            return "ant"
+            "ant"
         case .debug:
-            return "ladybug"
+            "ladybug"
         case .information:
-            return "info.circle"
+            "info.circle"
         case .warning:
-            return "exclamationmark.triangle"
+            "exclamationmark.triangle"
         case .error:
-            return "exclamationmark.circle"
+            "exclamationmark.circle"
         case .critical:
-            return "xmark.octagon"
+            "xmark.octagon"
         case .none:
-            return "questionmark.circle"
+            "questionmark.circle"
         }
     }
 

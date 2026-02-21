@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import Engine
 import JellyfinAPI
 import SwiftUI
 
@@ -28,13 +29,6 @@ struct ServerUserDetailsView: View {
     @StateObject
     private var profileViewModel: UserProfileImageViewModel
 
-    // MARK: - Dialog State
-
-    @State
-    private var username: String
-    @State
-    private var isPresentingUsername = false
-
     // MARK: - Error State
 
     @State
@@ -45,7 +39,6 @@ struct ServerUserDetailsView: View {
     init(user: UserDto) {
         self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
         self._profileViewModel = StateObject(wrappedValue: UserProfileImageViewModel(user: user))
-        self.username = user.name ?? ""
     }
 
     // MARK: - Body
@@ -65,18 +58,21 @@ struct ServerUserDetailsView: View {
             }
 
             Section {
-                ChevronButton(
-                    L10n.username,
-                    subtitle: viewModel.user.name,
-                    description: nil
-                ) {
-                    TextField(L10n.username, text: $username)
-                } onSave: {
-                    viewModel.send(.updateUsername(username))
-                    isPresentingUsername = false
-                } onCancel: {
-                    username = viewModel.user.name ?? ""
-                    isPresentingUsername = false
+                StateAdapter(initialValue: (isPresented: false, username: viewModel.user.name ?? "")) { alert in
+                    ChevronButton(L10n.username) {
+                        alert.isPresented.wrappedValue = true
+                    }
+                    .alert(L10n.username, isPresented: alert.isPresented) {
+                        TextField(L10n.username, text: alert.username)
+
+                        Button(L10n.save) {
+                            viewModel.send(.updateUsername(alert.username.wrappedValue))
+                        }
+
+                        Button(L10n.cancel, role: .cancel) {
+                            alert.username.wrappedValue = viewModel.user.name ?? ""
+                        }
+                    }
                 }
 
                 ChevronButton(L10n.permissions) {
@@ -125,7 +121,6 @@ struct ServerUserDetailsView: View {
             switch event {
             case let .error(eventError):
                 error = eventError
-                username = viewModel.user.name ?? ""
             case .updated:
                 break
             }

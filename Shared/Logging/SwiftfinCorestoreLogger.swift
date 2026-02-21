@@ -72,13 +72,13 @@ extension CoreStore.LogLevel {
     var asSwiftLog: Logger.Level {
         switch self {
         case .trace:
-            return .trace
+            .trace
         case .notice:
-            return .debug
+            .debug
         case .warning:
-            return .warning
+            .warning
         case .fatal:
-            return .critical
+            .critical
         }
     }
 }
