@@ -220,7 +220,7 @@ extension Defaults.Keys {
 
             static let chapterSlider: Key<Bool> = UserKey("chapterSlider", default: true)
 
-            /// Timestamp
+            // Timestamp
             static let trailingTimestampType: Key<TrailingTimestampType> = UserKey("trailingTimestamp", default: .timeLeft)
         }
 
@@ -245,7 +245,7 @@ extension Defaults.Keys {
         }
     }
 
-    /// Experimental settings
+    // Experimental settings
     enum Experimental {
 
         static let downloads: Key<Bool> = UserKey("experimentalDownloads", default: false)
