@@ -98,7 +98,8 @@ unusedKeys.forEach { localizationEntries.removeValue(forKey: $0) }
 let sortedKeys = localizationEntries.keys.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
 
 // Reconstruct the localization file with sorted and updated entries
-let updatedContent = sortedKeys.map { "/// \(localizationEntries[$0]!)\n\"\($0)\" = \"\(localizationEntries[$0]!)\";" }    .joined(separator: "\n\n")
+let updatedContent = sortedKeys.map { "/// \(localizationEntries[$0]!)\n\"\($0)\" = \"\(localizationEntries[$0]!)\";" }
+    .joined(separator: "\n\n")
 
 // Attempt to write the updated content back to the localization file
 do {
