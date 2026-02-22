@@ -37,6 +37,18 @@ struct ColorGradientSlider: View {
                 component: component
             )
         }
+        .onMoveCommand { direction in
+            let step: CGFloat = 5
+
+            switch direction {
+            case .left:
+                color.rgbaComponents[keyPath: component] = max(0, (color.rgbaComponents[keyPath: component] * 255 - step) / 255)
+            case .right:
+                color.rgbaComponents[keyPath: component] = min(1, (color.rgbaComponents[keyPath: component] * 255 + step) / 255)
+            default:
+                break
+            }
+        }
     }
 }
 
