@@ -40,22 +40,12 @@ class VideoPlayerContainerState: ObservableObject {
             return
         }
 
-        if isPresentingOverlay && !isPresentingSupplement {
+        guard isPresentingSupplement else {
             isPresentingPlaybackControls = true
             return
         }
 
-        if isCompact {
-            if isPresentingSupplement {
-                if !isPresentingPlaybackControls {
-                    isPresentingPlaybackControls = true
-                }
-            } else {
-                isPresentingPlaybackControls = false
-            }
-        } else {
-            isPresentingPlaybackControls = false
-        }
+        isPresentingPlaybackControls = isCompact
     }
 
     @Published
@@ -67,6 +57,11 @@ class VideoPlayerContainerState: ObservableObject {
 
     @Published
     var isGuestSupplement: Bool = false
+
+    func accessibilityToggleOverlay() {
+        isPresentingOverlay.toggle()
+        timer.stop()
+    }
 
     // TODO: rename isPresentingPlaybackControls
     @Published
