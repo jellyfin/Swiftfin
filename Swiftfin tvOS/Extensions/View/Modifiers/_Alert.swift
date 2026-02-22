@@ -10,6 +10,7 @@ import Engine
 import SwiftUI
 
 // TODO: tvOS 26: `.background(ultraThinMaterial)` to `.glassEffect`
+// TODO: onDismiss
 
 extension View {
 
@@ -45,7 +46,7 @@ extension View {
     }
 }
 
-struct _Alert<_Content: View, Message: View>: ViewModifier {
+private struct _Alert<_Content: View, Message: View>: ViewModifier {
 
     private let _content: _Content
     private let isPresented: Binding<Bool>

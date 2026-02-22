@@ -21,7 +21,11 @@ struct SettingsView: View {
     private var appearance
     #endif
 
+    #if os(iOS)
     @Default(.userAccentColor)
+    #else
+    @Default(.accentColor)
+    #endif
     private var accentColor
 
     @Default(.VideoPlayer.videoPlayerType)
@@ -145,6 +149,16 @@ struct SettingsView: View {
         #if os(iOS)
         Section {
             ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
+        } footer: {
+            Text(L10n.viewsMayRequireRestart)
+        }
+        #endif
+
+        #if os(tvOS)
+        Section {
+            ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
+        } header: {
+            Text(L10n.appearance)
         } footer: {
             Text(L10n.viewsMayRequireRestart)
         }
