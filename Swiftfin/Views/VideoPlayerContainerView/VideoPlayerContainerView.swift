@@ -507,8 +507,8 @@ extension VideoPlayer {
             setupOnLoadConstraints()
         }
 
-        /// Setup player view separately after view appears to hopefully
-        /// prevent player playing before the view is done presenting
+        // Setup player view separately after view appears to hopefully
+        // prevent player playing before the view is done presenting
         private func setupPlayerView() {
             addChild(playerViewController)
             view.addSubview(playerView)

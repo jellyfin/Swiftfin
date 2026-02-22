@@ -26,8 +26,8 @@ extension VideoPlayer {
 
         // MARK: - Environment
 
-        /// since this view ignores safe area, it must
-        /// get safe area insets from parent views
+        // since this view ignores safe area, it must
+        // get safe area insets from parent views
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets
 
