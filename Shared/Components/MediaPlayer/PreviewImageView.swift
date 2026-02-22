@@ -58,6 +58,7 @@ extension VideoPlayer.PlaybackControls {
                     }
                 }
             }
+            .id(image?.index)
             .onAppear {
                 getImage(for: scrubbedSeconds)
             }

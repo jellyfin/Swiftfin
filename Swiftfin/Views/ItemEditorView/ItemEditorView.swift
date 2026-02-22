@@ -72,7 +72,7 @@ struct ItemEditorView: View {
                 description: viewModel.item.path
             )
 
-            // Hide metadata options to Lyric/Subtitle only users
+            /// Hide metadata options to Lyric/Subtitle only users
             if canEditMetadata {
 
                 refreshButtonView

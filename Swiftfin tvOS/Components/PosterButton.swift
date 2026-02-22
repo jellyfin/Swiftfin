@@ -128,7 +128,7 @@ extension PosterButton {
 
     // TODO: clean up
 
-    /// Content specific for BaseItemDto episode items
+    // Content specific for BaseItemDto episode items
     struct EpisodeContentSubtitleContent: View {
 
         let item: Item

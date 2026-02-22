@@ -43,7 +43,7 @@ extension ItemView {
         // MARK: - Title
 
         private var title: String {
-            // Use the Season/Episode label for the Series ItemView
+            /// Use the Season/Episode label for the Series ItemView
             if let seriesViewModel = viewModel as? SeriesItemViewModel,
                let seasonEpisodeLabel = seriesViewModel.playButtonItem?.seasonEpisodeLabel
             {
