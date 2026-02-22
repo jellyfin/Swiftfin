@@ -24,6 +24,8 @@ struct SelectUserView: View {
     private var selectUserAllServersSplashscreen
     @Default(.selectUserServerSelection)
     private var serverSelection
+    @Default(.accentColor)
+    private var accentColor
 
     // MARK: - State & Environment Objects
 
@@ -251,7 +253,7 @@ struct SelectUserView: View {
                     .font(.callout)
                     .fontWeight(.bold)
                     .frame(width: 400, height: 75)
-                    .background(Color.jellyfinPurple)
+                    .background(accentColor)
             }
             .buttonStyle(.card)
         }
