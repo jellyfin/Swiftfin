@@ -71,11 +71,13 @@ private struct CapsuleSliderContent: SliderContentView {
                 if let originValue = sliderState.originValue, sliderState.total > 0 {
                     GeometryReader { geometry in
                         let fraction = clamp(originValue / sliderState.total, min: 0, max: 1)
-                        Capsule()
-                            .fill(Color.gray)
-                            .frame(width: 4, height: geometry.size.height - (borderWidth * 2))
-                            .position(x: geometry.size.width * fraction, y: geometry.size.height / 2)
-                            .shadow(color: .black.opacity(0.5), radius: 2)
+                        let xPos = geometry.size.width * fraction
+
+                        RoundedRectangle(cornerRadius: 1)
+                            .fill(Color.white.opacity(0.85))
+                            .frame(width: 2, height: geometry.size.height)
+                            .shadow(color: .black.opacity(0.6), radius: 2)
+                            .position(x: xPos, y: geometry.size.height / 2)
                     }
                     .allowsHitTesting(false)
                     .transition(.opacity)
