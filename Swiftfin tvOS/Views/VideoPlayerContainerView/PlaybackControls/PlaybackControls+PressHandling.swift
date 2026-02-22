@@ -43,11 +43,10 @@ extension VideoPlayer.PlaybackControls {
 
         switch press.phase {
         case .began:
-            startScrubbing(direction: .backward)
             press.resolve(.handled)
 
         case .ended, .cancelled:
-            stopScrubbing(performJump: true)
+            jumpBackward()
             press.resolve(.handled)
 
         default:
@@ -67,11 +66,11 @@ extension VideoPlayer.PlaybackControls {
 
         switch press.phase {
         case .began:
-            startScrubbing(direction: .forward)
+            startSpeedBoost()
             press.resolve(.handled)
 
         case .ended, .cancelled:
-            stopScrubbing(performJump: true)
+            stopSpeedBoost(performJump: true)
             press.resolve(.handled)
 
         default:

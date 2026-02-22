@@ -63,15 +63,14 @@ class VideoPlayerContainerState: ObservableObject {
     // TODO: replace with graph dependency package
 
     private func updatePlaybackControlsVisibility() {
-        let newValue: Bool
-        if !isPresentingOverlay {
-            newValue = false
+        let newValue: Bool = if !isPresentingOverlay {
+            false
         } else if !isPresentingSupplement {
-            newValue = true
+            true
         } else if isCompact {
-            newValue = true
+            true
         } else {
-            newValue = false
+            false
         }
 
         if isPresentingPlaybackControls != newValue {

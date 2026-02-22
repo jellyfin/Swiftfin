@@ -37,10 +37,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
 
         private func supplementContainer(for supplement: some MediaPlayerSupplement) -> some View {
             supplement.videoPlayerBody
-                .background {
-                    GestureView()
-                        .environment(\.panGestureDirection, .vertical)
-                }
         }
 
         // MARK: body

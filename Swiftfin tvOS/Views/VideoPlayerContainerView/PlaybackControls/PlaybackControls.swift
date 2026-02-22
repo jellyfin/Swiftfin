@@ -47,16 +47,12 @@ extension VideoPlayer {
         @State
         private var bottomContentFrame: CGRect = .zero
 
-        // MARK: - State (Scrubbing)
+        // MARK: - State (Speed Boost / Jump)
 
         @State
-        var scrubbingTimer: Timer?
+        var speedBoostTimer: Timer?
         @State
-        var scrubbingDirection: ScrubbingDirection?
-        @State
-        var scrubbingSpeed: Double = 1.0
-        @State
-        var scrubbingStartTime: Date?
+        var isSpeedBoosting: Bool = false
         @State
         var pendingJumpWork: DispatchWorkItem?
 
@@ -298,6 +294,21 @@ extension VideoPlayer {
             .onChange(of: focusedActionButton) { _, newValue in
                 if let newValue {
                     lastFocusedActionButton = newValue
+                }
+            }
+            .onChange(of: containerState.isProgressBarFocused) { _, newValue in
+                if !newValue {
+                    if hasEnteredScrubMode {
+                        cancelScrubbing()
+                    }
+                    if isSpeedBoosting {
+                        stopSpeedBoost()
+                    }
+                }
+            }
+            .onReceive(manager.secondsBox.$value) { newSeconds in
+                if hasEnteredScrubMode {
+                    scrubOriginSeconds = newSeconds
                 }
             }
             .onChange(of: focusedSupplementID) { oldValue, newValue in

@@ -107,19 +107,6 @@ extension VideoPlayer {
                         .environment(\.onPressEventPublisher, onPressEvent)
                         .environmentObject(containerState.scrubbedSeconds)
                 }
-                .environment(
-                    \.panAction,
-                    .init(
-                        action: {
-                            containerState.containerView?.handleSupplementPanAction(
-                                translation: $0,
-                                velocity: $1.y,
-                                location: $2,
-                                state: $4
-                            )
-                        }
-                    )
-                )
             }
         }
 
@@ -548,6 +535,12 @@ extension VideoPlayer {
         // MARK: - Play/Pause
 
         private func handlePlayPauseEnded() {
+            if containerState.hasEnteredScrubMode {
+                containerState.cancelScrub()
+                containerState.timer.poke()
+                return
+            }
+
             if !containerState.isPresentingOverlay {
                 if manager.playbackRequestStatus == .paused {
                     manager.setPlaybackRequestStatus(status: .playing)
