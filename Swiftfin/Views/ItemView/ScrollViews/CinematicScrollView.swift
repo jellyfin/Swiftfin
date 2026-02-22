@@ -53,6 +53,7 @@ extension ItemView {
                     .aspectRatio(usePrimaryImage ? (2 / 3) : 1.77, contentMode: .fill)
                     .frame(width: proxy.size.width, height: proxy.size.height * 0.6)
                     .bottomEdgeGradient(bottomColor: bottomColor)
+                    .accessibilityHidden(true)
                 }
             }
         }
@@ -114,6 +115,7 @@ extension ItemView.CinematicScrollView {
                             }
                             .aspectRatio(contentMode: .fit)
                             .frame(height: 100, alignment: .bottom)
+                            .accessibilityHidden(true)
                     }
 
                     DotHStack {
