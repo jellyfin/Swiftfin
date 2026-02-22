@@ -14,9 +14,9 @@ enum TrailingTimestampType: String, CaseIterable, Displayable, Storable {
     var displayTitle: String {
         switch self {
         case .timeLeft:
-            return L10n.timeLeft
+            L10n.timeLeft
         case .totalTime:
-            return L10n.totalTime
+            L10n.totalTime
         }
     }
 }

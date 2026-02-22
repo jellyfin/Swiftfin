@@ -10,13 +10,16 @@ enum LongPressGestureAction: String, GestureAction {
 
     case none
     case gestureLock
+    case playbackSpeed
 
     var displayTitle: String {
         switch self {
         case .none:
-            return L10n.none
+            L10n.none
         case .gestureLock:
-            return L10n.gestureLock
+            L10n.gestureLock
+        case .playbackSpeed:
+            L10n.playbackSpeed
         }
     }
 }

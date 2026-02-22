@@ -15,59 +15,59 @@ extension TranscodeReason: Displayable, SystemImageable {
     var displayTitle: String {
         switch self {
         case .containerNotSupported:
-            return L10n.containerNotSupported
+            L10n.containerNotSupported
         case .videoCodecNotSupported:
-            return L10n.videoCodecNotSupported
+            L10n.videoCodecNotSupported
         case .audioCodecNotSupported:
-            return L10n.audioCodecNotSupported
+            L10n.audioCodecNotSupported
         case .subtitleCodecNotSupported:
-            return L10n.subtitleCodecNotSupported
+            L10n.subtitleCodecNotSupported
         case .audioIsExternal:
-            return L10n.audioIsExternal
+            L10n.audioIsExternal
         case .secondaryAudioNotSupported:
-            return L10n.secondaryAudioNotSupported
+            L10n.secondaryAudioNotSupported
         case .videoProfileNotSupported:
-            return L10n.videoProfileNotSupported
+            L10n.videoProfileNotSupported
         case .videoLevelNotSupported:
-            return L10n.videoLevelNotSupported
+            L10n.videoLevelNotSupported
         case .videoResolutionNotSupported:
-            return L10n.videoResolutionNotSupported
+            L10n.videoResolutionNotSupported
         case .videoBitDepthNotSupported:
-            return L10n.videoBitDepthNotSupported
+            L10n.videoBitDepthNotSupported
         case .videoFramerateNotSupported:
-            return L10n.videoFramerateNotSupported
+            L10n.videoFramerateNotSupported
         case .refFramesNotSupported:
-            return L10n.refFramesNotSupported
+            L10n.refFramesNotSupported
         case .anamorphicVideoNotSupported:
-            return L10n.anamorphicVideoNotSupported
+            L10n.anamorphicVideoNotSupported
         case .interlacedVideoNotSupported:
-            return L10n.interlacedVideoNotSupported
+            L10n.interlacedVideoNotSupported
         case .audioChannelsNotSupported:
-            return L10n.audioChannelsNotSupported
+            L10n.audioChannelsNotSupported
         case .audioProfileNotSupported:
-            return L10n.audioProfileNotSupported
+            L10n.audioProfileNotSupported
         case .audioSampleRateNotSupported:
-            return L10n.audioSampleRateNotSupported
+            L10n.audioSampleRateNotSupported
         case .audioBitDepthNotSupported:
-            return L10n.audioBitDepthNotSupported
+            L10n.audioBitDepthNotSupported
         case .containerBitrateExceedsLimit:
-            return L10n.containerBitrateExceedsLimit
+            L10n.containerBitrateExceedsLimit
         case .videoBitrateNotSupported:
-            return L10n.videoBitrateNotSupported
+            L10n.videoBitrateNotSupported
         case .audioBitrateNotSupported:
-            return L10n.audioBitrateNotSupported
+            L10n.audioBitrateNotSupported
         case .unknownVideoStreamInfo:
-            return L10n.unknownVideoStreamInfo
+            L10n.unknownVideoStreamInfo
         case .unknownAudioStreamInfo:
-            return L10n.unknownAudioStreamInfo
+            L10n.unknownAudioStreamInfo
         case .directPlayError:
-            return L10n.directPlayError
+            L10n.directPlayError
         case .videoRangeTypeNotSupported:
-            return L10n.videoRangeTypeNotSupported
+            L10n.videoRangeTypeNotSupported
         case .videoCodecTagNotSupported:
-            return L10n.videoCodecTagNotSupported
+            L10n.videoCodecTagNotSupported
         case .streamCountExceedsLimit:
-            return L10n.streamCountExceedsLimit
+            L10n.streamCountExceedsLimit
         }
     }
 
@@ -76,7 +76,7 @@ extension TranscodeReason: Displayable, SystemImageable {
         case .containerNotSupported,
              .containerBitrateExceedsLimit,
              .directPlayError:
-            return "shippingbox"
+            "shippingbox"
         case .audioCodecNotSupported,
              .audioIsExternal,
              .secondaryAudioNotSupported,
@@ -86,7 +86,7 @@ extension TranscodeReason: Displayable, SystemImageable {
              .audioBitDepthNotSupported,
              .audioBitrateNotSupported,
              .unknownAudioStreamInfo:
-            return "speaker.wave.2"
+            "speaker.wave.2"
         case .videoCodecNotSupported,
              .videoProfileNotSupported,
              .videoLevelNotSupported,
@@ -100,11 +100,11 @@ extension TranscodeReason: Displayable, SystemImageable {
              .unknownVideoStreamInfo,
              .videoCodecTagNotSupported,
              .videoRangeTypeNotSupported:
-            return "photo.tv"
+            "photo.tv"
         case .subtitleCodecNotSupported:
-            return "captions.bubble"
+            "captions.bubble"
         case .streamCountExceedsLimit:
-            return "number.circle"
+            "number.circle"
         }
     }
 }

@@ -22,7 +22,7 @@ extension ItemFields {
     ]
 }
 
-extension Array where Element == ItemFields {
+extension [ItemFields] {
 
     static var MinimumFields: Self {
         ItemFields.MinimumFields

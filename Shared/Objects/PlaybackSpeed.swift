@@ -6,37 +6,74 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 
-enum PlaybackSpeed: Double, CaseIterable, Displayable {
+enum PlaybackSpeed: CaseIterable, Displayable, Hashable, RawRepresentable, Storable {
 
-    case quarter = 0.25
-    case half = 0.5
-    case threeQuarter = 0.75
-    case one = 1.0
-    case oneQuarter = 1.25
-    case oneHalf = 1.5
-    case oneThreeQuarter = 1.75
-    case two = 2.0
+    typealias RawValue = Float
 
-    var displayTitle: String {
+    case quarter
+    case half
+    case threeQuarter
+    case one
+    case oneQuarter
+    case oneHalf
+    case oneThreeQuarter
+    case two
+    case custom(Float)
+
+    init(rawValue: Float) {
+        switch rawValue {
+        case 0.25:
+            self = .quarter
+        case 0.5:
+            self = .half
+        case 0.75:
+            self = .threeQuarter
+        case 1.0:
+            self = .one
+        case 1.25:
+            self = .oneQuarter
+        case 1.5:
+            self = .oneHalf
+        case 1.75:
+            self = .oneThreeQuarter
+        case 2.0:
+            self = .two
+        default:
+            self = .custom(rawValue)
+        }
+    }
+
+    var rawValue: Float {
         switch self {
         case .quarter:
-            return "0.25x"
+            0.25
         case .half:
-            return "0.5x"
+            0.5
         case .threeQuarter:
-            return "0.75x"
+            0.75
         case .one:
-            return "1x"
+            1.0
         case .oneQuarter:
-            return "1.25x"
+            1.25
         case .oneHalf:
-            return "1.5x"
+            1.5
         case .oneThreeQuarter:
-            return "1.75x"
+            1.75
         case .two:
-            return "2x"
+            2.0
+        case let .custom(value):
+            value
         }
+    }
+
+    var displayTitle: String {
+        rawValue.formatted(.playbackRate(precision: 2))
+    }
+
+    static var allCases: [PlaybackSpeed] {
+        [.quarter, .half, .threeQuarter, .one, .oneQuarter, .oneHalf, .oneThreeQuarter, .two]
     }
 }

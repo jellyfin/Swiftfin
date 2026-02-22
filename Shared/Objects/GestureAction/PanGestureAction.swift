@@ -17,15 +17,15 @@ enum PanGestureAction: String, GestureAction {
     var displayTitle: String {
         switch self {
         case .none:
-            return L10n.none
+            L10n.none
         case .brightness:
-            return L10n.brightness
+            L10n.brightness
         case .scrub:
-            return L10n.scrub
+            L10n.scrub
         case .slowScrub:
-            return L10n.slowScrub
+            L10n.slowScrub
         case .volume:
-            return L10n.volume
+            L10n.volume
         }
     }
 }

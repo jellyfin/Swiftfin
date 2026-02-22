@@ -44,69 +44,69 @@ enum AudioCodec: String, CaseIterable, Codable, Displayable, Storable {
     var displayTitle: String {
         switch self {
         case .aac:
-            return "AAC"
+            "AAC"
         case .ac3:
-            return "AC-3"
+            "AC-3"
         case .amr_nb:
-            return "AMR-NB"
+            "AMR-NB"
         case .amr_wb:
-            return "AMR-WB"
+            "AMR-WB"
         case .dts:
-            return "DTS"
+            "DTS"
         case .dts_hd:
-            return "DTS-HD"
+            "DTS-HD"
         case .eac3:
-            return "E-AC-3"
+            "E-AC-3"
         case .flac:
-            return "FLAC"
+            "FLAC"
         case .alac:
-            return "ALAC"
+            "ALAC"
         case .mlp:
-            return "MLP"
+            "MLP"
         case .mp1:
-            return "MP1"
+            "MP1"
         case .mp2:
-            return "MP2"
+            "MP2"
         case .mp3:
-            return "MP3"
+            "MP3"
         case .nellymoser:
-            return "Nellymoser"
+            "Nellymoser"
         case .opus:
-            return "Opus"
+            "Opus"
         case .pcm_alaw:
-            return "PCM ALAW"
+            "PCM ALAW"
         case .pcm_bluray:
-            return "PCM Bluray"
+            "PCM Bluray"
         case .pcm_dvd:
-            return "PCM DVD"
+            "PCM DVD"
         case .pcm_mulaw:
-            return "PCM MULAW"
+            "PCM MULAW"
         case .pcm_s16be:
-            return "PCM S16BE"
+            "PCM S16BE"
         case .pcm_s16le:
-            return "PCM S16LE"
+            "PCM S16LE"
         case .pcm_s24be:
-            return "PCM S24BE"
+            "PCM S24BE"
         case .pcm_s24le:
-            return "PCM S24LE"
+            "PCM S24LE"
         case .pcm_u8:
-            return "PCM U8"
+            "PCM U8"
         case .speex:
-            return "Speex"
+            "Speex"
         case .truehd:
-            return "TrueHD"
+            "TrueHD"
         case .vorbis:
-            return "Vorbis"
+            "Vorbis"
         case .wavpack:
-            return "WavPack"
+            "WavPack"
         case .wmalossless:
-            return "WMA Lossless"
+            "WMA Lossless"
         case .wmapro:
-            return "WMA Pro"
+            "WMA Pro"
         case .wmav1:
-            return "WMA V1"
+            "WMA V1"
         case .wmav2:
-            return "WMA V2"
+            "WMA V2"
         }
     }
 }

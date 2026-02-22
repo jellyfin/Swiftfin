@@ -17,11 +17,11 @@ enum LoginFailurePolicy: Int, Displayable, CaseIterable {
     var displayTitle: String {
         switch self {
         case .unlimited:
-            return L10n.unlimited
+            L10n.unlimited
         case .userDefault:
-            return L10n.default
+            L10n.default
         case .custom:
-            return L10n.custom
+            L10n.custom
         }
     }
 }

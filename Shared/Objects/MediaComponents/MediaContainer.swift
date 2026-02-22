@@ -23,27 +23,27 @@ enum MediaContainer: String, CaseIterable, Codable, Displayable, Storable {
     var displayTitle: String {
         switch self {
         case .avi:
-            return "AVI"
+            "AVI"
         case .flv:
-            return "FLV"
+            "FLV"
         case .m4v:
-            return "M4V"
+            "M4V"
         case .mkv:
-            return "MKV"
+            "MKV"
         case .mov:
-            return "MOV"
+            "MOV"
         case .mp4:
-            return "MP4"
+            "MP4"
         case .mpegts:
-            return "MPEG-TS"
+            "MPEG-TS"
         case .ts:
-            return "TS"
+            "TS"
         case .threeG2:
-            return "3G2"
+            "3G2"
         case .threeGP:
-            return "3GP"
+            "3GP"
         case .webm:
-            return "WEBM"
+            "WEBM"
         }
     }
 }

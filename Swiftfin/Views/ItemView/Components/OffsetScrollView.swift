@@ -46,8 +46,7 @@ extension ItemView {
             let start = headerHeight - safeAreaInsets.top - 90
             let end = headerHeight - safeAreaInsets.top - 40
             let diff = end - start
-            let opacity = clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
-            return opacity
+            return clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
         }
 
         private var headerHeight: CGFloat {

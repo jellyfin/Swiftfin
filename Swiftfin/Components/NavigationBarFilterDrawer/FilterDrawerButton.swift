@@ -29,7 +29,7 @@ extension NavigationBarFilterDrawer {
             } label: {
                 HStack(spacing: 2) {
                     Group {
-                        if let systemName = systemName {
+                        if let systemName {
                             Image(systemName: systemName)
                         } else {
                             Text(title)
