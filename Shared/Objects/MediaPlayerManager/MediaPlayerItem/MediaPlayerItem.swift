@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -22,20 +23,23 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
     @Published
     var selectedAudioStreamIndex: Int? = nil {
         didSet {
-            if let proxy = manager?.proxy as? any VideoMediaPlayerProxy {
-                proxy.setAudioStream(.init(index: selectedAudioStreamIndex))
-            }
+            guard let selectedAudioStreamIndex, selectedAudioStreamIndex != oldValue else { return }
+            manager?.setTrack(type: .audio, from: oldValue, to: selectedAudioStreamIndex)
         }
     }
 
     @Published
     var selectedSubtitleStreamIndex: Int? = nil {
         didSet {
-            if let proxy = manager?.proxy as? any VideoMediaPlayerProxy {
-                proxy.setSubtitleStream(.init(index: selectedSubtitleStreamIndex))
-            }
+            guard selectedSubtitleStreamIndex != oldValue else { return }
+            manager?.setTrack(type: .subtitle, from: oldValue, to: selectedSubtitleStreamIndex)
         }
     }
+
+    /// Jellyfin stream index → player track index
+    private(set) var indexMap: [Int: Int]
+
+    private var externalSubtitlesResolved = false
 
     weak var manager: MediaPlayerManager? {
         didSet {
@@ -68,6 +72,8 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         playSessionID: String,
         url: URL,
         requestedBitrate: PlaybackBitrate = .max,
+        initialAudioStreamIndex: Int? = nil,
+        initialSubtitleStreamIndex: Int? = nil,
         previewImageProvider: (any PreviewImageProvider)? = nil,
         thumbnailProvider: ThumbnailProvider? = nil
     ) {
@@ -79,24 +85,95 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         self.thumbnailProvider = thumbnailProvider
         self.url = url
 
-        let adjustedMediaStreams = mediaSource.mediaStreams?.adjustedTrackIndexes(
-            for: mediaSource.transcodingURL == nil ? .directPlay : .transcode,
-            selectedAudioStreamIndex: mediaSource.defaultAudioStreamIndex ?? 0
-        )
+        let mediaStreams = mediaSource.mediaStreams
+        let isTranscoding = mediaSource.transcodingURL != nil
 
-        let audioStreams = adjustedMediaStreams?.filter { $0.type == .audio } ?? []
-        let subtitleStreams = adjustedMediaStreams?.filter { $0.type == .subtitle } ?? []
-        let videoStreams = adjustedMediaStreams?.filter { $0.type == .video } ?? []
+        // TODO: Fix External Audio Tracks & Re-Enable
+        self.audioStreams = mediaStreams?.filter { $0.type == .audio && $0.isExternal != true } ?? []
+        self.subtitleStreams = mediaStreams?.filter {
+            $0.type == .subtitle
+                && $0.deliveryMethod != .drop
+                /// Hide external image subtitles in direct play — they require transcoding to burn in
+                && !(Defaults[.VideoPlayer.Playback.compatibilityMode] == .directPlay
+                    && $0.isExternal == true
+                    && $0.isTextSubtitleStream != true)
+        } ?? []
+        self.videoStreams = mediaStreams?.filter { $0.type == .video } ?? []
 
-        self.audioStreams = audioStreams
-        self.subtitleStreams = subtitleStreams
-        self.videoStreams = videoStreams
+        let resolvedAudioStreamIndex = initialAudioStreamIndex
+            ?? mediaSource.defaultAudioStreamIndex
+            ?? mediaSource.mediaStreams?.first(where: { $0.type == .audio })?.index ?? 0
+
+        self.indexMap = mediaStreams?.buildIndexMap(
+            for: isTranscoding ? .transcode : .directPlay,
+            selectedAudioStreamIndex: resolvedAudioStreamIndex
+        ) ?? [:]
 
         super.init()
 
-        selectedAudioStreamIndex = mediaSource.defaultAudioStreamIndex ?? -1
-        selectedSubtitleStreamIndex = mediaSource.defaultSubtitleStreamIndex ?? -1
+        selectedAudioStreamIndex = resolvedAudioStreamIndex
+
+        selectedSubtitleStreamIndex = initialSubtitleStreamIndex
+            ?? mediaSource.defaultSubtitleStreamIndex
+            ?? -1
 
         observers.append(MediaProgressObserver(item: self))
+    }
+
+    /// Encoded or image-based (PGS) subtitles require a server rebuild to burn in
+    func isRebuildRequired(from oldIndex: Int?, to newIndex: Int?) -> Bool {
+        let needsRebuild: (MediaStream?) -> Bool = { stream in
+            guard let stream else { return false }
+            return stream.deliveryMethod == .encode || (stream.isTextSubtitleStream == false && stream.isExternal == true)
+        }
+
+        let oldStream = subtitleStreams.first(where: { $0.index == oldIndex })
+        let newStream: MediaStream? = {
+            guard let idx = newIndex, idx != -1 else { return nil }
+            return subtitleStreams.first(where: { $0.index == idx })
+        }()
+
+        return needsRebuild(oldStream) || needsRebuild(newStream)
+    }
+
+    /// Switch subtitle track directly without rebuilding
+    func switchSubtitleTrack(index: Int?) {
+        let playerIndex: Int
+        if index == nil || index == -1 {
+            playerIndex = -1
+        } else if let mapped = indexMap[index] {
+            playerIndex = mapped
+        } else {
+            return
+        }
+
+        if let proxy = manager?.proxy as? any VideoMediaPlayerProxy {
+            proxy.setSubtitleStream(.init(index: playerIndex))
+        }
+    }
+
+    /// Resolve sidecar subtitle indexes once the player reports its actual tracks
+    func getSubtitleIndexes(subtitleTracks: [(index: Int, title: String)]) {
+        guard !externalSubtitlesResolved else { return }
+        externalSubtitlesResolved = true
+
+        let playbackChildren = subtitleStreams.sidecarSubtitles
+        guard playbackChildren.isNotEmpty else { return }
+
+        indexMap = [MediaStream].resolveIndexMap(
+            into: indexMap,
+            playbackChildren: playbackChildren,
+            subtitleTracks: subtitleTracks,
+            isTranscoding: mediaSource.transcodingURL != nil
+        )
+
+        // re-apply current subtitle now that we have real indexes
+        if let currentSubtitle = selectedSubtitleStreamIndex,
+           let playerIndex = indexMap[currentSubtitle]
+        {
+            if let proxy = manager?.proxy as? any VideoMediaPlayerProxy {
+                proxy.setSubtitleStream(.init(index: playerIndex))
+            }
+        }
     }
 }

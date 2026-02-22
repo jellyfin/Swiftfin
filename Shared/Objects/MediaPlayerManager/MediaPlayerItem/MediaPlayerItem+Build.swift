@@ -21,6 +21,8 @@ extension MediaPlayerItem {
     static func build(
         for initialItem: BaseItemDto,
         mediaSource _initialMediaSource: MediaSourceInfo? = nil,
+        audioStreamIndex: Int? = nil,
+        subtitleStreamIndex: Int? = nil,
         videoPlayerType: VideoPlayerType = Defaults[.VideoPlayer.videoPlayerType],
         requestedBitrate: PlaybackBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate],
         compatibilityMode: PlaybackCompatibility = Defaults[.VideoPlayer.Playback.compatibilityMode],
@@ -75,6 +77,8 @@ extension MediaPlayerItem {
         playbackInfo.liveStreamID = initialMediaSource.liveStreamID
         playbackInfo.maxStreamingBitrate = maxBitrate
         playbackInfo.userID = userSession.user.id
+        playbackInfo.audioStreamIndex = audioStreamIndex
+        playbackInfo.subtitleStreamIndex = subtitleStreamIndex
 
         if !item.isLiveStream {
             playbackInfo.mediaSourceID = initialMediaSource.id
@@ -162,6 +166,8 @@ extension MediaPlayerItem {
             playSessionID: playSessionID,
             url: playbackURL,
             requestedBitrate: requestedBitrate,
+            initialAudioStreamIndex: audioStreamIndex,
+            initialSubtitleStreamIndex: subtitleStreamIndex,
             previewImageProvider: previewImageProvider,
             thumbnailProvider: item.getNowPlayingImage
         )

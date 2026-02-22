@@ -209,55 +209,108 @@ extension MediaStream {
 
 extension [MediaStream] {
 
-    /// Adjusts track indexes for a full set of media streams.
-    /// For non-transcode stream types:
-    ///   Internal tracks (non-external) are ordered as: Video, Audio, Subtitles, then any others.
-    ///   Their relative order within each group is preserved and indexes start at 0.
-    /// For transcode stream type:
-    ///   Only the first internal video track and the first internal audio track are included, in that order.
-    /// In both cases, external tracks are appended in their original order with indexes continuing after internal tracks.
-    func adjustedTrackIndexes(for playMethod: PlayMethod, selectedAudioStreamIndex: Int) -> [MediaStream] {
-        let internalTracks = self.filter { !($0.isExternal ?? false) }
-        let externalTracks = self.filter { $0.isExternal ?? false }
+    /// Text-based external subtitles loaded as sidecar files. Image-based subtitles are excluded because the player silently drops them.
+    var sidecarSubtitles: [MediaStream] {
+        filter { $0.deliveryMethod == .external && $0.deliveryURL != nil && $0.isTextSubtitleStream == true }
+    }
 
-        var orderedInternal: [MediaStream] = []
-
-        let subtitleInternal = internalTracks.filter { $0.type == .subtitle }
+    /// Jellyfin uses global stream indexes across all tracks. VLC uses container-position-based indexes.
+    /// This maps between the two so we can tell the player which track to use.
+    ///  - `Transcode`   HLS container only has 1 video (0) and 1 audio (1). Sidecar subtitles are predicted after that.
+    ///  - `DirectPlay` Internal tracks are offset by how many external tracks Jellyfin puts first.
+    func buildIndexMap(
+        for playMethod: PlayMethod,
+        selectedAudioStreamIndex: Int
+    ) -> [Int: Int] {
+        let playbackChildren = self.sidecarSubtitles
+        var indexMap: [Int: Int] = [:]
 
         if playMethod == .transcode {
-            // Only include the first video and first audio track for transcode.
-            let videoInternal = internalTracks.filter { $0.type == .video }
-            let audioInternal = internalTracks.filter { $0.type == .audio }
+            /// Transcode HLS has exactly 1 video + 1 audio in the container
+            var containerTracks: [MediaStream] = []
 
-            if let firstVideo = videoInternal.first {
-                orderedInternal.append(firstVideo)
+            let videoTracks = self.filter { $0.type == .video && !($0.isExternal ?? false) }
+            let audioTracks = self.filter { $0.type == .audio && !($0.isExternal ?? false) }
+
+            if let firstVideo = videoTracks.first {
+                containerTracks.append(firstVideo)
             }
-            if let selectedAudio = audioInternal.first(where: { $0.index == selectedAudioStreamIndex }) {
-                orderedInternal.append(selectedAudio)
+            if let selectedAudio = audioTracks.first(where: { $0.index == selectedAudioStreamIndex }) {
+                containerTracks.append(selectedAudio)
             }
 
-            orderedInternal += subtitleInternal
+            for (newIndex, track) in containerTracks.enumerated() {
+                guard let oldIndex = track.index else { continue }
+                indexMap[oldIndex] = newIndex
+            }
+
+            /// Get sidecar subtitle positions after container tracks
+            let playbackChildStartIndex = containerTracks.count
+
+            for (offset, track) in playbackChildren.enumerated() {
+                guard let oldIndex = track.index else { continue }
+                let playerIndex = playbackChildStartIndex + offset
+                indexMap[oldIndex] = playerIndex
+            }
         } else {
-            let videoInternal = internalTracks.filter { $0.type == .video }
-            let audioInternal = internalTracks.filter { $0.type == .audio }
+            /// Jellyfin puts external tracks first in its global indexes, so internal container indexes are offset by that count
+            let externalCount = self.count(where: { $0.isExternal == true })
+            let internalTracks = self.filter { !($0.isExternal ?? false) }
 
-            orderedInternal = videoInternal + audioInternal + subtitleInternal
+            for track in internalTracks {
+                guard let oldIndex = track.index else { continue }
+                let playerIndex = oldIndex - externalCount
+                indexMap[oldIndex] = playerIndex
+            }
         }
 
-        var newInternalTracks: [MediaStream] = []
-        for (index, var track) in orderedInternal.enumerated() {
-            track.index = index
-            newInternalTracks.append(track)
+        return indexMap
+    }
+
+    /// Sidecar subtitles get player-assigned indexes we can't see at initialization.
+    /// Once the player reports its actual tracks, we match them up and update the map.
+    ///  - `Transcode`   No embedded subtitles in HLS, so all reported tracks are sidecars match sequentially.
+    ///  - `DirectPlay` Container subtitles are already mapped, so take the last N unmapped indexes for sidecars.
+    static func resolveIndexMap(
+        into indexMap: [Int: Int],
+        playbackChildren: [MediaStream],
+        subtitleTracks: [(index: Int, title: String)],
+        isTranscoding: Bool
+    ) -> [Int: Int] {
+        guard !playbackChildren.isEmpty else { return indexMap }
+
+        var updatedMap = indexMap
+
+        let playerIndexes = subtitleTracks
+            .map(\.index)
+            .filter { $0 >= 0 }
+            .sorted()
+
+        if isTranscoding {
+            /// All reported subtitle tracks are sidecars
+            for (offset, playerIndex) in playerIndexes.enumerated() {
+                guard offset < playbackChildren.count,
+                      let jellyfinIndex = playbackChildren[offset].index
+                else { continue }
+                updatedMap[jellyfinIndex] = playerIndex
+            }
+        } else {
+            /// Filter out already-mapped container tracks, remaining are sidecars
+            let mappedIndexes = Set(indexMap.values)
+            let unmappedIndexes = playerIndexes
+                .filter { !mappedIndexes.contains($0) }
+
+            let externalIndexes = [Int](unmappedIndexes.suffix(playbackChildren.count))
+
+            for (offset, stream) in playbackChildren.enumerated() {
+                guard let jellyfinIndex = stream.index else { continue }
+                if offset < externalIndexes.count {
+                    updatedMap[jellyfinIndex] = externalIndexes[offset]
+                }
+            }
         }
 
-        var newExternalTracks: [MediaStream] = []
-        let startingIndexForExternal = newInternalTracks.count
-        for (offset, var track) in externalTracks.enumerated() {
-            track.index = startingIndexForExternal + offset
-            newExternalTracks.append(track)
-        }
-
-        return newInternalTracks + newExternalTracks
+        return updatedMap
     }
 
     var has4KVideo: Bool {
