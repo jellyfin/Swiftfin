@@ -3,12 +3,13 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
 
-enum ColorPickerDefaults: String, CaseIterable, Displayable {
+enum ColorPickerDefaults: CaseIterable, Displayable {
+
     case jellyfin
     case red
     case orange
@@ -19,34 +20,34 @@ enum ColorPickerDefaults: String, CaseIterable, Displayable {
     var color: Color {
         switch self {
         case .jellyfin:
-            return .jellyfinPurple
+            .jellyfinPurple
         case .red:
-            return .red
+            .red
         case .orange:
-            return .orange
+            .orange
         case .yellow:
-            return .yellow
+            .yellow
         case .green:
-            return .green
+            .green
         case .blue:
-            return .blue
+            .blue
         }
     }
 
     var displayTitle: String {
         switch self {
         case .jellyfin:
-            return "Jellyfin"
+            "Jellyfin"
         case .red:
-            return L10n.red
+            L10n.red
         case .orange:
-            return L10n.orange
+            L10n.orange
         case .yellow:
-            return L10n.yellow
+            L10n.yellow
         case .green:
-            return L10n.green
+            L10n.green
         case .blue:
-            return L10n.blue
+            L10n.blue
         }
     }
 }
