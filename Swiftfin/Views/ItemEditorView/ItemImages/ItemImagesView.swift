@@ -89,7 +89,6 @@ struct ItemImagesView: View {
 
     // MARK: - Image View
 
-    @ViewBuilder
     private var imageView: some View {
         ScrollView {
             ForEach(ImageType.allCases.sorted(using: \.rawValue), id: \.self) { imageType in
@@ -132,7 +131,6 @@ struct ItemImagesView: View {
 
     // MARK: - Section Header
 
-    @ViewBuilder
     private func sectionHeader(for imageType: ImageType) -> some View {
         HStack {
             Text(imageType.displayTitle)
@@ -168,7 +166,6 @@ struct ItemImagesView: View {
 
     // TODO: instead of using `posterStyle`, should be sized based on
     //       the image type and just ignore and poster styling
-    @ViewBuilder
     private func imageButton(
         imageInfo: ImageInfo,
         onSelect: @escaping () -> Void

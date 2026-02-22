@@ -58,7 +58,6 @@ extension ItemView {
 
         // MARK: - Single Trailer Button
 
-        @ViewBuilder
         private var trailerButton: some View {
             Button(
                 L10n.trailers,
@@ -76,7 +75,6 @@ extension ItemView {
 
         // MARK: - Multiple Trailers Menu Button
 
-        @ViewBuilder
         private var trailerMenu: some View {
             Menu(L10n.trailers, systemImage: "movieclapper") {
 

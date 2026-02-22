@@ -55,7 +55,6 @@ struct ActiveSessionsView: View {
 
     // MARK: - Body
 
-    @ViewBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -101,7 +100,6 @@ struct ActiveSessionsView: View {
 
     // MARK: - Active Within Filter Button
 
-    @ViewBuilder
     private var activeWithinFilterButton: some View {
         Picker(selection: $viewModel.activeWithinSeconds) {
             Label(
@@ -149,7 +147,6 @@ struct ActiveSessionsView: View {
 
     // MARK: - Show Inactive Sessions Button
 
-    @ViewBuilder
     private var showInactiveSessionsButton: some View {
         Picker(selection: $viewModel.showSessionType) {
             ForEach(ActiveSessionFilter.allCases, id: \.self) { filter in

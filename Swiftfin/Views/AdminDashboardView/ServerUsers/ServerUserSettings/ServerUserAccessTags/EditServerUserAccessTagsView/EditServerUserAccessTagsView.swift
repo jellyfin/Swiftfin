@@ -141,7 +141,6 @@ struct EditServerUserAccessTagsView: View {
         .errorMessage($error)
     }
 
-    @ViewBuilder
     private func makeRow(tag: TagWithAccess) -> some View {
         EditAccessTagRow(tag: tag.tag) {
             if isEditing {
@@ -157,7 +156,6 @@ struct EditServerUserAccessTagsView: View {
 
     // MARK: - Content View
 
-    @ViewBuilder
     private var contentView: some View {
         List {
             ListTitleSection(

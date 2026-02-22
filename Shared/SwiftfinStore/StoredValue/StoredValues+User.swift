@@ -67,8 +67,8 @@ extension StoredValues.Keys {
 
     enum User {
 
-        // Doesn't use `CurrentUserKey` because data may be
-        // retrieved and stored without a user session
+        /// Doesn't use `CurrentUserKey` because data may be
+        /// retrieved and stored without a user session
         static func accessPolicy(id: String) -> Key<UserAccessPolicy> {
             UserKey(
                 "accessPolicy",
@@ -78,8 +78,8 @@ extension StoredValues.Keys {
             )
         }
 
-        // Doesn't use `CurrentUserKey` because data may be
-        // retrieved and stored without a user session
+        /// Doesn't use `CurrentUserKey` because data may be
+        /// retrieved and stored without a user session
         static func data(id: String) -> Key<UserDto> {
             UserKey(
                 "userData",

@@ -125,7 +125,7 @@ extension _UnmaskSecureField {
 
 private extension UITextField {
 
-    // https://stackoverflow.com/a/48115361
+    /// https://stackoverflow.com/a/48115361
     func toggleSecureEntry() {
 
         isSecureTextEntry.toggle()

@@ -44,7 +44,6 @@ struct VideoPlayer: View {
         self._proxy = .init(wrappedValue: VLCMediaPlayerProxy())
     }
 
-    @ViewBuilder
     private var containerView: some View {
         VideoPlayerContainerView(
             containerState: containerState,

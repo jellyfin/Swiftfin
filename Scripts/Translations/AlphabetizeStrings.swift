@@ -8,11 +8,11 @@
 
 import Foundation
 
-// Get the English localization file
+/// Get the English localization file
 let fileURL = URL(fileURLWithPath: "./Translations/en.lproj/Localizable.strings")
 
-// This regular expression pattern matches lines of the format:
-// "Key" = "Value";
+/// This regular expression pattern matches lines of the format:
+/// "Key" = "Value";
 let regex = #/^\"(?<key>[^\"]+)\"\s*=\s*\"(?<value>[^\"]+)\";/#
 
 // Attempt to read the file content.
@@ -21,7 +21,7 @@ guard let content = try? String(contentsOf: fileURL, encoding: .utf16) else {
     exit(1)
 }
 
-// Split file content by newlines to process line by line.
+/// Split file content by newlines to process line by line.
 let strings = content.components(separatedBy: .newlines)
     .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
     .filter { !$0.isEmpty && !$0.hasPrefix("//") }

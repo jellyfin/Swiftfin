@@ -57,7 +57,6 @@ extension VideoPlayer.PlaybackControls {
                             .aspectRatio(contentMode: .fit)
                     }
                 }
-                .id(image?.index)
             }
             .onAppear {
                 getImage(for: scrubbedSeconds)

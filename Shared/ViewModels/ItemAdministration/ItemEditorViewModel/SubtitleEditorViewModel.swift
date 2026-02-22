@@ -88,7 +88,7 @@ final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
 
         super.init()
 
-        /// Setup debounced search
+        // Setup debounced search
         searchQuery
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] searchParams in
@@ -246,11 +246,11 @@ final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
             throw ErrorMessage(L10n.unknownError)
         }
 
-        /// Extract non-nil indexes from mediaStreams
+        // Extract non-nil indexes from mediaStreams
         let indices = mediaStreams.compactMap(\.index)
             .sorted(by: >)
 
-        /// Track successfully deleted indexes
+        // Track successfully deleted indexes
         var deletedIndices = Set<Int>()
 
         for index in indices {
@@ -333,8 +333,8 @@ final class SubtitleEditorViewModel: ViewModel, Stateful, Eventful {
         await MainActor.run {
             self.item = response.value
 
-            /// Important: Subtitle track indexes change sporadically
-            /// Extract subtitle streams from all media sources
+            // Important: Subtitle track indexes change sporadically
+            // Extract subtitle streams from all media sources
             let subtitles = (item.mediaSources ?? [])
                 .compactMap(\.subtitleStreams)
                 .flattened()

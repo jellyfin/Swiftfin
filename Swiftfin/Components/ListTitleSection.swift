@@ -80,7 +80,6 @@ struct InsetGroupedListHeader<Content: View>: View {
     private let description: Text?
     private let onLearnMore: (() -> Void)?
 
-    @ViewBuilder
     private var header: some View {
         Button {
             onLearnMore?()

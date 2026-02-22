@@ -10,7 +10,7 @@ import SwiftUI
 
 // TODO: come up with better name along with `ListRowButton`
 
-// Meant to be used when making a custom list without `List` or `Form`
+/// Meant to be used when making a custom list without `List` or `Form`
 struct ListRow<Leading: View, Content: View>: View {
 
     @State

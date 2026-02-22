@@ -25,16 +25,18 @@ struct FocusGuideModifier: ViewModifier {
 
             Color(debug ? .red : .clear)
                 .frame(height: 1)
+                .padding(.top, 1)
                 .if(focusConstructor.topTarget != nil, transform: { boundary in
-                    boundary.focusable()
+                    boundary.focusable().focusEffectDisabled()
                 })
                 .focused($focusDirection, equals: .top)
 
             HStack(spacing: 0) {
                 Color(debug ? .red : .clear)
                     .frame(width: 1)
+                    .padding(.leading, 1)
                     .if(focusConstructor.leftTarget != nil, transform: { boundary in
-                        boundary.focusable()
+                        boundary.focusable().focusEffectDisabled()
                     })
                     .focused($focusDirection, equals: .left)
 
@@ -43,19 +45,22 @@ struct FocusGuideModifier: ViewModifier {
 
                 Color(debug ? .red : .clear)
                     .frame(width: 1)
+                    .padding(.trailing, 1)
                     .if(focusConstructor.rightTarget != nil, transform: { boundary in
-                        boundary.focusable()
+                        boundary.focusable().focusEffectDisabled()
                     })
                     .focused($focusDirection, equals: .right)
             }
 
             Color(debug ? .red : .clear)
                 .frame(height: 1)
+                .padding(.bottom, 1)
                 .if(focusConstructor.bottomTarget != nil, transform: { boundary in
-                    boundary.focusable()
+                    boundary.focusable().focusEffectDisabled()
                 })
                 .focused($focusDirection, equals: .bottom)
         }
+        .fixedSize(horizontal: focusConstructor.fixedSize.horizontal, vertical: focusConstructor.fixedSize.vertical)
         .onChange(of: focusDirection) { _, focusDirection in
             guard let focusDirection else { return }
             switch focusDirection {
@@ -75,6 +80,7 @@ struct FocusGuideModifier: ViewModifier {
                 if let onContentFocus {
                     onContentFocus()
                 } else {
+                    focusDirection = nil
                     focusDirection = .content
                 }
             }
@@ -86,6 +92,7 @@ extension View {
     func focusGuide(
         _ focusGuide: FocusGuide,
         tag: String,
+        fixedSize: (horizontal: Bool, vertical: Bool) = (horizontal: false, vertical: false),
         onContentFocus: (() -> Void)? = nil,
         top: String? = nil,
         bottom: String? = nil,
@@ -94,6 +101,7 @@ extension View {
     ) -> some View {
         let focusConstructor = FocusConstructor(
             tag: tag,
+            fixedSize: fixedSize,
             topTarget: top,
             bottomTarget: bottom,
             leftTarget: left,
@@ -115,6 +123,7 @@ enum FocusDirection: String {
 struct FocusConstructor {
 
     let tag: String
+    let fixedSize: (horizontal: Bool, vertical: Bool)
     let topTarget: String?
     let bottomTarget: String?
     let leftTarget: String?

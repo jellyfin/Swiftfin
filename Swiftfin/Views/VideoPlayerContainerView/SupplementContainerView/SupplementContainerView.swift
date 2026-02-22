@@ -37,7 +37,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             containerState.isScrubbing
         }
 
-        @ViewBuilder
         private func supplementContainer(for supplement: some MediaPlayerSupplement) -> some View {
             AlternateLayoutView(alignment: .topLeading) {
                 Color.clear

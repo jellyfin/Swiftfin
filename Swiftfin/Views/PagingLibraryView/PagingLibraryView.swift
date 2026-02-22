@@ -180,7 +180,6 @@ struct PagingLibraryView<Element: Poster>: View {
     // Note: if parent is a folders then other items will have labels,
     //       so an empty content view is necessary
 
-    @ViewBuilder
     private func gridItemView(item: Element, posterType: PosterDisplayType) -> some View {
         PosterButton(
             item: item,
@@ -199,7 +198,6 @@ struct PagingLibraryView<Element: Poster>: View {
         }
     }
 
-    @ViewBuilder
     private func listItemView(item: Element, posterType: PosterDisplayType) -> some View {
         LibraryRow(
             item: item,
@@ -209,7 +207,6 @@ struct PagingLibraryView<Element: Poster>: View {
         }
     }
 
-    @ViewBuilder
     private var elementsView: some View {
         CollectionVGrid(
             uniqueElements: viewModel.elements,

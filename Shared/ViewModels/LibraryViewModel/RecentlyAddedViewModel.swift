@@ -14,7 +14,7 @@ import JellyfinAPI
 //       *when* new episodes are added to a series?
 final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
-    // Necessary because this is paginated and also used on home view
+    /// Necessary because this is paginated and also used on home view
     init(customPageSize: Int? = nil) {
 
         // Why doesn't `super.init(title:id:pageSize)` init work?

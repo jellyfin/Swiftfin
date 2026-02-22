@@ -14,7 +14,6 @@ extension CustomDeviceProfileSettingsView {
         let profile: CustomDeviceProfile
         var onSelect: () -> Void
 
-        @ViewBuilder
         private func profileDetailsView(title: String, detail: String) -> some View {
             VStack(alignment: .leading) {
                 Text(title)

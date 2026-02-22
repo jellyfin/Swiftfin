@@ -102,7 +102,6 @@ struct ItemSubtitleSearchView: View {
 
     // MARK: - Content View
 
-    @ViewBuilder
     private var contentView: some View {
         Form {
             searchSection
@@ -112,7 +111,6 @@ struct ItemSubtitleSearchView: View {
 
     // MARK: - Search Section
 
-    @ViewBuilder
     private var searchSection: some View {
         Section(L10n.options) {
             CulturePicker(L10n.language, threeLetterISOLanguageName: $language)
@@ -133,7 +131,6 @@ struct ItemSubtitleSearchView: View {
 
     // MARK: - Results Section
 
-    @ViewBuilder
     private var resultsSection: some View {
         Section(L10n.search) {
             if viewModel.searchResults.isEmpty {

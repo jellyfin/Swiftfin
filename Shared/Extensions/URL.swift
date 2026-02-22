@@ -68,7 +68,7 @@ extension URL {
         }
     }
 
-    // doesn't have `?` but doesn't matter
+    /// doesn't have `?` but doesn't matter
     var pathAndQuery: String? {
         path + (query ?? "")
     }

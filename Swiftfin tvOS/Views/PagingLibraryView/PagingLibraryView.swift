@@ -195,7 +195,6 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
 
     // MARK: Portrait Grid Item View
 
-    @ViewBuilder
     private func portraitGridItemView(item: Element) -> some View {
         PosterButton(
             item: item,
@@ -216,7 +215,6 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
 
     // MARK: List Item View
 
-    @ViewBuilder
     private func listItemView(item: Element, posterType: PosterDisplayType) -> some View {
         LibraryRow(
             item: item,
@@ -228,7 +226,6 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
 
     // MARK: Grid View
 
-    @ViewBuilder
     private var gridView: some View {
         CollectionVGrid(
             uniqueElements: viewModel.elements,
@@ -275,7 +272,6 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
 
     // MARK: Content View
 
-    @ViewBuilder
     private var contentView: some View {
 
         innerContent

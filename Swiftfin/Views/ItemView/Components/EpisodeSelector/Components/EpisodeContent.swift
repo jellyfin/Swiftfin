@@ -21,7 +21,6 @@ extension SeriesEpisodeSelector {
         let content: String
         let action: () -> Void
 
-        @ViewBuilder
         private var subHeaderView: some View {
             Text(subHeader)
                 .font(.footnote)
@@ -29,7 +28,6 @@ extension SeriesEpisodeSelector {
                 .lineLimit(1)
         }
 
-        @ViewBuilder
         private var headerView: some View {
             Text(header)
                 .font(.body)
@@ -39,7 +37,6 @@ extension SeriesEpisodeSelector {
                 .padding(.bottom, 1)
         }
 
-        @ViewBuilder
         private var contentView: some View {
             Text(content)
                 .font(.caption)

@@ -21,7 +21,6 @@ extension SelectUserView {
 
         // MARK: View Builders
 
-        @ViewBuilder
         private var label: some View {
             Label(L10n.addUser, systemImage: "plus")
                 .foregroundStyle(Color.primary)

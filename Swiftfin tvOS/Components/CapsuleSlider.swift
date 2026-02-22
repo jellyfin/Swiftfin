@@ -17,6 +17,7 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
     private var isFocused: Bool
 
     private let total: Value
+    private var originProgress: Value?
     private var onEditingChanged: (Bool) -> Void
 
     init(value: Binding<Value>, total: Value) {
@@ -29,6 +30,7 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
         SliderContainer(
             value: $value,
             total: total,
+            originProgress: originProgress,
             onEditingChanged: onEditingChanged
         ) {
             CapsuleSliderContent()
@@ -41,6 +43,10 @@ extension CapsuleSlider {
     func onEditingChanged(_ action: @escaping (Bool) -> Void) -> Self {
         copy(modifying: \.onEditingChanged, with: action)
     }
+
+    func originProgress(_ value: Value?) -> Self {
+        copy(modifying: \.originProgress, with: value)
+    }
 }
 
 private struct CapsuleSliderContent: SliderContentView {
@@ -48,9 +54,35 @@ private struct CapsuleSliderContent: SliderContentView {
     @EnvironmentObject
     var sliderState: SliderContainerState<Double>
 
+    private let borderWidth = 1.5
+
     var body: some View {
         ProgressView(value: sliderState.value, total: sliderState.total)
             .progressViewStyle(PlaybackProgressViewStyle(cornerStyle: .round))
             .frame(height: 30)
+            .overlay {
+                Capsule()
+                    .strokeBorder(
+                        Color.white.opacity(sliderState.isFocused ? 1 : 0.4),
+                        lineWidth: 1.5
+                    )
+            }
+            .overlay {
+                if let originValue = sliderState.originValue, sliderState.total > 0 {
+                    GeometryReader { geometry in
+                        let fraction = clamp(originValue / sliderState.total, min: 0, max: 1)
+                        let xPos = geometry.size.width * fraction
+
+                        RoundedRectangle(cornerRadius: 1)
+                            .fill(Color.white.opacity(0.85))
+                            .frame(width: 2, height: geometry.size.height)
+                            .shadow(color: .black.opacity(0.6), radius: 2)
+                            .position(x: xPos, y: geometry.size.height / 2)
+                    }
+                    .allowsHitTesting(false)
+                    .transition(.opacity)
+                }
+            }
+            .animation(.easeInOut(duration: 0.2), value: sliderState.originValue != nil)
     }
 }

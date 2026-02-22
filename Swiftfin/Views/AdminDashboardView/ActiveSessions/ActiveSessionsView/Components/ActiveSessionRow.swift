@@ -61,7 +61,6 @@ extension ActiveSessionsView {
             }
         }
 
-        @ViewBuilder
         private func activeSessionDetails(_ nowPlayingItem: BaseItemDto, playState: PlayerStateInfo) -> some View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(session.userName ?? L10n.unknown)
@@ -82,7 +81,6 @@ extension ActiveSessionsView {
             .font(.subheadline)
         }
 
-        @ViewBuilder
         private var idleSessionDetails: some View {
             VStack(alignment: .leading, spacing: 4) {
 

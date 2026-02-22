@@ -42,7 +42,6 @@ protocol VideoMediaPlayerProxy: MediaPlayerProxy {
     func setAudioStream(_ stream: MediaStream)
     func setSubtitleStream(_ stream: MediaStream)
 
-    @ViewBuilder
     @MainActor
     var videoPlayerBody: Self.VideoPlayerBody { get }
 }

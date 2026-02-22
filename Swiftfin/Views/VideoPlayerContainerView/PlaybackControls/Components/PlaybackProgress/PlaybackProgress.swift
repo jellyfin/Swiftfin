@@ -77,7 +77,6 @@ extension VideoPlayer.PlaybackControls {
             return clamp(videoPlayerProxy.videoSize.value.aspectRatio, min: 0.25, max: 4)
         }
 
-        @ViewBuilder
         private var liveIndicator: some View {
             Text("Live")
                 .font(.subheadline)
@@ -91,7 +90,6 @@ extension VideoPlayer.PlaybackControls {
                 }
         }
 
-        @ViewBuilder
         private var slowScrubbingIndicator: some View {
             HStack {
                 Image(systemName: "backward.fill")
@@ -101,7 +99,6 @@ extension VideoPlayer.PlaybackControls {
             .font(.caption)
         }
 
-        @ViewBuilder
         private var capsuleSlider: some View {
             AlternateLayoutView {
                 EmptyHitTestView()

@@ -47,14 +47,14 @@ struct UserPermissions {
         func canDelete(item: BaseItemDto) -> Bool {
             switch item.type {
             case .playlist:
-                /// Playlists can only be edited by owners who can also delete
-                item.canDelete == true
+                // Playlists can only be edited by owners who can also delete
+                return item.canDelete == true
             case .boxSet:
-                canManageCollections
+                return canManageCollections
                     && StoredValues[.User.enableCollectionManagement]
                     && item.canDelete == true
             default:
-                canDelete
+                return canDelete
                     && StoredValues[.User.enableItemDeletion]
                     && item.canDelete == true
             }
@@ -69,13 +69,13 @@ struct UserPermissions {
         func canEditMetadata(item: BaseItemDto) -> Bool {
             switch item.type {
             case .playlist:
-                /// Playlists can only be edited by owners who can also delete
-                item.canDelete == true
+                // Playlists can only be edited by owners who can also delete
+                return item.canDelete == true
             case .boxSet:
-                (canManageCollections || canEditMetadata)
+                return (canManageCollections || canEditMetadata)
                     && StoredValues[.User.enableCollectionManagement]
             default:
-                canEditMetadata
+                return canEditMetadata
                     && StoredValues[.User.enableItemEditing]
             }
         }
@@ -84,10 +84,10 @@ struct UserPermissions {
         func canManageSubtitles(item: BaseItemDto) -> Bool {
             switch item.type {
             case .episode, .movie, .musicVideo, .trailer, .video:
-                (canManageSubtitles || canEditMetadata)
+                return (canManageSubtitles || canEditMetadata)
                     && StoredValues[.User.enableItemEditing]
             default:
-                false
+                return false
             }
         }
 
@@ -95,10 +95,10 @@ struct UserPermissions {
         func canManageLyrics(item: BaseItemDto) -> Bool {
             switch item.type {
             case .audio:
-                (canManageLyrics || canEditMetadata)
+                return (canManageLyrics || canEditMetadata)
                     && StoredValues[.User.enableItemEditing]
             default:
-                false
+                return false
             }
         }
     }

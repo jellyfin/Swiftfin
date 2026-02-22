@@ -46,7 +46,7 @@ final class ConnectToServerViewModel: ViewModel {
         case initial
     }
 
-    // no longer-found servers are not cleared, but not an issue
+    /// no longer-found servers are not cleared, but not an issue
     @Published
     var localServers: OrderedSet<ServerState> = []
 
@@ -118,7 +118,7 @@ final class ConnectToServerViewModel: ViewModel {
         }
     }
 
-    // In the event of redirects, get the new host URL from response
+    /// In the event of redirects, get the new host URL from response
     private func processConnectionURL(initial url: URL, response: URL?) -> URL {
 
         guard let response else { return url }
@@ -159,7 +159,7 @@ final class ConnectToServerViewModel: ViewModel {
         StoredValues[.Server.publicInfo(id: server.id)] = publicInfo
     }
 
-    // server has same id, but (possible) new URL
+    /// server has same id, but (possible) new URL
     @Function(\Action.Cases.addNewURL)
     private func _addNewURL(_ server: ServerState) throws {
         let newState = try dataStack.perform { transaction in

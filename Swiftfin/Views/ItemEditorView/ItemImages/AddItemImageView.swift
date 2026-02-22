@@ -147,7 +147,6 @@ struct AddItemImageView: View {
 
     // MARK: - Poster Image Button
 
-    @ViewBuilder
     private func imageButton(_ image: RemoteImageInfo) -> some View {
         Button {
             router.route(
@@ -166,7 +165,6 @@ struct AddItemImageView: View {
 
     // MARK: - Poster Image
 
-    @ViewBuilder
     private func posterImage(
         _ posterImageInfo: RemoteImageInfo?,
         posterStyle: PosterDisplayType

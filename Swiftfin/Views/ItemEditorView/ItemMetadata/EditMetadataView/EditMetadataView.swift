@@ -46,7 +46,6 @@ struct EditMetadataView: View {
 
     // MARK: - Body
 
-    @ViewBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -86,7 +85,6 @@ struct EditMetadataView: View {
 
     // MARK: - Content View
 
-    @ViewBuilder
     private var contentView: some View {
         Form {
             TitleSection(item: $tempItem)

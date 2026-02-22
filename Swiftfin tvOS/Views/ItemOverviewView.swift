@@ -13,7 +13,6 @@ struct ItemOverviewView: View {
 
     let item: BaseItemDto
 
-    @ViewBuilder
     private var content: some View {
         GeometryReader { proxy in
             VStack(alignment: .center) {

@@ -132,7 +132,6 @@ struct EditAccessScheduleView: View {
 
     // MARK: - Content View
 
-    @ViewBuilder
     var contentView: some View {
         List {
             ListTitleSection(

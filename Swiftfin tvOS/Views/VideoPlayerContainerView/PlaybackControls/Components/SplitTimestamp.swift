@@ -13,8 +13,6 @@ extension VideoPlayer.PlaybackControls {
     struct SplitTimeStamp: View {
 
         @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
-        @EnvironmentObject
         private var manager: MediaPlayerManager
         @EnvironmentObject
         private var scrubbedSecondsBox: PublishedBox<Duration>

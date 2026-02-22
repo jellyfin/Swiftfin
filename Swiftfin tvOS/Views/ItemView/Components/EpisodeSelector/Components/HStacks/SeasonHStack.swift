@@ -91,7 +91,6 @@ extension SeriesEpisodeSelector {
 
         // MARK: - Season Button
 
-        @ViewBuilder
         private func seasonButton(season: SeasonItemViewModel) -> some View {
             Button {
                 selection = season.id

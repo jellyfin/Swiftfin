@@ -128,7 +128,6 @@ struct SelectUserView: View {
 
     // MARK: - Grid Content View
 
-    @ViewBuilder
     private var userGrid: some View {
         CenteredLazyVGrid(
             data: userItems,
@@ -157,7 +156,6 @@ struct SelectUserView: View {
         }
     }
 
-    @ViewBuilder
     private var addUserButtonGrid: some View {
         CenteredLazyVGrid(
             data: [0],
@@ -175,7 +173,6 @@ struct SelectUserView: View {
 
     // MARK: - User View
 
-    @ViewBuilder
     private var contentView: some View {
         VStack {
             ZStack {
@@ -240,7 +237,6 @@ struct SelectUserView: View {
 
     // MARK: - Connect to Server View
 
-    @ViewBuilder
     private var connectToServerView: some View {
         VStack(spacing: 50) {
             Text(L10n.connectToJellyfinServerStart)

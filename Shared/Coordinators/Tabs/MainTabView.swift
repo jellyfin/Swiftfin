@@ -42,7 +42,6 @@ struct MainTabView: View {
     }
     #endif
 
-    @ViewBuilder
     var body: some View {
         TabView(selection: $tabCoordinator.selectedTabID) {
             ForEach(tabCoordinator.tabs, id: \.item.id) { tab in

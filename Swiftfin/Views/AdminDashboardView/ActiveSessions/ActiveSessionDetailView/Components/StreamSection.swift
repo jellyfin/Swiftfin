@@ -49,7 +49,6 @@ extension ActiveSessionDetailView {
 
         // MARK: - Transcoding Details
 
-        @ViewBuilder
         private func getMediaComparison(sourceComponent: String, destinationComponent: String) -> some View {
             HStack {
                 Text(sourceComponent)

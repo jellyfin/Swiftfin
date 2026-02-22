@@ -16,6 +16,8 @@ class SliderContainerState<Value: BinaryFloatingPoint>: ObservableObject {
     var isFocused: Bool
     @Published
     var value: Value
+    @Published
+    var originValue: Value?
 
     let total: Value
 

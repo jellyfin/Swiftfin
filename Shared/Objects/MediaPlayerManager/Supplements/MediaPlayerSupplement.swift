@@ -20,7 +20,6 @@ protocol MediaPlayerSupplement: Displayable, Identifiable {
     var id: String { get }
 
     @MainActor
-    @ViewBuilder
     var videoPlayerBody: Self.VideoPlayerBody { get }
 }
 

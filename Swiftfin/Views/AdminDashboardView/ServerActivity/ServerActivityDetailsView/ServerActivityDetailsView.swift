@@ -25,12 +25,12 @@ struct ServerActivityDetailsView: View {
 
     var body: some View {
         List {
-            /// Item (If Available)
+            // Item (If Available)
             if let item = viewModel.item {
                 AdminDashboardView.MediaItemSection(item: item)
             }
 
-            /// User (If Available)
+            // User (If Available)
             if let user = viewModel.user {
                 AdminDashboardView.UserSection(
                     user: user,
@@ -40,7 +40,7 @@ struct ServerActivityDetailsView: View {
                 }
             }
 
-            /// Event Name & Overview
+            // Event Name & Overview
             Section(L10n.overview) {
                 if let name = viewModel.log.name, name.isNotEmpty {
                     Text(name)
@@ -52,7 +52,7 @@ struct ServerActivityDetailsView: View {
                 }
             }
 
-            /// Event Details
+            // Event Details
             Section(L10n.details) {
                 if let severity = viewModel.log.severity {
                     LabeledContent(

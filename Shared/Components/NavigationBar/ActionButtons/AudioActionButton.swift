@@ -10,7 +10,7 @@ import SwiftUI
 
 extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
-    struct Subtitles: View {
+    struct Audio: View {
 
         @Environment(\.isInMenu)
         private var isInMenu
@@ -19,27 +19,21 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
         private var manager: MediaPlayerManager
 
         @State
-        private var selectedSubtitleStreamIndex: Int?
+        private var selectedAudioStreamIndex: Int?
 
         private var systemImage: String {
-            if selectedSubtitleStreamIndex == nil {
-                "captions.bubble"
+            if selectedAudioStreamIndex == nil {
+                VideoPlayerActionButton.audio.secondarySystemImage
             } else {
-                "captions.bubble.fill"
+                VideoPlayerActionButton.audio.systemImage
             }
         }
 
-        @ViewBuilder
         private func content(playbackItem: MediaPlayerItem) -> some View {
-            ForEach(playbackItem.subtitleStreams.prepending(.none), id: \.index) { stream in
-                Button {
-                    playbackItem.selectedSubtitleStreamIndex = stream.index ?? -1
-                } label: {
-                    if selectedSubtitleStreamIndex == stream.index {
-                        Label(stream.displayTitle ?? L10n.unknown, systemImage: "checkmark")
-                    } else {
-                        Text(stream.displayTitle ?? L10n.unknown)
-                    }
+            Picker(L10n.audio, selection: $selectedAudioStreamIndex) {
+                ForEach(playbackItem.audioStreams, id: \.index) { stream in
+                    Text(stream.displayTitle ?? L10n.unknown)
+                        .tag(stream.index as Int?)
                 }
             }
         }
@@ -47,19 +41,23 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
         var body: some View {
             if let playbackItem = manager.playbackItem {
                 Menu(
-                    L10n.subtitles,
+                    L10n.audio,
                     systemImage: systemImage
                 ) {
                     if isInMenu {
                         content(playbackItem: playbackItem)
                     } else {
-                        Section(L10n.subtitles) {
+                        Section(L10n.audio) {
                             content(playbackItem: playbackItem)
                         }
                     }
                 }
                 .videoPlayerActionButtonTransition()
-                .assign(playbackItem.$selectedSubtitleStreamIndex, to: $selectedSubtitleStreamIndex)
+                .assign(playbackItem.$selectedAudioStreamIndex, to: $selectedAudioStreamIndex)
+                .backport
+                .onChange(of: selectedAudioStreamIndex) { _, newValue in
+                    playbackItem.selectedAudioStreamIndex = newValue
+                }
             }
         }
     }

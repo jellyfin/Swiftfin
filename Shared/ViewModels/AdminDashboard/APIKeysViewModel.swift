@@ -67,8 +67,8 @@ final class APIKeysViewModel: ViewModel {
         let request = Paths.createKey(app: name)
         try await userSession.client.send(request)
 
-        /// API does not return the new key so a full refresh is required.
-        /// There is no API to return a single API Key.
+        // API does not return the new key so a full refresh is required.
+        // There is no API to return a single API Key.
         try await _refresh()
 
         events.send(.createdKey)

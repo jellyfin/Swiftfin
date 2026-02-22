@@ -38,7 +38,6 @@ extension VideoPlayer.PlaybackControls {
             !manager.item.isLiveStream
         }
 
-        @ViewBuilder
         private var playButton: some View {
             Button {
                 switch manager.playbackRequestStatus {
@@ -51,7 +50,7 @@ extension VideoPlayer.PlaybackControls {
                 Group {
                     switch manager.playbackRequestStatus {
                     case .playing:
-                        Label("Pause", systemImage: "pause.fill")
+                        Label(L10n.pause, systemImage: "pause.fill")
                     case .paused:
                         Label(L10n.play, systemImage: "play.fill")
                     }
@@ -64,7 +63,6 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
-        @ViewBuilder
         private var jumpForwardButton: some View {
             Button {
                 manager.proxy?.jumpForward(jumpForwardInterval.rawValue)
@@ -80,7 +78,6 @@ extension VideoPlayer.PlaybackControls {
             .foregroundStyle(.primary)
         }
 
-        @ViewBuilder
         private var jumpBackwardButton: some View {
             Button {
                 manager.proxy?.jumpBackward(jumpBackwardInterval.rawValue)

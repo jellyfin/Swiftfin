@@ -28,7 +28,6 @@ struct PosterButton<Item: Poster>: View {
     private let label: any View
     private let action: (Namespace.ID) -> Void
 
-    @ViewBuilder
     private func posterView(overlay: some View = EmptyView()) -> some View {
         VStack(alignment: .leading) {
             PosterImage(item: item, type: type)
@@ -138,7 +137,7 @@ extension PosterButton {
         }
     }
 
-    // Content specific for BaseItemDto episode items
+    /// Content specific for BaseItemDto episode items
     struct EpisodeContentSubtitleContent: View {
 
         @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)

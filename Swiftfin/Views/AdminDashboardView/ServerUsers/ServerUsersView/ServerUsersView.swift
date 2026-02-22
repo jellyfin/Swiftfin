@@ -158,7 +158,6 @@ struct ServerUsersView: View {
 
     // MARK: - User List View
 
-    @ViewBuilder
     private var userListView: some View {
         List {
             InsetGroupedListHeader(

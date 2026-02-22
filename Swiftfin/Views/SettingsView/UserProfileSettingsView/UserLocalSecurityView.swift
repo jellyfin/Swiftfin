@@ -84,8 +84,8 @@ struct UserLocalSecurityView: View {
 
     // MARK: - Perform Device Authentication
 
-    // error logging/presentation is handled within here, just
-    // use try+thrown error in local Task for early return
+    /// error logging/presentation is handled within here, just
+    /// use try+thrown error in local Task for early return
     private func performDeviceAuthentication(reason: String) async throws {
         let context = LAContext()
         var policyError: NSError?
