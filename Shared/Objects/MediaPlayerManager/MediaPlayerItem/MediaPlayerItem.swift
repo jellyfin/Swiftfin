@@ -124,7 +124,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
     func isRebuildRequired(from oldIndex: Int?, to newIndex: Int?) -> Bool {
         let needsRebuild: (MediaStream?) -> Bool = { stream in
             guard let stream else { return false }
-            return stream.deliveryMethod == .encode || stream.isTextSubtitleStream != true
+            return stream.deliveryMethod == .encode || (stream.isTextSubtitleStream == false && stream.isExternal == true)
         }
 
         let oldStream = subtitleStreams.first(where: { $0.index == oldIndex })
