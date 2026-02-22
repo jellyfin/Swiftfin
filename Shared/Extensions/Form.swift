@@ -16,9 +16,9 @@ extension FocusedValues {
 
 // MARK: - Form Overloads
 
-func Form<Content: View>(
+func Form(
     systemImage: String,
-    @ViewBuilder content: @escaping () -> Content
+    @ViewBuilder content: @escaping () -> some View
 ) -> some View {
     PlatformForm(content: content) {
         Image(systemName: systemImage)
@@ -28,9 +28,9 @@ func Form<Content: View>(
     }
 }
 
-func Form<Content: View>(
+func Form(
     image: ImageResource,
-    @ViewBuilder content: @escaping () -> Content
+    @ViewBuilder content: @escaping () -> some View
 ) -> some View {
     PlatformForm(content: content) {
         Image(image)
@@ -40,9 +40,9 @@ func Form<Content: View>(
     }
 }
 
-func Form<Image: View, Content: View>(
-    @ViewBuilder content: @escaping () -> Content,
-    @ViewBuilder image: @escaping () -> Image
+func Form(
+    @ViewBuilder content: @escaping () -> some View,
+    @ViewBuilder image: @escaping () -> some View
 ) -> some View {
     PlatformForm(content: content, image: image)
 }

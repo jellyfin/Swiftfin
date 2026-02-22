@@ -71,7 +71,7 @@ extension SeriesEpisodeSelector {
                     }
                 }
                 .onChange(of: focusedSeason) { _, newValue in
-                    if let newValue = newValue {
+                    if let newValue {
                         selection = newValue
                     }
                 }

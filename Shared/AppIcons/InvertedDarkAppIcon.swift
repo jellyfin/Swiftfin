@@ -20,17 +20,17 @@ enum InvertedDarkAppIcon: String, AppIcon {
     var displayTitle: String {
         switch self {
         case .blue:
-            return L10n.blue
+            L10n.blue
         case .green:
-            return L10n.green
+            L10n.green
         case .orange:
-            return L10n.orange
+            L10n.orange
         case .red:
-            return L10n.red
+            L10n.red
         case .yellow:
-            return L10n.yellow
+            L10n.yellow
         case .jellyfin:
-            return "Jellyfin"
+            "Jellyfin"
         }
     }
 

@@ -12,7 +12,7 @@ struct TypeValueRegistry<Value> {
 
     private var registry: [(key: Any.Type, value: Value)] = []
 
-    func getvalue<T>(for otherType: T.Type) -> Value? {
+    func getvalue(for otherType: (some Any).Type) -> Value? {
         registry.first(where: { $0.key == otherType })?.value
     }
 

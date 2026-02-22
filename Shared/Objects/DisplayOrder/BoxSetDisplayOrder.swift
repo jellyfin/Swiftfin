@@ -20,11 +20,11 @@ enum BoxSetDisplayOrder: String, CaseIterable, Identifiable {
     var displayTitle: String {
         switch self {
         case .dateModified:
-            return L10n.dateModified
+            L10n.dateModified
         case .sortName:
-            return L10n.sortName
+            L10n.sortName
         case .premiereDate:
-            return L10n.premiereDate
+            L10n.premiereDate
         }
     }
 }

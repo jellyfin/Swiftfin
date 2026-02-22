@@ -17,11 +17,11 @@ enum SeriesStatus: String, CaseIterable {
     var displayTitle: String {
         switch self {
         case .continuing:
-            return L10n.continuing
+            L10n.continuing
         case .ended:
-            return L10n.ended
+            L10n.ended
         case .unreleased:
-            return L10n.unreleased
+            L10n.unreleased
         }
     }
 }

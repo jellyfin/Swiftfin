@@ -62,7 +62,7 @@ struct FocusGuideModifier: ViewModifier {
         }
         .fixedSize(horizontal: focusConstructor.fixedSize.horizontal, vertical: focusConstructor.fixedSize.vertical)
         .onChange(of: focusDirection) { _, focusDirection in
-            guard let focusDirection = focusDirection else { return }
+            guard let focusDirection else { return }
             switch focusDirection {
             case .top:
                 focusGuide.transition(to: focusConstructor.topTarget!)

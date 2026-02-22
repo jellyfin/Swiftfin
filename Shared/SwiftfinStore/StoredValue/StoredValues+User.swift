@@ -196,6 +196,22 @@ extension StoredValues.Keys {
                 default: .trickplay(fallbackToChapters: false)
             )
         }
+
+        static var forceDVTranscode: Key<Bool> {
+            CurrentUserKey(
+                "forceDVTranscode",
+                domain: "forceDVTranscode",
+                default: false
+            )
+        }
+
+        static var forceHDRTranscode: Key<Bool> {
+            CurrentUserKey(
+                "forceHDRTranscode",
+                domain: "forceHDRTranscode",
+                default: false
+            )
+        }
     }
 }
 

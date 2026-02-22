@@ -56,12 +56,10 @@ struct RuntimeFormatStyle: FormatStyle {
 
     func format(_ value: Duration) -> String {
 
-        let formatStyle: Duration.TimeFormatStyle
-
-        if value.components.seconds.magnitude >= 3600 {
-            formatStyle = Duration.TimeFormatStyle(pattern: .hourMinuteSecond)
+        let formatStyle: Duration.TimeFormatStyle = if value.components.seconds.magnitude >= 3600 {
+            Duration.TimeFormatStyle(pattern: .hourMinuteSecond)
         } else {
-            formatStyle = Duration.TimeFormatStyle(pattern: .minuteSecond)
+            Duration.TimeFormatStyle(pattern: .minuteSecond)
         }
 
         return formatStyle.format(value)
@@ -94,13 +92,23 @@ extension FormatStyle where Self == PlaybackRateStyle {
     static var playbackRate: PlaybackRateStyle {
         PlaybackRateStyle()
     }
+
+    static func playbackRate(precision: Int) -> PlaybackRateStyle {
+        PlaybackRateStyle(precision: precision)
+    }
 }
 
 struct PlaybackRateStyle: FormatStyle {
 
+    private let precision: Int
+
+    init(precision: Int = 2) {
+        self.precision = precision
+    }
+
     func format(_ value: Float) -> String {
         FloatingPointFormatStyle<Float>()
-            .precision(.significantDigits(1 ... 3))
+            .precision(.fractionLength(0 ... precision))
             .format(value)
             .appending("\u{00D7}")
     }

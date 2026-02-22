@@ -146,9 +146,9 @@ struct Marquee<Content: View>: View {
     private func offsetX(proxy: GeometryProxy) -> CGFloat {
         switch state {
         case .idle:
-            return 0
+            0
         case .animating:
-            return -(contentSize.width + gap(proxy))
+            -(contentSize.width + gap(proxy))
         }
     }
 

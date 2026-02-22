@@ -14,9 +14,9 @@ enum PinchGestureAction: String, GestureAction {
     var displayTitle: String {
         switch self {
         case .none:
-            return L10n.none
+            L10n.none
         case .aspectFill:
-            return L10n.aspectFill
+            L10n.aspectFill
         }
     }
 }

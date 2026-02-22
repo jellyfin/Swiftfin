@@ -30,18 +30,18 @@ extension UIViewController {
     @objc
     func swizzled_childForScreenEdgesDeferringSystemGestures() -> UIViewController? {
         if self is UIPreferencesHostingController {
-            return nil
+            nil
         } else {
-            return search()
+            search()
         }
     }
 
     @objc
     func swizzled_childForHomeIndicatorAutoHidden() -> UIViewController? {
         if self is UIPreferencesHostingController {
-            return nil
+            nil
         } else {
-            return search()
+            search()
         }
     }
 

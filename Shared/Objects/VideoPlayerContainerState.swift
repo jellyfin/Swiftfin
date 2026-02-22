@@ -159,6 +159,8 @@ class VideoPlayerContainerState: ObservableObject {
         willSet { sendChangeIfNeeded() }
     }
 
+    var originalPlaybackRate: Float?
+
     let jumpProgressObserver: JumpProgressObserver = .init()
     let scrubbedSeconds: PublishedBox<Duration> = .init(initialValue: .zero)
     let timer: PokeIntervalTimer = .init()

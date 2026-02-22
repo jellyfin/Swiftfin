@@ -1,49 +1,51 @@
-# version: 0.54.6
+# version: 0.59.1
 
---swiftversion 5.6
+--swiftversion 6.2
 
---tabwidth 4
---xcodeindentation enabled
---semicolons never
---stripunusedargs closure-only
---maxwidth 140
 --assetliterals visual-width
+--computedvarattrs prev-line
+--funcattributes prev-line
+--ifdef no-indent 
+--maxwidth 140
+--semicolons never
+--shortoptionals "always"
+--storedvarattrs prev-line
+--stripunusedargs closure-only
+--tabwidth 4
+--trailingclosures
+--typeattributes prev-line
 --wraparguments before-first
---wrapparameters before-first
 --wrapcollections before-first
 --wrapconditions after-first
---funcattributes prev-line
---typeattributes prev-line
---computedvarattrs prev-line
---storedvarattrs prev-line
---trailingclosures
---shortoptionals "always"
---ifdef no-indent 
+--wrapparameters before-first
+--xcodeindentation enabled
 
---enable isEmpty,           \
+--enable blankLinesAroundMark,   \
+    isEmpty,                \
     leadingDelimiters,      \
-    wrapEnumCases,          \
+    redundantInit,          \
+    redundantLet,           \
+    spaceInsideBraces,      \
+    spaceInsideBrackets,    \
+    spaceInsideComments,    \
+    spaceInsideGenerics,    \
+    spaceInsideParens,      \
+    trailingSpace,          \
     typeSugar,              \
     void,                   \
-    trailingSpace,          \
-    spaceInsideParens,      \
-    spaceInsideGenerics,    \
-    spaceInsideComments,    \
-    spaceInsideBrackets,    \
-    spaceInsideBraces,      \
-    blankLinesAroundMark,   \
-    redundantLet,           \
-    redundantInit,          \
-    blankLinesAroundMark
+    wrapEnumCases
 
---disable strongOutlets,    \
-    yodaConditions,         \
+--disable andOperator,       \
     blankLinesAtStartOfScope,\
-    andOperator,            \
+    docComments,             \
+    redundantClosure,       \
     redundantFileprivate,   \
     redundantSelf,          \
-    redundantClosure,       \
-    redundantType
+    redundantType,          \
+    redundantViewBuilder,   \
+    strongOutlets,          \
+    trailingCommas,         \
+    yodaConditions
 
 --exclude Shared/Strings/Strings.swift, fastlane/
 

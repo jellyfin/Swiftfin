@@ -29,9 +29,9 @@ extension String {
 
     func appending(_ element: @autoclosure () -> String, if condition: Bool) -> String {
         if condition {
-            return self + element()
+            self + element()
         } else {
-            return self
+            self
         }
     }
 
@@ -51,9 +51,9 @@ extension String {
 
     func prepending(_ element: String, if condition: Bool) -> String {
         if condition {
-            return element + self
+            element + self
         } else {
-            return self
+            self
         }
     }
 

@@ -28,27 +28,27 @@ enum SeriesDisplayOrder: String, CaseIterable, Identifiable {
     var displayTitle: String {
         switch self {
         case .aired:
-            return L10n.aired
+            L10n.aired
         case .originalAirDate:
-            return L10n.originalAirDate
+            L10n.originalAirDate
         case .absolute:
-            return L10n.absolute
+            L10n.absolute
         case .dvd:
-            return L10n.dvd
+            L10n.dvd
         case .digital:
-            return L10n.digital
+            L10n.digital
         case .storyArc:
-            return L10n.storyArc
+            L10n.storyArc
         case .production:
-            return L10n.production
+            L10n.production
         case .tv:
-            return L10n.tv
+            L10n.tv
         case .alternate:
-            return L10n.alternate
+            L10n.alternate
         case .regional:
-            return L10n.regional
+            L10n.regional
         case .alternateDVD:
-            return L10n.alternateDVD
+            L10n.alternateDVD
         }
     }
 }
