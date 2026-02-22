@@ -8,14 +8,16 @@
 
 import SwiftUI
 
+// TODO: use Group(subviews:) when available
+
 struct EqualWidthVStack<Content: View>: View {
 
     @State
     private var maxChildWidth: CGFloat?
 
     private let alignment: HorizontalAlignment
-    private let spacing: CGFloat?
     private let content: Content
+    private let spacing: CGFloat?
 
     init(
         alignment: HorizontalAlignment = .center,
@@ -23,9 +25,28 @@ struct EqualWidthVStack<Content: View>: View {
         @ViewBuilder content: () -> Content
     ) {
         self.alignment = alignment
-        self.spacing = spacing
         self.content = content()
+        self.spacing = spacing
     }
+
+    var body: some View {
+        _VariadicView.Tree(
+            EqualWidthVStackRoot(
+                alignment: alignment,
+                spacing: spacing,
+                maxChildWidth: $maxChildWidth
+            )
+        ) {
+            content
+        }
+    }
+}
+
+private struct EqualWidthVStackRoot: _VariadicView_UnaryViewRoot {
+
+    let alignment: HorizontalAlignment
+    let spacing: CGFloat?
+    let maxChildWidth: Binding<CGFloat?>
 
     private var childFrameAlignment: Alignment {
         switch alignment {
@@ -38,17 +59,15 @@ struct EqualWidthVStack<Content: View>: View {
         }
     }
 
-    var body: some View {
-        Group(subviews: content) { subviews in
-            VStack(alignment: alignment, spacing: spacing) {
-                ForEach(subviews) { subview in
-                    subview
-                        .onSizeChanged { size, _ in
-                            maxChildWidth = max(maxChildWidth ?? 0, size.width)
-                        }
-                        .frame(width: maxChildWidth, alignment: childFrameAlignment)
-                        .focusSection()
-                }
+    func body(children: _VariadicView.Children) -> some View {
+        VStack(alignment: alignment, spacing: spacing) {
+            ForEach(children) { child in
+                child
+                    .onSizeChanged { size, _ in
+                        maxChildWidth.wrappedValue = max(maxChildWidth.wrappedValue ?? 0, size.width)
+                    }
+                    .frame(width: maxChildWidth.wrappedValue, alignment: childFrameAlignment)
+                    .focusSection()
             }
         }
     }

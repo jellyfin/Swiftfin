@@ -39,11 +39,8 @@ struct ColorPicker: View {
         ) {
             StateAdapter(initialValue: selection.wrappedValue) { color in
                 Self._Alert(value: color)
-                    .backport
-                    .onChange(of: isPresented) { _, newValue in
-                        if !newValue {
-                            selection.wrappedValue = color.wrappedValue
-                        }
+                    .onDisappear {
+                        selection.wrappedValue = color.wrappedValue
                     }
             }
         }
