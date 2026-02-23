@@ -101,9 +101,9 @@ struct SettingsView: View {
     @ViewBuilder
     private var videoPlayerSection: some View {
         Section(L10n.videoPlayer) {
-
             #if os(iOS)
             Picker(L10n.videoPlayerType, selection: $videoPlayerType)
+
             ChevronButton(L10n.nativePlayer) {
                 router.route(to: .nativePlayerSettings)
             }
@@ -134,18 +134,17 @@ struct SettingsView: View {
 
     @ViewBuilder
     private var customizationSection: some View {
-        Section(L10n.customization) {
+        Section {
             #if os(iOS)
             Picker(L10n.appearance, selection: $appearance)
             #endif
+            ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
 
             ChevronButton(L10n.advanced) {
                 router.route(to: .customizationSettingsView)
             }
-        }
-
-        Section {
-            ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
+        } header: {
+            Text(L10n.customization)
         } footer: {
             Text(L10n.viewsMayRequireRestart)
         }
