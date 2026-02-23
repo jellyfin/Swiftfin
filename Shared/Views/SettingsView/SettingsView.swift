@@ -19,14 +19,12 @@ struct SettingsView: View {
     #if os(iOS)
     @Default(.userAppearance)
     private var appearance
-    #endif
-
-    #if os(iOS)
     @Default(.userAccentColor)
+    private var accentColor
     #else
     @Default(.accentColor)
-    #endif
     private var accentColor
+    #endif
 
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
@@ -105,10 +103,10 @@ struct SettingsView: View {
         Section(L10n.videoPlayer) {
 
             #if os(iOS)
+            Picker(L10n.videoPlayerType, selection: $videoPlayerType)
             ChevronButton(L10n.nativePlayer) {
                 router.route(to: .nativePlayerSettings)
             }
-            Picker(L10n.videoPlayerType, selection: $videoPlayerType)
             #else
             ListRowMenu(L10n.videoPlayerType, selection: $videoPlayerType)
             #endif
@@ -146,23 +144,11 @@ struct SettingsView: View {
             }
         }
 
-        #if os(iOS)
         Section {
             ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
         } footer: {
             Text(L10n.viewsMayRequireRestart)
         }
-        #endif
-
-        #if os(tvOS)
-        Section {
-            ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
-        } header: {
-            Text(L10n.appearance)
-        } footer: {
-            Text(L10n.viewsMayRequireRestart)
-        }
-        #endif
     }
 
     // MARK: - Diagnostics Section
