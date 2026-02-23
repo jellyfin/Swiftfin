@@ -69,7 +69,7 @@ struct NavigationInjectionView: View {
                 NavigationInjectionView(coordinator: newCoordinator) {
                     route.destination
                 }
-                .background(.ultraThickMaterial)
+                .background(.regularMaterial)
             }
         #else // <- Start: Use this for both OS when fixed
             .sheet(
