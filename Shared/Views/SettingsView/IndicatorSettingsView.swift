@@ -18,9 +18,9 @@ struct IndicatorSettingsView: View {
     @Default(.Customization.Indicators.showProgress)
     private var showProgress
     @Default(.Customization.Indicators.showUnplayed)
-    private var showUnwatched
+    private var showUnplayed
     @Default(.Customization.Indicators.showPlayed)
-    private var showWatched
+    private var showPlayed
 
     var body: some View {
         Form(systemImage: "checkmark.circle.fill") {
@@ -30,9 +30,9 @@ struct IndicatorSettingsView: View {
 
                 Toggle(L10n.showProgress, isOn: $showProgress)
 
-                Toggle(L10n.showUnwatched, isOn: $showUnwatched)
+                Toggle(L10n.showUnwatched, isOn: $showUnplayed)
 
-                Toggle(L10n.showWatched, isOn: $showWatched)
+                Toggle(L10n.showWatched, isOn: $showPlayed)
             }
         }
         .navigationTitle(L10n.indicators)
