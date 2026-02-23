@@ -8,6 +8,7 @@
 
 import Defaults
 import Factory
+import JellyfinAPI
 import SwiftUI
 
 struct CustomizationSettingsView: View {
@@ -93,8 +94,14 @@ struct CustomizationSettingsView: View {
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
     private var useSeriesLandscapeBackdrop
 
+    // MARK: - User Permissions
+
     @Injected(\.currentUserSession)
     private var userSession
+
+    private var userPolicy: UserPolicy? {
+        userSession?.user.data.policy
+    }
 
     @Router
     private var router
@@ -303,18 +310,24 @@ struct CustomizationSettingsView: View {
     private var itemManagementSettings: some View {
         if UIDevice.isPhone {
             Section(L10n.itemManagement) {
-                if userSession?.user.permissions.items.canManageCollections == true {
+
+                /// Collections can be edited by users or by setting
+                if userPolicy?.isAdministrator == true ||
+                    userPolicy?.enableCollectionManagement == true
+                {
                     Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
                 }
 
-                if userSession?.user.permissions.items.canEditMetadata == true ||
-                    userSession?.user.permissions.items.canManageLyrics == true ||
-                    userSession?.user.permissions.items.canManageSubtitles == true
-                {
+                /// Only allow editing if administrator
+                /// - Does NOT include subtitle / lyric editing
+                if userPolicy?.isAdministrator == true {
                     Toggle(L10n.editMedia, isOn: $enableItemEditing)
                 }
 
-                if userSession?.user.permissions.items.canDelete == true {
+                /// Only allow deletion if there is someting to delete from
+                if userPolicy?.enableContentDeletion == true ||
+                    userPolicy?.enableContentDeletionFromFolders?.isNotEmpty == true
+                {
                     Toggle(L10n.deleteMedia, isOn: $enableItemDeletion)
                 }
             }
