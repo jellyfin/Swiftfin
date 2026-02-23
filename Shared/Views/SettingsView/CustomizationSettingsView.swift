@@ -170,7 +170,11 @@ struct CustomizationSettingsView: View {
             Toggle(L10n.letterPicker, isOn: $letterPickerEnabled)
 
             if letterPickerEnabled {
+                #if os(iOS)
                 Picker(L10n.orientation, selection: $letterPickerOrientation)
+                #else
+                ListRowMenu(L10n.orientation, selection: $letterPickerOrientation)
+                #endif
             }
 
             ChevronButton(L10n.library) {
@@ -188,16 +192,28 @@ struct CustomizationSettingsView: View {
     @ViewBuilder
     private var librarySettings: some View {
         Section(L10n.libraries) {
+            #if os(iOS)
             Picker(L10n.posters, selection: $libraryPosterType)
-
             Picker(L10n.defaultLayout, selection: $libraryDisplayType)
+            #else
+            ListRowMenu(L10n.posters, selection: $libraryPosterType)
+            ListRowMenu(L10n.defaultLayout, selection: $libraryDisplayType)
+            #endif
 
             if libraryDisplayType == .list, UIDevice.isPad {
+                #if os(iOS)
+                Stepper(L10n.columns, value: $listColumnCount, in: 1 ... 3, step: 1) { _ in
+                    LabeledContent(L10n.columns) {
+                        Text(listColumnCount.description)
+                    }
+                }
+                #else
                 Stepper(L10n.columns, value: $listColumnCount, in: 1 ... 4, step: 1) {
                     LabeledContent(L10n.columns) {
                         Text(listColumnCount.description)
                     }
                 }
+                #endif
             }
 
             Toggle(L10n.rememberLayout, isOn: $rememberLibraryLayout)
@@ -217,15 +233,19 @@ struct CustomizationSettingsView: View {
                 router.route(to: .indicatorSettings)
             }
 
+            #if os(iOS)
             Picker(L10n.nextUp, selection: $nextUpPosterType)
-
             Picker(L10n.recentlyAdded, selection: $recentlyAddedPosterType)
-
             Picker(L10n.latestWithString(L10n.library.localizedLowercase), selection: $latestInLibraryPosterType)
-
             Picker(L10n.recommended, selection: $similarPosterType)
-
             Picker(L10n.search, selection: $searchPosterType)
+            #else
+            ListRowMenu(L10n.nextUp, selection: $nextUpPosterType)
+            ListRowMenu(L10n.recentlyAdded, selection: $recentlyAddedPosterType)
+            ListRowMenu(L10n.latestWithString(L10n.library.localizedLowercase), selection: $latestInLibraryPosterType)
+            ListRowMenu(L10n.recommended, selection: $similarPosterType)
+            ListRowMenu(L10n.search, selection: $searchPosterType)
+            #endif
         }
     }
 
@@ -238,7 +258,11 @@ struct CustomizationSettingsView: View {
                 router.route(to: .itemViewAttributes(selection: $itemViewAttributes))
             }
 
+            #if os(iOS)
             Picker(L10n.enabledTrailers, selection: $enabledTrailers)
+            #else
+            ListRowMenu(L10n.enabledTrailers, selection: $enabledTrailers)
+            #endif
 
             Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
 
@@ -252,7 +276,11 @@ struct CustomizationSettingsView: View {
     private var itemViewSettings: some View {
         if UIDevice.isPhone {
             Section {
+                #if os(iOS)
                 Picker(L10n.type, selection: $itemViewType)
+                #else
+                ListRowMenu(L10n.type, selection: $itemViewType)
+                #endif
 
                 if itemViewType == .cinematic {
                     Toggle(L10n.usePrimaryImage, isOn: $cinematicItemViewTypeUsePrimaryImage)
