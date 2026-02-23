@@ -8,38 +8,28 @@
 
 import SwiftUI
 
-struct SliderContainer<Value: BinaryFloatingPoint>: UIViewRepresentable {
+// TODO: make a `StyledView`
+
+struct SliderContainer<Value: BinaryFloatingPoint, Content: SliderContentView>: UIViewRepresentable {
 
     private var value: Binding<Value>
     private let total: Value
     private let onEditingChanged: (Bool) -> Void
-    private let view: AnyView
+    private let view: Content
 
     init(
         value: Binding<Value>,
         total: Value,
         onEditingChanged: @escaping (Bool) -> Void = { _ in },
-        @ViewBuilder view: @escaping () -> some SliderContentView
+        @ViewBuilder view: @escaping () -> Content
     ) {
         self.value = value
         self.total = total
         self.onEditingChanged = onEditingChanged
-        self.view = AnyView(view())
+        self.view = view()
     }
 
-    init(
-        value: Binding<Value>,
-        total: Value,
-        onEditingChanged: @escaping (Bool) -> Void = { _ in },
-        view: AnyView
-    ) {
-        self.value = value
-        self.total = total
-        self.onEditingChanged = onEditingChanged
-        self.view = view
-    }
-
-    func makeUIView(context: Context) -> UISliderContainer<Value> {
+    func makeUIView(context: Context) -> UISliderContainer<Value, Content> {
         UISliderContainer(
             value: value,
             total: total,
@@ -48,14 +38,15 @@ struct SliderContainer<Value: BinaryFloatingPoint>: UIViewRepresentable {
         )
     }
 
-    func updateUIView(_ uiView: UISliderContainer<Value>, context: Context) {
-        DispatchQueue.main.async {
-            uiView.containerState.value = value.wrappedValue
-        }
+    func updateUIView(_ uiView: UISliderContainer<Value, Content>, context: Context) {
+        uiView.update(
+            value: value.wrappedValue,
+            view: view
+        )
     }
 }
 
-final class UISliderContainer<Value: BinaryFloatingPoint>: UIControl {
+final class UISliderContainer<Value: BinaryFloatingPoint, Content: SliderContentView>: UIControl {
 
     private let decelerationMaxVelocity: CGFloat = 1000.0
     private let fineTuningVelocityThreshold: CGFloat = 1000.0
@@ -73,17 +64,19 @@ final class UISliderContainer<Value: BinaryFloatingPoint>: UIControl {
         return hostingController
     }()
 
-    private var progressHostingView: UIView { progressHostingController.view }
+    private var progressHostingView: UIView {
+        progressHostingController.view
+    }
 
     let containerState: SliderContainerState<Value>
-    let view: AnyView
+    private var view: Content
     private var decelerationTimer: Timer?
 
     init(
         value: Binding<Value>,
         total: Value,
         onEditingChanged: @escaping (Bool) -> Void,
-        view: AnyView
+        view: Content
     ) {
         self.onEditingChanged = onEditingChanged
         self.total = total
@@ -104,6 +97,11 @@ final class UISliderContainer<Value: BinaryFloatingPoint>: UIControl {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func update(value: Value, view: Content) {
+        containerState.value = value
+        progressHostingController.rootView = AnyView(view.environmentObject(containerState))
     }
 
     private func setupViews() {

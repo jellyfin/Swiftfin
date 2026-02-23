@@ -24,8 +24,7 @@ struct VideoPlayerSettingsView: View {
     @Router
     private var router
 
-    // MARK: - Body
-
+    // TODO: Update with correct settings once the tvOS PlayerUI is complete
     var body: some View {
         Form(systemImage: "tv") {
 
@@ -35,13 +34,13 @@ struct VideoPlayerSettingsView: View {
             }
 
             Section {
-                BasicStepper(
-                    L10n.offset,
-                    value: $resumeOffset,
-                    range: 0 ... 30,
-                    step: 1,
-                    displayAs: [.seconds]
-                )
+                Stepper(L10n.resumeOffset, value: $resumeOffset, in: 0 ... 30, step: 1, format: SecondFormatter()) {
+                    LabeledContent {
+                        Text(resumeOffset, format: SecondFormatter())
+                    } label: {
+                        Text(L10n.resumeOffset)
+                    }
+                }
             } header: {
                 Text(L10n.resume)
             } footer: {

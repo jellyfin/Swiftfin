@@ -225,9 +225,17 @@ extension VideoPlayer {
             return controller
         }()
 
-        private var playerView: UIView { playerViewController.view }
-        private var playbackControlsView: UIView { playbackControlsViewController.view }
-        private var supplementContainerView: UIView { supplementContainerViewController.view }
+        private var playerView: UIView {
+            playerViewController.view
+        }
+
+        private var playbackControlsView: UIView {
+            playbackControlsViewController.view
+        }
+
+        private var supplementContainerView: UIView {
+            supplementContainerViewController.view
+        }
 
         // MARK: - Constants
 
@@ -270,9 +278,7 @@ extension VideoPlayer {
             }
             let supplementContainerHeight = compactSupplementContainerOffset(view.bounds.height)
             let offsetPercentage = 1 - clamp(supplementBottomAnchor.constant.magnitude / supplementContainerHeight, min: 0, max: 1)
-            let offset = (dismissedSupplementContainerOffset + EdgeInsets.edgePadding) * offsetPercentage
-
-            return offset
+            return (dismissedSupplementContainerOffset + EdgeInsets.edgePadding) * offsetPercentage
         }
 
         private let logger = Logger.swiftfin()

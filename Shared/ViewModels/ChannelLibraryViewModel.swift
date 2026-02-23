@@ -25,9 +25,7 @@ final class ChannelLibraryViewModel: PagingLibraryViewModel<ChannelProgram> {
         let request = Paths.getLiveTvChannels(parameters: parameters)
         let response = try await userSession.client.send(request)
 
-        let processedChannels = try await getPrograms(for: response.value.items ?? [])
-
-        return processedChannels
+        return try await getPrograms(for: response.value.items ?? [])
     }
 
     private func getPrograms(for channels: [BaseItemDto]) async throws -> [ChannelProgram] {
@@ -50,14 +48,12 @@ final class ChannelLibraryViewModel: PagingLibraryViewModel<ChannelProgram> {
                 channels.first(where: { $0.id == program.channelID })
             }
 
-        let channelPrograms: [ChannelProgram] = channels
+        return channels
             .reduce(into: [:]) { partialResult, channel in
                 partialResult[channel] = (groupedPrograms[channel] ?? [])
                     .sorted(using: \.startDate)
             }
             .map(ChannelProgram.init)
             .sorted(using: \.channel.name)
-
-        return channelPrograms
     }
 }

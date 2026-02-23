@@ -17,9 +17,9 @@ enum TimestampType: String, CaseIterable, Defaults.Serializable, Displayable {
     var displayTitle: String {
         switch self {
         case .split:
-            return L10n.split
+            L10n.split
         case .compact:
-            return L10n.compact
+            L10n.compact
         }
     }
 }

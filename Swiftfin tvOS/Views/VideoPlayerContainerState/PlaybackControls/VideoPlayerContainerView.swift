@@ -105,9 +105,17 @@ extension VideoPlayer {
             return controller
         }()
 
-        private var playerView: UIView { playerViewController.view }
-        private var playbackControlsView: UIView { playbackControlsViewController.view }
-        private var supplementContainerView: UIView { supplementContainerViewController.view }
+        private var playerView: UIView {
+            playerViewController.view
+        }
+
+        private var playbackControlsView: UIView {
+            playbackControlsViewController.view
+        }
+
+        private var supplementContainerView: UIView {
+            supplementContainerViewController.view
+        }
 
         private var supplementRegularConstraints: [NSLayoutConstraint] = []
         private var playerRegularConstraints: [NSLayoutConstraint] = []

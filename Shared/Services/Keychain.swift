@@ -13,5 +13,7 @@ import KeychainSwift
 extension Container {
 
     // TODO: take a look at all security options
-    var keychainService: Factory<KeychainSwift> { self { KeychainSwift() }.singleton }
+    var keychainService: Factory<KeychainSwift> {
+        self { KeychainSwift() }.singleton
+    }
 }

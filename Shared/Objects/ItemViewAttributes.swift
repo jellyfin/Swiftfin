@@ -18,17 +18,17 @@ enum ItemViewAttribute: String, CaseIterable, Displayable, Storable {
     var displayTitle: String {
         switch self {
         case .ratingCritics:
-            return L10n.criticRating
+            L10n.criticRating
         case .ratingCommunity:
-            return L10n.communityRating
+            L10n.communityRating
         case .ratingOfficial:
-            return L10n.parentalRating
+            L10n.parentalRating
         case .videoQuality:
-            return L10n.video
+            L10n.video
         case .audioChannels:
-            return L10n.audio
+            L10n.audio
         case .subtitles:
-            return L10n.subtitles
+            L10n.subtitles
         }
     }
 }

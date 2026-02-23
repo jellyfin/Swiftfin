@@ -24,7 +24,7 @@ jobs:
     runs-on: macos-15
 
     env:
-      XCODE_VERSION: "16.4"
+      XCODE_VERSION: "26.2"
       IOS_VERSION: "18"
       TVOS_VERSION: "18"
       TVOS_SIMULATOR: "Apple TV 4K"

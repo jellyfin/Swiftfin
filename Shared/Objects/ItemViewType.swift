@@ -15,11 +15,11 @@ enum ItemViewType: String, CaseIterable, Displayable, Storable {
     var displayTitle: String {
         switch self {
         case .compactPoster:
-            return L10n.compactPoster
+            L10n.compactPoster
         case .compactLogo:
-            return L10n.compactLogo
+            L10n.compactLogo
         case .cinematic:
-            return L10n.cinematic
+            L10n.cinematic
         }
     }
 }

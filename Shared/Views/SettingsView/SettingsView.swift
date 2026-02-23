@@ -21,7 +21,11 @@ struct SettingsView: View {
     private var appearance
     #endif
 
+    #if os(iOS)
     @Default(.userAccentColor)
+    #else
+    @Default(.accentColor)
+    #endif
     private var accentColor
 
     @Default(.VideoPlayer.videoPlayerType)
@@ -149,6 +153,16 @@ struct SettingsView: View {
             Text(L10n.viewsMayRequireRestart)
         }
         #endif
+
+        #if os(tvOS)
+        Section {
+            ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
+        } header: {
+            Text(L10n.appearance)
+        } footer: {
+            Text(L10n.viewsMayRequireRestart)
+        }
+        #endif
     }
 
     // MARK: - Diagnostics Section
@@ -160,7 +174,7 @@ struct SettingsView: View {
                 router.route(to: .log)
             }
 
-            #if DEBUG && os(iOS)
+            #if DEBUG
             ChevronButton("Debug") {
                 router.route(to: .debugSettings)
             }

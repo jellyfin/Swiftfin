@@ -14,29 +14,29 @@ extension ExtraType: Displayable {
     var displayTitle: String {
         switch self {
         case .unknown:
-            return L10n.unknown
+            L10n.unknown
         case .clip:
-            return L10n.clip
+            L10n.clip
         case .trailer:
-            return L10n.trailer
+            L10n.trailer
         case .behindTheScenes:
-            return L10n.behindTheScenes
+            L10n.behindTheScenes
         case .deletedScene:
-            return L10n.deletedScene
+            L10n.deletedScene
         case .interview:
-            return L10n.interview
+            L10n.interview
         case .scene:
-            return L10n.scene
+            L10n.scene
         case .sample:
-            return L10n.sample
+            L10n.sample
         case .themeSong:
-            return L10n.themeSong
+            L10n.themeSong
         case .themeVideo:
-            return L10n.themeVideo
+            L10n.themeVideo
         case .featurette:
-            return L10n.featurette
+            L10n.featurette
         case .short:
-            return L10n.short
+            L10n.short
         }
     }
 
