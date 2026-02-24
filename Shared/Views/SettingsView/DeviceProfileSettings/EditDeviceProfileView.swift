@@ -47,11 +47,7 @@ extension CustomDeviceProfilesView {
 
         var body: some View {
             Form(systemImage: "doc") {
-                Section(L10n.behavior) {
-                    Toggle(L10n.useAsTranscodingProfile, isOn: $profile.useAsTranscodingProfile)
-                }
-
-                componentsSection
+                contentView
             }
             .interactiveDismissDisabled(true)
             .navigationTitle(L10n.customProfile.localizedCapitalized)
@@ -76,18 +72,24 @@ extension CustomDeviceProfilesView {
                 #endif
             }
             #if os(iOS)
-            .navigationBarBackButtonHidden()
-            .navigationBarCloseButton {
-                isPresentingNotSaved = true
-            }
+                .navigationBarBackButtonHidden()
+                .navigationBarCloseButton {
+                    isPresentingNotSaved = true
+                }
             #else
-            .onExitCommand {
+                .onExitCommand {
                     isPresentingNotSaved = true
                 }
             #endif
         }
 
-        private var componentsSection: some View {
+        @ViewBuilder
+        private var contentView: some View {
+
+            Section(L10n.behavior) {
+                Toggle(L10n.useAsTranscodingProfile, isOn: $profile.useAsTranscodingProfile)
+            }
+
             Section {
                 ChevronButton {
                     router.route(to: .editDeviceProfileAudio(selection: $profile.audio))

@@ -91,6 +91,10 @@ struct CustomDeviceProfilesView: View {
                     } label: {
                         VStack(alignment: .leading, spacing: 8) {
                             LabeledContent(
+                                L10n.useAsTranscodingProfile,
+                                value: profile.useAsTranscodingProfile ? L10n.yes : L10n.no
+                            )
+                            LabeledContent(
                                 L10n.audio,
                                 value: profile.audio.map(\.displayTitle).joined(separator: ", ")
                             )
@@ -101,10 +105,6 @@ struct CustomDeviceProfilesView: View {
                             LabeledContent(
                                 L10n.containers,
                                 value: profile.container.map(\.displayTitle).joined(separator: ", ")
-                            )
-                            LabeledContent(
-                                L10n.useAsTranscodingProfile,
-                                value: profile.useAsTranscodingProfile ? L10n.yes : L10n.no
                             )
                         }
                         .labeledContentStyle(.deviceProfile)
