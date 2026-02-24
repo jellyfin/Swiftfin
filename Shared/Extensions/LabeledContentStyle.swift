@@ -69,6 +69,7 @@ struct DeviceProfileLabeledContentStyle: LabeledContentStyle {
 
             configuration.content
                 .foregroundStyle(.secondary)
+                .multilineTextAlignment(.leading)
         }
         .font(.subheadline)
     }

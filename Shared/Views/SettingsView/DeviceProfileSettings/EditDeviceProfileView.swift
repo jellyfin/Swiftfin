@@ -72,12 +72,12 @@ extension CustomDeviceProfilesView {
                 #endif
             }
             #if os(iOS)
-                .navigationBarBackButtonHidden()
-                .navigationBarCloseButton {
-                    isPresentingNotSaved = true
-                }
+            .navigationBarBackButtonHidden()
+            .navigationBarCloseButton {
+                isPresentingNotSaved = true
+            }
             #else
-                .onExitCommand {
+            .onExitCommand {
                     isPresentingNotSaved = true
                 }
             #endif
