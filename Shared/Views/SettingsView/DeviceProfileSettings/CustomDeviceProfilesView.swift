@@ -7,13 +7,15 @@
 //
 
 import Defaults
-import Factory
+import JellyfinAPI
 import SwiftUI
 
 struct CustomDeviceProfilesView: View {
 
     @Default(.VideoPlayer.Playback.customDeviceProfileAction)
     private var customDeviceProfileAction
+    @Default(.VideoPlayer.videoPlayerType)
+    private var videoPlayerType
 
     @StoredValue(.User.customDeviceProfiles)
     private var customProfiles: [CustomDeviceProfile]
@@ -31,12 +33,17 @@ struct CustomDeviceProfilesView: View {
         }
     }
 
-    // MARK: - Body
+    private var addButton: some View {
+        Button(L10n.add) {
+            router.route(to: .createDeviceProfile)
+        }
+    }
 
     var body: some View {
         Form(systemImage: "doc.on.doc") {
-            behaviorSection
-            profilesSection
+            behaviorView
+            customProfileView
+            defaultProfileView
         }
         .navigationTitle(L10n.profiles)
         .topBarTrailing {
@@ -50,7 +57,7 @@ struct CustomDeviceProfilesView: View {
     }
 
     @ViewBuilder
-    private var behaviorSection: some View {
+    private var behaviorView: some View {
         Section(L10n.behavior) {
             #if os(iOS)
             Picker(L10n.behavior, selection: $customDeviceProfileAction)
@@ -75,44 +82,21 @@ struct CustomDeviceProfilesView: View {
     }
 
     @ViewBuilder
-    private var profilesSection: some View {
-        Section(L10n.profiles) {
+    private var customProfileView: some View {
+        Section(customDeviceProfileAction == .add ? L10n.custom : L10n.profiles) {
 
             if customProfiles.isEmpty {
                 addButton
             }
 
             ForEach($customProfiles, id: \.self) { $profile in
-                ChevronButton {
+                profileButton(
+                    useAsTranscodingProfile: profile.useAsTranscodingProfile,
+                    audio: profile.audio,
+                    video: profile.video,
+                    containers: profile.container
+                ) {
                     router.route(to: .editDeviceProfile(profile: $profile))
-                } label: {
-                    LabeledContent {
-                        EmptyView()
-                    } label: {
-                        VStack(alignment: .leading, spacing: 8) {
-                            LabeledContent(
-                                L10n.useAsTranscodingProfile,
-                                value: profile.useAsTranscodingProfile ? L10n.yes : L10n.no
-                            )
-                            LabeledContent(
-                                L10n.audio,
-                                value: profile.audio.map(\.displayTitle).joined(separator: ", ")
-                            )
-                            LabeledContent(
-                                L10n.video,
-                                value: profile.video.map(\.displayTitle).joined(separator: ", ")
-                            )
-                            LabeledContent(
-                                L10n.containers,
-                                value: profile.container.map(\.displayTitle).joined(separator: ", ")
-                            )
-                        }
-                        .labeledContentStyle(.deviceProfile)
-                        .if(UIDevice.isTV) { text in
-                            text
-                                .padding(.vertical)
-                        }
-                    }
                 }
                 #if os(iOS)
                 .swipeActions {
@@ -138,9 +122,92 @@ struct CustomDeviceProfilesView: View {
         }
     }
 
-    private var addButton: some View {
-        Button(L10n.add) {
-            router.route(to: .createDeviceProfile)
+    @ViewBuilder
+    private var defaultProfileView: some View {
+        if customDeviceProfileAction == .add {
+            Section(L10n.default) {
+                ForEach(Array(videoPlayerType.directPlayProfiles.enumerated()), id: \.offset) { _, profile in
+                    ListRow {} content: {
+                        profileView(
+                            useAsTranscodingProfile: false,
+                            audio: profile.audioCodec.components(of: AudioCodec.self),
+                            video: profile.videoCodec.components(of: VideoCodec.self),
+                            containers: profile.container.components(of: MediaContainer.self)
+                        )
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .isSeparatorVisible(false)
+                }
+
+                ForEach(Array(videoPlayerType.transcodingProfiles.enumerated()), id: \.offset) { _, profile in
+                    ListRow {} content: {
+                        profileView(
+                            useAsTranscodingProfile: true,
+                            audio: profile.audioCodec.components(of: AudioCodec.self),
+                            video: profile.videoCodec.components(of: VideoCodec.self),
+                            containers: profile.container.components(of: MediaContainer.self)
+                        )
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .isSeparatorVisible(false)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func profileView(
+        useAsTranscodingProfile: Bool,
+        audio: [AudioCodec],
+        video: [VideoCodec],
+        containers: [MediaContainer]
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            LabeledContent(
+                L10n.useAsTranscodingProfile,
+                value: useAsTranscodingProfile ? L10n.yes : L10n.no
+            )
+            LabeledContent(
+                L10n.audio,
+                value: audio.map(\.displayTitle).joined(separator: ", ")
+            )
+            LabeledContent(
+                L10n.video,
+                value: video.map(\.displayTitle).joined(separator: ", ")
+            )
+            LabeledContent(
+                L10n.containers,
+                value: containers.isEmpty
+                    ? L10n.all
+                    : containers.map(\.displayTitle).joined(separator: ", ")
+            )
+        }
+        .labeledContentStyle(.deviceProfile)
+        .if(UIDevice.isTV) { view in
+            view
+                .padding(.vertical)
+        }
+    }
+
+    @ViewBuilder
+    private func profileButton(
+        useAsTranscodingProfile: Bool,
+        audio: [AudioCodec],
+        video: [VideoCodec],
+        containers: [MediaContainer],
+        action: @escaping () -> Void
+    ) -> some View {
+        ChevronButton(action: action) {
+            LabeledContent {
+                EmptyView()
+            } label: {
+                profileView(
+                    useAsTranscodingProfile: useAsTranscodingProfile,
+                    audio: audio,
+                    video: video,
+                    containers: containers
+                )
+            }
         }
     }
 }
