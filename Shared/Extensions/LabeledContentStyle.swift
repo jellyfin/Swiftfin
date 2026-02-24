@@ -51,3 +51,25 @@ struct ItemAttributeLabeledContentStyle: LabeledContentStyle {
         }
     }
 }
+
+extension LabeledContentStyle where Self == DeviceProfileLabeledContentStyle {
+
+    static var deviceProfile: DeviceProfileLabeledContentStyle {
+        DeviceProfileLabeledContentStyle()
+    }
+}
+
+struct DeviceProfileLabeledContentStyle: LabeledContentStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            configuration.label
+                .fontWeight(.semibold)
+                .foregroundStyle(.primary)
+
+            configuration.content
+                .foregroundStyle(.secondary)
+        }
+        .font(.subheadline)
+    }
+}
