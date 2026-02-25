@@ -249,13 +249,13 @@ extension VideoPlayer {
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.easeInOut(duration: 0.3), value: isPresentingSupplement)
             .animation(.easeInOut(duration: 0.25), value: isPresentingOverlay)
-            .alert("Close Player", isPresented: $containerState.isPresentingCloseConfirmation) {
+            .alert(L10n.closePlayer, isPresented: $containerState.isPresentingCloseConfirmation) {
                 Button(L10n.cancel, role: .cancel) {}
                 Button(L10n.ok, role: .destructive) {
                     manager.stop()
                 }
             } message: {
-                Text("Are you sure you want to close the player?")
+                Text(L10n.closePlayerWarning)
             }
             .onFirstAppear {
                 containerState.isPresentingOverlay = true
