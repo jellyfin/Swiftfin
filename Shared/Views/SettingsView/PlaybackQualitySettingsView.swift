@@ -94,7 +94,7 @@ struct PlaybackQualitySettingsView: View {
 
                 if compatibilityMode == .custom {
                     ChevronButton(L10n.profiles) {
-                        router.route(to: .customDeviceProfileSettings)
+                        router.route(to: .customDeviceProfilesSettings)
                     }
                 }
             } footer: {
