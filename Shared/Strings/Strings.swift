@@ -342,6 +342,8 @@ internal enum L10n {
   internal static let compatible = L10n.tr("Localizable", "compatible", fallback: "Most compatible")
   /// Converts all media to H.264 video and AAC audio for maximum compatibility. May require server transcoding for non-compatible media types.
   internal static let compatibleDescription = L10n.tr("Localizable", "compatibleDescription", fallback: "Converts all media to H.264 video and AAC audio for maximum compatibility. May require server transcoding for non-compatible media types.")
+  /// Components
+  internal static let components = L10n.tr("Localizable", "components", fallback: "Components")
   /// Composer
   internal static let composer = L10n.tr("Localizable", "composer", fallback: "Composer")
   /// Conductor
