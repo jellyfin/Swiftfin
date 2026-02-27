@@ -80,14 +80,22 @@ struct ActiveSessionsView: View {
                 ProgressView()
             }
 
-            Menu(L10n.filters, systemImage: "line.3.horizontal.decrease.circle") {
+            Menu {
                 activeWithinFilterButton
                 showInactiveSessionsButton
+            } label: {
+                Label(L10n.filters, systemImage: "line.3.horizontal.decrease")
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .frame(width: 10, height: 10)
+                    .padding(10)
             }
+            .labelStyle(.iconOnly)
             .menuStyle(.button)
-            .buttonStyle(.isPressed { isPressed in
+            .buttonStyle(.tintedMaterial(tint: Color.gray.opacity(0.3), foregroundColor: accentColor) { isPressed in
                 isFiltersPresented = isPressed
             })
+            .clipShape(.circle)
             .foregroundStyle(accentColor)
         }
         .onFirstAppear {

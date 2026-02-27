@@ -27,12 +27,17 @@ struct NavigationBarMenuButtonModifier<Content: View>: ViewModifier {
                 }
 
                 if !isHidden {
-                    Menu(L10n.options, systemImage: "ellipsis.circle") {
+                    Menu(L10n.options, systemImage: "ellipsis") {
                         items()
                     }
                     .labelStyle(.iconOnly)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(accentColor)
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .frame(width: 30, height: 30)
+                    .menuStyle(.button)
+                    .buttonStyle(.tintedMaterial(tint: Color.gray.opacity(0.3), foregroundColor: accentColor))
+                    .clipShape(.circle)
+                    .isSelected(true)
                 }
             }
         }

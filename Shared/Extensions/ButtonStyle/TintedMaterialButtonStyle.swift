@@ -17,10 +17,15 @@ extension ButtonStyle where Self == TintedMaterialButtonStyle {
         TintedMaterialButtonStyle(tint: Color.clear, foregroundColor: Color.primary)
     }
 
-    static func tintedMaterial(tint: Color, foregroundColor: Color) -> TintedMaterialButtonStyle {
+    static func tintedMaterial(
+        tint: Color,
+        foregroundColor: Color,
+        isPressed: ((Bool) -> Void)? = nil
+    ) -> TintedMaterialButtonStyle {
         TintedMaterialButtonStyle(
             tint: tint,
-            foregroundColor: foregroundColor
+            foregroundColor: foregroundColor,
+            isPressed: isPressed
         )
     }
 }
@@ -36,6 +41,7 @@ struct TintedMaterialButtonStyle: ButtonStyle {
     // global accent color causes flashes of color
     let tint: Color
     let foregroundColor: Color
+    var isPressed: ((Bool) -> Void)?
 
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
@@ -50,6 +56,9 @@ struct TintedMaterialButtonStyle: ButtonStyle {
                 .symbolRenderingMode(.monochrome)
         }
         .hoverEffect(.lift)
+        .onChange(of: configuration.isPressed) { pressed in
+            isPressed?(pressed)
+        }
     }
 
     private var buttonTint: Color {

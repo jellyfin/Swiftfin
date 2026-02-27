@@ -99,6 +99,7 @@ extension ItemView {
                     }
                 }
             }
+            .cornerRadius(10)
             .isSelected(true)
             .enabled(isEnabled)
         }

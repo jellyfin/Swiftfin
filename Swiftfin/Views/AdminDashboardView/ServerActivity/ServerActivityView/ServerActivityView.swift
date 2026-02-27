@@ -7,11 +7,15 @@
 //
 
 import CollectionVGrid
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
 // TODO: WebSocket
 struct ServerActivityView: View {
+
+    @Default(.accentColor)
+    private var accentColor
 
     // MARK: - Router
 
@@ -47,10 +51,28 @@ struct ServerActivityView: View {
                 ProgressView()
             }
 
-            Menu(L10n.filters, systemImage: "line.3.horizontal.decrease.circle") {
+            Menu {
                 startDateButton
                 userFilterButton
+            } label: {
+                Label(L10n.filters, systemImage: "line.3.horizontal.decrease")
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .frame(width: 10, height: 10)
+                    .padding(10)
             }
+            .labelStyle(.iconOnly)
+            .menuStyle(.button)
+            .buttonStyle(
+                .tintedMaterial(
+                    tint: Color.gray.opacity(0.3), foregroundColor: accentColor
+                ) /* { isPressed in
+                     isFiltersPresented = isPressed
+                 } */
+                // TODO: Enable for WebSocket
+            )
+            .clipShape(.circle)
+            .foregroundStyle(accentColor)
         }
         .onFirstAppear {
             viewModel.send(.refresh)

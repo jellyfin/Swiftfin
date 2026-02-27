@@ -156,10 +156,14 @@ struct ItemImagesView: View {
                     router.route(to: .itemImageSelector(viewModel: viewModel, imageType: imageType))
                 }
             }
-            .font(.body)
             .labelStyle(.iconOnly)
+            .font(.body)
             .fontWeight(.semibold)
-            .foregroundStyle(accentColor)
+            .frame(width: 25, height: 25)
+            .clipShape(.circle)
+            .menuStyle(.button)
+            .buttonStyle(.tintedMaterial(tint: Color.gray.opacity(0.3), foregroundColor: accentColor))
+            .isSelected(true)
         }
         .edgePadding(.horizontal)
     }
