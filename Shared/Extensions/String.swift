@@ -131,6 +131,18 @@ extension String {
     }
 }
 
+extension String? {
+
+    /// Splits a delimited raw value string into typed components
+    func components<T: RawRepresentable>(
+        of type: T.Type,
+        separator: Character = ","
+    ) -> [T] where T.RawValue == String {
+        self?.split(separator: separator)
+            .compactMap { T(rawValue: String($0)) } ?? []
+    }
+}
+
 extension CharacterSet {
 
     // Character that appears on tvOS with voice input
