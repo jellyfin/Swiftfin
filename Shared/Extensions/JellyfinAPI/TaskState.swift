@@ -14,11 +14,11 @@ extension TaskState: Displayable {
     var displayTitle: String {
         switch self {
         case .cancelling:
-            return L10n.cancelling
+            L10n.cancelling
         case .idle:
-            return L10n.idle
+            L10n.idle
         case .running:
-            return L10n.running
+            L10n.running
         }
     }
 }

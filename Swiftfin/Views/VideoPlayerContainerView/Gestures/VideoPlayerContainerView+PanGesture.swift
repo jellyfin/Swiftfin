@@ -96,9 +96,9 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         }
     }
 
-    private func unpackAndHandlePan<Handler: _PanHandlingAction>(
+    private func unpackAndHandlePan(
         handlingState: _PanHandlingState,
-        action: Handler
+        action: some _PanHandlingAction
     ) {
         action.onChange(
             action.startState,
@@ -311,9 +311,9 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 .first(where: { $0 is UISlider }) as? UISlider else { return }
             let translation: CGFloat = {
                 if startState.direction.isHorizontal {
-                    return handlingState.translation.x
+                    handlingState.translation.x
                 } else {
-                    return -handlingState.translation.y
+                    -handlingState.translation.y
                 }
             }()
 

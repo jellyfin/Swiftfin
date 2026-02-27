@@ -103,7 +103,7 @@ extension CinematicItemSelector {
         copy(modifying: \.itemContent, with: content)
     }
 
-    func trailingContent<T: View>(@ViewBuilder _ content: @escaping () -> T) -> Self {
+    func trailingContent(@ViewBuilder _ content: @escaping () -> some View) -> Self {
         copy(modifying: \.trailingContent, with: content)
     }
 

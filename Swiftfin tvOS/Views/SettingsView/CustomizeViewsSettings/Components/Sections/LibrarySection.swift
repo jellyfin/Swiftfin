@@ -32,12 +32,6 @@ extension CustomizeViewsSettings {
         @Default(.Customization.Library.rememberSort)
         private var rememberLibrarySort
 
-        @Router
-        private var router
-
-        @State
-        private var isPresentingNextUpDays = false
-
         var body: some View {
             Section(L10n.media) {
 
@@ -54,12 +48,12 @@ extension CustomizeViewsSettings {
                 ListRowMenu(L10n.library, selection: $libraryDisplayType)
 
                 if libraryDisplayType == .list {
-                    ChevronButton(
-                        L10n.columns,
-                        subtitle: listColumnCount.description
-                    ) {
-                        // TODO: Implement listColumnSettings route in new Router system
-//                        router.route(to: .listColumnSettings(columnCount: $listColumnCount))
+                    Stepper(L10n.columns, value: $listColumnCount, in: 1 ... 4, step: 1) {
+                        LabeledContent {
+                            Text("\(listColumnCount)")
+                        } label: {
+                            Text(L10n.columns)
+                        }
                     }
                 }
             }

@@ -53,7 +53,9 @@ final class ServerTaskObserver: ViewModel, Identifiable {
     @Published
     var task: TaskInfo
 
-    var id: String? { task.id }
+    var id: String? {
+        task.id
+    }
 
     init(task: TaskInfo) {
         self.task = task

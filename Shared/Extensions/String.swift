@@ -29,9 +29,9 @@ extension String {
 
     func appending(_ element: @autoclosure () -> String, if condition: Bool) -> String {
         if condition {
-            return self + element()
+            self + element()
         } else {
-            return self
+            self
         }
     }
 
@@ -51,9 +51,9 @@ extension String {
 
     func prepending(_ element: String, if condition: Bool) -> String {
         if condition {
-            return element + self
+            element + self
         } else {
-            return self
+            self
         }
     }
 
@@ -128,6 +128,18 @@ extension String {
 
     var url: URL? {
         URL(string: self)
+    }
+}
+
+extension String? {
+
+    /// Splits a delimited raw value string into typed components
+    func components<T: RawRepresentable>(
+        of type: T.Type,
+        separator: Character = ","
+    ) -> [T] where T.RawValue == String {
+        self?.split(separator: separator)
+            .compactMap { T(rawValue: String($0)) } ?? []
     }
 }
 

@@ -360,15 +360,13 @@ class ItemViewModel: ViewModel, Stateful {
 
         guard let itemID = item.id else { return }
 
-        let request: Request<UserItemDataDto>
-
-        if isPlayed {
-            request = Paths.markPlayedItem(
+        let request: Request<UserItemDataDto> = if isPlayed {
+            Paths.markPlayedItem(
                 itemID: item.id!,
                 userID: userSession.user.id
             )
         } else {
-            request = Paths.markUnplayedItem(
+            Paths.markUnplayedItem(
                 itemID: item.id!,
                 userID: userSession.user.id
             )
@@ -382,15 +380,13 @@ class ItemViewModel: ViewModel, Stateful {
 
         guard let itemID = item.id else { return }
 
-        let request: Request<UserItemDataDto>
-
-        if isFavorite {
-            request = Paths.markFavoriteItem(
+        let request: Request<UserItemDataDto> = if isFavorite {
+            Paths.markFavoriteItem(
                 itemID: item.id!,
                 userID: userSession.user.id
             )
         } else {
-            request = Paths.unmarkFavoriteItem(
+            Paths.unmarkFavoriteItem(
                 itemID: item.id!,
                 userID: userSession.user.id
             )

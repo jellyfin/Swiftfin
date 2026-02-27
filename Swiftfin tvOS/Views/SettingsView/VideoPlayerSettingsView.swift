@@ -11,6 +11,9 @@ import SwiftUI
 
 struct VideoPlayerSettingsView: View {
 
+    @Default(.VideoPlayer.Subtitle.subtitleFontName)
+    private var subtitleFontName
+
     @Default(.VideoPlayer.jumpBackwardInterval)
     private var jumpBackwardLength
     @Default(.VideoPlayer.jumpForwardInterval)
@@ -20,9 +23,6 @@ struct VideoPlayerSettingsView: View {
 
     @Router
     private var router
-
-    @State
-    private var isPresentingResumeOffsetStepper: Bool = false
 
     // TODO: Update with correct settings once the tvOS PlayerUI is complete
     var body: some View {
@@ -34,11 +34,12 @@ struct VideoPlayerSettingsView: View {
             }
 
             Section {
-                ChevronButton(
-                    L10n.offset,
-                    subtitle: resumeOffset.secondLabel
-                ) {
-                    isPresentingResumeOffsetStepper = true
+                Stepper(L10n.resumeOffset, value: $resumeOffset, in: 0 ... 30, step: 1, format: SecondFormatter()) {
+                    LabeledContent {
+                        Text(resumeOffset, format: SecondFormatter())
+                    } label: {
+                        Text(L10n.resumeOffset)
+                    }
                 }
             } header: {
                 Text(L10n.resume)
@@ -46,23 +47,16 @@ struct VideoPlayerSettingsView: View {
                 Text(L10n.resumeOffsetDescription)
             }
 
-            TrackConfigurationSection()
-        }
-        .navigationTitle(L10n.videoPlayer.localizedCapitalized)
-        .blurredFullScreenCover(isPresented: $isPresentingResumeOffsetStepper) {
-            StepperView(
-                title: L10n.resumeOffsetTitle,
-                description: L10n.resumeOffsetDescription,
-                value: $resumeOffset,
-                range: 0 ... 30,
-                step: 1
-            )
-            .valueFormatter {
-                $0.secondLabel
-            }
-            .onCloseSelected {
-                isPresentingResumeOffsetStepper = false
+            Section {
+                ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName) {
+                    router.route(to: .fontPicker(selection: $subtitleFontName))
+                }
+            } header: {
+                Text(L10n.subtitles)
+            } footer: {
+                Text(L10n.subtitlesDisclaimer)
             }
         }
+        .navigationTitle(L10n.videoPlayer)
     }
 }

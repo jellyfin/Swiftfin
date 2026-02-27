@@ -34,18 +34,18 @@ extension NavigationRoute {
     }
     #endif
 
-    static let createCustomDeviceProfile = NavigationRoute(
-        id: "createCustomDeviceProfile",
+    static let createDeviceProfile = NavigationRoute(
+        id: "createDeviceProfile",
         style: .sheet
     ) {
-        CustomDeviceProfileSettingsView.EditCustomDeviceProfileView(profile: nil)
+        CustomDeviceProfilesView.EditDeviceProfileView(profile: nil)
             .navigationTitle(L10n.customProfile.localizedCapitalized)
     }
 
-    static let customDeviceProfileSettings = NavigationRoute(
-        id: "customDeviceProfileSettings"
+    static let customDeviceProfilesSettings = NavigationRoute(
+        id: "customDeviceProfilesSettings"
     ) {
-        CustomDeviceProfileSettingsView()
+        CustomDeviceProfilesView()
     }
 
     static let customizeViewsSettings = NavigationRoute(
@@ -54,7 +54,7 @@ extension NavigationRoute {
         CustomizeViewsSettings()
     }
 
-    #if DEBUG && !os(tvOS)
+    #if DEBUG
     static let debugSettings = NavigationRoute(
         id: "debugSettings"
     ) {
@@ -62,32 +62,32 @@ extension NavigationRoute {
     }
     #endif
 
-    static func editCustomDeviceProfile(profile: Binding<CustomDeviceProfile>) -> NavigationRoute {
+    static func editDeviceProfile(profile: Binding<CustomDeviceProfile>) -> NavigationRoute {
         NavigationRoute(
-            id: "editCustomDeviceProfile",
+            id: "editDeviceProfile",
             style: .sheet
         ) {
-            CustomDeviceProfileSettingsView.EditCustomDeviceProfileView(profile: profile)
+            CustomDeviceProfilesView.EditDeviceProfileView(profile: profile)
                 .navigationTitle(L10n.customProfile.localizedCapitalized)
         }
     }
 
-    static func editCustomDeviceProfileAudio(selection: Binding<[AudioCodec]>) -> NavigationRoute {
-        NavigationRoute(id: "editCustomDeviceProfileAudio") {
+    static func editDeviceProfileAudio(selection: Binding<[AudioCodec]>) -> NavigationRoute {
+        NavigationRoute(id: "editDeviceProfileAudio") {
             OrderedSectionSelectorView(selection: selection, sources: AudioCodec.allCases)
                 .navigationTitle(L10n.audio)
         }
     }
 
-    static func editCustomDeviceProfileContainer(selection: Binding<[MediaContainer]>) -> NavigationRoute {
-        NavigationRoute(id: "editCustomDeviceProfileContainer") {
+    static func editDeviceProfileContainer(selection: Binding<[MediaContainer]>) -> NavigationRoute {
+        NavigationRoute(id: "editDeviceProfileContainer") {
             OrderedSectionSelectorView(selection: selection, sources: MediaContainer.allCases)
                 .navigationTitle(L10n.containers)
         }
     }
 
-    static func editCustomDeviceProfileVideo(selection: Binding<[VideoCodec]>) -> NavigationRoute {
-        NavigationRoute(id: "editCustomDeviceProfileVideo") {
+    static func editDeviceProfileVideo(selection: Binding<[VideoCodec]>) -> NavigationRoute {
+        NavigationRoute(id: "editDeviceProfileVideo") {
             OrderedSectionSelectorView(selection: selection, sources: VideoCodec.allCases)
                 .navigationTitle(L10n.video)
         }
