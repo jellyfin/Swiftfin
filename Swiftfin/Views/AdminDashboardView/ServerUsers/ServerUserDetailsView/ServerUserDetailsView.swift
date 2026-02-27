@@ -13,35 +13,21 @@ import SwiftUI
 
 struct ServerUserDetailsView: View {
 
-    // MARK: - Current Date
-
     @CurrentDate
     private var currentDate: Date
-
-    // MARK: - State, Observed, & Environment Objects
 
     @Router
     private var router
 
     @StateObject
     private var viewModel: ServerUserAdminViewModel
-
     @StateObject
     private var profileViewModel: UserProfileImageViewModel
-
-    // MARK: - Error State
-
-    @State
-    private var error: Error?
-
-    // MARK: - Initializer
 
     init(user: UserDto) {
         self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
         self._profileViewModel = StateObject(wrappedValue: UserProfileImageViewModel(user: user))
     }
-
-    // MARK: - Body
 
     var body: some View {
         List {
@@ -63,10 +49,13 @@ struct ServerUserDetailsView: View {
                         alert.isPresented.wrappedValue = true
                     }
                     .alert(L10n.username, isPresented: alert.isPresented) {
-                        TextField(L10n.username, text: alert.username)
+                        TextField(L10n.username, text: Binding<String>(
+                            get: { alert.username.wrappedValue },
+                            set: { alert.username.wrappedValue = $0 }
+                        ))
 
                         Button(L10n.save) {
-                            viewModel.send(.updateUsername(alert.username.wrappedValue))
+                            viewModel.updateUsername(alert.username.wrappedValue)
                         }
 
                         Button(L10n.cancel, role: .cancel) {
@@ -120,15 +109,14 @@ struct ServerUserDetailsView: View {
         .refreshable {
             viewModel.refresh()
         }
-        .errorMessage($error) {
-            username = viewModel.user.name ?? ""
+        .errorMessage($viewModel.error) {
+            UIDevice.feedback(.error)
+        }
         .onReceive(viewModel.events) { event in
             switch event {
-            case let .error(eventError):
-                error = eventError
             case .updated:
-                break
+                UIDevice.feedback(.success)
             }
-=        }
+        }
     }
 }

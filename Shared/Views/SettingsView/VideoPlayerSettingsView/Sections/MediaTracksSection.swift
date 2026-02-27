@@ -169,19 +169,17 @@ struct TrackConfigurationSection: View {
                 router.route(to: .fontPicker(selection: $subtitleFontName))
             }
 
-            #if os(iOS)
-            BasicStepper(
-                L10n.subtitleSize,
-                value: $subtitleSize,
-                range: 1 ... 20,
-                step: 1
-            )
-
-            ColorPicker(selection: $subtitleColor, supportsOpacity: false) {
-                Text(L10n.subtitleColor)
+            Stepper(value: $subtitleSize, in: 1 ... 20, step: 1) {
+                LabeledContent(L10n.subtitleSize) {
+                    Text(subtitleSize.description)
+                }
             }
-            #endif
+
+            ColorPicker(L10n.subtitleColor, selection: $subtitleColor, supportsOpacity: false)
+        } header: {
+            Text(L10n.subtitle)
         } footer: {
+            // TODO: better wording
             Text(L10n.subtitlesDisclaimer)
         }
     }
