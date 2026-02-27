@@ -14,14 +14,12 @@ struct ListRowCheckbox: View {
     @Default(.accentColor)
     private var accentColor
 
-    // MARK: - Environment Variables
-
     @Environment(\.isEditing)
     private var isEditing
     @Environment(\.isSelected)
     private var isSelected
 
-    // MARK: - Sizing Variable
+    private let showDeselected: Bool
 
     #if os(tvOS)
     private let size: CGFloat = 36
@@ -29,7 +27,9 @@ struct ListRowCheckbox: View {
     private let size: CGFloat = 24
     #endif
 
-    // MARK: - Body
+    init(showDeselected: Bool = true) {
+        self.showDeselected = showDeselected
+    }
 
     @ViewBuilder
     var body: some View {
@@ -42,13 +42,13 @@ struct ListRowCheckbox: View {
                 .symbolRenderingMode(.palette)
                 .foregroundStyle(accentColor.overlayColor, accentColor)
 
-        } else if isEditing {
+        } else if isEditing, showDeselected {
             Image(systemName: "circle")
                 .resizable()
                 .fontWeight(.bold)
                 .aspectRatio(1, contentMode: .fit)
                 .frame(width: size, height: size)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.secondary)
         }
     }
 }

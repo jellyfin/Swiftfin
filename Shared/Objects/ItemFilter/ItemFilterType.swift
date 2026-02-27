@@ -6,7 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-enum ItemFilterType: String, CaseIterable, Storable {
+enum ItemFilterType: String, CaseIterable, Storable, Identifiable {
 
     case genres
     case letter
@@ -15,6 +15,10 @@ enum ItemFilterType: String, CaseIterable, Storable {
     case tags
     case traits
     case years
+
+    var id: String {
+        rawValue
+    }
 
     var selectorType: SelectorType {
         switch self {
@@ -63,6 +67,28 @@ extension ItemFilterType: Displayable {
             L10n.filters
         case .years:
             L10n.years
+        }
+    }
+}
+
+extension ItemFilterType: SystemImageable {
+
+    var systemImage: String {
+        switch self {
+        case .genres:
+            "theatermasks"
+        case .letter:
+            "character.textbox"
+        case .sortBy:
+            "line.3.horizontal.decrease"
+        case .sortOrder:
+            "arrow.up.arrow.down"
+        case .tags:
+            "tag"
+        case .traits:
+            "heart"
+        case .years:
+            "calendar"
         }
     }
 }
