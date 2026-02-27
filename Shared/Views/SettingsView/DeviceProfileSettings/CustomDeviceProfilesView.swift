@@ -27,15 +27,17 @@ struct CustomDeviceProfilesView: View {
         customDeviceProfileAction == .add || customProfiles.isNotEmpty
     }
 
-    private func deleteProfile(_ profile: CustomDeviceProfile) {
-        if let index = customProfiles.firstIndex(of: profile) {
-            customProfiles.remove(at: index)
-        }
-    }
-
+    @ViewBuilder
     private var addButton: some View {
         Button(L10n.add) {
             router.route(to: .createDeviceProfile)
+        }
+    }
+
+    @ViewBuilder
+    private func deleteButton(profile: CustomDeviceProfile) -> some View {
+        Button(L10n.delete, systemImage: "trash", role: .destructive) {
+            customProfiles.removeFirst(equalTo: profile)
         }
     }
 
@@ -74,6 +76,7 @@ struct CustomDeviceProfilesView: View {
                 L10n.add,
                 value: L10n.customDeviceProfileAdd
             )
+
             LabeledContent(
                 L10n.replace,
                 value: L10n.customDeviceProfileReplace
@@ -90,32 +93,27 @@ struct CustomDeviceProfilesView: View {
             }
 
             ForEach($customProfiles, id: \.self) { $profile in
-                profileButton(
-                    useAsTranscodingProfile: profile.useAsTranscodingProfile,
-                    audio: profile.audio,
-                    video: profile.video,
-                    containers: profile.container
-                ) {
+                ChevronButton {
                     router.route(to: .editDeviceProfile(profile: $profile))
+                } label: {
+                    LabeledContent {
+                        EmptyView()
+                    } label: {
+                        profileView(
+                            useAsTranscodingProfile: profile.useAsTranscodingProfile,
+                            audio: profile.audio,
+                            video: profile.video,
+                            containers: profile.container
+                        )
+                    }
                 }
                 #if os(iOS)
                 .swipeActions {
-                    Button(
-                        L10n.delete,
-                        systemImage: "trash",
-                        action: {
-                            deleteProfile(profile)
-                        }
-                    )
-                    .tint(.red)
+                    deleteButton(profile: profile)
                 }
                 #else
                 .contextMenu {
-                        Button(role: .destructive) {
-                            deleteProfile(profile)
-                        } label: {
-                            Label(L10n.delete, systemImage: "trash")
-                        }
+                        deleteButton(profile: profile)
                     }
                 #endif
             }
@@ -127,29 +125,27 @@ struct CustomDeviceProfilesView: View {
         if customDeviceProfileAction == .add {
             Section(L10n.default) {
                 ForEach(Array(videoPlayerType.directPlayProfiles.enumerated()), id: \.offset) { _, profile in
-                    ListRow {} content: {
+                    Button {} label: {
                         profileView(
                             useAsTranscodingProfile: false,
                             audio: profile.audioCodec.components(of: AudioCodec.self),
                             video: profile.videoCodec.components(of: VideoCodec.self),
                             containers: profile.container.components(of: MediaContainer.self)
                         )
-                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .isSeparatorVisible(false)
+                    .foregroundStyle(.primary, .secondary)
                 }
 
                 ForEach(Array(videoPlayerType.transcodingProfiles.enumerated()), id: \.offset) { _, profile in
-                    ListRow {} content: {
+                    Button {} label: {
                         profileView(
                             useAsTranscodingProfile: true,
                             audio: profile.audioCodec.components(of: AudioCodec.self),
                             video: profile.videoCodec.components(of: VideoCodec.self),
                             containers: profile.container.components(of: MediaContainer.self)
                         )
-                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .isSeparatorVisible(false)
+                    .foregroundStyle(.primary, .secondary)
                 }
             }
         }
@@ -167,14 +163,17 @@ struct CustomDeviceProfilesView: View {
                 L10n.useAsTranscodingProfile,
                 value: useAsTranscodingProfile ? L10n.yes : L10n.no
             )
+
             LabeledContent(
                 L10n.audio,
                 value: audio.map(\.displayTitle).joined(separator: ", ")
             )
+
             LabeledContent(
                 L10n.video,
                 value: video.map(\.displayTitle).joined(separator: ", ")
             )
+
             LabeledContent(
                 L10n.containers,
                 value: containers.isEmpty
@@ -186,28 +185,6 @@ struct CustomDeviceProfilesView: View {
         .if(UIDevice.isTV) { view in
             view
                 .padding(.vertical)
-        }
-    }
-
-    @ViewBuilder
-    private func profileButton(
-        useAsTranscodingProfile: Bool,
-        audio: [AudioCodec],
-        video: [VideoCodec],
-        containers: [MediaContainer],
-        action: @escaping () -> Void
-    ) -> some View {
-        ChevronButton(action: action) {
-            LabeledContent {
-                EmptyView()
-            } label: {
-                profileView(
-                    useAsTranscodingProfile: useAsTranscodingProfile,
-                    audio: audio,
-                    video: video,
-                    containers: containers
-                )
-            }
         }
     }
 }

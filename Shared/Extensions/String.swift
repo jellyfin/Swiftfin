@@ -136,7 +136,7 @@ extension String? {
     /// Splits a delimited raw value string into typed components
     func components<T: RawRepresentable>(
         of type: T.Type,
-        separatedBy separator: Character = ","
+        separator: Character = ","
     ) -> [T] where T.RawValue == String {
         self?.split(separator: separator)
             .compactMap { T(rawValue: String($0)) } ?? []
