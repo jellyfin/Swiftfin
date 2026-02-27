@@ -45,25 +45,23 @@ extension SeriesEpisodeSelector {
                 SeriesEpisodeSelector.EpisodeCard(episode: episode)
                     .focused($focusedEpisodeID, equals: episode.id)
                     .padding(.horizontal, 4)
+                    /// Wait to scroll until we see a `EpisodeCard` in the HStack
+                    .onFirstAppear {
+                        guard let playButtonItem,
+                              !didScrollToPlayButtonItem,
+                              viewModel.state == .content
+                        else { return }
+
+                        lastFocusedEpisodeID = playButtonItem.id
+                        proxy.scrollTo(id: playButtonItem.unwrappedIDHashOrZero, animated: false)
+                        didScrollToPlayButtonItem = true
+                    }
             }
             .scrollBehavior(.continuousLeadingEdge)
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
             .proxy(proxy)
-            .onFirstAppear {
-                guard !didScrollToPlayButtonItem else { return }
-                didScrollToPlayButtonItem = true
-
-                lastFocusedEpisodeID = playButtonItem?.id
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    guard let playButtonItem else { return }
-                    proxy.scrollTo(id: playButtonItem.unwrappedIDHashOrZero, animated: false)
-                }
-            }
         }
-
-        // MARK: - Determine Which Episode should be Focused
 
         private func getContentFocus() {
             switch viewModel.state {
