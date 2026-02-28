@@ -21,6 +21,7 @@ struct PlaybackProgressViewStyle: ProgressViewStyle {
     var secondaryProgress: Double?
     var cornerStyle: CornerStyle
 
+    @ViewBuilder
     private func buildCapsule(for progress: Double) -> some View {
         Rectangle()
             .cornerRadius(

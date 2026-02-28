@@ -47,6 +47,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
         // TODO: transition to Picker
         //       - need local State value
+        @ViewBuilder
         private func content(playbackItem: MediaPlayerItem) -> some View {
             ForEach(PlaybackBitrate.allCases, id: \.rawValue) { bitrate in
                 Button {

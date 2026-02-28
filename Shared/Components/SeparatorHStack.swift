@@ -77,6 +77,7 @@ extension SeparatorHStack {
             }
         }
 
+        @ViewBuilder
         private func localHStack(@ViewBuilder content: @escaping () -> some View) -> some View {
             HStack(spacing: 0) {
                 content()

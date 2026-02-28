@@ -31,6 +31,7 @@ struct ListRowCheckbox: View {
 
     // MARK: - Body
 
+    @ViewBuilder
     var body: some View {
         if isEditing, isSelected {
             Image(systemName: "checkmark.circle.fill")

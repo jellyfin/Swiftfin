@@ -243,6 +243,7 @@ extension View {
     }
 
     /// Apply a corner radius as a ratio of a view's side
+    @ViewBuilder
     func cornerRadius(
         ratio: CGFloat,
         of side: KeyPath<CGSize, CGFloat>,
